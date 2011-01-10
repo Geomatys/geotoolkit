@@ -76,7 +76,7 @@ public class SubjectMatchType {
    /**
     * Sets the value of the attributeValue property.
     */
-   public void setAttributeValue(AttributeValueType value) {
+   public void setAttributeValue(final AttributeValueType value) {
       this.attributeValue = value;
    }
 
@@ -90,7 +90,7 @@ public class SubjectMatchType {
    /**
     * Sets the value of the subjectAttributeDesignator property.
     */
-   public void setSubjectAttributeDesignator(SubjectAttributeDesignatorType value) {
+   public void setSubjectAttributeDesignator(final SubjectAttributeDesignatorType value) {
       this.subjectAttributeDesignator = value;
    }
 
@@ -104,7 +104,7 @@ public class SubjectMatchType {
    /**
     * Sets the value of the attributeSelector property.
     */
-   public void setAttributeSelector(AttributeSelectorType value) {
+   public void setAttributeSelector(final AttributeSelectorType value) {
       this.attributeSelector = value;
    }
 
@@ -118,7 +118,7 @@ public class SubjectMatchType {
    /**
     * Sets the value of the matchId property.
     */
-   public void setMatchId(String value) {
+   public void setMatchId(final String value) {
       this.matchId = value;
    }
 

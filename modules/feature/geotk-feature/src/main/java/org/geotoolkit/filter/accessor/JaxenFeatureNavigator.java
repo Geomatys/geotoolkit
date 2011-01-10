@@ -60,7 +60,7 @@ final class JaxenFeatureNavigator implements Navigator{
     private static final String EMPTY = "";
 
     @Override
-    public String getElementNamespaceUri(Object o) {
+    public String getElementNamespaceUri(final Object o) {
         if(o instanceof Property){
             final Property candidate = (Property) o;
             return candidate.getName().getNamespaceURI();
@@ -75,7 +75,7 @@ final class JaxenFeatureNavigator implements Navigator{
     }
 
     @Override
-    public String getElementName(Object o) {
+    public String getElementName(final Object o) {
         if(o instanceof Property){
             final Property candidate = (Property) o;
             return candidate.getName().getLocalPart();
@@ -90,7 +90,7 @@ final class JaxenFeatureNavigator implements Navigator{
     }
 
     @Override
-    public String getElementQName(Object o) {
+    public String getElementQName(final Object o) {
         if(o instanceof Property){
             final Property candidate = (Property) o;
             return DefaultName.toJCRExtendedForm(candidate.getName());
@@ -105,65 +105,65 @@ final class JaxenFeatureNavigator implements Navigator{
     }
 
     @Override
-    public String getAttributeNamespaceUri(Object o) {
+    public String getAttributeNamespaceUri(final Object o) {
         //final Identifier id = (Identifier) o;
         return null;
     }
 
     @Override
-    public String getAttributeName(Object o) {
-        //final Identifier id = (Identifier) o;
-        return "Id";
-    }
-
-    @Override
-    public String getAttributeQName(Object o) {
+    public String getAttributeName(final Object o) {
         //final Identifier id = (Identifier) o;
         return "Id";
     }
 
     @Override
-    public boolean isDocument(Object o) {
+    public String getAttributeQName(final Object o) {
+        //final Identifier id = (Identifier) o;
+        return "Id";
+    }
+
+    @Override
+    public boolean isDocument(final Object o) {
         return o instanceof ComplexAttribute || o instanceof ComplexType;
     }
 
     @Override
-    public boolean isElement(Object o) {
+    public boolean isElement(final Object o) {
         return o instanceof Property || o instanceof PropertyType || o instanceof PropertyDescriptor;
     }
 
     @Override
-    public boolean isAttribute(Object o) {
+    public boolean isAttribute(final Object o) {
         return o instanceof Identifier;
     }
 
     @Override
-    public boolean isNamespace(Object o) {
+    public boolean isNamespace(final Object o) {
         return false;
     }
 
     @Override
-    public boolean isComment(Object o) {
+    public boolean isComment(final Object o) {
         return false;
     }
 
     @Override
-    public boolean isText(Object o) {
+    public boolean isText(final Object o) {
         return false;
     }
 
     @Override
-    public boolean isProcessingInstruction(Object o) {
+    public boolean isProcessingInstruction(final Object o) {
         return false;
     }
 
     @Override
-    public String getCommentStringValue(Object o) {
+    public String getCommentStringValue(final Object o) {
         throw new UnsupportedOperationException("Not supported, should never be called, " + o);
     }
 
     @Override
-    public String getElementStringValue(Object o) {
+    public String getElementStringValue(final Object o) {
         if(o instanceof Property){
             final Property candidate = (Property) o;
             final Object value = candidate.getValue();
@@ -179,13 +179,13 @@ final class JaxenFeatureNavigator implements Navigator{
     }
 
     @Override
-    public String getAttributeStringValue(Object o) {
+    public String getAttributeStringValue(final Object o) {
         final Identifier property = (Identifier) o;
         return property.getID().toString();
     }
 
     @Override
-    public XPath parseXPath(String string) throws SAXPathException {
+    public XPath parseXPath(final String string) throws SAXPathException {
         throw new UnsupportedOperationException("Not supported, should never be called");
 //        return new JaxenFeatureXPath(string);
     }
@@ -194,27 +194,27 @@ final class JaxenFeatureNavigator implements Navigator{
     // NOT NEEDED //////////////////////////////////////////////////////////////
 
     @Override
-    public String getNamespaceStringValue(Object o) {
+    public String getNamespaceStringValue(final Object o) {
         throw new UnsupportedOperationException("Not supported, should never be called");
     }
 
     @Override
-    public String getTextStringValue(Object o) {
+    public String getTextStringValue(final Object o) {
         throw new UnsupportedOperationException("Not supported, should never be called");
     }
 
     @Override
-    public String getNamespacePrefix(Object o) {
+    public String getNamespacePrefix(final Object o) {
         throw new UnsupportedOperationException("Not supported, should never be called");
     }
 
     @Override
-    public String getProcessingInstructionTarget(Object o) {
+    public String getProcessingInstructionTarget(final Object o) {
         throw new UnsupportedOperationException("Not supported, should never be called");
     }
 
     @Override
-    public String getProcessingInstructionData(Object o) {
+    public String getProcessingInstructionData(final Object o) {
         throw new UnsupportedOperationException("Not supported, should never be called");
     }
 
@@ -222,7 +222,7 @@ final class JaxenFeatureNavigator implements Navigator{
     // ITERATORS ///////////////////////////////////////////////////////////////
 
     @Override
-    public Iterator getChildAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getChildAxisIterator(final Object o) throws UnsupportedAxisException {
         if(o instanceof ComplexAttribute){
             final ComplexAttribute candidate = (ComplexAttribute) o;
             return candidate.getProperties().iterator();
@@ -249,42 +249,42 @@ final class JaxenFeatureNavigator implements Navigator{
     }
 
     @Override
-    public Iterator getDescendantAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getDescendantAxisIterator(final Object o) throws UnsupportedAxisException {
         return new DescendantAxisIterator(o, this);
     }
 
     @Override
-    public Iterator getParentAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getParentAxisIterator(final Object o) throws UnsupportedAxisException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Iterator getAncestorAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getAncestorAxisIterator(final Object o) throws UnsupportedAxisException {
         return new AncestorAxisIterator(o, this);
     }
 
     @Override
-    public Iterator getFollowingSiblingAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getFollowingSiblingAxisIterator(final Object o) throws UnsupportedAxisException {
         return new FollowingSiblingAxisIterator(o, this);
     }
 
     @Override
-    public Iterator getPrecedingSiblingAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getPrecedingSiblingAxisIterator(final Object o) throws UnsupportedAxisException {
         return new PrecedingSiblingAxisIterator(o, this);
     }
 
     @Override
-    public Iterator getFollowingAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getFollowingAxisIterator(final Object o) throws UnsupportedAxisException {
         return new FollowingAxisIterator(o, this);
     }
 
     @Override
-    public Iterator getPrecedingAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getPrecedingAxisIterator(final Object o) throws UnsupportedAxisException {
         return new PrecedingAxisIterator(o, this);
     }
 
     @Override
-    public Iterator getAttributeAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getAttributeAxisIterator(final Object o) throws UnsupportedAxisException {
         if(o instanceof Attribute){
             final Attribute att = (Attribute) o;
             final Identifier id = att.getIdentifier();
@@ -297,22 +297,22 @@ final class JaxenFeatureNavigator implements Navigator{
     }
 
     @Override
-    public Iterator getNamespaceAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getNamespaceAxisIterator(final Object o) throws UnsupportedAxisException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Iterator getSelfAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getSelfAxisIterator(final Object o) throws UnsupportedAxisException {
         return new SelfAxisIterator(o);
     }
 
     @Override
-    public Iterator getDescendantOrSelfAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getDescendantOrSelfAxisIterator(final Object o) throws UnsupportedAxisException {
         return new DescendantOrSelfAxisIterator(o, this);
     }
 
     @Override
-    public Iterator getAncestorOrSelfAxisIterator(Object o) throws UnsupportedAxisException {
+    public Iterator getAncestorOrSelfAxisIterator(final Object o) throws UnsupportedAxisException {
         return new AncestorOrSelfAxisIterator(o, this);
     }
 
@@ -322,12 +322,12 @@ final class JaxenFeatureNavigator implements Navigator{
 
 
     @Override
-    public Object getDocument(String string) throws FunctionCallException {
+    public Object getDocument(final String string) throws FunctionCallException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object getDocumentNode(Object o) {
+    public Object getDocumentNode(final Object o) {
         if(o instanceof ComplexAttribute){
             return o;
         }else if(o instanceof PropertyDescriptor){
@@ -339,22 +339,22 @@ final class JaxenFeatureNavigator implements Navigator{
     }
 
     @Override
-    public Object getParentNode(Object o) throws UnsupportedAxisException {
+    public Object getParentNode(final Object o) throws UnsupportedAxisException {
         throw new UnsupportedAxisException("Not supported. Expression on feature can only be forward.");
     }
 
     @Override
-    public String translateNamespacePrefixToUri(String string, Object o) {
+    public String translateNamespacePrefixToUri(final String string, final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object getElementById(Object o, String string) {
+    public Object getElementById(final Object o, final String string) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public short getNodeType(Object o) {
+    public short getNodeType(final Object o) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

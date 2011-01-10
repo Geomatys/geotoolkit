@@ -87,7 +87,7 @@ public class Theme extends DescriptionType {
      *     {@link CodeType }
      *     
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 

@@ -67,7 +67,7 @@ public class OnlineResourceType
      *     {@link MethodType }
      *     
      */
-    public void setMethod(MethodType value) {
+    public void setMethod(final MethodType value) {
         this.method = value;
     }
 

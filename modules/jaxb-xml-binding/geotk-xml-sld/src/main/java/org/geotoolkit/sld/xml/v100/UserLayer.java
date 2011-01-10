@@ -87,7 +87,7 @@ public class UserLayer {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -111,7 +111,7 @@ public class UserLayer {
      *     {@link RemoteOWS }
      *     
      */
-    public void setRemoteOWS(RemoteOWS value) {
+    public void setRemoteOWS(final RemoteOWS value) {
         this.remoteOWS = value;
     }
 
@@ -135,7 +135,7 @@ public class UserLayer {
      *     {@link LayerFeatureConstraints }
      *     
      */
-    public void setLayerFeatureConstraints(LayerFeatureConstraints value) {
+    public void setLayerFeatureConstraints(final LayerFeatureConstraints value) {
         this.layerFeatureConstraints = value;
     }
 

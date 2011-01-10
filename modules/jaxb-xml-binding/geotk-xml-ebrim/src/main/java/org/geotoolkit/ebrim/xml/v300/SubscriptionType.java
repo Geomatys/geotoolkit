@@ -90,7 +90,7 @@ public class SubscriptionType extends RegistryObjectType {
         /**
      * Sets the value of the action property.
      */
-    public void setAction(ActionType action) {
+    public void setAction(final ActionType action) {
         if (this.action == null) {
             this.action = new ArrayList<JAXBElement<? extends ActionType>>();
         }
@@ -103,7 +103,7 @@ public class SubscriptionType extends RegistryObjectType {
     /**
      * Sets the value of the action property.
      */
-    public void setAction(List<JAXBElement<? extends ActionType>>  action) {
+    public void setAction(final List<JAXBElement<? extends ActionType>>  action) {
         this.action = action;
     }
 
@@ -117,7 +117,7 @@ public class SubscriptionType extends RegistryObjectType {
     /**
      * Sets the value of the selector property.
      */
-    public void setSelector(String value) {
+    public void setSelector(final String value) {
         this.selector = value;
     }
 
@@ -132,7 +132,7 @@ public class SubscriptionType extends RegistryObjectType {
      * Sets the value of the startTime property.
      *     
      */
-    public void setStartTime(XMLGregorianCalendar value) {
+    public void setStartTime(final XMLGregorianCalendar value) {
         this.startTime = value;
     }
 
@@ -146,7 +146,7 @@ public class SubscriptionType extends RegistryObjectType {
     /**
      * Sets the value of the endTime property.
      */
-    public void setEndTime(XMLGregorianCalendar value) {
+    public void setEndTime(final XMLGregorianCalendar value) {
         this.endTime = value;
     }
 
@@ -160,7 +160,7 @@ public class SubscriptionType extends RegistryObjectType {
     /**
      * Sets the value of the notificationInterval property.
      */
-    public void setNotificationInterval(Duration value) {
+    public void setNotificationInterval(final Duration value) {
         this.notificationInterval = value;
     }
 

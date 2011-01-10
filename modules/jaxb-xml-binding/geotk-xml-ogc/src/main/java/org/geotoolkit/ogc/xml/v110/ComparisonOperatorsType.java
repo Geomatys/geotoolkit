@@ -96,7 +96,7 @@ public class ComparisonOperatorsType implements ComparisonOperators {
     /**
      * @return Operator with the provided name, or null if not supported
      */
-    public Operator getOperator(String name) {
+    public Operator getOperator(final String name) {
         if ( name == null || comparisonOperator == null) {
             return null;
         }        

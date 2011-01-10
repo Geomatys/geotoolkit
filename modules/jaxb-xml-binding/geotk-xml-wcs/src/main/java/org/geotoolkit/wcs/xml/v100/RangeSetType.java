@@ -73,8 +73,8 @@ public class RangeSetType extends AbstractDescriptionType {
     RangeSetType(){
     }
 
-    public RangeSetType(List<MetadataLinkType> metadataLink, String name, String label, String description,
-            String semantic, String refSys, String refSysLabel)
+    public RangeSetType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description,
+            final String semantic, final String refSys, final String refSysLabel)
     {
         this(metadataLink, name, label, description, semantic, refSys, refSysLabel, null);
     }
@@ -82,8 +82,8 @@ public class RangeSetType extends AbstractDescriptionType {
     /**
      * Build a new range set.
      */
-    public RangeSetType(List<MetadataLinkType> metadataLink, String name, String label, String description,
-            String semantic, String refSys, String refSysLabel, List<AxisDescriptionType> axisDescription){
+    public RangeSetType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description,
+            final String semantic, final String refSys, final String refSysLabel, final List<AxisDescriptionType> axisDescription){
         super(metadataLink, name, label, description);
         this.semantic    = semantic;
         this.refSys      = refSys;

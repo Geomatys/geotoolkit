@@ -64,7 +64,7 @@ public class Classifier implements AbstractClassifier {
     public Classifier() {
     }
 
-    public Classifier(AbstractClassifier classifier) {
+    public Classifier(final AbstractClassifier classifier) {
         if (classifier != null) {
             this.name = classifier.getName();
             if (classifier.getTerm() != null) {
@@ -73,7 +73,7 @@ public class Classifier implements AbstractClassifier {
         }
     }
 
-    public Classifier(String name, Term term) {
+    public Classifier(final String name, final Term term) {
         this.name = name;
         this.term = term;
     }
@@ -98,7 +98,7 @@ public class Classifier implements AbstractClassifier {
      *     {@link Term }
      *
      */
-    public void setTerm(Term value) {
+    public void setTerm(final Term value) {
         this.term = value;
     }
 
@@ -122,7 +122,7 @@ public class Classifier implements AbstractClassifier {
      *     {@link String }
      *
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

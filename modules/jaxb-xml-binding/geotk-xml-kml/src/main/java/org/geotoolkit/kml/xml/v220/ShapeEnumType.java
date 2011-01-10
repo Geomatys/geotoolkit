@@ -49,7 +49,7 @@ public enum ShapeEnumType {
     SPHERE("sphere");
     private final String value;
 
-    ShapeEnumType(String v) {
+    ShapeEnumType(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum ShapeEnumType {
         return value;
     }
 
-    public static ShapeEnumType fromValue(String v) {
+    public static ShapeEnumType fromValue(final String v) {
         for (ShapeEnumType c: ShapeEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

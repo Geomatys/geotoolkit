@@ -104,7 +104,7 @@ abstract class GeometryBuilder {
      * @return an Stack with the required geometries
      * @throws CQLException
      */
-    protected Stack<Coordinate> popCoordinatesOf(int geomNode) throws CQLException {
+    protected Stack<Coordinate> popCoordinatesOf(final int geomNode) throws CQLException {
         final Stack<Coordinate> stack = new Stack<Coordinate>();
         while (!getResultStack().empty()) {
             final Result result = getResultStack().peek();

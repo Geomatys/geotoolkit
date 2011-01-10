@@ -57,7 +57,7 @@ public abstract class AbstractGeometricAggregateType extends AbstractGeometryTyp
     public AbstractGeometricAggregateType(){
     }
 
-    public AbstractGeometricAggregateType(String srsName){
+    public AbstractGeometricAggregateType(final String srsName){
         super(srsName);
     }
 }

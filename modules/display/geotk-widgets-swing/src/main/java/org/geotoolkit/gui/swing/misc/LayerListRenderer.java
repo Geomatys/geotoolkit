@@ -45,7 +45,7 @@ public class LayerListRenderer extends DefaultListCellRenderer {
     
     
     @Override
-    public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+    public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
         final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
         if(value instanceof MapLayer){
@@ -57,7 +57,7 @@ public class LayerListRenderer extends DefaultListCellRenderer {
         return lbl;
     }
     
-    private ImageIcon getIcon(MapLayer layer){
+    private ImageIcon getIcon(final MapLayer layer){
 //        DataStore ds = (DataStore) layer.getFeatureSource().getDataStore();
 //
 //        if (layer.getFeatureSource().getSchema().getName().getLocalPart().equals("GridCoverage")) {

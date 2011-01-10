@@ -70,7 +70,7 @@ public class PositionList implements AbstractPositionList {
 
     }
 
-    public PositionList(AbstractPositionList pos) {
+    public PositionList(final AbstractPositionList pos) {
         if (pos != null) {
             this.id = pos.getId();
             if (pos.getTimePosition() != null) {
@@ -85,7 +85,7 @@ public class PositionList implements AbstractPositionList {
         }
     }
 
-    public PositionList(String id, List<Position> position) {
+    public PositionList(final String id, final List<Position> position) {
         this.id = id;
         this.position = position;
     }
@@ -120,7 +120,7 @@ public class PositionList implements AbstractPositionList {
      *     {@link TimePosition }
      *
      */
-    public void setTimePosition(TimePosition value) {
+    public void setTimePosition(final TimePosition value) {
         this.timePosition = value;
     }
 
@@ -144,7 +144,7 @@ public class PositionList implements AbstractPositionList {
      *     {@link String }
      *
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

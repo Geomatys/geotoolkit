@@ -76,7 +76,7 @@ public class ShapeFileIndexer {
      *                 DOCUMENT ME!
      * @throws LockTimeoutException
      */
-    public int index(boolean verbose, ProgressListener listener)
+    public int index(final boolean verbose, final ProgressListener listener)
             throws MalformedURLException, IOException, TreeException,
             StoreException, LockTimeoutException {
 
@@ -115,7 +115,7 @@ public class ShapeFileIndexer {
         return cnt;
     }
 
-    private int buildQuadTree(ShapefileReader reader, File file, boolean verbose)
+    private int buildQuadTree(final ShapefileReader reader, final File file, final boolean verbose)
             throws IOException, StoreException {
         byte order = 0;
 
@@ -168,7 +168,7 @@ public class ShapeFileIndexer {
      * 
      * @param i
      */
-    public void setMax(int i) {
+    public void setMax(final int i) {
         max = i;
     }
 
@@ -177,7 +177,7 @@ public class ShapeFileIndexer {
      * 
      * @param i
      */
-    public void setMin(int i) {
+    public void setMin(final int i) {
         min = i;
     }
 
@@ -186,7 +186,7 @@ public class ShapeFileIndexer {
      * 
      * @param s
      */
-    public void setSplit(short s) {
+    public void setSplit(final short s) {
         split = s;
     }
 
@@ -195,7 +195,7 @@ public class ShapeFileIndexer {
      * 
      * @param shpFiles
      */
-    public void setShapeFileName(ShpFiles shpFiles) {
+    public void setShapeFileName(final ShpFiles shpFiles) {
         this.shpFiles = shpFiles;
     }
 
@@ -205,7 +205,7 @@ public class ShapeFileIndexer {
      * @param indexType
      *                The idxType to set.
      */
-    public void setIdxType(IndexType indexType) {
+    public void setIdxType(final IndexType indexType) {
         this.idxType = indexType;
     }
 
@@ -214,12 +214,12 @@ public class ShapeFileIndexer {
      * 
      * @param byteOrder The byteOrder to set.
      */
-    public void setByteOrder(String byteOrder) {
+    public void setByteOrder(final String byteOrder) {
         this.byteOrder = byteOrder;
     }
 
 
-    public static void main(String[] args) throws IOException {
+    public static void main(final String[] args) throws IOException {
         if ((args.length < 1) || (((args.length - 1) % 2) != 0)) {
             usage();
         }

@@ -127,7 +127,7 @@ public class ThoroughfareNumber {
      *     {@link String }
      *     
      */
-    public void setContent(String value) {
+    public void setContent(final String value) {
         this.content = value;
     }
 
@@ -151,7 +151,7 @@ public class ThoroughfareNumber {
      *     {@link String }
      *     
      */
-    public void setNumberType(String value) {
+    public void setNumberType(final String value) {
         this.numberType = value;
     }
 
@@ -175,7 +175,7 @@ public class ThoroughfareNumber {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -199,7 +199,7 @@ public class ThoroughfareNumber {
      *     {@link String }
      *     
      */
-    public void setIndicator(String value) {
+    public void setIndicator(final String value) {
         this.indicator = value;
     }
 
@@ -223,7 +223,7 @@ public class ThoroughfareNumber {
      *     {@link String }
      *     
      */
-    public void setIndicatorOccurrence(String value) {
+    public void setIndicatorOccurrence(final String value) {
         this.indicatorOccurrence = value;
     }
 
@@ -247,7 +247,7 @@ public class ThoroughfareNumber {
      *     {@link String }
      *     
      */
-    public void setNumberOccurrence(String value) {
+    public void setNumberOccurrence(final String value) {
         this.numberOccurrence = value;
     }
 
@@ -271,7 +271,7 @@ public class ThoroughfareNumber {
      *     {@link String }
      *     
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 

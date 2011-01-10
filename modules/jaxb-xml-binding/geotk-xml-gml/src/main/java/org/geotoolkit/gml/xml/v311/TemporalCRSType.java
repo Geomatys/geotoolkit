@@ -62,8 +62,8 @@ public class TemporalCRSType extends AbstractReferenceSystemType {
 
     }
 
-    public TemporalCRSType(final String id, final String name, final String description, String srsName,
-            TemporalCSRefType usesTemporalCS, TemporalDatumRefType usesTemporalDatum) {
+    public TemporalCRSType(final String id, final String name, final String description, final String srsName,
+            final TemporalCSRefType usesTemporalCS, final TemporalDatumRefType usesTemporalDatum) {
         super(id, name, description, srsName);
         this.usesTemporalCS    = usesTemporalCS;
         this.usesTemporalDatum = usesTemporalDatum;
@@ -79,7 +79,7 @@ public class TemporalCRSType extends AbstractReferenceSystemType {
     /**
      * Sets the value of the usesTemporalCS property.
      */
-    public void setUsesTemporalCS(TemporalCSRefType value) {
+    public void setUsesTemporalCS(final TemporalCSRefType value) {
         this.usesTemporalCS = value;
     }
 
@@ -94,7 +94,7 @@ public class TemporalCRSType extends AbstractReferenceSystemType {
      * Sets the value of the usesTemporalDatum property.
      * 
      */
-    public void setUsesTemporalDatum(TemporalDatumRefType value) {
+    public void setUsesTemporalDatum(final TemporalDatumRefType value) {
         this.usesTemporalDatum = value;
     }
 

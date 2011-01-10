@@ -26,7 +26,7 @@ import org.geotoolkit.data.osm.client.AbstractGetChangeSets;
  */
 public class GetChangeSets060 extends AbstractGetChangeSets{
 
-    public GetChangeSets060(String serveruURL){
+    public GetChangeSets060(final String serveruURL){
         super(serveruURL,"/api/0.6/changesets");
     }
 

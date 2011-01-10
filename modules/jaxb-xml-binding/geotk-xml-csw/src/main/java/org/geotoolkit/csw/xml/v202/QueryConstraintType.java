@@ -76,7 +76,7 @@ public class QueryConstraintType implements QueryConstraint {
     /**
      * Build a new Query constraint with a filter.
      */
-    public QueryConstraintType(FilterType filter, String version){
+    public QueryConstraintType(final FilterType filter, final String version){
         this.filter  = filter;
         this.version = version;
     }
@@ -84,7 +84,7 @@ public class QueryConstraintType implements QueryConstraint {
     /**
      * Build a new Query constraint with a CQL text.
      */
-    public QueryConstraintType(String cqlText, String version){
+    public QueryConstraintType(final String cqlText, final String version){
         this.cqlText = cqlText;
         this.version = version;
     }
@@ -115,7 +115,7 @@ public class QueryConstraintType implements QueryConstraint {
      * Sets the value of the filter property.
      * 
      */
-    public void setFilter(FilterType value) {
+    public void setFilter(final FilterType value) {
         this.filter = value;
     }
 
@@ -123,7 +123,7 @@ public class QueryConstraintType implements QueryConstraint {
      * Sets the value of the cqlText property.
      * 
      */
-    public void setCqlText(String value) {
+    public void setCqlText(final String value) {
         this.cqlText = value;
     }
 
@@ -131,7 +131,7 @@ public class QueryConstraintType implements QueryConstraint {
      * Sets the value of the version property.
      * 
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
     

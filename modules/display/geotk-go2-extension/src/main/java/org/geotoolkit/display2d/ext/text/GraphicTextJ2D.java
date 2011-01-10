@@ -40,7 +40,7 @@ public class GraphicTextJ2D extends PositionedGraphic2D{
 
     private final TextTemplate template;
 
-    public GraphicTextJ2D(final J2DCanvas canvas, TextTemplate template){
+    public GraphicTextJ2D(final J2DCanvas canvas, final TextTemplate template){
         super(canvas);
         this.template = template;
     }

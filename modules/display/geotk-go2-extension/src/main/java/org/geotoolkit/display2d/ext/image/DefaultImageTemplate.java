@@ -30,7 +30,7 @@ public class DefaultImageTemplate implements ImageTemplate {
     private final BackgroundTemplate background;
     private final BufferedImage image;
 
-    public DefaultImageTemplate(BackgroundTemplate background, BufferedImage image) {
+    public DefaultImageTemplate(final BackgroundTemplate background, final BufferedImage image) {
         this.background = background;
         this.image = image;
     }

@@ -78,7 +78,7 @@ public class ChangeCaseType
      *     {@link ParameterValueType }
      *     
      */
-    public void setStringValue(ParameterValueType value) {
+    public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
     }
 
@@ -102,7 +102,7 @@ public class ChangeCaseType
      *     {@link DirectionType }
      *     
      */
-    public void setDirection(DirectionType value) {
+    public void setDirection(final DirectionType value) {
         this.direction = value;
     }
 

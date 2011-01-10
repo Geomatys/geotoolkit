@@ -71,12 +71,12 @@ public class KeywordList implements AbstractKeywordList {
     public KeywordList() {
     }
 
-    public KeywordList(URI codeSpace, List<JAXBElement<String>> keyword) {
+    public KeywordList(final URI codeSpace, final List<JAXBElement<String>> keyword) {
         this.codeSpace = codeSpace;
         this.keyword = keyword;
     }
 
-    public KeywordList(AbstractKeywordList kl) {
+    public KeywordList(final AbstractKeywordList kl) {
         if (kl != null) {
             this.codeSpace = kl.getCodeSpace();
             this.id        = kl.getId();
@@ -105,14 +105,14 @@ public class KeywordList implements AbstractKeywordList {
     /**
      * Gets the value of the keyword property.
      */
-    public void setKeyword(List<JAXBElement<String>> keyword) {
+    public void setKeyword(final List<JAXBElement<String>> keyword) {
         this.keyword = keyword;
     }
 
     /**
      * Gets the value of the keyword property.
      */
-    public void setKeyword(JAXBElement<String> keyword) {
+    public void setKeyword(final JAXBElement<String> keyword) {
         if (this.keyword == null) {
             this.keyword = new ArrayList<JAXBElement<String>>();
         }
@@ -122,7 +122,7 @@ public class KeywordList implements AbstractKeywordList {
     /**
      * Gets the value of the keyword property.
      */
-    public void setKeyword(String keyword) {
+    public void setKeyword(final String keyword) {
         if (this.keyword == null) {
             this.keyword = new ArrayList<JAXBElement<String>>();
         }
@@ -140,7 +140,7 @@ public class KeywordList implements AbstractKeywordList {
     /**
      * Sets the value of the codeSpace property.
      */
-    public void setCodeSpace(URI value) {
+    public void setCodeSpace(final URI value) {
         this.codeSpace = value;
     }
 
@@ -154,7 +154,7 @@ public class KeywordList implements AbstractKeywordList {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

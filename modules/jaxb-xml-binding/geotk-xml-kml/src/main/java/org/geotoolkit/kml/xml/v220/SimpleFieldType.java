@@ -83,7 +83,7 @@ public class SimpleFieldType {
      *     {@link String }
      *     
      */
-    public void setDisplayName(String value) {
+    public void setDisplayName(final String value) {
         this.displayName = value;
     }
 
@@ -136,7 +136,7 @@ public class SimpleFieldType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -160,7 +160,7 @@ public class SimpleFieldType {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

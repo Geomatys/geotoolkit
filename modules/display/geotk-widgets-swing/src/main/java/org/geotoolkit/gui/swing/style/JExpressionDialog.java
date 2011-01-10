@@ -74,7 +74,7 @@ public class JExpressionDialog extends javax.swing.JDialog {
      * 
      * @param layer the layer to edit
      */
-    public JExpressionDialog(MapLayer layer) {
+    public JExpressionDialog(final MapLayer layer) {
         this(layer, null);
     }
 
@@ -82,7 +82,7 @@ public class JExpressionDialog extends javax.swing.JDialog {
      * 
      * @param exp the default expression
      */
-    public JExpressionDialog(Expression exp) {
+    public JExpressionDialog(final Expression exp) {
         this(null, exp);
     }
 
@@ -91,7 +91,7 @@ public class JExpressionDialog extends javax.swing.JDialog {
      * @param layer the layer to edit
      * @param exp the default expression
      */
-    public JExpressionDialog(MapLayer layer, Expression exp) {
+    public JExpressionDialog(final MapLayer layer, final Expression exp) {
         initComponents();
 
         setLayer(layer);
@@ -109,7 +109,7 @@ public class JExpressionDialog extends javax.swing.JDialog {
         });
     }
 
-    private void append(String val) {
+    private void append(final String val) {
         if (!jta.getText().endsWith(val)) {
 
             if (!jta.getText().endsWith(" ") && jta.getText().length() > 0) {
@@ -123,7 +123,7 @@ public class JExpressionDialog extends javax.swing.JDialog {
      * 
      * @param layer the layer to edit
      */
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         guiFields.removeAll();
 
         if (layer instanceof FeatureMapLayer) {
@@ -146,7 +146,7 @@ public class JExpressionDialog extends javax.swing.JDialog {
      * 
      * @param exp the default expression
      */
-    public void setExpression(Expression exp) {
+    public void setExpression(final Expression exp) {
         this.old = exp;
         
         if (exp != null) {
@@ -313,23 +313,23 @@ public class JExpressionDialog extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    private void jButton2actionPlus(ActionEvent evt) {//GEN-FIRST:event_jButton2actionPlus
+    private void jButton2actionPlus(final ActionEvent evt) {//GEN-FIRST:event_jButton2actionPlus
         append("+");
     }//GEN-LAST:event_jButton2actionPlus
 
-    private void jButton3actionMinus(ActionEvent evt) {//GEN-FIRST:event_jButton3actionMinus
+    private void jButton3actionMinus(final ActionEvent evt) {//GEN-FIRST:event_jButton3actionMinus
         append("-");
     }//GEN-LAST:event_jButton3actionMinus
 
-    private void jButton4actionDivide(ActionEvent evt) {//GEN-FIRST:event_jButton4actionDivide
+    private void jButton4actionDivide(final ActionEvent evt) {//GEN-FIRST:event_jButton4actionDivide
         append("/");
     }//GEN-LAST:event_jButton4actionDivide
 
-    private void jButton5actionMultiply(ActionEvent evt) {//GEN-FIRST:event_jButton5actionMultiply
+    private void jButton5actionMultiply(final ActionEvent evt) {//GEN-FIRST:event_jButton5actionMultiply
         append("*");
     }//GEN-LAST:event_jButton5actionMultiply
 
-    private void actionClose(ActionEvent evt) {//GEN-FIRST:event_actionClose
+    private void actionClose(final ActionEvent evt) {//GEN-FIRST:event_actionClose
         dispose();
     }//GEN-LAST:event_actionClose
     // Variables declaration - do not modify//GEN-BEGIN:variables

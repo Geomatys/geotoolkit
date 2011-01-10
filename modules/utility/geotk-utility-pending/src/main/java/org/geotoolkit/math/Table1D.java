@@ -62,7 +62,7 @@ public abstract class Table1D implements Extrapolation{
      *  même longueur.
      */
     @Override
-    public void setData(double[] x, double[] y) throws MismatchedSizeException {
+    public void setData(final double[] x, final double[] y) throws MismatchedSizeException {
         this.x = x;
         this.y = y;
         if (x.length != y.length) {
@@ -107,7 +107,7 @@ public abstract class Table1D implements Extrapolation{
      * @return l'ancien état.
      */
     @Override
-    public boolean ignoreNaN(boolean ignore) {
+    public boolean ignoreNaN(final boolean ignore) {
         boolean old = ignoreYNaN;
         ignoreYNaN = ignore;
         return old;
@@ -154,7 +154,7 @@ public abstract class Table1D implements Extrapolation{
      * @param n nombre minimal de données valides qui étaient nécessaires.
      * @throws ArrayIndexOutOfBoundsException toujours lancée avec un message appropriée.
      */
-    final void throwArrayIndexOutOfBoundsException(int n) throws ArrayIndexOutOfBoundsException {
+    final void throwArrayIndexOutOfBoundsException(final int n) throws ArrayIndexOutOfBoundsException {
         // TODO: Localize
         throw new ArrayIndexOutOfBoundsException("Il fallait " + n + " données valides, ce qui n'a pas été trouvé.");
     }

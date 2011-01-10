@@ -33,7 +33,7 @@ public class SingletonIterator<E> implements Iterator<E> {
     private final E singleton;
     private boolean hasNext = true;
 
-    private SingletonIterator(E singleton){
+    private SingletonIterator(final E singleton){
         this.singleton = singleton;
     }
 
@@ -68,7 +68,7 @@ public class SingletonIterator<E> implements Iterator<E> {
         throw new UnsupportedOperationException("Removing object from a singleton iterator is not authorized.");
     }
 
-    public static <T extends Object> Iterator<T> wrap(T singleton){
+    public static <T extends Object> Iterator<T> wrap(final T singleton){
         return new SingletonIterator<T>(singleton);
     }
 

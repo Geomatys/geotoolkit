@@ -44,7 +44,7 @@ public class PeriodUtilities {
     /**
      * Build a new period worker with the specified DateFormat 
      */
-    public PeriodUtilities(DateFormat dateFormat) {
+    public PeriodUtilities(final DateFormat dateFormat) {
         this.dateFormat = dateFormat;
     }
     
@@ -54,7 +54,7 @@ public class PeriodUtilities {
      *
      * @param dates a sorted set of date (ordered by time).
      */
-    public String getDatesRespresentation(SortedSet<Date> dates) {
+    public String getDatesRespresentation(final SortedSet<Date> dates) {
         if (dates.comparator() != null) {
             throw new IllegalArgumentException("Dates should be sorted naturaly without any custom comparator.");
         }
@@ -127,7 +127,7 @@ public class PeriodUtilities {
      * @param gap
      * @return
      */
-    public String getPeriodDescription(SortedSet<Date> dates, long gap) {
+    public String getPeriodDescription(final SortedSet<Date> dates, long gap) {
         final StringBuffer response = new StringBuffer();
         dateFormat.format(dates.first(), response, new FieldPosition(0));
         response.append('/');
@@ -201,7 +201,7 @@ public class PeriodUtilities {
      * @return
      * @throws java.text.ParseException
      */
-    public SortedSet<Date> getDatesFromPeriodDescription(String periods) throws ParseException {
+    public SortedSet<Date> getDatesFromPeriodDescription(final String periods) throws ParseException {
         final SortedSet<Date> response = new TreeSet<Date>();
         final StringTokenizer tokens = new StringTokenizer(periods, ",");
         while (tokens.hasMoreTokens()) {

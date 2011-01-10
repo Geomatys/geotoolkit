@@ -2901,7 +2901,7 @@ public class LuceneTest {
         assertTrue(results.contains("box 3"));
     }
     
-    private static void fillTestData(IndexWriter writer) throws Exception {
+    private static void fillTestData(final IndexWriter writer) throws Exception {
 
         final int srid4326 = SRIDGenerator.toSRID(CRS.decode("CRS:84"), Version.V1);
         final int srid3395 = SRIDGenerator.toSRID(CRS.decode("EPSG:3395"), Version.V1);
@@ -2980,7 +2980,7 @@ public class LuceneTest {
      * @param y2  the Y coordinate of the first point of the line.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addLine(Document doc, double x1, double y1, double x2, double y2, int srid) {
+    private static void addLine(final Document doc, final double x1, final double y1, final double x2, final double y2, final int srid) {
 
         LineString line = GF.createLineString(new Coordinate[]{
             new Coordinate(x1,y1),
@@ -3003,7 +3003,7 @@ public class LuceneTest {
      * @param y       The y coordinate of the point.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addPoint(Document doc, double x, double y, int srid) {
+    private static void addPoint(final Document doc, final double x, final double y, final int srid) {
 
         Point pt = GF.createPoint(new Coordinate(x, y));
         pt.setSRID(srid);
@@ -3024,7 +3024,7 @@ public class LuceneTest {
      * @param maxy the maximum Y coordinate of the bounding box.
      * @param crsName The coordinate reference system in witch the coordinates are expressed.
      */
-    private static void addBoundingBox(Document doc, double minx, double maxx, double miny, double maxy, int srid) {
+    private static void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) {
 
         toByte(minx, maxx, miny, maxy,srid);
         byte[] bytes = WKBUtils.toWKBwithSRID(polygon);
@@ -3048,7 +3048,7 @@ public class LuceneTest {
     private static final Polygon polygon = new Polygon(ring, new LinearRing[0],GF);
 
 
-    protected static byte[] toByte(double minx, double maxx, double miny, double maxy,int srid){
+    protected static byte[] toByte(final double minx, final double maxx, final double miny, final double maxy,final int srid){
         polygon.setSRID(4326);
         coords[0].x = minx;
         coords[0].y = miny;

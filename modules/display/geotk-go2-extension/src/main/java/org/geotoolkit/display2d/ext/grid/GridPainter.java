@@ -28,12 +28,12 @@ public class GridPainter implements BackgroundPainter{
 
     private final GridTemplate template;
 
-    public GridPainter(GridTemplate template){
+    public GridPainter(final GridTemplate template){
         this.template = template;
     }
 
     @Override
-    public void paint(RenderingContext2D context) {
+    public void paint(final RenderingContext2D context) {
         J2DGridUtilities.paint(context, template);
     }
 

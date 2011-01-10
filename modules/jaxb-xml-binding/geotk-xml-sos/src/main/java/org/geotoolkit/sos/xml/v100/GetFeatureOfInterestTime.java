@@ -61,7 +61,7 @@ public class GetFeatureOfInterestTime extends RequestBaseType {
      */
     GetFeatureOfInterestTime() {}
 
-    public GetFeatureOfInterestTime(String version, String featureOfInterestId) {
+    public GetFeatureOfInterestTime(final String version, final String featureOfInterestId) {
         super(version);
         this.featureOfInterestId = featureOfInterestId;
     }

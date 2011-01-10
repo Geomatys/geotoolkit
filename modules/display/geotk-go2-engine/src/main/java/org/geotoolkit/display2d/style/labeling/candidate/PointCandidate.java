@@ -37,7 +37,7 @@ public class PointCandidate extends Candidate<PointLabelDescriptor> {
     public int correctionY = 0;
 
 
-    public PointCandidate(PointLabelDescriptor desc, int width, int upper, int lower, float x, float y) {
+    public PointCandidate(final PointLabelDescriptor desc, final int width, final int upper, final int lower, final float x, final float y) {
         super(desc);
         this.width = width;
         this.upper = upper;

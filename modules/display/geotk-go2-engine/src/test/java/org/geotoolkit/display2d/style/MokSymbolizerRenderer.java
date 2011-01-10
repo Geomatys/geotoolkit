@@ -35,26 +35,26 @@ public class MokSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedMokS
 
     public static volatile int called = 0;
 
-    public MokSymbolizerRenderer(CachedMokSymbolizer cached, RenderingContext2D ctx){
+    public MokSymbolizerRenderer(final CachedMokSymbolizer cached, final RenderingContext2D ctx){
         super(cached,ctx);
     }
 
     @Override
-    public void portray(ProjectedFeature graphic) throws PortrayalException {
+    public void portray(final ProjectedFeature graphic) throws PortrayalException {
         called++;
     }
 
     @Override
-    public void portray(ProjectedCoverage graphic) throws PortrayalException {
+    public void portray(final ProjectedCoverage graphic) throws PortrayalException {
     }
 
     @Override
-    public boolean hit(ProjectedFeature graphic, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedFeature graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         return false;
     }
 
     @Override
-    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedCoverage graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         return false;
     }
 

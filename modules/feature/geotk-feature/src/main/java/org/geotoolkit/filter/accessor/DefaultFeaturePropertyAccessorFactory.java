@@ -62,7 +62,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
      * {@inheritDoc }
      */
     @Override
-    public PropertyAccessor createPropertyAccessor(Class type, String xpath, Class target, Hints hints) {
+    public PropertyAccessor createPropertyAccessor(final Class type, final String xpath, final Class target, final Hints hints) {
 
         if (xpath == null) {
             return null;
@@ -174,19 +174,19 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
     private static class FidSimpleFeaturePropertyAccessor implements PropertyAccessor {
 
         @Override
-        public boolean canHandle(Class clazz, String xpath, Class target) {
+        public boolean canHandle(final Class clazz, final String xpath, final Class target) {
             //we only work against feature, not feature type
             return Feature.class.isAssignableFrom(clazz) && xpath.matches("@(\\w+:)?id");
         }
 
         @Override
-        public Object get(Object object, String xpath, Class target) {
+        public Object get(final Object object, final String xpath, final Class target) {
             final Feature feature = (Feature) object;
             return feature.getIdentifier().getID();
         }
 
         @Override
-        public void set(Object object, String xpath, Object value, Class target)
+        public void set(final Object object, final String xpath, final Object value, final Class target)
                 throws IllegalArgumentException {
             throw new IllegalArgumentException("feature id is immutable");
         }
@@ -195,7 +195,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
     static class DefaultGeometrySimpleFeaturePropertyAccessor implements PropertyAccessor {
 
         @Override
-        public boolean canHandle(Class clazz, String xpath, Class target) {
+        public boolean canHandle(final Class clazz, final String xpath, final Class target) {
             if (!"".equals(xpath)) {
                 return false;
             }
@@ -205,7 +205,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         }
 
         @Override
-        public Object get(Object object, String xpath, Class target) {
+        public Object get(final Object object, final String xpath, final Class target) {
             if(object instanceof SimpleFeature){
                 return ((SimpleFeature) object).getDefaultGeometry();
             }else if (object instanceof Feature) {
@@ -219,7 +219,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         }
 
         @Override
-        public void set(Object object, String xpath, Object value, Class target)
+        public void set(final Object object, final String xpath, final Object value, final Class target)
                 throws IllegalArgumentException{
 
             if (object instanceof Feature) {
@@ -235,7 +235,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
     static class SimpleFeaturePropertyAccessor implements PropertyAccessor {
 
         @Override
-        public boolean canHandle(Class clazz, String xpath, Class target) {
+        public boolean canHandle(final Class clazz, String xpath, final Class target) {
             xpath = stripPrefix(xpath);
             final Name name = DefaultName.valueOf(xpath);
 
@@ -244,7 +244,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         }
 
         @Override
-        public Object get(Object object, String xpath, Class target) {
+        public Object get(final Object object, String xpath, final Class target) {
             xpath = stripPrefix(xpath);
 
             if (object instanceof Feature) {
@@ -262,7 +262,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         }
 
         @Override
-        public void set(Object object, String xpath, Object value, Class target)
+        public void set(final Object object, String xpath, final Object value, final Class target)
                 throws IllegalArgumentException {
             xpath = stripPrefix(xpath);
             final Name name = DefaultName.valueOf(xpath);
@@ -284,7 +284,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
 
     static class XNumPropertyAccessor implements PropertyAccessor {
 
-        private int toIndex(String xpath){
+        private int toIndex(final String xpath){
             String num = xpath.substring(2, xpath.length()-1);
 
             if(num.startsWith("position()=")){
@@ -295,14 +295,14 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         }
 
         @Override
-        public boolean canHandle(Class clazz, String xpath, Class target) {
+        public boolean canHandle(final Class clazz, final String xpath, final Class target) {
 
             return Feature.class.isAssignableFrom(clazz)
                 || FeatureType.class.isAssignableFrom(clazz);
         }
 
         @Override
-        public Object get(Object object, String xpath, Class target) {
+        public Object get(final Object object, final String xpath, final Class target) {
             final int index = toIndex(xpath);
 
             if(object instanceof SimpleFeature){
@@ -335,7 +335,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         }
 
         @Override
-        public void set(Object object, String xpath, Object value, Class target)
+        public void set(final Object object, final String xpath, final Object value, final Class target)
                 throws IllegalArgumentException {
             final int index = toIndex(xpath);
 

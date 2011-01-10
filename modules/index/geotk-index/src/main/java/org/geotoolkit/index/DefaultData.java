@@ -35,7 +35,7 @@ public class DefaultData implements Data {
      *
      * @param def
      */
-    public DefaultData(DataDefinition def) {
+    public DefaultData(final DataDefinition def) {
         this.def = def;
         this.values = new Object[def.getFieldsCount()];
     }
@@ -67,7 +67,7 @@ public class DefaultData implements Data {
      * @throws TreeException
      */
     @Override
-    public Data addValue(Object val) throws TreeException {
+    public Data addValue(final Object val) throws TreeException {
 
         if (nbValues == values.length) {
             throw new TreeException("Max number of values reached!");
@@ -103,7 +103,7 @@ public class DefaultData implements Data {
      * @param i
      */
     @Override
-    public Object getValue(int i) {
+    public Object getValue(final int i) {
         return this.values[i];
     }
 

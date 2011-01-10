@@ -79,7 +79,7 @@ public class IdentifierList implements AbstractIdentifierList {
     public IdentifierList() {
     }
 
-    public IdentifierList(AbstractIdentifierList il) {
+    public IdentifierList(final AbstractIdentifierList il) {
         if (il != null) {
             this.id = il.getId();
             if (il.getIdentifier() != null) {
@@ -91,7 +91,7 @@ public class IdentifierList implements AbstractIdentifierList {
         }
     }
 
-    public IdentifierList(String id, List<Identifier> identifiers) {
+    public IdentifierList(final String id, final List<Identifier> identifiers) {
         this.id = id;
         this.identifier = identifiers;
     }
@@ -126,7 +126,7 @@ public class IdentifierList implements AbstractIdentifierList {
      *     {@link String }
      *
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

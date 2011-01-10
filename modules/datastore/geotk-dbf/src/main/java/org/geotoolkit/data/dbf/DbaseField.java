@@ -35,8 +35,8 @@ abstract class DbaseField {
     private static final String NULL_STRING = "";
     private static final Date NULL_DATE = new Date();
 
-    public static DbaseField create(String fieldName, char fieldType, int fieldDataAddress,
-                        int fieldLength, int decimalCount, Class clazz) throws IOException{
+    public static DbaseField create(final String fieldName, final char fieldType, final int fieldDataAddress,
+                        final int fieldLength, final int decimalCount, final Class clazz) throws IOException{
 
         switch (fieldType) {
 
@@ -75,7 +75,7 @@ abstract class DbaseField {
     /**
      * Create a copy of hte DbaseField with a different adress
      */
-    public static DbaseField create(DbaseField field, int fieldDataAddress){
+    public static DbaseField create(final DbaseField field, final int fieldDataAddress){
         if(field instanceof BooleanField){
             return new BooleanField(field.fieldName, field.fieldType, fieldDataAddress,
                 field.fieldLength, field.decimalCount, field.clazz);
@@ -120,8 +120,8 @@ abstract class DbaseField {
     // Class
     public final Class clazz;
 
-    private DbaseField(String fieldName, char fieldType, int fieldDataAddress,
-                        int fieldLength, int decimalCount, Class clazz) {
+    private DbaseField(final String fieldName, final char fieldType, final int fieldDataAddress,
+                        final int fieldLength, final int decimalCount, final Class clazz) {
         this.fieldName = fieldName;
         this.fieldType = fieldType;
         this.fieldDataAddress = fieldDataAddress;
@@ -145,13 +145,13 @@ abstract class DbaseField {
 
     private static final class BooleanField extends DbaseField{
 
-        public BooleanField(String fieldName, char fieldType, int fieldDataAddress,
-                        int fieldLength, int decimalCount, Class clazz) {
+        public BooleanField(final String fieldName, final char fieldType, final int fieldDataAddress,
+                        final int fieldLength, final int decimalCount, final Class clazz) {
             super(fieldName, fieldType, fieldDataAddress, fieldLength, decimalCount,clazz);
         }
 
         @Override
-        public Object read(CharBuffer charBuffer, int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
             switch (charBuffer.charAt(fieldOffset)) {
                 case 't':
                 case 'T':
@@ -170,7 +170,7 @@ abstract class DbaseField {
         }
 
         @Override
-        public String string(Object obj, DbaseFieldFormatter formatter) throws IOException {
+        public String string(final Object obj, final DbaseFieldFormatter formatter) throws IOException {
             return (obj == null ? "F" : obj == Boolean.TRUE ? "T" : "F");
         }
 
@@ -178,13 +178,13 @@ abstract class DbaseField {
 
     private static final class CharField extends DbaseField{
 
-        public CharField(String fieldName, char fieldType, int fieldDataAddress,
-                        int fieldLength, int decimalCount, Class clazz) {
+        public CharField(final String fieldName, final char fieldType, final int fieldDataAddress,
+                        final int fieldLength, final int decimalCount, final Class clazz) {
             super(fieldName, fieldType, fieldDataAddress, fieldLength, decimalCount,clazz);
         }
 
         @Override
-        public Object read(CharBuffer charBuffer, int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
             // oh, this seems like a lot of work to parse strings...but,
             // For some reason if zero characters ( (int) char == 0 ) are allowed
             // in these strings, they do not compare correctly later on down
@@ -216,7 +216,7 @@ abstract class DbaseField {
         }
 
         @Override
-        public String string(Object obj, DbaseFieldFormatter formatter) throws IOException {
+        public String string(final Object obj, final DbaseFieldFormatter formatter) throws IOException {
             return formatter.getFieldString(fieldLength, obj == null ? NULL_STRING
                     : obj.toString());
         }
@@ -225,13 +225,13 @@ abstract class DbaseField {
 
     private static final class DateField extends DbaseField{
 
-        public DateField(String fieldName, char fieldType, int fieldDataAddress,
-                        int fieldLength, int decimalCount, Class clazz) {
+        public DateField(final String fieldName, final char fieldType, final int fieldDataAddress,
+                        final int fieldLength, final int decimalCount, final Class clazz) {
             super(fieldName, fieldType, fieldDataAddress, fieldLength, decimalCount,clazz);
         }
 
         @Override
-        public Object read(CharBuffer charBuffer, int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
             try {
                 String tempString = charBuffer.subSequence(fieldOffset,
                         fieldOffset + 4).toString();
@@ -255,7 +255,7 @@ abstract class DbaseField {
         }
 
         @Override
-        public String string(Object obj, DbaseFieldFormatter formatter) throws IOException {
+        public String string(final Object obj, final DbaseFieldFormatter formatter) throws IOException {
             return formatter.getFieldString((Date) (obj == null ? NULL_DATE : obj));
         }
 
@@ -265,13 +265,13 @@ abstract class DbaseField {
 
         private static final Long ZERO = 0l;
 
-        public IntegerField(String fieldName, char fieldType, int fieldDataAddress,
-                        int fieldLength, int decimalCount, Class clazz) {
+        public IntegerField(final String fieldName, final char fieldType, final int fieldDataAddress,
+                        final int fieldLength, final int decimalCount, final Class clazz) {
             super(fieldName, fieldType, fieldDataAddress, fieldLength, decimalCount,clazz);
         }
 
         @Override
-        public Object read(CharBuffer charBuffer, int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
             try {
                 final CharSequence number = extractNumberString(charBuffer,
                         fieldOffset);
@@ -288,7 +288,7 @@ abstract class DbaseField {
         }
 
         @Override
-        public String string(Object obj, DbaseFieldFormatter formatter) throws IOException {
+        public String string(final Object obj, final DbaseFieldFormatter formatter) throws IOException {
             return formatter.getFieldString(fieldLength, 0,(Number) (obj == null ? NULL_NUMBER : obj));
         }
 
@@ -298,13 +298,13 @@ abstract class DbaseField {
 
         private static final Long ZERO = 0l;
 
-        public LongField(String fieldName, char fieldType, int fieldDataAddress,
-                        int fieldLength, int decimalCount, Class clazz) {
+        public LongField(final String fieldName, final char fieldType, final int fieldDataAddress,
+                        final int fieldLength, final int decimalCount, final Class clazz) {
             super(fieldName, fieldType, fieldDataAddress, fieldLength, decimalCount,clazz);
         }
 
         @Override
-        public Object read(CharBuffer charBuffer, int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
             try {
                 final CharSequence number = extractNumberString(charBuffer,
                         fieldOffset);
@@ -316,7 +316,7 @@ abstract class DbaseField {
         }
 
         @Override
-        public String string(Object obj, DbaseFieldFormatter formatter) throws IOException {
+        public String string(final Object obj, final DbaseFieldFormatter formatter) throws IOException {
             return formatter.getFieldString(fieldLength, 0,(Number) (obj == null ? NULL_NUMBER : obj));
         }
     }
@@ -325,13 +325,13 @@ abstract class DbaseField {
 
         private static final Double ZERO = 0d;
 
-        public FloatingField(String fieldName, char fieldType, int fieldDataAddress,
-                        int fieldLength, int decimalCount, Class clazz) {
+        public FloatingField(final String fieldName, final char fieldType, final int fieldDataAddress,
+                        final int fieldLength, final int decimalCount, final Class clazz) {
             super(fieldName, fieldType, fieldDataAddress, fieldLength, decimalCount,clazz);
         }
 
         @Override
-        public Object read(CharBuffer charBuffer, int fieldOffset) throws IOException {
+        public Object read(final CharBuffer charBuffer, final int fieldOffset) throws IOException {
             try {
                 return Double.valueOf(extractNumberString(charBuffer, fieldOffset).toString());
             } catch (NumberFormatException e) {
@@ -344,7 +344,7 @@ abstract class DbaseField {
         }
 
         @Override
-        public String string(Object obj, DbaseFieldFormatter formatter) throws IOException {
+        public String string(final Object obj, final DbaseFieldFormatter formatter) throws IOException {
             return formatter.getFieldString(fieldLength, decimalCount,
                     (Number) (obj == null ? NULL_NUMBER : obj));
         }

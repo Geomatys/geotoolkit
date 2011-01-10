@@ -49,7 +49,7 @@ public class DefaultTemporalPosition implements TemporalPosition {
      * @param frame cannot be @CODE null
      * @param indeterminatePosition can be @CODE NULL if none.
      */
-    public DefaultTemporalPosition(TemporalReferenceSystem frame, IndeterminateValue indeterminatePosition) {
+    public DefaultTemporalPosition(final TemporalReferenceSystem frame, final IndeterminateValue indeterminatePosition) {
         this.frame = frame;
         this.indeterminatePosition = indeterminatePosition;
     }
@@ -75,11 +75,11 @@ public class DefaultTemporalPosition implements TemporalPosition {
         return frame;
     }
 
-    public void setFrame(TemporalReferenceSystem frame) {
+    public void setFrame(final TemporalReferenceSystem frame) {
         this.frame = frame;
     }
 
-    public void setIndeterminatePosition(IndeterminateValue indeterminatePosition) {
+    public void setIndeterminatePosition(final IndeterminateValue indeterminatePosition) {
         this.indeterminatePosition = indeterminatePosition;
     }
 

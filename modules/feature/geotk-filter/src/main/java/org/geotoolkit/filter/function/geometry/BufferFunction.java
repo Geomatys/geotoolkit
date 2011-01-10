@@ -30,7 +30,7 @@ public class BufferFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         Geometry arg0;
         double arg1;
 

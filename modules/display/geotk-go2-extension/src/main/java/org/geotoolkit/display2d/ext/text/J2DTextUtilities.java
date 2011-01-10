@@ -34,7 +34,7 @@ public class J2DTextUtilities {
 
     private J2DTextUtilities(){}
 
-    public static void paint(Graphics2D g2d, TextTemplate template, int x, int y){
+    public static void paint(final Graphics2D g2d, final TextTemplate template, final int x, final int y){
 
         final Dimension estimation = estimate(g2d, template, false);
         int X = x;
@@ -64,7 +64,7 @@ public class J2DTextUtilities {
         g2d.translate(-X, -Y);
     }
 
-    public static Dimension estimate(Graphics2D g, TextTemplate template, boolean considerBackground){
+    public static Dimension estimate(final Graphics2D g, final TextTemplate template, final boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
 
         final String txt = template.getText();

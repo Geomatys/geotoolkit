@@ -193,7 +193,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Service")
-    public JAXBElement<String> createService(String value) {
+    public JAXBElement<String> createService(final String value) {
         return new JAXBElement<String>(_Service_QNAME, String.class, null, value);
     }
 
@@ -202,7 +202,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Value")
-    public JAXBElement<String> createValue(String value) {
+    public JAXBElement<String> createValue(final String value) {
         return new JAXBElement<String>(_Value_QNAME, String.class, null, value);
     }
 
@@ -211,7 +211,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "IsDefault")
-    public JAXBElement<Boolean> createIsDefault(Boolean value) {
+    public JAXBElement<Boolean> createIsDefault(final Boolean value) {
         return new JAXBElement<Boolean>(_IsDefault_QNAME, Boolean.class, null, value);
     }
 
@@ -220,7 +220,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "TimePeriod")
-    public JAXBElement<String> createTimePeriod(String value) {
+    public JAXBElement<String> createTimePeriod(final String value) {
         return new JAXBElement<String>(_TimePeriod_QNAME, String.class, null, value);
     }
 
@@ -229,7 +229,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "UserDefinedSymbolization", substitutionHeadNamespace = "http://www.opengis.net/wms", substitutionHeadName = "_ExtendedCapabilities")
-    public JAXBElement<UserDefinedSymbolization> createUserDefinedSymbolization(UserDefinedSymbolization value) {
+    public JAXBElement<UserDefinedSymbolization> createUserDefinedSymbolization(final UserDefinedSymbolization value) {
         return new JAXBElement<UserDefinedSymbolization>(_UserDefinedSymbolization_QNAME, UserDefinedSymbolization.class, null, value);
     }
 

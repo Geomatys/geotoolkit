@@ -28,7 +28,7 @@ public class DefaultInterpolationPoint implements InterpolationPoint{
     private final Expression value;
     private final double data;
     
-    public DefaultInterpolationPoint(double data, Expression value){
+    public DefaultInterpolationPoint(final double data, final Expression value){
         if(value == null){
            throw new NullPointerException();
         }

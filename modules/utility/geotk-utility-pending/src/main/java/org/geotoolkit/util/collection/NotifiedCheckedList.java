@@ -29,11 +29,11 @@ import org.geotoolkit.util.NumberRange;
  */
 public abstract class NotifiedCheckedList<E> extends CheckedArrayList<E>{
     
-    public NotifiedCheckedList(Class<E> type) {
+    public NotifiedCheckedList(final Class<E> type) {
         super(type);
     }
     
-    public NotifiedCheckedList(Class<E> type, int capacity) {
+    public NotifiedCheckedList(final Class<E> type, final int capacity) {
         super(type,capacity);
     }
 

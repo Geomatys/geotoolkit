@@ -73,7 +73,7 @@ public class LocatedSpecimenType extends SpecimenType {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setSamplingLocation(GeometryPropertyType value) {
+    public void setSamplingLocation(final GeometryPropertyType value) {
         this.samplingLocation = value;
     }
 

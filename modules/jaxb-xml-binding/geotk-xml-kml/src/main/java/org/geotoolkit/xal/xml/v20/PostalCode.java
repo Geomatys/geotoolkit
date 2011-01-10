@@ -241,7 +241,7 @@ public class PostalCode {
      *     {@link PostalCode.PostTown }
      *     
      */
-    public void setPostTown(PostalCode.PostTown value) {
+    public void setPostTown(final PostalCode.PostTown value) {
         this.postTown = value;
     }
 
@@ -294,7 +294,7 @@ public class PostalCode {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -372,7 +372,7 @@ public class PostalCode {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -396,7 +396,7 @@ public class PostalCode {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -420,7 +420,7 @@ public class PostalCode {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -504,7 +504,7 @@ public class PostalCode {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -528,7 +528,7 @@ public class PostalCode {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -552,7 +552,7 @@ public class PostalCode {
          *     {@link String }
          *     
          */
-        public void setNumberExtensionSeparator(String value) {
+        public void setNumberExtensionSeparator(final String value) {
             this.numberExtensionSeparator = value;
         }
 
@@ -576,7 +576,7 @@ public class PostalCode {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -738,7 +738,7 @@ public class PostalCode {
          *     {@link PostalCode.PostTown.PostTownSuffix }
          *     
          */
-        public void setPostTownSuffix(PostalCode.PostTown.PostTownSuffix value) {
+        public void setPostTownSuffix(final PostalCode.PostTown.PostTownSuffix value) {
             this.postTownSuffix = value;
         }
 
@@ -762,7 +762,7 @@ public class PostalCode {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -840,7 +840,7 @@ public class PostalCode {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -864,7 +864,7 @@ public class PostalCode {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -888,7 +888,7 @@ public class PostalCode {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -964,7 +964,7 @@ public class PostalCode {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -988,7 +988,7 @@ public class PostalCode {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 

@@ -68,7 +68,7 @@ public class AbstractEncodingType implements AbstractEncoding {
      */
     AbstractEncodingType() {}
 
-    public AbstractEncodingType(AbstractEncoding enc) {
+    public AbstractEncodingType(final AbstractEncoding enc) {
         if (enc != null) {
             this.id = enc.getId();
         }
@@ -84,7 +84,7 @@ public class AbstractEncodingType implements AbstractEncoding {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

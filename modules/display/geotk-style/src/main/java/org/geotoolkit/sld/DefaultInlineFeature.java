@@ -37,7 +37,7 @@ class DefaultInlineFeature implements InlineFeature{
     /**
      * Default constructor
      */
-    DefaultInlineFeature(Collection<Collection<Feature>> features){
+    DefaultInlineFeature(final Collection<Collection<Feature>> features){
         if(features != null){
             Collection<Collection<Feature>> copy = new ArrayList<Collection<Feature>>();
             for(Collection<Feature> col : features){
@@ -61,7 +61,7 @@ class DefaultInlineFeature implements InlineFeature{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -69,7 +69,7 @@ class DefaultInlineFeature implements InlineFeature{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

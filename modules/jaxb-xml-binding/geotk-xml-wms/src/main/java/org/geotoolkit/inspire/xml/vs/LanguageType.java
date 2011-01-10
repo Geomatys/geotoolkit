@@ -36,11 +36,11 @@ public class LanguageType {
 
     }
 
-    public LanguageType(String value) {
+    public LanguageType(final String value) {
         this.value = value;
     }
 
-    public LanguageType(String value, Boolean default_) {
+    public LanguageType(final String value, final Boolean default_) {
         this.value    = value;
         this.default_ = default_;
     }
@@ -55,7 +55,7 @@ public class LanguageType {
     /**
      * @param value the value to set
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -69,7 +69,7 @@ public class LanguageType {
     /**
      * @param default_ the default_ to set
      */
-    public void setDefault_(Boolean default_) {
+    public void setDefault_(final Boolean default_) {
         this.default_ = default_;
     }
 

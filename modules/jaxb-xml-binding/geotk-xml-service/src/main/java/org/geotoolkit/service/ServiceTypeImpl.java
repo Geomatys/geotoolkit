@@ -44,7 +44,7 @@ public class ServiceTypeImpl implements ServiceType {
 
     }
 
-    public ServiceTypeImpl(LocalName serviceType) {
+    public ServiceTypeImpl(final LocalName serviceType) {
         this.serviceType = serviceType;
     }
 
@@ -52,7 +52,7 @@ public class ServiceTypeImpl implements ServiceType {
         return serviceType;
     }
 
-    public void setServiceType(LocalName serviceType) {
+    public void setServiceType(final LocalName serviceType) {
         this.serviceType = serviceType;
     }
 

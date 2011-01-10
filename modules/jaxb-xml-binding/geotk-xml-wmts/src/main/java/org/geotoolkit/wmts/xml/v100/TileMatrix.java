@@ -93,8 +93,8 @@ public class TileMatrix extends DescriptionType {
 
     }
 
-    public TileMatrix(CodeType identifier, double scaleDenominator, Integer tileWidth, Integer tileHeight,
-            Integer matrixWidth, Integer matrixHeight) {
+    public TileMatrix(final CodeType identifier, final double scaleDenominator, final Integer tileWidth, final Integer tileHeight,
+            final Integer matrixWidth, final Integer matrixHeight) {
         this.identifier       = identifier;
         this.scaleDenominator = scaleDenominator;
         this.matrixHeight     = matrixHeight;
@@ -125,7 +125,7 @@ public class TileMatrix extends DescriptionType {
      *     {@link CodeType }
      *     
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 
@@ -141,7 +141,7 @@ public class TileMatrix extends DescriptionType {
      * Sets the value of the scaleDenominator property.
      * 
      */
-    public void setScaleDenominator(double value) {
+    public void setScaleDenominator(final double value) {
         this.scaleDenominator = value;
     }
 
@@ -177,7 +177,7 @@ public class TileMatrix extends DescriptionType {
      *     {@link Integer }
      *     
      */
-    public void setTileWidth(Integer value) {
+    public void setTileWidth(final Integer value) {
         this.tileWidth = value;
     }
 
@@ -201,7 +201,7 @@ public class TileMatrix extends DescriptionType {
      *     {@link Integer }
      *     
      */
-    public void setTileHeight(Integer value) {
+    public void setTileHeight(final Integer value) {
         this.tileHeight = value;
     }
 
@@ -225,7 +225,7 @@ public class TileMatrix extends DescriptionType {
      *     {@link Integer }
      *     
      */
-    public void setMatrixWidth(Integer value) {
+    public void setMatrixWidth(final Integer value) {
         this.matrixWidth = value;
     }
 
@@ -249,7 +249,7 @@ public class TileMatrix extends DescriptionType {
      *     {@link Integer }
      *     
      */
-    public void setMatrixHeight(Integer value) {
+    public void setMatrixHeight(final Integer value) {
         this.matrixHeight = value;
     }
 

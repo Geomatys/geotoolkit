@@ -49,7 +49,7 @@ public class DomCompare {
      * @param expected : the expected structure (File,Stream,Document)
      * @param result : the obtained result (File,Stream,Document)
      */
-    public static void compare(Object expected, Object result)
+    public static void compare(final Object expected, final Object result)
             throws ParserConfigurationException, SAXException, IOException{
         final Document expectedDoc = DomUtilities.read(expected);
         final Document resultDoc = DomUtilities.read(result);
@@ -59,7 +59,7 @@ public class DomCompare {
 
     }
 
-    public static void compareNode(Node expected, Node result){
+    public static void compareNode(final Node expected, final Node result){
         compareNode(expected, result, null, 0);
     }
 
@@ -71,7 +71,7 @@ public class DomCompare {
      * @param previousNodes : list of previous nodes as String, for better output message.
      * @param nodeIndex : index of the tested node.
      */
-    public static void compareNode(Node expected, Node result, List<String> previousNodes, int nodeIndex){
+    public static void compareNode(final Node expected, final Node result, List<String> previousNodes, final int nodeIndex){
         if(previousNodes == null){
             previousNodes = new ArrayList<String>();
         }
@@ -133,7 +133,7 @@ public class DomCompare {
         previousNodes.remove(previousNodes.size()-1);
     }
 
-    private static List<Node> removeEmptyTextElements(NodeList lst){
+    private static List<Node> removeEmptyTextElements(final NodeList lst){
         final List<Node> nodes = new ArrayList<Node>();
         if(lst != null){
             for(int i=0,n=lst.getLength();i<n;i++){
@@ -155,7 +155,7 @@ public class DomCompare {
         return nodes;
     }
 
-    private static String errorMessage(Node expected, Node result, List<String> previousNodes){
+    private static String errorMessage(final Node expected, final Node result, final List<String> previousNodes){
         final StringBuilder sb = new StringBuilder("Error comparing nodes : \n");
         toString(expected, sb);
         sb.append('\n');
@@ -168,13 +168,13 @@ public class DomCompare {
         return sb.toString();
     }
 
-    private static String toString(Node node){
+    private static String toString(final Node node){
         final StringBuilder sb = new StringBuilder();
         toString(node, sb);
         return sb.toString();
     }
 
-    private static void toString(Node node, StringBuilder sb){
+    private static void toString(final Node node, final StringBuilder sb){
         if(node == null){
             sb.append("null");
             return;

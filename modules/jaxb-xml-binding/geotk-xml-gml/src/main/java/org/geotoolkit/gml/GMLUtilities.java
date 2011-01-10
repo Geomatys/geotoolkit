@@ -65,7 +65,7 @@ public class GMLUtilities {
 
     public GMLUtilities(){}
 
-    public static AbstractGeometryType getGMLFromISO(org.opengis.geometry.Geometry geometry) {
+    public static AbstractGeometryType getGMLFromISO(final org.opengis.geometry.Geometry geometry) {
        if (geometry instanceof Point) {
            Point point     = (Point) geometry;
            PointType gmlPoint = new PointType(null, point.getDirectPosition());

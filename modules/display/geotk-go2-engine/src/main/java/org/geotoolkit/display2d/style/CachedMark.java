@@ -51,7 +51,7 @@ public class CachedMark extends Cache<Mark>{
     private final CachedFill cachedFill;
     
     
-    private CachedMark(Mark mark){
+    private CachedMark(final Mark mark){
         super(mark);
         cachedStroke = (CachedStrokeSimple) CachedStroke.cache(mark.getStroke());
         cachedFill = CachedFill.cache(mark.getFill());
@@ -145,7 +145,7 @@ public class CachedMark extends Cache<Mark>{
         return styleElement.getWellKnownName()!= null || styleElement.getExternalMark() != null ;
     }
         
-    public BufferedImage getImage(Feature feature, final Float size, RenderingHints hints){
+    public BufferedImage getImage(final Feature feature, final Float size, final RenderingHints hints){
         evaluate();
                 
         final Expression wkn = styleElement.getWellKnownName();
@@ -257,7 +257,7 @@ public class CachedMark extends Cache<Mark>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         evaluate();
         
         
@@ -275,7 +275,7 @@ public class CachedMark extends Cache<Mark>{
         }
     }
 
-    public static CachedMark cache(Mark mark){
+    public static CachedMark cache(final Mark mark){
         return new CachedMark(mark);
     }
     

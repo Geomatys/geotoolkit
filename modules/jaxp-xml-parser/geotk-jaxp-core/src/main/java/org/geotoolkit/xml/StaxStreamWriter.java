@@ -146,7 +146,7 @@ public abstract class StaxStreamWriter {
      * @param value : text value to write
      * @throws XMLStreamException
      */
-    protected void writeSimpleTag(String namespace, String localName, Object value) throws XMLStreamException{
+    protected void writeSimpleTag(final String namespace, final String localName, final Object value) throws XMLStreamException{
         if(value != null){
             writer.writeStartElement(namespace, localName);
             writer.writeCharacters(value.toString());
@@ -160,7 +160,7 @@ public abstract class StaxStreamWriter {
      * @return XMLStreamWriter
      * @throws XMLStreamException if the output is not handled
      */
-    private static XMLStreamWriter toWriter(Object output)
+    private static XMLStreamWriter toWriter(final Object output)
             throws XMLStreamException{
         final XMLOutputFactory XMLfactory = XMLOutputFactory.newInstance();
         XMLfactory.setProperty(XMLOutputFactory.IS_REPAIRING_NAMESPACES, Boolean.TRUE);

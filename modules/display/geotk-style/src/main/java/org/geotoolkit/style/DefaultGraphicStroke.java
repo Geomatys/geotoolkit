@@ -55,14 +55,14 @@ public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStrok
      * @param initial : if null or Expression.NIL will be replaced by default value.
      * @param gap : if null or Expression.NIL will be replaced by default value.
      */
-    public DefaultGraphicStroke(List<GraphicalSymbol> symbols,
-            Expression opacity, 
-            Expression size, 
-            Expression rotation, 
-            AnchorPoint anchor, 
-            Displacement disp, 
-            Expression initial, 
-            Expression gap){
+    public DefaultGraphicStroke(final List<GraphicalSymbol> symbols,
+            final Expression opacity, 
+            final Expression size, 
+            final Expression rotation, 
+            final AnchorPoint anchor, 
+            final Displacement disp, 
+            final Expression initial, 
+            final Expression gap){
         super(symbols,opacity,size,rotation,anchor,disp);
         
         this.gap = (gap == null || gap == NIL) ? DEFAULT_GRAPHIC_STROKE_GAP : gap;
@@ -89,7 +89,7 @@ public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStrok
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -97,7 +97,7 @@ public class DefaultGraphicStroke extends DefaultGraphic implements GraphicStrok
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

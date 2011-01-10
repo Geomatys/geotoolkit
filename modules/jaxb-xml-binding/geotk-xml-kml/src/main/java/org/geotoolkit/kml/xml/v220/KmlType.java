@@ -93,7 +93,7 @@ public class KmlType {
      *     {@link NetworkLinkControlType }
      *     
      */
-    public void setNetworkLinkControl(NetworkLinkControlType value) {
+    public void setNetworkLinkControl(final NetworkLinkControlType value) {
         this.networkLinkControl = value;
     }
 
@@ -135,7 +135,7 @@ public class KmlType {
      *     {@link JAXBElement }{@code <}{@link FolderType }{@code >}
      *     
      */
-    public void setAbstractFeatureGroup(JAXBElement<? extends AbstractFeatureType> value) {
+    public void setAbstractFeatureGroup(final JAXBElement<? extends AbstractFeatureType> value) {
         this.abstractFeatureGroup = ((JAXBElement<? extends AbstractFeatureType> ) value);
     }
 
@@ -217,7 +217,7 @@ public class KmlType {
      *     {@link String }
      *     
      */
-    public void setHint(String value) {
+    public void setHint(final String value) {
         this.hint = value;
     }
 

@@ -58,12 +58,12 @@ public class PhoneType implements AbstractPhone {
     public PhoneType() {
     }
 
-    public PhoneType(List<String> voice, List<String> facsimile) {
+    public PhoneType(final List<String> voice, final List<String> facsimile) {
         this.facsimile = facsimile;
         this.voice     = voice;
     }
 
-    public PhoneType(String voice, String facsimile) {
+    public PhoneType(final String voice, final String facsimile) {
         this.facsimile = new ArrayList<String>();
         this.voice     = new ArrayList<String>();
         if (facsimile != null) {
@@ -75,7 +75,7 @@ public class PhoneType implements AbstractPhone {
 
     }
 
-    public PhoneType(AbstractPhone phone) {
+    public PhoneType(final AbstractPhone phone) {
         if (phone != null) {
             this.facsimile = phone.getFacsimile();
             this.voice     = phone.getVoice();
@@ -96,14 +96,14 @@ public class PhoneType implements AbstractPhone {
     /**
      * Sets the value of the voice property.
      */
-    public void setVoice(List<String> voice) {
+    public void setVoice(final List<String> voice) {
         this.voice = voice;
     }
 
     /**
      * Sets the value of the voice property.
      */
-    public void setVoice(String voice) {
+    public void setVoice(final String voice) {
         if (this.voice == null) {
             this.voice = new ArrayList<String>();
         }
@@ -125,14 +125,14 @@ public class PhoneType implements AbstractPhone {
     /**
      * Sets the value of the facsimile property.
      */
-    public void setFacsimile(List<String> facsimile) {
+    public void setFacsimile(final List<String> facsimile) {
         this.facsimile = facsimile;
     }
 
     /**
      * Sets the value of the facsimile property.
      */
-    public void setFacsimile(String facsimile) {
+    public void setFacsimile(final String facsimile) {
         if (this.facsimile == null) {
             this.facsimile = new ArrayList<String>();
         }

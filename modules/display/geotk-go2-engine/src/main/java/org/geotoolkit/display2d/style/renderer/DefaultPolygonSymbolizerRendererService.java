@@ -57,7 +57,7 @@ public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerR
      * {@inheritDoc }
      */
     @Override
-    public CachedPolygonSymbolizer createCachedSymbolizer(PolygonSymbolizer symbol) {
+    public CachedPolygonSymbolizer createCachedSymbolizer(final PolygonSymbolizer symbol) {
         return new CachedPolygonSymbolizer(symbol,this);
     }
 
@@ -65,7 +65,7 @@ public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerR
      * {@inheritDoc }
      */
     @Override
-    public SymbolizerRenderer createRenderer(CachedPolygonSymbolizer symbol, RenderingContext2D context) {
+    public SymbolizerRenderer createRenderer(final CachedPolygonSymbolizer symbol, final RenderingContext2D context) {
         return new DefaultPolygonSymbolizerRenderer(symbol, context);
     }
 
@@ -73,7 +73,7 @@ public class DefaultPolygonSymbolizerRendererService extends AbstractSymbolizerR
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedPolygonSymbolizer symbol, MapLayer layer) {
+    public void glyph(final Graphics2D g, final Rectangle2D rectangle, final CachedPolygonSymbolizer symbol, final MapLayer layer) {
         final AffineTransform affine = new AffineTransform(rectangle.getWidth(), 0, 0,
                 rectangle.getHeight(), rectangle.getX(), rectangle.getY());
 

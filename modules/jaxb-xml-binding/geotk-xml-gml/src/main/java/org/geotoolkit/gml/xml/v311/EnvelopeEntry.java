@@ -107,7 +107,7 @@ public class EnvelopeEntry implements Entry, Envelope {
     /**
      * build a new envelope.
      */
-    public EnvelopeEntry(String id, DirectPositionType lowerCorner, DirectPositionType upperCorner, String srsName) {
+    public EnvelopeEntry(final String id, final DirectPositionType lowerCorner, final DirectPositionType upperCorner, final String srsName) {
         this.lowerCorner = lowerCorner;
         this.upperCorner = upperCorner;
         this.id          = id;
@@ -117,13 +117,13 @@ public class EnvelopeEntry implements Entry, Envelope {
     /**
      * build a new envelope.
      */
-    public EnvelopeEntry(List<DirectPositionType> pos, String srsName) {
+    public EnvelopeEntry(final List<DirectPositionType> pos, final String srsName) {
         this.srsName      = srsName;
         this.pos          = pos;
         this.srsDimension = null;
     }
 
-    public EnvelopeEntry(Envelope env) {
+    public EnvelopeEntry(final Envelope env) {
         this.pos = new ArrayList<DirectPositionType>();
         if (env != null) {
             this.pos.add(new DirectPositionType(env.getLowerCorner(), false));
@@ -187,7 +187,7 @@ public class EnvelopeEntry implements Entry, Envelope {
      *     {@link DirectPositionType }
      *     
      */
-    public void setLowerCorner(DirectPositionType value) {
+    public void setLowerCorner(final DirectPositionType value) {
         this.lowerCorner = value;
     }
 
@@ -212,7 +212,7 @@ public class EnvelopeEntry implements Entry, Envelope {
      *     {@link DirectPositionType }
      *     
      */
-    public void setUpperCorner(DirectPositionType value) {
+    public void setUpperCorner(final DirectPositionType value) {
         this.upperCorner = value;
     }
 
@@ -236,7 +236,7 @@ public class EnvelopeEntry implements Entry, Envelope {
      *     {@link String }
      *
      */
-    public void setSrsName(String value) {
+    public void setSrsName(final String value) {
         this.srsName = value;
     }
 
@@ -260,7 +260,7 @@ public class EnvelopeEntry implements Entry, Envelope {
      *     {@link Integer }
      *
      */
-    public void setSrsDimension(Integer value) {
+    public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
     }
 
@@ -274,11 +274,11 @@ public class EnvelopeEntry implements Entry, Envelope {
         return this.axisLabels;
     }
 
-    public void setAxisLabels(List<String> axisLabels) {
+    public void setAxisLabels(final List<String> axisLabels) {
         this.axisLabels = axisLabels;
     }
 
-    public void setAxisLabels(String axisLabel) {
+    public void setAxisLabels(final String axisLabel) {
         if (axisLabel != null) {
             if (axisLabels == null) {
                 axisLabels = new ArrayList<String>();
@@ -344,7 +344,7 @@ public class EnvelopeEntry implements Entry, Envelope {
      *     
      */
     @Deprecated
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 
@@ -451,19 +451,19 @@ public class EnvelopeEntry implements Entry, Envelope {
         return srsDimension;
     }
 
-    public double getMinimum(int i) throws IndexOutOfBoundsException {
+    public double getMinimum(final int i) throws IndexOutOfBoundsException {
         return lowerCorner.getOrdinate(i);
     }
 
-    public double getMaximum(int i) throws IndexOutOfBoundsException {
+    public double getMaximum(final int i) throws IndexOutOfBoundsException {
         return upperCorner.getOrdinate(i);
     }
 
-    public double getMedian(int i) throws IndexOutOfBoundsException {
+    public double getMedian(final int i) throws IndexOutOfBoundsException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public double getSpan(int i) throws IndexOutOfBoundsException {
+    public double getSpan(final int i) throws IndexOutOfBoundsException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

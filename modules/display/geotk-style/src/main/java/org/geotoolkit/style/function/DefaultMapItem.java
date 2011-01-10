@@ -30,7 +30,7 @@ public class DefaultMapItem extends AbstractExpression implements MapItem{
     private Expression value;
     private double data;
 
-    public DefaultMapItem(double data, Expression value){
+    public DefaultMapItem(final double data, final Expression value){
 
     }
 
@@ -45,7 +45,7 @@ public class DefaultMapItem extends AbstractExpression implements MapItem{
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         if(object instanceof Number){
             final Number num = (Number) object;
             if(num.doubleValue() == data){
@@ -58,7 +58,7 @@ public class DefaultMapItem extends AbstractExpression implements MapItem{
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return null;
     }
 

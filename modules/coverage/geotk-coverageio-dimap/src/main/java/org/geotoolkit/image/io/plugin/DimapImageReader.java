@@ -92,7 +92,7 @@ public class DimapImageReader extends ImageReaderAdapter {
     /**
      * Apply the band selection indexes provided in the dimap file.
      */
-    private RenderedImage changeColorModel(RenderedImage image, boolean bufferedImage) throws IOException{
+    private RenderedImage changeColorModel(RenderedImage image, final boolean bufferedImage) throws IOException{
         if(image == null) return image;
 
         final boolean oldState = ignoreMetadata;
@@ -162,7 +162,7 @@ public class DimapImageReader extends ImageReaderAdapter {
      * {@inheritDoc }
      */
     @Override
-    public RenderedImage readAsRenderedImage(int imageIndex, ImageReadParam param) throws IOException {
+    public RenderedImage readAsRenderedImage(final int imageIndex, final ImageReadParam param) throws IOException {
         return changeColorModel(super.readAsRenderedImage(imageIndex, param),false);
     }
 
@@ -170,7 +170,7 @@ public class DimapImageReader extends ImageReaderAdapter {
      * {@inheritDoc }
      */
     @Override
-    public BufferedImage readTile(final int imageIndex, int tileX, int tileY) throws IOException {
+    public BufferedImage readTile(final int imageIndex, final int tileX, final int tileY) throws IOException {
         return (BufferedImage) changeColorModel(super.readTile(imageIndex, tileX, tileY),true);
     }
 
@@ -226,7 +226,7 @@ public class DimapImageReader extends ImageReaderAdapter {
             return "Dimap format.";
         }
 
-        private static File searchMetadataFile(Object input) throws IOException{
+        private static File searchMetadataFile(final Object input) throws IOException{
             if(input instanceof File){
                 final File file = (File) input;
                 final File parent = file.getParentFile();

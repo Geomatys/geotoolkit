@@ -83,7 +83,7 @@ public class Notation extends Annotated {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -107,7 +107,7 @@ public class Notation extends Annotated {
      *     {@link String }
      *     
      */
-    public void setPublic(String value) {
+    public void setPublic(final String value) {
         this._public = value;
     }
 
@@ -131,7 +131,7 @@ public class Notation extends Annotated {
      *     {@link String }
      *     
      */
-    public void setSystem(String value) {
+    public void setSystem(final String value) {
         this.system = value;
     }
 

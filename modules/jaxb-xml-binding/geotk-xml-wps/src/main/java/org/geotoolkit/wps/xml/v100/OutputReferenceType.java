@@ -80,7 +80,7 @@ public class OutputReferenceType {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -104,7 +104,7 @@ public class OutputReferenceType {
      *     {@link String }
      *     
      */
-    public void setMimeType(String value) {
+    public void setMimeType(final String value) {
         this.mimeType = value;
     }
 
@@ -128,7 +128,7 @@ public class OutputReferenceType {
      *     {@link String }
      *     
      */
-    public void setEncoding(String value) {
+    public void setEncoding(final String value) {
         this.encoding = value;
     }
 
@@ -152,7 +152,7 @@ public class OutputReferenceType {
      *     {@link String }
      *     
      */
-    public void setSchema(String value) {
+    public void setSchema(final String value) {
         this.schema = value;
     }
 

@@ -32,7 +32,7 @@ import org.opengis.geometry.Envelope;
  */
 public class EmptyMapLayer extends AbstractMapLayer{
 
-    EmptyMapLayer(MutableStyle style){
+    EmptyMapLayer(final MutableStyle style){
         super(style);
     }
 

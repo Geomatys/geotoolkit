@@ -92,7 +92,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
 
     }
 
-    public AbstractDerivableComponentType(AbstractDerivableComponent ad) {
+    public AbstractDerivableComponentType(final AbstractDerivableComponent ad) {
         super(ad);
         if (ad != null) {
             if (ad.getInterfaces() != null) {
@@ -120,7 +120,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
         return location;
     }
     
-    public void setSMLLocation(AbstractLocation location) {
+    public void setSMLLocation(final AbstractLocation location) {
         if (location != null) {
             this.location = new Location(location);
         }
@@ -133,7 +133,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
         return position;
     }
     
-    public void setPosition(AbstractPosition position) {
+    public void setPosition(final AbstractPosition position) {
         if (position != null) {
             this.position = new Position(position);
         }
@@ -149,7 +149,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @param spatialReferenceFrame the spatialReferenceFrame to set
      */
-    public void setSpatialReferenceFrame(SpatialReferenceFrame spatialReferenceFrame) {
+    public void setSpatialReferenceFrame(final SpatialReferenceFrame spatialReferenceFrame) {
         this.spatialReferenceFrame = spatialReferenceFrame;
     }
     
@@ -163,7 +163,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @param timePosition the timePosition to set
      */
-    public void setTimePosition(TimePosition timePosition) {
+    public void setTimePosition(final TimePosition timePosition) {
         this.timePosition = timePosition;
     }
 
@@ -177,7 +177,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @param temporalReferenceFrame the temporalReferenceFrame to set
      */
-    public void setTemporalReferenceFrame(TemporalReferenceFrame temporalReferenceFrame) {
+    public void setTemporalReferenceFrame(final TemporalReferenceFrame temporalReferenceFrame) {
         this.temporalReferenceFrame = temporalReferenceFrame;
     }
 
@@ -191,7 +191,7 @@ public abstract class AbstractDerivableComponentType extends AbstractProcessType
     /**
      * @param interfaces the interfaces to set
      */
-    public void setInterfaces(Interfaces interfaces) {
+    public void setInterfaces(final Interfaces interfaces) {
         this.interfaces = interfaces;
     }
 }

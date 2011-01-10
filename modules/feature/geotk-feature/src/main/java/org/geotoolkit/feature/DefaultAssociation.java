@@ -31,7 +31,7 @@ import org.opengis.feature.type.AttributeType;
  */
 public class DefaultAssociation extends DefaultProperty<Attribute,AssociationDescriptor> implements Association {
 
-    protected DefaultAssociation(Attribute value, AssociationDescriptor descriptor) {
+    protected DefaultAssociation(final Attribute value, final AssociationDescriptor descriptor) {
         super(value, descriptor);
     }
 

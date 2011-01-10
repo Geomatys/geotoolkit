@@ -109,7 +109,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     protected Query currentQuery = null;
 
-    public StatelessFeatureLayerJ2D(J2DCanvas canvas, FeatureMapLayer layer){
+    public StatelessFeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
         super(canvas, layer);
     }
 
@@ -233,8 +233,8 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
     }
 
-    protected RenderingIterator getIterator(FeatureCollection<? extends Feature> features,
-            RenderingContext2D renderingContext, StatefullContextParams params){
+    protected RenderingIterator getIterator(final FeatureCollection<? extends Feature> features,
+            final RenderingContext2D renderingContext, final StatefullContextParams params){
         final Hints iteHints = new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
         final FeatureIterator<? extends Feature> iterator = features.iterator(iteHints);
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
@@ -249,8 +249,8 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * @param params
      * @throws PortrayalException
      */
-    protected final void renderByFeatureOrder(FeatureCollection<? extends Feature> features,
-            RenderingContext2D context, final CachedRule[] rules, StatefullContextParams params)
+    protected final void renderByFeatureOrder(final FeatureCollection<? extends Feature> features,
+            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
             throws PortrayalException{        
         final CanvasMonitor monitor = context.getMonitor();
         final RenderingIterator statefullIterator = getIterator(features, context, params);
@@ -311,8 +311,8 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     /**
      * render by symbol order.
      */
-    protected final void renderBySymbolOrder(FeatureCollection<? extends Feature> features,
-            RenderingContext2D context, final CachedRule[] rules, StatefullContextParams params)
+    protected final void renderBySymbolOrder(final FeatureCollection<? extends Feature> features,
+            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
             throws PortrayalException {
                 
         //performance routine, only one symbol to render
@@ -343,8 +343,8 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * Render vy symbol order in mutiple passes. consume less memory but requiere
      * more time.
      */
-    private void renderBySymbolStream(FeatureCollection<? extends Feature> features,
-            RenderingContext2D context, final CachedRule[] rules, StatefullContextParams params)
+    private void renderBySymbolStream(final FeatureCollection<? extends Feature> features,
+            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
             throws PortrayalException {
         final CanvasMonitor monitor = context.getMonitor();
         
@@ -442,8 +442,8 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * Render by symbol order in a single pass, this results in creating a buffered image
      * for each symbol, which may be expensive in memory but efficient in performance.
      */
-    private void renderBySymbolParallal(FeatureCollection<? extends Feature> features,
-            RenderingContext2D context, final CachedRule[] rules, StatefullContextParams params)
+    private void renderBySymbolParallal(final FeatureCollection<? extends Feature> features,
+            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
             throws PortrayalException {
                 
         final CanvasMonitor monitor = context.getMonitor();
@@ -590,7 +590,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     }    
 
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
-            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
+            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter visitFilter, final List<Graphic> graphics) {
 
         final Query query = prepareQuery(renderingContext, layer, rules);
 
@@ -672,7 +672,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * {@inheritDoc }
      */
     @Override
-    public List<Graphic> getGraphicAt(RenderingContext rdcontext, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext rdcontext, final SearchArea mask, final VisitFilter filter, List<Graphic> graphics) {
 
         if(!item.isSelectable()) return graphics;
 
@@ -705,7 +705,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    protected static Query prepareQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules){
+    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, final CachedRule[] rules){
 
         final FeatureCollection<? extends Feature> fs            = layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
@@ -929,14 +929,14 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         return qb.buildQuery();
     }
 
-    protected final Query idQuery(RenderingContext2D renderingContext, FeatureMapLayer layer, CachedRule[] rules, Filter ids){
+    protected final Query idQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, final CachedRule[] rules, final Filter ids){
 
         QueryBuilder qb = new QueryBuilder(currentQuery);
         qb.setFilter(ids);
         return qb.buildQuery();
     }
 
-    private StatefullContextParams prepareContextParams(RenderingContext2D renderingContext,
+    private StatefullContextParams prepareContextParams(final RenderingContext2D renderingContext,
             StatefullContextParams params){
         final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
         final AffineTransform2D objtoDisp              = renderingContext.getObjectiveToDisplay();
@@ -961,7 +961,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         private final FeatureIterator<? extends Feature> ite;
         private final StatefullProjectedFeature projected;
 
-        public GraphicIterator(FeatureIterator<? extends Feature> ite, StatefullProjectedFeature projected) {
+        public GraphicIterator(final FeatureIterator<? extends Feature> ite, final StatefullProjectedFeature projected) {
             this.ite = ite;
             this.projected = projected;
         }
@@ -996,7 +996,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         private ProjectedFeature next = null;
         private final Set<FeatureId> ids;
 
-        public FilterGraphicIterator(RenderingIterator ite, Filter filter, Set<FeatureId> ids) {
+        public FilterGraphicIterator(final RenderingIterator ite, final Filter filter, final Set<FeatureId> ids) {
             this.ite = ite;
             this.filter = (filter==null)?Filter.INCLUDE : filter ;
             this.ids = ids;

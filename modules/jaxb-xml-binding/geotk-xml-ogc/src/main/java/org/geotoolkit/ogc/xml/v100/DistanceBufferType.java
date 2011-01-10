@@ -74,7 +74,7 @@ public class DistanceBufferType extends SpatialOpsType {
      * Sets the value of the propertyName property.
      * 
      */
-    public void setPropertyName(PropertyNameType value) {
+    public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
     }
 
@@ -90,7 +90,7 @@ public class DistanceBufferType extends SpatialOpsType {
      * Sets the value of the geometry property.
      * 
      */
-    public void setGeometry(JAXBElement<? extends AbstractGeometryType> value) {
+    public void setGeometry(final JAXBElement<? extends AbstractGeometryType> value) {
         this.geometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
     }
 
@@ -106,7 +106,7 @@ public class DistanceBufferType extends SpatialOpsType {
      * Sets the value of the distance property.
      *     
      */
-    public void setDistance(DistanceType value) {
+    public void setDistance(final DistanceType value) {
         this.distance = value;
     }
 

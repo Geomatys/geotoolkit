@@ -93,7 +93,7 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
      *     {@link Double }
      *     
      */
-    public void setMinAltitude(Double value) {
+    public void setMinAltitude(final Double value) {
         this.minAltitude = value;
     }
 
@@ -117,7 +117,7 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
      *     {@link Double }
      *     
      */
-    public void setMaxAltitude(Double value) {
+    public void setMaxAltitude(final Double value) {
         this.maxAltitude = value;
     }
 
@@ -143,7 +143,7 @@ public class LatLonAltBoxType extends AbstractLatLonBoxType {
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
      *     
      */
-    public void setAltitudeModeGroup(JAXBElement<?> value) {
+    public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
     }
 

@@ -42,7 +42,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
     private final Unit unit;
     private final String strUnit;
 
-    public DefaultBeyond(Expression left, Expression right, double distance, String unit) {
+    public DefaultBeyond(final Expression left, final Expression right, final double distance, final String unit) {
         super(left,right);
         this.distance = distance;
         this.strUnit = unit;
@@ -69,7 +69,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         final Geometry leftGeom = left.evaluate(object, Geometry.class);
         final Geometry rightGeom = right.evaluate(object, Geometry.class);
 
@@ -106,7 +106,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -125,7 +125,7 @@ public class DefaultBeyond extends AbstractBinarySpatialOperator<Expression,Expr
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

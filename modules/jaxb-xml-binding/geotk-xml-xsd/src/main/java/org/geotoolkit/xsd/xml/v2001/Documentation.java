@@ -103,7 +103,7 @@ public class Documentation {
      *     {@link String }
      *     
      */
-    public void setSource(String value) {
+    public void setSource(final String value) {
         this.source = value;
     }
 
@@ -127,7 +127,7 @@ public class Documentation {
      *     {@link String }
      *     
      */
-    public void setLang(String value) {
+    public void setLang(final String value) {
         this.lang = value;
     }
 

@@ -35,7 +35,7 @@ public class NotType extends UnaryLogicOpType implements Not {
      /**
       * Build a new Unary logic operator of type NOT 
       */
-     public NotType(Object operators) {
+     public NotType(final Object operators) {
          super(operators);
          
      }

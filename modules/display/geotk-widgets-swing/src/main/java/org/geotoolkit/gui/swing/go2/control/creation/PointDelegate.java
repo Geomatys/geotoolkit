@@ -66,7 +66,7 @@ public class PointDelegate extends AbstractEditionDelegate{
     private boolean modified = false;
     private boolean coordSelected = false;
 
-    public PointDelegate(DefaultEditionHandler handler) {
+    public PointDelegate(final DefaultEditionHandler handler) {
         super(handler);
     }
 
@@ -125,7 +125,7 @@ public class PointDelegate extends AbstractEditionDelegate{
         handler.getDecoration().setGestureMessages(MSG_GEOM_SELECT, null, MSG_DRAG, MSG_ZOOM);
     }
 
-    private void setCurrentFeature(SimpleFeature feature){
+    private void setCurrentFeature(final SimpleFeature feature){
         this.feature = feature;
         if(feature != null){
             this.geometry = (Point)handler.getHelper().toObjectiveCRS(feature);
@@ -138,7 +138,7 @@ public class PointDelegate extends AbstractEditionDelegate{
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
 
         final int button = e.getButton();
 
@@ -168,7 +168,7 @@ public class PointDelegate extends AbstractEditionDelegate{
     int pressed = -1;
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
         pressed = e.getButton();
         switch(currentAction){
             case MOVE:
@@ -183,7 +183,7 @@ public class PointDelegate extends AbstractEditionDelegate{
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         switch(currentAction){
             case MOVE:
                 if(coordSelected && e.getButton() == BUTTON1){
@@ -199,7 +199,7 @@ public class PointDelegate extends AbstractEditionDelegate{
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
         switch(currentAction){
             case MOVE:
                 if(coordSelected && pressed == BUTTON1){

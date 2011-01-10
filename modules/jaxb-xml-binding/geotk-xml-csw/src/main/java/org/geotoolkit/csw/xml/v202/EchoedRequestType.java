@@ -64,7 +64,7 @@ public class EchoedRequestType {
     /**
      * Build a new Echoed request
      */
-    public EchoedRequestType(Object request) {
+    public EchoedRequestType(final Object request) {
         this.any = request;
     }
     

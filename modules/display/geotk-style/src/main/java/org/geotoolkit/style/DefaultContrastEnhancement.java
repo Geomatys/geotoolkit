@@ -43,7 +43,7 @@ public class DefaultContrastEnhancement implements ContrastEnhancement{
      * @param type : if null will be replaced by ContrastMethod.NONE
      * @param gamma : if null or Expression.NIL will be replaced by default value.
      */
-    public DefaultContrastEnhancement(ContrastMethod type, Expression gamma){
+    public DefaultContrastEnhancement(final ContrastMethod type, final Expression gamma){
         this.type = (type == null) ? ContrastMethod.NONE : type;
         this.gamma = (gamma == null || gamma == NIL) ? DEFAULT_CONTRAST_ENHANCEMENT_GAMMA : gamma;
     }
@@ -52,7 +52,7 @@ public class DefaultContrastEnhancement implements ContrastEnhancement{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -76,7 +76,7 @@ public class DefaultContrastEnhancement implements ContrastEnhancement{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

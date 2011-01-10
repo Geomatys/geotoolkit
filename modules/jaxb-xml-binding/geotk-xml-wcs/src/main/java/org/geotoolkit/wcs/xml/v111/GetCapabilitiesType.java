@@ -62,8 +62,8 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v110.GetCapabili
      /**
      * Build a new getCapabilities request version 1.1.1.
      */
-    public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
-            AcceptFormatsType acceptFormats, String updateSequence){
+    public GetCapabilitiesType(final AcceptVersionsType acceptVersions, final SectionsType sections,
+            final AcceptFormatsType acceptFormats, final String updateSequence){
         super (acceptVersions, sections, acceptFormats, updateSequence, "WCS");
     }
     

@@ -26,7 +26,7 @@ import org.geotoolkit.data.osm.client.AbstractGetData;
  */
 public class GetData060 extends AbstractGetData{
 
-    public GetData060(String serverURL){
+    public GetData060(final String serverURL){
         super(serverURL,"api/0.6/map?");
     }
 

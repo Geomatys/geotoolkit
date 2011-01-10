@@ -75,7 +75,7 @@ public class ValuesReferenceType {
      *     {@link String }
      *     
      */
-    public void setReference(String value) {
+    public void setReference(final String value) {
         this.reference = value;
     }
 
@@ -99,7 +99,7 @@ public class ValuesReferenceType {
      *     {@link String }
      *     
      */
-    public void setValuesForm(String value) {
+    public void setValuesForm(final String value) {
         this.valuesForm = value;
     }
 

@@ -85,7 +85,7 @@ public class Parameters {
      * 
      * @param channel
      */
-    public void setChannel(FileChannel channel) {
+    public void setChannel(final FileChannel channel) {
         this.channel = channel;
     }
 
@@ -94,7 +94,7 @@ public class Parameters {
      * 
      * @param definition
      */
-    public void setDataDef(DataDefinition definition) {
+    public void setDataDef(final DataDefinition definition) {
         dataDef = definition;
     }
 
@@ -103,7 +103,7 @@ public class Parameters {
      * 
      * @param i
      */
-    public void setMaxNodeEntries(int i) {
+    public void setMaxNodeEntries(final int i) {
         maxNodeEntries = i;
     }
 
@@ -112,7 +112,7 @@ public class Parameters {
      * 
      * @param i
      */
-    public void setMinNodeEntries(int i) {
+    public void setMinNodeEntries(final int i) {
         minNodeEntries = i;
     }
 
@@ -121,7 +121,7 @@ public class Parameters {
      * 
      * @param s
      */
-    public void setSplitAlg(short s) {
+    public void setSplitAlg(final short s) {
         splitAlg = s;
     }
 
@@ -138,7 +138,7 @@ public class Parameters {
      * 
      * @param b
      */
-    public void setForceChannel(boolean b) {
+    public void setForceChannel(final boolean b) {
         forceChannel = b;
     }
 
@@ -155,7 +155,7 @@ public class Parameters {
      * 
      * @param stack
      */
-    public void setFreePages(Stack stack) {
+    public void setFreePages(final Stack stack) {
         freePages = stack;
     }
 }

@@ -80,7 +80,7 @@ public class FormulaType {
      *     {@link Double }
      *     
      */
-    public void setA(Double value) {
+    public void setA(final Double value) {
         this.a = value;
     }
 
@@ -96,7 +96,7 @@ public class FormulaType {
      * Sets the value of the b property.
      * 
      */
-    public void setB(double value) {
+    public void setB(final double value) {
         this.b = value;
     }
 
@@ -112,7 +112,7 @@ public class FormulaType {
      * Sets the value of the c property.
      * 
      */
-    public void setC(double value) {
+    public void setC(final double value) {
         this.c = value;
     }
 
@@ -136,7 +136,7 @@ public class FormulaType {
      *     {@link Double }
      *     
      */
-    public void setD(Double value) {
+    public void setD(final Double value) {
         this.d = value;
     }
 

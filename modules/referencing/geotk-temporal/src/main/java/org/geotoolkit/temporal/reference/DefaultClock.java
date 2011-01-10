@@ -50,7 +50,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
      */
     private Collection<Calendar> dateBasis;
 
-    public DefaultClock(ReferenceIdentifier name, Extent domainOfValidity, InternationalString referenceEvent, ClockTime referenceTime, ClockTime utcReference) {
+    public DefaultClock(final ReferenceIdentifier name, final Extent domainOfValidity, final InternationalString referenceEvent, final ClockTime referenceTime, final ClockTime utcReference) {
         super(name, domainOfValidity);
         this.referenceEvent = referenceEvent;
         this.referenceTime = referenceTime;
@@ -78,7 +78,7 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
      * @return ClickTime
      */
     @Override
-    public ClockTime clkTrans(ClockTime uTime) {
+    public ClockTime clkTrans(final ClockTime uTime) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -88,19 +88,19 @@ public class DefaultClock extends DefaultTemporalReferenceSystem implements Cloc
      * @return ClockTime
      */
     @Override
-    public ClockTime utcTrans(ClockTime clkTime) {
+    public ClockTime utcTrans(final ClockTime clkTime) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public void setReferenceEvent(InternationalString referenceEvent) {
+    public void setReferenceEvent(final InternationalString referenceEvent) {
         this.referenceEvent = referenceEvent;
     }
 
-    public void setReferenceTime(ClockTime referenceTime) {
+    public void setReferenceTime(final ClockTime referenceTime) {
         this.referenceTime = referenceTime;
     }
 
-    public void setUtcReference(ClockTime utcReference) {
+    public void setUtcReference(final ClockTime utcReference) {
         this.utcReference = utcReference;
     }
 

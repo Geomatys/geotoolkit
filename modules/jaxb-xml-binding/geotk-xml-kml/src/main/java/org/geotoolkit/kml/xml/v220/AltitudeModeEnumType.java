@@ -49,7 +49,7 @@ public enum AltitudeModeEnumType {
     ABSOLUTE("absolute");
     private final String value;
 
-    AltitudeModeEnumType(String v) {
+    AltitudeModeEnumType(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum AltitudeModeEnumType {
         return value;
     }
 
-    public static AltitudeModeEnumType fromValue(String v) {
+    public static AltitudeModeEnumType fromValue(final String v) {
         for (AltitudeModeEnumType c: AltitudeModeEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

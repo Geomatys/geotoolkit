@@ -57,11 +57,11 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
         setFocusable(false);
     }
 
-    public void setFill(boolean fill){
+    public void setFill(final boolean fill){
         this.fill = fill;
     }
 
-    public void setCoord(int sx, int sy, int ex, int ey, boolean draw){
+    public void setCoord(final int sx, final int sy, final int ex, final int ey, final boolean draw){
         startx = sx;
         starty = sy;
         width = ex;
@@ -72,7 +72,7 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(final Graphics g) {
         if(draw){
 
             if(fill){
@@ -120,7 +120,7 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
     }
 
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         this.map = map;
     }
 
@@ -145,7 +145,7 @@ public class ZoomDecoration extends JComponent implements MapDecoration{
     /**
      * @param buffer the buffer to set
      */
-    public void setBuffer(Image buffer) {
+    public void setBuffer(final Image buffer) {
         this.buffer = buffer;
     }
 }

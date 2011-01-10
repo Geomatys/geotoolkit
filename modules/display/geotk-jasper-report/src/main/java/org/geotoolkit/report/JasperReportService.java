@@ -72,7 +72,7 @@ public final class JasperReportService {
      * @return Entry<JasperReport,FeatureType>
      * @throws JRException
      */
-    public static Entry<JasperReport,FeatureType> prepareTemplate(Object jrxml) throws JRException{
+    public static Entry<JasperReport,FeatureType> prepareTemplate(final Object jrxml) throws JRException{
 
         // load and compile the template
         final JasperDesign jasperDesign;
@@ -108,8 +108,8 @@ public final class JasperReportService {
      * @param output : output definition
      * @throws JRException
      */
-    public static void generateReport(JasperReport report, FeatureCollection col, Map parameters,
-                                  OutputDef output) throws JRException, DataStoreRuntimeException{
+    public static void generateReport(final JasperReport report, final FeatureCollection col, final Map parameters,
+                                  final OutputDef output) throws JRException, DataStoreRuntimeException{
         final FeatureIterator ite = col.iterator();
         try{
             generateReport(report, ite, parameters, output);
@@ -128,8 +128,8 @@ public final class JasperReportService {
      * @param output : output definition
      * @throws JRException
      */
-    public static void generateReport(JasperReport report, FeatureIterator ite, Map parameters,
-                                  OutputDef output) throws JRException, DataStoreRuntimeException{
+    public static void generateReport(final JasperReport report, final FeatureIterator ite, final Map parameters,
+                                  final OutputDef output) throws JRException, DataStoreRuntimeException{
         final FeatureCollectionDataSource source = new FeatureCollectionDataSource(ite);
         final JasperPrint print = JasperFillManager.fillReport(report, parameters, source);
         generate(print, output);
@@ -138,7 +138,7 @@ public final class JasperReportService {
     /**
      * Write the jasper print in the defined output.
      */
-    private static void generate(JasperPrint print, OutputDef output) throws JRException{
+    private static void generate(final JasperPrint print, final OutputDef output) throws JRException{
         final String mime = output.getMime();
         Object target = output.getOutput();
 
@@ -178,7 +178,7 @@ public final class JasperReportService {
      * @param design
      * @return FeatureType
      */
-    private static FeatureType extractType(JasperDesign design){
+    private static FeatureType extractType(final JasperDesign design){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(design.getName());
 
@@ -210,7 +210,7 @@ public final class JasperReportService {
     /**
      * Change a jasper report property map in a casual java Map.
      */
-    private static Map<Object,Object> toParameterMap(JRPropertiesMap params){
+    private static Map<Object,Object> toParameterMap(final JRPropertiesMap params){
         if(params == null){
             return null;
         }

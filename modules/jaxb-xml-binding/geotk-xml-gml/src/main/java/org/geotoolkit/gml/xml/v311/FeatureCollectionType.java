@@ -55,7 +55,7 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType {
         super();
     }
 
-    public FeatureCollectionType(String id, String name, String description, List<FeaturePropertyType> featureMember) {
+    public FeatureCollectionType(final String id, final String name, final String description, final List<FeaturePropertyType> featureMember) {
         super(id, name, description, featureMember);
     }
 

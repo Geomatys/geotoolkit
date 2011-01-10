@@ -28,7 +28,7 @@ public class ColorItem {
     private final Literal sourceColor;
     private final Literal targetColor;
 
-    public ColorItem(Literal sourceColor, Literal targetColor) {
+    public ColorItem(final Literal sourceColor, final Literal targetColor) {
         this.sourceColor = sourceColor;
         this.targetColor = targetColor;
     }

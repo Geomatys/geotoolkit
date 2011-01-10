@@ -108,7 +108,7 @@ public class ProcessDescriptionType
      *     {@link ProcessDescriptionType.DataInputs }
      *     
      */
-    public void setDataInputs(ProcessDescriptionType.DataInputs value) {
+    public void setDataInputs(final ProcessDescriptionType.DataInputs value) {
         this.dataInputs = value;
     }
 
@@ -132,7 +132,7 @@ public class ProcessDescriptionType
      *     {@link ProcessDescriptionType.ProcessOutputs }
      *     
      */
-    public void setProcessOutputs(ProcessDescriptionType.ProcessOutputs value) {
+    public void setProcessOutputs(final ProcessDescriptionType.ProcessOutputs value) {
         this.processOutputs = value;
     }
 
@@ -160,7 +160,7 @@ public class ProcessDescriptionType
      *     {@link Boolean }
      *     
      */
-    public void setStoreSupported(Boolean value) {
+    public void setStoreSupported(final Boolean value) {
         this.storeSupported = value;
     }
 
@@ -188,7 +188,7 @@ public class ProcessDescriptionType
      *     {@link Boolean }
      *     
      */
-    public void setStatusSupported(Boolean value) {
+    public void setStatusSupported(final Boolean value) {
         this.statusSupported = value;
     }
 

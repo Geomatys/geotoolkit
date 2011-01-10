@@ -37,7 +37,7 @@ public abstract class CachedDisplacement{
     protected final Displacement styleElement;
     private final Collection<String> attributs;
 
-    private CachedDisplacement(Displacement anchor, Collection<String> attributs) {
+    private CachedDisplacement(final Displacement anchor, final Collection<String> attributs) {
         this.styleElement = anchor;
         this.attributs = attributs;
     }
@@ -59,7 +59,7 @@ public abstract class CachedDisplacement{
      *
      * @return Collection<String> : all requiered feature attributs name
      */
-    public Collection<String> getRequieredAttributsName(Collection<String> buffer){
+    public Collection<String> getRequieredAttributsName(final Collection<String> buffer){
         if(buffer == null){
             return attributs;
         }else{
@@ -72,7 +72,7 @@ public abstract class CachedDisplacement{
 
 
 
-    public static CachedDisplacement cache(Displacement anchor){
+    public static CachedDisplacement cache(final Displacement anchor){
 
         float cachedX = Float.NaN;
         float cachedY = Float.NaN;
@@ -116,14 +116,14 @@ public abstract class CachedDisplacement{
         private final float cachedX;
         private final float cachedY;
 
-        public StaticDisplacement(Displacement anchor, float cachedX, float cachedY) {
+        public StaticDisplacement(final Displacement anchor, final float cachedX, final float cachedY) {
             super(anchor,Cache.EMPTY_ATTRIBUTS);
             this.cachedX = cachedX;
             this.cachedY = cachedY;
         }
 
         @Override
-        public float[] getValues(Feature feature, float[] buffer){
+        public float[] getValues(final Feature feature, final float[] buffer){
             if(buffer == null){
                 return new float[]{cachedX,cachedY};
             }else{
@@ -139,14 +139,14 @@ public abstract class CachedDisplacement{
         private final float cachedX;
         private final float cachedY;
 
-        public DynamicDisplacement(Displacement anchor, float cachedX, float cachedY, Collection<String> attributs) {
+        public DynamicDisplacement(final Displacement anchor, final float cachedX, final float cachedY, final Collection<String> attributs) {
             super(anchor,attributs);
             this.cachedX = cachedX;
             this.cachedY = cachedY;
         }
 
         @Override
-        public float[] getValues(Feature feature, float[] buffer){
+        public float[] getValues(final Feature feature, float[] buffer){
 
             if(buffer == null){
                 buffer = new float[2];

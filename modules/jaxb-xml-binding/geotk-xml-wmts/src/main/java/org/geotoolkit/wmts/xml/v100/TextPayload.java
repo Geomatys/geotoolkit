@@ -78,7 +78,7 @@ public class TextPayload {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 
@@ -102,7 +102,7 @@ public class TextPayload {
      *     {@link String }
      *     
      */
-    public void setTextContent(String value) {
+    public void setTextContent(final String value) {
         this.textContent = value;
     }
 

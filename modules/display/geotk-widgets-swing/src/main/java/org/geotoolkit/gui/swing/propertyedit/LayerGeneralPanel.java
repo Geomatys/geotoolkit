@@ -215,7 +215,7 @@ public class LayerGeneralPanel extends javax.swing.JPanel implements PropertyPan
     }
 
     @Override
-    public void setTarget(Object target) {
+    public void setTarget(final Object target) {
         if (target instanceof MapLayer) {
             layer = (MapLayer) target;
         } else {

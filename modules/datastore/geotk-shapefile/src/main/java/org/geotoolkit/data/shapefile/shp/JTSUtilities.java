@@ -55,7 +55,7 @@ public final class JTSUtilities {
      *            target[1] with the maximum. The array current values, if not
      *            NaN, will be taken into acount in the computation.
      */
-    public static void zMinMax(final CoordinateSequence cs, double[] target) {
+    public static void zMinMax(final CoordinateSequence cs, final double[] target) {
         if (cs.getDimension() < 3) {
             return;
         }
@@ -102,7 +102,7 @@ public final class JTSUtilities {
      * @param lr The ring to reverse.
      * @return A new ring with the reversed Coordinates.
      */
-    public static LinearRing reverseRing(LinearRing lr) {
+    public static LinearRing reverseRing(final LinearRing lr) {
         final int numPoints = lr.getNumPoints()-1;
         final Coordinate[] newCoords = new Coordinate[numPoints+1];
 
@@ -120,7 +120,7 @@ public final class JTSUtilities {
      * @param p The Polygon to make "nice".
      * @return The "nice" Polygon.
      */
-    public static Polygon makeGoodShapePolygon(Polygon p) {
+    public static Polygon makeGoodShapePolygon(final Polygon p) {
         final LinearRing outer;
         final LinearRing[] holes = new LinearRing[p.getNumInteriorRing()];
         Coordinate[] coords;
@@ -153,7 +153,7 @@ public final class JTSUtilities {
      * @param mp The MultiPolygon to "niceify".
      * @return The "nicified" MultiPolygon.
      */
-    public static MultiPolygon makeGoodShapeMultiPolygon(MultiPolygon mp) {
+    public static MultiPolygon makeGoodShapeMultiPolygon(final MultiPolygon mp) {
         final MultiPolygon result;
         Polygon[] ps = new Polygon[mp.getNumGeometries()];
 
@@ -187,7 +187,7 @@ public final class JTSUtilities {
         return 2;
     }
 
-    public static Geometry convertToCollection(Geometry geom, ShapeType type) {
+    public static Geometry convertToCollection(final Geometry geom, final ShapeType type) {
         Geometry retVal = null;
 
         if (type.isPointType()) {
@@ -241,8 +241,8 @@ public final class JTSUtilities {
      *                 If theres a problem, like a bogus Geometry.
      * @return The best ShapeType.
      */
-    public static ShapeType getShapeType(Geometry geom,
-            int shapeFileDimentions) throws DataStoreException {
+    public static ShapeType getShapeType(final Geometry geom,
+            final int shapeFileDimentions) throws DataStoreException {
 
         ShapeType type = null;
 

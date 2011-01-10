@@ -77,7 +77,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureType> read(String xml) throws JAXBException {
+    public List<FeatureType> read(final String xml) throws JAXBException {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
@@ -92,7 +92,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureType> read(InputStream in) throws JAXBException {
+    public List<FeatureType> read(final InputStream in) throws JAXBException {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(in);
@@ -107,7 +107,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureType> read(Reader reader) throws JAXBException {
+    public List<FeatureType> read(final Reader reader) throws JAXBException {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(reader);
@@ -122,7 +122,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType read(String xml, String name) throws JAXBException {
+    public FeatureType read(final String xml, final String name) throws JAXBException {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
@@ -137,7 +137,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType read(InputStream in, String name) throws JAXBException {
+    public FeatureType read(final InputStream in, final String name) throws JAXBException {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(in);
@@ -152,7 +152,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType read(Reader reader, String name) throws JAXBException {
+    public FeatureType read(final Reader reader, final String name) throws JAXBException {
         builder.reset();
         final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
         final Schema schema             = (Schema) unmarshaller.unmarshal(reader);
@@ -164,7 +164,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     }
 
 
-    private List<FeatureType> getAllFeatureTypeFromSchema(Schema schema) throws SchemaException {
+    private List<FeatureType> getAllFeatureTypeFromSchema(final Schema schema) throws SchemaException {
         final List<FeatureType> result = new ArrayList<FeatureType>();
         for (TopLevelElement element : schema.getElements()) {
             final QName typeName = element.getType();
@@ -176,7 +176,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     }
     
     
-    private FeatureType getFeatureTypeFromSchema(Schema schema, String name) throws SchemaException {
+    private FeatureType getFeatureTypeFromSchema(final Schema schema, final String name) throws SchemaException {
         final TopLevelElement element = schema.getElementByName(name);
         if (element != null) {
             final QName typeName = element.getType();
@@ -191,7 +191,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         return null;
     }
     
-    private FeatureType getFeatureTypeFromSchema(TopLevelComplexType type, String namespace) throws SchemaException {
+    private FeatureType getFeatureTypeFromSchema(final TopLevelComplexType type, final String namespace) throws SchemaException {
         if (type != null) {
             final ComplexContent content = type.getComplexContent();
             if (content != null) {

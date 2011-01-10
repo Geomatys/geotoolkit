@@ -103,7 +103,7 @@ public class GeneralType {
      *     {@link WindowType }
      *     
      */
-    public void setWindow(WindowType value) {
+    public void setWindow(final WindowType value) {
         this.window = value;
     }
 
@@ -127,7 +127,7 @@ public class GeneralType {
      *     {@link BoundingBoxType }
      *     
      */
-    public void setBoundingBox(BoundingBoxType value) {
+    public void setBoundingBox(final BoundingBoxType value) {
         this.boundingBox = value;
     }
 
@@ -151,7 +151,7 @@ public class GeneralType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -175,7 +175,7 @@ public class GeneralType {
      *     {@link KeywordListType }
      *     
      */
-    public void setKeywordList(KeywordListType value) {
+    public void setKeywordList(final KeywordListType value) {
         this.keywordList = value;
     }
 
@@ -199,7 +199,7 @@ public class GeneralType {
      *     {@link String }
      *     
      */
-    public void setAbstract(String value) {
+    public void setAbstract(final String value) {
         this._abstract = value;
     }
 
@@ -223,7 +223,7 @@ public class GeneralType {
      *     {@link URLType }
      *     
      */
-    public void setLogoURL(URLType value) {
+    public void setLogoURL(final URLType value) {
         this.logoURL = value;
     }
 
@@ -247,7 +247,7 @@ public class GeneralType {
      *     {@link URLType }
      *     
      */
-    public void setDescriptionURL(URLType value) {
+    public void setDescriptionURL(final URLType value) {
         this.descriptionURL = value;
     }
 
@@ -271,7 +271,7 @@ public class GeneralType {
      *     {@link ContactInformationType }
      *     
      */
-    public void setContactInformation(ContactInformationType value) {
+    public void setContactInformation(final ContactInformationType value) {
         this.contactInformation = value;
     }
 
@@ -295,7 +295,7 @@ public class GeneralType {
      *     {@link ExtensionType }
      *     
      */
-    public void setExtension(ExtensionType value) {
+    public void setExtension(final ExtensionType value) {
         this.extension = value;
     }
 

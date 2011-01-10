@@ -97,7 +97,7 @@ public class CategorizeType
      *     {@link ParameterValueType }
      *     
      */
-    public void setLookupValue(ParameterValueType value) {
+    public void setLookupValue(final ParameterValueType value) {
         this.lookupValue = value;
     }
 
@@ -121,7 +121,7 @@ public class CategorizeType
      *     {@link ParameterValueType }
      *     
      */
-    public void setValue(ParameterValueType value) {
+    public void setValue(final ParameterValueType value) {
         this.value = value;
     }
 
@@ -175,7 +175,7 @@ public class CategorizeType
      *     {@link ThreshholdsBelongToType }
      *     
      */
-    public void setThreshholdsBelongTo(ThreshholdsBelongToType value) {
+    public void setThreshholdsBelongTo(final ThreshholdsBelongToType value) {
         this.threshholdsBelongTo = value;
     }
 

@@ -60,14 +60,14 @@ public class DomainType extends UnNamedDomainType implements AbstractDomain {
     /**
      * Build a new Domain with the specified name.
      */
-    public DomainType(String name){
+    public DomainType(final String name){
         this.name = name;
     }
 
     /**
      * Build a new Domain with the specified name.
      */
-    public DomainType(String name, AllowedValues values){
+    public DomainType(final String name, final AllowedValues values){
         super(values);
         this.name = name;
     }

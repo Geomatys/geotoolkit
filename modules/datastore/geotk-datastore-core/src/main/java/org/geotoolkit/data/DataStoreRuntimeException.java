@@ -32,15 +32,15 @@ public class DataStoreRuntimeException extends BackingStoreException{
         super();
     }
 
-    public DataStoreRuntimeException(String message){
+    public DataStoreRuntimeException(final String message){
         super(message);
     }
 
-    public DataStoreRuntimeException(String message, Throwable th){
+    public DataStoreRuntimeException(final String message, final Throwable th){
         super(message, th);
     }
 
-    public DataStoreRuntimeException(Throwable th){
+    public DataStoreRuntimeException(final Throwable th){
         super(th);
     }
 

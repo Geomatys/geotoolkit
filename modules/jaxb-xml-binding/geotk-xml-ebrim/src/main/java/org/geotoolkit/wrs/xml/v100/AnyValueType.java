@@ -68,7 +68,7 @@ public class AnyValueType {
     /**
      * Sets the value of the content property.
      */
-    public void setContent(List<Object> content) {
+    public void setContent(final List<Object> content) {
         this.content = content;
     }
     

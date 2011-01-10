@@ -84,7 +84,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      * {@inheritDoc }
      */
     @Override
-    public void visit(Graphic graphic, RenderingContext context, SearchArea area) {
+    public void visit(final Graphic graphic, final RenderingContext context, final SearchArea area) {
 
         if(graphic == null ) return;
 
@@ -109,7 +109,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      *
      * @return list : each entry contain a gridsampledimension and value associated.
      */
-    protected static List<Entry<GridSampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, RenderingContext2D context, SearchAreaJ2D queryArea){
+    protected static List<Entry<GridSampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, final RenderingContext2D context, final SearchAreaJ2D queryArea){
 
         final CoverageMapLayer layer = gra.getCoverageLayer();
         Envelope objBounds = context.getCanvasObjectiveBounds();

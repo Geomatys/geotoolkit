@@ -50,7 +50,7 @@ public class CQLNullPredicateTest  {
      * @param expected
      * @throws Exception
      */
-    protected void testNullPredicate(final String samplePredicate, Filter expected) throws Exception{
+    protected void testNullPredicate(final String samplePredicate, final Filter expected) throws Exception{
 
         Filter actual = CompilerUtil.parseFilter(this.language, samplePredicate);
 

@@ -102,7 +102,7 @@ public class Restriction
      *     {@link LocalSimpleType }
      *     
      */
-    public void setSimpleType(LocalSimpleType value) {
+    public void setSimpleType(final LocalSimpleType value) {
         this.simpleType = value;
     }
 
@@ -151,7 +151,7 @@ public class Restriction
      *     {@link QName }
      *     
      */
-    public void setBase(QName value) {
+    public void setBase(final QName value) {
         this.base = value;
     }
 

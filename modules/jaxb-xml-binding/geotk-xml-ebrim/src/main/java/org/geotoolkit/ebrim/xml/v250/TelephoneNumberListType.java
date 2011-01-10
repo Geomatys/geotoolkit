@@ -66,7 +66,7 @@ public class TelephoneNumberListType {
     /**
      * Sets the value of the telephoneNumber property.
      */
-    public void setTelephoneNumber(TelephoneNumberType number) {
+    public void setTelephoneNumber(final TelephoneNumberType number) {
         if (telephoneNumber == null) {
             telephoneNumber = new ArrayList<TelephoneNumberType>();
         }
@@ -76,7 +76,7 @@ public class TelephoneNumberListType {
     /**
      * Sets the value of the telephoneNumber property.
      */
-    public void setTelephoneNumber(List<TelephoneNumberType> numbers) {
+    public void setTelephoneNumber(final List<TelephoneNumberType> numbers) {
         this.telephoneNumber = numbers;
     }
 

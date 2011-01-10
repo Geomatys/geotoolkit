@@ -73,7 +73,7 @@ public class ComplexDataCombinationType {
      *     {@link ComplexDataDescriptionType }
      *     
      */
-    public void setFormat(ComplexDataDescriptionType value) {
+    public void setFormat(final ComplexDataDescriptionType value) {
         this.format = value;
     }
 

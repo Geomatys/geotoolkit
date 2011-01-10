@@ -34,7 +34,7 @@ public class J2DImageUtilities {
 
     private J2DImageUtilities(){}
 
-    public static void paint(Graphics2D g2d, ImageTemplate template, int x, int y){
+    public static void paint(final Graphics2D g2d, final ImageTemplate template, final int x, final int y){
 
         final Dimension estimation = estimate(g2d, template, false);
         int X = x;
@@ -58,7 +58,7 @@ public class J2DImageUtilities {
         g2d.drawImage(template.getImage(), X, Y,null);
     }
 
-    public static Dimension estimate(Graphics2D g, ImageTemplate template, boolean considerBackground){
+    public static Dimension estimate(final Graphics2D g, final ImageTemplate template, final boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
 
         final BufferedImage img = template.getImage();

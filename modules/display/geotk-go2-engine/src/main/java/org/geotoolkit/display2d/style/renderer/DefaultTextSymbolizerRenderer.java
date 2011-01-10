@@ -53,7 +53,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     private LabelLayer labelLayer;
 
-    public DefaultTextSymbolizerRenderer(CachedTextSymbolizer symbol, RenderingContext2D context){
+    public DefaultTextSymbolizerRenderer(final CachedTextSymbolizer symbol, final RenderingContext2D context){
         super(symbol,context);
     }
 
@@ -70,7 +70,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
+    public void portray(final ProjectedFeature projectedFeature) throws PortrayalException{
 
         final Feature feature = projectedFeature.getFeature();
 
@@ -124,9 +124,9 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     }
 
-    private void portray(ProjectedGeometry projectedGeometry, RenderingContext2D context, ProjectedFeature projectedFeature,
-            CachedLabelPlacement placement, float haloWidth, Paint haloPaint, Paint fontPaint, Font j2dFont,
-            String label) throws PortrayalException{
+    private void portray(final ProjectedGeometry projectedGeometry, final RenderingContext2D context, final ProjectedFeature projectedFeature,
+            final CachedLabelPlacement placement, final float haloWidth, final Paint haloPaint, final Paint fontPaint, final Font j2dFont,
+            final String label) throws PortrayalException{
 
         final Feature feature = projectedFeature.getFeature();
 
@@ -134,9 +134,9 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         exploreAndPortray(projectedGeometry, feature, context, placement, haloWidth, haloPaint, fontPaint, j2dFont, label, labelLayer);
     }
 
-    private static void exploreAndPortray(ProjectedGeometry projectedGeometry, Feature feature, RenderingContext2D context,
-            CachedLabelPlacement placement, float haloWidth, Paint haloPaint, Paint fontPaint, Font j2dFont,
-            String label, LabelLayer layer) throws PortrayalException{
+    private static void exploreAndPortray(final ProjectedGeometry projectedGeometry, final Feature feature, final RenderingContext2D context,
+            final CachedLabelPlacement placement, final float haloWidth, final Paint haloPaint, final Paint fontPaint, final Font j2dFont,
+            final String label, final LabelLayer layer) throws PortrayalException{
 
         if(placement instanceof CachedPointPlacement){
             final CachedPointPlacement pp = (CachedPointPlacement) placement;
@@ -190,7 +190,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedFeature feature, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedFeature feature, final SearchAreaJ2D mask, final VisitFilter filter) {
         //text symbolizer are not hittable
         return false;
     }
@@ -199,7 +199,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedCoverage graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         return false;
     }
 

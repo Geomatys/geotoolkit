@@ -54,12 +54,12 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
                             3,true,false, new Font("Serial", Font.PLAIN, 12),true,SI.METRE);
 
 
-    public GraphicScaleBarJ2D(J2DCanvas canvas){
+    public GraphicScaleBarJ2D(final J2DCanvas canvas){
         super(canvas);
         setPosition(SOUTH_WEST);
     }
 
-    public void setTemplate(ScaleBarTemplate template) {
+    public void setTemplate(final ScaleBarTemplate template) {
         if(template == null) throw new NullPointerException("Template can't be null");
         this.template = template;
     }
@@ -68,7 +68,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
      * {@inheritDoc }
      */
     @Override
-    protected void paint(RenderingContext2D context, int position, int[] offset) {
+    protected void paint(final RenderingContext2D context, final int position, final int[] offset) {
 
         final Graphics2D g2d = context.getGraphics();
 

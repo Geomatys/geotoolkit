@@ -55,7 +55,7 @@ public class DateToDateSQLConverter implements ObjectConverter<Date, java.sql.Da
     }
 
     @Override
-    public java.sql.Date convert(Date s) throws NonconvertibleObjectException {
+    public java.sql.Date convert(final Date s) throws NonconvertibleObjectException {
         return new java.sql.Date(s.getTime());
     }
 

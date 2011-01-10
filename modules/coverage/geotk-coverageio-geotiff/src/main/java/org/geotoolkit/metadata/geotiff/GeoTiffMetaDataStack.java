@@ -50,7 +50,7 @@ final class GeoTiffMetaDataStack {
     private Node nPixelScale = null;
     private Node nTransform = null;
 
-    GeoTiffMetaDataStack(Node tiffTree) {
+    GeoTiffMetaDataStack(final Node tiffTree) {
         if(tiffTree == null){
             throw new NullArgumentException("Tiff metadata tree can not be null.");
         }
@@ -69,12 +69,12 @@ final class GeoTiffMetaDataStack {
         }
     }
 
-    void addShort(int keyId, int value){
+    void addShort(final int keyId, final int value){
         final KeyDirectoryEntry entry = new KeyDirectoryEntry(keyId, 0, 1, value);
         entries.add(entry);
     }
 
-    void addDouble(int keyID, double value) {        
+    void addDouble(final int keyID, final double value) {        
         final KeyDirectoryEntry entry = new KeyDirectoryEntry(
                 keyID, 
                 getGeoDoubleParamsTag().getNumber(), 
@@ -85,7 +85,7 @@ final class GeoTiffMetaDataStack {
         doubleValues.add(value);
     }
 
-    void addAscii(int keyID, String value) {
+    void addAscii(final int keyID, final String value) {
         // +1 for the '|' character to be appended
         final int lenght = value.length() + 1;
         final KeyDirectoryEntry entry = new KeyDirectoryEntry(
@@ -99,12 +99,12 @@ final class GeoTiffMetaDataStack {
         asciiValues.append('|');
     }
 
-    void setModelPixelScale(double x, double y, double z) {
+    void setModelPixelScale(final double x, final double y, final double z) {
         nPixelScale = createTiffField(getModelPixelScaleTag());
         nPixelScale.appendChild(createTiffDoubles(x,y,z));
     }
 
-    void addModelTiePoint(TiePoint tp) {
+    void addModelTiePoint(final TiePoint tp) {
         tiePoints.add(tp);
     }
 
@@ -133,14 +133,14 @@ final class GeoTiffMetaDataStack {
         nTransform.appendChild(nValues);  
     }
 
-    static Node createModelTransformationElement(double ... values) {
+    static Node createModelTransformationElement(final double ... values) {
         final Node nTransformation = createTiffField(getModelTransformationTag());
         final Node nValues = createTiffDoubles(values);
         nTransformation.appendChild(nValues);
         return nTransformation;
     }
 
-    static Node createModelTiePointsElement(Collection<? extends TiePoint> tiePoints) {
+    static Node createModelTiePointsElement(final Collection<? extends TiePoint> tiePoints) {
         final Node nTiePoints = createTiffField(getModelTiePointTag());
         final Node nValues = createNode(TAG_GEOTIFF_DOUBLES);
         nTiePoints.appendChild(nValues);

@@ -37,7 +37,7 @@ public class GPXFileMetadata {
     private final double lat;
     private final double lon;
 
-    public GPXFileMetadata(long id, String name, String user, boolean pub, boolean pending, Date time, double lat, double lon) {
+    public GPXFileMetadata(final long id, final String name, final String user, final boolean pub, final boolean pending, final Date time, final double lat, final double lon) {
         this.id = id;
         this.name = name;
         this.user = user;
@@ -81,7 +81,7 @@ public class GPXFileMetadata {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -34,17 +34,17 @@ public class CanvasDef {
     public CanvasDef() {
     }
 
-    public CanvasDef(Dimension dim, Color background) {
+    public CanvasDef(final Dimension dim, final Color background) {
         this(dim,background,true);
     }
 
-    public CanvasDef(Dimension dim, Color background, boolean stretch) {
+    public CanvasDef(final Dimension dim, final Color background, final boolean stretch) {
         setDimension(dim);
         setBackground(background);
         setStretchImage(stretch);
     }
 
-    public void setDimension(Dimension dimension) {
+    public void setDimension(final Dimension dimension) {
         this.dimension = dimension;
     }
 
@@ -52,7 +52,7 @@ public class CanvasDef {
         return dimension;
     }
 
-    public void setBackground(Color background) {
+    public void setBackground(final Color background) {
         this.background = background;
     }
 
@@ -60,7 +60,7 @@ public class CanvasDef {
         return background;
     }
 
-    public void setStretchImage(boolean stretchImage) {
+    public void setStretchImage(final boolean stretchImage) {
         this.stretchImage = stretchImage;
     }
 

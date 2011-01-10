@@ -58,7 +58,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPatternSymbolizer>{
 
-    public PatternRenderer(CachedPatternSymbolizer symbol, RenderingContext2D context){
+    public PatternRenderer(final CachedPatternSymbolizer symbol, final RenderingContext2D context){
         super(symbol,context);
     }
 
@@ -72,7 +72,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
      * {@inheritDoc }
      */
     @Override
-    public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
+    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         double[] resolution = renderingContext.getResolution();
         final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());

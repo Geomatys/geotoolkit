@@ -27,7 +27,7 @@ public enum SOSVersion {
 
     private final String code;
 
-    SOSVersion(String code){
+    SOSVersion(final String code){
         this.code = code;
     }
 

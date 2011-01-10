@@ -77,7 +77,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
      * @param id The identifier of the point.
      * @param pos A direcPosition locating the point.
      */
-    public PointType(String id, DirectPosition pos) {
+    public PointType(final String id, final DirectPosition pos) {
         super.setId(id);
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos);
         if (this.pos.srsName == null) {
@@ -90,7 +90,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
      *
      * @param pos A direcPosition locating the point.
      */
-    public PointType(DirectPosition pos) {
+    public PointType(final DirectPosition pos) {
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, true);
         if (this.pos.srsName == null) {
             this.pos.setSrsName(getSrsName());
@@ -103,7 +103,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
      * @param pos A direcPosition locating the point.
      * @param srsInfo if true the srs information will be applied to the directPosition
      */
-    public PointType(DirectPosition pos, boolean srsInfo) {
+    public PointType(final DirectPosition pos, final boolean srsInfo) {
         this.pos = (pos instanceof DirectPositionType) ? (DirectPositionType)pos : new DirectPositionType(pos, srsInfo);
         if (this.pos.srsName == null) {
             this.pos.setSrsName(getSrsName());
@@ -115,7 +115,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
      *
      * @param coordinates a list of coordinates.
      */
-    public PointType(CoordinatesType coordinates) {
+    public PointType(final CoordinatesType coordinates) {
         this.coordinates = coordinates;
     }
 
@@ -139,7 +139,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
      *     {@link DirectPositionType }
      *     
      */
-    public void setPos(DirectPositionType value) {
+    public void setPos(final DirectPositionType value) {
         this.pos = value;
     }
 
@@ -169,7 +169,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
      *     {@link CoordinatesType }
      *     
      */
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 
@@ -179,12 +179,12 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
     }
 
     @Override
-    public void setDirectPosition(DirectPosition position) throws UnmodifiableGeometryException {
+    public void setDirectPosition(final DirectPosition position) throws UnmodifiableGeometryException {
         this.pos = new DirectPositionType(position);
     }
 
     @Override
-    public void setPosition(DirectPosition position) throws UnmodifiableGeometryException {
+    public void setPosition(final DirectPosition position) throws UnmodifiableGeometryException {
         pos = new DirectPositionType(position);
     }
 
@@ -199,7 +199,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
     }
 
     @Override
-    public Bearing getBearing(Position toPoint) {
+    public Bearing getBearing(final Position toPoint) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

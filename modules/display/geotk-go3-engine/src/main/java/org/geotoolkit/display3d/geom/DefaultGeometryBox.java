@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class DefaultGeometryBox extends Box{
 
-    public DefaultGeometryBox(Geometry geom, double miny, double maxy) {
+    public DefaultGeometryBox(final Geometry geom, final double miny, final double maxy) {
         super();
         Envelope env = geom.getEnvelopeInternal();
         this.setData(   new Vector3(env.getMinX(), miny, env.getMinY()),

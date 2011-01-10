@@ -73,7 +73,7 @@ public class Utils {
      * @param qname a XML QName.
      * @return a GeoAPI Name.
      */
-    public static Name getNameFromQname(QName qname) {
+    public static Name getNameFromQname(final QName qname) {
         Name name;
         if (qname.getNamespaceURI() == null || qname.getNamespaceURI().isEmpty()) {
             name = new DefaultName(qname.getLocalPart());
@@ -89,7 +89,7 @@ public class Utils {
      * @param name a GeoAPI name.
      * @return A XML QName.
      */
-    public static QName getQnameFromName(Name name) {
+    public static QName getQnameFromName(final Name name) {
         QName qname;
         if (name.getNamespaceURI() == null || "".equals(name.getNamespaceURI())) {
             qname = new QName(name.getLocalPart());
@@ -149,7 +149,7 @@ public class Utils {
      * @param name A XML QName.
      * @return A Class.
      */
-    public static Class getTypeFromQName(QName name) {
+    public static Class getTypeFromQName(final QName name) {
         if (name != null) {
             final Class result = CLASS_BINDING.get(name.getLocalPart());
             if (result == null) {
@@ -201,7 +201,7 @@ public class Utils {
      * @param binding A prmitive type Class.
      * @return A QName describing the class.
      */
-    public static QName getQNameFromType(Class binding) {
+    public static QName getQNameFromType(final Class binding) {
         if (binding != null) {
             final QName result;
              if (Geometry.class.isAssignableFrom(binding)) {
@@ -226,7 +226,7 @@ public class Utils {
      * @param eventType An XMLEvent type.
      * @return A string representation or "UNKNOWN_EVENT_TYPE" if the integer does not correspound to an XMLEvent type.
      */
-    public final static String getEventTypeString(int eventType) {
+    public final static String getEventTypeString(final int eventType) {
         switch (eventType) {
             case XMLEvent.START_DOCUMENT:
                 return "START_DOCUMENT";
@@ -255,7 +255,7 @@ public class Utils {
      * @param obj A primitive object
      * @return A String representation of the Object.
      */
-    public static String getStringValue(Object obj) {
+    public static String getStringValue(final Object obj) {
         if (obj instanceof String) {
             return (String) obj;
         } else if (obj instanceof Timestamp) {
@@ -278,7 +278,7 @@ public class Utils {
      * @param typeNames
      * @return
      */
-    public static List<QName> getQNameListFromNameSet(Collection<Name> typeNames) {
+    public static List<QName> getQNameListFromNameSet(final Collection<Name> typeNames) {
         final List<QName> result = new ArrayList<QName>(typeNames.size());
         for (Name typeName : typeNames) {
             result.add(Utils.getQnameFromName(typeName));
@@ -291,7 +291,7 @@ public class Utils {
      * @param typeNames
      * @return
      */
-    public static List<Name> getNameListFromQNameSet(Collection<QName> typeNames) {
+    public static List<Name> getNameListFromQNameSet(final Collection<QName> typeNames) {
         final List<Name> result = new ArrayList<Name>(typeNames.size());
         for (QName typeName : typeNames) {
             result.add(Utils.getNameFromQname(typeName));

@@ -41,7 +41,7 @@ public enum ClassificationOperatorType {
     CLASSIFIED_AS("ClassifiedAs");
     private final String value;
 
-    ClassificationOperatorType(String v) {
+    ClassificationOperatorType(final String v) {
         value = v;
     }
 
@@ -49,7 +49,7 @@ public enum ClassificationOperatorType {
         return value;
     }
 
-    public static ClassificationOperatorType fromValue(String v) {
+    public static ClassificationOperatorType fromValue(final String v) {
         for (ClassificationOperatorType c: ClassificationOperatorType.values()) {
             if (c.value.equals(v)) {
                 return c;

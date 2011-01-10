@@ -85,7 +85,7 @@ public class CurveArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
      *
      */
-    public void setJbAbstractCurve(List<JAXBElement<? extends AbstractCurveType>> abstractCurve) {
+    public void setJbAbstractCurve(final List<JAXBElement<? extends AbstractCurveType>> abstractCurve) {
         this.abstractCurve = abstractCurve;
     }
 
@@ -120,7 +120,7 @@ public class CurveArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
      *
      */
-    public void setAbstractCurve(List<? extends AbstractCurveType> abstractCurve) {
+    public void setAbstractCurve(final List<? extends AbstractCurveType> abstractCurve) {
         if (abstractCurve != null) {
             this.abstractCurve = new ArrayList<JAXBElement<? extends AbstractCurveType>>();
             final ObjectFactory factory = new ObjectFactory();
@@ -148,7 +148,7 @@ public class CurveArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link OrientableCurveType }{@code >}
      *
      */
-    public void setAbstractCurve(AbstractCurveType abstractCurve) {
+    public void setAbstractCurve(final AbstractCurveType abstractCurve) {
         if (abstractCurve != null) {
             if (this.abstractCurve == null) {
                 this.abstractCurve = new ArrayList<JAXBElement<? extends AbstractCurveType>>();

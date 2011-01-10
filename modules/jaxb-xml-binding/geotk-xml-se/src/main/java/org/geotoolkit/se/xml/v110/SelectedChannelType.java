@@ -75,7 +75,7 @@ public class SelectedChannelType {
      *     {@link String }
      *     
      */
-    public void setSourceChannelName(String value) {
+    public void setSourceChannelName(final String value) {
         this.sourceChannelName = value;
     }
 
@@ -99,7 +99,7 @@ public class SelectedChannelType {
      *     {@link ContrastEnhancementType }
      *     
      */
-    public void setContrastEnhancement(ContrastEnhancementType value) {
+    public void setContrastEnhancement(final ContrastEnhancementType value) {
         this.contrastEnhancement = value;
     }
 

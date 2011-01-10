@@ -59,7 +59,7 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
      * Creates a new {@code PolyhedralSurfaceImpl}.
      * @param crs
      */
-    public JTSPolyhedralSurface(CoordinateReferenceSystem crs) {
+    public JTSPolyhedralSurface(final CoordinateReferenceSystem crs) {
         super(crs);
     }
     
@@ -83,7 +83,7 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
      * {@inheritDoc }
      */
     @Override
-    public double [] getUpNormal(DirectPosition point) {
+    public double [] getUpNormal(final DirectPosition point) {
         return new double [] { 0, 0, 1 };
     }
 
@@ -186,7 +186,7 @@ public class JTSPolyhedralSurface extends AbstractJTSGeometry implements Polyhed
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this)
             return true;
 

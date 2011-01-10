@@ -30,7 +30,7 @@ public abstract class AbstractDownloadChangeSet extends AbstractRequest implemen
 
     protected int id = -1;
 
-    public AbstractDownloadChangeSet(String serverURL, String subPath){
+    public AbstractDownloadChangeSet(final String serverURL, final String subPath){
         super(serverURL, subPath);
     }
 
@@ -40,7 +40,7 @@ public abstract class AbstractDownloadChangeSet extends AbstractRequest implemen
     }
 
     @Override
-    public void setChangeSetID(int id) {
+    public void setChangeSetID(final int id) {
         this.id = id;
     }
     

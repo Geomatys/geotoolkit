@@ -95,7 +95,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
 
     }
 
-    private void append(String val) {
+    private void append(final String val) {
         if (!guiTxtCQL.getText().endsWith(val)) {
 
             if (!guiTxtCQL.getText().endsWith(" ") && guiTxtCQL.getText().length() > 0) {
@@ -105,7 +105,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
         }
     }
 
-    private Filter verifyQuery(String str) {
+    private Filter verifyQuery(final String str) {
 
         try {
             final Filter flt = CQL.toFilter(str);
@@ -117,11 +117,11 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
         }
     }
 
-    private void parse(Filter filter) {
+    private void parse(final Filter filter) {
         guiTxtCQL.setText(CQL.toCQL(filter));
     }
 
-    private void parse(FeatureMapLayer ly) {
+    private void parse(final FeatureMapLayer ly) {
         
         if (layer != null) {
             guiFields.removeAll();
@@ -239,7 +239,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     // End of variables declaration//GEN-END:variables
     
     @Override
-    public void setFilter(Filter filter) {
+    public void setFilter(final Filter filter) {
         if (filter == null) {
             throw new NullPointerException();
         }
@@ -260,7 +260,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     }
 
     @Override
-    public void setLayer(FeatureMapLayer layer) {
+    public void setLayer(final FeatureMapLayer layer) {
 
         if (layer == null) {
             throw new NullPointerException();

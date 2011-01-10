@@ -63,7 +63,7 @@ public class ParameterImpl implements Parameter {
     /**
      * Clone a parameter. 
      */
-    public ParameterImpl(Parameter parameter) {
+    public ParameterImpl(final Parameter parameter) {
         this.description   = parameter.getDescription();
         this.direction     = parameter.getDirection();
         this.name          = parameter.getName();
@@ -86,7 +86,7 @@ public class ParameterImpl implements Parameter {
      * Sets the value of the name property.
      * 
      */
-    public void setName(MemberName value) {
+    public void setName(final MemberName value) {
         this.name = value;
     }
 
@@ -103,7 +103,7 @@ public class ParameterImpl implements Parameter {
      * Sets the value of the direction property.
      * 
      */
-    public void setDirection(ParameterDirection value) {
+    public void setDirection(final ParameterDirection value) {
         this.direction = value;
     }
 
@@ -120,7 +120,7 @@ public class ParameterImpl implements Parameter {
      * Sets the value of the description property.
      * 
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -137,7 +137,7 @@ public class ParameterImpl implements Parameter {
      * Sets the value of the optionality property.
      * 
      */
-    public void setOptionality(String value) {
+    public void setOptionality(final String value) {
         this.optionality = value;
     }
 
@@ -154,7 +154,7 @@ public class ParameterImpl implements Parameter {
      * Sets the value of the repeatability property.
      * 
      */
-    public void setRepeatability(Boolean value) {
+    public void setRepeatability(final Boolean value) {
         this.repeatability = value;
     }
 
@@ -171,7 +171,7 @@ public class ParameterImpl implements Parameter {
      * Sets the value of the valueType property.
      * 
      */
-    public void setValueType(TypeName value) {
+    public void setValueType(final TypeName value) {
         this.valueType = value;
     }
 

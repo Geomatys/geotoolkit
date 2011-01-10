@@ -26,7 +26,7 @@ public enum WMSVersion {
 
     private final String code;
 
-    WMSVersion(String code){
+    WMSVersion(final String code){
         this.code = code;
     }
 

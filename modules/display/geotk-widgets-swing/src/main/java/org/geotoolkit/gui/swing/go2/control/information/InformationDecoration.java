@@ -143,8 +143,8 @@ public class InformationDecoration extends JLayeredPane implements MapDecoration
         label.setText("  "+(selected+1) +"/"+selecteds.size()+"  ");
     }
 
-    public void display(List<? extends Object> selecteds, 
-            InformationPresenter presenter, Point2D where, RenderingContext2D context, SearchAreaJ2D area){
+    public void display(final List<? extends Object> selecteds, 
+            final InformationPresenter presenter, final Point2D where, final RenderingContext2D context, final SearchAreaJ2D area){
 
         this.presenter = presenter;
         this.selecteds = selecteds;
@@ -184,7 +184,7 @@ public class InformationDecoration extends JLayeredPane implements MapDecoration
      * {@inheritDoc }
      */
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         this.map = map;
     }
 

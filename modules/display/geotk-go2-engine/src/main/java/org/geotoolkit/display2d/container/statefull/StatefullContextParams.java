@@ -44,7 +44,7 @@ public class StatefullContextParams {
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
 
-    public StatefullContextParams(ReferencedCanvas2D canvas, FeatureMapLayer layer){
+    public StatefullContextParams(final ReferencedCanvas2D canvas, final FeatureMapLayer layer){
         this.canvas = canvas;
         this.layer = layer;
     }

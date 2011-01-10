@@ -79,7 +79,7 @@ public class ExceptionReport implements ExceptionResponse {
      * @param exceptionText 
      * @param exceptionCode
      */
-    public ExceptionReport(String exceptionText, String exceptionCode, String locator, String version) {
+    public ExceptionReport(final String exceptionText, final String exceptionCode, final String locator, final String version) {
         exception = new ArrayList<ExceptionType>();
         this.exception.add(new ExceptionType(exceptionText, exceptionCode, locator));
         this.version = version;

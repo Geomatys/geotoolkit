@@ -80,7 +80,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         editor.setLayer(layer);
         this.layer = layer;
     }
@@ -97,7 +97,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
      * {@inheritDoc }
      */
     @Override
-    public void parse(ExternalGraphic[] externals) {
+    public void parse(final ExternalGraphic[] externals) {
         model.setExternalGraphics(externals);
     }
 
@@ -199,7 +199,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
             .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 106, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-    private void guiUpActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiUpActionPerformed
+    private void guiUpActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiUpActionPerformed
         int index = tabMarks.getSelectionModel().getMinSelectionIndex();
 
         if (index >= 0) {
@@ -208,7 +208,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
         }
 }//GEN-LAST:event_guiUpActionPerformed
 
-    private void guiDownActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiDownActionPerformed
+    private void guiDownActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiDownActionPerformed
         int index = tabMarks.getSelectionModel().getMinSelectionIndex();
 
         if (index >= 0) {
@@ -217,11 +217,11 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
         }
 }//GEN-LAST:event_guiDownActionPerformed
 
-    private void guiNewActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiNewActionPerformed
+    private void guiNewActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiNewActionPerformed
         model.newExternalGraphic();
 }//GEN-LAST:event_guiNewActionPerformed
 
-    private void guiDeleteActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiDeleteActionPerformed
+    private void guiDeleteActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiDeleteActionPerformed
         int index = tabMarks.getSelectionModel().getMinSelectionIndex();
 
         if (index >= 0) {
@@ -241,7 +241,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
 
         private List<ExternalGraphic> externals = new ArrayList<ExternalGraphic>();
 
-        ExternalGraphicModel(ExternalGraphic[] externals) {
+        ExternalGraphicModel(final ExternalGraphic[] externals) {
             this.externals.addAll(Arrays.asList(externals));
         }
 
@@ -253,12 +253,12 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
             fireTableRowsInserted(last, last);
         }
 
-        public void deleteExternalGraphic(int index) {
+        public void deleteExternalGraphic(final int index) {
             externals.remove(index);
             fireTableRowsDeleted(index, index);
         }
 
-        public void moveUp(ExternalGraphic m) {
+        public void moveUp(final ExternalGraphic m) {
             int index = externals.indexOf(m);
             if (index != 0) {
                 externals.remove(m);
@@ -267,7 +267,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
             }
         }
 
-        public void moveDown(ExternalGraphic m) {
+        public void moveDown(final ExternalGraphic m) {
             int index = externals.indexOf(m);
             if (index != externals.size() - 1) {
                 externals.remove(m);
@@ -276,7 +276,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
             }
         }
 
-        public void setExternalGraphics(ExternalGraphic[] externals) {
+        public void setExternalGraphics(final ExternalGraphic[] externals) {
             this.externals.clear();
 
             if (externals != null) {
@@ -300,17 +300,17 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
         }
 
         @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
+        public boolean isCellEditable(final int rowIndex, final int columnIndex) {
             return true;
         }
 
         @Override
-        public Class<?> getColumnClass(int columnIndex) {
+        public Class<?> getColumnClass(final int columnIndex) {
             return ExternalGraphic.class;
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
+        public Object getValueAt(final int rowIndex, final int columnIndex) {
             return externals.get(rowIndex);
         }
     }
@@ -320,7 +320,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
         private String text = "SsIiGg84";
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
 
             JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
 
@@ -363,7 +363,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
             });
         }
 
-        public void setLayer(MapLayer layer) {
+        public void setLayer(final MapLayer layer) {
             this.layer = layer;
         }
 
@@ -380,7 +380,7 @@ public class JExternalGraphicTable extends StyleElementEditor<ExternalGraphic[]>
 //        return true;
 //    }
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
 
             if (value != null && value instanceof ExternalGraphic) {
                 mark = (ExternalGraphic) value;

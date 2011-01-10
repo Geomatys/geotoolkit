@@ -543,7 +543,7 @@ public final class GeometryUtils {
      * @param pointArray The PointArray to be populated.  This must not be null.
      * @param dps The new array of points
      */
-    public static void populatePointArray(PointArray pointArray, DirectPosition[] dps) {
+    public static void populatePointArray(final PointArray pointArray, final DirectPosition[] dps) {
     	List pts = pointArray.positions();
     	pts.clear();
     	int count = dps.length;
@@ -587,7 +587,7 @@ public final class GeometryUtils {
      * @throws IllegalArgumentException if any element cannot be converted.
      * For the present version, only Curves that wrap only LineStrings are convertible.
      */
-    public static LineString[] getLineStrings(CompositeCurve cc) {
+    public static LineString[] getLineStrings(final CompositeCurve cc) {
     	ArrayList lsList = getLineStrings(cc, new ArrayList());
     	if (lsList == null) {
     		throw new IllegalArgumentException(
@@ -605,7 +605,7 @@ public final class GeometryUtils {
      * @param lsList The ArrayList to be populated
      * @return The populated List, or null if not valid
      */
-    private static ArrayList getLineStrings(CompositeCurve cc, ArrayList lsList) {
+    private static ArrayList getLineStrings(final CompositeCurve cc, final ArrayList lsList) {
         // Cast below can be removed when GeoAPI will be allowed to abandon Java 1.4 support.
     	List elements = (List) cc.getGenerators();
     	boolean valid = true;

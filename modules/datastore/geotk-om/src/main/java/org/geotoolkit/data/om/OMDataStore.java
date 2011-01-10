@@ -101,7 +101,7 @@ public class OMDataStore extends AbstractDataStore {
     private static final String SQL_GET_LAST_ID = "SELECT COUNT(*) FROM \"observation\".\"sampling_points\"";
 
 
-    public OMDataStore(ManageableDataSource source) {
+    public OMDataStore(final ManageableDataSource source) {
         super(null);
         this.source = source;
         initTypes();
@@ -126,7 +126,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader<FeatureType, Feature> getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader<FeatureType, Feature> getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType sft = getFeatureType(query.getTypeName());
         try {
             return handleRemaining(new OMReader(sft), query);
@@ -152,7 +152,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
         return handleWriterAppend(typeName);
     }
 
@@ -168,7 +168,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName);
         return types.get(typeName);
     }
@@ -185,7 +185,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         return handleWriter(typeName, filter);
     }
 
@@ -193,7 +193,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         final FeatureType featureType = getFeatureType(groupName); //raise an error if type doesn't exist
         final List<FeatureId> result = new ArrayList<FeatureId>();
 
@@ -309,7 +309,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -317,7 +317,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -325,7 +325,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -333,7 +333,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -341,7 +341,7 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -358,7 +358,7 @@ public class OMDataStore extends AbstractDataStore {
         private final ResultSet result;
         private Feature current = null;
 
-        private OMReader(FeatureType type) throws SQLException{
+        private OMReader(final FeatureType type) throws SQLException{
             this.type = type;
             cnx = getConnection();
             final PreparedStatement stmtAll = cnx.prepareStatement(SQL_ALL_SAMPLING_POINT);

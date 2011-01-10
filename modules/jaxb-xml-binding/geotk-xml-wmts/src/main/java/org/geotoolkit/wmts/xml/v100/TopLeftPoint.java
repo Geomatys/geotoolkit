@@ -48,7 +48,7 @@ public class TopLeftPoint {
     public TopLeftPoint() {
     }
 
-    public TopLeftPoint(PointType pt) {
+    public TopLeftPoint(final PointType pt) {
         this.topLeftPoint = factory.createPoint(pt);
     }
 
@@ -64,7 +64,7 @@ public class TopLeftPoint {
     /**
      * @param topLeftPoint the topLeftPoint to set
      */
-    public void setTopLeftPoint(PointType topLeftPoint) {
+    public void setTopLeftPoint(final PointType topLeftPoint) {
         this.topLeftPoint = factory.createPoint(topLeftPoint);
     }
 

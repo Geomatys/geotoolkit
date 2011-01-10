@@ -54,7 +54,7 @@ public class MidpointSplitPointFinder implements ConstraintSplitPointFinder {
     /**
      * Gets the midpoint of the split segment
      */
-    public Coordinate findSplitPoint(Segment seg, Coordinate encroachPt) {
+    public Coordinate findSplitPoint(final Segment seg, final Coordinate encroachPt) {
         Coordinate p0 = seg.getStart();
         Coordinate p1 = seg.getEnd();
         return new Coordinate((p0.x + p1.x) / 2, (p0.y + p1.y) / 2);

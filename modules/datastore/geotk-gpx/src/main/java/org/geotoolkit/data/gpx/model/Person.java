@@ -31,7 +31,7 @@ public class Person {
     private final String email;
     private final URI link;
 
-    public Person(String name, String email, URI link){
+    public Person(final String name, final String email, final URI link){
         this.name = name;
         this.email = email;
         this.link = link;
@@ -58,7 +58,7 @@ public class Person {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

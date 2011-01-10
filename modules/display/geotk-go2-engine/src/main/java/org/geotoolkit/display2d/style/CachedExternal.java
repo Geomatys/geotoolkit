@@ -49,7 +49,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
     private BufferedImage cachedImage = null;
     private boolean isSVG = false;
 
-    private CachedExternal(ExternalGraphic external){
+    private CachedExternal(final ExternalGraphic external){
         super(external);
     }
 
@@ -118,7 +118,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return isValid();
     }
 
@@ -137,7 +137,7 @@ public class CachedExternal extends Cache<ExternalGraphic>{
      * @param size : image size
      * @return BufferedImage
      */
-    public BufferedImage getImage(final Float size, float coeff, RenderingHints hints){
+    public BufferedImage getImage(final Float size, final float coeff, final RenderingHints hints){
         evaluate();
 
         BufferedImage img = cachedImage;
@@ -194,11 +194,11 @@ public class CachedExternal extends Cache<ExternalGraphic>{
         return img;
     }
 
-    public static CachedExternal cache(ExternalGraphic external){
+    public static CachedExternal cache(final ExternalGraphic external){
         return new CachedExternal(external);
     }
 
-    private static BufferedImage recode(BufferedImage buffer, Collection<ColorReplacement> replacements){
+    private static BufferedImage recode(BufferedImage buffer, final Collection<ColorReplacement> replacements){
         if(buffer != null){
             for(final ColorReplacement replace : replacements){
                 final Function fct = replace.getRecoding();

@@ -68,7 +68,7 @@ public class ValuesReference {
     /**
      * Build a new Values reference.
      */
-    public ValuesReference(String value, String reference){
+    public ValuesReference(final String value, final String reference){
         this.value     = value;
         this.reference = reference;
     }

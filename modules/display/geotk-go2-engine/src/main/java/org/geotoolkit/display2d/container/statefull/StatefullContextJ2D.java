@@ -37,7 +37,7 @@ public class StatefullContextJ2D extends StatelessMapItemJ2D<MapContext> {
     }
    
     @Override
-    protected GraphicJ2D parseChild(final MapItem item, int index){
+    protected GraphicJ2D parseChild(final MapItem item, final int index){
 
         if (item instanceof FeatureMapLayer){
             final StatefullFeatureLayerJ2D g2d = new StatefullFeatureLayerJ2D(getCanvas(), (FeatureMapLayer)item);

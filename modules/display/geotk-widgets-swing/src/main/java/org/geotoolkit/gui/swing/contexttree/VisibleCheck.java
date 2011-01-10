@@ -37,7 +37,7 @@ class VisibleCheck extends JCheckBox {
     private static final ImageIcon ICO_NOVISIBLE = IconBundle.getIcon("16_novisible");
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(final Graphics g) {
         int x = (getWidth() - 16) / 2;
         int y = (getHeight() - 16) / 2;
         g.drawImage((isSelected()) ? ICO_VISIBLE.getImage() : ICO_NOVISIBLE.getImage(), x, y, this);

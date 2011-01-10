@@ -55,7 +55,7 @@ public class JDisplacementPane extends StyleElementEditor<Displacement>{
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer){
+    public void setLayer(final MapLayer layer){
         guiX.setLayer(layer);
         guiY.setLayer(layer);
         this.layer = layer;

@@ -40,7 +40,7 @@ public class OfferingPhenomenonEntry implements Entry{
     /**
      * Build a new link between a procedure and an offering. 
      */
-    public OfferingPhenomenonEntry(String idOffering, PhenomenonEntry component) {
+    public OfferingPhenomenonEntry(final String idOffering, final PhenomenonEntry component) {
         this.idOffering = idOffering;
         this.component  = component;
     }

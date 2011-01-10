@@ -84,7 +84,7 @@ public class ServiceIdentificationAdapter extends XmlAdapter<ServiceIdentificati
      * @return A java object which represents the service value.
      */
     @Override
-    public ServiceIdentification unmarshal(ServiceIdentificationAdapter value) throws Exception {
+    public ServiceIdentification unmarshal(final ServiceIdentificationAdapter value) throws Exception {
         System.out.println("per akei");
         if (value == null) {
             return null;
@@ -100,7 +100,7 @@ public class ServiceIdentificationAdapter extends XmlAdapter<ServiceIdentificati
      * @return The adapter for this interface.
      */
     @Override
-    public ServiceIdentificationAdapter marshal(ServiceIdentification value) throws Exception {
+    public ServiceIdentificationAdapter marshal(final ServiceIdentification value) throws Exception {
         return wrap(value);
     }
 

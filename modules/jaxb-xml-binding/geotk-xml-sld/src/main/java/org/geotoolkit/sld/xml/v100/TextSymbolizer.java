@@ -93,7 +93,7 @@ public class TextSymbolizer
      *     {@link Geometry }
      *     
      */
-    public void setGeometry(Geometry value) {
+    public void setGeometry(final Geometry value) {
         this.geometry = value;
     }
 
@@ -117,7 +117,7 @@ public class TextSymbolizer
      *     {@link ParameterValueType }
      *     
      */
-    public void setLabel(ParameterValueType value) {
+    public void setLabel(final ParameterValueType value) {
         this.label = value;
     }
 
@@ -141,7 +141,7 @@ public class TextSymbolizer
      *     {@link Font }
      *     
      */
-    public void setFont(Font value) {
+    public void setFont(final Font value) {
         this.font = value;
     }
 
@@ -165,7 +165,7 @@ public class TextSymbolizer
      *     {@link LabelPlacement }
      *     
      */
-    public void setLabelPlacement(LabelPlacement value) {
+    public void setLabelPlacement(final LabelPlacement value) {
         this.labelPlacement = value;
     }
 
@@ -189,7 +189,7 @@ public class TextSymbolizer
      *     {@link Halo }
      *     
      */
-    public void setHalo(Halo value) {
+    public void setHalo(final Halo value) {
         this.halo = value;
     }
 
@@ -213,7 +213,7 @@ public class TextSymbolizer
      *     {@link Fill }
      *     
      */
-    public void setFill(Fill value) {
+    public void setFill(final Fill value) {
         this.fill = value;
     }
 

@@ -28,11 +28,11 @@ import org.geotoolkit.util.NumberRange;
  */
 public abstract class NotifiedCheckedSet<E> extends CheckedHashSet<E>{
     
-    public NotifiedCheckedSet(Class<E> type) {
+    public NotifiedCheckedSet(final Class<E> type) {
         super(type);
     }
     
-    public NotifiedCheckedSet(Class<E> type, int capacity) {
+    public NotifiedCheckedSet(final Class<E> type, final int capacity) {
         super(type,capacity);
     }
 
@@ -53,7 +53,7 @@ public abstract class NotifiedCheckedSet<E> extends CheckedHashSet<E>{
     }
 
     @Override
-    public boolean addAll(Collection<? extends E> collection) throws IllegalArgumentException, UnsupportedOperationException {
+    public boolean addAll(final Collection<? extends E> collection) throws IllegalArgumentException, UnsupportedOperationException {
         final boolean added = super.addAll(collection);
         if (added) {
             notifyAdd(collection, null );
@@ -62,7 +62,7 @@ public abstract class NotifiedCheckedSet<E> extends CheckedHashSet<E>{
     }
 
     @Override
-    public boolean remove(Object o) throws UnsupportedOperationException {
+    public boolean remove(final Object o) throws UnsupportedOperationException {
         final boolean removed = super.remove(o);
         if (removed) {
             notifyRemove(super.getElementType().cast(o), null );
@@ -71,7 +71,7 @@ public abstract class NotifiedCheckedSet<E> extends CheckedHashSet<E>{
     }
 
     @Override
-    public boolean removeAll(Collection<?> c) throws UnsupportedOperationException {
+    public boolean removeAll(final Collection<?> c) throws UnsupportedOperationException {
         //TODO handle remove by collection events if possible
         // to avoid several calls to remove
         boolean valid = false;

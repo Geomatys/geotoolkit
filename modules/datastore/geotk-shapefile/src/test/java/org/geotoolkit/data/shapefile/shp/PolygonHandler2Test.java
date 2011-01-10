@@ -33,11 +33,11 @@ import java.util.List;
  * @module pending
  */
 public class PolygonHandler2Test extends org.geotoolkit.data.shapefile.AbstractTestCaseSupport {
-    public PolygonHandler2Test(String testName) throws IOException {
+    public PolygonHandler2Test(final String testName) throws IOException {
         super(testName);
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         junit.textui.TestRunner.run(suite(PolygonHandlerTest.class));
     }
 
@@ -87,7 +87,7 @@ public class PolygonHandler2Test extends org.geotoolkit.data.shapefile.AbstractT
         assertEquals(((ArrayList) assigned.get(0)).size(), holes.size());
     }
 
-    public static Geometry rectangle(PrecisionModel pm, int SRID) {
+    public static Geometry rectangle(final PrecisionModel pm, final int SRID) {
         Coordinate[] coords = new Coordinate[5];
 
         for (int i = 0; i < coords.length; i++) {
@@ -97,8 +97,8 @@ public class PolygonHandler2Test extends org.geotoolkit.data.shapefile.AbstractT
         return new GeometryFactory().createLinearRing(coords);
     }
 
-    public static Geometry copyTo(double x, double y, double w, double h,
-            Geometry g) {
+    public static Geometry copyTo(final double x, final double y, final double w, final double h,
+            final Geometry g) {
         if (g.getNumPoints() != 5) {
             throw new IllegalArgumentException("Geometry must have 5 points");
         }

@@ -95,14 +95,14 @@ public class ContentMetadata implements Content{
     /**
      * Build a new content metaData, without version specified.
      */
-    public ContentMetadata(List<CoverageOfferingBriefType> coverageOfferingBrief) {
+    public ContentMetadata(final List<CoverageOfferingBriefType> coverageOfferingBrief) {
         this(null, coverageOfferingBrief);
     }
     
     /**
      * Build a new content metaData.
      */
-    public ContentMetadata(String version, List<CoverageOfferingBriefType> coverageOfferingBrief) {
+    public ContentMetadata(final String version, final List<CoverageOfferingBriefType> coverageOfferingBrief) {
         this.version               = version;
         this.coverageOfferingBrief = coverageOfferingBrief;
     }
@@ -195,7 +195,7 @@ public class ContentMetadata implements Content{
         return actuate;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 

@@ -54,7 +54,7 @@ public class DbaseDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
         final URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();
         
@@ -77,7 +77,7 @@ public class DbaseDataStoreFactory extends AbstractFileDataStoreFactory {
     }
 
     @Override
-    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
         return createDataStore(params);
     }
 

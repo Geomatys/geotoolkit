@@ -312,7 +312,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      *         the geometry boundary; <code>false</code> otherwise.
      */
     @Override
-    public boolean contains(double x, double y) {
+    public boolean contains(final double x, final double y) {
         // To be overriden by subclasses with a more efficient implementation.
         return contains(new Point2D.Double(x,y));
     }
@@ -333,7 +333,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      * system (as returned by {@link #getCoordinateSystem}).
      */
     @Override
-    public boolean contains(double x, double y, double width, double height) {
+    public boolean contains(final double x, final double y, final double width, final double height) {
         return contains(new Rectangle2D.Double(x, y, width, height));
     }
 
@@ -362,7 +362,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      * system (as returned by {@link #getCoordinateSystem}).
      */
     @Override
-    public boolean intersects(double x, double y, double width, double height) {
+    public boolean intersects(final double x, final double y, final double width, final double height) {
         return intersects(new Rectangle2D.Double(x, y, width, height));
     }
 
@@ -513,7 +513,7 @@ public abstract class Geometry implements Shape, Cloneable, Serializable {
      *        {@linkplain #getCoordinateSystem coordinate system} (linear or angular units,
      *        see {@link #getRenderingResolution} for a discussion).
      */
-    public void setRenderingResolution(float resolution) {
+    public void setRenderingResolution(final float resolution) {
         // The default implementation ignore this call, since this method is just a hint.
         // Subclasses will do the real work.
     }

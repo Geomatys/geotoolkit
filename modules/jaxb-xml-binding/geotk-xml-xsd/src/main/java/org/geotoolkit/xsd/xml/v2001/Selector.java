@@ -78,7 +78,7 @@ public class Selector extends Annotated {
      *     {@link String }
      *     
      */
-    public void setXpath(String value) {
+    public void setXpath(final String value) {
         this.xpath = value;
     }
 

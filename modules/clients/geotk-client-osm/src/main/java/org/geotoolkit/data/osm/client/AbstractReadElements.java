@@ -40,7 +40,7 @@ public abstract class AbstractReadElements extends AbstractRequest implements Re
      *
      * @param serverURL The server url.
      */
-    protected AbstractReadElements(final String serverURL, String subpath){
+    protected AbstractReadElements(final String serverURL, final String subpath){
         super(serverURL, subpath);
     }
 
@@ -56,7 +56,7 @@ public abstract class AbstractReadElements extends AbstractRequest implements Re
      * {@inheritDoc }
      */
     @Override
-    public void setElementType(Class<?> clazz) {
+    public void setElementType(final Class<?> clazz) {
         this.type = clazz;
     }
 
@@ -64,7 +64,7 @@ public abstract class AbstractReadElements extends AbstractRequest implements Re
      * {@inheritDoc }
      */
     @Override
-    public void setIds(List<Long> ids) {
+    public void setIds(final List<Long> ids) {
         this.ids = ids;
     }
 

@@ -76,7 +76,7 @@ public class ConversionToPreferredUnitType
      *     {@link Double }
      *     
      */
-    public void setFactor(Double value) {
+    public void setFactor(final Double value) {
         this.factor = value;
     }
 
@@ -100,7 +100,7 @@ public class ConversionToPreferredUnitType
      *     {@link FormulaType }
      *     
      */
-    public void setFormula(FormulaType value) {
+    public void setFormula(final FormulaType value) {
         this.formula = value;
     }
 

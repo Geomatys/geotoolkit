@@ -117,7 +117,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     /**
      * Sets the value of the name property.
      */
-    public void setName(InternationalStringType value) {
+    public void setName(final InternationalStringType value) {
         this.name = value;
     }
 
@@ -131,7 +131,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     /**
      * Sets the value of the description property.
      */
-    public void setDescription(InternationalStringType value) {
+    public void setDescription(final InternationalStringType value) {
         this.description = value;
     }
 
@@ -145,7 +145,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     /**
      * Sets the value of the versionInfo property.
      */
-    public void setVersionInfo(VersionInfoType value) {
+    public void setVersionInfo(final VersionInfoType value) {
         this.versionInfo = value;
     }
 
@@ -162,7 +162,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     /**
      * Sets the value of the classification property.
      */
-    public void setClassification(ClassificationType classification) {
+    public void setClassification(final ClassificationType classification) {
         if (this.classification == null) {
             this.classification = new ArrayList<ClassificationType>();
         }
@@ -172,7 +172,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     /**
      * Sets the value of the classification property.
      */
-    public void setClassification(List<ClassificationType> classification) {
+    public void setClassification(final List<ClassificationType> classification) {
        this.classification = classification;
     }
     
@@ -190,7 +190,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
         /**
      * Sets the value of the externalIdentifier property.
      */
-    public void setExternalIdentifier(ExternalIdentifierType externalIdentifier) {
+    public void setExternalIdentifier(final ExternalIdentifierType externalIdentifier) {
         if (this.externalIdentifier == null) {
             this.externalIdentifier = new ArrayList<ExternalIdentifierType>();
         }
@@ -217,7 +217,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     /**
      * Sets the value of the lid property.
      */
-    public void setLid(String value) {
+    public void setLid(final String value) {
         this.lid = value;
     }
 
@@ -231,7 +231,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     /**
      * Sets the value of the objectType property.
      */
-    public void setObjectType(String value) {
+    public void setObjectType(final String value) {
         this.objectType = value;
     }
 
@@ -245,7 +245,7 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
     /**
      * Sets the value of the status property.
      */
-    public void setStatus(String value) {
+    public void setStatus(final String value) {
         this.status = value;
     }
     

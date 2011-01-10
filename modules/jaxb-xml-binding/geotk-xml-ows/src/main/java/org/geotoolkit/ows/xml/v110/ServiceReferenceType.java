@@ -71,7 +71,7 @@ public class ServiceReferenceType extends ReferenceType {
      * Sets the value of the requestMessage property.
      * 
      */
-    public void setRequestMessage(Object value) {
+    public void setRequestMessage(final Object value) {
         this.requestMessage = value;
     }
 
@@ -87,7 +87,7 @@ public class ServiceReferenceType extends ReferenceType {
      * Sets the value of the requestMessageReference property.
      * 
      */
-    public void setRequestMessageReference(String value) {
+    public void setRequestMessageReference(final String value) {
         this.requestMessageReference = value;
     }
 

@@ -45,8 +45,8 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
     private final CachedSymbolizer cachedoutLine;
 
 
-    public CachedRasterSymbolizer(RasterSymbolizer symbol,
-            SymbolizerRendererService<RasterSymbolizer,? extends CachedSymbolizer<RasterSymbolizer>> renderer){
+    public CachedRasterSymbolizer(final RasterSymbolizer symbol,
+            final SymbolizerRendererService<RasterSymbolizer,? extends CachedSymbolizer<RasterSymbolizer>> renderer){
         super(symbol,renderer);
 
         Symbolizer outline = styleElement.getImageOutline();
@@ -111,7 +111,7 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return true;
     }
 
@@ -119,7 +119,7 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         evaluate();
 
         if(cachedoutLine == null){

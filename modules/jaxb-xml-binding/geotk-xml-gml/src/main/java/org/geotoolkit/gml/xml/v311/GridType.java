@@ -80,7 +80,7 @@ public class GridType extends AbstractGeometryType {
     /**
      * Build a new GridType.
      */
-    public GridType(GridLimitsType limits, List<String> axisName) {
+    public GridType(final GridLimitsType limits, final List<String> axisName) {
         this.axisName = axisName;
         if (axisName != null) {
             dimension = axisName.size();
@@ -88,7 +88,7 @@ public class GridType extends AbstractGeometryType {
         this.limits = limits; 
     }
 
-    public GridType(Grid grid) {
+    public GridType(final Grid grid) {
         if (grid != null) {
             this.axisName  = grid.getAxisNames();
             this.dimension = grid.getDimension();
@@ -106,7 +106,7 @@ public class GridType extends AbstractGeometryType {
     /**
      * Sets the value of the limits property.
      */
-    public void setLimits(GridLimitsType limits) {
+    public void setLimits(final GridLimitsType limits) {
         this.limits = limits;
     }
 
@@ -123,7 +123,7 @@ public class GridType extends AbstractGeometryType {
     /**
      * Sets the value of the axisName property.
      */
-    public void setAxisName(List<String> axisName) {
+    public void setAxisName(final List<String> axisName) {
         this.axisName = axisName;
     }
 
@@ -137,23 +137,23 @@ public class GridType extends AbstractGeometryType {
     /**
      * Gets the value of the dimension property.
      */
-    public void setDimension(Integer dimension) {
+    public void setDimension(final Integer dimension) {
         this.dimension = dimension;
     }
 
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

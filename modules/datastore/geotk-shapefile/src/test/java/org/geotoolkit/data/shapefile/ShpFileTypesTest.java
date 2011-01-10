@@ -42,7 +42,7 @@ public class ShpFileTypesTest extends TestCase {
 
     }
 
-    private void assertToURLBase(ShpFileType type) throws MalformedURLException {
+    private void assertToURLBase(final ShpFileType type) throws MalformedURLException {
         String urlString = "file://c:/shapefiles/file1." + type.extension;
         URL url = new URL(urlString);
 
@@ -56,7 +56,7 @@ public class ShpFileTypesTest extends TestCase {
         }
     }
 
-    private void assertToFileBase(ShpFileType type) {
+    private void assertToFileBase(final ShpFileType type) {
         File file = new File("c:\\shapefiles\\file1." + type.extension);
 
         ShpFileType[] values = ShpFileType.values();

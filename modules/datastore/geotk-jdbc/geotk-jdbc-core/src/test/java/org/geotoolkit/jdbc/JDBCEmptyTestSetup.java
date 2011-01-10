@@ -28,7 +28,7 @@ import java.sql.SQLException;
  */
 public abstract class JDBCEmptyTestSetup extends JDBCDelegatingTestSetup {
 
-    protected JDBCEmptyTestSetup(JDBCTestSetup delegate) {
+    protected JDBCEmptyTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
     }
 

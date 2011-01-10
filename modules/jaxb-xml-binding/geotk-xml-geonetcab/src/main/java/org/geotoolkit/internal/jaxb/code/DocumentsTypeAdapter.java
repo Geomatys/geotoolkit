@@ -58,7 +58,7 @@ public final class DocumentsTypeAdapter extends CodeListAdapter<DocumentsTypeAda
      * {@inheritDoc}
      */
     @Override
-    protected DocumentsTypeAdapter wrap(CodeListProxy proxy) {
+    protected DocumentsTypeAdapter wrap(final CodeListProxy proxy) {
         return new DocumentsTypeAdapter(proxy);
     }
 

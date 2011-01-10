@@ -77,7 +77,7 @@ public class EmailAddressType {
     /**
      * Sets the value of the slot property.
      */
-    public void setSlot(SlotType slot) {
+    public void setSlot(final SlotType slot) {
         if (this.slot == null) {
             this.slot = new ArrayList<SlotType>();
         }
@@ -87,7 +87,7 @@ public class EmailAddressType {
      /**
      * Sets the value of the slot property.
      */
-    public void setSlot(List<SlotType> slot) {
+    public void setSlot(final List<SlotType> slot) {
         this.slot = slot;
     }
 
@@ -101,7 +101,7 @@ public class EmailAddressType {
     /**
      * Sets the value of the address property.
      */
-    public void setAddress(String value) {
+    public void setAddress(final String value) {
         this.address = value;
     }
 
@@ -115,7 +115,7 @@ public class EmailAddressType {
     /**
      * Sets the value of the type property.
     */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

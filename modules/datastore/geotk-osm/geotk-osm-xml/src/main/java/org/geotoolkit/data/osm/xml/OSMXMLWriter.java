@@ -59,7 +59,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         writer.writeStartElement(TAG_OSM);
     }
 
-    public void writeOSMChangeTag(String version, String generator) throws XMLStreamException{
+    public void writeOSMChangeTag(final String version, final String generator) throws XMLStreamException{
         writer.writeStartElement(TAG_OSM_CHANGE);
         if(version != null){
             writer.writeAttribute(ATT_VERSION, version);
@@ -70,7 +70,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         }
     }
 
-    public void writeChangeSet(ChangeSet cs) throws XMLStreamException{
+    public void writeChangeSet(final ChangeSet cs) throws XMLStreamException{
         writer.writeStartElement(TAG_CHANGESET);
 
         final Integer id = cs.getId();
@@ -107,7 +107,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writeTransaction(Transaction transaction) throws XMLStreamException{
+    public void writeTransaction(final Transaction transaction) throws XMLStreamException{
         if(transaction == null) return;
 
         writer.writeStartElement(transaction.getType().getTagName());
@@ -128,7 +128,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writeElement(IdentifiedElement element) throws XMLStreamException{
+    public void writeElement(final IdentifiedElement element) throws XMLStreamException{
         if(element instanceof Node){
             writeNode((Node) element);
         }else if(element instanceof Way){
@@ -138,7 +138,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         }
     }
 
-    private void writeCommunAttributs(IdentifiedElement element) throws XMLStreamException{
+    private void writeCommunAttributs(final IdentifiedElement element) throws XMLStreamException{
         final int changeset = element.getChangeset();
         if(changeset > 0){
             writer.writeAttribute(ATT_CHANGESET, Integer.toString(changeset));
@@ -162,7 +162,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         }
     }
 
-    public void writeNode(Node element) throws XMLStreamException{
+    public void writeNode(final Node element) throws XMLStreamException{
         writer.writeStartElement(TAG_NODE);
         writer.writeAttribute(ATT_NODE_LAT, Double.toString(element.getLatitude()));
         writer.writeAttribute(ATT_NODE_LON, Double.toString(element.getLongitude()));
@@ -171,7 +171,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writeWay(Way element) throws XMLStreamException{
+    public void writeWay(final Way element) throws XMLStreamException{
         writer.writeStartElement(TAG_WAY);
         writeCommunAttributs(element);
         writeWayNodes(element.getNodesIds());
@@ -179,7 +179,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    private void writeWayNodes(List<Long> nodes) throws XMLStreamException{
+    private void writeWayNodes(final List<Long> nodes) throws XMLStreamException{
         for(Long ref : nodes){
             writer.writeStartElement(TAG_WAYND);
             writer.writeAttribute(ATT_WAYND_REF, Long.toString(ref));
@@ -187,7 +187,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         }
     }
 
-    public void writeRelation(Relation element) throws XMLStreamException{
+    public void writeRelation(final Relation element) throws XMLStreamException{
         writer.writeStartElement(TAG_REL);
         writeCommunAttributs(element);
         writeRelationMembers(element.getMembers());
@@ -195,7 +195,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    private void writeRelationMembers(List<Member> members) throws XMLStreamException{
+    private void writeRelationMembers(final List<Member> members) throws XMLStreamException{
         for(Member m : members){
             writer.writeStartElement(TAG_RELMB);
             writer.writeAttribute(ATT_RELMB_REF, Long.toString(m.getReference()));
@@ -206,7 +206,7 @@ public class OSMXMLWriter extends StaxStreamWriter{
     }
 
 
-    public void writeTags(List<Tag> tags) throws XMLStreamException{
+    public void writeTags(final List<Tag> tags) throws XMLStreamException{
         if(tags == null || tags.isEmpty()) return;
 
         for(final Tag tag : tags){

@@ -56,8 +56,8 @@ public abstract class PageStore {
      * @throws UnsupportedOperationException
      *                 DOCUMENT ME!
      */
-    public PageStore(DataDefinition def, int maxNodeEntries,
-            int minNodeEntries, short splitAlg) throws TreeException {
+    public PageStore(final DataDefinition def, final int maxNodeEntries,
+            final int minNodeEntries, final short splitAlg) throws TreeException {
         this();
 
         if (minNodeEntries > (maxNodeEntries / 2)) {
@@ -201,7 +201,7 @@ public abstract class PageStore {
      * 
      * @param lock
      */
-    public void releaseLock(Lock lock) {
+    public void releaseLock(final Lock lock) {
         this.lockManager.release(lock);
     }
 

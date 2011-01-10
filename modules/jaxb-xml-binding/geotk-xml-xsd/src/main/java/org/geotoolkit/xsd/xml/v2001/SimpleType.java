@@ -90,7 +90,7 @@ public abstract class SimpleType extends Annotated {
      *     {@link Restriction }
      *     
      */
-    public void setRestriction(Restriction value) {
+    public void setRestriction(final Restriction value) {
         this.restriction = value;
     }
 
@@ -114,7 +114,7 @@ public abstract class SimpleType extends Annotated {
      *     {@link org.w3._2001.xmlschema.List }
      *     
      */
-    public void setList(org.geotoolkit.xsd.xml.v2001.List value) {
+    public void setList(final org.geotoolkit.xsd.xml.v2001.List value) {
         this.list = value;
     }
 
@@ -138,7 +138,7 @@ public abstract class SimpleType extends Annotated {
      *     {@link Union }
      *     
      */
-    public void setUnion(Union value) {
+    public void setUnion(final Union value) {
         this.union = value;
     }
 
@@ -191,7 +191,7 @@ public abstract class SimpleType extends Annotated {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

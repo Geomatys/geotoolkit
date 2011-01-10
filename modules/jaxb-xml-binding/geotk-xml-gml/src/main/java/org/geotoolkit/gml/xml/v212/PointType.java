@@ -78,7 +78,7 @@ public class PointType extends AbstractGeometryType {
      *     {@link CoordType }
      *     
      */
-    public void setCoord(CoordType value) {
+    public void setCoord(final CoordType value) {
         this.coord = value;
     }
 
@@ -102,7 +102,7 @@ public class PointType extends AbstractGeometryType {
      *     {@link CoordinatesType }
      *     
      */
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 

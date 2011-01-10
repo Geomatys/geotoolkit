@@ -182,7 +182,7 @@ public class JRConfigTree<C> extends Outline{
         return fields;
     }
 
-    public void setDesign(JasperDesign design){
+    public void setDesign(final JasperDesign design){
         treeModel = new JRModel(design);
         rowModel = new JRRowModel();
 
@@ -194,7 +194,7 @@ public class JRConfigTree<C> extends Outline{
 
     }
 
-    public JasperDesign getDesign(JasperDesign design){
+    public JasperDesign getDesign(final JasperDesign design){
         return treeModel.design;
     }
 
@@ -205,7 +205,7 @@ public class JRConfigTree<C> extends Outline{
         private final DefaultMutableTreeNode parameters;
         private final DefaultMutableTreeNode fields;
 
-        JRModel(JasperDesign design){
+        JRModel(final JasperDesign design){
             this.design = design;
             root = new DefaultMutableTreeNode("root");
             parameters = new DefaultMutableTreeNode(STR_PARAMETERS);
@@ -231,39 +231,39 @@ public class JRConfigTree<C> extends Outline{
         }
 
         @Override
-        public Object getChild(Object candidate, int index) {
+        public Object getChild(final Object candidate, final int index) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) candidate;
             return node.getChildAt(index);
         }
 
         @Override
-        public int getChildCount(Object candidate) {
+        public int getChildCount(final Object candidate) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) candidate;
             return node.getChildCount();
         }
 
         @Override
-        public boolean isLeaf(Object candidate) {
+        public boolean isLeaf(final Object candidate) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) candidate;
             return node.isLeaf();
         }
 
         @Override
-        public void valueForPathChanged(TreePath path, Object newValue) {
+        public void valueForPathChanged(final TreePath path, final Object newValue) {
         }
 
         @Override
-        public int getIndexOfChild(Object parent, Object child) {
+        public int getIndexOfChild(final Object parent, final Object child) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) parent;
             return node.getIndex( (TreeNode)child);
         }
 
         @Override
-        public void addTreeModelListener(TreeModelListener l) {
+        public void addTreeModelListener(final TreeModelListener l) {
         }
 
         @Override
-        public void removeTreeModelListener(TreeModelListener l) {
+        public void removeTreeModelListener(final TreeModelListener l) {
         }
 
     }
@@ -273,7 +273,7 @@ public class JRConfigTree<C> extends Outline{
         private Map<Object,Object> values = new HashMap<Object,Object>();
 
 
-        private Object findBestMapper(JRField field){
+        private Object findBestMapper(final JRField field){
             final String name = field.getName();
             final Class classe = field.getValueClass();
 
@@ -297,7 +297,7 @@ public class JRConfigTree<C> extends Outline{
         }
 
         @Override
-        public Object getValueFor(Object candidate, int index) {
+        public Object getValueFor(final Object candidate, final int index) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) candidate;
             Object userObj = node.getUserObject();
 
@@ -317,12 +317,12 @@ public class JRConfigTree<C> extends Outline{
         }
 
         @Override
-        public Class getColumnClass(int arg0) {
+        public Class getColumnClass(final int arg0) {
             return Object.class;
         }
 
         @Override
-        public boolean isCellEditable(Object candidate, int index) {
+        public boolean isCellEditable(final Object candidate, final int index) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) candidate;
             Object userObj = node.getUserObject();
 
@@ -338,7 +338,7 @@ public class JRConfigTree<C> extends Outline{
         }
 
         @Override
-        public void setValueFor(Object candidate, int index, Object newValue) {
+        public void setValueFor(final Object candidate, final int index, final Object newValue) {
             DefaultMutableTreeNode node = (DefaultMutableTreeNode) candidate;
             Object userObj = node.getUserObject();
 
@@ -353,7 +353,7 @@ public class JRConfigTree<C> extends Outline{
         }
 
         @Override
-        public String getColumnName(int arg0) {
+        public String getColumnName(final int arg0) {
             return "editor";
         }
 
@@ -364,7 +364,7 @@ public class JRConfigTree<C> extends Outline{
         private final JLabel label = new JLabel();
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
                         
             if(value == null){
                 label.setText("");
@@ -425,7 +425,7 @@ public class JRConfigTree<C> extends Outline{
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
 
             mapper = null;
             

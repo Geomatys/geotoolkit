@@ -62,14 +62,14 @@ public class PropertyNameType implements PropertyName {
     /**
      * Build a new propertyName with the specified name.
      */
-    public PropertyNameType(String content) {
+    public PropertyNameType(final String content) {
         this.content = content;
     }
 
     /**
      * Build a new propertyName with the specified name.
      */
-    public PropertyNameType(QName content) {
+    public PropertyNameType(final QName content) {
         if (content != null) {
             if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
                 this.content = content.getNamespaceURI() + ':' + content.getLocalPart();
@@ -88,7 +88,7 @@ public class PropertyNameType implements PropertyName {
     /**
      * Gets the value of the content property.
      */
-    public void setContent(String content) {
+    public void setContent(final String content) {
         this.content = content;
     }
 
@@ -101,15 +101,15 @@ public class PropertyNameType implements PropertyName {
         return content;
     }
 
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
     

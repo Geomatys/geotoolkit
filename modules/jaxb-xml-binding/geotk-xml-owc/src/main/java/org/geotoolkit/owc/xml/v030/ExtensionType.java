@@ -77,7 +77,7 @@ public class ExtensionType {
      *     {@link Object }
      *     
      */
-    public void setAny(Object value) {
+    public void setAny(final Object value) {
         this.any = value;
     }
 

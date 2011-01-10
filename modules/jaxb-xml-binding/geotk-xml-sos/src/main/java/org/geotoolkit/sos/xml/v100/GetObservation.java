@@ -149,10 +149,10 @@ public class GetObservation extends RequestBaseType {
     /**
      * Build a new full GetObservation request
      */
-    public GetObservation(String version, String offering, List<EventTime> eventTime, List<String> procedure,
-            List<String> observedProperty, GetObservation.FeatureOfInterest featureOfInterest, 
-            GetObservation.Result result, String responseFormat, QName resultModel, ResponseModeType responseMode,
-            String srsName){
+    public GetObservation(final String version, final String offering, final List<EventTime> eventTime, final List<String> procedure,
+            final List<String> observedProperty, final GetObservation.FeatureOfInterest featureOfInterest, 
+            final GetObservation.Result result, final String responseFormat, final QName resultModel, final ResponseModeType responseMode,
+            final String srsName){
         super(version);
         this.eventTime         = eventTime;
         this.featureOfInterest = featureOfInterest;
@@ -406,11 +406,11 @@ public class GetObservation extends RequestBaseType {
 
         }
 
-        public FeatureOfInterest(List<String> objectID) {
+        public FeatureOfInterest(final List<String> objectID) {
             this.objectID = objectID;
         }
 
-        public FeatureOfInterest(BBOXType bbox) {
+        public FeatureOfInterest(final BBOXType bbox) {
             this.bbox = bbox;
         }
 
@@ -652,7 +652,7 @@ public class GetObservation extends RequestBaseType {
 
         }
 
-        public Result(ComparisonOpsType ops) {
+        public Result(final ComparisonOpsType ops) {
             if (ops instanceof PropertyIsLessThan) {
                 this.propertyIsLessThan = (BinaryComparisonOpType) ops;
             } else if (ops instanceof PropertyIsGreaterThanOrEqualTo) {

@@ -79,7 +79,7 @@ public class GraphicStrokeType {
      *     {@link GraphicType }
      *     
      */
-    public void setGraphic(GraphicType value) {
+    public void setGraphic(final GraphicType value) {
         this.graphic = value;
     }
 
@@ -103,7 +103,7 @@ public class GraphicStrokeType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setInitialGap(ParameterValueType value) {
+    public void setInitialGap(final ParameterValueType value) {
         this.initialGap = value;
     }
 
@@ -127,7 +127,7 @@ public class GraphicStrokeType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setGap(ParameterValueType value) {
+    public void setGap(final ParameterValueType value) {
         this.gap = value;
     }
 

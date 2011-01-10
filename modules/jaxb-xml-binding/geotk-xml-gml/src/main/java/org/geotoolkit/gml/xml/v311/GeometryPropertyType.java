@@ -88,7 +88,7 @@ public class GeometryPropertyType {
 
     }
 
-    public GeometryPropertyType(AbstractGeometryType value) {
+    public GeometryPropertyType(final AbstractGeometryType value) {
         if (value instanceof PolygonType) {
             abstractGeometry = factory.createPolygon((PolygonType) value);
         } else if (value instanceof OrientableSurfaceType) {
@@ -196,7 +196,7 @@ public class GeometryPropertyType {
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     
      */
-    public void setJbAbstractGeometry(JAXBElement<? extends AbstractGeometryType> value) {
+    public void setJbAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
     }
 
@@ -275,7 +275,7 @@ public class GeometryPropertyType {
      *     {@code <}{@link MultiSolidType }{@code >}
      *
      */
-    public void setAbstractGeometry(AbstractGeometryType value) {
+    public void setAbstractGeometry(final AbstractGeometryType value) {
         if (value instanceof PolygonType) {
             abstractGeometry = factory.createPolygon((PolygonType) value);
         } else if (value instanceof CurveType) {
@@ -331,7 +331,7 @@ public class GeometryPropertyType {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -355,7 +355,7 @@ public class GeometryPropertyType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -379,7 +379,7 @@ public class GeometryPropertyType {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -403,7 +403,7 @@ public class GeometryPropertyType {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -427,7 +427,7 @@ public class GeometryPropertyType {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -451,7 +451,7 @@ public class GeometryPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -475,7 +475,7 @@ public class GeometryPropertyType {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -499,7 +499,7 @@ public class GeometryPropertyType {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

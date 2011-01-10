@@ -86,7 +86,7 @@ public class GNC_TrainingDurationCode extends CodeList<GNC_TrainingDurationCode>
      * Returns the GNC_TrainingDurationCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_TrainingDurationCode valueOf(String code) {
+    public static GNC_TrainingDurationCode valueOf(final String code) {
         return valueOf(GNC_TrainingDurationCode.class, code);
     }
 }

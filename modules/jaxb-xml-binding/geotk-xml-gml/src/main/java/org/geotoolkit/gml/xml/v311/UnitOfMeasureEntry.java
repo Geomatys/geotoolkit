@@ -63,7 +63,7 @@ public class UnitOfMeasureEntry implements BaseUnit, Entry {
     /**
      * Créé une nouvelle unité de mesure.
      */
-    public UnitOfMeasureEntry(String id, String name, String quantityType, String unitsSystem) {
+    public UnitOfMeasureEntry(final String id, final String name, final String quantityType, final String unitsSystem) {
         this.id           = id;
         this.name         = name;
         this.quantityType = quantityType;

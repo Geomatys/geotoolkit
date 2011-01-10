@@ -68,7 +68,7 @@ public class Extent {
       * @param name     The name (often the type) of this Dimension block (time, elevation,...)
       * @param _default The default value if its not specified.
       */
-    public Extent(final String name, final String _default, String value) {
+    public Extent(final String name, final String _default, final String value) {
         
         this.name           = name;
         this._default       = _default;

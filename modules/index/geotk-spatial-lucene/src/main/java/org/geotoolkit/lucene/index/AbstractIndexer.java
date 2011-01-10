@@ -89,7 +89,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param configDirectory
      * @param analyzer
      */
-    public AbstractIndexer(String serviceID, File configDirectory, Analyzer analyzer) {
+    public AbstractIndexer(final String serviceID, final File configDirectory, final Analyzer analyzer) {
         super(analyzer);
         
         // we get the last index directory
@@ -130,14 +130,14 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param serviceID
      * @param configDirectory
      */
-    public AbstractIndexer(String serviceID, File configDirectory) {
+    public AbstractIndexer(final String serviceID, final File configDirectory) {
         this(serviceID, configDirectory, null);
     }
 
     /**
      * Replace the precedent index directory by another pre-generated.
      */
-    private void deleteOldIndexDir(File configDirectory, String serviceID, String currentDirName) {
+    private void deleteOldIndexDir(final File configDirectory, final String serviceID, final String currentDirName) {
         for (File indexDirectory : configDirectory.listFiles(new IndexDirectoryFilter(serviceID))) {
             final String dirName = indexDirectory.getName();
             if (!dirName.equals(currentDirName)) {
@@ -169,7 +169,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param writer An Lucene index writer.
      * @param object The object to index.
      */
-    public void indexDocument(IndexWriter writer, E meta) {
+    public void indexDocument(final IndexWriter writer, final E meta) {
         try {
             //adding the document in a specific model. in this case we use a MDwebDocument.
             writer.addDocument(createDocument(meta));
@@ -188,7 +188,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      *
      * @param object The object to index.
      */
-    public void indexDocument(E meta) {
+    public void indexDocument(final E meta) {
         try {
             final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), analyzer, false,IndexWriter.MaxFieldLength.UNLIMITED);
 
@@ -226,7 +226,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      *
      * @param identifier
      */
-    public void removeDocument(String identifier) {
+    public void removeDocument(final String identifier) {
         try {
             final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), analyzer, false, MaxFieldLength.UNLIMITED);
 
@@ -281,7 +281,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param srid coordinate spatial reference identifier.
      * @return
      */
-    protected byte[] toBytes(double minx, double maxx, double miny, double maxy, int srid){
+    protected byte[] toBytes(final double minx, final double maxx, final double miny, final double maxy, final int srid){
         coords[0].x = minx;
         coords[0].y = miny;
         coords[1].x = minx;
@@ -305,7 +305,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param maxy maximal Y coordinate.
      * @param srid coordinate spatial reference identifier.
      */
-    protected Polygon getPolygon(double minx, double maxx, double miny, double maxy, int srid){
+    protected Polygon getPolygon(final double minx, final double maxx, final double miny, final double maxy, final int srid){
         final Coordinate[] crds = new Coordinate[]{
         new Coordinate(0, 0),
         new Coordinate(0, 0),
@@ -341,7 +341,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param maxy maximal Y coordinate.
      * @param srid coordinate spatial reference identifier.
      */
-    protected void addBoundingBox(Document doc, double minx, double maxx, double miny, double maxy, int srid) {
+    protected void addBoundingBox(final Document doc, final double minx, final double maxx, final double miny, final double maxy, final int srid) {
         addGeometry(doc, toBytes(minx, maxx, miny, maxy,srid));
     }
 
@@ -355,7 +355,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param maxy a list of maximal Y coordinate.
      * @param srid coordinate spatial reference identifier.
      */
-    protected void addMultipleBoundingBox(Document doc, List<Double> minx, List<Double> maxx, List<Double> miny, List<Double> maxy, int srid) {
+    protected void addMultipleBoundingBox(final Document doc, final List<Double> minx, final List<Double> maxx, final List<Double> miny, final List<Double> maxy, final int srid) {
         final Polygon[] polygons = new Polygon[minx.size()];
         for (int i = 0; i < minx.size(); i++) {
             polygons[i] = getPolygon(minx.get(i), maxx.get(i), miny.get(i), maxy.get(i),srid);
@@ -369,7 +369,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param doc The lucene document currently building.
      * @param geom A JTS geometry
      */
-    public static void addGeometry(Document doc, Geometry geom) {
+    public static void addGeometry(final Document doc, final Geometry geom) {
         addGeometry(doc, WKBUtils.toWKBwithSRID(geom));
     }
 
@@ -378,7 +378,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param doc The lucene document currently building.
      * @param geom A geometry byte encoded.
      */
-    public static void addGeometry(Document doc, byte[] geom) {
+    public static void addGeometry(final Document doc, final byte[] geom) {
         doc.add(new Field(LuceneOGCFilter.GEOMETRY_FIELD_NAME,geom,Field.Store.YES));
     }
 
@@ -393,7 +393,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
     /**
      * This method stop all the current indexation running
      */
-    public static void stopIndexation(List<String> ids) {
+    public static void stopIndexation(final List<String> ids) {
         stopIndexing = true;
         if (ids != null) {
             for (String id: ids) {
@@ -432,7 +432,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
          */
         private final String prefix;
 
-        public IndexDirectoryFilter(String id) {
+        public IndexDirectoryFilter(final String id) {
             if (id != null) {
                 prefix = id;
             } else {
@@ -448,7 +448,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
          * @return True if the specified file in the current directory match the conditions.
          */
         @Override
-        public boolean accept(File dir, String name) {
+        public boolean accept(final File dir, final String name) {
             File f = new File(dir, name);
             if ("all".equals(prefix)) {
                 return (name.indexOf("index-") != -1 && f.isDirectory());

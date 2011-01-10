@@ -68,7 +68,7 @@ public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -76,7 +76,7 @@ public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Creation of OSMbin datastore not supported yet.");
     }
 

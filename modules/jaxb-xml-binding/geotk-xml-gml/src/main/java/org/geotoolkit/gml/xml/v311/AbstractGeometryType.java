@@ -97,18 +97,18 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
      */
     AbstractGeometryType(){}
 
-    public AbstractGeometryType(Integer srsDimension, String srsName, List<String> axisLabels, List<String> uomLabels){
+    public AbstractGeometryType(final Integer srsDimension, final String srsName, final List<String> axisLabels, final List<String> uomLabels){
         this.axisLabels   = axisLabels;
         this.srsDimension = srsDimension;
         this.srsName      = srsName;
         this.uomLabels    = uomLabels;
     }
 
-    public AbstractGeometryType(String srsName) {
+    public AbstractGeometryType(final String srsName) {
         this.srsName      = srsName;
     }
 
-    public AbstractGeometryType(String id, String srsName) {
+    public AbstractGeometryType(final String id, final String srsName) {
         super(id);
         this.srsName      = srsName;
     }
@@ -133,7 +133,7 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
      *     {@link String }
      *     
      */
-    public void setGid(String value) {
+    public void setGid(final String value) {
         this.gid = value;
     }
 
@@ -157,7 +157,7 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
      *     {@link String }
      *     
      */
-    public void setSrsName(String value) {
+    public void setSrsName(final String value) {
         this.srsName = value;
     }
 
@@ -181,7 +181,7 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
      *     {@link Integer }
      *     
      */
-    public void setSrsDimension(Integer value) {
+    public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
     }
 
@@ -265,12 +265,12 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
     }
 
     @Override
-    public double distance(Geometry geometry) {
+    public double distance(final Geometry geometry) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getDimension(DirectPosition point) {
+    public int getDimension(final DirectPosition point) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -290,12 +290,12 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
     }
 
     @Override
-    public Geometry transform(CoordinateReferenceSystem newCRS) throws TransformException {
+    public Geometry transform(final CoordinateReferenceSystem newCRS) throws TransformException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Geometry transform(CoordinateReferenceSystem newCRS, MathTransform transform) throws TransformException {
+    public Geometry transform(final CoordinateReferenceSystem newCRS, final MathTransform transform) throws TransformException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -315,7 +315,7 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
     }
 
     @Override
-    public Geometry getBuffer(double distance) {
+    public Geometry getBuffer(final double distance) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -330,42 +330,42 @@ public abstract class AbstractGeometryType extends AbstractGMLEntry implements G
     }
 
     @Override
-    public boolean contains(TransfiniteSet pointSet) {
+    public boolean contains(final TransfiniteSet pointSet) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean contains(DirectPosition point) {
+    public boolean contains(final DirectPosition point) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean intersects(TransfiniteSet pointSet) {
+    public boolean intersects(final TransfiniteSet pointSet) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean equals(TransfiniteSet pointSet) {
+    public boolean equals(final TransfiniteSet pointSet) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public TransfiniteSet union(TransfiniteSet pointSet) {
+    public TransfiniteSet union(final TransfiniteSet pointSet) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public TransfiniteSet intersection(TransfiniteSet pointSet) {
+    public TransfiniteSet intersection(final TransfiniteSet pointSet) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public TransfiniteSet difference(TransfiniteSet pointSet) {
+    public TransfiniteSet difference(final TransfiniteSet pointSet) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public TransfiniteSet symmetricDifference(TransfiniteSet pointSet) {
+    public TransfiniteSet symmetricDifference(final TransfiniteSet pointSet) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

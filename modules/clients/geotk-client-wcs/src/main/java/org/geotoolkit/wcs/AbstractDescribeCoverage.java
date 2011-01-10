@@ -34,7 +34,7 @@ public abstract class AbstractDescribeCoverage extends AbstractRequest implement
 
     private String[] coverage;
 
-    protected AbstractDescribeCoverage(String serverURL, String version){
+    protected AbstractDescribeCoverage(final String serverURL, final String version){
         super(serverURL);
         this.version = version;
     }
@@ -45,7 +45,7 @@ public abstract class AbstractDescribeCoverage extends AbstractRequest implement
     }
 
     @Override
-    public void setCoverage(String... coverage) {
+    public void setCoverage(final String... coverage) {
         this.coverage = coverage;
     }
 

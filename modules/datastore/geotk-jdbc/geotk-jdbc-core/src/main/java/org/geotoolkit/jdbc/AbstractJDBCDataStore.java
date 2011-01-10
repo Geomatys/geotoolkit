@@ -75,7 +75,7 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
         this(null);
     }
 
-    public AbstractJDBCDataStore(String namespace) {
+    public AbstractJDBCDataStore(final String namespace) {
         super(namespace);
     }
 
@@ -163,7 +163,7 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
      * {@inheritDoc }
      */
     @Override
-    public void setDialect(SQLDialect dialect) {
+    public void setDialect(final SQLDialect dialect) {
         this.dialect = dialect;
     }
 
@@ -179,7 +179,7 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
      * {@inheritDoc }
      */
     @Override
-    public void setDatabaseSchema(String databaseSchema) {
+    public void setDatabaseSchema(final String databaseSchema) {
         this.databaseSchema = databaseSchema;
     }
 
@@ -195,7 +195,7 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
      * {@inheritDoc }
      */
     @Override
-    public void setDataSource(DataSource source) {
+    public void setDataSource(final DataSource source) {
         this.source = source;
     }
 
@@ -247,7 +247,7 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
      * {@inheritDoc }
      */
     @Override
-    public void closeSafe(Connection cx, Statement st, ResultSet rs){
+    public void closeSafe(final Connection cx, final Statement st, final ResultSet rs){
         closeSafe(cx);
         closeSafe(st);
         closeSafe(rs);

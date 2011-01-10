@@ -79,7 +79,7 @@ public class SectionsType implements Sections {
      * 
      * @param section one or more of "ServiceIdentification", "ServiceProvider", "OperationsMetadata", "Filter_Capabilities", "All".
      */
-    public SectionsType(List<String> section){
+    public SectionsType(final List<String> section){
         this.section = section;
     }
     
@@ -88,7 +88,7 @@ public class SectionsType implements Sections {
      * 
      * @param section one or more of "ServiceIdentification", "ServiceProvider", "OperationsMetadata", "Filter_Capabilities", "All".
      */
-    public SectionsType(String... section){
+    public SectionsType(final String... section){
         this.section = new ArrayList<String>();
         for (String s: section) {
             this.section.add(s);
@@ -112,7 +112,7 @@ public class SectionsType implements Sections {
      * @param sectionName The name of the searched section.
      * @return true if the Section contains the specified section.
      */
-    public boolean containsSection(String sectionName) {
+    public boolean containsSection(final String sectionName) {
         if (section != null) {
             return section.contains(sectionName);
         }
@@ -124,7 +124,7 @@ public class SectionsType implements Sections {
      * 
      * @param section a new section.
      */
-    public void add(String section) {
+    public void add(final String section) {
         this.section.add(section);
     }
     

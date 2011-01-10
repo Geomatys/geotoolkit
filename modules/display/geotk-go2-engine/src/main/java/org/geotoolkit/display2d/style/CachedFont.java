@@ -36,11 +36,11 @@ public class CachedFont extends Cache<Font>{
     private int fontSize = Integer.MIN_VALUE;
     private int fontStyle = Integer.MIN_VALUE;
     
-    private CachedFont(Font font){
+    private CachedFont(final Font font){
         super(font);
     }
     
-    public java.awt.Font getJ2dFont(Feature feature, float coeff) {
+    public java.awt.Font getJ2dFont(final Feature feature, final float coeff) {
 
         final Font font = styleElement;
         
@@ -165,13 +165,13 @@ public class CachedFont extends Cache<Font>{
     }
 
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         evaluate();
         //font doesnt know if it's visible or not whit those informations, always true.
         return true;
     }
 
-    public static CachedFont cache(Font font){
+    public static CachedFont cache(final Font font){
         return new CachedFont(font);
     }
 

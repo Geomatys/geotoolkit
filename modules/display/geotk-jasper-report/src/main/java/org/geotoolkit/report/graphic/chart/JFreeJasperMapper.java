@@ -39,7 +39,7 @@ public class JFreeJasperMapper implements JRRenderable{
     private final String id = System.currentTimeMillis() + "-" + Math.random();
     private final JFreeChart chart;
 
-    public JFreeJasperMapper(JFreeChart chart){
+    public JFreeJasperMapper(final JFreeChart chart){
         this.chart = chart;
     }
 

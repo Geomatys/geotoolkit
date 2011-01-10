@@ -89,7 +89,7 @@ public class PolygonSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public void setGeometry(GeometryType value) {
+    public void setGeometry(final GeometryType value) {
         this.geometry = value;
     }
 
@@ -113,7 +113,7 @@ public class PolygonSymbolizerType
      *     {@link FillType }
      *     
      */
-    public void setFill(FillType value) {
+    public void setFill(final FillType value) {
         this.fill = value;
     }
 
@@ -137,7 +137,7 @@ public class PolygonSymbolizerType
      *     {@link StrokeType }
      *     
      */
-    public void setStroke(StrokeType value) {
+    public void setStroke(final StrokeType value) {
         this.stroke = value;
     }
 
@@ -161,7 +161,7 @@ public class PolygonSymbolizerType
      *     {@link DisplacementType }
      *     
      */
-    public void setDisplacement(DisplacementType value) {
+    public void setDisplacement(final DisplacementType value) {
         this.displacement = value;
     }
 
@@ -185,7 +185,7 @@ public class PolygonSymbolizerType
      *     {@link ParameterValueType }
      *     
      */
-    public void setPerpendicularOffset(ParameterValueType value) {
+    public void setPerpendicularOffset(final ParameterValueType value) {
         this.perpendicularOffset = value;
     }
 

@@ -49,11 +49,11 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     private int mousebutton = 0;
     private int panButton = MouseEvent.BUTTON3;
 
-    public MouseNavigatonListener(JMap2D map) {
+    public MouseNavigatonListener(final JMap2D map) {
         this.map = map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
     }
 
@@ -61,7 +61,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
         return map;
     }
 
-    public void setPanButton(int panButton) {
+    public void setPanButton(final int panButton) {
         this.panButton = panButton;
     }
 
@@ -69,14 +69,14 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
         return panButton;
     }
 
-    public void install(Component component){
+    public void install(final Component component){
         map.addDecoration(0,decorationPane);
         component.addMouseListener(this);
         component.addMouseMotionListener(this);
         component.addMouseWheelListener(this);
     }
 
-    public void uninstall(Component component){
+    public void uninstall(final Component component){
         component.removeMouseListener(this);
         component.removeMouseMotionListener(this);
         component.removeMouseWheelListener(this);
@@ -134,7 +134,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     /**
      * Drag the map from coordinate 1 to coordinate 2.
      */
-    protected void processDrag(int x1, int y1, int x2, int y2) {
+    protected void processDrag(final int x1, final int y1, final int x2, final int y2) {
         try {
             map.getCanvas().getController().translateDisplay(x2 - x1, y2 - y1);
         } catch (NoninvertibleTransformException ex) {
@@ -146,7 +146,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
 
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
         startX = e.getX();
         startY = e.getY();
         lastX = startX;
@@ -156,7 +156,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
         startX = e.getX();
         startY = e.getY();
         lastX = 0;
@@ -172,7 +172,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         int endX = e.getX();
         int endY = e.getY();
 
@@ -190,17 +190,17 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(final MouseEvent e) {
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(final MouseEvent e) {
         decorationPane.setFill(false);
         decorationPane.setCoord(-10, -10,-10, -10, true);
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
         int x = e.getX();
         int y = e.getY();
 
@@ -221,7 +221,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(final MouseEvent e) {
         Rectangle rect = new Rectangle(e.getPoint());
         rect.x -= 10;
         rect.y -= 10;
@@ -230,7 +230,7 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
     }
 
     @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
+    public void mouseWheelMoved(final MouseWheelEvent e) {
         int rotate = e.getWheelRotation();
 
         if (rotate < 0) {

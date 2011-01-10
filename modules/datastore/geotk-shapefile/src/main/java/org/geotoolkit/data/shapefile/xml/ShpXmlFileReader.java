@@ -46,7 +46,7 @@ public class ShpXmlFileReader {
      * @throws JDOMException
      * @throws IOException
      */
-    public ShpXmlFileReader(ShpFiles shapefileFiles) throws IOException, ParserConfigurationException, SAXException {
+    public ShpXmlFileReader(final ShpFiles shapefileFiles) throws IOException, ParserConfigurationException, SAXException {
 
         DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
         DocumentBuilder constructeur = fabrique.newDocumentBuilder();
@@ -64,13 +64,13 @@ public class ShpXmlFileReader {
         return parseMetadata(dom.getDocumentElement());
     }
 
-    protected Metadata parseMetadata(Element root) {
+    protected Metadata parseMetadata(final Element root) {
         Metadata meta = new Metadata();
         meta.setIdinfo(parseIdInfo(getChild(root,"idinfo")));
         return meta;
     }
 
-    protected IdInfo parseIdInfo(Element element) {
+    protected IdInfo parseIdInfo(final Element element) {
         IdInfo idInfo = new IdInfo();
 
         Element spdom = getChild(element, "spdom");
@@ -84,7 +84,7 @@ public class ShpXmlFileReader {
         return idInfo;
     }
 
-    protected Envelope parseBounding(Element bounding) {
+    protected Envelope parseBounding(final Element bounding) {
         if (bounding == null)
             return new Envelope();
 
@@ -96,7 +96,7 @@ public class ShpXmlFileReader {
         return new Envelope(minX, maxX, minY, maxY);
     }
 
-    private static Element getChild(Element parent, String name){
+    private static Element getChild(final Element parent, final String name){
         NodeList liste = parent.getElementsByTagName(name);
         if(liste.getLength() > 0){
             return (Element) liste.item(0);
@@ -104,7 +104,7 @@ public class ShpXmlFileReader {
         return null;
     }
 
-    private static String getChildText(Element parent, String name){
+    private static String getChildText(final Element parent, final String name){
         NodeList liste = parent.getElementsByTagName(name);
         if(liste.getLength() > 0){
             return ((Element) liste.item(0)).getTextContent();

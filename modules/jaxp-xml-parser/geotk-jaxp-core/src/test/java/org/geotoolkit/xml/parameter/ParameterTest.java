@@ -108,7 +108,7 @@ public class ParameterTest {
      * @throws IOException
      * @throws XMLStreamException
      */
-    public static void assertParameterRead(GeneralParameterValue gpv) throws IOException, XMLStreamException {
+    public static void assertParameterRead(final GeneralParameterValue gpv) throws IOException, XMLStreamException {
         assertTrue(gpv instanceof ParameterValueGroup);
         final ParameterValueGroup globalValueGroup = (ParameterValueGroup) gpv;
         final ParameterDescriptorGroup globalDescritorGroup = globalValueGroup.getDescriptor();
@@ -298,7 +298,7 @@ public class ParameterTest {
      * @throws IOException
      * @throws XMLStreamException
      */
-    public static void writting_Operation(GeneralParameterValue globalParameter)
+    public static void writting_Operation(final GeneralParameterValue globalParameter)
             throws IOException, XMLStreamException {
 
         final File output = new File(WRITTING_FILE);

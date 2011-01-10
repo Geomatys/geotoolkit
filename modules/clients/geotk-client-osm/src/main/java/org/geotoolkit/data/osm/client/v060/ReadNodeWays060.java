@@ -26,7 +26,7 @@ import org.geotoolkit.data.osm.client.AbstractReadNodeWays;
  */
 public class ReadNodeWays060 extends AbstractReadNodeWays{
 
-    public ReadNodeWays060(String serveruURL){
+    public ReadNodeWays060(final String serveruURL){
         super(serveruURL,"/api/0.6/node/");
     }
 

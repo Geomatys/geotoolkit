@@ -53,12 +53,12 @@ public class LegendFieldRenderer implements JRFieldRenderer{
     private static final String MAP_ATTRIBUTE = "map";
 
     @Override
-    public boolean canHandle(JRField field) {
+    public boolean canHandle(final JRField field) {
         return field.getValueClass() == LegendDef.class;
     }
 
     @Override
-    public PropertyDescriptor createDescriptor(JRField field) throws IllegalArgumentException{
+    public PropertyDescriptor createDescriptor(final JRField field) throws IllegalArgumentException{
         final String name = field.getName();
 
         final String relatedMap = field.getPropertiesMap().getProperty(MAP_ATTRIBUTE);
@@ -73,7 +73,7 @@ public class LegendFieldRenderer implements JRFieldRenderer{
     }
 
     @Override
-    public Object createValue(JRField field, Feature feature) {
+    public Object createValue(final JRField field, final Feature feature) {
         final String name = field.getName();
         final Property prop = feature.getProperty(name);
         final LegendDef legend = (LegendDef) prop.getValue();

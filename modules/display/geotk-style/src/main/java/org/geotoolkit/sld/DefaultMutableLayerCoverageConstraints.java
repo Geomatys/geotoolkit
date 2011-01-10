@@ -89,7 +89,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
      * {@inheritDoc }
      */
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
     
@@ -97,7 +97,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
 
-    protected void fireLibraryChange(int type, CoverageConstraint lib, NumberRange<Integer> range) {
+    protected void fireLibraryChange(final int type, final CoverageConstraint lib, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<CoverageConstraint> event = new CollectionChangeEvent<CoverageConstraint>(this, lib, type, range, null);
@@ -109,7 +109,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
 
     }
     
-    protected void fireLibraryChange(int type, CoverageConstraint lib, NumberRange<Integer> range, EventObject subEvent) {
+    protected void fireLibraryChange(final int type, final CoverageConstraint lib, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<CoverageConstraint> event = new CollectionChangeEvent<CoverageConstraint>(this, lib, type, range,subEvent);
@@ -121,7 +121,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
 
     }
     
-    protected void fireLibraryChange(int type, Collection<? extends CoverageConstraint> lib, NumberRange<Integer> range){
+    protected void fireLibraryChange(final int type, final Collection<? extends CoverageConstraint> lib, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
         
         final CollectionChangeEvent<CoverageConstraint> event = new CollectionChangeEvent<CoverageConstraint>(this,lib,type,range, null);
@@ -137,7 +137,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
      * {@inheritDoc }
      */
     @Override
-    public void addListener(CollectionChangeListener<? extends Constraint> listener) {
+    public void addListener(final CollectionChangeListener<? extends Constraint> listener) {
         listeners.add(CollectionChangeListener.class, listener);
     }
 
@@ -145,7 +145,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(CollectionChangeListener<? extends Constraint> listener) {
+    public void removeListener(final CollectionChangeListener<? extends Constraint> listener) {
         listeners.remove(CollectionChangeListener.class, listener);
     }
 
@@ -153,7 +153,7 @@ class DefaultMutableLayerCoverageConstraints implements MutableLayerCoverageCons
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

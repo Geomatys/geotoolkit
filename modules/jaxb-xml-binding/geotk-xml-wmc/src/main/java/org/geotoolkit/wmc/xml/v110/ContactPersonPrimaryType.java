@@ -75,7 +75,7 @@ public class ContactPersonPrimaryType {
      *     {@link String }
      *     
      */
-    public void setContactPerson(String value) {
+    public void setContactPerson(final String value) {
         this.contactPerson = value;
     }
 
@@ -99,7 +99,7 @@ public class ContactPersonPrimaryType {
      *     {@link String }
      *     
      */
-    public void setContactOrganization(String value) {
+    public void setContactOrganization(final String value) {
         this.contactOrganization = value;
     }
 

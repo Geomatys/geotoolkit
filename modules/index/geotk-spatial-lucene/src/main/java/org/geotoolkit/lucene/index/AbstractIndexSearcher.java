@@ -95,7 +95,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
      * @param analyzer  A lucene Analyzer (Default is StandardAnalyzer)
      */
-    public AbstractIndexSearcher(File configDir, String serviceID, Analyzer analyzer) throws IndexingException {
+    public AbstractIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
         super(analyzer);
         try {
             // we get the last index directory
@@ -145,7 +145,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      * 
      * @throws IndexingException
      */
-    public AbstractIndexSearcher(File configDir, String serviceID) throws IndexingException {
+    public AbstractIndexSearcher(final File configDir, final String serviceID) throws IndexingException {
         this(configDir, serviceID, null);
     }
 
@@ -201,7 +201,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      *
      * @return A database id.
      */
-    public String identifierQuery(String id) throws SearchingException {
+    public String identifierQuery(final String id) throws SearchingException {
         try {
             final TermQuery query = new TermQuery(new Term(getIdentifierSearchField(), id));
             final List<String> results = new ArrayList<String>();
@@ -243,7 +243,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      *
      * @return A database id.
      */
-    public String getMatchingID(Document doc) throws SearchingException {
+    public String getMatchingID(final Document doc) throws SearchingException {
         return doc.get("id");
     }
 
@@ -254,7 +254,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      *
      * @return A List of metadata identifiers.
      */
-    public List<String> doSearch(SpatialQuery spatialQuery) throws SearchingException {
+    public List<String> doSearch(final SpatialQuery spatialQuery) throws SearchingException {
         try {
             final long start = System.currentTimeMillis();
             List<String> results = new ArrayList<String>();
@@ -407,7 +407,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      * @param query a Lucene spatial query.
      * @param results A list of metadataIdentifier.
      */
-    private void putInCache(SpatialQuery query, List<String> results) {
+    private void putInCache(final SpatialQuery query, final List<String> results) {
         if (isCacheEnabled) {
             // if we had reach the maximum cache size we remove the first request
             if (cachedQueries.size() >= MAX_CACHED_QUERIES_SIZE) {

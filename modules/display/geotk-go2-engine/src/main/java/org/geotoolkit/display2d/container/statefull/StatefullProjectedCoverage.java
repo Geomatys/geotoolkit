@@ -49,7 +49,7 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     private final CoverageMapLayer layer;
     private StatefullProjectedGeometry border;
 
-    public StatefullProjectedCoverage(StatefullContextParams params, CoverageMapLayer layer) {
+    public StatefullProjectedCoverage(final StatefullContextParams params, final CoverageMapLayer layer) {
         this.params = params;
         this.layer = layer;
     }
@@ -67,7 +67,7 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     }
 
     @Override
-    public GridCoverage2D getCoverage(GridCoverageReadParam param) throws CoverageStoreException{
+    public GridCoverage2D getCoverage(final GridCoverageReadParam param) throws CoverageStoreException{
         GridCoverage2D value = cache.peek(param);
         if (value == null) {
             Cache.Handler<GridCoverage2D> handler = cache.lock(param);
@@ -85,7 +85,7 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     }
 
     @Override
-    public GridCoverage2D getElevationCoverage(GridCoverageReadParam param)
+    public GridCoverage2D getElevationCoverage(final GridCoverageReadParam param)
         throws CoverageStoreException{
         final ElevationModel elevationModel = layer.getElevationModel();
 
@@ -134,7 +134,7 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
      * {@inheritDoc }
      */
     @Override
-    public void setVisible(boolean visible) {
+    public void setVisible(final boolean visible) {
     }
 
     /**

@@ -50,8 +50,8 @@ public class TextStroke implements Stroke {
     private final float gap;
     private final Rectangle clip;
 
-    public TextStroke(String text, Font font, boolean repeat, float offset,
-            float initialgap, float gap, Rectangle clip) {
+    public TextStroke(final String text, final Font font, final boolean repeat, final float offset,
+            final float initialgap, final float gap, final Rectangle clip) {
         this.text = text;
         this.font = font;
         this.repeat = repeat;
@@ -62,7 +62,7 @@ public class TextStroke implements Stroke {
     }
 
     @Override
-    public Shape createStrokedShape(Shape shape) {
+    public Shape createStrokedShape(final Shape shape) {
         final FontRenderContext frc = new FontRenderContext(null, true, true);
         final GlyphVector glyphVector = font.createGlyphVector(frc, text);
         final GeneralPath result = new GeneralPath();
@@ -233,7 +233,7 @@ public class TextStroke implements Stroke {
     }
 
     
-    public float measurePathLength(Shape shape) {
+    public float measurePathLength(final Shape shape) {
         final PathIterator it = new FlatteningPathIterator(shape.getPathIterator(null), 1);
         final float[] points = new float[6];
         float moveX = 0, moveY = 0;

@@ -29,7 +29,7 @@ import org.geotoolkit.data.osm.model.Way;
  */
 public class ChangeElement060 extends AbstractChangeElement{
 
-    public ChangeElement060(String serverURL, Type type){
+    public ChangeElement060(final String serverURL, final Type type){
         super(serverURL,"",type);
     }
 

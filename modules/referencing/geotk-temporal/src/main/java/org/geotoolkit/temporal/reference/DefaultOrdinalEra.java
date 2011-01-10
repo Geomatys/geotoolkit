@@ -45,7 +45,7 @@ public class DefaultOrdinalEra implements OrdinalEra {
     private Collection<OrdinalEra> composition;
     private DefaultOrdinalEra group;
 
-    public DefaultOrdinalEra(InternationalString name, Date beginning, Date end) {
+    public DefaultOrdinalEra(final InternationalString name, final Date beginning, final Date end) {
         if (! beginning.before(end))
             throw new IllegalArgumentException("The beginning date of the OrdinalEra must be less than (i.e. earlier than) the end date of this OrdinalEra.");
         this.name = name;
@@ -53,7 +53,7 @@ public class DefaultOrdinalEra implements OrdinalEra {
         this.end = end;
     }
 
-    public DefaultOrdinalEra(InternationalString name, Date beginning, Date end, Collection<OrdinalEra> composition) {
+    public DefaultOrdinalEra(final InternationalString name, final Date beginning, final Date end, final Collection<OrdinalEra> composition) {
         this.name = name;
         this.beginning = beginning;
         this.end = end;
@@ -79,15 +79,15 @@ public class DefaultOrdinalEra implements OrdinalEra {
         return composition;
     }
 
-    public void setName(InternationalString name) {
+    public void setName(final InternationalString name) {
         this.name = name;
     }
 
-    public void setBeginning(Date beginning) {
+    public void setBeginning(final Date beginning) {
         this.beginning = beginning;
     }
 
-    public void setEnd(Date end) {
+    public void setEnd(final Date end) {
         this.end = end;
     }
 
@@ -95,7 +95,7 @@ public class DefaultOrdinalEra implements OrdinalEra {
         return group;
     }
 
-    public void setGroup(DefaultOrdinalEra group) {
+    public void setGroup(final DefaultOrdinalEra group) {
         this.group = group;
     }
 

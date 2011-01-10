@@ -53,7 +53,7 @@ public class DelaunayTriangulationBuilder
 	 * @param geom the geometry to extract from
 	 * @return a List of the unique Coordinates
 	 */
-	public static CoordinateList extractUniqueCoordinates(Geometry geom)
+	public static CoordinateList extractUniqueCoordinates(final Geometry geom)
 	{
 		if (geom == null)
 			return new CoordinateList();
@@ -62,7 +62,7 @@ public class DelaunayTriangulationBuilder
 		return unique(coords);
 	}
 	
-	public static CoordinateList unique(Coordinate[] coords)
+	public static CoordinateList unique(final Coordinate[] coords)
 	{
 		Arrays.sort(coords);
 		CoordinateList coordList = new CoordinateList(coords, false);
@@ -74,7 +74,7 @@ public class DelaunayTriangulationBuilder
 	 * @param coords the coordinates to convert
 	 * @return a List of Vertex objects
 	 */
-	public static List toVertices(Collection coords)
+	public static List toVertices(final Collection coords)
 	{
 		List verts = new ArrayList();
 		for (Iterator i = coords.iterator(); i.hasNext(); ) {
@@ -90,7 +90,7 @@ public class DelaunayTriangulationBuilder
 	 * @param coords a List of Coordinates
 	 * @return the envelope of the set of coordinates
 	 */
-	public static Envelope envelope(Collection coords)
+	public static Envelope envelope(final Collection coords)
 	{
 		Envelope env = new Envelope();
 		for (Iterator i = coords.iterator(); i.hasNext(); ) {
@@ -118,7 +118,7 @@ public class DelaunayTriangulationBuilder
 	 * 
 	 * @param geom the geometry from which the sites will be extracted.
 	 */
-	public void setSites(Geometry geom)
+	public void setSites(final Geometry geom)
 	{
 		// remove any duplicate points (they will cause the triangulation to fail)
 		siteCoords = extractUniqueCoordinates(geom);
@@ -130,7 +130,7 @@ public class DelaunayTriangulationBuilder
 	 * 
 	 * @param geom a collection of Coordinates.
 	 */
-	public void setSites(Collection coords)
+	public void setSites(final Collection coords)
 	{
 		// remove any duplicate points (they will cause the triangulation to fail)
 		siteCoords = unique(CoordinateArrays.toCoordinateArray(coords));
@@ -143,7 +143,7 @@ public class DelaunayTriangulationBuilder
 	 * 
 	 * @param tolerance the tolerance distance to use
 	 */
-	public void setTolerance(double tolerance)
+	public void setTolerance(final double tolerance)
 	{
 		this.tolerance = tolerance;
 	}
@@ -176,7 +176,7 @@ public class DelaunayTriangulationBuilder
 	 * @param geomFact the geometry factory to use to create the output
 	 * @return the edges of the triangulation
 	 */
-	public Geometry getEdges(GeometryFactory geomFact)
+	public Geometry getEdges(final GeometryFactory geomFact)
 	{
 		create();
 		return subdiv.getEdges(geomFact);
@@ -189,7 +189,7 @@ public class DelaunayTriangulationBuilder
 	 * @param geomFact the geometry factory to use to create the output
 	 * @return the faces of the triangulation
 	 */
-	public Geometry getTriangles(GeometryFactory geomFact)
+	public Geometry getTriangles(final GeometryFactory geomFact)
 	{
 		create();
 		return subdiv.getTriangles(geomFact);

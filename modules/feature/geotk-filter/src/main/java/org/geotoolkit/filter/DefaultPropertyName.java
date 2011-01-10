@@ -40,7 +40,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
      */
     private Entry<Class,PropertyAccessor> lastAccessor;
 
-    public DefaultPropertyName(String property) {
+    public DefaultPropertyName(final String property) {
         if(property == null){
             throw new NullPointerException("Property name can not be null");
         }
@@ -59,7 +59,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
      * {@inheritDoc }
      */
     @Override
-    public Object evaluate(Object candidate) {
+    public Object evaluate(final Object candidate) {
         Entry<Class,PropertyAccessor> copy = lastAccessor;
         if (copy != null && copy.getKey().equals(candidate.getClass())) {
             final PropertyAccessor access = copy.getValue();
@@ -83,7 +83,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
      * {@inheritDoc }
      */
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -99,7 +99,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -33,7 +33,7 @@ public class DefaultComparisonOperators implements ComparisonOperators {
 
     private final Map<String,Operator> operators = new HashMap<String,Operator>();
 
-    public DefaultComparisonOperators(Operator[] operators) {
+    public DefaultComparisonOperators(final Operator[] operators) {
         if(operators == null || operators.length == 0){
             throw new IllegalArgumentException("Functions must not be null or empty");
         }
@@ -54,7 +54,7 @@ public class DefaultComparisonOperators implements ComparisonOperators {
      * {@inheritDoc }
      */
     @Override
-    public Operator getOperator(String name) {
+    public Operator getOperator(final String name) {
         return operators.get(name);
     }
 
@@ -62,7 +62,7 @@ public class DefaultComparisonOperators implements ComparisonOperators {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -146,7 +146,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
     /**
      * Transform an expression in jaxb element.
      */
-    public JAXBElement<?> extract(Expression exp){
+    public JAXBElement<?> extract(final Expression exp){
         JAXBElement<?> jax = null;
         
         if(exp instanceof Function){
@@ -283,11 +283,11 @@ public class GTtoSE100Transformer implements StyleVisitor{
     /**
      * Transform a Feature name in a QName.
      */
-    public QName visitName(Name name){
+    public QName visitName(final Name name){
         return new QName(name.getNamespaceURI(), name.getLocalPart());
     }
     
-    public JAXBElement<?> visitFilter(Filter filter){
+    public JAXBElement<?> visitFilter(final Filter filter){
                         
         if(filter.equals(Filter.INCLUDE)){
             return null;
@@ -425,7 +425,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
         throw new IllegalArgumentException("Unknowed filter element : " + filter +" class :" + filter.getClass());
     }
     
-    public FilterType visit(Filter filter) {
+    public FilterType visit(final Filter filter) {
         final FilterType ft = ogc_factory.createFilterType();
         JAXBElement<?> sf = visitFilter(filter);
 
@@ -447,7 +447,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
     /**
      * Transform a Unit to the corresponding SLD string.
      */
-    public String visitUOM(Unit<Length> uom) {
+    public String visitUOM(final Unit<Length> uom) {
         if(uom.equals(SI.METRE)){
             return "http://www.opengeospatial.org/se/units/metre";
         }else if(uom.equals(NonSI.FOOT) ){
@@ -461,7 +461,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT Style in Jaxb UserStyle
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.UserStyle visit(Style style, Object data) {
+    public org.geotoolkit.sld.xml.v100.UserStyle visit(final Style style, final Object data) {
         final org.geotoolkit.sld.xml.v100.UserStyle userStyle = sld_factory_v100.createUserStyle();
         userStyle.setName(style.getName());
         if (style.getDescription() != null) {
@@ -484,7 +484,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT FTS in Jaxb FeatureTypeStyle or CoveragaStyle or OnlineResource.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.FeatureTypeStyle visit(FeatureTypeStyle fts, Object data) {
+    public org.geotoolkit.sld.xml.v100.FeatureTypeStyle visit(final FeatureTypeStyle fts, final Object data) {
 
         //normally we should try to figure out if we have here a coverage FTS or not
         //no need, SLD 1.0.0 only have feature tag
@@ -539,7 +539,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT rule in jaxb rule or OnlineResource
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.Rule visit(Rule rule, Object data) {
+    public org.geotoolkit.sld.xml.v100.Rule visit(final Rule rule, final Object data) {
                 
         final org.geotoolkit.sld.xml.v100.Rule rt = sld_factory_v100.createRule();
         rt.setName(rule.getName());
@@ -588,7 +588,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT point symbol in jaxb point symbol.
      */
     @Override
-    public JAXBElement<org.geotoolkit.sld.xml.v100.PointSymbolizer> visit(PointSymbolizer point, Object data) {
+    public JAXBElement<org.geotoolkit.sld.xml.v100.PointSymbolizer> visit(final PointSymbolizer point, final Object data) {
         final org.geotoolkit.sld.xml.v100.PointSymbolizer pst = sld_factory_v100.createPointSymbolizer();
         pst.setGeometry( visitGeometryType(point.getGeometryPropertyName() ) );
         
@@ -603,7 +603,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT line symbol in jaxb line symbol.
      */
     @Override
-    public JAXBElement<org.geotoolkit.sld.xml.v100.LineSymbolizer> visit(LineSymbolizer line, Object data) {
+    public JAXBElement<org.geotoolkit.sld.xml.v100.LineSymbolizer> visit(final LineSymbolizer line, final Object data) {
         final org.geotoolkit.sld.xml.v100.LineSymbolizer lst = sld_factory_v100.createLineSymbolizer();
         lst.setGeometry( visitGeometryType(line.getGeometryPropertyName() ) );
         
@@ -618,7 +618,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT polygon symbol in a jaxb version.
      */
     @Override
-    public JAXBElement<org.geotoolkit.sld.xml.v100.PolygonSymbolizer> visit(PolygonSymbolizer polygon, Object data) {
+    public JAXBElement<org.geotoolkit.sld.xml.v100.PolygonSymbolizer> visit(final PolygonSymbolizer polygon, final Object data) {
         final org.geotoolkit.sld.xml.v100.PolygonSymbolizer pst = sld_factory_v100.createPolygonSymbolizer();
         pst.setGeometry( visitGeometryType(polygon.getGeometryPropertyName() ) );
                 
@@ -637,7 +637,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT text symbol in jaxb symbol.
      */
     @Override
-    public JAXBElement<org.geotoolkit.sld.xml.v100.TextSymbolizer> visit(TextSymbolizer text, Object data) {
+    public JAXBElement<org.geotoolkit.sld.xml.v100.TextSymbolizer> visit(final TextSymbolizer text, final Object data) {
         final org.geotoolkit.sld.xml.v100.TextSymbolizer tst = sld_factory_v100.createTextSymbolizer();
         tst.setGeometry( visitGeometryType(text.getGeometryPropertyName() ) );
         
@@ -666,7 +666,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT raster symbolizer in jaxb raster symbolizer.
      */
     @Override
-    public JAXBElement<org.geotoolkit.sld.xml.v100.RasterSymbolizer> visit(RasterSymbolizer raster, Object data) {
+    public JAXBElement<org.geotoolkit.sld.xml.v100.RasterSymbolizer> visit(final RasterSymbolizer raster, final Object data) {
         final org.geotoolkit.sld.xml.v100.RasterSymbolizer tst = sld_factory_v100.createRasterSymbolizer();
         tst.setGeometry( visitGeometryType(raster.getGeometryPropertyName() ) );
         
@@ -709,7 +709,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
     }
 
     @Override
-    public Object visit(ExtensionSymbolizer extension, Object data) {
+    public Object visit(final ExtensionSymbolizer extension, final Object data) {
         // extended symbolizers are not supported in XML
         return null;
     }
@@ -718,7 +718,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * transform a GT description in jaxb description.
      */
     @Override
-    public Object visit(Description description, Object data) {
+    public Object visit(final Description description, final Object data) {
         throw new UnsupportedOperationException("SLD v1.0.0 doesnt have a xml tag to store description.");
     }
 
@@ -726,7 +726,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT displacement in jaxb displacement.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.Displacement visit(Displacement displacement, Object data) {
+    public org.geotoolkit.sld.xml.v100.Displacement visit(final Displacement displacement, final Object data) {
         final org.geotoolkit.sld.xml.v100.Displacement disp = sld_factory_v100.createDisplacement();
         disp.setDisplacementX( visitExpression(displacement.getDisplacementX()) );
         disp.setDisplacementY( visitExpression(displacement.getDisplacementY()) );
@@ -737,7 +737,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT fill in jaxb fill.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.Fill visit(Fill fill, Object data) {
+    public org.geotoolkit.sld.xml.v100.Fill visit(final Fill fill, final Object data) {
         final org.geotoolkit.sld.xml.v100.Fill ft = sld_factory_v100.createFill();
         
         if(fill.getGraphicFill() != null){
@@ -759,7 +759,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT Font in jaxb font.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.Font visit(Font font, Object data) {
+    public org.geotoolkit.sld.xml.v100.Font visit(final Font font, final Object data) {
         final org.geotoolkit.sld.xml.v100.Font ft = sld_factory_v100.createFont();
         
         final List<CssParameter> svgs = ft.getCssParameter();
@@ -778,7 +778,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT stroke in jaxb stroke.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.Stroke visit(Stroke stroke, Object data) {
+    public org.geotoolkit.sld.xml.v100.Stroke visit(final Stroke stroke, final Object data) {
         final org.geotoolkit.sld.xml.v100.Stroke st = sld_factory_v100.createStroke();
         
         if(stroke.getGraphicFill() != null){
@@ -810,7 +810,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * transform a GT graphic in jaxb graphic
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.Graphic visit(Graphic graphic, Object data) {
+    public org.geotoolkit.sld.xml.v100.Graphic visit(final Graphic graphic, final Object data) {
         final org.geotoolkit.sld.xml.v100.Graphic gt = sld_factory_v100.createGraphic();
         
         for(final GraphicalSymbol gs : graphic.graphicalSymbols()){
@@ -833,7 +833,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT graphic fill in jaxb graphic fill.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.GraphicFill visit(GraphicFill graphicFill, Object data) {
+    public org.geotoolkit.sld.xml.v100.GraphicFill visit(final GraphicFill graphicFill, final Object data) {
         final org.geotoolkit.sld.xml.v100.GraphicFill gft = sld_factory_v100.createGraphicFill();
         gft.setGraphic( visit((Graphic)graphicFill,null) );
         return gft;
@@ -843,7 +843,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT graphic stroke in jaxb graphic stroke.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.GraphicStroke visit(GraphicStroke graphicStroke, Object data) {
+    public org.geotoolkit.sld.xml.v100.GraphicStroke visit(final GraphicStroke graphicStroke, final Object data) {
         final org.geotoolkit.sld.xml.v100.GraphicStroke gst = sld_factory_v100.createGraphicStroke();
         gst.setGraphic( visit((Graphic)graphicStroke,null) );
         return gst;
@@ -853,7 +853,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT Mark in jaxb Mark.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.Mark visit(Mark mark, Object data) {
+    public org.geotoolkit.sld.xml.v100.Mark visit(final Mark mark, final Object data) {
         final org.geotoolkit.sld.xml.v100.Mark mt = sld_factory_v100.createMark();
         mt.setFill( visit(mark.getFill(),null) );
         mt.setStroke( visit(mark.getStroke(),null) );
@@ -866,7 +866,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Not usable for SLD, See visit(Mark) method.
      */
     @Override
-    public Object visit(ExternalMark externalMark, Object data) {
+    public Object visit(final ExternalMark externalMark, final Object data) {
         return null;
     }
 
@@ -874,7 +874,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT external graphic in jaxb externla graphic.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.ExternalGraphic visit(ExternalGraphic externalGraphic, Object data) {
+    public org.geotoolkit.sld.xml.v100.ExternalGraphic visit(final ExternalGraphic externalGraphic, final Object data) {
         final org.geotoolkit.sld.xml.v100.ExternalGraphic egt = sld_factory_v100.createExternalGraphic();
         egt.setFormat(externalGraphic.getFormat());
                 
@@ -889,7 +889,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT point placement in jaxb point placement.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.PointPlacement visit(PointPlacement pointPlacement, Object data) {
+    public org.geotoolkit.sld.xml.v100.PointPlacement visit(final PointPlacement pointPlacement, final Object data) {
         final org.geotoolkit.sld.xml.v100.PointPlacement ppt = sld_factory_v100.createPointPlacement();
         ppt.setAnchorPoint( visit(pointPlacement.getAnchorPoint(), null) );
         ppt.setDisplacement( visit(pointPlacement.getDisplacement(), null) );
@@ -901,7 +901,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * transform a GT anchor point in jaxb anchor point.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.AnchorPoint visit(AnchorPoint anchorPoint, Object data) {
+    public org.geotoolkit.sld.xml.v100.AnchorPoint visit(final AnchorPoint anchorPoint, final Object data) {
         final org.geotoolkit.sld.xml.v100.AnchorPoint apt = sld_factory_v100.createAnchorPoint();
         apt.setAnchorPointX( visitExpression(anchorPoint.getAnchorPointX()) );
         apt.setAnchorPointY( visitExpression(anchorPoint.getAnchorPointY()) );
@@ -912,7 +912,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * transform a GT lineplacement in jaxb line placement.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.LinePlacement visit(LinePlacement linePlacement, Object data) {
+    public org.geotoolkit.sld.xml.v100.LinePlacement visit(final LinePlacement linePlacement, final Object data) {
         final org.geotoolkit.sld.xml.v100.LinePlacement lpt = sld_factory_v100.createLinePlacement();
         lpt.setPerpendicularOffset( visitExpression(linePlacement.getPerpendicularOffset()) );        
         return lpt;
@@ -921,7 +921,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
     /**
      * Transform a GT label placement in jaxb label placement.
      */
-    public org.geotoolkit.sld.xml.v100.LabelPlacement visit(LabelPlacement labelPlacement, Object data) {
+    public org.geotoolkit.sld.xml.v100.LabelPlacement visit(final LabelPlacement labelPlacement, final Object data) {
         final org.geotoolkit.sld.xml.v100.LabelPlacement lpt = sld_factory_v100.createLabelPlacement();
         if(labelPlacement instanceof LinePlacement){
             final LinePlacement lp = (LinePlacement) labelPlacement;
@@ -937,7 +937,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT graphicLegend in jaxb graphic legend
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.LegendGraphic visit(GraphicLegend graphicLegend, Object data) {
+    public org.geotoolkit.sld.xml.v100.LegendGraphic visit(final GraphicLegend graphicLegend, final Object data) {
         final org.geotoolkit.sld.xml.v100.LegendGraphic lgt = sld_factory_v100.createLegendGraphic();
         lgt.setGraphic( visit((Graphic)graphicLegend,null) );
         return lgt;
@@ -946,7 +946,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
     /**
      * Transform a GT onlineResource in jaxb online resource.
      */
-    public org.geotoolkit.sld.xml.v100.OnlineResource visit(OnlineResource or, Object data){
+    public org.geotoolkit.sld.xml.v100.OnlineResource visit(final OnlineResource or, final Object data){
         final org.geotoolkit.sld.xml.v100.OnlineResource ort = sld_factory_v100.createOnlineResource();
         try {
             ort.setHref(or.getLinkage().toURL().toString());
@@ -960,7 +960,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * transform a GT halo in a jaxb halo.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.Halo visit(Halo halo, Object data) {
+    public org.geotoolkit.sld.xml.v100.Halo visit(final Halo halo, final Object data) {
         final org.geotoolkit.sld.xml.v100.Halo ht = sld_factory_v100.createHalo();
         ht.setFill( visit(halo.getFill(),null) );
         ht.setRadius( visitExpression(halo.getRadius()) );
@@ -968,7 +968,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v100.ColorMap visit(ColorMap colorMap, Object data) {
+    public org.geotoolkit.sld.xml.v100.ColorMap visit(final ColorMap colorMap, final Object data) {
         //TODO Fix that when better undestanding raster functions.
         final org.geotoolkit.sld.xml.v100.ColorMap cmt = sld_factory_v100.createColorMap();
         cmt.getColorMapEntry();
@@ -977,7 +977,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
     }
 
     @Override
-    public Object visit(ColorReplacement colorReplacement, Object data) {
+    public Object visit(final ColorReplacement colorReplacement, final Object data) {
         throw new UnsupportedOperationException("SLD v1.0.0 doesnt have a xml tag to store color replacements.");
     }
 
@@ -985,7 +985,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT constrast enchancement in jaxb constrast enchancement
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.ContrastEnhancement visit(ContrastEnhancement contrastEnhancement, Object data) {
+    public org.geotoolkit.sld.xml.v100.ContrastEnhancement visit(final ContrastEnhancement contrastEnhancement, final Object data) {
         final org.geotoolkit.sld.xml.v100.ContrastEnhancement cet = sld_factory_v100.createContrastEnhancement();
         cet.setGammaValue(contrastEnhancement.getGammaValue().evaluate(null, Double.class));
         
@@ -1003,7 +1003,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT channel selection in jaxb channel selection.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.ChannelSelection visit(ChannelSelection channelSelection, Object data) {
+    public org.geotoolkit.sld.xml.v100.ChannelSelection visit(final ChannelSelection channelSelection, final Object data) {
         final org.geotoolkit.sld.xml.v100.ChannelSelection cst = sld_factory_v100.createChannelSelection();
         
         if(channelSelection.getRGBChannels() != null){
@@ -1022,7 +1022,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
     /**
      * transform a GT overlap in xml string representation.
      */
-    public org.geotoolkit.sld.xml.v100.OverlapBehavior visit(OverlapBehavior overlapBehavior, Object data) {
+    public org.geotoolkit.sld.xml.v100.OverlapBehavior visit(final OverlapBehavior overlapBehavior, final Object data) {
         final org.geotoolkit.sld.xml.v100.OverlapBehavior over = sld_factory_v100.createOverlapBehavior();
         switch(overlapBehavior){
             case AVERAGE : over.setAVERAGE(sld_factory_v100.createAVERAGE()); break;
@@ -1039,7 +1039,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * transform a GT channel type in jaxb channel type.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.SelectedChannelType visit(SelectedChannelType selectChannelType, Object data) {
+    public org.geotoolkit.sld.xml.v100.SelectedChannelType visit(final SelectedChannelType selectChannelType, final Object data) {
         final org.geotoolkit.sld.xml.v100.SelectedChannelType sct = sld_factory_v100.createSelectedChannelType();
         sct.setContrastEnhancement( visit(selectChannelType.getContrastEnhancement(), null) );
         sct.setSourceChannelName( selectChannelType.getChannelName() );
@@ -1050,7 +1050,7 @@ public class GTtoSE100Transformer implements StyleVisitor{
      * Transform a GT shaded relief in jaxb shaded relief.
      */
     @Override
-    public org.geotoolkit.sld.xml.v100.ShadedRelief visit(ShadedRelief shadedRelief, Object data) {
+    public org.geotoolkit.sld.xml.v100.ShadedRelief visit(final ShadedRelief shadedRelief, final Object data) {
         final org.geotoolkit.sld.xml.v100.ShadedRelief srt = sld_factory_v100.createShadedRelief();
         srt.setBrightnessOnly(shadedRelief.isBrightnessOnly());
         srt.setReliefFactor(shadedRelief.getReliefFactor().evaluate(null, Double.class));

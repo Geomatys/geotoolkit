@@ -90,7 +90,7 @@ public class PremiseNumberSuffix {
      *     {@link String }
      *     
      */
-    public void setContent(String value) {
+    public void setContent(final String value) {
         this.content = value;
     }
 
@@ -114,7 +114,7 @@ public class PremiseNumberSuffix {
      *     {@link String }
      *     
      */
-    public void setNumberSuffixSeparator(String value) {
+    public void setNumberSuffixSeparator(final String value) {
         this.numberSuffixSeparator = value;
     }
 
@@ -138,7 +138,7 @@ public class PremiseNumberSuffix {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -162,7 +162,7 @@ public class PremiseNumberSuffix {
      *     {@link String }
      *     
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 

@@ -46,7 +46,7 @@ public class DefaultPolygonMesh extends Mesh {
 
     private static final double EPS = 1E-3;
 
-    public DefaultPolygonMesh(Polygon geom, float minz, float maxz) {
+    public DefaultPolygonMesh(final Polygon geom, final float minz, final float maxz) {
 
         final ConformingDelaunayTriangulationBuilder builder = new ConformingDelaunayTriangulationBuilder();
         builder.setSites(geom);
@@ -167,7 +167,7 @@ public class DefaultPolygonMesh extends Mesh {
         updateModelBound();
     }
 
-    private static void compress(List<Coordinate[]> coords, List<Coordinate> vertexes, List<Integer> indexes){
+    private static void compress(final List<Coordinate[]> coords, final List<Coordinate> vertexes, final List<Integer> indexes){
         Map<Coordinate,Integer> lst = new HashMap<Coordinate,Integer>();
         
         int inc = -1;

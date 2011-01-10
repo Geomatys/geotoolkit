@@ -115,7 +115,7 @@ public class Service extends AbstractService {
      */
     public Service(final String name, final String title, final String _abstract,
             final KeywordList keywordList, final OnlineResource onlineResource, 
-            final ContactInformation contactInformation, String fees, String accessConstraints,
+            final ContactInformation contactInformation, final String fees, final String accessConstraints,
             final int layerLimit, final int maxWidth, final int maxHeight) {
         
         this._abstract          = _abstract;

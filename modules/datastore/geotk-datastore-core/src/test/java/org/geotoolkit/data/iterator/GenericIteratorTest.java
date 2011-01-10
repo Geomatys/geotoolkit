@@ -172,7 +172,7 @@ public class GenericIteratorTest extends TestCase{
 
     }
 
-    private void testIterationOnNext(FeatureIterator ite, int size){
+    private void testIterationOnNext(final FeatureIterator ite, final int size){
 
         //check that there is no iteration on hasnext()
         for(int i=0; i<size+10; i++){

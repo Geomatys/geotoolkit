@@ -59,7 +59,7 @@ public class J2DGridUtilities {
     private J2DGridUtilities() {
     }
 
-    public static void paint(RenderingContext2D context, GridTemplate template){
+    public static void paint(final RenderingContext2D context, final GridTemplate template){
 
         CoordinateReferenceSystem gridCRS = template.getCRS();
         //use context crs if gridcrs is not defined

@@ -41,7 +41,7 @@ public class JTSComplexFactory extends Factory implements ComplexFactory {
         this( DefaultGeographicCRS.WGS84);
     }
 
-    public JTSComplexFactory( CoordinateReferenceSystem crs ) {
+    public JTSComplexFactory( final CoordinateReferenceSystem crs ) {
         this.crs = crs;
     }
 
@@ -49,7 +49,7 @@ public class JTSComplexFactory extends Factory implements ComplexFactory {
      * {@inheritDoc }
      */
     @Override
-    public CompositeCurve createCompositeCurve( List curves ) {
+    public CompositeCurve createCompositeCurve( final List curves ) {
         JTSCompositeCurve composite = new JTSCompositeCurve( null, crs );
         composite.getElements().addAll( curves );
         return composite;
@@ -59,7 +59,7 @@ public class JTSComplexFactory extends Factory implements ComplexFactory {
      * {@inheritDoc }
      */
     @Override
-    public CompositePoint createCompositePoint( Point arg0 ) {
+    public CompositePoint createCompositePoint( final Point arg0 ) {
         throw new UnsupportedOperationException("not implemented yet.");
     }
 
@@ -67,7 +67,7 @@ public class JTSComplexFactory extends Factory implements ComplexFactory {
      * {@inheritDoc }
      */
     @Override
-    public CompositeSurface createCompositeSurface( List list ) {
+    public CompositeSurface createCompositeSurface( final List list ) {
         JTSCompositeSurface composite = new JTSCompositeSurface();
         composite.getElementList().addAll( list );        
         return composite;

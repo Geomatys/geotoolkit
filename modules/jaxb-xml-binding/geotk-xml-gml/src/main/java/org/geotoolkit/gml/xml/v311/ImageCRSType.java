@@ -70,7 +70,7 @@ public class ImageCRSType extends AbstractReferenceSystemType {
     /**
      * Build a new Image CRS with cartesian CS.
      */
-    public ImageCRSType(ImageDatumRefType usesImageDatum, CartesianCSRefType usesCartesianCS) {
+    public ImageCRSType(final ImageDatumRefType usesImageDatum, final CartesianCSRefType usesCartesianCS) {
         this.usesImageDatum         = usesImageDatum;
         this.usesCartesianCS        = usesCartesianCS;
         this.usesObliqueCartesianCS = null;
@@ -79,7 +79,7 @@ public class ImageCRSType extends AbstractReferenceSystemType {
      /**
      * Build a new Image CRS with oblique cartesian CS.
      */
-    public ImageCRSType(ImageDatumRefType usesImageDatum, ObliqueCartesianCSRefType usesObliqueCartesianCS) {
+    public ImageCRSType(final ImageDatumRefType usesImageDatum, final ObliqueCartesianCSRefType usesObliqueCartesianCS) {
         this.usesImageDatum         = usesImageDatum;
         this.usesObliqueCartesianCS = usesObliqueCartesianCS;
         this.usesCartesianCS        = null;

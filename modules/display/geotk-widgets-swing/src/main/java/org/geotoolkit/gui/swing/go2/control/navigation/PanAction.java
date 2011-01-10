@@ -40,7 +40,7 @@ public class PanAction extends AbstractAction {
         this(false);
     }
 
-    public PanAction(boolean big) {
+    public PanAction(final boolean big) {
         super("",(big) ? ICON_ZOOM_PAN_24 : ICON_ZOOM_PAN_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_pan"));
     }
@@ -49,7 +49,7 @@ public class PanAction extends AbstractAction {
      * {@inheritDoc }
      */
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
             map.setHandler(new PanHandler(map));
         }
@@ -59,7 +59,7 @@ public class PanAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

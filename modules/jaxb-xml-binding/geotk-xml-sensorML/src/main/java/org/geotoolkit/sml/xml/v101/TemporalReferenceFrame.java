@@ -59,13 +59,13 @@ public class TemporalReferenceFrame implements AbstractTemporalReferenceFrame {
 
     }
 
-    public TemporalReferenceFrame(AbstractTemporalReferenceFrame tr) {
+    public TemporalReferenceFrame(final AbstractTemporalReferenceFrame tr) {
         if (tr != null) {
             this.temporalCRS = tr.getTemporalCRS();
         }
     }
 
-    public TemporalReferenceFrame(TemporalCRSType temporalCRS) {
+    public TemporalReferenceFrame(final TemporalCRSType temporalCRS) {
         this.temporalCRS = temporalCRS;
     }
     
@@ -80,7 +80,7 @@ public class TemporalReferenceFrame implements AbstractTemporalReferenceFrame {
      * Sets the value of the temporalCRS property.
      * 
      */
-    public void setTemporalCRS(TemporalCRSType value) {
+    public void setTemporalCRS(final TemporalCRSType value) {
         this.temporalCRS = value;
     }
 

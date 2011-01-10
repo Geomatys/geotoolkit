@@ -57,7 +57,7 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
      * @param desc Nested descriptor
      * @param id Feature ID
      */
-    public AbstractFeature(AttributeDescriptor desc, FeatureId id) {
+    public AbstractFeature(final AttributeDescriptor desc, final FeatureId id) {
         super(desc, id);
     }
 
@@ -69,7 +69,7 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
         return (FeatureType) descriptor.getType();
     }
 
-    public void setId(FeatureId id) {
+    public void setId(final FeatureId id) {
         this.id = id;
     }
 
@@ -147,7 +147,7 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
     //1- getValue() shouldn't contain the passed in attribute, but the schema should contain its descriptor
     //2- this.defaultGeometry = defaultGeometry means getValue() will  not contain the argument
     @Override
-    public void setDefaultGeometryProperty(GeometryAttribute defaultGeometry) {
+    public void setDefaultGeometryProperty(final GeometryAttribute defaultGeometry) {
         if (!getValue().contains(defaultGeometry)) {
             throw new IllegalArgumentException("specified attribute is not one of: " + getValue());
         }

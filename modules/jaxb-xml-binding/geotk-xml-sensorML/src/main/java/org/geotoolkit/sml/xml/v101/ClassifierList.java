@@ -80,7 +80,7 @@ public class ClassifierList implements AbstractClassifierList {
     public ClassifierList() {
     }
 
-    public ClassifierList(AbstractClassifierList classList) {
+    public ClassifierList(final AbstractClassifierList classList) {
         if (classList != null) {
             this.id = classList.getId();
             if (classList.getClassifier() != null) {
@@ -92,7 +92,7 @@ public class ClassifierList implements AbstractClassifierList {
         }
     }
 
-    public ClassifierList(String id, List<Classifier> classifier) {
+    public ClassifierList(final String id, final List<Classifier> classifier) {
         this.classifier = classifier;
         this.id = id;
     }
@@ -127,7 +127,7 @@ public class ClassifierList implements AbstractClassifierList {
      *     {@link String }
      *
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

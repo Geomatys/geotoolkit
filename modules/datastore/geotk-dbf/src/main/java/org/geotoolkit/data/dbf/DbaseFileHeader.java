@@ -80,7 +80,7 @@ public class DbaseFileHeader {
     // lets start out with a zero-length array, just in case
     private DbaseField[] fields = new DbaseField[0];
 
-    private void read(ByteBuffer buffer, ReadableByteChannel channel) throws IOException {
+    private void read(final ByteBuffer buffer, final ReadableByteChannel channel) throws IOException {
         while (buffer.remaining() > 0) {
             if (channel.read(buffer) == -1) {
                 throw new EOFException("Premature end of file");
@@ -107,11 +107,11 @@ public class DbaseFileHeader {
      *                <CODE>getNumFields() - 1</CODE> .
      * @return A Class which closely represents the dbase field type.
      */
-    public Class getFieldClass(int i) {
+    public Class getFieldClass(final int i) {
         return getFieldClass(fields[i].fieldType, fields[i].decimalCount, fields[i].fieldLength);
     }
 
-    private static Class getFieldClass(char fieldType, int decimalCount, int fieldLength) {
+    private static Class getFieldClass(final char fieldType, final int decimalCount, final int fieldLength) {
         final Class typeClass;
 
         switch (fieldType) {
@@ -151,7 +151,7 @@ public class DbaseFileHeader {
         return typeClass;
     }
 
-    DbaseField getField(int index){
+    DbaseField getField(final int index){
         return fields[index];
     }
 
@@ -307,7 +307,7 @@ public class DbaseFileHeader {
      *                The name of the field, will ignore case and trim.
      * @return index of the removed column, -1 if no found
      */
-    public int removeColumn(String inFieldName) throws IOException {
+    public int removeColumn(final String inFieldName) throws IOException {
 
         int retCol = -1;
         int tempLength = 1;
@@ -352,7 +352,7 @@ public class DbaseFileHeader {
      *                The field index.
      * @return The length in bytes.
      */
-    public int getFieldLength(int inIndex) {
+    public int getFieldLength(final int inIndex) {
         return fields[inIndex].fieldLength;
     }
 
@@ -364,7 +364,7 @@ public class DbaseFileHeader {
      *                The field index.
      * @return The decimal count.
      */
-    public int getFieldDecimalCount(int inIndex) {
+    public int getFieldDecimalCount(final int inIndex) {
         return fields[inIndex].decimalCount;
     }
 
@@ -376,7 +376,7 @@ public class DbaseFileHeader {
      *                The field index.
      * @return The name of the field.
      */
-    public String getFieldName(int inIndex) {
+    public String getFieldName(final int inIndex) {
         return fields[inIndex].fieldName;
     }
 
@@ -388,7 +388,7 @@ public class DbaseFileHeader {
      *                The field index.
      * @return The dbase character representing this field.
      */
-    public char getFieldType(int inIndex) {
+    public char getFieldType(final int inIndex) {
         return fields[inIndex].fieldType;
     }
 
@@ -447,7 +447,7 @@ public class DbaseFileHeader {
      * @throws IOException
      *                 If errors occur while reading.
      */
-    public void readHeader(ReadableByteChannel channel) throws IOException {
+    public void readHeader(final ReadableByteChannel channel) throws IOException {
         // we'll read in chunks of 1K
         ByteBuffer in = ByteBuffer.allocateDirect(1024);
         // do this or GO CRAZY
@@ -583,7 +583,7 @@ public class DbaseFileHeader {
      * @param inNumRecords
      *                The number of records.
      */
-    public void setNumRecords(int inNumRecords) {
+    public void setNumRecords(final int inNumRecords) {
         recordCnt = inNumRecords;
     }
 
@@ -597,7 +597,7 @@ public class DbaseFileHeader {
      * @throws IOException
      *                 If errors occur.
      */
-    public void writeHeader(WritableByteChannel out) throws IOException {
+    public void writeHeader(final WritableByteChannel out) throws IOException {
         // take care of the annoying case where no records have been added...
         if (headerLength == -1) {
             headerLength = MINIMUM_HEADER;
@@ -704,7 +704,7 @@ public class DbaseFileHeader {
      * @throws IOException DOCUMENT ME!
      * @throws DbaseFileException DOCUMENT ME!
      */
-    public static DbaseFileHeader createDbaseHeader(SimpleFeatureType featureType)
+    public static DbaseFileHeader createDbaseHeader(final SimpleFeatureType featureType)
             throws IOException,DbaseFileException {
 
         final DbaseFileHeader header = new DbaseFileHeader();

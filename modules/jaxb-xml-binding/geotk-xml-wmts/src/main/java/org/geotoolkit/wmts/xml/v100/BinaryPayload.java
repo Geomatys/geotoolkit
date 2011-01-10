@@ -84,7 +84,7 @@ public class BinaryPayload {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 
@@ -106,7 +106,7 @@ public class BinaryPayload {
      *     allowed object is
      *     byte[]
      */
-    public void setBinaryContent(byte[] value) {
+    public void setBinaryContent(final byte[] value) {
         this.binaryContent = ((byte[]) value);
     }
 

@@ -33,7 +33,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
     protected String infoFormat;
     protected String[] queryLayers;
 
-    protected AbstractGetFeatureInfo(String serverURL, String version) {
+    protected AbstractGetFeatureInfo(final String serverURL, final String version) {
         super(serverURL, version);
     }
 
@@ -73,7 +73,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
      * {@inheritDoc}
      */
     @Override
-    public void setColumnIndex(Integer columnIndex) {
+    public void setColumnIndex(final Integer columnIndex) {
         this.columnIndex = columnIndex;
     }
 
@@ -81,7 +81,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
      * {@inheritDoc}
      */
     @Override
-    public void setRawIndex(Integer rawIndex) {
+    public void setRawIndex(final Integer rawIndex) {
         this.rawIndex = rawIndex;
     }
 
@@ -89,7 +89,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
      * {@inheritDoc}
      */
     @Override
-    public void setQueryLayers(String... layers) {
+    public void setQueryLayers(final String... layers) {
         this.queryLayers = layers;
     }
 
@@ -97,7 +97,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
      * {@inheritDoc}
      */
     @Override
-    public void setInfoFormat(String format) {
+    public void setInfoFormat(final String format) {
         this.infoFormat = format;
     }
 
@@ -113,7 +113,7 @@ public abstract class AbstractGetFeatureInfo extends AbstractGetMap implements G
      * {@inheritDoc}
      */
     @Override
-    public void setFeatureCount(Integer featureCount) {
+    public void setFeatureCount(final Integer featureCount) {
         this.featureCount = featureCount;
     }
 

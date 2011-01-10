@@ -141,7 +141,7 @@ public class SchemaDataType extends AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setSchemaUrl(String value) {
+    public void setSchemaUrl(final String value) {
         this.schemaUrl = value;
     }
 

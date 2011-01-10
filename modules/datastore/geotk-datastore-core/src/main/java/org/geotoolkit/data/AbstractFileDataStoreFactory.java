@@ -43,7 +43,7 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
      * {@inheritDoc }
      */
     @Override
-    public boolean canProcess(ParameterValueGroup params) {
+    public boolean canProcess(final ParameterValueGroup params) {
         boolean valid = super.canProcess(params);
 
         if(valid){
@@ -69,7 +69,7 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
      * {@inheritDoc }
      */
     @Override
-    public boolean canProcess(URL url) {
+    public boolean canProcess(final URL url) {
         return canProcess(Collections.singletonMap(URLP.getName().toString(), url));
     }
 
@@ -77,7 +77,7 @@ public abstract class AbstractFileDataStoreFactory extends AbstractDataStoreFact
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(URL url) throws DataStoreException {
+    public DataStore createDataStore(final URL url) throws DataStoreException {
         return createDataStore(Collections.singletonMap(URLP.getName().toString(), url));
     }
 

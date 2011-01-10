@@ -76,14 +76,14 @@ public abstract class AbstractReferenceSystemType extends AbstractReferenceSyste
     /**
      * build an abstract reference system.
      */
-    public AbstractReferenceSystemType(final String id, final String name, final String description, String srsName)  {
+    public AbstractReferenceSystemType(final String id, final String name, final String description, final String srsName)  {
         super(id, name, description, srsName);
     }
 
     /**
      * build an abstract reference system.
      */
-    public AbstractReferenceSystemType(List<IdentifierType> srsID, ExtentType validArea, String scope) {
+    public AbstractReferenceSystemType(final List<IdentifierType> srsID, final ExtentType validArea, final String scope) {
         
         this.scope     = scope;
         this.validArea = validArea;

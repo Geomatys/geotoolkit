@@ -54,7 +54,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
 
     private final Query query;
 
-    public DefaultSelectorFeatureCollection(String id, Query query){
+    public DefaultSelectorFeatureCollection(final String id, final Query query){
         super(id,query.getSource());
 
         if(!(query.getSource() instanceof Selector)){
@@ -78,7 +78,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public FeatureCollection<Feature> subCollection(Query query) throws DataStoreException {
+    public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
         return getSession().getFeatureCollection(QueryUtilities.subQuery(this.query, query));
     }
 
@@ -108,7 +108,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException{
+    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException{
 
         final Query iteQuery;
         if(hints != null){
@@ -156,7 +156,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public boolean add(Feature e) {
+    public boolean add(final Feature e) {
         return addAll(Collections.singletonList(e));
     }
 
@@ -164,7 +164,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public boolean addAll(Collection<? extends Feature> clctn) {
+    public boolean addAll(final Collection<? extends Feature> clctn) {
         try {
             getSession().addFeatures(query.getTypeName(), clctn);
             return true;
@@ -184,7 +184,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
     }
 
     @Override
-    public boolean remove(Object o) throws DataStoreRuntimeException{
+    public boolean remove(final Object o) throws DataStoreRuntimeException{
 
         if(isWritable()){
             if(o instanceof Feature){
@@ -208,7 +208,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
     }
 
     @Override
-    public boolean removeAll(Collection<?> clctn) {
+    public boolean removeAll(final Collection<?> clctn) {
 
         if(isWritable()){
             final Set<Identifier> ids = new HashSet<Identifier>();
@@ -253,7 +253,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
         if(filter == Filter.INCLUDE){
             getSession().updateFeatures(query.getTypeName(),query.getFilter(),values);
         }else{
@@ -265,7 +265,7 @@ public class DefaultSelectorFeatureCollection extends AbstractFeatureCollection<
      * {@inheritDoc }
      */
     @Override
-    public void remove(Filter filter) throws DataStoreException {
+    public void remove(final Filter filter) throws DataStoreException {
         if(filter == Filter.INCLUDE){
             getSession().removeFeatures(query.getTypeName(),query.getFilter());
         }else{

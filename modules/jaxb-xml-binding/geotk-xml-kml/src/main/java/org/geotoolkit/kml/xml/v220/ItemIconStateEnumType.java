@@ -58,7 +58,7 @@ public enum ItemIconStateEnumType {
     FETCHING_2("fetching2");
     private final String value;
 
-    ItemIconStateEnumType(String v) {
+    ItemIconStateEnumType(final String v) {
         value = v;
     }
 
@@ -66,7 +66,7 @@ public enum ItemIconStateEnumType {
         return value;
     }
 
-    public static ItemIconStateEnumType fromValue(String v) {
+    public static ItemIconStateEnumType fromValue(final String v) {
         for (ItemIconStateEnumType c: ItemIconStateEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

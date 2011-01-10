@@ -40,7 +40,7 @@ public class ShpFilesTest extends TestCase{
     }
 
 
-    private void assertCorrectCase(boolean uppercase)
+    private void assertCorrectCase(final boolean uppercase)
             throws MalformedURLException {
         String base = "http://someURL.com/file.";
         
@@ -96,8 +96,8 @@ public class ShpFilesTest extends TestCase{
         
     }
     
-    public static Map<ShpFileType, File> createFiles(String string,
-            ShpFileType[] values, boolean uppercase) throws IOException {
+    public static Map<ShpFileType, File> createFiles(final String string,
+            final ShpFileType[] values, final boolean uppercase) throws IOException {
         Map<ShpFileType, File> files = new HashMap<ShpFileType, File>();
 
         String extensionWithPeriod = values[0].extensionWithPeriod;
@@ -211,8 +211,8 @@ public class ShpFilesTest extends TestCase{
         assertEqualMaps(expected, shapefiles.getFileNames());
     }
 
-    private void assertEqualMaps(Map<ShpFileType, File> expected,
-            Map<ShpFileType, String> files) throws MalformedURLException {
+    private void assertEqualMaps(final Map<ShpFileType, File> expected,
+            final Map<ShpFileType, String> files) throws MalformedURLException {
 
         Set<Entry<ShpFileType, File>> expectedEntries = expected.entrySet();
         for (Entry<ShpFileType, File> entry : expectedEntries) {

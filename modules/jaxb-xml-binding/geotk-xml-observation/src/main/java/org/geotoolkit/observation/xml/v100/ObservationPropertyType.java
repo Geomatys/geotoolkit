@@ -94,7 +94,7 @@ public class ObservationPropertyType {
     /**
      * A JAXB constructor.
      */
-    public ObservationPropertyType(ObservationEntry observation) {
+    public ObservationPropertyType(final ObservationEntry observation) {
         if (observation instanceof MeasurementEntry) {
             this.observation = omFactory.createMeasurement((MeasurementEntry) observation);
         } else {
@@ -105,7 +105,7 @@ public class ObservationPropertyType {
     /**
      * A JAXB constructor.
      */
-    public ObservationPropertyType(String title) {
+    public ObservationPropertyType(final String title) {
         this.title = title;
     }
             

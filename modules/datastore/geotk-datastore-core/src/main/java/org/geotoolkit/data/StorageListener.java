@@ -59,11 +59,11 @@ public interface StorageListener extends EventListener{
 
         private final Collection<Object> sources = new ArrayList<Object>(1);
 
-        public Weak(StorageListener ref) {
+        public Weak(final StorageListener ref) {
             this(null,ref);
         }
 
-        public Weak(Object source, StorageListener ref) {
+        public Weak(final Object source, final StorageListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
@@ -71,7 +71,7 @@ public interface StorageListener extends EventListener{
         /**
          * Register this listener on the given source.
          */
-        public synchronized void registerSource(Object source){
+        public synchronized void registerSource(final Object source){
             if(source != null){
                 //register in the new source
                 this.sources.add(source);
@@ -95,12 +95,12 @@ public interface StorageListener extends EventListener{
         /**
          * Unregister this listener on the given source.
          */
-        public synchronized void unregisterSource(Object source){
+        public synchronized void unregisterSource(final Object source){
             sources.remove(source);
             remove(source);
         }
 
-        private synchronized void remove(Object source){
+        private synchronized void remove(final Object source){
             try {
                 final Method method = source.getClass().getMethod("removeStorageListener", StorageListener.class);
                 method.invoke(source, this);
@@ -126,7 +126,7 @@ public interface StorageListener extends EventListener{
         }
 
         @Override
-        public void structureChanged(StorageManagementEvent event) {
+        public void structureChanged(final StorageManagementEvent event) {
             final StorageListener listener = get();
             if (listener != null) {
                 listener.structureChanged(event);
@@ -134,7 +134,7 @@ public interface StorageListener extends EventListener{
         }
 
         @Override
-        public void contentChanged(StorageContentEvent event) {
+        public void contentChanged(final StorageContentEvent event) {
             final StorageListener listener = get();
             if (listener != null) {
                 listener.contentChanged(event);

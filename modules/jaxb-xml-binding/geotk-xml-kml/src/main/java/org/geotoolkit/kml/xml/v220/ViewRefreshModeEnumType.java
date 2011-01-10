@@ -52,7 +52,7 @@ public enum ViewRefreshModeEnumType {
     ON_REGION("onRegion");
     private final String value;
 
-    ViewRefreshModeEnumType(String v) {
+    ViewRefreshModeEnumType(final String v) {
         value = v;
     }
 
@@ -60,7 +60,7 @@ public enum ViewRefreshModeEnumType {
         return value;
     }
 
-    public static ViewRefreshModeEnumType fromValue(String v) {
+    public static ViewRefreshModeEnumType fromValue(final String v) {
         for (ViewRefreshModeEnumType c: ViewRefreshModeEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

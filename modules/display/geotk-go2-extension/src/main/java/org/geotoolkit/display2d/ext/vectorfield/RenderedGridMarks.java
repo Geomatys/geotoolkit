@@ -254,7 +254,7 @@ public class RenderedGridMarks extends RenderedMarks {
     }
    
 
-    private GridCoverage2D reSample(GridCoverage2D coverage, CoordinateReferenceSystem crs){
+    private GridCoverage2D reSample(final GridCoverage2D coverage, final CoordinateReferenceSystem crs){
         
         RenderedImage rendered = coverage.getRenderedImage();
         GridGeometry2D gridGeom = coverage.getGridGeometry();
@@ -691,7 +691,7 @@ public class RenderedGridMarks extends RenderedMarks {
     }
 
 
-    private AffineTransform calculateAverageAffine(RenderingContext2D context) throws FactoryException, TransformException{
+    private AffineTransform calculateAverageAffine(final RenderingContext2D context) throws FactoryException, TransformException{
 
         MathTransform trs = context.getMathTransform(context.getObjectiveCRS(),coverage.getCoordinateReferenceSystem2D() );
 
@@ -750,7 +750,7 @@ public class RenderedGridMarks extends RenderedMarks {
      * {@inheritDoc }
      */
      @Override
-    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
         //not selectable graphic
         return graphics;
     }

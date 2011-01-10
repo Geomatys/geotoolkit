@@ -84,13 +84,13 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
     private boolean isDisplayCalculated = false;
 
     
-    public DefaultGraphicFeatureJ2D(J2DCanvas canvas, FeatureMapLayer layer, Feature feature){
+    public DefaultGraphicFeatureJ2D(final J2DCanvas canvas, final FeatureMapLayer layer, final Feature feature){
         super(canvas,feature.getType().getCoordinateReferenceSystem());
         this.layer = layer;
         initFeature(feature);
     }
     
-    public void initFeature(Feature feature){
+    public void initFeature(final Feature feature){
         this.feature = feature;
         this.defaultGeom = GO2Utilities.getGeometry(feature, "");
         objectiveGeometry = null;
@@ -179,12 +179,12 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
     }
 
     @Override
-    public void paint(RenderingContext2D context) {
+    public void paint(final RenderingContext2D context) {
     }
 
     @Override
-    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask,
-            VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask,
+            final VisitFilter filter, final List<Graphic> graphics) {
         return graphics;
     }
 
@@ -223,7 +223,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
         return dispBounds;
     }
 
-    private Feature getCompleteFeature(FeatureId id)throws DataStoreException{
+    private Feature getCompleteFeature(final FeatureId id)throws DataStoreException{
 
         if(layer != null){
             Filter filter = FILTER_FACTORY.id(Collections.singleton(id));
@@ -255,7 +255,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
     }
 
     @Override
-    public ProjectedGeometry getGeometry(String name) {
+    public ProjectedGeometry getGeometry(final String name) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

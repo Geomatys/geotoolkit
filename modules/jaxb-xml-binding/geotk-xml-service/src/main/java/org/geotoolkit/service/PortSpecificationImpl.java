@@ -48,7 +48,7 @@ public class PortSpecificationImpl implements PortSpecification {
         
     }
     
-    public PortSpecificationImpl(DCPList binding, URL address) {
+    public PortSpecificationImpl(final DCPList binding, final URL address) {
         this.address = address;
         this.binding = binding;
     }
@@ -66,7 +66,7 @@ public class PortSpecificationImpl implements PortSpecification {
      * 
      *     
      */
-    public void setBinding(DCPList value) {
+    public void setBinding(final DCPList value) {
         this.binding = value;
     }
 
@@ -82,7 +82,7 @@ public class PortSpecificationImpl implements PortSpecification {
      * Sets the value of the address property.
      * 
      */
-    public void setAddress(URL value) {
+    public void setAddress(final URL value) {
         this.address = value;
     }
 

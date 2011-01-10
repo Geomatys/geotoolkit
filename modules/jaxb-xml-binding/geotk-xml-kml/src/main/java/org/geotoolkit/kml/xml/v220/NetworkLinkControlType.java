@@ -115,7 +115,7 @@ public class NetworkLinkControlType {
      *     {@link Double }
      *     
      */
-    public void setMinRefreshPeriod(Double value) {
+    public void setMinRefreshPeriod(final Double value) {
         this.minRefreshPeriod = value;
     }
 
@@ -139,7 +139,7 @@ public class NetworkLinkControlType {
      *     {@link Double }
      *     
      */
-    public void setMaxSessionLength(Double value) {
+    public void setMaxSessionLength(final Double value) {
         this.maxSessionLength = value;
     }
 
@@ -163,7 +163,7 @@ public class NetworkLinkControlType {
      *     {@link String }
      *     
      */
-    public void setCookie(String value) {
+    public void setCookie(final String value) {
         this.cookie = value;
     }
 
@@ -187,7 +187,7 @@ public class NetworkLinkControlType {
      *     {@link String }
      *     
      */
-    public void setMessage(String value) {
+    public void setMessage(final String value) {
         this.message = value;
     }
 
@@ -211,7 +211,7 @@ public class NetworkLinkControlType {
      *     {@link String }
      *     
      */
-    public void setLinkName(String value) {
+    public void setLinkName(final String value) {
         this.linkName = value;
     }
 
@@ -235,7 +235,7 @@ public class NetworkLinkControlType {
      *     {@link String }
      *     
      */
-    public void setLinkDescription(String value) {
+    public void setLinkDescription(final String value) {
         this.linkDescription = value;
     }
 
@@ -259,7 +259,7 @@ public class NetworkLinkControlType {
      *     {@link SnippetType }
      *     
      */
-    public void setLinkSnippet(SnippetType value) {
+    public void setLinkSnippet(final SnippetType value) {
         this.linkSnippet = value;
     }
 
@@ -283,7 +283,7 @@ public class NetworkLinkControlType {
      *     {@link String }
      *     
      */
-    public void setExpires(String value) {
+    public void setExpires(final String value) {
         this.expires = value;
     }
 
@@ -307,7 +307,7 @@ public class NetworkLinkControlType {
      *     {@link UpdateType }
      *     
      */
-    public void setUpdate(UpdateType value) {
+    public void setUpdate(final UpdateType value) {
         this.update = value;
     }
 
@@ -335,7 +335,7 @@ public class NetworkLinkControlType {
      *     {@link JAXBElement }{@code <}{@link AbstractViewType }{@code >}
      *     
      */
-    public void setAbstractViewGroup(JAXBElement<? extends AbstractViewType> value) {
+    public void setAbstractViewGroup(final JAXBElement<? extends AbstractViewType> value) {
         this.abstractViewGroup = ((JAXBElement<? extends AbstractViewType> ) value);
     }
 

@@ -57,7 +57,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
      * {@inheritDoc }
      */
     @Override
-    public void setRenderingContext(RenderingContext2D context){
+    public void setRenderingContext(final RenderingContext2D context){
         if(context == null) throw new NullPointerException("Rendering context can not be null");
         this.context = context;
     }
@@ -100,7 +100,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
         this.layers.clear();
     }
 
-    private void portray(Graphics2D g2, PointLabelDescriptor label){
+    private void portray(final Graphics2D g2, final PointLabelDescriptor label){
         context.switchToDisplayCRS();
 
         final FontMetrics metric = g2.getFontMetrics(label.getTextFont());
@@ -149,7 +149,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
 
     }
 
-    private void portray(Graphics2D g2, LinearLabelDescriptor label){
+    private void portray(final Graphics2D g2, final LinearLabelDescriptor label){
         context.switchToDisplayCRS();
 
         final TextStroke stroke = new TextStroke(label.getText(), label.getTextFont(), label.isRepeated(),
@@ -179,7 +179,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
     }
 
     @Override
-    public void portrayImmidiately(LabelLayer layer) {
+    public void portrayImmidiately(final LabelLayer layer) {
         final Graphics2D g2 = context.getGraphics();
         //enable antialiasing for labels
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);

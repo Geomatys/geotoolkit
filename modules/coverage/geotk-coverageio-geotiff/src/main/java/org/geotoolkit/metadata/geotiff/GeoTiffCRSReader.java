@@ -147,7 +147,7 @@ final class GeoTiffCRSReader {
     private Hints hints;
 
 
-    public GeoTiffCRSReader(Hints hints){
+    public GeoTiffCRSReader(final Hints hints){
         final Hints tempHints = hints != null ? new Hints(hints) : DEFAULT_HINTS;
 
         this.hints = (Hints) tempHints.clone();
@@ -168,7 +168,7 @@ final class GeoTiffCRSReader {
     /**
      * Fill the CRS metadatas with the values available in the geotiff tags.
      */
-    public void fillCRSMetaDatas(SpatialMetadata metadatas, ValueMap entries) throws IOException, FactoryException{
+    public void fillCRSMetaDatas(final SpatialMetadata metadatas, final ValueMap entries) throws IOException, FactoryException{
 
         final Object type = entries.get(GTModelTypeGeoKey);
 
@@ -187,7 +187,7 @@ final class GeoTiffCRSReader {
     /**
      * Fill a projected CRS metadatas with the values available in the geotiff tags.
      */
-    private void fillProjectedCRSMetaDatas(SpatialMetadata metadatas, ValueMap entries) throws IOException, FactoryException {
+    private void fillProjectedCRSMetaDatas(final SpatialMetadata metadatas, final ValueMap entries) throws IOException, FactoryException {
 
         final ReferencingBuilder rb = new ReferencingBuilder(metadatas);
         final CoordinateReferenceSystem crs;
@@ -261,7 +261,7 @@ final class GeoTiffCRSReader {
     /**
      * Fill a geographic CRS metadatas with the values available in the geotiff tags.
      */
-    private void fillGeographicCRSMetaDatas(SpatialMetadata metadatas, ValueMap entries) throws IOException, FactoryException{
+    private void fillGeographicCRSMetaDatas(final SpatialMetadata metadatas, final ValueMap entries) throws IOException, FactoryException{
         GeographicCRS gcs = null;
 
         // ////////////////////////////////////////////////////////////////////
@@ -332,7 +332,7 @@ final class GeoTiffCRSReader {
     /**
      * Fill a geocentric CRS metadatas with the values available in the geotiff tags.
      */
-    private void fillGeocentricCRSMetaDatas(SpatialMetadata metadatas, ValueMap entries) throws IOException{
+    private void fillGeocentricCRSMetaDatas(final SpatialMetadata metadatas, final ValueMap entries) throws IOException{
         throw new IOException("Not done yet.");
     }
 
@@ -354,8 +354,8 @@ final class GeoTiffCRSReader {
      *
      * @throws IOException
      */
-    private GeographicCRS createUserDefinedGCS(final ValueMap metadata, Unit linearUnit,
-            Unit angularUnit) throws IOException, FactoryException {
+    private GeographicCRS createUserDefinedGCS(final ValueMap metadata, final Unit linearUnit,
+            final Unit angularUnit) throws IOException, FactoryException {
         // //
         // coordinate reference system name (GeogCitationGeoKey)
         // //
@@ -390,7 +390,7 @@ final class GeoTiffCRSReader {
      * @throws FactoryException
      */
     private ProjectedCRS createUserDefinedPCS(
-            final ValueMap metadata, Unit linearUnit)
+            final ValueMap metadata, final Unit linearUnit)
             throws IOException, FactoryException {
 
         // /////////////////////////////////////////////////////////////////
@@ -648,7 +648,7 @@ final class GeoTiffCRSReader {
      * @throws FactoryException
      */
     private ParameterValueGroup createUserDefinedProjectionParameter(
-            String name, final ValueMap metadata)
+            final String name, final ValueMap metadata)
             throws IOException, FactoryException {
         // //
         //
@@ -1013,7 +1013,7 @@ final class GeoTiffCRSReader {
      * @return an instance of {@link CartesianCS} using the provided
      *         {@link Unit},
      */
-    private DefaultCartesianCS createProjectedCS(Unit linearUnit) {
+    private DefaultCartesianCS createProjectedCS(final Unit linearUnit) {
         if (linearUnit == null) {
             throw new NullPointerException(
                     "Error when trying to create a PCS using this linear UoM ");
@@ -1042,7 +1042,7 @@ final class GeoTiffCRSReader {
      * @throws IOException
      */
     private PrimeMeridian createPrimeMeridian(
-            final ValueMap metadata, Unit linearUnit)
+            final ValueMap metadata, final Unit linearUnit)
             throws IOException {
         // look up the prime meridian:
         // + could be an EPSG code
@@ -1232,7 +1232,7 @@ final class GeoTiffCRSReader {
      *             <code>ProjLinearUnitSizeGeoKey</code> is either not defined
      *             or does not contain a number.
      */
-    private Unit createUnit(int key, int userDefinedKey, Unit base, Unit def,
+    private Unit createUnit(final int key, final int userDefinedKey, final Unit base, final Unit def,
             final ValueMap metadata) throws IOException {
         final String unitCode = metadata.getAsString(key);
 
@@ -1269,7 +1269,7 @@ final class GeoTiffCRSReader {
         }
     }
 
-    private static String code(GeneralParameterDescriptor desc){
+    private static String code(final GeneralParameterDescriptor desc){
         return desc.getName().getCode();
     }
 

@@ -49,11 +49,11 @@ public interface ItemListener extends PropertyChangeListener {
 
         private final Collection<MapItem> sources = new ArrayList<MapItem>(1);
 
-        public Weak(ItemListener ref) {
+        public Weak(final ItemListener ref) {
             this(null,ref);
         }
 
-        public Weak(MapItem source, ItemListener ref) {
+        public Weak(final MapItem source, final ItemListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
@@ -61,7 +61,7 @@ public interface ItemListener extends PropertyChangeListener {
         /**
          * Register this listener on the given source.
          */
-        public synchronized void registerSource(MapItem source){
+        public synchronized void registerSource(final MapItem source){
             if(source != null){
                 //register in the new source
                 source.addItemListener(this);
@@ -72,7 +72,7 @@ public interface ItemListener extends PropertyChangeListener {
         /**
          * Unregister this listener on the given source.
          */
-        public synchronized void unregisterSource(MapItem source){
+        public synchronized void unregisterSource(final MapItem source){
             sources.remove(source);
             source.removeItemListener(this);
         }
@@ -86,7 +86,7 @@ public interface ItemListener extends PropertyChangeListener {
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             final ItemListener listener = get();
             if (listener != null) {
                 listener.propertyChange(evt);
@@ -95,7 +95,7 @@ public interface ItemListener extends PropertyChangeListener {
         }
 
         @Override
-        public void itemChange(CollectionChangeEvent<MapItem> event) {
+        public void itemChange(final CollectionChangeEvent<MapItem> event) {
             final ItemListener listener = get();
             if (listener != null) {
                 listener.itemChange(event);

@@ -45,7 +45,7 @@ public abstract class AbstractUpdateChangeSet extends AbstractRequest implements
     protected int id = -1;
     protected final List<Tag> tags = new ArrayList<Tag>();
 
-    public AbstractUpdateChangeSet(String serverURL, String subPath){
+    public AbstractUpdateChangeSet(final String serverURL, final String subPath){
         super(serverURL, subPath);
     }
 
@@ -55,7 +55,7 @@ public abstract class AbstractUpdateChangeSet extends AbstractRequest implements
     }
 
     @Override
-    public void setChangeSetID(int id) {
+    public void setChangeSetID(final int id) {
         this.id = id;
     }
 

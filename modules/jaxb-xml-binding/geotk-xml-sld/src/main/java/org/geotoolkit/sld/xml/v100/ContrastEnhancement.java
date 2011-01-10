@@ -83,7 +83,7 @@ public class ContrastEnhancement {
      *     {@link Normalize }
      *     
      */
-    public void setNormalize(Normalize value) {
+    public void setNormalize(final Normalize value) {
         this.normalize = value;
     }
 
@@ -107,7 +107,7 @@ public class ContrastEnhancement {
      *     {@link Histogram }
      *     
      */
-    public void setHistogram(Histogram value) {
+    public void setHistogram(final Histogram value) {
         this.histogram = value;
     }
 
@@ -131,7 +131,7 @@ public class ContrastEnhancement {
      *     {@link Double }
      *     
      */
-    public void setGammaValue(Double value) {
+    public void setGammaValue(final Double value) {
         this.gammaValue = value;
     }
 

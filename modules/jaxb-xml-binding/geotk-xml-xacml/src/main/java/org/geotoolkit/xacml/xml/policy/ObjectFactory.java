@@ -369,7 +369,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicySetCombinerParameters")
-   public JAXBElement<PolicySetCombinerParametersType> createPolicySetCombinerParameters(PolicySetCombinerParametersType value) {
+   public JAXBElement<PolicySetCombinerParametersType> createPolicySetCombinerParameters(final PolicySetCombinerParametersType value) {
       return new JAXBElement<PolicySetCombinerParametersType>(_PolicySetCombinerParam_QNAME,
             PolicySetCombinerParametersType.class, null, value);
    }
@@ -379,7 +379,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Obligations")
-   public JAXBElement<ObligationsType> createObligations(ObligationsType value) {
+   public JAXBElement<ObligationsType> createObligations(final ObligationsType value) {
       return new JAXBElement<ObligationsType>(_Obligations_QNAME, ObligationsType.class, null, value);
    }
 
@@ -388,7 +388,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "RuleCombinerParameters")
-   public JAXBElement<RuleCombinerParametersType> createRuleCombinerParameters(RuleCombinerParametersType value) {
+   public JAXBElement<RuleCombinerParametersType> createRuleCombinerParameters(final RuleCombinerParametersType value) {
       return new JAXBElement<RuleCombinerParametersType>(_RuleCombinerParameters_QNAME,
             RuleCombinerParametersType.class, null, value);
    }
@@ -398,7 +398,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "AttributeValue", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
-   public JAXBElement<AttributeValueType> createAttributeValue(AttributeValueType value) {
+   public JAXBElement<AttributeValueType> createAttributeValue(final AttributeValueType value) {
       return new JAXBElement<AttributeValueType>(_AttributeValue_QNAME, AttributeValueType.class, null, value);
    }
 
@@ -407,7 +407,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "VariableDefinition")
-   public JAXBElement<VariableDefinitionType> createVariableDefinition(VariableDefinitionType value) {
+   public JAXBElement<VariableDefinitionType> createVariableDefinition(final VariableDefinitionType value) {
       return new JAXBElement<VariableDefinitionType>(_VariableDefinition_QNAME, VariableDefinitionType.class, null,
             value);
    }
@@ -417,7 +417,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Apply", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
-   public JAXBElement<ApplyType> createApply(ApplyType value) {
+   public JAXBElement<ApplyType> createApply(final ApplyType value) {
       return new JAXBElement<ApplyType>(_Apply_QNAME, ApplyType.class, null, value);
    }
 
@@ -426,7 +426,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Environments")
-   public JAXBElement<EnvironmentsType> createEnvironments(EnvironmentsType value) {
+   public JAXBElement<EnvironmentsType> createEnvironments(final EnvironmentsType value) {
       return new JAXBElement<EnvironmentsType>(_Environments_QNAME, EnvironmentsType.class, null, value);
    }
 
@@ -435,7 +435,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "SubjectMatch")
-   public JAXBElement<SubjectMatchType> createSubjectMatch(SubjectMatchType value) {
+   public JAXBElement<SubjectMatchType> createSubjectMatch(final SubjectMatchType value) {
       return new JAXBElement<SubjectMatchType>(_SubjectMatch_QNAME, SubjectMatchType.class, null, value);
    }
 
@@ -444,7 +444,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "ResourceMatch")
-   public JAXBElement<ResourceMatchType> createResourceMatch(ResourceMatchType value) {
+   public JAXBElement<ResourceMatchType> createResourceMatch(final ResourceMatchType value) {
       return new JAXBElement<ResourceMatchType>(_ResourceMatch_QNAME, ResourceMatchType.class, null, value);
    }
 
@@ -453,7 +453,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "ActionAttributeDesignator", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
-   public JAXBElement<AttributeDesignatorType> createActionAttributeDesignator(AttributeDesignatorType value) {
+   public JAXBElement<AttributeDesignatorType> createActionAttributeDesignator(final AttributeDesignatorType value) {
       return new JAXBElement<AttributeDesignatorType>(_ActionAttrDesignator_QNAME, AttributeDesignatorType.class,
             null, value);
    }
@@ -463,7 +463,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicyCombinerParameters")
-   public JAXBElement<PolicyCombinerParametersType> createPolicyCombinerParameters(PolicyCombinerParametersType value) {
+   public JAXBElement<PolicyCombinerParametersType> createPolicyCombinerParameters(final PolicyCombinerParametersType value) {
       return new JAXBElement<PolicyCombinerParametersType>(_PolicyCombinerParam_QNAME,
             PolicyCombinerParametersType.class, null, value);
    }
@@ -473,7 +473,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Obligation")
-   public JAXBElement<ObligationType> createObligation(ObligationType value) {
+   public JAXBElement<ObligationType> createObligation(final ObligationType value) {
       return new JAXBElement<ObligationType>(_Obligation_QNAME, ObligationType.class, null, value);
    }
 
@@ -482,7 +482,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "ResourceAttributeDesignator", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
-   public JAXBElement<AttributeDesignatorType> createResourceAttributeDesignator(AttributeDesignatorType value) {
+   public JAXBElement<AttributeDesignatorType> createResourceAttributeDesignator(final AttributeDesignatorType value) {
       return new JAXBElement<AttributeDesignatorType>(_ResourceAttrDesignator_QNAME, AttributeDesignatorType.class, null, value);
    }
 
@@ -491,7 +491,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Function", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
-   public JAXBElement<FunctionType> createFunction(FunctionType value) {
+   public JAXBElement<FunctionType> createFunction(final FunctionType value) {
       return new JAXBElement<FunctionType>(_Function_QNAME, FunctionType.class, null, value);
    }
 
@@ -500,7 +500,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "EnvironmentAttributeDesignator", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
-   public JAXBElement<AttributeDesignatorType> createEnvironmentAttributeDesignator(AttributeDesignatorType value) {
+   public JAXBElement<AttributeDesignatorType> createEnvironmentAttributeDesignator(final AttributeDesignatorType value) {
       return new JAXBElement<AttributeDesignatorType>(_EnvironmentAttrDesignator_QNAME,
             AttributeDesignatorType.class, null, value);
    }
@@ -510,7 +510,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "VariableReference", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
-   public JAXBElement<VariableReferenceType> createVariableReference(VariableReferenceType value) {
+   public JAXBElement<VariableReferenceType> createVariableReference(final VariableReferenceType value) {
       return new JAXBElement<VariableReferenceType>(_VariableReference_QNAME, VariableReferenceType.class, null, value);
    }
 
@@ -519,7 +519,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "AttributeAssignment")
-   public JAXBElement<AttributeAssignmentType> createAttributeAssignment(AttributeAssignmentType value) {
+   public JAXBElement<AttributeAssignmentType> createAttributeAssignment(final AttributeAssignmentType value) {
       return new JAXBElement<AttributeAssignmentType>(_AttributeAssignment_QNAME, AttributeAssignmentType.class, null,
             value);
    }
@@ -529,7 +529,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Resource")
-   public JAXBElement<ResourceType> createResource(ResourceType value) {
+   public JAXBElement<ResourceType> createResource(final ResourceType value) {
       return new JAXBElement<ResourceType>(_Resource_QNAME, ResourceType.class, null, value);
    }
 
@@ -538,7 +538,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Condition")
-   public JAXBElement<ConditionType> createCondition(ConditionType value) {
+   public JAXBElement<ConditionType> createCondition(final ConditionType value) {
       return new JAXBElement<ConditionType>(_Condition_QNAME, ConditionType.class, null, value);
    }
 
@@ -547,7 +547,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicyDefaults")
-   public JAXBElement<DefaultsType> createPolicyDefaults(DefaultsType value) {
+   public JAXBElement<DefaultsType> createPolicyDefaults(final DefaultsType value) {
       return new JAXBElement<DefaultsType>(_PolicyDefaults_QNAME, DefaultsType.class, null, value);
    }
 
@@ -556,7 +556,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Rule")
-   public JAXBElement<RuleType> createRule(RuleType value) {
+   public JAXBElement<RuleType> createRule(final RuleType value) {
       return new JAXBElement<RuleType>(_Rule_QNAME, RuleType.class, null, value);
    }
 
@@ -565,7 +565,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Resources")
-   public JAXBElement<ResourcesType> createResources(ResourcesType value) {
+   public JAXBElement<ResourcesType> createResources(final ResourcesType value) {
       return new JAXBElement<ResourcesType>(_Resources_QNAME, ResourcesType.class, null, value);
    }
 
@@ -574,7 +574,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Policy")
-   public JAXBElement<PolicyType> createPolicy(PolicyType value) {
+   public JAXBElement<PolicyType> createPolicy(final PolicyType value) {
       return new JAXBElement<PolicyType>(_Policy_QNAME, PolicyType.class, null, value);
    }
 
@@ -583,7 +583,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Target")
-   public JAXBElement<TargetType> createTarget(TargetType value) {
+   public JAXBElement<TargetType> createTarget(final TargetType value) {
       return new JAXBElement<TargetType>(_Target_QNAME, TargetType.class, null, value);
    }
 
@@ -592,7 +592,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Subject")
-   public JAXBElement<SubjectType> createSubject(SubjectType value) {
+   public JAXBElement<SubjectType> createSubject(final SubjectType value) {
       return new JAXBElement<SubjectType>(_Subject_QNAME, SubjectType.class, null, value);
    }
 
@@ -601,7 +601,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Subjects")
-   public JAXBElement<SubjectsType> createSubjects(SubjectsType value) {
+   public JAXBElement<SubjectsType> createSubjects(final SubjectsType value) {
       return new JAXBElement<SubjectsType>(_Subjects_QNAME, SubjectsType.class, null, value);
    }
 
@@ -610,7 +610,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicySetIdReference")
-   public JAXBElement<IdReferenceType> createPolicySetIdReference(IdReferenceType value) {
+   public JAXBElement<IdReferenceType> createPolicySetIdReference(final IdReferenceType value) {
       return new JAXBElement<IdReferenceType>(_PolicySetIdReference_QNAME, IdReferenceType.class, null, value);
    }
 
@@ -619,7 +619,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicySetDefaults")
-   public JAXBElement<DefaultsType> createPolicySetDefaults(DefaultsType value) {
+   public JAXBElement<DefaultsType> createPolicySetDefaults(final DefaultsType value) {
       return new JAXBElement<DefaultsType>(_PolicySetDefaults_QNAME, DefaultsType.class, null, value);
    }
 
@@ -628,7 +628,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "XPathVersion")
-   public JAXBElement<String> createXPathVersion(String value) {
+   public JAXBElement<String> createXPathVersion(final String value) {
       return new JAXBElement<String>(_XPathVersion_QNAME, String.class, null, value);
    }
 
@@ -637,7 +637,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicyIdReference")
-   public JAXBElement<IdReferenceType> createPolicyIdReference(IdReferenceType value) {
+   public JAXBElement<IdReferenceType> createPolicyIdReference(final IdReferenceType value) {
       return new JAXBElement<IdReferenceType>(_PolicyIdReference_QNAME, IdReferenceType.class, null, value);
    }
 
@@ -646,7 +646,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "CombinerParameters")
-   public JAXBElement<CombinerParametersType> createCombinerParameters(CombinerParametersType value) {
+   public JAXBElement<CombinerParametersType> createCombinerParameters(final CombinerParametersType value) {
       return new JAXBElement<CombinerParametersType>(_CombinerParameters_QNAME, CombinerParametersType.class, null,
             value);
    }
@@ -656,7 +656,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "EnvironmentMatch")
-   public JAXBElement<EnvironmentMatchType> createEnvironmentMatch(EnvironmentMatchType value) {
+   public JAXBElement<EnvironmentMatchType> createEnvironmentMatch(final EnvironmentMatchType value) {
       return new JAXBElement<EnvironmentMatchType>(_EnvironmentMatch_QNAME, EnvironmentMatchType.class, null, value);
    }
 
@@ -665,7 +665,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Environment")
-   public JAXBElement<EnvironmentType> createEnvironment(EnvironmentType value) {
+   public JAXBElement<EnvironmentType> createEnvironment(final EnvironmentType value) {
       return new JAXBElement<EnvironmentType>(_Environment_QNAME, EnvironmentType.class, null, value);
    }
 
@@ -674,7 +674,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Actions")
-   public JAXBElement<ActionsType> createActions(ActionsType value) {
+   public JAXBElement<ActionsType> createActions(final ActionsType value) {
       return new JAXBElement<ActionsType>(_Actions_QNAME, ActionsType.class, null, value);
    }
 
@@ -683,7 +683,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Action")
-   public JAXBElement<ActionType> createAction(ActionType value) {
+   public JAXBElement<ActionType> createAction(final ActionType value) {
       return new JAXBElement<ActionType>(_Action_QNAME, ActionType.class, null, value);
    }
 
@@ -692,7 +692,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "ActionMatch")
-   public JAXBElement<ActionMatchType> createActionMatch(ActionMatchType value) {
+   public JAXBElement<ActionMatchType> createActionMatch(final ActionMatchType value) {
       return new JAXBElement<ActionMatchType>(_ActionMatch_QNAME, ActionMatchType.class, null, value);
    }
 
@@ -701,7 +701,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "AttributeSelector", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
-   public JAXBElement<AttributeSelectorType> createAttributeSelector(AttributeSelectorType value) {
+   public JAXBElement<AttributeSelectorType> createAttributeSelector(final AttributeSelectorType value) {
       return new JAXBElement<AttributeSelectorType>(_AttributeSelector_QNAME, AttributeSelectorType.class, null, value);
    }
 
@@ -710,7 +710,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Description")
-   public JAXBElement<String> createDescription(String value) {
+   public JAXBElement<String> createDescription(final String value) {
       return new JAXBElement<String>(_Description_QNAME, String.class, null, value);
    }
 
@@ -719,7 +719,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "PolicySet")
-   public JAXBElement<PolicySetType> createPolicySet(PolicySetType value) {
+   public JAXBElement<PolicySetType> createPolicySet(final PolicySetType value) {
       return new JAXBElement<PolicySetType>(_PolicySet_QNAME, PolicySetType.class, null, value);
    }
 
@@ -728,7 +728,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "SubjectAttributeDesignator", substitutionHeadNamespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", substitutionHeadName = "Expression")
-   public JAXBElement<SubjectAttributeDesignatorType> createSubjectAttributeDesignator(SubjectAttributeDesignatorType value) {
+   public JAXBElement<SubjectAttributeDesignatorType> createSubjectAttributeDesignator(final SubjectAttributeDesignatorType value) {
       return new JAXBElement<SubjectAttributeDesignatorType>(_SubjectAttrDesignator_QNAME,
             SubjectAttributeDesignatorType.class, null, value);
    }
@@ -738,7 +738,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "Expression")
-   public JAXBElement<ExpressionType> createExpression(ExpressionType value) {
+   public JAXBElement<ExpressionType> createExpression(final ExpressionType value) {
       return new JAXBElement<ExpressionType>(_Expression_QNAME, ExpressionType.class, null, value);
    }
 
@@ -747,7 +747,7 @@ public class ObjectFactory
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:policy:schema:os", name = "CombinerParameter")
-   public JAXBElement<CombinerParameterType> createCombinerParameter(CombinerParameterType value) {
+   public JAXBElement<CombinerParameterType> createCombinerParameter(final CombinerParameterType value) {
       return new JAXBElement<CombinerParameterType>(_CombinerParameter_QNAME, CombinerParameterType.class, null, value);
    }
 

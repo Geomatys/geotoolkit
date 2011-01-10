@@ -59,7 +59,7 @@ public class CurveType extends AbstractCurveType {
 
     CurveType() {}
 
-    public CurveType(List<? extends AbstractCurveSegmentType> segments) {
+    public CurveType(final List<? extends AbstractCurveSegmentType> segments) {
         this.segments = new CurveSegmentArrayPropertyType(segments);
     }
 
@@ -83,7 +83,7 @@ public class CurveType extends AbstractCurveType {
      *     {@link CurveSegmentArrayPropertyType }
      *     
      */
-    public void setSegments(CurveSegmentArrayPropertyType value) {
+    public void setSegments(final CurveSegmentArrayPropertyType value) {
         this.segments = value;
     }
 

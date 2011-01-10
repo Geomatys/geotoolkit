@@ -43,7 +43,7 @@ public class FeatureCollectionDataSource implements JRDataSource {
     private final FeatureIterator iterator;
     private Feature feature;
 
-    public FeatureCollectionDataSource(FeatureCollection collection){
+    public FeatureCollectionDataSource(final FeatureCollection collection){
         if(collection == null){
             throw new NullArgumentException("Feature collection can not be null.");
         }
@@ -51,7 +51,7 @@ public class FeatureCollectionDataSource implements JRDataSource {
         this.iterator = collection.iterator();
     }
 
-    public FeatureCollectionDataSource(FeatureIterator iterator){
+    public FeatureCollectionDataSource(final FeatureIterator iterator){
         if(iterator == null){
             throw new NullArgumentException("Feature iterator can not be null.");
         }
@@ -74,7 +74,7 @@ public class FeatureCollectionDataSource implements JRDataSource {
     }
 
     @Override
-    public Object getFieldValue(JRField jrf) throws JRException {
+    public Object getFieldValue(final JRField jrf) throws JRException {
         
         //search for special fields
         final Collection<JRFieldRenderer> renderers = JRMappingUtils.getFieldRenderers();

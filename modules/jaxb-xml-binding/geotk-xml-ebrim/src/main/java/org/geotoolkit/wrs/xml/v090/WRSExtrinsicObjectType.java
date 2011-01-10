@@ -74,7 +74,7 @@ public class WRSExtrinsicObjectType extends ExtrinsicObjectType {
     /**
      * Sets the value of the content property.
      */
-    public void setContent(SimpleLinkType value) {
+    public void setContent(final SimpleLinkType value) {
         this.content = value;
     }
 

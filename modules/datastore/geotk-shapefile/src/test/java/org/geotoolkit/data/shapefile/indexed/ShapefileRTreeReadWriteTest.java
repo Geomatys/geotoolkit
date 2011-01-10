@@ -54,7 +54,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
     /**
      * Creates a new instance of ShapefileReadWriteTest
      */
-    public ShapefileRTreeReadWriteTest(String name) throws IOException {
+    public ShapefileRTreeReadWriteTest(final String name) throws IOException {
         super(name);
     }
 
@@ -77,7 +77,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         }
     }
 
-    public void fail(String message, Throwable cause) throws Throwable {
+    public void fail(final String message, final Throwable cause) throws Throwable {
         Throwable fail = new AssertionFailedError(message);
         fail.initCause(cause);
         throw fail;
@@ -98,8 +98,8 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         s1.dispose();
     }
 
-    private void doubleWrite(SimpleFeatureType type, FeatureCollection<SimpleFeature> one,
-            File tmp, boolean memorymapped) throws IOException, MalformedURLException, DataStoreException {
+    private void doubleWrite(final SimpleFeatureType type, final FeatureCollection<SimpleFeature> one,
+            final File tmp, final boolean memorymapped) throws IOException, MalformedURLException, DataStoreException {
         IndexedShapefileDataStore s;
         s = new IndexedShapefileDataStore(tmp.toURL(), memorymapped, true);
 
@@ -114,7 +114,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getName())));
     }
 
-    void test(String f) throws Exception {
+    void test(final String f) throws Exception {
         File file = copyShapefiles(f); // Work on File rather than URL from JAR.
         IndexedShapefileDataStore s = new IndexedShapefileDataStore(file.toURI().toURL());
         SimpleFeatureType type = s.getFeatureType();
@@ -126,7 +126,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         s.dispose();
     }
 
-    private void test(SimpleFeatureType type, FeatureCollection<SimpleFeature> one, File tmp, boolean memorymapped)
+    private void test(final SimpleFeatureType type, final FeatureCollection<SimpleFeature> one, final File tmp, final boolean memorymapped)
             throws IOException, MalformedURLException, Exception {
         IndexedShapefileDataStore s;
         Name typeName;
@@ -156,7 +156,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         s.dispose();
     }
 
-    static void compare(FeatureIterator<SimpleFeature> fs1, FeatureIterator<SimpleFeature> fs2)
+    static void compare(final FeatureIterator<SimpleFeature> fs1, final FeatureIterator<SimpleFeature> fs2)
             throws Exception {
 
         int i = 0;
@@ -171,7 +171,7 @@ public class ShapefileRTreeReadWriteTest extends AbstractTestCaseSupport {
         fs2.close();
     }
 
-    static void compare(SimpleFeature f1, SimpleFeature f2) throws Exception {
+    static void compare(final SimpleFeature f1, final SimpleFeature f2) throws Exception {
         if (f1.getAttributeCount() != f2.getAttributeCount()) {
             throw new Exception("Unequal number of attributes");
         }

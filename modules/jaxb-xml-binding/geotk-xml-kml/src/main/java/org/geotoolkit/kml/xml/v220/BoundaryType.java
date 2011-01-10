@@ -83,7 +83,7 @@ public class BoundaryType {
      *     {@link LinearRingType }
      *     
      */
-    public void setLinearRing(LinearRingType value) {
+    public void setLinearRing(final LinearRingType value) {
         this.linearRing = value;
     }
 

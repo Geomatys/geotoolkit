@@ -43,7 +43,7 @@ public enum GetTileValueType {
     GET_TILE("GetTile");
     private final String value;
 
-    GetTileValueType(String v) {
+    GetTileValueType(final String v) {
         value = v;
     }
 
@@ -51,7 +51,7 @@ public enum GetTileValueType {
         return value;
     }
 
-    public static GetTileValueType fromValue(String v) {
+    public static GetTileValueType fromValue(final String v) {
         for (GetTileValueType c: GetTileValueType.values()) {
             if (c.value.equals(v)) {
                 return c;

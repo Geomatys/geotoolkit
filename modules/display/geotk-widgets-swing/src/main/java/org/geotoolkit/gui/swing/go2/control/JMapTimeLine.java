@@ -299,7 +299,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         if(this.map != null){
             this.map.getCanvas().removePropertyChangeListener(this);
         }
@@ -322,7 +322,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
     private volatile Date popupEdit = null;
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
 
         if(map != null){
             final Date[] range = map.getCanvas().getController().getTemporalRange();
@@ -358,7 +358,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
 
         if(selected >= 0 && edit != null){
 
@@ -389,7 +389,7 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
         
         if(selected >= 0){
             //drag one limit
@@ -411,14 +411,14 @@ public class JMapTimeLine extends JNavigator implements PropertyChangeListener{
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(final PropertyChangeEvent evt) {
         if(evt.getPropertyName().equals(CanvasController2D.TEMPORAL_PROPERTY)){
             repaint();
         }
     }
 
     @Override
-    protected void paintChildren(Graphics g) {
+    protected void paintChildren(final Graphics g) {
         super.paintChildren(g);
 
         if(map == null) return;

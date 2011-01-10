@@ -200,7 +200,7 @@ public abstract class JDBCSpatialFiltersTest extends JDBCTestSupport {
         checkSingleResult(features, "r3");
     }
 
-    protected void checkSingleResult(FeatureCollection features, String name) {
+    protected void checkSingleResult(final FeatureCollection features, final String name) {
         assertEquals(1, features.size());
         FeatureIterator fr = features.iterator();
         assertTrue(fr.hasNext());

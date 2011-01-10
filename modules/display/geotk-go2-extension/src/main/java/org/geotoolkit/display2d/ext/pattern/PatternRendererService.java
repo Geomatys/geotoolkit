@@ -51,7 +51,7 @@ public class PatternRendererService extends AbstractSymbolizerRendererService<Pa
      * {@inheritDoc }
      */
     @Override
-    public CachedPatternSymbolizer createCachedSymbolizer(PatternSymbolizer symbol) {
+    public CachedPatternSymbolizer createCachedSymbolizer(final PatternSymbolizer symbol) {
         return new CachedPatternSymbolizer(symbol,this);
     }
 
@@ -59,7 +59,7 @@ public class PatternRendererService extends AbstractSymbolizerRendererService<Pa
      * {@inheritDoc }
      */
     @Override
-    public SymbolizerRenderer createRenderer(CachedPatternSymbolizer symbol, RenderingContext2D context) {
+    public SymbolizerRenderer createRenderer(final CachedPatternSymbolizer symbol, final RenderingContext2D context) {
         return new PatternRenderer(symbol, context);
     }
 
@@ -67,7 +67,7 @@ public class PatternRendererService extends AbstractSymbolizerRendererService<Pa
      * {@inheritDoc }
      */
     @Override
-    public Rectangle2D glyphPreferredSize(CachedPatternSymbolizer symbol,MapLayer layer) {
+    public Rectangle2D glyphPreferredSize(final CachedPatternSymbolizer symbol,final MapLayer layer) {
         return null;
     }
 
@@ -75,7 +75,7 @@ public class PatternRendererService extends AbstractSymbolizerRendererService<Pa
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedPatternSymbolizer symbol,MapLayer layer) {
+    public void glyph(final Graphics2D g, final Rectangle2D rect, final CachedPatternSymbolizer symbol,final MapLayer layer) {
         //todo glyph
     }
 

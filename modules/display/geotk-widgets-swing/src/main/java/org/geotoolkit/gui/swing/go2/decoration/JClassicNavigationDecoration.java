@@ -111,7 +111,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
         this(THEME.CLASSIC);
     }
 
-    public JClassicNavigationDecoration(THEME theme) {
+    public JClassicNavigationDecoration(final THEME theme) {
 
         if(theme == THEME.CLASSIC){
             teinteDark = Color.GRAY;
@@ -143,7 +143,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
         final Graphics2D g2d = (Graphics2D) g;
         final Rectangle clip = g2d.getClipBounds();
@@ -317,7 +317,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
         
     }
         
-    private void setRotation(double r){
+    private void setRotation(final double r){
         rotation = r;
         mustUpdate = true;
         repaint(MARGIN,MARGIN,CERCLE_WIDTH,CERCLE_WIDTH);
@@ -367,7 +367,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
         }
     }
     
-    private void mapRotate(double d){
+    private void mapRotate(final double d){
 
         if (map != null) {
             try {
@@ -379,7 +379,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
         }
     }
     
-    private double calculateAngle(int mouseX, int mouseY){
+    private double calculateAngle(final int mouseX, final int mouseY){
         
         final Point pa = new Point( (MARGIN + CERCLE_WIDTH / 2) ,0);
         final Point pb = new Point( (MARGIN + CERCLE_WIDTH / 2) , (MARGIN + CERCLE_WIDTH / 2) );
@@ -401,7 +401,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     }
     
     @Override
-    public boolean contains(int x, int y) {
+    public boolean contains(final int x, final int y) {
       return outerCercle.contains(x,y);
     }
 
@@ -543,7 +543,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     }
 
     @Override
-    public Dimension getSize(Dimension rv) {
+    public Dimension getSize(final Dimension rv) {
         if(rv != null){
             rv.height = buffer.getHeight();
             rv.width = buffer.getWidth();
@@ -564,7 +564,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     }
 
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         
         if(this.map != null){
             this.map.getCanvas().removePropertyChangeListener(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY,propertyListener);

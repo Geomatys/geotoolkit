@@ -86,7 +86,7 @@ public class GeoTiffImageWriter extends ImageWriterAdapter{
      * Complete the IIOMetadata with geotiff metadatas structure.
      */
     @Override
-    public void write(IIOMetadata streamMetadata, IIOImage image, ImageWriteParam param) throws IOException {
+    public void write(final IIOMetadata streamMetadata, final IIOImage image, final ImageWriteParam param) throws IOException {
 
         
         IIOMetadata iiometadata = image.getMetadata();

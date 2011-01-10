@@ -114,8 +114,8 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
     /**
      * Build a new Summary record TODO add relation and spatial
      */
-    public SummaryRecordType(SimpleLiteral identifier, SimpleLiteral title, SimpleLiteral type, List<BoundingBoxType> bboxes,
-            List<SimpleLiteral> subject, SimpleLiteral format, SimpleLiteral modified, SimpleLiteral _abstract){
+    public SummaryRecordType(SimpleLiteral identifier, SimpleLiteral title, final SimpleLiteral type, final List<BoundingBoxType> bboxes,
+            final List<SimpleLiteral> subject, final SimpleLiteral format, final SimpleLiteral modified, final SimpleLiteral _abstract){
         
         this.identifier = new ArrayList<SimpleLiteral>();
         if (identifier == null)
@@ -157,8 +157,8 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
     /**
      * Build a new Summary record TODO add relation and spatial
      */
-    public SummaryRecordType(SimpleLiteral identifier, SimpleLiteral title, SimpleLiteral type, List<BoundingBoxType> bboxes,
-            List<SimpleLiteral> subject, List<SimpleLiteral> formats, SimpleLiteral modified, List<SimpleLiteral> _abstract){
+    public SummaryRecordType(SimpleLiteral identifier, SimpleLiteral title, final SimpleLiteral type, final List<BoundingBoxType> bboxes,
+            final List<SimpleLiteral> subject, final List<SimpleLiteral> formats, final SimpleLiteral modified, final List<SimpleLiteral> _abstract){
         
         this.identifier = new ArrayList<SimpleLiteral>();
         if (identifier == null)
@@ -195,8 +195,8 @@ public class SummaryRecordType extends AbstractRecordType implements SummaryReco
     /**
      * Build a new Summary record TODO add relation and spatial
      */
-    public SummaryRecordType(List<SimpleLiteral> identifier, List<SimpleLiteral> title, SimpleLiteral type, List<BoundingBoxType> bboxes,
-            List<SimpleLiteral> subject, List<SimpleLiteral> format, List<SimpleLiteral> modified, List<SimpleLiteral> _abstract){
+    public SummaryRecordType(final List<SimpleLiteral> identifier, final List<SimpleLiteral> title, final SimpleLiteral type, final List<BoundingBoxType> bboxes,
+            final List<SimpleLiteral> subject, final List<SimpleLiteral> format, final List<SimpleLiteral> modified, final List<SimpleLiteral> _abstract){
 
         this.identifier = identifier;
         this.title = title;

@@ -22,7 +22,7 @@ import org.geotoolkit.jdbc.JDBCTestSetup;
 
 public class PostgisEmptyTestSetup extends JDBCEmptyTestSetup {
 
-    public PostgisEmptyTestSetup(JDBCTestSetup delegate) {
+    public PostgisEmptyTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
         
     }

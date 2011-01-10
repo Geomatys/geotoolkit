@@ -29,7 +29,7 @@ public class LinearCandidate extends Candidate<LinearLabelDescriptor> {
 
     private final Shape shape;
 
-    public LinearCandidate(LinearLabelDescriptor desc, Shape shape) {
+    public LinearCandidate(final LinearLabelDescriptor desc, final Shape shape) {
         super(desc);
         this.shape = shape;
     }

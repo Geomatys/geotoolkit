@@ -59,7 +59,7 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
     private final StatefullContextParams params;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
-    public StatefullCoverageLayerJ2D(J2DCanvas canvas, CoverageMapLayer layer){
+    public StatefullCoverageLayerJ2D(final J2DCanvas canvas, final CoverageMapLayer layer){
         super(canvas, layer, true);
 
         try {
@@ -78,7 +78,7 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
         this.projectedCoverage = new StatefullProjectedCoverage(params, layer);
     }
 
-    private synchronized void updateCache(RenderingContext2D context){
+    private synchronized void updateCache(final RenderingContext2D context){
         params.context = context;
         boolean objectiveCleared = false;
 
@@ -164,7 +164,7 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
      * {@inheritDoc }
      */
     @Override
-    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, List<Graphic> graphics) {
 
         if(!(context instanceof RenderingContext2D) ) return graphics;
         if(!item.isSelectable())                     return graphics;
@@ -194,7 +194,7 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
     }
 
     private List<Graphic> searchAt(final CoverageMapLayer layer, final CachedRule[] rules,
-            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, VisitFilter filter, List<Graphic> graphics) {
+            final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter filter, List<Graphic> graphics) {
         updateCache(renderingContext);
 
         final GraphicBuilder<GraphicJ2D> builder = (GraphicBuilder<GraphicJ2D>) layer.getGraphicBuilder(GraphicJ2D.class);

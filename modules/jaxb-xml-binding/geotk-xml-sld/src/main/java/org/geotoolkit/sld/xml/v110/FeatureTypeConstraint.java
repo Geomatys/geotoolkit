@@ -85,7 +85,7 @@ public class FeatureTypeConstraint {
      *     {@link QName }
      *     
      */
-    public void setFeatureTypeName(QName value) {
+    public void setFeatureTypeName(final QName value) {
         this.featureTypeName = value;
     }
 
@@ -109,7 +109,7 @@ public class FeatureTypeConstraint {
      *     {@link FilterType }
      *     
      */
-    public void setFilter(FilterType value) {
+    public void setFilter(final FilterType value) {
         this.filter = value;
     }
 

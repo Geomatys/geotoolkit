@@ -34,7 +34,7 @@ public final class WCSUtilities {
 
     private WCSUtilities(){}
 
-    public static GetCapabilitiesResponse unmarshallCapabilities(InputStream stream) throws JAXBException{
+    public static GetCapabilitiesResponse unmarshallCapabilities(final InputStream stream) throws JAXBException{
         final Unmarshaller unmarshal = WCSMarshallerPool.getInstance().acquireUnmarshaller();
         Object obj;
         try{

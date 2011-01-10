@@ -42,7 +42,7 @@ public enum ParameterDirection {
     
     private final String value;
 
-    ParameterDirection(String v) {
+    ParameterDirection(final String v) {
         value = v;
     }
 
@@ -50,7 +50,7 @@ public enum ParameterDirection {
         return value;
     }
 
-    public static ParameterDirection fromValue(String v) {
+    public static ParameterDirection fromValue(final String v) {
         for (ParameterDirection c: ParameterDirection.values()) {
             if (c.value.equals(v)) {
                 return c;

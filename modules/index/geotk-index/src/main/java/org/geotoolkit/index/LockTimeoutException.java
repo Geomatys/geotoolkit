@@ -35,7 +35,7 @@ public class LockTimeoutException extends Exception {
      * 
      * @param message
      */
-    public LockTimeoutException(String message) {
+    public LockTimeoutException(final String message) {
         super(message);
     }
 
@@ -45,7 +45,7 @@ public class LockTimeoutException extends Exception {
      * @param message
      * @param cause
      */
-    public LockTimeoutException(String message, Throwable cause) {
+    public LockTimeoutException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
@@ -54,7 +54,7 @@ public class LockTimeoutException extends Exception {
      * 
      * @param cause
      */
-    public LockTimeoutException(Throwable cause) {
+    public LockTimeoutException(final Throwable cause) {
         super(cause);
     }
 }

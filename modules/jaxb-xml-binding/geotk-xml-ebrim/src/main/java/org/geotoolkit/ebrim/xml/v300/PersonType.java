@@ -86,7 +86,7 @@ public class PersonType extends RegistryObjectType {
     /**
      * Sets the value of the address property.
      */
-    public void setAddress(PostalAddressType address) {
+    public void setAddress(final PostalAddressType address) {
         if (this.address == null) {
             this.address = new ArrayList<PostalAddressType>();
         }
@@ -96,7 +96,7 @@ public class PersonType extends RegistryObjectType {
     /**
      * Sets the value of the address property.
      */
-    public void setAddress(List<PostalAddressType> address) {
+    public void setAddress(final List<PostalAddressType> address) {
         this.address = address;
     }
 
@@ -110,7 +110,7 @@ public class PersonType extends RegistryObjectType {
     /**
      * Sets the value of the personName property.
      */
-    public void setPersonName(PersonNameType value) {
+    public void setPersonName(final PersonNameType value) {
         this.personName = value;
     }
 
@@ -127,7 +127,7 @@ public class PersonType extends RegistryObjectType {
         /**
      * Sets the value of the telephoneNumber property.
      */
-    public void setTelephoneNumber(TelephoneNumberType number) {
+    public void setTelephoneNumber(final TelephoneNumberType number) {
         if (telephoneNumber == null) {
             telephoneNumber = new ArrayList<TelephoneNumberType>();
         }
@@ -137,7 +137,7 @@ public class PersonType extends RegistryObjectType {
     /**
      * Sets the value of the telephoneNumber property.
      */
-    public void setTelephoneNumber(List<TelephoneNumberType> numbers) {
+    public void setTelephoneNumber(final List<TelephoneNumberType> numbers) {
         this.telephoneNumber = numbers;
     }
 
@@ -154,7 +154,7 @@ public class PersonType extends RegistryObjectType {
         /**
      * Sets the value of the emailAddress property.
      */
-    public void setEmailAddress(EmailAddressType email) {
+    public void setEmailAddress(final EmailAddressType email) {
         if (emailAddress == null) {
             emailAddress = new ArrayList<EmailAddressType>();
         }
@@ -164,7 +164,7 @@ public class PersonType extends RegistryObjectType {
     /**
      * Sets the value of the emailAddress property.
      */
-    public void setEmailAddress(List<EmailAddressType> email) {
+    public void setEmailAddress(final List<EmailAddressType> email) {
         this.emailAddress = email;
     }
 

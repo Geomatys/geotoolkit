@@ -69,7 +69,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
 
     PolygonPatchType() {}
 
-    public PolygonPatchType(SurfaceInterpolationType interpolation, AbstractRingType exterior, List<? extends AbstractRingType> interiors) {
+    public PolygonPatchType(final SurfaceInterpolationType interpolation, final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
         this.interpolation = interpolation;
         ObjectFactory factory = new ObjectFactory();
         if (exterior != null) {
@@ -105,7 +105,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public void setJbExterior(JAXBElement<AbstractRingPropertyType> value) {
+    public void setJbExterior(final JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
     }
 
@@ -134,7 +134,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *     {@code <}{@link AbstractRingPropertyType }{@code >}
      *
      */
-    public void setExterior(AbstractRingPropertyType value) {
+    public void setExterior(final AbstractRingPropertyType value) {
         ObjectFactory factory = new ObjectFactory();
         this.exterior =  factory.createExterior(value);
     }
@@ -164,7 +164,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *
      *
      */
-    public void setJbInterior(List<JAXBElement<AbstractRingPropertyType>> interior) {
+    public void setJbInterior(final List<JAXBElement<AbstractRingPropertyType>> interior) {
         this.interior = interior;
     }
 
@@ -198,7 +198,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *
      *
      */
-    public void setInterior(List<AbstractRingPropertyType> interior) {
+    public void setInterior(final List<AbstractRingPropertyType> interior) {
         if (interior != null) {
             if (this.interior == null) {
                 this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
@@ -221,7 +221,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *
      *
      */
-    public void setInterior(AbstractRingPropertyType interior) {
+    public void setInterior(final AbstractRingPropertyType interior) {
         if (interior != null) {
             if (this.interior == null) {
                 this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
@@ -254,7 +254,7 @@ public class PolygonPatchType extends AbstractSurfacePatchType {
      *     {@link SurfaceInterpolationType }
      *     
      */
-    public void setInterpolation(SurfaceInterpolationType value) {
+    public void setInterpolation(final SurfaceInterpolationType value) {
         this.interpolation = value;
     }
 

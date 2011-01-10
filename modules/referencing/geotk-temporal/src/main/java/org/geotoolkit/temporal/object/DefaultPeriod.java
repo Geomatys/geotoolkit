@@ -45,7 +45,7 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
 
     }
     
-    public DefaultPeriod(Instant begining, Instant ending) {
+    public DefaultPeriod(final Instant begining, final Instant ending) {
 	// begining must be before or equals ending
         if (begining != null && 
                 (RelativePosition.BEFORE.equals(begining.relativePosition(ending)) ||
@@ -62,15 +62,15 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         return begining;
     }
 
-    public void setBegining(Instant begining) {
+    public void setBegining(final Instant begining) {
         this.begining = begining;
     }
 
-    public void setBegining(Date date) {
+    public void setBegining(final Date date) {
         this.begining = new DefaultInstant(new DefaultPosition(date));
     }
 
-    public void setBegining(Position pos) {
+    public void setBegining(final Position pos) {
         this.begining = new DefaultInstant(pos);
     }
 
@@ -81,15 +81,15 @@ public class DefaultPeriod extends DefaultTemporalGeometricPrimitive implements 
         return ending;
     }
 
-    public void setEnding(Instant ending) {
+    public void setEnding(final Instant ending) {
         this.ending = ending;
     }
 
-    public void setEnding(Position pos) {
+    public void setEnding(final Position pos) {
         this.ending = new DefaultInstant(pos);
     }
 
-    public void setEnding(Date date) {
+    public void setEnding(final Date date) {
         this.ending = new DefaultInstant(new DefaultPosition(date));
     }
 

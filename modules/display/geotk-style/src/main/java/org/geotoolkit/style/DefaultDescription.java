@@ -39,7 +39,7 @@ public class DefaultDescription implements Description{
      * @param title : can be null
      * @param desc : can be null
      */
-    public DefaultDescription(InternationalString title, InternationalString desc){
+    public DefaultDescription(final InternationalString title, final InternationalString desc){
         this.title = title;
         this.desc = desc;
     }
@@ -64,7 +64,7 @@ public class DefaultDescription implements Description{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -72,7 +72,7 @@ public class DefaultDescription implements Description{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

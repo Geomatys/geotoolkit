@@ -219,15 +219,15 @@ public class FeatureTypeBuilder {
         defaultGeometry = null;
     }
 
-    public void setName(String name){
+    public void setName(final String name){
         setName(DefaultName.valueOf(name));
     }
 
-    public void setName(String namespace, String localPart){
+    public void setName(final String namespace, final String localPart){
         setName(new DefaultName(namespace,localPart));
     }
 
-    public void setName(String namespace, String separator, String localPart){
+    public void setName(final String namespace, final String separator, final String localPart){
         setName(new DefaultName(namespace,separator,localPart));
     }
 
@@ -380,8 +380,8 @@ public class FeatureTypeBuilder {
         add(DefaultName.valueOf(name),binding);
     }
 
-    public void add(final String name, final Class binding, int min, int max,
-            boolean nillable, Map<Object,Object> userData) {
+    public void add(final String name, final Class binding, final int min, final int max,
+            final boolean nillable, final Map<Object,Object> userData) {
         add(DefaultName.valueOf(name),binding,min,max,nillable,userData);
     }
 
@@ -390,7 +390,7 @@ public class FeatureTypeBuilder {
     }
 
     public void add(final String name, final Class binding, final CoordinateReferenceSystem crs,
-            int min, int max, boolean nillable, Map<Object,Object> userData) {
+            final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
         add(DefaultName.valueOf(name),binding,crs,min,max,nillable,userData);
     }
 
@@ -412,8 +412,8 @@ public class FeatureTypeBuilder {
         add(name,binding,1,1,true,null);
     }
 
-    public void add(final Name name, final Class binding, int min, int max,
-            boolean nillable, Map<Object,Object> userData) {
+    public void add(final Name name, final Class binding, final int min, final int max,
+            final boolean nillable, final Map<Object,Object> userData) {
         add(name,binding,null,min,max,nillable,userData);
     }
 
@@ -460,13 +460,13 @@ public class FeatureTypeBuilder {
     }
 
     public void add(final Name name, final Class binding, final CoordinateReferenceSystem crs,
-            int min, int max, boolean nillable, Map<Object,Object> userData) {
+            final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
         final AttributeDescriptor desc = attributeDescBuilder.create(name, binding, crs, min, max, nillable, userData);
         add(desc);
     }
 
     public void add(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
-            int min, int max, boolean nillable, Map<Object,Object> userData){
+            final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         final AttributeDescriptor desc = attributeDescBuilder.create(at, name, crs, min, max, nillable, userData);
         add(desc);
     }
@@ -579,7 +579,7 @@ public class FeatureTypeBuilder {
      * @return
      * @throws IllegalArgumentException : if asking for a simple type and one property is not simple
      */
-    private FeatureType buildFeatureType(boolean simple) throws IllegalArgumentException{
+    private FeatureType buildFeatureType(final boolean simple) throws IllegalArgumentException{
         GeometryDescriptor defaultGeometry = null;
 
         if(superType == null){

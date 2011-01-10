@@ -123,7 +123,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * @param crs The coordinate reference system.
      * @throws MismatchedDimensionException if the CRS dimension is not valid.
      */
-    public JTSEnvelope2D(CoordinateReferenceSystem crs)
+    public JTSEnvelope2D(final CoordinateReferenceSystem crs)
             throws MismatchedDimensionException {
         this.crs = crs;
         checkCoordinateReferenceSystemDimension();
@@ -223,7 +223,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
     /**
      * Sets this envelope to the specified bounding box.
      */
-    public void init(BoundingBox bounds) {
+    public void init(final BoundingBox bounds) {
         super.init(bounds.getMinimum(0), bounds.getMaximum(0), bounds.getMinimum(1),
                 bounds.getMaximum(1));
         this.crs = bounds.getCoordinateReferenceSystem();
@@ -375,7 +375,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * @since 2.4
      */
     @Override
-    public boolean contains(DirectPosition pos) {
+    public boolean contains(final DirectPosition pos) {
         return super.contains(pos.getOrdinate(0), pos.getOrdinate(1));
     }
 
@@ -418,7 +418,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * @since 2.4
      */
     @Override
-    public void include(double x, double y) {
+    public void include(final double x, final double y) {
         super.expandToInclude(x, y);
     }
 
@@ -466,7 +466,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      *
      * @see CRS#transform(CoordinateOperation, org.opengis.geometry.Envelope)
      */
-    public JTSEnvelope2D transform(CoordinateReferenceSystem targetCRS, boolean lenient)
+    public JTSEnvelope2D transform(final CoordinateReferenceSystem targetCRS, final boolean lenient)
             throws TransformException, FactoryException {
         return transform(targetCRS, lenient, 5);
     }
@@ -585,7 +585,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * @param e The envelope.  Can be null.
      * @return A JTSEnvelope2D using the specified envelope, or null if the envelope was null.
      */
-    public static JTSEnvelope2D reference(Envelope e) {
+    public static JTSEnvelope2D reference(final Envelope e) {
         if (e == null) {
             return null;
         } else {
@@ -607,7 +607,7 @@ public class JTSEnvelope2D extends Envelope implements org.opengis.geometry.Enve
      * @param e The envelope.
      * @return JTSEnvelope2D
      */
-    public static JTSEnvelope2D reference(BoundingBox e) {
+    public static JTSEnvelope2D reference(final BoundingBox e) {
         if (e == null) {
             return null;
         }

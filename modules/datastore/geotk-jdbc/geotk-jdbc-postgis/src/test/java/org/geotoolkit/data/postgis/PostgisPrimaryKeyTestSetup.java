@@ -22,7 +22,7 @@ import org.geotoolkit.jdbc.JDBCTestSetup;
 
 public class PostgisPrimaryKeyTestSetup extends JDBCPrimaryKeyTestSetup {
 
-    public PostgisPrimaryKeyTestSetup(JDBCTestSetup delegate) {
+    public PostgisPrimaryKeyTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
     }
 

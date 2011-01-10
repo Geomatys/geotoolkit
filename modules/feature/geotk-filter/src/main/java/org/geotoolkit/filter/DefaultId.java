@@ -43,7 +43,7 @@ public class DefaultId implements Id,Serializable{
 
     private final DualKeyMap keys = new DualKeyMap();
 
-    public DefaultId( Set<? extends Identifier> ids ) {
+    public DefaultId( final Set<? extends Identifier> ids ) {
         for(Identifier id : ids){
             keys.put(id.getID(), id);
         }
@@ -69,7 +69,7 @@ public class DefaultId implements Id,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         if (object == null) {
             return false;
         }
@@ -86,7 +86,7 @@ public class DefaultId implements Id,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -94,7 +94,7 @@ public class DefaultId implements Id,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -141,7 +141,7 @@ public class DefaultId implements Id,Serializable{
     private static class DualKeyMap extends HashMap<Object,Identifier>{
 
         @Override
-        public boolean containsValue(Object value) {
+        public boolean containsValue(final Object value) {
             if(value instanceof Identifier){
                 Identifier ident = (Identifier) value;
                 return containsKey(ident.getID());

@@ -99,7 +99,7 @@ public class ViewVolumeType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setLeftFov(Double value) {
+    public void setLeftFov(final Double value) {
         this.leftFov = value;
     }
 
@@ -123,7 +123,7 @@ public class ViewVolumeType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setRightFov(Double value) {
+    public void setRightFov(final Double value) {
         this.rightFov = value;
     }
 
@@ -147,7 +147,7 @@ public class ViewVolumeType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setBottomFov(Double value) {
+    public void setBottomFov(final Double value) {
         this.bottomFov = value;
     }
 
@@ -171,7 +171,7 @@ public class ViewVolumeType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setTopFov(Double value) {
+    public void setTopFov(final Double value) {
         this.topFov = value;
     }
 
@@ -195,7 +195,7 @@ public class ViewVolumeType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setNear(Double value) {
+    public void setNear(final Double value) {
         this.near = value;
     }
 

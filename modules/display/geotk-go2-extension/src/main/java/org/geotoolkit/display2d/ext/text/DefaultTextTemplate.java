@@ -29,7 +29,7 @@ public class DefaultTextTemplate implements TextTemplate {
     private final BackgroundTemplate background;
     private final String text;
 
-    public DefaultTextTemplate(BackgroundTemplate background, String text) {
+    public DefaultTextTemplate(final BackgroundTemplate background, final String text) {
         this.background = background;
         this.text = text;
     }

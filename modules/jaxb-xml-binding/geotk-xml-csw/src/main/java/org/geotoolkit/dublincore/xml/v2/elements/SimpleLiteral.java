@@ -77,7 +77,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
     /**
      * Build a new Simple literal
      */
-    public SimpleLiteral(String content) {
+    public SimpleLiteral(final String content) {
         this.content = new ArrayList<String>();
         this.content.add(content);
     }
@@ -85,7 +85,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
     /**
      * Build a new Simple literal
      */
-    public SimpleLiteral(String scheme, String content) {
+    public SimpleLiteral(final String scheme, final String content) {
         this.scheme  = scheme;
         this.content = new ArrayList<String>();
         this.content.add(content);
@@ -94,7 +94,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
     /**
      * Build a new Simple literal
      */
-    public SimpleLiteral(String scheme, List<String> content) {
+    public SimpleLiteral(final String scheme, final List<String> content) {
         this.scheme  = scheme;
         this.content = content;
     }
@@ -115,11 +115,11 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         return Collections.unmodifiableList(content);
     }
     
-    public void setContent(List<String> content) {
+    public void setContent(final List<String> content) {
         this.content = content;
     }
     
-    public void setContent(String content) {
+    public void setContent(final String content) {
         if (this.content == null) {
             this.content = new ArrayList<String>();
         }
@@ -133,7 +133,7 @@ public class SimpleLiteral extends AbstractSimpleLiteral {
         return scheme;
     }
     
-    public void setScheme(String scheme){
+    public void setScheme(final String scheme){
         this.scheme = scheme;
     }
     

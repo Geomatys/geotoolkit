@@ -85,7 +85,7 @@ public class LatLonBoxType
      *     {@link Double }
      *     
      */
-    public void setRotation(Double value) {
+    public void setRotation(final Double value) {
         this.rotation = value;
     }
 

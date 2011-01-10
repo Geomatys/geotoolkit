@@ -71,7 +71,7 @@ public class LegendGraphicType {
      *     {@link GraphicType }
      *     
      */
-    public void setGraphic(GraphicType value) {
+    public void setGraphic(final GraphicType value) {
         this.graphic = value;
     }
 

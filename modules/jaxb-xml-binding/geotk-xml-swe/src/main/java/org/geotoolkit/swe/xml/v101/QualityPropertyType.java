@@ -98,7 +98,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
 
     }
 
-    public QualityPropertyType(AbstractQualityProperty aq) {
+    public QualityPropertyType(final AbstractQualityProperty aq) {
         if (aq != null) {
             this.actuate = aq.getActuate();
             this.arcrole = aq.getArcrole();
@@ -143,7 +143,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link Quantity }
      *     
      */
-    public void setQuantity(QuantityType value) {
+    public void setQuantity(final QuantityType value) {
         this.quantity = value;
     }
 
@@ -167,7 +167,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link QuantityRange }
      *     
      */
-    public void setQuantityRange(QuantityRange value) {
+    public void setQuantityRange(final QuantityRange value) {
         this.quantityRange = value;
     }
 
@@ -191,7 +191,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link Category }
      *     
      */
-    public void setCategory(Category value) {
+    public void setCategory(final Category value) {
         this.category = value;
     }
 
@@ -215,7 +215,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link Text }
      *     
      */
-    public void setText(Text value) {
+    public void setText(final Text value) {
         this.text = value;
     }
 
@@ -239,7 +239,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -263,7 +263,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -287,7 +287,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -311,7 +311,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -335,7 +335,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -359,7 +359,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -383,7 +383,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -407,7 +407,7 @@ public class QualityPropertyType implements AbstractQualityProperty {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

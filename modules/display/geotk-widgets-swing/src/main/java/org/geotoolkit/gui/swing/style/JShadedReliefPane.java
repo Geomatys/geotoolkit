@@ -47,7 +47,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiFactor.setLayer(layer);
     }
@@ -58,7 +58,7 @@ public class JShadedReliefPane extends StyleElementEditor<ShadedRelief>{
     }
     
     @Override
-    public void parse(ShadedRelief relief) {
+    public void parse(final ShadedRelief relief) {
         if (relief != null) {
             guiFactor.parse(relief.getReliefFactor());
             guiBrightness.setSelected(relief.isBrightnessOnly());

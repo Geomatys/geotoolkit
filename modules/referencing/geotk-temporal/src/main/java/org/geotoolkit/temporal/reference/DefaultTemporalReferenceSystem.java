@@ -49,7 +49,7 @@ public class DefaultTemporalReferenceSystem implements TemporalReferenceSystem {
      * @param name
      * @param domainOfValidity
      */
-    public DefaultTemporalReferenceSystem(ReferenceIdentifier name, Extent domainOfValidity) {
+    public DefaultTemporalReferenceSystem(final ReferenceIdentifier name, final Extent domainOfValidity) {
         this.name = name;
         this.domainOfValidity = domainOfValidity;
     }
@@ -94,19 +94,19 @@ public class DefaultTemporalReferenceSystem implements TemporalReferenceSystem {
     /**
      * This is a name that uniquely identifies the temporal reference system.
      */
-    public void setName(ReferenceIdentifier name) {
+    public void setName(final ReferenceIdentifier name) {
         this.name = name;
     }
 
-    public void setDomainOfValidity(Extent domainOfValidity) {
+    public void setDomainOfValidity(final Extent domainOfValidity) {
         this.domainOfValidity = domainOfValidity;
     }
 
-    public void setValidArea(Extent validArea) {
+    public void setValidArea(final Extent validArea) {
         this.validArea = validArea;
     }
 
-    public void setScope(InternationalString scope) {
+    public void setScope(final InternationalString scope) {
         this.scope = scope;
     }
 

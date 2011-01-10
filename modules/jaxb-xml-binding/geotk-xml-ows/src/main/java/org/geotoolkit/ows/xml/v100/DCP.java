@@ -68,7 +68,7 @@ public class DCP implements AbstractDCP {
     /**
      * Build a new DCP.
      */
-    public DCP(HTTP http){
+    public DCP(final HTTP http){
         this.http = http;
     }
 

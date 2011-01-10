@@ -31,7 +31,7 @@ public class DefaultGmlObjectId implements GmlObjectId,Serializable {
 
     private final String id;
 
-    public DefaultGmlObjectId(String id) {
+    public DefaultGmlObjectId(final String id) {
         if (id == null) {
             throw new NullPointerException("GML id can not be null");
         }
@@ -50,7 +50,7 @@ public class DefaultGmlObjectId implements GmlObjectId,Serializable {
      * {@inheritDoc }
      */
     @Override
-    public boolean matches(Object object) {
+    public boolean matches(final Object object) {
         if (object instanceof Feature) {
             return id.equals(((Feature)object).getIdentifier().getID());
         }
@@ -70,7 +70,7 @@ public class DefaultGmlObjectId implements GmlObjectId,Serializable {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

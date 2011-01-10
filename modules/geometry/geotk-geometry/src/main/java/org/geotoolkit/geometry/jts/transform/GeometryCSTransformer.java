@@ -45,7 +45,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
     private final CoordinateSequenceTransformer csTransformer;
     private CoordinateReferenceSystem crs;
     
-    public GeometryCSTransformer(CoordinateSequenceTransformer transformer) {
+    public GeometryCSTransformer(final CoordinateSequenceTransformer transformer) {
         csTransformer = transformer;
     }
 
@@ -61,7 +61,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
      * </p>
      * @param crs The target coordinate reference system.
      */
-    public void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+    public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
         this.crs = crs;
     }
     
@@ -71,7 +71,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
      * @throws TransformException
      */
     @Override
-    public Geometry transform(Geometry g) throws TransformException {
+    public Geometry transform(final Geometry g) throws TransformException {
         final GeometryFactory factory = g.getFactory();
         final Geometry transformed;
         
@@ -138,7 +138,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
      *
      * @throws TransformException
      */
-    public LineString transformLineString(LineString ls, GeometryFactory gf)
+    public LineString transformLineString(final LineString ls, final GeometryFactory gf)
         throws TransformException {
         final CoordinateSequence cs = projectCoordinateSequence(ls.getCoordinateSequence());
         final LineString transformed;
@@ -158,7 +158,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
      *
      * @throws TransformException
      */
-    public Point transformPoint(Point point, GeometryFactory gf)
+    public Point transformPoint(final Point point, final GeometryFactory gf)
         throws TransformException {
         final CoordinateSequence cs = projectCoordinateSequence(point.getCoordinateSequence());
         final Point transformed = gf.createPoint(cs);
@@ -171,7 +171,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
      *
      * @throws TransformException
      */
-    public CoordinateSequence projectCoordinateSequence(CoordinateSequence cs)
+    public CoordinateSequence projectCoordinateSequence(final CoordinateSequence cs)
         throws TransformException {
         return csTransformer.transform(cs,1);
     }
@@ -180,7 +180,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
      * @param polygon
      * @throws TransformException
      */
-    public Polygon transformPolygon(Polygon polygon, GeometryFactory gf)
+    public Polygon transformPolygon(final Polygon polygon, final GeometryFactory gf)
         throws TransformException {
         final LinearRing exterior = (LinearRing) transformLineString(polygon.getExteriorRing(), gf);
         final LinearRing[] interiors = new LinearRing[polygon.getNumInteriorRing()];
@@ -195,7 +195,7 @@ public class GeometryCSTransformer implements GeometryTransformer{
     }
 
     @Override
-    public CoordinateSequence transform(CoordinateSequence sequence, int minpoints) throws TransformException {
+    public CoordinateSequence transform(final CoordinateSequence sequence, final int minpoints) throws TransformException {
         return csTransformer.transform(sequence,minpoints);
     }
 }

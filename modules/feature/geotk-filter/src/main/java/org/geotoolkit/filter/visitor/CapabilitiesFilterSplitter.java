@@ -150,7 +150,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      *            process.
      * @param parent The FeatureType that this filter involves. Why is this needed?
      */
-    public CapabilitiesFilterSplitter(DefaultFilterCapabilities fcs, FeatureType parent) {
+    public CapabilitiesFilterSplitter(final DefaultFilterCapabilities fcs, final FeatureType parent) {
         this.ff = FactoryFinder.getFilterFactory(null);
         this.fcs = fcs;
         this.parent = parent;
@@ -222,7 +222,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * 
      * @param filter the {@link Filter} to visit
      */
-    public void visit(IncludeFilter filter) {
+    public void visit(final IncludeFilter filter) {
         return;
     }
 
@@ -231,7 +231,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * 
      * @param filter the {@link Filter} to visit
      */
-    public void visit(ExcludeFilter filter) {
+    public void visit(final ExcludeFilter filter) {
         if (fcs.supports(Filter.EXCLUDE)) {
             preStack.addFirst(filter);
         } else {
@@ -247,7 +247,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * @param filter the {@link Filter} to visit
      */
     @Override
-    public Object visit(PropertyIsBetween filter, Object extradata) {
+    public Object visit(final PropertyIsBetween filter, final Object extradata) {
         if (original == null) {
             original = filter;
         }
@@ -344,42 +344,42 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(PropertyIsEqualTo filter, Object notUsed) {
+    public Object visit(final PropertyIsEqualTo filter, final Object notUsed) {
         visitBinaryComparisonOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(PropertyIsGreaterThan filter, Object notUsed) {
+    public Object visit(final PropertyIsGreaterThan filter, final Object notUsed) {
         visitBinaryComparisonOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(PropertyIsGreaterThanOrEqualTo filter, Object notUsed) {
+    public Object visit(final PropertyIsGreaterThanOrEqualTo filter, final Object notUsed) {
         visitBinaryComparisonOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(PropertyIsLessThan filter, Object notUsed) {
+    public Object visit(final PropertyIsLessThan filter, final Object notUsed) {
         visitBinaryComparisonOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(PropertyIsLessThanOrEqualTo filter, Object notUsed) {
+    public Object visit(final PropertyIsLessThanOrEqualTo filter, final Object notUsed) {
         visitBinaryComparisonOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(PropertyIsNotEqualTo filter, Object notUsed) {
+    public Object visit(final PropertyIsNotEqualTo filter, final Object notUsed) {
         visitBinaryComparisonOperator(filter);
         return null;
     }
 
-    private void visitBinaryComparisonOperator(BinaryComparisonOperator filter) {
+    private void visitBinaryComparisonOperator(final BinaryComparisonOperator filter) {
         if (original == null) {
             original = filter;
         }
@@ -419,7 +419,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(BBOX filter, Object notUsed) {
+    public Object visit(final BBOX filter, final Object notUsed) {
         if (!fcs.supports(filter)) {
             postStack.addFirst(filter);
         } else {
@@ -429,66 +429,66 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(Beyond filter, Object notUsed) {
+    public Object visit(final Beyond filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Contains filter, Object notUsed) {
+    public Object visit(final Contains filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Crosses filter, Object notUsed) {
+    public Object visit(final Crosses filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Disjoint filter, Object notUsed) {
+    public Object visit(final Disjoint filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(DWithin filter, Object notUsed) {
+    public Object visit(final DWithin filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Equals filter, Object notUsed) {
+    public Object visit(final Equals filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Intersects filter, Object notUsed) {
+    public Object visit(final Intersects filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Overlaps filter, Object notUsed) {
+    public Object visit(final Overlaps filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Touches filter, Object notUsed) {
+    public Object visit(final Touches filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Within filter, Object notUsed) {
+    public Object visit(final Within filter, final Object notUsed) {
         visitBinarySpatialOperator(filter);
         return null;
     }
 
-    private void visitBinarySpatialOperator(BinarySpatialOperator filter) {
+    private void visitBinarySpatialOperator(final BinarySpatialOperator filter) {
         if (original == null) {
             original = filter;
         }
@@ -536,7 +536,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(PropertyIsLike filter, Object notUsed) {
+    public Object visit(final PropertyIsLike filter, final Object notUsed) {
         if (original == null) {
             original = filter;
         }
@@ -562,24 +562,24 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(And filter, Object notUsed) {
+    public Object visit(final And filter, final Object notUsed) {
         visitLogicOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Not filter, Object notUsed) {
+    public Object visit(final Not filter, final Object notUsed) {
         visitLogicOperator(filter);
         return null;
     }
 
     @Override
-    public Object visit(Or filter, Object notUsed) {
+    public Object visit(final Or filter, final Object notUsed) {
         visitLogicOperator(filter);
         return null;
     }
 
-    private void visitLogicOperator(Filter filter) {
+    private void visitLogicOperator(final Filter filter) {
         if (original == null) {
             original = filter;
         }
@@ -658,24 +658,24 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
         }
     }
 
-    private void removeFirstToSize(Deque stack, int j) {
+    private void removeFirstToSize(final Deque stack, final int j) {
         while (j < stack.size()) {
             stack.removeFirst();
         }
     }
 
     @Override
-    public Object visitNullFilter(Object notUsed) {
+    public Object visitNullFilter(final Object notUsed) {
         return null;
     }
 
     @Override
-    public Object visit(IncludeFilter filter, Object notUsed) {
+    public Object visit(final IncludeFilter filter, final Object notUsed) {
         return null;
     }
 
     @Override
-    public Object visit(ExcludeFilter filter, Object notUsed) {
+    public Object visit(final ExcludeFilter filter, final Object notUsed) {
         if (fcs.supports(Filter.EXCLUDE)) {
             preStack.addFirst(filter);
         } else {
@@ -685,7 +685,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(PropertyIsNull filter, Object notUsed) {
+    public Object visit(final PropertyIsNull filter, final Object notUsed) {
         if (original == null) {
             original = filter;
         }
@@ -709,7 +709,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(Id filter, Object notUsed) {
+    public Object visit(final Id filter, final Object notUsed) {
         if (original == null) {
             original = filter;
         }
@@ -724,7 +724,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(PropertyName expression, Object notUsed) {
+    public Object visit(final PropertyName expression, final Object notUsed) {
         // JD: use an expression to get at the attribute type intead of accessing directly
         if (parent != null && expression.evaluate(parent) == null) {
             throw new IllegalArgumentException("Property '" + expression.getPropertyName() + "' could not be found in " + parent.getName());
@@ -735,7 +735,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(Literal expression, Object notUsed) {
+    public Object visit(final Literal expression, final Object notUsed) {
         if (expression.getValue() == null) {
             postStack.addFirst(expression);
         }
@@ -744,30 +744,30 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(Add filter, Object notUsed) {
+    public Object visit(final Add filter, final Object notUsed) {
         visitMathExpression(filter);
         return null;
     }
 
     @Override
-    public Object visit(Divide filter, Object notUsed) {
+    public Object visit(final Divide filter, final Object notUsed) {
         visitMathExpression(filter);
         return null;
     }
 
     @Override
-    public Object visit(Multiply filter, Object notUsed) {
+    public Object visit(final Multiply filter, final Object notUsed) {
         visitMathExpression(filter);
         return null;
     }
 
     @Override
-    public Object visit(Subtract filter, Object notUsed) {
+    public Object visit(final Subtract filter, final Object notUsed) {
         visitMathExpression(filter);
         return null;
     }
 
-    private void visitMathExpression(BinaryExpression expression) {
+    private void visitMathExpression(final BinaryExpression expression) {
         // if (!fcs.supports(Add.class) && !fcs.supports(Subtract.class)
         // && !fcs.supports(Multiply.class) && !fcs.supports(Divide.class)) {
         /*if (!fcs.fullySupports(expression)) {
@@ -808,7 +808,7 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
      * {@inheritDoc }
      */
     @Override
-    public Object visit(Function expression, Object notUsed) {
+    public Object visit(final Function expression, final Object notUsed) {
         /*if (!fcs.fullySupports(expression)) {
         postStack.addFirst(expression);
         return null;
@@ -843,12 +843,12 @@ public class CapabilitiesFilterSplitter implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit(NilExpression nilExpression, Object notUsed) {
+    public Object visit(final NilExpression nilExpression, final Object notUsed) {
         postStack.addFirst(nilExpression);
         return null;
     }
 
-    private Filter translateOr(Or filter) {
+    private Filter translateOr(final Or filter) {
 
         // a|b == ~~(a|b) negative introduction
         // ~(a|b) == (~a + ~b) modus ponens

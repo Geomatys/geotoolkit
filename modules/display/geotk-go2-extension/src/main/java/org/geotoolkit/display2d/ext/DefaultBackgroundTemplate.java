@@ -34,7 +34,7 @@ public class DefaultBackgroundTemplate implements BackgroundTemplate{
     private final Insets insets;
     private final int round;
 
-    public DefaultBackgroundTemplate(Stroke stroke, Paint strokeFill, Paint fill, Insets insets, int round) {
+    public DefaultBackgroundTemplate(final Stroke stroke, final Paint strokeFill, final Paint fill, final Insets insets, final int round) {
         this.stroke = stroke;
         this.strokeFill = strokeFill;
         this.fill = fill;

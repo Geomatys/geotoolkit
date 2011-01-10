@@ -53,7 +53,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiGamma.setLayer(layer);
     }
@@ -70,7 +70,7 @@ public class JContrastEnhancement extends StyleElementEditor<ContrastEnhancement
      * {@inheritDoc }
      */
     @Override
-    public void parse(ContrastEnhancement enhancement) {
+    public void parse(final ContrastEnhancement enhancement) {
         if (enhancement != null) {
             guiGamma.parse(enhancement.getGammaValue());
             final ContrastMethod method = enhancement.getMethod();

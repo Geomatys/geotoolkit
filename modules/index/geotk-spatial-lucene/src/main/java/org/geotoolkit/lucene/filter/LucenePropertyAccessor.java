@@ -60,7 +60,7 @@ public class LucenePropertyAccessor implements PropertyAccessor {
      * {@inheritDoc }
      */
     @Override
-    public boolean canHandle(Class clazz, String xpath, Class target) {
+    public boolean canHandle(final Class clazz, final String xpath, final Class target) {
         return Document.class.isAssignableFrom(clazz);
     }
 
@@ -68,7 +68,7 @@ public class LucenePropertyAccessor implements PropertyAccessor {
      * {@inheritDoc }
      */
     @Override
-    public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
+    public Object get(final Object object, final String xpath, final Class target) throws IllegalArgumentException {
         Document doc = (Document) object;
 
         if(xpath.equals(LuceneOGCFilter.GEOMETRY_FIELD_NAME)){
@@ -104,7 +104,7 @@ public class LucenePropertyAccessor implements PropertyAccessor {
      * {@inheritDoc }
      */
     @Override
-    public void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException {
+    public void set(final Object object, final String xpath, final Object value, final Class target) throws IllegalArgumentException {
         throw new UnsupportedOperationException("You are not allowed to change a property value on lucene document.");
     }
 

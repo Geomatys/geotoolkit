@@ -98,7 +98,7 @@ public class WFSDataStore extends AbstractDataStore{
     private SoftReference<FeatureCollection<Feature>> lastCollection = null;
 
 
-    public WFSDataStore(URI serverURI, boolean postRequest) throws MalformedURLException{
+    public WFSDataStore(final URI serverURI, final boolean postRequest) throws MalformedURLException{
         super(null);
         this.postRequest = postRequest;
         this.server = new WebFeatureServer(serverURI.toURL(), "1.1.0");
@@ -187,7 +187,7 @@ public class WFSDataStore extends AbstractDataStore{
     }
 
     @Override
-    public boolean isWritable(Name typeName) throws DataStoreException {
+    public boolean isWritable(final Name typeName) throws DataStoreException {
         this.typeCheck(typeName);
         return true;
     }
@@ -204,7 +204,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         final FeatureType ft = types.get(typeName);
 
         if(ft == null){
@@ -218,7 +218,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(Query query) throws DataStoreException {
+    public Envelope getEnvelope(final Query query) throws DataStoreException {
         final Name typeName = query.getTypeName();
         typeCheck(typeName);
         return bounds.get(typeName);
@@ -240,7 +240,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema creation not supported.");
     }
 
@@ -248,7 +248,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema update not supported.");
     }
 
@@ -256,7 +256,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Schema deletion not supported.");
     }
 
@@ -268,7 +268,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader<FeatureType,Feature> getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader<FeatureType,Feature> getFeatureReader(final Query query) throws DataStoreException {
         final Name name = query.getTypeName();
         //will raise an error if typename in unknowned
         final FeatureType sft = getFeatureType(name);
@@ -292,7 +292,7 @@ public class WFSDataStore extends AbstractDataStore{
      * Writer that fall back on add,remove, update methods.
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         return handleWriter(typeName, filter);
     }
 
@@ -300,7 +300,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         lastCollection = null;
 
         final TransactionRequest request = server.createTransaction();
@@ -333,7 +333,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         lastCollection = null;
         
         final TransactionRequest request = server.createTransaction();
@@ -360,7 +360,7 @@ public class WFSDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         lastCollection = null;
         
         final TransactionRequest request = server.createTransaction();
@@ -383,7 +383,7 @@ public class WFSDataStore extends AbstractDataStore{
     // read & write ////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    private FeatureType requestType(QName typeName) throws IOException{
+    private FeatureType requestType(final QName typeName) throws IOException{
         final DescribeFeatureTypeRequest request = server.createDescribeFeatureType();
         request.setTypeNames(Collections.singletonList(typeName));
 
@@ -408,7 +408,7 @@ public class WFSDataStore extends AbstractDataStore{
 
     }
 
-    private FeatureCollection<Feature> requestFeature(QName typeName, Query query) throws IOException {
+    private FeatureCollection<Feature> requestFeature(final QName typeName, final Query query) throws IOException {
         final Name name = new DefaultName(typeName);
         FeatureType sft = types.get(name);
         sft = FeatureTypeUtilities.createSubType(sft, query.getPropertyNames());

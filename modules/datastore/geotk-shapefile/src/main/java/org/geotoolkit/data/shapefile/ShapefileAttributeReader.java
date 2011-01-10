@@ -48,8 +48,8 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
     private final double estimateX;
     private final double estimateY;
 
-    public ShapefileAttributeReader(List<? extends PropertyDescriptor> atts,
-            ShapefileReader shp, DbaseFileReader dbf) {
+    public ShapefileAttributeReader(final List<? extends PropertyDescriptor> atts,
+            final ShapefileReader shp, final DbaseFileReader dbf) {
         this(atts.toArray(new PropertyDescriptor[atts.size()]), shp, dbf);
     }
 
@@ -61,8 +61,8 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
      * @param dbf - the dbf file reader. May be null, in this case no
      *              attributes will be read from the dbf file
      */
-    public ShapefileAttributeReader(PropertyDescriptor[] atts,
-            ShapefileReader shp, DbaseFileReader dbf) {
+    public ShapefileAttributeReader(final PropertyDescriptor[] atts,
+            final ShapefileReader shp, final DbaseFileReader dbf) {
         this(atts,shp,dbf,null);
     }
 
@@ -74,8 +74,8 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
      * @param dbf - the dbf file reader. May be null, in this case no
      *              attributes will be read from the dbf file
      */
-    public ShapefileAttributeReader(PropertyDescriptor[] atts,
-            ShapefileReader shp, DbaseFileReader dbf, double[] estimateRes) {
+    public ShapefileAttributeReader(final PropertyDescriptor[] atts,
+            final ShapefileReader shp, final DbaseFileReader dbf, final double[] estimateRes) {
         super(atts);
         this.shp = shp;
         this.dbf = dbf;
@@ -197,7 +197,7 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
      * {@inheritDoc }
      */
     @Override
-    public Object read(int param) throws IOException,IndexOutOfBoundsException {
+    public Object read(final int param) throws IOException,IndexOutOfBoundsException {
 
         final int index = attributIndex[param];
         if(index == -1){
@@ -224,7 +224,7 @@ public class ShapefileAttributeReader extends AbstractPropertyReader {
      * {@inheritDoc }
      */
     @Override
-    public void read(Object[] buffer) throws IOException {
+    public void read(final Object[] buffer) throws IOException {
         for(int i=0,n=getPropertyCount();i<n;i++){
             buffer[i] = read(i);
         }

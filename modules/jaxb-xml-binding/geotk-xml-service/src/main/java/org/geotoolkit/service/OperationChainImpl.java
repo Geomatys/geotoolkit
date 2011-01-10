@@ -51,7 +51,7 @@ public class OperationChainImpl implements OperationChain {
         
     }
     
-    public OperationChainImpl(String name, String description, List<Operation> operation) {
+    public OperationChainImpl(final String name, final String description, final List<Operation> operation) {
         this.name        = name;
         this.description = description;
         this.operation   = operation;
@@ -69,7 +69,7 @@ public class OperationChainImpl implements OperationChain {
      * Sets the value of the name property.
      * 
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -86,7 +86,7 @@ public class OperationChainImpl implements OperationChain {
      * Sets the value of the description property.
      * 
     */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -102,11 +102,11 @@ public class OperationChainImpl implements OperationChain {
         return this.operation;
     }
     
-    public void setOperation(Collection<Operation> operation) {
+    public void setOperation(final Collection<Operation> operation) {
          this.operation = operation;
     }
     
-     public void setOperation(Operation operation) {
+     public void setOperation(final Operation operation) {
         if (this.operation == null) {
             this.operation = new ArrayList<Operation>();
         }

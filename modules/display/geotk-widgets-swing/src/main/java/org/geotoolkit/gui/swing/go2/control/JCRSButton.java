@@ -42,7 +42,7 @@ public class JCRSButton extends JButton{
      * set the related Map2D
      * @param map2d : related Map2D
      */
-    public void setMap(JMap2D map2d) {
+    public void setMap(final JMap2D map2d) {
         map = map2d;
         ACTION_CRS.setMap(map);
     }

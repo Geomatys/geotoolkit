@@ -105,7 +105,7 @@ public class EditionHelper {
 
     private final DefaultEditionHandler handler;
 
-    EditionHelper(DefaultEditionHandler handler) {
+    EditionHelper(final DefaultEditionHandler handler) {
         this.handler = handler;
     }
 
@@ -115,7 +115,7 @@ public class EditionHelper {
      * @param my : y coordinate of the mouse on the map (in pixel)
      * @return JTS geometry (corresponding to a square of 6x6 pixel around mouse coordinate)
      */
-    public Polygon mousePositionToGeometry(int mx, int my) throws NoninvertibleTransformException {
+    public Polygon mousePositionToGeometry(final int mx, final int my) throws NoninvertibleTransformException {
         Coordinate[] coord = new Coordinate[5];
         int taille = 4;
 
@@ -129,13 +129,13 @@ public class EditionHelper {
         return GEOMETRY_FACTORY.createPolygon(lr1, null);
     }
 
-    public Point toJTS(int x, int y){
+    public Point toJTS(final int x, final int y){
         Coordinate coord = toCoord(x, y);
         Point geom = GEOMETRY_FACTORY.createPoint(coord);
         return geom;
     }
 
-    public Coordinate toCoord(int x, int y){
+    public Coordinate toCoord(final int x, final int y){
         AffineTransform2D trs = handler.getMap().getCanvas().getController().getTransform();
         AffineTransform dispToObj;
         try {
@@ -149,7 +149,7 @@ public class EditionHelper {
         return new Coordinate(crds[0], crds[1]);
     }
 
-    public SimpleFeature grabFeature(int mx, int my, boolean style) {
+    public SimpleFeature grabFeature(final int mx, final int my, final boolean style) {
 
         final FeatureMapLayer layer = handler.getEditedLayer();
 
@@ -181,7 +181,7 @@ public class EditionHelper {
         return candidate;
     }
 
-    public boolean grabGeometrynode(Point pt, int mx, int my){
+    public boolean grabGeometrynode(final Point pt, final int mx, final int my){
         try{
             //transform our mouse in a geometry
             final Geometry mouseGeo = mousePositionToGeometry(mx, my);
@@ -199,7 +199,7 @@ public class EditionHelper {
      * int[2] == grabbed coordinate index
      * there might be two coordinate grab in the case of polygon last point
      */
-    public int[] grabGeometryNode(Geometry geo, int mx, int my) {
+    public int[] grabGeometryNode(final Geometry geo, final int mx, final int my) {
         final int[] indexes = new int[]{-1,-1,-1};
 
         try{
@@ -241,7 +241,7 @@ public class EditionHelper {
         return indexes;
     }
 
-    public void dragGeometryNode(EditionContext context, int mx, int my) {
+    public void dragGeometryNode(final EditionContext context, final int mx, final int my) {
         final Coordinate mouseCoord = toCoord(mx, my);
 
         final Geometry subgeo = context.subGeometries.get(0);
@@ -268,7 +268,7 @@ public class EditionHelper {
         context.geometry.geometryChanged();
     }
 
-    public void moveGeometry(Geometry geo, int dx, int dy) {
+    public void moveGeometry(final Geometry geo, final int dx, final int dy) {
 
         try{
             final Point2D pt0 = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
@@ -293,7 +293,7 @@ public class EditionHelper {
 
     }
 
-    public void moveSubGeometry(Geometry geo, int indice, int dx, int dy) {
+    public void moveSubGeometry(final Geometry geo, final int indice, final int dx, final int dy) {
 
         try{
             final Point2D pt0 = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
@@ -318,7 +318,7 @@ public class EditionHelper {
     }
 
 
-    public Geometry insertNode(Polygon geo, int mx, int my) {
+    public Geometry insertNode(final Polygon geo, final int mx, final int my) {
         try{
             //transform our mouse in a geometry
             final Geometry mouseGeo = mousePositionToGeometry(mx, my);
@@ -357,7 +357,7 @@ public class EditionHelper {
         return geo;
     }
 
-    public Geometry insertNode(LineString geo, int mx, int my) {
+    public Geometry insertNode(final LineString geo, final int mx, final int my) {
         try{
             //transform our mouse in a geometry
             final Geometry mouseGeo = mousePositionToGeometry(mx, my);
@@ -397,7 +397,7 @@ public class EditionHelper {
     }
 
 
-    public Geometry insertNode(GeometryCollection geo, int mx, int my) {
+    public Geometry insertNode(final GeometryCollection geo, final int mx, final int my) {
         try{
             //transform our mouse in a geometry
             final Geometry mouseGeo = mousePositionToGeometry(mx, my);
@@ -463,7 +463,7 @@ public class EditionHelper {
         return geo;
     }
 
-    public Geometry deleteNode(Polygon geo, int mx, int my) {
+    public Geometry deleteNode(final Polygon geo, final int mx, final int my) {
 
         try{
             //transform our mouse in a geometry
@@ -500,7 +500,7 @@ public class EditionHelper {
         return geo;
     }
 
-    public Geometry deleteNode(LineString geo, int mx, int my) {
+    public Geometry deleteNode(final LineString geo, final int mx, final int my) {
 
         try{
             //transform our mouse in a geometry
@@ -538,7 +538,7 @@ public class EditionHelper {
     }
 
 
-    public Geometry deleteNode(GeometryCollection geo, int mx, int my) {
+    public Geometry deleteNode(final GeometryCollection geo, final int mx, final int my) {
 
         try{
             //transform our mouse in a geometry
@@ -598,7 +598,7 @@ public class EditionHelper {
         return geo;
     }
 
-    public Geometry deleteSubGeometry(GeometryCollection geo, int mx, int my) {
+    public Geometry deleteSubGeometry(final GeometryCollection geo, final int mx, final int my) {
 
         try{
             //transform our mouse in a geometry
@@ -637,7 +637,7 @@ public class EditionHelper {
     }
 
 
-    public Geometry toObjectiveCRS(SimpleFeature sf){
+    public Geometry toObjectiveCRS(final SimpleFeature sf){
         final FeatureMapLayer layer = handler.getEditedLayer();
         final Object obj = sf.getDefaultGeometry();
 
@@ -665,7 +665,7 @@ public class EditionHelper {
      * @param layer : target layer filter
      * @return geometry filter
      */
-    public Filter toFilter(Geometry poly, FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException{
+    public Filter toFilter(final Geometry poly, final FeatureMapLayer fl) throws FactoryException, MismatchedDimensionException, TransformException{
 
         final String geoStr = fl.getCollection().getFeatureType().getGeometryDescriptor().getLocalName();
         final Expression geomField = FF.property(geoStr);
@@ -734,7 +734,7 @@ public class EditionHelper {
 
     }
 
-    public void sourceModifyFeature(SimpleFeature feature, Geometry geo){
+    public void sourceModifyFeature(final SimpleFeature feature, final Geometry geo){
 
         final String ID = feature.getID();
 
@@ -766,7 +766,7 @@ public class EditionHelper {
 
     }
 
-    public void sourceRemoveFeature(SimpleFeature feature){
+    public void sourceRemoveFeature(final SimpleFeature feature){
         sourceRemoveFeature(feature.getID());
     }
 
@@ -797,7 +797,7 @@ public class EditionHelper {
 
     //staic helper methods -----------------------------------------------------
 
-    public static Geometry createGeometry(List<Coordinate> coords) {
+    public static Geometry createGeometry(final List<Coordinate> coords) {
         int size = coords.size();
 
         switch (size) {
@@ -812,11 +812,11 @@ public class EditionHelper {
         }
     }
 
-    public static Point createPoint(Coordinate coord) {
+    public static Point createPoint(final Coordinate coord) {
         return GEOMETRY_FACTORY.createPoint(coord);
     }
 
-    public static MultiPoint createMultiPoint(List<? extends Geometry> geoms) {
+    public static MultiPoint createMultiPoint(final List<? extends Geometry> geoms) {
         List<Point> lst = new ArrayList<Point>();
         for (Geometry go : geoms) {
             if (go instanceof Point) {
@@ -826,10 +826,10 @@ public class EditionHelper {
         return GEOMETRY_FACTORY.createMultiPoint(lst.toArray(new Point[lst.size()]));
     }
 
-    public static LineString createLine(Coordinate ... coords) {
+    public static LineString createLine(final Coordinate ... coords) {
         return GEOMETRY_FACTORY.createLineString(coords);
     }
-    public static LineString createLine(List<Coordinate> coords) {
+    public static LineString createLine(final List<Coordinate> coords) {
         return GEOMETRY_FACTORY.createLineString(coords.toArray(EMPTY_COORDINATE_ARRAY));
     }
 
@@ -847,12 +847,12 @@ public class EditionHelper {
         return GEOMETRY_FACTORY.createLinearRing(coords.toArray(EMPTY_COORDINATE_ARRAY));
     }
 
-    public static Polygon createPolygon(List<Coordinate> coords) {
+    public static Polygon createPolygon(final List<Coordinate> coords) {
         LinearRing ring = createLinearRing(coords);
         return GEOMETRY_FACTORY.createPolygon(ring, null);
     }
 
-    public static MultiPolygon createMultiPolygon(List<Geometry> geoms) {
+    public static MultiPolygon createMultiPolygon(final List<Geometry> geoms) {
         List<Polygon> lst = new ArrayList<Polygon>();
         for (Geometry go : geoms) {
             if (go instanceof Polygon) {
@@ -864,7 +864,7 @@ public class EditionHelper {
         return GEOMETRY_FACTORY.createMultiPolygon(lst.toArray(new Polygon[lst.size()]));
     }
 
-    public static MultiLineString createMultiLine(List<Geometry> geoms) {
+    public static MultiLineString createMultiLine(final List<Geometry> geoms) {
         List<LineString> lst = new ArrayList<LineString>();
         for (Geometry go : geoms) {
             if (go instanceof LineString) {

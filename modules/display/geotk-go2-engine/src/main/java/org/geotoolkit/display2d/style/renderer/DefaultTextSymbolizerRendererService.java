@@ -61,7 +61,7 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
      * {@inheritDoc }
      */
     @Override
-    public CachedTextSymbolizer createCachedSymbolizer(TextSymbolizer symbol) {
+    public CachedTextSymbolizer createCachedSymbolizer(final TextSymbolizer symbol) {
         return new CachedTextSymbolizer(symbol,this);
     }
 
@@ -69,7 +69,7 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
      * {@inheritDoc }
      */
     @Override
-    public SymbolizerRenderer createRenderer(CachedTextSymbolizer symbol, RenderingContext2D context) {
+    public SymbolizerRenderer createRenderer(final CachedTextSymbolizer symbol, final RenderingContext2D context) {
         return new DefaultTextSymbolizerRenderer(symbol, context);
     }
 
@@ -77,7 +77,7 @@ public class DefaultTextSymbolizerRendererService extends AbstractSymbolizerRend
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedTextSymbolizer symbol, MapLayer layer) {
+    public void glyph(final Graphics2D g, final Rectangle2D rectangle, final CachedTextSymbolizer symbol, final MapLayer layer) {
         g.setClip(rectangle);
 
         final String family;

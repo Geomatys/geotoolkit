@@ -87,7 +87,7 @@ public class RelatedTimeType
      *     {@link String }
      *     
      */
-    public void setRelativePosition(String value) {
+    public void setRelativePosition(final String value) {
         this.relativePosition = value;
     }
 

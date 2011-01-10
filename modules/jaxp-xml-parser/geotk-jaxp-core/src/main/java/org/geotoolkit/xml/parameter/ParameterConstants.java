@@ -76,13 +76,13 @@ final class ParameterConstants {
 
         private final String type;
 
-        private ValueType(String type) {
+        private ValueType(final String type) {
             this.type = type;
         }
 
         public String getType(){return this.type;}
 
-        public static ValueType transform(String type){
+        public static ValueType transform(final String type){
             for(ValueType tv : ValueType.values()){
                 if(tv.getType().equals(type)) return tv;
             }
@@ -101,13 +101,13 @@ final class ParameterConstants {
 
         private final String topology;
 
-        private ValuesTopology(String topology) {
+        private ValuesTopology(final String topology) {
             this.topology = topology;
         }
 
         public String getTopology(){return this.topology;}
 
-        public static ValuesTopology transform(String topology){
+        public static ValuesTopology transform(final String topology){
             for(ValuesTopology to : ValuesTopology.values()){
                 if(to.getTopology().equals(topology)) return to;
             }

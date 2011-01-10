@@ -77,7 +77,7 @@ public class GNC_Document extends GNC_MaterialResource implements org.opengis.me
      *     {@link GNCDocumentTypeCodePropertyType }
      *     
      */
-    public void setTypeOfDocuments(GNC_DocumentsTypeCode value) {
+    public void setTypeOfDocuments(final GNC_DocumentsTypeCode value) {
         this.typeOfDocuments = value;
     }
 

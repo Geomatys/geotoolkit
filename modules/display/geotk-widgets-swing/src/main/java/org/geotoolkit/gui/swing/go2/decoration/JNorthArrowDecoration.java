@@ -55,7 +55,7 @@ public class JNorthArrowDecoration extends JComponent implements MapDecoration{
         this(JNorthArrowDecoration.class.getResource("/org/geotoolkit/gui/swing/resource/icon/boussole.svg"));
     }
 
-    public JNorthArrowDecoration(URL svgFile){
+    public JNorthArrowDecoration(final URL svgFile){
         arrowTemplate = new DefaultNorthArrowTemplate(null,svgFile, new Dimension(100,100));
     }
 
@@ -77,7 +77,7 @@ public class JNorthArrowDecoration extends JComponent implements MapDecoration{
      * {@inheritDoc }
      */
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         this.map = map;
     }
 
@@ -98,7 +98,7 @@ public class JNorthArrowDecoration extends JComponent implements MapDecoration{
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
 
         if(map == null) return;
 

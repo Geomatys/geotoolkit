@@ -52,7 +52,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
     }
 
@@ -62,7 +62,7 @@ public class JExternalGraphicPane extends StyleElementEditor<ExternalGraphic> {
     }
 
     @Override
-    public void parse(ExternalGraphic ext) {
+    public void parse(final ExternalGraphic ext) {
         this.external = ext;
 
         if (external != null) {

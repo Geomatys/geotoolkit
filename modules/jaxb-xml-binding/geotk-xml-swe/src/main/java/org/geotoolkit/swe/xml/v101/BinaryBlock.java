@@ -118,7 +118,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
 
     }
 
-    public BinaryBlock(AbstractBinaryBlock bb) {
+    public BinaryBlock(final AbstractBinaryBlock bb) {
         super(bb);
         if (bb != null) {
             this.byteLength = bb.getByteLength();
@@ -153,7 +153,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
     /**
      * Sets the value of the byteLength property.
      */
-    public void setByteLength(Integer value) {
+    public void setByteLength(final Integer value) {
         this.byteLength = value;
     }
 
@@ -167,7 +167,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
     /**
      * Sets the value of the byteEncoding property.
      */
-    public void setByteEncoding(ByteEncoding value) {
+    public void setByteEncoding(final ByteEncoding value) {
         this.byteEncoding = value;
     }
 
@@ -181,7 +181,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
     /**
      * Sets the value of the byteOrder property.
      */
-    public void setByteOrder(ByteOrder value) {
+    public void setByteOrder(final ByteOrder value) {
         this.byteOrder = value;
     }
 
@@ -279,7 +279,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
 
         }
 
-        public Member(BinaryBlockMember m) {
+        public Member(final BinaryBlockMember m) {
             if (m != null) {
                 if (m.getBlock() != null) {
                     this.block = new Block(m.getBlock());
@@ -301,7 +301,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
         /**
          * Sets the value of the component property.
          */
-        public void setComponent(BinaryBlock.Member.Component value) {
+        public void setComponent(final BinaryBlock.Member.Component value) {
             this.component = value;
         }
 
@@ -315,7 +315,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
         /**
          * Sets the value of the block property.
          */
-        public void setBlock(BinaryBlock.Member.Block value) {
+        public void setBlock(final BinaryBlock.Member.Block value) {
             this.block = value;
         }
 
@@ -394,7 +394,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
 
             }
 
-            public Block(BinaryBlockMemberBlock bl) {
+            public Block(final BinaryBlockMemberBlock bl) {
                 if (bl != null) {
                     this.byteLength         = bl.getByteLength();
                     this.compression        = bl.getCompression();
@@ -417,7 +417,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
              * Sets the value of the ref property.
              * 
              */
-            public void setRef(String value) {
+            public void setRef(final String value) {
                 this.ref = value;
             }
 
@@ -431,7 +431,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the byteLength property.
              */
-            public void setByteLength(Integer value) {
+            public void setByteLength(final Integer value) {
                 this.byteLength = value;
             }
 
@@ -449,7 +449,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the paddingBytesBefore property.
              */
-            public void setPaddingBytesBefore(Integer value) {
+            public void setPaddingBytesBefore(final Integer value) {
                 this.paddingBytesBefore = value;
             }
 
@@ -467,7 +467,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the paddingBytesAfter property.
              */
-            public void setPaddingBytesAfter(Integer value) {
+            public void setPaddingBytesAfter(final Integer value) {
                 this.paddingBytesAfter = value;
             }
 
@@ -481,7 +481,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the encryption property.
              */
-            public void setEncryption(String value) {
+            public void setEncryption(final String value) {
                 this.encryption = value;
             }
 
@@ -495,7 +495,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the compression property.
              */
-            public void setCompression(String value) {
+            public void setCompression(final String value) {
                 this.compression = value;
             }
 
@@ -589,7 +589,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
 
             }
 
-            public Component(BinaryBlockMemberComponent bc) {
+            public Component(final BinaryBlockMemberComponent bc) {
                 if (bc != null) {
                     this.bitLength         = bc.getBitLength();
                     this.dataType          = bc.getDataType();
@@ -612,7 +612,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the ref property.
              */
-            public void setRef(String value) {
+            public void setRef(final String value) {
                 this.ref = value;
             }
 
@@ -626,7 +626,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the dataType property.
              */
-            public void setDataType(String value) {
+            public void setDataType(final String value) {
                 this.dataType = value;
             }
 
@@ -640,7 +640,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the significantBits property.
              */
-            public void setSignificantBits(Integer value) {
+            public void setSignificantBits(final Integer value) {
                 this.significantBits = value;
             }
 
@@ -656,7 +656,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
              * Sets the value of the bitLength property.
              * 
              */
-            public void setBitLength(Integer value) {
+            public void setBitLength(final Integer value) {
                 this.bitLength = value;
             }
 
@@ -675,7 +675,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the paddingBitsBefore property.
              */
-            public void setPaddingBitsBefore(Integer value) {
+            public void setPaddingBitsBefore(final Integer value) {
                 this.paddingBitsBefore = value;
             }
 
@@ -693,7 +693,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the paddingBitsAfter property.
              */
-            public void setPaddingBitsAfter(Integer value) {
+            public void setPaddingBitsAfter(final Integer value) {
                 this.paddingBitsAfter = value;
             }
 
@@ -708,7 +708,7 @@ public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinar
             /**
              * Sets the value of the encryption property.
              */
-            public void setEncryption(String value) {
+            public void setEncryption(final String value) {
                 this.encryption = value;
             }
 

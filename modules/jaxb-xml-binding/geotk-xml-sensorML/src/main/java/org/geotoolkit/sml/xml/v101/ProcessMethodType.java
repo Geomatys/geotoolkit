@@ -219,7 +219,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
     }
 
-    public ProcessMethodType(AbstractProcessMethod method) {
+    public ProcessMethodType(final AbstractProcessMethod method) {
         super(method);
         if (method != null) {
 
@@ -315,7 +315,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the keywords property.
      *
      */
-    public void setKeywords(List<Keywords> keywords) {
+    public void setKeywords(final List<Keywords> keywords) {
         this.keywords = keywords;
     }
 
@@ -323,7 +323,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the keywords property.
      *
      */
-    public void setKeywords(Keywords keywords) {
+    public void setKeywords(final Keywords keywords) {
         if (keywords != null) {
             if (this.keywords == null) {
                 this.keywords = new ArrayList<Keywords>();
@@ -347,7 +347,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the keywords property.
      *
      */
-    public void setIdentification(List<Identification> identification) {
+    public void setIdentification(final List<Identification> identification) {
         this.identification = identification;
     }
 
@@ -355,7 +355,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the keywords property.
      *
      */
-    public void setIdentification(Identification identification) {
+    public void setIdentification(final Identification identification) {
         if (identification != null) {
             if (this.identification == null) {
                 this.identification = new ArrayList<Identification>();
@@ -368,7 +368,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the keywords property.
      *
      */
-    public void setIdentification(IdentifierList identification) {
+    public void setIdentification(final IdentifierList identification) {
         if (identification != null) {
             if (this.identification == null) {
                 this.identification = new ArrayList<Identification>();
@@ -392,7 +392,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the keywords property.
      *
      */
-    public void setClassification(List<Classification> classification) {
+    public void setClassification(final List<Classification> classification) {
        this.classification = classification;
     }
 
@@ -400,7 +400,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the keywords property.
      *
      */
-    public void setClassification(Classification classification) {
+    public void setClassification(final Classification classification) {
         if (classification != null) {
             if (this.classification == null) {
                 this.classification = new ArrayList<Classification>();
@@ -413,7 +413,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the keywords property.
      *
      */
-    public void setClassification(ClassifierList classification) {
+    public void setClassification(final ClassifierList classification) {
         if (classification != null) {
             if (this.classification == null) {
                 this.classification = new ArrayList<Classification>();
@@ -437,21 +437,21 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      /**
      * Sets the value of the validTime property.
      */
-    public void setValidTime(AbstractValidTime value) {
+    public void setValidTime(final AbstractValidTime value) {
         this.validTime = new ValidTime(value);
     }
 
      /**
      * Sets the value of the validTime property.
      */
-    public void setValidTime(TimePeriodType value) {
+    public void setValidTime(final TimePeriodType value) {
         this.validTime = new ValidTime(value);
     }
 
      /**
      * Sets the value of the validTime property.
      */
-    public void setValidTime(TimeInstantType value) {
+    public void setValidTime(final TimeInstantType value) {
         this.validTime = new ValidTime(value);
     }
 
@@ -475,7 +475,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      *     {@link SecurityConstraint }
      *     
      */
-    public void setSecurityConstraint(SecurityConstraint value) {
+    public void setSecurityConstraint(final SecurityConstraint value) {
         this.securityConstraint = value;
     }
 
@@ -493,7 +493,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Gets the value of the legalConstraint property.
      *
      */
-    public void setLegalConstraint(LegalConstraint legalConstraint) {
+    public void setLegalConstraint(final LegalConstraint legalConstraint) {
         if (legalConstraint != null) {
             if (this.legalConstraint == null) {
                 this.legalConstraint = new ArrayList<LegalConstraint>();
@@ -506,7 +506,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Gets the value of the legalConstraint property.
      *
      */
-    public void setLegalConstraint(Rights legalConstraint) {
+    public void setLegalConstraint(final Rights legalConstraint) {
         if (legalConstraint != null) {
             if (this.legalConstraint == null) {
                 this.legalConstraint = new ArrayList<LegalConstraint>();
@@ -519,7 +519,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Gets the value of the legalConstraint property.
      *
      */
-    public void setLegalConstraint(List<LegalConstraint> legalConstraint) {
+    public void setLegalConstraint(final List<LegalConstraint> legalConstraint) {
         this.legalConstraint = legalConstraint;
     }
 
@@ -537,7 +537,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the characteristics property.
      *
      */
-    public void setCharacteristics(List<Characteristics> characteristics) {
+    public void setCharacteristics(final List<Characteristics> characteristics) {
         this.characteristics = characteristics;
     }
 
@@ -545,7 +545,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the characteristics property.
      *
      */
-    public void setCharacteristics(Characteristics characteristics) {
+    public void setCharacteristics(final Characteristics characteristics) {
         if (characteristics != null) {
             if (this.characteristics == null) {
                 this.characteristics = new ArrayList<Characteristics>();
@@ -558,7 +558,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the characteristics property.
      *
      */
-    public void setCharacteristics(DataRecordType characteristics) {
+    public void setCharacteristics(final DataRecordType characteristics) {
         if (characteristics != null) {
             if (this.characteristics == null) {
                 this.characteristics = new ArrayList<Characteristics>();
@@ -581,7 +581,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the capabilities property.
      *
      */
-    public void setCapabilities(Capabilities capabilties) {
+    public void setCapabilities(final Capabilities capabilties) {
         if (capabilties != null) {
             if (this.capabilities == null) {
                 this.capabilities = new ArrayList<Capabilities>();
@@ -594,7 +594,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the capabilities property.
      *
      */
-    public void setCapabilities(DataRecordType capabilties) {
+    public void setCapabilities(final DataRecordType capabilties) {
         if (capabilties != null) {
             if (this.capabilities == null) {
                 this.capabilities = new ArrayList<Capabilities>();
@@ -607,7 +607,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the capabilities property.
      *
      */
-    public void setCapabilities(List<Capabilities> capabilities) {
+    public void setCapabilities(final List<Capabilities> capabilities) {
         this.capabilities = capabilities;
     }
     
@@ -625,7 +625,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the contact property.
      *
      */
-    public void setContact(Contact contact) {
+    public void setContact(final Contact contact) {
         if (contact != null) {
             if (this.contact == null) {
                 this.contact = new ArrayList<Contact>();
@@ -638,7 +638,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the contact property.
      *
      */
-    public void setContact(ResponsibleParty contact) {
+    public void setContact(final ResponsibleParty contact) {
         if (contact != null) {
             if (this.contact == null) {
                 this.contact = new ArrayList<Contact>();
@@ -651,7 +651,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * sets the value of the contact property.
      *
      */
-    public void setContact(List<Contact> contact) {
+    public void setContact(final List<Contact> contact) {
         this.contact = contact;
     }
     
@@ -669,7 +669,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the contact property.
      *
      */
-    public void setDocumentation(Documentation documentation) {
+    public void setDocumentation(final Documentation documentation) {
         if (documentation != null) {
             if (this.documentation == null) {
                 this.documentation = new ArrayList<Documentation>();
@@ -682,7 +682,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * Sets the value of the contact property.
      *
      */
-    public void setDocumentation(Document documentation) {
+    public void setDocumentation(final Document documentation) {
         if (documentation != null) {
             if (this.documentation == null) {
                 this.documentation = new ArrayList<Documentation>();
@@ -695,7 +695,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      * sets the value of the contact property.
      *
      */
-    public void setDocumentation(List<Documentation> documentation) {
+    public void setDocumentation(final List<Documentation> documentation) {
         this.documentation = documentation;
     }
     
@@ -712,14 +712,14 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      /**
      * Sets the value of the history property.
      */
-    public void setHistory(List<History> history) {
+    public void setHistory(final List<History> history) {
         this.history = history;
     }
 
     /**
      * Sets the value of the history property.
      */
-    public void setHistory(History history) {
+    public void setHistory(final History history) {
         if (history != null) {
             if (this.history == null) {
                 this.history = new ArrayList<History>();
@@ -748,7 +748,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      *     {@link ProcessMethodType.Rules }
      *     
      */
-    public void setRules(ProcessMethodType.Rules value) {
+    public void setRules(final ProcessMethodType.Rules value) {
         this.rules = value;
     }
 
@@ -772,7 +772,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
      *     {@link ProcessMethodType.Algorithm }
      *     
      */
-    public void setAlgorithm(ProcessMethodType.Algorithm value) {
+    public void setAlgorithm(final ProcessMethodType.Algorithm value) {
         this.algorithm = value;
     }
 
@@ -845,7 +845,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
         }
 
-        public Algorithm(AbstractAlgorithm algo) {
+        public Algorithm(final AbstractAlgorithm algo) {
             if (algo != null && algo.getAlgorithmDefinition() != null) {
                 this.algorithmDefinition = new AlgorithmDefinition(algo.getAlgorithmDefinition());
             }
@@ -871,7 +871,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link ProcessMethodType.Algorithm.AlgorithmDefinition }
          *     
          */
-        public void setAlgorithmDefinition(ProcessMethodType.Algorithm.AlgorithmDefinition value) {
+        public void setAlgorithmDefinition(final ProcessMethodType.Algorithm.AlgorithmDefinition value) {
             this.algorithmDefinition = value;
         }
 
@@ -922,7 +922,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
             }
 
-            public AlgorithmDefinition(AbstractAlgorithmDefinition ald) {
+            public AlgorithmDefinition(final AbstractAlgorithmDefinition ald) {
                 if (ald != null) {
                     this.description = ald.getDescription();
                     if (ald.getMathML() != null) {
@@ -951,7 +951,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link StringOrRefType }
              *     
              */
-            public void setDescription(StringOrRefType value) {
+            public void setDescription(final StringOrRefType value) {
                 this.description = value;
             }
 
@@ -975,7 +975,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link ProcessMethodType.Algorithm.AlgorithmDefinition.MathML }
              *     
              */
-            public void setMathML(ProcessMethodType.Algorithm.AlgorithmDefinition.MathML value) {
+            public void setMathML(final ProcessMethodType.Algorithm.AlgorithmDefinition.MathML value) {
                 this.mathML = value;
             }
 
@@ -1033,7 +1033,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
                 }
 
-                public MathML(AbstractMathML mat) {
+                public MathML(final AbstractMathML mat) {
                     if (mat != null) {
                         this.actuate   = mat.getActuate();
                         this.remoteSchema = mat.getRemoteSchema();
@@ -1069,7 +1069,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link Object }
                  *     
                  */
-                public void setAny(Object value) {
+                public void setAny(final Object value) {
                     this.any = value;
                 }
 
@@ -1097,7 +1097,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setRemoteSchema(String value) {
+                public void setRemoteSchema(final String value) {
                     this.remoteSchema = value;
                 }
 
@@ -1121,7 +1121,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setType(String value) {
+                public void setType(final String value) {
                     this.type = value;
                 }
 
@@ -1145,7 +1145,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setHref(String value) {
+                public void setHref(final String value) {
                     this.href = value;
                 }
 
@@ -1169,7 +1169,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setRole(String value) {
+                public void setRole(final String value) {
                     this.role = value;
                 }
 
@@ -1193,7 +1193,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setArcrole(String value) {
+                public void setArcrole(final String value) {
                     this.arcrole = value;
                 }
 
@@ -1217,7 +1217,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setTitle(String value) {
+                public void setTitle(final String value) {
                     this.title = value;
                 }
 
@@ -1241,7 +1241,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setShow(String value) {
+                public void setShow(final String value) {
                     this.show = value;
                 }
 
@@ -1265,7 +1265,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setActuate(String value) {
+                public void setActuate(final String value) {
                     this.actuate = value;
                 }
 
@@ -1365,7 +1365,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
         }
 
-        public Implementation(AbstractImplementation imp) {
+        public Implementation(final AbstractImplementation imp) {
             if (imp != null) {
                 this.actuate   = imp.getActuate();
                 this.arcrole   = imp.getArcrole();
@@ -1408,7 +1408,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link ProcessChainType }
          *     
          */
-        public void setProcessChain(ProcessChainType value) {
+        public void setProcessChain(final ProcessChainType value) {
             this.processChain = value;
         }
 
@@ -1432,7 +1432,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link ProcessMethodType.Implementation.ImplementationCode }
          *     
          */
-        public void setImplementationCode(ProcessMethodType.Implementation.ImplementationCode value) {
+        public void setImplementationCode(final ProcessMethodType.Implementation.ImplementationCode value) {
             this.implementationCode = value;
         }
 
@@ -1456,7 +1456,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link String }
          *     
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -1480,7 +1480,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -1504,7 +1504,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link String }
          *     
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -1528,7 +1528,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link String }
          *     
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -1552,7 +1552,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link String }
          *     
          */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -1576,7 +1576,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link String }
          *     
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -1600,7 +1600,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link String }
          *     
          */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -1624,7 +1624,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link String }
          *     
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 
@@ -1721,7 +1721,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
             }
 
-            public ImplementationCode(AbstractImplementationCode ic) {
+            public ImplementationCode(final AbstractImplementationCode ic) {
                 if (ic != null) {
                     this.description = ic.getDescription();
                     this.framework   = ic.getFramework();
@@ -1810,7 +1810,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link StringOrRefType }
              *     
              */
-            public void setDescription(StringOrRefType value) {
+            public void setDescription(final StringOrRefType value) {
                 this.description = value;
             }
 
@@ -1921,7 +1921,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link ValidTime }
              *     
              */
-            public void setValidTime(ValidTime value) {
+            public void setValidTime(final ValidTime value) {
                 this.validTime = value;
             }
 
@@ -1945,7 +1945,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link SecurityConstraint }
              *     
              */
-            public void setSecurityConstraint(SecurityConstraint value) {
+            public void setSecurityConstraint(final SecurityConstraint value) {
                 this.securityConstraint = value;
             }
 
@@ -2143,7 +2143,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link ProcessMethodType.Implementation.ImplementationCode.SourceRef }
              *     
              */
-            public void setSourceRef(ProcessMethodType.Implementation.ImplementationCode.SourceRef value) {
+            public void setSourceRef(final ProcessMethodType.Implementation.ImplementationCode.SourceRef value) {
                 this.sourceRef = value;
             }
 
@@ -2167,7 +2167,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link ProcessMethodType.Implementation.ImplementationCode.BinaryRef }
              *     
              */
-            public void setBinaryRef(ProcessMethodType.Implementation.ImplementationCode.BinaryRef value) {
+            public void setBinaryRef(final ProcessMethodType.Implementation.ImplementationCode.BinaryRef value) {
                 this.binaryRef = value;
             }
 
@@ -2191,7 +2191,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link String }
              *     
              */
-            public void setLanguage(String value) {
+            public void setLanguage(final String value) {
                 this.language = value;
             }
 
@@ -2215,7 +2215,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link String }
              *     
              */
-            public void setFramework(String value) {
+            public void setFramework(final String value) {
                 this.framework = value;
             }
 
@@ -2239,7 +2239,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link String }
              *     
              */
-            public void setVersion(String value) {
+            public void setVersion(final String value) {
                 this.version = value;
             }
 
@@ -2290,7 +2290,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
                 }
 
-                public BinaryRef(AbstractBinaryRef mat) {
+                public BinaryRef(final AbstractBinaryRef mat) {
                     if (mat != null) {
                         this.actuate   = mat.getActuate();
                         this.arcrole   = mat.getArcrole();
@@ -2327,7 +2327,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setRemoteSchema(String value) {
+                public void setRemoteSchema(final String value) {
                     this.remoteSchema = value;
                 }
 
@@ -2351,7 +2351,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setType(String value) {
+                public void setType(final String value) {
                     this.type = value;
                 }
 
@@ -2375,7 +2375,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setHref(String value) {
+                public void setHref(final String value) {
                     this.href = value;
                 }
 
@@ -2399,7 +2399,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setRole(String value) {
+                public void setRole(final String value) {
                     this.role = value;
                 }
 
@@ -2423,7 +2423,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setArcrole(String value) {
+                public void setArcrole(final String value) {
                     this.arcrole = value;
                 }
 
@@ -2447,7 +2447,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setTitle(String value) {
+                public void setTitle(final String value) {
                     this.title = value;
                 }
 
@@ -2471,7 +2471,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setShow(String value) {
+                public void setShow(final String value) {
                     this.show = value;
                 }
 
@@ -2495,7 +2495,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setActuate(String value) {
+                public void setActuate(final String value) {
                     this.actuate = value;
                 }
 
@@ -2549,7 +2549,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
                 }
 
-                public SourceRef(AbstractSourceRef mat) {
+                public SourceRef(final AbstractSourceRef mat) {
                     if (mat != null) {
                         this.actuate   = mat.getActuate();
                         this.arcrole   = mat.getArcrole();
@@ -2585,7 +2585,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setRemoteSchema(String value) {
+                public void setRemoteSchema(final String value) {
                     this.remoteSchema = value;
                 }
 
@@ -2609,7 +2609,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setType(String value) {
+                public void setType(final String value) {
                     this.type = value;
                 }
 
@@ -2633,7 +2633,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setHref(String value) {
+                public void setHref(final String value) {
                     this.href = value;
                 }
 
@@ -2657,7 +2657,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setRole(String value) {
+                public void setRole(final String value) {
                     this.role = value;
                 }
 
@@ -2681,7 +2681,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setArcrole(String value) {
+                public void setArcrole(final String value) {
                     this.arcrole = value;
                 }
 
@@ -2705,7 +2705,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setTitle(String value) {
+                public void setTitle(final String value) {
                     this.title = value;
                 }
 
@@ -2729,7 +2729,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setShow(String value) {
+                public void setShow(final String value) {
                     this.show = value;
                 }
 
@@ -2753,7 +2753,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                  *     {@link String }
                  *     
                  */
-                public void setActuate(String value) {
+                public void setActuate(final String value) {
                     this.actuate = value;
                 }
 
@@ -2807,7 +2807,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
         }
 
-        public Rules(AbstractRules ar) {
+        public Rules(final AbstractRules ar) {
             if (ar != null && ar.getRulesDefinition() != null) {
                 this.rulesDefinition = new RulesDefinition(ar.getRulesDefinition());
             }
@@ -2833,7 +2833,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
          *     {@link ProcessMethodType.Rules.RulesDefinition }
          *     
          */
-        public void setRulesDefinition(ProcessMethodType.Rules.RulesDefinition value) {
+        public void setRulesDefinition(final ProcessMethodType.Rules.RulesDefinition value) {
             this.rulesDefinition = value;
         }
 
@@ -2874,7 +2874,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
 
             }
 
-            public RulesDefinition(AbstractRulesDefinition rd) {
+            public RulesDefinition(final AbstractRulesDefinition rd) {
                 if (rd != null) {
                     this.description = rd.getDescription();
                     if (rd.getRuleLanguage() != null) {
@@ -2910,7 +2910,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link StringOrRefType }
              *     
              */
-            public void setDescription(StringOrRefType value) {
+            public void setDescription(final StringOrRefType value) {
                 this.description = value;
             }
 
@@ -2921,7 +2921,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
                 return null;
             }
 
-            public void setRuleLanguage(RuleLanguageType value) {
+            public void setRuleLanguage(final RuleLanguageType value) {
                 ObjectFactory fact = new ObjectFactory();
                 if (value instanceof Schematron) {
                     this.ruleLanguage = fact.createSchematron((Schematron)value);
@@ -2957,7 +2957,7 @@ public class ProcessMethodType extends AbstractGMLEntry implements AbstractProce
              *     {@link JAXBElement }{@code <}{@link RuleLanguageType }{@code >}
              *     
              */
-            public void setJbRuleLanguage(JAXBElement<? extends RuleLanguageType> value) {
+            public void setJbRuleLanguage(final JAXBElement<? extends RuleLanguageType> value) {
                 this.ruleLanguage = ((JAXBElement<? extends RuleLanguageType> ) value);
             }
 

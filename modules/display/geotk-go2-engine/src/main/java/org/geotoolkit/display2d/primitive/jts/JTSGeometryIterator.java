@@ -35,20 +35,20 @@ public abstract class JTSGeometryIterator<T extends Geometry> implements PathIte
     protected AffineTransform transform;
     protected T geometry;
 
-    protected JTSGeometryIterator(AffineTransform trs){
+    protected JTSGeometryIterator(final AffineTransform trs){
         this(null,trs);
     }
 
-    protected JTSGeometryIterator(T geometry, AffineTransform trs){
+    protected JTSGeometryIterator(final T geometry, final AffineTransform trs){
         this.transform = (trs == null) ? IDENTITY : trs;
         this.geometry = geometry;
     }
 
-    public void setGeometry(T geom){
+    public void setGeometry(final T geom){
         this.geometry = geom;
     }
 
-    public void setTransform(AffineTransform trs){
+    public void setTransform(final AffineTransform trs){
         this.transform = (trs == null) ? IDENTITY : trs;
         reset();
     }

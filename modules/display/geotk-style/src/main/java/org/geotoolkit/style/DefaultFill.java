@@ -46,7 +46,7 @@ public class DefaultFill implements Fill{
      * @param color : if null or Expression.NIL will be replaced by default value.
      * @param opacity : if null or Expression.NIL will be replaced by default value.
      */
-    public DefaultFill(GraphicFill fill, Expression color, Expression opacity){
+    public DefaultFill(final GraphicFill fill, final Expression color, final Expression opacity){
         this.fill = fill;
         this.color = (color == null || color == NIL) ? DEFAULT_FILL_COLOR : color;
         this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_FILL_OPACITY : opacity;
@@ -80,7 +80,7 @@ public class DefaultFill implements Fill{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -88,7 +88,7 @@ public class DefaultFill implements Fill{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

@@ -118,7 +118,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
 
     }
 
-    public AnyScalarPropertyType(AnyScalar sc) {
+    public AnyScalarPropertyType(final AnyScalar sc) {
         if (sc != null) {
             if (sc.getValue() != null) {
                 AbstractDataComponent component = sc.getValue();
@@ -150,7 +150,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         }
     }
 
-    public AnyScalarPropertyType(String name, QuantityType quantity) {
+    public AnyScalarPropertyType(final String name, final QuantityType quantity) {
         this.name     = name;
         this.quantity = quantity;
     }
@@ -158,7 +158,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Build a new component Property.
      */
-    public AnyScalarPropertyType(String idDataRecord, String name, AbstractDataComponentEntry component) {
+    public AnyScalarPropertyType(final String idDataRecord, final String name, final AbstractDataComponentEntry component) {
         this.name         = name;
         this.idDataRecord = idDataRecord;
         if (component instanceof TimeType) {
@@ -174,13 +174,13 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
         }
     }
 
-    public AnyScalarPropertyType(String name, Text text) {
+    public AnyScalarPropertyType(final String name, final Text text) {
         this.name  = name;
         this.text  = text;
     }
 
 
-    public AnyScalarPropertyType(String name, TimeType time) {
+    public AnyScalarPropertyType(final String name, final TimeType time) {
         this.name  = name;
         this.time  = time;
     }

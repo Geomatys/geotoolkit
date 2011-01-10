@@ -47,7 +47,7 @@ public class JGeomBox extends JComboBox {
         setOpaque(false);
     }
 
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
 
         this.layer = layer;
 
@@ -85,7 +85,7 @@ public class JGeomBox extends JComboBox {
         }
     }
 
-    public void setGeom(String name) {
+    public void setGeom(final String name) {
         if (layer != null && name != null) {
             setSelectedItem(name);
         }else{

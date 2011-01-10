@@ -169,7 +169,7 @@ public class FeatureUtilities {
         throw new IllegalArgumentException(type + " is not supported by this method");
     }
 
-    public static Object duplicate(Object src) {
+    public static Object duplicate(final Object src) {
 //JD: this method really needs to be replaced with somethign better
 
         if (src == null) {
@@ -276,7 +276,7 @@ public class FeatureUtilities {
         throw new SimpleIllegalAttributeException("Do not know how to deep copy " + type.getName());
     }
 
-    public static Feature copy(Feature feature){
+    public static Feature copy(final Feature feature){
         if(feature instanceof SimpleFeature){
             return SimpleFeatureBuilder.copy((SimpleFeature) feature);
         }
@@ -289,7 +289,7 @@ public class FeatureUtilities {
         return FF.createFeature(copies, feature.getDescriptor(), feature.getIdentifier().getID());
     }
 
-    public static Property copy(Property property){
+    public static Property copy(final Property property){
 
         final Property copy;
         if(property instanceof GeometryAttribute){
@@ -322,11 +322,11 @@ public class FeatureUtilities {
         return copy;
     }
 
-    public static SimpleFeature defaultFeature(SimpleFeatureType type, String id){
+    public static SimpleFeature defaultFeature(final SimpleFeatureType type, final String id){
         return (SimpleFeature)defaultFeature((FeatureType)type, id);
     }
 
-    public static Feature defaultFeature(FeatureType type, String id){
+    public static Feature defaultFeature(final FeatureType type, final String id){
         final List<Property> properties = new ArrayList<Property>();
         for(PropertyDescriptor desc : type.getDescriptors()){
             properties.add(defaultProperty(desc));

@@ -57,14 +57,14 @@ public class Text extends AbstractDataComponentEntry implements AbstractText {
 
     }
 
-    public Text(AbstractText tx) {
+    public Text(final AbstractText tx) {
         super(tx);
         if (tx != null) {
             this.value = tx.getValue();
         }
     }
 
-    public Text(String definition, String value) {
+    public Text(final String definition, final String value) {
         super(definition);
         this.value = value;
     }
@@ -79,7 +79,7 @@ public class Text extends AbstractDataComponentEntry implements AbstractText {
     /**
      * Sets the value of the value property.
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 

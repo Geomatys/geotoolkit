@@ -33,7 +33,7 @@ public abstract class AbstractElementNode extends DefaultMutableTreeNode impleme
     private final ElementType type;
     private SoftReference ref = null;
 
-    public AbstractElementNode(String name, Description desc, ElementType type) {
+    public AbstractElementNode(final String name, final Description desc, final ElementType type) {
         this.name = name;
         this.desc = desc;
         this.type = type;
@@ -85,7 +85,7 @@ public abstract class AbstractElementNode extends DefaultMutableTreeNode impleme
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

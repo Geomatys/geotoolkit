@@ -51,7 +51,7 @@ public class NATSDI_DataIdentification extends DefaultDataIdentification impleme
     /**
      * @param speciesInformation the speciesInformation to set
      */
-    public synchronized void setSpeciesInformation(List<NATSDI_SpeciesInformation> newValues) {
+    public synchronized void setSpeciesInformation(final List<NATSDI_SpeciesInformation> newValues) {
         speciesInformation = copyList(newValues, speciesInformation, NATSDI_SpeciesInformation.class);
     }
 

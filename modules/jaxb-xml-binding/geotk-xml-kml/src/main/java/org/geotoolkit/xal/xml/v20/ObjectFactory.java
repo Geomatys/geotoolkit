@@ -726,7 +726,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "urn:oasis:names:tc:ciq:xsdschema:xAL:2.0", name = "AddressDetails")
-    public JAXBElement<AddressDetails> createAddressDetails(AddressDetails value) {
+    public JAXBElement<AddressDetails> createAddressDetails(final AddressDetails value) {
         return new JAXBElement<AddressDetails>(_AddressDetails_QNAME, AddressDetails.class, null, value);
     }
 

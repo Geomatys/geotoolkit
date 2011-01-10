@@ -78,7 +78,7 @@ public class ActionType {
      *     {@link String }
      *     
      */
-    public void setMessage(String value) {
+    public void setMessage(final String value) {
         this.message = value;
     }
 
@@ -102,7 +102,7 @@ public class ActionType {
      *     {@link String }
      *     
      */
-    public void setLocator(String value) {
+    public void setLocator(final String value) {
         this.locator = value;
     }
 
@@ -126,7 +126,7 @@ public class ActionType {
      *     {@link String }
      *     
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 

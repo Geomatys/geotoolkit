@@ -67,7 +67,7 @@ public class RangeOfValuesType {
      * Sets the value of the minValue property.
      * 
      */
-    public void setMinValue(Object value) {
+    public void setMinValue(final Object value) {
         this.minValue = value;
     }
 
@@ -82,7 +82,7 @@ public class RangeOfValuesType {
     /**
      * Sets the value of the maxValue property.
      */
-    public void setMaxValue(Object value) {
+    public void setMaxValue(final Object value) {
         this.maxValue = value;
     }
 

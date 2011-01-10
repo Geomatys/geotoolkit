@@ -57,7 +57,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
      *
      * @param featureType
      */
-    public FilterAttributeExtractor(SimpleFeatureType featureType) {
+    public FilterAttributeExtractor(final SimpleFeatureType featureType) {
         this.featureType = featureType;
     }
 
@@ -83,7 +83,7 @@ public class FilterAttributeExtractor extends DefaultFilterVisitor {
     }
 
     @Override
-    public Object visit(PropertyName expression, Object data) {
+    public Object visit(final PropertyName expression, final Object data) {
         if (data != null && data != attributeNames && data instanceof Set) {
             attributeNames.addAll((Set) data);
         }

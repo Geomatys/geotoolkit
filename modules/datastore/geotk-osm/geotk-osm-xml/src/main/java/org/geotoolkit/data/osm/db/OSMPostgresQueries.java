@@ -283,7 +283,7 @@ public class OSMPostgresQueries {
     // INSERT STATEMENTS ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static String createInsertNode(int count){
+    public static String createInsertNode(final int count){
         final StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO \"Node\" ");
         sb.append("(id, version, \"userId\", timestamp, changeset, lat, lon)");
@@ -298,7 +298,7 @@ public class OSMPostgresQueries {
         return sb.toString();
     }
 
-    public static String createInsertNodeTag(int count){
+    public static String createInsertNodeTag(final int count){
         final StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO \"NodeTag\" ");
         sb.append("(\"nodeId\", k, v)");
@@ -313,7 +313,7 @@ public class OSMPostgresQueries {
         return sb.toString();
     }
 
-    public static String createInsertWay(int count){
+    public static String createInsertWay(final int count){
         final StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO \"Way\" ");
         sb.append("(id, version, \"userId\", timestamp, changeset)");
@@ -328,7 +328,7 @@ public class OSMPostgresQueries {
         return sb.toString();
     }
 
-    public static String createInsertWayTag(int count){
+    public static String createInsertWayTag(final int count){
         final StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO \"WayTag\" ");
         sb.append("(\"wayId\", k, v)");
@@ -343,7 +343,7 @@ public class OSMPostgresQueries {
         return sb.toString();
     }
 
-    public static String createInsertWayMember(int count){
+    public static String createInsertWayMember(final int count){
         final StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO \"WayMember\" ");
         sb.append("(\"wayId\",\"nodeId\", index)");
@@ -358,7 +358,7 @@ public class OSMPostgresQueries {
         return sb.toString();
     }
 
-    public static String createInsertRelation(int count){
+    public static String createInsertRelation(final int count){
         final StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO \"Relation\" ");
         sb.append("(id, version, \"userId\", timestamp, changeset)");
@@ -373,7 +373,7 @@ public class OSMPostgresQueries {
         return sb.toString();
     }
 
-    public static String createInsertRelationTag(int count){
+    public static String createInsertRelationTag(final int count){
         final StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO \"RelationTag\" ");
         sb.append("(\"relationId\", k, v)");
@@ -388,7 +388,7 @@ public class OSMPostgresQueries {
         return sb.toString();
     }
 
-    public static String createInsertRelationMember(int count){
+    public static String createInsertRelationMember(final int count){
         final StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO \"RelationMember\" ");
         sb.append("(\"relationId\",\"memberId\", type, role, index)");
@@ -403,7 +403,7 @@ public class OSMPostgresQueries {
         return sb.toString();
     }
 
-    public static String createInsertUser(int count) {
+    public static String createInsertUser(final int count) {
         final StringBuilder sb = new StringBuilder();
         sb.append("INSERT INTO \"User\" ");
         sb.append("(id, name)");

@@ -80,7 +80,7 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
     /**
      * Build a new description.
      */
-    public AbstractDescriptionType(List<MetadataLinkType> metadataLink, String name, String label, String description){
+    public AbstractDescriptionType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description){
         super(metadataLink);
         ObjectFactory factory = new ObjectFactory();
         if (description!= null)
@@ -100,7 +100,7 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
         return null;
     }
 
-    public void setLabel(String label) {
+    public void setLabel(final String label) {
         //first we erase the old one.
         for (int i = 0; i < rest.size(); i++) {
             JAXBElement<String> jb = rest.get(i);
@@ -124,7 +124,7 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
         return null;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         //first we erase the old one.
         for (int i = 0; i < rest.size(); i++) {
             JAXBElement<String> jb = rest.get(i);
@@ -148,7 +148,7 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
         return null;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         //first we erase the old one.
         for (int i = 0; i < rest.size(); i++) {
             JAXBElement<String> jb = rest.get(i);
@@ -174,7 +174,7 @@ public abstract class AbstractDescriptionType extends AbstractDescriptionBaseTyp
     /**
      * Add a new element to the rest list.
      */
-    public void addRest(JAXBElement<String> element) {
+    public void addRest(final JAXBElement<String> element) {
         this.rest.add(element);
     }
 

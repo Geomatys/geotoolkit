@@ -58,7 +58,7 @@ public final class ApplicationFieldAdapter extends CodeListAdapter<ApplicationFi
      * {@inheritDoc}
      */
     @Override
-    protected ApplicationFieldAdapter wrap(CodeListProxy proxy) {
+    protected ApplicationFieldAdapter wrap(final CodeListProxy proxy) {
         return new ApplicationFieldAdapter(proxy);
     }
 

@@ -81,7 +81,7 @@ public class SamplingSurfaceType extends SpatiallyExtensiveSamplingFeatureType {
      *     {@link SurfacePropertyType }
      *     
      */
-    public void setShape(SurfacePropertyType value) {
+    public void setShape(final SurfacePropertyType value) {
         this.shape = value;
     }
 
@@ -105,7 +105,7 @@ public class SamplingSurfaceType extends SpatiallyExtensiveSamplingFeatureType {
      *     {@link MeasureType }
      *     
      */
-    public void setArea(MeasureType value) {
+    public void setArea(final MeasureType value) {
         this.area = value;
     }
 

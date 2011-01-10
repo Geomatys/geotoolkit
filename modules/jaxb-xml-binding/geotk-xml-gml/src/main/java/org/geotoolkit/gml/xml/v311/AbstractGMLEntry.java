@@ -91,7 +91,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable, Ent
     /**
      *  Simple super constructor to initialise the entry name.
      */
-    public AbstractGMLEntry(AbstractGML a) {
+    public AbstractGMLEntry(final AbstractGML a) {
         if (a != null) {
             this.description = a.getDescription();
             this.descriptionReference = a.getDescriptionReference();
@@ -104,11 +104,11 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable, Ent
     /**
      *  Simple super constructor to initialise the entry name.
      */
-    public AbstractGMLEntry(String id) {
+    public AbstractGMLEntry(final String id) {
         this.id = id;
     }
 
-    public AbstractGMLEntry(String id, String name, String description, ReferenceEntry descriptionReference) {
+    public AbstractGMLEntry(final String id, final String name, final String description, final ReferenceEntry descriptionReference) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -127,7 +127,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable, Ent
      * Sets the value of the description property.    
      */
     @Override
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -141,7 +141,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable, Ent
     /**
      * Sets the value of the description reference property.    
      */
-    public void setDescription(ReferenceEntry value) {
+    public void setDescription(final ReferenceEntry value) {
         this.descriptionReference = value;
     }
 
@@ -155,7 +155,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable, Ent
     /**
      *
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -185,7 +185,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable, Ent
      *     
      */
     @Override
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -193,7 +193,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable, Ent
      * @todo fix the id problem.
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -244,7 +244,7 @@ public abstract class AbstractGMLEntry implements AbstractGML, Serializable, Ent
     /**
      * @param parameterName the parameterName to set
      */
-    public void setParameterName(CodeType parameterName) {
+    public void setParameterName(final CodeType parameterName) {
         this.parameterName = parameterName;
     }
 

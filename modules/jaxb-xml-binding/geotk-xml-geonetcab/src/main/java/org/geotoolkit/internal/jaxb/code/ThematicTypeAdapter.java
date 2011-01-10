@@ -58,7 +58,7 @@ public final class ThematicTypeAdapter extends CodeListAdapter<ThematicTypeAdapt
      * {@inheritDoc}
      */
     @Override
-    protected ThematicTypeAdapter wrap(CodeListProxy proxy) {
+    protected ThematicTypeAdapter wrap(final CodeListProxy proxy) {
         return new ThematicTypeAdapter(proxy);
     }
 

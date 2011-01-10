@@ -93,22 +93,22 @@ public class MultiSolidType extends AbstractGeometricAggregateType {
      *     {@link SolidArrayPropertyType }
      *     
      */
-    public void setSolidMembers(SolidArrayPropertyType value) {
+    public void setSolidMembers(final SolidArrayPropertyType value) {
         this.solidMembers = value;
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

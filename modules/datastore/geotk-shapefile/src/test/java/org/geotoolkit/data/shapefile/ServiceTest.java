@@ -36,7 +36,7 @@ public class ServiceTest extends AbstractTestCaseSupport {
 
     final String TEST_FILE = "shapes/statepop.shp";
 
-    public ServiceTest(String testName) throws IOException {
+    public ServiceTest(final String testName) throws IOException {
         super(testName);
     }
 

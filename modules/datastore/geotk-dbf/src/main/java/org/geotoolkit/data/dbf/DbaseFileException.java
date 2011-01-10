@@ -28,11 +28,11 @@ public class DbaseFileException extends DataStoreException {
 
     private static final long serialVersionUID = -6890880438911014652L;
 
-    public DbaseFileException(String s) {
+    public DbaseFileException(final String s) {
         super(s);
     }
 
-    public DbaseFileException(String s, Throwable cause) {
+    public DbaseFileException(final String s, final Throwable cause) {
         super(s, cause);
     }
 }

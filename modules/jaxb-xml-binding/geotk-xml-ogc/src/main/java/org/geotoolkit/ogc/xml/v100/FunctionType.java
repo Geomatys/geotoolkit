@@ -81,7 +81,7 @@ public class FunctionType extends ExpressionType {
      * Sets the value of the name property.
      * 
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

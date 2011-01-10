@@ -60,7 +60,7 @@ public abstract class AbstractGetFeatureOfInterestTime extends AbstractSOSReques
     }
 
     @Override
-    public void setFeatureOfInterestId(String featureOfInterestId) {
+    public void setFeatureOfInterestId(final String featureOfInterestId) {
         this.featureOfInterestId = featureOfInterestId;
     }
 

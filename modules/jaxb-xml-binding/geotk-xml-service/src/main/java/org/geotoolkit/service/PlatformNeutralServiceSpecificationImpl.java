@@ -54,7 +54,7 @@ public class PlatformNeutralServiceSpecificationImpl extends ServiceSpecificatio
     /**
      * Clone a PlatformSpecificServiceSpecification
      */
-    public PlatformNeutralServiceSpecificationImpl(PlatformNeutralServiceSpecification platform) {
+    public PlatformNeutralServiceSpecificationImpl(final PlatformNeutralServiceSpecification platform) {
         this.implSpec    = platform.getImplSpec();
         this.serviceType = platform.getServiceType();
     }
@@ -70,7 +70,7 @@ public class PlatformNeutralServiceSpecificationImpl extends ServiceSpecificatio
     /**
      * Sets the value of the serviceType property.
      */
-    public void setServiceType(ServiceType value) {
+    public void setServiceType(final ServiceType value) {
         this.serviceType = value;
     }
 
@@ -87,7 +87,7 @@ public class PlatformNeutralServiceSpecificationImpl extends ServiceSpecificatio
      * Sets the value of the implSpec property.
      * 
      */
-    public void setImplSpec(PlatformSpecificServiceSpecification value) {
+    public void setImplSpec(final PlatformSpecificServiceSpecification value) {
         this.implSpec = value;
     }
 

@@ -31,7 +31,7 @@ public class CachedStrokeGraphic extends CachedStroke{
 
     private final CachedGraphicStroke cachedGraphic;
 
-    CachedStrokeGraphic(Stroke stroke){
+    CachedStrokeGraphic(final Stroke stroke){
         super(stroke);
         cachedGraphic = new CachedGraphicStroke(stroke.getGraphicStroke());
     }
@@ -52,11 +52,11 @@ public class CachedStrokeGraphic extends CachedStroke{
         return cachedGraphic;
     }
 
-    public float getGap(Feature feature){
+    public float getGap(final Feature feature){
         return cachedGraphic.getGap(feature);
     }
 
-    public float getInitialGap(Feature feature){
+    public float getInitialGap(final Feature feature){
         return cachedGraphic.getInitialGap(feature);
     }
 
@@ -66,12 +66,12 @@ public class CachedStrokeGraphic extends CachedStroke{
      * {@inheritDoc}
      */
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return cachedGraphic.isVisible(feature);
     }
 
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         return cachedGraphic.getMargin(feature, coeff);
     }
 

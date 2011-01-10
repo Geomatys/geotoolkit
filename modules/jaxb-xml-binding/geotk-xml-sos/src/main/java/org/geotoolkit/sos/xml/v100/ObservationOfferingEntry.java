@@ -81,10 +81,10 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
     /**
      *  Build a new offering.
      */ 
-    public ObservationOfferingEntry(String id, String name, String description, ReferenceEntry descriptionReference,
-            BoundingShapeEntry boundedBy, List<String> srsName, AbstractTimeGeometricPrimitiveType time, List<ReferenceEntry> procedure,
-            List<PhenomenonPropertyType> observedProperty, List<ReferenceEntry> featureOfInterest,
-            List<String> responseFormat, List<QName> resultModel, List<ResponseModeType> responseMode) {
+    public ObservationOfferingEntry(final String id, final String name, final String description, final ReferenceEntry descriptionReference,
+            final BoundingShapeEntry boundedBy, final List<String> srsName, final AbstractTimeGeometricPrimitiveType time, final List<ReferenceEntry> procedure,
+            final List<PhenomenonPropertyType> observedProperty, final List<ReferenceEntry> featureOfInterest,
+            final List<String> responseFormat, final List<QName> resultModel, final List<ResponseModeType> responseMode) {
         
         super(id, name, description, descriptionReference, boundedBy, srsName);
         this.procedure         = procedure;
@@ -99,9 +99,9 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
     /**
      *  Build a new offering.
      */
-    public ObservationOfferingEntry(String id, String name, String description, List<String> srsName, AbstractTimeGeometricPrimitiveType time, ReferenceEntry procedure,
-            PhenomenonEntry observedProperty, ReferenceEntry featureOfInterest,
-            List<String> responseFormat, List<QName> resultModel, List<ResponseModeType> responseMode) {
+    public ObservationOfferingEntry(final String id, final String name, final String description, final List<String> srsName, final AbstractTimeGeometricPrimitiveType time, final ReferenceEntry procedure,
+            final PhenomenonEntry observedProperty, final ReferenceEntry featureOfInterest,
+            final List<String> responseFormat, final List<QName> resultModel, final List<ResponseModeType> responseMode) {
 
         super(id, name, description, null, null, srsName);
         this.procedure         = Arrays.asList(procedure);
@@ -139,7 +139,7 @@ public class ObservationOfferingEntry extends AbstractFeatureEntry {
     /**
      * Sets the value of the eventTime property.
      */
-    public void setTime(AbstractTimeGeometricPrimitiveType value) {
+    public void setTime(final AbstractTimeGeometricPrimitiveType value) {
         if (time != null)
             this.time.setTimeGeometricPrimitive(value);
         else

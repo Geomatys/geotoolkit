@@ -57,7 +57,7 @@ public class MesureUtilities {
 
     private static final Logger LOGGER = Logging.getLogger(MesureUtilities.class);
 
-    public static double calculateLenght(Geometry geom, CoordinateReferenceSystem geomCRS, Unit<Length> unit){
+    public static double calculateLenght(final Geometry geom, final CoordinateReferenceSystem geomCRS, final Unit<Length> unit){
 
         if(geom == null || !(geom instanceof LineString)) return 0;
 
@@ -100,7 +100,7 @@ public class MesureUtilities {
         return 0;
     }
 
-    public static double calculateArea(Geometry geom, CoordinateReferenceSystem geomCRS, Unit unit){
+    public static double calculateArea(final Geometry geom, final CoordinateReferenceSystem geomCRS, final Unit unit){
 
         if(geom == null || !(geom instanceof Polygon)) return 0;
 

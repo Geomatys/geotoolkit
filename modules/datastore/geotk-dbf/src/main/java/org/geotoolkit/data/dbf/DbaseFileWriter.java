@@ -65,7 +65,7 @@ public class DbaseFileWriter {
      * @throws IOException
      *                 If errors occur while initializing.
      */
-    public DbaseFileWriter(DbaseFileHeader header, WritableByteChannel out)
+    public DbaseFileWriter(final DbaseFileHeader header, final WritableByteChannel out)
             throws IOException {
         this(header, out, null);
     }
@@ -83,7 +83,7 @@ public class DbaseFileWriter {
      * @throws IOException
      *                 If errors occur while initializing.
      */
-    public DbaseFileWriter(DbaseFileHeader header, WritableByteChannel out, Charset charset)
+    public DbaseFileWriter(final DbaseFileHeader header, final WritableByteChannel out, final Charset charset)
             throws IOException {
         header.writeHeader(out);
         this.header = header;
@@ -115,7 +115,7 @@ public class DbaseFileWriter {
      * @throws DbaseFileException
      *                 If the entry doesn't comply to the header.
      */
-    public void write(Object[] record) throws IOException, DbaseFileException {
+    public void write(final Object[] record) throws IOException, DbaseFileException {
 
         if (record.length != header.getNumFields()) {
             throw new DbaseFileException("Wrong number of fields "

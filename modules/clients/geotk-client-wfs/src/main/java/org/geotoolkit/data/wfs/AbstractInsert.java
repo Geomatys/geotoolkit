@@ -38,7 +38,7 @@ public class AbstractInsert implements Insert{
     }
 
     @Override
-    public void setHandle(String handle) {
+    public void setHandle(final String handle) {
         this.handle = handle;
     }
 
@@ -48,7 +48,7 @@ public class AbstractInsert implements Insert{
     }
 
     @Override
-    public void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+    public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
         this.crs = crs;
     }
 
@@ -58,7 +58,7 @@ public class AbstractInsert implements Insert{
     }
 
     @Override
-    public void setInputFormat(String format) {
+    public void setInputFormat(final String format) {
         this.inputFormat = format;
     }
 
@@ -68,7 +68,7 @@ public class AbstractInsert implements Insert{
     }
 
     @Override
-    public void setIdentifierGenerationOption(IdentifierGenerationOption type) {
+    public void setIdentifierGenerationOption(final IdentifierGenerationOption type) {
         this.idGen = type;
     }
 
@@ -78,7 +78,7 @@ public class AbstractInsert implements Insert{
     }
 
     @Override
-    public void setFeatures(FeatureCollection fc) {
+    public void setFeatures(final FeatureCollection fc) {
         this.features = fc;
     }
 

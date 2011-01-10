@@ -201,7 +201,7 @@ public class StaticGeometry {
         return point.getY();
     }
 
-    public static boolean isClosed(Geometry geom) {
+    public static boolean isClosed(final Geometry geom) {
         final LineString line = (LineString) geom;
         return line.isClosed();
     }

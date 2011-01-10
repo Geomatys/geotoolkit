@@ -39,7 +39,7 @@ class RemoveDelta extends AbstractDelta{
     private final Name type;
     private final Id removedIds;
 
-    RemoveDelta(Session session, Name typeName, Id filter){
+    RemoveDelta(final Session session, final Name typeName, final Id filter){
         super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");
@@ -56,7 +56,7 @@ class RemoveDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public Query modify(Query query) {
+    public Query modify(final Query query) {
         if(!query.getTypeName().equals(type)) return query;
 
         final QueryBuilder builder = new QueryBuilder(query);
@@ -69,7 +69,7 @@ class RemoveDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator modify(Query query, FeatureIterator reader) throws DataStoreException {
+    public FeatureIterator modify(final Query query, final FeatureIterator reader) throws DataStoreException {
         //nothing to do, the send query has already been modified
         return reader;
     }
@@ -78,7 +78,7 @@ class RemoveDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public long modify(Query query, long count) throws DataStoreException{
+    public long modify(final Query query, final long count) throws DataStoreException{
         //nothing to do, the send query has already been modified
         return count;
     }
@@ -87,7 +87,7 @@ class RemoveDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public Envelope modify(Query query, Envelope env) throws DataStoreException {
+    public Envelope modify(final Query query, final Envelope env) throws DataStoreException {
         //nothing to do, the send query has already been modified
         return env;
     }
@@ -96,7 +96,7 @@ class RemoveDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public void commit(DataStore store) throws DataStoreException {
+    public void commit(final DataStore store) throws DataStoreException {
         store.removeFeatures(type, removedIds);
     }
 

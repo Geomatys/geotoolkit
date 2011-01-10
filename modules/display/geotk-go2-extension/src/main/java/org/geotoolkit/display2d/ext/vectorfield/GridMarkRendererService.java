@@ -56,7 +56,7 @@ public class GridMarkRendererService extends AbstractSymbolizerRendererService<V
      * {@inheritDoc }
      */
     @Override
-    public CachedVectorFieldSymbolizer createCachedSymbolizer(VectorFieldSymbolizer symbol) {
+    public CachedVectorFieldSymbolizer createCachedSymbolizer(final VectorFieldSymbolizer symbol) {
         return new CachedVectorFieldSymbolizer(symbol,this);
     }
 
@@ -64,17 +64,17 @@ public class GridMarkRendererService extends AbstractSymbolizerRendererService<V
      * {@inheritDoc }
      */
     @Override
-    public SymbolizerRenderer createRenderer(CachedVectorFieldSymbolizer symbol, RenderingContext2D context) {
+    public SymbolizerRenderer createRenderer(final CachedVectorFieldSymbolizer symbol, final RenderingContext2D context) {
         return new GridMarkRenderer(symbol, context);
     }
 
     @Override
-    public Rectangle2D glyphPreferredSize(CachedVectorFieldSymbolizer symbol, MapLayer layer) {
+    public Rectangle2D glyphPreferredSize(final CachedVectorFieldSymbolizer symbol, final MapLayer layer) {
         return new Rectangle2D.Double(0, 0, 25, 25);
     }
 
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedVectorFieldSymbolizer symbol, MapLayer layer) {
+    public void glyph(final Graphics2D g, final Rectangle2D rect, final CachedVectorFieldSymbolizer symbol, final MapLayer layer) {
         Shape arrow = new Arrow2D(rect.getMinX(), rect.getMinY(), rect.getWidth()-1, rect.getHeight()-1);
         g.setColor(Color.GRAY);
         g.fill(arrow);

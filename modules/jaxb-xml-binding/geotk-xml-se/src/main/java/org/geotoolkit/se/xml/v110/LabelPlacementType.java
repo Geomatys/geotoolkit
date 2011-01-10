@@ -75,7 +75,7 @@ public class LabelPlacementType {
      *     {@link PointPlacementType }
      *     
      */
-    public void setPointPlacement(PointPlacementType value) {
+    public void setPointPlacement(final PointPlacementType value) {
         this.pointPlacement = value;
     }
 
@@ -99,7 +99,7 @@ public class LabelPlacementType {
      *     {@link LinePlacementType }
      *     
      */
-    public void setLinePlacement(LinePlacementType value) {
+    public void setLinePlacement(final LinePlacementType value) {
         this.linePlacement = value;
     }
 

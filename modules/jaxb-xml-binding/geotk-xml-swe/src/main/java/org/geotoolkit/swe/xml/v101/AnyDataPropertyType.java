@@ -126,7 +126,7 @@ public class AnyDataPropertyType {
      *     {@link Count }
      *     
      */
-    public void setCount(Count value) {
+    public void setCount(final Count value) {
         this.count = value;
     }
 
@@ -150,7 +150,7 @@ public class AnyDataPropertyType {
      *     {@link Quantity }
      *     
      */
-    public void setQuantity(QuantityType value) {
+    public void setQuantity(final QuantityType value) {
         this.quantity = value;
     }
 
@@ -174,7 +174,7 @@ public class AnyDataPropertyType {
      *     {@link Time }
      *     
      */
-    public void setTime(TimeType value) {
+    public void setTime(final TimeType value) {
         this.time = value;
     }
 
@@ -198,7 +198,7 @@ public class AnyDataPropertyType {
      *     {@link Boolean }
      *     
      */
-    public void setBoolean(Boolean value) {
+    public void setBoolean(final Boolean value) {
         this._boolean = value;
     }
 
@@ -222,7 +222,7 @@ public class AnyDataPropertyType {
      *     {@link Category }
      *     
      */
-    public void setCategory(Category value) {
+    public void setCategory(final Category value) {
         this.category = value;
     }
 
@@ -246,7 +246,7 @@ public class AnyDataPropertyType {
      *     {@link Text }
      *     
      */
-    public void setText(Text value) {
+    public void setText(final Text value) {
         this.text = value;
     }
 
@@ -270,7 +270,7 @@ public class AnyDataPropertyType {
      *     {@link QuantityRange }
      *     
      */
-    public void setQuantityRange(QuantityRange value) {
+    public void setQuantityRange(final QuantityRange value) {
         this.quantityRange = value;
     }
 
@@ -294,7 +294,7 @@ public class AnyDataPropertyType {
      *     {@link CountRange }
      *     
      */
-    public void setCountRange(CountRange value) {
+    public void setCountRange(final CountRange value) {
         this.countRange = value;
     }
 
@@ -318,7 +318,7 @@ public class AnyDataPropertyType {
      *     {@link TimeRange }
      *     
      */
-    public void setTimeRange(TimeRange value) {
+    public void setTimeRange(final TimeRange value) {
         this.timeRange = value;
     }
 
@@ -360,7 +360,7 @@ public class AnyDataPropertyType {
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordEntry> value) {
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordEntry> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordEntry> ) value);
     }
 
@@ -390,7 +390,7 @@ public class AnyDataPropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
      *     
      */
-    public void setAbstractDataArray(JAXBElement<? extends AbstractDataArrayEntry> value) {
+    public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayEntry> value) {
         this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayEntry> ) value);
     }
 
@@ -414,7 +414,7 @@ public class AnyDataPropertyType {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -438,7 +438,7 @@ public class AnyDataPropertyType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -462,7 +462,7 @@ public class AnyDataPropertyType {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -486,7 +486,7 @@ public class AnyDataPropertyType {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -510,7 +510,7 @@ public class AnyDataPropertyType {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -534,7 +534,7 @@ public class AnyDataPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -558,7 +558,7 @@ public class AnyDataPropertyType {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -582,7 +582,7 @@ public class AnyDataPropertyType {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

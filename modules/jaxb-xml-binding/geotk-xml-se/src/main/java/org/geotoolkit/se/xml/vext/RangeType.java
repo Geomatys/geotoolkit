@@ -75,7 +75,7 @@ public class RangeType {
         return threshold;
     }
 
-    public void setThreshold(ParameterValueType value) {
+    public void setThreshold(final ParameterValueType value) {
         this.threshold = value;
     }
 

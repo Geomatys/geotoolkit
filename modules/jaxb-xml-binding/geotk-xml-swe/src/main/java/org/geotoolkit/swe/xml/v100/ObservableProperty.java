@@ -50,7 +50,7 @@ public class ObservableProperty extends AbstractDataComponentType implements Abs
 
     }
 
-    public ObservableProperty(URI definition) {
+    public ObservableProperty(final URI definition) {
         super(definition);
     }
 

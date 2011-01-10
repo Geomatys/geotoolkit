@@ -200,7 +200,7 @@ public final class GeometryProxy extends Geometry {
      * This method forwards the call to the wrapped geometry.
      */
     @Override
-    public boolean contains(double x, double y, double width, double height) {
+    public boolean contains(final double x, final double y, final double width, final double height) {
         return geometry.contains(x, y, width, height);
     }
 
@@ -227,7 +227,7 @@ public final class GeometryProxy extends Geometry {
      * This method forwards the call to the wrapped geometry.
      */
     @Override
-    public boolean intersects(double x, double y, double width, double height) {
+    public boolean intersects(final double x, final double y, final double width, final double height) {
         return geometry.intersects(x, y, width, height);
     }
 
@@ -325,7 +325,7 @@ public final class GeometryProxy extends Geometry {
      *        {@linkplain #getCoordinateSystem coordinate system} (linear or angular units).
      */
     @Override
-    public void setRenderingResolution(float resolution) {
+    public void setRenderingResolution(final float resolution) {
         geometry.setRenderingResolution(resolution);
     }
 

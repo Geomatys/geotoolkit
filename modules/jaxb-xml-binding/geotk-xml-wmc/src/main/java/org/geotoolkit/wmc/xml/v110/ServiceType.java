@@ -46,7 +46,7 @@ public enum ServiceType {
     OGC_WFS("OGC:WFS");
     private final String value;
 
-    ServiceType(String v) {
+    ServiceType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum ServiceType {
         return value;
     }
 
-    public static ServiceType fromValue(String v) {
+    public static ServiceType fromValue(final String v) {
         for (ServiceType c: ServiceType.values()) {
             if (c.value.equals(v)) {
                 return c;

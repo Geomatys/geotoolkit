@@ -111,7 +111,7 @@ public class GeometricComplexPropertyType {
      *     {@link GeometricComplexType }
      *     
      */
-    public void setGeometricComplex(GeometricComplexType value) {
+    public void setGeometricComplex(final GeometricComplexType value) {
         this.geometricComplex = value;
     }
 
@@ -135,7 +135,7 @@ public class GeometricComplexPropertyType {
      *     {@link CompositeCurveType }
      *     
      */
-    public void setCompositeCurve(CompositeCurveType value) {
+    public void setCompositeCurve(final CompositeCurveType value) {
         this.compositeCurve = value;
     }
 
@@ -159,7 +159,7 @@ public class GeometricComplexPropertyType {
      *     {@link CompositeSurfaceType }
      *     
      */
-    public void setCompositeSurface(CompositeSurfaceType value) {
+    public void setCompositeSurface(final CompositeSurfaceType value) {
         this.compositeSurface = value;
     }
 
@@ -183,7 +183,7 @@ public class GeometricComplexPropertyType {
      *     {@link CompositeSolidType }
      *     
      */
-    public void setCompositeSolid(CompositeSolidType value) {
+    public void setCompositeSolid(final CompositeSolidType value) {
         this.compositeSolid = value;
     }
 
@@ -207,7 +207,7 @@ public class GeometricComplexPropertyType {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -235,7 +235,7 @@ public class GeometricComplexPropertyType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -259,7 +259,7 @@ public class GeometricComplexPropertyType {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -283,7 +283,7 @@ public class GeometricComplexPropertyType {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -307,7 +307,7 @@ public class GeometricComplexPropertyType {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -331,7 +331,7 @@ public class GeometricComplexPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -355,7 +355,7 @@ public class GeometricComplexPropertyType {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -379,7 +379,7 @@ public class GeometricComplexPropertyType {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

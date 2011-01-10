@@ -64,7 +64,7 @@ public class CombinerParameterType {
    /**
     * Sets the value of the attributeValue property.
     */
-   public void setAttributeValue(AttributeValueType value) {
+   public void setAttributeValue(final AttributeValueType value) {
       this.attributeValue = value;
    }
 
@@ -78,7 +78,7 @@ public class CombinerParameterType {
    /**
     * Sets the value of the parameterName property.
     */
-   public void setParameterName(String value) {
+   public void setParameterName(final String value) {
       this.parameterName = value;
    }
 

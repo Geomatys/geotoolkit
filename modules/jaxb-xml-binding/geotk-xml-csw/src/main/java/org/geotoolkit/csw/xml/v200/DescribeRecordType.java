@@ -84,7 +84,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         return this.typeName;
     }
 
-    public void setTypeName(List<QName> typeNames) {
+    public void setTypeName(final List<QName> typeNames) {
         if (typeName == null) {
             typeName = new ArrayList<TypeNameType>();
         }
@@ -110,7 +110,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
      * Sets the value of the outputFormat property.
      * 
      */
-    public void setOutputFormat(String value) {
+    public void setOutputFormat(final String value) {
         this.outputFormat = value;
     }
 
@@ -130,7 +130,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
      * Sets the value of the schemaLanguage property.
      * 
      */
-    public void setSchemaLanguage(String value) {
+    public void setSchemaLanguage(final String value) {
         this.schemaLanguage = value;
     }
 

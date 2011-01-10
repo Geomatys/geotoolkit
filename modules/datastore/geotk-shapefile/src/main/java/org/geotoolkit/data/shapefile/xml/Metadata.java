@@ -47,7 +47,7 @@ public class Metadata {
     /**
      * @param idinfo The idinfo to set.
      */
-    public void setIdinfo(IdInfo idinfo) {
+    public void setIdinfo(final IdInfo idinfo) {
         this.idinfo = idinfo;
     }
 }

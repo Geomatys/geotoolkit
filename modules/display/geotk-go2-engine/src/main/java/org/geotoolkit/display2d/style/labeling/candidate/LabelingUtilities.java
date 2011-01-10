@@ -61,7 +61,7 @@ public class LabelingUtilities {
 
     private LabelingUtilities(){}
 
-    public static List<Candidate> clipOutofBounds(RenderingContext2D context, List<Candidate> candidates){
+    public static List<Candidate> clipOutofBounds(final RenderingContext2D context, final List<Candidate> candidates){
         final Rectangle bounds = context.getCanvasDisplayBounds();
         final List<Candidate> correctCandidates = new ArrayList<Candidate>();
 
@@ -79,12 +79,12 @@ public class LabelingUtilities {
         return correctCandidates;
     }
 
-    public static List<Candidate> sortByXY(List<Candidate> candidates){
+    public static List<Candidate> sortByXY(final List<Candidate> candidates){
         Collections.sort(candidates, XY_COMPARATOR);
         return candidates;
     }
 
-    public static List<Candidate> sortByCost(List<Candidate> candidates){
+    public static List<Candidate> sortByCost(final List<Candidate> candidates){
 
         Collections.sort(candidates, new Comparator<Candidate>() {
             @Override
@@ -110,7 +110,7 @@ public class LabelingUtilities {
         return candidates;
     }
 
-    public static boolean intersects(Candidate candidate, Collection<? extends Candidate> candidates){
+    public static boolean intersects(final Candidate candidate, final Collection<? extends Candidate> candidates){
         for(Candidate c : candidates){
             if(intersects(candidate, c)){
                 return true;
@@ -119,7 +119,7 @@ public class LabelingUtilities {
         return false;
     }
 
-    public static boolean intersects(Candidate candidate1, Candidate candidate2){
+    public static boolean intersects(final Candidate candidate1, final Candidate candidate2){
         if(candidate1 instanceof PointCandidate){
             if(candidate2 instanceof PointCandidate){
                 return intersects((PointCandidate)candidate1, (PointCandidate)candidate2);
@@ -137,11 +137,11 @@ public class LabelingUtilities {
         throw new IllegalArgumentException("Unexpected Candidate classes.");
     }
 
-    public static boolean intersects(PointCandidate label1, PointCandidate label2){
+    public static boolean intersects(final PointCandidate label1, final PointCandidate label2){
         return intersects(label1, null, label2, null,true);
     }
 
-    public static boolean intersects(PointCandidate label1, Point combine1, PointCandidate label2, Point combine2, boolean useCorrection){
+    public static boolean intersects(final PointCandidate label1, final Point combine1, final PointCandidate label2, final Point combine2, final boolean useCorrection){
 
         final AffineTransform trs = new AffineTransform();
         trs.translate(0, label1.upper);
@@ -221,11 +221,11 @@ public class LabelingUtilities {
         return false;
     }
 
-    public static boolean intersects(LinearCandidate linear, PointCandidate point){
+    public static boolean intersects(final LinearCandidate linear, final PointCandidate point){
         return false;
     }
 
-    public static boolean intersects(LinearCandidate linear1, LinearCandidate linear2){
+    public static boolean intersects(final LinearCandidate linear1, final LinearCandidate linear2){
         return false;
     }
 

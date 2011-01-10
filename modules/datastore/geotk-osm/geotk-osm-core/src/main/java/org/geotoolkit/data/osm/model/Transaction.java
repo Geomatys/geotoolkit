@@ -33,7 +33,7 @@ public class Transaction {
     private final String version;
     private final String generator;
 
-    public Transaction(TransactionType type, List<IdentifiedElement> elements, String version, String generator){
+    public Transaction(final TransactionType type, final List<IdentifiedElement> elements, final String version, final String generator){
 
         if(elements instanceof ArrayList){
             this.elements = (List<IdentifiedElement>) ((ArrayList)elements).clone();
@@ -84,7 +84,7 @@ public class Transaction {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

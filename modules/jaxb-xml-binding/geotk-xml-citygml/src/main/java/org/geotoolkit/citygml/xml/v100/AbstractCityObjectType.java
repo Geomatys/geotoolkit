@@ -90,7 +90,7 @@ public abstract class AbstractCityObjectType extends AbstractFeatureEntry {
     /**
      * Sets the value of the creationDate property.
      */
-    public void setCreationDate(XMLGregorianCalendar value) {
+    public void setCreationDate(final XMLGregorianCalendar value) {
         this.creationDate = value;
     }
 
@@ -109,7 +109,7 @@ public abstract class AbstractCityObjectType extends AbstractFeatureEntry {
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public void setTerminationDate(XMLGregorianCalendar value) {
+    public void setTerminationDate(final XMLGregorianCalendar value) {
         this.terminationDate = value;
     }
 

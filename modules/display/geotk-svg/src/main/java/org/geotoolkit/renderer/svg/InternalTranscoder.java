@@ -43,13 +43,13 @@ final class InternalTranscoder extends ImageTranscoder {
     }
 
     @Override
-    protected void transcode(Document document, String uri, TranscoderOutput output) throws TranscoderException {
+    protected void transcode(final Document document, final String uri, final TranscoderOutput output) throws TranscoderException {
         super.transcode(document, uri, output);
         this.doc = document;
     }
 
     @Override
-    public BufferedImage createImage(int width, int height) {
+    public BufferedImage createImage(final int width, final int height) {
         return new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
     }
 
@@ -57,7 +57,7 @@ final class InternalTranscoder extends ImageTranscoder {
      * Gets called by the end of the image transcoder with an actual image.
      */
     @Override
-    public void writeImage(BufferedImage img, TranscoderOutput output) {
+    public void writeImage(final BufferedImage img, final TranscoderOutput output) {
         result = img;
     }
 

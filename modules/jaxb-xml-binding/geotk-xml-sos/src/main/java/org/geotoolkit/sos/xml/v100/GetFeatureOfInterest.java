@@ -110,7 +110,7 @@ public class GetFeatureOfInterest extends RequestBaseType {
      }
 
 
-     public GetFeatureOfInterest(String version, String service, String featureId) {
+     public GetFeatureOfInterest(final String version, final String service, final String featureId) {
         super(version, service);
         this.featureOfInterestId = new ArrayList<String>();
         if (featureId != null) {
@@ -118,12 +118,12 @@ public class GetFeatureOfInterest extends RequestBaseType {
         }
         }
 
-     public GetFeatureOfInterest(String version, String service, List<String> featureId) {
+     public GetFeatureOfInterest(final String version, final String service, final List<String> featureId) {
         super(version, service);
         this.featureOfInterestId = featureId;
      }
 
-     public GetFeatureOfInterest(String version, String service, GetFeatureOfInterest.Location location) {
+     public GetFeatureOfInterest(final String version, final String service, final GetFeatureOfInterest.Location location) {
         super(version, service);
         this.location = location;
      }
@@ -161,7 +161,7 @@ public class GetFeatureOfInterest extends RequestBaseType {
      * Set the value of the featureOfInterestLocation property.
      *
      */
-    public void setLocation(GetFeatureOfInterest.Location location) {
+    public void setLocation(final GetFeatureOfInterest.Location location) {
         this.location = location;
     }
     
@@ -224,11 +224,11 @@ public class GetFeatureOfInterest extends RequestBaseType {
 
         }
 
-        public Location(JAXBElement<? extends SpatialOpsType> spatialOps) {
+        public Location(final JAXBElement<? extends SpatialOpsType> spatialOps) {
             this.spatialOps = spatialOps;
         }
 
-        public Location(BBOXType bboxFilter) {
+        public Location(final BBOXType bboxFilter) {
             if (bboxFilter != null) {
                 org.geotoolkit.ogc.xml.v110.ObjectFactory factory = new org.geotoolkit.ogc.xml.v110.ObjectFactory();
                 this.spatialOps = factory.createBBOX(bboxFilter);
@@ -245,7 +245,7 @@ public class GetFeatureOfInterest extends RequestBaseType {
         /**
          * Gets the value of the spatialOps property.
          */
-        public void setSpatialOps(JAXBElement<? extends SpatialOpsType> spatialOps) {
+        public void setSpatialOps(final JAXBElement<? extends SpatialOpsType> spatialOps) {
             this.spatialOps = spatialOps;
         }
         

@@ -61,7 +61,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
 
     }
 
-    public DataArrayType(DataArray ar) {
+    public DataArrayType(final DataArray ar) {
         super(ar);
         if (ar != null) {
             if (ar.getPropertyEncoding() != null) {
@@ -90,7 +90,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     /**
      * Sets the value of the elementType property.
      */
-    public void setElementType(DataComponentPropertyType value) {
+    public void setElementType(final DataComponentPropertyType value) {
         this.elementType = value;
     }
 
@@ -111,7 +111,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     /**
      * Sets the value of the encoding property.
      */
-    public void setEncoding(BlockEncodingPropertyType value) {
+    public void setEncoding(final BlockEncodingPropertyType value) {
         this.encoding = value;
     }
 
@@ -134,7 +134,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
     /**
      * Sets the value of the values property.
      */
-    public void setValues(DataValuePropertyType value) {
+    public void setValues(final DataValuePropertyType value) {
         this.values = value;
     }
 

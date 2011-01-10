@@ -93,7 +93,7 @@ public class GroundOverlayType extends AbstractOverlayType {
      *     {@link Double }
      *     
      */
-    public void setAltitude(Double value) {
+    public void setAltitude(final Double value) {
         this.altitude = value;
     }
 
@@ -119,7 +119,7 @@ public class GroundOverlayType extends AbstractOverlayType {
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
      *     
      */
-    public void setAltitudeModeGroup(JAXBElement<?> value) {
+    public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
     }
 
@@ -143,7 +143,7 @@ public class GroundOverlayType extends AbstractOverlayType {
      *     {@link LatLonBoxType }
      *     
      */
-    public void setLatLonBox(LatLonBoxType value) {
+    public void setLatLonBox(final LatLonBoxType value) {
         this.latLonBox = value;
     }
 

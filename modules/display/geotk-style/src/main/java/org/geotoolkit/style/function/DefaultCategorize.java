@@ -135,7 +135,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      * @param fallback
      */
     public DefaultCategorize(final Expression LookUpValue, final Map<Expression,Expression> values, 
-            ThreshholdsBelongTo belongs, Literal fallback){
+            final ThreshholdsBelongTo belongs, final Literal fallback){
                 
         if(values == null || values.isEmpty()){
             throw new IllegalArgumentException("Values can't be empty");
@@ -198,7 +198,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      * {@inheritDoc }
      */
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -206,7 +206,7 @@ public class DefaultCategorize extends AbstractExpression implements Categorize 
      * {@inheritDoc }
      */
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
 
         if(object instanceof Feature){
             final Feature f = (Feature)object;

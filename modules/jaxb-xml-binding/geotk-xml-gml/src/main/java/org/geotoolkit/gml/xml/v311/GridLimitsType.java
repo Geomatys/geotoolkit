@@ -62,7 +62,7 @@ public class GridLimitsType {
     /**
      * Build a new Grid limits
      */
-    public GridLimitsType(GridEnvelope gridEnvelope){
+    public GridLimitsType(final GridEnvelope gridEnvelope){
         if (gridEnvelope instanceof GridEnvelopeType) {
             this.gridEnvelope = (GridEnvelopeType) gridEnvelope;
         } else {
@@ -73,7 +73,7 @@ public class GridLimitsType {
     /**
      * Build a new Grid limits
      */
-    public GridLimitsType(int[] low, int[] high){
+    public GridLimitsType(final int[] low, final int[] high){
         this.gridEnvelope = new GridEnvelopeType(low, high);
     }
     

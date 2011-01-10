@@ -91,14 +91,14 @@ public class SpatialDomainType {
     /**
      * Build a new light Spatial Domain type version 1.1.1
      */
-    public SpatialDomainType(JAXBElement<? extends BoundingBoxType> boundingBox) {
+    public SpatialDomainType(final JAXBElement<? extends BoundingBoxType> boundingBox) {
        this.boundingBox.add(boundingBox);
     }
     
     /**
      * Build a new light Spatial Domain type version 1.1.1
      */
-    public SpatialDomainType(List<JAXBElement<? extends BoundingBoxType>> boundingBoxes) {
+    public SpatialDomainType(final List<JAXBElement<? extends BoundingBoxType>> boundingBoxes) {
        this.boundingBox = boundingBoxes;
     }
    
@@ -106,8 +106,8 @@ public class SpatialDomainType {
     /**
      * Build a new full Spatial Domain type version 1.1.1
      */
-    public SpatialDomainType(List<JAXBElement<? extends BoundingBoxType>> boundingBox, GridCrsType gridCRS,
-            AbstractCoordinateOperationType transformation, ImageCRSRefType imageCRS, List<PolygonType> polygon) {
+    public SpatialDomainType(final List<JAXBElement<? extends BoundingBoxType>> boundingBox, final GridCrsType gridCRS,
+            final AbstractCoordinateOperationType transformation, final ImageCRSRefType imageCRS, final List<PolygonType> polygon) {
        this.boundingBox    = boundingBox;
        this.gridCRS        = gridCRS;
        this.imageCRS       = imageCRS;
@@ -145,7 +145,7 @@ public class SpatialDomainType {
         return gridCRS;
     }
 
-    public void setGridCRS(GridCrsType grid) {
+    public void setGridCRS(final GridCrsType grid) {
         this.gridCRS = grid;
     }
 
@@ -156,7 +156,7 @@ public class SpatialDomainType {
         return transformation;
     }
 
-    public void setTransformation(AbstractCoordinateOperationType transformation) {
+    public void setTransformation(final AbstractCoordinateOperationType transformation) {
         this.transformation = transformation;
     }
 
@@ -168,7 +168,7 @@ public class SpatialDomainType {
         return imageCRS;
     }
 
-    public void setImageCRS(ImageCRSRefType imageCRS) {
+    public void setImageCRS(final ImageCRSRefType imageCRS) {
         this.imageCRS = imageCRS;
     }
     

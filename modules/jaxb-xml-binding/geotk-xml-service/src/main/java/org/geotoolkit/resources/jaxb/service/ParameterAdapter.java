@@ -84,7 +84,7 @@ public class ParameterAdapter extends XmlAdapter<ParameterAdapter, Parameter> {
      * @return A java object which represents the metadata value.
      */
     @Override
-    public Parameter unmarshal(ParameterAdapter value) throws Exception {
+    public Parameter unmarshal(final ParameterAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class ParameterAdapter extends XmlAdapter<ParameterAdapter, Parameter> {
      * @return The adapter for this Parameter.
      */
     @Override
-    public ParameterAdapter marshal(Parameter value) throws Exception {
+    public ParameterAdapter marshal(final Parameter value) throws Exception {
         return new ParameterAdapter(value);
     }
 

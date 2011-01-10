@@ -45,7 +45,7 @@ public final class ISOCurveIterator extends ISOGeometryIterator<Curve> {
      * @param cu The curve the iterator will use
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public ISOCurveIterator(Curve cu, AffineTransform trs) {
+    public ISOCurveIterator(final Curve cu, final AffineTransform trs) {
         super(cu,trs);
         LineString ls = cu.asLineString(0, 0);
         coordinates = ls.getControlPoints();
@@ -97,7 +97,7 @@ public final class ISOCurveIterator extends ISOGeometryIterator<Curve> {
      * {@inheritDoc }
      */
     @Override
-	public int currentSegment(double[] coords) {
+	public int currentSegment(final double[] coords) {
         if (currentCoord == 0) {
             DirectPosition pos = coordinates.get(0).getDirectPosition();
             coords[0] = pos.getOrdinate(0);

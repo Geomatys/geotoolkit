@@ -72,7 +72,7 @@ public class ServiceProvider implements AbstractServiceProvider {
     /**
      * Build a new Service provider.
      */
-    public ServiceProvider(String providerName, OnlineResourceType providerSite, ResponsiblePartySubsetType serviceContact){
+    public ServiceProvider(final String providerName, final OnlineResourceType providerSite, final ResponsiblePartySubsetType serviceContact){
         this.providerName   = providerName;
         this.providerSite   = providerSite;
         this.serviceContact = serviceContact;

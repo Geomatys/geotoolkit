@@ -46,15 +46,15 @@ public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     private boolean interpolateCoverageColor = true;
     private int step = 10;
 
-    public IsolineGraphicBuilder(ValueExtractor extractor){
+    public IsolineGraphicBuilder(final ValueExtractor extractor){
         this.extractor = extractor;
     }
 
-    public void setCoverageStyle(MutableStyle coverageStyle) {
+    public void setCoverageStyle(final MutableStyle coverageStyle) {
         this.coverageStyle = coverageStyle;
     }
 
-    public void setIsoLineStyle(MutableStyle isoLineStyle) {
+    public void setIsoLineStyle(final MutableStyle isoLineStyle) {
         this.isoLineStyle = isoLineStyle;
     }
 
@@ -66,7 +66,7 @@ public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         return isoLineStyle;
     }
 
-    public void setStep(int step) {
+    public void setStep(final int step) {
         this.step = step;
     }
 
@@ -74,7 +74,7 @@ public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         return step;
     }
 
-    public void setInterpolateCoverageColor(boolean interpolateCoverageColor) {
+    public void setInterpolateCoverageColor(final boolean interpolateCoverageColor) {
         this.interpolateCoverageColor = interpolateCoverageColor;
     }
 
@@ -83,7 +83,7 @@ public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     }
 
     @Override
-    public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
+    public Collection<GraphicJ2D> createGraphics(final MapLayer layer, final Canvas canvas) {
 
         if(canvas instanceof ReferencedCanvas2D && layer instanceof FeatureMapLayer){
             final J2DCanvas refCanvas = (J2DCanvas) canvas;
@@ -108,7 +108,7 @@ public class IsolineGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     }
 
     @Override
-    public Image getLegend(MapLayer layer) throws PortrayalException {
+    public Image getLegend(final MapLayer layer) throws PortrayalException {
         return null;
     }
 

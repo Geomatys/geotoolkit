@@ -102,7 +102,7 @@ public abstract class AbstractLatLonBoxType
      *     {@link Double }
      *     
      */
-    public void setNorth(Double value) {
+    public void setNorth(final Double value) {
         this.north = value;
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractLatLonBoxType
      *     {@link Double }
      *     
      */
-    public void setSouth(Double value) {
+    public void setSouth(final Double value) {
         this.south = value;
     }
 
@@ -150,7 +150,7 @@ public abstract class AbstractLatLonBoxType
      *     {@link Double }
      *     
      */
-    public void setEast(Double value) {
+    public void setEast(final Double value) {
         this.east = value;
     }
 
@@ -174,7 +174,7 @@ public abstract class AbstractLatLonBoxType
      *     {@link Double }
      *     
      */
-    public void setWest(Double value) {
+    public void setWest(final Double value) {
         this.west = value;
     }
 

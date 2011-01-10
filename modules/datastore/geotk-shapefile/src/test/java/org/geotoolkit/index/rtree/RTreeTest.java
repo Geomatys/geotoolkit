@@ -43,11 +43,11 @@ public class RTreeTest extends TestCase {
      * 
      * @param arg0
      */
-    public RTreeTest(String arg0) {
+    public RTreeTest(final String arg0) {
         super(arg0);
     }
 
-    private RTree getRTree(short type) throws Exception {
+    private RTree getRTree(final short type) throws Exception {
         dd = new DataDefinition("US-ASCII");
         dd.addField(Integer.class);
 
@@ -71,7 +71,7 @@ public class RTreeTest extends TestCase {
         return new RTree(ps);
     }
 
-    private RTree getFullRTree(short type) throws Exception {
+    private RTree getFullRTree(final short type) throws Exception {
         RTree idx = getRTree(type);
 
         Data data = null;

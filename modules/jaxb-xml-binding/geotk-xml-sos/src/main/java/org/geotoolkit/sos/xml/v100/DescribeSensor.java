@@ -81,7 +81,7 @@ public class DescribeSensor extends RequestBaseType {
      /**
      * Build a new DescribeSensor Request
      */
-     public DescribeSensor(String version, String service, String procedure, String outputFormat) {
+     public DescribeSensor(final String version, final String service, final String procedure, final String outputFormat) {
          super(version, service);
          this.outputFormat = outputFormat;
          this.procedure    = procedure;
@@ -90,7 +90,7 @@ public class DescribeSensor extends RequestBaseType {
      /**
      * Build a new DescribeSensor Request
      */
-     public DescribeSensor(String procedure, String outputFormat) {
+     public DescribeSensor(final String procedure, final String outputFormat) {
          this.outputFormat = outputFormat;
          this.procedure    = procedure;
      }

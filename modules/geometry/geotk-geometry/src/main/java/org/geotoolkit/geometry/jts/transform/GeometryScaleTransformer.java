@@ -31,13 +31,13 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
     private final double resX;
     private final double resY;
 
-    public GeometryScaleTransformer(double resX, double resY){
+    public GeometryScaleTransformer(final double resX, final double resY){
         this.resX = resX;
         this.resY = resY;
     }
 
     @Override
-    public CoordinateSequence transform(CoordinateSequence cs, int minpoints) {
+    public CoordinateSequence transform(final CoordinateSequence cs, final int minpoints) {
         final Coordinate[] coords = cs.toCoordinateArray();
         final Coordinate[] deci = decimate(coords,minpoints);
         if(deci.length == coords.length){
@@ -48,7 +48,7 @@ public class GeometryScaleTransformer extends AbstractGeometryTransformer{
         }
     }
 
-    private Coordinate[] decimate(Coordinate[] coords, int minpoint) {
+    private Coordinate[] decimate(final Coordinate[] coords, final int minpoint) {
         int lenght = 1;
 
         final boolean closed = coords[0].equals2D(coords[coords.length-1]);

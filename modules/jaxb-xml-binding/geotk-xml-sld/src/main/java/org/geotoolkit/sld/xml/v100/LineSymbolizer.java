@@ -77,7 +77,7 @@ public class LineSymbolizer
      *     {@link Geometry }
      *     
      */
-    public void setGeometry(Geometry value) {
+    public void setGeometry(final Geometry value) {
         this.geometry = value;
     }
 
@@ -101,7 +101,7 @@ public class LineSymbolizer
      *     {@link Stroke }
      *     
      */
-    public void setStroke(Stroke value) {
+    public void setStroke(final Stroke value) {
         this.stroke = value;
     }
 

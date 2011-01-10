@@ -35,7 +35,7 @@ public class SortByComparator implements Comparator<Feature> {
 
     private final SortBy[] orders;
 
-    public SortByComparator(SortBy[] orders) {
+    public SortByComparator(final SortBy[] orders) {
         if (orders == null || orders.length == 0) {
             throw new IllegalArgumentException("SortBy array can not be null or empty.");
         }
@@ -47,7 +47,7 @@ public class SortByComparator implements Comparator<Feature> {
      * {@inheritDoc }
      */
     @Override
-    public int compare(Feature f1, Feature f2) {
+    public int compare(final Feature f1, final Feature f2) {
 
         for (final SortBy order : orders) {
             final PropertyName property = order.getPropertyName();

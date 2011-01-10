@@ -94,7 +94,7 @@ public class IconStyleType extends AbstractColorStyleType {
      *     {@link Double }
      *     
      */
-    public void setScaleDenominator(Double value) {
+    public void setScaleDenominator(final Double value) {
         this.scaleDenominator = value;
     }
 
@@ -118,7 +118,7 @@ public class IconStyleType extends AbstractColorStyleType {
      *     {@link Double }
      *     
      */
-    public void setHeading(Double value) {
+    public void setHeading(final Double value) {
         this.heading = value;
     }
 
@@ -142,7 +142,7 @@ public class IconStyleType extends AbstractColorStyleType {
      *     {@link BasicLinkType }
      *     
      */
-    public void setIcon(BasicLinkType value) {
+    public void setIcon(final BasicLinkType value) {
         this.icon = value;
     }
 
@@ -166,7 +166,7 @@ public class IconStyleType extends AbstractColorStyleType {
      *     {@link Vec2Type }
      *     
      */
-    public void setHotSpot(Vec2Type value) {
+    public void setHotSpot(final Vec2Type value) {
         this.hotSpot = value;
     }
 

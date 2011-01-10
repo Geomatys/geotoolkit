@@ -84,7 +84,7 @@ public class InsertType {
     /**
      * Build a new Insert request with the specified objects to insert.
      */
-    public InsertType(Object... objects) {
+    public InsertType(final Object... objects) {
         any = new ArrayList<Object>();
         for (Object obj: objects) {
             any.add(obj);
@@ -109,7 +109,7 @@ public class InsertType {
         return typeName;
     }
 
-    public void setTypeName(String typeName) {
+    public void setTypeName(final String typeName) {
         this.typeName = typeName;
     }
 
@@ -120,7 +120,7 @@ public class InsertType {
         return handle;
     }
 
-    public void setHandle(String handle) {
+    public void setHandle(final String handle) {
         this.handle = handle;
     }
 

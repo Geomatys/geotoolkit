@@ -230,7 +230,7 @@ public class DependentLocalityType {
      *     {@link DependentLocalityType.DependentLocalityNumber }
      *     
      */
-    public void setDependentLocalityNumber(DependentLocalityType.DependentLocalityNumber value) {
+    public void setDependentLocalityNumber(final DependentLocalityType.DependentLocalityNumber value) {
         this.dependentLocalityNumber = value;
     }
 
@@ -254,7 +254,7 @@ public class DependentLocalityType {
      *     {@link PostBox }
      *     
      */
-    public void setPostBox(PostBox value) {
+    public void setPostBox(final PostBox value) {
         this.postBox = value;
     }
 
@@ -278,7 +278,7 @@ public class DependentLocalityType {
      *     {@link LargeMailUserType }
      *     
      */
-    public void setLargeMailUser(LargeMailUserType value) {
+    public void setLargeMailUser(final LargeMailUserType value) {
         this.largeMailUser = value;
     }
 
@@ -302,7 +302,7 @@ public class DependentLocalityType {
      *     {@link PostOffice }
      *     
      */
-    public void setPostOffice(PostOffice value) {
+    public void setPostOffice(final PostOffice value) {
         this.postOffice = value;
     }
 
@@ -326,7 +326,7 @@ public class DependentLocalityType {
      *     {@link PostalRouteType }
      *     
      */
-    public void setPostalRoute(PostalRouteType value) {
+    public void setPostalRoute(final PostalRouteType value) {
         this.postalRoute = value;
     }
 
@@ -350,7 +350,7 @@ public class DependentLocalityType {
      *     {@link Thoroughfare }
      *     
      */
-    public void setThoroughfare(Thoroughfare value) {
+    public void setThoroughfare(final Thoroughfare value) {
         this.thoroughfare = value;
     }
 
@@ -374,7 +374,7 @@ public class DependentLocalityType {
      *     {@link Premise }
      *     
      */
-    public void setPremise(Premise value) {
+    public void setPremise(final Premise value) {
         this.premise = value;
     }
 
@@ -398,7 +398,7 @@ public class DependentLocalityType {
      *     {@link DependentLocalityType }
      *     
      */
-    public void setDependentLocality(DependentLocalityType value) {
+    public void setDependentLocality(final DependentLocalityType value) {
         this.dependentLocality = value;
     }
 
@@ -422,7 +422,7 @@ public class DependentLocalityType {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -475,7 +475,7 @@ public class DependentLocalityType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -499,7 +499,7 @@ public class DependentLocalityType {
      *     {@link String }
      *     
      */
-    public void setUsageType(String value) {
+    public void setUsageType(final String value) {
         this.usageType = value;
     }
 
@@ -523,7 +523,7 @@ public class DependentLocalityType {
      *     {@link String }
      *     
      */
-    public void setConnector(String value) {
+    public void setConnector(final String value) {
         this.connector = value;
     }
 
@@ -547,7 +547,7 @@ public class DependentLocalityType {
      *     {@link String }
      *     
      */
-    public void setIndicator(String value) {
+    public void setIndicator(final String value) {
         this.indicator = value;
     }
 
@@ -625,7 +625,7 @@ public class DependentLocalityType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -649,7 +649,7 @@ public class DependentLocalityType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -673,7 +673,7 @@ public class DependentLocalityType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -760,7 +760,7 @@ public class DependentLocalityType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -784,7 +784,7 @@ public class DependentLocalityType {
          *     {@link String }
          *     
          */
-        public void setNameNumberOccurrence(String value) {
+        public void setNameNumberOccurrence(final String value) {
             this.nameNumberOccurrence = value;
         }
 
@@ -808,7 +808,7 @@ public class DependentLocalityType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 

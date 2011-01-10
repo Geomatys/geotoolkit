@@ -69,14 +69,14 @@ public class Keywords {
     /**
      * Build a new list of keywords.
      */
-    public Keywords(List<String> keyword) {
+    public Keywords(final List<String> keyword) {
         this.keyword = keyword;
     }
     
     /**
      * Build a new list of keywords with the element of the list in the parameters.
      */
-    public Keywords(String... keywords) {
+    public Keywords(final String... keywords) {
         this.keyword = new ArrayList<String>();
         for (String word: keywords){
             keyword.add(word);

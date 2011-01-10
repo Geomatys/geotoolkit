@@ -68,7 +68,7 @@ import org.geotoolkit.util.Utilities;
      */
     DataBlockDefinitionEntry() {}
 
-    public DataBlockDefinitionEntry(DataBlockDefinition db) {
+    public DataBlockDefinitionEntry(final DataBlockDefinition db) {
         if (db != null) {
             this.id = db.getId();
             if (db.getEncoding() != null) {

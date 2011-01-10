@@ -29,7 +29,7 @@ public enum CSWVersion {
 
     private final String code;
 
-    CSWVersion(String code){
+    CSWVersion(final String code){
         this.code = code;
     }
 

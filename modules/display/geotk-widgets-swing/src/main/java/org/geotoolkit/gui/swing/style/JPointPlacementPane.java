@@ -102,7 +102,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
     }// </editor-fold>//GEN-END:initComponents
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiAnchor.setLayer(layer);
         guiDisplacement.setLayer(layer);
@@ -115,7 +115,7 @@ public class JPointPlacementPane extends StyleElementEditor<PointPlacement>{
     }
 
     @Override
-    public void parse(PointPlacement placement) {
+    public void parse(final PointPlacement placement) {
         if(placement != null){
             guiAnchor.parse(placement.getAnchorPoint());
             guiDisplacement.parse(placement.getDisplacement());

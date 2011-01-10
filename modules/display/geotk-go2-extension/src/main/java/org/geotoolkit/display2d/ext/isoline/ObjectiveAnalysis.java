@@ -300,7 +300,7 @@ public class ObjectiveAnalysis {
      *         may be throws if someone override {@link #computeGrid} and failed
      *         to provided a regular grid.
      */
-    public Map<Point3d,List<Coordinate>> doContouring(double[] xp, double[] yp, double[] zp, double[] lls) throws IllegalStateException {
+    public Map<Point3d,List<Coordinate>> doContouring(final double[] xp, final double[] yp, final double[] zp, final double[] lls) throws IllegalStateException {
         final Map<Point3d,List<Coordinate>> cellMap = new HashMap<Point3d,List<Coordinate>>();
 
         if (xp == null || yp == null || zp == null) return cellMap;
@@ -533,7 +533,7 @@ public class ObjectiveAnalysis {
 
     }
 
-    private boolean merge(Coordinate[] toMerge,List<Coordinate> coords){
+    private boolean merge(final Coordinate[] toMerge,final List<Coordinate> coords){
         Coordinate coord0 = toMerge[0];
         Coordinate coord1 = toMerge[1];
 
@@ -559,7 +559,7 @@ public class ObjectiveAnalysis {
         return true;
     }
 
-    private boolean merge(List<Coordinate> toMerge,List<Coordinate> coords){
+    private boolean merge(final List<Coordinate> toMerge,final List<Coordinate> coords){
         Coordinate coord0 = toMerge.get(0);
         Coordinate coord1 = toMerge.get(toMerge.size()-1);
 
@@ -591,7 +591,7 @@ public class ObjectiveAnalysis {
         return true;
     }
 
-    private boolean equalCoordinates(Coordinate coord0, Coordinate coord1){
+    private boolean equalCoordinates(final Coordinate coord0, final Coordinate coord1){
 
         //test x values
         if (Math.abs(coord0.x - coord1.x) > EPS * Math.max(Math.abs(coord0.x), Math.abs(coord1.x))) {
@@ -604,7 +604,7 @@ public class ObjectiveAnalysis {
         return true;
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
 
         if (true) {
             final int s = 5;

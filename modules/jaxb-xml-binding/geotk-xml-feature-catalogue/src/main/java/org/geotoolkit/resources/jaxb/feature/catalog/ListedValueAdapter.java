@@ -86,7 +86,7 @@ public class ListedValueAdapter extends XmlAdapter<ListedValueAdapter, ListedVal
      * @return A java object which represents the metadata value.
      */
     @Override
-    public ListedValue unmarshal(ListedValueAdapter value) throws Exception {
+    public ListedValue unmarshal(final ListedValueAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -101,7 +101,7 @@ public class ListedValueAdapter extends XmlAdapter<ListedValueAdapter, ListedVal
      * @return The adapter for this ListedValue.
      */
     @Override
-    public ListedValueAdapter marshal(ListedValue value) throws Exception {
+    public ListedValueAdapter marshal(final ListedValue value) throws Exception {
         return new ListedValueAdapter(value);
     }
 

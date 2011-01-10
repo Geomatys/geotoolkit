@@ -92,12 +92,12 @@ public class UpdateType {
 
     }
 
-    public UpdateType(Object any, QueryConstraintType query) {
+    public UpdateType(final Object any, final QueryConstraintType query) {
         this.any        = any;
         this.constraint = query;
     }
 
-    public UpdateType(List<RecordPropertyType> recordProperty, QueryConstraintType query) {
+    public UpdateType(final List<RecordPropertyType> recordProperty, final QueryConstraintType query) {
         this.recordProperty = recordProperty;
         this.constraint     = query;
     }
@@ -108,7 +108,7 @@ public class UpdateType {
         return any;
     }
 
-    public void setAny(Object any) {
+    public void setAny(final Object any) {
         this.any = any;
     }
 
@@ -123,7 +123,7 @@ public class UpdateType {
         return recordProperty;
     }
 
-    public void setRecordProperty(List<RecordPropertyType> recordProperty) {
+    public void setRecordProperty(final List<RecordPropertyType> recordProperty) {
         this.recordProperty = recordProperty;
     }
 
@@ -134,7 +134,7 @@ public class UpdateType {
         return constraint;
     }
 
-    public void setConstraint(QueryConstraintType constraint) {
+    public void setConstraint(final QueryConstraintType constraint) {
         this.constraint = constraint;
     }
     
@@ -145,7 +145,7 @@ public class UpdateType {
         return handle;
     }
 
-    public void setHandle(String handle) {
+    public void setHandle(final String handle) {
         this.handle = handle;
     }
 

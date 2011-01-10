@@ -39,7 +39,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      *
      * @param generalParameterDescriptor
      */
-    public void write(GeneralParameterDescriptor generalParameterDescriptor) throws XMLStreamException {
+    public void write(final GeneralParameterDescriptor generalParameterDescriptor) throws XMLStreamException {
         writer.writeStartDocument("UTF-8", "1.0");
         writer.setDefaultNamespace(URI_XSD);
         writer.writeStartElement(URI_XSD, TAG_XSD_SCHEMA);
@@ -58,7 +58,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      * @param descriptor
      * @throws XMLStreamException
      */
-    private void writeParameterDescriptor(ParameterDescriptor descriptor)
+    private void writeParameterDescriptor(final ParameterDescriptor descriptor)
             throws XMLStreamException {
 
         if (descriptor.getDefaultValue() != null) {
@@ -173,7 +173,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      * @return index of first different character
      * @throws XMLStreamException
      */
-    private int writeIntervalPatterns(String min, String max)
+    private int writeIntervalPatterns(final String min, final String max)
             throws XMLStreamException {
 
         final StringBuilder sb = new StringBuilder();
@@ -219,7 +219,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      * @param max maximum String
      * @throws XMLStreamException
      */
-    private void writeTopPatterns(int idx, String max)
+    private void writeTopPatterns(final int idx, final String max)
             throws XMLStreamException {
 
         for (int i = idx + 1; i < max.length() - 1; i++) {
@@ -243,7 +243,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      * @param min minimum String
      * @throws XMLStreamException
      */
-    private void writeBottomPatterns(int idx, String min)
+    private void writeBottomPatterns(final int idx, final String min)
             throws XMLStreamException {
 
         for (int i = idx + 1; i < min.length() - 1; i++) {
@@ -266,7 +266,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      * @param descriptor
      * @throws XMLStreamException
      */
-    private void writeParameterDescriptorGroup(ParameterDescriptorGroup descriptor)
+    private void writeParameterDescriptorGroup(final ParameterDescriptorGroup descriptor)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XSD, TAG_XSD_COMPLEX_TYPE);
@@ -287,7 +287,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      * @param parameterDescriptor
      * @throws XMLStreamException
      */
-    private void writeGeneralParameterDescriptor(GeneralParameterDescriptor parameterDescriptor)
+    private void writeGeneralParameterDescriptor(final GeneralParameterDescriptor parameterDescriptor)
             throws XMLStreamException {
 
         /*
@@ -331,7 +331,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      * @param parameterDescriptor
      * @throws XMLStreamException
      */
-    private void writeAnnotations(GeneralParameterDescriptor parameterDescriptor)
+    private void writeAnnotations(final GeneralParameterDescriptor parameterDescriptor)
             throws XMLStreamException {
 
         if (parameterDescriptor.getRemarks() != null
@@ -364,7 +364,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      * @param remarks
      * @throws XMLStreamException
      */
-    private void writeRemarks(InternationalString remarks)
+    private void writeRemarks(final InternationalString remarks)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XSD, TAG_XSD_DOCUMENTATION);
@@ -379,7 +379,7 @@ public class ParameterDescriptorWriter extends StaxStreamWriter {
      * @param info
      * @throws XMLStreamException
      */
-    private void writeAppInfo(String pseudoTag, String info)
+    private void writeAppInfo(final String pseudoTag, final String info)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_XSD, TAG_XSD_APP_INFO);

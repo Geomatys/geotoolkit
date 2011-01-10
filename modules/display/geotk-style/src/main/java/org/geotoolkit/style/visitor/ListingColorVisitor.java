@@ -72,56 +72,56 @@ public class ListingColorVisitor extends DefaultStyleVisitor{
     }
 
     @Override
-    public Object visit(Style style, Object data) {
+    public Object visit(final Style style, final Object data) {
         return (unpredictable) ? data : super.visit(style,data);
     }
 
     @Override
-    public Object visit(FeatureTypeStyle fts, Object data) {
+    public Object visit(final FeatureTypeStyle fts, final Object data) {
         return (unpredictable) ? data : super.visit(fts,data);
     }
 
     @Override
-    public Object visit(Rule rule, Object data) {
+    public Object visit(final Rule rule, final Object data) {
         return (unpredictable) ? data : super.visit(rule,data);
     }
 
     @Override
-    public Object visit(PointSymbolizer symbol, Object data) {
+    public Object visit(final PointSymbolizer symbol, final Object data) {
         return (unpredictable) ? data : super.visit(symbol,data);
     }
 
     @Override
-    public Object visit(LineSymbolizer symbol, Object data) {
+    public Object visit(final LineSymbolizer symbol, final Object data) {
         return (unpredictable) ? data : super.visit(symbol,data);
     }
 
     @Override
-    public Object visit(PolygonSymbolizer symbol, Object data) {
+    public Object visit(final PolygonSymbolizer symbol, final Object data) {
         return (unpredictable) ? data : super.visit(symbol,data);
     }
 
     @Override
-    public Object visit(TextSymbolizer symbol, Object data) {
+    public Object visit(final TextSymbolizer symbol, final Object data) {
         return (unpredictable) ? data : super.visit(symbol,data);
     }
 
     // Elements unpredictable //////////////////////////////////////////////////
 
     @Override
-    public Object visit(RasterSymbolizer symbol, Object data) {
+    public Object visit(final RasterSymbolizer symbol, final Object data) {
         unpredictable = true;
         return data;
     }
 
     @Override
-    public Object visit(ExtensionSymbolizer symbol, Object data) {
+    public Object visit(final ExtensionSymbolizer symbol, final Object data) {
         unpredictable = true;
         return data;
     }
 
     @Override
-    public Object visit(ExternalGraphic external, Object data) {
+    public Object visit(final ExternalGraphic external, final Object data) {
         unpredictable = true;
         return data;
     }
@@ -129,7 +129,7 @@ public class ListingColorVisitor extends DefaultStyleVisitor{
 
     // Elements that can contain colors or opacity /////////////////////////////
 
-    private void checkColor(Expression exp){
+    private void checkColor(final Expression exp){
         if(exp == null || unpredictable){
             return;
         }else if(exp instanceof Literal){
@@ -146,7 +146,7 @@ public class ListingColorVisitor extends DefaultStyleVisitor{
         }
     }
 
-    private void checkOpacity(Expression exp){
+    private void checkOpacity(final Expression exp){
         if(exp == null || unpredictable){
             return;
         }else if(exp instanceof Literal){
@@ -163,21 +163,21 @@ public class ListingColorVisitor extends DefaultStyleVisitor{
     }
 
     @Override
-    public Object visit(Fill fill, Object data) {
+    public Object visit(final Fill fill, final Object data) {
         checkColor(fill.getColor());
         checkOpacity(fill.getOpacity());
         return super.visit(fill, data);
     }
 
     @Override
-    public Object visit(Stroke stroke, Object data) {
+    public Object visit(final Stroke stroke, final Object data) {
         checkColor(stroke.getColor());
         checkOpacity(stroke.getOpacity());
         return super.visit(stroke, data);
     }
 
     @Override
-    public Object visit(Graphic gr, Object data) {
+    public Object visit(final Graphic gr, final Object data) {
         checkOpacity(gr.getOpacity());
         return super.visit(gr, data);
     }

@@ -58,7 +58,7 @@ public class PolyhedralSurfaceType extends SurfaceType {
 
     PolyhedralSurfaceType() {}
 
-    public PolyhedralSurfaceType(PolygonPatchArrayPropertyType polygonPatches) {
+    public PolyhedralSurfaceType(final PolygonPatchArrayPropertyType polygonPatches) {
         if (polygonPatches != null) {
             ObjectFactory factory = new ObjectFactory();
             this.polygonPatches = factory.createPolygonPatches(polygonPatches);
@@ -75,7 +75,7 @@ public class PolyhedralSurfaceType extends SurfaceType {
     /**
      * @param polygonPatches the polygonPatches to set
      */
-    public void setPolygonPatches(JAXBElement<? extends PolygonPatchArrayPropertyType> polygonPatches) {
+    public void setPolygonPatches(final JAXBElement<? extends PolygonPatchArrayPropertyType> polygonPatches) {
         this.polygonPatches = polygonPatches;
     }
 

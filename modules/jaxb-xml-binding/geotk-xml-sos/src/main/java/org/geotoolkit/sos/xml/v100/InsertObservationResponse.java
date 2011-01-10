@@ -68,7 +68,7 @@ public class InsertObservationResponse implements SOSResponse {
      * 
      * @param assignedObservationId The id of the observation whitch have been inserted previously. 
      */
-    public InsertObservationResponse(String assignedObservationId) {
+    public InsertObservationResponse(final String assignedObservationId) {
         this.assignedObservationId = assignedObservationId;
     }
     

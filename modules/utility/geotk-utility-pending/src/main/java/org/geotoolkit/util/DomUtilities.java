@@ -65,7 +65,7 @@ public class DomUtilities {
      * This is provided as a convinient method, use the default JRE classes so it may
      * not be the faster parsing method.
      */
-    public static Document read(Object input) throws ParserConfigurationException, SAXException, IOException {
+    public static Document read(final Object input) throws ParserConfigurationException, SAXException, IOException {
         final InputStream stream = toInputStream(input);
         final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         final DocumentBuilder constructeur = factory.newDocumentBuilder();
@@ -81,7 +81,7 @@ public class DomUtilities {
      * @param output : output file, url, uri, outputstream
      * @throws TransformerException
      */
-    public static void write(Document doc, Object output) throws TransformerException, FileNotFoundException, IOException{
+    public static void write(final Document doc, final Object output) throws TransformerException, FileNotFoundException, IOException{
         final Source source = new DOMSource(doc);
 
         final Result result;
@@ -110,7 +110,7 @@ public class DomUtilities {
      * @param tagName : child node name
      * @return first element with tagName in parent node or null
      */
-    public static Element firstElement(Element parent, String tagName){
+    public static Element firstElement(final Element parent, final String tagName){
         return firstElement(parent, tagName, true);
     }
 
@@ -122,7 +122,7 @@ public class DomUtilities {
      * @param recursive : search in sub nodes or not
      * @return first element with tagName in parent node or null
      */
-    public static Element firstElement(Element parent, String tagName, boolean recursive){
+    public static Element firstElement(final Element parent, final String tagName, final boolean recursive){
 
         if(recursive){
             final NodeList lst = parent.getElementsByTagName(tagName);
@@ -171,7 +171,7 @@ public class DomUtilities {
      * @param clazz : wished value class
      * @return T or null if no node with tagname was found or convertion to given class failed.
      */
-    public static <T> T textValue(Element parent, String tagName, Class<T> clazz) throws NonconvertibleObjectException{
+    public static <T> T textValue(final Element parent, final String tagName, final Class<T> clazz) throws NonconvertibleObjectException{
         final Element ele = firstElement(parent, tagName, true);
         if(ele == null) return null;
         final String text = ele.getTextContent();
@@ -183,7 +183,7 @@ public class DomUtilities {
      * Same as {@link DomUtilities#textValue(org.w3c.dom.Element, java.lang.String, java.lang.Class) }
      * but dont throw any exception.
      */
-    public static <T> T textValueSafe(Element parent, String tagName, Class<T> clazz) {
+    public static <T> T textValueSafe(final Element parent, final String tagName, final Class<T> clazz) {
         try {
             return textValue(parent, tagName, clazz);
         } catch (NonconvertibleObjectException ex) {
@@ -195,7 +195,7 @@ public class DomUtilities {
     /**
      * Convert an object source to a stream.
      */
-    private static OutputStream toOutputStream(Object input) throws FileNotFoundException, IOException{
+    private static OutputStream toOutputStream(final Object input) throws FileNotFoundException, IOException{
 
         if(input instanceof File){
             return new FileOutputStream((File)input);
@@ -207,7 +207,7 @@ public class DomUtilities {
     /**
      * Convert an object source to a stream.
      */
-    private static InputStream toInputStream(Object input) throws FileNotFoundException, IOException{
+    private static InputStream toInputStream(final Object input) throws FileNotFoundException, IOException{
 
         if(input instanceof InputStream){
             return (InputStream) input;

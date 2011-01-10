@@ -62,7 +62,7 @@ public class JTSRing extends JTSCompositeCurve implements Ring {
     /**
      * Constructs a new Ring instance with the given CRS and no parent curve.
      */
-    public JTSRing(CoordinateReferenceSystem crs) {
+    public JTSRing(final CoordinateReferenceSystem crs) {
         this(null, crs);
     }
 
@@ -70,11 +70,11 @@ public class JTSRing extends JTSCompositeCurve implements Ring {
      * Constructs a new Ring instance with the given curve as its parent and
      * with the CRS retrieved from parentCurve.
      */
-    public JTSRing(CompositeCurve parentCurve) {
+    public JTSRing(final CompositeCurve parentCurve) {
         this(parentCurve, parentCurve.getCoordinateReferenceSystem());
     }
 
-    public JTSRing(CompositeCurve parentCurve, CoordinateReferenceSystem crs) {
+    public JTSRing(final CompositeCurve parentCurve, final CoordinateReferenceSystem crs) {
         super(parentCurve, crs);
     }
     

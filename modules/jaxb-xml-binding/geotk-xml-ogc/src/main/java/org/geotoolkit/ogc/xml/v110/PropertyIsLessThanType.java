@@ -39,7 +39,7 @@ public class PropertyIsLessThanType extends BinaryComparisonOpType implements Pr
     /**
      * Build a new Binary comparison operator
      */
-    public  PropertyIsLessThanType(LiteralType literal, PropertyNameType propertyName, Boolean matchCase) {
+    public  PropertyIsLessThanType(final LiteralType literal, final PropertyNameType propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
     

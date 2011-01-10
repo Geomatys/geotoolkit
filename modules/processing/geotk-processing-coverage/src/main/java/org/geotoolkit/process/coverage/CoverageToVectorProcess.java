@@ -71,7 +71,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
         super(CoverageToVectorDescriptor.INSTANCE);
     }
 
-    public Geometry[] toPolygon(GridCoverage2D coverage, final NumberRange[] ranges, int band)
+    public Geometry[] toPolygon(GridCoverage2D coverage, final NumberRange[] ranges, final int band)
             throws IOException, TransformException {
         coverage = coverage.view(ViewType.GEOPHYSICS);
 
@@ -170,7 +170,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
         return polygones.toArray(new Polygon[polygones.size()]);
     }
 
-    private void append(Point point, Number value) {
+    private void append(final Point point, Number value) {
         //System.err.println("POINT["+point+"] value = " + value);
 
         //special case for NaN or null
@@ -368,7 +368,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
 
     }
 
-    private void replaceInLastLigne(Boundary old, Boundary newone){
+    private void replaceInLastLigne(final Boundary old, final Boundary newone){
         for(int i=0,n=buffers[LAST_LINE].length; i<n; i++){
             if(buffers[LAST_LINE][i] == old){
                 buffers[LAST_LINE][i] = newone;
@@ -381,7 +381,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
     }
 
 
-    private int[] findExtent(int index){
+    private int[] findExtent(final int index){
         final int[] extent = new int[]{index,index};
         final Boundary bnd = buffers[LAST_LINE][index];
 
@@ -438,7 +438,7 @@ public class CoverageToVectorProcess extends AbstractProcess {
         }
 
         @Override
-        public boolean contains(Number number) throws IllegalArgumentException {
+        public boolean contains(final Number number) throws IllegalArgumentException {
             return Double.isNaN(number.doubleValue());
         }
 

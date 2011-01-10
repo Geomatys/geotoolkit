@@ -38,7 +38,7 @@ public class ZoomAllAction extends AbstractAction {
     private A3DCanvas map = null;
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null) {
             MapContext context = map.getContainer2().getContext();
             if(context == null) return;
@@ -50,7 +50,7 @@ public class ZoomAllAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(A3DCanvas map) {
+    public void setMap(final A3DCanvas map) {
         this.map = map;
         setEnabled(map != null);
     }

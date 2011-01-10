@@ -76,7 +76,7 @@ public class DynamicFeatureCollectionType extends FeatureCollectionType {
      *     {@link TimePrimitivePropertyType }
      *     
      */
-    public void setValidTime(TimePrimitivePropertyType value) {
+    public void setValidTime(final TimePrimitivePropertyType value) {
         this.validTime = value;
     }
 
@@ -102,7 +102,7 @@ public class DynamicFeatureCollectionType extends FeatureCollectionType {
      *     {@link JAXBElement }{@code <}{@link HistoryPropertyType }{@code >}
      *     
      */
-    public void setHistory(JAXBElement<? extends HistoryPropertyType> value) {
+    public void setHistory(final JAXBElement<? extends HistoryPropertyType> value) {
         this.history = ((JAXBElement<? extends HistoryPropertyType> ) value);
     }
 
@@ -126,7 +126,7 @@ public class DynamicFeatureCollectionType extends FeatureCollectionType {
      *     {@link StringOrRefType }
      *     
      */
-    public void setDataSource(StringOrRefType value) {
+    public void setDataSource(final StringOrRefType value) {
         this.dataSource = value;
     }
 

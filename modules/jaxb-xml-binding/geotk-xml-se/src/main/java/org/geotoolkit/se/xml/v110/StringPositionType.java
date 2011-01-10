@@ -82,7 +82,7 @@ public class StringPositionType
      *     {@link ParameterValueType }
      *     
      */
-    public void setLookupString(ParameterValueType value) {
+    public void setLookupString(final ParameterValueType value) {
         this.lookupString = value;
     }
 
@@ -106,7 +106,7 @@ public class StringPositionType
      *     {@link ParameterValueType }
      *     
      */
-    public void setStringValue(ParameterValueType value) {
+    public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
     }
 
@@ -130,7 +130,7 @@ public class StringPositionType
      *     {@link SearchDirectionType }
      *     
      */
-    public void setSearchDirection(SearchDirectionType value) {
+    public void setSearchDirection(final SearchDirectionType value) {
         this.searchDirection = value;
     }
 

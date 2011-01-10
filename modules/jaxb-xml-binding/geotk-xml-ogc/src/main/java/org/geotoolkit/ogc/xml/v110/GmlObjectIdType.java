@@ -65,7 +65,7 @@ public class GmlObjectIdType extends AbstractIdType implements GmlObjectId {
     /**
      * Build a new GML object Id with the specified ID
      */
-    public GmlObjectIdType(String id) {
+    public GmlObjectIdType(final String id) {
         this.id = id;
     }
     
@@ -73,7 +73,7 @@ public class GmlObjectIdType extends AbstractIdType implements GmlObjectId {
         return id;
     }
 
-    public boolean matches(Object object) {
+    public boolean matches(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

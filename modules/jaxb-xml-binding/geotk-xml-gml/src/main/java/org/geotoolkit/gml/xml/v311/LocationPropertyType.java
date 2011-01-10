@@ -175,7 +175,7 @@ public class LocationPropertyType {
      *     {@link JAXBElement }{@code <}{@link MultiSolidType }{@code >}
      *     
      */
-    public void setAbstractGeometry(JAXBElement<? extends AbstractGeometryType> value) {
+    public void setAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
     }
 
@@ -199,7 +199,7 @@ public class LocationPropertyType {
      *     {@link CodeType }
      *     
      */
-    public void setLocationKeyWord(CodeType value) {
+    public void setLocationKeyWord(final CodeType value) {
         this.locationKeyWord = value;
     }
 
@@ -223,7 +223,7 @@ public class LocationPropertyType {
      *     {@link StringOrRefType }
      *     
      */
-    public void setLocationString(StringOrRefType value) {
+    public void setLocationString(final StringOrRefType value) {
         this.locationString = value;
     }
 
@@ -286,7 +286,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -314,7 +314,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -338,7 +338,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -362,7 +362,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -386,7 +386,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -410,7 +410,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -434,7 +434,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -458,7 +458,7 @@ public class LocationPropertyType {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

@@ -110,7 +110,7 @@ public class Annotated extends OpenAttrs {
      *     {@link Annotation }
      *     
      */
-    public void setAnnotation(Annotation value) {
+    public void setAnnotation(final Annotation value) {
         this.annotation = value;
     }
 
@@ -134,7 +134,7 @@ public class Annotated extends OpenAttrs {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

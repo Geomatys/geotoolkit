@@ -754,7 +754,7 @@ final class LineString implements Serializable {
      * @return LineString r�sultant. Ca sera en g�n�ral <code>scan</code>.
      */
     public static LineString prependBorder(LineString scan, final float[] data,
-                                           int lower, int upper)
+                                           final int lower, int upper)
     {
         if (REMOVE_DOUBLONS_IN_BORDER) {
             try {
@@ -791,7 +791,7 @@ final class LineString implements Serializable {
      * @param  upper Index suivant celui du dernier <var>y</var> � ajouter � la bordure.
      * @return Polyligne r�sultante. Ca sera en g�n�ral <code>scan</code>.
      */
-    public static LineString appendBorder(LineString scan, final float[] data, int lower, int upper) {
+    public static LineString appendBorder(LineString scan, final float[] data, int lower, final int upper) {
         if (REMOVE_DOUBLONS_IN_BORDER) {
             try {
                 final Point2D check = getLastPoint(scan, null);
@@ -1051,7 +1051,7 @@ final class LineString implements Serializable {
      * @see #getResolution
      */
     public static void setResolution(LineString scan, final CoordinateOperation transformation,
-                                     double resolution)
+                                     final double resolution)
             throws TransformException
     {
         /*

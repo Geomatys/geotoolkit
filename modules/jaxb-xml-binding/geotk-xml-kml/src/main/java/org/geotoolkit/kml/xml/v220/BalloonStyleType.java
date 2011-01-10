@@ -107,7 +107,7 @@ public class BalloonStyleType
      *     {@link String }
      *     
      */
-    public void setColor(byte[] value) {
+    public void setColor(final byte[] value) {
         this.color = ((byte[]) value);
     }
 
@@ -131,7 +131,7 @@ public class BalloonStyleType
      *     {@link String }
      *     
      */
-    public void setBgColor(byte[] value) {
+    public void setBgColor(final byte[] value) {
         this.bgColor = ((byte[]) value);
     }
 
@@ -155,7 +155,7 @@ public class BalloonStyleType
      *     {@link String }
      *     
      */
-    public void setTextColor(byte[] value) {
+    public void setTextColor(final byte[] value) {
         this.textColor = ((byte[]) value);
     }
 
@@ -179,7 +179,7 @@ public class BalloonStyleType
      *     {@link String }
      *     
      */
-    public void setText(String value) {
+    public void setText(final String value) {
         this.text = value;
     }
 
@@ -203,7 +203,7 @@ public class BalloonStyleType
      *     {@link DisplayModeEnumType }
      *     
      */
-    public void setDisplayMode(DisplayModeEnumType value) {
+    public void setDisplayMode(final DisplayModeEnumType value) {
         this.displayMode = value;
     }
 

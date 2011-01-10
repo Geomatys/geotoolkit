@@ -209,7 +209,7 @@ public final class JTSUtils {
      * Converts a DirectPosition to a JTS Coordinate.  Returns a newly
      * instantiated Coordinate object.
      */
-    public static com.vividsolutions.jts.geom.Coordinate directPositionToCoordinate(DirectPosition dp) {
+    public static com.vividsolutions.jts.geom.Coordinate directPositionToCoordinate(final DirectPosition dp) {
         double x = Double.NaN, y = Double.NaN, z = Double.NaN;
         final int d = dp.getDimension();
         if (d >= 1) {
@@ -230,7 +230,7 @@ public final class JTSUtils {
      * less than three, then the unused ordinates of the Coordinate are set to
      * Double.NaN.
      */
-    public static void directPositionToCoordinate(DirectPosition dp, com.vividsolutions.jts.geom.Coordinate result) {
+    public static void directPositionToCoordinate(final DirectPosition dp, final com.vividsolutions.jts.geom.Coordinate result) {
         final int d = dp.getDimension();
         if (d >= 1) {
             result.x = dp.getOrdinate(0);
@@ -256,15 +256,15 @@ public final class JTSUtils {
      * instantiated Point object that was created using the default
      * GeometryFactory instance.
      */
-    public static com.vividsolutions.jts.geom.Point directPositionToPoint(DirectPosition dp) {
+    public static com.vividsolutions.jts.geom.Point directPositionToPoint(final DirectPosition dp) {
         return GEOMETRY_FACTORY.createPoint(directPositionToCoordinate(dp));
     }
 
     /**
      * Converts a JTS Coordinate to a DirectPosition with the given CRS.
      */
-    public static DirectPosition coordinateToDirectPosition(com.vividsolutions.jts.geom.Coordinate c,
-            CoordinateReferenceSystem crs) {
+    public static DirectPosition coordinateToDirectPosition(final com.vividsolutions.jts.geom.Coordinate c,
+            final CoordinateReferenceSystem crs) {
 
         PositionFactory pf = new JTSPositionFactory(crs);
 
@@ -294,8 +294,8 @@ public final class JTSUtils {
      * Extracts the values of a JTS coordinate into an existing DirectPosition
      * object.
      */
-    public static void coordinateToDirectPosition(com.vividsolutions.jts.geom.Coordinate c,
-            DirectPosition result) {
+    public static void coordinateToDirectPosition(final com.vividsolutions.jts.geom.Coordinate c,
+            final DirectPosition result) {
         // Get the CRS so we can figure out the dimension of the result.
         CoordinateReferenceSystem crs = result.getCoordinateReferenceSystem();
         int d;
@@ -335,13 +335,13 @@ public final class JTSUtils {
     /**
      * Converts a JTS Point to a DirectPosition with the given CRS.
      */
-    public static DirectPosition pointToDirectPosition(com.vividsolutions.jts.geom.Point p,
-            CoordinateReferenceSystem crs) {
+    public static DirectPosition pointToDirectPosition(final com.vividsolutions.jts.geom.Point p,
+            final CoordinateReferenceSystem crs) {
         return coordinateToDirectPosition(p.getCoordinate(), crs);
     }
 
-    public static Ring linearRingToRing(com.vividsolutions.jts.geom.LineString jtsLinearRing,
-            CoordinateReferenceSystem crs) {
+    public static Ring linearRingToRing(final com.vividsolutions.jts.geom.LineString jtsLinearRing,
+            final CoordinateReferenceSystem crs) {
         int numPoints = jtsLinearRing.getNumPoints();
         if (numPoints != 0 && !jtsLinearRing.getCoordinateN(0).equals(jtsLinearRing.getCoordinateN(numPoints - 1))) {
             throw new IllegalArgumentException("LineString must be a ring");
@@ -369,8 +369,8 @@ public final class JTSUtils {
      * methods do not allow for either parameter to be a collection.  So we have
      * to implement the logic of dealing with collection geometries separately.
      */
-    public static double distance(com.vividsolutions.jts.geom.Geometry g1,
-            com.vividsolutions.jts.geom.Geometry g2) {
+    public static double distance(final com.vividsolutions.jts.geom.Geometry g1,
+            final com.vividsolutions.jts.geom.Geometry g2) {
         if (g1 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
             double minDistance = Double.POSITIVE_INFINITY;
             com.vividsolutions.jts.geom.GeometryCollection gc1 =
@@ -409,38 +409,38 @@ public final class JTSUtils {
      * aggregates, creates an aggregate containing all the parts of both.
      */
     public static com.vividsolutions.jts.geom.Geometry union(
-            com.vividsolutions.jts.geom.Geometry g1,
-            com.vividsolutions.jts.geom.Geometry g2) {
+            final com.vividsolutions.jts.geom.Geometry g1,
+            final com.vividsolutions.jts.geom.Geometry g2) {
         return null;
     }
 
     public static com.vividsolutions.jts.geom.Geometry intersection(
-            com.vividsolutions.jts.geom.Geometry g1,
-            com.vividsolutions.jts.geom.Geometry g2) {
+            final com.vividsolutions.jts.geom.Geometry g1,
+            final com.vividsolutions.jts.geom.Geometry g2) {
         return null;
     }
 
     public static com.vividsolutions.jts.geom.Geometry difference(
-            com.vividsolutions.jts.geom.Geometry g1,
-            com.vividsolutions.jts.geom.Geometry g2) {
+            final com.vividsolutions.jts.geom.Geometry g1,
+            final com.vividsolutions.jts.geom.Geometry g2) {
         return null;
     }
 
     public static com.vividsolutions.jts.geom.Geometry symmetricDifference(
-            com.vividsolutions.jts.geom.Geometry g1,
-            com.vividsolutions.jts.geom.Geometry g2) {
+            final com.vividsolutions.jts.geom.Geometry g1,
+            final com.vividsolutions.jts.geom.Geometry g2) {
         return null;
     }
 
     public static boolean contains(
-            com.vividsolutions.jts.geom.Geometry g1,
-            com.vividsolutions.jts.geom.Geometry g2) {
+            final com.vividsolutions.jts.geom.Geometry g1,
+            final com.vividsolutions.jts.geom.Geometry g2) {
         return false;
     }
 
     public static boolean equals(
-            com.vividsolutions.jts.geom.Geometry g1,
-            com.vividsolutions.jts.geom.Geometry g2) {
+            final com.vividsolutions.jts.geom.Geometry g1,
+            final com.vividsolutions.jts.geom.Geometry g2) {
         return false;
     }
 
@@ -451,8 +451,8 @@ public final class JTSUtils {
      * intersections.
      */
     public static boolean intersects(
-            com.vividsolutions.jts.geom.Geometry g1,
-            com.vividsolutions.jts.geom.Geometry g2) {
+            final com.vividsolutions.jts.geom.Geometry g1,
+            final com.vividsolutions.jts.geom.Geometry g2) {
         if (g1 instanceof com.vividsolutions.jts.geom.GeometryCollection) {
             com.vividsolutions.jts.geom.GeometryCollection gc1 =
                     (com.vividsolutions.jts.geom.GeometryCollection) g1;

@@ -34,7 +34,7 @@ public class MemoryNode extends Node {
      * 
      * @param maxNodeEntries
      */
-    public MemoryNode(int maxNodeEntries) {
+    public MemoryNode(final int maxNodeEntries) {
         super(maxNodeEntries);
     }
 
@@ -50,7 +50,7 @@ public class MemoryNode extends Node {
      * {@inheritDoc }
      */
     @Override
-    public void setParent(Node node) {
+    public void setParent(final Node node) {
         this.parent = node;
     }
 
@@ -58,7 +58,7 @@ public class MemoryNode extends Node {
      * {@inheritDoc }
      */
     @Override
-    protected Entry getEntry(Node node) {
+    protected Entry getEntry(final Node node) {
         Entry ret = null;
         Node n = null;
 

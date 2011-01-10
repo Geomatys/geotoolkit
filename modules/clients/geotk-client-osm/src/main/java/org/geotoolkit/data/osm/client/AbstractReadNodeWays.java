@@ -37,7 +37,7 @@ public abstract class AbstractReadNodeWays extends AbstractRequest implements Re
      *
      * @param serverURL The server url.
      */
-    protected AbstractReadNodeWays(final String serverURL, String subpath){
+    protected AbstractReadNodeWays(final String serverURL, final String subpath){
         super(serverURL, subpath);
     }
 
@@ -45,7 +45,7 @@ public abstract class AbstractReadNodeWays extends AbstractRequest implements Re
      * {@inheritDoc }
      */
     @Override
-    public void setId(long id) {
+    public void setId(final long id) {
         this.id = id;
     }
 

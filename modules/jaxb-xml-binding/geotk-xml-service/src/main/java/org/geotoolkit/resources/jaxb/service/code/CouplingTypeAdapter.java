@@ -42,7 +42,7 @@ public final class CouplingTypeAdapter extends CodeListAdapter<CouplingTypeAdapt
     }
 
     @Override
-    protected CouplingTypeAdapter wrap(CodeListProxy proxy) {
+    protected CouplingTypeAdapter wrap(final CodeListProxy proxy) {
         return new CouplingTypeAdapter(proxy);
     }
 

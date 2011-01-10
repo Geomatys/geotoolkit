@@ -66,7 +66,7 @@ public class ConformingDelaunayTriangulationBuilder
 	 * 
 	 * @param geom the geometry from which the sites will be extracted.
 	 */
-	public void setSites(Geometry geom)
+	public void setSites(final Geometry geom)
 	{
 		siteCoords = DelaunayTriangulationBuilder.extractUniqueCoordinates(geom);
 	}
@@ -77,7 +77,7 @@ public class ConformingDelaunayTriangulationBuilder
 	 * 
 	 * @param constraintLines the lines to constraint to
 	 */
-	public void setConstraints(Geometry constraintLines)
+	public void setConstraints(final Geometry constraintLines)
 	{
 		this.constraintLines = constraintLines;
 	}
@@ -89,7 +89,7 @@ public class ConformingDelaunayTriangulationBuilder
 	 * 
 	 * @param tolerance the tolerance distance to use
 	 */
-	public void setTolerance(double tolerance)
+	public void setTolerance(final double tolerance)
 	{
 		this.tolerance = tolerance;
 	}
@@ -119,7 +119,7 @@ public class ConformingDelaunayTriangulationBuilder
 		subdiv = cdt.getSubdivision();
 	}
 	
-	private static List createConstraintVertices(Collection coords)
+	private static List createConstraintVertices(final Collection coords)
 	{
 		List verts = new ArrayList();
 		for (Iterator i = coords.iterator(); i.hasNext(); ) {
@@ -129,7 +129,7 @@ public class ConformingDelaunayTriangulationBuilder
 		return verts;
 	}
 
-	private void createVertices(Geometry geom)
+	private void createVertices(final Geometry geom)
 	{
 		Coordinate[] coords = geom.getCoordinates();
 		for (int i = 0; i < coords.length; i++) {
@@ -138,7 +138,7 @@ public class ConformingDelaunayTriangulationBuilder
 		}
 	}
 	
-	private static List createConstraintSegments(Geometry geom)
+	private static List createConstraintSegments(final Geometry geom)
 	{
 		List lines = LinearComponentExtracter.getLines(geom);
 		List constraintSegs = new ArrayList();
@@ -149,7 +149,7 @@ public class ConformingDelaunayTriangulationBuilder
 		return constraintSegs;
 	}
 	
-	private static void createConstraintSegments(LineString line, List constraintSegs)
+	private static void createConstraintSegments(final LineString line, final List constraintSegs)
 	{
 		Coordinate[] coords = line.getCoordinates();
 		for (int i = 1; i < coords.length; i++) {
@@ -174,7 +174,7 @@ public class ConformingDelaunayTriangulationBuilder
 	 * @param geomFact the geometry factory to use to create the output
 	 * @return the edges of the triangulation
 	 */
-	public Geometry getEdges(GeometryFactory geomFact)
+	public Geometry getEdges(final GeometryFactory geomFact)
 	{
 		create();
 		return subdiv.getEdges(geomFact);
@@ -187,7 +187,7 @@ public class ConformingDelaunayTriangulationBuilder
 	 * @param geomFact the geometry factory to use to create the output
 	 * @return the faces of the triangulation
 	 */
-	public Geometry getTriangles(GeometryFactory geomFact)
+	public Geometry getTriangles(final GeometryFactory geomFact)
 	{
 		create();
 		return subdiv.getTriangles(geomFact);

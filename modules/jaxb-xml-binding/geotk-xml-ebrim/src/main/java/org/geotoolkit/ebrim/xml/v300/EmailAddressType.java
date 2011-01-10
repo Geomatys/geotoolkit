@@ -62,7 +62,7 @@ public class EmailAddressType {
     /**
      * Sets the value of the address property.
      */
-    public void setAddress(String value) {
+    public void setAddress(final String value) {
         this.address = value;
     }
 
@@ -76,7 +76,7 @@ public class EmailAddressType {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

@@ -69,7 +69,7 @@ public class ExtrapolationException extends Exception {
      *
      * @param xi valeur de <var>x</var> pour laquelle on voulait interpoler un <var>y</var>.
      */
-    public ExtrapolationException(double xi) {
+    public ExtrapolationException(final double xi) {
         super(Double.isNaN(xi) ? "Je ne peux pas interpoler à x=NaN." : "Le vecteur des X ne contient pas suffisament de données valides."); // TODO: Localize
         this.xi = xi;
     }
@@ -80,7 +80,7 @@ public class ExtrapolationException extends Exception {
      * @param raison Raison de l'extrapolation (-1, 0 ou +1).
      *        Voyez la description de {@link #raison}.
      */
-    public ExtrapolationException(int raison) {
+    public ExtrapolationException(final int raison) {
         super("La donnée demandée est en dehors de la plage de valeurs du vecteur des X."); // TODO: Localize
         this.raison = (byte) raison;
     }
@@ -92,7 +92,7 @@ public class ExtrapolationException extends Exception {
      *					Voyez la description de {@link #raison}.
      * @param index		index d'une donnée valide.
      */
-    public ExtrapolationException(int raison, int index) {
+    public ExtrapolationException(final int raison, final int index) {
         this(raison);
         this.index = index;
     }

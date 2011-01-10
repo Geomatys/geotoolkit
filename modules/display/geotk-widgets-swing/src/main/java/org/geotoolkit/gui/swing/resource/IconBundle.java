@@ -76,7 +76,7 @@ public final class IconBundle {
         return url;
     }
 
-    private static ImageIcon getIcon(URL url) {
+    private static ImageIcon getIcon(final URL url) {
         if (url == null) {
             return EMPTY_ICON;
         } else {
@@ -84,7 +84,7 @@ public final class IconBundle {
         }
     }
 
-    public static BufferedImage getBuffer(String key) throws IOException{
+    public static BufferedImage getBuffer(final String key) throws IOException{
        return ImageIO.read(getURL(getValue(key), IconBundle.class));
     }
 
@@ -94,11 +94,11 @@ public final class IconBundle {
      * @param key
      * @return ImageIcon
      */
-    public static ImageIcon getIcon(String key) {
+    public static ImageIcon getIcon(final String key) {
         return getIcon(key, IconBundle.class);
     }
 
-    public static ImageIcon getIcon(String key, Class base) {
+    public static ImageIcon getIcon(final String key, final Class base) {
 
         if (key == null) {
             return EMPTY_ICON;
@@ -123,7 +123,7 @@ public final class IconBundle {
         return icon;
     }
 
-    private static String getValue(String key) {
+    private static String getValue(final String key) {
 
         for(int i = BUNDLES.size()-1; i>=0; i--){
             ResourceBundle bundle = BUNDLES.get(i);
@@ -141,7 +141,7 @@ public final class IconBundle {
         return null;
     }
 
-    private static boolean existe(ResourceBundle bundle, String key) {
+    private static boolean existe(final ResourceBundle bundle, final String key) {
 
         Enumeration<String> keys = bundle.getKeys();
 
@@ -159,7 +159,7 @@ public final class IconBundle {
      * if icon is missing the defautltset icon will be used
      * @param bundle ResourceBundle
      */
-    public static void addBundle(ResourceBundle bundle) {
+    public static void addBundle(final ResourceBundle bundle) {
         BUNDLES.add(bundle);
     }
 

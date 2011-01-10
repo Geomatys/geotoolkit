@@ -30,7 +30,7 @@ final class KeyDirectoryEntry {
     final int valueNb;
     final int valueOffset;
 
-    public KeyDirectoryEntry(int valueKey, int valuelocation, int valueNb, int valueOffset) {
+    public KeyDirectoryEntry(final int valueKey, final int valuelocation, final int valueNb, final int valueOffset) {
         this.valueKey = valueKey;
         this.valuelocation = valuelocation;
         this.valueNb = valueNb;

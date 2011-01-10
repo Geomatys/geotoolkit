@@ -134,7 +134,7 @@ public final class MapBuilder {
      * @param scale : a multiplication factor to use on the coverage values
      * @return ElevationModel
      */
-    public static ElevationModel createElevationModel(final GridCoverageReader grid, Expression offset, Expression scale){
+    public static ElevationModel createElevationModel(final GridCoverageReader grid, final Expression offset, final Expression scale){
         return new DefaultElevationModel(grid, offset,scale);
     }
 
@@ -143,7 +143,7 @@ public final class MapBuilder {
 
         private final GridCoverage2D coverage;
 
-        public SimpleCoverageReader(GridCoverage2D coverage){
+        public SimpleCoverageReader(final GridCoverage2D coverage){
             this.coverage = coverage;
         }
 
@@ -153,17 +153,17 @@ public final class MapBuilder {
         }
 
         @Override
-        public GeneralGridGeometry getGridGeometry(int i) throws CoverageStoreException, CancellationException {
+        public GeneralGridGeometry getGridGeometry(final int i) throws CoverageStoreException, CancellationException {
             return (GeneralGridGeometry) coverage.getGridGeometry();
         }
 
         @Override
-        public List<GridSampleDimension> getSampleDimensions(int i) throws CoverageStoreException, CancellationException {
+        public List<GridSampleDimension> getSampleDimensions(final int i) throws CoverageStoreException, CancellationException {
             return Collections.singletonList(coverage.getSampleDimension(i));
         }
 
         @Override
-        public GridCoverage read(int i, GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
+        public GridCoverage read(final int i, final GridCoverageReadParam gcrp) throws CoverageStoreException, CancellationException {
             return coverage;
         }
 

@@ -81,7 +81,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
 
     }
 
-    public LegalConstraint(AbstractLegalConstraint doc) {
+    public LegalConstraint(final AbstractLegalConstraint doc) {
         if (doc != null) {
             this.actuate      = doc.getActuate();
             this.arcrole      = doc.getArcrole();
@@ -97,7 +97,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
         }
     }
     
-    public LegalConstraint(Rights rights) {
+    public LegalConstraint(final Rights rights) {
         this.rights = rights;
     }
 
@@ -111,7 +111,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
     /**
      * Sets the value of the rights property.
      */
-    public void setRights(Rights value) {
+    public void setRights(final Rights value) {
         this.rights = value;
     }
 
@@ -140,7 +140,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -154,7 +154,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -168,7 +168,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -182,7 +182,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
     /**
      * Sets the value of the href property.
     */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -196,7 +196,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -212,7 +212,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
      * Sets the value of the show property.
      * 
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -226,7 +226,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -240,7 +240,7 @@ public class LegalConstraint implements AbstractLegalConstraint {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

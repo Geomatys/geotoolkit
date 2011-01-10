@@ -51,7 +51,7 @@ class ShapeAttModel extends AbstractTableModel{
      * {@inheritDoc }
      */
     @Override
-    public String getColumnName(int columnIndex) {
+    public String getColumnName(final int columnIndex) {
         if(columnIndex == 0){
             return MessageBundle.getString("shp_name");
         }else{
@@ -63,7 +63,7 @@ class ShapeAttModel extends AbstractTableModel{
      * {@inheritDoc }
      */
     @Override
-    public Class<?> getColumnClass(int columnIndex) {
+    public Class<?> getColumnClass(final int columnIndex) {
         if(columnIndex == 0){
             return String.class;
         }else{
@@ -75,11 +75,11 @@ class ShapeAttModel extends AbstractTableModel{
      * {@inheritDoc }
      */
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(final int rowIndex, final int columnIndex) {
         return true;
     }
 
-    Field getDataAt(int rowIndex){
+    Field getDataAt(final int rowIndex){
         return datas.get(rowIndex);
     }
     
@@ -87,7 +87,7 @@ class ShapeAttModel extends AbstractTableModel{
         return datas.toArray(new Field[datas.size()]);
     }
     
-    int indexOf(Field data){
+    int indexOf(final Field data){
         return datas.indexOf(data);
     }
     
@@ -95,7 +95,7 @@ class ShapeAttModel extends AbstractTableModel{
      * {@inheritDoc }
      */
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
+    public Object getValueAt(final int rowIndex, final int columnIndex) {
         if(columnIndex == 0){
             return datas.get(rowIndex).getName();
         }else{
@@ -107,7 +107,7 @@ class ShapeAttModel extends AbstractTableModel{
      * {@inheritDoc }
      */
     @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
         if(columnIndex == 0){
             datas.get(rowIndex).setName((String) aValue);
         }else{
@@ -122,13 +122,13 @@ class ShapeAttModel extends AbstractTableModel{
         fireTableRowsInserted(datas.indexOf(newData), datas.indexOf(newData));
     }
     
-    void deleteAttribut(Field data){
+    void deleteAttribut(final Field data){
         final int index = datas.indexOf(data);
         datas.remove(data);
         fireTableRowsDeleted(index, index);
     }
 
-    void moveUp(Field data){
+    void moveUp(final Field data){
         final int index = datas.indexOf(data);
         if(index > 0){
             datas.remove(index);
@@ -139,7 +139,7 @@ class ShapeAttModel extends AbstractTableModel{
         
     }
     
-    void moveDown(Field data){
+    void moveDown(final Field data){
         final int index = datas.indexOf(data);
         if(index >= 0 && index < datas.size()-1 ){
             datas.remove(index);

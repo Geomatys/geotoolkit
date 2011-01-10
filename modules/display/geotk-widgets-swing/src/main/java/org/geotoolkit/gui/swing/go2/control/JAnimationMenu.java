@@ -120,11 +120,11 @@ public abstract class JAnimationMenu extends JMenu{
 
     }
 
-    public void setSpeedFactor(double d){
+    public void setSpeedFactor(final double d){
         factor.setValue(d);
     }
 
-    public void setRefreshInterval(double d){
+    public void setRefreshInterval(final double d){
         refresh.setValue(d);
     }
 
@@ -146,7 +146,7 @@ public abstract class JAnimationMenu extends JMenu{
         return null;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = new WeakReference<JMap2D>(map);
     }
 

@@ -122,7 +122,7 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
      *     {@link Integer }
      *     
      */
-    public void setRows(Integer value) {
+    public void setRows(final Integer value) {
         this.rows = value;
     }
 
@@ -146,7 +146,7 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
      *     {@link Integer }
      *     
      */
-    public void setColumns(Integer value) {
+    public void setColumns(final Integer value) {
         this.columns = value;
     }
 
@@ -204,7 +204,7 @@ public class AbstractGriddedSurfaceType extends AbstractParametricCurveSurfaceTy
          *     {@link DirectPositionListType }
          *     
          */
-        public void setPosList(DirectPositionListType value) {
+        public void setPosList(final DirectPositionListType value) {
             this.posList = value;
         }
 

@@ -52,7 +52,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
      * @param id
      * @return An attribute
      */
-    public static DefaultAttribute<Object,AttributeDescriptor,Identifier> create(Object content, AttributeType type, Identifier id){
+    public static DefaultAttribute<Object,AttributeDescriptor,Identifier> create(final Object content, final AttributeType type, final Identifier id){
         return new DefaultAttribute<Object,AttributeDescriptor,Identifier>(
                 content,
                 new DefaultAttributeDescriptor(type, type.getName(), 1, 1, true, null),
@@ -96,7 +96,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
      * Override of setValue to convert the newValue to specified type if need be.
      */
     @Override
-    public void setValue(Object newValue) throws IllegalArgumentException, IllegalStateException {
+    public void setValue(final Object newValue) throws IllegalArgumentException, IllegalStateException {
         super.setValue(newValue);
 
         //todo, do we perform a validation here ? seems to cost time when reusing features

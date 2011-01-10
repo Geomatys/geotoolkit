@@ -77,7 +77,7 @@ public class SupportedCRSsType {
     /**
      * Build a new light Supported Crs element with only the request/reponse CRS accepted.
      */
-    public SupportedCRSsType(List<CodeListType> requestResponseCRSs){
+    public SupportedCRSsType(final List<CodeListType> requestResponseCRSs){
         this.requestResponseCRSs = requestResponseCRSs;
     }
     
@@ -85,7 +85,7 @@ public class SupportedCRSsType {
      * Build a new light Supported Crs element with only the request/reponse CRS accepted.
      * all the element of the list of codeList are in the parameters.
      */
-    public SupportedCRSsType(CodeListType... requestResponseCRS){
+    public SupportedCRSsType(final CodeListType... requestResponseCRS){
         this.requestResponseCRSs = new ArrayList<CodeListType>();
         for (CodeListType element:requestResponseCRS) {
             requestResponseCRSs.add(element);
@@ -95,8 +95,8 @@ public class SupportedCRSsType {
     /**
      * Build a new full Supported Crs element.
      */
-    public SupportedCRSsType(List<CodeListType> requestResponseCRSs, List<CodeListType> requestCRSs,
-            List<CodeListType> responseCRSs, List<CodeListType> nativeCRSs){
+    public SupportedCRSsType(final List<CodeListType> requestResponseCRSs, final List<CodeListType> requestCRSs,
+            final List<CodeListType> responseCRSs, final List<CodeListType> nativeCRSs){
         this.nativeCRSs          = nativeCRSs;
         this.requestCRSs         = requestCRSs;
         this.requestResponseCRSs = requestResponseCRSs;
@@ -110,11 +110,11 @@ public class SupportedCRSsType {
         return requestResponseCRSs;
     }
 
-    public void setRequestResponseCRSs(List<CodeListType> requestResponseCRSs) {
+    public void setRequestResponseCRSs(final List<CodeListType> requestResponseCRSs) {
         this.requestResponseCRSs = requestResponseCRSs;
     }
 
-    public void addRequestResponseCRSs(CodeListType requestResponseCRSs) {
+    public void addRequestResponseCRSs(final CodeListType requestResponseCRSs) {
         if (this.requestResponseCRSs == null) {
             this.requestResponseCRSs = new ArrayList<CodeListType>();
         }
@@ -128,11 +128,11 @@ public class SupportedCRSsType {
         return requestCRSs;
     }
 
-    public void setRequestCRSs(List<CodeListType> requestCRSs) {
+    public void setRequestCRSs(final List<CodeListType> requestCRSs) {
         this.requestCRSs = requestCRSs;
     }
 
-    public void addRequestCRSs(CodeListType requestCRSs) {
+    public void addRequestCRSs(final CodeListType requestCRSs) {
         if (this.requestCRSs == null) {
             this.requestCRSs = new ArrayList<CodeListType>();
         }
@@ -147,11 +147,11 @@ public class SupportedCRSsType {
         return responseCRSs;
     }
 
-    public void setResponseCRSs(List<CodeListType> responseCRSs) {
+    public void setResponseCRSs(final List<CodeListType> responseCRSs) {
         this.responseCRSs = responseCRSs;
     }
 
-    public void addResponseCRSs(CodeListType responseCRSs) {
+    public void addResponseCRSs(final CodeListType responseCRSs) {
         if (this.responseCRSs == null) {
             this.responseCRSs = new ArrayList<CodeListType>();
         }
@@ -166,11 +166,11 @@ public class SupportedCRSsType {
         return nativeCRSs;
     }
 
-    public void setNativeCRSs(List<CodeListType> nativeCRSs) {
+    public void setNativeCRSs(final List<CodeListType> nativeCRSs) {
         this.nativeCRSs = nativeCRSs;
     }
 
-    public void addNativeCRSs(CodeListType nativeCRSs) {
+    public void addNativeCRSs(final CodeListType nativeCRSs) {
         if (this.nativeCRSs == null) {
             this.nativeCRSs = new ArrayList<CodeListType>();
         }

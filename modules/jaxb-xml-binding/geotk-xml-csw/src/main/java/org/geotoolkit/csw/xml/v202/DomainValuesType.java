@@ -98,7 +98,7 @@ public class DomainValuesType implements DomainValues {
      * One of parameterName or propertyName must be null.
      * 
      */
-    public DomainValuesType(String parameterName, String propertyName, ListOfValuesType listOfValues, QName type) {
+    public DomainValuesType(final String parameterName, final String propertyName, final ListOfValuesType listOfValues, final QName type) {
         
         if (propertyName != null && parameterName != null) {
             throw new IllegalArgumentException("One of propertyName or parameterName must be null");
@@ -116,7 +116,7 @@ public class DomainValuesType implements DomainValues {
      * One of parameterName or propertyName must be null.
      *
      */
-    public DomainValuesType(String parameterName, String propertyName, List<String> listOfValues, QName type) {
+    public DomainValuesType(final String parameterName, final String propertyName, final List<String> listOfValues, final QName type) {
 
         if (propertyName != null && parameterName != null) {
             throw new IllegalArgumentException("One of propertyName or parameterName must be null");

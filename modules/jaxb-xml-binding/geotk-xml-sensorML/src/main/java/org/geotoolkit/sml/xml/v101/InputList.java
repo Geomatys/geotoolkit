@@ -68,11 +68,11 @@ public class InputList implements AbstractInputList {
     public InputList() {
     }
 
-    public InputList(List<IoComponentPropertyType> input) {
+    public InputList(final List<IoComponentPropertyType> input) {
         this.input = input;
     }
 
-    public InputList(AbstractInputList inputList) {
+    public InputList(final AbstractInputList inputList) {
        if (inputList != null) {
             if (inputList.getInput() != null) {
                 this.input = new ArrayList<IoComponentPropertyType>();
@@ -114,7 +114,7 @@ public class InputList implements AbstractInputList {
      *     {@link String }
      *
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

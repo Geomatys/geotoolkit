@@ -46,7 +46,7 @@ public abstract class AbstractUpload extends AbstractRequest implements UploadRe
     protected String generator = "GeotoolKit.org";
     protected String version = "3";
 
-    public AbstractUpload(String serverURL, String subPath){
+    public AbstractUpload(final String serverURL, final String subPath){
         super(serverURL, subPath);
     }
 
@@ -56,7 +56,7 @@ public abstract class AbstractUpload extends AbstractRequest implements UploadRe
     }
 
     @Override
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 
@@ -66,12 +66,12 @@ public abstract class AbstractUpload extends AbstractRequest implements UploadRe
     }
 
     @Override
-    public void setGenerator(String generator) {
+    public void setGenerator(final String generator) {
         this.generator = generator;
     }
 
     @Override
-    public void setChangeSetID(int id){
+    public void setChangeSetID(final int id){
         this.changesetId = id;
     }
 

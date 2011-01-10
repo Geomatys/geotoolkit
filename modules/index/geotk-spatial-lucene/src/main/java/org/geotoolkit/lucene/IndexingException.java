@@ -37,7 +37,7 @@ public class IndexingException extends Exception {
      * @param message User understandable explanation of the cause of the 
      *                  exception.
      */
-    public IndexingException(String message) {
+    public IndexingException(final String message) {
         super(message);
     }
 
@@ -48,7 +48,7 @@ public class IndexingException extends Exception {
      *                  exception.
      * @param cause The preceding exception.
      */
-    public IndexingException(String message, Throwable cause) {
+    public IndexingException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

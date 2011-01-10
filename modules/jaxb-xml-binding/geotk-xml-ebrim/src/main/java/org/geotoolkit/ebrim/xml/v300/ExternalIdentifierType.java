@@ -69,7 +69,7 @@ public class ExternalIdentifierType extends RegistryObjectType {
     /**
      * Sets the value of the registryObject property.
      */
-    public void setRegistryObject(String value) {
+    public void setRegistryObject(final String value) {
         this.registryObject = value;
     }
 
@@ -83,7 +83,7 @@ public class ExternalIdentifierType extends RegistryObjectType {
     /**
      * Sets the value of the identificationScheme property.
      */
-    public void setIdentificationScheme(String value) {
+    public void setIdentificationScheme(final String value) {
         this.identificationScheme = value;
     }
 
@@ -97,7 +97,7 @@ public class ExternalIdentifierType extends RegistryObjectType {
     /**
      * Sets the value of the value property.
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 

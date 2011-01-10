@@ -87,7 +87,7 @@ public class InsertResultType {
     /**
      * Gets the value of the handleRef property.
      */
-    public void setHandleRef(String handleRef) {
+    public void setHandleRef(final String handleRef) {
         this.handleRef = handleRef;
     }
 

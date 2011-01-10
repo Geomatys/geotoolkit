@@ -101,7 +101,7 @@ public class SurfacePatchArrayPropertyType {
      *
      *
      */
-    public void setJbAbstractSurfacePatch(List<JAXBElement<? extends AbstractSurfacePatchType>> abstractSurfacePatch) {
+    public void setJbAbstractSurfacePatch(final List<JAXBElement<? extends AbstractSurfacePatchType>> abstractSurfacePatch) {
         this.abstractSurfacePatch = abstractSurfacePatch;
     }
 
@@ -148,7 +148,7 @@ public class SurfacePatchArrayPropertyType {
      *
      *
      */
-    public void setAbstractSurfacePatch(AbstractSurfacePatchType abstractSurfacePatch) {
+    public void setAbstractSurfacePatch(final AbstractSurfacePatchType abstractSurfacePatch) {
         if (abstractSurfacePatch != null) {
             if (this.abstractSurfacePatch == null) {
                 this.abstractSurfacePatch = new ArrayList<JAXBElement<? extends AbstractSurfacePatchType>>();
@@ -188,7 +188,7 @@ public class SurfacePatchArrayPropertyType {
      *
      *
      */
-    public void setAbstractSurfacePatch(List<? extends AbstractSurfacePatchType> abstractSurfacePatch) {
+    public void setAbstractSurfacePatch(final List<? extends AbstractSurfacePatchType> abstractSurfacePatch) {
         if (abstractSurfacePatch != null) {
             this.abstractSurfacePatch = new ArrayList<JAXBElement<? extends AbstractSurfacePatchType>>();
             final ObjectFactory factory = new ObjectFactory();

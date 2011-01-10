@@ -30,7 +30,7 @@ import javax.swing.border.AbstractBorder;
 public class RoundedBorder extends AbstractBorder {
 
     @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+    public void paintBorder(final Component c, final Graphics g, final int x, final int y, final int width, final int height) {
         g.setColor(c.getBackground());
         g.setClip(new Rectangle(x, y, width, height));
         g.fillRoundRect(x, y, width, height, 26, 26);
@@ -39,12 +39,12 @@ public class RoundedBorder extends AbstractBorder {
     }
     
     @Override
-    public Insets getBorderInsets(Component comp) {
+    public Insets getBorderInsets(final Component comp) {
         return new Insets(0, 4, 0, 4);
     }
 
     @Override
-    public Insets getBorderInsets(Component comp,Insets in) {
+    public Insets getBorderInsets(final Component comp,final Insets in) {
         in.set(0, 4, 0, 4);
         return in;
     }

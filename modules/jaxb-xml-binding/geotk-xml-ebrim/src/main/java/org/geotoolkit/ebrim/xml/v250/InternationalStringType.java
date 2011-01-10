@@ -69,7 +69,7 @@ public class InternationalStringType implements EbrimInternationalString {
      * 
      * @param localizedString
      */
-    public void setLocalizedString(List<LocalizedStringType> localizedString) {
+    public void setLocalizedString(final List<LocalizedStringType> localizedString) {
         this.localizedString = localizedString;
     }
     
@@ -78,7 +78,7 @@ public class InternationalStringType implements EbrimInternationalString {
      * 
      * @param localizedString
      */
-    public void setLocalizedString(LocalizedStringType localizedString) {
+    public void setLocalizedString(final LocalizedStringType localizedString) {
         if (this.localizedString == null) {
             this.localizedString = new ArrayList<LocalizedStringType>();
         }

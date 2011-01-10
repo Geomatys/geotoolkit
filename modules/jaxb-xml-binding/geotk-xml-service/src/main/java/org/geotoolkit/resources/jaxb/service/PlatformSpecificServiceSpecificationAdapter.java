@@ -84,7 +84,7 @@ public class PlatformSpecificServiceSpecificationAdapter extends XmlAdapter<Plat
      * @return A java object which represents the metadata value.
      */
     @Override
-    public PlatformSpecificServiceSpecification unmarshal(PlatformSpecificServiceSpecificationAdapter value) throws Exception {
+    public PlatformSpecificServiceSpecification unmarshal(final PlatformSpecificServiceSpecificationAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class PlatformSpecificServiceSpecificationAdapter extends XmlAdapter<Plat
      * @return The adapter for this PlatformSpecificServiceSpecification.
      */
     @Override
-    public PlatformSpecificServiceSpecificationAdapter marshal(PlatformSpecificServiceSpecification value) throws Exception {
+    public PlatformSpecificServiceSpecificationAdapter marshal(final PlatformSpecificServiceSpecification value) throws Exception {
         return new PlatformSpecificServiceSpecificationAdapter(value);
     }
 

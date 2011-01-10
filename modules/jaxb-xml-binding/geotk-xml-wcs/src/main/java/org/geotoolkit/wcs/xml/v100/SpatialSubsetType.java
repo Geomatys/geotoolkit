@@ -60,7 +60,7 @@ public class SpatialSubsetType extends SpatialDomainType {
     /**
      * Build a new Spatial subset.
      */
-    public SpatialSubsetType(EnvelopeEntry envelope, GridType grid){
+    public SpatialSubsetType(final EnvelopeEntry envelope, final GridType grid){
         super(envelope, grid);
     }
     

@@ -28,7 +28,7 @@ import com.vividsolutions.jts.geom.CoordinateSequence;
  */
 class ShapeCoordinateSequence3D extends ShapeCoordinateSequence2D {
 
-    ShapeCoordinateSequence3D(double[] coordinates){
+    ShapeCoordinateSequence3D(final double[] coordinates){
         super(coordinates,coordinates.length/3);
     }
 
@@ -38,13 +38,13 @@ class ShapeCoordinateSequence3D extends ShapeCoordinateSequence2D {
     }
 
     @Override
-    public Coordinate getCoordinate(int index) {
+    public Coordinate getCoordinate(final int index) {
         final int i = index*2;
         return new Coordinate(coordinates[i], coordinates[i+1], coordinates[size*2 + index]);
     }
 
     @Override
-    public void getCoordinate(int index, Coordinate coord) {
+    public void getCoordinate(final int index, final Coordinate coord) {
         final int i = index*2;
         coord.x = coordinates[i];
         coord.y = coordinates[i+1];
@@ -52,7 +52,7 @@ class ShapeCoordinateSequence3D extends ShapeCoordinateSequence2D {
     }
 
     @Override
-    public double getOrdinate(int index, int ordinate) {
+    public double getOrdinate(final int index, final int ordinate) {
         switch(ordinate){
             case 0: return coordinates[index*2];
             case 1: return coordinates[index*2 + 1];
@@ -63,7 +63,7 @@ class ShapeCoordinateSequence3D extends ShapeCoordinateSequence2D {
     }
 
     @Override
-    public void setOrdinate(int index, int ordinate, double value) {
+    public void setOrdinate(final int index, final int ordinate, final double value) {
         switch(ordinate){
             case 0: coordinates[index*2] = value; break;
             case 1: coordinates[index*2 + 1] = value; break;

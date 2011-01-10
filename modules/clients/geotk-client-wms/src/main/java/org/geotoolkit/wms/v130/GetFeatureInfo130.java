@@ -41,7 +41,7 @@ public class GetFeatureInfo130 extends AbstractGetFeatureInfo {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetFeatureInfo130(String serverURL){
+    public GetFeatureInfo130(final String serverURL){
         super(serverURL,"1.3.0");
     }
 

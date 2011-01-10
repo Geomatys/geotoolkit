@@ -85,7 +85,7 @@ public class J2DScaleBarUtilities {
                               final CoordinateReferenceSystem displayCRS,
                               final Point2D geoPosition,
                               final Graphics2D g2d,
-                              final int x, int y,
+                              final int x, final int y,
                               final ScaleBarTemplate template) throws PortrayalException{
 
         final Dimension estimation = estimate(g2d, template, false);
@@ -282,7 +282,7 @@ public class J2DScaleBarUtilities {
 
     }
 
-    public static Dimension estimate(Graphics2D g, ScaleBarTemplate template, boolean considerBackground){
+    public static Dimension estimate(final Graphics2D g, final ScaleBarTemplate template, final boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
 
         dim.width = template.getSize().width;

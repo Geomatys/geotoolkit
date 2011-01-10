@@ -33,7 +33,7 @@ class DefaultSLDLibrary implements SLDLibrary{
     private StyledLayerDescriptor sld = null;
     
     
-    DefaultSLDLibrary(OnlineResource online){
+    DefaultSLDLibrary(final OnlineResource online){
         if(online == null){
             throw new NullPointerException("Online resource can not be null");
         }
@@ -62,7 +62,7 @@ class DefaultSLDLibrary implements SLDLibrary{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -70,7 +70,7 @@ class DefaultSLDLibrary implements SLDLibrary{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

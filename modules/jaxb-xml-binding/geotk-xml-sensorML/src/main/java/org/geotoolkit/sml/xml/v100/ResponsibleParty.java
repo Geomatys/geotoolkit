@@ -75,18 +75,18 @@ public class ResponsibleParty implements AbstractResponsibleParty {
 
     }
 
-    public ResponsibleParty(String organizationName) {
+    public ResponsibleParty(final String organizationName) {
         this.organizationName = organizationName;
     }
 
-    public ResponsibleParty(String individualName, String organizationName, String positionName, ContactInfo contactInfo) {
+    public ResponsibleParty(final String individualName, final String organizationName, final String positionName, final ContactInfo contactInfo) {
         this.organizationName = organizationName;
         this.contactInfo      = contactInfo;
         this.individualName   = individualName;
         this.positionName     = positionName;
     }
 
-    public ResponsibleParty(AbstractResponsibleParty res) {
+    public ResponsibleParty(final AbstractResponsibleParty res) {
         if (res != null) {
             this.id               = res.getId();
             this.individualName   = res.getIndividualName();
@@ -109,7 +109,7 @@ public class ResponsibleParty implements AbstractResponsibleParty {
      * Sets the value of the individualName property.
      *     
      */
-    public void setIndividualName(String value) {
+    public void setIndividualName(final String value) {
         this.individualName = value;
     }
 
@@ -123,7 +123,7 @@ public class ResponsibleParty implements AbstractResponsibleParty {
     /**
      * Sets the value of the organizationName property.
      */
-    public void setOrganizationName(String value) {
+    public void setOrganizationName(final String value) {
         this.organizationName = value;
     }
 
@@ -137,7 +137,7 @@ public class ResponsibleParty implements AbstractResponsibleParty {
     /**
      * Sets the value of the positionName property.
      */
-    public void setPositionName(String value) {
+    public void setPositionName(final String value) {
         this.positionName = value;
     }
 
@@ -151,7 +151,7 @@ public class ResponsibleParty implements AbstractResponsibleParty {
     /**
      * Sets the value of the contactInfo property.
      */
-    public void setContactInfo(ContactInfo value) {
+    public void setContactInfo(final ContactInfo value) {
         this.contactInfo = value;
     }
 
@@ -165,7 +165,7 @@ public class ResponsibleParty implements AbstractResponsibleParty {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

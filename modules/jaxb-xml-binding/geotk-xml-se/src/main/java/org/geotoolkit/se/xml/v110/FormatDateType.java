@@ -78,7 +78,7 @@ public class FormatDateType
      *     {@link ParameterValueType }
      *     
      */
-    public void setDateValue(ParameterValueType value) {
+    public void setDateValue(final ParameterValueType value) {
         this.dateValue = value;
     }
 
@@ -102,7 +102,7 @@ public class FormatDateType
      *     {@link String }
      *     
      */
-    public void setPattern(String value) {
+    public void setPattern(final String value) {
         this.pattern = value;
     }
 

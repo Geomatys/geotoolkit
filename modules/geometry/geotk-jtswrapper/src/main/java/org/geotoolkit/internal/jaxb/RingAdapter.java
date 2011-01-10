@@ -20,12 +20,12 @@ public class RingAdapter extends XmlAdapter<RingAdapter, Ring> {
         
     }
     
-    public RingAdapter(JTSRing ring) {
+    public RingAdapter(final JTSRing ring) {
         this.ring = new LinearRingPosListType(ring);
     }
 
     @Override
-    public Ring unmarshal(RingAdapter v) throws Exception {
+    public Ring unmarshal(final RingAdapter v) throws Exception {
         if (v != null && v.ring != null) {
             return v.ring.getJTSRing();
         }
@@ -33,7 +33,7 @@ public class RingAdapter extends XmlAdapter<RingAdapter, Ring> {
     }
 
     @Override
-    public RingAdapter marshal(Ring v) throws Exception {
+    public RingAdapter marshal(final Ring v) throws Exception {
         if (v instanceof JTSRing)
             return new RingAdapter((JTSRing) v);
         return null;

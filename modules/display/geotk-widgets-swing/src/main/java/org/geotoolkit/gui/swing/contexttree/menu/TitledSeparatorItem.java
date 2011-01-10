@@ -49,7 +49,7 @@ public abstract class TitledSeparatorItem extends JXTitledSeparator implements T
      * Creates a new instance of separator
      * @param title
      */
-    public TitledSeparatorItem(String title) {
+    public TitledSeparatorItem(final String title) {
         super(title);
     }
     
@@ -58,7 +58,7 @@ public abstract class TitledSeparatorItem extends JXTitledSeparator implements T
      * @param title
      * @param position of the texte, SwingConstants
      */
-    public TitledSeparatorItem(String title,int position) {
+    public TitledSeparatorItem(final String title,final int position) {
         super(title,position);
     }
     
@@ -68,17 +68,17 @@ public abstract class TitledSeparatorItem extends JXTitledSeparator implements T
      * @param position of the texte, SwingConstants
      * @param img icon
      */
-    public TitledSeparatorItem(String title,int position,Icon img) {
+    public TitledSeparatorItem(final String title,final int position,final Icon img) {
         super(title,position,img);
     }
     
     @Override
-    public Component getComponent(TreePath[] selection) {
+    public Component getComponent(final TreePath[] selection) {
         return this;
     }
     
     @Override
-    public boolean isValid(TreePath[] selection){
+    public boolean isValid(final TreePath[] selection){
         return true;
     }
     

@@ -48,7 +48,7 @@ public class ZoomAllAction extends AbstractAction {
         this(false);
     }
 
-    public ZoomAllAction(boolean big) {
+    public ZoomAllAction(final boolean big) {
         super("",(big)? ICON_ZOOM_ALL_24 : ICON_ZOOM_ALL_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_all"));
     }
@@ -56,7 +56,7 @@ public class ZoomAllAction extends AbstractAction {
     private JMap2D map = null;
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null) {
             Envelope rect = map.getCanvas().getContainer().getGraphicsEnvelope();
             try {
@@ -75,7 +75,7 @@ public class ZoomAllAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

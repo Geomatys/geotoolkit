@@ -73,7 +73,7 @@ public class CouplingType  extends CodeList<CouplingType> {
      * Returns the CouplingType that matches the given string, or returns a
      * new one if none match it.
      */
-    public static CouplingType valueOf(String code) {
+    public static CouplingType valueOf(final String code) {
         return valueOf(CouplingType.class, code);
     }
     

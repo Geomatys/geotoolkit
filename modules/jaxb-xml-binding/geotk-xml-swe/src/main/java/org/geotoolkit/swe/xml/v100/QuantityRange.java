@@ -85,7 +85,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
 
     }
 
-    public QuantityRange(AbstractQuantityRange q) {
+    public QuantityRange(final AbstractQuantityRange q) {
         super(q);
         if (q != null) {
             this.axisID         = q.getAxisID();
@@ -106,7 +106,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
         }
     }
     
-    public QuantityRange(UomPropertyType uom, List<Double> value) {
+    public QuantityRange(final UomPropertyType uom, final List<Double> value) {
         this.uom   = uom;
         this.value = value;
     }
@@ -122,7 +122,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
     /**
      * Sets the value of the uom property.
      */
-    public void setUom(UomPropertyType value) {
+    public void setUom(final UomPropertyType value) {
         this.uom = value;
     }
 
@@ -136,7 +136,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
     /**
      * Sets the value of the constraint property.
      */
-    public void setConstraint(AllowedValuesPropertyType value) {
+    public void setConstraint(final AllowedValuesPropertyType value) {
         this.constraint = value;
     }
 
@@ -152,7 +152,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
         return this.quality;
     }
 
-    public void setQuality(QualityPropertyType quality) {
+    public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
                 this.quality = new ArrayList<QualityPropertyType>();
@@ -161,7 +161,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
         }
     }
 
-    public void setQuality(List<QualityPropertyType> quality) {
+    public void setQuality(final List<QualityPropertyType> quality) {
         this.quality = quality;
     }
     
@@ -181,7 +181,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
      * Gets the value of the value property.
      *
      */
-    public void setValue(List<Double> value) {
+    public void setValue(final List<Double> value) {
         this.value = value;
     }
 
@@ -189,7 +189,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
      * Gets the value of the value property.
      *
      */
-    public void setValue(Double value) {
+    public void setValue(final Double value) {
         if (this.value == null) {
             this.value = new ArrayList<Double>();
         }
@@ -207,7 +207,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
      * Sets the value of the referenceFrame property.
      * 
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -222,7 +222,7 @@ public class QuantityRange extends AbstractDataComponentType implements Abstract
     /**
      * Sets the value of the axisID property.
      */
-    public void setAxisID(String value) {
+    public void setAxisID(final String value) {
         this.axisID = value;
     }
 

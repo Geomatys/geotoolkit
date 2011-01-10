@@ -73,7 +73,7 @@ public class LinePlacement {
      *     {@link ParameterValueType }
      *     
      */
-    public void setPerpendicularOffset(ParameterValueType value) {
+    public void setPerpendicularOffset(final ParameterValueType value) {
         this.perpendicularOffset = value;
     }
 

@@ -205,7 +205,7 @@ public class PostOffice {
      *     {@link PostOffice.PostOfficeNumber }
      *     
      */
-    public void setPostOfficeNumber(PostOffice.PostOfficeNumber value) {
+    public void setPostOfficeNumber(final PostOffice.PostOfficeNumber value) {
         this.postOfficeNumber = value;
     }
 
@@ -229,7 +229,7 @@ public class PostOffice {
      *     {@link PostalRouteType }
      *     
      */
-    public void setPostalRoute(PostalRouteType value) {
+    public void setPostalRoute(final PostalRouteType value) {
         this.postalRoute = value;
     }
 
@@ -253,7 +253,7 @@ public class PostOffice {
      *     {@link PostBox }
      *     
      */
-    public void setPostBox(PostBox value) {
+    public void setPostBox(final PostBox value) {
         this.postBox = value;
     }
 
@@ -277,7 +277,7 @@ public class PostOffice {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -330,7 +330,7 @@ public class PostOffice {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -354,7 +354,7 @@ public class PostOffice {
      *     {@link String }
      *     
      */
-    public void setIndicator(String value) {
+    public void setIndicator(final String value) {
         this.indicator = value;
     }
 
@@ -432,7 +432,7 @@ public class PostOffice {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -456,7 +456,7 @@ public class PostOffice {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -480,7 +480,7 @@ public class PostOffice {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -571,7 +571,7 @@ public class PostOffice {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -595,7 +595,7 @@ public class PostOffice {
          *     {@link String }
          *     
          */
-        public void setIndicator(String value) {
+        public void setIndicator(final String value) {
             this.indicator = value;
         }
 
@@ -619,7 +619,7 @@ public class PostOffice {
          *     {@link String }
          *     
          */
-        public void setIndicatorOccurrence(String value) {
+        public void setIndicatorOccurrence(final String value) {
             this.indicatorOccurrence = value;
         }
 
@@ -643,7 +643,7 @@ public class PostOffice {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 

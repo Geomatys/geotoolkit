@@ -113,7 +113,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         return style;
     }
 
-    public void setStyleElement(T style) {
+    public void setStyleElement(final T style) {
 
         this.style = style;
 
@@ -129,7 +129,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     private StyleElementTransferable dd = null;
 
     @Override
-    public void dragGestureRecognized(DragGestureEvent e) {
+    public void dragGestureRecognized(final DragGestureEvent e) {
         final TreePath path = getSelectionModel().getSelectionPath();
         final DefaultMutableTreeNode dragNode = (DefaultMutableTreeNode) path.getLastPathComponent();
 
@@ -145,44 +145,44 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
     //--------------------drag events-------------------------------------------
     @Override
-    public void dragEnter(DragSourceDragEvent dsde) {
+    public void dragEnter(final DragSourceDragEvent dsde) {
     }
 
     @Override
-    public void dragOver(DragSourceDragEvent dsde) {
+    public void dragOver(final DragSourceDragEvent dsde) {
     }
 
     @Override
-    public void dropActionChanged(DragSourceDragEvent dsde) {
+    public void dropActionChanged(final DragSourceDragEvent dsde) {
     }
 
     @Override
-    public void dragExit(DragSourceEvent dse) {
+    public void dragExit(final DragSourceEvent dse) {
     }
 
     @Override
-    public void dragDropEnd(DragSourceDropEvent dsde) {
+    public void dragDropEnd(final DragSourceDropEvent dsde) {
     }
 
     //--------------------drop events-------------------------------------------
     @Override
-    public void dragEnter(DropTargetDragEvent dtde) {
+    public void dragEnter(final DropTargetDragEvent dtde) {
     }
 
     @Override
-    public void dragOver(DropTargetDragEvent dtde) {
+    public void dragOver(final DropTargetDragEvent dtde) {
     }
 
     @Override
-    public void dropActionChanged(DropTargetDragEvent dtde) {
+    public void dropActionChanged(final DropTargetDragEvent dtde) {
     }
 
     @Override
-    public void dragExit(DropTargetEvent dte) {
+    public void dragExit(final DropTargetEvent dte) {
     }
 
     @Override
-    public void drop(DropTargetDropEvent dtde) {
+    public void drop(final DropTargetDropEvent dtde) {
         final Point loc = dtde.getLocation();
         final TreePath targetPath = getPathForLocation(loc.x, loc.y);
 
@@ -268,8 +268,8 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class StyleCellRenderer extends DefaultTreeCellRenderer {
         
         @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object value, boolean selected,
-                boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        public Component getTreeCellRendererComponent(final JTree tree, final Object value, final boolean selected,
+                final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
             final Component comp = super.getTreeCellRendererComponent(tree, value, selected, expanded, leaf, row, hasFocus);
 
             if (comp instanceof JLabel) {
@@ -306,13 +306,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
 
         private final JTree tree;
 
-        StylePopup(JTree tree) {
+        StylePopup(final JTree tree) {
             super();
             this.tree = tree;
         }
 
         @Override
-        public void setVisible(boolean visible) {
+        public void setVisible(final boolean visible) {
             final TreePath path = tree.getSelectionModel().getSelectionPath();
 
             if (path != null && visible) {
@@ -366,13 +366,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class CollapseAction extends AbstractAction{
         private final DefaultMutableTreeNode parentNode;
 
-        CollapseAction(DefaultMutableTreeNode node) {
+        CollapseAction(final DefaultMutableTreeNode node) {
             super("Collapse sub nodes.");
             this.parentNode = node;
         }
 
         @Override
-        public void actionPerformed(ActionEvent ae) {
+        public void actionPerformed(final ActionEvent ae) {
             for(int i=0,n=parentNode.getChildCount(); i<n; i++){
                 collapsePath(new TreePath(treemodel.getPathToRoot(parentNode.getChildAt(i))));
             }
@@ -382,13 +382,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class ExpandAction extends AbstractAction{
         private final DefaultMutableTreeNode parentNode;
 
-        ExpandAction(DefaultMutableTreeNode node) {
+        ExpandAction(final DefaultMutableTreeNode node) {
             super("Expand sub nodes.");
             this.parentNode = node;
         }
 
         @Override
-        public void actionPerformed(ActionEvent ae) {
+        public void actionPerformed(final ActionEvent ae) {
             for(int i=0,n=parentNode.getChildCount(); i<n; i++){
                 final TreeNode child = parentNode.getChildAt(i);
                 for(int k=0,l=child.getChildCount(); k<l; k++){
@@ -401,13 +401,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class ChangeRuleScaleAction extends AbstractAction{
         private final MutableFeatureTypeStyle fts;
 
-        ChangeRuleScaleAction(MutableFeatureTypeStyle cdt) {
+        ChangeRuleScaleAction(final MutableFeatureTypeStyle cdt) {
             super("Change rules valid scale.");
             this.fts = cdt;
         }
 
         @Override
-        public void actionPerformed(ActionEvent ae) {
+        public void actionPerformed(final ActionEvent ae) {
             final JPanel pan = new JPanel();
             pan.add(new JLabel(" Min scale : "));
             final JSpinner spiMin = new JSpinner(new SpinnerNumberModel());
@@ -438,13 +438,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class NewFTSAction extends AbstractAction{
         private final MutableStyle style;
 
-        NewFTSAction(MutableStyle cdt) {
+        NewFTSAction(final MutableStyle cdt) {
             super("new FTS",ICON_NEW);
             this.style = cdt;
         }
 
         @Override
-        public void actionPerformed(ActionEvent ae) {
+        public void actionPerformed(final ActionEvent ae) {
             style.featureTypeStyles().add(SF.featureTypeStyle(RandomStyleFactory.createPointSymbolizer()));
         }
     }
@@ -452,13 +452,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class NewRuleAction extends AbstractAction{
         private final MutableFeatureTypeStyle fts;
 
-        NewRuleAction(MutableFeatureTypeStyle cdt) {
+        NewRuleAction(final MutableFeatureTypeStyle cdt) {
             super("new Rule",ICON_NEW);
             this.fts = cdt;
         }
 
         @Override
-        public void actionPerformed(ActionEvent ae) {
+        public void actionPerformed(final ActionEvent ae) {
             fts.rules().add(SF.rule(RandomStyleFactory.createPointSymbolizer()));
         }
     }
@@ -466,13 +466,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class NewPointSymbolizerAction extends AbstractAction {
         private final MutableRule rule;
 
-        NewPointSymbolizerAction(MutableRule cdt) {
+        NewPointSymbolizerAction(final MutableRule cdt) {
             super("Point Symbolizer",ICON_NEW);
             this.rule = cdt;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             rule.symbolizers().add(RandomStyleFactory.createPointSymbolizer());
         }
     }
@@ -480,13 +480,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class NewLineSymbolizerAction extends AbstractAction {
         private final MutableRule rule;
 
-        NewLineSymbolizerAction(MutableRule cdt) {
+        NewLineSymbolizerAction(final MutableRule cdt) {
             super("Line Symbolizer", ICON_NEW);
             this.rule = cdt;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             rule.symbolizers().add(RandomStyleFactory.createLineSymbolizer());
         }
     }
@@ -494,13 +494,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class NewPolygonSymbolizerAction extends AbstractAction {
         private final MutableRule rule;
 
-        NewPolygonSymbolizerAction(MutableRule cdt) {
+        NewPolygonSymbolizerAction(final MutableRule cdt) {
             super("Polygon Symbolizer",ICON_NEW);
             this.rule = cdt;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             rule.symbolizers().add(RandomStyleFactory.createPolygonSymbolizer());
         }
     }
@@ -508,13 +508,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class NewTextSymbolizerAction extends AbstractAction {
         private final MutableRule rule;
 
-        NewTextSymbolizerAction(MutableRule cdt) {
+        NewTextSymbolizerAction(final MutableRule cdt) {
             super("Text Symbolizer", ICON_NEW);
             this.rule = cdt;
         }
         
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             rule.symbolizers().add(SF.textSymbolizer());
         }
     }
@@ -522,13 +522,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class NewRasterSymbolizerAction extends AbstractAction {
         private final MutableRule rule;
 
-        NewRasterSymbolizerAction(MutableRule cdt) {
+        NewRasterSymbolizerAction(final MutableRule cdt) {
             super("Raster Symbolizer", ICON_NEW);
             this.rule = cdt;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             rule.symbolizers().add(SF.rasterSymbolizer());
         }
     }
@@ -536,13 +536,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class DuplicateAction extends AbstractAction {
         private final DefaultMutableTreeNode parentNode;
 
-        DuplicateAction(DefaultMutableTreeNode node) {
+        DuplicateAction(final DefaultMutableTreeNode node) {
             super("Duplicate", ICON_DUPLICATE);
             this.parentNode = node;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             treemodel.duplicateNode(parentNode);
         }
     }
@@ -550,13 +550,13 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
     class DeleteAction extends AbstractAction {
         private final DefaultMutableTreeNode parentNode;
 
-        DeleteAction(DefaultMutableTreeNode node) {
+        DeleteAction(final DefaultMutableTreeNode node) {
             super("Delete",ICON_DELETE);
             this.parentNode = node;
         }
 
         @Override
-        public void actionPerformed(ActionEvent e) {
+        public void actionPerformed(final ActionEvent e) {
             treemodel.deleteNode(parentNode);
         }
     }
@@ -566,7 +566,7 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         private final Object styleElement;
         private final Object parent;
 
-        public StyleElementTransferable(Object styleElement, Object parent){
+        public StyleElementTransferable(final Object styleElement, final Object parent){
             this.styleElement = styleElement;
             this.parent = parent;
         }
@@ -577,12 +577,12 @@ public class JStyleTree<T> extends JXTree implements DragGestureListener, DragSo
         }
 
         @Override
-        public boolean isDataFlavorSupported(DataFlavor df) {
+        public boolean isDataFlavorSupported(final DataFlavor df) {
             return true;
         }
 
         @Override
-        public Object getTransferData(DataFlavor df) throws UnsupportedFlavorException, IOException {
+        public Object getTransferData(final DataFlavor df) throws UnsupportedFlavorException, IOException {
             return styleElement;
         }
 

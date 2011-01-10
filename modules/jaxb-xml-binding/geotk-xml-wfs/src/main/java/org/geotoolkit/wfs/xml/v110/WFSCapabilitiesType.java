@@ -88,12 +88,12 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
 
     }
 
-    public WFSCapabilitiesType(String version) {
+    public WFSCapabilitiesType(final String version) {
         super(version);
     }
 
-    public WFSCapabilitiesType(String version, ServiceIdentification si, ServiceProvider sp, OperationsMetadata om, 
-            FeatureTypeListType ft, FilterCapabilities fc) {
+    public WFSCapabilitiesType(final String version, final ServiceIdentification si, final ServiceProvider sp, final OperationsMetadata om, 
+            final FeatureTypeListType ft, final FilterCapabilities fc) {
         super(si, sp, om, version, null);
         this.featureTypeList = ft;
         this.filterCapabilities = fc;
@@ -119,7 +119,7 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
      *     {@link FeatureTypeListType }
      *     
      */
-    public void setFeatureTypeList(FeatureTypeListType value) {
+    public void setFeatureTypeList(final FeatureTypeListType value) {
         this.featureTypeList = value;
     }
 
@@ -143,7 +143,7 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
      *     {@link GMLObjectTypeListType }
      *     
      */
-    public void setServesGMLObjectTypeList(GMLObjectTypeListType value) {
+    public void setServesGMLObjectTypeList(final GMLObjectTypeListType value) {
         this.servesGMLObjectTypeList = value;
     }
 
@@ -167,7 +167,7 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
      *     {@link GMLObjectTypeListType }
      *     
      */
-    public void setSupportsGMLObjectTypeList(GMLObjectTypeListType value) {
+    public void setSupportsGMLObjectTypeList(final GMLObjectTypeListType value) {
         this.supportsGMLObjectTypeList = value;
     }
 
@@ -191,7 +191,7 @@ public class WFSCapabilitiesType extends CapabilitiesBaseType implements WFSResp
      *     {@link FilterCapabilities }
      *     
      */
-    public void setFilterCapabilities(FilterCapabilities value) {
+    public void setFilterCapabilities(final FilterCapabilities value) {
         this.filterCapabilities = value;
     }
 

@@ -54,7 +54,7 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
         
     }
     
-    public OperationChainMetadataImpl(String name, String description, List<OperationMetadata> operation) {
+    public OperationChainMetadataImpl(final String name, final String description, final List<OperationMetadata> operation) {
         this.name        = name;
         this.description = description;
         this.operation   = operation;
@@ -73,7 +73,7 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
      * Sets the value of the name property.
      * 
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -89,7 +89,7 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
      * Sets the value of the description property.
      * 
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -104,11 +104,11 @@ public class OperationChainMetadataImpl implements OperationChainMetadata {
         return this.operation;
     }
     
-    public void setOperation(Collection<OperationMetadata> operation) {
+    public void setOperation(final Collection<OperationMetadata> operation) {
          this.operation = operation;
     }
     
-    public void setOperation(OperationMetadata operation) {
+    public void setOperation(final OperationMetadata operation) {
         if (this.operation == null) {
             this.operation = new ArrayList<OperationMetadata>();
         }

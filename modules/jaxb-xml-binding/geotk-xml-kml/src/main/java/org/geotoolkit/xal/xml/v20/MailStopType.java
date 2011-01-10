@@ -146,7 +146,7 @@ public class MailStopType {
      *     {@link MailStopType.MailStopName }
      *     
      */
-    public void setMailStopName(MailStopType.MailStopName value) {
+    public void setMailStopName(final MailStopType.MailStopName value) {
         this.mailStopName = value;
     }
 
@@ -170,7 +170,7 @@ public class MailStopType {
      *     {@link MailStopType.MailStopNumber }
      *     
      */
-    public void setMailStopNumber(MailStopType.MailStopNumber value) {
+    public void setMailStopNumber(final MailStopType.MailStopNumber value) {
         this.mailStopNumber = value;
     }
 
@@ -223,7 +223,7 @@ public class MailStopType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -301,7 +301,7 @@ public class MailStopType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -325,7 +325,7 @@ public class MailStopType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -349,7 +349,7 @@ public class MailStopType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -429,7 +429,7 @@ public class MailStopType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -453,7 +453,7 @@ public class MailStopType {
          *     {@link String }
          *     
          */
-        public void setNameNumberSeparator(String value) {
+        public void setNameNumberSeparator(final String value) {
             this.nameNumberSeparator = value;
         }
 
@@ -477,7 +477,7 @@ public class MailStopType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 

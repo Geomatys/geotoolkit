@@ -55,7 +55,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://inspira.europa.eu/networkservice/view/1.0", name = "ExtendedCapabilities" , substitutionHeadNamespace = "http://www.opengis.net/wms", substitutionHeadName = "_ExtendedCapabilities")
-    public JAXBElement<ExtendedCapabilitiesType> createExtendedCapabilities(ExtendedCapabilitiesType value) {
+    public JAXBElement<ExtendedCapabilitiesType> createExtendedCapabilities(final ExtendedCapabilitiesType value) {
         return new JAXBElement<ExtendedCapabilitiesType>(_ExtendedCapabilities_QNAME, ExtendedCapabilitiesType.class, null, value);
     }
 

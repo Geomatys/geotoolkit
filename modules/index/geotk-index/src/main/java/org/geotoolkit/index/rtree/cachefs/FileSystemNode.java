@@ -46,7 +46,7 @@ public class FileSystemNode extends Node {
     private long parentOffset = -1;
     private long offset = -1;
 
-    private FileSystemNode(Parameters params, boolean getFromFree) {
+    private FileSystemNode(final Parameters params, final boolean getFromFree) {
         super(params.getMaxNodeEntries());
 
         this.params = params;
@@ -77,7 +77,7 @@ public class FileSystemNode extends Node {
      * 
      * @param params
      */
-    public FileSystemNode(Parameters params) {
+    public FileSystemNode(final Parameters params) {
         this(params, true);
     }
 
@@ -93,7 +93,7 @@ public class FileSystemNode extends Node {
      * @throws TreeException
      *                 DOCUMENT ME!
      */
-    public FileSystemNode(Parameters params, long offset) throws IOException,
+    public FileSystemNode(final Parameters params, final long offset) throws IOException,
             TreeException {
         this(params, false);
         this.offset = offset;
@@ -159,7 +159,7 @@ public class FileSystemNode extends Node {
      * 
      * @throws TreeException
      */
-    private Data loadData(ByteBuffer buf, DataDefinition def)
+    private Data loadData(final ByteBuffer buf, final DataDefinition def)
             throws TreeException {
         Data data = new DefaultData(def);
 
@@ -205,7 +205,7 @@ public class FileSystemNode extends Node {
      * @param dataDef
      * 
      */
-    private ByteBuffer getEmptyByteBuffer(DataDefinition dataDef) {
+    private ByteBuffer getEmptyByteBuffer(final DataDefinition dataDef) {
         int bufLen = dataDef.getEncodedLen() * this.params.getMaxNodeEntries();
 
         return ByteBuffer.allocate(bufLen);
@@ -429,7 +429,7 @@ public class FileSystemNode extends Node {
      * 
      * @throws IOException
      */
-    private void storeKeyData(ByteBuffer buf, Data data) throws IOException {
+    private void storeKeyData(final ByteBuffer buf, final Data data) throws IOException {
         Object val = null;
         Field field = null;
 
@@ -494,7 +494,7 @@ public class FileSystemNode extends Node {
     /**
      * {@inheritDoc }
      */
-    protected Entry getEntry(Node node) {
+    protected Entry getEntry(final Node node) {
         FileSystemNode fn = (FileSystemNode) node;
 
         Entry ret = null;
@@ -517,7 +517,7 @@ public class FileSystemNode extends Node {
      * {@inheritDoc }
      */
     @Override
-    public void setParent(Node node) {
+    public void setParent(final Node node) {
         if (node == null) {
             this.parentOffset = -1;
         } else {
@@ -529,7 +529,7 @@ public class FileSystemNode extends Node {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

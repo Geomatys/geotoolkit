@@ -79,7 +79,7 @@ public class GeometryTestParser {
      * @param inputSource
      * @return
      */
-    public GeometryTestContainer parseTestDefinition(InputSource inputSource) {
+    public GeometryTestContainer parseTestDefinition(final InputSource inputSource) {
         Document doc = null;
         try {
             doc = documentBuilder.parse(inputSource);
@@ -112,7 +112,7 @@ public class GeometryTestParser {
      * @return
      * @throws ParseException
      */
-    public GeometryTestContainer processRootNode(Node node) throws ParseException {
+    public GeometryTestContainer processRootNode(final Node node) throws ParseException {
         if (!node.getNodeName().equalsIgnoreCase("run")) {
             throw new ParseException("Expected run tag, found " +
                     node.getNodeName(), 0);
@@ -148,7 +148,7 @@ public class GeometryTestParser {
      * @param testCaseNode
      * @return
      */
-    private GeometryTestCase readTestCase(Node testCaseNode) throws ParseException {
+    private GeometryTestCase readTestCase(final Node testCaseNode) throws ParseException {
         Node child = testCaseNode.getFirstChild();
         GeometryTestOperation operation = null;
 
@@ -183,7 +183,7 @@ public class GeometryTestParser {
      * @param testNode a test node from the xml file
      * @return
      */
-    private GeometryTestOperation loadTestOperation(Node testNode) {
+    private GeometryTestOperation loadTestOperation(final Node testNode) {
 
         Node node = getNamedChild(testNode, "op");
         if (node == null) {
@@ -214,7 +214,7 @@ public class GeometryTestParser {
     }
 
 
-    private Geometry loadTestGeometry(Node node) {
+    private Geometry loadTestGeometry(final Node node) {
         String wktString = getNodeText(node);
         Geometry geom = null;
         try {
@@ -227,12 +227,12 @@ public class GeometryTestParser {
     }
 
 
-    private String getPrecisionModel(Node child) {
+    private String getPrecisionModel(final Node child) {
         return getNodeAttribute(child, "type");
     }
 
 
-    private String getNodeAttribute(Node node, String attrName) {
+    private String getNodeAttribute(final Node node, final String attrName) {
         String emptyString = "";
         NamedNodeMap attrs = node.getAttributes();
         if (attrs == null) {
@@ -247,7 +247,7 @@ public class GeometryTestParser {
     }
 
 
-    private String getNodeText(Node node) {
+    private String getNodeText(final Node node) {
         Node child = node.getFirstChild();
         while (child != null) {
             if (child.getNodeType() == Node.TEXT_NODE) {
@@ -258,7 +258,7 @@ public class GeometryTestParser {
     }
 
 
-    private Node getNamedChild(Node node, String name) {
+    private Node getNamedChild(final Node node, final String name) {
         Node child = node.getFirstChild();
         while (child != null) {
             if (name.equalsIgnoreCase(child.getNodeName())) {

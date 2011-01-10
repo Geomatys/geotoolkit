@@ -131,7 +131,7 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
     /**
      * Set the graphics container for this canvas.
      */
-    public void setContainer(T container){
+    public void setContainer(final T container){
         if(this.container != null){
             this.container.removeContainerListener(containerListener);
         }
@@ -238,7 +238,7 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
      *
      * @param event CanvasEvent
      */
-    protected void fireCanvasEvent(CanvasEvent event){
+    protected void fireCanvasEvent(final CanvasEvent event){
         final CanvasListener[] listeners = canvasListeners.getListeners(CanvasListener.class);
         for(final CanvasListener listener : listeners){
             listener.canvasChanged(event);
@@ -246,7 +246,7 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
     }
 
     private RenderingState oldState = null;
-    protected void fireRenderingStateChanged(RenderingState state){
+    protected void fireRenderingStateChanged(final RenderingState state){
         final CanvasEvent event = new DefaultCanvasEvent(this, null, null, null, oldState, state);
         fireCanvasEvent(event);
         oldState = state;
@@ -257,28 +257,28 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
      * This method is automaticly called when a event is generate by the canvas
      * container when a graphic object is added.
      */
-    protected void graphicsAdded(ContainerEvent event) {
+    protected void graphicsAdded(final ContainerEvent event) {
     }
 
     /**
      * This method is automaticly called when a event is generate by the canvas
      * container when a graphic object is removed.
      */
-    protected void graphicsRemoved(ContainerEvent event) {
+    protected void graphicsRemoved(final ContainerEvent event) {
     }
 
     /**
      * This method is automaticly called when a event is generate by the canvas
      * container when a graphic object changes.
      */
-    protected void graphicsChanged(ContainerEvent event) {
+    protected void graphicsChanged(final ContainerEvent event) {
     }
 
     /**
      * This method is automaticly called when a event is generate by the canvas
      * container when a graphic display changes.
      */
-    protected void graphicsDisplayChanged(ContainerEvent event) {
+    protected void graphicsDisplayChanged(final ContainerEvent event) {
     }
 
 
@@ -294,7 +294,7 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
 
     @Override
     @Deprecated
-    public boolean isVisible(DirectPosition coordinate) {
+    public boolean isVisible(final DirectPosition coordinate) {
         throw new UnsupportedOperationException("Not supported. Obsolete.");
     }
     

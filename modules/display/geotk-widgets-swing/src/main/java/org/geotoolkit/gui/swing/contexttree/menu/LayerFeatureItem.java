@@ -81,12 +81,12 @@ public class LayerFeatureItem extends AbstractTreePopupItem{
     }
 
     @Override
-    public boolean isValid(TreePath[] selection) {
+    public boolean isValid(final TreePath[] selection) {
         return uniqueAndType(selection,FeatureMapLayer.class);
     }
 
     @Override
-    public Component getComponent(TreePath[] selection) {
+    public Component getComponent(final TreePath[] selection) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
         layerRef = new WeakReference<FeatureMapLayer>((FeatureMapLayer) node.getUserObject());
         return this;

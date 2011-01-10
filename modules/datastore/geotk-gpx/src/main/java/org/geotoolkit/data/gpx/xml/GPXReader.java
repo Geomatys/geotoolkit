@@ -68,7 +68,7 @@ public class GPXReader extends StaxStreamReader{
     }
 
     @Override
-    public void setInput(Object input) throws IOException, XMLStreamException {
+    public void setInput(final Object input) throws IOException, XMLStreamException {
         super.setInput(input);
 
         //search for the bound tag to generate the envelope
@@ -422,7 +422,7 @@ public class GPXReader extends StaxStreamReader{
                 Double.parseDouble(ymax));
     }
 
-    private Feature parseWayPoint(int index) throws XMLStreamException{
+    private Feature parseWayPoint(final int index) throws XMLStreamException{
         //way points might be located in different tag names : wpt, rtept and trkpt
         //we kind the current tag name to know when we reach the end.
         final String tagName = reader.getLocalName();
@@ -523,7 +523,7 @@ public class GPXReader extends StaxStreamReader{
         throw new XMLStreamException("Error in xml file, "+tagName+" tag without end.");
     }
 
-    private Feature parseRoute(int index) throws XMLStreamException{
+    private Feature parseRoute(final int index) throws XMLStreamException{
 
         int ptInc = 0;
         String name = null;
@@ -582,7 +582,7 @@ public class GPXReader extends StaxStreamReader{
         throw new XMLStreamException("Error in xml file, "+TAG_RTE+" tag without end.");
     }
 
-    private ComplexAttribute parseTrackSegment(int index) throws XMLStreamException{
+    private ComplexAttribute parseTrackSegment(final int index) throws XMLStreamException{
 
         int ptInc = 0;
         List<Feature> wayPoints = null;
@@ -610,7 +610,7 @@ public class GPXReader extends StaxStreamReader{
         throw new XMLStreamException("Error in xml file, "+TAG_TRK_SEG+" tag without end.");
     }
 
-    private Feature parseTrack(int index) throws XMLStreamException{
+    private Feature parseTrack(final int index) throws XMLStreamException{
 
         int segInc = 0;
         String name = null;

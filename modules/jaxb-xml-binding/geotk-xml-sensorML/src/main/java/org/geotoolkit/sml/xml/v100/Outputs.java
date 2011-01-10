@@ -92,15 +92,15 @@ public class Outputs implements AbstractOutputs {
 
     }
 
-    public Outputs(OutputList outputList) {
+    public Outputs(final OutputList outputList) {
         this.outputList = outputList;
     }
 
-    public Outputs(List<IoComponentPropertyType> outputList) {
+    public Outputs(final List<IoComponentPropertyType> outputList) {
         this.outputList = new OutputList(outputList);
     }
 
-    public Outputs(AbstractOutputs outputs) {
+    public Outputs(final AbstractOutputs outputs) {
         this.outputList    = new OutputList(outputs.getOutputList());
         this.actuate      = outputs.getActuate();
         this.arcrole      = outputs.getArcrole();
@@ -123,7 +123,7 @@ public class Outputs implements AbstractOutputs {
     /**
      * Sets the value of the outputList property.
      */
-    public void setOutputList(OutputList value) {
+    public void setOutputList(final OutputList value) {
         this.outputList = value;
     }
 
@@ -147,7 +147,7 @@ public class Outputs implements AbstractOutputs {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -161,7 +161,7 @@ public class Outputs implements AbstractOutputs {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -175,7 +175,7 @@ public class Outputs implements AbstractOutputs {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -189,7 +189,7 @@ public class Outputs implements AbstractOutputs {
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -205,7 +205,7 @@ public class Outputs implements AbstractOutputs {
      * Sets the value of the role property.
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -219,7 +219,7 @@ public class Outputs implements AbstractOutputs {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -233,7 +233,7 @@ public class Outputs implements AbstractOutputs {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -247,7 +247,7 @@ public class Outputs implements AbstractOutputs {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

@@ -28,7 +28,7 @@ public class FilterNode extends AbstractElementNode implements ElementNode{
 
     private final ElementNode wrap;
 
-    public FilterNode(ElementNode wrap) {
+    public FilterNode(final ElementNode wrap) {
         super(wrap.getName(),wrap.getDescription(),wrap.getType());
         this.wrap = wrap;
     }

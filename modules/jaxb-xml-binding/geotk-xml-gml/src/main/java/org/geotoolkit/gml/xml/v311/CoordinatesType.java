@@ -81,7 +81,7 @@ public class CoordinatesType {
      * @param decimal Symbol used for a decimal point (default="." a stop or period)
      * @param ts      symbol used to separate tuples or coordinate strings (default=" " a space)
      */
-    public CoordinatesType(String value, String cs, String decimal, String ts) {
+    public CoordinatesType(final String value, final String cs, final String decimal, final String ts) {
         this.value   = value;
         this.cs      = cs;
         this.ts      = ts;
@@ -93,7 +93,7 @@ public class CoordinatesType {
      *
      * @param value a list of coordinates coma space separated.
      */
-    public CoordinatesType(String value) {
+    public CoordinatesType(final String value) {
         this.value = value;
     }
 
@@ -117,7 +117,7 @@ public class CoordinatesType {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -144,7 +144,7 @@ public class CoordinatesType {
      *     {@link String }
      *     
      */
-    public void setDecimal(String value) {
+    public void setDecimal(final String value) {
         this.decimal = value;
     }
 
@@ -171,7 +171,7 @@ public class CoordinatesType {
      *     {@link String }
      *     
      */
-    public void setCs(String value) {
+    public void setCs(final String value) {
         this.cs = value;
     }
 
@@ -198,7 +198,7 @@ public class CoordinatesType {
      *     {@link String }
      *     
      */
-    public void setTs(String value) {
+    public void setTs(final String value) {
         this.ts = value;
     }
 

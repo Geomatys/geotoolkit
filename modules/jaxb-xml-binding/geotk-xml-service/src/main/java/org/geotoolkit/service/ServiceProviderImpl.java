@@ -38,7 +38,7 @@ public class ServiceProviderImpl implements ServiceProvider {
     /**
      * Clone a ServiceProvider. 
      */
-    public ServiceProviderImpl(ServiceProvider provider) {
+    public ServiceProviderImpl(final ServiceProvider provider) {
         this.providerName   = provider.getProviderName();
         this.serviceContact = provider.getServiceContact();
         this.services       = provider.getServices();
@@ -53,11 +53,11 @@ public class ServiceProviderImpl implements ServiceProvider {
         return serviceContact;
     }
     
-    public void setServiceContact(Collection<ResponsibleParty> serviceContact) {
+    public void setServiceContact(final Collection<ResponsibleParty> serviceContact) {
          this.serviceContact = serviceContact;
     }
     
-    public void setServiceContact(ResponsibleParty serviceContact) {
+    public void setServiceContact(final ResponsibleParty serviceContact) {
         if (this.serviceContact == null) {
             this.serviceContact = new ArrayList<ResponsibleParty>();
         }
@@ -77,11 +77,11 @@ public class ServiceProviderImpl implements ServiceProvider {
         return services;
     }
     
-    public void setServices(Collection<ServiceIdentification> services) {
+    public void setServices(final Collection<ServiceIdentification> services) {
          this.services = services;
     }
     
-    public void setServices(ServiceIdentification services) {
+    public void setServices(final ServiceIdentification services) {
         if (this.services == null) {
             this.services = new ArrayList<ServiceIdentification>();
         }

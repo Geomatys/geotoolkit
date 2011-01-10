@@ -78,7 +78,7 @@ public class ColorMapEntry {
      *     {@link String }
      *     
      */
-    public void setColor(String value) {
+    public void setColor(final String value) {
         this.color = value;
     }
 
@@ -102,7 +102,7 @@ public class ColorMapEntry {
      *     {@link Double }
      *     
      */
-    public void setOpacity(Double value) {
+    public void setOpacity(final Double value) {
         this.opacity = value;
     }
 
@@ -126,7 +126,7 @@ public class ColorMapEntry {
      *     {@link Double }
      *     
      */
-    public void setQuantity(Double value) {
+    public void setQuantity(final Double value) {
         this.quantity = value;
     }
 
@@ -150,7 +150,7 @@ public class ColorMapEntry {
      *     {@link String }
      *     
      */
-    public void setLabel(String value) {
+    public void setLabel(final String value) {
         this.label = value;
     }
 

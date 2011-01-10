@@ -48,7 +48,7 @@ public enum DecisionType {
    NOT_APPLICABLE("NotApplicable");
    private final String value;
 
-   DecisionType(String v) {
+   DecisionType(final String v) {
       value = v;
    }
 
@@ -56,7 +56,7 @@ public enum DecisionType {
       return value;
    }
 
-   public static DecisionType fromValue(String v) {
+   public static DecisionType fromValue(final String v) {
       for (DecisionType c : DecisionType.values()) {
          if (c.value.equals(v)) {
             return c;

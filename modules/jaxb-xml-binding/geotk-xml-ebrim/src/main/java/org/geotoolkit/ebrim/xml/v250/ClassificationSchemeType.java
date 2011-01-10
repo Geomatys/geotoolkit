@@ -91,7 +91,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
      /**
      * Sets the value of the classificationNode property.
      */
-    public void setClassificationNode(ClassificationNodeType classificationNode) {
+    public void setClassificationNode(final ClassificationNodeType classificationNode) {
         if (this.classificationNode == null) {
             this.classificationNode = new ArrayList<ClassificationNodeType>();
         }
@@ -101,7 +101,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
     /**
      * Sets the value of the classificationNode property.
      */
-    public void setClassificationNode(List<ClassificationNodeType> classificationNode) {
+    public void setClassificationNode(final List<ClassificationNodeType> classificationNode) {
         this.classificationNode = classificationNode;
     }
 
@@ -117,7 +117,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
      * Sets the value of the isInternal property.
      * 
      */
-    public void setIsInternal(boolean value) {
+    public void setIsInternal(final boolean value) {
         this.isInternal = value;
     }
 
@@ -141,7 +141,7 @@ public class ClassificationSchemeType extends RegistryEntryType {
      *     {@link String }
      *     
      */
-    public void setNodeType(String value) {
+    public void setNodeType(final String value) {
         this.nodeType = value;
     }
 

@@ -116,7 +116,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
 
         private final T type;
 
-        private GenericWrapFeatureReader(Iterator<F> ite, T type){
+        private GenericWrapFeatureReader(final Iterator<F> ite, final T type){
             super(ite);
             this.type = type;
         }
@@ -140,7 +140,7 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
 
         private final T type;
 
-        private GenericWrapFeatureWriter(Iterator<F> iterator, T type){
+        private GenericWrapFeatureWriter(final Iterator<F> iterator, final T type){
             super(iterator);
             this.type = type;
         }
@@ -159,21 +159,21 @@ public class GenericWrapFeatureIterator<F extends Feature> implements FeatureIte
     /**
      * Wrap an Iterator as a FeatureIterator.
      */
-    public static <F extends Feature> FeatureIterator<F> wrapToIterator(Iterator<F> reader){
+    public static <F extends Feature> FeatureIterator<F> wrapToIterator(final Iterator<F> reader){
         return new GenericWrapFeatureIterator(reader);
     }
 
     /**
      * Wrap an Iterator as a FeatureReader.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrapToReader(Iterator<F> reader, T type){
+    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrapToReader(final Iterator<F> reader, final T type){
         return new GenericWrapFeatureReader(reader, type);
     }
 
     /**
      * Wrap an Iterator as a FeatureWriter.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrapToWriter(Iterator<F> writer, T type){
+    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrapToWriter(final Iterator<F> writer, final T type){
         return new GenericWrapFeatureWriter(writer, type);
     }
 

@@ -96,7 +96,7 @@ public class FeatureAssociationAdapter extends XmlAdapter<FeatureAssociationAdap
      * @return A java object which represents the metadata value.
      */
     @Override
-    public FeatureAssociation unmarshal(FeatureAssociationAdapter value) throws Exception {
+    public FeatureAssociation unmarshal(final FeatureAssociationAdapter value) throws Exception {
         if (value == null) {
             return null;
         } else if (value.href != null) {
@@ -114,7 +114,7 @@ public class FeatureAssociationAdapter extends XmlAdapter<FeatureAssociationAdap
      * @return The adapter for this FeatureAssociation.
      */
     @Override
-    public FeatureAssociationAdapter marshal(FeatureAssociation value) throws Exception {
+    public FeatureAssociationAdapter marshal(final FeatureAssociation value) throws Exception {
         return new FeatureAssociationAdapter(value);
     }
 

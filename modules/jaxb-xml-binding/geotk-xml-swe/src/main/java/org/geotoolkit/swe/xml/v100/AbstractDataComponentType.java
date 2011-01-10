@@ -78,11 +78,11 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
 
     }
 
-    public AbstractDataComponentType(URI definition) {
+    public AbstractDataComponentType(final URI definition) {
         this.definition = definition;
     }
 
-    public AbstractDataComponentType(AbstractDataComponent component) {
+    public AbstractDataComponentType(final AbstractDataComponent component) {
         super(component);
         if (component != null) {
             if (component.getDefinition() instanceof String) {
@@ -105,7 +105,7 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
     /**
      * Sets the value of the fixed property.
      */
-    public void setFixed(java.lang.Boolean value) {
+    public void setFixed(final java.lang.Boolean value) {
         this.fixed = value;
     }
 
@@ -120,14 +120,14 @@ public abstract class AbstractDataComponentType extends AbstractGMLEntry impleme
     /**
      * Sets the value of the definition property.
       */
-    public void setDefinition(URI value) {
+    public void setDefinition(final URI value) {
         this.definition = value;
     }
 
     /**
      * Sets the value of the definition property.
       */
-    public void setDefinition(String value) {
+    public void setDefinition(final String value) {
         if (value != null) {
             this.definition = URI.create(value);
         } else {

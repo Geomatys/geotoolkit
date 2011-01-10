@@ -56,7 +56,7 @@ public class KdNode {
      * @param _y coordinate of point
      * @param data a data objects to associate with this node
      */
-    public KdNode(double _x, double _y, Object data) {
+    public KdNode(final double _x, final double _y, final Object data) {
         p = new Coordinate(_x, _y);
         left = null;
         right = null;
@@ -70,7 +70,7 @@ public class KdNode {
      * @param p point location of new node
      * @param data a data objects to associate with this node
      */
-    public KdNode(Coordinate p, Object data) {
+    public KdNode(final Coordinate p, final Object data) {
         this.p = new Coordinate(p);
         left = null;
         right = null;
@@ -155,12 +155,12 @@ public class KdNode {
     }
 
     // Sets left node value
-    void setLeft(KdNode _left) {
+    void setLeft(final KdNode _left) {
         left = _left;
     }
 
     // Sets right node value
-    void setRight(KdNode _right) {
+    void setRight(final KdNode _right) {
         right = _right;
     }
 }

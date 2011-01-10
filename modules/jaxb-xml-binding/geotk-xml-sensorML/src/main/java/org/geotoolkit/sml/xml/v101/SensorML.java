@@ -129,12 +129,12 @@ public class SensorML extends AbstractSensorML {
 
     }
 
-    public SensorML(String version, List<SensorML.Member> members) {
+    public SensorML(final String version, final List<SensorML.Member> members) {
         this.version = version;
         this.member  = members;
     }
 
-    public SensorML(AbstractSensorML sml) {
+    public SensorML(final AbstractSensorML sml) {
         if (sml != null) {
             this.version = sml.getVersion();
             if (sml.getMember() != null) {
@@ -251,7 +251,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Sets the value of the validTime property.
      */
-    public void setValidTime(ValidTime value) {
+    public void setValidTime(final ValidTime value) {
         this.validTime = value;
     }
 
@@ -265,7 +265,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Sets the value of the securityConstraint property.
      */
-    public void setSecurityConstraint(SecurityConstraint value) {
+    public void setSecurityConstraint(final SecurityConstraint value) {
         this.securityConstraint = value;
     }
 
@@ -354,7 +354,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Sets the value of the version property.
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -540,7 +540,7 @@ public class SensorML extends AbstractSensorML {
         public Member() {
         }
 
-        public Member(AbstractProcessType process) {
+        public Member(final AbstractProcessType process) {
             ObjectFactory factory = new ObjectFactory();
             if (process instanceof SystemType) {
                 this.process = factory.createSystem((SystemType) process);
@@ -558,17 +558,17 @@ public class SensorML extends AbstractSensorML {
                 Logger.getLogger("SensorML").warning("Unexpected AbstractProcessType:" + process);
             }
         }
-        public Member(SystemType system) {
+        public Member(final SystemType system) {
             ObjectFactory factory = new ObjectFactory();
             this.process = factory.createSystem(system);
         }
 
-        public Member(ComponentType compo) {
+        public Member(final ComponentType compo) {
             ObjectFactory factory = new ObjectFactory();
             this.process = factory.createComponent(compo);
         }
 
-        public Member(SMLMember sm) {
+        public Member(final SMLMember sm) {
             if (sm != null) {
                 this.actuate      = sm.getActuate();
                 this.arcrole      = sm.getArcrole();
@@ -641,7 +641,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link JAXBElement }{@code <}{@link ComponentType }{@code >}
          *     
          */
-        public void setProcess(JAXBElement<? extends AbstractProcessType> value) {
+        public void setProcess(final JAXBElement<? extends AbstractProcessType> value) {
             this.process = ((JAXBElement<? extends AbstractProcessType> ) value);
         }
 
@@ -665,7 +665,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link DocumentList }
          *     
          */
-        public void setDocumentList(DocumentList value) {
+        public void setDocumentList(final DocumentList value) {
             this.documentList = value;
         }
 
@@ -689,7 +689,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link ContactList }
          *     
          */
-        public void setContactList(ContactList value) {
+        public void setContactList(final ContactList value) {
             this.contactList = value;
         }
 
@@ -713,7 +713,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link String }
          *     
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -737,7 +737,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -761,7 +761,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link String }
          *     
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -785,7 +785,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link String }
          *     
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -809,7 +809,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link String }
          *     
          */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -833,7 +833,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link String }
          *     
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -857,7 +857,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link String }
          *     
          */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -881,7 +881,7 @@ public class SensorML extends AbstractSensorML {
          *     {@link String }
          *     
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 

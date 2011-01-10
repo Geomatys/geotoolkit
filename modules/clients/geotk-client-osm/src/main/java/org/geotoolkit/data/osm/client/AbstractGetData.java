@@ -40,7 +40,7 @@ public abstract class AbstractGetData extends AbstractRequest implements GetData
      *
      * @param serverURL The server url.
      */
-    protected AbstractGetData(final String serverURL, String subpath){
+    protected AbstractGetData(final String serverURL, final String subpath){
         super(serverURL, subpath);
     }
 
@@ -48,7 +48,7 @@ public abstract class AbstractGetData extends AbstractRequest implements GetData
      * {@inheritDoc }
      */
     @Override
-    public void setEnvelope(Envelope env) {
+    public void setEnvelope(final Envelope env) {
         this.envelope = env;
     }
 

@@ -84,7 +84,7 @@ public class PortAdapter extends XmlAdapter<PortAdapter, Port> {
      * @return A java object which represents the port value.
      */
     @Override
-    public Port unmarshal(PortAdapter value) throws Exception {
+    public Port unmarshal(final PortAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class PortAdapter extends XmlAdapter<PortAdapter, Port> {
      * @return The adapter for this interface.
      */
     @Override
-    public PortAdapter marshal(Port value) throws Exception {
+    public PortAdapter marshal(final Port value) throws Exception {
         return new PortAdapter(value);
     }
 

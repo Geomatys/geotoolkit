@@ -437,11 +437,11 @@ public class ColorModelTest {
     }
 
 
-    private MapLayer createLayer(Color ... colors){
+    private MapLayer createLayer(final Color ... colors){
         return MapBuilder.createFeatureLayer(featureColls.get(0), createStyle(colors));
     }
 
-    private static MutableStyle createStyle(Color ... colors){
+    private static MutableStyle createStyle(final Color ... colors){
         final MutableStyle style = SF.style();
 
         for(Color c : colors){

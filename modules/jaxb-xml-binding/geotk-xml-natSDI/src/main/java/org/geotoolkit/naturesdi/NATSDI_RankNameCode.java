@@ -81,7 +81,7 @@ public class NATSDI_RankNameCode extends CodeList<NATSDI_RankNameCode> {
      * Returns the NATSDI_RankNameCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static NATSDI_RankNameCode valueOf(String code) {
+    public static NATSDI_RankNameCode valueOf(final String code) {
         return valueOf(NATSDI_RankNameCode.class, code);
     }
 }

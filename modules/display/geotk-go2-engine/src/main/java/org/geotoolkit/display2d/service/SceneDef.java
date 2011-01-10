@@ -47,11 +47,11 @@ public class SceneDef {
     public SceneDef() {
     }
 
-    public SceneDef(MapContext context) {
+    public SceneDef(final MapContext context) {
         this(context,null,(List<? extends PortrayalExtension>)null);
     }
 
-    public SceneDef(MapContext context, Hints hints, List<? extends PortrayalExtension> extensions) {
+    public SceneDef(final MapContext context, final Hints hints, final List<? extends PortrayalExtension> extensions) {
         setContext(context);
         setHints(hints);
         if(extensions != null){
@@ -59,7 +59,7 @@ public class SceneDef {
         }
     }
 
-    public SceneDef(MapContext context, Hints hints, PortrayalExtension ... extensions) {
+    public SceneDef(final MapContext context, final Hints hints, final PortrayalExtension ... extensions) {
         setContext(context);
         setHints(hints);
         for(PortrayalExtension pe : extensions){
@@ -74,7 +74,7 @@ public class SceneDef {
         return context;
     }
 
-    public void setContext(MapContext context) {
+    public void setContext(final MapContext context) {
         this.context = context;
     }
 
@@ -82,7 +82,7 @@ public class SceneDef {
         return hints;
     }
 
-    public void setHints(Hints hints) {
+    public void setHints(final Hints hints) {
         this.hints = hints;
     }
 

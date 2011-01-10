@@ -62,7 +62,7 @@ public class MultiPointType extends AbstractGeometricAggregateType {
 
     }
 
-    public MultiPointType(String srsName, List<PointPropertyType> pointMember) {
+    public MultiPointType(final String srsName, final List<PointPropertyType> pointMember) {
         super(srsName);
         this.pointMember = pointMember;
     }
@@ -80,14 +80,14 @@ public class MultiPointType extends AbstractGeometricAggregateType {
     /**
      * Sets the value of the pointMember property.
      */
-    public void setPointMember(List<PointPropertyType> pointMember) {
+    public void setPointMember(final List<PointPropertyType> pointMember) {
         this.pointMember = pointMember;
     }
 
     /**
      * Sets the value of the pointMember property.
      */
-    public void setPointMember(PointPropertyType pointMember) {
+    public void setPointMember(final PointPropertyType pointMember) {
         if (pointMember != null) {
             if (this.pointMember == null) {
                 this.pointMember = new ArrayList<PointPropertyType>();
@@ -116,22 +116,22 @@ public class MultiPointType extends AbstractGeometricAggregateType {
      *     {@link PointArrayPropertyType }
      *     
      */
-    public void setPointMembers(PointArrayPropertyType value) {
+    public void setPointMembers(final PointArrayPropertyType value) {
         this.pointMembers = value;
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

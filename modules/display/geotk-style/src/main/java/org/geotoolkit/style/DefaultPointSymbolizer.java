@@ -48,7 +48,7 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
      * @param name : can be null
      * @param desc : if null will be replaced by default description.
      */
-    public DefaultPointSymbolizer(Graphic graphic, Unit uom, String geom, String name, Description desc){
+    public DefaultPointSymbolizer(final Graphic graphic, final Unit uom, final String geom, final String name, final Description desc){
         super(uom,geom,name,desc);
         this.graphic = (graphic == null) ? DEFAULT_GRAPHIC : graphic ;
     }
@@ -65,7 +65,7 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -73,7 +73,7 @@ public class DefaultPointSymbolizer extends AbstractSymbolizer implements PointS
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

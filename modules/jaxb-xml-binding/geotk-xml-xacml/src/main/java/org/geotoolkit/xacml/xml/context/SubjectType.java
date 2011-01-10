@@ -83,7 +83,7 @@ public class SubjectType {
    /**
     * Sets the value of the subjectCategory property.
     */
-   public void setSubjectCategory(String value) {
+   public void setSubjectCategory(final String value) {
       this.subjectCategory = value;
    }
 

@@ -94,7 +94,7 @@ public class StatusType {
      *     {@link String }
      *     
      */
-    public void setProcessAccepted(String value) {
+    public void setProcessAccepted(final String value) {
         this.processAccepted = value;
     }
 
@@ -118,7 +118,7 @@ public class StatusType {
      *     {@link ProcessStartedType }
      *     
      */
-    public void setProcessStarted(ProcessStartedType value) {
+    public void setProcessStarted(final ProcessStartedType value) {
         this.processStarted = value;
     }
 
@@ -142,7 +142,7 @@ public class StatusType {
      *     {@link ProcessStartedType }
      *     
      */
-    public void setProcessPaused(ProcessStartedType value) {
+    public void setProcessPaused(final ProcessStartedType value) {
         this.processPaused = value;
     }
 
@@ -166,7 +166,7 @@ public class StatusType {
      *     {@link String }
      *     
      */
-    public void setProcessSucceeded(String value) {
+    public void setProcessSucceeded(final String value) {
         this.processSucceeded = value;
     }
 
@@ -190,7 +190,7 @@ public class StatusType {
      *     {@link ProcessFailedType }
      *     
      */
-    public void setProcessFailed(ProcessFailedType value) {
+    public void setProcessFailed(final ProcessFailedType value) {
         this.processFailed = value;
     }
 
@@ -214,7 +214,7 @@ public class StatusType {
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public void setCreationTime(XMLGregorianCalendar value) {
+    public void setCreationTime(final XMLGregorianCalendar value) {
         this.creationTime = value;
     }
 

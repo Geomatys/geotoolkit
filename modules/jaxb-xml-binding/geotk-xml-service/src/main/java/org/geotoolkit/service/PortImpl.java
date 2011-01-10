@@ -51,7 +51,7 @@ public class PortImpl implements Port {
     /**
      * Clone a Port.
      */
-    public PortImpl(Port port) {
+    public PortImpl(final Port port) {
         
         this.theSVInterface = port.getTheSVInterface();
     }
@@ -67,11 +67,11 @@ public class PortImpl implements Port {
         return this.theSVInterface;
     }
     
-    public void setTheSVInterface(Collection<Interface> theSVInterface) {
+    public void setTheSVInterface(final Collection<Interface> theSVInterface) {
          this.theSVInterface = theSVInterface;
     }
     
-    public void setTheSVInterface(Interface theSVInterface) {
+    public void setTheSVInterface(final Interface theSVInterface) {
         if (this.theSVInterface == null) {
             this.theSVInterface = new ArrayList<Interface>();
         }

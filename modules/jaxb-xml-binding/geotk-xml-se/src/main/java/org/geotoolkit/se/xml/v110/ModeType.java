@@ -49,7 +49,7 @@ public enum ModeType {
     CUBIC("cubic");
     private final String value;
 
-    ModeType(String v) {
+    ModeType(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum ModeType {
         return value;
     }
 
-    public static ModeType fromValue(String v) {
+    public static ModeType fromValue(final String v) {
         for (ModeType c: ModeType.values()) {
             if (c.value.equals(v)) {
                 return c;

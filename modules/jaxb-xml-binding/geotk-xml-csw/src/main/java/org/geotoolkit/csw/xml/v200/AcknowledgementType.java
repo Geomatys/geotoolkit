@@ -83,7 +83,7 @@ public class AcknowledgementType {
      * Sets the value of the echoedRequest property.
      * 
      */
-    public void setEchoedRequest(EchoedRequestType value) {
+    public void setEchoedRequest(final EchoedRequestType value) {
         this.echoedRequest = value;
     }
 
@@ -99,7 +99,7 @@ public class AcknowledgementType {
      * Sets the value of the requestId property.
      * 
      */
-    public void setRequestId(String value) {
+    public void setRequestId(final String value) {
         this.requestId = value;
     }
 
@@ -115,7 +115,7 @@ public class AcknowledgementType {
      * Sets the value of the timeStamp property.
      * 
      */
-    public void setTimeStamp(XMLGregorianCalendar value) {
+    public void setTimeStamp(final XMLGregorianCalendar value) {
         this.timeStamp = value;
     }
 

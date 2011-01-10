@@ -74,7 +74,7 @@ public class GridEnvelopeType implements GridEnvelope {
     /**
      * Build a new Grid envelope
      */
-    public GridEnvelopeType(GridEnvelope env){
+    public GridEnvelopeType(final GridEnvelope env){
         if (env != null) {
             if (env.getHigh() != null) {
                 this.high = env.getHigh().getCoordinateValues();
@@ -88,7 +88,7 @@ public class GridEnvelopeType implements GridEnvelope {
     /**
      * Build a new Grid envelope
      */
-    public GridEnvelopeType(int[] low, int[] high){
+    public GridEnvelopeType(final int[] low, final int[] high){
         this.high = high;
         this.low  = low;
     }
@@ -121,21 +121,21 @@ public class GridEnvelopeType implements GridEnvelope {
     }
 
 
-    public int getLow(int i) throws IndexOutOfBoundsException {
+    public int getLow(final int i) throws IndexOutOfBoundsException {
         if (low != null && i < low.length) {
             return low[i];
         }
         return -1;
     }
 
-    public int getHigh(int i) throws IndexOutOfBoundsException {
+    public int getHigh(final int i) throws IndexOutOfBoundsException {
         if (high != null && i < high.length) {
             return high[i];
         }
         return -1;
     }
 
-    public int getSpan(int i) throws IndexOutOfBoundsException {
+    public int getSpan(final int i) throws IndexOutOfBoundsException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -113,7 +113,7 @@ public class ECQL {
      * @return a {@link Expression} equivalent to the one specified in
      *         <code>ecqlExpression</code>.
      */
-    public static Expression toExpression(String ecqlExpression) throws CQLException {
+    public static Expression toExpression(final String ecqlExpression) throws CQLException {
         return toExpression(ecqlExpression, null);
     }
 
@@ -160,7 +160,7 @@ public class ECQL {
      * @return a List of {@link Filter}, one for each input ECQL statement
      * @throws CQLException
      */
-    public static List<Filter> toFilterList(final String ecqlSequencePredicate, FilterFactory filterFactory)
+    public static List<Filter> toFilterList(final String ecqlSequencePredicate, final FilterFactory filterFactory)
             throws CQLException
     {
         return CompilerUtil.parseFilterList(ecqlSequencePredicate, new ECQLCompilerFactory(), filterFactory);

@@ -71,7 +71,7 @@ public class IdReferenceType {
    /**
     * Sets the value of the value property.
     */
-   public void setValue(String value) {
+   public void setValue(final String value) {
       this.value = value;
    }
 
@@ -85,7 +85,7 @@ public class IdReferenceType {
    /**
     * Sets the value of the version property.
     */
-   public void setVersion(String value) {
+   public void setVersion(final String value) {
       this.version = value;
    }
 
@@ -99,7 +99,7 @@ public class IdReferenceType {
    /**
     * Sets the value of the earliestVersion property.
     */
-   public void setEarliestVersion(String value) {
+   public void setEarliestVersion(final String value) {
       this.earliestVersion = value;
    }
 
@@ -113,7 +113,7 @@ public class IdReferenceType {
    /**
     * Sets the value of the latestVersion property.
     */
-   public void setLatestVersion(String value) {
+   public void setLatestVersion(final String value) {
       this.latestVersion = value;
    }
 

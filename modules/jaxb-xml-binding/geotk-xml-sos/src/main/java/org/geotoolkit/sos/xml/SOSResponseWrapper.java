@@ -29,15 +29,15 @@ public class SOSResponseWrapper implements SOSResponse {
 
     private Object response;
 
-    public SOSResponseWrapper(ObservationCollectionEntry collection) {
+    public SOSResponseWrapper(final ObservationCollectionEntry collection) {
         this.response = collection;
     }
 
-    public SOSResponseWrapper(AbstractFeatureEntry feature) {
+    public SOSResponseWrapper(final AbstractFeatureEntry feature) {
         this.response = feature;
     }
 
-    public SOSResponseWrapper(AbstractTimePrimitiveType time) {
+    public SOSResponseWrapper(final AbstractTimePrimitiveType time) {
         this.response = time;
     }
 
@@ -51,7 +51,7 @@ public class SOSResponseWrapper implements SOSResponse {
     /**
      * @param collection the collection to set
      */
-    public void setCollection(Object response) {
+    public void setCollection(final Object response) {
         this.response = response;
     }
 }

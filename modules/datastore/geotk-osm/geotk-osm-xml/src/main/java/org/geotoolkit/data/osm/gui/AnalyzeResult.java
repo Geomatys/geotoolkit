@@ -33,7 +33,7 @@ class AnalyzeResult {
     public int tagCount = 0;
     public final Map<String, Integer> values = new HashMap<String, Integer>();
 
-    public AnalyzeResult(String tableName, String key) {
+    public AnalyzeResult(final String tableName, final String key) {
         this.tableName = tableName;
         this.tagKey = key;
     }

@@ -64,11 +64,11 @@ public class J2DCanvasBuffered extends J2DCanvas{
     private BufferedImage buffer;
 
 
-    public J2DCanvasBuffered(CoordinateReferenceSystem crs, final Dimension dim){
+    public J2DCanvasBuffered(final CoordinateReferenceSystem crs, final Dimension dim){
         this(crs,dim,null);
     }
 
-    public J2DCanvasBuffered(CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
+    public J2DCanvasBuffered(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
         super(crs,hints);
         setSize(dim);
     }
@@ -82,7 +82,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     @Override
-    protected void setDisplayBounds(Rectangle2D rect) {
+    protected void setDisplayBounds(final Rectangle2D rect) {
         super.setDisplayBounds(rect);
         buffer = null; //todo should check if the size is really different
     }
@@ -105,7 +105,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
     }
 
     @Override
-    public void repaint(Shape displayArea) {
+    public void repaint(final Shape displayArea) {
         final Dimension dim = getSize();
 
         if(buffer == null){
@@ -165,7 +165,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
      * the different rendering parameters and hints.
      * @return
      */
-    private BufferedImage createBufferedImage(Dimension dim){
+    private BufferedImage createBufferedImage(final Dimension dim){
 
         //See if a color model has been set, if so use it.
         final ColorModel cm = (ColorModel)getRenderingHint(GO2Hints.KEY_COLOR_MODEL);
@@ -236,7 +236,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
 
     }
 
-    private static BufferedImage createBufferedImage(Dimension dim, Set<Integer> colors){
+    private static BufferedImage createBufferedImage(final Dimension dim, final Set<Integer> colors){
         
         if(colors.size() <= 1){
             //in case no colors where used after all filters.
@@ -262,7 +262,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
      * @param graphics graphics to explore
      * @return Set of colors used by the graphics or null if unpredictable.
      */
-    private static SortedSet<Integer> extractColors(List<Graphic> graphics){
+    private static SortedSet<Integer> extractColors(final List<Graphic> graphics){
 
         SortedSet<Integer> colors = new TreeSet<Integer>(new Comparator<Integer>(){
             @Override
@@ -292,7 +292,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         return colors;
     }
 
-    private static SortedSet<Integer> extractColors(MapItem context, SortedSet<Integer> buffer){
+    private static SortedSet<Integer> extractColors(final MapItem context, SortedSet<Integer> buffer){
         for(MapItem child : context.items()){
             if(child instanceof MapLayer){
                 buffer = extractColors((MapLayer)child, buffer);
@@ -308,7 +308,7 @@ public class J2DCanvasBuffered extends J2DCanvas{
         return buffer;
     }
 
-    private static SortedSet<Integer> extractColors(MapLayer layer, SortedSet<Integer> buffer){
+    private static SortedSet<Integer> extractColors(final MapLayer layer, final SortedSet<Integer> buffer){
 
         final GraphicBuilder customBuilder = layer.getGraphicBuilder(GraphicJ2D.class);
 

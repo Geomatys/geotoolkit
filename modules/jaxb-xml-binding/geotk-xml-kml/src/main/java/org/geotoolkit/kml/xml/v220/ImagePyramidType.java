@@ -95,7 +95,7 @@ public class ImagePyramidType extends AbstractObjectType {
      *     {@link Integer }
      *     
      */
-    public void setTileSize(Integer value) {
+    public void setTileSize(final Integer value) {
         this.tileSize = value;
     }
 
@@ -119,7 +119,7 @@ public class ImagePyramidType extends AbstractObjectType {
      *     {@link Integer }
      *     
      */
-    public void setMaxWidth(Integer value) {
+    public void setMaxWidth(final Integer value) {
         this.maxWidth = value;
     }
 
@@ -143,7 +143,7 @@ public class ImagePyramidType extends AbstractObjectType {
      *     {@link Integer }
      *     
      */
-    public void setMaxHeight(Integer value) {
+    public void setMaxHeight(final Integer value) {
         this.maxHeight = value;
     }
 
@@ -167,7 +167,7 @@ public class ImagePyramidType extends AbstractObjectType {
      *     {@link GridOriginEnumType }
      *     
      */
-    public void setGridOrigin(GridOriginEnumType value) {
+    public void setGridOrigin(final GridOriginEnumType value) {
         this.gridOrigin = value;
     }
 

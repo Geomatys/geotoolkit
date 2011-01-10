@@ -59,11 +59,11 @@ public class ConnectionList implements AbstractConnectionList {
 
     }
 
-    public ConnectionList(List<Connection> connection) {
+    public ConnectionList(final List<Connection> connection) {
         this.connection = connection;
     }
 
-    public ConnectionList(AbstractConnectionList connectionList) {
+    public ConnectionList(final AbstractConnectionList connectionList) {
         if (connectionList != null)  {
             this.connection = new ArrayList<Connection>();
             for (AbstractConnection c : connectionList.getConnection()) {
@@ -86,7 +86,7 @@ public class ConnectionList implements AbstractConnectionList {
     /**
      * Gets the value of the connection property.
      */
-    public void setConnection(Connection connection) {
+    public void setConnection(final Connection connection) {
         if (this.connection == null) {
             this.connection = new ArrayList<Connection>();
         }
@@ -96,14 +96,14 @@ public class ConnectionList implements AbstractConnectionList {
     /**
      * Gets the value of the connection property.
      */
-    public void setConnection(List<Connection> connection) {
+    public void setConnection(final List<Connection> connection) {
         this.connection = connection;
     }
 
     /**
      * Gets the value of the connection property.
      */
-    public void setConnection(Link connection) {
+    public void setConnection(final Link connection) {
         if (this.connection == null) {
             this.connection = new ArrayList<Connection>();
         }

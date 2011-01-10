@@ -91,7 +91,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     }
 
-    public InterfaceDefinition(AbstractInterfaceDefinition in) {
+    public InterfaceDefinition(final AbstractInterfaceDefinition in) {
         if (in != null) {
             if (in.getServiceLayer() != null) {
                 this.serviceLayer = new LayerPropertyType(in.getServiceLayer());
@@ -127,7 +127,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
         }
     }
 
-    public InterfaceDefinition(String id, LayerPropertyType applicationLayer, LayerPropertyType dataLinkLayer) {
+    public InterfaceDefinition(final String id, final LayerPropertyType applicationLayer, final LayerPropertyType dataLinkLayer) {
         this.applicationLayer = applicationLayer;
         this.dataLinkLayer    = dataLinkLayer;
     }
@@ -152,7 +152,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link LayerPropertyType }
      *     
      */
-    public void setServiceLayer(LayerPropertyType value) {
+    public void setServiceLayer(final LayerPropertyType value) {
         this.serviceLayer = value;
     }
 
@@ -176,7 +176,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link LayerPropertyType }
      *     
      */
-    public void setApplicationLayer(LayerPropertyType value) {
+    public void setApplicationLayer(final LayerPropertyType value) {
         this.applicationLayer = value;
     }
 
@@ -200,7 +200,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link PresentationLayerPropertyType }
      *     
      */
-    public void setPresentationLayer(PresentationLayerPropertyType value) {
+    public void setPresentationLayer(final PresentationLayerPropertyType value) {
         this.presentationLayer = value;
     }
 
@@ -224,7 +224,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link LayerPropertyType }
      *     
      */
-    public void setSessionLayer(LayerPropertyType value) {
+    public void setSessionLayer(final LayerPropertyType value) {
         this.sessionLayer = value;
     }
 
@@ -248,7 +248,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link LayerPropertyType }
      *     
      */
-    public void setTransportLayer(LayerPropertyType value) {
+    public void setTransportLayer(final LayerPropertyType value) {
         this.transportLayer = value;
     }
 
@@ -272,7 +272,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link LayerPropertyType }
      *     
      */
-    public void setNetworkLayer(LayerPropertyType value) {
+    public void setNetworkLayer(final LayerPropertyType value) {
         this.networkLayer = value;
     }
 
@@ -296,7 +296,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link LayerPropertyType }
      *     
      */
-    public void setDataLinkLayer(LayerPropertyType value) {
+    public void setDataLinkLayer(final LayerPropertyType value) {
         this.dataLinkLayer = value;
     }
 
@@ -320,7 +320,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link LayerPropertyType }
      *     
      */
-    public void setPhysicalLayer(LayerPropertyType value) {
+    public void setPhysicalLayer(final LayerPropertyType value) {
         this.physicalLayer = value;
     }
 
@@ -344,7 +344,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link LayerPropertyType }
      *     
      */
-    public void setMechanicalLayer(LayerPropertyType value) {
+    public void setMechanicalLayer(final LayerPropertyType value) {
         this.mechanicalLayer = value;
     }
 
@@ -368,7 +368,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

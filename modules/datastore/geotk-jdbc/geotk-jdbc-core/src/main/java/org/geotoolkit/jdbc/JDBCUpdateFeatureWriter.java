@@ -42,16 +42,16 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
 
     ResultSetFeature last;
     
-    public JDBCUpdateFeatureWriter(String sql, Connection cx, final JDBCDataStore store,
-            final Name groupName, SimpleFeatureType type, PrimaryKey pkey, Hints hints)
+    public JDBCUpdateFeatureWriter(final String sql, final Connection cx, final JDBCDataStore store,
+            final Name groupName, final SimpleFeatureType type, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException,DataStoreException {
         
         super(sql, cx, store, groupName, type, pkey, hints);
         last = new ResultSetFeature( rs, cx );
     }
     
-    public JDBCUpdateFeatureWriter(PreparedStatement ps, Connection cx, final JDBCDataStore store,
-            final Name groupName, SimpleFeatureType type, PrimaryKey pkey, Hints hints)
+    public JDBCUpdateFeatureWriter(final PreparedStatement ps, final Connection cx, final JDBCDataStore store,
+            final Name groupName, final SimpleFeatureType type, final PrimaryKey pkey, final Hints hints)
             throws SQLException, IOException, DataStoreException {
         
         super(ps, cx, store, groupName, type, pkey, hints);

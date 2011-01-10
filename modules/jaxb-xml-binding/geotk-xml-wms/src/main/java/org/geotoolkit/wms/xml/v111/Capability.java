@@ -64,7 +64,7 @@ public class Capability extends AbstractCapability {
     /**
      * Build a new capability object.
      */
-    public Capability(final Request request, final Exception exception, final Layer layer, UserDefinedSymbolization userDefinedSymbolization) {
+    public Capability(final Request request, final Exception exception, final Layer layer, final UserDefinedSymbolization userDefinedSymbolization) {
         this.request   = request;
         this.exception = exception;
         this.layer     = layer;
@@ -78,7 +78,7 @@ public class Capability extends AbstractCapability {
         return request;
     }
 
-    public void setRequest(AbstractRequest request) {
+    public void setRequest(final AbstractRequest request) {
         if (request instanceof Request) {
             this.request = (Request)request;
         } else {
@@ -105,7 +105,7 @@ public class Capability extends AbstractCapability {
         return exception.getFormat();
     }
 
-    public void setExceptionFormats(List<String> formats) {
+    public void setExceptionFormats(final List<String> formats) {
         if (formats != null) {
             this.exception = new Exception(formats.toArray(new String[formats.size()]));
         } else {
@@ -125,7 +125,7 @@ public class Capability extends AbstractCapability {
      * Gets the value of the layer property.
      */
     @Override
-    public void setLayer(AbstractLayer layer) {
+    public void setLayer(final AbstractLayer layer) {
         if (layer instanceof Layer) {
             this.layer = (Layer) layer;
         } else {

@@ -69,7 +69,7 @@ public class IndexedDbaseFileReader extends DbaseFileReader {
      * @param readChannel
      * @throws IOException
      */
-    public IndexedDbaseFileReader(ReadableByteChannel readChannel) throws IOException {
+    public IndexedDbaseFileReader(final ReadableByteChannel readChannel) throws IOException {
         this(readChannel, false, DEFAULT_STRING_CHARSET);
     }
 
@@ -80,18 +80,18 @@ public class IndexedDbaseFileReader extends DbaseFileReader {
      * @param useMemoryMappedBuffer Wether or not map the file in memory
      * @throws IOException If an error occurs while initializing.
      */
-    public IndexedDbaseFileReader(ReadableByteChannel readChannel,
-            boolean useMemoryMappedBuffer) throws IOException {
+    public IndexedDbaseFileReader(final ReadableByteChannel readChannel,
+            final boolean useMemoryMappedBuffer) throws IOException {
         super(readChannel, useMemoryMappedBuffer,DEFAULT_STRING_CHARSET);
     }
 
-    public IndexedDbaseFileReader(ReadableByteChannel readChannel,
-            boolean useMemoryMappedBuffer, Charset stringCharset)
+    public IndexedDbaseFileReader(final ReadableByteChannel readChannel,
+            final boolean useMemoryMappedBuffer, final Charset stringCharset)
             throws IOException {
         super(readChannel, useMemoryMappedBuffer, stringCharset);
     }
 
-    public void goTo(int recno) throws IOException, UnsupportedOperationException {
+    public void goTo(final int recno) throws IOException, UnsupportedOperationException {
 
         if (randomAccessEnabled) {
             final long newPosition = header.getHeaderLength()
@@ -119,7 +119,7 @@ public class IndexedDbaseFileReader extends DbaseFileReader {
         return this.randomAccessEnabled;
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         final IndexedDbaseFileReader reader = new IndexedDbaseFileReader(
                 new RandomAccessFile(new File(args[0]),"r").getChannel(), false);
         System.out.println(reader.getHeader());

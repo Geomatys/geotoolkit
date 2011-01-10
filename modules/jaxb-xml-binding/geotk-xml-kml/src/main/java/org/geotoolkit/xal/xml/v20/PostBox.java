@@ -184,7 +184,7 @@ public class PostBox {
      *     {@link PostBox.PostBoxNumber }
      *     
      */
-    public void setPostBoxNumber(PostBox.PostBoxNumber value) {
+    public void setPostBoxNumber(final PostBox.PostBoxNumber value) {
         this.postBoxNumber = value;
     }
 
@@ -208,7 +208,7 @@ public class PostBox {
      *     {@link PostBox.PostBoxNumberPrefix }
      *     
      */
-    public void setPostBoxNumberPrefix(PostBox.PostBoxNumberPrefix value) {
+    public void setPostBoxNumberPrefix(final PostBox.PostBoxNumberPrefix value) {
         this.postBoxNumberPrefix = value;
     }
 
@@ -232,7 +232,7 @@ public class PostBox {
      *     {@link PostBox.PostBoxNumberSuffix }
      *     
      */
-    public void setPostBoxNumberSuffix(PostBox.PostBoxNumberSuffix value) {
+    public void setPostBoxNumberSuffix(final PostBox.PostBoxNumberSuffix value) {
         this.postBoxNumberSuffix = value;
     }
 
@@ -256,7 +256,7 @@ public class PostBox {
      *     {@link PostBox.PostBoxNumberExtension }
      *     
      */
-    public void setPostBoxNumberExtension(PostBox.PostBoxNumberExtension value) {
+    public void setPostBoxNumberExtension(final PostBox.PostBoxNumberExtension value) {
         this.postBoxNumberExtension = value;
     }
 
@@ -280,7 +280,7 @@ public class PostBox {
      *     {@link FirmType }
      *     
      */
-    public void setFirm(FirmType value) {
+    public void setFirm(final FirmType value) {
         this.firm = value;
     }
 
@@ -304,7 +304,7 @@ public class PostBox {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -357,7 +357,7 @@ public class PostBox {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -381,7 +381,7 @@ public class PostBox {
      *     {@link String }
      *     
      */
-    public void setIndicator(String value) {
+    public void setIndicator(final String value) {
         this.indicator = value;
     }
 
@@ -455,7 +455,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -479,7 +479,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -555,7 +555,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -579,7 +579,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setNumberExtensionSeparator(String value) {
+        public void setNumberExtensionSeparator(final String value) {
             this.numberExtensionSeparator = value;
         }
 
@@ -659,7 +659,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -683,7 +683,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setNumberPrefixSeparator(String value) {
+        public void setNumberPrefixSeparator(final String value) {
             this.numberPrefixSeparator = value;
         }
 
@@ -707,7 +707,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -787,7 +787,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -811,7 +811,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setNumberSuffixSeparator(String value) {
+        public void setNumberSuffixSeparator(final String value) {
             this.numberSuffixSeparator = value;
         }
 
@@ -835,7 +835,7 @@ public class PostBox {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 

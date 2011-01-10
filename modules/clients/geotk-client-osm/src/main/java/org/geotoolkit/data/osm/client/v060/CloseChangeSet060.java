@@ -26,7 +26,7 @@ import org.geotoolkit.data.osm.client.AbstractCloseChangeSet;
  */
 public class CloseChangeSet060 extends AbstractCloseChangeSet{
 
-    public CloseChangeSet060(String serverURL){
+    public CloseChangeSet060(final String serverURL){
         super(serverURL,"");
     }
 

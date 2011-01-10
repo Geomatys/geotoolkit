@@ -333,7 +333,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Name")
-    public JAXBElement<String> createName(String value) {
+    public JAXBElement<String> createName(final String value) {
         return new JAXBElement<String>(_Name_QNAME, String.class, null, value);
     }
 
@@ -342,7 +342,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MinScaleDenominator")
-    public JAXBElement<Double> createMinScaleDenominator(Double value) {
+    public JAXBElement<Double> createMinScaleDenominator(final Double value) {
         return new JAXBElement<Double>(_MinScaleDenominator_QNAME, Double.class, null, value);
     }
 
@@ -351,7 +351,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "PostCode")
-    public JAXBElement<String> createPostCode(String value) {
+    public JAXBElement<String> createPostCode(final String value) {
         return new JAXBElement<String>(_PostCode_QNAME, String.class, null, value);
     }
 
@@ -360,7 +360,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MaxHeight")
-    public JAXBElement<Integer> createMaxHeight(Integer value) {
+    public JAXBElement<Integer> createMaxHeight(final Integer value) {
         return new JAXBElement<Integer>(_MaxHeight_QNAME, Integer.class, null, value);
     }
 
@@ -369,7 +369,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Address")
-    public JAXBElement<String> createAddress(String value) {
+    public JAXBElement<String> createAddress(final String value) {
         return new JAXBElement<String>(_Address_QNAME, String.class, null, value);
     }
 
@@ -378,7 +378,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactFacsimileTelephone")
-    public JAXBElement<String> createContactFacsimileTelephone(String value) {
+    public JAXBElement<String> createContactFacsimileTelephone(final String value) {
         return new JAXBElement<String>(_ContactFacsimileTelephone_QNAME, String.class, null, value);
     }
 
@@ -387,7 +387,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "AddressType")
-    public JAXBElement<String> createAddressType(String value) {
+    public JAXBElement<String> createAddressType(final String value) {
         return new JAXBElement<String>(_AddressType_QNAME, String.class, null, value);
     }
 
@@ -396,7 +396,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactVoiceTelephone")
-    public JAXBElement<String> createContactVoiceTelephone(String value) {
+    public JAXBElement<String> createContactVoiceTelephone(final String value) {
         return new JAXBElement<String>(_ContactVoiceTelephone_QNAME, String.class, null, value);
     }
 
@@ -405,7 +405,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Abstract")
-    public JAXBElement<String> createAbstract(String value) {
+    public JAXBElement<String> createAbstract(final String value) {
         return new JAXBElement<String>(_Abstract_QNAME, String.class, null, value);
     }
 
@@ -414,7 +414,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MaxWidth")
-    public JAXBElement<Integer> createMaxWidth(Integer value) {
+    public JAXBElement<Integer> createMaxWidth(final Integer value) {
         return new JAXBElement<Integer>(_MaxWidth_QNAME, Integer.class, null, value);
     }
 
@@ -423,7 +423,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "AccessConstraints")
-    public JAXBElement<String> createAccessConstraints(String value) {
+    public JAXBElement<String> createAccessConstraints(final String value) {
         return new JAXBElement<String>(_AccessConstraints_QNAME, String.class, null, value);
     }
 
@@ -432,7 +432,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "_ExtendedCapabilities")
-    public JAXBElement<Object> createExtendedCapabilities(Object value) {
+    public JAXBElement<Object> createExtendedCapabilities(final Object value) {
         return new JAXBElement<Object>(_ExtendedCapabilities_QNAME, Object.class, null, value);
     }
 
@@ -441,7 +441,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactPerson")
-    public JAXBElement<String> createContactPerson(String value) {
+    public JAXBElement<String> createContactPerson(final String value) {
         return new JAXBElement<String>(_ContactPerson_QNAME, String.class, null, value);
     }
 
@@ -450,7 +450,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "GetCapabilities")
-    public JAXBElement<OperationType> createGetCapabilities(OperationType value) {
+    public JAXBElement<OperationType> createGetCapabilities(final OperationType value) {
         return new JAXBElement<OperationType>(_GetCapabilities_QNAME, OperationType.class, null, value);
     }
 
@@ -459,7 +459,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "LayerLimit")
-    public JAXBElement<Integer> createLayerLimit(Integer value) {
+    public JAXBElement<Integer> createLayerLimit(final Integer value) {
         return new JAXBElement<Integer>(_LayerLimit_QNAME, Integer.class, null, value);
     }
 
@@ -468,7 +468,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactOrganization")
-    public JAXBElement<String> createContactOrganization(String value) {
+    public JAXBElement<String> createContactOrganization(final String value) {
         return new JAXBElement<String>(_ContactOrganization_QNAME, String.class, null, value);
     }
 
@@ -477,7 +477,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "_ExtendedOperation")
-    public JAXBElement<OperationType> createExtendedOperation(OperationType value) {
+    public JAXBElement<OperationType> createExtendedOperation(final OperationType value) {
         return new JAXBElement<OperationType>(_ExtendedOperation_QNAME, OperationType.class, null, value);
     }
 
@@ -486,7 +486,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Country")
-    public JAXBElement<String> createCountry(String value) {
+    public JAXBElement<String> createCountry(final String value) {
         return new JAXBElement<String>(_Country_QNAME, String.class, null, value);
     }
 
@@ -495,7 +495,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "City")
-    public JAXBElement<String> createCity(String value) {
+    public JAXBElement<String> createCity(final String value) {
         return new JAXBElement<String>(_City_QNAME, String.class, null, value);
     }
 
@@ -504,7 +504,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Title")
-    public JAXBElement<String> createTitle(String value) {
+    public JAXBElement<String> createTitle(final String value) {
         return new JAXBElement<String>(_Title_QNAME, String.class, null, value);
     }
 
@@ -513,7 +513,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Fees")
-    public JAXBElement<String> createFees(String value) {
+    public JAXBElement<String> createFees(final String value) {
         return new JAXBElement<String>(_Fees_QNAME, String.class, null, value);
     }
 
@@ -522,7 +522,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "GetMap")
-    public JAXBElement<OperationType> createGetMap(OperationType value) {
+    public JAXBElement<OperationType> createGetMap(final OperationType value) {
         return new JAXBElement<OperationType>(_GetMap_QNAME, OperationType.class, null, value);
     }
 
@@ -531,7 +531,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "GetFeatureInfo")
-    public JAXBElement<OperationType> createGetFeatureInfo(OperationType value) {
+    public JAXBElement<OperationType> createGetFeatureInfo(final OperationType value) {
         return new JAXBElement<OperationType>(_GetFeatureInfo_QNAME, OperationType.class, null, value);
     }
 
@@ -540,7 +540,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "StateOrProvince")
-    public JAXBElement<String> createStateOrProvince(String value) {
+    public JAXBElement<String> createStateOrProvince(final String value) {
         return new JAXBElement<String>(_StateOrProvince_QNAME, String.class, null, value);
     }
 
@@ -549,7 +549,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "Format")
-    public JAXBElement<String> createFormat(String value) {
+    public JAXBElement<String> createFormat(final String value) {
         return new JAXBElement<String>(_Format_QNAME, String.class, null, value);
     }
 
@@ -558,7 +558,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "CRS")
-    public JAXBElement<String> createCRS(String value) {
+    public JAXBElement<String> createCRS(final String value) {
         return new JAXBElement<String>(_CRS_QNAME, String.class, null, value);
     }
 
@@ -567,7 +567,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "MaxScaleDenominator")
-    public JAXBElement<Double> createMaxScaleDenominator(Double value) {
+    public JAXBElement<Double> createMaxScaleDenominator(final Double value) {
         return new JAXBElement<Double>(_MaxScaleDenominator_QNAME, Double.class, null, value);
     }
 
@@ -576,7 +576,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactElectronicMailAddress")
-    public JAXBElement<String> createContactElectronicMailAddress(String value) {
+    public JAXBElement<String> createContactElectronicMailAddress(final String value) {
         return new JAXBElement<String>(_ContactElectronicMailAddress_QNAME, String.class, null, value);
     }
 
@@ -585,7 +585,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wms", name = "ContactPosition")
-    public JAXBElement<String> createContactPosition(String value) {
+    public JAXBElement<String> createContactPosition(final String value) {
         return new JAXBElement<String>(_ContactPosition_QNAME, String.class, null, value);
     }
 
@@ -594,7 +594,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "GetLegendGraphic", substitutionHeadNamespace = "http://www.opengis.net/wms", substitutionHeadName = "_ExtendedOperation")
-    public JAXBElement<OperationType> createGetLegendGraphic(OperationType value) {
+    public JAXBElement<OperationType> createGetLegendGraphic(final OperationType value) {
         return new JAXBElement<OperationType>(_GetLegendGraphic_QNAME, OperationType.class, null, value);
     }
 
@@ -603,7 +603,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "DescribeLayer", substitutionHeadNamespace = "http://www.opengis.net/wms", substitutionHeadName = "_ExtendedOperation")
-    public JAXBElement<OperationType> createDescribeLayer(OperationType value) {
+    public JAXBElement<OperationType> createDescribeLayer(final OperationType value) {
         return new JAXBElement<OperationType>(_DescribeLayer_QNAME, OperationType.class, null, value);
     }
 }

@@ -66,14 +66,14 @@ public class ValueListType {
      /**
      * Sets the value of the value property. 
      */
-    public void setValue(List<String> value) {
+    public void setValue(final List<String> value) {
         this.value = value;
     }
     
     /**
      * Gets the value of the value property. 
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         if (this.value == null) {
             this.value = new ArrayList<String>();
         }

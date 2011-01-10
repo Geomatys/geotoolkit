@@ -56,7 +56,7 @@ public class TimeStampToDateSQLConverter implements ObjectConverter<Timestamp, D
     }
 
     @Override
-    public Date convert(Timestamp s) throws NonconvertibleObjectException {
+    public Date convert(final Timestamp s) throws NonconvertibleObjectException {
         return new Date(s.getTime());
     }
 

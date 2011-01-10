@@ -96,7 +96,7 @@ public class RequestType {
     * Sets the value of the action property.
     * 
     */
-   public void setAction(ActionType value) {
+   public void setAction(final ActionType value) {
       this.action = value;
    }
 
@@ -112,7 +112,7 @@ public class RequestType {
     * Sets the value of the environment property.
     * 
     */
-   public void setEnvironment(EnvironmentType value) {
+   public void setEnvironment(final EnvironmentType value) {
       this.environment = value;
    }
 

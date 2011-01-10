@@ -58,7 +58,7 @@ public final class OrganisationTypeAdapter extends CodeListAdapter<OrganisationT
      * {@inheritDoc}
      */
     @Override
-    protected OrganisationTypeAdapter wrap(CodeListProxy proxy) {
+    protected OrganisationTypeAdapter wrap(final CodeListProxy proxy) {
         return new OrganisationTypeAdapter(proxy);
     }
 

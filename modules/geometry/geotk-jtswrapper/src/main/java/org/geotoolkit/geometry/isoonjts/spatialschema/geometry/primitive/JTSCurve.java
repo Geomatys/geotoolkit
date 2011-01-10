@@ -102,7 +102,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * {@inheritDoc }
      */
     @Override
-    public double [] getTangent(double s) {
+    public double [] getTangent(final double s) {
         // PENDING(CSD): Implement me!
         return new double[0];
     }
@@ -146,7 +146,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     // start constructive param of curve segment i, ecp is the end constructive
     // param of curve segment i.
     @Override
-    public final DirectPosition forConstructiveParam(double cp) {
+    public final DirectPosition forConstructiveParam(final double cp) {
         int n = curveSegments.size();
         int i = (int) cp;
         if (i < 0) {
@@ -171,7 +171,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * {@inheritDoc }
      */
     @Override
-    public final DirectPosition forParam(double s) {
+    public final DirectPosition forParam(final double s) {
         return null;
     }
 
@@ -179,7 +179,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * Not implemented.  Always just returns null.
      */
     @Override
-    public ParamForPoint getParamForPoint(DirectPosition p) {
+    public ParamForPoint getParamForPoint(final DirectPosition p) {
         return null;
     }
 
@@ -187,7 +187,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * Not implemented.  Always returns zero.
      */
     @Override
-    public double length(Position point1, Position point2) {
+    public double length(final Position point1, final Position point2) {
         return 0.0;
     }
 
@@ -197,7 +197,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * CurveSegments that comprise this object.
      */
     @Override
-    public double length(double cparam1, double cparam2) {
+    public double length(final double cparam1, final double cparam2) {
         return 0.0;
     }
 
@@ -207,7 +207,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
      * In future versions this could be implemented by delegating to the comprising segments.
      */
     @Override
-    public LineString asLineString(double maxSpacing, double maxOffset) {
+    public LineString asLineString(final double maxSpacing, final double maxOffset) {
     	int count = curveSegments.size();
     	if (count == 1) {
     		Object segment1 = curveSegments.get(0);
@@ -303,7 +303,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
         return new CurveArrayType(curveSegments);
     }
 
-    public void setCurveArray(CurveArrayType array) {
+    public void setCurveArray(final CurveArrayType array) {
         curveSegments = new NotifyingArrayList<CurveSegment>(this);
         for (CurveSegment c : array.getCurveSegments())  {
             JTSLineString line = (JTSLineString) c;
@@ -357,7 +357,7 @@ public class JTSCurve extends AbstractJTSGeometry implements Curve {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (this == object)
             return true;
 

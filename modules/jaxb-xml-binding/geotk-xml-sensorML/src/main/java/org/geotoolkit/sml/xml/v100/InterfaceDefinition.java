@@ -91,12 +91,12 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
 
     }
 
-    public InterfaceDefinition(String id, LayerPropertyType applicationLayer, LayerPropertyType dataLinkLayer) {
+    public InterfaceDefinition(final String id, final LayerPropertyType applicationLayer, final LayerPropertyType dataLinkLayer) {
         this.applicationLayer = applicationLayer;
         this.dataLinkLayer    = dataLinkLayer;
     }
 
-     public InterfaceDefinition(AbstractInterfaceDefinition in) {
+     public InterfaceDefinition(final AbstractInterfaceDefinition in) {
         if (in != null) {
             if (in.getServiceLayer() != null) {
                 this.serviceLayer = new LayerPropertyType(in.getServiceLayer());
@@ -142,14 +142,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the serviceLayer property.
      */
-    public void setServiceLayer(LayerPropertyType value) {
+    public void setServiceLayer(final LayerPropertyType value) {
         this.serviceLayer = value;
     }
 
     /**
      * Sets the value of the serviceLayer property.
      */
-    public void setServiceLayer(Category value) {
+    public void setServiceLayer(final Category value) {
         this.serviceLayer = new LayerPropertyType(value);
     }
 
@@ -164,14 +164,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the applicationLayer property.
      */
-    public void setApplicationLayer(LayerPropertyType value) {
+    public void setApplicationLayer(final LayerPropertyType value) {
         this.applicationLayer = value;
     }
 
     /**
      * Sets the value of the applicationLayer property.
      */
-    public void setApplicationLayer(Category value) {
+    public void setApplicationLayer(final Category value) {
         this.applicationLayer = new LayerPropertyType(value);
     }
 
@@ -185,14 +185,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the presentationLayer property.
      */
-    public void setPresentationLayer(PresentationLayerPropertyType value) {
+    public void setPresentationLayer(final PresentationLayerPropertyType value) {
         this.presentationLayer = value;
     }
 
     /**
      * Sets the value of the applicationLayer property.
      */
-    public void setPresentationLayer(Category value) {
+    public void setPresentationLayer(final Category value) {
         this.presentationLayer = new PresentationLayerPropertyType(value);
     }
 
@@ -206,14 +206,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the sessionLayer property.
      */
-    public void setSessionLayer(LayerPropertyType value) {
+    public void setSessionLayer(final LayerPropertyType value) {
         this.sessionLayer = value;
     }
 
     /**
      * Sets the value of the sessionLayer property.
      */
-    public void setSessionLayer(Category value) {
+    public void setSessionLayer(final Category value) {
         this.sessionLayer = new LayerPropertyType(value);
     }
 
@@ -227,14 +227,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the transportLayer property.
      */
-    public void setTransportLayer(LayerPropertyType value) {
+    public void setTransportLayer(final LayerPropertyType value) {
         this.transportLayer = value;
     }
 
     /**
      * Sets the value of the transportLayer property.
      */
-    public void setTransportLayer(Category value) {
+    public void setTransportLayer(final Category value) {
         this.transportLayer = new LayerPropertyType(value);
     }
 
@@ -248,14 +248,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the networkLayer property.
      */
-    public void setNetworkLayer(LayerPropertyType value) {
+    public void setNetworkLayer(final LayerPropertyType value) {
         this.networkLayer = value;
     }
 
     /**
      * Sets the value of the networkLayer property.
      */
-    public void setNetworkLayer(Category value) {
+    public void setNetworkLayer(final Category value) {
         this.networkLayer = new LayerPropertyType(value);
     }
 
@@ -269,14 +269,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the dataLinkLayer property.
      */
-    public void setDataLinkLayer(LayerPropertyType value) {
+    public void setDataLinkLayer(final LayerPropertyType value) {
         this.dataLinkLayer = value;
     }
 
     /**
      * Sets the value of the dataLinkLayer property.
      */
-    public void setDataLinkLayer(Category value) {
+    public void setDataLinkLayer(final Category value) {
         this.dataLinkLayer = new LayerPropertyType(value);
     }
 
@@ -290,14 +290,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the physicalLayer property.
      */
-    public void setPhysicalLayer(LayerPropertyType value) {
+    public void setPhysicalLayer(final LayerPropertyType value) {
         this.physicalLayer = value;
     }
 
     /**
      * Sets the value of the physicalLayer property.
      */
-    public void setPhysicalLayer(Category value) {
+    public void setPhysicalLayer(final Category value) {
         this.physicalLayer = new LayerPropertyType(value);
     }
 
@@ -311,14 +311,14 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the mechanicalLayer property.
      */
-    public void setMechanicalLayer(LayerPropertyType value) {
+    public void setMechanicalLayer(final LayerPropertyType value) {
         this.mechanicalLayer = value;
     }
 
     /**
      * Sets the value of the mechanicalLayer property.
      */
-    public void setMechanicalLayer(Category value) {
+    public void setMechanicalLayer(final Category value) {
         this.mechanicalLayer = new LayerPropertyType(value);
     }
 
@@ -332,7 +332,7 @@ public class InterfaceDefinition implements AbstractInterfaceDefinition {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
     /**

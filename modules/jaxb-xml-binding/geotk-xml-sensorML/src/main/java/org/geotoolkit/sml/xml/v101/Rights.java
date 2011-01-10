@@ -78,7 +78,7 @@ public class Rights implements AbstractRights{
 
     }
 
-    public Rights(AbstractRights r) {
+    public Rights(final AbstractRights r) {
         if (r != null) {
             this.copyRights = r.isCopyRights();
             this.privacyAct = r.isPrivacyAct();
@@ -90,7 +90,7 @@ public class Rights implements AbstractRights{
         }
     }
 
-    public Rights(Boolean copyRights, Boolean privacyAct, Documentation docu) {
+    public Rights(final Boolean copyRights, final Boolean privacyAct, final Documentation docu) {
         this.copyRights = copyRights;
         this.privacyAct = privacyAct;
         this.documentation = docu;
@@ -116,7 +116,7 @@ public class Rights implements AbstractRights{
      *     {@link Documentation }
      *     
      */
-    public void setDocumentation(Documentation value) {
+    public void setDocumentation(final Documentation value) {
         this.documentation = value;
     }
 
@@ -140,7 +140,7 @@ public class Rights implements AbstractRights{
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -164,7 +164,7 @@ public class Rights implements AbstractRights{
      *     {@link Boolean }
      *     
      */
-    public void setPrivacyAct(Boolean value) {
+    public void setPrivacyAct(final Boolean value) {
         this.privacyAct = value;
     }
 
@@ -188,7 +188,7 @@ public class Rights implements AbstractRights{
      *     {@link Boolean }
      *     
      */
-    public void setIntellectualPropertyRights(Boolean value) {
+    public void setIntellectualPropertyRights(final Boolean value) {
         this.intellectualPropertyRights = value;
     }
 
@@ -212,7 +212,7 @@ public class Rights implements AbstractRights{
      *     {@link Boolean }
      *     
      */
-    public void setCopyRights(Boolean value) {
+    public void setCopyRights(final Boolean value) {
         this.copyRights = value;
     }
 

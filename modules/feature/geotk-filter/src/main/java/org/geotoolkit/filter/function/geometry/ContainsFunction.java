@@ -23,12 +23,12 @@ import org.opengis.filter.expression.Expression;
 
 public class ContainsFunction extends AbstractFunction {
 
-    public ContainsFunction(Expression expr1, Expression expr2) {
+    public ContainsFunction(final Expression expr1, final Expression expr2) {
         super(GeometryFunctionFactory.CONTAINS, new Expression[]{expr1, expr2}, null);
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         Geometry arg0;
         Geometry arg1;
 

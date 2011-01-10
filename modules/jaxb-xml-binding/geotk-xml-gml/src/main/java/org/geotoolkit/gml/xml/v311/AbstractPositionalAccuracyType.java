@@ -68,7 +68,7 @@ public abstract class AbstractPositionalAccuracyType {
      * Sets the value of the measureDescription property.
      * 
     */
-    public void setMeasureDescription(CodeType value) {
+    public void setMeasureDescription(final CodeType value) {
         this.measureDescription = value;
     }
 

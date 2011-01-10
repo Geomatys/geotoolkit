@@ -92,7 +92,7 @@ public class CSVDataStore extends AbstractDataStore{
 
     private SimpleFeatureType featureType;
 
-    public CSVDataStore(File f, String namespace, String name, char separator){
+    public CSVDataStore(final File f, final String namespace, final String name, final char separator){
         super(namespace);
         this.file = f;
         this.name = name;
@@ -184,7 +184,7 @@ public class CSVDataStore extends AbstractDataStore{
         }
     }
 
-    private String createHeader(SimpleFeatureType type) throws DataStoreException{
+    private String createHeader(final SimpleFeatureType type) throws DataStoreException{
         final StringBuilder sb = new StringBuilder();
         boolean first = true;
         for(PropertyDescriptor desc : type.getDescriptors()){
@@ -219,7 +219,7 @@ public class CSVDataStore extends AbstractDataStore{
         return sb.toString();
     }
 
-    private void writeType(SimpleFeatureType type) throws DataStoreException {
+    private void writeType(final SimpleFeatureType type) throws DataStoreException {
         
         Writer output = null;
         try {
@@ -245,7 +245,7 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     @Override
-    public long getCount(Query query) throws DataStoreException {
+    public long getCount(final Query query) throws DataStoreException {
         if(QueryUtilities.queryAll(query)) {
             //ni filter or start index, just count number of line avoid reading features.
             RWLock.readLock().lock();
@@ -290,7 +290,7 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         checkExist();
         if(this.featureType != null){
             throw new DataStoreException("Can only have one feature type in CSV dataStore.");
@@ -314,7 +314,7 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
 
         final SimpleFeatureType oldSchema = featureType;
@@ -332,20 +332,20 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         deleteSchema(typeName);
         createSchema(typeName, featureType);
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         return featureType;
     }
 
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         typeCheck(query.getTypeName()); //raise error is type doesnt exist
 
         final Hints hints = query.getHints();
@@ -356,7 +356,7 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         final FeatureWriter fw = new CSVFeatureWriter();
         return handleRemaining(fw, filter);
@@ -372,17 +372,17 @@ public class CSVDataStore extends AbstractDataStore{
     }
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures);
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
@@ -395,7 +395,7 @@ public class CSVDataStore extends AbstractDataStore{
         protected SimpleFeature current = null;
         protected int inc = 0;
 
-        private CSVFeatureReader(boolean reuseFeature) throws DataStoreException{
+        private CSVFeatureReader(final boolean reuseFeature) throws DataStoreException{
             RWLock.readLock().lock();
             sfb = new SimpleFeatureBuilder(featureType);
             if(reuseFeature){

@@ -77,7 +77,7 @@ public class ResponseFormType {
      *     {@link ResponseDocumentType }
      *     
      */
-    public void setResponseDocument(ResponseDocumentType value) {
+    public void setResponseDocument(final ResponseDocumentType value) {
         this.responseDocument = value;
     }
 
@@ -101,7 +101,7 @@ public class ResponseFormType {
      *     {@link OutputDefinitionType }
      *     
      */
-    public void setRawDataOutput(OutputDefinitionType value) {
+    public void setRawDataOutput(final OutputDefinitionType value) {
         this.rawDataOutput = value;
     }
 

@@ -43,7 +43,7 @@ public class RDF implements Serializable {
         concept = new ArrayList<Concept>();
     }
     
-    public RDF(List<Concept> concept) {
+    public RDF(final List<Concept> concept) {
         this.concept = concept;
     }
     
@@ -53,7 +53,7 @@ public class RDF implements Serializable {
         return concept;
     }
 
-    public void setConcept(List<Concept> concept) {
+    public void setConcept(final List<Concept> concept) {
         this.concept = concept;
     }
     

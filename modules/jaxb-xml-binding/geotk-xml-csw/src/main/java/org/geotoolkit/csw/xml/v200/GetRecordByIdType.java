@@ -77,7 +77,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
      * Sets the value of the id property.
      * 
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -93,7 +93,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
      * Sets the value of the elementSetName property.
      * 
      */
-    public void setElementSetName(ElementSetNameType value) {
+    public void setElementSetName(final ElementSetNameType value) {
         this.elementSetName = value;
     }
 
@@ -105,6 +105,6 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
         return "application/xml";
     }
 
-    public void setOutputFormat(String value) {}
+    public void setOutputFormat(final String value) {}
 
 }

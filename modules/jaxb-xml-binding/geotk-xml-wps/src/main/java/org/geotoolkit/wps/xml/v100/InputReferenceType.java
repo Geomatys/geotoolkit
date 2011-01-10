@@ -155,7 +155,7 @@ public class InputReferenceType {
      *     {@link Object }
      *     
      */
-    public void setBody(Object value) {
+    public void setBody(final Object value) {
         this.body = value;
     }
 
@@ -179,7 +179,7 @@ public class InputReferenceType {
      *     {@link InputReferenceType.BodyReference }
      *     
      */
-    public void setBodyReference(InputReferenceType.BodyReference value) {
+    public void setBodyReference(final InputReferenceType.BodyReference value) {
         this.bodyReference = value;
     }
 
@@ -203,7 +203,7 @@ public class InputReferenceType {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -231,7 +231,7 @@ public class InputReferenceType {
      *     {@link String }
      *     
      */
-    public void setMethod(String value) {
+    public void setMethod(final String value) {
         this.method = value;
     }
 
@@ -255,7 +255,7 @@ public class InputReferenceType {
      *     {@link String }
      *     
      */
-    public void setMimeType(String value) {
+    public void setMimeType(final String value) {
         this.mimeType = value;
     }
 
@@ -279,7 +279,7 @@ public class InputReferenceType {
      *     {@link String }
      *     
      */
-    public void setEncoding(String value) {
+    public void setEncoding(final String value) {
         this.encoding = value;
     }
 
@@ -303,7 +303,7 @@ public class InputReferenceType {
      *     {@link String }
      *     
      */
-    public void setSchema(String value) {
+    public void setSchema(final String value) {
         this.schema = value;
     }
 
@@ -353,7 +353,7 @@ public class InputReferenceType {
          *     {@link String }
          *     
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -407,7 +407,7 @@ public class InputReferenceType {
          *     {@link String }
          *     
          */
-        public void setKey(String value) {
+        public void setKey(final String value) {
             this.key = value;
         }
 
@@ -431,7 +431,7 @@ public class InputReferenceType {
          *     {@link String }
          *     
          */
-        public void setValue(String value) {
+        public void setValue(final String value) {
             this.value = value;
         }
 

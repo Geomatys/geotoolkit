@@ -26,7 +26,7 @@ import org.apache.commons.dbcp.BasicDataSource;
  */
 public class DBCPDataSource extends AbstractManageableDataSource {
 
-    public DBCPDataSource(BasicDataSource wrapped) {
+    public DBCPDataSource(final BasicDataSource wrapped) {
         super(wrapped);
     }
 
@@ -36,13 +36,13 @@ public class DBCPDataSource extends AbstractManageableDataSource {
     }
 
     @Override
-    public boolean isWrapperFor(Class type) throws SQLException {
+    public boolean isWrapperFor(final Class type) throws SQLException {
         return false;
         //return this.wrapped.isWrapperFor(type);
     }
 
     @Override
-    public Object unwrap(Class type) throws SQLException {
+    public Object unwrap(final Class type) throws SQLException {
         return null;
         //return this.wrapped.unwrap(type);
     }

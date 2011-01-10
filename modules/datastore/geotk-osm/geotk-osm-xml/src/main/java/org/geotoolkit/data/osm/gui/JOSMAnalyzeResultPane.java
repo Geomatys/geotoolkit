@@ -67,15 +67,15 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
 
     }
 
-    public void setDataStore(DataStore store) {
+    public void setDataStore(final DataStore store) {
         this.store = store;
     }
 
-    public void setAnalyzeResult(AnalyzeResult result) {
+    public void setAnalyzeResult(final AnalyzeResult result) {
         this.result = result;
     }
 
-    public void sortBy(boolean occurence){
+    public void sortBy(final boolean occurence){
         if(result != null){
             final List<Entry<String,Integer>> values = new ArrayList<Entry<String,Integer>>();
             values.addAll(result.values.entrySet());
@@ -212,7 +212,7 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
         add(jSplitPane1, java.awt.BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiSearchCrossActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiSearchCrossActionPerformed
+    private void guiSearchCrossActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiSearchCrossActionPerformed
         final Entry<String,Integer> selected = (Entry<String, Integer>) guiValues.getSelectedValue();
         if(selected == null){
             new CrossThread(null).start();
@@ -222,7 +222,7 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
 
     }//GEN-LAST:event_guiSearchCrossActionPerformed
 
-    private void guiSearchIdActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiSearchIdActionPerformed
+    private void guiSearchIdActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiSearchIdActionPerformed
         final Entry<String,Integer> selected = (Entry<String, Integer>) guiValues.getSelectedValue();
         if(selected == null){
             new IdThread(null).start();
@@ -251,7 +251,7 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
     private static final class ValueRenderer extends DefaultListCellRenderer{
 
         @Override
-        public Component getListCellRendererComponent(JList jlist, Object o, int i, boolean bln, boolean bln1) {
+        public Component getListCellRendererComponent(final JList jlist, final Object o, final int i, final boolean bln, final boolean bln1) {
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(jlist, o, i, bln, bln1);
             
             if(o instanceof Entry){
@@ -275,7 +275,7 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
 
         private final String tagValue;
 
-        public CrossThread(String value) {
+        public CrossThread(final String value) {
             this.tagValue = value;
         }
 
@@ -403,7 +403,7 @@ public class JOSMAnalyzeResultPane extends javax.swing.JPanel {
 
         private final String tagValue;
 
-        public IdThread(String value) {
+        public IdThread(final String value) {
             this.tagValue = value;
         }
 

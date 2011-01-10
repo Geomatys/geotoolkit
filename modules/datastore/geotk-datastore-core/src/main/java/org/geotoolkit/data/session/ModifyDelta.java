@@ -47,7 +47,7 @@ class ModifyDelta extends AbstractDelta{
     private final Id filter;
     private final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
 
-    ModifyDelta(Session session, Name typeName, Id filter, Map<? extends AttributeDescriptor,? extends Object> values){
+    ModifyDelta(final Session session, final Name typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
         super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");
@@ -68,7 +68,7 @@ class ModifyDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public Query modify(Query query) {
+    public Query modify(final Query query) {
         if(!query.getTypeName().equals(type)) return query;
 
         //we always include the modified features
@@ -84,7 +84,7 @@ class ModifyDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator modify(Query query, FeatureIterator reader) throws DataStoreException {
+    public FeatureIterator modify(final Query query, final FeatureIterator reader) throws DataStoreException {
 
         //modify the features that match the filter
         final FeatureIterator modified = GenericModifyFeatureIterator.wrap(reader, filter, values);
@@ -100,7 +100,7 @@ class ModifyDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public long modify(Query query, long count) throws DataStoreException{
+    public long modify(final Query query, final long count) throws DataStoreException{
         //todo must find a correct wayto alterate the count
         //the send request should be modified
         return count;
@@ -110,7 +110,7 @@ class ModifyDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public Envelope modify(Query query, Envelope env) throws DataStoreException {
+    public Envelope modify(final Query query, final Envelope env) throws DataStoreException {
         //todo must find a correct wayto alterate the envelope
         //the send request should be modified
         return env;
@@ -120,7 +120,7 @@ class ModifyDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public void commit(DataStore store) throws DataStoreException {
+    public void commit(final DataStore store) throws DataStoreException {
         store.updateFeatures(type, filter, values);
     }
 

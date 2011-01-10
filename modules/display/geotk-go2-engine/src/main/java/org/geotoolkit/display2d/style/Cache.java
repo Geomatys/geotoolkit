@@ -76,7 +76,7 @@ public abstract class Cache<T extends Object> {
      */
     protected final T styleElement; 
         
-    protected Cache(T element){
+    protected Cache(final T element){
         if(element == null){
             throw new NullPointerException("Style Element can not be null");
         }
@@ -114,7 +114,7 @@ public abstract class Cache<T extends Object> {
      * 
      * @return Collection<String> : all requiered feature attributs name
      */
-    public Collection<String> getRequieredAttributsName(Collection<String> buffer){
+    public Collection<String> getRequieredAttributsName(final Collection<String> buffer){
         evaluate();
         if(buffer != null){
             buffer.addAll(requieredAttributs);

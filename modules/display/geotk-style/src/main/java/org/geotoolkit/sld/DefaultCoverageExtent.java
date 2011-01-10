@@ -38,7 +38,7 @@ class DefaultCoverageExtent implements CoverageExtent{
     private final String timePeriod;
     private final List<RangeAxis> ranges;
     
-    DefaultCoverageExtent(String timeperiod, List<RangeAxis> ranges){
+    DefaultCoverageExtent(final String timeperiod, final List<RangeAxis> ranges){
         if(timeperiod != null && ranges != null){
             throw new IllegalArgumentException("You can not have a timeperiod and range axis, only one allow");
         }
@@ -64,7 +64,7 @@ class DefaultCoverageExtent implements CoverageExtent{
     }
 
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -72,7 +72,7 @@ class DefaultCoverageExtent implements CoverageExtent{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

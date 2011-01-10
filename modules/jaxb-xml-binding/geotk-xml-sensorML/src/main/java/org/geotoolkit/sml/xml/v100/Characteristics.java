@@ -88,12 +88,12 @@ public class Characteristics implements AbstractCharacteristics {
 
     }
 
-    public Characteristics(DataRecordType dataRecord) {
+    public Characteristics(final DataRecordType dataRecord) {
         org.geotoolkit.swe.xml.v100.ObjectFactory facto = new org.geotoolkit.swe.xml.v100.ObjectFactory();
         this.abstractDataRecord = facto.createDataRecord(dataRecord);
     }
 
-     public Characteristics(AbstractCharacteristics capa) {
+     public Characteristics(final AbstractCharacteristics capa) {
         if (capa != null) {
             if (capa.getDataRecord() != null) {
                 AbstractDataRecord record = capa.getDataRecord();
@@ -135,7 +135,7 @@ public class Characteristics implements AbstractCharacteristics {
      * Sets the value of the abstractDataRecord property.
      * 
      */
-    public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordType> value) {
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
     }
 
@@ -143,7 +143,7 @@ public class Characteristics implements AbstractCharacteristics {
      * Sets the value of the abstractDataRecord property.
      *
      */
-    public void setAbstractDataRecord(AbstractDataRecordType value) {
+    public void setAbstractDataRecord(final AbstractDataRecordType value) {
         org.geotoolkit.swe.xml.v100.ObjectFactory facto = new org.geotoolkit.swe.xml.v100.ObjectFactory();
         if (value instanceof SimpleDataRecordType) {
             this.abstractDataRecord = facto.createSimpleDataRecord((SimpleDataRecordType) value);
@@ -174,7 +174,7 @@ public class Characteristics implements AbstractCharacteristics {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -192,7 +192,7 @@ public class Characteristics implements AbstractCharacteristics {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -206,7 +206,7 @@ public class Characteristics implements AbstractCharacteristics {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -220,7 +220,7 @@ public class Characteristics implements AbstractCharacteristics {
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -234,7 +234,7 @@ public class Characteristics implements AbstractCharacteristics {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -248,7 +248,7 @@ public class Characteristics implements AbstractCharacteristics {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -262,7 +262,7 @@ public class Characteristics implements AbstractCharacteristics {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -276,7 +276,7 @@ public class Characteristics implements AbstractCharacteristics {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

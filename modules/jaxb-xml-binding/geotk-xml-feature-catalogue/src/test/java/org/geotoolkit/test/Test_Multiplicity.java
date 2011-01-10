@@ -36,7 +36,7 @@ import org.opengis.util.UnlimitedInteger;
 @Ignore
 public class Test_Multiplicity {
     
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         
     
      String fileName = "multiplicity.xml";

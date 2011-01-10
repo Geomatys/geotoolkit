@@ -75,14 +75,14 @@ public class GetGmlObjectType extends BaseRequestType {
 
     }
 
-    public GetGmlObjectType(String service, String version, String handle, GmlObjectIdType gmlObjectId, String outputFormat) {
+    public GetGmlObjectType(final String service, final String version, final String handle, final GmlObjectIdType gmlObjectId, final String outputFormat) {
         super(service, version, handle);
         this.gmlObjectId  = gmlObjectId;
         this.outputFormat = outputFormat;
     }
 
-    public GetGmlObjectType(String service, String version, String handle, GmlObjectIdType gmlObjectId, String outputFormat,
-            String traverseXlinkDepth, Integer traverseXlinkExpiry) {
+    public GetGmlObjectType(final String service, final String version, final String handle, final GmlObjectIdType gmlObjectId, final String outputFormat,
+            final String traverseXlinkDepth, final Integer traverseXlinkExpiry) {
         super(service, version, handle);
         this.gmlObjectId  = gmlObjectId;
         this.outputFormat = outputFormat;
@@ -110,7 +110,7 @@ public class GetGmlObjectType extends BaseRequestType {
      *     {@link GmlObjectIdType }
      *     
      */
-    public void setGmlObjectId(GmlObjectIdType value) {
+    public void setGmlObjectId(final GmlObjectIdType value) {
         this.gmlObjectId = value;
     }
 
@@ -138,7 +138,7 @@ public class GetGmlObjectType extends BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setOutputFormat(String value) {
+    public void setOutputFormat(final String value) {
         this.outputFormat = value;
     }
 
@@ -162,7 +162,7 @@ public class GetGmlObjectType extends BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setTraverseXlinkDepth(String value) {
+    public void setTraverseXlinkDepth(final String value) {
         this.traverseXlinkDepth = value;
     }
 
@@ -186,7 +186,7 @@ public class GetGmlObjectType extends BaseRequestType {
      *     {@link Integer }
      *     
      */
-    public void setTraverseXlinkExpiry(Integer value) {
+    public void setTraverseXlinkExpiry(final Integer value) {
         this.traverseXlinkExpiry = value;
     }
 

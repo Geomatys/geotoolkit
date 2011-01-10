@@ -40,7 +40,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
     protected JTSGeometryIterator currentIterator;
     protected boolean done = false;
 
-    public JTSGeomCollectionIterator(GeometryCollection gc, AffineTransform trs) {
+    public JTSGeomCollectionIterator(final GeometryCollection gc, final AffineTransform trs) {
         super(gc,trs);
         reset();
     }
@@ -58,7 +58,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
     }
 
     @Override
-    public void setGeometry(GeometryCollection geom) {
+    public void setGeometry(final GeometryCollection geom) {
         super.setGeometry(geom);
         if(geom == null){
             nbGeom = 0;
@@ -74,7 +74,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
      *
      * @return the specific iterator for the geometry passed.
      */
-    protected void prepareIterator(Geometry candidate) {
+    protected void prepareIterator(final Geometry candidate) {
 
         //try to reuse the previous iterator.
         if (candidate.isEmpty()) {
@@ -119,7 +119,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
     }
 
     @Override
-    public void setTransform(AffineTransform trs) {
+    public void setTransform(final AffineTransform trs) {
         if(currentIterator != null){
             currentIterator.setTransform(trs);
         }
@@ -130,7 +130,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         return currentIterator.currentSegment(coords);
     }
 
@@ -138,7 +138,7 @@ public class JTSGeomCollectionIterator extends JTSGeometryIterator<GeometryColle
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(float[] coords) {
+    public int currentSegment(final float[] coords) {
         return currentIterator.currentSegment(coords);
     }
 

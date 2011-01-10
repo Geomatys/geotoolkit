@@ -46,7 +46,7 @@ public class DefaultPointPlacement implements PointPlacement{
      * @param disp : if null will be replaced by default value.
      * @param rotation : if null or Expression.NIL will be replaced by default value.
      */
-    public DefaultPointPlacement(AnchorPoint anchor, Displacement disp, Expression rotation){
+    public DefaultPointPlacement(final AnchorPoint anchor, final Displacement disp, final Expression rotation){
         this.anchor = (anchor == null) ? DEFAULT_ANCHOR_POINT : anchor;
         this.disp = (disp == null) ? DEFAULT_DISPLACEMENT : disp;
         this.rotation = (rotation == null || rotation == NIL) ? DEFAULT_POINTPLACEMENT_ROTATION : rotation;
@@ -80,7 +80,7 @@ public class DefaultPointPlacement implements PointPlacement{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -88,7 +88,7 @@ public class DefaultPointPlacement implements PointPlacement{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

@@ -85,7 +85,7 @@ public class ClassificationType extends RegistryObjectType {
      *     {@link String }
      *     
      */
-    public void setClassificationScheme(String value) {
+    public void setClassificationScheme(final String value) {
         this.classificationScheme = value;
     }
 
@@ -109,7 +109,7 @@ public class ClassificationType extends RegistryObjectType {
      *     {@link String }
      *     
      */
-    public void setClassifiedObject(String value) {
+    public void setClassifiedObject(final String value) {
         this.classifiedObject = value;
     }
 
@@ -133,7 +133,7 @@ public class ClassificationType extends RegistryObjectType {
      *     {@link String }
      *     
      */
-    public void setClassificationNode(String value) {
+    public void setClassificationNode(final String value) {
         this.classificationNode = value;
     }
 
@@ -157,7 +157,7 @@ public class ClassificationType extends RegistryObjectType {
      *     {@link String }
      *     
      */
-    public void setNodeRepresentation(String value) {
+    public void setNodeRepresentation(final String value) {
         this.nodeRepresentation = value;
     }
 

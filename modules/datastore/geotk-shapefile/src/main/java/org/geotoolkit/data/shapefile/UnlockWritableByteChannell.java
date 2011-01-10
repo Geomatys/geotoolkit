@@ -37,8 +37,8 @@ public class UnlockWritableByteChannell implements WritableByteChannel {
     private final Object requestor;
     private boolean closed;
 
-    public UnlockWritableByteChannell(WritableByteChannel newChannel,
-            ShpFiles shapefileFiles, URL url, Object requestor) {
+    public UnlockWritableByteChannell(final WritableByteChannel newChannel,
+            final ShpFiles shapefileFiles, final URL url, final Object requestor) {
         this.wrapped = newChannel;
         this.shapefileFiles = shapefileFiles;
         this.url = url;
@@ -50,7 +50,7 @@ public class UnlockWritableByteChannell implements WritableByteChannel {
      * {@inheritDoc }
      */
     @Override
-    public int write(ByteBuffer src) throws IOException {
+    public int write(final ByteBuffer src) throws IOException {
         return wrapped.write(src);
     }
 

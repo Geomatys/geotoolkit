@@ -59,7 +59,7 @@ public class GeoLocationArea extends AbstractVectorType implements AbstractGeoLo
 
     }
 
-    public GeoLocationArea(AbstractGeoLocationArea gla) {
+    public GeoLocationArea(final AbstractGeoLocationArea gla) {
         super(gla);
         if (gla != null && gla.getMember() != null) {
             this.member = new ArrayList<EnvelopePropertyType>();

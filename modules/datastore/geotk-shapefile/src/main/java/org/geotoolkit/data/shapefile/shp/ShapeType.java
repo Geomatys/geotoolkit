@@ -79,7 +79,7 @@ public enum ShapeType {
      * @param id The id.
      * @param name The name.
      */
-    ShapeType(int id, String name) {
+    ShapeType(final int id, final String name) {
         this.id = id;
         this.name = name;
     }
@@ -144,7 +144,7 @@ public enum ShapeType {
      *                The id to search for.
      * @return The ShapeType for the id.
      */
-    public static ShapeType forID(int id) {
+    public static ShapeType forID(final int id) {
         switch (id) {
             case 0:  return NULL;
             case 1:  return POINT;
@@ -170,11 +170,11 @@ public enum ShapeType {
      * @throws ShapefileException If the ShapeType is bogus.
      * @return The correct handler for this ShapeType. Returns a new one.
      */
-    public ShapeHandler getShapeHandler(boolean read3D) throws DataStoreException {
+    public ShapeHandler getShapeHandler(final boolean read3D) throws DataStoreException {
         return getShapeHandler(read3D, null);
     }
 
-    public ShapeHandler getShapeHandler(boolean read3D, double[] res) throws DataStoreException {
+    public ShapeHandler getShapeHandler(final boolean read3D, final double[] res) throws DataStoreException {
         switch (id) {
             case 1:
             case 11:
@@ -206,11 +206,11 @@ public enum ShapeType {
      * @param geom The Geometry to analyze.
      * @return The best ShapeType for the Geometry.
      */
-    public static ShapeType findBestGeometryType(Geometry geom) {
+    public static ShapeType findBestGeometryType(final Geometry geom) {
         return findBestGeometryType(geom.getClass());
     }
 
-    public static ShapeType findBestGeometryType(Class geomType) {
+    public static ShapeType findBestGeometryType(final Class geomType) {
         if (Point.class.isAssignableFrom(geomType)) {
             return ShapeType.POINT;
         } else if (MultiPoint.class.isAssignableFrom(geomType)) {

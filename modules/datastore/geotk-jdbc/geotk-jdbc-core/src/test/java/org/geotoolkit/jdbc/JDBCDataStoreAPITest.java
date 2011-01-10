@@ -1110,7 +1110,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 //        assertFalse(isLocked(tname("road"), tname("road") + "." + (td.initialFidValue)));
 //    }
 
-    int count(String typeName) throws Exception {
+    int count(final String typeName) throws Exception {
         // return count(reader(typeName));
         // makes use of optimization if any
         return (int) dataStore.getCount(QueryBuilder.all(nsname(typeName)));
@@ -1122,7 +1122,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      * This method will close the reader.
      * </p>
      */
-    int count(FeatureReader <SimpleFeatureType, SimpleFeature> reader) throws Exception {
+    int count(final FeatureReader <SimpleFeatureType, SimpleFeature> reader) throws Exception {
         if (reader == null) {
             return -1;
         }
@@ -1160,7 +1160,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      * @throws IllegalAttributeException
      *             DOCUMENT ME!
      */
-    void assertCovered(SimpleFeature[] features,  FeatureReader<SimpleFeatureType, SimpleFeature> reader)
+    void assertCovered(final SimpleFeature[] features,  final FeatureReader<SimpleFeatureType, SimpleFeature> reader)
         throws NoSuchElementException, IOException, IllegalAttributeException {
         int count = 0;
 
@@ -1176,7 +1176,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         assertEquals(features.length, count);
     }
 
-    void assertCovers(String msg, FeatureCollection<SimpleFeature> c1, FeatureCollection<SimpleFeature> c2) {
+    void assertCovers(final String msg, final FeatureCollection<SimpleFeature> c1, final FeatureCollection<SimpleFeature> c2) {
         if (c1 == c2) {
             return;
         }
@@ -1206,7 +1206,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         i.close();
     }
 
-    void assertContains(SimpleFeature[] array, SimpleFeature expected) {
+    void assertContains(final SimpleFeature[] array, final SimpleFeature expected) {
         assertFalse(array == null);
         assertFalse(array.length == 0);
         assertNotNull(expected);
@@ -1220,7 +1220,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         fail("Contains " + expected);
     }
 
-    String id( String raw, SimpleFeature f ) {
+    String id( final String raw, final SimpleFeature f ) {
         if ( raw == null ) {
             return null;
         }
@@ -1230,7 +1230,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
 
         return raw;
     }
-    boolean contains(Object[] array, Object expected) {
+    boolean contains(final Object[] array, final Object expected) {
         if ((array == null) || (array.length == 0)) {
             return false;
         }
@@ -1244,12 +1244,12 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         return false;
     }
 
-    FeatureReader<SimpleFeatureType, SimpleFeature> reader(String typeName) throws Exception {
+    FeatureReader<SimpleFeatureType, SimpleFeature> reader(final String typeName) throws Exception {
         Query query = QueryBuilder.filtered(dataStore.getFeatureType(typeName).getName(), Filter.INCLUDE);
         return dataStore.getFeatureReader(query);
     }
 
-    FeatureWriter<SimpleFeatureType, SimpleFeature> writer(String typeName) throws Exception {
+    FeatureWriter<SimpleFeatureType, SimpleFeature> writer(final String typeName) throws Exception {
         return dataStore.getFeatureWriter(nsname(typeName),Filter.INCLUDE);
     }
 
@@ -1257,7 +1257,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      * Counts the number of Features in the specified writer.
      * This method will close the writer.
      */
-    protected int count(FeatureWriter<SimpleFeatureType, SimpleFeature> writer)
+    protected int count(final FeatureWriter<SimpleFeatureType, SimpleFeature> writer)
         throws NoSuchElementException, IOException, IllegalAttributeException {
         int count = 0;
 
@@ -1273,7 +1273,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         return count;
     }
 
-    protected SimpleFeature feature(String typeName, String fid)
+    protected SimpleFeature feature(final String typeName, final String fid)
         throws NoSuchElementException, IOException, Exception {
          FeatureReader<SimpleFeatureType, SimpleFeature> reader = reader(typeName);
         SimpleFeature f;
@@ -1293,7 +1293,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         return null;
     }
 
-    boolean covers(FeatureIterator<SimpleFeature> reader, SimpleFeature[] array)
+    boolean covers(final FeatureIterator<SimpleFeature> reader, final SimpleFeature[] array)
         throws NoSuchElementException, IOException, IllegalAttributeException {
         SimpleFeature feature;
         int count = 0;
@@ -1330,7 +1330,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      * @throws IllegalAttributeException
      *             DOCUMENT ME!
      */
-    boolean covers(FeatureReader <SimpleFeatureType, SimpleFeature> reader, SimpleFeature[] array)
+    boolean covers(final FeatureReader <SimpleFeatureType, SimpleFeature> reader, final SimpleFeature[] array)
         throws NoSuchElementException, IOException, IllegalAttributeException {
         SimpleFeature feature;
         int count = 0;
@@ -1352,7 +1352,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         return count == array.length;
     }
 
-    boolean coversLax(FeatureReader <SimpleFeatureType, SimpleFeature> reader, SimpleFeature[] array)
+    boolean coversLax(final FeatureReader <SimpleFeatureType, SimpleFeature> reader, final SimpleFeature[] array)
         throws NoSuchElementException, IOException, IllegalAttributeException {
         SimpleFeature feature;
         int count = 0;
@@ -1383,7 +1383,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      *            DOCUMENT ME!
      * @return DOCUMENT ME!
      */
-    boolean containsLax(SimpleFeature[] array, SimpleFeature expected) {
+    boolean containsLax(final SimpleFeature[] array, final SimpleFeature expected) {
         if ((array == null) || (array.length == 0)) {
             return false;
         }
@@ -1426,7 +1426,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      * @throws IllegalAttributeException
      *             if attributeName did not match schema
      */
-    SimpleFeature findFeature(FeatureReader <SimpleFeatureType, SimpleFeature> reader, String attributeName, Object value)
+    SimpleFeature findFeature(final FeatureReader <SimpleFeatureType, SimpleFeature> reader, final String attributeName, final Object value)
         throws NoSuchElementException, IOException, IllegalAttributeException {
         SimpleFeature f;
 
@@ -1468,7 +1468,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      * @throws Exception
      *             DOCUMENT ME!
      */
-    void assertMatched(SimpleFeature[] array,  FeatureReader<SimpleFeatureType, SimpleFeature> reader)
+    void assertMatched(final SimpleFeature[] array,  final FeatureReader<SimpleFeatureType, SimpleFeature> reader)
         throws Exception {
         SimpleFeature feature;
         int count = 0;
@@ -1486,7 +1486,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
         assertEquals("array not matched by reader", array.length, count);
     }
 
-    void assertMatch(SimpleFeature[] array, SimpleFeature feature) {
+    void assertMatch(final SimpleFeature[] array, final SimpleFeature feature) {
         assertTrue(array != null);
         assertTrue(array.length != 0);
 
@@ -1520,7 +1520,7 @@ public abstract class JDBCDataStoreAPITest extends JDBCTestSupport {
      *            DOCUMENT ME!
      * @return DOCUMENT ME!
      */
-    boolean match(SimpleFeature expected, SimpleFeature actual) {
+    boolean match(final SimpleFeature expected, final SimpleFeature actual) {
         SimpleFeatureType type = expected.getFeatureType();
 
         for (int i = 0; i < type.getAttributeCount(); i++) {

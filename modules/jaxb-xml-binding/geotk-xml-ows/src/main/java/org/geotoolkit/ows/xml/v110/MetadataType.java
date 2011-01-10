@@ -87,7 +87,7 @@ public class MetadataType implements AbstractMetadata {
 
     }
 
-    public MetadataType(String href) {
+    public MetadataType(final String href) {
         this.href = href;
     }
     

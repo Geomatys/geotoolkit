@@ -68,7 +68,7 @@ public class JCRSChooser extends javax.swing.JDialog {
      * @param parent
      * @param modal 
      */
-    public JCRSChooser(java.awt.Frame parent, boolean modal) {
+    public JCRSChooser(final java.awt.Frame parent, final boolean modal) {
         super(parent, modal);
         initComponents();
 
@@ -114,7 +114,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         
     }
 
-    public void setCRS(CoordinateReferenceSystem crs) {
+    public void setCRS(final CoordinateReferenceSystem crs) {
         this.crs = crs;
         if (crs != null) {
             String epsg = crs.getName().toString();
@@ -298,20 +298,20 @@ public class JCRSChooser extends javax.swing.JDialog {
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
-    private void gui_jtf_crsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_gui_jtf_crsActionPerformed
+    private void gui_jtf_crsActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_gui_jtf_crsActionPerformed
         liste.searchCRS(gui_jtf_crs.getText());
     }//GEN-LAST:event_gui_jtf_crsActionPerformed
 
-    private void gui_jtf_crsKeyTyped(KeyEvent evt) {//GEN-FIRST:event_gui_jtf_crsKeyTyped
+    private void gui_jtf_crsKeyTyped(final KeyEvent evt) {//GEN-FIRST:event_gui_jtf_crsKeyTyped
         liste.searchCRS(gui_jtf_crs.getText());
     }//GEN-LAST:event_gui_jtf_crsKeyTyped
 
-    private void but_valideractionAjouter(ActionEvent evt) {//GEN-FIRST:event_but_valideractionAjouter
+    private void but_valideractionAjouter(final ActionEvent evt) {//GEN-FIRST:event_but_valideractionAjouter
         exitmode = ACTION.APPROVE;
         dispose();
     }//GEN-LAST:event_but_valideractionAjouter
 
-    private void but_fermeractionFermer(ActionEvent evt) {//GEN-FIRST:event_but_fermeractionFermer
+    private void but_fermeractionFermer(final ActionEvent evt) {//GEN-FIRST:event_but_fermeractionFermer
         exitmode = ACTION.CANCEL;
         dispose();
     }//GEN-LAST:event_but_fermeractionFermer

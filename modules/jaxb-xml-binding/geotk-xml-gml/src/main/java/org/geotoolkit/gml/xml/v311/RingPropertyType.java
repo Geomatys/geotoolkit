@@ -73,7 +73,7 @@ public class RingPropertyType {
      *     {@link RingType }
      *     
      */
-    public void setRing(RingType value) {
+    public void setRing(final RingType value) {
         this.ring = value;
     }
 

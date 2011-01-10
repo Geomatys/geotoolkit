@@ -66,7 +66,7 @@ public class ImageIOUtilities {
 
     }
 
-    public static void writeImage(final RenderedImage image, Object output, ImageWriter writer) throws IOException{
+    public static void writeImage(final RenderedImage image, Object output, final ImageWriter writer) throws IOException{
 
         final ImageWriterSpi spi = writer.getOriginatingProvider();
 
@@ -84,7 +84,7 @@ public class ImageIOUtilities {
 
     }
 
-    public static void logImageWriterOrder(String mime) {
+    public static void logImageWriterOrder(final String mime) {
         final Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mime);
         int i = 1;
         String line = "\n///////////////////////////////////////////\n";
@@ -99,7 +99,7 @@ public class ImageIOUtilities {
         Logger.getAnonymousLogger().log(Level.INFO, sb.toString());
     }
 
-    public static ImageWriter getImageWriter(final RenderedImage image, String mime, Object output) throws IOException{
+    public static ImageWriter getImageWriter(final RenderedImage image, final String mime, final Object output) throws IOException{
         if(image == null) throw new NullPointerException("Image can not be null");
 
         int n = 0;

@@ -150,7 +150,7 @@ public abstract class AbstractRequest implements Request {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object candidate) {
+    public boolean equals(final Object candidate) {
         if (!(candidate instanceof Request)) {
             return false;
         }
@@ -163,7 +163,7 @@ public abstract class AbstractRequest implements Request {
         }
     }
 
-    protected InputStream openRichException(URLConnection cnx) throws IOException {
+    protected InputStream openRichException(final URLConnection cnx) throws IOException {
         try {
             return cnx.getInputStream();
         } catch(IOException ex) {

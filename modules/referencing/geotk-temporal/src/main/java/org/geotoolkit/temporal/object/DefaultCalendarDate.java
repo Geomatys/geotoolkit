@@ -44,7 +44,7 @@ public class DefaultCalendarDate extends DefaultTemporalPosition implements Cale
      */
     private int[] calendarDate;
 
-    public DefaultCalendarDate(TemporalReferenceSystem frame, IndeterminateValue indeterminatePosition, InternationalString calendarEraName, int[] calendarDate) {
+    public DefaultCalendarDate(final TemporalReferenceSystem frame, final IndeterminateValue indeterminatePosition, final InternationalString calendarEraName, final int[] calendarDate) {
         super(frame, indeterminatePosition);
         this.calendarDate = calendarDate;
         this.calendarEraName = calendarEraName;
@@ -74,11 +74,11 @@ public class DefaultCalendarDate extends DefaultTemporalPosition implements Cale
         return calendarDate;
     }
 
-    public void setCalendarEraName(InternationalString calendarEraName) {
+    public void setCalendarEraName(final InternationalString calendarEraName) {
         this.calendarEraName = calendarEraName;
     }
 
-    public void setCalendarDate(int[] calendarDate) {
+    public void setCalendarDate(final int[] calendarDate) {
         this.calendarDate = calendarDate;
     }
 

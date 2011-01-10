@@ -403,7 +403,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Role")
-    public JAXBElement<CodeType> createRole(CodeType value) {
+    public JAXBElement<CodeType> createRole(final CodeType value) {
         return new JAXBElement<CodeType>(_Role_QNAME, CodeType.class, null, value);
     }
 
@@ -412,7 +412,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Range")
-    public JAXBElement<RangeType> createRange(RangeType value) {
+    public JAXBElement<RangeType> createRange(final RangeType value) {
         return new JAXBElement<RangeType>(_Range_QNAME, RangeType.class, null, value);
     }
 
@@ -421,7 +421,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Keywords")
-    public JAXBElement<KeywordsType> createKeywords(KeywordsType value) {
+    public JAXBElement<KeywordsType> createKeywords(final KeywordsType value) {
         return new JAXBElement<KeywordsType>(_Keywords_QNAME, KeywordsType.class, null, value);
     }
 
@@ -430,7 +430,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Manifest")
-    public JAXBElement<ManifestType> createManifest(ManifestType value) {
+    public JAXBElement<ManifestType> createManifest(final ManifestType value) {
         return new JAXBElement<ManifestType>(_Manifest_QNAME, ManifestType.class, null, value);
     }
 
@@ -439,7 +439,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "AbstractReferenceBase")
-    public JAXBElement<AbstractReferenceBaseType> createAbstractReferenceBase(AbstractReferenceBaseType value) {
+    public JAXBElement<AbstractReferenceBaseType> createAbstractReferenceBase(final AbstractReferenceBaseType value) {
         return new JAXBElement<AbstractReferenceBaseType>(_AbstractReferenceBase_QNAME, AbstractReferenceBaseType.class, null, value);
     }
 
@@ -448,7 +448,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "OtherSource")
-    public JAXBElement<MetadataType> createOtherSource(MetadataType value) {
+    public JAXBElement<MetadataType> createOtherSource(final MetadataType value) {
         return new JAXBElement<MetadataType>(_OtherSource_QNAME, MetadataType.class, null, value);
     }
 
@@ -457,7 +457,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Fees")
-    public JAXBElement<String> createFees(String value) {
+    public JAXBElement<String> createFees(final String value) {
         return new JAXBElement<String>(_Fees_QNAME, String.class, null, value);
     }
 
@@ -466,7 +466,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "InputData")
-    public JAXBElement<ManifestType> createInputData(ManifestType value) {
+    public JAXBElement<ManifestType> createInputData(final ManifestType value) {
         return new JAXBElement<ManifestType>(_InputData_QNAME, ManifestType.class, null, value);
     }
 
@@ -475,7 +475,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Reference", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "AbstractReferenceBase")
-    public JAXBElement<ReferenceType> createReference(ReferenceType value) {
+    public JAXBElement<ReferenceType> createReference(final ReferenceType value) {
         return new JAXBElement<ReferenceType>(_Reference_QNAME, ReferenceType.class, null, value);
     }
 
@@ -484,7 +484,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "SupportedCRS", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "AvailableCRS")
-    public JAXBElement<String> createSupportedCRS(String value) {
+    public JAXBElement<String> createSupportedCRS(final String value) {
         return new JAXBElement<String>(_SupportedCRS_QNAME, String.class, null, value);
     }
 
@@ -493,7 +493,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "OutputFormat")
-    public JAXBElement<String> createOutputFormat(String value) {
+    public JAXBElement<String> createOutputFormat(final String value) {
         return new JAXBElement<String>(_OutputFormat_QNAME, String.class, null, value);
     }
 
@@ -502,7 +502,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "OperationResponse")
-    public JAXBElement<ManifestType> createOperationResponse(ManifestType value) {
+    public JAXBElement<ManifestType> createOperationResponse(final ManifestType value) {
         return new JAXBElement<ManifestType>(_OperationResponse_QNAME, ManifestType.class, null, value);
     }
 
@@ -511,7 +511,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "ExtendedCapabilities")
-    public JAXBElement<Object> createExtendedCapabilities(Object value) {
+    public JAXBElement<Object> createExtendedCapabilities(final Object value) {
         return new JAXBElement<Object>(_ExtendedCapabilities_QNAME, Object.class, null, value);
     }
 
@@ -520,7 +520,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Identifier")
-    public JAXBElement<CodeType> createIdentifier(CodeType value) {
+    public JAXBElement<CodeType> createIdentifier(final CodeType value) {
         return new JAXBElement<CodeType>(_Identifier_QNAME, CodeType.class, null, value);
     }
 
@@ -529,7 +529,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "OrganisationName")
-    public JAXBElement<String> createOrganisationName(String value) {
+    public JAXBElement<String> createOrganisationName(final String value) {
         return new JAXBElement<String>(_OrganisationName_QNAME, String.class, null, value);
     }
 
@@ -538,7 +538,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "DataType")
-    public JAXBElement<DomainMetadataType> createDataType(DomainMetadataType value) {
+    public JAXBElement<DomainMetadataType> createDataType(final DomainMetadataType value) {
         return new JAXBElement<DomainMetadataType>(_DataType_QNAME, DomainMetadataType.class, null, value);
     }
 
@@ -547,7 +547,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "WGS84BoundingBox", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "BoundingBox")
-    public JAXBElement<WGS84BoundingBoxType> createWGS84BoundingBox(WGS84BoundingBoxType value) {
+    public JAXBElement<WGS84BoundingBoxType> createWGS84BoundingBox(final WGS84BoundingBoxType value) {
         return new JAXBElement<WGS84BoundingBoxType>(_WGS84BoundingBox_QNAME, WGS84BoundingBoxType.class, null, value);
     }
 
@@ -556,7 +556,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Spacing")
-    public JAXBElement<ValueType> createSpacing(ValueType value) {
+    public JAXBElement<ValueType> createSpacing(final ValueType value) {
         return new JAXBElement<ValueType>(_Spacing_QNAME, ValueType.class, null, value);
     }
 
@@ -565,7 +565,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "ReferenceGroup")
-    public JAXBElement<ReferenceGroupType> createReferenceGroup(ReferenceGroupType value) {
+    public JAXBElement<ReferenceGroupType> createReferenceGroup(final ReferenceGroupType value) {
         return new JAXBElement<ReferenceGroupType>(_ReferenceGroup_QNAME, ReferenceGroupType.class, null, value);
     }
 
@@ -574,7 +574,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "MinimumValue")
-    public JAXBElement<ValueType> createMinimumValue(ValueType value) {
+    public JAXBElement<ValueType> createMinimumValue(final ValueType value) {
         return new JAXBElement<ValueType>(_MinimumValue_QNAME, ValueType.class, null, value);
     }
 
@@ -583,7 +583,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "BoundingBox")
-    public JAXBElement<BoundingBoxType> createBoundingBox(BoundingBoxType value) {
+    public JAXBElement<BoundingBoxType> createBoundingBox(final BoundingBoxType value) {
         return new JAXBElement<BoundingBoxType>(_BoundingBox_QNAME, BoundingBoxType.class, null, value);
     }
 
@@ -592,7 +592,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "PositionName")
-    public JAXBElement<String> createPositionName(String value) {
+    public JAXBElement<String> createPositionName(final String value) {
         return new JAXBElement<String>(_PositionName_QNAME, String.class, null, value);
     }
 
@@ -601,7 +601,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Meaning")
-    public JAXBElement<DomainMetadataType> createMeaning(DomainMetadataType value) {
+    public JAXBElement<DomainMetadataType> createMeaning(final DomainMetadataType value) {
         return new JAXBElement<DomainMetadataType>(_Meaning_QNAME, DomainMetadataType.class, null, value);
     }
 
@@ -610,7 +610,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "DefaultValue")
-    public JAXBElement<ValueType> createDefaultValue(ValueType value) {
+    public JAXBElement<ValueType> createDefaultValue(final ValueType value) {
         return new JAXBElement<ValueType>(_DefaultValue_QNAME, ValueType.class, null, value);
     }
 
@@ -620,7 +620,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Language")
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createLanguage(String value) {
+    public JAXBElement<String> createLanguage(final String value) {
         return new JAXBElement<String>(_Language_QNAME, String.class, null, value);
     }
 
@@ -629,7 +629,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "IndividualName")
-    public JAXBElement<String> createIndividualName(String value) {
+    public JAXBElement<String> createIndividualName(final String value) {
         return new JAXBElement<String>(_IndividualName_QNAME, String.class, null, value);
     }
 
@@ -638,7 +638,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Title")
-    public JAXBElement<LanguageStringType> createTitle(LanguageStringType value) {
+    public JAXBElement<LanguageStringType> createTitle(final LanguageStringType value) {
         return new JAXBElement<LanguageStringType>(_Title_QNAME, LanguageStringType.class, null, value);
     }
 
@@ -647,7 +647,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "ReferenceSystem")
-    public JAXBElement<DomainMetadataType> createReferenceSystem(DomainMetadataType value) {
+    public JAXBElement<DomainMetadataType> createReferenceSystem(final DomainMetadataType value) {
         return new JAXBElement<DomainMetadataType>(_ReferenceSystem_QNAME, DomainMetadataType.class, null, value);
     }
 
@@ -656,7 +656,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "AvailableCRS")
-    public JAXBElement<String> createAvailableCRS(String value) {
+    public JAXBElement<String> createAvailableCRS(final String value) {
         return new JAXBElement<String>(_AvailableCRS_QNAME, String.class, null, value);
     }
 
@@ -665,7 +665,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "UOM")
-    public JAXBElement<DomainMetadataType> createUOM(DomainMetadataType value) {
+    public JAXBElement<DomainMetadataType> createUOM(final DomainMetadataType value) {
         return new JAXBElement<DomainMetadataType>(_UOM_QNAME, DomainMetadataType.class, null, value);
     }
 
@@ -674,7 +674,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Resource")
-    public JAXBElement<Object> createResource(Object value) {
+    public JAXBElement<Object> createResource(final Object value) {
         return new JAXBElement<Object>(_Resource_QNAME, Object.class, null, value);
     }
 
@@ -683,7 +683,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "ContactInfo")
-    public JAXBElement<ContactType> createContactInfo(ContactType value) {
+    public JAXBElement<ContactType> createContactInfo(final ContactType value) {
         return new JAXBElement<ContactType>(_ContactInfo_QNAME, ContactType.class, null, value);
     }
 
@@ -692,7 +692,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "MaximumValue")
-    public JAXBElement<ValueType> createMaximumValue(ValueType value) {
+    public JAXBElement<ValueType> createMaximumValue(final ValueType value) {
         return new JAXBElement<ValueType>(_MaximumValue_QNAME, ValueType.class, null, value);
     }
 
@@ -701,7 +701,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Value")
-    public JAXBElement<ValueType> createValue(ValueType value) {
+    public JAXBElement<ValueType> createValue(final ValueType value) {
         return new JAXBElement<ValueType>(_Value_QNAME, ValueType.class, null, value);
     }
 
@@ -710,7 +710,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Abstract")
-    public JAXBElement<LanguageStringType> createAbstract(LanguageStringType value) {
+    public JAXBElement<LanguageStringType> createAbstract(final LanguageStringType value) {
         return new JAXBElement<LanguageStringType>(_Abstract_QNAME, LanguageStringType.class, null, value);
     }
 
@@ -719,7 +719,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "ServiceReference", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "Reference")
-    public JAXBElement<ServiceReferenceType> createServiceReference(ServiceReferenceType value) {
+    public JAXBElement<ServiceReferenceType> createServiceReference(final ServiceReferenceType value) {
         return new JAXBElement<ServiceReferenceType>(_ServiceReference_QNAME, ServiceReferenceType.class, null, value);
     }
 
@@ -728,7 +728,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Metadata")
-    public JAXBElement<MetadataType> createMetadata(MetadataType value) {
+    public JAXBElement<MetadataType> createMetadata(final MetadataType value) {
         return new JAXBElement<MetadataType>(_Metadata_QNAME, MetadataType.class, null, value);
     }
 
@@ -737,7 +737,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "DatasetDescriptionSummary")
-    public JAXBElement<DatasetDescriptionSummaryBaseType> createDatasetDescriptionSummary(DatasetDescriptionSummaryBaseType value) {
+    public JAXBElement<DatasetDescriptionSummaryBaseType> createDatasetDescriptionSummary(final DatasetDescriptionSummaryBaseType value) {
         return new JAXBElement<DatasetDescriptionSummaryBaseType>(_DatasetDescriptionSummary_QNAME, DatasetDescriptionSummaryBaseType.class, null, value);
     }
 
@@ -746,7 +746,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "AbstractMetaData")
-    public JAXBElement<Object> createAbstractMetaData(Object value) {
+    public JAXBElement<Object> createAbstractMetaData(final Object value) {
         return new JAXBElement<Object>(_AbstractMetaData_QNAME, Object.class, null, value);
     }
 
@@ -755,7 +755,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "AccessConstraints")
-    public JAXBElement<String> createAccessConstraints(String value) {
+    public JAXBElement<String> createAccessConstraints(final String value) {
         return new JAXBElement<String>(_AccessConstraints_QNAME, String.class, null, value);
     }
 
@@ -764,7 +764,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Get", scope = HTTP.class)
-    public JAXBElement<RequestMethodType> createHTTPGet(RequestMethodType value) {
+    public JAXBElement<RequestMethodType> createHTTPGet(final RequestMethodType value) {
         return new JAXBElement<RequestMethodType>(_HTTPGet_QNAME, RequestMethodType.class, HTTP.class, value);
     }
 
@@ -773,7 +773,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Post", scope = HTTP.class)
-    public JAXBElement<RequestMethodType> createHTTPPost(RequestMethodType value) {
+    public JAXBElement<RequestMethodType> createHTTPPost(final RequestMethodType value) {
         return new JAXBElement<RequestMethodType>(_HTTPPost_QNAME, RequestMethodType.class, HTTP.class, value);
     }
     
@@ -798,7 +798,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "Exception")
-    public JAXBElement<ExceptionType> createException(ExceptionType value) {
+    public JAXBElement<ExceptionType> createException(final ExceptionType value) {
         return new JAXBElement<ExceptionType>(_Exception_QNAME, ExceptionType.class, null, value);
     }
 
@@ -839,7 +839,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows/1.1", name = "GetCapabilities")
-    public JAXBElement<GetCapabilitiesType> createGetCapabilities(GetCapabilitiesType value) {
+    public JAXBElement<GetCapabilitiesType> createGetCapabilities(final GetCapabilitiesType value) {
         return new JAXBElement<GetCapabilitiesType>(_GetCapabilities_QNAME, GetCapabilitiesType.class, null, value);
     }
 

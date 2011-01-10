@@ -55,7 +55,7 @@ import org.opengis.style.Style;
 public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements SLDVisitor {
 
     @Override
-    public Object visit(StyledLayerDescriptor sld, Object data) {
+    public Object visit(final StyledLayerDescriptor sld, Object data) {
         final List<? extends Layer> layers = sld.layers();
         if(layers != null){
             for(Layer l : layers){
@@ -76,7 +76,7 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
     }
 
     @Override
-    public Object visit(SLDLibrary library, Object data) {
+    public Object visit(final SLDLibrary library, Object data) {
         final StyledLayerDescriptor sld = library.getSLD();
         if(sld != null){
             data = sld.accept(this, data);
@@ -85,7 +85,7 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
     }
 
     @Override
-    public Object visit(NamedLayer layer, Object data) {
+    public Object visit(final NamedLayer layer, Object data) {
         final LayerFeatureConstraints lfc = layer.getConstraints();
         if(lfc != null){
             data = lfc.accept(this, data);
@@ -104,7 +104,7 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
     }
 
     @Override
-    public Object visit(UserLayer layer, Object data) {
+    public Object visit(final UserLayer layer, Object data) {
         final Constraints csts = layer.getConstraints();
         if(csts != null){
             if(csts instanceof LayerCoverageConstraints){
@@ -131,12 +131,12 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
     }
 
     @Override
-    public Object visit(NamedStyle style, Object data) {
+    public Object visit(final NamedStyle style, final Object data) {
         return data;
     }
 
     @Override
-    public Object visit(LayerCoverageConstraints constraints, Object data) {
+    public Object visit(final LayerCoverageConstraints constraints, Object data) {
         final List<? extends CoverageConstraint> lst = constraints.constraints();
         if(lst != null){
             for(CoverageConstraint gc : lst){
@@ -147,7 +147,7 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
     }
 
     @Override
-    public Object visit(LayerFeatureConstraints constraints, Object data) {
+    public Object visit(final LayerFeatureConstraints constraints, Object data) {
         final List<? extends FeatureTypeConstraint> lst = constraints.constraints();
         if(lst != null){
             for(FeatureTypeConstraint ftc : lst){
@@ -158,7 +158,7 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
     }
 
     @Override
-    public Object visit(CoverageConstraint constraint, Object data) {
+    public Object visit(final CoverageConstraint constraint, Object data) {
         final CoverageExtent extent = constraint.getCoverageExtent();
         if(extent != null){
             data = extent.accept(this, data);
@@ -167,7 +167,7 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
     }
 
     @Override
-    public Object visit(FeatureTypeConstraint constraint, Object data) {
+    public Object visit(final FeatureTypeConstraint constraint, Object data) {
         final List<Extent> extents = constraint.getExtent();
         if(extents != null){
             for(Extent ext : extents){
@@ -182,7 +182,7 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
     }
 
     @Override
-    public Object visit(CoverageExtent extent, Object data) {
+    public Object visit(final CoverageExtent extent, Object data) {
         final List<RangeAxis> axis = extent.rangeAxis();
         if(axis != null){
             for(RangeAxis axi : axis){
@@ -193,22 +193,22 @@ public abstract class DefaultSLDVisitor extends DefaultStyleVisitor implements S
     }
 
     @Override
-    public Object visit(Extent extent, Object data) {
+    public Object visit(final Extent extent, final Object data) {
         return data;
     }
 
     @Override
-    public Object visit(RangeAxis axi, Object data) {
+    public Object visit(final RangeAxis axi, final Object data) {
         return data;
     }
 
     @Override
-    public Object visit(RemoteOWS ows, Object data) {
+    public Object visit(final RemoteOWS ows, final Object data) {
         return data;
     }
 
     @Override
-    public Object visit(InlineFeature inline, Object data) {
+    public Object visit(final InlineFeature inline, final Object data) {
         return data;
     }
 

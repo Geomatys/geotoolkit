@@ -46,7 +46,7 @@ public enum GridOriginEnumType {
     UPPER_LEFT("upperLeft");
     private final String value;
 
-    GridOriginEnumType(String v) {
+    GridOriginEnumType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum GridOriginEnumType {
         return value;
     }
 
-    public static GridOriginEnumType fromValue(String v) {
+    public static GridOriginEnumType fromValue(final String v) {
         for (GridOriginEnumType c: GridOriginEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

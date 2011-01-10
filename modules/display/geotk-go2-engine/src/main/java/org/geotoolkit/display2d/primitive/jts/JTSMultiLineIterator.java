@@ -48,13 +48,13 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
      * @param ls The line string the iterator will use
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public JTSMultiLineIterator(MultiLineString ls, AffineTransform trs) {
+    public JTSMultiLineIterator(final MultiLineString ls, final AffineTransform trs) {
         super(ls,trs);
         setGeometry(ls);
     }
 
     @Override
-    public void setGeometry(MultiLineString geom) {
+    public void setGeometry(final MultiLineString geom) {
         super.setGeometry(geom);
         if(geom != null){
             nbGeom = geom.getNumGeometries();
@@ -129,7 +129,7 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         if (currentCoord == 0) {
             coords[0] = currentSequence.getX(currentCoord);
             coords[1] = currentSequence.getY(currentCoord);
@@ -149,7 +149,7 @@ public final class JTSMultiLineIterator extends JTSGeometryIterator<MultiLineStr
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(float[] coords) {
+    public int currentSegment(final float[] coords) {
         if (currentCoord == 0) {
             coords[0] = (float) currentSequence.getX(currentCoord);
             coords[1] = (float) currentSequence.getY(currentCoord);

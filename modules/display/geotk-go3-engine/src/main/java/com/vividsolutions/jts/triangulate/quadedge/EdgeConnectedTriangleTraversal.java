@@ -48,7 +48,7 @@ public class EdgeConnectedTriangleTraversal {
 
     public EdgeConnectedTriangleTraversal() {}
 
-    public void init(QuadEdgeTriangle tri) {
+    public void init(final QuadEdgeTriangle tri) {
         triQueue.addLast(tri);
     }
 
@@ -57,7 +57,7 @@ public class EdgeConnectedTriangleTraversal {
      * 
      * @param tris a collection of QuadEdgeTriangle
      */
-    public void init(Collection tris) {
+    public void init(final Collection tris) {
         triQueue.addAll(tris);
     }
 
@@ -74,14 +74,14 @@ public class EdgeConnectedTriangleTraversal {
     /**
      * Subclasses call this method to perform the visiting process.
      */
-    public void visitAll(TraversalVisitor visitor) {
+    public void visitAll(final TraversalVisitor visitor) {
         while (!triQueue.isEmpty()) {
             QuadEdgeTriangle tri = (QuadEdgeTriangle) triQueue.removeFirst();
             process(tri, visitor);
         }
     }
 
-    private void process(QuadEdgeTriangle currTri, TraversalVisitor visitor) {
+    private void process(final QuadEdgeTriangle currTri, final TraversalVisitor visitor) {
         currTri.getNeighbours();
         for (int i = 0; i < 3; i++) {
             QuadEdgeTriangle neighTri = (QuadEdgeTriangle) currTri.getEdge(i).sym().getData();

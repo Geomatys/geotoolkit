@@ -30,7 +30,7 @@ import javax.xml.bind.ValidationEventHandler;
 public class JAXBEventHandler implements ValidationEventHandler {
 
     @Override
-    public boolean handleEvent(ValidationEvent ve) {
+    public boolean handleEvent(final ValidationEvent ve) {
         if (ve.getSeverity() == ve.FATAL_ERROR || ve.getSeverity() == ve.ERROR) {
             if (ve.getMessage() != null && ve.getMessage().startsWith("org.opengis.referencing.NoSuchAuthorityCodeException")) {
                 return false;

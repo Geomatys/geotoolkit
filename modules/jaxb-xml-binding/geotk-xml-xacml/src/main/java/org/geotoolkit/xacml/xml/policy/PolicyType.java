@@ -106,7 +106,7 @@ public class PolicyType {
    /**
     * Sets the value of the description property.
     */
-   public void setDescription(String value) {
+   public void setDescription(final String value) {
       this.description = value;
    }
 
@@ -121,7 +121,7 @@ public class PolicyType {
    /**
     * Sets the value of the policyDefaults property.
     */
-   public void setPolicyDefaults(DefaultsType value) {
+   public void setPolicyDefaults(final DefaultsType value) {
       this.policyDefaults = value;
    }
 
@@ -135,7 +135,7 @@ public class PolicyType {
    /**
     * Sets the value of the target property.
     */
-   public void setTarget(TargetType value) {
+   public void setTarget(final TargetType value) {
       this.target = value;
    }
 
@@ -160,7 +160,7 @@ public class PolicyType {
    /**
     * Sets the value of the obligations property.
     */
-   public void setObligations(ObligationsType value) {
+   public void setObligations(final ObligationsType value) {
       this.obligations = value;
    }
 
@@ -174,7 +174,7 @@ public class PolicyType {
    /**
     * Sets the value of the policyId property.
     */
-   public void setPolicyId(String value) {
+   public void setPolicyId(final String value) {
       this.policyId = value;
    }
 
@@ -192,7 +192,7 @@ public class PolicyType {
    /**
     * Sets the value of the version property.
     */
-   public void setVersion(String value) {
+   public void setVersion(final String value) {
       this.version = value;
    }
 
@@ -207,7 +207,7 @@ public class PolicyType {
    /**
     * Sets the value of the ruleCombiningAlgId property.
     */
-   public void setRuleCombiningAlgId(String value) {
+   public void setRuleCombiningAlgId(final String value) {
       this.ruleCombiningAlgId = value;
    }
 

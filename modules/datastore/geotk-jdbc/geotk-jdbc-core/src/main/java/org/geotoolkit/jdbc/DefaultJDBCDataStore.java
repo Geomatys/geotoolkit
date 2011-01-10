@@ -120,7 +120,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     private final SQLQueryBuilder queryBuilder = new SQLQueryBuilder(this);
     private Set<Name> nameCache = null;
 
-    DefaultJDBCDataStore(String namespace){
+    DefaultJDBCDataStore(final String namespace){
         super(namespace);
     }
 
@@ -128,7 +128,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public PrimaryKey getPrimaryKey(Name featureTypeName) throws DataStoreException{
+    public PrimaryKey getPrimaryKey(final Name featureTypeName) throws DataStoreException{
         if(nameCache == null){
             visitTables();
         }
@@ -136,7 +136,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     @Override
-    public boolean isWritable(Name typeName) throws DataStoreException {
+    public boolean isWritable(final Name typeName) throws DataStoreException {
         final PrimaryKey key = getPrimaryKey(typeName);
         return key != null && !(key instanceof NullPrimaryKey);
     }
@@ -159,7 +159,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName);
         return names.get(typeName);
     }
@@ -228,7 +228,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     /**
      * Builds the feature type from database metadata.
      */
-    private SimpleFeatureType createFeatureType(Name typeName) throws DataStoreException {
+    private SimpleFeatureType createFeatureType(final Name typeName) throws DataStoreException {
         final FeatureTypeBuilder tb = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder atb = new AttributeTypeBuilder();
@@ -514,7 +514,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
 
         final Source source = query.getSource();
 
@@ -542,7 +542,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * @return FeatureReader
      * @throws DataStoreException
      */
-    private FeatureReader getCrossFeatureReader(Query query) throws DataStoreException {
+    private FeatureReader getCrossFeatureReader(final Query query) throws DataStoreException {
         /*
          * Query should look like :
           SELECT * FROM
@@ -623,8 +623,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         return reader;
     }
 
-    private void prepareSelect(Source source, StringBuilder sql, LinkedHashMap<String, List<AttributeDescriptor>> att,
-            List<PrimaryKey> pkeys, Hints hints) throws DataStoreException{
+    private void prepareSelect(final Source source, final StringBuilder sql, final LinkedHashMap<String, List<AttributeDescriptor>> att,
+            final List<PrimaryKey> pkeys, final Hints hints) throws DataStoreException{
         if(source instanceof Join){
             prepareSelect((Join)source, sql, att, pkeys, hints);
         }else if(source instanceof Selector){
@@ -634,8 +634,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
     }
 
-    private void prepareSelect(Join source, StringBuilder sql, LinkedHashMap<String, List<AttributeDescriptor>> att,
-            List<PrimaryKey> pkeys, Hints hints) throws DataStoreException{
+    private void prepareSelect(final Join source, final StringBuilder sql, final LinkedHashMap<String, List<AttributeDescriptor>> att,
+            final List<PrimaryKey> pkeys, final Hints hints) throws DataStoreException{
 
         final Source leftSource = source.getLeft();
         final Source rightSource = source.getRight();
@@ -658,8 +658,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         dialect.encodeColumnName(DefaultName.valueOf(rightProp.getPropertyName()).getLocalPart(), sql);
     }
 
-    private void prepareSelect(Selector source, StringBuilder sql, LinkedHashMap<String, List<AttributeDescriptor>> att,
-            List<PrimaryKey> pkeys, Hints hints) throws DataStoreException{
+    private void prepareSelect(final Selector source, final StringBuilder sql, final LinkedHashMap<String, List<AttributeDescriptor>> att,
+            final List<PrimaryKey> pkeys, final Hints hints) throws DataStoreException{
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(source.getFeatureTypeName());
         final PrimaryKey pk = getPrimaryKey(type.getName());
 
@@ -684,7 +684,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         pkeys.add(pk);
     }
 
-    private FeatureReader getSimpleFeatureReader(Query query) throws DataStoreException {
+    private FeatureReader getSimpleFeatureReader(final Query query) throws DataStoreException {
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
         final PrimaryKey pkey = getPrimaryKey(query.getTypeName());
 
@@ -804,7 +804,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         try {
             return getFeatureWriterInternal(typeName, filter, WRITER_ADD | WRITER_UPDATE);
         } catch (IOException ex) {
@@ -813,7 +813,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     @Override
-    public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
         try {
             return getFeatureWriterInternal(typeName, Filter.EXCLUDE, WRITER_ADD);
         } catch (IOException ex) {
@@ -899,7 +899,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public long getCount(Query query) throws DataStoreException {
+    public long getCount(final Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
         final FeatureType type = getFeatureType(query.getTypeName());
 
@@ -988,7 +988,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
+    public Envelope getEnvelope(final Query query) throws DataStoreException, DataStoreRuntimeException {
         typeCheck(query.getTypeName());
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
 
@@ -1224,7 +1224,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
 
         if(typeName == null){
             throw new DataStoreException("Type name can not be null.");
@@ -1275,7 +1275,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported.");
     }
 
@@ -1283,7 +1283,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported.");
     }
 
@@ -1295,7 +1295,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     /**
      * Helper method for splitting a filter.
      */
-    private Filter[] splitFilter(final Filter original, FeatureType schema) throws DataStoreException {
+    private Filter[] splitFilter(final Filter original, final FeatureType schema) throws DataStoreException {
         final Filter[] split = new Filter[2];
         if ( original != null ) {
             //create a filter splitter
@@ -1429,7 +1429,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures);
     }
 
@@ -1437,7 +1437,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
@@ -1445,7 +1445,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 

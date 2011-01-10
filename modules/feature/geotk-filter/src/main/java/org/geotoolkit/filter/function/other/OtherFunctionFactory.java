@@ -85,7 +85,7 @@ public class OtherFunctionFactory implements FunctionFactory{
      * {@inheritDoc }
      */
     @Override
-    public Function createFunction(String name, Literal fallback, Expression... parameters) throws IllegalArgumentException {
+    public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
 
         if(name.equals(CONVERT)) return new ConvertFunction(parameters[0], parameters[1]);
         if(name.equals(DATE_FORMAT)) return new DateFormatFunction(parameters[0], parameters[1]);

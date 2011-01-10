@@ -72,7 +72,7 @@ public abstract class BaseRequestType implements RequestBase {
 
     }
 
-    public BaseRequestType(String service, String version, String handle) {
+    public BaseRequestType(final String service, final String version, final String handle) {
         this.service = service;
         this.version = version;
         this.handle  = handle;
@@ -102,7 +102,7 @@ public abstract class BaseRequestType implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -129,7 +129,7 @@ public abstract class BaseRequestType implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -153,7 +153,7 @@ public abstract class BaseRequestType implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setHandle(String value) {
+    public void setHandle(final String value) {
         this.handle = value;
     }
 
@@ -173,7 +173,7 @@ public abstract class BaseRequestType implements RequestBase {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }

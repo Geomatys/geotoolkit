@@ -40,7 +40,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
 
     protected final String version;
 
-    protected AbstractGetCapabilities(String serverURL,String version){
+    protected AbstractGetCapabilities(final String serverURL,final String version){
         super(serverURL);
         this.version = version;
     }

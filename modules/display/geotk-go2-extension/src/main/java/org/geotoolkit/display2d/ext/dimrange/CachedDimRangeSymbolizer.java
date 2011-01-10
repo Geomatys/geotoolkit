@@ -29,13 +29,13 @@ import org.opengis.feature.Feature;
  */
 public class CachedDimRangeSymbolizer extends CachedSymbolizer<DimRangeSymbolizer>{
 
-    public CachedDimRangeSymbolizer(DimRangeSymbolizer sym,
-            SymbolizerRendererService<DimRangeSymbolizer,? extends CachedSymbolizer<DimRangeSymbolizer>> renderer){
+    public CachedDimRangeSymbolizer(final DimRangeSymbolizer sym,
+            final SymbolizerRendererService<DimRangeSymbolizer,? extends CachedSymbolizer<DimRangeSymbolizer>> renderer){
         super(sym,renderer);
     }
 
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         return 0;
     }
 
@@ -44,7 +44,7 @@ public class CachedDimRangeSymbolizer extends CachedSymbolizer<DimRangeSymbolize
     }
 
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return false;
     }
 

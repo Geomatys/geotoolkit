@@ -91,7 +91,7 @@ public class LockFeatureResponseType implements WFSResponse {
      *     {@link String }
      *     
      */
-    public void setLockId(String value) {
+    public void setLockId(final String value) {
         this.lockId = value;
     }
 
@@ -115,7 +115,7 @@ public class LockFeatureResponseType implements WFSResponse {
      *     {@link FeaturesLockedType }
      *     
      */
-    public void setFeaturesLocked(FeaturesLockedType value) {
+    public void setFeaturesLocked(final FeaturesLockedType value) {
         this.featuresLocked = value;
     }
 
@@ -139,7 +139,7 @@ public class LockFeatureResponseType implements WFSResponse {
      *     {@link FeaturesNotLockedType }
      *     
      */
-    public void setFeaturesNotLocked(FeaturesNotLockedType value) {
+    public void setFeaturesNotLocked(final FeaturesNotLockedType value) {
         this.featuresNotLocked = value;
     }
 

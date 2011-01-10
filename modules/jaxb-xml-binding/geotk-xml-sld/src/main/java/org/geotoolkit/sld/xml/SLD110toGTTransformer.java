@@ -66,14 +66,14 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
 
     protected final MutableSLDFactory sldFactory;
 
-    public SLD110toGTTransformer(FilterFactory2 filterFactory, MutableStyleFactory styleFactory,
-            MutableSLDFactory sldFactory) {
+    public SLD110toGTTransformer(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory,
+            final MutableSLDFactory sldFactory) {
         super(filterFactory,styleFactory);
         this.sldFactory = sldFactory;
     }
 
-    public SLD110toGTTransformer(FilterFactory2 filterFactory, MutableStyleFactory styleFactory,
-            MutableSLDFactory sldFactory, Map<String, String> namespaceMapping) {
+    public SLD110toGTTransformer(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory,
+            final MutableSLDFactory sldFactory, final Map<String, String> namespaceMapping) {
         super(filterFactory,styleFactory, namespaceMapping);
         this.sldFactory = sldFactory;
     }
@@ -81,7 +81,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD in a GT class.
      */
-    public MutableStyledLayerDescriptor visit(StyledLayerDescriptor sld) throws FactoryException{
+    public MutableStyledLayerDescriptor visit(final StyledLayerDescriptor sld) throws FactoryException{
         final MutableStyledLayerDescriptor geoSLD = sldFactory.createSLD();
         geoSLD.setName(sld.getName());
         geoSLD.setVersion(sld.getVersion());
@@ -94,7 +94,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD UseSLDLibrary in a GT SLD library objects.
      */
-    public Collection<? extends SLDLibrary> visitLibraries( List<UseSLDLibrary> libs){
+    public Collection<? extends SLDLibrary> visitLibraries( final List<UseSLDLibrary> libs){
         if(libs == null || libs.isEmpty()){
             return Collections.emptyList();
         }else{
@@ -111,7 +111,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD layers in a GT layers Objects
      */
-    public Collection<? extends MutableLayer> visitLayers(List<Object> layers) throws FactoryException{
+    public Collection<? extends MutableLayer> visitLayers(final List<Object> layers) throws FactoryException{
         if(layers == null || layers.isEmpty()){
             return Collections.emptyList();
         } else {
@@ -162,7 +162,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD constraints in a GT constraints class.
      */
-    public Collection<? extends FeatureTypeConstraint> visitFeatureConstraints(LayerFeatureConstraints ftc) throws FactoryException{
+    public Collection<? extends FeatureTypeConstraint> visitFeatureConstraints(final LayerFeatureConstraints ftc) throws FactoryException{
         if(ftc == null || ftc.getFeatureTypeConstraint() == null || ftc.getFeatureTypeConstraint().isEmpty()){
             return Collections.emptyList();
         }else{
@@ -183,7 +183,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD constraints in a GT constraints class.
      */
-    public Collection<? extends CoverageConstraint> visitCoverageConstraints(LayerCoverageConstraints ftc){
+    public Collection<? extends CoverageConstraint> visitCoverageConstraints(final LayerCoverageConstraints ftc){
         if(ftc == null || ftc.getCoverageConstraint() == null || ftc.getCoverageConstraint().isEmpty()){
             return Collections.emptyList();
         }else{
@@ -203,7 +203,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD extents in a GT extents class.
      */
-    public List<Extent> visitExtents(List<org.geotoolkit.sld.xml.v110.Extent> exts){
+    public List<Extent> visitExtents(final List<org.geotoolkit.sld.xml.v110.Extent> exts){
         if(exts == null || exts.isEmpty()){
             return Collections.emptyList();
         }else{
@@ -220,7 +220,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD extent in a GT extent class.
      */
-    public CoverageExtent visitCoverageExtent(org.geotoolkit.sld.xml.v110.CoverageExtent coverageExtent) {
+    public CoverageExtent visitCoverageExtent(final org.geotoolkit.sld.xml.v110.CoverageExtent coverageExtent) {
         if(coverageExtent == null){
             return null;
         }else{
@@ -240,7 +240,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD RangeAxis in a GT RangeAxis class.
      */
-    public List<RangeAxis> visitRangeAxis(List<org.geotoolkit.sld.xml.v110.RangeAxis> ranges){
+    public List<RangeAxis> visitRangeAxis(final List<org.geotoolkit.sld.xml.v110.RangeAxis> ranges){
         if(ranges == null || ranges.isEmpty()){
             return Collections.emptyList();
         }else{
@@ -257,7 +257,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD remoteOWS in a GT remoteOWS class.
      */
-    public RemoteOWS visiteRemoteOWS(org.geotoolkit.sld.xml.v110.RemoteOWS ows){
+    public RemoteOWS visiteRemoteOWS(final org.geotoolkit.sld.xml.v110.RemoteOWS ows){
         if(ows == null){
             return null;
         }else{
@@ -273,7 +273,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD inlineFeature in a GT inlineFeature class.
      */
-    public Source visitInlineFeature(InlineFeature inlineFeature) {
+    public Source visitInlineFeature(final InlineFeature inlineFeature) {
         //TODO : fix this when GML works.
         return null;
     }
@@ -281,7 +281,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 SLD layer style in a GT style class.
      */
-    public Collection<? extends MutableLayerStyle> visitStyles(List<Object> styles) throws FactoryException{
+    public Collection<? extends MutableLayerStyle> visitStyles(final List<Object> styles) throws FactoryException{
         if(styles == null || styles.isEmpty()){
             return Collections.emptyList();
         }else{
@@ -309,7 +309,7 @@ public class SLD110toGTTransformer extends SE110toGTTransformer{
     /**
      * Transform a jaxb v1.1.0 layer style in a GT layer style class.
      */
-    public Collection<? extends MutableStyle> visitUserStyles(List<UserStyle> styles) throws FactoryException{
+    public Collection<? extends MutableStyle> visitUserStyles(final List<UserStyle> styles) throws FactoryException{
         if(styles == null || styles.isEmpty()){
             return Collections.emptyList();
         }else{

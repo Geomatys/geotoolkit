@@ -87,7 +87,7 @@ public class IdentifiableType {
     /**
      * Sets the value of the slot property.
      */
-    public void setSlot(SlotType slot) {
+    public void setSlot(final SlotType slot) {
         if (this.slot == null) {
             this.slot = new ArrayList<SlotType>();
         }
@@ -97,7 +97,7 @@ public class IdentifiableType {
     /**
      * Sets the value of the slot property.
      */
-    public void setSlot(List<SlotType> slot) {
+    public void setSlot(final List<SlotType> slot) {
         this.slot = slot;
     }
 
@@ -111,7 +111,7 @@ public class IdentifiableType {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -125,7 +125,7 @@ public class IdentifiableType {
     /**
      * Sets the value of the home property.
      */
-    public void setHome(String value) {
+    public void setHome(final String value) {
         this.home = value;
     }
     

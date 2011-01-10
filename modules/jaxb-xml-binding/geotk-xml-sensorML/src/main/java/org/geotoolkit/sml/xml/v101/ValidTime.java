@@ -65,26 +65,26 @@ public class ValidTime implements AbstractValidTime {
 
     }
 
-    public ValidTime(AbstractValidTime time) {
+    public ValidTime(final AbstractValidTime time) {
         if (time != null) {
             this.timeInstant = time.getTimeInstant();
             this.timePeriod  = time.getTimePeriod();
         }
     }
 
-    public ValidTime(TimeInstantType timeInstant) {
+    public ValidTime(final TimeInstantType timeInstant) {
         this.timeInstant = timeInstant;
     }
 
-    public ValidTime(TimePeriodType timePeriod) {
+    public ValidTime(final TimePeriodType timePeriod) {
         this.timePeriod = timePeriod;
     }
 
-    public ValidTime(String begin, String end) {
+    public ValidTime(final String begin, final String end) {
         this.timePeriod = new TimePeriodType(begin, end);
     }
 
-    public ValidTime(String instant) {
+    public ValidTime(final String instant) {
         this.timeInstant = new TimeInstantType(new TimePositionType(instant));
     }
 
@@ -108,7 +108,7 @@ public class ValidTime implements AbstractValidTime {
      *     {@link TimeInstantType }
      *     
      */
-    public void setTimeInstant(TimeInstantType value) {
+    public void setTimeInstant(final TimeInstantType value) {
         this.timeInstant = value;
     }
 
@@ -132,7 +132,7 @@ public class ValidTime implements AbstractValidTime {
      *     {@link TimePeriodType }
      *     
      */
-    public void setTimePeriod(TimePeriodType value) {
+    public void setTimePeriod(final TimePeriodType value) {
         this.timePeriod = value;
     }
 

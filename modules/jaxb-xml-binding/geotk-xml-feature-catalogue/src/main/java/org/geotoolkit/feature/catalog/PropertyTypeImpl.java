@@ -103,7 +103,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     /**
      * Clone a FeatureAttribute
      */
-    public PropertyTypeImpl(PropertyType feature) {
+    public PropertyTypeImpl(final PropertyType feature) {
         if (feature != null) {
             this.id                  = feature.getId();
             this.cardinality         = feature.getCardinality();
@@ -118,8 +118,8 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     /**
      * Build a new PropertyTypeImpl
      */
-    public PropertyTypeImpl(String id, LocalName memberName, String definition, Multiplicity cardinality, 
-            FeatureType featureType, List<Constraint> constrainedBy, DefinitionReference definitionReference) {
+    public PropertyTypeImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality, 
+            final FeatureType featureType, final List<Constraint> constrainedBy, final DefinitionReference definitionReference) {
         this.id                  = id;
         this.cardinality         = cardinality;
         this.definitionReference = definitionReference;
@@ -140,7 +140,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Sets the value of the memberName property.
      * 
      */
-    public void setMemberName(LocalName value) {
+    public void setMemberName(final LocalName value) {
         this.memberName = value;
     }
 
@@ -156,7 +156,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Sets the value of the definition property.
      * 
      */
-    public void setDefinition(String value) {
+    public void setDefinition(final String value) {
         this.definition = value;
     }
 
@@ -172,7 +172,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Sets the value of the cardinality property.
      * 
     */
-    public void setCardinality(Multiplicity value) {
+    public void setCardinality(final Multiplicity value) {
         this.cardinality = value;
     }
 
@@ -188,7 +188,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Sets the value of the featureType property.
      * 
      */
-    public void setFeatureType(FeatureType value) {
+    public void setFeatureType(final FeatureType value) {
         this.featureType = value;
     }
 
@@ -202,14 +202,14 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
         return this.constrainedBy;
     }
     
-    public void setConstrainedBy(Constraint constrainedBy) {
+    public void setConstrainedBy(final Constraint constrainedBy) {
         if (this.constrainedBy == null) {
             this.constrainedBy = new ArrayList<Constraint>();
         }
         this.constrainedBy.add(constrainedBy);
     }
 
-    public void setConstrainedBy(List<Constraint> constrainedBy) {
+    public void setConstrainedBy(final List<Constraint> constrainedBy) {
         this.constrainedBy = constrainedBy;
     }
 
@@ -225,14 +225,14 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
      * Sets the value of the definitionReference property.
      * 
     */
-    public void setDefinitionReference(DefinitionReference value) {
+    public void setDefinitionReference(final DefinitionReference value) {
         this.definitionReference = value;
     }
     
     /**
      * set the catalogue in href mode
      */
-    public void setReference(boolean mode) {
+    public void setReference(final boolean mode) {
         this.isReference = mode;
     }
     
@@ -253,7 +253,7 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
         return id;
     }
     
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
     

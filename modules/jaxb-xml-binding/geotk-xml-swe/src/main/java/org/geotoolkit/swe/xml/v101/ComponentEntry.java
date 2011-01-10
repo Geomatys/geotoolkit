@@ -41,7 +41,7 @@ public class ComponentEntry implements Entry{
     /**
      * Crée une nouvelle liste de phénomene. 
      */
-    public ComponentEntry(String idCompositePhenomenon, PhenomenonEntry component) {
+    public ComponentEntry(final String idCompositePhenomenon, final PhenomenonEntry component) {
         this.idCompositePhenomenon = idCompositePhenomenon;
         this.component             = component;
     }

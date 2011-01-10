@@ -82,7 +82,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      *Build a new Property is like operator
      */
-    public PropertyIsLikeType(Expression expr, String pattern, String wildcard, String singleChar, String escape) {
+    public PropertyIsLikeType(final Expression expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
         this.escapeChar   = escape;
         if (expr instanceof PropertyNameType)
             this.propertyName = (PropertyNameType) expr;
@@ -96,7 +96,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      *Build a new Property is like operator
      */
-    public PropertyIsLikeType(String expr, String pattern, String wildcard, String singleChar, String escape) {
+    public PropertyIsLikeType(final String expr, final String pattern, final String wildcard, final String singleChar, final String escape) {
         this.escapeChar   = escape;
         this.propertyName =  new PropertyNameType(expr);
         this.singleChar   = singleChar;
@@ -107,7 +107,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      *Build a new Property is like operator
      */
-    public PropertyIsLikeType(Expression expr, String pattern, String wildcard, String singleChar, String escape, Boolean matchCase) {
+    public PropertyIsLikeType(final Expression expr, final String pattern, final String wildcard, final String singleChar, final String escape, final Boolean matchCase) {
         this.escapeChar   = escape;
         if (expr instanceof PropertyNameType)
             this.propertyName = (PropertyNameType) expr;
@@ -129,7 +129,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      * Sets the value of the propertyName property.
      */
-    public void setPropertyName(PropertyNameType propertyName) {
+    public void setPropertyName(final PropertyNameType propertyName) {
         this.propertyName = propertyName;
     }
 
@@ -140,7 +140,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         return literal.getStringValue();
     }
 
-    public void setLiteral(String literal) {
+    public void setLiteral(final String literal) {
         this.literal = new LiteralType(literal);
     }
 
@@ -192,7 +192,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      * Sets the value of the singleChar property.
      */
-    public void setSingleChar(String singleChar) {
+    public void setSingleChar(final String singleChar) {
         this.singleChar = singleChar;
     }
 
@@ -206,7 +206,7 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
     /**
      * Sets the value of the wildCard property.
      */
-    public void setWildCard(String wildCard) {
+    public void setWildCard(final String wildCard) {
         this.wildCard = wildCard;
     }
 
@@ -269,11 +269,11 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
         return escapeChar;
     }
 
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 }

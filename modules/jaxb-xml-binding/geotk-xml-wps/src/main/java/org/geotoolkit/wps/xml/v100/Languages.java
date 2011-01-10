@@ -90,7 +90,7 @@ public class Languages {
      *     {@link Languages.Default }
      *     
      */
-    public void setDefault(Languages.Default value) {
+    public void setDefault(final Languages.Default value) {
         this._default = value;
     }
 
@@ -114,7 +114,7 @@ public class Languages {
      *     {@link LanguagesType }
      *     
      */
-    public void setSupported(LanguagesType value) {
+    public void setSupported(final LanguagesType value) {
         this.supported = value;
     }
 
@@ -169,7 +169,7 @@ public class Languages {
          *     {@link String }
          *     
          */
-        public void setLanguage(String value) {
+        public void setLanguage(final String value) {
             this.language = value;
         }
 

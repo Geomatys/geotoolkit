@@ -61,7 +61,7 @@ public abstract class AbstractDescribeResultModel extends AbstractSOSRequest imp
     }
 
     @Override
-    public void setResultName(QName observedProperty) {
+    public void setResultName(final QName observedProperty) {
         this.resultName = observedProperty;
     }
 

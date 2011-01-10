@@ -80,7 +80,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
     private boolean draggingAll = false;
 
 
-    public MultiPointDelegate(DefaultEditionHandler handler) {
+    public MultiPointDelegate(final DefaultEditionHandler handler) {
         super(handler);
     }
 
@@ -197,7 +197,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
         reset();
     }
 
-    private void setCurrentFeature(SimpleFeature feature){
+    private void setCurrentFeature(final SimpleFeature feature){
         this.feature = feature;
         if(feature != null){
             this.geometry = (MultiPoint) handler.getHelper().toObjectiveCRS(feature);
@@ -209,7 +209,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
 
         final int button = e.getButton();
 
@@ -321,7 +321,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
     int lastY = 0;
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
         pressed = e.getButton();
         lastX = e.getX();
         lastY = e.getY();
@@ -354,7 +354,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
 
         switch(currentAction){
             case GEOM_MOVE:
@@ -389,7 +389,7 @@ public class MultiPointDelegate extends AbstractEditionDelegate {
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
 
         switch(currentAction){
             case GEOM_MOVE:

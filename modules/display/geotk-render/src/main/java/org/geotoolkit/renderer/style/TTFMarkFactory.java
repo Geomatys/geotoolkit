@@ -59,7 +59,7 @@ public class TTFMarkFactory implements MarkFactory {
             new AffineTransform(), false, false);
 
     @Override
-    public Shape getShape(Graphics2D graphics, Expression symbolUrl, Feature feature)
+    public Shape getShape(final Graphics2D graphics, final Expression symbolUrl, final Feature feature)
             throws Exception {
         String markUrl = symbolUrl.evaluate(feature, String.class);
 
@@ -103,7 +103,7 @@ public class TTFMarkFactory implements MarkFactory {
         return textGlyphVector.getOutline();
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         BufferedImage image = new BufferedImage(300, 300, BufferedImage.TYPE_4BYTE_ABGR);
         Graphics2D g2d = (Graphics2D) image.getGraphics();
         g2d.setColor(Color.BLACK);

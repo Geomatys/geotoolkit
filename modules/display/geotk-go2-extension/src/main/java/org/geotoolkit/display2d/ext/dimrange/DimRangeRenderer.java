@@ -53,12 +53,12 @@ import org.opengis.referencing.operation.MathTransform2D;
  */
 public class DimRangeRenderer extends AbstractCoverageSymbolizerRenderer<CachedDimRangeSymbolizer>{
 
-    public DimRangeRenderer(CachedDimRangeSymbolizer symbol, RenderingContext2D context){
+    public DimRangeRenderer(final CachedDimRangeSymbolizer symbol, final RenderingContext2D context){
         super(symbol,context);
     }
 
     @Override
-    public void portray(ProjectedCoverage projectedCoverage) throws PortrayalException {
+    public void portray(final ProjectedCoverage projectedCoverage) throws PortrayalException {
 
         double[] resolution = renderingContext.getResolution();
         final Envelope bounds = new GeneralEnvelope(renderingContext.getCanvasObjectiveBounds());

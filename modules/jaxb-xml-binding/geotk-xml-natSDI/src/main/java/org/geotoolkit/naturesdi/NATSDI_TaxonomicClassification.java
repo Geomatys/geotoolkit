@@ -41,7 +41,7 @@ public class NATSDI_TaxonomicClassification implements org.opengis.metadata.natu
 
     }
 
-    public NATSDI_TaxonomicClassification(NATSDI_RankNameCode taxonRankName, Keywords taxonRankValue) {
+    public NATSDI_TaxonomicClassification(final NATSDI_RankNameCode taxonRankName, final Keywords taxonRankValue) {
         this.taxonRankName  = taxonRankName;
         this.taxonRankValue = taxonRankValue;
     }
@@ -56,7 +56,7 @@ public class NATSDI_TaxonomicClassification implements org.opengis.metadata.natu
     /**
      * @param taxonRankName the taxonRankName to set
      */
-    public void setTaxonRankName(NATSDI_RankNameCode taxonRankName) {
+    public void setTaxonRankName(final NATSDI_RankNameCode taxonRankName) {
         this.taxonRankName = taxonRankName;
     }
 
@@ -70,7 +70,7 @@ public class NATSDI_TaxonomicClassification implements org.opengis.metadata.natu
     /**
      * @param taxonRankValue the taxonRankValue to set
      */
-    public void setTaxonRankValue(Keywords taxonRankValue) {
+    public void setTaxonRankValue(final Keywords taxonRankValue) {
         this.taxonRankValue = taxonRankValue;
     }
 
@@ -87,7 +87,7 @@ public class NATSDI_TaxonomicClassification implements org.opengis.metadata.natu
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

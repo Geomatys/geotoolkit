@@ -60,7 +60,7 @@ public class OperationImpl implements Operation {
     /**
      * Clone an Operation
      */
-    public OperationImpl(Operation operation) {
+    public OperationImpl(final Operation operation) {
         this.dependsOn     = operation.getDependsOn();
         this.operationName = operation.getOperationName();
         this.parameter     = operation.getParameter();
@@ -76,7 +76,7 @@ public class OperationImpl implements Operation {
     /**
      * Sets the value of the operationName property.
      */
-    public void setOperationName(MemberName value) {
+    public void setOperationName(final MemberName value) {
         this.operationName = value;
     }
 
@@ -90,11 +90,11 @@ public class OperationImpl implements Operation {
         return this.dependsOn;
     }
     
-    public void setDependsOn(Collection<Operation> dependsOn) {
+    public void setDependsOn(final Collection<Operation> dependsOn) {
          this.dependsOn = dependsOn;
     }
     
-    public void setDependsOn(Operation dependsOn) {
+    public void setDependsOn(final Operation dependsOn) {
         if (this.dependsOn == null) {
             this.dependsOn = new ArrayList<Operation>();
         }
@@ -113,7 +113,7 @@ public class OperationImpl implements Operation {
      * Sets the value of the parameter property.
      * 
      */
-    public void setParameter(Parameter value) {
+    public void setParameter(final Parameter value) {
         this.parameter = value;
     }
 

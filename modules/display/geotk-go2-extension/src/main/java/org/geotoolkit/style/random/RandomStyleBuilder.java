@@ -87,7 +87,7 @@ public class RandomStyleBuilder extends Factory {
         this(null,null);
     }
 
-    public RandomStyleBuilder(MutableStyleFactory styleFactory, FilterFactory filterFactory){
+    public RandomStyleBuilder(final MutableStyleFactory styleFactory, final FilterFactory filterFactory){
         if(styleFactory == null){
              sf = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
         }else{
@@ -166,7 +166,7 @@ public class RandomStyleBuilder extends Factory {
         return style;
     }
 
-    public MutableStyle createDefaultVectorStyle(FeatureCollection<SimpleFeature> fs){
+    public MutableStyle createDefaultVectorStyle(final FeatureCollection<SimpleFeature> fs){
 
         final Symbolizer ps;
 
@@ -191,7 +191,7 @@ public class RandomStyleBuilder extends Factory {
         return style;
     }
     
-    public MutableStyle createRandomVectorStyle(FeatureCollection<SimpleFeature> fs) {
+    public MutableStyle createRandomVectorStyle(final FeatureCollection<SimpleFeature> fs) {
         
         final Symbolizer ps;
         final FeatureType typ = fs.getFeatureType();

@@ -79,7 +79,7 @@ public class LayerType extends DatasetDescriptionSummaryBaseType {
 
     }
 
-    public LayerType(String layerName, String remarks, BoundingBoxType bbox, List<Style> style, List<Dimension> dimension) {
+    public LayerType(final String layerName, final String remarks, final BoundingBoxType bbox, final List<Style> style, final List<Dimension> dimension) {
         super(layerName, remarks, Arrays.asList(bbox));
         this.style     = style;
         this.dimension = dimension;

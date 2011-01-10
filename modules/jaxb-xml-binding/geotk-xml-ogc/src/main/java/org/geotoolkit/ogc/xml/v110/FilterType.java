@@ -88,7 +88,7 @@ public class FilterType implements Filter {
     /**
      * build a new FilterType with the specified logical operator
      */
-    public FilterType(Object obj) {
+    public FilterType(final Object obj) {
         
         // comparison operator
         if (obj instanceof ComparisonOpsType) {
@@ -122,14 +122,14 @@ public class FilterType implements Filter {
     /**
      * Sets the value of the spatialOps property.
      */
-    public void setSpatialOps(JAXBElement<? extends SpatialOpsType> spatialOps) {
+    public void setSpatialOps(final JAXBElement<? extends SpatialOpsType> spatialOps) {
         this.spatialOps = spatialOps;
     }
     
     /**
      * Sets the value of the spatialOps property.
      */
-    public void setSpatialOps(SpatialOpsType spatialOps) {
+    public void setSpatialOps(final SpatialOpsType spatialOps) {
         this.spatialOps = createSpatialOps(spatialOps);
     }
 
@@ -143,14 +143,14 @@ public class FilterType implements Filter {
     /**
      * Sets the value of the comparisonOps property.
      */
-    public void setComparisonOps(JAXBElement<? extends ComparisonOpsType> comparisonOps) {
+    public void setComparisonOps(final JAXBElement<? extends ComparisonOpsType> comparisonOps) {
         this.comparisonOps = comparisonOps;
     }
     
     /**
      * Sets the value of the comparisonOps property.
      */
-    public void setComparisonOps(ComparisonOpsType comparisonOps) {
+    public void setComparisonOps(final ComparisonOpsType comparisonOps) {
         this.comparisonOps = createComparisonOps(comparisonOps);
     }
 
@@ -164,14 +164,14 @@ public class FilterType implements Filter {
     /**
      * Sets the value of the logicOps property.
      */
-    public void setLogicOps(JAXBElement<? extends LogicOpsType> logicOps) {
+    public void setLogicOps(final JAXBElement<? extends LogicOpsType> logicOps) {
         this.logicOps = logicOps;
     }
     
     /**
      * Sets the value of the logicOps property.
      */
-    public void setLogicOps(LogicOpsType logicOps) {
+    public void setLogicOps(final LogicOpsType logicOps) {
         this.logicOps = createLogicOps(logicOps);
     }
 
@@ -224,15 +224,15 @@ public class FilterType implements Filter {
         return s.toString();
     }
 
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return extraData;
     }
     
-    public static JAXBElement<? extends ComparisonOpsType> createComparisonOps(ComparisonOpsType operator) {
+    public static JAXBElement<? extends ComparisonOpsType> createComparisonOps(final ComparisonOpsType operator) {
         
         if (operator instanceof PropertyIsLessThanOrEqualToType) {
             return FACTORY.createPropertyIsLessThanOrEqualTo((PropertyIsLessThanOrEqualToType) operator);
@@ -257,7 +257,7 @@ public class FilterType implements Filter {
         } else return null;
     }
     
-    public static JAXBElement<? extends LogicOpsType> createLogicOps(LogicOpsType operator) {
+    public static JAXBElement<? extends LogicOpsType> createLogicOps(final LogicOpsType operator) {
         
         if (operator instanceof OrType) {
             return FACTORY.createOr((OrType) operator);
@@ -270,7 +270,7 @@ public class FilterType implements Filter {
         } else return null;
     }
     
-    public static JAXBElement<? extends SpatialOpsType> createSpatialOps(SpatialOpsType operator) {
+    public static JAXBElement<? extends SpatialOpsType> createSpatialOps(final SpatialOpsType operator) {
         
         if (operator instanceof BeyondType) {
             return FACTORY.createBeyond((BeyondType) operator);
@@ -301,7 +301,7 @@ public class FilterType implements Filter {
         }
     }
 
-    public static JAXBElement<? extends AbstractIdType> createIdOps(AbstractIdType operator) {
+    public static JAXBElement<? extends AbstractIdType> createIdOps(final AbstractIdType operator) {
 
         if (operator instanceof FeatureIdType) {
             return FACTORY.createFeatureId((FeatureIdType) operator);

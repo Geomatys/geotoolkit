@@ -56,7 +56,7 @@ public class Schematron extends RuleLanguageType implements AbstractSchematron {
 
     }
 
-    public Schematron(AbstractSchematron rn) {
+    public Schematron(final AbstractSchematron rn) {
         if (rn != null && rn.getAny() != null) {
             this.any = rn.getAny();
         }
@@ -84,7 +84,7 @@ public class Schematron extends RuleLanguageType implements AbstractSchematron {
      *     {@link Object }
      *     
      */
-    public void setAny(Object value) {
+    public void setAny(final Object value) {
         this.any = value;
     }
 

@@ -81,22 +81,22 @@ public abstract class AbstractGetRecordById extends AbstractCSWRequest implement
     }
 
     @Override
-    public void setElementSetName(ElementSetType elementSetName) {
+    public void setElementSetName(final ElementSetType elementSetName) {
         this.elementSetName = elementSetName;
     }
 
     @Override
-    public void setIds(String... ids) {
+    public void setIds(final String... ids) {
         this.ids = ids;
     }
 
     @Override
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
 
     @Override
-    public void setOutputSchema(String outputSchema) {
+    public void setOutputSchema(final String outputSchema) {
         this.outputSchema = outputSchema;
     }
 

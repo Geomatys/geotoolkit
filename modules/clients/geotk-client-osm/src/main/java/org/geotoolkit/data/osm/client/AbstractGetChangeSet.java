@@ -39,7 +39,7 @@ public abstract class AbstractGetChangeSet extends AbstractRequest implements Ge
      *
      * @param serverURL The server url.
      */
-    protected AbstractGetChangeSet(final String serverURL, String subpath){
+    protected AbstractGetChangeSet(final String serverURL, final String subpath){
         super(serverURL, subpath);
     }
 
@@ -47,7 +47,7 @@ public abstract class AbstractGetChangeSet extends AbstractRequest implements Ge
      * {@inheritDoc }
      */
     @Override
-    public void setChangeSetID(long id) {
+    public void setChangeSetID(final long id) {
         this.id = id;
     }
 

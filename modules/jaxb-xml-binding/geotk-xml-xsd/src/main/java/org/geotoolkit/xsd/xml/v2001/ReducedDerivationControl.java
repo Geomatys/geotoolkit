@@ -46,7 +46,7 @@ public enum ReducedDerivationControl {
     RESTRICTION(DerivationControl.RESTRICTION);
     private final DerivationControl value;
 
-    ReducedDerivationControl(DerivationControl v) {
+    ReducedDerivationControl(final DerivationControl v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum ReducedDerivationControl {
         return value;
     }
 
-    public static ReducedDerivationControl fromValue(DerivationControl v) {
+    public static ReducedDerivationControl fromValue(final DerivationControl v) {
         for (ReducedDerivationControl c: ReducedDerivationControl.values()) {
             if (c.value.equals(v)) {
                 return c;

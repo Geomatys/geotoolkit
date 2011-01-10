@@ -148,7 +148,7 @@ public class IoComponentPropertyType implements IoComponent {
 
     }
 
-    public IoComponentPropertyType(IoComponent io) {
+    public IoComponentPropertyType(final IoComponent io) {
         if (io != null) {
             this.actuate      = io.getActuate();
             this.arcrole      = io.getArcrole();
@@ -205,22 +205,22 @@ public class IoComponentPropertyType implements IoComponent {
         }
     }
 
-    public IoComponentPropertyType(String name, ObservableProperty observableProperty) {
+    public IoComponentPropertyType(final String name, final ObservableProperty observableProperty) {
         this.name               = name;
         this.observableProperty = observableProperty;
     }
 
-    public IoComponentPropertyType(String name, QuantityType quantity) {
+    public IoComponentPropertyType(final String name, final QuantityType quantity) {
         this.name     = name;
         this.quantity = quantity;
     }
 
-    public IoComponentPropertyType(String name, SimpleDataRecordEntry abstractDataRecord) {
+    public IoComponentPropertyType(final String name, final SimpleDataRecordEntry abstractDataRecord) {
         this.name = name;
         this.abstractDataRecord = factory.createSimpleDataRecord(abstractDataRecord);
     }
 
-    public IoComponentPropertyType(String name, DataRecordType abstractDataRecord) {
+    public IoComponentPropertyType(final String name, final DataRecordType abstractDataRecord) {
         this.name = name;
         this.abstractDataRecord = factory.createDataRecord(abstractDataRecord);
     }
@@ -313,7 +313,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link Count }
      *     
      */
-    public void setCount(Count value) {
+    public void setCount(final Count value) {
         this.count = value;
     }
 
@@ -337,7 +337,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link Quantity }
      *     
      */
-    public void setQuantity(QuantityType value) {
+    public void setQuantity(final QuantityType value) {
         this.quantity = value;
     }
 
@@ -361,7 +361,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link Time }
      *     
      */
-    public void setTime(TimeType value) {
+    public void setTime(final TimeType value) {
         this.time = value;
     }
 
@@ -385,7 +385,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link Boolean }
      *     
      */
-    public void setBoolean(BooleanType value) {
+    public void setBoolean(final BooleanType value) {
         this._boolean = value;
     }
 
@@ -409,7 +409,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link Category }
      *     
      */
-    public void setCategory(Category value) {
+    public void setCategory(final Category value) {
         this.category = value;
     }
 
@@ -433,7 +433,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link Text }
      *     
      */
-    public void setText(Text value) {
+    public void setText(final Text value) {
         this.text = value;
     }
 
@@ -457,7 +457,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link QuantityRange }
      *     
      */
-    public void setQuantityRange(QuantityRange value) {
+    public void setQuantityRange(final QuantityRange value) {
         this.quantityRange = value;
     }
 
@@ -481,7 +481,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link CountRange }
      *     
      */
-    public void setCountRange(CountRange value) {
+    public void setCountRange(final CountRange value) {
         this.countRange = value;
     }
 
@@ -505,7 +505,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link TimeRange }
      *     
      */
-    public void setTimeRange(TimeRange value) {
+    public void setTimeRange(final TimeRange value) {
         this.timeRange = value;
     }
 
@@ -554,7 +554,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordEntry> value) {
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordEntry> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordEntry> ) value);
     }
 
@@ -591,7 +591,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
      *     
      */
-    public void setAbstractDataArray(JAXBElement<? extends AbstractDataArrayEntry> value) {
+    public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayEntry> value) {
         this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayEntry> ) value);
     }
 
@@ -615,7 +615,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link ObservableProperty }
      *     
      */
-    public void setObservableProperty(ObservableProperty value) {
+    public void setObservableProperty(final ObservableProperty value) {
         this.observableProperty = value;
     }
 
@@ -639,7 +639,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -663,7 +663,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -687,7 +687,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -711,7 +711,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -735,7 +735,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -759,7 +759,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -783,7 +783,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -807,7 +807,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -831,7 +831,7 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

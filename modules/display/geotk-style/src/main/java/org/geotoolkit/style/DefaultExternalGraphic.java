@@ -51,7 +51,7 @@ public class DefaultExternalGraphic implements ExternalGraphic{
      * @param format : can not be null
      * @param replaces : can be null or empty
      */
-    public DefaultExternalGraphic(OnlineResource resource, String format, Collection<ColorReplacement> replaces){
+    public DefaultExternalGraphic(final OnlineResource resource, final String format, final Collection<ColorReplacement> replaces){
         if( resource == null || format == null ){
             throw new IllegalArgumentException("OnlineResource and format can not be null");
         }
@@ -76,7 +76,7 @@ public class DefaultExternalGraphic implements ExternalGraphic{
      * @param format : can not be null
      * @param replaces : can be null
      */
-    DefaultExternalGraphic(Icon icon, Collection<ColorReplacement> replaces){
+    DefaultExternalGraphic(final Icon icon, final Collection<ColorReplacement> replaces){
         if( icon == null ){
             throw new IllegalArgumentException("Icon can not be null");
         }
@@ -130,7 +130,7 @@ public class DefaultExternalGraphic implements ExternalGraphic{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -138,7 +138,7 @@ public class DefaultExternalGraphic implements ExternalGraphic{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

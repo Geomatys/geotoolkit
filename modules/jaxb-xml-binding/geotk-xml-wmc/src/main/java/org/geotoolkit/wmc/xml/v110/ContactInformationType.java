@@ -91,7 +91,7 @@ public class ContactInformationType {
      *     {@link ContactPersonPrimaryType }
      *     
      */
-    public void setContactPersonPrimary(ContactPersonPrimaryType value) {
+    public void setContactPersonPrimary(final ContactPersonPrimaryType value) {
         this.contactPersonPrimary = value;
     }
 
@@ -115,7 +115,7 @@ public class ContactInformationType {
      *     {@link String }
      *     
      */
-    public void setContactPosition(String value) {
+    public void setContactPosition(final String value) {
         this.contactPosition = value;
     }
 
@@ -139,7 +139,7 @@ public class ContactInformationType {
      *     {@link AddressType }
      *     
      */
-    public void setContactAddress(AddressType value) {
+    public void setContactAddress(final AddressType value) {
         this.contactAddress = value;
     }
 
@@ -163,7 +163,7 @@ public class ContactInformationType {
      *     {@link String }
      *     
      */
-    public void setContactVoiceTelephone(String value) {
+    public void setContactVoiceTelephone(final String value) {
         this.contactVoiceTelephone = value;
     }
 
@@ -187,7 +187,7 @@ public class ContactInformationType {
      *     {@link String }
      *     
      */
-    public void setContactFacsimileTelephone(String value) {
+    public void setContactFacsimileTelephone(final String value) {
         this.contactFacsimileTelephone = value;
     }
 
@@ -211,7 +211,7 @@ public class ContactInformationType {
      *     {@link String }
      *     
      */
-    public void setContactElectronicMailAddress(String value) {
+    public void setContactElectronicMailAddress(final String value) {
         this.contactElectronicMailAddress = value;
     }
 

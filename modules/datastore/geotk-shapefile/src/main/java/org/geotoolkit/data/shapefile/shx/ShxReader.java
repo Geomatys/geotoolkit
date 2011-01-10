@@ -65,7 +65,7 @@ public final class ShxReader {
      * @param shpFiles The channel to read from.
      * @throws IOException If an error occurs.
      */
-    public ShxReader(ShpFiles shpFiles, boolean useMemoryMappedBuffer)
+    public ShxReader(final ShpFiles shpFiles, final boolean useMemoryMappedBuffer)
             throws IOException {
         this.useMemoryMappedBuffer = useMemoryMappedBuffer;
         final ReadableByteChannel byteChannel = shpFiles.getReadChannel(ShpFileType.SHX, this);
@@ -118,7 +118,7 @@ public final class ShxReader {
 
     }
 
-    private static ShapefileHeader readHeader(ReadableByteChannel channel) throws IOException {
+    private static ShapefileHeader readHeader(final ReadableByteChannel channel) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocateDirect(100);
         while (buffer.remaining() > 0) {
             channel.read(buffer);
@@ -127,7 +127,7 @@ public final class ShxReader {
         return ShapefileHeader.read(buffer, true);
     }
 
-    private void readRecords(ReadableByteChannel channel) throws IOException {
+    private void readRecords(final ReadableByteChannel channel) throws IOException {
         check();
         final int remaining = (header.getFileLength() * 2) - 100;
         final ByteBuffer buffer = ByteBuffer.allocateDirect(remaining);
@@ -141,7 +141,7 @@ public final class ShxReader {
         ints.get(content);
     }
 
-    private void readRecord(int index) throws IOException {
+    private void readRecord(final int index) throws IOException {
         check();
         final int pos = 100 + index * 8;
         if (!useMemoryMappedBuffer) {
@@ -197,7 +197,7 @@ public final class ShxReader {
      * @return The offset in 16-bit words.
      * @throws IOException
      */
-    public int getOffset(int index) throws IOException {
+    public int getOffset(final int index) throws IOException {
 
         if (this.channel != null) {
             if (this.lastIndex != index) {
@@ -216,7 +216,7 @@ public final class ShxReader {
      * @return The offset in bytes.
      * @throws IOException
      */
-    public int getOffsetInBytes(int index) throws IOException {
+    public int getOffsetInBytes(final int index) throws IOException {
         return this.getOffset(index) * 2;
     }
 
@@ -227,7 +227,7 @@ public final class ShxReader {
      * @return The lengh in bytes of the record.
      * @throws IOException
      */
-    public int getContentLength(int index) throws IOException {
+    public int getContentLength(final int index) throws IOException {
 
         if (this.channel != null) {
             if (this.lastIndex != index) {

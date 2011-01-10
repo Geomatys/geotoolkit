@@ -40,7 +40,7 @@ public class PropertyIsNotEqualToType  extends BinaryComparisonOpType implements
     /**
      * Build a new Binary comparison operator
      */
-    public PropertyIsNotEqualToType(LiteralType literal, PropertyNameType propertyName, Boolean matchCase) {
+    public PropertyIsNotEqualToType(final LiteralType literal, final PropertyNameType propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
 }

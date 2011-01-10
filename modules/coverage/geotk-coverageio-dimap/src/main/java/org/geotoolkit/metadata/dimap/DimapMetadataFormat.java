@@ -41,127 +41,127 @@ public class DimapMetadataFormat implements IIOMetadataFormat{
     }
 
     @Override
-    public boolean canNodeAppear(String elementName, ImageTypeSpecifier imageType) {
+    public boolean canNodeAppear(final String elementName, final ImageTypeSpecifier imageType) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getElementMinChildren(String elementName) {
+    public int getElementMinChildren(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getElementMaxChildren(String elementName) {
+    public int getElementMaxChildren(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public String getElementDescription(String elementName, Locale locale) {
+    public String getElementDescription(final String elementName, final Locale locale) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getChildPolicy(String elementName) {
+    public int getChildPolicy(final String elementName) {
         return CHILD_POLICY_EMPTY;
     }
 
     @Override
-    public String[] getChildNames(String elementName) {
+    public String[] getChildNames(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public String[] getAttributeNames(String elementName) {
+    public String[] getAttributeNames(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getAttributeValueType(String elementName, String attrName) {
+    public int getAttributeValueType(final String elementName, final String attrName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getAttributeDataType(String elementName, String attrName) {
+    public int getAttributeDataType(final String elementName, final String attrName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public boolean isAttributeRequired(String elementName, String attrName) {
+    public boolean isAttributeRequired(final String elementName, final String attrName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public String getAttributeDefaultValue(String elementName, String attrName) {
+    public String getAttributeDefaultValue(final String elementName, final String attrName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public String[] getAttributeEnumerations(String elementName, String attrName) {
+    public String[] getAttributeEnumerations(final String elementName, final String attrName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public String getAttributeMinValue(String elementName, String attrName) {
+    public String getAttributeMinValue(final String elementName, final String attrName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public String getAttributeMaxValue(String elementName, String attrName) {
+    public String getAttributeMaxValue(final String elementName, final String attrName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getAttributeListMinLength(String elementName, String attrName) {
+    public int getAttributeListMinLength(final String elementName, final String attrName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getAttributeListMaxLength(String elementName, String attrName) {
+    public int getAttributeListMaxLength(final String elementName, final String attrName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public String getAttributeDescription(String elementName, String attrName, Locale locale) {
+    public String getAttributeDescription(final String elementName, final String attrName, final Locale locale) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getObjectValueType(String elementName) {
+    public int getObjectValueType(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Class<?> getObjectClass(String elementName) {
+    public Class<?> getObjectClass(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object getObjectDefaultValue(String elementName) {
+    public Object getObjectDefaultValue(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object[] getObjectEnumerations(String elementName) {
+    public Object[] getObjectEnumerations(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Comparable<?> getObjectMinValue(String elementName) {
+    public Comparable<?> getObjectMinValue(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Comparable<?> getObjectMaxValue(String elementName) {
+    public Comparable<?> getObjectMaxValue(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getObjectArrayMinLength(String elementName) {
+    public int getObjectArrayMinLength(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public int getObjectArrayMaxLength(String elementName) {
+    public int getObjectArrayMaxLength(final String elementName) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

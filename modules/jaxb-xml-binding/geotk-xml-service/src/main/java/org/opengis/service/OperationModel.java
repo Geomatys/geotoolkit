@@ -26,7 +26,7 @@ public enum OperationModel {
     
     private final String value;
 
-    OperationModel(String v) {
+    OperationModel(final String v) {
         value = v;
     }
 
@@ -34,7 +34,7 @@ public enum OperationModel {
         return value;
     }
 
-    public static OperationModel fromValue(String v) {
+    public static OperationModel fromValue(final String v) {
         for (OperationModel c: OperationModel.values()) {
             if (c.value.equals(v)) {
                 return c;

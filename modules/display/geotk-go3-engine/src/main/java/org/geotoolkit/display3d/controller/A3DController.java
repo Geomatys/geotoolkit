@@ -76,7 +76,7 @@ public class A3DController implements Updater,CanvasController3D {
     }
 
     @Override
-    public void setCameraPosition(double x, double y, double z) {
+    public void setCameraPosition(final double x, final double y, final double z) {
         synchronized(updateLocation){
             updateLocation.setX(x);
             updateLocation.setY(y);
@@ -85,7 +85,7 @@ public class A3DController implements Updater,CanvasController3D {
     }
 
     @Override
-    public void setCameraSpeed(double speed) {
+    public void setCameraSpeed(final double speed) {
         controller.setMoveSpeed(speed);
     }
 
@@ -161,17 +161,17 @@ public class A3DController implements Updater,CanvasController3D {
     }
 
     @Override
-    public void setTitle(InternationalString arg0) {
+    public void setTitle(final InternationalString arg0) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void setCenter(DirectPosition arg0) {
+    public void setCenter(final DirectPosition arg0) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void setObjectiveCRS(CoordinateReferenceSystem arg0) throws TransformException {
+    public void setObjectiveCRS(final CoordinateReferenceSystem arg0) throws TransformException {
         canvas.setObjectiveCRS(arg0);
     }
 
@@ -181,7 +181,7 @@ public class A3DController implements Updater,CanvasController3D {
     }
 
     @Override
-    public void addLocationSensitiveGraphic(LocationSensitiveGraphic graphic, double distance) {
+    public void addLocationSensitiveGraphic(final LocationSensitiveGraphic graphic, final double distance) {
         locationUpdater.put(graphic, distance);
     }
 

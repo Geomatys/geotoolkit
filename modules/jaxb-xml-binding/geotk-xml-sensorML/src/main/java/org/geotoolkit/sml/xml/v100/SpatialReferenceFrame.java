@@ -60,13 +60,13 @@ public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
 
     }
 
-    public SpatialReferenceFrame(AbstractSpatialReferenceFrame sr) {
+    public SpatialReferenceFrame(final AbstractSpatialReferenceFrame sr) {
         if (sr != null) {
             this.engineeringCRS = sr.getEngineeringCRS();
         }
     }
 
-    public SpatialReferenceFrame(EngineeringCRSType engineeringCRS) {
+    public SpatialReferenceFrame(final EngineeringCRSType engineeringCRS) {
         this.engineeringCRS = engineeringCRS;
     }
 
@@ -90,7 +90,7 @@ public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
      *     {@link EngineeringCRSType }
      *     
      */
-    public void setEngineeringCRS(EngineeringCRSType value) {
+    public void setEngineeringCRS(final EngineeringCRSType value) {
         this.engineeringCRS = value;
     }
 

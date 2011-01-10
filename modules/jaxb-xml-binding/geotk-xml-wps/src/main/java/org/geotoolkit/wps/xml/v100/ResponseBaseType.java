@@ -84,7 +84,7 @@ public class ResponseBaseType {
      *     {@link String }
      *     
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -112,7 +112,7 @@ public class ResponseBaseType {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -136,7 +136,7 @@ public class ResponseBaseType {
      *     {@link String }
      *     
      */
-    public void setLang(String value) {
+    public void setLang(final String value) {
         this.lang = value;
     }
 

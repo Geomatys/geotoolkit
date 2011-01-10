@@ -41,7 +41,7 @@ public class DefaultAnchorPoint implements AnchorPoint{
      * @param anchorX : if null or Expression.NIL will be replaced by default value.
      * @param anchorY : if null or Expression.NIL will be replaced by default value.
      */
-    public DefaultAnchorPoint(Expression anchorX, Expression anchorY){
+    public DefaultAnchorPoint(final Expression anchorX, final Expression anchorY){
         this.anchorX = (anchorX == null || anchorX == NIL) ? DEFAULT_ANCHOR_POINT_X : anchorX;
         this.anchorY = (anchorY == null || anchorY == NIL) ? DEFAULT_ANCHOR_POINT_Y : anchorY;
     }
@@ -66,7 +66,7 @@ public class DefaultAnchorPoint implements AnchorPoint{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -74,7 +74,7 @@ public class DefaultAnchorPoint implements AnchorPoint{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

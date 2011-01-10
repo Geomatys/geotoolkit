@@ -222,7 +222,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/context", name = "ViewContext")
-    public JAXBElement<ViewContextType> createViewContext(ViewContextType value) {
+    public JAXBElement<ViewContextType> createViewContext(final ViewContextType value) {
         return new JAXBElement<ViewContextType>(_ViewContext_QNAME, ViewContextType.class, null, value);
     }
 

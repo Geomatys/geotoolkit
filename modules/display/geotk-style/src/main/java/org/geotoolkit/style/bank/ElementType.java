@@ -29,11 +29,11 @@ public enum ElementType {
     SYMBOLIZER(4);
 
     private final int level;
-    private ElementType(int level) {
+    private ElementType(final int level) {
         this.level = level;
     }
 
-    public boolean isContainerFor(ElementType candidate){
+    public boolean isContainerFor(final ElementType candidate){
         return this.level < candidate.level;
     }
 

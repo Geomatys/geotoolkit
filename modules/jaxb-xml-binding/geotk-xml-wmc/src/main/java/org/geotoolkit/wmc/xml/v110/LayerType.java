@@ -128,7 +128,7 @@ public class LayerType {
      *     {@link ServerType }
      *     
      */
-    public void setServer(ServerType value) {
+    public void setServer(final ServerType value) {
         this.server = value;
     }
 
@@ -152,7 +152,7 @@ public class LayerType {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -176,7 +176,7 @@ public class LayerType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -200,7 +200,7 @@ public class LayerType {
      *     {@link String }
      *     
      */
-    public void setAbstract(String value) {
+    public void setAbstract(final String value) {
         this._abstract = value;
     }
 
@@ -224,7 +224,7 @@ public class LayerType {
      *     {@link URLType }
      *     
      */
-    public void setDataURL(URLType value) {
+    public void setDataURL(final URLType value) {
         this.dataURL = value;
     }
 
@@ -248,7 +248,7 @@ public class LayerType {
      *     {@link URLType }
      *     
      */
-    public void setMetadataURL(URLType value) {
+    public void setMetadataURL(final URLType value) {
         this.metadataURL = value;
     }
 
@@ -272,7 +272,7 @@ public class LayerType {
      *     {@link Double }
      *     
      */
-    public void setMinScaleDenominator(Double value) {
+    public void setMinScaleDenominator(final Double value) {
         this.minScaleDenominator = value;
     }
 
@@ -296,7 +296,7 @@ public class LayerType {
      *     {@link Double }
      *     
      */
-    public void setMaxScaleDenominator(Double value) {
+    public void setMaxScaleDenominator(final Double value) {
         this.maxScaleDenominator = value;
     }
 
@@ -349,7 +349,7 @@ public class LayerType {
      *     {@link FormatListType }
      *     
      */
-    public void setFormatList(FormatListType value) {
+    public void setFormatList(final FormatListType value) {
         this.formatList = value;
     }
 
@@ -373,7 +373,7 @@ public class LayerType {
      *     {@link StyleListType }
      *     
      */
-    public void setStyleList(StyleListType value) {
+    public void setStyleList(final StyleListType value) {
         this.styleList = value;
     }
 
@@ -397,7 +397,7 @@ public class LayerType {
      *     {@link DimensionListType }
      *     
      */
-    public void setDimensionList(DimensionListType value) {
+    public void setDimensionList(final DimensionListType value) {
         this.dimensionList = value;
     }
 
@@ -421,7 +421,7 @@ public class LayerType {
      *     {@link ExtensionType }
      *     
      */
-    public void setExtension(ExtensionType value) {
+    public void setExtension(final ExtensionType value) {
         this.extension = value;
     }
 
@@ -437,7 +437,7 @@ public class LayerType {
      * Sets the value of the hidden property.
      * 
      */
-    public void setHidden(boolean value) {
+    public void setHidden(final boolean value) {
         this.hidden = value;
     }
 
@@ -453,7 +453,7 @@ public class LayerType {
      * Sets the value of the queryable property.
      * 
      */
-    public void setQueryable(boolean value) {
+    public void setQueryable(final boolean value) {
         this.queryable = value;
     }
 

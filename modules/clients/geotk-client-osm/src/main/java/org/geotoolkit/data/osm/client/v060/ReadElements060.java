@@ -30,7 +30,7 @@ import org.geotoolkit.util.StringUtilities;
  */
 public class ReadElements060 extends AbstractReadElements{
 
-    public ReadElements060(String serveruURL){
+    public ReadElements060(final String serveruURL){
         super(serveruURL,"/api/0.6/");
     }
 

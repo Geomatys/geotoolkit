@@ -39,7 +39,7 @@ public class DefaultChannelSelection implements ChannelSelection{
      * Create a default immutable channel selection.
      *
      */
-    public DefaultChannelSelection(SelectedChannelType red, SelectedChannelType green, SelectedChannelType blue){
+    public DefaultChannelSelection(final SelectedChannelType red, final SelectedChannelType green, final SelectedChannelType blue){
         rgb = new SelectedChannelType[3];
         rgb[0] = red;
         rgb[1] = green;
@@ -53,7 +53,7 @@ public class DefaultChannelSelection implements ChannelSelection{
      *
      * @param gray : can not be null 
      */
-    DefaultChannelSelection(SelectedChannelType gray){
+    DefaultChannelSelection(final SelectedChannelType gray){
         if(gray == null){
             throw new NullPointerException("Gray channel can't be null");
         }
@@ -83,7 +83,7 @@ public class DefaultChannelSelection implements ChannelSelection{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -91,7 +91,7 @@ public class DefaultChannelSelection implements ChannelSelection{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

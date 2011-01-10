@@ -75,7 +75,7 @@ public class GetDomainResponseType implements GetDomainResponse {
     /**
      * build a new response to a getDomain request
      */
-    public GetDomainResponseType(List<DomainValues> domainValues) {
+    public GetDomainResponseType(final List<DomainValues> domainValues) {
         if (domainValues != null) {
             this.domainValues = new ArrayList<DomainValuesType>(domainValues.size());
             for (DomainValues dv : domainValues) {

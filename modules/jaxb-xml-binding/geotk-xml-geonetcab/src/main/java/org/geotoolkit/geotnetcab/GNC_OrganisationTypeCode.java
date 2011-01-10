@@ -95,7 +95,7 @@ public class GNC_OrganisationTypeCode extends CodeList<GNC_OrganisationTypeCode>
      * Returns the GNC_OrganisationTypeCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_OrganisationTypeCode valueOf(String code) {
+    public static GNC_OrganisationTypeCode valueOf(final String code) {
         return valueOf(GNC_OrganisationTypeCode.class, code);
     }
 }

@@ -162,7 +162,7 @@ public abstract class AbstractModelTests extends TestCase{
 
     }
 
-    private void readAndWriteTest(DataStore store, Name name){
+    private void readAndWriteTest(final DataStore store, final Name name){
         //todo test creating a few features
     }
 

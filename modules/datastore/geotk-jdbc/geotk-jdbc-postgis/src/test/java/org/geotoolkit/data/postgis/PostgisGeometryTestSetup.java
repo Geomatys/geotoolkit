@@ -22,12 +22,12 @@ import org.geotoolkit.jdbc.JDBCTestSetup;
 
 public class PostgisGeometryTestSetup extends JDBCGeometryTestSetup {
 
-    public PostgisGeometryTestSetup(JDBCTestSetup delegate) {
+    public PostgisGeometryTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
     }
 
     @Override
-    protected void dropSpatialTable(String tableName) throws Exception {
+    protected void dropSpatialTable(final String tableName) throws Exception {
         runSafe("DELETE FROM GEOMETRY_COLUMNS WHERE F_TABLE_NAME = '" + tableName + "'");
         runSafe("DROP TABLE IF EXISTS \"" + tableName + "\"");
         

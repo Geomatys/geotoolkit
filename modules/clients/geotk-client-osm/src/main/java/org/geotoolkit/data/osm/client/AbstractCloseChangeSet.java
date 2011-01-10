@@ -35,7 +35,7 @@ public abstract class AbstractCloseChangeSet extends AbstractRequest implements 
 
     protected int id = -1;
 
-    public AbstractCloseChangeSet(String serverURL, String subPath){
+    public AbstractCloseChangeSet(final String serverURL, final String subPath){
         super(serverURL, subPath);
     }
 
@@ -45,7 +45,7 @@ public abstract class AbstractCloseChangeSet extends AbstractRequest implements 
     }
 
     @Override
-    public void setChangeSetID(int id) {
+    public void setChangeSetID(final int id) {
         this.id = id;
     }
 

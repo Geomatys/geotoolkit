@@ -289,7 +289,7 @@ public class AddressDetails {
      *     {@link AddressDetails.PostalServiceElements }
      *     
      */
-    public void setPostalServiceElements(AddressDetails.PostalServiceElements value) {
+    public void setPostalServiceElements(final AddressDetails.PostalServiceElements value) {
         this.postalServiceElements = value;
     }
 
@@ -313,7 +313,7 @@ public class AddressDetails {
      *     {@link AddressDetails.Address }
      *     
      */
-    public void setAddress(AddressDetails.Address value) {
+    public void setAddress(final AddressDetails.Address value) {
         this.address = value;
     }
 
@@ -337,7 +337,7 @@ public class AddressDetails {
      *     {@link AddressLinesType }
      *     
      */
-    public void setAddressLines(AddressLinesType value) {
+    public void setAddressLines(final AddressLinesType value) {
         this.addressLines = value;
     }
 
@@ -361,7 +361,7 @@ public class AddressDetails {
      *     {@link AddressDetails.Country }
      *     
      */
-    public void setCountry(AddressDetails.Country value) {
+    public void setCountry(final AddressDetails.Country value) {
         this.country = value;
     }
 
@@ -385,7 +385,7 @@ public class AddressDetails {
      *     {@link AdministrativeArea }
      *     
      */
-    public void setAdministrativeArea(AdministrativeArea value) {
+    public void setAdministrativeArea(final AdministrativeArea value) {
         this.administrativeArea = value;
     }
 
@@ -409,7 +409,7 @@ public class AddressDetails {
      *     {@link Locality }
      *     
      */
-    public void setLocality(Locality value) {
+    public void setLocality(final Locality value) {
         this.locality = value;
     }
 
@@ -433,7 +433,7 @@ public class AddressDetails {
      *     {@link Thoroughfare }
      *     
      */
-    public void setThoroughfare(Thoroughfare value) {
+    public void setThoroughfare(final Thoroughfare value) {
         this.thoroughfare = value;
     }
 
@@ -486,7 +486,7 @@ public class AddressDetails {
      *     {@link String }
      *     
      */
-    public void setAddressType(String value) {
+    public void setAddressType(final String value) {
         this.addressType = value;
     }
 
@@ -510,7 +510,7 @@ public class AddressDetails {
      *     {@link String }
      *     
      */
-    public void setCurrentStatus(String value) {
+    public void setCurrentStatus(final String value) {
         this.currentStatus = value;
     }
 
@@ -534,7 +534,7 @@ public class AddressDetails {
      *     {@link String }
      *     
      */
-    public void setValidFromDate(String value) {
+    public void setValidFromDate(final String value) {
         this.validFromDate = value;
     }
 
@@ -558,7 +558,7 @@ public class AddressDetails {
      *     {@link String }
      *     
      */
-    public void setValidToDate(String value) {
+    public void setValidToDate(final String value) {
         this.validToDate = value;
     }
 
@@ -582,7 +582,7 @@ public class AddressDetails {
      *     {@link String }
      *     
      */
-    public void setUsage(String value) {
+    public void setUsage(final String value) {
         this.usage = value;
     }
 
@@ -606,7 +606,7 @@ public class AddressDetails {
      *     {@link String }
      *     
      */
-    public void setAddressDetailsKey(String value) {
+    public void setAddressDetailsKey(final String value) {
         this.addressDetailsKey = value;
     }
 
@@ -630,7 +630,7 @@ public class AddressDetails {
      *     {@link String }
      *     
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 
@@ -708,7 +708,7 @@ public class AddressDetails {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -732,7 +732,7 @@ public class AddressDetails {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -756,7 +756,7 @@ public class AddressDetails {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -953,7 +953,7 @@ public class AddressDetails {
          *     {@link AdministrativeArea }
          *     
          */
-        public void setAdministrativeArea(AdministrativeArea value) {
+        public void setAdministrativeArea(final AdministrativeArea value) {
             this.administrativeArea = value;
         }
 
@@ -977,7 +977,7 @@ public class AddressDetails {
          *     {@link Locality }
          *     
          */
-        public void setLocality(Locality value) {
+        public void setLocality(final Locality value) {
             this.locality = value;
         }
 
@@ -1001,7 +1001,7 @@ public class AddressDetails {
          *     {@link Thoroughfare }
          *     
          */
-        public void setThoroughfare(Thoroughfare value) {
+        public void setThoroughfare(final Thoroughfare value) {
             this.thoroughfare = value;
         }
 
@@ -1108,7 +1108,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -1132,7 +1132,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setScheme(String value) {
+            public void setScheme(final String value) {
                 this.scheme = value;
             }
 
@@ -1156,7 +1156,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -1397,7 +1397,7 @@ public class AddressDetails {
          *     {@link AddressDetails.PostalServiceElements.EndorsementLineCode }
          *     
          */
-        public void setEndorsementLineCode(AddressDetails.PostalServiceElements.EndorsementLineCode value) {
+        public void setEndorsementLineCode(final AddressDetails.PostalServiceElements.EndorsementLineCode value) {
             this.endorsementLineCode = value;
         }
 
@@ -1421,7 +1421,7 @@ public class AddressDetails {
          *     {@link AddressDetails.PostalServiceElements.KeyLineCode }
          *     
          */
-        public void setKeyLineCode(AddressDetails.PostalServiceElements.KeyLineCode value) {
+        public void setKeyLineCode(final AddressDetails.PostalServiceElements.KeyLineCode value) {
             this.keyLineCode = value;
         }
 
@@ -1445,7 +1445,7 @@ public class AddressDetails {
          *     {@link AddressDetails.PostalServiceElements.Barcode }
          *     
          */
-        public void setBarcode(AddressDetails.PostalServiceElements.Barcode value) {
+        public void setBarcode(final AddressDetails.PostalServiceElements.Barcode value) {
             this.barcode = value;
         }
 
@@ -1469,7 +1469,7 @@ public class AddressDetails {
          *     {@link AddressDetails.PostalServiceElements.SortingCode }
          *     
          */
-        public void setSortingCode(AddressDetails.PostalServiceElements.SortingCode value) {
+        public void setSortingCode(final AddressDetails.PostalServiceElements.SortingCode value) {
             this.sortingCode = value;
         }
 
@@ -1493,7 +1493,7 @@ public class AddressDetails {
          *     {@link AddressDetails.PostalServiceElements.AddressLatitude }
          *     
          */
-        public void setAddressLatitude(AddressDetails.PostalServiceElements.AddressLatitude value) {
+        public void setAddressLatitude(final AddressDetails.PostalServiceElements.AddressLatitude value) {
             this.addressLatitude = value;
         }
 
@@ -1517,7 +1517,7 @@ public class AddressDetails {
          *     {@link AddressDetails.PostalServiceElements.AddressLatitudeDirection }
          *     
          */
-        public void setAddressLatitudeDirection(AddressDetails.PostalServiceElements.AddressLatitudeDirection value) {
+        public void setAddressLatitudeDirection(final AddressDetails.PostalServiceElements.AddressLatitudeDirection value) {
             this.addressLatitudeDirection = value;
         }
 
@@ -1541,7 +1541,7 @@ public class AddressDetails {
          *     {@link AddressDetails.PostalServiceElements.AddressLongitude }
          *     
          */
-        public void setAddressLongitude(AddressDetails.PostalServiceElements.AddressLongitude value) {
+        public void setAddressLongitude(final AddressDetails.PostalServiceElements.AddressLongitude value) {
             this.addressLongitude = value;
         }
 
@@ -1565,7 +1565,7 @@ public class AddressDetails {
          *     {@link AddressDetails.PostalServiceElements.AddressLongitudeDirection }
          *     
          */
-        public void setAddressLongitudeDirection(AddressDetails.PostalServiceElements.AddressLongitudeDirection value) {
+        public void setAddressLongitudeDirection(final AddressDetails.PostalServiceElements.AddressLongitudeDirection value) {
             this.addressLongitudeDirection = value;
         }
 
@@ -1647,7 +1647,7 @@ public class AddressDetails {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -1729,7 +1729,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -1753,7 +1753,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setIdentifierType(String value) {
+            public void setIdentifierType(final String value) {
                 this.identifierType = value;
             }
 
@@ -1777,7 +1777,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -1801,7 +1801,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -1881,7 +1881,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -1905,7 +1905,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -1929,7 +1929,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -2011,7 +2011,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -2035,7 +2035,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -2059,7 +2059,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -2139,7 +2139,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -2163,7 +2163,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -2187,7 +2187,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -2267,7 +2267,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -2291,7 +2291,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -2315,7 +2315,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -2395,7 +2395,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -2419,7 +2419,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -2443,7 +2443,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -2523,7 +2523,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -2547,7 +2547,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -2571,7 +2571,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -2651,7 +2651,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -2675,7 +2675,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -2699,7 +2699,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -2773,7 +2773,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -2797,7 +2797,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -2859,7 +2859,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -2883,7 +2883,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -2907,7 +2907,7 @@ public class AddressDetails {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 

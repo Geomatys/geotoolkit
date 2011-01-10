@@ -47,7 +47,7 @@ final class JTSIterator extends PointIterator {
     /**
      * Construit un it�rateur qui balaiera la plage sp�cifi�e d'un tableau de donn�es.
      */
-    public JTSIterator(Coordinate[] coords, int lower, int upper) {
+    public JTSIterator(final Coordinate[] coords, final int lower, final int upper) {
         this.coords = coords;
         this.index  = lower;
         this.upper  = upper;

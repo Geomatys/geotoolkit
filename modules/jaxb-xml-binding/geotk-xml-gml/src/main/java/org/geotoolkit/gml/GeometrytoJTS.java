@@ -101,7 +101,7 @@ public class GeometrytoJTS {
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
      * @throws org.opengis.util.FactoryException
      */
-    public static com.vividsolutions.jts.geom.Polygon toJTS(EnvelopeEntry gmlEnvelope)
+    public static com.vividsolutions.jts.geom.Polygon toJTS(final EnvelopeEntry gmlEnvelope)
             throws NoSuchAuthorityCodeException, FactoryException {
         final String crsName = gmlEnvelope.getSrsName();
         if (crsName == null) {
@@ -135,7 +135,7 @@ public class GeometrytoJTS {
         return polygon;
     }
 
-    public static Geometry toJTS(AbstractGeometryType gml)
+    public static Geometry toJTS(final AbstractGeometryType gml)
             throws NoSuchAuthorityCodeException, FactoryException{
 
         if (gml instanceof PointType){
@@ -166,7 +166,7 @@ public class GeometrytoJTS {
 
     }
 
-    public static Point toJTS(PointType gmlPoint, int parentSrid) throws NoSuchAuthorityCodeException, FactoryException{
+    public static Point toJTS(final PointType gmlPoint, final int parentSrid) throws NoSuchAuthorityCodeException, FactoryException{
         final String crsName;
         if (parentSrid == -1) {
             crsName = gmlPoint.getSrsName();
@@ -218,7 +218,7 @@ public class GeometrytoJTS {
         return pt;
     }
     
-    public static Polygon toJTS(PolygonType gml) throws FactoryException{
+    public static Polygon toJTS(final PolygonType gml) throws FactoryException{
         final AbstractRingPropertyType ext = gml.getExterior();
         final List<AbstractRingPropertyType> ints = gml.getInterior();
 
@@ -239,7 +239,7 @@ public class GeometrytoJTS {
         return polygon;
     }
 
-    public static LineString toJTS(LineStringType gmlLine) throws FactoryException{
+    public static LineString toJTS(final LineStringType gmlLine) throws FactoryException{
         final String crsName = gmlLine.getSrsName();
         if (crsName == null) {
             throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
@@ -293,7 +293,7 @@ public class GeometrytoJTS {
         return ls;
     }
 
-    public static List<LineString> toJTS(CurveType gmlLine) throws FactoryException{
+    public static List<LineString> toJTS(final CurveType gmlLine) throws FactoryException{
         final String crsName = gmlLine.getSrsName();
         if (crsName == null) {
             throw new FactoryException("A CRS (coordinate Reference system) must be specified for the line.");
@@ -354,7 +354,7 @@ public class GeometrytoJTS {
         return lineList;
     }
 
-    public static List<Coordinate> toJTSCoords(DirectPositionListType lst, int dim){
+    public static List<Coordinate> toJTSCoords(final DirectPositionListType lst, final int dim){
         final List<Double> values = lst.getValue();
         final List<Coordinate> coords = new ArrayList<Coordinate>();
 
@@ -364,7 +364,7 @@ public class GeometrytoJTS {
         return coords;
     }
 
-    public static MultiPoint toJTS(MultiPointType gml) throws NoSuchAuthorityCodeException, FactoryException{
+    public static MultiPoint toJTS(final MultiPointType gml) throws NoSuchAuthorityCodeException, FactoryException{
         final List<PointPropertyType> pos = gml.getPointMember();
         final Point[] members = new Point[pos.size()];
 
@@ -388,7 +388,7 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static MultiLineString toJTS(MultiLineStringType gml) throws FactoryException{
+    public static MultiLineString toJTS(final MultiLineStringType gml) throws FactoryException{
         final List<LineStringPropertyType> pos = gml.getLineStringMember();
         final LineString[] members = new LineString[pos.size()];
 
@@ -407,7 +407,7 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static MultiLineString toJTS(MultiCurveType gml) throws FactoryException{
+    public static MultiLineString toJTS(final MultiCurveType gml) throws FactoryException{
         final List<CurvePropertyType> pos = gml.getCurveMember();
         final List<LineString> members = new ArrayList<LineString>();
 
@@ -433,7 +433,7 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static MultiPolygon toJTS(MultiPolygonType gml) throws FactoryException{
+    public static MultiPolygon toJTS(final MultiPolygonType gml) throws FactoryException{
         final List<PolygonPropertyType> pos = gml.getPolygonMember();
         final Polygon[] members = new Polygon[pos.size()];
 
@@ -452,7 +452,7 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static MultiPolygon toJTS(MultiSurfaceType gml) throws FactoryException{
+    public static MultiPolygon toJTS(final MultiSurfaceType gml) throws FactoryException{
         final List<SurfacePropertyType> pos = gml.getSurfaceMember();
         final Polygon[] members = new Polygon[pos.size()];
 
@@ -470,7 +470,7 @@ public class GeometrytoJTS {
         return geom;
     }
 
-    public static LinearRing toJTS(AbstractRingType gml) throws FactoryException{
+    public static LinearRing toJTS(final AbstractRingType gml) throws FactoryException{
         if(gml instanceof LinearRingType){
             return toJTS((LinearRingType)gml);
         }else if(gml instanceof RingType){
@@ -483,7 +483,7 @@ public class GeometrytoJTS {
 
     }
 
-    public static LinearRing toJTS(LinearRingType gml){
+    public static LinearRing toJTS(final LinearRingType gml){
         final DirectPositionListType lst = gml.getPosList();
         final int dim = gml.getCoordinateDimension();
 
@@ -505,7 +505,7 @@ public class GeometrytoJTS {
         return ring;
     }
 
-    public static LinearRing toJTS(RingType gml) throws FactoryException {
+    public static LinearRing toJTS(final RingType gml) throws FactoryException {
 
         final LinkedList<Coordinate> coords = new LinkedList<Coordinate>();
 

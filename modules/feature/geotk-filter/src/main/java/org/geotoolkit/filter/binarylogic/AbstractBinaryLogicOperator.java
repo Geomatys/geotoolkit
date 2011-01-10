@@ -36,7 +36,7 @@ public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator
     protected final Filter[] filterArray;
     protected final List<Filter> filters;
 
-    public AbstractBinaryLogicOperator(List<Filter> filters) {
+    public AbstractBinaryLogicOperator(final List<Filter> filters) {
         if(filters == null || filters.isEmpty()){
             throw new IllegalArgumentException("Filters list can not be null or empty");
         }
@@ -46,7 +46,7 @@ public abstract class AbstractBinaryLogicOperator implements BinaryLogicOperator
         this.filters = UnmodifiableArrayList.wrap(filterArray);
     }
 
-    public AbstractBinaryLogicOperator(Filter filter1, Filter filter2) {
+    public AbstractBinaryLogicOperator(final Filter filter1, final Filter filter2) {
         if(filter1 == null || filter2 == null){
             throw new IllegalArgumentException("Filters can not be null");
         }

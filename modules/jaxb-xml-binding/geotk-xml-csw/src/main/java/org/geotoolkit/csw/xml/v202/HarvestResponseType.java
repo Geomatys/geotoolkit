@@ -69,14 +69,14 @@ public class HarvestResponseType implements CSWResponse {
     /**
      * Build a new Response to an harvest request (synchronous mode)
      */
-    public HarvestResponseType(TransactionResponseType transactionResponse) {
+    public HarvestResponseType(final TransactionResponseType transactionResponse) {
         this.transactionResponse = transactionResponse;
     }
     
     /**
      * Build a new Response to an harvest request (synchronous mode)
      */
-    public HarvestResponseType(AcknowledgementType acknowledgement) {
+    public HarvestResponseType(final AcknowledgementType acknowledgement) {
         this.acknowledgement = acknowledgement;
     }
     

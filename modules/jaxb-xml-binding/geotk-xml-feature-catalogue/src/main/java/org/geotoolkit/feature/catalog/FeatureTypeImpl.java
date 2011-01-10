@@ -124,7 +124,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Clone a FeatureType
      */
-    public FeatureTypeImpl(FeatureType feature) {
+    public FeatureTypeImpl(final FeatureType feature) {
         if (feature != null) {
             this.aliases                  = feature.getAliases();
             this.carrierOfCharacteristics = feature.getCarrierOfCharacteristics();
@@ -144,8 +144,8 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Build a new Feature type
      */
-    public FeatureTypeImpl(LocalName typeName, String definition, String code, Boolean isAbstract, List<LocalName> aliases,
-            FeatureCatalogue catalogue, List<PropertyType> carrierOfCharacteristics) {
+    public FeatureTypeImpl(final LocalName typeName, final String definition, final String code, final Boolean isAbstract, final List<LocalName> aliases,
+            final FeatureCatalogue catalogue, final List<PropertyType> carrierOfCharacteristics) {
         this.id                       = "ftype-" + code;
         this.aliases                  = aliases;
         this.carrierOfCharacteristics = carrierOfCharacteristics;
@@ -166,7 +166,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Sets the value of the typeName property.
      */
-    public void setTypeName(LocalName value) {
+    public void setTypeName(final LocalName value) {
         this.typeName = value;
     }
 
@@ -181,7 +181,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Sets the value of the definition property.
      */
-    public void setDefinition(String value) {
+    public void setDefinition(final String value) {
         this.definition = value;
     }
 
@@ -196,7 +196,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Sets the value of the code property.
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 
@@ -210,7 +210,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Sets the value of the isAbstract property.
      */
-    public void setIsAbstract(Boolean value) {
+    public void setIsAbstract(final Boolean value) {
         this.isAbstract = value;
     }
 
@@ -225,14 +225,14 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         return aliases;
     }
     
-    public void setAliases(LocalName alias) {
+    public void setAliases(final LocalName alias) {
         if (aliases == null) {
             aliases = new ArrayList<LocalName>();
         }
         this.aliases.add(alias);
     }
     
-    public void setAliases(List<LocalName> aliases) {
+    public void setAliases(final List<LocalName> aliases) {
         this.aliases = aliases;
     }
 
@@ -246,14 +246,14 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         return this.inheritsFrom;
     }
     
-    public void setInheritsFrom(InheritanceRelation inheritsFrom) {
+    public void setInheritsFrom(final InheritanceRelation inheritsFrom) {
         if (this.inheritsFrom == null) {
             this.inheritsFrom = new ArrayList<InheritanceRelation>();
         }
         this.inheritsFrom.add(inheritsFrom);
     }
     
-    public void setInheritsFrom(List<InheritanceRelation> inheritsFrom) {
+    public void setInheritsFrom(final List<InheritanceRelation> inheritsFrom) {
         this.inheritsFrom = inheritsFrom;
     }
 
@@ -267,14 +267,14 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         return this.inheritsTo;
     }
     
-    public void setInheritsTo(InheritanceRelation inheritsTo) {
+    public void setInheritsTo(final InheritanceRelation inheritsTo) {
         if (this.inheritsTo == null) {
             this.inheritsTo = new ArrayList<InheritanceRelation>();
         }
         this.inheritsTo.add(inheritsTo);
     }
     
-    public void setInheritsTo(List<InheritanceRelation> inheritsTo) {
+    public void setInheritsTo(final List<InheritanceRelation> inheritsTo) {
         this.inheritsTo = inheritsTo;
     }
 
@@ -288,7 +288,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     /**
      * Sets the value of the featureCatalogue property.
      */
-    public void setFeatureCatalogue(FeatureCatalogue value) {
+    public void setFeatureCatalogue(final FeatureCatalogue value) {
         this.featureCatalogue = value;
     }
 
@@ -303,21 +303,21 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         return this.carrierOfCharacteristics;
     }
     
-    public void setCarrierOfCharacteristics(PropertyType carrierOfCharacteristics) {
+    public void setCarrierOfCharacteristics(final PropertyType carrierOfCharacteristics) {
         if (this.carrierOfCharacteristics == null) {
             this.carrierOfCharacteristics = new ArrayList<PropertyType>();
         }
         this.carrierOfCharacteristics.add(carrierOfCharacteristics);
     }
 
-    public void setCarrierOfCharacteristics(FeatureAttribute carrierOfCharacteristics) {
+    public void setCarrierOfCharacteristics(final FeatureAttribute carrierOfCharacteristics) {
         if (this.carrierOfCharacteristics == null) {
             this.carrierOfCharacteristics = new ArrayList<PropertyType>();
         }
         this.carrierOfCharacteristics.add(carrierOfCharacteristics);
     }
     
-    public void setCarrierOfCharacteristics(List<PropertyType> carrierOfCharacteristics) {
+    public void setCarrierOfCharacteristics(final List<PropertyType> carrierOfCharacteristics) {
         this.carrierOfCharacteristics = carrierOfCharacteristics;
     }
 
@@ -332,14 +332,14 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         return this.constrainedBy;
     }
     
-    public void setConstrainedBy(Constraint constrainedBy) {
+    public void setConstrainedBy(final Constraint constrainedBy) {
         if (this.constrainedBy == null) {
             this.constrainedBy = new ArrayList<Constraint>();
         }
         this.constrainedBy.add(constrainedBy);
     }
     
-    public void setConstrainedBy(List<Constraint> constrainedBy) {
+    public void setConstrainedBy(final List<Constraint> constrainedBy) {
         this.constrainedBy = constrainedBy;
     }
 
@@ -355,7 +355,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      * Sets the value of the definitionReference property.
      * 
      */
-    public void setDefinitionReference(DefinitionReference value) {
+    public void setDefinitionReference(final DefinitionReference value) {
         this.definitionReference = value;
     }
     
@@ -363,14 +363,14 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
      
     /**
      * set the feature in reference mode
      */
-    public void setReference(boolean mode) {
+    public void setReference(final boolean mode) {
         this.isReference = mode;
     }
     
@@ -392,7 +392,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
      * We must create reference mark in the xml.
      * @param marshaller
      */
-    private void beforeMarshal(Marshaller marshaller) {
+    private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
             beforeMarshal(new HashMap<String, Referenceable>());
         }

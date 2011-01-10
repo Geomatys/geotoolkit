@@ -28,7 +28,7 @@ public class SchemaException extends IOException {
 
     private static final String NOT_FOUND = "Feature type could not be found for ";
 
-    public SchemaException(Throwable cause) {
+    public SchemaException(final Throwable cause) {
         super(cause);
     }
 
@@ -37,7 +37,7 @@ public class SchemaException extends IOException {
      *
      * @param message Reason for the exception being thrown
      */
-    public SchemaException(String message) {
+    public SchemaException(final String message) {
         super(message);
     }
 
@@ -47,15 +47,15 @@ public class SchemaException extends IOException {
      * @param message Reason for the exception being thrown
      * @param cause Cause of SchemaException
      */
-    public SchemaException(String message, Throwable cause) {
+    public SchemaException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
-    public static SchemaException notFound(String typeName){
+    public static SchemaException notFound(final String typeName){
         return notFound(typeName,null);
     }
 
-    public static SchemaException notFound(String typeName, Throwable th){
+    public static SchemaException notFound(final String typeName, final Throwable th){
         final SchemaException ex = new SchemaException(NOT_FOUND+typeName);
         if(th != null){
             ex.initCause(th);

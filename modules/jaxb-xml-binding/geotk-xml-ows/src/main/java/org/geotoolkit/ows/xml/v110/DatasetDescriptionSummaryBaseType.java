@@ -77,7 +77,7 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
 
     }
 
-    public DatasetDescriptionSummaryBaseType(String identifier, String remarks, List<BoundingBoxType> boundingBox) {
+    public DatasetDescriptionSummaryBaseType(final String identifier, final String remarks, final List<BoundingBoxType> boundingBox) {
         super(new LanguageStringType(identifier), new LanguageStringType(remarks), null);
         this.identifier  = new CodeType(identifier);
         this.boundingBox = boundingBox;
@@ -114,7 +114,7 @@ public class DatasetDescriptionSummaryBaseType extends DescriptionType {
      *     {@link CodeType }
      *     
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 

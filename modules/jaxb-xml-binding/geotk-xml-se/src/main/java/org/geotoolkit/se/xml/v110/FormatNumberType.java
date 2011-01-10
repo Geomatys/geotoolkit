@@ -89,7 +89,7 @@ public class FormatNumberType
      *     {@link ParameterValueType }
      *     
      */
-    public void setNumericValue(ParameterValueType value) {
+    public void setNumericValue(final ParameterValueType value) {
         this.numericValue = value;
     }
 
@@ -113,7 +113,7 @@ public class FormatNumberType
      *     {@link String }
      *     
      */
-    public void setPattern(String value) {
+    public void setPattern(final String value) {
         this.pattern = value;
     }
 
@@ -137,7 +137,7 @@ public class FormatNumberType
      *     {@link String }
      *     
      */
-    public void setNegativePattern(String value) {
+    public void setNegativePattern(final String value) {
         this.negativePattern = value;
     }
 
@@ -165,7 +165,7 @@ public class FormatNumberType
      *     {@link String }
      *     
      */
-    public void setDecimalPoint(String value) {
+    public void setDecimalPoint(final String value) {
         this.decimalPoint = value;
     }
 
@@ -193,7 +193,7 @@ public class FormatNumberType
      *     {@link String }
      *     
      */
-    public void setGroupingSeparator(String value) {
+    public void setGroupingSeparator(final String value) {
         this.groupingSeparator = value;
     }
 

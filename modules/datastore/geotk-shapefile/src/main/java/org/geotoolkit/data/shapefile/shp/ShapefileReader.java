@@ -142,8 +142,8 @@ public class ShapefileReader{
      * @throws ShapefileException
      *                 If for some reason the file contains invalid records.
      */
-    public ShapefileReader(ShpFiles shapefileFiles, boolean strict,
-            boolean useMemoryMapped, boolean read3D) throws IOException, DataStoreException {
+    public ShapefileReader(final ShpFiles shapefileFiles, final boolean strict,
+            final boolean useMemoryMapped, final boolean read3D) throws IOException, DataStoreException {
         this(shapefileFiles,strict,useMemoryMapped,read3D,null);
     }
 
@@ -160,8 +160,8 @@ public class ShapefileReader{
      * @throws ShapefileException
      *                 If for some reason the file contains invalid records.
      */
-    public ShapefileReader(ShpFiles shapefileFiles, boolean strict,boolean useMemoryMapped, 
-            boolean read3D, double[] resample) throws IOException, DataStoreException {
+    public ShapefileReader(final ShpFiles shapefileFiles, final boolean strict,final boolean useMemoryMapped, 
+            final boolean read3D, final double[] resample) throws IOException, DataStoreException {
         this.channel = shapefileFiles.getReadChannel(ShpFileType.SHP, this);
         this.randomAccessEnabled = channel instanceof FileChannel;
 
@@ -232,8 +232,8 @@ public class ShapefileReader{
      *                 If problems arise.
      * @return A ShapefileHeader object.
      */
-    public static ShapefileHeader readHeader(ReadableByteChannel channel,
-            boolean strict) throws IOException {
+    public static ShapefileHeader readHeader(final ReadableByteChannel channel,
+            final boolean strict) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocateDirect(100);
         if (fill(buffer, channel) == -1) {
             throw new EOFException("Premature end of header");
@@ -245,8 +245,8 @@ public class ShapefileReader{
     // ensure the capacity of the buffer is of size by doubling the original
     // capacity until it is big enough
     // this may be naiive and result in out of MemoryError as implemented...
-    public static ByteBuffer ensureCapacity(ByteBuffer buffer, int size,
-            boolean useMemoryMappedBuffer) {
+    public static ByteBuffer ensureCapacity(ByteBuffer buffer, final int size,
+            final boolean useMemoryMappedBuffer) {
         // This sucks if you accidentally pass is a MemoryMappedBuffer of size
         // 80M
         // like I did while messing around, within moments I had 1 gig of
@@ -271,7 +271,7 @@ public class ShapefileReader{
     }
 
     // for filling a ReadableByteChannel
-    public static int fill(ByteBuffer buffer, ReadableByteChannel channel)
+    public static int fill(final ByteBuffer buffer, final ReadableByteChannel channel)
             throws IOException {
         int r = buffer.remaining();
         // channel reads return -1 when EOF or other error
@@ -341,7 +341,7 @@ public class ShapefileReader{
      * @throws IOException
      * @return True if has next record, false otherwise.
      */
-    private boolean hasNext(boolean checkRecno) throws IOException {
+    private boolean hasNext(final boolean checkRecno) throws IOException {
         // don't read past the end of the file (provided currentShape accurately
         // represents the current position)
         if(currentShape > UNKNOWN && currentShape > shxReader.getRecordCount() - 1)
@@ -387,7 +387,7 @@ public class ShapefileReader{
      * @param bounds double array of length four for transfering the bounds into
      * @return The length of the record transfered in bytes
      */
-    public int transferTo(ShapefileWriter writer, int recordNum, double[] bounds) throws IOException {
+    public int transferTo(final ShapefileWriter writer, final int recordNum, final double[] bounds) throws IOException {
 
         buffer.position(this.toBufferOffset(record.end));
         buffer.order(ByteOrder.BIG_ENDIAN);
@@ -530,7 +530,7 @@ public class ShapefileReader{
      * @throws IOException
      * @throws UnsupportedOperationException
      */
-    public void goTo(int offset) throws IOException, UnsupportedOperationException {
+    public void goTo(final int offset) throws IOException, UnsupportedOperationException {
         disableShxUsage();
         if (randomAccessEnabled) {
             if (useMemoryMappedBuffer) {
@@ -580,7 +580,7 @@ public class ShapefileReader{
      * @throws IOException
      * @throws UnsupportedOperationException
      */
-    public Object shapeAt(int offset) throws IOException, UnsupportedOperationException {
+    public Object shapeAt(final int offset) throws IOException, UnsupportedOperationException {
         if (randomAccessEnabled) {
             goTo(offset);
             return nextRecord().shape();
@@ -610,7 +610,7 @@ public class ShapefileReader{
      * @throws UnsupportedOperationException
      *             thrown if not a random access file
      */
-    public Record recordAt(int offset) throws IOException, UnsupportedOperationException {
+    public Record recordAt(final int offset) throws IOException, UnsupportedOperationException {
         if (randomAccessEnabled) {
             goTo(offset);
             return nextRecord();
@@ -624,7 +624,7 @@ public class ShapefileReader{
      * @param offset The offset relative to the whole file
      * @return The offset relative to the current loaded portion of the file
      */
-    private int toBufferOffset(int offset) {
+    private int toBufferOffset(final int offset) {
         return (int) (offset - currentOffset);
     }
 
@@ -634,7 +634,7 @@ public class ShapefileReader{
      * @param offset The offset relative to the buffer
      * @return The offset relative to the whole file
      */
-    private int toFileOffset(int offset) {
+    private int toFileOffset(final int offset) {
         return (int) (currentOffset + offset);
     }
 

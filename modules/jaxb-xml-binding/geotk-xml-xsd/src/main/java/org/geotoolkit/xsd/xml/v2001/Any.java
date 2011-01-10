@@ -81,7 +81,7 @@ public class Any
      *     {@link BigInteger }
      *     
      */
-    public void setMinOccurs(BigInteger value) {
+    public void setMinOccurs(final BigInteger value) {
         this.minOccurs = value;
     }
 
@@ -109,7 +109,7 @@ public class Any
      *     {@link String }
      *     
      */
-    public void setMaxOccurs(String value) {
+    public void setMaxOccurs(final String value) {
         this.maxOccurs = value;
     }
 

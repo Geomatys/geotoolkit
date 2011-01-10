@@ -94,9 +94,9 @@ public class AxisType extends DescriptionType {
     /**
      * Build a new Axis
      */
-    public AxisType(List<LanguageStringType> title,  List<LanguageStringType> _abstract,
-            List<KeywordsType> keywords, AvailableKeys availableKeys, DomainMetadataType meaning, DomainMetadataType dataType,
-            DomainMetadataType uom, DomainMetadataType referenceSystem, List<MetadataType> metadata, String identifier ) {
+    public AxisType(final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
+            final List<KeywordsType> keywords, final AvailableKeys availableKeys, final DomainMetadataType meaning, final DomainMetadataType dataType,
+            final DomainMetadataType uom, final DomainMetadataType referenceSystem, final List<MetadataType> metadata, final String identifier ) {
         super(title, _abstract, keywords);
         this.availableKeys   = availableKeys;
         this.dataType        = dataType;

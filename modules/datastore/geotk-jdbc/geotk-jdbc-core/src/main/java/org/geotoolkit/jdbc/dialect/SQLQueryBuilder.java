@@ -74,7 +74,7 @@ public final class SQLQueryBuilder {
 
     private final AbstractJDBCDataStore store;
 
-    public SQLQueryBuilder(AbstractJDBCDataStore store){
+    public SQLQueryBuilder(final AbstractJDBCDataStore store){
         if(store == null){
             throw new NullPointerException("JDBCDataStore can not be null.");
         }

@@ -38,7 +38,7 @@ import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
  */
 public class GPXWriter110 extends GPXWriter100{
 
-    public GPXWriter110(String creator){
+    public GPXWriter110(final String creator){
         super(creator);
     }
 
@@ -48,7 +48,7 @@ public class GPXWriter110 extends GPXWriter100{
     }
 
     @Override
-    public void write(MetaData metadata) throws XMLStreamException{
+    public void write(final MetaData metadata) throws XMLStreamException{
         writer.writeStartElement(GPX_NAMESPACE, TAG_METADATA);
         writeSimpleTag(GPX_NAMESPACE, TAG_NAME, metadata.getName());
         writeSimpleTag(GPX_NAMESPACE, TAG_DESC, metadata.getDescription());
@@ -69,7 +69,7 @@ public class GPXWriter110 extends GPXWriter100{
         writer.writeEndElement();
     }
 
-    public void writePerson(Person person) throws XMLStreamException{
+    public void writePerson(final Person person) throws XMLStreamException{
         if(person == null) return;
         
         writer.writeStartElement(GPX_NAMESPACE, TAG_AUTHOR);
@@ -80,7 +80,7 @@ public class GPXWriter110 extends GPXWriter100{
     }
 
     @Override
-    public void writeLinkURIs(Collection<URI> links) throws XMLStreamException{
+    public void writeLinkURIs(final Collection<URI> links) throws XMLStreamException{
         if(links != null && !links.isEmpty()){
             for(URI uri : links){
                 writeLink(uri);
@@ -89,7 +89,7 @@ public class GPXWriter110 extends GPXWriter100{
     }
 
     @Override
-    public void writeLink(URI uri) throws XMLStreamException{
+    public void writeLink(final URI uri) throws XMLStreamException{
         if(uri == null) return;
 
         writer.writeStartElement(GPX_NAMESPACE, TAG_LINK);
@@ -97,7 +97,7 @@ public class GPXWriter110 extends GPXWriter100{
         writer.writeEndElement();
     }
 
-    public void writeCopyRight(CopyRight copyRight) throws XMLStreamException{
+    public void writeCopyRight(final CopyRight copyRight) throws XMLStreamException{
         if(copyRight == null) return;
 
         writer.writeStartElement(GPX_NAMESPACE, TAG_COPYRIGHT);

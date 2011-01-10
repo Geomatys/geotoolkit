@@ -37,7 +37,7 @@ public class DefaultRandomPalette implements RandomPalette{
     }
 
     @Override
-    public void render(Graphics2D g, Rectangle rectangle) {
+    public void render(final Graphics2D g, final Rectangle rectangle) {
 
         final float[] fractions = new float[3];
         final Color[] colors = new Color[3];

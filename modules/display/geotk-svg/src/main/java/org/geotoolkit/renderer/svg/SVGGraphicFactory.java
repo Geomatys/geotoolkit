@@ -46,7 +46,7 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
      * {@inheritDoc }
      */
     @Override
-    public BufferedImage getImage(URI uri, String mime, Float size, RenderingHints hints) throws Exception {
+    public BufferedImage getImage(final URI uri, final String mime, final Float size, final RenderingHints hints) throws Exception {
         final Dimension dim;
         if(size == null || Float.isNaN(size)){
             dim = new Dimension(12, 12);
@@ -78,8 +78,8 @@ public class SVGGraphicFactory implements ExternalGraphicFactory {
     }
 
     @Override
-    public void renderImage(URI uri, String mime, Float size, Graphics2D g,
-            Point2D center, RenderingHints hints) throws Exception {
+    public void renderImage(final URI uri, final String mime, final Float size, final Graphics2D g,
+            final Point2D center, final RenderingHints hints) throws Exception {
         final BufferedImage img = getImage(uri, mime, size, hints);
 
         final float dispX = img.getWidth()/2;

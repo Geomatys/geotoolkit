@@ -99,7 +99,7 @@ public class InheritanceRelationAdapter extends XmlAdapter<InheritanceRelationAd
      * @return A java object which represents the metadata value.
      */
     @Override
-    public InheritanceRelation unmarshal(InheritanceRelationAdapter value) throws Exception {
+    public InheritanceRelation unmarshal(final InheritanceRelationAdapter value) throws Exception {
         if (value == null) {
             return null;
         } else if (value.href != null) {
@@ -117,7 +117,7 @@ public class InheritanceRelationAdapter extends XmlAdapter<InheritanceRelationAd
      * @return The adapter for this inheritanceRelation.
      */
     @Override
-    public InheritanceRelationAdapter marshal(InheritanceRelation value) throws Exception {
+    public InheritanceRelationAdapter marshal(final InheritanceRelation value) throws Exception {
         return new InheritanceRelationAdapter(value);
     }
 

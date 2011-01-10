@@ -82,7 +82,7 @@ public class TimeStampType extends AbstractTimePrimitiveType {
      *     {@link String }
      *     
      */
-    public void setWhen(String value) {
+    public void setWhen(final String value) {
         this.when = value;
     }
 

@@ -62,7 +62,7 @@ public class ComplexContent extends Annotated {
 
     }
 
-    public ComplexContent(ExtensionType extension) {
+    public ComplexContent(final ExtensionType extension) {
         this.extension = extension;
     }
 
@@ -77,7 +77,7 @@ public class ComplexContent extends Annotated {
      * Sets the value of the restriction property.
      *     
      */
-    public void setRestriction(ComplexRestrictionType value) {
+    public void setRestriction(final ComplexRestrictionType value) {
         this.restriction = value;
     }
 
@@ -92,7 +92,7 @@ public class ComplexContent extends Annotated {
     /**
      * Sets the value of the extension property.
      */
-    public void setExtension(ExtensionType value) {
+    public void setExtension(final ExtensionType value) {
         this.extension = value;
     }
 
@@ -107,7 +107,7 @@ public class ComplexContent extends Annotated {
     /**
      * Sets the value of the mixed property.
      */
-    public void setMixed(Boolean value) {
+    public void setMixed(final Boolean value) {
         this.mixed = value;
     }
 

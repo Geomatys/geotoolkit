@@ -63,7 +63,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     protected final boolean validating;
 
-    protected AbstractFeatureFactory(boolean validate) {
+    protected AbstractFeatureFactory(final boolean validate) {
         this.validating = validate;
     }
 
@@ -71,7 +71,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public Association createAssociation(Attribute related, AssociationDescriptor descriptor) {
+    public Association createAssociation(final Attribute related, final AssociationDescriptor descriptor) {
         return new DefaultAssociation(related, descriptor);
     }
 
@@ -79,7 +79,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public Attribute createAttribute(Object value, AttributeDescriptor descriptor, String id) {
+    public Attribute createAttribute(final Object value, final AttributeDescriptor descriptor, final String id) {
         if(descriptor instanceof GeometryDescriptor){
             return createGeometryAttribute(value, (GeometryDescriptor) descriptor, id, null);
         }
@@ -96,7 +96,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public GeometryAttribute createGeometryAttribute(
-            Object value, GeometryDescriptor descriptor, String id, CoordinateReferenceSystem crs) {
+            final Object value, final GeometryDescriptor descriptor, final String id, final CoordinateReferenceSystem crs) {
         if(id != null && !id.isEmpty()){
             return new DefaultGeometryAttribute((Geometry)value,descriptor, FF.gmlObjectId(id));
         }else{
@@ -109,7 +109,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public ComplexAttribute createComplexAttribute(
-            Collection<Property> value, AttributeDescriptor descriptor, String id) {
+            final Collection<Property> value, final AttributeDescriptor descriptor, final String id) {
         if(id != null && !id.isEmpty()){
             return new DefaultComplexAttribute(value, descriptor, FF.gmlObjectId(id));
         }else{
@@ -121,7 +121,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public ComplexAttribute createComplexAttribute(Collection<Property> value, ComplexType type, String id) {
+    public ComplexAttribute createComplexAttribute(final Collection<Property> value, final ComplexType type, final String id) {
         if(id != null && !id.isEmpty()){
             return DefaultComplexAttribute.create(value, type, FF.gmlObjectId(id));
         }else{
@@ -133,7 +133,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public Feature createFeature(Collection<Property> value, AttributeDescriptor descriptor, String id) {        
+    public Feature createFeature(final Collection<Property> value, final AttributeDescriptor descriptor, final String id) {        
         if(descriptor.getType() instanceof SimpleFeatureType){
             //in case we try to create a simple Feature with this method.
             final List<Property> properties = new ArrayList<Property>(value);
@@ -147,7 +147,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public Feature createFeature(Collection<Property> value, FeatureType type, String id) {
+    public Feature createFeature(final Collection<Property> value, final FeatureType type, final String id) {
         return createFeature(value,new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),id);
     }
 
@@ -155,7 +155,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeature createSimpleFeature(Object[] array, SimpleFeatureType type, String id) {
+    public SimpleFeature createSimpleFeature(final Object[] array, final SimpleFeatureType type, final String id) {
         if (type.isAbstract()) {
             throw new IllegalArgumentException("Cannot create an feature of an abstract FeatureType " + type.getTypeName());
         }
@@ -166,7 +166,7 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      * {@inheritDoc }
      */
     @Override
-    public SimpleFeature createSimpleFeautre(Object[] array, AttributeDescriptor descriptor, String id) {
+    public SimpleFeature createSimpleFeautre(final Object[] array, final AttributeDescriptor descriptor, final String id) {
         if (descriptor.getType().isAbstract()) {
             throw new IllegalArgumentException("Cannot create an feature of an abstract FeatureType " + descriptor.getType().getName());
         }

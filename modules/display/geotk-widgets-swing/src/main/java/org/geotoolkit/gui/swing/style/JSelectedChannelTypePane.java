@@ -48,7 +48,7 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiContrast.setLayer(layer);
     }
@@ -59,7 +59,7 @@ public class JSelectedChannelTypePane extends StyleElementEditor<SelectedChannel
     }
     
     @Override
-    public void parse(SelectedChannelType channel) {
+    public void parse(final SelectedChannelType channel) {
         this.channel = channel;
         if (channel != null) {
             guiName.setText(channel.getChannelName());

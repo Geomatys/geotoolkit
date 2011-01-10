@@ -68,7 +68,7 @@ public class JPropertyDialog extends JDialog{
     private ArrayList<PropertyPane> panels = new ArrayList<PropertyPane>();
     
     /** Creates a new instance of ASDialog */
-    private JPropertyDialog(boolean modal,boolean app, boolean rev, boolean clo) {
+    private JPropertyDialog(final boolean modal,final boolean app, final boolean rev, final boolean clo) {
         super();
         setModal(modal);
         setTitle(MessageBundle.getString("property_properties"));
@@ -125,14 +125,14 @@ public class JPropertyDialog extends JDialog{
         
     }
     
-    public void addEditPanel(PropertyPane pan){
+    public void addEditPanel(final PropertyPane pan){
         panels.add(pan);        
         tabs.addTab(pan.getTitle(),pan.getIcon(),pan.getComponent(),pan.getToolTip());        
     }
     
 
     @Override
-    public void setVisible(boolean b) {
+    public void setVisible(final boolean b) {
         if(b){
             if(panels.size()>1){
                 add(BorderLayout.CENTER,tabs);
@@ -143,11 +143,11 @@ public class JPropertyDialog extends JDialog{
         super.setVisible(b);
     }
     
-    public static void showDialog(List<PropertyPane> lst, Object target){
+    public static void showDialog(final List<PropertyPane> lst, final Object target){
         showDialog(lst,target, true);
     }
 
-    public static void showDialog(List<PropertyPane> lst, Object target, boolean modal){
+    public static void showDialog(final List<PropertyPane> lst, final Object target, final boolean modal){
         JPropertyDialog dia = new JPropertyDialog(modal,true,true,true);
 
         for(PropertyPane pro : lst){
@@ -161,11 +161,11 @@ public class JPropertyDialog extends JDialog{
     }
 
 
-    public static Symbolizer showSymbolizerDialog(Symbolizer symbol, Object target){
+    public static Symbolizer showSymbolizerDialog(final Symbolizer symbol, final Object target){
         return showSymbolizerDialog(symbol, false, target);
     }
 
-    public static Symbolizer showSymbolizerDialog(Symbolizer symbol, boolean allowTypeChange, Object target){
+    public static Symbolizer showSymbolizerDialog(final Symbolizer symbol, final boolean allowTypeChange, final Object target){
 
         final JPanel container = new JPanel(new BorderLayout());
         final JSymbolizerStylePanel pane = new JSymbolizerStylePanel();

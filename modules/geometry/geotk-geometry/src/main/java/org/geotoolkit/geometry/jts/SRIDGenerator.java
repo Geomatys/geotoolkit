@@ -40,7 +40,7 @@ public final class SRIDGenerator {
 
         final byte code;
 
-        Version(byte code){
+        Version(final byte code){
             this.code = code;
         }
 
@@ -63,7 +63,7 @@ public final class SRIDGenerator {
      *
      * return int , 0 if no srid could be generated because the crs has no identifiers.
      */
-    public static int toSRID(CoordinateReferenceSystem crs, Version version){
+    public static int toSRID(final CoordinateReferenceSystem crs, final Version version){
         final Set<ReferenceIdentifier> ids = crs.getIdentifiers();
 
         if(ids.isEmpty()){
@@ -96,7 +96,7 @@ public final class SRIDGenerator {
      * @param  srs : String presenting the crs code.
      * exemple : EPSG:4326 or CRS:84
      */
-    public static int toSRID(String srs, Version version){
+    public static int toSRID(final String srs, final Version version){
         final int index = srs.lastIndexOf(':');
         if(index <= 0){
             throw new IllegalArgumentException("CRS code doesnt match pattern Authority:Code : " + srs );
@@ -141,7 +141,7 @@ public final class SRIDGenerator {
      * buffer[offset+0] hold the compact version number
      * buffer[offset+1] to buffer[offset+4] hold the SRID number
      */
-    public static int toSRID(byte[] buffer, int offset){
+    public static int toSRID(final byte[] buffer, final int offset){
         if(buffer[offset] == Version.V1.code){
             return toInt(buffer, offset+1);
         }
@@ -153,7 +153,7 @@ public final class SRIDGenerator {
      * Read a byte array and extract an integer value from
      * the first 4 bytes, buffer[offset+0] to buffer[offset+3].
      */
-    public static int toInt(byte[] buffer, int offset){
+    public static int toInt(final byte[] buffer, final int offset){
         int compact = ((int)(buffer[offset]) & 0xFF) << 24;
         compact |= ((int)(buffer[offset+1]) & 0xFF) << 16;
         compact |= ((int)(buffer[offset+2]) & 0xFF) << 8;
@@ -165,7 +165,7 @@ public final class SRIDGenerator {
      * Read an integer SRID, and knowing it's compact version
      * extract the real SRS value.
      */
-    public static String toSRS(int srid, Version version){
+    public static String toSRS(final int srid, final Version version){
         if(version == Version.V1){
             final int authorityCode = srid >>> 28;
             final String authority;
@@ -192,7 +192,7 @@ public final class SRIDGenerator {
      * buffer[offset+0] hold the compact version number
      * buffer[offset+1] to buffer[offset+4] hold the SRID number
      */
-    public static String toSRS(byte[] buffer, int offset){
+    public static String toSRS(final byte[] buffer, final int offset){
         if(buffer[offset] == Version.V1.code){
             final int srid = toInt(buffer, offset+1);
             return toSRS(srid, Version.V1);
@@ -205,7 +205,7 @@ public final class SRIDGenerator {
      * Write a CRS in a byte[] of lenght 5.
      * the result byte array holds the compact version and the srid.
      */
-    public static byte[] toBytes(CoordinateReferenceSystem crs, Version version){
+    public static byte[] toBytes(final CoordinateReferenceSystem crs, final Version version){
         final int srid = toSRID(crs, version);
         return toBytes(srid, version);
     }
@@ -214,7 +214,7 @@ public final class SRIDGenerator {
      * Write an srid in a byte[] of lenght 5.
      * the result byte array holds the compact version and the srid.
      */
-    public static byte[] toBytes(int srid, Version version){
+    public static byte[] toBytes(final int srid, final Version version){
         final byte[] buffer = new byte[5];
         buffer[0] = version.code;
         toBytes(srid, buffer, 1);
@@ -225,7 +225,7 @@ public final class SRIDGenerator {
      * Write an int in a byte array.
      * 4 bytes will be used, from buffer[offset+0] to buffer[offset+3].
      */
-    public static byte[] toBytes(int compact, byte[] buffer, int offset){
+    public static byte[] toBytes(final int compact, final byte[] buffer, final int offset){
         buffer[offset  ] = (byte)(compact >>> 24);
         buffer[offset+1] = (byte)(compact >>> 16);
         buffer[offset+2] = (byte)(compact >>> 8);

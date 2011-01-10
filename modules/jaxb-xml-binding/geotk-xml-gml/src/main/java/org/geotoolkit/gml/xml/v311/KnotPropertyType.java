@@ -73,7 +73,7 @@ public class KnotPropertyType {
      *     {@link KnotType }
      *     
      */
-    public void setKnot(KnotType value) {
+    public void setKnot(final KnotType value) {
         this.knot = value;
     }
 

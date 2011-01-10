@@ -40,7 +40,7 @@ public class OfferingSamplingFeatureEntry implements Entry{
     /**
      * Cree une nouveau lien entre une Station et un offering. 
      */
-    public OfferingSamplingFeatureEntry(String idOffering, ReferenceEntry component) {
+    public OfferingSamplingFeatureEntry(final String idOffering, final ReferenceEntry component) {
         this.idOffering = idOffering;
         this.component  = component;
     }

@@ -49,7 +49,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
     /** An additional AffineTransform */
     protected final AffineTransform transform;
 
-    public AbstractJTSGeometryJ2D(T geom) {
+    public AbstractJTSGeometryJ2D(final T geom) {
         this(geom, JTSGeometryIterator.IDENTITY);
     }
 
@@ -58,7 +58,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      *
      * @param geom - the wrapped geometry
      */
-    public AbstractJTSGeometryJ2D(T geom, AffineTransform trs) {
+    public AbstractJTSGeometryJ2D(final T geom, final AffineTransform trs) {
         this.geometry = geom;
         this.transform = trs;
     }
@@ -69,7 +69,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      *
      * @param g
      */
-    public void setGeometry(T g) {
+    public void setGeometry(final T g) {
         this.geometry = g;
     }
 
@@ -93,7 +93,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      * {@inheritDoc }
      */
     @Override
-    public boolean contains(Rectangle2D r) {
+    public boolean contains(final Rectangle2D r) {
         return contains(r.getMinX(),r.getMinY(),r.getWidth(),r.getHeight());
     }
 
@@ -101,7 +101,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      * {@inheritDoc }
      */
     @Override
-    public boolean contains(Point2D p) {
+    public boolean contains(final Point2D p) {
         final AffineTransform inverse = getInverse();
         inverse.transform(p, p);
         final Coordinate coord = new Coordinate(p.getX(), p.getY());
@@ -113,7 +113,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      * {@inheritDoc }
      */
     @Override
-    public boolean contains(double x, double y) {
+    public boolean contains(final double x, final double y) {
         final Point2D p = new Point2D.Double(x, y);
         return contains(p);
     }
@@ -122,7 +122,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      * {@inheritDoc }
      */
     @Override
-    public boolean contains(double x, double y, double w, double h) {
+    public boolean contains(final double x, final double y, final double w, final double h) {
         Geometry rect = createRectangle(x, y, w, h);
         return geometry.contains(rect);
     }
@@ -163,7 +163,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      * {@inheritDoc }
      */
     @Override
-    public PathIterator getPathIterator(AffineTransform at, double flatness) {
+    public PathIterator getPathIterator(final AffineTransform at, final double flatness) {
         return getPathIterator(at);
     }
 
@@ -171,7 +171,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      * {@inheritDoc }
      */
     @Override
-    public boolean intersects(Rectangle2D r) {
+    public boolean intersects(final Rectangle2D r) {
         final Geometry rect = createRectangle(
                 r.getMinX(),
                 r.getMinY(),
@@ -184,7 +184,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      * {@inheritDoc }
      */
     @Override
-    public boolean intersects(double x, double y, double w, double h) {
+    public boolean intersects(final double x, final double y, final double w, final double h) {
         Geometry rect = createRectangle(x, y, w, h);
         return geometry.intersects(rect);
     }
@@ -199,7 +199,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      * @param h height     *
      * @return a rectangle with the specified position and size
      */
-    private Geometry createRectangle(double x, double y, double w, double h) {
+    private Geometry createRectangle(final double x, final double y, final double w, final double h) {
         final AffineTransform inverse = getInverse();
         final Point2D p1 = new Point2D.Double(x, y);
         inverse.transform(p1, p1);

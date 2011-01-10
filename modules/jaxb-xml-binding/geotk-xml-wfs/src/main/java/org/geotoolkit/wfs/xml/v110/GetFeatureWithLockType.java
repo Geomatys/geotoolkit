@@ -117,7 +117,7 @@ public class GetFeatureWithLockType extends BaseRequestType {
      *     {@link BigInteger }
      *     
      */
-    public void setExpiry(BigInteger value) {
+    public void setExpiry(final BigInteger value) {
         this.expiry = value;
     }
 
@@ -145,7 +145,7 @@ public class GetFeatureWithLockType extends BaseRequestType {
      *     {@link ResultTypeType }
      *     
      */
-    public void setResultType(ResultTypeType value) {
+    public void setResultType(final ResultTypeType value) {
         this.resultType = value;
     }
 
@@ -173,7 +173,7 @@ public class GetFeatureWithLockType extends BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setOutputFormat(String value) {
+    public void setOutputFormat(final String value) {
         this.outputFormat = value;
     }
 
@@ -197,7 +197,7 @@ public class GetFeatureWithLockType extends BaseRequestType {
      *     {@link BigInteger }
      *     
      */
-    public void setMaxFeatures(BigInteger value) {
+    public void setMaxFeatures(final BigInteger value) {
         this.maxFeatures = value;
     }
 
@@ -221,7 +221,7 @@ public class GetFeatureWithLockType extends BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setTraverseXlinkDepth(String value) {
+    public void setTraverseXlinkDepth(final String value) {
         this.traverseXlinkDepth = value;
     }
 
@@ -245,7 +245,7 @@ public class GetFeatureWithLockType extends BaseRequestType {
      *     {@link BigInteger }
      *     
      */
-    public void setTraverseXlinkExpiry(BigInteger value) {
+    public void setTraverseXlinkExpiry(final BigInteger value) {
         this.traverseXlinkExpiry = value;
     }
 

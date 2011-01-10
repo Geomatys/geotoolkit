@@ -88,7 +88,7 @@ public class GNC_UserDefinedMetadata implements org.opengis.metadata.geonetcab.G
      *     {@link Date }
      *     
      */
-    public void setDateStamp(Date value) {
+    public void setDateStamp(final Date value) {
         this.dateStamp = value;
     }
 
@@ -113,7 +113,7 @@ public class GNC_UserDefinedMetadata implements org.opengis.metadata.geonetcab.G
      *     {@link String }
      *     
      */
-    public void setFeedbackStatement(String value) {
+    public void setFeedbackStatement(final String value) {
         this.feedbackStatement = value;
     }
 
@@ -133,11 +133,11 @@ public class GNC_UserDefinedMetadata implements org.opengis.metadata.geonetcab.G
         return this.userContact;
     }
 
-    public void setUserContact(List<ResponsibleParty> userContact) {
+    public void setUserContact(final List<ResponsibleParty> userContact) {
         this.userContact = userContact;
     }
 
-    public void setUserContact(ResponsibleParty userContact) {
+    public void setUserContact(final ResponsibleParty userContact) {
         if (this.userContact == null) {
             this.userContact = new ArrayList<ResponsibleParty>();
         }
@@ -145,7 +145,7 @@ public class GNC_UserDefinedMetadata implements org.opengis.metadata.geonetcab.G
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

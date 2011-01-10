@@ -56,7 +56,7 @@ public class StringToDateConverter implements ObjectConverter<String, Date>{
     }
 
     @Override
-    public Date convert(String s) throws NonconvertibleObjectException {
+    public Date convert(final String s) throws NonconvertibleObjectException {
         return TemporalUtilities.parseDateSafe(s,false);
     }
 

@@ -13,12 +13,12 @@ import org.opengis.geometry.primitive.SurfaceBoundary;
 public class SurfaceBoundaryAdapter extends XmlAdapter<JTSSurfaceBoundary, SurfaceBoundary> {
 
     @Override
-    public SurfaceBoundary unmarshal(JTSSurfaceBoundary v) throws Exception {
+    public SurfaceBoundary unmarshal(final JTSSurfaceBoundary v) throws Exception {
         return v;
     }
 
     @Override
-    public JTSSurfaceBoundary marshal(SurfaceBoundary v) throws Exception {
+    public JTSSurfaceBoundary marshal(final SurfaceBoundary v) throws Exception {
         if (v instanceof JTSSurfaceBoundary) {
             return (JTSSurfaceBoundary) v;
         }

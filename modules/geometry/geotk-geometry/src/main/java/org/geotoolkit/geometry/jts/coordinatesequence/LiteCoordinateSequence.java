@@ -45,7 +45,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * @param coords
      *
      */
-    public LiteCoordinateSequence(double[] coords) {
+    public LiteCoordinateSequence(final double[] coords) {
         this.dimension = 2;
         if (coords.length % dimension != 0) {
             throw new IllegalArgumentException("Packed array does not contain " + "an integral number of coordinates");
@@ -59,7 +59,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      *
      * @param coordinates
      */
-    public LiteCoordinateSequence(float[] coordinates) {
+    public LiteCoordinateSequence(final float[] coordinates) {
         this.coords = new double[coordinates.length];
         this.dimension = 2;
         this.size = coords.length / dimension;
@@ -92,7 +92,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * @param dimension
      *
      */
-    public LiteCoordinateSequence(int size, int dimension) {
+    public LiteCoordinateSequence(final int size, final int dimension) {
         if (dimension != 2) {
             throw new IllegalArgumentException("This type of sequence is always 2 dimensional");
         }
@@ -105,7 +105,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * Copy constructor
      * @param seq
      */
-    public LiteCoordinateSequence(LiteCoordinateSequence seq) {
+    public LiteCoordinateSequence(final LiteCoordinateSequence seq) {
         // a trivial benchmark can show that cloning arrays like this is actually faster
         // than calling clone on the array.
         this.dimension = seq.dimension;
@@ -119,7 +119,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * @see com.vividsolutions.jts.geom.CoordinateSequence#getCoordinate(int)
      */
     @Override
-    public Coordinate getCoordinateInternal(int i) {
+    public Coordinate getCoordinateInternal(final int i) {
         final double x = coords[i * dimension];
         final double y = coords[i * dimension + 1];
         final double z = dimension == 2 ? java.lang.Double.NaN : coords[i * dimension + 2];
@@ -151,7 +151,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      *      value.
      */
     @Override
-    public double getOrdinate(int index, int ordinate) {
+    public double getOrdinate(final int index, final int ordinate) {
         return coords[index * dimension + ordinate];
     }
 
@@ -159,7 +159,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * {@inheritDoc }
      */
     @Override
-    public double getX(int index) {
+    public double getX(final int index) {
         return coords[index * dimension];
     }
 
@@ -167,7 +167,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * {@inheritDoc }
      */
     @Override
-    public double getY(int index) {
+    public double getY(final int index) {
         return coords[index * dimension + 1];
     }
 
@@ -175,7 +175,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * {@inheritDoc }
      */
     @Override
-    public void setOrdinate(int index, int ordinate, double value) {
+    public void setOrdinate(final int index, final int ordinate, final double value) {
         coordRef = null;
         coords[index * dimension + ordinate] = value;
     }
@@ -184,7 +184,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
      * {@inheritDoc }
      */
     @Override
-    public Envelope expandEnvelope(Envelope env) {
+    public Envelope expandEnvelope(final Envelope env) {
         double minx = coords[0];
         double maxx = minx;
         double miny = coords[1];
@@ -216,7 +216,7 @@ public class LiteCoordinateSequence extends PackedCoordinateSequence {
     /**
      * @param coords2
      */
-    public void setArray(double[] coords2) {
+    public void setArray(final double[] coords2) {
         coords = coords2;
         size = coords.length / dimension;
         coordRef = null;

@@ -48,7 +48,7 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
     }
     
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiOffset.setLayer(layer);
         guiInitial.setLayer(layer);
@@ -61,7 +61,7 @@ public class JLinePlacementPane extends StyleElementEditor<LinePlacement>{
     }
 
     @Override
-    public void parse(LinePlacement target) {
+    public void parse(final LinePlacement target) {
         placement = target;
         
         if(placement != null){

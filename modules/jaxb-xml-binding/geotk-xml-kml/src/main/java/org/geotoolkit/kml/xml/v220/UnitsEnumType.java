@@ -49,7 +49,7 @@ public enum UnitsEnumType {
     INSET_PIXELS("insetPixels");
     private final String value;
 
-    UnitsEnumType(String v) {
+    UnitsEnumType(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum UnitsEnumType {
         return value;
     }
 
-    public static UnitsEnumType fromValue(String v) {
+    public static UnitsEnumType fromValue(final String v) {
         for (UnitsEnumType c: UnitsEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

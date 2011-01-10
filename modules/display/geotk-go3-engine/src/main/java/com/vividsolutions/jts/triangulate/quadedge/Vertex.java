@@ -62,15 +62,15 @@ public class Vertex
     private Coordinate      p;
     // private int edgeNumber = -1;
 
-    public Vertex(double _x, double _y) {
+    public Vertex(final double _x, final double _y) {
         p = new Coordinate(_x, _y);
     }
 
-    public Vertex(double _x, double _y, double _z) {
+    public Vertex(final double _x, final double _y, final double _z) {
         p = new Coordinate(_x, _y, _z);
     }
 
-    public Vertex(Coordinate _p) {
+    public Vertex(final Coordinate _p) {
         p = new Coordinate(_p);
     }
 
@@ -86,7 +86,7 @@ public class Vertex
         return p.z;
     }
 
-    public void setZ(double _z) {
+    public void setZ(final double _z) {
         p.z = _z;
     }
 
@@ -98,7 +98,7 @@ public class Vertex
         return "POINT (" + p.x + " " + p.y + ")";
     }
 
-    public boolean equals(Vertex _x) {
+    public boolean equals(final Vertex _x) {
         if (p.x == _x.getX() && p.y == _x.getY()) {
             return true;
         } else {
@@ -106,7 +106,7 @@ public class Vertex
         }
     }
 
-    public boolean equals(Vertex _x, double tolerance) {
+    public boolean equals(final Vertex _x, final double tolerance) {
         if (p.distance(_x.getCoordinate()) < tolerance) {
             return true;
         } else {
@@ -114,7 +114,7 @@ public class Vertex
         }
     }
 
-    public int classify(Vertex p0, Vertex p1) {
+    public int classify(final Vertex p0, final Vertex p1) {
         Vertex p2 = this;
         Vertex a = p1.sub(p0);
         Vertex b = p2.sub(p0);
@@ -140,7 +140,7 @@ public class Vertex
      * @param v a vertex
      * @return returns the magnitude of u X v
      */
-    double crossProduct(Vertex v) {
+    double crossProduct(final Vertex v) {
         return (p.x * v.getY() - p.y * v.getX());
     }
 
@@ -150,7 +150,7 @@ public class Vertex
      * @param v, a vertex
      * @return returns the dot product u.v
      */
-    double dot(Vertex v) {
+    double dot(final Vertex v) {
         return (p.x * v.getX() + p.y * v.getY());
     }
 
@@ -160,17 +160,17 @@ public class Vertex
      * @param v, a vertex
      * @return returns the scaled vector
      */
-    Vertex times(double c) {
+    Vertex times(final double c) {
         return (new Vertex(c * p.x, c * p.y));
     }
 
     /* Vector addition */
-    Vertex sum(Vertex v) {
+    Vertex sum(final Vertex v) {
         return (new Vertex(p.x + v.getX(), p.y + v.getY()));
     }
 
     /* and subtraction */
-    Vertex sub(Vertex v) {
+    Vertex sub(final Vertex v) {
         return (new Vertex(p.x - v.getX(), p.y - v.getY()));
     }
 
@@ -193,7 +193,7 @@ public class Vertex
      * Computes twice the area of the oriented triangle (a, b, c), i.e., the area is positive if the
      * triangle is oriented counterclockwise.
      */
-    private final double triArea(Vertex a, Vertex b, Vertex c) {
+    private final double triArea(final Vertex a, final Vertex b, final Vertex c) {
         return (b.p.x - a.p.x) * (c.p.y - a.p.y) 
              - (b.p.y - a.p.y) * (c.p.x - a.p.x);
     }
@@ -207,7 +207,7 @@ public class Vertex
      * @param c
      * @return true if this point is inside the circle defined by the points a, b, c
      */
-    public final boolean inCircle(Vertex a, Vertex b, Vertex c) {
+    public final boolean inCircle(final Vertex a, final Vertex b, final Vertex c) {
       Vertex d = this;
       boolean isInCircle = 
       	        (a.p.x * a.p.x + a.p.y * a.p.y) * triArea(b, c, d)
@@ -245,7 +245,7 @@ public class Vertex
      * @param c a vertex
      * @returns true if the triangle is oriented CCW
      */
-    public final boolean isCCW(Vertex b, Vertex c) 
+    public final boolean isCCW(final Vertex b, final Vertex c) 
     {
     	// is equal to the signed area of the triangle
     	
@@ -266,15 +266,15 @@ public class Vertex
         //*/
     }
 
-    public final boolean rightOf(QuadEdge e) {
+    public final boolean rightOf(final QuadEdge e) {
         return isCCW(e.dest(), e.orig());
     }
 
-    public final boolean leftOf(QuadEdge e) {
+    public final boolean leftOf(final QuadEdge e) {
         return isCCW(e.orig(), e.dest());
     }
 
-    private HCoordinate bisector(Vertex a, Vertex b) {
+    private HCoordinate bisector(final Vertex a, final Vertex b) {
         // returns the perpendicular bisector of the line segment ab
         double dx = b.getX() - a.getX();
         double dy = b.getY() - a.getY();
@@ -283,7 +283,7 @@ public class Vertex
         return new HCoordinate(l1, l2);
     }
 
-    private double distance(Vertex v1, Vertex v2) {
+    private double distance(final Vertex v1, final Vertex v2) {
         return Math.sqrt(Math.pow(v2.getX() - v1.getX(), 2.0)
                 + Math.pow(v2.getY() - v1.getY(), 2.0));
     }
@@ -298,7 +298,7 @@ public class Vertex
      * @param c third vertex of the triangle
      * @return ratio of circumradius to shortest edge.
      */
-    public double circumRadiusRatio(Vertex b, Vertex c) {
+    public double circumRadiusRatio(final Vertex b, final Vertex c) {
         Vertex x = this.circleCenter(b, c);
         double radius = distance(x, b);
         double edgeLength = distance(this, b);
@@ -319,7 +319,7 @@ public class Vertex
      * @param a the other end point.
      * @return the point mid-way between this and that.
      */
-    public Vertex midPoint(Vertex a) {
+    public Vertex midPoint(final Vertex a) {
         double xm = (p.x + a.getX()) / 2.0;
         double ym = (p.y + a.getY()) / 2.0;
         double zm = (p.z + a.getZ()) / 2.0;
@@ -333,7 +333,7 @@ public class Vertex
      * @param c
      * @return the Coordinate which is the circumcircle of the 3 points.
      */
-    public Vertex circleCenter(Vertex b, Vertex c) {
+    public Vertex circleCenter(final Vertex b, final Vertex c) {
         Vertex a = new Vertex(this.getX(), this.getY());
         // compute the perpendicular bisector of cord ab
         HCoordinate cab = bisector(a, b);
@@ -355,7 +355,7 @@ public class Vertex
      * For this vertex enclosed in a triangle defined by three verticies v0, v1 and v2, interpolate
      * a z value from the surrounding vertices.
      */
-    public double interpolateZValue(Vertex v0, Vertex v1, Vertex v2) {
+    public double interpolateZValue(final Vertex v0, final Vertex v1, final Vertex v2) {
         double x0 = v0.getX();
         double y0 = v0.getY();
         double a = v1.getX() - x0;
@@ -374,7 +374,7 @@ public class Vertex
     /**
      * Interpolates the Z value of a point enclosed in a 3D triangle.
      */
-    public static double interpolateZ(Coordinate p, Coordinate v0, Coordinate v1, Coordinate v2) {
+    public static double interpolateZ(final Coordinate p, final Coordinate v0, final Coordinate v1, final Coordinate v2) {
         double x0 = v0.x;
         double y0 = v0.y;
         double a = v1.x - x0;
@@ -398,7 +398,7 @@ public class Vertex
      * @param p1
      * @return
      */
-    public static double interpolateZ(Coordinate p, Coordinate p0, Coordinate p1) {
+    public static double interpolateZ(final Coordinate p, final Coordinate p0, final Coordinate p1) {
         double segLen = p0.distance(p1);
         double ptLen = p.distance(p0);
         double dz = p1.z - p0.z;

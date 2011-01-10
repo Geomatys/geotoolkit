@@ -40,8 +40,8 @@ public class FileSystemNode extends AbstractNode {
     private final int subNodesLength;
     private byte numSubNodes;
 
-    FileSystemNode(double minx, double miny, double maxx, double maxy,
-            ScrollingBuffer buffer, int startByte, int subNodesLength) {
+    FileSystemNode(final double minx, final double miny, final double maxx, final double maxy,
+            final ScrollingBuffer buffer, final int startByte, final int subNodesLength) {
         super(minx,miny,maxx,maxy);
         this.buffer = buffer;
         this.subNodeStartByte = startByte;
@@ -60,7 +60,7 @@ public class FileSystemNode extends AbstractNode {
      * DOCUMENT ME!
      * @param numSubNodes The numSubNodes to set.
      */
-    public void setNumSubNodes(int numSubNodes) {
+    public void setNumSubNodes(final int numSubNodes) {
         this.numSubNodes = (byte) numSubNodes;
     }
 
@@ -84,7 +84,7 @@ public class FileSystemNode extends AbstractNode {
      * {@inheritDoc }
      */
     @Override
-    public AbstractNode getSubNode(int index) throws StoreException {
+    public AbstractNode getSubNode(final int index) throws StoreException {
 
         if (nodes == null) {
             //read the subnodes
@@ -113,7 +113,7 @@ public class FileSystemNode extends AbstractNode {
     }
 
     @Override
-    public void setSubNodes(AbstractNode ... nodes) {
+    public void setSubNodes(final AbstractNode ... nodes) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

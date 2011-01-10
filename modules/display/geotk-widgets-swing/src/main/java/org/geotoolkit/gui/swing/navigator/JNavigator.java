@@ -94,12 +94,12 @@ public class JNavigator extends JPanel implements
     }
 
     @Override
-    public void setComponentPopupMenu(JPopupMenu popup) {
+    public void setComponentPopupMenu(final JPopupMenu popup) {
         super.setComponentPopupMenu(popup);
         graduation.setComponentPopupMenu(popup);
     }
 
-    public void addBand(JNavigatorBand band){
+    public void addBand(final JNavigatorBand band){
         band.setModel(getModel());
         bands.add(band);
         bandsPan.add(band);
@@ -109,7 +109,7 @@ public class JNavigator extends JPanel implements
         repaint();
     }
 
-    public void removeBand(JNavigatorBand band){
+    public void removeBand(final JNavigatorBand band){
         bands.remove(band);
         bandsPan.remove(band);
         bandsPan.revalidate();
@@ -126,7 +126,7 @@ public class JNavigator extends JPanel implements
         return renderer;
     }
 
-    public void setModelRenderer(NavigatorRenderer renderer) {
+    public void setModelRenderer(final NavigatorRenderer renderer) {
         this.renderer = renderer;
 
         if(this.renderer != null){
@@ -136,7 +136,7 @@ public class JNavigator extends JPanel implements
         }
     }
 
-    public void setOrientation(int orientation) {
+    public void setOrientation(final int orientation) {
         
         if(this.orientation != orientation){
             this.orientation = orientation;
@@ -176,7 +176,7 @@ public class JNavigator extends JPanel implements
     }
 
     @Override
-    protected void paintComponent(Graphics grphcs) {
+    protected void paintComponent(final Graphics grphcs) {
         super.paintComponent(grphcs);
         final Graphics2D g = (Graphics2D) grphcs;
         if(renderer != null){
@@ -197,12 +197,12 @@ public class JNavigator extends JPanel implements
 
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
 
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
         flagMove = (e.getButton() == MouseEvent.BUTTON1);
 
         newMouseX = e.getX();
@@ -213,21 +213,21 @@ public class JNavigator extends JPanel implements
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         flagMove = false;
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(final MouseEvent e) {
         requestFocus();
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(final MouseEvent e) {
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
 
         if(!flagMove) return;
 
@@ -249,13 +249,13 @@ public class JNavigator extends JPanel implements
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(final MouseEvent e) {
         setCursor(new Cursor(Cursor.DEFAULT_CURSOR));
         setToolTipText(null);
     }
 
     @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
+    public void mouseWheelMoved(final MouseWheelEvent e) {
         final int x = getPosition(e);
 
         if (e.getWheelRotation() > 0) {
@@ -266,11 +266,11 @@ public class JNavigator extends JPanel implements
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(final KeyEvent e) {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(final KeyEvent e) {
         final int code = e.getKeyCode();
         final int x = getPosition(null);
         final double scale = getModel().getScale();
@@ -311,13 +311,13 @@ public class JNavigator extends JPanel implements
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(final KeyEvent e) {
     }
 
     /**
      * used to define the scaling center.
      */
-    private int getPosition(MouseEvent e){
+    private int getPosition(final MouseEvent e){
         if(e != null){
             switch(orientation){
                 case NORTH : return e.getX();

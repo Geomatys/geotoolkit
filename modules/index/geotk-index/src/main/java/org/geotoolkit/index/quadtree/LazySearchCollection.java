@@ -45,11 +45,11 @@ public class LazySearchCollection<T extends Data> extends AbstractCollection<T> 
     private final double[] minRes;
     private final DataReader<T> reader;
 
-    public LazySearchCollection(QuadTree tree, DataReader<T> reader, Envelope bounds) {
+    public LazySearchCollection(final QuadTree tree, final DataReader<T> reader, final Envelope bounds) {
         this(tree,reader,bounds,null);
     }
 
-    public LazySearchCollection(QuadTree tree, DataReader<T> reader, Envelope bounds, double[] minRes) {
+    public LazySearchCollection(final QuadTree tree, final DataReader<T> reader, final Envelope bounds, final double[] minRes) {
         this.tree = tree;
         this.reader = reader;
         this.bounds = bounds;
@@ -123,7 +123,7 @@ public class LazySearchCollection<T extends Data> extends AbstractCollection<T> 
     }
 
     @Override
-    public void closeIterator( Iterator<T> iter ) throws IOException {
+    public void closeIterator( final Iterator<T> iter ) throws IOException {
         try {
             tree.close(iter);
         } catch (StoreException e) {

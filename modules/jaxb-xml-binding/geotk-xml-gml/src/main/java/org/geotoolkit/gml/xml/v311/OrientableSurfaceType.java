@@ -77,7 +77,7 @@ public class OrientableSurfaceType extends AbstractSurfaceType {
      *     {@link SurfacePropertyType }
      *     
      */
-    public void setBaseSurface(SurfacePropertyType value) {
+    public void setBaseSurface(final SurfacePropertyType value) {
         this.baseSurface = value;
     }
 
@@ -105,7 +105,7 @@ public class OrientableSurfaceType extends AbstractSurfaceType {
      *     {@link String }
      *     
      */
-    public void setOrientation(String value) {
+    public void setOrientation(final String value) {
         this.orientation = value;
     }
 

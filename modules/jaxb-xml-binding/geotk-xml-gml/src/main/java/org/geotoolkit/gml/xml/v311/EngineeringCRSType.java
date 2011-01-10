@@ -65,7 +65,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType {
 
     }
 
-    public EngineeringCRSType(String id, String srsName, CoordinateSystemRefType usesCS, EngineeringDatumRefType usesEngineeringDatum) {
+    public EngineeringCRSType(final String id, final String srsName, final CoordinateSystemRefType usesCS, final EngineeringDatumRefType usesEngineeringDatum) {
         super(id, null, null, srsName);
         this.usesCS = usesCS;
         this.usesEngineeringDatum = usesEngineeringDatum;
@@ -83,7 +83,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType {
      * Sets the value of the usesCS property.
      * 
      */
-    public void setUsesCS(CoordinateSystemRefType value) {
+    public void setUsesCS(final CoordinateSystemRefType value) {
         this.usesCS = value;
     }
 
@@ -99,7 +99,7 @@ public class EngineeringCRSType extends AbstractReferenceSystemType {
      * Sets the value of the usesEngineeringDatum property.
      * 
      */
-    public void setUsesEngineeringDatum(EngineeringDatumRefType value) {
+    public void setUsesEngineeringDatum(final EngineeringDatumRefType value) {
         this.usesEngineeringDatum = value;
     }
 

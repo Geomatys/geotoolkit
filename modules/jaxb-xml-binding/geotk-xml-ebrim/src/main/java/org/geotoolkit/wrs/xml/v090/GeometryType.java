@@ -83,7 +83,7 @@ public class GeometryType extends WRSExtrinsicObjectType {
     /**
      * Sets the value of the dimension property.
      */
-    public void setDimension(Integer value) {
+    public void setDimension(final Integer value) {
         this.dimension = value;
     }
 
@@ -97,7 +97,7 @@ public class GeometryType extends WRSExtrinsicObjectType {
     /**
      * Sets the value of the geometryType property.
      */
-    public void setGeometryType(String value) {
+    public void setGeometryType(final String value) {
         this.geometryType = value;
     }
 
@@ -111,7 +111,7 @@ public class GeometryType extends WRSExtrinsicObjectType {
     /**
      * Sets the value of the srid property.
      */
-    public void setSrid(String value) {
+    public void setSrid(final String value) {
         this.srid = value;
     }
 

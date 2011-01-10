@@ -81,7 +81,7 @@ public class List extends Annotated {
      *     {@link LocalSimpleType }
      *     
      */
-    public void setSimpleType(LocalSimpleType value) {
+    public void setSimpleType(final LocalSimpleType value) {
         this.simpleType = value;
     }
 
@@ -105,7 +105,7 @@ public class List extends Annotated {
      *     {@link QName }
      *     
      */
-    public void setItemType(QName value) {
+    public void setItemType(final QName value) {
         this.itemType = value;
     }
 

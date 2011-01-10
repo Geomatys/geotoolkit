@@ -56,29 +56,29 @@ public class UtilTestGraphics extends Graphics2D{
     public Font font;
     
     @Override
-    public void addRenderingHints(Map<?, ?> toAdd) {
+    public void addRenderingHints(final Map<?, ?> toAdd) {
         //hints.putAll( toAdd );
     }
 
     @Override
-    public void clip(Shape s) {
+    public void clip(final Shape s) {
         clip = s;
     }
 
     @Override
-    public void draw(Shape s) {
+    public void draw(final Shape s) {
         draw = s;
     }
 
     @Override
-    public void drawGlyphVector(GlyphVector g, float x, float y) {
+    public void drawGlyphVector(final GlyphVector g, final float x, final float y) {
         this.x = x;
         this.y = y;
         glyphs = g;
     }
 
     @Override
-    public boolean drawImage(Image img, AffineTransform xform, ImageObserver obs) {
+    public boolean drawImage(final Image img, final AffineTransform xform, final ImageObserver obs) {
         this.image = img;
         this.transform = xform;
         this.observer = obs;
@@ -86,7 +86,7 @@ public class UtilTestGraphics extends Graphics2D{
     }
 
     @Override
-    public void drawImage(BufferedImage img, BufferedImageOp op, int x, int y) {
+    public void drawImage(final BufferedImage img, final BufferedImageOp op, final int x, final int y) {
         this.image = img;
         this.x = x;
         this.y = y;
@@ -94,33 +94,33 @@ public class UtilTestGraphics extends Graphics2D{
     }
 
     @Override
-    public void drawRenderableImage(RenderableImage img, AffineTransform xform) {
+    public void drawRenderableImage(final RenderableImage img, final AffineTransform xform) {
         this.image = img;
         this.transform = xform;
     }
 
     @Override
-    public void drawRenderedImage(RenderedImage img, AffineTransform xform) {
+    public void drawRenderedImage(final RenderedImage img, final AffineTransform xform) {
         this.image = img;
         this.transform = xform;
     }
 
     @Override
-    public void drawString(String str, int x, int y) {
+    public void drawString(final String str, final int x, final int y) {
         this.string = str;
         this.x = x;
         this.y = y;
     }
 
     @Override
-    public void drawString(String s, float x, float y) {
+    public void drawString(final String s, final float x, final float y) {
         this.string= s;
         this.x = x;
         this.y = y;
     }
 
     @Override
-    public void drawString(AttributedCharacterIterator iterator, int x, int y) {
+    public void drawString(final AttributedCharacterIterator iterator, final int x, final int y) {
         StringBuffer build = new StringBuffer();
         char c;
         while( (c = iterator.next()) != iterator.DONE ){
@@ -132,8 +132,8 @@ public class UtilTestGraphics extends Graphics2D{
     }
 
     @Override
-    public void drawString(AttributedCharacterIterator iterator, float x,
-            float y) {
+    public void drawString(final AttributedCharacterIterator iterator, final float x,
+            final float y) {
         StringBuffer build = new StringBuffer();
         char c;
         while( (c = iterator.next()) != iterator.DONE ){
@@ -145,7 +145,7 @@ public class UtilTestGraphics extends Graphics2D{
     }
 
     @Override
-    public void fill(Shape s) {
+    public void fill(final Shape s) {
         this.draw = s;
         this.fill = true;
     }
@@ -176,7 +176,7 @@ public class UtilTestGraphics extends Graphics2D{
     }
 
     @Override
-    public Object getRenderingHint(Key hintKey) {
+    public Object getRenderingHint(final Key hintKey) {
         return hints.get( hintKey );
     }
 
@@ -198,109 +198,109 @@ public class UtilTestGraphics extends Graphics2D{
     }
 
     @Override
-    public boolean hit(Rectangle rect, Shape s, boolean onStroke) {
+    public boolean hit(final Rectangle rect, final Shape s, final boolean onStroke) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public void rotate(double theta) {
+    public void rotate(final double theta) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void rotate(double theta, double x, double y) {
+    public void rotate(final double theta, final double x, final double y) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void scale(double sx, double sy) {
+    public void scale(final double sx, final double sy) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setBackground(Color color) {
+    public void setBackground(final Color color) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setComposite(Composite comp) {
+    public void setComposite(final Composite comp) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setPaint(Paint paint) {
+    public void setPaint(final Paint paint) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setRenderingHint(Key hintKey, Object hintValue) {
+    public void setRenderingHint(final Key hintKey, final Object hintValue) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setRenderingHints(Map<?, ?> hints) {
+    public void setRenderingHints(final Map<?, ?> hints) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setStroke(Stroke s) {
+    public void setStroke(final Stroke s) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void setTransform(AffineTransform Tx) {
+    public void setTransform(final AffineTransform Tx) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void shear(double shx, double shy) {
+    public void shear(final double shx, final double shy) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void transform(AffineTransform Tx) {
+    public void transform(final AffineTransform Tx) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void translate(int x, int y) {
+    public void translate(final int x, final int y) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void translate(double tx, double ty) {
+    public void translate(final double tx, final double ty) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void clearRect(int x, int y, int width, int height) {
+    public void clearRect(final int x, final int y, final int width, final int height) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void clipRect(int x, int y, int width, int height) {
+    public void clipRect(final int x, final int y, final int width, final int height) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public void copyArea(int x, int y, int width, int height, int dx, int dy) {
+    public void copyArea(final int x, final int y, final int width, final int height, final int dx, final int dy) {
         // TODO Auto-generated method stub
         
     }
@@ -318,106 +318,106 @@ public class UtilTestGraphics extends Graphics2D{
     }
 
     @Override
-    public void drawArc(int x, int y, int width, int height, int startAngle,
-            int arcAngle) {
+    public void drawArc(final int x, final int y, final int width, final int height, final int startAngle,
+            final int arcAngle) {
         // TODO Auto-generated method stub
         
     }
 
     @Override
-    public boolean drawImage(Image img, int x, int y, ImageObserver observer) {
+    public boolean drawImage(final Image img, final int x, final int y, final ImageObserver observer) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean drawImage(Image img, int x, int y, Color bgcolor,
-            ImageObserver observer) {
+    public boolean drawImage(final Image img, final int x, final int y, final Color bgcolor,
+            final ImageObserver observer) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean drawImage(Image img, int x, int y, int width, int height,
-            ImageObserver observer) {
+    public boolean drawImage(final Image img, final int x, final int y, final int width, final int height,
+            final ImageObserver observer) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean drawImage(Image img, int x, int y, int width, int height,
-            Color bgcolor, ImageObserver observer) {
+    public boolean drawImage(final Image img, final int x, final int y, final int width, final int height,
+            final Color bgcolor, final ImageObserver observer) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2,
-            int sx1, int sy1, int sx2, int sy2, ImageObserver observer) {
+    public boolean drawImage(final Image img, final int dx1, final int dy1, final int dx2, final int dy2,
+            final int sx1, final int sy1, final int sx2, final int sy2, final ImageObserver observer) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean drawImage(Image img, int dx1, int dy1, int dx2, int dy2,
-            int sx1, int sy1, int sx2, int sy2, Color bgcolor,
-            ImageObserver observer) {
+    public boolean drawImage(final Image img, final int dx1, final int dy1, final int dx2, final int dy2,
+            final int sx1, final int sy1, final int sx2, final int sy2, final Color bgcolor,
+            final ImageObserver observer) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public void drawLine(int x1, int y1, int x2, int y2) {
+    public void drawLine(final int x1, final int y1, final int x2, final int y2) {
         x = x1;
         y = y1;
         fill = false;
     }
 
     @Override
-    public void drawOval(int x, int y, int width, int height) {
+    public void drawOval(final int x, final int y, final int width, final int height) {
         draw( new Rectangle( x,y, width,height) );
     }
 
     @Override
-    public void drawPolygon(int[] points, int[] points2, int points3) {
+    public void drawPolygon(final int[] points, final int[] points2, final int points3) {
         draw( new Polygon( points, points2, points3 ) );
     }
 
     @Override
-    public void drawPolyline(int[] points, int[] points2, int points3) {
+    public void drawPolyline(final int[] points, final int[] points2, final int points3) {
         draw( new Polygon( points, points2, points3 ) );
     }
 
     @Override
-    public void drawRoundRect(int x, int y, int width, int height,
-            int arcWidth, int arcHeight) {
+    public void drawRoundRect(final int x, final int y, final int width, final int height,
+            final int arcWidth, final int arcHeight) {
         draw( new RoundRectangle2D.Float(x,y,width,height,arcWidth, arcHeight ));
     }
 
     @Override
-    public void fillArc(int x, int y, int width, int height, int startAngle,
-            int arcAngle) {
+    public void fillArc(final int x, final int y, final int width, final int height, final int startAngle,
+            final int arcAngle) {
         fill( new Rectangle( x,y, width,height) );
     }
 
     @Override
-    public void fillOval(int x, int y, int width, int height) {
+    public void fillOval(final int x, final int y, final int width, final int height) {
         fill( new Rectangle( x,y, width,height) );
     }
 
     @Override
-    public void fillPolygon(int[] points, int[] points2, int points3) {
+    public void fillPolygon(final int[] points, final int[] points2, final int points3) {
         fill( new Polygon( points, points2, points3 ) );
     }
 
     @Override
-    public void fillRect(int x, int y, int width, int height) {
+    public void fillRect(final int x, final int y, final int width, final int height) {
         fill( new Rectangle( x,y,width,height));
     }
 
     @Override
-    public void fillRoundRect(int x, int y, int width, int height,
-            int arcWidth, int arcHeight) {
+    public void fillRoundRect(final int x, final int y, final int width, final int height,
+            final int arcWidth, final int arcHeight) {
         fill( new RoundRectangle2D.Float(x,y,width,height,arcWidth, arcHeight ));
     }
 
@@ -442,27 +442,27 @@ public class UtilTestGraphics extends Graphics2D{
     }
 
     @Override
-    public FontMetrics getFontMetrics(Font f) {
+    public FontMetrics getFontMetrics(final Font f) {
         return null;
     }
 
     @Override
-    public void setClip(Shape clip) {
+    public void setClip(final Shape clip) {
         this.clip = clip;
     }
 
     @Override
-    public void setClip(int x, int y, int width, int height) {
+    public void setClip(final int x, final int y, final int width, final int height) {
         setClip( new Rectangle(x,y,width,height));
     }
 
     @Override
-    public void setColor(Color c) {
+    public void setColor(final Color c) {
         paint = c;
     }
 
     @Override
-    public void setFont(Font font) {
+    public void setFont(final Font font) {
         this.font = font;
     }
 
@@ -471,7 +471,7 @@ public class UtilTestGraphics extends Graphics2D{
     }
 
     @Override
-    public void setXORMode(Color c1) {
+    public void setXORMode(final Color c1) {
         // TODO Auto-generated method stub
         
     }

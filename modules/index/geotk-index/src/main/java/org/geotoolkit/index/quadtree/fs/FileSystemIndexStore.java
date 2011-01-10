@@ -49,7 +49,7 @@ public class FileSystemIndexStore implements IndexStore {
      * 
      * @param file
      */
-    public FileSystemIndexStore(File file) {
+    public FileSystemIndexStore(final File file) {
         this.file = file;
         this.byteOrder = NEW_MSB_ORDER;
     }
@@ -60,7 +60,7 @@ public class FileSystemIndexStore implements IndexStore {
      * @param file
      * @param byteOrder
      */
-    public FileSystemIndexStore(File file, byte byteOrder) {
+    public FileSystemIndexStore(final File file, final byte byteOrder) {
         this.file = file;
         this.byteOrder = byteOrder;
     }
@@ -69,7 +69,7 @@ public class FileSystemIndexStore implements IndexStore {
      * {@inheritDoc }
      */
     @Override
-    public void store(QuadTree tree) throws StoreException {
+    public void store(final QuadTree tree) throws StoreException {
         // For efficiency, trim the tree
         tree.trim();
 
@@ -135,7 +135,7 @@ public class FileSystemIndexStore implements IndexStore {
      * @throws StoreException
      *                 DOCUMENT ME!
      */
-    private void writeNode(QuadTree tree, AbstractNode node, FileChannel channel, ByteOrder order)
+    private void writeNode(final QuadTree tree, final AbstractNode node, final FileChannel channel, final ByteOrder order)
             throws IOException, StoreException {
         final int offset = this.getSubNodeOffset(node);
 
@@ -177,7 +177,7 @@ public class FileSystemIndexStore implements IndexStore {
      * @throws StoreException
      *                 DOCUMENT ME!
      */
-    private int getSubNodeOffset(AbstractNode node) throws StoreException {
+    private int getSubNodeOffset(final AbstractNode node) throws StoreException {
         int offset = 0;
 
         for (int i=0,n=node.getNumSubNodes(); i<n; i++) {
@@ -216,11 +216,11 @@ public class FileSystemIndexStore implements IndexStore {
         return tree;
     }
 
-    static FileSystemNode readNode(FileChannel channel, ByteOrder order) throws IOException {
+    static FileSystemNode readNode(final FileChannel channel, final ByteOrder order) throws IOException {
         return readNode(new ScrollingBuffer(channel, order));
     }
 
-    static FileSystemNode readNode(ScrollingBuffer buf)
+    static FileSystemNode readNode(final ScrollingBuffer buf)
             throws IOException {
 
         // offset(4) + envelope(32) + nbIds(4)

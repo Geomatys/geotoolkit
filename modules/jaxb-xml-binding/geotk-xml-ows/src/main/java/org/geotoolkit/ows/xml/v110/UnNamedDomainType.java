@@ -102,7 +102,7 @@ public class UnNamedDomainType {
     /**
      * Empty constructor used by JAXB.
      */
-    public UnNamedDomainType(AnyValue anyValue) {
+    public UnNamedDomainType(final AnyValue anyValue) {
         if (anyValue == null) {
             this.anyValue = new AnyValue();
         } else {
@@ -113,7 +113,7 @@ public class UnNamedDomainType {
     /**
      * Empty constructor used by JAXB.
      */
-    public UnNamedDomainType(AllowedValues value) {
+    public UnNamedDomainType(final AllowedValues value) {
         this.allowedValues = value;
     }
     
@@ -121,9 +121,9 @@ public class UnNamedDomainType {
     /**
      * Build a new Un-named Domain.
      */
-    public UnNamedDomainType(AllowedValues allowedValues, AnyValue anyValue, ValuesReference valuesReference, 
-            NoValues noValues, ValueType defaultValue, DomainMetadataType meaning, DomainMetadataType dataType,
-            DomainMetadataType uom, DomainMetadataType referenceSystem,List<MetadataType> metadata) {
+    public UnNamedDomainType(final AllowedValues allowedValues, final AnyValue anyValue, final ValuesReference valuesReference, 
+            final NoValues noValues, final ValueType defaultValue, final DomainMetadataType meaning, final DomainMetadataType dataType,
+            final DomainMetadataType uom, final DomainMetadataType referenceSystem,final List<MetadataType> metadata) {
         this.allowedValues   = allowedValues;
         this.anyValue        = anyValue;
         this.dataType        = dataType;
@@ -147,7 +147,7 @@ public class UnNamedDomainType {
     /**
      * Gets the value of the allowedValues property.
      */
-    public void setAllowedValues(AllowedValues allowedValues) {
+    public void setAllowedValues(final AllowedValues allowedValues) {
         this.allowedValues = allowedValues;
     }
 

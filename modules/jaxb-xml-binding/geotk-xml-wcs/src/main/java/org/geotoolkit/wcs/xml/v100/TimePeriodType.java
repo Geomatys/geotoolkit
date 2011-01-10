@@ -77,8 +77,8 @@ public class TimePeriodType {
      /**
      * an empty constructor used by JAXB
      */
-    public TimePeriodType(TimePositionType beginPosition, TimePositionType endPosition, 
-            String timeResolution, String frame){
+    public TimePeriodType(final TimePositionType beginPosition, final TimePositionType endPosition, 
+            final String timeResolution, final String frame){
         this.beginPosition  = beginPosition;
         this.endPosition    = endPosition;
         this.frame          = frame;

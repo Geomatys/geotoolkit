@@ -162,7 +162,7 @@ public abstract class StaxStreamReader {
      * @return XMLStreamReader
      * @throws XMLStreamException if the input is not handled
      */
-    private static final XMLStreamReader toReader(Object input)
+    private static final XMLStreamReader toReader(final Object input)
             throws XMLStreamException{
         final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
         XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
@@ -187,7 +187,7 @@ public abstract class StaxStreamReader {
      * @param bool The String to parse
      * @return true if bool is equal to "true" or "1".
      */
-    protected static boolean parseBoolean(String candidate) {
+    protected static boolean parseBoolean(final String candidate) {
         if (candidate.length() == 1) {
             return !candidate.equals("0");
         }
@@ -200,7 +200,7 @@ public abstract class StaxStreamReader {
      * @param candidate Can not be null.
      * @return
      */
-    protected static double parseDouble(String candidate) {
+    protected static double parseDouble(final String candidate) {
         return Double.parseDouble(candidate.replace(',', '.'));
     }
 

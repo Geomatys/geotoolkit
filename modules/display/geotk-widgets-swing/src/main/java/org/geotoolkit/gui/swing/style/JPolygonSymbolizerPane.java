@@ -54,7 +54,7 @@ public class JPolygonSymbolizerPane extends StyleElementEditor<PolygonSymbolizer
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiGeom.setLayer(layer);
         guiFill.setLayer(layer);
@@ -76,7 +76,7 @@ public class JPolygonSymbolizerPane extends StyleElementEditor<PolygonSymbolizer
      * {@inheritDoc }
      */
     @Override
-    public void parse(PolygonSymbolizer symbol) {
+    public void parse(final PolygonSymbolizer symbol) {
         if (symbol != null) {
             guiGeom.setGeom(symbol.getGeometryPropertyName());
             guiFill.parse(symbol.getFill());

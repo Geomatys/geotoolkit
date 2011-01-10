@@ -59,7 +59,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetLegend(String serverURL,String version){
+    protected AbstractGetLegend(final String serverURL,final String version){
         super(serverURL);
         this.version = version;
     }
@@ -76,7 +76,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(String layer) {
+    public void setLayer(final String layer) {
         this.layer = layer;
     }
 
@@ -92,7 +92,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setDimension(Dimension dim) {
+    public void setDimension(final Dimension dim) {
         this.dimension = dim;
     }
 
@@ -108,7 +108,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setFormat(String format) {
+    public void setFormat(final String format) {
         this.format = format;
     }
 
@@ -124,7 +124,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setExceptions(String ex) {
+    public void setExceptions(final String ex) {
         this.exception = ex;
     }
 
@@ -140,7 +140,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setRule(String rule) {
+    public void setRule(final String rule) {
         this.rule = rule;
     }
 
@@ -156,7 +156,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setScale(Double scale) {
+    public void setScale(final Double scale) {
         this.scale = scale;
     }
 
@@ -172,7 +172,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setStyle(String style) {
+    public void setStyle(final String style) {
         this.style = style;
     }
 
@@ -188,7 +188,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setSld(String sld){
+    public void setSld(final String sld){
         this.sld = sld;
     }
 
@@ -204,7 +204,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setSldVersion(String sldVersion) {
+    public void setSldVersion(final String sldVersion) {
         this.sldVersion = sldVersion;
     }
 
@@ -220,7 +220,7 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      * {@inheritDoc }
      */
     @Override
-    public void setSldBody(String sldBody){
+    public void setSldBody(final String sldBody){
         this.sldBody = sldBody;
     }
 

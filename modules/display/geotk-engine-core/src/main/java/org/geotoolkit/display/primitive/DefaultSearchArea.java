@@ -29,11 +29,11 @@ public class DefaultSearchArea implements SearchArea{
     public final Geometry objectiveGeometryISO;
     public final Geometry displayGeometryISO;
 
-    public DefaultSearchArea(SearchArea search) {
+    public DefaultSearchArea(final SearchArea search) {
         this(search.getObjectiveGeometry(), search.getDisplayGeometry());
     }
 
-    public DefaultSearchArea(Geometry objectiveGeometryISO, Geometry displayGeometryISO) {
+    public DefaultSearchArea(final Geometry objectiveGeometryISO, final Geometry displayGeometryISO) {
         this.objectiveGeometryISO = objectiveGeometryISO;
         this.displayGeometryISO = displayGeometryISO;
     }

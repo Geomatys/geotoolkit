@@ -46,7 +46,7 @@ public enum SearchDirectionType {
     BACK_TO_FRONT("backToFront");
     private final String value;
 
-    SearchDirectionType(String v) {
+    SearchDirectionType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum SearchDirectionType {
         return value;
     }
 
-    public static SearchDirectionType fromValue(String v) {
+    public static SearchDirectionType fromValue(final String v) {
         for (SearchDirectionType c: SearchDirectionType.values()) {
             if (c.value.equals(v)) {
                 return c;

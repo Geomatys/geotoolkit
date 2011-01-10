@@ -33,11 +33,11 @@ public class ProcessEvent extends EventObject {
     private final InternationalString message;
     private final Throwable sub;
 
-    public ProcessEvent(Object source){
+    public ProcessEvent(final Object source){
         this(source,PROGRESS_INDETERMINATE,null,null);
     }
     
-    public ProcessEvent(Object source, int progress, InternationalString message, Throwable sub){
+    public ProcessEvent(final Object source, final int progress, final InternationalString message, final Throwable sub){
         super(source);
         this.progress = progress;
         this.message = message;

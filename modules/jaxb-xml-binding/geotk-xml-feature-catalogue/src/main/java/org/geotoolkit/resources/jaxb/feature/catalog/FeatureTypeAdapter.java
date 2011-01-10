@@ -98,7 +98,7 @@ public class FeatureTypeAdapter extends XmlAdapter<FeatureTypeAdapter, FeatureTy
      * @return A java object which represents the metadata value.
      */
     @Override
-    public FeatureType unmarshal(FeatureTypeAdapter value) throws Exception {
+    public FeatureType unmarshal(final FeatureTypeAdapter value) throws Exception {
         if (value == null) {
             return null;
         } else if (value.href != null) {
@@ -116,7 +116,7 @@ public class FeatureTypeAdapter extends XmlAdapter<FeatureTypeAdapter, FeatureTy
      * @return The adapter for this FeatureType.
      */
     @Override
-    public FeatureTypeAdapter marshal(FeatureType value) throws Exception {
+    public FeatureTypeAdapter marshal(final FeatureType value) throws Exception {
         return new FeatureTypeAdapter(value);
     }
 

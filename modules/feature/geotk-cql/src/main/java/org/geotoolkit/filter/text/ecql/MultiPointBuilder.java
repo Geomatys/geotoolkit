@@ -46,7 +46,7 @@ final class MultiPointBuilder extends GeometryBuilder {
      * Builds a {@link MultiPoint} using the point nodes presents in the stack of result
      */
     @Override
-    public Geometry build(int pointNode) throws CQLException {
+    public Geometry build(final int pointNode) throws CQLException {
         final List<Geometry> pointList = popGeometry(pointNode);
 
         final int pointListSize = pointList.size();

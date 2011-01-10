@@ -51,8 +51,8 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
 
     }
 
-    public NATSDI_SpeciesInformation(NATSDI_TaxonomicClassification taxonomicClassification, List<DefaultCitation> classificationSystemAuthority,
-            List<DefaultCitation> authorCitation, String speciesVernacularName) {
+    public NATSDI_SpeciesInformation(final NATSDI_TaxonomicClassification taxonomicClassification, final List<DefaultCitation> classificationSystemAuthority,
+            final List<DefaultCitation> authorCitation, final String speciesVernacularName) {
         this.authorCitation = authorCitation;
         this.classificationSystemAuthority = classificationSystemAuthority;
         this.speciesVernacularName = speciesVernacularName;
@@ -69,7 +69,7 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
     /**
      * @param taxonomicClassification the taxonomicClassification to set
      */
-    public void setTaxonomicClassification(NATSDI_TaxonomicClassification taxonomicClassification) {
+    public void setTaxonomicClassification(final NATSDI_TaxonomicClassification taxonomicClassification) {
         this.taxonomicClassification = taxonomicClassification;
     }
 
@@ -83,14 +83,14 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
     /**
      * @param classificationSystemAuthority the classificationSystemAuthority to set
      */
-    public void setClassificationSystemAuthority(List<? extends Citation> classificationSystemAuthority) {
+    public void setClassificationSystemAuthority(final List<? extends Citation> classificationSystemAuthority) {
         this.classificationSystemAuthority = (List<DefaultCitation>) classificationSystemAuthority;
     }
 
     /**
      * @param classificationSystemAuthority the classificationSystemAuthority to set
      */
-    public void setClassificationSystemAuthority(DefaultCitation classificationSystemAuthority) {
+    public void setClassificationSystemAuthority(final DefaultCitation classificationSystemAuthority) {
         if (this.classificationSystemAuthority == null) {
             this.classificationSystemAuthority = new ArrayList<DefaultCitation>();
         }
@@ -107,14 +107,14 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
     /**
      * @param authorCitation the authorCitation to set
      */
-    public void setAuthorCitation(List<? extends Citation> authorCitation) {
+    public void setAuthorCitation(final List<? extends Citation> authorCitation) {
         this.authorCitation = (List<DefaultCitation>) authorCitation;
     }
 
     /**
      * @param authorCitation the authorCitation to set
      */
-    public void setAuthorCitation(DefaultCitation authorCitation) {
+    public void setAuthorCitation(final DefaultCitation authorCitation) {
         if (this.authorCitation == null) {
             this.authorCitation = new ArrayList<DefaultCitation>();
         }
@@ -132,7 +132,7 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
     /**
      * @param speciesVernacularName the speciesVernacularName to set
      */
-    public void setSpeciesVernacularName(String speciesVernacularName) {
+    public void setSpeciesVernacularName(final String speciesVernacularName) {
         this.speciesVernacularName = speciesVernacularName;
     }
 
@@ -155,7 +155,7 @@ public class NATSDI_SpeciesInformation implements org.opengis.metadata.naturesdi
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

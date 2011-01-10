@@ -43,7 +43,7 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
     private static final XPathPropertyAccessor ACCESSOR = new XPathPropertyAccessor();
 
     @Override
-    public PropertyAccessor createPropertyAccessor(Class type, String xpath, Class target, Hints hints) {
+    public PropertyAccessor createPropertyAccessor(final Class type, final String xpath, final Class target, final Hints hints) {
 
         if(ACCESSOR.canHandle(type, xpath, target)){
             return ACCESSOR;
@@ -59,7 +59,7 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
     private static class XPathPropertyAccessor implements PropertyAccessor{
 
         @Override
-        public boolean canHandle(Class type, String xpath, Class target) {
+        public boolean canHandle(final Class type, final String xpath, final Class target) {
 
             if(xpath == null || xpath.isEmpty()){
                 return false;
@@ -75,7 +75,7 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
         }
 
         @Override
-        public Object get(Object object, String path, Class target) throws IllegalArgumentException {
+        public Object get(final Object object, final String path, final Class target) throws IllegalArgumentException {
 
             try {
                 final JaxenFeatureXPath xpath = JaxenFeatureXPath.create(path);
@@ -116,7 +116,7 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
         }
 
         @Override
-        public void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException {
+        public void set(final Object object, final String xpath, final Object value, final Class target) throws IllegalArgumentException {
             throw new UnsupportedOperationException("Not supported.");
         }
 

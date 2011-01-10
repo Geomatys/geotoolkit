@@ -72,12 +72,12 @@ public abstract class AbstractDescribeSensor extends AbstractSOSRequest implemen
      * {@inheritDoc}
      */
     @Override
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
 
     @Override
-    public void setSensorId(String sensorId) {
+    public void setSensorId(final String sensorId) {
         this.sensorId = sensorId;
     }
 

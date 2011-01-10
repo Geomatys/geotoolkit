@@ -36,14 +36,14 @@ import org.opengis.filter.identity.Identifier;
 public class DefaultComplexAttribute<I extends Identifier> extends AbstractComplexAttribute<Collection<Property>,I> {
 
     public static DefaultComplexAttribute<Identifier> create(
-            Collection<? extends Property> properties, ComplexType type, Identifier id) {
+            final Collection<? extends Property> properties, final ComplexType type, final Identifier id) {
         return new DefaultComplexAttribute(
                 properties,
                 new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),
                 id);
     }
 
-    public DefaultComplexAttribute(Collection<? extends Property> properties, AttributeDescriptor descriptor, I id) {
+    public DefaultComplexAttribute(final Collection<? extends Property> properties, final AttributeDescriptor descriptor, final I id) {
         super(descriptor, id );
         value = new ArrayList<Property>();
         value.addAll(properties);

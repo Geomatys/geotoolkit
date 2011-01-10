@@ -83,7 +83,7 @@ public class GNC_Resource extends DefaultDataIdentification implements org.openg
      * Sets the value of the onlineInformation property.
      *
      */
-    public void setOnlineInformation(List<OnlineResource> onlineInformation) {
+    public void setOnlineInformation(final List<OnlineResource> onlineInformation) {
         this.onlineInformation = onlineInformation;
     }
 
@@ -91,7 +91,7 @@ public class GNC_Resource extends DefaultDataIdentification implements org.openg
      * Sets the value of the onlineInformation property.
      *
      */
-    public void setOnlineInformation(OnlineResource onlineInformation) {
+    public void setOnlineInformation(final OnlineResource onlineInformation) {
         if (this.onlineInformation == null) {
             this.onlineInformation = new ArrayList<OnlineResource>();
         }
@@ -114,7 +114,7 @@ public class GNC_Resource extends DefaultDataIdentification implements org.openg
      * Sets the value of the references property.
      *
      */
-    public void setReference(List<GNC_Resource> reference) {
+    public void setReference(final List<GNC_Resource> reference) {
         this.reference = reference;
     }
 
@@ -122,7 +122,7 @@ public class GNC_Resource extends DefaultDataIdentification implements org.openg
      * Sets the value of the references property.
      *
      */
-    public void setReference(GNC_Resource reference) {
+    public void setReference(final GNC_Resource reference) {
         if (this.reference == null) {
             this.reference = new ArrayList<GNC_Resource>();
         }

@@ -45,7 +45,7 @@ public class JColorExpressionPane extends StyleElementEditor<Expression>{
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         super.setLayer(layer);
         guiSpecial.setLayer(layer);
     }
@@ -96,12 +96,12 @@ public class JColorExpressionPane extends StyleElementEditor<Expression>{
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void guiColorActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiColorActionPerformed
+private void guiColorActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiColorActionPerformed
     final Color color = JColorChooser.showDialog(null, "", guiColor.getBackground());
     parse(getStyleFactory().literal(color));
 }//GEN-LAST:event_guiColorActionPerformed
 
-private void guiSpecialPropertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
+private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
     if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)){
         parse(guiSpecial.get());
     }
@@ -114,7 +114,7 @@ private void guiSpecialPropertyChange(PropertyChangeEvent evt) {//GEN-FIRST:even
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void parse(Expression target) {
+    public void parse(final Expression target) {
         if(target != null){
             if(isStatic(target)){
                 final Color color = target.evaluate(null, Color.class);

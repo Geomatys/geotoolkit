@@ -83,7 +83,7 @@ public class StrokeType {
      *     {@link GraphicFillType }
      *     
      */
-    public void setGraphicFill(GraphicFillType value) {
+    public void setGraphicFill(final GraphicFillType value) {
         this.graphicFill = value;
     }
 
@@ -107,7 +107,7 @@ public class StrokeType {
      *     {@link GraphicStrokeType }
      *     
      */
-    public void setGraphicStroke(GraphicStrokeType value) {
+    public void setGraphicStroke(final GraphicStrokeType value) {
         this.graphicStroke = value;
     }
 

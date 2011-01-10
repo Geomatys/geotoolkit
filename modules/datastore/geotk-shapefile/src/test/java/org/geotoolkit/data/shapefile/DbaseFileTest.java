@@ -47,11 +47,11 @@ public class DbaseFileTest extends AbstractTestCaseSupport {
 
     private ShpFiles shpFiles;
 
-    public DbaseFileTest(String testName) throws IOException {
+    public DbaseFileTest(final String testName) throws IOException {
         super(testName);
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         // verbose = true;
         junit.textui.TestRunner.run(suite(DbaseFileTest.class));
     }

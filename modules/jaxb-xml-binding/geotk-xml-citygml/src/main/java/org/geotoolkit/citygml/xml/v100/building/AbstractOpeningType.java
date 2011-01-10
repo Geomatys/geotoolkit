@@ -90,7 +90,7 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
      *     {@link MultiSurfacePropertyType }
      *     
      */
-    public void setLod3MultiSurface(MultiSurfacePropertyType value) {
+    public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
     }
 
@@ -114,7 +114,7 @@ public abstract class AbstractOpeningType extends AbstractCityObjectType {
      *     {@link MultiSurfacePropertyType }
      *     
      */
-    public void setLod4MultiSurface(MultiSurfacePropertyType value) {
+    public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
     }
 

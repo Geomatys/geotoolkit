@@ -52,7 +52,7 @@ public enum TimeIndeterminateValueType {
     UNKNOWN("unknown");
     private final String value;
 
-    TimeIndeterminateValueType(String v) {
+    TimeIndeterminateValueType(final String v) {
         value = v;
     }
 
@@ -60,7 +60,7 @@ public enum TimeIndeterminateValueType {
         return value;
     }
 
-    public static TimeIndeterminateValueType fromValue(String v) {
+    public static TimeIndeterminateValueType fromValue(final String v) {
         for (TimeIndeterminateValueType c: TimeIndeterminateValueType.values()) {
             if (c.value.equals(v)) {
                 return c;

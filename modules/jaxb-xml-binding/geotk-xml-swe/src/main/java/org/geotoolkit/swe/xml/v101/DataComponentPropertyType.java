@@ -130,43 +130,43 @@ public class DataComponentPropertyType implements DataComponentProperty {
         
     }
 
-    public DataComponentPropertyType(String name, String role, TimeRange timeRange) {
+    public DataComponentPropertyType(final String name, final String role, final TimeRange timeRange) {
         this.name      = name;
         this.role      = role;
         this.timeRange = timeRange;
     }
 
-    public DataComponentPropertyType(String name, String role, TimeType time) {
+    public DataComponentPropertyType(final String name, final String role, final TimeType time) {
         this.name      = name;
         this.role      = role;
         this.time      = time;
     }
 
-    public DataComponentPropertyType(String name, String role, QuantityType quantity) {
+    public DataComponentPropertyType(final String name, final String role, final QuantityType quantity) {
         this.name      = name;
         this.role      = role;
         this.quantity  = quantity;
     }
 
-    public DataComponentPropertyType(String name, String role, BooleanType bool) {
+    public DataComponentPropertyType(final String name, final String role, final BooleanType bool) {
         this.name      = name;
         this.role      = role;
         this._boolean  = bool;
     }
 
-    public DataComponentPropertyType(String name, String role, JAXBElement<? extends AbstractDataRecordEntry> dataRecord) {
+    public DataComponentPropertyType(final String name, final String role, final JAXBElement<? extends AbstractDataRecordEntry> dataRecord) {
         this.name      = name;
         this.role      = role;
         this.abstractDataRecord = dataRecord;
     }
 
-    public DataComponentPropertyType(String name, String role, QuantityRange quantityRange) {
+    public DataComponentPropertyType(final String name, final String role, final QuantityRange quantityRange) {
         this.name      = name;
         this.role      = role;
         this.quantityRange = quantityRange;
     }
 
-    public DataComponentPropertyType(DataComponentProperty d) {
+    public DataComponentPropertyType(final DataComponentProperty d) {
         if (d != null){
             this.actuate = d.getActuate();
             if (d.getBoolean() != null) {
@@ -239,7 +239,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * 
      */
-    public DataComponentPropertyType(AbstractDataRecordEntry component, String name) {
+    public DataComponentPropertyType(final AbstractDataRecordEntry component, final String name) {
         this.name = name;
         if (component instanceof SimpleDataRecordEntry) {
             this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordEntry)component);
@@ -532,56 +532,56 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * @param name the name to set
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
     /**
      * @param href the href to set
      */
-    public void setHref(String href) {
+    public void setHref(final String href) {
         this.href = href;
     }
 
     /**
      * @param role the role to set
      */
-    public void setRole(String role) {
+    public void setRole(final String role) {
         this.role = role;
     }
 
     /**
      * @param arcrole the arcrole to set
      */
-    public void setArcrole(String arcrole) {
+    public void setArcrole(final String arcrole) {
         this.arcrole = arcrole;
     }
 
     /**
      * @param title the title to set
      */
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
     /**
      * @param show the show to set
      */
-    public void setShow(String show) {
+    public void setShow(final String show) {
         this.show = show;
     }
 
     /**
      * @param actuate the actuate to set
      */
-    public void setActuate(String actuate) {
+    public void setActuate(final String actuate) {
         this.actuate = actuate;
     }
 

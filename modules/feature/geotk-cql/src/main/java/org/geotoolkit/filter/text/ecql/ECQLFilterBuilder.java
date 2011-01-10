@@ -59,7 +59,7 @@ import com.vividsolutions.jts.geom.Polygon;
  */
 final class ECQLFilterBuilder extends AbstractFilterBuilder {
 
-    public ECQLFilterBuilder(String ecqlSource, FilterFactory filterFactory) {
+    public ECQLFilterBuilder(final String ecqlSource, final FilterFactory filterFactory) {
         super(ecqlSource, filterFactory);
     }
 
@@ -213,7 +213,7 @@ final class ECQLFilterBuilder extends AbstractFilterBuilder {
      * @return a MultiPoint
      * @throws CQLException
      */
-    public MultiPoint buildMultiPoint(int pointNode) throws CQLException {
+    public MultiPoint buildMultiPoint(final int pointNode) throws CQLException {
         final MultiPointBuilder builder = new MultiPointBuilder(getStatement(), getResultStack());
         return (MultiPoint) builder.build(pointNode);
     }

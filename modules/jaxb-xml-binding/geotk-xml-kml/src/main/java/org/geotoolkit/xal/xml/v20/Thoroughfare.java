@@ -385,7 +385,7 @@ public class Thoroughfare {
      *     {@link ThoroughfarePreDirectionType }
      *     
      */
-    public void setThoroughfarePreDirection(ThoroughfarePreDirectionType value) {
+    public void setThoroughfarePreDirection(final ThoroughfarePreDirectionType value) {
         this.thoroughfarePreDirection = value;
     }
 
@@ -409,7 +409,7 @@ public class Thoroughfare {
      *     {@link ThoroughfareLeadingTypeType }
      *     
      */
-    public void setThoroughfareLeadingType(ThoroughfareLeadingTypeType value) {
+    public void setThoroughfareLeadingType(final ThoroughfareLeadingTypeType value) {
         this.thoroughfareLeadingType = value;
     }
 
@@ -462,7 +462,7 @@ public class Thoroughfare {
      *     {@link ThoroughfareTrailingTypeType }
      *     
      */
-    public void setThoroughfareTrailingType(ThoroughfareTrailingTypeType value) {
+    public void setThoroughfareTrailingType(final ThoroughfareTrailingTypeType value) {
         this.thoroughfareTrailingType = value;
     }
 
@@ -486,7 +486,7 @@ public class Thoroughfare {
      *     {@link ThoroughfarePostDirectionType }
      *     
      */
-    public void setThoroughfarePostDirection(ThoroughfarePostDirectionType value) {
+    public void setThoroughfarePostDirection(final ThoroughfarePostDirectionType value) {
         this.thoroughfarePostDirection = value;
     }
 
@@ -510,7 +510,7 @@ public class Thoroughfare {
      *     {@link Thoroughfare.DependentThoroughfare }
      *     
      */
-    public void setDependentThoroughfare(Thoroughfare.DependentThoroughfare value) {
+    public void setDependentThoroughfare(final Thoroughfare.DependentThoroughfare value) {
         this.dependentThoroughfare = value;
     }
 
@@ -534,7 +534,7 @@ public class Thoroughfare {
      *     {@link DependentLocalityType }
      *     
      */
-    public void setDependentLocality(DependentLocalityType value) {
+    public void setDependentLocality(final DependentLocalityType value) {
         this.dependentLocality = value;
     }
 
@@ -558,7 +558,7 @@ public class Thoroughfare {
      *     {@link Premise }
      *     
      */
-    public void setPremise(Premise value) {
+    public void setPremise(final Premise value) {
         this.premise = value;
     }
 
@@ -582,7 +582,7 @@ public class Thoroughfare {
      *     {@link FirmType }
      *     
      */
-    public void setFirm(FirmType value) {
+    public void setFirm(final FirmType value) {
         this.firm = value;
     }
 
@@ -606,7 +606,7 @@ public class Thoroughfare {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -659,7 +659,7 @@ public class Thoroughfare {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -683,7 +683,7 @@ public class Thoroughfare {
      *     {@link String }
      *     
      */
-    public void setDependentThoroughfares(String value) {
+    public void setDependentThoroughfares(final String value) {
         this.dependentThoroughfares = value;
     }
 
@@ -707,7 +707,7 @@ public class Thoroughfare {
      *     {@link String }
      *     
      */
-    public void setDependentThoroughfaresIndicator(String value) {
+    public void setDependentThoroughfaresIndicator(final String value) {
         this.dependentThoroughfaresIndicator = value;
     }
 
@@ -731,7 +731,7 @@ public class Thoroughfare {
      *     {@link String }
      *     
      */
-    public void setDependentThoroughfaresConnector(String value) {
+    public void setDependentThoroughfaresConnector(final String value) {
         this.dependentThoroughfaresConnector = value;
     }
 
@@ -755,7 +755,7 @@ public class Thoroughfare {
      *     {@link String }
      *     
      */
-    public void setDependentThoroughfaresType(String value) {
+    public void setDependentThoroughfaresType(final String value) {
         this.dependentThoroughfaresType = value;
     }
 
@@ -885,7 +885,7 @@ public class Thoroughfare {
          *     {@link ThoroughfarePreDirectionType }
          *     
          */
-        public void setThoroughfarePreDirection(ThoroughfarePreDirectionType value) {
+        public void setThoroughfarePreDirection(final ThoroughfarePreDirectionType value) {
             this.thoroughfarePreDirection = value;
         }
 
@@ -909,7 +909,7 @@ public class Thoroughfare {
          *     {@link ThoroughfareLeadingTypeType }
          *     
          */
-        public void setThoroughfareLeadingType(ThoroughfareLeadingTypeType value) {
+        public void setThoroughfareLeadingType(final ThoroughfareLeadingTypeType value) {
             this.thoroughfareLeadingType = value;
         }
 
@@ -962,7 +962,7 @@ public class Thoroughfare {
          *     {@link ThoroughfareTrailingTypeType }
          *     
          */
-        public void setThoroughfareTrailingType(ThoroughfareTrailingTypeType value) {
+        public void setThoroughfareTrailingType(final ThoroughfareTrailingTypeType value) {
             this.thoroughfareTrailingType = value;
         }
 
@@ -986,7 +986,7 @@ public class Thoroughfare {
          *     {@link ThoroughfarePostDirectionType }
          *     
          */
-        public void setThoroughfarePostDirection(ThoroughfarePostDirectionType value) {
+        public void setThoroughfarePostDirection(final ThoroughfarePostDirectionType value) {
             this.thoroughfarePostDirection = value;
         }
 
@@ -1039,7 +1039,7 @@ public class Thoroughfare {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -1230,7 +1230,7 @@ public class Thoroughfare {
          *     {@link Thoroughfare.ThoroughfareNumberRange.ThoroughfareNumberFrom }
          *     
          */
-        public void setThoroughfareNumberFrom(Thoroughfare.ThoroughfareNumberRange.ThoroughfareNumberFrom value) {
+        public void setThoroughfareNumberFrom(final Thoroughfare.ThoroughfareNumberRange.ThoroughfareNumberFrom value) {
             this.thoroughfareNumberFrom = value;
         }
 
@@ -1254,7 +1254,7 @@ public class Thoroughfare {
          *     {@link Thoroughfare.ThoroughfareNumberRange.ThoroughfareNumberTo }
          *     
          */
-        public void setThoroughfareNumberTo(Thoroughfare.ThoroughfareNumberRange.ThoroughfareNumberTo value) {
+        public void setThoroughfareNumberTo(final Thoroughfare.ThoroughfareNumberRange.ThoroughfareNumberTo value) {
             this.thoroughfareNumberTo = value;
         }
 
@@ -1278,7 +1278,7 @@ public class Thoroughfare {
          *     {@link String }
          *     
          */
-        public void setRangeType(String value) {
+        public void setRangeType(final String value) {
             this.rangeType = value;
         }
 
@@ -1302,7 +1302,7 @@ public class Thoroughfare {
          *     {@link String }
          *     
          */
-        public void setIndicator(String value) {
+        public void setIndicator(final String value) {
             this.indicator = value;
         }
 
@@ -1326,7 +1326,7 @@ public class Thoroughfare {
          *     {@link String }
          *     
          */
-        public void setSeparator(String value) {
+        public void setSeparator(final String value) {
             this.separator = value;
         }
 
@@ -1350,7 +1350,7 @@ public class Thoroughfare {
          *     {@link String }
          *     
          */
-        public void setIndicatorOccurrence(String value) {
+        public void setIndicatorOccurrence(final String value) {
             this.indicatorOccurrence = value;
         }
 
@@ -1374,7 +1374,7 @@ public class Thoroughfare {
          *     {@link String }
          *     
          */
-        public void setNumberRangeOccurrence(String value) {
+        public void setNumberRangeOccurrence(final String value) {
             this.numberRangeOccurrence = value;
         }
 
@@ -1398,7 +1398,7 @@ public class Thoroughfare {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -1422,7 +1422,7 @@ public class Thoroughfare {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -1541,7 +1541,7 @@ public class Thoroughfare {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 
@@ -1662,7 +1662,7 @@ public class Thoroughfare {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 

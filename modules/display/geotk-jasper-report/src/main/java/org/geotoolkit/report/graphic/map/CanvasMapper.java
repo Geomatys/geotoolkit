@@ -46,7 +46,7 @@ public class CanvasMapper extends JRRendererMapper{
     private static final Logger LOGGER = Logging.getLogger(CanvasMapper.class);
 
     
-    CanvasMapper(JRMapperFactory<JRRenderable,MapContext> factory) {
+    CanvasMapper(final JRMapperFactory<JRRenderable,MapContext> factory) {
         super(factory);
     }
 
@@ -54,7 +54,7 @@ public class CanvasMapper extends JRRendererMapper{
      * {@inheritDoc }
      */
     @Override
-    public JRRenderable create(MapContext candidate, Collection<Object> renderedValues) {
+    public JRRenderable create(final MapContext candidate, final Collection<Object> renderedValues) {
 
         if(!(candidate instanceof MapContext)) return null;
 

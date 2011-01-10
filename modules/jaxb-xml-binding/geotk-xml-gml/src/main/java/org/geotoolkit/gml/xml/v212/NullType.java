@@ -52,7 +52,7 @@ public enum NullType {
     MISSING("missing");
     private final String value;
 
-    NullType(String v) {
+    NullType(final String v) {
         value = v;
     }
 
@@ -60,7 +60,7 @@ public enum NullType {
         return value;
     }
 
-    public static NullType fromValue(String v) {
+    public static NullType fromValue(final String v) {
         for (NullType c: NullType.values()) {
             if (c.value.equals(v)) {
                 return c;

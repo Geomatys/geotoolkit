@@ -62,7 +62,7 @@ public class DataUtilities {
     private DataUtilities() {
     }
 
-    public static FeatureCollection collection(Feature ... features){
+    public static FeatureCollection collection(final Feature ... features){
         final FeatureCollection col = collection("", features[0].getType());
         col.addAll(Arrays.asList(features));
         return col;
@@ -74,13 +74,13 @@ public class DataUtilities {
      * @param features
      * @return FeatureCollection
      */
-    public static FeatureCollection collection(FeatureType type, Collection<? extends Feature> features){
+    public static FeatureCollection collection(final FeatureType type, final Collection<? extends Feature> features){
         final FeatureCollection col = collection("", type);
         col.addAll(features);
         return col;
     }
 
-    public static FeatureCollection collection(String id, FeatureType type){
+    public static FeatureCollection collection(final String id, FeatureType type){
         if(type == null){
             //a collection with no defined type, make a generic abstract type
             //that is possible since feature collection may not always have a type.
@@ -106,7 +106,7 @@ public class DataUtilities {
      * @param source : source collection.
      * @param target : collection to copy features into.
      */
-    public static Collection fill(Collection source, Collection target){
+    public static Collection fill(final Collection source, final Collection target){
         if(target instanceof FeatureCollection){
             //we can safely use the addAll method.
             target.addAll(source);
@@ -142,7 +142,7 @@ public class DataUtilities {
      * @return List of generated FeatureId
      * @throws DataStoreRuntimeException
      */
-    public static List<FeatureId> write(FeatureWriter writer, Collection<? extends Feature> collection)
+    public static List<FeatureId> write(final FeatureWriter writer, final Collection<? extends Feature> collection)
             throws DataStoreRuntimeException{
         final List<FeatureId> ids = new ArrayList<FeatureId>();
 
@@ -178,7 +178,7 @@ public class DataUtilities {
      * Iterate on the given iterator and calculate count.
      * @throws DataStoreRuntimeException
      */
-    public static long calculateCount(FeatureIterator reader) throws DataStoreRuntimeException{
+    public static long calculateCount(final FeatureIterator reader) throws DataStoreRuntimeException{
         long count = 0;
 
         try{
@@ -197,7 +197,7 @@ public class DataUtilities {
      * Iterate on the given iterator and calculate the envelope.
      * @throws DataStoreRuntimeException
      */
-    public static Envelope calculateEnvelope(FeatureIterator iterator) throws DataStoreRuntimeException{
+    public static Envelope calculateEnvelope(final FeatureIterator iterator) throws DataStoreRuntimeException{
         if(iterator == null){
             throw new NullPointerException("Iterator can not be null");
         }
@@ -223,15 +223,15 @@ public class DataUtilities {
         return env;
     }
 
-    public static FeatureCollection sequence(String id, FeatureCollection... collections) {
+    public static FeatureCollection sequence(final String id, final FeatureCollection... collections) {
         return new FeatureCollectionSequence(id, collections);
     }
 
-    public static <F extends Feature> FeatureIterator<F> sequence(FeatureIterator<F> ... iterators){
+    public static <F extends Feature> FeatureIterator<F> sequence(final FeatureIterator<F> ... iterators){
         return new FeatureIteratorSequence<F>(iterators);
     }
     
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> sequence(FeatureReader<T,F> ... readers){
+    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> sequence(final FeatureReader<T,F> ... readers){
         return new FeatureReaderSequence<T, F>(readers);
     }
 
@@ -244,7 +244,7 @@ public class DataUtilities {
      * @param iterators : iterators to combine
      * @return FeatureIterator combining all others
      */
-    public static <F extends Feature> FeatureIterator<F> combine(SortBy[] sorts, FeatureIterator<F> ... iterators){
+    public static <F extends Feature> FeatureIterator<F> combine(final SortBy[] sorts, final FeatureIterator<F> ... iterators){
         return combine(new SortByComparator(sorts), iterators);
     }
 
@@ -257,7 +257,7 @@ public class DataUtilities {
      * @param iterators : iterators to combine
      * @return FeatureIterator combining all others
      */
-    public static <F extends Feature> FeatureIterator<F> combine(Comparator<? super F> comparator, FeatureIterator<F> ... iterators){
+    public static <F extends Feature> FeatureIterator<F> combine(final Comparator<? super F> comparator, final FeatureIterator<F> ... iterators){
         if(iterators == null || iterators.length < 2 || (iterators.length == 1 && iterators[0] == null)){
             throw new IllegalArgumentException("There must be at least 2 non null iterators.");
         }
@@ -287,7 +287,7 @@ public class DataUtilities {
 
         private final FeatureCollection[] wrapped;
 
-        private FeatureCollectionSequence(String id, FeatureCollection[] wrapped) {
+        private FeatureCollectionSequence(final String id, final FeatureCollection[] wrapped) {
             super(id, wrapped[0].getSource());
 
             if(wrapped.length == 1){
@@ -307,7 +307,7 @@ public class DataUtilities {
         }
 
         @Override
-        public FeatureIterator iterator(Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
             return new SequenceIterator(hints);
         }
 
@@ -333,11 +333,11 @@ public class DataUtilities {
             return bbox;
         }
 
-        public static FeatureCollection sequence(FeatureCollection... cols) {
+        public static FeatureCollection sequence(final FeatureCollection... cols) {
             return new FeatureCollectionSequence("collection-1", cols);
         }
 
-        public static FeatureCollection sequence(String id, FeatureCollection... cols) {
+        public static FeatureCollection sequence(final String id, final FeatureCollection... cols) {
             return new FeatureCollectionSequence(id, cols);
         }
 
@@ -347,14 +347,14 @@ public class DataUtilities {
         }
 
         @Override
-        public void update(Filter filter, Map values) throws DataStoreException {
+        public void update(final Filter filter, final Map values) throws DataStoreException {
             for(FeatureCollection c : wrapped){
                 c.update(filter, values);
             }
         }
 
         @Override
-        public void remove(Filter filter) throws DataStoreException {
+        public void remove(final Filter filter) throws DataStoreException {
             for(FeatureCollection c : wrapped){
                 c.remove(filter);
             }
@@ -371,7 +371,7 @@ public class DataUtilities {
         }
 
         @Override
-        public FeatureCollection subCollection(Query query) throws DataStoreException {
+        public FeatureCollection subCollection(final Query query) throws DataStoreException {
             FeatureCollection[] subs = new FeatureCollection[wrapped.length];
             for(int i=0;i<subs.length;i++){
                 subs[i] = wrapped[i].subCollection(query);
@@ -385,7 +385,7 @@ public class DataUtilities {
             private int currentCollection = -1;
             private FeatureIterator ite = null;
 
-            public SequenceIterator(Hints hints) {
+            public SequenceIterator(final Hints hints) {
                 this.hints = hints;
                 currentCollection = 0;
                 ite = wrapped[currentCollection].iterator(hints);
@@ -459,7 +459,7 @@ public class DataUtilities {
         private int currentIndex = 0;
         private FeatureIterator<F> active = null;
 
-        private FeatureIteratorSequence(FeatureIterator<F>[] wrapped) {
+        private FeatureIteratorSequence(final FeatureIterator<F>[] wrapped) {
             if(wrapped == null || wrapped.length == 0 || wrapped[0] == null){
                 throw new IllegalArgumentException("Iterators can not be empty or null");
             }
@@ -533,7 +533,7 @@ public class DataUtilities {
         private int currentIndex = 0;
         private FeatureReader<T,F> active = null;
 
-        private FeatureReaderSequence(FeatureReader<T,F>[] wrapped) {
+        private FeatureReaderSequence(final FeatureReader<T,F>[] wrapped) {
             if(wrapped == null || wrapped.length == 0 || wrapped[0] == null){
                 throw new IllegalArgumentException("Readers can not be empty or null");
             }
@@ -617,7 +617,7 @@ public class DataUtilities {
         private F ite2next = null;
         private F next = null;
 
-        private FeatureIteratorCombine(Comparator<? super Feature> comparator, FeatureIterator<F> ite1, FeatureIterator<F> ite2){
+        private FeatureIteratorCombine(final Comparator<? super Feature> comparator, final FeatureIterator<F> ite1, final FeatureIterator<F> ite2){
             if(ite1 == null || ite2 == null){
                 throw new NullPointerException("Iterators can not be empty or null");
             }

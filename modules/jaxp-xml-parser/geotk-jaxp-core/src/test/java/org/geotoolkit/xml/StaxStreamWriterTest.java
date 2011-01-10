@@ -144,7 +144,7 @@ public class StaxStreamWriterTest {
         if(file.exists()) file.delete();
     }
 
-    private void validate(File f) throws Exception{
+    private void validate(final File f) throws Exception{
         final MockReader instance = new MockReader();
         instance.setInput(f);
         Person person = instance.read();

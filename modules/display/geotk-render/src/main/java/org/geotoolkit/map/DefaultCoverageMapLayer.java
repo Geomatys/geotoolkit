@@ -42,7 +42,7 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
     private final GridCoverageReader reader;
     private final Name coverageName;
     
-    DefaultCoverageMapLayer(GridCoverageReader reader, MutableStyle style, Name name){
+    DefaultCoverageMapLayer(final GridCoverageReader reader, final MutableStyle style, final Name name){
         super(style);
         if(reader == null || name == null || name.toString() == null || name.getLocalPart() == null){
             throw new NullPointerException("Coverage Reader and name can not be null");

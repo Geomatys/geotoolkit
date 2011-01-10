@@ -48,7 +48,7 @@ public class OSMBinDataStore extends AbstractDataStore{
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
 
-    public OSMBinDataStore(URL filePath){
+    public OSMBinDataStore(final URL filePath){
         super(null);
     }
 
@@ -64,7 +64,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -80,7 +80,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public boolean isWritable(Name typeName) throws DataStoreException {
+    public boolean isWritable(final Name typeName) throws DataStoreException {
         //will raise an error if not exist.
         typeCheck(typeName);
         return false;
@@ -90,7 +90,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -103,7 +103,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * Not supported yet.
      */
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 
@@ -112,7 +112,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * Not supported yet.
      */
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 
@@ -121,7 +121,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * Not supported yet.
      */
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Not supported yet.");
     }
 
@@ -134,7 +134,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * Not supported yet.
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures);
     }
 
@@ -143,7 +143,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * Not supported yet.
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
@@ -152,7 +152,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * Not supported yet.
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
@@ -161,7 +161,7 @@ public class OSMBinDataStore extends AbstractDataStore{
      * Not supported yet.
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         if(isWritable(typeName)){
             throw new DataStoreException("Writer not handled yet.");
         }else{

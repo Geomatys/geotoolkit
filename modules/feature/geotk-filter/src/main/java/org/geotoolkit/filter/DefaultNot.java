@@ -32,7 +32,7 @@ public class DefaultNot implements Not,Serializable{
 
     private final Filter filter;
 
-    public DefaultNot(Filter filter) {
+    public DefaultNot(final Filter filter) {
         if(filter == null){
             throw new NullPointerException("Fitler can not be null");
         }
@@ -51,7 +51,7 @@ public class DefaultNot implements Not,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         return !filter.evaluate(object);
     }
 
@@ -59,7 +59,7 @@ public class DefaultNot implements Not,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -75,7 +75,7 @@ public class DefaultNot implements Not,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

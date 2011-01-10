@@ -38,7 +38,7 @@ public class SearchingException extends Exception {
      * @param message User understandable explanation of the cause of the
      *                  exception.
      */
-    public SearchingException(String message) {
+    public SearchingException(final String message) {
         super(message);
     }
 
@@ -49,7 +49,7 @@ public class SearchingException extends Exception {
      *                  exception.
      * @param cause The preceding exception.
      */
-    public SearchingException(String message, Throwable cause) {
+    public SearchingException(final String message, final Throwable cause) {
         super(message, cause);
     }
 

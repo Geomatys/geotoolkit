@@ -72,7 +72,7 @@ public class ExtrinsicObjectType extends org.geotoolkit.ebrim.xml.v300.Extrinsic
     /**
      * Sets the value of the repositoryItemRef property.
      */
-    public void setRepositoryItemRef(SimpleLinkType value) {
+    public void setRepositoryItemRef(final SimpleLinkType value) {
         this.repositoryItemRef = value;
     }
 
@@ -86,7 +86,7 @@ public class ExtrinsicObjectType extends org.geotoolkit.ebrim.xml.v300.Extrinsic
     /**
      * Sets the value of the repositoryItem property.
      */
-    public void setRepositoryItem(DataHandler value) {
+    public void setRepositoryItem(final DataHandler value) {
         this.repositoryItem = value;
     }
 

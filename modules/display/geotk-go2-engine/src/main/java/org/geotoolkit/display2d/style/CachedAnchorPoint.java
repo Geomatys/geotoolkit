@@ -37,7 +37,7 @@ public abstract class CachedAnchorPoint{
     protected final AnchorPoint styleElement;
     private final Collection<String> attributs;
 
-    private CachedAnchorPoint(AnchorPoint anchor, Collection<String> attributs) {
+    private CachedAnchorPoint(final AnchorPoint anchor, final Collection<String> attributs) {
         this.styleElement = anchor;
         this.attributs = attributs;
     }
@@ -59,7 +59,7 @@ public abstract class CachedAnchorPoint{
      *
      * @return Collection<String> : all requiered feature attributs name
      */
-    public Collection<String> getRequieredAttributsName(Collection<String> buffer){
+    public Collection<String> getRequieredAttributsName(final Collection<String> buffer){
         if(buffer == null){
             return attributs;
         }else{
@@ -72,7 +72,7 @@ public abstract class CachedAnchorPoint{
 
 
 
-    public static CachedAnchorPoint cache(AnchorPoint anchor){
+    public static CachedAnchorPoint cache(final AnchorPoint anchor){
 
         float cachedX = Float.NaN;
         float cachedY = Float.NaN;
@@ -116,14 +116,14 @@ public abstract class CachedAnchorPoint{
         private final float cachedX;
         private final float cachedY;
 
-        public StaticAnchorPoint(AnchorPoint anchor, float cachedX, float cachedY) {
+        public StaticAnchorPoint(final AnchorPoint anchor, final float cachedX, final float cachedY) {
             super(anchor,Cache.EMPTY_ATTRIBUTS);
             this.cachedX = cachedX;
             this.cachedY = cachedY;
         }
 
         @Override
-        public float[] getValues(Feature feature, float[] buffer){
+        public float[] getValues(final Feature feature, final float[] buffer){
             if(buffer == null){
                 return new float[]{cachedX,cachedY};
             }else{
@@ -139,14 +139,14 @@ public abstract class CachedAnchorPoint{
         private final float cachedX;
         private final float cachedY;
 
-        public DynamicAnchorPoint(AnchorPoint anchor, float cachedX, float cachedY, Collection<String> attributs) {
+        public DynamicAnchorPoint(final AnchorPoint anchor, final float cachedX, final float cachedY, final Collection<String> attributs) {
             super(anchor,attributs);
             this.cachedX = cachedX;
             this.cachedY = cachedY;
         }
 
         @Override
-        public float[] getValues(Feature feature, float[] buffer){
+        public float[] getValues(final Feature feature, float[] buffer){
 
             if(buffer == null){
                 buffer = new float[2];

@@ -44,7 +44,7 @@ public class NorthArrowRenderer implements JRRenderable{
     public NorthArrowRenderer(){
     }
 
-    public void setRotation(double rotation){
+    public void setRotation(final double rotation){
         this.rotation = rotation;
     }
 

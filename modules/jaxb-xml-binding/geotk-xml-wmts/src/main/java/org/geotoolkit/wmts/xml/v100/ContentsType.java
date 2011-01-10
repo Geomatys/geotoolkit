@@ -90,7 +90,7 @@ public class ContentsType extends ContentsBaseType {
         return null;
     }
 
-    public void setTileMatrixSet(List<TileMatrixSet> tms) {
+    public void setTileMatrixSet(final List<TileMatrixSet> tms) {
         this.tileMatrixSet = tms;
     }
 
@@ -105,7 +105,7 @@ public class ContentsType extends ContentsBaseType {
         return layers;
     }
 
-    public void setLayers(List<LayerType> layers) {
+    public void setLayers(final List<LayerType> layers) {
         final ObjectFactory factory = new ObjectFactory();
         this.datasetDescriptionSummary = new ArrayList<JAXBElement<? extends DatasetDescriptionSummaryBaseType>>(layers.size());
         for (LayerType elem : layers) {

@@ -74,7 +74,7 @@ public class Term implements AbstractTerm {
 
     }
 
-    public Term(AbstractTerm term) {
+    public Term(final AbstractTerm term) {
         if (term != null) {
             this.value      = term.getValue();
             this.definition = term.getDefinition();
@@ -84,25 +84,25 @@ public class Term implements AbstractTerm {
         }
     }
 
-    public Term(String value, URI definition) {
+    public Term(final String value, final URI definition) {
         this.codeSpace  = null;
         this.definition = definition;
         this.value      = value;
     }
 
-    public Term(String value, String definition) {
+    public Term(final String value, final String definition) {
         this.codeSpace  = null;
         this.definition = URI.create(definition);
         this.value      = value;
     }
 
-    public Term(CodeSpacePropertyType codeSpace, String value, URI definition) {
+    public Term(final CodeSpacePropertyType codeSpace, final String value, final URI definition) {
         this.codeSpace  = codeSpace;
         this.definition = definition;
         this.value      = value;
     }
 
-    public Term(CodeSpacePropertyType codeSpace, String value, String definition) {
+    public Term(final CodeSpacePropertyType codeSpace, final String value, final String definition) {
         this.codeSpace  = codeSpace;
         this.definition = URI.create(definition);
         this.value      = value;
@@ -128,7 +128,7 @@ public class Term implements AbstractTerm {
      *     {@link CodeSpacePropertyType }
      *     
      */
-    public void setCodeSpace(CodeSpacePropertyType value) {
+    public void setCodeSpace(final CodeSpacePropertyType value) {
         this.codeSpace = value;
     }
 
@@ -152,7 +152,7 @@ public class Term implements AbstractTerm {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -176,7 +176,7 @@ public class Term implements AbstractTerm {
      *     {@link String }
      *     
      */
-    public void setDefinition(String value) {
+    public void setDefinition(final String value) {
         this.definition = URI.create(value);
     }
 

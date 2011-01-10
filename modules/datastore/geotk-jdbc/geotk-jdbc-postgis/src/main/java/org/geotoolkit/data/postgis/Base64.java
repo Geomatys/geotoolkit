@@ -258,7 +258,7 @@ public final class Base64 {
      * @since 1.3
      */
     private static byte[] encode3to4(final byte[] source, final int srcOffset, final int numSigBytes,
-            byte[] destination, int destOffset) {
+            final byte[] destination, final int destOffset) {
         //           1         2         3
         // 01234567890123456789012345678901 Bit position
         // --------000000001111111122222222 Array position from threeBytes
@@ -310,7 +310,7 @@ public final class Base64 {
      * @return The Base64-encoded object
      * @since 1.4
      */
-    public static String encodeObject(Serializable serializableObject) {
+    public static String encodeObject(final Serializable serializableObject) {
         return encodeObject(serializableObject, NO_OPTIONS);
     }
 
@@ -337,7 +337,7 @@ public final class Base64 {
      * @see Base64#DONT_BREAK_LINES
      * @since 2.0
      */
-    public static String encodeObject(Serializable serializableObject, int options) {
+    public static String encodeObject(final Serializable serializableObject, final int options) {
         // Streams
         ByteArrayOutputStream baos = null;
         Base64OutputStream b64os = null;
@@ -404,7 +404,7 @@ public final class Base64 {
      * @param source The data to convert
      * @since 1.4
      */
-    public static String encodeBytes(byte[] source) {
+    public static String encodeBytes(final byte[] source) {
         return encodeBytes(source, 0, source.length, NO_OPTIONS);
     }
 
@@ -428,7 +428,7 @@ public final class Base64 {
      * @see Base64#DONT_BREAK_LINES
      * @since 2.0
      */
-    public static String encodeBytes(byte[] source, int options) {
+    public static String encodeBytes(final byte[] source, final int options) {
         return encodeBytes(source, 0, source.length, options);
     }
 
@@ -441,7 +441,7 @@ public final class Base64 {
      * @param len Length of data to convert
      * @since 1.4
      */
-    public static String encodeBytes(byte[] source, int off, int len) {
+    public static String encodeBytes(final byte[] source, final int off, final int len) {
         return encodeBytes(source, off, len, NO_OPTIONS);
     }
 
@@ -467,7 +467,7 @@ public final class Base64 {
      * @see Base64#DONT_BREAK_LINES
      * @since 2.0
      */
-    public static String encodeBytes(byte[] source, int off, int len, int options) {
+    public static String encodeBytes(final byte[] source, final int off, final int len, final int options) {
         // Isolate options
         final int dontBreakLines = (options & DONT_BREAK_LINES);
         final int gzip = (options & GZIP);
@@ -577,7 +577,7 @@ public final class Base64 {
      * @return the number of decoded bytes converted
      * @since 1.3
      */
-    private static int decode4to3(byte[] source, int srcOffset, byte[] destination, int destOffset) {
+    private static int decode4to3(final byte[] source, final int srcOffset, final byte[] destination, final int destOffset) {
         // Example: Dk==
         if (source[srcOffset + 2] == EQUALS_SIGN) {
             // Two ways to do the same thing. Don't know which way I like best.
@@ -634,7 +634,7 @@ public final class Base64 {
      * @return decoded data
      * @since 1.3
      */
-    public static byte[] decode(byte[] source) {
+    public static byte[] decode(final byte[] source) {
         int len = source.length;
         int len34 = len * 3 / 4;
         byte[] outBuff = new byte[len34]; // Upper limit on size of output
@@ -691,7 +691,7 @@ public final class Base64 {
      * @return decoded data
      * @since 1.3
      */
-    public static byte[] decode(byte[] source, int off, int len) {
+    public static byte[] decode(final byte[] source, final int off, final int len) {
         int len34 = len * 3 / 4;
         byte[] outBuff = new byte[len34]; // Upper limit on size of output
         int outBuffPosn = 0;
@@ -741,7 +741,7 @@ public final class Base64 {
      * @return the decoded data
      * @since 1.4
      */
-    public static byte[] decode(String s) {
+    public static byte[] decode(final String s) {
         byte[] bytes;
         try {
             bytes = s.getBytes(PREFERRED_ENCODING);
@@ -811,7 +811,7 @@ public final class Base64 {
      * @return The decoded and deserialized object
      * @since 1.5
      */
-    public static Object decodeToObject(String encodedObject) {
+    public static Object decodeToObject(final String encodedObject) {
         // Decode and gunzip if necessary
         byte[] objBytes = decode(encodedObject);
 
@@ -854,7 +854,7 @@ public final class Base64 {
      *
      * @since 2.1
      */
-    public static boolean encodeToFile(byte[] dataToEncode, String filename) {
+    public static boolean encodeToFile(final byte[] dataToEncode, final String filename) {
         boolean success;
         Base64.Base64OutputStream bos = null;
         try {
@@ -885,7 +885,7 @@ public final class Base64 {
      *
      * @since 2.1
      */
-    public static boolean decodeToFile(String dataToDecode, String filename) {
+    public static boolean decodeToFile(final String dataToDecode, final String filename) {
         boolean success = false;
         Base64.Base64OutputStream bos = null;
         try {
@@ -914,7 +914,7 @@ public final class Base64 {
      *
      * @since 2.1
      */
-    public static byte[] decodeFromFile(String filename) {
+    public static byte[] decodeFromFile(final String filename) {
         byte[] decodedData = null;
         Base64.Base64InputStream bis = null;
         try {
@@ -969,7 +969,7 @@ public final class Base64 {
      *
      * @since 2.1
      */
-    public static String encodeFromFile(String filename) {
+    public static String encodeFromFile(final String filename) {
         String encodedData = null;
         Base64.Base64InputStream bis = null;
         try {
@@ -1030,7 +1030,7 @@ public final class Base64 {
          * @param in the <tt>java.io.InputStream</tt> from which to read data.
          * @since 1.3
          */
-        public Base64InputStream(InputStream in) {
+        public Base64InputStream(final InputStream in) {
             this(in, DECODE);
         }
 
@@ -1055,7 +1055,7 @@ public final class Base64 {
          * @see Base64#DONT_BREAK_LINES
          * @since 2.0
          */
-        public Base64InputStream(InputStream in, int options) {
+        public Base64InputStream(final InputStream in, final int options) {
             super(in);
             this.breakLines = (options & DONT_BREAK_LINES) != DONT_BREAK_LINES;
             this.encode = (options & ENCODE) == ENCODE;
@@ -1184,7 +1184,7 @@ public final class Base64 {
          * @since 1.3
          */
         @Override
-        public int read(byte[] dest, int off, int len) throws IOException {
+        public int read(final byte[] dest, final int off, final int len) throws IOException {
             int i;
             int b;
             for (i = 0; i < len; i++) {
@@ -1231,7 +1231,7 @@ public final class Base64 {
          * @param out the <tt>java.io.OutputStream</tt> to which data will be written.
          * @since 1.3
          */
-        public Base64OutputStream(OutputStream out) {
+        public Base64OutputStream(final OutputStream out) {
             this(out, ENCODE);
         }
 
@@ -1255,7 +1255,7 @@ public final class Base64 {
          * @see Base64#DONT_BREAK_LINES
          * @since 1.3
          */
-        public Base64OutputStream(OutputStream out, int options) {
+        public Base64OutputStream(final OutputStream out, final int options) {
             super(out);
             this.breakLines = (options & DONT_BREAK_LINES) != DONT_BREAK_LINES;
             this.encode = (options & ENCODE) == ENCODE;
@@ -1280,7 +1280,7 @@ public final class Base64 {
          * @since 1.3
          */
         @Override
-        public void write(int theByte) throws IOException {
+        public void write(final int theByte) throws IOException {
             // Encoding suspended?
             if (suspendEncoding) {
                 super.out.write(theByte);
@@ -1332,7 +1332,7 @@ public final class Base64 {
          * @since 1.3
          */
         @Override
-        public void write(byte[] theBytes, int off, int len) throws IOException {
+        public void write(final byte[] theBytes, final int off, final int len) throws IOException {
             // Encoding suspended?
             if (suspendEncoding) {
                 super.out.write(theBytes, off, len);

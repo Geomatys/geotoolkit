@@ -79,7 +79,7 @@ public class CompositePhenomenonEntry extends CompoundPhenomenonEntry implements
     /**
      * Add a component to the list 
      */
-    public void addComponent(PhenomenonEntry phenomenon) {
+    public void addComponent(final PhenomenonEntry phenomenon) {
         component.add(new PhenomenonPropertyType(phenomenon));
     }
     
@@ -100,7 +100,7 @@ public class CompositePhenomenonEntry extends CompoundPhenomenonEntry implements
      * @param phenomenonId
      * @return
      */
-    public boolean containsPhenomenon(String phenomenonId) {
+    public boolean containsPhenomenon(final String phenomenonId) {
         if (component != null) {
             for (PhenomenonPropertyType pheno : component) {
                 if (pheno.getPhenomenon().getId().equals(phenomenonId)) {
@@ -121,7 +121,7 @@ public class CompositePhenomenonEntry extends CompoundPhenomenonEntry implements
         return component;
     }
 
-    public void update(String id, String name, int Dimension) {
+    public void update(final String id, final String name, final int Dimension) {
         this.setId(id);
         this.setName(name);
         this.setDimension(Dimension);

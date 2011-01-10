@@ -39,12 +39,12 @@ public class JTSPositionFactory implements PositionFactory {
 	public JTSPositionFactory(){
 	    this( DefaultGeographicCRS.WGS84);
 	}
-	public JTSPositionFactory( CoordinateReferenceSystem crs ){
+	public JTSPositionFactory( final CoordinateReferenceSystem crs ){
 		this.crs = crs;
 	}
     
     @Override
-	public DirectPosition createDirectPosition(double[] ordinates)
+	public DirectPosition createDirectPosition(final double[] ordinates)
 			throws MismatchedDimensionException {
         GeneralDirectPosition position = new GeneralDirectPosition(ordinates);
         position.setCoordinateReferenceSystem(crs);
@@ -52,7 +52,7 @@ public class JTSPositionFactory implements PositionFactory {
 	}
 
     @Override
-	public Position createPosition(Position position) {
+	public Position createPosition(final Position position) {
         return new GeneralDirectPosition(position.getDirectPosition());
 	}
 
@@ -60,7 +60,7 @@ public class JTSPositionFactory implements PositionFactory {
 		return new JTSPointArray( crs );
 	}
 
-	public List createPositionList(double[] coordinates, int start, int end) {
+	public List createPositionList(final double[] coordinates, final int start, final int end) {
 		PointArray array = new JTSPointArray( crs );
 		int N = crs.getCoordinateSystem().getDimension();
 		for( int i=start; i < end ; i += N ){
@@ -71,7 +71,7 @@ public class JTSPositionFactory implements PositionFactory {
 		return array;
 	}
 
-	public List createPositionList(float[] coordinates, int start, int end) {
+	public List createPositionList(final float[] coordinates, final int start, final int end) {
 		PointArray array = new JTSPointArray( crs );
 		int N = crs.getCoordinateSystem().getDimension();
 		for( int i=start; i < end ; i += N ){
@@ -91,7 +91,7 @@ public class JTSPositionFactory implements PositionFactory {
 		return null;
 	}
 	
-	public PointArray createPointArray(float[] array, int start, int end) {
+	public PointArray createPointArray(final float[] array, final int start, final int end) {
 		PointArray pointArray = (PointArray) createPointArray();
 		int D = crs.getCoordinateSystem().getDimension();
 		if (D == 2) {

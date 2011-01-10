@@ -83,7 +83,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
      * Sets the value of the requestId property.
      * 
      */
-    public void setRequestId(String value) {
+    public void setRequestId(final String value) {
         this.requestId = value;
     }
 
@@ -99,7 +99,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
      * Sets the value of the searchStatus property.
      * 
      */
-    public void setSearchStatus(RequestStatusType value) {
+    public void setSearchStatus(final RequestStatusType value) {
         this.searchStatus = value;
     }
 
@@ -115,7 +115,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
      * Sets the value of the searchResults property.
      * 
      */
-    public void setSearchResults(SearchResultsType value) {
+    public void setSearchResults(final SearchResultsType value) {
         this.searchResults = value;
     }
 
@@ -131,7 +131,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
      * Sets the value of the version property.
      * 
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
     

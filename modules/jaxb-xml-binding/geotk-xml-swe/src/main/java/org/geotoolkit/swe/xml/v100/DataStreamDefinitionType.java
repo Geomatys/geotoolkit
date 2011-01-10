@@ -74,7 +74,7 @@ public class DataStreamDefinitionType implements DataStreamDefinition {
 
     }
 
-    public DataStreamDefinitionType(DataStreamDefinition da) {
+    public DataStreamDefinitionType(final DataStreamDefinition da) {
         if (da != null) {
             this.id = da.getId();
             if (da.getStreamEncoding() != null) {
@@ -115,7 +115,7 @@ public class DataStreamDefinitionType implements DataStreamDefinition {
     /**
      * Sets the value of the streamEncoding property.
      */
-    public void setStreamEncoding(MultiplexedStreamFormatPropertyType value) {
+    public void setStreamEncoding(final MultiplexedStreamFormatPropertyType value) {
         this.streamEncoding = value;
     }
 
@@ -129,7 +129,7 @@ public class DataStreamDefinitionType implements DataStreamDefinition {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

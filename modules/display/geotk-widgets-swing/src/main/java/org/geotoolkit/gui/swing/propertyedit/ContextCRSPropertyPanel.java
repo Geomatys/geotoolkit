@@ -209,11 +209,11 @@ public class ContextCRSPropertyPanel extends javax.swing.JPanel implements Prope
             .addComponent(jTabbedPane1, GroupLayout.DEFAULT_SIZE, 345, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-    private void gui_jtf_crsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_gui_jtf_crsActionPerformed
+    private void gui_jtf_crsActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_gui_jtf_crsActionPerformed
         if(liste!=null)liste.searchCRS(gui_jtf_crs.getText());
     }//GEN-LAST:event_gui_jtf_crsActionPerformed
 
-    private void gui_jtf_crsKeyTyped(KeyEvent evt) {//GEN-FIRST:event_gui_jtf_crsKeyTyped
+    private void gui_jtf_crsKeyTyped(final KeyEvent evt) {//GEN-FIRST:event_gui_jtf_crsKeyTyped
         if(liste!=null)liste.searchCRS(gui_jtf_crs.getText());
     }//GEN-LAST:event_gui_jtf_crsKeyTyped
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -227,7 +227,7 @@ public class ContextCRSPropertyPanel extends javax.swing.JPanel implements Prope
     private JTextArea wktArea;
     // End of variables declaration//GEN-END:variables
     @Override
-    public void setTarget(Object target) {
+    public void setTarget(final Object target) {
         context = (MapContext) target;
         init();
     }

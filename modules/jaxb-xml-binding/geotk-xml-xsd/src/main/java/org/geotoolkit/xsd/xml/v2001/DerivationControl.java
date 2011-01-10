@@ -55,7 +55,7 @@ public enum DerivationControl {
     UNION("union");
     private final String value;
 
-    DerivationControl(String v) {
+    DerivationControl(final String v) {
         value = v;
     }
 
@@ -63,7 +63,7 @@ public enum DerivationControl {
         return value;
     }
 
-    public static DerivationControl fromValue(String v) {
+    public static DerivationControl fromValue(final String v) {
         for (DerivationControl c: DerivationControl.values()) {
             if (c.value.equals(v)) {
                 return c;

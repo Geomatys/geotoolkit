@@ -34,11 +34,11 @@ import org.opengis.style.Stroke;
  */
 public abstract class CachedStroke extends Cache<Stroke>{
 
-    protected CachedStroke(Stroke stroke){
+    protected CachedStroke(final Stroke stroke){
         super(stroke);
     }
 
-    public static CachedStroke cache(Stroke stroke){
+    public static CachedStroke cache(final Stroke stroke){
         final GraphicStroke gs = stroke.getGraphicStroke();
         if(gs == null){
             //simple stroke

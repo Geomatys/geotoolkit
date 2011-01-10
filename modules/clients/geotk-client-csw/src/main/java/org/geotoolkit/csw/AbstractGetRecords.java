@@ -152,82 +152,82 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
     }
 
     @Override
-    public void setConstraint(String constraint) {
+    public void setConstraint(final String constraint) {
         this.constraint = constraint;
     }
 
     @Override
-    public void setConstraintLanguage(String constraintLanguage) {
+    public void setConstraintLanguage(final String constraintLanguage) {
         this.constraintLanguage = constraintLanguage;
     }
 
     @Override
-    public void setConstraintLanguageVersion(String constraintLanguageVersion) {
+    public void setConstraintLanguageVersion(final String constraintLanguageVersion) {
         this.constraintLanguageVersion = constraintLanguageVersion;
     }
 
     @Override
-    public void setDistributedSearch(Boolean distributedSearch) {
+    public void setDistributedSearch(final Boolean distributedSearch) {
         this.distributedSearch = distributedSearch;
     }
 
     @Override
-    public void setElementSetName(ElementSetType elementSetName) {
+    public void setElementSetName(final ElementSetType elementSetName) {
         this.elementSetName = elementSetName;
     }
 
     @Override
-    public void setHopcount(Integer hopcount) {
+    public void setHopcount(final Integer hopcount) {
         this.hopcount = hopcount;
     }
 
     @Override
-    public void setMaxRecords(Integer maxRecords) {
+    public void setMaxRecords(final Integer maxRecords) {
         this.maxRecords = maxRecords;
     }
 
     @Override
-    public void setNamespace(String namespace) {
+    public void setNamespace(final String namespace) {
         this.namespace = namespace;
     }
 
     @Override
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
 
     @Override
-    public void setOutputSchema(String outputSchema) {
+    public void setOutputSchema(final String outputSchema) {
         this.outputSchema = outputSchema;
     }
 
     @Override
-    public void setRequestId(String requestId) {
+    public void setRequestId(final String requestId) {
         this.requestId = requestId;
     }
 
     @Override
-    public void setResponseHandler(String responseHandler) {
+    public void setResponseHandler(final String responseHandler) {
         this.responseHandler = responseHandler;
     }
 
     @Override
-    public void setResultType(ResultType resultType) {
+    public void setResultType(final ResultType resultType) {
         this.resultType = resultType;
     }
 
     @Override
-    public void setSortBy(String sortBy) {
+    public void setSortBy(final String sortBy) {
         this.sortBy = sortBy;
     }
 
     @Override
-    public void setStartPosition(Integer startPosition) {
+    public void setStartPosition(final Integer startPosition) {
         this.startPosition = startPosition;
     }
 
     @Override
-    public void setTypeNames(String typeNames) {
+    public void setTypeNames(final String typeNames) {
         this.typeNames = typeNames;
     }
 

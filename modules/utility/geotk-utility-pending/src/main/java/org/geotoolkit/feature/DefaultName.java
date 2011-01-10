@@ -145,7 +145,7 @@ public class DefaultName implements Name,Serializable {
      * value object with equality based on name and namespace.
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == this) {
             return true;
         }
@@ -182,7 +182,7 @@ public class DefaultName implements Name,Serializable {
      * @param candidate
      * @return Name
      */
-    public static Name valueOf(String candidate){
+    public static Name valueOf(final String candidate){
 
         if(candidate.startsWith("{")){
             //name is in extended form
@@ -201,7 +201,7 @@ public class DefaultName implements Name,Serializable {
 
     }
 
-    private static Name toSessionNamespaceFromExtended(String candidate) {
+    private static Name toSessionNamespaceFromExtended(final String candidate) {
         int index = candidate.indexOf('}');
 
         if(index == -1) throw new IllegalArgumentException("Invalide extended form : "+ candidate);
@@ -212,7 +212,7 @@ public class DefaultName implements Name,Serializable {
         return new DefaultName(uri, name);
     }
 
-    public static String toJCRExtendedForm(Name name){
+    public static String toJCRExtendedForm(final Name name){
         final String uri = name.getNamespaceURI();
         if(uri == null){
             return name.getLocalPart();
@@ -221,7 +221,7 @@ public class DefaultName implements Name,Serializable {
         }
     }
 
-    public static String toExtendedForm(Name name){
+    public static String toExtendedForm(final Name name){
         final String uri = name.getNamespaceURI();
         if(uri == null){
             return name.getLocalPart();
@@ -239,7 +239,7 @@ public class DefaultName implements Name,Serializable {
      * @param candidate
      * @return true if the string match the name
      */
-    public static boolean match(Name name, String candidate){
+    public static boolean match(final Name name, final String candidate){
         if(candidate.startsWith("{")){
             //candidate is in extended form
             return candidate.equals(DefaultName.toJCRExtendedForm(name));
@@ -256,7 +256,7 @@ public class DefaultName implements Name,Serializable {
         }
     }
 
-    public static boolean match(Name name, Name candidate){
+    public static boolean match(final Name name, final Name candidate){
         if(name.getNamespaceURI() == null || candidate.getNamespaceURI()==null){
             //compare only namespaces
             return name.getLocalPart().equals(candidate.getLocalPart());

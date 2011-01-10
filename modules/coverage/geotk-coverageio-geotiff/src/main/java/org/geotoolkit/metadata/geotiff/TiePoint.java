@@ -36,14 +36,14 @@ final class TiePoint {
      * 2 dimensions tie point.
      * rasterK and coverageZ are set to 0;
      */
-    public TiePoint(double rasterI, double rasterJ, double coverageX, double coverageY) {
+    public TiePoint(final double rasterI, final double rasterJ, final double coverageX, final double coverageY) {
         this(rasterI,rasterJ,0,coverageX,coverageY,0);
     }
 
     /**
      * 3 dimensions tie point.
      */
-    public TiePoint(double rasterI, double rasterJ, double rasterK, double coverageX, double coverageY, double coverageZ) {
+    public TiePoint(final double rasterI, final double rasterJ, final double rasterK, final double coverageX, final double coverageY, final double coverageZ) {
         this.rasterI = rasterI;
         this.rasterJ = rasterJ;
         this.rasterK = rasterK;

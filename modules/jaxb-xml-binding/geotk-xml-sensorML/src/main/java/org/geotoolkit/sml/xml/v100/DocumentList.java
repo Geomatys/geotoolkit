@@ -88,7 +88,7 @@ public class DocumentList implements AbstractDocumentList {
 
     }
 
-    public DocumentList(AbstractDocumentList dl) {
+    public DocumentList(final AbstractDocumentList dl) {
         if (dl != null) {
             this.description = dl.getDescription();
             this.id          = dl.getId();
@@ -111,7 +111,7 @@ public class DocumentList implements AbstractDocumentList {
     /**
      * Sets the value of the description property.
      */
-    public void setDescription(StringOrRefType value) {
+    public void setDescription(final StringOrRefType value) {
         this.description = value;
     }
 
@@ -125,14 +125,14 @@ public class DocumentList implements AbstractDocumentList {
         return this.member;
     }
 
-    public void setMember(DocumentList.Member member) {
+    public void setMember(final DocumentList.Member member) {
         if (this.member == null) {
             this.member = new ArrayList<DocumentList.Member>();
         }
         this.member.add(member);
     }
 
-    public void setMember(List<DocumentList.Member> member) {
+    public void setMember(final List<DocumentList.Member> member) {
         this.member = member;
     }
 
@@ -146,7 +146,7 @@ public class DocumentList implements AbstractDocumentList {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -248,7 +248,7 @@ public class DocumentList implements AbstractDocumentList {
 
         }
 
-        public Member(AbstractDocumentListMember m) {
+        public Member(final AbstractDocumentListMember m) {
             if (m != null) {
                 this.actuate = m.getActuate();
                 this.arcrole = m.getArcrole();
@@ -275,7 +275,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the document property.
          */
-        public void setDocument(Document value) {
+        public void setDocument(final Document value) {
             this.document = value;
         }
 
@@ -289,7 +289,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the name property.
          */
-        public void setName(String value) {
+        public void setName(final String value) {
             this.name = value;
         }
 
@@ -313,7 +313,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the remoteSchema property.
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -327,7 +327,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the actuate property.
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 
@@ -341,7 +341,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the arcrole property.
         */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -355,7 +355,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the href property.
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -369,7 +369,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the role property.
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -384,7 +384,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the show property.
          */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -398,7 +398,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the title property.
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -412,7 +412,7 @@ public class DocumentList implements AbstractDocumentList {
         /**
          * Sets the value of the type property.
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 

@@ -45,8 +45,8 @@ public class OpenStreetMapSimpleSession {
     private final String generatorVersion;
     private int changeSetId = -1;
 
-    public OpenStreetMapSimpleSession(OpenStreetMapServer server, String user, char[] password,
-            String generator, String generatorVersion){
+    public OpenStreetMapSimpleSession(final OpenStreetMapServer server, final String user, final char[] password,
+            final String generator, final String generatorVersion){
         this.server = server;
         this.user = user;
         this.password = password;
@@ -62,7 +62,7 @@ public class OpenStreetMapSimpleSession {
         return changeSetId;
     }
 
-    public int startChangeSet(String creator, String comment) throws IOException{
+    public int startChangeSet(final String creator, final String comment) throws IOException{
         if(changeSetId > 0){
             throw new IllegalArgumentException("A changeset is already open.");
         }
@@ -114,7 +114,7 @@ public class OpenStreetMapSimpleSession {
     }
 
 
-    public void SendTransactions(List<Transaction> transactions) throws IOException{
+    public void SendTransactions(final List<Transaction> transactions) throws IOException{
         if(changeSetId < 0){
             throw new IllegalArgumentException("No changeset open.");
         }

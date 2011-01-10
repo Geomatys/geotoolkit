@@ -31,7 +31,7 @@ public class DefaultLabelLayer implements LabelLayer{
     private final boolean obstacle;
     private final boolean labelled;
 
-    public DefaultLabelLayer(boolean isObstacle, boolean isLabelled) {
+    public DefaultLabelLayer(final boolean isObstacle, final boolean isLabelled) {
         this.labelled = isLabelled;
         this.obstacle = isObstacle;
     }

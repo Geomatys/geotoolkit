@@ -100,7 +100,7 @@ public abstract class AbstractTestCaseSupport extends TestCase {
         super.tearDown();
     }
 
-    private void dieDieDIE(File file) {
+    private void dieDieDIE(final File file) {
         if (file.exists()) {
             if (file.delete()) {
                 // dead
@@ -160,7 +160,7 @@ public abstract class AbstractTestCaseSupport extends TestCase {
     /**
      * Returns the first feature in the given feature collection.
      */
-    protected SimpleFeature firstFeature(FeatureCollection fc) {
+    protected SimpleFeature firstFeature(final FeatureCollection fc) {
         FeatureIterator<SimpleFeature> features = fc.iterator();
         SimpleFeature next = features.next();
         features.close();
@@ -182,7 +182,7 @@ public abstract class AbstractTestCaseSupport extends TestCase {
         return tmpFile;
     }
 
-    private void markTempFile(File tmpFile) {
+    private void markTempFile(final File tmpFile) {
         tmpFiles.add(tmpFile);
     }
 
@@ -233,7 +233,7 @@ public abstract class AbstractTestCaseSupport extends TestCase {
     /**
      * Returns the test suite for the given class.
      */
-    public static Test suite(Class<?> c) {
+    public static Test suite(final Class<?> c) {
         return new TestSuite(c);
     }
 }

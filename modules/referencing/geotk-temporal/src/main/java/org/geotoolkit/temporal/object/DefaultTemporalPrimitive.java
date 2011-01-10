@@ -37,7 +37,7 @@ public abstract class DefaultTemporalPrimitive extends DefaultTemporalObject imp
      * @param other TemporalPrimitive
      */
     @Override
-    public RelativePosition relativePosition(TemporalPrimitive other) {
+    public RelativePosition relativePosition(final TemporalPrimitive other) {
         if (this instanceof Instant && other instanceof Instant) {
             Instant timeobject = (Instant) this;
             Instant instantOther = (Instant) other;

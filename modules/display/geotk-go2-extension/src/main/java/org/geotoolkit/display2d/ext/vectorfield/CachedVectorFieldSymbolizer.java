@@ -28,8 +28,8 @@ import org.opengis.feature.Feature;
  */
 public class CachedVectorFieldSymbolizer extends CachedSymbolizer<VectorFieldSymbolizer>{
 
-    public CachedVectorFieldSymbolizer(VectorFieldSymbolizer symbol,
-            SymbolizerRendererService<VectorFieldSymbolizer,? extends CachedSymbolizer<VectorFieldSymbolizer>> renderer){
+    public CachedVectorFieldSymbolizer(final VectorFieldSymbolizer symbol,
+            final SymbolizerRendererService<VectorFieldSymbolizer,? extends CachedSymbolizer<VectorFieldSymbolizer>> renderer){
         super(symbol,renderer);
     }
 
@@ -37,7 +37,7 @@ public class CachedVectorFieldSymbolizer extends CachedSymbolizer<VectorFieldSym
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         return 0;
     }
 
@@ -50,7 +50,7 @@ public class CachedVectorFieldSymbolizer extends CachedSymbolizer<VectorFieldSym
     }
 
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return true;
     }
 

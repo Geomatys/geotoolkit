@@ -69,11 +69,11 @@ public class ComponentList implements AbstractComponentList {
     public ComponentList() {
     }
 
-    public ComponentList(List<ComponentPropertyType> component) {
+    public ComponentList(final List<ComponentPropertyType> component) {
         this.component = component;
     }
 
-    public ComponentList(AbstractComponentList component) {
+    public ComponentList(final AbstractComponentList component) {
         if (component != null) {
             this.component = new ArrayList<ComponentPropertyType>();
             for (ComponentProperty cp :component.getComponent()) {

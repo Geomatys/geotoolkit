@@ -108,7 +108,7 @@ public class Annotation extends OpenAttrs {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

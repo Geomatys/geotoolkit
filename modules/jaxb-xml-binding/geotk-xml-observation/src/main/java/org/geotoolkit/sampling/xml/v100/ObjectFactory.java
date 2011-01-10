@@ -56,7 +56,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<SamplingPointEntry> createSamplingPoint(SamplingPointEntry value) {
+    public JAXBElement<SamplingPointEntry> createSamplingPoint(final SamplingPointEntry value) {
         return new JAXBElement<SamplingPointEntry>(_SamplingPoint_QNAME, SamplingPointEntry.class, null, value);
     }
 
@@ -266,7 +266,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingSurface", substitutionHeadNamespace = "http://www.opengis.net/sampling/1.0", substitutionHeadName = "SpatiallyExtensiveSamplingFeature")
-    public JAXBElement<SamplingSurfaceType> createSamplingSurface(SamplingSurfaceType value) {
+    public JAXBElement<SamplingSurfaceType> createSamplingSurface(final SamplingSurfaceType value) {
         return new JAXBElement<SamplingSurfaceType>(_SamplingSurface_QNAME, SamplingSurfaceType.class, null, value);
     }
 
@@ -275,7 +275,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingCurve", substitutionHeadNamespace = "http://www.opengis.net/sampling/1.0", substitutionHeadName = "SpatiallyExtensiveSamplingFeature")
-    public JAXBElement<SamplingCurveType> createSamplingCurve(SamplingCurveType value) {
+    public JAXBElement<SamplingCurveType> createSamplingCurve(final SamplingCurveType value) {
         return new JAXBElement<SamplingCurveType>(_SamplingCurve_QNAME, SamplingCurveType.class, null, value);
     }
 
@@ -284,7 +284,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "Specimen", substitutionHeadNamespace = "http://www.opengis.net/sampling/1.0", substitutionHeadName = "SamplingFeature")
-    public JAXBElement<SpecimenType> createSpecimen(SpecimenType value) {
+    public JAXBElement<SpecimenType> createSpecimen(final SpecimenType value) {
         return new JAXBElement<SpecimenType>(_Specimen_QNAME, SpecimenType.class, null, value);
     }
 
@@ -293,7 +293,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SpatiallyExtensiveSamplingFeature", substitutionHeadNamespace = "http://www.opengis.net/sampling/1.0", substitutionHeadName = "SamplingFeature")
-    public JAXBElement<SpatiallyExtensiveSamplingFeatureType> createSpatiallyExtensiveSamplingFeature(SpatiallyExtensiveSamplingFeatureType value) {
+    public JAXBElement<SpatiallyExtensiveSamplingFeatureType> createSpatiallyExtensiveSamplingFeature(final SpatiallyExtensiveSamplingFeatureType value) {
         return new JAXBElement<SpatiallyExtensiveSamplingFeatureType>(_SpatiallyExtensiveSamplingFeature_QNAME, SpatiallyExtensiveSamplingFeatureType.class, null, value);
     }
 
@@ -302,7 +302,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingSolid", substitutionHeadNamespace = "http://www.opengis.net/sampling/1.0", substitutionHeadName = "SpatiallyExtensiveSamplingFeature")
-    public JAXBElement<SamplingSolidType> createSamplingSolid(SamplingSolidType value) {
+    public JAXBElement<SamplingSolidType> createSamplingSolid(final SamplingSolidType value) {
         return new JAXBElement<SamplingSolidType>(_SamplingSolid_QNAME, SamplingSolidType.class, null, value);
     }
 
@@ -311,7 +311,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "LocatedSpecimen", substitutionHeadNamespace = "http://www.opengis.net/sampling/1.0", substitutionHeadName = "Specimen")
-    public JAXBElement<LocatedSpecimenType> createLocatedSpecimen(LocatedSpecimenType value) {
+    public JAXBElement<LocatedSpecimenType> createLocatedSpecimen(final LocatedSpecimenType value) {
         return new JAXBElement<LocatedSpecimenType>(_LocatedSpecimen_QNAME, LocatedSpecimenType.class, null, value);
     }
 
@@ -320,7 +320,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SurveyProcedure", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<SurveyProcedureType> createSurveyProcedure(SurveyProcedureType value) {
+    public JAXBElement<SurveyProcedureType> createSurveyProcedure(final SurveyProcedureType value) {
         return new JAXBElement<SurveyProcedureType>(_SurveyProcedure_QNAME, SurveyProcedureType.class, null, value);
     }
 
@@ -329,7 +329,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingFeature", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<SamplingFeatureEntry> createSamplingFeature(SamplingFeatureEntry value) {
+    public JAXBElement<SamplingFeatureEntry> createSamplingFeature(final SamplingFeatureEntry value) {
         return new JAXBElement<SamplingFeatureEntry>(_SamplingFeature_QNAME, SamplingFeatureEntry.class, null, value);
     }
 
@@ -338,7 +338,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingFeatureRelation")
-    public JAXBElement<SamplingFeatureRelationEntry> createSamplingFeatureRelation(SamplingFeatureRelationEntry value) {
+    public JAXBElement<SamplingFeatureRelationEntry> createSamplingFeatureRelation(final SamplingFeatureRelationEntry value) {
         return new JAXBElement<SamplingFeatureRelationEntry>(_SamplingFeatureRelation_QNAME, SamplingFeatureRelationEntry.class, null, value);
     }
 
@@ -347,7 +347,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingFeatureCollection", substitutionHeadNamespace = "http://www.opengis.net/sampling/1.0", substitutionHeadName = "SamplingFeature")
-    public JAXBElement<SamplingFeatureCollectionType> createSamplingFeatureCollection(SamplingFeatureCollectionType value) {
+    public JAXBElement<SamplingFeatureCollectionType> createSamplingFeatureCollection(final SamplingFeatureCollectionType value) {
         return new JAXBElement<SamplingFeatureCollectionType>(_SamplingFeatureCollection_QNAME, SamplingFeatureCollectionType.class, null, value);
     }
 

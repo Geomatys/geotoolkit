@@ -124,7 +124,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * 
      * @param url The URL of the shp file to use for this DataSource.
      */
-    public IndexedShapefileDataStore(URL url)
+    public IndexedShapefileDataStore(final URL url)
             throws MalformedURLException,DataStoreException {
         this(url, null, false, true, IndexType.QIX);
     }
@@ -135,7 +135,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @param url The URL of the shp file to use for this DataSource.
      * @param namespace DOCUMENT ME!
      */
-    public IndexedShapefileDataStore(URL url, String namespace)
+    public IndexedShapefileDataStore(final URL url, final String namespace)
             throws MalformedURLException,DataStoreException {
         this(url, namespace, false, true, IndexType.QIX);
     }
@@ -147,8 +147,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @param useMemoryMappedBuffer enable/disable memory mapping of files
      * @param createIndex enable/disable automatic index creation if needed
      */
-    public IndexedShapefileDataStore(URL url, boolean useMemoryMappedBuffer,
-            boolean createIndex) throws MalformedURLException,DataStoreException {
+    public IndexedShapefileDataStore(final URL url, final boolean useMemoryMappedBuffer,
+            final boolean createIndex) throws MalformedURLException,DataStoreException {
         this(url, null, useMemoryMappedBuffer, createIndex, IndexType.QIX);
     }
 
@@ -162,8 +162,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @param treeType The type of index to use
      * 
      */
-    public IndexedShapefileDataStore(URL url, String namespace, boolean useMemoryMappedBuffer,
-            boolean createIndex, IndexType treeType)
+    public IndexedShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMappedBuffer,
+            final boolean createIndex, final IndexType treeType)
             throws MalformedURLException,DataStoreException {
         this(url, namespace, useMemoryMappedBuffer, createIndex, treeType, DEFAULT_STRING_CHARSET);
     }
@@ -180,8 +180,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * 
      * @throws MalformedURLException
      */
-    public IndexedShapefileDataStore(URL url, String namespace, boolean useMemoryMappedBuffer,
-            boolean createIndex, IndexType treeType, Charset dbfCharset)
+    public IndexedShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMappedBuffer,
+            final boolean createIndex, final IndexType treeType, final Charset dbfCharset)
             throws MalformedURLException,DataStoreException {
         super(url, namespace, useMemoryMappedBuffer, dbfCharset);
 
@@ -235,7 +235,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * file.
      */
     @Override
-    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(Query query)
+    public FeatureReader<SimpleFeatureType, SimpleFeature> getFeatureReader(final Query query)
             throws DataStoreException {
         final SimpleFeatureType originalSchema = getFeatureType();
         final Name              queryTypeName = query.getTypeName();
@@ -349,7 +349,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     }
 
     protected FeatureReader<SimpleFeatureType, SimpleFeature> createFeatureReader(
-            IndexedShapefileAttributeReader r, SimpleFeatureType featureType, Hints hints)
+            final IndexedShapefileAttributeReader r, final SimpleFeatureType featureType, final Hints hints)
             throws SchemaException, IOException,DataStoreException {
 
         final FeatureIDReader fidReader;
@@ -371,8 +371,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         IndexedFidWriter.generate(shpFiles);
     }
 
-    private IndexedShapefileAttributeReader getAttributesReader(List<? extends PropertyDescriptor> properties, 
-            Filter filter, boolean read3D, double[] resample) throws DataStoreException{
+    private IndexedShapefileAttributeReader getAttributesReader(final List<? extends PropertyDescriptor> properties, 
+            final Filter filter, final boolean read3D, final double[] resample) throws DataStoreException{
 
 
         CloseableCollection<ShpData> goodRecs = null;
@@ -428,8 +428,8 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
     }
 
 
-    protected IndexedShapefileAttributeReader getBBoxAttributesReader(List<PropertyDescriptor> properties, 
-            final Envelope bbox, boolean loose, Hints hints, boolean read3D, double[] res) throws DataStoreException {
+    protected IndexedShapefileAttributeReader getBBoxAttributesReader(final List<PropertyDescriptor> properties, 
+            final Envelope bbox, final boolean loose, final Hints hints, final boolean read3D, final double[] res) throws DataStoreException {
 
         final double[] minRes = (double[]) hints.get(HintsPending.KEY_IGNORE_SMALL_FEATURES);
 
@@ -477,7 +477,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException
      * @throws TreeException
      */
-    private CloseableCollection<ShpData> queryFidIndex(Set<Identifier> idsSet) throws IOException {
+    private CloseableCollection<ShpData> queryFidIndex(final Set<Identifier> idsSet) throws IOException {
 
         if (!indexUseable(FIX)) {
             return null;
@@ -529,7 +529,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @param indexType the type of index to check
      * @return true if the index for the given type exists and is useable.
      */
-    public boolean indexUseable(ShpFileType indexType) {
+    public boolean indexUseable(final ShpFileType indexType) {
         if (shpFiles.isLocal()) {
             if (needsGeneration(indexType) || !shpFiles.exists(indexType)) {
                 return false;
@@ -557,7 +557,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
         return true;
     }
 
-    final boolean needsGeneration(ShpFileType indexType) {
+    final boolean needsGeneration(final ShpFileType indexType) {
         if (!shpFiles.isLocal())
             throw new IllegalStateException(
                     "This method only applies if the files are local and the file can be created");
@@ -614,7 +614,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException
      * @throws TreeException DOCUMENT ME!
      */
-    private CloseableCollection<ShpData> queryQuadTree(Envelope bbox)
+    private CloseableCollection<ShpData> queryQuadTree(final Envelope bbox)
             throws DataStoreException, IOException, TreeException {
         CloseableCollection<ShpData> tmp = null;
 
@@ -677,7 +677,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @throws IOException If the typeName is not available or some other error occurs.
      */
     @Override
-    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(Name typeName, Filter filter)
+    public FeatureWriter<SimpleFeatureType, SimpleFeature> getFeatureWriter(final Name typeName, final Filter filter)
             throws DataStoreException {
 
         //will raise an error if it does not exist
@@ -699,7 +699,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
 
     
     @Override
-    public org.opengis.geometry.Envelope getEnvelope(Query query) throws DataStoreException {
+    public org.opengis.geometry.Envelope getEnvelope(final Query query) throws DataStoreException {
 
         final Filter filter = query.getFilter();
         if (filter == Filter.INCLUDE || QueryUtilities.queryAll(query) ) {
@@ -759,7 +759,7 @@ public class IndexedShapefileDataStore extends ShapefileDataStore {
      * @param maxDepth depth of the tree. if < 0 then a best guess is made.
      * @throws TreeException
      */
-    public void buildQuadTree(int maxDepth) throws TreeException {
+    public void buildQuadTree(final int maxDepth) throws TreeException {
         if (shpFiles.isLocal()) {
             shpFiles.unloadIndexes();
             getLogger().fine("Creating spatial index for " + shpFiles.get(SHP));

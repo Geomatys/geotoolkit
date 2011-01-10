@@ -82,14 +82,14 @@ public class Dimension extends DescriptionType {
 
     }
 
-    public Dimension(String identifier, String unit, String _default) {
+    public Dimension(final String identifier, final String unit, final String _default) {
         this.identifier = new CodeType(identifier);
         this.unitSymbol = unit;
         this._default   = _default;
 
     }
 
-    public Dimension(String identifier, String unit, String _default, String value) {
+    public Dimension(final String identifier, final String unit, final String _default, final String value) {
         this.identifier = new CodeType(identifier);
         this.unitSymbol = unit;
         this._default   = _default;
@@ -117,7 +117,7 @@ public class Dimension extends DescriptionType {
      *     {@link CodeType }
      *     
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 
@@ -141,7 +141,7 @@ public class Dimension extends DescriptionType {
      *     {@link DomainMetadataType }
      *     
      */
-    public void setUOM(DomainMetadataType value) {
+    public void setUOM(final DomainMetadataType value) {
         this.uom = value;
     }
 
@@ -165,7 +165,7 @@ public class Dimension extends DescriptionType {
      *     {@link String }
      *     
      */
-    public void setUnitSymbol(String value) {
+    public void setUnitSymbol(final String value) {
         this.unitSymbol = value;
     }
 
@@ -189,7 +189,7 @@ public class Dimension extends DescriptionType {
      *     {@link String }
      *     
      */
-    public void setDefault(String value) {
+    public void setDefault(final String value) {
         this._default = value;
     }
 
@@ -213,7 +213,7 @@ public class Dimension extends DescriptionType {
      *     {@link Boolean }
      *     
      */
-    public void setCurrent(Boolean value) {
+    public void setCurrent(final Boolean value) {
         this.current = value;
     }
 
@@ -227,11 +227,11 @@ public class Dimension extends DescriptionType {
         return this.value;
     }
 
-    public void setValue(List<String> value) {
+    public void setValue(final List<String> value) {
         this.value = value;
 }
 
-    public void setValue(String value) {
+    public void setValue(final String value) {
         if (this.value == null) {
             this.value = new ArrayList<String>();
         }

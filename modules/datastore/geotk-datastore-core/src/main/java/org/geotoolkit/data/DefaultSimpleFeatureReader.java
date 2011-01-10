@@ -92,7 +92,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
      *
      * @throws SchemaException if we could not determine the correct FeatureType
      */
-    private DefaultSimpleFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader,
+    private DefaultSimpleFeatureReader(final PropertyReader attributeReader, final FeatureIDReader fidReader,
             SimpleFeatureType schema) throws SchemaException {
         this.attributeReader = attributeReader;
         this.fidReader = fidReader;
@@ -124,7 +124,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
         assert(creationStack = new IllegalStateException().fillInStackTrace()) != null;
     }
 
-    public DefaultSimpleFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader)
+    public DefaultSimpleFeatureReader(final PropertyReader attributeReader, final FeatureIDReader fidReader)
             throws SchemaException {
         this(attributeReader, fidReader, null);
     }
@@ -234,7 +234,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
     /**
      * Create a FeatureType based on the attributs described in the attribut reader.
      */
-    private static SimpleFeatureType createSchema(PropertyReader attributeReader) throws SchemaException {
+    private static SimpleFeatureType createSchema(final PropertyReader attributeReader) throws SchemaException {
         final FeatureTypeBuilder b = new FeatureTypeBuilder();
         b.setName("noTypeName");
         b.addAll(getDescriptors(attributeReader));
@@ -250,8 +250,8 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
     }
 
 
-    public static DefaultSimpleFeatureReader create(PropertyReader attributeReader, FeatureIDReader fidReader,
-            SimpleFeatureType schema, Hints hints) throws SchemaException{
+    public static DefaultSimpleFeatureReader create(final PropertyReader attributeReader, final FeatureIDReader fidReader,
+            final SimpleFeatureType schema, final Hints hints) throws SchemaException{
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
         if(detached == null || detached){
             //default behavior, make separate features
@@ -266,8 +266,8 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
 
         protected final SimpleFeatureBuilder builder;
 
-        private DefaultSeparateFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader,
-            SimpleFeatureType schema) throws SchemaException{
+        private DefaultSeparateFeatureReader(final PropertyReader attributeReader, final FeatureIDReader fidReader,
+            final SimpleFeatureType schema) throws SchemaException{
             super(attributeReader,fidReader,schema);
 
             this.builder = new SimpleFeatureBuilder(schema);
@@ -303,8 +303,8 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
 
         protected final DefaultSimpleFeature feature;
 
-        private DefaultReuseFeatureReader(PropertyReader attributeReader, FeatureIDReader fidReader,
-            SimpleFeatureType schema) throws SchemaException{
+        private DefaultReuseFeatureReader(final PropertyReader attributeReader, final FeatureIDReader fidReader,
+            final SimpleFeatureType schema) throws SchemaException{
             super(attributeReader,fidReader,schema);
 
             feature = new DefaultSimpleFeature(schema, null,new Object[schema.getAttributeCount()], false);
@@ -337,7 +337,7 @@ public abstract class DefaultSimpleFeatureReader implements FeatureReader<Simple
 
     }
 
-    private static AttributeDescriptor[] getDescriptors(PropertyReader reader){
+    private static AttributeDescriptor[] getDescriptors(final PropertyReader reader){
         final PropertyDescriptor[] vals = reader.getPropertyDescriptors();
         final AttributeDescriptor[] atts = new AttributeDescriptor[vals.length];
         for(int i=0; i<vals.length;i++){

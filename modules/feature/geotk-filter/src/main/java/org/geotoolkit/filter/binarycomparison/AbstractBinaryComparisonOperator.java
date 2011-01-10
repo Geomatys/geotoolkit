@@ -40,7 +40,7 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
     protected final F right;
     protected final boolean match;
 
-    public AbstractBinaryComparisonOperator(E left, F right, boolean match) {
+    public AbstractBinaryComparisonOperator(final E left, final F right, final boolean match) {
         if(left == null || right == null){
             throw new NullPointerException("Expressions can not be null");
         }
@@ -73,7 +73,7 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
         return match;
     }
 
-    protected Integer compare(Object object){
+    protected Integer compare(final Object object){
         Object objleft = left.evaluate(object);
 
         if(!(objleft instanceof Comparable)){
@@ -133,7 +133,7 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

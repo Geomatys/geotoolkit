@@ -60,7 +60,7 @@ public class TranslatedCapabilitiesType {
 
     }
 
-    public TranslatedCapabilitiesType(List<DocumentType> document) {
+    public TranslatedCapabilitiesType(final List<DocumentType> document) {
         this.document = document;
     }
 
@@ -87,7 +87,7 @@ public class TranslatedCapabilitiesType {
     /**
      * Sets the value of the Document property.
      */
-    public void setDocument(DocumentType document) {
+    public void setDocument(final DocumentType document) {
         if (this.document == null) {
             this.document = new ArrayList<DocumentType>();
         }

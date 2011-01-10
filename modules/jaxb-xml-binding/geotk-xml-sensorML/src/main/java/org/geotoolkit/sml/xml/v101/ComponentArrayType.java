@@ -87,7 +87,7 @@ public class ComponentArrayType extends AbstractDerivableComponentType implement
 
     }
 
-    public ComponentArrayType(ComponentArray ca) {
+    public ComponentArrayType(final ComponentArray ca) {
         super(ca);
     }
 }

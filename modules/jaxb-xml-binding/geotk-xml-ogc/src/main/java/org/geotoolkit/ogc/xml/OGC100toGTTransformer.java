@@ -43,14 +43,14 @@ public class OGC100toGTTransformer {
 
     protected final FilterFactory2 filterFactory;
 
-    public OGC100toGTTransformer(FilterFactory2 factory){
+    public OGC100toGTTransformer(final FilterFactory2 factory){
         this.filterFactory = factory;
     }
 
     /**
      * Transform a SLD filter v1.0 in GT filter.
      */
-    public Filter visitFilter(org.geotoolkit.ogc.xml.v100.FilterType ft){
+    public Filter visitFilter(final org.geotoolkit.ogc.xml.v100.FilterType ft){
         if(ft == null)return null;        
         
         if(ft.getComparisonOps() != null){
@@ -294,7 +294,7 @@ public class OGC100toGTTransformer {
     /**
      * Transform a SLD IDS Filter v1.0 in GT filter.
      */
-    public Filter visitIds(List<org.geotoolkit.ogc.xml.v100.FeatureIdType> lst){
+    public Filter visitIds(final List<org.geotoolkit.ogc.xml.v100.FeatureIdType> lst){
         final Set<Identifier> ids = new HashSet<Identifier>();
         
         for(final org.geotoolkit.ogc.xml.v100.FeatureIdType id : lst){
@@ -304,18 +304,18 @@ public class OGC100toGTTransformer {
         return filterFactory.id(ids);
     }
     
-    public Expression visit(JAXBElement<? extends org.geotoolkit.gml.xml.v212.AbstractGeometryType> ele){
+    public Expression visit(final JAXBElement<? extends org.geotoolkit.gml.xml.v212.AbstractGeometryType> ele){
         throw new UnsupportedOperationException("not supported yet, need GML");
     }
 
-    public PropertyName visitPropertyName(PropertyNameType pnt){
+    public PropertyName visitPropertyName(final PropertyNameType pnt){
         return filterFactory.property(pnt.getContent());
     }
 
     /**
      * Transform a JaxBelement in Expression.
      */
-    public Expression visitExpression(JAXBElement<?> jax){
+    public Expression visitExpression(final JAXBElement<?> jax){
 //        JAXBElementFunctionType>  ---NS
 //        JAXBElementExpressionType> ---k
 //        JAXBElementLiteralType> ---k
@@ -368,7 +368,7 @@ public class OGC100toGTTransformer {
     /**
      * Transform a literalType in Expression.
      */
-    public Expression visitExpression(LiteralType type){
+    public Expression visitExpression(final LiteralType type){
         final List<Object> content = type.getContent();
 
         for(final Object obj : content){

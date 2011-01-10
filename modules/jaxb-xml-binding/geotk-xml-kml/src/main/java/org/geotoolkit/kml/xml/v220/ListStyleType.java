@@ -98,7 +98,7 @@ public class ListStyleType extends AbstractSubStyleType {
      *     {@link ListItemTypeEnumType }
      *     
      */
-    public void setListItemType(ListItemTypeEnumType value) {
+    public void setListItemType(final ListItemTypeEnumType value) {
         this.listItemType = value;
     }
 
@@ -122,7 +122,7 @@ public class ListStyleType extends AbstractSubStyleType {
      *     {@link String }
      *     
      */
-    public void setBgColor(byte[] value) {
+    public void setBgColor(final byte[] value) {
         this.bgColor = ((byte[]) value);
     }
 
@@ -175,7 +175,7 @@ public class ListStyleType extends AbstractSubStyleType {
      *     {@link Integer }
      *     
      */
-    public void setMaxSnippetLines(Integer value) {
+    public void setMaxSnippetLines(final Integer value) {
         this.maxSnippetLines = value;
     }
 

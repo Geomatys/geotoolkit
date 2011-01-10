@@ -79,7 +79,7 @@ public class SpecificationLinkType extends RegistryObjectType {
     /**
      * Sets the value of the usageDescription property.
      */
-    public void setUsageDescription(InternationalStringType value) {
+    public void setUsageDescription(final InternationalStringType value) {
         this.usageDescription = value;
     }
 
@@ -96,7 +96,7 @@ public class SpecificationLinkType extends RegistryObjectType {
     /**
      * Sets the value of the usageParameter property.
      */
-    public void setUsageParameter(String usageParameter) {
+    public void setUsageParameter(final String usageParameter) {
         if (this.usageParameter == null) {
             this.usageParameter = new ArrayList<String>();
         }
@@ -106,7 +106,7 @@ public class SpecificationLinkType extends RegistryObjectType {
     /**
      * Sets the value of the usageParameter property.
      */
-    public void setUsageParameter(List<String> usageParameter) {
+    public void setUsageParameter(final List<String> usageParameter) {
         this.usageParameter = usageParameter;
     }
 
@@ -120,7 +120,7 @@ public class SpecificationLinkType extends RegistryObjectType {
     /**
      * Sets the value of the serviceBinding property.
      */
-    public void setServiceBinding(String value) {
+    public void setServiceBinding(final String value) {
         this.serviceBinding = value;
     }
 
@@ -134,7 +134,7 @@ public class SpecificationLinkType extends RegistryObjectType {
     /**
      * Sets the value of the specificationObject property.
      */
-    public void setSpecificationObject(String value) {
+    public void setSpecificationObject(final String value) {
         this.specificationObject = value;
     }
 

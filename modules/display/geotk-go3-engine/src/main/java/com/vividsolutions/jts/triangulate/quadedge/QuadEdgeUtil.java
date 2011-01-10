@@ -57,7 +57,7 @@ public class QuadEdgeUtil
 	 * @return a List of edges which have their origin at the origin of the given
 	 *         edge
 	 */
-	public static List findEdgesIncidentOnOrigin(QuadEdge start) {
+	public static List findEdgesIncidentOnOrigin(final QuadEdge start) {
 		List incEdge = new ArrayList();
 
 		QuadEdge qe = start;

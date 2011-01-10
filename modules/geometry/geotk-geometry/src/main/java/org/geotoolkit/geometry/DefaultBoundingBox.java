@@ -31,25 +31,25 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox,Envelope{
 
-    public DefaultBoundingBox(CoordinateReferenceSystem crs){
+    public DefaultBoundingBox(final CoordinateReferenceSystem crs){
         super(crs);
     }
 
-    public DefaultBoundingBox(Envelope env){
+    public DefaultBoundingBox(final Envelope env){
         super(env);
     }
 
-    public DefaultBoundingBox(BoundingBox bounds, CoordinateReferenceSystem crs){
+    public DefaultBoundingBox(final BoundingBox bounds, final CoordinateReferenceSystem crs){
         super(crs);
         setBounds(bounds);
     }
 
-    public DefaultBoundingBox(double[] min, double[] max){
+    public DefaultBoundingBox(final double[] min, final double[] max){
         super(min,max);
     }
 
     @Override
-    public void setBounds(BoundingBox bounds) {
+    public void setBounds(final BoundingBox bounds) {
         for(int dim=0;dim<bounds.getDimension();dim++){
             setRange(dim, bounds.getMinimum(dim),bounds.getMaximum(dim));
         }
@@ -86,32 +86,32 @@ public class DefaultBoundingBox extends GeneralEnvelope implements BoundingBox,E
     }
 
     @Override
-    public void include(BoundingBox bounds) {
+    public void include(final BoundingBox bounds) {
         add(bounds);
     }
 
     @Override
-    public void include(double x, double y) {
+    public void include(final double x, final double y) {
         add(new DirectPosition2D(getCoordinateReferenceSystem(), x, y));
     }
 
     @Override
-    public boolean intersects(BoundingBox bounds) {
+    public boolean intersects(final BoundingBox bounds) {
         return intersects(bounds, true);
     }
 
     @Override
-    public boolean contains(BoundingBox bounds) {
+    public boolean contains(final BoundingBox bounds) {
         return contains(bounds, true);
     }
 
     @Override
-    public boolean contains(double x, double y) {
+    public boolean contains(final double x, final double y) {
         return contains(new DirectPosition2D(this.getCoordinateReferenceSystem(), x, y));
     }
 
     @Override
-    public BoundingBox toBounds(CoordinateReferenceSystem targetCRS) throws TransformException {
+    public BoundingBox toBounds(final CoordinateReferenceSystem targetCRS) throws TransformException {
         return new DefaultBoundingBox(CRS.getEnvelope(targetCRS));
     }
 

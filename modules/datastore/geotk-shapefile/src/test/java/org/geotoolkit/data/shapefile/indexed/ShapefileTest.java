@@ -35,7 +35,7 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
 
-    public ShapefileTest(String testName) throws IOException {
+    public ShapefileTest(final String testName) throws IOException {
         super(testName);
     }
 
@@ -65,7 +65,7 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
 
     }
 
-    protected void loadShapes(String resource, int expected) throws Exception {
+    protected void loadShapes(final String resource, final int expected) throws Exception {
         ShpFiles shpFiles = new ShpFiles(ShapeTestData.url(resource));
         ShapefileReader reader = new ShapefileReader(shpFiles, false, false, true);
         int cnt = 0;
@@ -81,7 +81,7 @@ public class ShapefileTest extends org.geotoolkit.data.shapefile.ShapefileTest {
                 expected, cnt);
     }
 
-    protected void loadMemoryMapped(String resource, int expected)
+    protected void loadMemoryMapped(final String resource, final int expected)
             throws Exception {
         ShpFiles shpFiles = new ShpFiles(ShapeTestData.url(resource));
         ShapefileReader reader = new ShapefileReader(shpFiles, false, false, true);

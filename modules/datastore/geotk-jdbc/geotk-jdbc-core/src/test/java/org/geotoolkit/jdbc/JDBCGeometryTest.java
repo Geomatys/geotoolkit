@@ -80,7 +80,7 @@ public abstract class JDBCGeometryTest extends JDBCTestSupport {
         assertEquals(GeometryCollection.class, checkGeometryType(GeometryCollection.class));
     }
 
-    protected Class checkGeometryType(Class geomClass) throws Exception {
+    protected Class checkGeometryType(final Class geomClass) throws Exception {
         // we just prefix the table name with "t" otherwise we go beyond
         // the Oracle identifier max length limit (oh my my...)
         String featureTypeName = tname("t" + geomClass.getSimpleName());

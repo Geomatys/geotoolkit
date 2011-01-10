@@ -41,7 +41,7 @@ public class CachedRule extends Cache<Rule>{
     private final CachedSymbolizer[] symbols;
     private final Filter preparedFilter;
 
-    public CachedRule(Rule source){
+    public CachedRule(final Rule source){
         super(source);
 
         final List<? extends Symbolizer> ruleSymbols = source.symbolizers();
@@ -103,7 +103,7 @@ public class CachedRule extends Cache<Rule>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
 
         for(CachedSymbolizer cached : symbols){
             if(cached.isVisible(feature)) return true;

@@ -54,7 +54,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
             "shapes/stream.shp", "shapes/chinese_poly.shp" };
 
     /** Creates a new instance of ShapefileReadWriteTest */
-    public ShapefileReadWriteTest(String name) throws IOException {
+    public ShapefileReadWriteTest(final String name) throws IOException {
         super(name);
     }
     
@@ -168,17 +168,17 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         test(files[0]);
     }
 
-    private static void fail(String message, Throwable cause) {
+    private static void fail(final String message, final Throwable cause) {
         AssertionFailedError fail = new AssertionFailedError(message);
         fail.initCause(cause);
         throw fail;
     }
     
-    private void test(String f) throws Exception {
+    private void test(final String f) throws Exception {
         test(f, null);
     }
 
-    private void test(String f, Charset charset) throws Exception {
+    private void test(final String f, final Charset charset) throws Exception {
         copyShapefiles(f); // Work on File rather than URL from JAR.
         ShapefileDataStore s = null;
         if(charset == null) {
@@ -200,8 +200,8 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
         test(type, one, tmp2, maker, false, charset);
     }
 
-    private void test(SimpleFeatureType type, FeatureCollection<SimpleFeature> original,
-            File tmp, ShapefileDataStoreFactory maker, boolean memorymapped, Charset charset)
+    private void test(final SimpleFeatureType type, final FeatureCollection<SimpleFeature> original,
+            final File tmp, final ShapefileDataStoreFactory maker, final boolean memorymapped, final Charset charset)
             throws IOException, MalformedURLException, Exception {
 
         ShapefileDataStore shapefile;
@@ -272,7 +272,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 //        }
     }
 
-    static void compare(SimpleFeature f1, SimpleFeature f2) throws Exception {
+    static void compare(final SimpleFeature f1, final SimpleFeature f2) throws Exception {
 
         if (f1.getAttributeCount() != f2.getAttributeCount()) {
             throw new Exception("Unequal number of attributes");
@@ -300,7 +300,7 @@ public class ShapefileReadWriteTest extends AbstractTestCaseSupport {
 
     }
 
-    public static final void main(String[] args) throws Exception {
+    public static final void main(final String[] args) throws Exception {
         // verbose = true;
         junit.textui.TestRunner.run(suite(ShapefileReadWriteTest.class));
     }

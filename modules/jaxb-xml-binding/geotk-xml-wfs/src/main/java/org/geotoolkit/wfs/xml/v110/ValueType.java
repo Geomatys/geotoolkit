@@ -101,7 +101,7 @@ public class ValueType {
     /**
      * @param value the value to set
      */
-    public void setValue(Object value) {
+    public void setValue(final Object value) {
         this.value = Arrays.asList(value);
     }
 
@@ -119,7 +119,7 @@ public class ValueType {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }
@@ -150,7 +150,7 @@ public class ValueType {
             value.remove(obj);
         }
     }
-    public boolean isOnlySpace(String s) {
+    public boolean isOnlySpace(final String s) {
         String left = s.replaceAll(" ", "");
         left        = left.replaceAll("\n", "");
         left        = left.replaceAll("\t", "");

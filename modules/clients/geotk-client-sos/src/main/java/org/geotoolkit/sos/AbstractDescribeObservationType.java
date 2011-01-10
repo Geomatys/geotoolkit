@@ -60,7 +60,7 @@ public abstract class AbstractDescribeObservationType extends AbstractSOSRequest
     }
 
     @Override
-    public void setObservedProperty(String observedProperty) {
+    public void setObservedProperty(final String observedProperty) {
         this.observedProperty = observedProperty;
     }
 

@@ -57,7 +57,7 @@ public class PolygonPatchArrayPropertyType extends SurfacePatchArrayPropertyType
 
     PolygonPatchArrayPropertyType() {}
 
-    public PolygonPatchArrayPropertyType(List<? extends PolygonPatchType> polygonPatch) {
+    public PolygonPatchArrayPropertyType(final List<? extends PolygonPatchType> polygonPatch) {
         this.polygonPatch = new ArrayList<JAXBElement<? extends PolygonPatchType>>();
 
         if (polygonPatch != null) {
@@ -81,7 +81,7 @@ public class PolygonPatchArrayPropertyType extends SurfacePatchArrayPropertyType
     /**
      * @param polygonPatch the polygonPatch to set
      */
-    public void setPolygonPatch(List<JAXBElement<? extends PolygonPatchType>> polygonPatch) {
+    public void setPolygonPatch(final List<JAXBElement<? extends PolygonPatchType>> polygonPatch) {
         this.polygonPatch = polygonPatch;
     }
 

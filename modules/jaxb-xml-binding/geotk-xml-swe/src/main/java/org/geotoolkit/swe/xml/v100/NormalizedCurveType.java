@@ -74,7 +74,7 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
 
     }
 
-    public NormalizedCurveType(AbstractNormalizedCurve nc) {
+    public NormalizedCurveType(final AbstractNormalizedCurve nc) {
         super(nc);
         if (nc != null) {
             if (nc.getInputGain() != null) {
@@ -122,7 +122,7 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
      *     {@link QuantityPropertyType }
      *     
      */
-    public void setInputGain(QuantityPropertyType value) {
+    public void setInputGain(final QuantityPropertyType value) {
         this.inputGain = value;
     }
 
@@ -146,7 +146,7 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
      *     {@link QuantityPropertyType }
      *     
      */
-    public void setInputBias(QuantityPropertyType value) {
+    public void setInputBias(final QuantityPropertyType value) {
         this.inputBias = value;
     }
 
@@ -170,7 +170,7 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
      *     {@link QuantityPropertyType }
      *     
      */
-    public void setOutputGain(QuantityPropertyType value) {
+    public void setOutputGain(final QuantityPropertyType value) {
         this.outputGain = value;
     }
 
@@ -194,7 +194,7 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
      *     {@link QuantityPropertyType }
      *     
      */
-    public void setOutputBias(QuantityPropertyType value) {
+    public void setOutputBias(final QuantityPropertyType value) {
         this.outputBias = value;
     }
 
@@ -218,7 +218,7 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
      *     {@link CategoryPropertyType }
      *     
      */
-    public void setInterpolationMethod(CategoryPropertyType value) {
+    public void setInterpolationMethod(final CategoryPropertyType value) {
         this.interpolationMethod = value;
     }
 
@@ -242,7 +242,7 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
      *     {@link CategoryPropertyType }
      *     
      */
-    public void setExtrapolationMethod(CategoryPropertyType value) {
+    public void setExtrapolationMethod(final CategoryPropertyType value) {
         this.extrapolationMethod = value;
     }
 
@@ -266,7 +266,7 @@ public class NormalizedCurveType  extends AbstractDataRecordType implements Abst
      *     {@link CurvePropertyType }
      *     
      */
-    public void setFunction(CurvePropertyType value) {
+    public void setFunction(final CurvePropertyType value) {
         this.function = value;
     }
 

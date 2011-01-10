@@ -88,7 +88,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      * @return A java object which represents the metadata value.
      */
     @Override
-    public UnlimitedInteger unmarshal(UnlimitedIntegerAdapter value) throws Exception {
+    public UnlimitedInteger unmarshal(final UnlimitedIntegerAdapter value) throws Exception {
         if (value == null) {
             System.out.println("unmarshall null");
             return null;
@@ -104,7 +104,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      * @return The adapter for this String.
      */
     @Override
-    public UnlimitedIntegerAdapter marshal(UnlimitedInteger value) throws Exception {
+    public UnlimitedIntegerAdapter marshal(final UnlimitedInteger value) throws Exception {
         return new UnlimitedIntegerAdapter(value);
     }
 

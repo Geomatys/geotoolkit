@@ -67,7 +67,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         
     }
     
-    public FeatureOperationImpl(FeatureOperation operation) {
+    public FeatureOperationImpl(final FeatureOperation operation) {
         super(operation);
         if (operation != null) {
             signature           = operation.getSignature();
@@ -89,7 +89,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
      * Sets the value of the signature property.
      * 
      */
-    public void setSignature(String value) {
+    public void setSignature(final String value) {
         this.signature = value;
     }
 
@@ -103,7 +103,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
     /**
      * Sets the value of the formalDefinition property.
      */
-    public void setFormalDefinition(String value) {
+    public void setFormalDefinition(final String value) {
         this.formalDefinition = value;
     }
 
@@ -119,14 +119,14 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         return this.triggeredByValuesOf;
     }
     
-    public void setTriggeredByValuesOf(BoundFeatureAttribute triggeredByValuesOf) {
+    public void setTriggeredByValuesOf(final BoundFeatureAttribute triggeredByValuesOf) {
         if (this.triggeredByValuesOf == null) {
             this.triggeredByValuesOf = new ArrayList<BoundFeatureAttribute>();
         }
         this.triggeredByValuesOf.add(triggeredByValuesOf);
     }
     
-    public void setTriggeredByValuesOf(List<BoundFeatureAttribute> triggeredByValuesOf) {
+    public void setTriggeredByValuesOf(final List<BoundFeatureAttribute> triggeredByValuesOf) {
         this.triggeredByValuesOf = triggeredByValuesOf;
     }
 
@@ -141,14 +141,14 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         return this.observesValuesOf;
     }
     
-    public void setObservesValuesOf(BoundFeatureAttribute observesValuesOf) {
+    public void setObservesValuesOf(final BoundFeatureAttribute observesValuesOf) {
         if (this.observesValuesOf == null) {
             this.observesValuesOf = new ArrayList<BoundFeatureAttribute>();
         }
         this.observesValuesOf.add(observesValuesOf);
     }
 
-    public void setObservesValuesOf(List<BoundFeatureAttribute> observesValuesOf) {
+    public void setObservesValuesOf(final List<BoundFeatureAttribute> observesValuesOf) {
         this.observesValuesOf = observesValuesOf;
     }
     
@@ -163,14 +163,14 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         return this.affectsValuesOf;
     }
     
-    public void setAffectsValuesOf(BoundFeatureAttribute affectsValuesOf) {
+    public void setAffectsValuesOf(final BoundFeatureAttribute affectsValuesOf) {
         if (this.affectsValuesOf == null) {
             this.affectsValuesOf = new ArrayList<BoundFeatureAttribute>();
         }
         this.affectsValuesOf.add(affectsValuesOf);
     }
     
-    public void setAffectsValuesOf(List<BoundFeatureAttribute> affectsValuesOf) {
+    public void setAffectsValuesOf(final List<BoundFeatureAttribute> affectsValuesOf) {
         this.affectsValuesOf = affectsValuesOf;
     }
     
@@ -180,7 +180,7 @@ public class FeatureOperationImpl extends PropertyTypeImpl implements FeatureOpe
         return result;
     }
     
-    private void beforeMarshal(Marshaller marshaller) {
+    private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
             beforeMarshal(new HashMap<String, Referenceable>());
             Logger.getAnonymousLogger().info("marshall root operation");

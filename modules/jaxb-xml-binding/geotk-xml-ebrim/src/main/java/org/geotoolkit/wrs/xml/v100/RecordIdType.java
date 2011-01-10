@@ -58,7 +58,7 @@ public class RecordIdType {
     /**
      * Sets the value of the content property.
      */
-    public void setContent(String value) {
+    public void setContent(final String value) {
         this.content = value;
     }
 

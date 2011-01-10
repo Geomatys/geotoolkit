@@ -44,7 +44,7 @@ public final class StorageFile implements Comparable<StorageFile> {
     private final File tempFile;
     private final ShpFileType type;
 
-    public StorageFile(ShpFiles shpFiles, File tempFile, ShpFileType type) {
+    public StorageFile(final ShpFiles shpFiles, final File tempFile, final ShpFileType type) {
         this.shpFiles = shpFiles;
         this.tempFile = tempFile;
         this.type = type;
@@ -83,7 +83,7 @@ public final class StorageFile implements Comparable<StorageFile> {
      * @param storageFiles files to execute the replace functionality.
      * @throws IOException
      */
-    public static void replaceOriginals( StorageFile... storageFiles ) throws IOException {
+    public static void replaceOriginals( final StorageFile... storageFiles ) throws IOException {
         SortedSet<StorageFile> files = new TreeSet<StorageFile>(Arrays.asList(storageFiles));
 
         ShpFiles currentShpFiles = null;
@@ -138,7 +138,7 @@ public final class StorageFile implements Comparable<StorageFile> {
 
     }
 
-    private static void copyFile( File storage, URL url, File dest ) throws FileNotFoundException,
+    private static void copyFile( final File storage, final URL url, final File dest ) throws FileNotFoundException,
             IOException {
         FileChannel in = null;
         FileChannel out = null;
@@ -167,11 +167,11 @@ public final class StorageFile implements Comparable<StorageFile> {
         return shpFiles.acquireWrite(type, this);
     }
 
-    private void unlockWriteURL( URL url ) {
+    private void unlockWriteURL( final URL url ) {
         shpFiles.unlockWrite(url, this);
     }
 
-    private static void unlock( ShpFiles currentShpFiles, URL shpURL, StorageFile locker ) {
+    private static void unlock( final ShpFiles currentShpFiles, final URL shpURL, final StorageFile locker ) {
         // no lock to be unlocked
         if (currentShpFiles == null) {
             return;
@@ -184,7 +184,7 @@ public final class StorageFile implements Comparable<StorageFile> {
      * Just groups together files that have the same ShpFiles instance
      */
     @Override
-    public int compareTo( StorageFile o ) {
+    public int compareTo( final StorageFile o ) {
         // group togheter files that have the same shpefile instance
         if (this == o) {
             return 0;

@@ -70,7 +70,7 @@ public class SupportedFormatsType {
     /**
      * Build a new list of supported formats.
      */
-     public SupportedFormatsType(String nativeFormat, List<CodeListType> formats){
+     public SupportedFormatsType(final String nativeFormat, final List<CodeListType> formats){
          this.nativeFormat = nativeFormat;
          this.formats      = formats;
      }

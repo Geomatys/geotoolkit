@@ -48,7 +48,7 @@ public class DescribeLayer extends AbstractOperation {
 
     }
 
-    public DescribeLayer(List<String> formats, DCPType... dcpList) {
+    public DescribeLayer(final List<String> formats, final DCPType... dcpList) {
         if (formats != null) {
             this.format = new ArrayList<Format>();
             for (String f : formats) {
@@ -82,7 +82,7 @@ public class DescribeLayer extends AbstractOperation {
         return this.dcpType;
     }
 
-    public void updateURL(String url) {
+    public void updateURL(final String url) {
         for (DCPType dcp : dcpType) {
             final HTTP http = dcp.getHTTP();
             if (http != null) {

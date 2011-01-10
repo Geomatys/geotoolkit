@@ -103,7 +103,7 @@ public class ShpFiles {
      * @param file any one of the shapefile files
      * @throws FileNotFoundException if the shapefile associated with file is not found
      */
-    public ShpFiles(Object path) throws IllegalArgumentException {
+    public ShpFiles(final Object path) throws IllegalArgumentException {
         this(path,false);
     }
 
@@ -112,7 +112,7 @@ public class ShpFiles {
      * 
      * @param url any one of the shapefile files
      */
-    public ShpFiles(Object path, boolean loadQix) throws IllegalArgumentException {
+    public ShpFiles(final Object path, final boolean loadQix) throws IllegalArgumentException {
         URL url = null;
 
         if(path instanceof String){
@@ -216,7 +216,7 @@ public class ShpFiles {
      * @param logLevel
      *                the level at which to log.
      */
-    public void logCurrentLockers(Level logLevel) {
+    public void logCurrentLockers(final Level logLevel) {
         for (Collection<ShpFilesLocker> lockerList : lockers.values()) {
             for (ShpFilesLocker locker : lockerList) {
                 ShapefileDataStoreFactory.LOGGER
@@ -257,7 +257,7 @@ public class ShpFiles {
      *         the type parameter or null if it is known that the file does not
      *         exist.
      */
-    public String get(ShpFileType type) {
+    public String get(final ShpFileType type) {
         return urls.get(type).toExternalForm();
     }
 
@@ -293,7 +293,7 @@ public class ShpFiles {
      *                must release the lock and is also used for debugging.
      * @return the File type requested 
      */
-    public File acquireReadFile(ShpFileType type, Object requestor) {
+    public File acquireReadFile(final ShpFileType type, final Object requestor) {
         if(!isLocal() ){
             throw new IllegalStateException("This method only applies if the files are local");
         }
@@ -318,7 +318,7 @@ public class ShpFiles {
      *                must release the lock and is also used for debugging.
      * @return the URL to the file of the type requested
      */
-    public URL acquireRead(ShpFileType type, Object requestor) {
+    public URL acquireRead(final ShpFileType type, final Object requestor) {
         URL url = urls.get(type);
         if (url == null)
             return null;
@@ -348,7 +348,7 @@ public class ShpFiles {
      *                must release the lock and is also used for debugging.
      * @return A result object containing the URL or the reason for the failure.
      */
-    public Entry<URL, State> tryAcquireRead(ShpFileType type, Object requestor) {
+    public Entry<URL, State> tryAcquireRead(final ShpFileType type, final Object requestor) {
         URL url = urls.get(type);
         if (url == null) {
             return new SimpleImmutableEntry<URL, State>(null, State.NOT_EXIST);
@@ -373,7 +373,7 @@ public class ShpFiles {
      * @param requestor
      *                the class that requested the file
      */
-    public void unlockRead(File file, Object requestor) {
+    public void unlockRead(final File file, final Object requestor) {
         final Collection<URL> allURLS = urls.values();
         for (URL url : allURLS) {
             if (toFile(url).equals(file)) {
@@ -391,7 +391,7 @@ public class ShpFiles {
      * @param requestor
      *                the class that requested the url
      */
-    public void unlockRead(URL url, Object requestor) {
+    public void unlockRead(final URL url, final Object requestor) {
         if (url == null) {
             throw new NullPointerException("url cannot be null");
         }
@@ -431,8 +431,8 @@ public class ShpFiles {
      *                must release the lock and is also used for debugging.
      * @return the File to the file of the type requested
      */
-    public File acquireWriteFile(ShpFileType type,
-            Object requestor) {
+    public File acquireWriteFile(final ShpFileType type,
+            final Object requestor) {
         if(!isLocal() ){
             throw new IllegalStateException("This method only applies if the files are local");
         }
@@ -458,7 +458,7 @@ public class ShpFiles {
      *                must release the lock and is also used for debugging.
      * @return the URL to the file of the type requested
      */
-    public URL acquireWrite(ShpFileType type, Object requestor) {
+    public URL acquireWrite(final ShpFileType type, final Object requestor) {
         URL url = urls.get(type);
         if (url == null) {
             return null;
@@ -492,7 +492,7 @@ public class ShpFiles {
      *                must release the lock and is also used for debugging.
      * @return A result object containing the URL or the reason for the failure.
      */
-    public Entry<URL, State> tryAcquireWrite(ShpFileType type, Object requestor) {
+    public Entry<URL, State> tryAcquireWrite(final ShpFileType type, final Object requestor) {
         
         URL url = urls.get(type);
         if (url == null) {
@@ -524,7 +524,7 @@ public class ShpFiles {
      * @param requestor
      *                the class that requested the file
      */
-    public void unlockWrite(File file, Object requestor) {
+    public void unlockWrite(final File file, final Object requestor) {
         Collection<URL> allURLS = urls.values();
         for (URL url : allURLS) {
             if (toFile(url).equals(file)) {
@@ -543,7 +543,7 @@ public class ShpFiles {
      * @param requestor
      *                the class that requested the url
      */
-    public void unlockWrite(URL url, Object requestor) {
+    public void unlockWrite(final URL url, final Object requestor) {
         if (url == null) {
             throw new NullPointerException("url cannot be null");
         }
@@ -585,7 +585,7 @@ public class ShpFiles {
      * Gives up all read locks in preparation for lock upgade
      * @param threadLockers
      */
-    private void relinquishReadLocks(Collection<ShpFilesLocker> threadLockers) {
+    private void relinquishReadLocks(final Collection<ShpFilesLocker> threadLockers) {
         for (ShpFilesLocker shpFilesLocker : threadLockers) {
             if(!shpFilesLocker.write && !shpFilesLocker.upgraded) {
                 readWriteLock.readLock().unlock();
@@ -598,7 +598,7 @@ public class ShpFiles {
      * Re-takes the read locks in preparation for lock downgrade
      * @param threadLockers
      */
-    private void regainReadLocks(Collection<ShpFilesLocker> threadLockers) {
+    private void regainReadLocks(final Collection<ShpFilesLocker> threadLockers) {
         for (ShpFilesLocker shpFilesLocker : threadLockers) {
             if(!shpFilesLocker.write && shpFilesLocker.upgraded) {
                 readWriteLock.readLock().lock();
@@ -655,7 +655,7 @@ public class ShpFiles {
      * @throws IOException
      *                 if a problem occurred opening the stream.
      */
-    public InputStream getInputStream(ShpFileType type,
+    public InputStream getInputStream(final ShpFileType type,
             final Object requestor) throws IOException {
         final URL url = acquireRead(type, requestor);
 
@@ -704,7 +704,7 @@ public class ShpFiles {
      * @throws IOException
      *                 if a problem occurred opening the stream.
      */
-    public OutputStream getOutputStream(ShpFileType type,
+    public OutputStream getOutputStream(final ShpFileType type,
             final Object requestor) throws IOException {
         final URL url = acquireWrite(type, requestor);
 
@@ -768,8 +768,8 @@ public class ShpFiles {
      *                the object requesting the channel
      * 
      */
-    public ReadableByteChannel getReadChannel(ShpFileType type,
-            Object requestor) throws IOException {
+    public ReadableByteChannel getReadChannel(final ShpFileType type,
+            final Object requestor) throws IOException {
         URL url = acquireRead(type, requestor);
         ReadableByteChannel channel = null;
         try {
@@ -831,8 +831,8 @@ public class ShpFiles {
      * @throws IOException
      *                 if there is an error opening the stream
      */
-    public WritableByteChannel getWriteChannel(ShpFileType type,
-            Object requestor) throws IOException {
+    public WritableByteChannel getWriteChannel(final ShpFileType type,
+            final Object requestor) throws IOException {
 
         URL url = acquireWrite(type, requestor);
 
@@ -893,7 +893,7 @@ public class ShpFiles {
      * @return StorageFile
      * @throws IOException if temporary files cannot be created
      */
-    public StorageFile getStorageFile(ShpFileType type) throws IOException {
+    public StorageFile getStorageFile(final ShpFileType type) throws IOException {
         String baseName = getTypeName();
         if (baseName.length() < 3) { // min prefix length for createTempFile
             baseName = baseName + "___".substring(0, 3 - baseName.length());
@@ -922,7 +922,7 @@ public class ShpFiles {
      * @return true if the file exists.
      * @throws IllegalArgumentException if the files are not local.
      */
-    public boolean exists(ShpFileType fileType) throws IllegalArgumentException {
+    public boolean exists(final ShpFileType fileType) throws IllegalArgumentException {
         if (!isLocal()) {
             throw new IllegalArgumentException("This method only makes sense if the files are local");
         }
@@ -940,7 +940,7 @@ public class ShpFiles {
     /////////////// utils methods //////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    private static String baseName(Object obj) {
+    private static String baseName(final Object obj) {
         for(final ShpFileType type : ShpFileType.values()) {
             String base = null;
             if(obj instanceof File) {
@@ -960,7 +960,7 @@ public class ShpFiles {
      * different cases that the extension can be made up of.
      * exemple : Shp, SHP, Shp, ShP etc...
      */
-    private static URL findExistingFile(URL value) {
+    private static URL findExistingFile(final URL value) {
         final File file = toFile(value);
         final File directory = file.getParentFile();
         if( directory==null || !directory.exists() ) {
@@ -984,7 +984,7 @@ public class ShpFiles {
         return null;
     }
 
-    public static File toFile(URL url){
+    public static File toFile(final URL url){
         try {
             return IOUtilities.toFile(url, ENCODING);
         } catch (IOException ex) {

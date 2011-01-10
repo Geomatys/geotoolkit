@@ -94,15 +94,15 @@ public class Positions implements AbstractPositions {
 
     }
 
-    public Positions(PositionList positionList)  {
+    public Positions(final PositionList positionList)  {
         this.positionList = positionList;
     }
 
-    public Positions(String id , List<Position> position) {
+    public Positions(final String id , final List<Position> position) {
         this.positionList = new PositionList(id, position);
     }
     
-    public Positions(AbstractPositions positions) {
+    public Positions(final AbstractPositions positions) {
         if (positions != null) {
             this.actuate      = positions.getActuate();
             this.arcrole      = positions.getArcrole();
@@ -138,7 +138,7 @@ public class Positions implements AbstractPositions {
      *     {@link Positions.PositionList }
      *     
      */
-    public void setPositionList(PositionList value) {
+    public void setPositionList(final PositionList value) {
         this.positionList = value;
     }
 
@@ -162,7 +162,7 @@ public class Positions implements AbstractPositions {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -186,7 +186,7 @@ public class Positions implements AbstractPositions {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -210,7 +210,7 @@ public class Positions implements AbstractPositions {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -234,7 +234,7 @@ public class Positions implements AbstractPositions {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -258,7 +258,7 @@ public class Positions implements AbstractPositions {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -282,7 +282,7 @@ public class Positions implements AbstractPositions {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -306,7 +306,7 @@ public class Positions implements AbstractPositions {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -330,7 +330,7 @@ public class Positions implements AbstractPositions {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 }

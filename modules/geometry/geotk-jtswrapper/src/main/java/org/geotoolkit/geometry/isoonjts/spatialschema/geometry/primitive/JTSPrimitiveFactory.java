@@ -172,7 +172,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
      * {@inheritDoc }
      */
     @Override
-    public SurfaceBoundary createSurfaceBoundary(Ring exterior, List interiors)
+    public SurfaceBoundary createSurfaceBoundary(final Ring exterior, final List interiors)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
     }
@@ -203,7 +203,7 @@ public class JTSPrimitiveFactory implements PrimitiveFactory {
     }
 
     
-    public PolyhedralSurface createPolyhedralSurface(List<Polygon> patches)
+    public PolyhedralSurface createPolyhedralSurface(final List<Polygon> patches)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         JTSPolyhedralSurface result = new JTSPolyhedralSurface(crs);
         List<?> cast = (List<?>) patches;

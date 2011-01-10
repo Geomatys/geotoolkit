@@ -92,7 +92,7 @@ public final class DimapAccessor {
      * @throws NoSuchAuthorityCodeException
      * @throws FactoryException
      */
-    public static CoordinateReferenceSystem readCRS(Element doc) throws NoSuchAuthorityCodeException, FactoryException{
+    public static CoordinateReferenceSystem readCRS(final Element doc) throws NoSuchAuthorityCodeException, FactoryException{
         final Element ele = firstElement(doc, TAG_CRS);
         final Element code = firstElement(ele, TAG_HORIZONTAL_CS_CODE);
         return CRS.decode(code.getTextContent());
@@ -107,7 +107,7 @@ public final class DimapAccessor {
      * @throws FactoryException
      * @throws TransformException
      */
-    public static AffineTransform readGridToCRS(Element doc) throws FactoryException, TransformException{
+    public static AffineTransform readGridToCRS(final Element doc) throws FactoryException, TransformException{
         final Element ele = firstElement(doc, TAG_GEOPOSITION);
         final Element insert = firstElement(ele, TAG_GEOPOSITION_INSERT);
         final Element points = firstElement(ele, TAG_GEOPOSITION_POINTS);
@@ -173,7 +173,7 @@ public final class DimapAccessor {
      * @param doc
      * @return int[] 0:rows, 1:cols, 2:bands
      */
-    public static int[] readRasterDimension(Element doc){
+    public static int[] readRasterDimension(final Element doc){
         final Element ele = firstElement(doc, TAG_RASTER_DIMENSIONS);
         final int rows = textValueSafe(ele, TAG_NROWS, Integer.class);
         final int cols = textValueSafe(ele, TAG_NCOLS, Integer.class);
@@ -188,7 +188,7 @@ public final class DimapAccessor {
      * @param parent
      * @return GridSampleDimension
      */
-    public static int[] readColorBandMapping(Element parent){
+    public static int[] readColorBandMapping(final Element parent){
         final Element ele = firstElement(parent, TAG_IMAGE_DISPLAY);
         if(ele == null) return null;
         final Element displayOrder = firstElement(ele, TAG_BAND_DISPLAY_ORDER);
@@ -212,7 +212,7 @@ public final class DimapAccessor {
      * @param doc
      * @return GridSampleDimension
      */
-    public static GridSampleDimension[] readSampleDimensions(Element doc, String coverageName,int nbbands){
+    public static GridSampleDimension[] readSampleDimensions(final Element doc, final String coverageName,final int nbbands){
 
         // read raster encoding informations -----------------------------------
         final Element nodeEncoding = firstElement(doc, TAG_RASTER_ENCODING);
@@ -307,7 +307,7 @@ public final class DimapAccessor {
     /**
      * @return DatasetName from Dataset_ID tag. 
      */
-    public static String readDatasetName(Element doc){
+    public static String readDatasetName(final Element doc){
         final Element datasetID = firstElement(doc, TAG_DATASET_ID);
         final String name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
         return name;
@@ -322,7 +322,7 @@ public final class DimapAccessor {
      * @param metadata : metadata to fill, if null it will create one.
      * @return Metadata, never null
      */
-    public static DefaultMetadata fillMetadata(Element doc, DefaultMetadata metadata){
+    public static DefaultMetadata fillMetadata(final Element doc, DefaultMetadata metadata){
 
         if(metadata == null){
             metadata = new DefaultMetadata();

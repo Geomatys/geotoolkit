@@ -39,7 +39,7 @@ public class SimulatedAnnealing {
     private SimulatedAnnealing(){
     }
 
-    public static Set<Candidate> simulate(List<Candidate> cdts, double temperature, double coolDown){
+    public static Set<Candidate> simulate(final List<Candidate> cdts, double temperature, final double coolDown){
 
         final Map<Candidate,Point> candidates = new HashMap<Candidate,Point>();
         for(Candidate cdt : cdts){
@@ -122,7 +122,7 @@ public class SimulatedAnnealing {
         return candidates.keySet();
     }
 
-    private static boolean findBestLocalCombinaison(PointCandidate c, Point p, Map<Candidate,Point> candidates, double temperature){
+    private static boolean findBestLocalCombinaison(final PointCandidate c, final Point p, final Map<Candidate,Point> candidates, final double temperature){
 
         Map<PointCandidate,Point> localCandidates = new HashMap<PointCandidate,Point>();
         localCandidates.put(c, new Point(p));
@@ -181,14 +181,14 @@ public class SimulatedAnnealing {
      * @param d The distance.
      * @return True if annealing should take place.
      */
-    public boolean anneal(double d, double temperature) {
+    public boolean anneal(final double d, final double temperature) {
         if (temperature < 1.0E-4) {
             return (d > 0.0);
         }
         return (Math.random() < Math.exp(d / temperature));
     }
 
-    private static int solutionCost(Map<? extends Candidate,Point> candidates){
+    private static int solutionCost(final Map<? extends Candidate,Point> candidates){
         int d = 0;
 
         for(Candidate c : candidates.keySet()){
@@ -199,7 +199,7 @@ public class SimulatedAnnealing {
         return d;
     }
 
-    private static int solutionLocalCost(Map<? extends Candidate,Point> localCandidates, Map<? extends Candidate,Point> candidates){
+    private static int solutionLocalCost(final Map<? extends Candidate,Point> localCandidates, final Map<? extends Candidate,Point> candidates){
         int d = 0;
 
         for(Candidate c : localCandidates.keySet()){
@@ -211,7 +211,7 @@ public class SimulatedAnnealing {
     }
 
 
-    private static int solutionCost(Candidate candidate, Point p, Map<? extends Candidate,Point> candidates){
+    private static int solutionCost(final Candidate candidate, final Point p, final Map<? extends Candidate,Point> candidates){
         int d = Math.abs(p.x) + Math.abs(p.y);
 
         for(Candidate other : candidates.keySet()){

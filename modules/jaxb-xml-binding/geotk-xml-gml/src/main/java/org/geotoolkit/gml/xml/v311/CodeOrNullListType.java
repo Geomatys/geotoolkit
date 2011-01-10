@@ -111,7 +111,7 @@ public class CodeOrNullListType {
      *     {@link String }
      *     
      */
-    public void setCodeSpace(String value) {
+    public void setCodeSpace(final String value) {
         this.codeSpace = value;
     }
 

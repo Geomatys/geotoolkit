@@ -118,7 +118,7 @@ public class ItemIconType
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 

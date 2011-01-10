@@ -64,7 +64,7 @@ public class TextBlockEntry extends AbstractEncodingEntry implements TextBlock {
      */
     public TextBlockEntry() {}
 
-    public TextBlockEntry(TextBlock tb) {
+    public TextBlockEntry(final TextBlock tb) {
         super(tb);
         if (tb != null) {
             this.blockSeparator   = tb.getBlockSeparator();
@@ -76,7 +76,7 @@ public class TextBlockEntry extends AbstractEncodingEntry implements TextBlock {
     /**
      * Crée un nouveau encodage de texte.
      */
-    public TextBlockEntry(String id, String tokenSeparator, String blockSeparator, String decimalSeparator) {
+    public TextBlockEntry(final String id, final String tokenSeparator, final String blockSeparator, final String decimalSeparator) {
         super(id);
         this.tokenSeparator   = tokenSeparator;
         this.blockSeparator   = blockSeparator;

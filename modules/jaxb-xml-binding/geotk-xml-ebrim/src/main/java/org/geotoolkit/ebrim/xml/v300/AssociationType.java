@@ -71,7 +71,7 @@ public class AssociationType extends RegistryObjectType {
     /**
      * Sets the value of the associationType property.
      */
-    public void setAssociationType(String value) {
+    public void setAssociationType(final String value) {
         this.associationType = value;
     }
 
@@ -85,7 +85,7 @@ public class AssociationType extends RegistryObjectType {
     /**
      * Sets the value of the sourceObject property.
      */
-    public void setSourceObject(String value) {
+    public void setSourceObject(final String value) {
         this.sourceObject = value;
     }
 
@@ -99,7 +99,7 @@ public class AssociationType extends RegistryObjectType {
     /**
      * Sets the value of the targetObject property.
      */
-    public void setTargetObject(String value) {
+    public void setTargetObject(final String value) {
         this.targetObject = value;
     }
 

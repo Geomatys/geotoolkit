@@ -123,7 +123,7 @@ public final class GmlGeometryAdapter extends GeometryAdapter implements Registe
      * @return The adapter which covers the metadata value.
      */
     @Override
-    protected GeometryAdapter wrap(Geometry value) {
+    protected GeometryAdapter wrap(final Geometry value) {
         return new GmlGeometryAdapter(value);
     }
 

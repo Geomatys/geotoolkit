@@ -60,7 +60,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
     protected final E left;
     protected final F right;
 
-    protected AbstractBinarySpatialOperator(E left, F right){
+    protected AbstractBinarySpatialOperator(final E left, final F right){
         if(left == null || right == null){
             throw new NullPointerException("Left and right expressions can not be null");
         }
@@ -84,14 +84,14 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         return right;
     }
 
-    protected static Unit toUnit(String str){
+    protected static Unit toUnit(final String str){
         return Units.valueOf(str);
     }
 
     /**
      * Reproject geometries to the same CRS if needed and if possible.
      */
-    protected static Geometry[] toSameCRS(Geometry leftGeom, Geometry rightGeom)
+    protected static Geometry[] toSameCRS(final Geometry leftGeom, final Geometry rightGeom)
             throws NoSuchAuthorityCodeException, FactoryException, TransformException{
 
         final int srid1 = leftGeom.getSRID();
@@ -122,7 +122,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
      * will be compatible with the requested unit.
      * return Array[leftGeometry, rightGeometry, matchingCRS];
      */
-    protected static Object[] toSameCRS(Geometry leftGeom, Geometry rightGeom, Unit unit)
+    protected static Object[] toSameCRS(final Geometry leftGeom, final Geometry rightGeom, final Unit unit)
             throws NoSuchAuthorityCodeException, FactoryException, TransformException{
 
         final int srid1 = leftGeom.getSRID();

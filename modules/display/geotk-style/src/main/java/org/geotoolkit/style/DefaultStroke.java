@@ -64,8 +64,8 @@ public class DefaultStroke implements Stroke{
      * @param dashes : can be null, if not null then it must have 2 fields
      * @param offset : if null or Expression.NIL will be replaced by default value.
      */
-    public DefaultStroke(Expression color, Expression opacity, Expression width,
-            Expression join, Expression cap, float[] dashes, Expression offset){
+    public DefaultStroke(final Expression color, final Expression opacity, final Expression width,
+            final Expression join, final Expression cap, final float[] dashes, final Expression offset){
         
         if(dashes != null && dashes.length < 2){
             throw new IllegalArgumentException("Dashes must have 2 or more fields");
@@ -94,8 +94,8 @@ public class DefaultStroke implements Stroke{
      * @param dashes : can be null, if not null then it must have 2 fields
      * @param offset : if null or Expression.NIL will be replaced by default value.
      */
-    DefaultStroke(GraphicFill fill, Expression color, Expression opacity, 
-            Expression width, Expression join, Expression cap, float[] dashes, Expression offset){
+    DefaultStroke(final GraphicFill fill, final Expression color, final Expression opacity, 
+            final Expression width, final Expression join, final Expression cap, final float[] dashes, final Expression offset){
                 
         if(dashes != null && dashes.length < 2){
             throw new IllegalArgumentException("Dashes must have 2 or more fields");
@@ -126,8 +126,8 @@ public class DefaultStroke implements Stroke{
      * @param dashes : can be null, if not null then it must have 2 fields
      * @param offset : if null or Expression.NIL will be replaced by default value.
      */
-    DefaultStroke(GraphicStroke stroke, Expression color, Expression opacity, 
-            Expression width, Expression join, Expression cap, float[] dashes, Expression offset){
+    DefaultStroke(final GraphicStroke stroke, final Expression color, final Expression opacity, 
+            final Expression width, final Expression join, final Expression cap, final float[] dashes, final Expression offset){
         if(stroke == null){
             throw new IllegalArgumentException("Stroke can not be null.");
         }
@@ -223,7 +223,7 @@ public class DefaultStroke implements Stroke{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -231,7 +231,7 @@ public class DefaultStroke implements Stroke{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

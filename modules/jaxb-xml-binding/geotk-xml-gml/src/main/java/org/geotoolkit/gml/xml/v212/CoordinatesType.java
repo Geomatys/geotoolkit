@@ -86,7 +86,7 @@ public class CoordinatesType {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -114,7 +114,7 @@ public class CoordinatesType {
      *     {@link String }
      *     
      */
-    public void setDecimal(String value) {
+    public void setDecimal(final String value) {
         this.decimal = value;
     }
 
@@ -142,7 +142,7 @@ public class CoordinatesType {
      *     {@link String }
      *     
      */
-    public void setCs(String value) {
+    public void setCs(final String value) {
         this.cs = value;
     }
 
@@ -170,7 +170,7 @@ public class CoordinatesType {
      *     {@link String }
      *     
      */
-    public void setTs(String value) {
+    public void setTs(final String value) {
         this.ts = value;
     }
 

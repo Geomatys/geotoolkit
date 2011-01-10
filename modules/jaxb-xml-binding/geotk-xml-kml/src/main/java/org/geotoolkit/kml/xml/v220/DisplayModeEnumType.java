@@ -46,7 +46,7 @@ public enum DisplayModeEnumType {
     HIDE("hide");
     private final String value;
 
-    DisplayModeEnumType(String v) {
+    DisplayModeEnumType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum DisplayModeEnumType {
         return value;
     }
 
-    public static DisplayModeEnumType fromValue(String v) {
+    public static DisplayModeEnumType fromValue(final String v) {
         for (DisplayModeEnumType c: DisplayModeEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

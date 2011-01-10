@@ -89,7 +89,7 @@ class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstr
      * {@inheritDoc }
      */
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
     
@@ -97,7 +97,7 @@ class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstr
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
 
-    protected void fireLibraryChange(int type, FeatureTypeConstraint lib, NumberRange<Integer> range) {
+    protected void fireLibraryChange(final int type, final FeatureTypeConstraint lib, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<FeatureTypeConstraint> event = new CollectionChangeEvent<FeatureTypeConstraint>(this, lib, type, range, null);
@@ -109,7 +109,7 @@ class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstr
 
     }
     
-    protected void fireLibraryChange(int type, FeatureTypeConstraint lib, NumberRange<Integer> range, EventObject subEvent) {
+    protected void fireLibraryChange(final int type, final FeatureTypeConstraint lib, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<FeatureTypeConstraint> event = new CollectionChangeEvent<FeatureTypeConstraint>(this, lib, type, range,subEvent);
@@ -121,7 +121,7 @@ class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstr
 
     }
     
-    protected void fireLibraryChange(int type, Collection<? extends FeatureTypeConstraint> lib, NumberRange<Integer> range){
+    protected void fireLibraryChange(final int type, final Collection<? extends FeatureTypeConstraint> lib, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
         
         final CollectionChangeEvent<FeatureTypeConstraint> event = new CollectionChangeEvent<FeatureTypeConstraint>(this,lib,type,range, null);
@@ -137,7 +137,7 @@ class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstr
      * {@inheritDoc }
      */
     @Override
-    public void addListener(CollectionChangeListener<? extends Constraint> listener) {
+    public void addListener(final CollectionChangeListener<? extends Constraint> listener) {
         listeners.add(CollectionChangeListener.class, listener);
     }
 
@@ -145,7 +145,7 @@ class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstr
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(CollectionChangeListener<? extends Constraint> listener) {
+    public void removeListener(final CollectionChangeListener<? extends Constraint> listener) {
         listeners.remove(CollectionChangeListener.class, listener);
     }
 
@@ -153,7 +153,7 @@ class DefaultMutableLayerFeatureConstraints implements MutableLayerFeatureConstr
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

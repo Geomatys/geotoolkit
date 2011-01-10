@@ -33,7 +33,7 @@ public class DefaultIntervalPalette implements IntervalPalette{
 
     private final int[] ARGB;
 
-    public DefaultIntervalPalette(Color[] colors) {
+    public DefaultIntervalPalette(final Color[] colors) {
         this.ARGB = new int[colors.length];
 
         for(int i=0;i<colors.length;i++){
@@ -43,7 +43,7 @@ public class DefaultIntervalPalette implements IntervalPalette{
     }
 
     @Override
-    public void render(Graphics2D g, Rectangle rectangle) {
+    public void render(final Graphics2D g, final Rectangle rectangle) {
 
         final float[] fractions = new float[ARGB.length];
         final Color[] colors = new Color[ARGB.length];
@@ -67,7 +67,7 @@ public class DefaultIntervalPalette implements IntervalPalette{
     }
 
     @Override
-    public Color interpolate(double d) {
+    public Color interpolate(final double d) {
 
         float lastStep = -1;
         int lastColor = -1;

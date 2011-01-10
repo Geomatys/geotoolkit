@@ -82,7 +82,7 @@ public class URLType {
      *     {@link OnlineResourceType }
      *     
      */
-    public void setOnlineResource(OnlineResourceType value) {
+    public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
     }
 
@@ -106,7 +106,7 @@ public class URLType {
      *     {@link BigInteger }
      *     
      */
-    public void setWidth(BigInteger value) {
+    public void setWidth(final BigInteger value) {
         this.width = value;
     }
 
@@ -130,7 +130,7 @@ public class URLType {
      *     {@link BigInteger }
      *     
      */
-    public void setHeight(BigInteger value) {
+    public void setHeight(final BigInteger value) {
         this.height = value;
     }
 
@@ -154,7 +154,7 @@ public class URLType {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 

@@ -73,7 +73,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
         
     }
     
-    public AllowedTokens(AbstractAllowedTokens tk) {
+    public AllowedTokens(final AbstractAllowedTokens tk) {
         if (tk != null) {
             this.id = tk.getId();
             valueList = new ArrayList<JAXBElement<List<String>>>();
@@ -94,7 +94,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
         return this.valueList;
     }
 
-    public void setValueList(String value) {
+    public void setValueList(final String value) {
         if (value != null) {
             if (valueList == null) {
                 valueList = new ArrayList<JAXBElement<List<String>>>();
@@ -116,7 +116,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
         }
     }
 
-    public void setValueList(List<String> value) {
+    public void setValueList(final List<String> value) {
         if (value != null) {
             if (valueList == null) {
                 valueList = new ArrayList<JAXBElement<List<String>>>();
@@ -136,7 +136,7 @@ public class AllowedTokens implements AbstractAllowedTokens {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

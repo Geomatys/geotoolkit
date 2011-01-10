@@ -57,7 +57,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
     public final String HOLETOUCHEDGE = "shapes/holeTouchEdge.shp";
     public final String EXTRAATEND = "shapes/extraAtEnd.shp";
 
-    public ShapefileTest(String testName) throws IOException {
+    public ShapefileTest(final String testName) throws IOException {
         super(testName);
     }
 
@@ -213,7 +213,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
         }
     }
 
-    protected void loadShapes(String resource, int expected) throws Exception {
+    protected void loadShapes(final String resource, final int expected) throws Exception {
         final URL url = ShapeTestData.url(resource);
         ShapefileReader reader = new ShapefileReader(new ShpFiles(url), false,
                 false, true);
@@ -230,7 +230,7 @@ public class ShapefileTest extends AbstractTestCaseSupport {
                 expected, cnt);
     }
 
-    protected void loadMemoryMapped(String resource, int expected)
+    protected void loadMemoryMapped(final String resource, final int expected)
             throws Exception {
         final URL url = ShapeTestData.url(resource);
         ShapefileReader reader = new ShapefileReader(new ShpFiles(url), false,

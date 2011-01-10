@@ -55,7 +55,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
     /**
      * Clone a FeatureAssociation
      */
-    public BoundFeatureAttributeImpl(BoundFeatureAttribute feature) {
+    public BoundFeatureAttributeImpl(final BoundFeatureAttribute feature) {
         if (feature != null) {
             this.id          = feature.getId();
             this.attribute   = feature.getAttribute();
@@ -68,7 +68,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
         return featureType;
     }
     
-    public void setFeatureType(FeatureType featureType) {
+    public void setFeatureType(final FeatureType featureType) {
         this.featureType = featureType;
     }
 
@@ -76,7 +76,7 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
        return attribute;
     }
     
-    public void setAttribute(FeatureAttribute attribute) {
+    public void setAttribute(final FeatureAttribute attribute) {
        this.attribute = attribute;
     }
     
@@ -84,14 +84,14 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
      
     /**
      * set the feature in reference mode
      */
-    public void setReference(boolean mode) {
+    public void setReference(final boolean mode) {
         this.isReference = mode;
     }
     

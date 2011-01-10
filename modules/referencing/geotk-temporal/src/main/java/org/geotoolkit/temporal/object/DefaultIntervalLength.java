@@ -54,7 +54,7 @@ public class DefaultIntervalLength extends DefaultDuration implements IntervalLe
      * @param factor
      * @param value
      */
-    public DefaultIntervalLength(Unit unit, int radix, int factor, int value) {
+    public DefaultIntervalLength(final Unit unit, final int radix, final int factor, final int value) {
         this.unit = unit;
         this.radix = radix;
         this.factor = factor;

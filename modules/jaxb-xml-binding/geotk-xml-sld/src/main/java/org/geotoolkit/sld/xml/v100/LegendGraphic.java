@@ -73,7 +73,7 @@ public class LegendGraphic {
      *     {@link Graphic }
      *     
      */
-    public void setGraphic(Graphic value) {
+    public void setGraphic(final Graphic value) {
         this.graphic = value;
     }
 

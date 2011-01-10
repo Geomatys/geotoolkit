@@ -73,7 +73,7 @@ public class NamedStyle {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

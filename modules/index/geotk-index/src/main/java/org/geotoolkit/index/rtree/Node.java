@@ -38,7 +38,7 @@ public abstract class Node implements EntryBoundsChangeListener {
     protected Entry[] entries;
     protected boolean isChanged;
 
-    public Node(int maxNodeEntries) {
+    public Node(final int maxNodeEntries) {
         this.maxNodeEntries = maxNodeEntries;
         this.entries = new Entry[maxNodeEntries + 1];
         this.bounds = null;
@@ -49,7 +49,7 @@ public abstract class Node implements EntryBoundsChangeListener {
      * 
      * @param entry
      */
-    public final void addEntry(Entry entry) {
+    public final void addEntry(final Entry entry) {
         this.entries[this.entriesCount++] = entry;
         entry.setListener(this);
 
@@ -68,7 +68,7 @@ public abstract class Node implements EntryBoundsChangeListener {
      * @param entry
      *                The <code>Entry</code> to remove
      */
-    public final void removeEntry(Entry entry) {
+    public final void removeEntry(final Entry entry) {
         Entry[] newEntries = new Entry[this.entries.length];
         Envelope newBounds = null;
         int newSize = 0;
@@ -114,7 +114,7 @@ public abstract class Node implements EntryBoundsChangeListener {
      * 
      * @param b
      */
-    public void setLeaf(boolean b) {
+    public void setLeaf(final boolean b) {
         leaf = b;
     }
 
@@ -132,7 +132,7 @@ public abstract class Node implements EntryBoundsChangeListener {
      * @param n
      * 
      */
-    public Entry getEntry(int n) {
+    public Entry getEntry(final int n) {
         return this.entries[n];
     }
 
@@ -162,7 +162,7 @@ public abstract class Node implements EntryBoundsChangeListener {
      * {@inheritDoc }
      */
     @Override
-    public void boundsChanged(Entry e) {
+    public void boundsChanged(final Entry e) {
         this.bounds = new Envelope(this.entries[0].getBounds());
 
         for (int i = 1; i < this.entriesCount; i++) {

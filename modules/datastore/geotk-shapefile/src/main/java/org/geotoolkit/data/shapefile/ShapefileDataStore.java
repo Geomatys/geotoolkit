@@ -118,16 +118,16 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @throws NullPointerException DOCUMENT ME!
      * @throws DataStoreException If computation of related URLs (dbf,shx) fails.
      */
-    public ShapefileDataStore(URL url) throws DataStoreException,MalformedURLException {
+    public ShapefileDataStore(final URL url) throws DataStoreException,MalformedURLException {
         this(url, false, DEFAULT_STRING_CHARSET);
     }
 
-    public ShapefileDataStore(URL url, boolean useMemoryMappedBuffer)
+    public ShapefileDataStore(final URL url, final boolean useMemoryMappedBuffer)
             throws DataStoreException,MalformedURLException {
         this(url, useMemoryMappedBuffer, DEFAULT_STRING_CHARSET);
     }
 
-    public ShapefileDataStore(URL url, boolean useMemoryMappedBuffer, Charset dbfCharset)
+    public ShapefileDataStore(final URL url, final boolean useMemoryMappedBuffer, final Charset dbfCharset)
             throws DataStoreException,MalformedURLException {
         this(url, null, false, dbfCharset);
     }
@@ -140,7 +140,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param url
      * @param namespace
      */
-    public ShapefileDataStore(URL url, String namespace)
+    public ShapefileDataStore(final URL url, final String namespace)
             throws DataStoreException,MalformedURLException {
         this(url, namespace, false, DEFAULT_STRING_CHARSET);
     }
@@ -154,7 +154,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param namespace
      * @param useMemoryMapped
      */
-    public ShapefileDataStore(URL url, String namespace, boolean useMemoryMapped)
+    public ShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMapped)
             throws DataStoreException,MalformedURLException {
         this(url, namespace, useMemoryMapped, DEFAULT_STRING_CHARSET);
     }
@@ -169,8 +169,8 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param useMemoryMapped : default is true
      * @param dbfCharset : default is ShapefileDataStore.DEFAULT_STRING_CHARSET
      */
-    public ShapefileDataStore(URL url, String namespace, boolean useMemoryMapped,
-            Charset dbfCharset) throws MalformedURLException, DataStoreException {
+    public ShapefileDataStore(final URL url, final String namespace, final boolean useMemoryMapped,
+            final Charset dbfCharset) throws MalformedURLException, DataStoreException {
         super(namespace);
         shpFiles = new ShpFiles(url);
 
@@ -184,7 +184,7 @@ public class ShapefileDataStore extends AbstractDataStore{
     }
 
     @Override
-    public boolean isWritable(Name typeName) throws DataStoreException {
+    public boolean isWritable(final Name typeName) throws DataStoreException {
         return shpFiles.isLocal();
     }
 
@@ -218,7 +218,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName);
 
         return schema;
@@ -241,7 +241,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @throws DataSourceException DOCUMENT ME!
      */
     @Override
-    public Envelope getEnvelope(Query query) throws DataStoreException, DataStoreRuntimeException {
+    public Envelope getEnvelope(final Query query) throws DataStoreException, DataStoreRuntimeException {
         typeCheck(query.getTypeName());
 
         if(QueryUtilities.queryAll(query)){
@@ -293,7 +293,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures);
     }
 
@@ -301,7 +301,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
@@ -309,7 +309,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
@@ -317,7 +317,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         typeCheck(query.getTypeName());
 
         final Hints hints = query.getHints();
@@ -393,7 +393,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         typeCheck(typeName);
 
         final ShapefileAttributeReader attReader = getAttributesReader(true,true,null);
@@ -426,7 +426,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @todo must synchronize this properly
      */
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         if (!shpFiles.isLocal()) {
             throw new DataStoreException("Cannot create FeatureType on remote shapefile");
         }
@@ -534,7 +534,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Can not update shapefile schema.");
     }
 
@@ -542,7 +542,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Can not delete shapefile schema.");
     }
 
@@ -599,7 +599,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @return List of new AttributeDescriptor
      * @throws DataStoreException If AttributeType reading fails
      */
-    protected List<AttributeDescriptor> readAttributes(String namespace) throws DataStoreException {
+    protected List<AttributeDescriptor> readAttributes(final String namespace) throws DataStoreException {
         final ShapefileReader shp = openShapeReader(true,null);
         final DbaseFileReader dbf = openDbfReader();
 
@@ -702,7 +702,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @param readDbf - if true, the dbf fill will be opened and read
      * @throws IOException
      */
-    protected ShapefileAttributeReader getAttributesReader(boolean readDbf, boolean read3D, double[] resample)
+    protected ShapefileAttributeReader getAttributesReader(final boolean readDbf, final boolean read3D, final double[] resample)
             throws DataStoreException {
 
         final SimpleFeatureType schema = getFeatureType();
@@ -717,8 +717,8 @@ public class ShapefileDataStore extends AbstractDataStore{
         return new ShapefileAttributeReader(atts, openShapeReader(read3D,resample), openDbfReader());
     }
 
-    protected DefaultSimpleFeatureReader createFeatureReader(String typeName,
-            ShapefileAttributeReader reader, SimpleFeatureType readerSchema, Hints hints)
+    protected DefaultSimpleFeatureReader createFeatureReader(final String typeName,
+            final ShapefileAttributeReader reader, final SimpleFeatureType readerSchema, final Hints hints)
             throws SchemaException {
 
         return DefaultSimpleFeatureReader.create(reader, new DefaultFeatureIDReader(typeName), readerSchema, hints);
@@ -730,7 +730,7 @@ public class ShapefileDataStore extends AbstractDataStore{
      * @return A new ShapefileReader.
      * @throws IOException If an error occurs during creation.
      */
-    protected ShapefileReader openShapeReader(boolean read3D, double[] res) throws DataStoreException {
+    protected ShapefileReader openShapeReader(final boolean read3D, final double[] res) throws DataStoreException {
         try {
             return new ShapefileReader(shpFiles, true, useMemoryMappedBuffer,read3D,res);
         } catch (IOException se) {

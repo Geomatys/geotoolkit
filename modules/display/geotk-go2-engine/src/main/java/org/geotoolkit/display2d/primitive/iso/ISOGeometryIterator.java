@@ -35,7 +35,7 @@ public abstract class ISOGeometryIterator<T extends Geometry> implements PathIte
     protected AffineTransform transform;
     protected final T geometry;
 
-    protected ISOGeometryIterator(T geometry, AffineTransform trs){
+    protected ISOGeometryIterator(final T geometry, final AffineTransform trs){
         this.geometry = geometry;
         this.transform = (trs == null) ? IDENTITY : trs;
     }
@@ -44,14 +44,14 @@ public abstract class ISOGeometryIterator<T extends Geometry> implements PathIte
      * {@inheritDoc }
      */
     @Override
-	public int currentSegment(float[] coords) {
+	public int currentSegment(final float[] coords) {
 		int result = currentSegment(dcoords);
 		coords[0] = (float) dcoords[0];
 		coords[1] = (float) dcoords[1];
 		return result;
 	}
 
-    public void setTransform(AffineTransform trs){
+    public void setTransform(final AffineTransform trs){
         this.transform = (trs == null) ? IDENTITY : trs;
     }
 

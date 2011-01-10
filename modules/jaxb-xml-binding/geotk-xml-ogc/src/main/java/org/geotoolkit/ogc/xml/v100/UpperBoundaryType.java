@@ -64,7 +64,7 @@ public class UpperBoundaryType {
      * Sets the value of the expression property.
      * 
      */
-    public void setExpression(JAXBElement<?> value) {
+    public void setExpression(final JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
     }
 

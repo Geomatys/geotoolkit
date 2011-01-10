@@ -89,7 +89,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
      * {@inheritDoc }
      */
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         this.map = map;
     }
 
@@ -109,7 +109,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
         return this;
     }
 
-    public void setUnit(Unit unit) {
+    public void setUnit(final Unit unit) {
         template = new DefaultScaleBarTemplate(null,
                             new Dimension(300,40),10,
                             false, 5, NumberFormat.getNumberInstance(),
@@ -125,7 +125,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
 
         if(map == null) return;
 

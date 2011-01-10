@@ -70,7 +70,7 @@ public class NativeType {
      *     {@link String }
      *     
      */
-    public void setVendorId(String value) {
+    public void setVendorId(final String value) {
         this.vendorId = value;
     }
 
@@ -86,7 +86,7 @@ public class NativeType {
      * Sets the value of the safeToIgnore property.
      * 
      */
-    public void setSafeToIgnore(boolean value) {
+    public void setSafeToIgnore(final boolean value) {
         this.safeToIgnore = value;
     }
 

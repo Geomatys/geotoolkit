@@ -26,7 +26,7 @@ import org.opengis.style.Description;
  */
 public class DefaultGroupNode extends AbstractElementNode {
 
-    public DefaultGroupNode(String name, Description desc) {
+    public DefaultGroupNode(final String name, final Description desc) {
         super(name, desc, ElementType.GROUP);
     }
 

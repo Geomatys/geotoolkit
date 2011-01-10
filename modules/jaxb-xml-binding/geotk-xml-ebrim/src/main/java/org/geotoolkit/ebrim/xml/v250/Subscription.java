@@ -85,7 +85,7 @@ public class Subscription extends RegistryObjectType {
     /**
      * Sets the value of the action property.
      */
-    public void setAction(ActionType action) {
+    public void setAction(final ActionType action) {
         if (this.action == null) {
             this.action = new ArrayList<ActionType>();
         }
@@ -95,7 +95,7 @@ public class Subscription extends RegistryObjectType {
     /**
      * Sets the value of the action property.
      */
-    public void setAction(List<ActionType> action) {
+    public void setAction(final List<ActionType> action) {
         this.action = action;
     }
 
@@ -109,7 +109,7 @@ public class Subscription extends RegistryObjectType {
     /**
      * Sets the value of the selector property.
      */
-    public void setSelector(String value) {
+    public void setSelector(final String value) {
         this.selector = value;
     }
 
@@ -124,7 +124,7 @@ public class Subscription extends RegistryObjectType {
     /**
      * Sets the value of the startDate property.
      */
-    public void setStartDate(XMLGregorianCalendar value) {
+    public void setStartDate(final XMLGregorianCalendar value) {
         this.startDate = value;
     }
 
@@ -138,7 +138,7 @@ public class Subscription extends RegistryObjectType {
     /**
      * Sets the value of the endDate property.
      */
-    public void setEndDate(XMLGregorianCalendar value) {
+    public void setEndDate(final XMLGregorianCalendar value) {
         this.endDate = value;
     }
 
@@ -154,7 +154,7 @@ public class Subscription extends RegistryObjectType {
      * Sets the value of the notificationInterval property.
      *     
      */
-    public void setNotificationInterval(Duration value) {
+    public void setNotificationInterval(final Duration value) {
         this.notificationInterval = value;
     }
 

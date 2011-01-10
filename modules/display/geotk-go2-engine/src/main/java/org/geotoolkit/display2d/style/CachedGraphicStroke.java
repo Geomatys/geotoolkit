@@ -27,15 +27,15 @@ import org.opengis.style.GraphicStroke;
  */
 public class CachedGraphicStroke extends CachedGraphic<GraphicStroke>{
 
-    protected CachedGraphicStroke(GraphicStroke stroke){
+    protected CachedGraphicStroke(final GraphicStroke stroke){
         super(stroke);
     }
 
-    public float getGap(Feature feature){
+    public float getGap(final Feature feature){
         return styleElement.getGap().evaluate(feature,Float.class);
     }
 
-    public float getInitialGap(Feature feature){
+    public float getInitialGap(final Feature feature){
         return styleElement.getInitialGap().evaluate(feature,Float.class);
     }
 

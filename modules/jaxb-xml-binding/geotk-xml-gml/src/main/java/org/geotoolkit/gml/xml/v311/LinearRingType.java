@@ -115,7 +115,7 @@ public class LinearRingType extends AbstractRingType {
      *     {@link DirectPositionListType }
      *     
      */
-    public void setPosList(DirectPositionListType value) {
+    public void setPosList(final DirectPositionListType value) {
         this.posList = value;
     }
 
@@ -139,7 +139,7 @@ public class LinearRingType extends AbstractRingType {
      *     {@link CoordinatesType }
      *     
      */
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 
@@ -160,17 +160,17 @@ public class LinearRingType extends AbstractRingType {
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -212,7 +212,7 @@ public class LinearRingType extends AbstractRingType {
         return hash;
     }
 
-    private boolean JAXBElementEquals(JAXBElement a, JAXBElement b) {
+    private boolean JAXBElementEquals(final JAXBElement a, final JAXBElement b) {
         if (a  != null && b != null) {
             return Utilities.equals(a.getValue(), b.getValue());
         } else if (a == null && b == null) {

@@ -71,7 +71,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
      * @param tab
      * @param layer 
      */
-    public FeatureCollectionModel(JXTable tab, FeatureMapLayer layer, boolean selectIds) {
+    public FeatureCollectionModel(final JXTable tab, final FeatureMapLayer layer, final boolean selectIds) {
         super();
         this.tab = tab;
         this.layer = layer;
@@ -80,7 +80,7 @@ public class FeatureCollectionModel extends DefaultTableModel {
         setQuery(layer.getQuery());
     }
 
-    public void setQuery(Query candidateQuery) {
+    public void setQuery(final Query candidateQuery) {
         query = removeGeometryAttributs(candidateQuery);
         
         columns.clear();
@@ -152,13 +152,13 @@ public class FeatureCollectionModel extends DefaultTableModel {
     }
 
     @Override
-    public Class getColumnClass(int column) {
+    public Class getColumnClass(final int column) {
         if(column == 0) return String.class;
         return columns.get(column-1).getType().getBinding();
     }
 
     @Override
-    public String getColumnName(int column) {
+    public String getColumnName(final int column) {
         if(column == 0) return "id";
         return columns.get(column-1).getName().getLocalPart();
     }
@@ -173,22 +173,22 @@ public class FeatureCollectionModel extends DefaultTableModel {
     }
 
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(final int rowIndex, final int columnIndex) {
         return columnIndex != 0;
     }
 
-    public Feature getFeatureAt(int rowIndex){
+    public Feature getFeatureAt(final int rowIndex){
         return features.get(rowIndex);
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
+    public Object getValueAt(final int rowIndex, final int columnIndex) {
         if(columnIndex == 0) return features.get(rowIndex).getIdentifier().getID();
         return features.get(rowIndex).getProperty(columns.get(columnIndex-1).getName()).getValue();
     }
 
     @Override
-    public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+    public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
         if(columnIndex == 0) return;
 
         if (featureCollection.isWritable()) {

@@ -58,7 +58,7 @@ public class InterpolationMethodType extends InterpolationMethodBaseType {
     /**
      * build a new Interpolation Method.
      */
-     public InterpolationMethodType(String methodName, String nullResistance) {
+     public InterpolationMethodType(final String methodName, final String nullResistance) {
          super(methodName);
          this.nullResistance = nullResistance;
      }

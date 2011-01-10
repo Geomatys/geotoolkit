@@ -45,7 +45,7 @@ public class CameraSpeedSlider extends JSlider{
 
     }
 
-    public void setMap(A3DCanvas map) {
+    public void setMap(final A3DCanvas map) {
         this.map = map;
     }
 

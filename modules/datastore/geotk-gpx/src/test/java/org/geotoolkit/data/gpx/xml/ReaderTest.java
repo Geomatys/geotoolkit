@@ -470,7 +470,7 @@ public class ReaderTest {
         assertFalse(reader.hasNext());
     }
 
-    private void checkPoint(Feature f, int num, boolean v11) throws Exception{
+    private void checkPoint(final Feature f, final int num, final boolean v11) throws Exception{
         if(num == 0){
             assertEquals(0,                     f.getProperty("index").getValue());
             assertEquals(15.0,                  ((Point)f.getProperty("geometry").getValue()).getX(), DELTA);

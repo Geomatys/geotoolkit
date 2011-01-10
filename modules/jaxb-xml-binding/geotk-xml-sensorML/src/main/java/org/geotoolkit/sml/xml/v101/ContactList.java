@@ -87,7 +87,7 @@ public class ContactList implements AbstractContactList {
 
     }
 
-    public ContactList(AbstractContactList cl) {
+    public ContactList(final AbstractContactList cl) {
         if (cl != null) {
             this.id = cl.getId();
             this.description = cl.getDescription();
@@ -120,7 +120,7 @@ public class ContactList implements AbstractContactList {
      *     {@link StringOrRefType }
      *     
      */
-    public void setDescription(StringOrRefType value) {
+    public void setDescription(final StringOrRefType value) {
         this.description = value;
     }
 
@@ -155,7 +155,7 @@ public class ContactList implements AbstractContactList {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -238,7 +238,7 @@ public class ContactList implements AbstractContactList {
             
         }
 
-        public Member(AbstractContactListMember member) {
+        public Member(final AbstractContactListMember member) {
             if (member != null) {
                 this.actuate = member.getActuate();
                 this.arcrole = member.getArcrole();
@@ -276,7 +276,7 @@ public class ContactList implements AbstractContactList {
          *     {@link Person }
          *     
          */
-        public void setPerson(Person value) {
+        public void setPerson(final Person value) {
             this.person = value;
         }
 
@@ -300,7 +300,7 @@ public class ContactList implements AbstractContactList {
          *     {@link ResponsibleParty }
          *     
          */
-        public void setResponsibleParty(ResponsibleParty value) {
+        public void setResponsibleParty(final ResponsibleParty value) {
             this.responsibleParty = value;
         }
 
@@ -324,7 +324,7 @@ public class ContactList implements AbstractContactList {
          *     {@link String }
          *     
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -348,7 +348,7 @@ public class ContactList implements AbstractContactList {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -372,7 +372,7 @@ public class ContactList implements AbstractContactList {
          *     {@link String }
          *     
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -396,7 +396,7 @@ public class ContactList implements AbstractContactList {
          *     {@link String }
          *     
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -420,7 +420,7 @@ public class ContactList implements AbstractContactList {
          *     {@link String }
          *     
          */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -444,7 +444,7 @@ public class ContactList implements AbstractContactList {
          *     {@link String }
          *     
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -468,7 +468,7 @@ public class ContactList implements AbstractContactList {
          *     {@link String }
          *     
          */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -492,7 +492,7 @@ public class ContactList implements AbstractContactList {
          *     {@link String }
          *     
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 

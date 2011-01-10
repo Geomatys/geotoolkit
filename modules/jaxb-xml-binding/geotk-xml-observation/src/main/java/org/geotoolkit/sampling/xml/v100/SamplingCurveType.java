@@ -91,7 +91,7 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
     /**
      * Sets the value of the shape property.
      */
-    public void setShape(CurvePropertyType value) {
+    public void setShape(final CurvePropertyType value) {
         this.shape = value;
     }
 
@@ -105,7 +105,7 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
     /**
      * Sets the value of the length property.
      */
-    public void setLength(MeasureType value) {
+    public void setLength(final MeasureType value) {
         this.length = value;
     }
 

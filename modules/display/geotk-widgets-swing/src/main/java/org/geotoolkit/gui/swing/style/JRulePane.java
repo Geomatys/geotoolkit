@@ -234,7 +234,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void but_editActionPerformed(ActionEvent evt) {//GEN-FIRST:event_but_editActionPerformed
+    private void but_editActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_but_editActionPerformed
         if(rule == null){
             rule = getStyleFactory().rule();
         }
@@ -282,7 +282,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
     }
 
@@ -292,7 +292,7 @@ public class JRulePane extends StyleElementEditor<MutableRule> {
     }
 
     @Override
-    public void parse(MutableRule target) {
+    public void parse(final MutableRule target) {
         this.rule = target;
         if (rule != null) {
             jtf_name.setText(rule.getName());

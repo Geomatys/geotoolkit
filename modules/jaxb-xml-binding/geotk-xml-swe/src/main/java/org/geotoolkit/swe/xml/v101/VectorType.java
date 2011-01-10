@@ -70,7 +70,7 @@ public class VectorType extends AbstractVectorType implements Vector {
 
     }
 
-    public VectorType(Vector v) {
+    public VectorType(final Vector v) {
         super(v);
         if (v != null && v.getCoordinate() != null) {
             this.coordinate = new ArrayList<CoordinateType>();
@@ -80,17 +80,17 @@ public class VectorType extends AbstractVectorType implements Vector {
         }
     }
 
-    public VectorType(URI referenceFrame, URI localFrame, List<CoordinateType> coordinate) {
+    public VectorType(final URI referenceFrame, final URI localFrame, final List<CoordinateType> coordinate) {
         super(referenceFrame, localFrame);
         this.coordinate = coordinate;
     }
 
-    public VectorType(String definition, List<CoordinateType> coordinate) {
+    public VectorType(final String definition, final List<CoordinateType> coordinate) {
         super(definition);
         this.coordinate = coordinate;
     }
 
-    public VectorType(List<CoordinateType> coordinate) {
+    public VectorType(final List<CoordinateType> coordinate) {
         this.coordinate = coordinate;
     }
 

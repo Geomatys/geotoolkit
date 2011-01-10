@@ -86,7 +86,7 @@ public class AcknowledgementType implements CSWResponse {
     /**
      * Build a new Anknowledgement message. 
      */
-    public AcknowledgementType(String requestId, EchoedRequestType echoedRequest, Long timeStamp) throws DatatypeConfigurationException {
+    public AcknowledgementType(final String requestId, final EchoedRequestType echoedRequest, final Long timeStamp) throws DatatypeConfigurationException {
         this.requestId     = requestId;
         this.echoedRequest = echoedRequest;
         if (timeStamp != null) {

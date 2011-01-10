@@ -53,7 +53,7 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiDisplacement.setLayer(layer);
         guiAlpha.setLayer(layer);
@@ -68,7 +68,7 @@ public class JGraphicPane extends StyleElementEditor<Graphic> {
     }
 
     @Override
-    public void parse(Graphic graphic) {
+    public void parse(final Graphic graphic) {
 
         if (graphic != null) {
             guiDisplacement.parse(graphic.getDisplacement());

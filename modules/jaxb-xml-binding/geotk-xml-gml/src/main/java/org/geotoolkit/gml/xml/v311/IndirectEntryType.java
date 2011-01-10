@@ -73,7 +73,7 @@ public class IndirectEntryType {
      *     {@link DefinitionProxyType }
      *     
      */
-    public void setDefinitionProxy(DefinitionProxyType value) {
+    public void setDefinitionProxy(final DefinitionProxyType value) {
         this.definitionProxy = value;
     }
 

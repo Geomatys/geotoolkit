@@ -50,8 +50,8 @@ public class DefaultOnlineResource implements OnlineResource{
      * 
      * @param uri
      */
-    public DefaultOnlineResource(URI uri, String protocol, String profil, String name,
-                            InternationalString desc, OnLineFunction function){
+    public DefaultOnlineResource(final URI uri, final String protocol, final String profil, final String name,
+                            final InternationalString desc, final OnLineFunction function){
         this.href = uri;
         this.desc = desc;
         this.function = function;
@@ -112,7 +112,7 @@ public class DefaultOnlineResource implements OnlineResource{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

@@ -87,7 +87,7 @@ public abstract class CompoundPhenomenonEntry extends PhenomenonEntry {
     /**
      * Sets the value of the dimension property.
      */
-    public void setDimension(int dimension) {
+    public void setDimension(final int dimension) {
         this.dimension = dimension;
     }
     

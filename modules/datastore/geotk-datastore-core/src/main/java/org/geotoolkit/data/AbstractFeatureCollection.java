@@ -51,7 +51,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     protected String id;
     protected final Source source;
 
-    public AbstractFeatureCollection(String id, Source source){
+    public AbstractFeatureCollection(final String id, final Source source){
 
         if(id == null){
             throw new NullPointerException("Feature collection ID must not be null.");
@@ -70,7 +70,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
 
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 
@@ -146,7 +146,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public void update(Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException {
+    public void update(final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
         update(filter, Collections.singletonMap(desc, value));
     }
 
@@ -178,7 +178,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * Forward event to listeners by changing source.
      */
     @Override
-    public void contentChanged(StorageContentEvent event){
+    public void contentChanged(final StorageContentEvent event){
         final FeatureType currentType = getFeatureType();
 
         //forward events only if the collection is typed and match the type name
@@ -191,7 +191,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public void addStorageListener(StorageListener listener) {
+    public void addStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
@@ -201,7 +201,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * {@inheritDoc }
      */
     @Override
-    public void removeStorageListener(StorageListener listener) {
+    public void removeStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -213,7 +213,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * @param name of the schema where features where added.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesAdded(Name name, Id ids){
+    protected void fireFeaturesAdded(final Name name, final Id ids){
         sendEvent(StorageContentEvent.createAddEvent(this, name,ids));
     }
 
@@ -223,7 +223,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * @param name of the schema where features where updated.
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesUpdated(Name name, Id ids){
+    protected void fireFeaturesUpdated(final Name name, final Id ids){
         sendEvent(StorageContentEvent.createUpdateEvent(this, name, ids));
     }
 
@@ -233,7 +233,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * @param name of the schema where features where deleted
      * @param ids modified feature ids.
      */
-    protected void fireFeaturesDeleted(Name name, Id ids){
+    protected void fireFeaturesDeleted(final Name name, final Id ids){
         sendEvent(StorageContentEvent.createDeleteEvent(this, name, ids));
     }
 
@@ -241,7 +241,7 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
      * Forward a features event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(StorageContentEvent event) {
+    protected void sendEvent(final StorageContentEvent event) {
         final StorageListener[] lst;
         synchronized (listeners) {
             lst = listeners.toArray(new StorageListener[listeners.size()]);

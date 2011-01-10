@@ -84,7 +84,7 @@ public class Execute
      *     {@link CodeType }
      *     
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 
@@ -108,7 +108,7 @@ public class Execute
      *     {@link DataInputsType }
      *     
      */
-    public void setDataInputs(DataInputsType value) {
+    public void setDataInputs(final DataInputsType value) {
         this.dataInputs = value;
     }
 
@@ -132,7 +132,7 @@ public class Execute
      *     {@link ResponseFormType }
      *     
      */
-    public void setResponseForm(ResponseFormType value) {
+    public void setResponseForm(final ResponseFormType value) {
         this.responseForm = value;
     }
 

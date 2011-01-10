@@ -80,13 +80,13 @@ public class LayerStyleItem extends AbstractTreePopupItem {
     }
 
     @Override
-    public boolean isValid(TreePath[] selection) {
+    public boolean isValid(final TreePath[] selection) {
         return uniqueAndType(selection,Rule.class)
             || uniqueAndType(selection,FeatureTypeStyle.class);
     }
 
     @Override
-    public Component getComponent(TreePath[] selection) {
+    public Component getComponent(final TreePath[] selection) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
         styleRef = new WeakReference<Object>(node.getUserObject());
 

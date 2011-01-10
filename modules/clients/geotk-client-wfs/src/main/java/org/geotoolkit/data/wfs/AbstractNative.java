@@ -33,7 +33,7 @@ public abstract class AbstractNative implements Native{
     }
 
     @Override
-    public void setVendorId(String vendorId) {
+    public void setVendorId(final String vendorId) {
         this.vendorId = vendorId;
     }
 
@@ -43,7 +43,7 @@ public abstract class AbstractNative implements Native{
     }
 
     @Override
-    public void setSafeToIgnore(boolean safe) {
+    public void setSafeToIgnore(final boolean safe) {
         this.safe = safe;
     }
 

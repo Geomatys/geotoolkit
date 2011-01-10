@@ -73,8 +73,8 @@ public class Capabilities extends CapabilitiesBaseType implements AbstractCapabi
     /**
      * Build a new Capabilities document
      */
-    public Capabilities(ServiceIdentification serviceIdentification, ServiceProvider serviceProvider,
-            OperationsMetadata operationsMetadata, String version, String updateSequence, FilterCapabilities filterCapabilities){
+    public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final FilterCapabilities filterCapabilities){
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
             this.filterCapabilities = filterCapabilities;
     }

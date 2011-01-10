@@ -37,8 +37,8 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
     private final CachedGraphic cachedGraphic;
     private UnSynchronizedCache<Float,BufferedImage> cache = null;
         
-    public CachedPointSymbolizer(PointSymbolizer point,
-            SymbolizerRendererService<PointSymbolizer,? extends CachedSymbolizer<PointSymbolizer>> renderer){
+    public CachedPointSymbolizer(final PointSymbolizer point,
+            final SymbolizerRendererService<PointSymbolizer,? extends CachedSymbolizer<PointSymbolizer>> renderer){
         super(point,renderer);
         cachedGraphic = CachedGraphic.cache(point.getGraphic());
     }
@@ -47,7 +47,7 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         return cachedGraphic.getMargin(feature, coeff);
     }
 
@@ -75,7 +75,7 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return cachedGraphic.isVisible(feature);
     }
     
@@ -83,7 +83,7 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
      * 
      * @return BufferedImage for a feature 
      */
-    public BufferedImage getImage(Feature feature, final float coeff, RenderingHints hints) {
+    public BufferedImage getImage(final Feature feature, final float coeff, final RenderingHints hints) {
         evaluate();
 
         if(cache != null){
@@ -104,14 +104,14 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
     /**
      * return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(Feature feature, float[] buffer){
+    public float[] getDisplacement(final Feature feature, final float[] buffer){
         return cachedGraphic.getDisplacement(feature, buffer);
     }
     
     /**
      * return an Array of 2 floats.
      */
-    public float[] getAnchor(Feature feature, float[] buffer){
+    public float[] getAnchor(final Feature feature, final float[] buffer){
         return cachedGraphic.getAnchor(feature,buffer);
     }
     

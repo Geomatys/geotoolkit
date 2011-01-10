@@ -33,7 +33,7 @@ public class LockManager {
     public LockManager() {
     }
 
-    public synchronized void release(Lock lock) {
+    public synchronized void release(final Lock lock) {
         LockImpl li = (LockImpl) lock;
 
         if (li.getType() == Lock.EXCLUSIVE) {
@@ -117,7 +117,7 @@ public class LockManager {
          * 
          * @param type
          */
-        public LockImpl(short type) {
+        public LockImpl(final short type) {
             this.type = type;
         }
 

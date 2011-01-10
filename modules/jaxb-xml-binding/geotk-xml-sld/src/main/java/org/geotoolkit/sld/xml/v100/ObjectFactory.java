@@ -489,7 +489,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "PerpendicularOffset")
-    public JAXBElement<ParameterValueType> createPerpendicularOffset(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createPerpendicularOffset(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_PerpendicularOffset_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -498,7 +498,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "MaxScaleDenominator")
-    public JAXBElement<Double> createMaxScaleDenominator(Double value) {
+    public JAXBElement<Double> createMaxScaleDenominator(final Double value) {
         return new JAXBElement<Double>(_MaxScaleDenominator_QNAME, Double.class, null, value);
     }
 
@@ -507,7 +507,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "ReliefFactor")
-    public JAXBElement<Double> createReliefFactor(Double value) {
+    public JAXBElement<Double> createReliefFactor(final Double value) {
         return new JAXBElement<Double>(_ReliefFactor_QNAME, Double.class, null, value);
     }
 
@@ -516,7 +516,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Label")
-    public JAXBElement<ParameterValueType> createLabel(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createLabel(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_Label_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -525,7 +525,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Abstract")
-    public JAXBElement<String> createAbstract(String value) {
+    public JAXBElement<String> createAbstract(final String value) {
         return new JAXBElement<String>(_Abstract_QNAME, String.class, null, value);
     }
 
@@ -534,7 +534,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Name")
-    public JAXBElement<String> createName(String value) {
+    public JAXBElement<String> createName(final String value) {
         return new JAXBElement<String>(_Name_QNAME, String.class, null, value);
     }
 
@@ -543,7 +543,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "GreenChannel")
-    public JAXBElement<SelectedChannelType> createGreenChannel(SelectedChannelType value) {
+    public JAXBElement<SelectedChannelType> createGreenChannel(final SelectedChannelType value) {
         return new JAXBElement<SelectedChannelType>(_GreenChannel_QNAME, SelectedChannelType.class, null, value);
     }
 
@@ -552,7 +552,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Radius")
-    public JAXBElement<ParameterValueType> createRadius(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createRadius(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_Radius_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -561,7 +561,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "MinScaleDenominator")
-    public JAXBElement<Double> createMinScaleDenominator(Double value) {
+    public JAXBElement<Double> createMinScaleDenominator(final Double value) {
         return new JAXBElement<Double>(_MinScaleDenominator_QNAME, Double.class, null, value);
     }
 
@@ -570,7 +570,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Title")
-    public JAXBElement<String> createTitle(String value) {
+    public JAXBElement<String> createTitle(final String value) {
         return new JAXBElement<String>(_Title_QNAME, String.class, null, value);
     }
 
@@ -579,7 +579,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "RasterSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
-    public JAXBElement<RasterSymbolizer> createRasterSymbolizer(RasterSymbolizer value) {
+    public JAXBElement<RasterSymbolizer> createRasterSymbolizer(final RasterSymbolizer value) {
         return new JAXBElement<RasterSymbolizer>(_RasterSymbolizer_QNAME, RasterSymbolizer.class, null, value);
     }
 
@@ -588,7 +588,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "BrightnessOnly")
-    public JAXBElement<Boolean> createBrightnessOnly(Boolean value) {
+    public JAXBElement<Boolean> createBrightnessOnly(final Boolean value) {
         return new JAXBElement<Boolean>(_BrightnessOnly_QNAME, Boolean.class, null, value);
     }
 
@@ -597,7 +597,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Symbolizer")
-    public JAXBElement<SymbolizerType> createSymbolizer(SymbolizerType value) {
+    public JAXBElement<SymbolizerType> createSymbolizer(final SymbolizerType value) {
         return new JAXBElement<SymbolizerType>(_Symbolizer_QNAME, SymbolizerType.class, null, value);
     }
 
@@ -606,7 +606,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Size")
-    public JAXBElement<ParameterValueType> createSize(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createSize(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_Size_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -615,7 +615,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "FeatureTypeName")
-    public JAXBElement<String> createFeatureTypeName(String value) {
+    public JAXBElement<String> createFeatureTypeName(final String value) {
         return new JAXBElement<String>(_FeatureTypeName_QNAME, String.class, null, value);
     }
 
@@ -624,7 +624,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "SemanticTypeIdentifier")
-    public JAXBElement<String> createSemanticTypeIdentifier(String value) {
+    public JAXBElement<String> createSemanticTypeIdentifier(final String value) {
         return new JAXBElement<String>(_SemanticTypeIdentifier_QNAME, String.class, null, value);
     }
 
@@ -633,7 +633,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "SourceChannelName")
-    public JAXBElement<String> createSourceChannelName(String value) {
+    public JAXBElement<String> createSourceChannelName(final String value) {
         return new JAXBElement<String>(_SourceChannelName_QNAME, String.class, null, value);
     }
 
@@ -642,7 +642,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "PointSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
-    public JAXBElement<PointSymbolizer> createPointSymbolizer(PointSymbolizer value) {
+    public JAXBElement<PointSymbolizer> createPointSymbolizer(final PointSymbolizer value) {
         return new JAXBElement<PointSymbolizer>(_PointSymbolizer_QNAME, PointSymbolizer.class, null, value);
     }
 
@@ -651,7 +651,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "DisplacementY")
-    public JAXBElement<ParameterValueType> createDisplacementY(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createDisplacementY(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_DisplacementY_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -660,7 +660,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "DisplacementX")
-    public JAXBElement<ParameterValueType> createDisplacementX(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createDisplacementX(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_DisplacementX_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -669,7 +669,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "PolygonSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
-    public JAXBElement<PolygonSymbolizer> createPolygonSymbolizer(PolygonSymbolizer value) {
+    public JAXBElement<PolygonSymbolizer> createPolygonSymbolizer(final PolygonSymbolizer value) {
         return new JAXBElement<PolygonSymbolizer>(_PolygonSymbolizer_QNAME, PolygonSymbolizer.class, null, value);
     }
 
@@ -678,7 +678,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "GammaValue")
-    public JAXBElement<Double> createGammaValue(Double value) {
+    public JAXBElement<Double> createGammaValue(final Double value) {
         return new JAXBElement<Double>(_GammaValue_QNAME, Double.class, null, value);
     }
 
@@ -687,7 +687,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "WellKnownName")
-    public JAXBElement<String> createWellKnownName(String value) {
+    public JAXBElement<String> createWellKnownName(final String value) {
         return new JAXBElement<String>(_WellKnownName_QNAME, String.class, null, value);
     }
 
@@ -696,7 +696,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "BlueChannel")
-    public JAXBElement<SelectedChannelType> createBlueChannel(SelectedChannelType value) {
+    public JAXBElement<SelectedChannelType> createBlueChannel(final SelectedChannelType value) {
         return new JAXBElement<SelectedChannelType>(_BlueChannel_QNAME, SelectedChannelType.class, null, value);
     }
 
@@ -705,7 +705,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "LineSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
-    public JAXBElement<LineSymbolizer> createLineSymbolizer(LineSymbolizer value) {
+    public JAXBElement<LineSymbolizer> createLineSymbolizer(final LineSymbolizer value) {
         return new JAXBElement<LineSymbolizer>(_LineSymbolizer_QNAME, LineSymbolizer.class, null, value);
     }
 
@@ -714,7 +714,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Service")
-    public JAXBElement<String> createService(String value) {
+    public JAXBElement<String> createService(final String value) {
         return new JAXBElement<String>(_Service_QNAME, String.class, null, value);
     }
 
@@ -723,7 +723,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Format")
-    public JAXBElement<String> createFormat(String value) {
+    public JAXBElement<String> createFormat(final String value) {
         return new JAXBElement<String>(_Format_QNAME, String.class, null, value);
     }
 
@@ -732,7 +732,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "IsDefault")
-    public JAXBElement<Boolean> createIsDefault(Boolean value) {
+    public JAXBElement<Boolean> createIsDefault(final Boolean value) {
         return new JAXBElement<Boolean>(_IsDefault_QNAME, Boolean.class, null, value);
     }
 
@@ -741,7 +741,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "TextSymbolizer", substitutionHeadNamespace = "http://www.opengis.net/sld", substitutionHeadName = "Symbolizer")
-    public JAXBElement<TextSymbolizer> createTextSymbolizer(TextSymbolizer value) {
+    public JAXBElement<TextSymbolizer> createTextSymbolizer(final TextSymbolizer value) {
         return new JAXBElement<TextSymbolizer>(_TextSymbolizer_QNAME, TextSymbolizer.class, null, value);
     }
 
@@ -750,7 +750,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "AnchorPointY")
-    public JAXBElement<ParameterValueType> createAnchorPointY(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createAnchorPointY(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_AnchorPointY_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -759,7 +759,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Rotation")
-    public JAXBElement<ParameterValueType> createRotation(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createRotation(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_Rotation_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -768,7 +768,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "AnchorPointX")
-    public JAXBElement<ParameterValueType> createAnchorPointX(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createAnchorPointX(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_AnchorPointX_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -777,7 +777,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "RedChannel")
-    public JAXBElement<SelectedChannelType> createRedChannel(SelectedChannelType value) {
+    public JAXBElement<SelectedChannelType> createRedChannel(final SelectedChannelType value) {
         return new JAXBElement<SelectedChannelType>(_RedChannel_QNAME, SelectedChannelType.class, null, value);
     }
 
@@ -786,7 +786,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Opacity")
-    public JAXBElement<ParameterValueType> createOpacity(ParameterValueType value) {
+    public JAXBElement<ParameterValueType> createOpacity(final ParameterValueType value) {
         return new JAXBElement<ParameterValueType>(_Opacity_QNAME, ParameterValueType.class, null, value);
     }
 
@@ -795,7 +795,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "GrayChannel")
-    public JAXBElement<SelectedChannelType> createGrayChannel(SelectedChannelType value) {
+    public JAXBElement<SelectedChannelType> createGrayChannel(final SelectedChannelType value) {
         return new JAXBElement<SelectedChannelType>(_GrayChannel_QNAME, SelectedChannelType.class, null, value);
     }
 
@@ -804,7 +804,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sld", name = "Value")
-    public JAXBElement<String> createValue(String value) {
+    public JAXBElement<String> createValue(final String value) {
         return new JAXBElement<String>(_Value_QNAME, String.class, null, value);
     }
 

@@ -60,7 +60,7 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
 
     public TextBlock() {}
 
-    public TextBlock(org.geotoolkit.swe.xml.TextBlock tb) {
+    public TextBlock(final org.geotoolkit.swe.xml.TextBlock tb) {
         super(tb);
         if (tb != null) {
             this.blockSeparator   = tb.getBlockSeparator();
@@ -89,7 +89,7 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
      *     {@link String }
      *     
      */
-    public void setTokenSeparator(String value) {
+    public void setTokenSeparator(final String value) {
         this.tokenSeparator = value;
     }
 
@@ -113,7 +113,7 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
      *     {@link String }
      *     
      */
-    public void setBlockSeparator(String value) {
+    public void setBlockSeparator(final String value) {
         this.blockSeparator = value;
     }
 
@@ -137,7 +137,7 @@ public class TextBlock extends AbstractEncodingType implements org.geotoolkit.sw
      *     {@link String }
      *     
      */
-    public void setDecimalSeparator(String value) {
+    public void setDecimalSeparator(final String value) {
         this.decimalSeparator = value;
     }
 

@@ -124,7 +124,7 @@ public abstract class AttributeGroup extends Annotated {
      *     {@link Wildcard }
      *     
      */
-    public void setAnyAttribute(Wildcard value) {
+    public void setAnyAttribute(final Wildcard value) {
         this.anyAttribute = value;
     }
 
@@ -148,7 +148,7 @@ public abstract class AttributeGroup extends Annotated {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -172,7 +172,7 @@ public abstract class AttributeGroup extends Annotated {
      *     {@link QName }
      *     
      */
-    public void setRef(QName value) {
+    public void setRef(final QName value) {
         this.ref = value;
     }
 

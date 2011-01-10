@@ -71,13 +71,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     private Name[] cachedAttributs = null;
     private double[] oldRes = null;
     
-    public StatefullFeatureLayerJ2D(J2DCanvas canvas, FeatureMapLayer layer){
+    public StatefullFeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
         super(canvas, layer);
         params = new StatefullContextParams(canvas,layer);
         dataCRS = layer.getCollection().getFeatureType().getCoordinateReferenceSystem();
     }
 
-    private synchronized void updateCache(RenderingContext2D context){
+    private synchronized void updateCache(final RenderingContext2D context){
 
         boolean objectiveCleared = false;
 
@@ -133,8 +133,8 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     }
 
     @Override
-    protected RenderingIterator getIterator(FeatureCollection<? extends Feature> features,
-            RenderingContext2D renderingContext, StatefullContextParams params){
+    protected RenderingIterator getIterator(final FeatureCollection<? extends Feature> features,
+            final RenderingContext2D renderingContext, final StatefullContextParams params){
         updateCache(renderingContext);
         return new StatefullGraphicIterator(features.iterator());
     }
@@ -190,7 +190,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
     @Override
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
-            final RenderingContext2D context, final SearchAreaJ2D mask, VisitFilter visitFilter, List<Graphic> graphics) {
+            final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter visitFilter, final List<Graphic> graphics) {
         updateCache(context);
 
         final Query query = prepareQuery(context, layer, rules);
@@ -284,7 +284,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
 
         private final FeatureIterator<? extends Feature> ite;
 
-        public StatefullGraphicIterator(FeatureIterator<? extends Feature> ite) {
+        public StatefullGraphicIterator(final FeatureIterator<? extends Feature> ite) {
             this.ite = ite;
         }
 

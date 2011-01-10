@@ -99,7 +99,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
         setMap2D(map);
     }
 
-    public void setToNorth(JComponent comp){
+    public void setToNorth(final JComponent comp){
         comp.getInsets().set(5, 5, 5, 5);
 
         final JPanel pan = new JPanel(new BorderLayout());
@@ -109,7 +109,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
         panNorth.add(BorderLayout.CENTER,pan);
     }
 
-    public void setGestureMessages(String left, String right, String center, String wheel){
+    public void setGestureMessages(final String left, final String right, final String center, final String wheel){
 
         final JPanel panLabels = new JPanel(new GridLayout(4, 1,4,4));
         panLabels.setOpaque(false);
@@ -139,7 +139,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
         revalidate();
     }
 
-    public void setToolsPane(JComponent comp){
+    public void setToolsPane(final JComponent comp){
         panEast.removeAll();
         final JPanel panDetail = new JPanel();
         panDetail.setOpaque(false);
@@ -156,13 +156,13 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
     }
 
     @Override
-    public void setMap2D(JMap2D map2d){
+    public void setMap2D(final JMap2D map2d){
         super.setMap2D(map2d);
     }
 
 
     @Override
-    protected void paintGeometry(Graphics2D g2, RenderingContext2D context, ProjectedGeometry projectedGeom) throws TransformException {
+    protected void paintGeometry(final Graphics2D g2, final RenderingContext2D context, final ProjectedGeometry projectedGeom) throws TransformException {
         context.switchToDisplayCRS();
 
         final Geometry objectiveGeom = projectedGeom.getDisplayGeometryJTS();
@@ -192,14 +192,14 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
 
     }
 
-    private void paintPoint(Graphics2D g2, Point objectiveGeom){
+    private void paintPoint(final Graphics2D g2, final Point objectiveGeom){
         //draw a single cross
         final Point p = (Point) objectiveGeom;
         final double[] crds = new double[]{p.getX(),p.getY()};
         paintCross(g2, crds);
     }
 
-    private void paintLineString(Graphics2D g2, LineString line, Shape displayShape) throws TransformException{
+    private void paintLineString(final Graphics2D g2, final LineString line, final Shape displayShape) throws TransformException{
         g2.setStroke(new BasicStroke(2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
 
         g2.setColor(MAIN_COLOR);
@@ -210,7 +210,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
         }
     }
 
-    private void paintPolygon(Graphics2D g2, Polygon poly, Shape displayShape) throws TransformException{
+    private void paintPolygon(final Graphics2D g2, final Polygon poly, final Shape displayShape) throws TransformException{
         g2.setStroke(new BasicStroke(2,BasicStroke.CAP_ROUND,BasicStroke.JOIN_ROUND));
 
         g2.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_OVER, 0.6f));
@@ -225,7 +225,7 @@ public final class DefaultEditionDecoration extends AbstractGeometryDecoration {
         }
     }
 
-    private void paintCross(Graphics2D g2, double[] crds){
+    private void paintCross(final Graphics2D g2, final double[] crds){
         g2.setStroke(new BasicStroke(1,BasicStroke.CAP_BUTT,BasicStroke.JOIN_BEVEL));
 
         g2.setColor(MAIN_COLOR);

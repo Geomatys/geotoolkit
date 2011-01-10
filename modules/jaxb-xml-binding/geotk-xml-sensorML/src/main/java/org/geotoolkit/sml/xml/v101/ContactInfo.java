@@ -98,7 +98,7 @@ public class ContactInfo implements AbstractContactInfo {
 
     }
 
-    public ContactInfo(AbstractContactInfo ci) {
+    public ContactInfo(final AbstractContactInfo ci) {
         if (ci != null) {
             if (ci.getAddress() != null) {
                 this.address = new Address(ci.getAddress());
@@ -117,7 +117,7 @@ public class ContactInfo implements AbstractContactInfo {
         }
     }
 
-    public ContactInfo(Phone phone, Address address) {
+    public ContactInfo(final Phone phone, final Address address) {
         this.address = address;
         this.phone   = phone;
     }
@@ -142,7 +142,7 @@ public class ContactInfo implements AbstractContactInfo {
      *     {@link ContactInfo.Phone }
      *     
      */
-    public void setPhone(Phone value) {
+    public void setPhone(final Phone value) {
         this.phone = value;
     }
 
@@ -166,7 +166,7 @@ public class ContactInfo implements AbstractContactInfo {
      *     {@link ContactInfo.Address }
      *     
      */
-    public void setAddress(Address value) {
+    public void setAddress(final Address value) {
         this.address = value;
     }
 
@@ -183,14 +183,14 @@ public class ContactInfo implements AbstractContactInfo {
     /**
      * sets the value of the onlineResource property.
      */
-    public void setOnlineResource(List<OnlineResource> or) {
+    public void setOnlineResource(final List<OnlineResource> or) {
         this.onlineResource = or;
     }
 
     /**
      * Gets the value of the onlineResource property.
      */
-    public void setOnlineResource(OnlineResource or) {
+    public void setOnlineResource(final OnlineResource or) {
         if (onlineResource == null) {
             onlineResource = new ArrayList<OnlineResource>();
         }
@@ -217,7 +217,7 @@ public class ContactInfo implements AbstractContactInfo {
      *     {@link String }
      *     
      */
-    public void setHoursOfService(String value) {
+    public void setHoursOfService(final String value) {
         this.hoursOfService = value;
     }
 
@@ -241,7 +241,7 @@ public class ContactInfo implements AbstractContactInfo {
      *     {@link String }
      *     
      */
-    public void setContactInstructions(String value) {
+    public void setContactInstructions(final String value) {
         this.contactInstructions = value;
     }
 

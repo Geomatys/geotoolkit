@@ -60,11 +60,11 @@ public class LanguagesType {
 
     }
 
-    public LanguagesType(List<String> language) {
+    public LanguagesType(final List<String> language) {
         this.language = language;
     }
 
-    public LanguagesType(String language) {
+    public LanguagesType(final String language) {
         this.language = new ArrayList<String>();
         this.language.add(language);
     }
@@ -92,7 +92,7 @@ public class LanguagesType {
     /**
      * Sets the value of the language property.
      */
-    public void setLanguage(String language) {
+    public void setLanguage(final String language) {
         if (this.language == null) {
             this.language = new ArrayList<String>();
         }

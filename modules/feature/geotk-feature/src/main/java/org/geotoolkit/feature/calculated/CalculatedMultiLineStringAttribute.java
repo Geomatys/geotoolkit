@@ -52,12 +52,12 @@ public class CalculatedMultiLineStringAttribute extends DefaultGeometryAttribute
      * @param desc : the descriptor of this attribute
      * @param path : a path of names to the property that holds LineString geometries.
      */
-    public CalculatedMultiLineStringAttribute(GeometryDescriptor desc, Name ... path) {
+    public CalculatedMultiLineStringAttribute(final GeometryDescriptor desc, final Name ... path) {
         super(null, desc, null);
         this.path = path;
     }
     
-    public void setRelated(ComplexAttribute relatedFeature) {
+    public void setRelated(final ComplexAttribute relatedFeature) {
         this.related = relatedFeature;
     }
 
@@ -72,7 +72,7 @@ public class CalculatedMultiLineStringAttribute extends DefaultGeometryAttribute
         return GF.createMultiLineString(subs.toArray(new LineString[subs.size()]));
     }
 
-    private void explore(ComplexAttribute att, int depth, List<LineString> lines){
+    private void explore(final ComplexAttribute att, final int depth, final List<LineString> lines){
         if(depth == path.length-1){
             //we are on the field that hold the geometry lines
             for (final Property prop : att.getProperties(path[depth])) {

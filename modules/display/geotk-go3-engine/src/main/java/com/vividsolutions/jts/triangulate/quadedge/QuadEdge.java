@@ -67,7 +67,7 @@ public class QuadEdge
      *          the destination Vertex
      * @return the new QuadEdge quartet
      */
-  public static QuadEdge makeEdge(Vertex o, Vertex d) {
+  public static QuadEdge makeEdge(final Vertex o, final Vertex d) {
     QuadEdge q0 = new QuadEdge();
     QuadEdge q1 = new QuadEdge();
     QuadEdge q2 = new QuadEdge();
@@ -97,7 +97,7 @@ public class QuadEdge
      * 
      * @return the connected edge.
      */
-    public static QuadEdge connect(QuadEdge a, QuadEdge b) {
+    public static QuadEdge connect(final QuadEdge a, final QuadEdge b) {
         QuadEdge e = makeEdge(a.dest(), b.orig());
         splice(e, a.lNext());
         splice(e.sym(), b);
@@ -117,7 +117,7 @@ public class QuadEdge
      * @param b an edge to splice
      * 
      */
-    public static void splice(QuadEdge a, QuadEdge b) {
+    public static void splice(final QuadEdge a, final QuadEdge b) {
         QuadEdge alpha = a.oNext().rot();
         QuadEdge beta = b.oNext().rot();
 
@@ -137,7 +137,7 @@ public class QuadEdge
      * 
      * @param e the quadedge to turn
      */
-    public static void swap(QuadEdge e) {
+    public static void swap(final QuadEdge e) {
         QuadEdge a = e.oPrev();
         QuadEdge b = e.sym().oPrev();
         splice(e, a);
@@ -185,7 +185,7 @@ public class QuadEdge
      * 
      * @param data an object containing external data
      */
-    public void setData(Object data) {
+    public void setData(final Object data) {
         this.data = data;
     }
     
@@ -225,7 +225,7 @@ public class QuadEdge
      * 
      * @param nextEdge edge
      */
-    public void setNext(QuadEdge next) {
+    public void setNext(final QuadEdge next) {
         this.next = next;
     }
     
@@ -341,7 +341,7 @@ public class QuadEdge
      * 
      * @param o the origin vertex
      */
-    void setOrig(Vertex o) {
+    void setOrig(final Vertex o) {
         vertex = o;
     }
 
@@ -350,7 +350,7 @@ public class QuadEdge
      * 
      * @param d the destination vertex
      */
-    void setDest(Vertex d) {
+    void setDest(final Vertex d) {
         sym().setOrig(d);
     }
 
@@ -388,7 +388,7 @@ public class QuadEdge
      * @param qe a quadege
      * @return true if the quadedges are based on the same line segment regardless of orientation
      */
-    public boolean equalsNonOriented(QuadEdge qe) {
+    public boolean equalsNonOriented(final QuadEdge qe) {
         if (equalsOriented(qe))
             return true;
         if (equalsOriented(qe.sym()))
@@ -403,7 +403,7 @@ public class QuadEdge
      * @param qe a quadege
      * @return true if the quadedges are based on the same line segment
      */
-    public boolean equalsOriented(QuadEdge qe) {
+    public boolean equalsOriented(final QuadEdge qe) {
         if (orig().getCoordinate().equals2D(qe.orig().getCoordinate())
                 && dest().getCoordinate().equals2D(qe.dest().getCoordinate()))
             return true;

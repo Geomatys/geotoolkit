@@ -76,7 +76,7 @@ public class DomainSubsetType implements DomainSubset {
      * Build a new Domain subset with the specified spatial
      * and temporal subset
      */
-    public DomainSubsetType(TimeSequenceType temporalSubset, SpatialSubsetType spatialSubset) {
+    public DomainSubsetType(final TimeSequenceType temporalSubset, final SpatialSubsetType spatialSubset) {
         this.content = new ArrayList<JAXBElement<?>>();
         ObjectFactory factory = new ObjectFactory();
         if (temporalSubset != null) {
@@ -90,7 +90,7 @@ public class DomainSubsetType implements DomainSubset {
     /**
      * Build a new Domain subset with a list of JAXB element
      */
-    public DomainSubsetType(List<JAXBElement<?>> content) {
+    public DomainSubsetType(final List<JAXBElement<?>> content) {
         this.content = content;
         
     }

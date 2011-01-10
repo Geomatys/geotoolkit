@@ -76,7 +76,7 @@ public class DimensionNameValue {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -100,7 +100,7 @@ public class DimensionNameValue {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

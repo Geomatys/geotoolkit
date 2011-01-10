@@ -70,7 +70,7 @@ public class RequestStatusType implements RequestStatus {
      * Sets the value of the status property.
      * 
      */
-    public void setStatus(StatusType value) {
+    public void setStatus(final StatusType value) {
         this.status = value;
     }
 
@@ -85,7 +85,7 @@ public class RequestStatusType implements RequestStatus {
     /**
      * Sets the value of the timestamp property.
      */
-    public void setTimestamp(XMLGregorianCalendar value) {
+    public void setTimestamp(final XMLGregorianCalendar value) {
         this.timestamp = value;
     }
     

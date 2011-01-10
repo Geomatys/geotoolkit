@@ -36,7 +36,7 @@ public final class ISOPointIterator extends ISOGeometryIterator<Point> {
      * @param point The point
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public ISOPointIterator(Point point,AffineTransform trs) {
+    public ISOPointIterator(final Point point,final AffineTransform trs) {
         super(point,trs);
     }
 
@@ -73,7 +73,7 @@ public final class ISOPointIterator extends ISOGeometryIterator<Point> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         DirectPosition pos = geometry.getDirectPosition();
         coords[0] = pos.getOrdinate(0);
         coords[1] = pos.getOrdinate(1);

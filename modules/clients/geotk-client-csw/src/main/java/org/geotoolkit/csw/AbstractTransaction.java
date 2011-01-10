@@ -65,7 +65,7 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
     }
 
     @Override
-    public void setDelete(DeleteType delete) {
+    public void setDelete(final DeleteType delete) {
         this.delete = delete;
     }
 
@@ -75,7 +75,7 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
     }
 
     @Override
-    public void setInsert(InsertType insert) {
+    public void setInsert(final InsertType insert) {
         this.insert = insert;
     }
 
@@ -85,7 +85,7 @@ public class AbstractTransaction extends AbstractCSWRequest implements Transacti
     }
 
     @Override
-    public void setUpdate(UpdateType update) {
+    public void setUpdate(final UpdateType update) {
         this.update = update;
     }
 

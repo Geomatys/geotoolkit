@@ -30,7 +30,7 @@ public abstract class Candidate<T extends LabelDescriptor> {
     private int priority = 0;
     private int cost = 0;
 
-    public Candidate(T desc) {
+    public Candidate(final T desc) {
         this.desc = desc;
     }
 
@@ -42,11 +42,11 @@ public abstract class Candidate<T extends LabelDescriptor> {
         return priority;
     }
 
-    public void setPriority(int priority) {
+    public void setPriority(final int priority) {
         this.priority = priority;
     }
 
-    public void setCost(int cost) {
+    public void setCost(final int cost) {
         this.cost = cost;
     }
 

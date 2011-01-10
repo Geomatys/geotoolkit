@@ -72,7 +72,7 @@ public class FunctionNameType implements FunctionName {
     /**
      * An empty constructor used by JAXB
      */
-    public FunctionNameType(String name, int nArgs) {
+    public FunctionNameType(final String name, final int nArgs) {
         this.value = name;
         this.nArgs = nArgs + "";
     }
@@ -108,7 +108,7 @@ public class FunctionNameType implements FunctionName {
         return argumentNames;
     }
 
-    private static List<String> generateArgumentNames( int count ){
+    private static List<String> generateArgumentNames( final int count ){
         List<String> names = Arrays.asList( new String[count]);
         for( int i=0; i < count; i++){
             names.set(i, "arg"+i );

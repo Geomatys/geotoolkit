@@ -71,7 +71,7 @@ public class ScalarCapabilitiesType implements ScalarCapabilities {
      /**
      *Build a new Scalar Capabilities
      */
-    public ScalarCapabilitiesType(ComparisonOperators comparison, ArithmeticOperators arithmetic, boolean logical) {
+    public ScalarCapabilitiesType(final ComparisonOperators comparison, final ArithmeticOperators arithmetic, final boolean logical) {
         if (logical) {
             this.logicalOperators = new LogicalOperators();
         }

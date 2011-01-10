@@ -61,7 +61,7 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
 
     }
 
-    public CurveType(AbstractCurve cu) {
+    public CurveType(final AbstractCurve cu) {
         super(cu);
         if (cu != null) {
             if (cu.getElementType() != null) {
@@ -96,7 +96,7 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
      *     {@link SimpleDataRecordPropertyType }
      *     
      */
-    public void setElementType(SimpleDataRecordPropertyType value) {
+    public void setElementType(final SimpleDataRecordPropertyType value) {
         this.elementType = value;
     }
 
@@ -120,7 +120,7 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
      *     {@link BlockEncodingPropertyType }
      *     
      */
-    public void setEncoding(BlockEncodingPropertyType value) {
+    public void setEncoding(final BlockEncodingPropertyType value) {
         this.encoding = value;
     }
 
@@ -144,7 +144,7 @@ public class CurveType extends AbstractDataArrayType implements AbstractCurve {
      *     {@link DataValuePropertyType }
      *     
      */
-    public void setValues(DataValuePropertyType value) {
+    public void setValues(final DataValuePropertyType value) {
         this.values = value;
     }
 

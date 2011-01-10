@@ -93,7 +93,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
 
     }
 
-    public AbstractConditionalType(AbstractConditional ac) {
+    public AbstractConditionalType(final AbstractConditional ac) {
         super(ac);
         if (ac != null && ac.getCondition() != null) {
             this.condition = new ArrayList<Condition>();
@@ -200,7 +200,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
 
         }
 
-        public Condition(AbstractCondition d) {
+        public Condition(final AbstractCondition d) {
              if (d != null){
                 this.actuate = d.getActuate();
                 if (d.getBoolean() != null) {
@@ -314,7 +314,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link Count }
          *     
          */
-        public void setCount(Count value) {
+        public void setCount(final Count value) {
             this.count = value;
         }
 
@@ -338,7 +338,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link Quantity }
          *     
          */
-        public void setQuantity(QuantityType value) {
+        public void setQuantity(final QuantityType value) {
             this.quantity = value;
         }
 
@@ -362,7 +362,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link Time }
          *     
          */
-        public void setTime(TimeType value) {
+        public void setTime(final TimeType value) {
             this.time = value;
         }
 
@@ -386,7 +386,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link Boolean }
          *     
          */
-        public void setBoolean(BooleanType value) {
+        public void setBoolean(final BooleanType value) {
             this._boolean = value;
         }
 
@@ -410,7 +410,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link Category }
          *     
          */
-        public void setCategory(Category value) {
+        public void setCategory(final Category value) {
             this.category = value;
         }
 
@@ -434,7 +434,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link Text }
          *     
          */
-        public void setText(Text value) {
+        public void setText(final Text value) {
             this.text = value;
         }
 
@@ -458,7 +458,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link QuantityRange }
          *     
          */
-        public void setQuantityRange(QuantityRange value) {
+        public void setQuantityRange(final QuantityRange value) {
             this.quantityRange = value;
         }
 
@@ -482,7 +482,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link CountRange }
          *     
          */
-        public void setCountRange(CountRange value) {
+        public void setCountRange(final CountRange value) {
             this.countRange = value;
         }
 
@@ -506,7 +506,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link TimeRange }
          *     
          */
-        public void setTimeRange(TimeRange value) {
+        public void setTimeRange(final TimeRange value) {
             this.timeRange = value;
         }
 
@@ -555,7 +555,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link JAXBElement }{@code <}{@link VectorType }{@code >}
          *     
          */
-        public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordType> value) {
+        public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
             this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
         }
 
@@ -592,7 +592,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link JAXBElement }{@code <}{@link SquareMatrixType }{@code >}
          *     
          */
-        public void setAbstractDataArray(JAXBElement<? extends AbstractDataArrayType> value) {
+        public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayType> value) {
             this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);
         }
 
@@ -616,7 +616,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link String }
          *     
          */
-        public void setName(String value) {
+        public void setName(final String value) {
             this.name = value;
         }
 
@@ -640,7 +640,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link String }
          *     
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -664,7 +664,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -688,7 +688,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link String }
          *     
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -712,7 +712,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link String }
          *     
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -736,7 +736,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link String }
          *     
          */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -760,7 +760,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link String }
          *     
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -784,7 +784,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link String }
          *     
          */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -808,7 +808,7 @@ public class AbstractConditionalType extends AbstractDataRecordType implements A
          *     {@link String }
          *     
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 

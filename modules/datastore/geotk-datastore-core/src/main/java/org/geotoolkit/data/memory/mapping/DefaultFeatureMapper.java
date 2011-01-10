@@ -54,9 +54,9 @@ public class DefaultFeatureMapper implements FeatureMapper {
     private final Map<PropertyDescriptor, List<PropertyDescriptor>> mapping;
     private int id = 1;
 
-    public DefaultFeatureMapper(SimpleFeatureType typeSource, SimpleFeatureType typeTarget,
-            Map<PropertyDescriptor, List<PropertyDescriptor>> mapping,
-            Map<PropertyDescriptor, Object> defaults) {
+    public DefaultFeatureMapper(final SimpleFeatureType typeSource, final SimpleFeatureType typeTarget,
+            final Map<PropertyDescriptor, List<PropertyDescriptor>> mapping,
+            final Map<PropertyDescriptor, Object> defaults) {
         this.typeSource = typeSource;
         this.typeTarget = typeTarget;
         this.mapping = mapping;
@@ -66,7 +66,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
     }
 
     @Override
-    public Feature transform(Feature feature) {
+    public Feature transform(final Feature feature) {
         builder.reset();
 
         //set all default values
@@ -105,7 +105,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
 
 
-    private static Object convert(Object value, PropertyDescriptor source, PropertyDescriptor target){
+    private static Object convert(final Object value, final PropertyDescriptor source, final PropertyDescriptor target){
 
         //special case for geometry attributs
         if(source instanceof GeometryDescriptor){
@@ -150,7 +150,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
         }
     }
 
-    private static Geometry convertType(Geometry geom, Class targetClass){
+    private static Geometry convertType(final Geometry geom, final Class targetClass){
         if(geom == null) return null;
 
         if(targetClass.isInstance(geom)){
@@ -178,7 +178,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
     // Convert to Point --------------------------------------------------------
 
-    private static Point convertToPoint(Geometry geom){
+    private static Point convertToPoint(final Geometry geom){
         if(geom instanceof Point){
             return convertToPoint((Point)geom);
         }else if(geom instanceof MultiPoint){
@@ -195,33 +195,33 @@ public class DefaultFeatureMapper implements FeatureMapper {
         return null;
     }
 
-    private static Point convertToPoint(Point pt){
+    private static Point convertToPoint(final Point pt){
         return pt;
     }
 
-    private static Point convertToPoint(MultiPoint pt){
+    private static Point convertToPoint(final MultiPoint pt){
         return pt.getCentroid();
     }
 
-    private static Point convertToPoint(LineString pt){
+    private static Point convertToPoint(final LineString pt){
         return pt.getCentroid();
     }
 
-    private static Point convertToPoint(MultiLineString pt){
+    private static Point convertToPoint(final MultiLineString pt){
         return pt.getCentroid();
     }
 
-    private static Point convertToPoint(Polygon pt){
+    private static Point convertToPoint(final Polygon pt){
         return pt.getCentroid();
     }
 
-    private static Point convertToPoint(MultiPolygon pt){
+    private static Point convertToPoint(final MultiPolygon pt){
         return pt.getCentroid();
     }
 
     // Convert to MultiPoint ---------------------------------------------------
 
-    private static MultiPoint convertToMultiPoint(Geometry geom){
+    private static MultiPoint convertToMultiPoint(final Geometry geom){
         if(geom instanceof Point){
             return convertToMultiPoint((Point)geom);
         }else if(geom instanceof MultiPoint){
@@ -238,33 +238,33 @@ public class DefaultFeatureMapper implements FeatureMapper {
         return null;
     }
 
-    private static MultiPoint convertToMultiPoint(Point pt){
+    private static MultiPoint convertToMultiPoint(final Point pt){
         return GF.createMultiPoint(new Point[]{pt});
     }
 
-    private static MultiPoint convertToMultiPoint(MultiPoint pt){
+    private static MultiPoint convertToMultiPoint(final MultiPoint pt){
         return pt;
     }
 
-    private static MultiPoint convertToMultiPoint(LineString pt){
+    private static MultiPoint convertToMultiPoint(final LineString pt){
         return GF.createMultiPoint(pt.getCoordinates());
     }
 
-    private static MultiPoint convertToMultiPoint(MultiLineString pt){
+    private static MultiPoint convertToMultiPoint(final MultiLineString pt){
         return GF.createMultiPoint(pt.getCoordinates());
     }
 
-    private static MultiPoint convertToMultiPoint(Polygon pt){
+    private static MultiPoint convertToMultiPoint(final Polygon pt){
         return GF.createMultiPoint(pt.getCoordinates());
     }
 
-    private static MultiPoint convertToMultiPoint(MultiPolygon pt){
+    private static MultiPoint convertToMultiPoint(final MultiPolygon pt){
         return GF.createMultiPoint(pt.getCoordinates());
     }
 
     // Convert to LineString ---------------------------------------------------
 
-    private static LineString convertToLineString(Geometry geom){
+    private static LineString convertToLineString(final Geometry geom){
         if(geom instanceof Point){
             return convertToLineString((Point)geom);
         }else if(geom instanceof MultiPoint){
@@ -281,11 +281,11 @@ public class DefaultFeatureMapper implements FeatureMapper {
         return null;
     }
 
-    private static LineString convertToLineString(Point pt){
+    private static LineString convertToLineString(final Point pt){
         return GF.createLineString(new Coordinate[]{pt.getCoordinate(),pt.getCoordinate()});
     }
 
-    private static LineString convertToLineString(MultiPoint pt){
+    private static LineString convertToLineString(final MultiPoint pt){
         final Coordinate[] coords = pt.getCoordinates();
         if(coords.length == 1){
             return GF.createLineString(new Coordinate[]{coords[0],coords[0]});
@@ -294,25 +294,25 @@ public class DefaultFeatureMapper implements FeatureMapper {
         }
     }
 
-    private static LineString convertToLineString(LineString pt){
+    private static LineString convertToLineString(final LineString pt){
         return pt;
     }
 
-    private static LineString convertToLineString(MultiLineString pt){
+    private static LineString convertToLineString(final MultiLineString pt){
         return GF.createLineString(pt.getCoordinates());
     }
 
-    private static LineString convertToLineString(Polygon pt){
+    private static LineString convertToLineString(final Polygon pt){
         return GF.createLineString(pt.getCoordinates());
     }
 
-    private static LineString convertToLineString(MultiPolygon pt){
+    private static LineString convertToLineString(final MultiPolygon pt){
         return GF.createLineString(pt.getCoordinates());
     }
 
     // Convert to MultiLineString ----------------------------------------------
 
-    private static MultiLineString convertToMultiLineString(Geometry geom){
+    private static MultiLineString convertToMultiLineString(final Geometry geom){
         if(geom instanceof Point){
             return convertToMultiLineString((Point)geom);
         }else if(geom instanceof MultiPoint){
@@ -329,27 +329,27 @@ public class DefaultFeatureMapper implements FeatureMapper {
         return null;
     }
 
-    private static MultiLineString convertToMultiLineString(Point pt){
+    private static MultiLineString convertToMultiLineString(final Point pt){
         return convertToMultiLineString(convertToLineString(pt));
     }
 
-    private static MultiLineString convertToMultiLineString(MultiPoint pt){
+    private static MultiLineString convertToMultiLineString(final MultiPoint pt){
         return convertToMultiLineString(convertToLineString(pt));
     }
 
-    private static MultiLineString convertToMultiLineString(LineString pt){
+    private static MultiLineString convertToMultiLineString(final LineString pt){
         return GF.createMultiLineString(new LineString[]{pt});
     }
 
-    private static MultiLineString convertToMultiLineString(MultiLineString pt){
+    private static MultiLineString convertToMultiLineString(final MultiLineString pt){
         return pt;
     }
 
-    private static MultiLineString convertToMultiLineString(Polygon pt){
+    private static MultiLineString convertToMultiLineString(final Polygon pt){
         return convertToMultiLineString(GF.createLineString(pt.getCoordinates()));
     }
 
-    private static MultiLineString convertToMultiLineString(MultiPolygon pt){
+    private static MultiLineString convertToMultiLineString(final MultiPolygon pt){
         final int n = pt.getNumGeometries();
         final LineString[] geoms = new LineString[n];
         for(int i=0; i<n;i++){
@@ -360,7 +360,7 @@ public class DefaultFeatureMapper implements FeatureMapper {
 
     // Convert to Polygon ------------------------------------------------------
 
-    private static Polygon convertToPolygon(Geometry geom){
+    private static Polygon convertToPolygon(final Geometry geom){
         if(geom instanceof Point){
             return convertToPolygon((Point)geom);
         }else if(geom instanceof MultiPoint){
@@ -377,34 +377,34 @@ public class DefaultFeatureMapper implements FeatureMapper {
         return null;
     }
 
-    private static Polygon convertToPolygon(Point pt){
+    private static Polygon convertToPolygon(final Point pt){
         LinearRing ring = GF.createLinearRing(new Coordinate[]{pt.getCoordinate(),pt.getCoordinate(),pt.getCoordinate()});
         return GF.createPolygon(ring, new LinearRing[0]);
     }
 
-    private static Polygon convertToPolygon(MultiPoint pt){
+    private static Polygon convertToPolygon(final MultiPoint pt){
         return convertToPolygon(convertToLineString(pt));
     }
 
-    private static Polygon convertToPolygon(LineString pt){
+    private static Polygon convertToPolygon(final LineString pt){
         return GF.createPolygon(GF.createLinearRing(pt.getCoordinates()), new LinearRing[0]);
     }
 
-    private static Polygon convertToPolygon(MultiLineString pt){
+    private static Polygon convertToPolygon(final MultiLineString pt){
         return convertToPolygon(convertToLineString(pt));
     }
 
-    private static Polygon convertToPolygon(Polygon pt){
+    private static Polygon convertToPolygon(final Polygon pt){
         return pt;
     }
 
-    private static Polygon convertToPolygon(MultiPolygon pt){
+    private static Polygon convertToPolygon(final MultiPolygon pt){
         return convertToPolygon(pt.convexHull());
     }
 
     // Convert to MultiPolygon -------------------------------------------------
 
-    private static MultiPolygon convertToMultiPolygon(Geometry geom){
+    private static MultiPolygon convertToMultiPolygon(final Geometry geom){
         if(geom instanceof Point){
             return convertToMultiPolygon((Point)geom);
         }else if(geom instanceof MultiPoint){
@@ -421,27 +421,27 @@ public class DefaultFeatureMapper implements FeatureMapper {
         return null;
     }
 
-    private static MultiPolygon convertToMultiPolygon(Point pt){
+    private static MultiPolygon convertToMultiPolygon(final Point pt){
         return convertToMultiPolygon(convertToPolygon(pt));
     }
 
-    private static MultiPolygon convertToMultiPolygon(MultiPoint pt){
+    private static MultiPolygon convertToMultiPolygon(final MultiPoint pt){
         return convertToMultiPolygon(convertToPolygon(pt));
     }
 
-    private static MultiPolygon convertToMultiPolygon(LineString pt){
+    private static MultiPolygon convertToMultiPolygon(final LineString pt){
         return convertToMultiPolygon(convertToPolygon(pt));
     }
 
-    private static MultiPolygon convertToMultiPolygon(MultiLineString pt){
+    private static MultiPolygon convertToMultiPolygon(final MultiLineString pt){
         return convertToMultiPolygon(convertToPolygon(pt));
     }
 
-    private static MultiPolygon convertToMultiPolygon(Polygon pt){
+    private static MultiPolygon convertToMultiPolygon(final Polygon pt){
         return GF.createMultiPolygon(new Polygon[]{pt});
     }
 
-    private static MultiPolygon convertToMultiPolygon(MultiPolygon pt){
+    private static MultiPolygon convertToMultiPolygon(final MultiPolygon pt){
         return pt;
     }
 

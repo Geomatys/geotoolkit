@@ -73,7 +73,7 @@ public class TimeSequenceType {
      * 
      * @param timePositionOrTimePeriod a list of timePosition and timePeriod
      */
-    public TimeSequenceType(List<Object> timePositionOrTimePeriod) {
+    public TimeSequenceType(final List<Object> timePositionOrTimePeriod) {
         this.timePositionOrTimePeriod = timePositionOrTimePeriod;
         
     }
@@ -83,7 +83,7 @@ public class TimeSequenceType {
      * 
      * @param timePosition a simple timePosition
      */
-    public TimeSequenceType(TimePositionType timePosition) {
+    public TimeSequenceType(final TimePositionType timePosition) {
         timePositionOrTimePeriod = new ArrayList<Object>();
         timePositionOrTimePeriod.add(timePosition);
     }

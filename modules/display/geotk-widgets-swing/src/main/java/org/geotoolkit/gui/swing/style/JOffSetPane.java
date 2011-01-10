@@ -44,7 +44,7 @@ public class JOffSetPane extends StyleElementEditor<Expression> {
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         guiOffset.setLayer(layer);
     }
 
@@ -60,7 +60,7 @@ public class JOffSetPane extends StyleElementEditor<Expression> {
      * {@inheritDoc }
      */
     @Override
-    public void parse(Expression target) {
+    public void parse(final Expression target) {
         guiOffset.parse(target);
     }
 

@@ -74,7 +74,7 @@ public abstract class AbstractCurveSegmentType {
 
     }
 
-    public AbstractCurveSegmentType(Integer numDerivativesAtStart, Integer numDerivativesAtEnd, Integer numDerivativeInterior) {
+    public AbstractCurveSegmentType(final Integer numDerivativesAtStart, final Integer numDerivativesAtEnd, final Integer numDerivativeInterior) {
         this.numDerivativeInterior = numDerivativeInterior;
         this.numDerivativesAtEnd   = numDerivativesAtEnd;
         this.numDerivativesAtStart = numDerivativesAtStart;
@@ -102,7 +102,7 @@ public abstract class AbstractCurveSegmentType {
      *     {@link Integer }
      *     
      */
-    public void setNumDerivativesAtStart(Integer value) {
+    public void setNumDerivativesAtStart(final Integer value) {
         this.numDerivativesAtStart = value;
     }
 
@@ -129,7 +129,7 @@ public abstract class AbstractCurveSegmentType {
      *     {@link Integer }
      *     
      */
-    public void setNumDerivativesAtEnd(Integer value) {
+    public void setNumDerivativesAtEnd(final Integer value) {
         this.numDerivativesAtEnd = value;
     }
 
@@ -156,7 +156,7 @@ public abstract class AbstractCurveSegmentType {
      *     {@link Integer }
      *     
      */
-    public void setNumDerivativeInterior(Integer value) {
+    public void setNumDerivativeInterior(final Integer value) {
         this.numDerivativeInterior = value;
     }
 

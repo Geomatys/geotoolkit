@@ -75,7 +75,7 @@ public class FormatType {
      *     {@link String }
      *     
      */
-    public void setMIME(String value) {
+    public void setMIME(final String value) {
         this.mime = value;
     }
 
@@ -99,7 +99,7 @@ public class FormatType {
      *     {@link String }
      *     
      */
-    public void setFileExtension(String value) {
+    public void setFileExtension(final String value) {
         this.fileExtension = value;
     }
 

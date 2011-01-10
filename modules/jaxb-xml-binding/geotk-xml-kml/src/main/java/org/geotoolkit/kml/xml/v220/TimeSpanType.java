@@ -85,7 +85,7 @@ public class TimeSpanType extends AbstractTimePrimitiveType {
      *     {@link String }
      *     
      */
-    public void setBegin(String value) {
+    public void setBegin(final String value) {
         this.begin = value;
     }
 
@@ -109,7 +109,7 @@ public class TimeSpanType extends AbstractTimePrimitiveType {
      *     {@link String }
      *     
      */
-    public void setEnd(String value) {
+    public void setEnd(final String value) {
         this.end = value;
     }
 

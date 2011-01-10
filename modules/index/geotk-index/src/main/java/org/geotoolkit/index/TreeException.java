@@ -37,7 +37,7 @@ public class TreeException extends IOException {
      * 
      * @param message
      */
-    public TreeException(String message) {
+    public TreeException(final String message) {
         super(message);
     }
 
@@ -47,7 +47,7 @@ public class TreeException extends IOException {
      * @param message
      * @param cause
      */
-    public TreeException(String message, Throwable cause) {
+    public TreeException(final String message, final Throwable cause) {
         super(message);
         initCause(cause);
     }
@@ -57,7 +57,7 @@ public class TreeException extends IOException {
      * 
      * @param cause
      */
-    public TreeException(Throwable cause) {
+    public TreeException(final Throwable cause) {
         super();
         initCause(cause);
     }

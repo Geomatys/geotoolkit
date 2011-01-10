@@ -46,7 +46,7 @@ public enum MethodType {
         return name();
     }
 
-    public static MethodType fromValue(String v) {
+    public static MethodType fromValue(final String v) {
         return valueOf(v);
     }
 

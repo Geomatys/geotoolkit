@@ -38,8 +38,8 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
     private final LineSymbolizer line;
     private final CachedStroke cachedStroke;
     
-    public CachedLineSymbolizer(LineSymbolizer line,
-            SymbolizerRendererService<LineSymbolizer, ? extends CachedSymbolizer<LineSymbolizer>> renderer){
+    public CachedLineSymbolizer(final LineSymbolizer line,
+            final SymbolizerRendererService<LineSymbolizer, ? extends CachedSymbolizer<LineSymbolizer>> renderer){
         super(line,renderer);
         cachedStroke = CachedStroke.cache(line.getStroke());
         this.line = line;
@@ -71,7 +71,7 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
      * 
      * @return offset of the given feature.
      */
-    public float getOffset(Feature feature, float coeff){
+    public float getOffset(final Feature feature, final float coeff){
         evaluate();
 
         if(Float.isNaN(cachedOffset)){
@@ -91,7 +91,7 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         return cachedStroke.getMargin(feature, coeff);
     }
 
@@ -99,7 +99,7 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return cachedStroke.isVisible(feature);
     }
     

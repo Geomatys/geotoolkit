@@ -37,7 +37,7 @@ import com.vividsolutions.jts.geom.*;
 public class LocateFailureException 
 	extends RuntimeException 
 {
-	private static String msgWithSpatial(String msg, LineSegment seg) {
+	private static String msgWithSpatial(final String msg, final LineSegment seg) {
 		if (seg != null)
 			return msg + " [ " + seg + " ]";
 		return msg;
@@ -45,16 +45,16 @@ public class LocateFailureException
 
 	private LineSegment seg = null;
 
-	public LocateFailureException(String msg) {
+	public LocateFailureException(final String msg) {
 		super(msg);
 	}
 
-	public LocateFailureException(String msg, LineSegment seg) {
+	public LocateFailureException(final String msg, final LineSegment seg) {
 		super(msgWithSpatial(msg, seg));
 		this.seg = new LineSegment(seg);
 	}
 
-	public LocateFailureException(LineSegment seg) {
+	public LocateFailureException(final LineSegment seg) {
 		super(
 				"Locate failed to converge (at edge: "
 						+ seg

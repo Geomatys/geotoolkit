@@ -51,7 +51,7 @@ public class ConstraintImpl implements Constraint {
     /**
      * Clone a Constraint
      */
-    public ConstraintImpl(Constraint feature) {
+    public ConstraintImpl(final Constraint feature) {
         if (feature != null) {
             this.description = feature.getDescription();
         }
@@ -61,7 +61,7 @@ public class ConstraintImpl implements Constraint {
     /**
      * Build a new Constraint with the specified description
      */
-    public ConstraintImpl(String description) {
+    public ConstraintImpl(final String description) {
         this.description = description;
     }
     
@@ -77,7 +77,7 @@ public class ConstraintImpl implements Constraint {
      * Sets the value of the description property.
      * 
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
     

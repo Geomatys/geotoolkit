@@ -36,7 +36,7 @@ import org.geotoolkit.index.quadtree.StoreException;
  */
 public class FileSystemQuadTree extends QuadTree {
 
-    public static FileSystemQuadTree load(File file) throws IOException, StoreException{
+    public static FileSystemQuadTree load(final File file) throws IOException, StoreException{
         final FileInputStream fis = new FileInputStream(file);
         final FileChannel channel = fis.getChannel();
 
@@ -53,8 +53,8 @@ public class FileSystemQuadTree extends QuadTree {
     private final FileInputStream fis;
     private final FileChannel channel;
 
-    public FileSystemQuadTree(int numShapes, int maxDepth, FileInputStream fis, 
-                              FileChannel channel, ByteOrder order) throws IOException{
+    public FileSystemQuadTree(final int numShapes, final int maxDepth, final FileInputStream fis, 
+                              final FileChannel channel, final ByteOrder order) throws IOException{
         super(numShapes,maxDepth);
         this.fis = fis;
         this.channel = channel;
@@ -62,7 +62,7 @@ public class FileSystemQuadTree extends QuadTree {
     }
 
     @Override
-    public void insert(int recno, Envelope bounds) {
+    public void insert(final int recno, final Envelope bounds) {
         throw new UnsupportedOperationException("File quadtrees are immutable");
     }
 

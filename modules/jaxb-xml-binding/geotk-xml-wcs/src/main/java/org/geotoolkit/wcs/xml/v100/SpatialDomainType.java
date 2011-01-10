@@ -88,7 +88,7 @@ public class SpatialDomainType {
      *
      * @param envelope An envelope that should not be null.
      */
-    public SpatialDomainType(EnvelopeEntry envelope) {
+    public SpatialDomainType(final EnvelopeEntry envelope) {
        ObjectFactory gmlFactory = new ObjectFactory();
        this.envelope = new ArrayList<JAXBElement<? extends EnvelopeEntry>>();
        this.envelope.add(gmlFactory.createEnvelope(envelope));
@@ -97,7 +97,7 @@ public class SpatialDomainType {
     /**
      * Build a new light Spatial Domain type version 1.0.0
      */
-    public SpatialDomainType(EnvelopeEntry envelope, GridType grid) {
+    public SpatialDomainType(final EnvelopeEntry envelope, final GridType grid) {
         ObjectFactory gmlFactory = new ObjectFactory();
         this.envelope = new ArrayList<JAXBElement<? extends EnvelopeEntry>>();
         if (envelope != null) {
@@ -114,7 +114,7 @@ public class SpatialDomainType {
     /**
      * Build a new Spatial Domain type version 1.0.0
      */
-    public SpatialDomainType(List<EnvelopeEntry> envelopes, List<GridType> grids) {
+    public SpatialDomainType(final List<EnvelopeEntry> envelopes, final List<GridType> grids) {
         ObjectFactory gmlFactory = new ObjectFactory();
         this.envelope = new ArrayList<JAXBElement<? extends EnvelopeEntry>>();
         for (EnvelopeEntry env : envelopes) {
@@ -135,8 +135,8 @@ public class SpatialDomainType {
     /**
      * Build a new full Spatial Domain type version 1.0.0
      */
-    public SpatialDomainType(List<JAXBElement<? extends EnvelopeEntry>> envelope, List<JAXBElement<? extends GridType>> grid,
-            List<PolygonType> polygon) {
+    public SpatialDomainType(final List<JAXBElement<? extends EnvelopeEntry>> envelope, final List<JAXBElement<? extends GridType>> grid,
+            final List<PolygonType> polygon) {
        this.envelope = envelope;
        this.grid     = grid;
        this.polygon  = polygon;

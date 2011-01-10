@@ -57,7 +57,7 @@ public class VariableReferenceType extends ExpressionType {
    /**
     * Sets the value of the variableId property.
     */
-   public void setVariableId(String value) {
+   public void setVariableId(final String value) {
       this.variableId = value;
    }
 

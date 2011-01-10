@@ -121,7 +121,7 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
         tree.addTreeSelectionListener(listener);
     }
 
-    private StyleElementEditor getPanel(Class clazz){
+    private StyleElementEditor getPanel(final Class clazz){
         StyleElementEditor val = guiPanels.get(clazz);
         if(val == null){
             try {
@@ -139,7 +139,7 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
         return val;
     }
 
-    private void applyEditor(TreePath oldPath){
+    private void applyEditor(final TreePath oldPath){
         if(editor == null) return;
 
         //create implies a call to apply if a style element is present
@@ -209,7 +209,7 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
     }
 
@@ -219,7 +219,7 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
     }
 
     @Override
-    public void parse(T style) {
+    public void parse(final T style) {
         this.style = style;
         parse();
     }
@@ -246,7 +246,7 @@ public class JAdvancedStylePanel<T extends Object> extends StyleElementEditor<T>
     }
 
     @Override
-    public void setTarget(Object layer) {
+    public void setTarget(final Object layer) {
 
         if (layer instanceof MapLayer) {
             setLayer((MapLayer) layer);

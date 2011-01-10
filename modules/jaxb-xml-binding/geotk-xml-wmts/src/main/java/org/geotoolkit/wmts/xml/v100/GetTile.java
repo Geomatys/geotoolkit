@@ -114,7 +114,7 @@ public class GetTile implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setLayer(String value) {
+    public void setLayer(final String value) {
         this.layer = value;
     }
 
@@ -138,7 +138,7 @@ public class GetTile implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setStyle(String value) {
+    public void setStyle(final String value) {
         this.style = value;
     }
 
@@ -162,7 +162,7 @@ public class GetTile implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 
@@ -201,7 +201,7 @@ public class GetTile implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setTileMatrixSet(String value) {
+    public void setTileMatrixSet(final String value) {
         this.tileMatrixSet = value;
     }
 
@@ -225,7 +225,7 @@ public class GetTile implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setTileMatrix(String value) {
+    public void setTileMatrix(final String value) {
         this.tileMatrix = value;
     }
 
@@ -249,7 +249,7 @@ public class GetTile implements RequestBase {
      *     {@link Integer }
      *     
      */
-    public void setTileRow(Integer value) {
+    public void setTileRow(final Integer value) {
         this.tileRow = value;
     }
 
@@ -273,7 +273,7 @@ public class GetTile implements RequestBase {
      *     {@link Integer }
      *     
      */
-    public void setTileCol(Integer value) {
+    public void setTileCol(final Integer value) {
         this.tileCol = value;
     }
 
@@ -298,7 +298,7 @@ public class GetTile implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -326,7 +326,7 @@ public class GetTile implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

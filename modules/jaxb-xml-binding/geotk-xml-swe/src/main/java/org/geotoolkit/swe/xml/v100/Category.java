@@ -81,12 +81,12 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
 
     }
 
-    public Category(URI definition, String value) {
+    public Category(final URI definition, final String value) {
         super(definition);
         this.value = value;
     }
 
-    public Category(AbstractCategory cat) {
+    public Category(final AbstractCategory cat) {
         super(cat);
         if (cat != null) {
             this.axisID    = cat.getAxisID();
@@ -115,7 +115,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
     /**
      * Sets the value of the codeSpace property.
      */
-    public void setCodeSpace(CodeSpacePropertyType value) {
+    public void setCodeSpace(final CodeSpacePropertyType value) {
         this.codeSpace = value;
     }
 
@@ -129,7 +129,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
     /**
      * Sets the value of the constraint property.
      */
-    public void setConstraint(AllowedTokensPropertyType value) {
+    public void setConstraint(final AllowedTokensPropertyType value) {
         this.constraint = value;
     }
 
@@ -144,7 +144,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
     /**
      * Sets the value of the quality property.
      */
-    public void setQuality(QualityPropertyType value) {
+    public void setQuality(final QualityPropertyType value) {
         this.quality = value;
     }
 
@@ -159,7 +159,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
     /**
      * Sets the value of the value property.
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -173,7 +173,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -187,7 +187,7 @@ public class Category extends AbstractDataComponentType implements AbstractCateg
     /**
      * Sets the value of the axisID property.
      */
-    public void setAxisID(String value) {
+    public void setAxisID(final String value) {
         this.axisID = value;
     }
 

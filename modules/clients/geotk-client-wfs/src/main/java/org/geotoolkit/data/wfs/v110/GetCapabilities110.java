@@ -27,7 +27,7 @@ import org.geotoolkit.data.wfs.AbstractGetCapabilities;
  */
 public class GetCapabilities110 extends AbstractGetCapabilities{
 
-    public GetCapabilities110(String serverURL){
+    public GetCapabilities110(final String serverURL){
         super(serverURL, "1.1.0");
     }
 }

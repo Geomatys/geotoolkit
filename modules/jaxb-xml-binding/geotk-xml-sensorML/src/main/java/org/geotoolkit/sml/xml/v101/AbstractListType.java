@@ -91,7 +91,7 @@ public class AbstractListType {
      * Sets the value of the id property.
      * 
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

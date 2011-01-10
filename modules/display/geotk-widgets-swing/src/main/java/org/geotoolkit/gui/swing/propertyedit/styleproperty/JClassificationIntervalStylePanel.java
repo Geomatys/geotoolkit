@@ -403,13 +403,13 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiRemoveAllActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiRemoveAllActionPerformed
+    private void guiRemoveAllActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiRemoveAllActionPerformed
         model.rules.clear();
         guiTable.revalidate();
         guiTable.repaint();
     }//GEN-LAST:event_guiRemoveAllActionPerformed
 
-    private void guiGenerateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
+    private void guiGenerateActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
         model.rules.clear();
         model.rules.addAll(analyze.generateRules((IntervalPalette) guiPalette.getSelectedItem()));
 
@@ -417,26 +417,26 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         guiTable.repaint();
     }//GEN-LAST:event_guiGenerateActionPerformed
 
-    private void guiModelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
+    private void guiModelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
         analyze.setTemplate(JPropertyDialog.showSymbolizerDialog(analyze.getTemplate(), true, layer));
         updateModelGlyph();
     }//GEN-LAST:event_guiModelActionPerformed
 
-    private void guiPropertyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiPropertyActionPerformed
+    private void guiPropertyActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiPropertyActionPerformed
         analyze.setClassification((PropertyName) guiProperty.getSelectedItem());
         updateNormalizeList();
     }//GEN-LAST:event_guiPropertyActionPerformed
 
-    private void guiNormalizeActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiNormalizeActionPerformed
+    private void guiNormalizeActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiNormalizeActionPerformed
         PropertyName prop = (PropertyName) guiNormalize.getSelectedItem();
         analyze.setNormalize(prop);
     }//GEN-LAST:event_guiNormalizeActionPerformed
 
-    private void guiClassesStateChanged(ChangeEvent evt) {//GEN-FIRST:event_guiClassesStateChanged
+    private void guiClassesStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_guiClassesStateChanged
         analyze.setNbClasses((Integer)guiClasses.getModel().getValue());
     }//GEN-LAST:event_guiClassesStateChanged
 
-    private void guiInvertActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiInvertActionPerformed
+    private void guiInvertActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiInvertActionPerformed
 
         Symbolizer[] symbols = new Symbolizer[model.rules.size()];
 
@@ -454,11 +454,11 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
     }//GEN-LAST:event_guiInvertActionPerformed
 
-    private void guiMethodActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiMethodActionPerformed
+    private void guiMethodActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiMethodActionPerformed
         analyze.setMethod((METHOD) guiMethod.getSelectedItem());
     }//GEN-LAST:event_guiMethodActionPerformed
 
-    private void guiClassifyActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiClassifyActionPerformed
+    private void guiClassifyActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiClassifyActionPerformed
 
         JAnalizePanel panel = new JAnalizePanel(analyze);
 
@@ -477,7 +477,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     }//GEN-LAST:event_guiClassifyActionPerformed
 
     @Override
-    public void setTarget(Object layer) {
+    public void setTarget(final Object layer) {
         if(layer instanceof FeatureMapLayer){
             this.layer = (FeatureMapLayer) layer;
             parse();
@@ -549,7 +549,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
 
     private class PropertyRenderer extends DefaultListCellRenderer{
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if(value instanceof PropertyName){
                 setText(((PropertyName)value).getPropertyName());
@@ -563,7 +563,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         private Palette palette = null;
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
             PaletteRenderer.this.setText(" Random ");
@@ -575,7 +575,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         }
 
         @Override
-        protected void paintComponent(Graphics g) {
+        protected void paintComponent(final Graphics g) {
             super.paintComponent(g);
 
             if(palette != null){
@@ -592,7 +592,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     private class MethodRenderer extends DefaultListCellRenderer{
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
             MethodRenderer.this.setText(" ");
@@ -615,7 +615,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     private class DeleteRenderer extends DefaultTableCellRenderer{
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             DeleteRenderer.this.setIcon(IconBundle.getIcon("16_delete"));
             return DeleteRenderer.this;
@@ -652,7 +652,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
             this.value = value;
             return button;
         }
@@ -662,7 +662,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     private class RulePropertyRenderer extends DefaultTableCellRenderer{
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             RulePropertyRenderer.this.setText("");
@@ -704,7 +704,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
             if(value instanceof MutableRule){
                 this.value = (MutableRule) value;
 
@@ -733,7 +733,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     private class RuleNameRenderer extends DefaultTableCellRenderer{
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             RuleNameRenderer.this.setText("");
@@ -762,7 +762,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
             if(value instanceof MutableRule){
                 this.value = (MutableRule) value;
 
@@ -781,7 +781,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     private class RuleStyleRenderer extends DefaultTableCellRenderer{
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             RuleStyleRenderer.this.setText("");
@@ -827,7 +827,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
             if(value instanceof MutableRule){
                 this.value = (MutableRule) value;
                 BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
@@ -856,17 +856,17 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         }
 
         @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
+        public boolean isCellEditable(final int rowIndex, final int columnIndex) {
             return columnIndex != 1;
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
+        public Object getValueAt(final int rowIndex, final int columnIndex) {
             return rules.get(rowIndex);
         }
 
         @Override
-        public String getColumnName(int columnIndex) {
+        public String getColumnName(final int columnIndex) {
             switch(columnIndex){
                 case 0: return "";
                 case 1: return MessageBundle.getString("value");
@@ -878,7 +878,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         }
 
         @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
 
             MutableRule rule = (MutableRule) rules.get(rowIndex);
 

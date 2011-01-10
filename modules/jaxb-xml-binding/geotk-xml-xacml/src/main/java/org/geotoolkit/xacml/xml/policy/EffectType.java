@@ -44,7 +44,7 @@ public enum EffectType {
    DENY("Deny");
    private final String value;
 
-   EffectType(String v) {
+   EffectType(final String v) {
       value = v;
    }
 
@@ -52,7 +52,7 @@ public enum EffectType {
       return value;
    }
 
-   public static EffectType fromValue(String v) {
+   public static EffectType fromValue(final String v) {
       for (EffectType c : EffectType.values()) {
          if (c.value.equals(v)) {
             return c;

@@ -106,7 +106,7 @@ public abstract class JDBCPrimaryKeyTest extends JDBCTestSupport {
         assertPrimaryKeyValues(features,4);
     }
     
-    void assertPrimaryKeyValues( FeatureCollection features, int count ) throws DataStoreException {
+    void assertPrimaryKeyValues( final FeatureCollection features, final int count ) throws DataStoreException {
         FeatureIterator i = features.iterator();
        
         for ( int j = 1; j <= count; j++ ) {

@@ -130,7 +130,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
         return store;
     }
 
-    public void setDBParameters(Map<String, Serializable> dBConnectionParameters) {
+    public void setDBParameters(final Map<String, Serializable> dBConnectionParameters) {
         if(store != null){
             store.dispose();
             store = null;
@@ -138,7 +138,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
         this.dbParameters = dBConnectionParameters;
     }
 
-    private void reorder(DefaultMutableTreeNode node){
+    private void reorder(final DefaultMutableTreeNode node){
 
         final List<AnalyzeResult> results = new ArrayList<AnalyzeResult>();
 
@@ -248,7 +248,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
         add(jPanel1, java.awt.BorderLayout.NORTH);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiSortByActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiSortByActionPerformed
+    private void guiSortByActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiSortByActionPerformed
         new Thread(){
 
             @Override
@@ -281,7 +281,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
     private class TreeRenderer extends DefaultTreeCellRenderer{
 
         @Override
-        public Component getTreeCellRendererComponent(JTree jtree, Object o, boolean bln, boolean bln1, boolean bln2, int i, boolean bln3) {
+        public Component getTreeCellRendererComponent(final JTree jtree, Object o, final boolean bln, final boolean bln1, final boolean bln2, final int i, final boolean bln3) {
             final JLabel lbl = (JLabel) super.getTreeCellRendererComponent(jtree, o, bln, bln1, bln2, i, bln3);
 
             if(o instanceof DefaultMutableTreeNode){
@@ -307,7 +307,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
     private class TreeMenu extends JPopupMenu{
 
         @Override
-        public void setVisible(boolean bln) {
+        public void setVisible(final boolean bln) {
             TreeMenu.this.removeAll();
             if(bln){
                 final DefaultMutableTreeNode node = (DefaultMutableTreeNode) guiTree.getSelectionPath().getLastPathComponent();
@@ -342,7 +342,7 @@ public class JOSMAnalyzePane extends javax.swing.JPanel {
 
         private final String table;
 
-        public AnalyzeThread(Class type) {
+        public AnalyzeThread(final Class type) {
             if(type.equals(Node.class)){
                 table = "NodeTag";
             }else if(type.equals(Way.class)){

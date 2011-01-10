@@ -261,7 +261,7 @@ public class TransportationComplexType
      *     {@link MultiSurfacePropertyType }
      *     
      */
-    public void setLod1MultiSurface(MultiSurfacePropertyType value) {
+    public void setLod1MultiSurface(final MultiSurfacePropertyType value) {
         this.lod1MultiSurface = value;
     }
 
@@ -285,7 +285,7 @@ public class TransportationComplexType
      *     {@link MultiSurfacePropertyType }
      *     
      */
-    public void setLod2MultiSurface(MultiSurfacePropertyType value) {
+    public void setLod2MultiSurface(final MultiSurfacePropertyType value) {
         this.lod2MultiSurface = value;
     }
 
@@ -309,7 +309,7 @@ public class TransportationComplexType
      *     {@link MultiSurfacePropertyType }
      *     
      */
-    public void setLod3MultiSurface(MultiSurfacePropertyType value) {
+    public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
     }
 
@@ -333,7 +333,7 @@ public class TransportationComplexType
      *     {@link MultiSurfacePropertyType }
      *     
      */
-    public void setLod4MultiSurface(MultiSurfacePropertyType value) {
+    public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
     }
 

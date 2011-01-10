@@ -28,7 +28,7 @@ import org.jdesktop.swingx.combobox.ListComboBoxModel;
  */
 public class JUOMChooser extends JComboBox{
 
-    public JUOMChooser(List<Unit> units) {
+    public JUOMChooser(final List<Unit> units) {
         super(new ListComboBoxModel(units));
         setSelectedIndex(0);
     }

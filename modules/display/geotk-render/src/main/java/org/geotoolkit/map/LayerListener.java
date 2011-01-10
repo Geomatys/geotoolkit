@@ -48,11 +48,11 @@ public interface LayerListener extends ItemListener {
 
         private final Collection<MapLayer> sources = new ArrayList<MapLayer>(1);
 
-        public Weak(LayerListener ref) {
+        public Weak(final LayerListener ref) {
             this(null,ref);
         }
 
-        public Weak(MapLayer source, LayerListener ref) {
+        public Weak(final MapLayer source, final LayerListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
@@ -60,7 +60,7 @@ public interface LayerListener extends ItemListener {
         /**
          * Register this listener on the given source.
          */
-        public synchronized void registerSource(MapLayer source){
+        public synchronized void registerSource(final MapLayer source){
             if(source != null){
                 //register in the new source
                 source.addLayerListener(this);
@@ -71,7 +71,7 @@ public interface LayerListener extends ItemListener {
         /**
          * Unregister this listener on the given source.
          */
-        public synchronized void unregisterSource(MapLayer source){
+        public synchronized void unregisterSource(final MapLayer source){
             sources.remove(source);
             source.removeLayerListener(this);
         }
@@ -85,7 +85,7 @@ public interface LayerListener extends ItemListener {
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             final LayerListener listener = get();
             if (listener != null) {
                 listener.propertyChange(evt);
@@ -94,7 +94,7 @@ public interface LayerListener extends ItemListener {
         }
 
         @Override
-        public void styleChange(MapLayer source, EventObject event) {
+        public void styleChange(final MapLayer source, final EventObject event) {
             final LayerListener listener = get();
             if (listener != null) {
                 listener.styleChange(source,event);
@@ -103,7 +103,7 @@ public interface LayerListener extends ItemListener {
         }
 
         @Override
-        public void itemChange(CollectionChangeEvent<MapItem> event) {
+        public void itemChange(final CollectionChangeEvent<MapItem> event) {
             final LayerListener listener = get();
             if (listener != null) {
                 listener.itemChange(event);

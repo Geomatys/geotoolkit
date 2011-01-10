@@ -63,7 +63,7 @@ public class QuadTree {
      * @param maxBounds
      *                The bounds of all geometries to be indexed
      */
-    public QuadTree(int numShapes, Envelope maxBounds) {
+    public QuadTree(final int numShapes, final Envelope maxBounds) {
         this(numShapes, 0, maxBounds);
     }
 
@@ -76,7 +76,7 @@ public class QuadTree {
      * @param maxDepth
      *                The max depth of the index, must be <= 65535
      */
-    public QuadTree(int numShapes, int maxDepth) {
+    public QuadTree(final int numShapes, final int maxDepth) {
         this(numShapes, maxDepth, null);
     }
 
@@ -90,7 +90,7 @@ public class QuadTree {
      * @param maxBounds
      *                The bounds of all geometries to be indexed
      */
-    public QuadTree(int numShapes, int maxDepth, Envelope maxBounds) {
+    public QuadTree(final int numShapes, final int maxDepth, final Envelope maxBounds) {
         if (maxDepth > 65535) {
             throw new IllegalArgumentException("maxDepth must be <= 65535 value is " + maxDepth);
         }
@@ -125,7 +125,7 @@ public class QuadTree {
         load(getRoot());
     }
 
-    private void load(AbstractNode node) throws StoreException{
+    private void load(final AbstractNode node) throws StoreException{
         for(int i=0, n=node.getNumSubNodes(); i<n; i++){
             load(node.getSubNode(i));
         }
@@ -139,7 +139,7 @@ public class QuadTree {
      * @param bounds
      *                The bounding box
      */
-    public void insert(int recno, Envelope bounds) throws StoreException {
+    public void insert(final int recno, final Envelope bounds) throws StoreException {
         this.insert(this.root, recno, bounds, this.maxDepth);
     }
 
@@ -152,7 +152,7 @@ public class QuadTree {
      * @param md
      * @throws StoreException
      */
-    private void insert(AbstractNode node, int recno, Envelope bounds, int md)
+    private void insert(final AbstractNode node, final int recno, final Envelope bounds, final int md)
             throws StoreException {
 
         final Envelope buffer = new Envelope();
@@ -201,7 +201,7 @@ public class QuadTree {
      * @param bounds
      * @return A List of Integer
      */
-    public <T extends Data> CloseableCollection<T> search(DataReader<T> reader, Envelope bounds) throws StoreException {
+    public <T extends Data> CloseableCollection<T> search(final DataReader<T> reader, final Envelope bounds) throws StoreException {
         return search(reader,bounds,null);
     }
 
@@ -211,8 +211,8 @@ public class QuadTree {
      * @param minRes : nodes with a small envelope then the given resolution will be ignored.
      * @return A List of Integer
      */
-    public <T extends Data> CloseableCollection<T> search(DataReader<T> reader,Envelope bounds,
-                                                       double[] minRes) throws StoreException {
+    public <T extends Data> CloseableCollection<T> search(final DataReader<T> reader,final Envelope bounds,
+                                                       final double[] minRes) throws StoreException {
         if (LOGGER.isLoggable(Level.FINEST)) {
             LOGGER.log(Level.FINEST, "Querying {0}", bounds);
         }
@@ -233,7 +233,7 @@ public class QuadTree {
      * 
      * @throws StoreException
      */
-    public void close(Iterator iter) throws StoreException {
+    public void close(final Iterator iter) throws StoreException {
         iterators.remove(iter);
         if (iter instanceof SearchIterator){
             ((SearchIterator) iter).close();
@@ -254,7 +254,7 @@ public class QuadTree {
      * @param node The node to trim
      * @return true if this node has been trimmed
      */
-    private boolean trim(AbstractNode node) throws StoreException {
+    private boolean trim(final AbstractNode node) throws StoreException {
         final int nbSub = node.getNumSubNodes();
 
         if(nbSub>0){
@@ -299,7 +299,7 @@ public class QuadTree {
      * | 2 | 3 |
      * +---+---+
      */
-    private Envelope[] splitBounds(Envelope in) {
+    private Envelope[] splitBounds(final Envelope in) {
         final Envelope[] ret = new Envelope[4];
         final double minx = in.getMinX();
         final double miny = in.getMinY();
@@ -325,7 +325,7 @@ public class QuadTree {
      * @param maxDepth
      *                The maxDepth to set.
      */
-    public void setMaxDepth(int maxDepth) {
+    public void setMaxDepth(final int maxDepth) {
         this.maxDepth = maxDepth;
     }
 
@@ -340,7 +340,7 @@ public class QuadTree {
      * @param numShapesAbstractNode
      *                The numShapes to set.
      */
-    public void setNumShapes(int numShapes) {
+    public void setNumShapes(final int numShapes) {
         this.numShapes = numShapes;
     }
 
@@ -355,7 +355,7 @@ public class QuadTree {
      * @param root
      *                The root to set.
      */
-    public void setRoot(AbstractNode root) {
+    public void setRoot(final AbstractNode root) {
         this.root = root;
     }
 
@@ -365,7 +365,7 @@ public class QuadTree {
         }
     }
 
-    public void registerIterator(Iterator object) {
+    public void registerIterator(final Iterator object) {
         iterators.add(object);
     }
 

@@ -98,7 +98,7 @@ public class UomPropertyType implements UomProperty {
     
     public UomPropertyType() {}
 
-    public UomPropertyType(UomProperty uom) {
+    public UomPropertyType(final UomProperty uom) {
         if (uom != null) {
             this.actuate   = uom.getActuate();
             this.arcrole   = uom.getArcrole();
@@ -115,7 +115,7 @@ public class UomPropertyType implements UomProperty {
         }
     }
     
-    public UomPropertyType(String code, String href) {
+    public UomPropertyType(final String code, final String href) {
         this.code = code;
         this.href = href;
     }
@@ -291,63 +291,63 @@ public class UomPropertyType implements UomProperty {
     /**
      * @param code the code to set
      */
-    public void setCode(String code) {
+    public void setCode(final String code) {
         this.code = code;
     }
 
     /**
      * @param remoteSchema the remoteSchema to set
      */
-    public void setRemoteSchema(String remoteSchema) {
+    public void setRemoteSchema(final String remoteSchema) {
         this.remoteSchema = remoteSchema;
     }
 
     /**
      * @param actuate the actuate to set
      */
-    public void setActuate(String actuate) {
+    public void setActuate(final String actuate) {
         this.actuate = actuate;
     }
 
     /**
      * @param arcrole the arcrole to set
      */
-    public void setArcrole(String arcrole) {
+    public void setArcrole(final String arcrole) {
         this.arcrole = arcrole;
     }
 
     /**
      * @param href the href to set
      */
-    public void setHref(String href) {
+    public void setHref(final String href) {
         this.href = href;
     }
 
     /**
      * @param role the role to set
      */
-    public void setRole(String role) {
+    public void setRole(final String role) {
         this.role = role;
     }
 
     /**
      * @param show the show to set
      */
-    public void setShow(String show) {
+    public void setShow(final String show) {
         this.show = show;
     }
 
     /**
      * @param title the title to set
      */
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
     /**
      * @param type the type to set
      */
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 

@@ -176,12 +176,12 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     protected final MutableStyleFactory styleFactory;
     protected final XMLUtilities xmlUtilities = new XMLUtilities();
 
-    public SE110toGTTransformer(FilterFactory2 filterFactory,MutableStyleFactory styleFactory){
+    public SE110toGTTransformer(final FilterFactory2 filterFactory,final MutableStyleFactory styleFactory){
         super(filterFactory);
         this.styleFactory = styleFactory;
     }
 
-    public SE110toGTTransformer(FilterFactory2 filterFactory,MutableStyleFactory styleFactory, Map<String, String> namespaceMapping){
+    public SE110toGTTransformer(final FilterFactory2 filterFactory,final MutableStyleFactory styleFactory, final Map<String, String> namespaceMapping){
         super(filterFactory, namespaceMapping);
         this.styleFactory = styleFactory;
     }
@@ -297,7 +297,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
      * Transform a JaxBelement in Expression.
      */
     @Override
-    public Expression visitExpression(JAXBElement<?> jax){
+    public Expression visitExpression(final JAXBElement<?> jax){
         //Added in SE1.1-----
 //        JAXBElementMapItemType>
 //        JAXBElementInterpolateType>
@@ -356,7 +356,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a parametervaluetype in Expression.
      */
-    public Expression visitExpression(org.geotoolkit.se.xml.v110.ParameterValueType param) {
+    public Expression visitExpression(final org.geotoolkit.se.xml.v110.ParameterValueType param) {
         if(param == null) return null;
 
 //        Objects of the following type(s) are allowed in the list
@@ -400,7 +400,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 userstyle in GT style.
      */
-    public MutableStyle visitUserStyle(org.geotoolkit.sld.xml.v110.UserStyle us) throws FactoryException {
+    public MutableStyle visitUserStyle(final org.geotoolkit.sld.xml.v110.UserStyle us) throws FactoryException {
         if(us == null){
             return null;
         }else{
@@ -425,7 +425,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 FeatureTypeStyle or CoverageStyle in GT FTS.
      */
-    public MutableFeatureTypeStyle visitFTS(Object obj) throws FactoryException{
+    public MutableFeatureTypeStyle visitFTS(final Object obj) throws FactoryException{
         if(obj == null) return null;
 
         if(obj instanceof OnlineResourceType){
@@ -487,7 +487,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform SLD v1.1 semantics in GT semantics.
      */
-    public Collection<? extends SemanticType> visitSemantics(List<String> strs){
+    public Collection<? extends SemanticType> visitSemantics(final List<String> strs){
 
         if(strs == null || strs.isEmpty()){
             return Collections.emptyList();
@@ -518,7 +518,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Trasnform SLD v1.1 rule in GT Rule.
      */
-    public MutableRule visitRule(Object objRule) throws FactoryException {
+    public MutableRule visitRule(final Object objRule) throws FactoryException {
         if(objRule instanceof OnlineResourceType){
             final OnlineResourceType ortRule = (OnlineResourceType) objRule;
             return visitRule(ortRule);
@@ -532,7 +532,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Trasnform SLD v1.1 rule in GT Rule.
      */
-    public MutableRule visitRule(OnlineResourceType ort) throws FactoryException {
+    public MutableRule visitRule(final OnlineResourceType ort) throws FactoryException {
         final OnlineResource or = visitOnlineResource(ort);
         if(or != null) {
             try{
@@ -548,7 +548,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Trasnform SLD v1.1 rule in GT Rule.
      */
-    public MutableRule visitRule(org.geotoolkit.se.xml.v110.RuleType rt) 
+    public MutableRule visitRule(final org.geotoolkit.se.xml.v110.RuleType rt) 
             throws FactoryException {
 
         final MutableRule rule = styleFactory.rule();
@@ -601,7 +601,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         return rs;
     }
 
-    public Symbolizer visit(SymbolizerType st) {
+    public Symbolizer visit(final SymbolizerType st) {
 
         if (st instanceof PointSymbolizerType) {
             final PointSymbolizerType pst = (PointSymbolizerType) st;
@@ -629,7 +629,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 point symbolizer in GT point symbolizer.
      */
-    public PointSymbolizer visit(PointSymbolizerType pst) {
+    public PointSymbolizer visit(final PointSymbolizerType pst) {
         if(pst == null) return null;
 
         final Graphic graphic = (pst.getGraphic() == null) ? styleFactory.graphic() : visit(pst.getGraphic());
@@ -644,7 +644,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 line symbolizer in GT line symbolizer.
      */
-    public LineSymbolizer visit(LineSymbolizerType lst) {
+    public LineSymbolizer visit(final LineSymbolizerType lst) {
         if(lst == null) return null;
 
         final Stroke stroke = visit(lst.getStroke());
@@ -660,7 +660,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 polygon symbolizer in GT polygon symbolizer.
      */
-    public PolygonSymbolizer visit(PolygonSymbolizerType pst) {
+    public PolygonSymbolizer visit(final PolygonSymbolizerType pst) {
         if(pst == null) return null;
 
         final Stroke stroke = visit(pst.getStroke());
@@ -678,7 +678,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 raster symbolizer in GT raster symbolizer.
      */
-    public RasterSymbolizer visit(RasterSymbolizerType rst) {
+    public RasterSymbolizer visit(final RasterSymbolizerType rst) {
         if(rst == null) return null;
 
         final Expression opacity = (rst.getOpacity() == null) ? filterFactory.literal(1) : visitExpression(rst.getOpacity());
@@ -701,7 +701,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 text symbolizer in GT text symbolizer.
      */
-    public TextSymbolizer visit(TextSymbolizerType tst) {
+    public TextSymbolizer visit(final TextSymbolizerType tst) {
         if(tst == null) return null;
 
         final Expression label = visitExpression(tst.getLabel());
@@ -722,7 +722,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD ext pattern symbolizer in GT pattern symbolizer.
      */
-    public PatternSymbolizer visit(PatternSymbolizerType rst) {
+    public PatternSymbolizer visit(final PatternSymbolizerType rst) {
         if(rst == null) return null;
 
         final Expression selection = visitExpression(rst.getChannel());
@@ -744,7 +744,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
 
     //Sub elements -------------------------------------------------------------
 
-    public Map<Expression,List<Symbolizer>> visitRanges(List<JAXBElement<RangeType>> types){
+    public Map<Expression,List<Symbolizer>> visitRanges(final List<JAXBElement<RangeType>> types){
         final Map<Expression,List<Symbolizer>> ranges = new LinkedHashMap<Expression, List<Symbolizer>>();
 
         for(final JAXBElement<RangeType> type : types){
@@ -769,7 +769,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 legend in GT legend.
      */
-    public GraphicLegend visitLegend(LegendGraphicType legendGraphic) {
+    public GraphicLegend visitLegend(final LegendGraphicType legendGraphic) {
         if(legendGraphic == null || legendGraphic.getGraphic() == null){
             return null;
         }
@@ -785,7 +785,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 graphic in GT graphic.
      */
-    private Graphic visit(GraphicType graphic) {
+    private Graphic visit(final GraphicType graphic) {
         if(graphic == null) return null;
 
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
@@ -810,7 +810,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 stroke in GT stroke.
      */
-    private Stroke visit(StrokeType strk) {
+    private Stroke visit(final StrokeType strk) {
         if(strk == null) return null;
 
         final GraphicFill fill = visit(strk.getGraphicFill());
@@ -855,7 +855,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 fill in GT fill.
      */
-    private Fill visit(FillType fl) {
+    private Fill visit(final FillType fl) {
         if(fl == null) return null;
 
         final GraphicFill fill = visit(fl.getGraphicFill());
@@ -924,7 +924,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 colormap in GT colormap.
      */
-    private ColorMap visit(ColorMapType colorMap) {
+    private ColorMap visit(final ColorMapType colorMap) {
         if(colorMap == null) return null;
         
         Function function = null;
@@ -940,7 +940,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 contrastEnchancement in GT contrastEnchancement.
      */
-    private ContrastEnhancement visit(ContrastEnhancementType contrastEnhancement) {
+    private ContrastEnhancement visit(final ContrastEnhancementType contrastEnhancement) {
         if(contrastEnhancement == null) return null;
         
         final Expression gamma = filterFactory.literal(contrastEnhancement.getGammaValue());
@@ -973,7 +973,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 shadedRelief in GT shadedRelief.
      */
-    private ShadedRelief visit(ShadedReliefType shadedRelief) {
+    private ShadedRelief visit(final ShadedReliefType shadedRelief) {
         if(shadedRelief == null) return null;
         
         final boolean bright = shadedRelief.isBrightnessOnly();
@@ -985,7 +985,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 font in GT font.
      */
-    private Font visit(FontType font) {
+    private Font visit(final FontType font) {
         if(font == null) return null;
         
         final List<Expression> family = new ArrayList<Expression>();
@@ -1012,7 +1012,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 halo in GT halo.
      */
-    private Halo visit(HaloType halo) {
+    private Halo visit(final HaloType halo) {
         if(halo == null) return null;
         
         final Fill fill = visit(halo.getFill());
@@ -1040,7 +1040,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 anchor in GT anchor.
      */
-    private AnchorPoint visit(AnchorPointType anchorPoint) {
+    private AnchorPoint visit(final AnchorPointType anchorPoint) {
         if(anchorPoint == null) return null;
         
         final Expression x = visitExpression(anchorPoint.getAnchorPointX());
@@ -1049,7 +1049,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         return styleFactory.anchorPoint(x, y);
     }
 
-    private Mark visit(MarkType markType) {
+    private Mark visit(final MarkType markType) {
         if(markType == null) return null;
         
         final Expression wkn = filterFactory.literal(markType.getWellKnownName());
@@ -1061,7 +1061,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
         return styleFactory.mark(wkn, fill, stroke);
     }
 
-    private ExternalGraphic visit(ExternalGraphicType externalGraphicType) {
+    private ExternalGraphic visit(final ExternalGraphicType externalGraphicType) {
         if(externalGraphicType == null) return null;
                 
         final OnlineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
@@ -1109,7 +1109,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 graphic fill in GT graphic fill.
      */
-    private GraphicFill visit(GraphicFillType graphicFill) {
+    private GraphicFill visit(final GraphicFillType graphicFill) {
         if(graphicFill == null || graphicFill.getGraphic() == null){
             return null;
         }
@@ -1125,7 +1125,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 graphic stroke in GT graphic stroke.
      */
-    private GraphicStroke visit(GraphicStrokeType graphicStroke) {
+    private GraphicStroke visit(final GraphicStrokeType graphicStroke) {
         if(graphicStroke == null || graphicStroke.getGraphic() == null){
             return null;
         }
@@ -1144,7 +1144,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      * Transform a SLD v1.1 selected channel in GT selected channel.
      */
-    private SelectedChannelType visit(org.geotoolkit.se.xml.v110.SelectedChannelType channel) {
+    private SelectedChannelType visit(final org.geotoolkit.se.xml.v110.SelectedChannelType channel) {
         if(channel == null) return null;
         
         final String name = channel.getSourceChannelName();
@@ -1225,7 +1225,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 lineplacement in GT line placement.
      */
-    private LinePlacement visit(LinePlacementType linePlacement) {
+    private LinePlacement visit(final LinePlacementType linePlacement) {
         if(linePlacement == null) return null;
         
         final Expression offset = visitExpression(linePlacement.getPerpendicularOffset());
@@ -1244,7 +1244,7 @@ public class SE110toGTTransformer extends OGC110toGTTransformer {
     /**
      *  Transform a SLD v1.1 pointplacement in GT point placement.
      */
-    private PointPlacement visit(PointPlacementType pointPlacement) {
+    private PointPlacement visit(final PointPlacementType pointPlacement) {
         if(pointPlacement == null) return null;
         
         final AnchorPoint anchor = visit(pointPlacement.getAnchorPoint());

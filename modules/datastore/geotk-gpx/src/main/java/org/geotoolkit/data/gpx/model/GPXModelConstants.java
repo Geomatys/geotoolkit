@@ -289,15 +289,15 @@ public final class GPXModelConstants {
      * @param ymax : maximum latitude
      * @return Immutable envelope in WGS84 with the given extents.
      */
-    public static Envelope createEnvelope(double xmin, double xmax, double ymin, double ymax){
+    public static Envelope createEnvelope(final double xmin, final double xmax, final double ymin, final double ymax){
         return new ImmutableEnvelope(DefaultGeographicCRS.WGS84, xmin, xmax, ymin, ymax);
     }
 
-    public static Feature createWayPoint(int index, Point geometry, Double ele, Date time,
-            Double magvar, Double geoidheight, String name, String cmt, String desc,
-            String src, List<URI> links, String sym, String type, String fix,
-            Integer sat, Double hdop, Double vdop, Double pdop, Double ageofdgpsdata,
-            Integer dgpsid) {
+    public static Feature createWayPoint(final int index, final Point geometry, final Double ele, final Date time,
+            final Double magvar, final Double geoidheight, final String name, final String cmt, final String desc,
+            final String src, final List<URI> links, final String sym, final String type, final String fix,
+            final Integer sat, final Double hdop, final Double vdop, final Double pdop, final Double ageofdgpsdata,
+            final Integer dgpsid) {
 
         final Collection<Property> properties = new ArrayList<Property>();
 
@@ -332,8 +332,8 @@ public final class GPXModelConstants {
         return FF.createFeature(properties, TYPE_WAYPOINT, Integer.toString(index));
     }
 
-    public static Feature createRoute(int index, String name, String cmt, String desc,
-            String src, List<URI> links, Integer number, String type, List<Feature> wayPoints) {
+    public static Feature createRoute(final int index, final String name, final String cmt, final String desc,
+            final String src, final List<URI> links, final Integer number, final String type, final List<Feature> wayPoints) {
 
         final Collection<Property> properties = new ArrayList<Property>();
 
@@ -369,7 +369,7 @@ public final class GPXModelConstants {
         return feature;
     }
 
-    public static ComplexAttribute createTrackSegment(int index, List<Feature> wayPoints) {
+    public static ComplexAttribute createTrackSegment(final int index, final List<Feature> wayPoints) {
 
         final Collection<Property> properties = new ArrayList<Property>();
 
@@ -391,8 +391,8 @@ public final class GPXModelConstants {
         return ca;
     }
 
-    public static Feature createTrack(int index, String name, String cmt, String desc,
-            String src, List<URI> links, Integer number, String type, List<ComplexAttribute> segments) {
+    public static Feature createTrack(final int index, final String name, final String cmt, final String desc,
+            final String src, final List<URI> links, final Integer number, final String type, final List<ComplexAttribute> segments) {
 
         final Collection<Property> properties = new ArrayList<Property>();
 

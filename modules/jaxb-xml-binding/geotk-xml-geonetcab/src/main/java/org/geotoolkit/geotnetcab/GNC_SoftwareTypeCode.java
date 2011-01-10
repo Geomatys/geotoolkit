@@ -87,7 +87,7 @@ public class GNC_SoftwareTypeCode extends CodeList<GNC_SoftwareTypeCode> {
      * Returns the GNC_SoftwareTypeCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_SoftwareTypeCode valueOf(String code) {
+    public static GNC_SoftwareTypeCode valueOf(final String code) {
         return valueOf(GNC_SoftwareTypeCode.class, code);
     }
 }

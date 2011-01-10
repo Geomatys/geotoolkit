@@ -40,7 +40,7 @@ public class OfferingProcedureEntry implements Entry{
     /**
      * Build a new link between a procedure and an offering. 
      */
-    public OfferingProcedureEntry(String idOffering, ReferenceEntry component) {
+    public OfferingProcedureEntry(final String idOffering, final ReferenceEntry component) {
         this.idOffering = idOffering;
         this.component  = component;
     }

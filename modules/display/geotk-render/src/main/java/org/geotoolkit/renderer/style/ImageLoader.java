@@ -76,7 +76,7 @@ class ImageLoader implements Runnable {
      *
      * @param newTimeout the new timeout value in milliseconds
      */
-    public static void setTimeout(long newTimeout) {
+    public static void setTimeout(final long newTimeout) {
         timeout = newTimeout;
     }
 
@@ -87,7 +87,7 @@ class ImageLoader implements Runnable {
      * @param interactive if true the methods returns immediatly, otherwise waits for the image to
      *        be loaded
      */
-    private void add(URL location, boolean interactive) {
+    private void add(final URL location, final boolean interactive) {
         int imgId = imageID;
         this.location = location;
         LOGGER.finest("adding image, interactive? " + interactive);
@@ -140,7 +140,7 @@ class ImageLoader implements Runnable {
      *
      * @return true if the flag is up
      */
-    private boolean isFlagUp(int id, int flag) {
+    private boolean isFlagUp(final int id, final int flag) {
         return (tracker.statusID(id, true) & flag) == flag;
     }
 
@@ -156,7 +156,7 @@ class ImageLoader implements Runnable {
      *
      * @return the buffered image or null
      */
-    public BufferedImage get(URL location, boolean interactive) {
+    public BufferedImage get(final URL location, final boolean interactive) {
         if (images.containsKey(location)) {
             LOGGER.finest("found it");
 

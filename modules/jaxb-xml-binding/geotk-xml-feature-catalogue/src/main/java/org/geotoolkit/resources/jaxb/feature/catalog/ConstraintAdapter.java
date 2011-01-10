@@ -86,7 +86,7 @@ public class ConstraintAdapter extends XmlAdapter<ConstraintAdapter, Constraint>
      * @return A java object which represents the metadata value.
      */
     @Override
-    public Constraint unmarshal(ConstraintAdapter value) throws Exception {
+    public Constraint unmarshal(final ConstraintAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -101,7 +101,7 @@ public class ConstraintAdapter extends XmlAdapter<ConstraintAdapter, Constraint>
      * @return The adapter for this Constraint.
      */
     @Override
-    public ConstraintAdapter marshal(Constraint value) throws Exception {
+    public ConstraintAdapter marshal(final Constraint value) throws Exception {
         return new ConstraintAdapter(value);
     }
 

@@ -31,7 +31,7 @@ public abstract class AbstractShapeHandler implements ShapeHandler {
     protected final ShapeType shapeType;
     protected final boolean read3D;
     
-    public AbstractShapeHandler(ShapeType shapeType,boolean read3D){
+    public AbstractShapeHandler(final ShapeType shapeType,final boolean read3D){
         this.shapeType = shapeType;
         this.read3D = read3D;
     }

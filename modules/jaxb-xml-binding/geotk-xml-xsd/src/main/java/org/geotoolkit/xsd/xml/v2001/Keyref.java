@@ -70,7 +70,7 @@ public class Keyref extends Keybase {
      *     {@link QName }
      *     
      */
-    public void setRefer(QName value) {
+    public void setRefer(final QName value) {
         this.refer = value;
     }
 

@@ -195,7 +195,7 @@ public class LargeMailUserType {
      *     {@link LargeMailUserType.LargeMailUserIdentifier }
      *     
      */
-    public void setLargeMailUserIdentifier(LargeMailUserType.LargeMailUserIdentifier value) {
+    public void setLargeMailUserIdentifier(final LargeMailUserType.LargeMailUserIdentifier value) {
         this.largeMailUserIdentifier = value;
     }
 
@@ -248,7 +248,7 @@ public class LargeMailUserType {
      *     {@link Department }
      *     
      */
-    public void setDepartment(Department value) {
+    public void setDepartment(final Department value) {
         this.department = value;
     }
 
@@ -272,7 +272,7 @@ public class LargeMailUserType {
      *     {@link PostBox }
      *     
      */
-    public void setPostBox(PostBox value) {
+    public void setPostBox(final PostBox value) {
         this.postBox = value;
     }
 
@@ -296,7 +296,7 @@ public class LargeMailUserType {
      *     {@link Thoroughfare }
      *     
      */
-    public void setThoroughfare(Thoroughfare value) {
+    public void setThoroughfare(final Thoroughfare value) {
         this.thoroughfare = value;
     }
 
@@ -320,7 +320,7 @@ public class LargeMailUserType {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -373,7 +373,7 @@ public class LargeMailUserType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -454,7 +454,7 @@ public class LargeMailUserType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -478,7 +478,7 @@ public class LargeMailUserType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -502,7 +502,7 @@ public class LargeMailUserType {
          *     {@link String }
          *     
          */
-        public void setIndicator(String value) {
+        public void setIndicator(final String value) {
             this.indicator = value;
         }
 
@@ -526,7 +526,7 @@ public class LargeMailUserType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -604,7 +604,7 @@ public class LargeMailUserType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -628,7 +628,7 @@ public class LargeMailUserType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -652,7 +652,7 @@ public class LargeMailUserType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 

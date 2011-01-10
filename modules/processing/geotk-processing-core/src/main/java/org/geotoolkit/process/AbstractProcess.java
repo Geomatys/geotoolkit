@@ -67,7 +67,7 @@ public abstract class AbstractProcess implements Process{
     protected ParameterValueGroup inputParameters;
     private ProcessMonitor monitor = null;
 
-    public AbstractProcess(ProcessDescriptor desc){
+    public AbstractProcess(final ProcessDescriptor desc){
         if(desc == null){
             throw new NullPointerException("Descriptor is null");
         }
@@ -80,7 +80,7 @@ public abstract class AbstractProcess implements Process{
     }
 
     @Override
-    public void setInput(ParameterValueGroup parameter) {
+    public void setInput(final ParameterValueGroup parameter) {
         inputParameters = parameter;
         final ConformanceResult res = Parameters.isValid(inputParameters, inputParameters.getDescriptor());
         if(!res.pass()){
@@ -94,7 +94,7 @@ public abstract class AbstractProcess implements Process{
     }
 
     @Override
-    public void setMonitor(ProcessMonitor monitor) {
+    public void setMonitor(final ProcessMonitor monitor) {
         this.monitor = monitor;
     }
 

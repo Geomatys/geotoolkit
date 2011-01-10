@@ -63,7 +63,7 @@ public class EchoedRequestType {
      * Sets the value of the any property.
      * 
      */
-    public void setAny(Object value) {
+    public void setAny(final Object value) {
         this.any = value;
     }
 

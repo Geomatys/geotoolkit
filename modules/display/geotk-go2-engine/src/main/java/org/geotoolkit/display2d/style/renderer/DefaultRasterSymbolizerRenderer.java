@@ -85,7 +85,7 @@ import org.opengis.style.ShadedRelief;
 public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerRenderer<CachedRasterSymbolizer>{
 
 
-    public DefaultRasterSymbolizerRenderer(CachedRasterSymbolizer symbol, RenderingContext2D context){
+    public DefaultRasterSymbolizerRenderer(final CachedRasterSymbolizer symbol, final RenderingContext2D context){
         super(symbol,context);
     }
     
@@ -290,7 +290,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return new ShadedReliefOp(img, null, null, null);
     }
 
-    private static RenderedImage selectBand(final RenderedImage image, int[] indices){
+    private static RenderedImage selectBand(final RenderedImage image, final int[] indices){
         if(image.getSampleModel().getNumBands() < indices.length){
             //not enough bands in the image
             LOGGER.log(Level.WARNING, "Raster Style define more bands than the data");
@@ -303,7 +303,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
     }
 
-    private static RenderedImage recolor(final RenderedImage image, Function function){
+    private static RenderedImage recolor(final RenderedImage image, final Function function){
 
         final int visibleBand = CoverageUtilities.getVisibleBand(image);
         final ColorModel candidate = image.getColorModel();
@@ -467,7 +467,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return ARGB;
     }
 
-    private static RenderedImage equalize(RenderedImage source) {
+    private static RenderedImage equalize(final RenderedImage source) {
         int sum = 0;
         byte[] cumulative = new byte[256];
         int array[] = getHistogram(source);
@@ -570,7 +570,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         return local_array;
     }
 
-    private static RenderedImage brigthen(RenderedImage image,int brightness) throws PortrayalException{
+    private static RenderedImage brigthen(final RenderedImage image,final int brightness) throws PortrayalException{
         final ColorModel model = image.getColorModel();
 
         if(model instanceof IndexColorModel){
@@ -605,7 +605,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
 
     }
 
-    private static byte clamp(int v) {
+    private static byte clamp(final int v) {
         if ( v > 255 ) {
             return (byte)255;
         } else if ( v < 0 ) {
@@ -615,7 +615,7 @@ public class DefaultRasterSymbolizerRenderer extends AbstractCoverageSymbolizerR
         }
     }
 
-    private static RenderedImage colorize(RenderedImage image, byte[][] lt) {
+    private static RenderedImage colorize(final RenderedImage image, final byte[][] lt) {
         LookupTableJAI lookup = new LookupTableJAI(lt);
         ParameterBlock pb = new ParameterBlock();
         pb.addSource(image);

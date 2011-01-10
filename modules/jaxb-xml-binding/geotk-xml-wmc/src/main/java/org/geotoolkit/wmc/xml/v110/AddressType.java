@@ -91,7 +91,7 @@ public class AddressType {
      *     {@link String }
      *     
      */
-    public void setAddressType(String value) {
+    public void setAddressType(final String value) {
         this.addressType = value;
     }
 
@@ -115,7 +115,7 @@ public class AddressType {
      *     {@link String }
      *     
      */
-    public void setAddress(String value) {
+    public void setAddress(final String value) {
         this.address = value;
     }
 
@@ -139,7 +139,7 @@ public class AddressType {
      *     {@link String }
      *     
      */
-    public void setCity(String value) {
+    public void setCity(final String value) {
         this.city = value;
     }
 
@@ -163,7 +163,7 @@ public class AddressType {
      *     {@link String }
      *     
      */
-    public void setStateOrProvince(String value) {
+    public void setStateOrProvince(final String value) {
         this.stateOrProvince = value;
     }
 
@@ -187,7 +187,7 @@ public class AddressType {
      *     {@link String }
      *     
      */
-    public void setPostCode(String value) {
+    public void setPostCode(final String value) {
         this.postCode = value;
     }
 
@@ -211,7 +211,7 @@ public class AddressType {
      *     {@link String }
      *     
      */
-    public void setCountry(String value) {
+    public void setCountry(final String value) {
         this.country = value;
     }
 

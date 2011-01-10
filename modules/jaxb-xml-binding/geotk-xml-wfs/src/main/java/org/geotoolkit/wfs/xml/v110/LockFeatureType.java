@@ -75,7 +75,7 @@ public class LockFeatureType extends BaseRequestType {
 
     }
 
-    public LockFeatureType(String service, String version, String handle, List<LockType> lock, Integer expiry, AllSomeType lockAction) {
+    public LockFeatureType(final String service, final String version, final String handle, final List<LockType> lock, final Integer expiry, final AllSomeType lockAction) {
         super(service, version, handle);
         this.expiry     = expiry;
         this.lock       = lock;
@@ -116,7 +116,7 @@ public class LockFeatureType extends BaseRequestType {
      *     {@link Integer }
      *     
      */
-    public void setExpiry(Integer value) {
+    public void setExpiry(final Integer value) {
         this.expiry = value;
     }
 
@@ -144,7 +144,7 @@ public class LockFeatureType extends BaseRequestType {
      *     {@link AllSomeType }
      *     
      */
-    public void setLockAction(AllSomeType value) {
+    public void setLockAction(final AllSomeType value) {
         this.lockAction = value;
     }
 

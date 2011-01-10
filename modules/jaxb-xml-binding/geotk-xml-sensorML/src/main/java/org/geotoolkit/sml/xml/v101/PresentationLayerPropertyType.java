@@ -102,7 +102,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     public PresentationLayerPropertyType() {
         
     }
-    public PresentationLayerPropertyType(AbstractPresentationLayerProperty la) {
+    public PresentationLayerPropertyType(final AbstractPresentationLayerProperty la) {
         if (la != null) {
             if (la.getDataBlockDefinition() != null) {
                 this.dataBlockDefinition = new DataBlockDefinitionEntry(la.getDataBlockDefinition());
@@ -180,7 +180,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordEntry> value) {
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordEntry> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordEntry> ) value);
     }
 
@@ -204,7 +204,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link Category }
      *     
      */
-    public void setCategory(Category value) {
+    public void setCategory(final Category value) {
         this.category = value;
     }
 
@@ -228,7 +228,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link DataBlockDefinitionType }
      *     
      */
-    public void setDataBlockDefinition(DataBlockDefinitionEntry value) {
+    public void setDataBlockDefinition(final DataBlockDefinitionEntry value) {
         this.dataBlockDefinition = value;
     }
 
@@ -252,7 +252,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link DataStreamDefinitionType }
      *     
      */
-    public void setDataStreamDefinition(DataStreamDefinitionType value) {
+    public void setDataStreamDefinition(final DataStreamDefinitionType value) {
         this.dataStreamDefinition = value;
     }
 
@@ -276,7 +276,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -300,7 +300,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -324,7 +324,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -348,7 +348,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -372,7 +372,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -396,7 +396,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -420,7 +420,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -444,7 +444,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

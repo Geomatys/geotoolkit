@@ -103,7 +103,7 @@ public class DefaultMutableRule implements MutableRule{
      * This method is thread safe.
      */
     @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         final String oldName;
         synchronized (this) {
             oldName = this.name;
@@ -129,7 +129,7 @@ public class DefaultMutableRule implements MutableRule{
      * @param desc : Description can't be null
      */
     @Override
-    public void setDescription(Description desc){
+    public void setDescription(final Description desc){
         if (desc == null) {
             throw new NullPointerException("description can't be null");
         }
@@ -159,7 +159,7 @@ public class DefaultMutableRule implements MutableRule{
      * @param legend : can be null.
      */
     @Override
-    public void setLegendGraphic(GraphicLegend legend){
+    public void setLegendGraphic(final GraphicLegend legend){
         final GraphicLegend oldLegend;
         synchronized (this) {
             oldLegend = this.legend;
@@ -188,7 +188,7 @@ public class DefaultMutableRule implements MutableRule{
      * @param filter : can be null.
      */
     @Override
-    public void setFilter(Filter filter){
+    public void setFilter(final Filter filter){
         final Filter oldFilter;
         synchronized (this) {
             oldFilter = this.filter;
@@ -216,7 +216,7 @@ public class DefaultMutableRule implements MutableRule{
      * 
      */
     @Override
-    public void setElseFilter(boolean isElse){
+    public void setElseFilter(final boolean isElse){
         final boolean oldIsElse;
         synchronized (this) {
             oldIsElse = this.isElse;
@@ -243,7 +243,7 @@ public class DefaultMutableRule implements MutableRule{
      * will not be tested.
      */
     @Override
-    public void setMinScaleDenominator(double minScale){
+    public void setMinScaleDenominator(final double minScale){
         final double oldMinScale;
         synchronized (this) {
             oldMinScale = this.minscale;
@@ -270,7 +270,7 @@ public class DefaultMutableRule implements MutableRule{
      * will not be tested.
      */
     @Override
-    public void setMaxScaleDenominator(double maxScale){
+    public void setMaxScaleDenominator(final double maxScale){
         final double oldMaxScale;
         synchronized (this) {
             oldMaxScale = this.maxScale;
@@ -305,7 +305,7 @@ public class DefaultMutableRule implements MutableRule{
      * This method is thread safe.
      */
     @Override
-    public void setOnlineResource(OnlineResource online) {
+    public void setOnlineResource(final OnlineResource online) {
         final OnlineResource oldOnline;
         synchronized (this) {
             oldOnline = this.online;
@@ -321,7 +321,7 @@ public class DefaultMutableRule implements MutableRule{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -349,7 +349,7 @@ public class DefaultMutableRule implements MutableRule{
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
     
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
+    protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
         
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
@@ -361,7 +361,7 @@ public class DefaultMutableRule implements MutableRule{
         
     }
     
-    protected void fireSymbolizerChange(int type, Symbolizer symbol, NumberRange<Integer> range) {
+    protected void fireSymbolizerChange(final int type, final Symbolizer symbol, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<Symbolizer> event = new CollectionChangeEvent<Symbolizer>(this, symbol, type, range, null);
@@ -373,7 +373,7 @@ public class DefaultMutableRule implements MutableRule{
 
     }
     
-    protected void fireSymbolizerChange(int type, Collection<? extends Symbolizer> symbol, NumberRange<Integer> range){
+    protected void fireSymbolizerChange(final int type, final Collection<? extends Symbolizer> symbol, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
         
         final CollectionChangeEvent<Symbolizer> event = new CollectionChangeEvent<Symbolizer>(this,symbol,type,range, null);
@@ -389,7 +389,7 @@ public class DefaultMutableRule implements MutableRule{
      * {@inheritDoc }
      */
     @Override
-    public void addListener(RuleListener listener){
+    public void addListener(final RuleListener listener){
         addListener((PropertyChangeListener)listener);
     }
 
@@ -397,7 +397,7 @@ public class DefaultMutableRule implements MutableRule{
      * {@inheritDoc }
      */
     @Override
-    public void addListener(PropertyChangeListener listener){
+    public void addListener(final PropertyChangeListener listener){
         listeners.add(PropertyChangeListener.class, listener);
         if(listener instanceof RuleListener){
             listeners.add(RuleListener.class, (RuleListener)listener);
@@ -408,7 +408,7 @@ public class DefaultMutableRule implements MutableRule{
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(PropertyChangeListener listener){
+    public void removeListener(final PropertyChangeListener listener){
         listeners.remove(PropertyChangeListener.class, listener);
         if(listener instanceof RuleListener){
             listeners.remove(RuleListener.class, (RuleListener)listener);

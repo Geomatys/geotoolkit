@@ -100,7 +100,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * @param extraData
      * @return
      */
-    protected StringBuffer asStringBuffer( Object extraData){
+    protected StringBuffer asStringBuffer( final Object extraData){
         if( extraData instanceof StringBuffer){
             return (StringBuffer) extraData;
         }
@@ -111,7 +111,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * Exclude everything; using an old SQL trick of 1=0.
      */
     @Override
-    public Object visit(ExcludeFilter filter, Object extraData) {
+    public Object visit(final ExcludeFilter filter, final Object extraData) {
         StringBuffer output = asStringBuffer(extraData);
         output.append("1 = 1");
         return output;
@@ -121,14 +121,14 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * Include everything; using an old SQL trick of 1=1.
      */
     @Override
-    public Object visit(IncludeFilter filter, Object extraData) {
+    public Object visit(final IncludeFilter filter, final Object extraData) {
         StringBuffer output = asStringBuffer(extraData);
         output.append("1 = 1");
         return output;
     }
 
     @Override
-    public Object visit(And filter, Object extraData) {
+    public Object visit(final And filter, final Object extraData) {
         LOGGER.finer("exporting And filter");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -154,12 +154,12 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * by an id is a distinct operation seperate from a filter based query.
      */
     @Override
-    public Object visit(Id filter, Object extraData) {
+    public Object visit(final Id filter, final Object extraData) {
         throw new IllegalStateException("Cannot encode an Id as legal CQL");
     }
 
     @Override
-    public Object visit(Not filter, Object extraData) {
+    public Object visit(final Not filter, final Object extraData) {
         LOGGER.finer("exporting Not filter");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -170,7 +170,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Or filter, Object extraData) {
+    public Object visit(final Or filter, final Object extraData) {
         LOGGER.finer("exporting Or filter");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -190,7 +190,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyIsBetween filter, Object extraData) {
+    public Object visit(final PropertyIsBetween filter, final Object extraData) {
         LOGGER.finer("exporting PropertyIsBetween");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -205,7 +205,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyIsEqualTo filter, Object extraData) {
+    public Object visit(final PropertyIsEqualTo filter, final Object extraData) {
         LOGGER.finer("exporting PropertyIsEqualTo");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -218,7 +218,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyIsNotEqualTo filter, Object extraData) {
+    public Object visit(final PropertyIsNotEqualTo filter, final Object extraData) {
         LOGGER.finer("exporting PropertyIsNotEqualTo");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -231,7 +231,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyIsGreaterThan filter, Object extraData) {
+    public Object visit(final PropertyIsGreaterThan filter, final Object extraData) {
         StringBuffer output = asStringBuffer(extraData);
         if( isDate( filter )){
             return after( filter, output);
@@ -252,7 +252,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * @param compare
      * @return true if we are working on Date
      */
-    protected boolean isDate( BinaryComparisonOperator compare ){
+    protected boolean isDate( final BinaryComparisonOperator compare ){
         if( compare.getExpression2() instanceof Literal){
             Literal literal = (Literal) compare.getExpression2();
             return literal.getValue() instanceof Date;
@@ -266,7 +266,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * I am tempted to do the SimpleFeature look aisde in order to guess
      * what kind of type I am working with.
      */
-    public StringBuffer after( PropertyIsGreaterThan filter, StringBuffer output ){
+    public StringBuffer after( final PropertyIsGreaterThan filter, final StringBuffer output ){
         LOGGER.finer("exporting AFTER");
         PropertyName propertyName = (PropertyName) filter.getExpression1();
         propertyName.accept(this, output);
@@ -278,7 +278,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyIsGreaterThanOrEqualTo filter, Object extraData) {
+    public Object visit(final PropertyIsGreaterThanOrEqualTo filter, final Object extraData) {
         LOGGER.finer("exporting PropertyIsGreaterThanOrEqualTo");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -291,7 +291,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyIsLessThan filter, Object extraData) {
+    public Object visit(final PropertyIsLessThan filter, final Object extraData) {
         LOGGER.finer("exporting PropertyIsLessThan");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -304,7 +304,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyIsLessThanOrEqualTo filter, Object extraData) {
+    public Object visit(final PropertyIsLessThanOrEqualTo filter, final Object extraData) {
         LOGGER.finer("exporting PropertyIsLessThanOrEqualTo");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -317,7 +317,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyIsLike filter, Object extraData) {
+    public Object visit(final PropertyIsLike filter, final Object extraData) {
         StringBuffer output = asStringBuffer(extraData);
 
         char esc = filter.getEscape().charAt(0);
@@ -347,7 +347,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyIsNull filter, Object extraData) {
+    public Object visit(final PropertyIsNull filter, final Object extraData) {
         StringBuffer output = asStringBuffer(extraData);
 
         PropertyName propertyName = (PropertyName) filter.getExpression();
@@ -357,7 +357,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(BBOX filter, Object extraData) {
+    public Object visit(final BBOX filter, final Object extraData) {
         StringBuffer output = asStringBuffer(extraData);
 
         output.append( "BBOX(");
@@ -376,7 +376,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Beyond filter, Object extraData) {
+    public Object visit(final Beyond filter, final Object extraData) {
         LOGGER.finer("exporting Beyond");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -391,7 +391,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Contains filter, Object extraData) {
+    public Object visit(final Contains filter, final Object extraData) {
         LOGGER.finer("exporting Contains");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -406,7 +406,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Crosses filter, Object extraData) {
+    public Object visit(final Crosses filter, final Object extraData) {
         LOGGER.finer("exporting Crosses");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -421,7 +421,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Disjoint filter, Object extraData) {
+    public Object visit(final Disjoint filter, final Object extraData) {
         LOGGER.finer("exporting Crosses");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -436,7 +436,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(DWithin filter, Object extraData) {
+    public Object visit(final DWithin filter, final Object extraData) {
         LOGGER.finer("exporting Crosses");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -455,7 +455,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Equals filter, Object extraData) {
+    public Object visit(final Equals filter, final Object extraData) {
         LOGGER.finer("exporting Equals");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -470,7 +470,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Intersects filter, Object extraData) {
+    public Object visit(final Intersects filter, final Object extraData) {
         LOGGER.finer("exporting Intersects");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -485,7 +485,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Overlaps filter, Object extraData) {
+    public Object visit(final Overlaps filter, final Object extraData) {
         LOGGER.finer("exporting Overlaps");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -500,7 +500,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Touches filter, Object extraData) {
+    public Object visit(final Touches filter, final Object extraData) {
         LOGGER.finer("exporting Touches");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -515,7 +515,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Within filter, Object extraData) {
+    public Object visit(final Within filter, final Object extraData) {
         LOGGER.finer("exporting Within");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -539,7 +539,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * <p>
      */
     @Override
-    public Object visitNullFilter(Object extraData) {
+    public Object visitNullFilter(final Object extraData) {
         throw new NullPointerException("Cannot encode null as a Filter");
     }
 
@@ -548,7 +548,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * to use an emptry string for now.
      */
     @Override
-    public Object visit(NilExpression expression, Object extraData) {
+    public Object visit(final NilExpression expression, final Object extraData) {
         LOGGER.finer("exporting Expression Nil");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -558,7 +558,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Add expression, Object extraData) {
+    public Object visit(final Add expression, final Object extraData) {
         LOGGER.finer("exporting Expression Add");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -570,7 +570,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Divide expression, Object extraData) {
+    public Object visit(final Divide expression, final Object extraData) {
         LOGGER.finer("exporting Expression Divide");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -582,7 +582,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Function function, Object extraData) {
+    public Object visit(final Function function, final Object extraData) {
         LOGGER.finer("exporting Function");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -604,7 +604,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Literal expression, Object extraData) {
+    public Object visit(final Literal expression, final Object extraData) {
         LOGGER.finer("exporting LiteralExpression");
         StringBuffer output = asStringBuffer(extraData);
 
@@ -636,7 +636,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
      * @param output
      * @return output
      */
-    public StringBuffer date( Date date, StringBuffer output ){
+    public StringBuffer date( final Date date, final StringBuffer output ){
 
         DateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT);
 
@@ -646,7 +646,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Multiply expression, Object extraData) {
+    public Object visit(final Multiply expression, final Object extraData) {
         LOGGER.finer("exporting Expression Multiply");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -658,7 +658,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(PropertyName expression, Object extraData) {
+    public Object visit(final PropertyName expression, final Object extraData) {
         LOGGER.finer("exporting PropertyName");
 
         StringBuffer output = asStringBuffer(extraData);
@@ -668,7 +668,7 @@ class FilterToCQL implements FilterVisitor, ExpressionVisitor {
     }
 
     @Override
-    public Object visit(Subtract expression, Object extraData) {
+    public Object visit(final Subtract expression, final Object extraData) {
         LOGGER.finer("exporting Expression Subtract");
 
         StringBuffer output = asStringBuffer(extraData);

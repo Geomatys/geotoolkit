@@ -87,7 +87,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     private boolean interpolateCoverageColor = true;
     private int step = 10;
 
-    public IsolineGraphicJ2D(J2DCanvas canvas, FeatureMapLayer layer, ValueExtractor extractor) {
+    public IsolineGraphicJ2D(final J2DCanvas canvas, final FeatureMapLayer layer, final ValueExtractor extractor) {
         super(canvas, layer);
         this.extractor = extractor;
 
@@ -99,7 +99,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         this.featureBuilder = new SimpleFeatureBuilder(sftb.buildSimpleFeatureType());
     }
 
-    public void setStep(int step) {
+    public void setStep(final int step) {
         this.step = step;
     }
 
@@ -107,11 +107,11 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         return step;
     }
 
-    public void setCoverageStyle(MutableStyle coverageStyle) {
+    public void setCoverageStyle(final MutableStyle coverageStyle) {
         this.coverageStyle = coverageStyle;
     }
 
-    public void setIsoLineStyle(MutableStyle isoLineStyle) {
+    public void setIsoLineStyle(final MutableStyle isoLineStyle) {
         this.isoLineStyle = isoLineStyle;
     }
 
@@ -123,7 +123,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
         return isoLineStyle;
     }
 
-    public void setInterpolateCoverageColor(boolean interpolateCoverageColor) {
+    public void setInterpolateCoverageColor(final boolean interpolateCoverageColor) {
         this.interpolateCoverageColor = interpolateCoverageColor;
     }
 
@@ -132,7 +132,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     }
 
     @Override
-    public void paintLayer(RenderingContext2D context) {
+    public void paintLayer(final RenderingContext2D context) {
 
         //we abort painting if the layer is not visible.
         if (!item.isVisible()) {
@@ -275,7 +275,7 @@ public class IsolineGraphicJ2D extends StatelessFeatureLayerJ2D {
     }
 
     private static GridCoverage2D toCoverage(final double[] computed, final double[] xs, final double[] ys,
-            final Envelope env, double zmin, double zmax){
+            final Envelope env, final double zmin, double zmax){
 
         final int lower = 1;
         final int upper = 255;

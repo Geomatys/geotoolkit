@@ -96,7 +96,7 @@ public class DefinitionSourceAdapter extends XmlAdapter<DefinitionSourceAdapter,
      * @return A java object which represents the metadata value.
      */
     @Override
-    public DefinitionSource unmarshal(DefinitionSourceAdapter value) throws Exception {
+    public DefinitionSource unmarshal(final DefinitionSourceAdapter value) throws Exception {
         if (value == null) {
             return null;
         } else if (value.href != null) {
@@ -114,7 +114,7 @@ public class DefinitionSourceAdapter extends XmlAdapter<DefinitionSourceAdapter,
      * @return The adapter for this DefinitionSource.
      */
     @Override
-    public DefinitionSourceAdapter marshal(DefinitionSource value) throws Exception {
+    public DefinitionSourceAdapter marshal(final DefinitionSource value) throws Exception {
         return new DefinitionSourceAdapter(value);
     }
 

@@ -55,7 +55,7 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
      * {@inheritDoc }
      */
     @Override
-    public CachedPointSymbolizer createCachedSymbolizer(PointSymbolizer symbol) {
+    public CachedPointSymbolizer createCachedSymbolizer(final PointSymbolizer symbol) {
         return new CachedPointSymbolizer(symbol,this);
     }
 
@@ -63,7 +63,7 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
      * {@inheritDoc }
      */
     @Override
-    public SymbolizerRenderer createRenderer(CachedPointSymbolizer symbol, RenderingContext2D context) {
+    public SymbolizerRenderer createRenderer(final CachedPointSymbolizer symbol, final RenderingContext2D context) {
         return new DefaultPointSymbolizerRenderer(symbol, context);
     }
 
@@ -71,7 +71,7 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g2d, Rectangle2D rectangle, CachedPointSymbolizer symbol, MapLayer layer) {
+    public void glyph(final Graphics2D g2d, final Rectangle2D rectangle, final CachedPointSymbolizer symbol, final MapLayer layer) {
         g2d.setClip(rectangle);
         
         final Feature feature = null;

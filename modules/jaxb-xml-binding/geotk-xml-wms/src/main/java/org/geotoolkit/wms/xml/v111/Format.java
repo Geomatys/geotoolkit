@@ -41,7 +41,7 @@ public class Format {
 
     }
 
-    public Format(String value) {
+    public Format(final String value) {
         this.value = value;
     }
     /**

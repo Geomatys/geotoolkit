@@ -67,7 +67,7 @@ final class JaxenFeatureXPath implements XPath {
     /** the support information and function, namespace and variable contexts */
     private ContextSupport support;
 
-    private JaxenFeatureXPath(String xpathExpr) throws JaxenException {
+    private JaxenFeatureXPath(final String xpathExpr) throws JaxenException {
         try {
             final XPathReader reader = XPathReaderFactory.createReader();
             final JaxenHandler handler = new JaxenHandler();
@@ -83,7 +83,7 @@ final class JaxenFeatureXPath implements XPath {
     }
 
     @Override
-    public Object evaluate(Object context) throws JaxenException{
+    public Object evaluate(final Object context) throws JaxenException{
         final List answer = selectNodes(context);
         if (answer != null && answer.size() == 1){
             return answer.get(0);
@@ -94,7 +94,7 @@ final class JaxenFeatureXPath implements XPath {
     /**
      * Replaces all {namespace} by prefixes and fill the xpath namespace context.
      */
-    private static String replaceNamespaces(String candidate, Map<String,String> prefixes) throws JaxenException{
+    private static String replaceNamespaces(final String candidate, final Map<String,String> prefixes) throws JaxenException{
 
         int start = candidate.indexOf('{');
         if(start >= 0){
@@ -131,12 +131,12 @@ final class JaxenFeatureXPath implements XPath {
     }
 
     @Override
-    public String valueOf(Object node) throws JaxenException {
+    public String valueOf(final Object node) throws JaxenException {
         return stringValueOf( node );
     }
 
     @Override
-    public String stringValueOf(Object node) throws JaxenException {
+    public String stringValueOf(final Object node) throws JaxenException {
         final Context context = getContext( node );
         final Object result = selectSingleNodeForContext( context );
         if ( result == null ){
@@ -146,7 +146,7 @@ final class JaxenFeatureXPath implements XPath {
     }
 
     @Override
-    public boolean booleanValueOf(Object node) throws JaxenException {
+    public boolean booleanValueOf(final Object node) throws JaxenException {
         final Context context = getContext( node );
         final List result = selectNodesForContext( context );
         if ( result == null ) return false;
@@ -154,20 +154,20 @@ final class JaxenFeatureXPath implements XPath {
     }
 
     @Override
-    public Number numberValueOf(Object node) throws JaxenException {
+    public Number numberValueOf(final Object node) throws JaxenException {
         final Context context = getContext( node );
         final Object result = selectSingleNodeForContext( context );
         return NumberFunction.evaluate( result, context.getNavigator() );
     }
 
     @Override
-    public List selectNodes(Object node) throws JaxenException {
+    public List selectNodes(final Object node) throws JaxenException {
         final Context context = getContext( node );
         return selectNodesForContext( context );
     }
 
     @Override
-    public Object selectSingleNode(Object node) throws JaxenException {
+    public Object selectSingleNode(final Object node) throws JaxenException {
         final List results = selectNodes( node );
         if ( results.isEmpty() ){
             return null;
@@ -176,7 +176,7 @@ final class JaxenFeatureXPath implements XPath {
     }
 
     @Override
-    public void addNamespace(String prefix, String uri) throws JaxenException {
+    public void addNamespace(final String prefix, final String uri) throws JaxenException {
         final NamespaceContext nsContext = getNamespaceContext();
         if ( nsContext instanceof SimpleNamespaceContext ){
             ((SimpleNamespaceContext)nsContext).addNamespace( prefix, uri );
@@ -186,17 +186,17 @@ final class JaxenFeatureXPath implements XPath {
     }
 
     @Override
-    public void setNamespaceContext(NamespaceContext namespaceContext) {
+    public void setNamespaceContext(final NamespaceContext namespaceContext) {
         getContextSupport().setNamespaceContext(namespaceContext);
     }
 
     @Override
-    public void setFunctionContext(FunctionContext functionContext) {
+    public void setFunctionContext(final FunctionContext functionContext) {
         getContextSupport().setFunctionContext(functionContext);
     }
 
     @Override
-    public void setVariableContext(VariableContext variableContext) {
+    public void setVariableContext(final VariableContext variableContext) {
         getContextSupport().setVariableContext(variableContext);
     }
 
@@ -223,7 +223,7 @@ final class JaxenFeatureXPath implements XPath {
 
     /////////////////////////////////////////////////////////////////////////
 
-    private Context getContext(Object node) {
+    private Context getContext(final Object node) {
         if (node instanceof Context) {
             return (Context) node;
         }
@@ -252,11 +252,11 @@ final class JaxenFeatureXPath implements XPath {
         return support;
     }
 
-    private List selectNodesForContext(Context context) throws JaxenException {
+    private List selectNodesForContext(final Context context) throws JaxenException {
         return this.xpath.asList(context);
     }
 
-    private Object selectSingleNodeForContext(Context context) throws JaxenException {
+    private Object selectSingleNodeForContext(final Context context) throws JaxenException {
         final List results = selectNodesForContext(context);
         if (results.isEmpty()) {
             return null;

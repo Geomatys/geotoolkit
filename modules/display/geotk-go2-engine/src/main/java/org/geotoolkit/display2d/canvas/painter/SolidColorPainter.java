@@ -30,7 +30,7 @@ public class SolidColorPainter implements BackgroundPainter{
 
     private final Color color;
 
-    public SolidColorPainter(Color color){
+    public SolidColorPainter(final Color color){
         if(color == null){
             throw new NullPointerException("Color can not be null.");
         }
@@ -42,7 +42,7 @@ public class SolidColorPainter implements BackgroundPainter{
     }
     
     @Override
-    public void paint(RenderingContext2D context) {
+    public void paint(final RenderingContext2D context) {
         final Graphics2D g = context.getGraphics();
         final Rectangle rect = context.getCanvasDisplayBounds();
         g.setPaint(color);

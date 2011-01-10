@@ -57,7 +57,7 @@ public class LineLazySearchCollectionTest extends AbstractTestCaseSupport {
         crs = ds.getFeatureType(ds.getNames().iterator().next()).getCoordinateReferenceSystem();
     }
 
-    public static Object[] openQuadTree(File file) throws StoreException {
+    public static Object[] openQuadTree(final File file) throws StoreException {
         File qixFile = sibling(file, "qix");
         FileSystemIndexStore store = new FileSystemIndexStore(qixFile);
         try {

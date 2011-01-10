@@ -112,7 +112,7 @@ public class Rule {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -136,7 +136,7 @@ public class Rule {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -160,7 +160,7 @@ public class Rule {
      *     {@link String }
      *     
      */
-    public void setAbstract(String value) {
+    public void setAbstract(final String value) {
         this._abstract = value;
     }
 
@@ -184,7 +184,7 @@ public class Rule {
      *     {@link LegendGraphic }
      *     
      */
-    public void setLegendGraphic(LegendGraphic value) {
+    public void setLegendGraphic(final LegendGraphic value) {
         this.legendGraphic = value;
     }
 
@@ -208,7 +208,7 @@ public class Rule {
      *     {@link FilterType }
      *     
      */
-    public void setFilter(FilterType value) {
+    public void setFilter(final FilterType value) {
         this.filter = value;
     }
 
@@ -232,7 +232,7 @@ public class Rule {
      *     {@link ElseFilter }
      *     
      */
-    public void setElseFilter(ElseFilter value) {
+    public void setElseFilter(final ElseFilter value) {
         this.elseFilter = value;
     }
 
@@ -256,7 +256,7 @@ public class Rule {
      *     {@link Double }
      *     
      */
-    public void setMinScaleDenominator(Double value) {
+    public void setMinScaleDenominator(final Double value) {
         this.minScaleDenominator = value;
     }
 
@@ -280,7 +280,7 @@ public class Rule {
      *     {@link Double }
      *     
      */
-    public void setMaxScaleDenominator(Double value) {
+    public void setMaxScaleDenominator(final Double value) {
         this.maxScaleDenominator = value;
     }
 

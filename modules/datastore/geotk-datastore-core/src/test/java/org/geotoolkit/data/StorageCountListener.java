@@ -12,13 +12,13 @@ public final class StorageCountListener implements StorageListener {
     public StorageContentEvent lastContentEvent = null;
 
     @Override
-    public void structureChanged(StorageManagementEvent event) {
+    public void structureChanged(final StorageManagementEvent event) {
         numManageEvent++;
         this.lastManagementEvent = event;
     }
 
     @Override
-    public void contentChanged(StorageContentEvent event) {
+    public void contentChanged(final StorageContentEvent event) {
         numContentEvent++;
         this.lastContentEvent = event;
     }

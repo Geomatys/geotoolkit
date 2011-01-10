@@ -88,7 +88,7 @@ public final class Portrayer {
         container.setContext(EMPTY_CONTEXT);
     }
 
-    public BufferedImage portray(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef) throws PortrayalException{
+    public BufferedImage portray(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef) throws PortrayalException{
 
         final Envelope contextEnv = viewDef.getEnvelope();
         final CoordinateReferenceSystem crs = contextEnv.getCoordinateReferenceSystem();
@@ -154,8 +154,8 @@ public final class Portrayer {
      *              if the mime type write can not support it.
      * @throws PortrayalException
      */
-    public void portray(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef,
-            OutputDef outputDef) throws PortrayalException{
+    public void portray(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
+            final OutputDef outputDef) throws PortrayalException{
 
         final String mime = outputDef.getMime();
         if(mime.contains("jpeg") || mime.contains("jpg")){
@@ -217,8 +217,8 @@ public final class Portrayer {
      * @return true if the optimization have been applied.
      * @throws PortrayalException
      */
-    private boolean portrayAsCoverage(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef,
-            OutputDef outputDef) throws PortrayalException {
+    private boolean portrayAsCoverage(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef,
+            final OutputDef outputDef) throws PortrayalException {
 
         //works for one layer only
         final List<MapLayer> layers = sceneDef.getContext().layers();
@@ -289,8 +289,8 @@ public final class Portrayer {
      * @param outputDef : outpout definition
      * @throws PortrayalException if writing failed
      */
-    private void writeCoverage(GridCoverage coverage, Envelope env, double[] resolution,
-            OutputDef outputDef, Color backgroundColor) throws PortrayalException{
+    private void writeCoverage(final GridCoverage coverage, final Envelope env, final double[] resolution,
+            final OutputDef outputDef, final Color backgroundColor) throws PortrayalException{
         final String mimeType = outputDef.getMime();
 
         String javaType = MIME_CACHE.get(mimeType);

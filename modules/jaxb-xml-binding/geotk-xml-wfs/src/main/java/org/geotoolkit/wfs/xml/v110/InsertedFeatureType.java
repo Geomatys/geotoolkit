@@ -64,12 +64,12 @@ public class InsertedFeatureType {
 
     }
     
-    public InsertedFeatureType(List<FeatureIdType> featureId, String handle) {
+    public InsertedFeatureType(final List<FeatureIdType> featureId, final String handle) {
         this.featureId = featureId;
         this.handle    = handle;
     }
 
-    public InsertedFeatureType(FeatureIdType featureId, String handle) {
+    public InsertedFeatureType(final FeatureIdType featureId, final String handle) {
         this.featureId = Arrays.asList(featureId);
         this.handle    = handle;
     }
@@ -109,7 +109,7 @@ public class InsertedFeatureType {
      *     {@link String }
      *     
      */
-    public void setHandle(String value) {
+    public void setHandle(final String value) {
         this.handle = value;
     }
 

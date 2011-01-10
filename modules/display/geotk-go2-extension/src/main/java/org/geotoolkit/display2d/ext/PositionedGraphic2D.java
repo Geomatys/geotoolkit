@@ -41,7 +41,7 @@ public abstract class PositionedGraphic2D extends AbstractGraphicJ2D{
     private int[] offset = new int[]{0,0};
     private Dimension minimumCanvasSize = new Dimension(0,0);
 
-    public PositionedGraphic2D(J2DCanvas canvas) {
+    public PositionedGraphic2D(final J2DCanvas canvas) {
         super(canvas,DefaultGeographicCRS.WGS84);
     }
 
@@ -50,7 +50,7 @@ public abstract class PositionedGraphic2D extends AbstractGraphicJ2D{
      * 
      * @param position, one value in SwingConstants.*
      */
-    public void setPosition(int position) {
+    public void setPosition(final int position) {
         this.position = position;
     }
 
@@ -61,13 +61,13 @@ public abstract class PositionedGraphic2D extends AbstractGraphicJ2D{
      * @param offsetX
      * @param offsetY
      */
-    public void setOffset(int offsetX, int offsetY) {
+    public void setOffset(final int offsetX, final int offsetY) {
         this.offset[0] = offsetX;
         this.offset[1] = offsetY;
     }
 
     @Override
-    public void paint(RenderingContext2D context) {
+    public void paint(final RenderingContext2D context) {
         Rectangle rect = context.getCanvasDisplayBounds();
 
         //dont paint the graphic if the canvas is to small
@@ -79,7 +79,7 @@ public abstract class PositionedGraphic2D extends AbstractGraphicJ2D{
     protected abstract void paint(RenderingContext2D context, int position, int[] offset);
 
     @Override
-    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
         return graphics;
     }
 

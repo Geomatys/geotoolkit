@@ -91,7 +91,7 @@ public class GNC_RelationNameCode extends CodeList<GNC_RelationNameCode>  {
      * Returns the GNC_RelationNameCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_RelationNameCode valueOf(String code) {
+    public static GNC_RelationNameCode valueOf(final String code) {
         return valueOf(GNC_RelationNameCode.class, code);
     }
 }

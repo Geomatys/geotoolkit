@@ -84,7 +84,7 @@ public class ComplexDataDescriptionType {
      *     {@link String }
      *     
      */
-    public void setMimeType(String value) {
+    public void setMimeType(final String value) {
         this.mimeType = value;
     }
 
@@ -108,7 +108,7 @@ public class ComplexDataDescriptionType {
      *     {@link String }
      *     
      */
-    public void setEncoding(String value) {
+    public void setEncoding(final String value) {
         this.encoding = value;
     }
 
@@ -132,7 +132,7 @@ public class ComplexDataDescriptionType {
      *     {@link String }
      *     
      */
-    public void setSchema(String value) {
+    public void setSchema(final String value) {
         this.schema = value;
     }
 

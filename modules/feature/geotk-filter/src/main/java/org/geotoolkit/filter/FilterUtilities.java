@@ -41,7 +41,7 @@ public final class FilterUtilities {
      * @param objectClazz : target class against which to optimize
      * @return optimized filter
      */
-    public static Filter prepare(Filter filter, Class objectClazz){
+    public static Filter prepare(final Filter filter, final Class objectClazz){
         if(filter == null) return null;
         final PrepareFilterVisitor visitor = new PrepareFilterVisitor(objectClazz);
         return (Filter) filter.accept(visitor, null);
@@ -57,7 +57,7 @@ public final class FilterUtilities {
      *      will be used.
      * @return prepared property name expression.
      */
-    public static PropertyName prepare(PropertyName exp, Class objectClazz){
+    public static PropertyName prepare(final PropertyName exp, final Class objectClazz){
         return new CachedPropertyName(exp.getPropertyName(), objectClazz);
     }
 

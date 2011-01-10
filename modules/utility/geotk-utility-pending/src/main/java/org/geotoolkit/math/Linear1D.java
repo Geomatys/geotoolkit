@@ -42,7 +42,7 @@ public class Linear1D extends Search1D {
      * @return				Valeur <var>y</var> interpolée.
      */
     @Override
-    protected double interpolate(double xi, boolean reUseIndex) throws ExtrapolationException {
+    protected double interpolate(final double xi, final boolean reUseIndex) throws ExtrapolationException {
         if (ignoreYNaN && !reUseIndex) {
             validateIndex(y);
         }
@@ -65,7 +65,7 @@ public class Linear1D extends Search1D {
      * @return			Le tableau des <var>y</var>.
      */
     @Override
-    public double[] interpolateNaN(double dxStart, double dxStop) {
+    public double[] interpolateNaN(final double dxStart, final double dxStop) {
         return interpolateNaN(dxStart, dxStop, y);
     }
 }

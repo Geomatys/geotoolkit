@@ -80,11 +80,11 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
     private final FeatureMapLayer layer;
 
-    public FeatureLayerNode(A3DCanvas canvas, FeatureMapLayer layer) {
+    public FeatureLayerNode(final A3DCanvas canvas, final FeatureMapLayer layer) {
         this(canvas,layer,false);
     }
 
-    public FeatureLayerNode(A3DCanvas canvas, FeatureMapLayer layer, boolean loadAll) {
+    public FeatureLayerNode(final A3DCanvas canvas, final FeatureMapLayer layer, final boolean loadAll) {
         super(canvas);
         this.layer = layer;
 
@@ -99,7 +99,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         
     }
 
-    private Mesh toNodeLine(LineString geom, float z ,ColorRGBA color){
+    private Mesh toNodeLine(final LineString geom, final float z ,final ColorRGBA color){
                 
         final Coordinate[] coords = geom.getCoordinates();
         final FloatBuffer verts = BufferUtils.createVector3Buffer(coords.length);
@@ -120,7 +120,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         return line;
     }
 
-    private Node toNodeLine(MultiLineString geom, float z ,ColorRGBA color){
+    private Node toNodeLine(final MultiLineString geom, final float z ,final ColorRGBA color){
 
         final Node node = new Node();
 
@@ -132,7 +132,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         return node;
     }
 
-    private Mesh toNodePoint(Point geom,float z,ReadOnlyColorRGBA color){
+    private Mesh toNodePoint(final Point geom,final float z,final ReadOnlyColorRGBA color){
         final Tube cy = new Tube("cy", 4, 5, 10);
         cy.setTranslation(geom.getCoordinate().x, z,geom.getCoordinate().y);
         cy.setDefaultColor(color);
@@ -141,7 +141,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
         return cy;
     }
 
-    private Node toNodePoint(MultiPoint geom,float z,ReadOnlyColorRGBA color){
+    private Node toNodePoint(final MultiPoint geom,final float z,final ReadOnlyColorRGBA color){
 
         final Node node = new Node();
 
@@ -154,7 +154,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     }
 
     @Override
-    public void draw(Renderer r) {
+    public void draw(final Renderer r) {
 
         //remove old ones
         synchronized(tounload){
@@ -185,7 +185,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
     private final Cache<String,Spatial> cache   = new Cache<String, Spatial>();
     
     @Override
-    public void update(ReadOnlyVector3 cameraPosition) {
+    public void update(final ReadOnlyVector3 cameraPosition) {
         final FeatureSource<SimpleFeatureType,SimpleFeature> source = layer.getFeatureSource();
 
         final DefaultBoundingBox bb = new DefaultBoundingBox(layer.getBounds());
@@ -200,7 +200,7 @@ public class FeatureLayerNode extends A3DGraphic implements LocationSensitiveGra
 
     }
 
-    private void loadArea(Filter filter){
+    private void loadArea(final Filter filter){
         final List<String> exactList = new ArrayList<String>();
 
         final GeometryCoordinateSequenceTransformer dataToObjectiveTransformer = new GeometryCoordinateSequenceTransformer();

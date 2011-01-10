@@ -42,13 +42,13 @@ public class MesureAreaAction extends AbstractAction {
         this(false);
     }
 
-    public MesureAreaAction(boolean big){
+    public MesureAreaAction(final boolean big){
         super("", (big)?ICON_AREA_24 : ICON_AREA_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_measure_area"));
     }
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
             map.setHandler(new AreaHandler(map));
         }
@@ -58,7 +58,7 @@ public class MesureAreaAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

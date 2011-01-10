@@ -22,12 +22,12 @@ import org.opengis.filter.expression.Expression;
 
 public class IfThenElseFunction extends AbstractFunction {
 
-    public IfThenElseFunction(Expression expr1, Expression expr2, Expression expr3) {
+    public IfThenElseFunction(final Expression expr1, final Expression expr2, final Expression expr3) {
         super(OtherFunctionFactory.IF_THEN_ELSE, new Expression[]{expr1,expr2,expr3}, null);
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         boolean arg0;
         Object arg1;
         Object arg2;

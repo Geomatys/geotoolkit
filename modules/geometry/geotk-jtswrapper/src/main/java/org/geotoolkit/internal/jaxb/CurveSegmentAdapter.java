@@ -45,12 +45,12 @@ public class CurveSegmentAdapter extends XmlAdapter<CurveSegmentAdapter, CurveSe
 
     }
 
-    public CurveSegmentAdapter(CurveSegment lineString) {
+    public CurveSegmentAdapter(final CurveSegment lineString) {
         this.positions = lineString.getSamplePoints().positions();
     }
 
     @Override
-    public CurveSegment unmarshal(CurveSegmentAdapter v) throws Exception {
+    public CurveSegment unmarshal(final CurveSegmentAdapter v) throws Exception {
        JTSLineString line = new JTSLineString();
        for (Position p : v.positions) {
             line.getPositions().add(p);
@@ -59,7 +59,7 @@ public class CurveSegmentAdapter extends XmlAdapter<CurveSegmentAdapter, CurveSe
     }
 
     @Override
-    public CurveSegmentAdapter marshal(CurveSegment v) throws Exception {
+    public CurveSegmentAdapter marshal(final CurveSegment v) throws Exception {
         return new CurveSegmentAdapter(v);
     }
 

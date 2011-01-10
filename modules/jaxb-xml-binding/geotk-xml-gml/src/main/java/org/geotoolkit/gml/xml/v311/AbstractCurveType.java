@@ -55,7 +55,7 @@ public abstract class AbstractCurveType extends AbstractGeometricPrimitiveType {
 
     }
 
-    public AbstractCurveType(String id, String srsName) {
+    public AbstractCurveType(final String id, final String srsName) {
         super(id, srsName);
     }
 

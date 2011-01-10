@@ -75,7 +75,7 @@ public class ResultType {
     * Sets the value of the decision property.
     * 
     */
-   public void setDecision(DecisionType value) {
+   public void setDecision(final DecisionType value) {
       this.decision = value;
    }
 
@@ -91,7 +91,7 @@ public class ResultType {
     * Sets the value of the status property.
     * 
     */
-   public void setStatus(StatusType value) {
+   public void setStatus(final StatusType value) {
       this.status = value;
    }
 
@@ -107,7 +107,7 @@ public class ResultType {
     * Sets the value of the obligations property.
     * 
     */
-   public void setObligations(ObligationsType value) {
+   public void setObligations(final ObligationsType value) {
       this.obligations = value;
    }
 
@@ -123,7 +123,7 @@ public class ResultType {
     * Sets the value of the resourceId property.
     * 
     */
-   public void setResourceId(String value) {
+   public void setResourceId(final String value) {
       this.resourceId = value;
    }
 

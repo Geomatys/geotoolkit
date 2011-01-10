@@ -108,7 +108,7 @@ public class CoverageExtent {
      *     {@link String }
      *     
      */
-    public void setTimePeriod(String value) {
+    public void setTimePeriod(final String value) {
         this.timePeriod = value;
     }
 

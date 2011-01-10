@@ -38,7 +38,7 @@ public class DateParseFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         String format;
         String date;
 

@@ -72,7 +72,7 @@ public class OperationMetadataImpl implements OperationMetadata {
     /**
      * Clone a OperationMetadata
      */
-    public OperationMetadataImpl(OperationMetadata operation) {
+    public OperationMetadataImpl(final OperationMetadata operation) {
         this.connectPoint         = operation.getConnectPoint();
         this.dcp                  = operation.getDCP();
         this.dependsOn            = operation.getDependsOn();
@@ -85,7 +85,7 @@ public class OperationMetadataImpl implements OperationMetadata {
     /**
      * Build a new Operation metadata
      */
-    public OperationMetadataImpl(String operationName) {
+    public OperationMetadataImpl(final String operationName) {
         this.operationName = operationName;
     }
     
@@ -103,7 +103,7 @@ public class OperationMetadataImpl implements OperationMetadata {
      * Sets the value of the operationName property.
      * 
      */
-    public void setOperationName(String value) {
+    public void setOperationName(final String value) {
         this.operationName = value;
     }
 
@@ -120,11 +120,11 @@ public class OperationMetadataImpl implements OperationMetadata {
         return this.dcp;
     }
     
-    public void setDCP(Collection<DCPList> dcp) {
+    public void setDCP(final Collection<DCPList> dcp) {
          this.dcp = dcp;
     }
     
-    public void setDCP(DCPList dcp) {
+    public void setDCP(final DCPList dcp) {
         if (this.dcp == null) {
             this.dcp = new ArrayList<DCPList>();
         } 
@@ -144,7 +144,7 @@ public class OperationMetadataImpl implements OperationMetadata {
      * Sets the value of the operationDescription property.
      * 
      */
-    public void setOperationDescription(String value) {
+    public void setOperationDescription(final String value) {
         this.operationDescription = value;
     }
 
@@ -161,7 +161,7 @@ public class OperationMetadataImpl implements OperationMetadata {
      * Sets the value of the invocationName property.
      * 
      */
-    public void setInvocationName(String value) {
+    public void setInvocationName(final String value) {
         this.invocationName = value;
     }
 
@@ -177,11 +177,11 @@ public class OperationMetadataImpl implements OperationMetadata {
         return this.parameters;
     }
     
-    public void setParameters(Collection<Parameter> parameters) {
+    public void setParameters(final Collection<Parameter> parameters) {
          this.parameters = parameters;
     }
     
-    public void setParameters(Parameter parameter) {
+    public void setParameters(final Parameter parameter) {
         if (parameters == null) {
             parameters = new ArrayList<Parameter>();
         }
@@ -200,11 +200,11 @@ public class OperationMetadataImpl implements OperationMetadata {
         return this.connectPoint;
     }
     
-    public void setConnectPoint(Collection<OnlineResource> connectPoint) {
+    public void setConnectPoint(final Collection<OnlineResource> connectPoint) {
          this.connectPoint = connectPoint;
     }
     
-    public void setConnectPoint(OnlineResource connectPoint) {
+    public void setConnectPoint(final OnlineResource connectPoint) {
         if (this.connectPoint == null) {
             this.connectPoint = new ArrayList<OnlineResource>();
         }
@@ -222,11 +222,11 @@ public class OperationMetadataImpl implements OperationMetadata {
         return this.dependsOn;
     }
     
-    public void setDependsOn(Collection<OperationMetadata> dependsOn) {
+    public void setDependsOn(final Collection<OperationMetadata> dependsOn) {
          this.dependsOn = dependsOn;
     }
     
-    public void setDependsOn(OperationMetadata dependsOn) {
+    public void setDependsOn(final OperationMetadata dependsOn) {
         if (this.dependsOn == null) {
             this.dependsOn = new ArrayList<OperationMetadata>();
         }
@@ -243,7 +243,7 @@ public class OperationMetadataImpl implements OperationMetadata {
     /**
      * @param isUuidref the isUuidref to set
      */
-    public void setIsUuidref(boolean isUuidref) {
+    public void setIsUuidref(final boolean isUuidref) {
         this.isUuidref = isUuidref;
     }
     

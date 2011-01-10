@@ -70,11 +70,11 @@ public class PointArrayPropertyType {
         return this.point;
     }
 
-    public void setPoint(List<PointType> point) {
+    public void setPoint(final List<PointType> point) {
         this.point = point;
     }
 
-    public void setPoint(PointType point) {
+    public void setPoint(final PointType point) {
         if (point != null) {
             if (this.point == null) {
                 this.point = new ArrayList<PointType>();

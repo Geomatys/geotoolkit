@@ -73,7 +73,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * @param serverURL The server url.
      * @param version The version of the request.
      */
-    protected AbstractGetMap(String serverURL, String version) {
+    protected AbstractGetMap(final String serverURL, final String version) {
         super(serverURL);
         this.version = version;
     }
@@ -91,7 +91,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setLayers(String... layers) {
+    public void setLayers(final String... layers) {
         this.layers = layers;
     }
 
@@ -107,7 +107,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setEnvelope(Envelope env) {
+    public void setEnvelope(final Envelope env) {
         this.envelope = env;
     }
 
@@ -123,7 +123,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setDimension(Dimension dim) {
+    public void setDimension(final Dimension dim) {
         this.dimension = dim;
     }
 
@@ -139,7 +139,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setFormat(String format) {
+    public void setFormat(final String format) {
         this.format = format;
     }
 
@@ -155,7 +155,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setExceptions(String ex) {
+    public void setExceptions(final String ex) {
         this.exceptions = ex;
     }
 
@@ -171,7 +171,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setStyles(String... styles) {
+    public void setStyles(final String... styles) {
         this.styles = styles;
     }
 
@@ -187,7 +187,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setSld(String sld) {
+    public void setSld(final String sld) {
         this.sld = sld;
     }
 
@@ -203,7 +203,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setSldBody(String sldBody) {
+    public void setSldBody(final String sldBody) {
         this.sldBody = sldBody;
     }
 
@@ -213,7 +213,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     }
 
     @Override
-    public void setSldVersion(String sldVersion) {
+    public void setSldVersion(final String sldVersion) {
         this.sldVersion = sldVersion;
     }
 
@@ -229,7 +229,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * {@inheritDoc }
      */
     @Override
-    public void setTransparent(Boolean transparent) {
+    public void setTransparent(final Boolean transparent) {
         this.transparent = transparent;
     }
 
@@ -328,7 +328,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
      * @param env Current Envelope
      * @param map map containing GetMap parameters
      */
-    protected void encodeTimeAndElevation(Envelope env, Map<String, String> map) {
+    protected void encodeTimeAndElevation(final Envelope env, final Map<String, String> map) {
         //append time and elevation parameter
         final CoordinateSystem cs = env.getCoordinateReferenceSystem().getCoordinateSystem();
         for (int i = 0, n = cs.getDimension(); i < n; i++) {
@@ -392,7 +392,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
     /**
      * Transform a double representing a Date to a String
      */
-    private static String toDateString(double value) {
+    private static String toDateString(final double value) {
         return ISO_FORMAT.format(new Date((long) value));
     }
 }

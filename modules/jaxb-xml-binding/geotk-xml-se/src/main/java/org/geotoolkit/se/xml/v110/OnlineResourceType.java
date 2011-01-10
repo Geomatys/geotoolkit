@@ -67,7 +67,7 @@ public class OnlineResourceType {
 
     }
 
-    public OnlineResourceType(String href) {
+    public OnlineResourceType(final String href) {
         this.href = href;
     }
 
@@ -95,7 +95,7 @@ public class OnlineResourceType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -119,7 +119,7 @@ public class OnlineResourceType {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -143,7 +143,7 @@ public class OnlineResourceType {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -167,7 +167,7 @@ public class OnlineResourceType {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -191,7 +191,7 @@ public class OnlineResourceType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -215,7 +215,7 @@ public class OnlineResourceType {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -239,7 +239,7 @@ public class OnlineResourceType {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

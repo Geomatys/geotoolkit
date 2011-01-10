@@ -33,7 +33,7 @@ public class DefaultFunctions implements Functions{
 
     private final Map<String,FunctionName> functions = new HashMap<String, FunctionName>();
 
-    public DefaultFunctions(FunctionName[] functions) {
+    public DefaultFunctions(final FunctionName[] functions) {
         if(functions == null || functions.length == 0){
             throw new IllegalArgumentException("Functions must not be null or empty");
         }
@@ -54,7 +54,7 @@ public class DefaultFunctions implements Functions{
      * {@inheritDoc }
      */
     @Override
-    public FunctionName getFunctionName(String name) {
+    public FunctionName getFunctionName(final String name) {
         return functions.get(name);
     }
 
@@ -62,7 +62,7 @@ public class DefaultFunctions implements Functions{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

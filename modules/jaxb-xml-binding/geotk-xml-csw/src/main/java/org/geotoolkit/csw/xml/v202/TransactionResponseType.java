@@ -81,8 +81,8 @@ public class TransactionResponseType implements CSWResponse {
     /**
      * Build a new response to a transaction
      */
-    public TransactionResponseType(TransactionSummaryType transactionSummary, List<InsertResultType> insertResult,
-            String version) {
+    public TransactionResponseType(final TransactionSummaryType transactionSummary, final List<InsertResultType> insertResult,
+            final String version) {
         this.transactionSummary = transactionSummary;
         this.insertResult       = insertResult;
         this.version            = version;

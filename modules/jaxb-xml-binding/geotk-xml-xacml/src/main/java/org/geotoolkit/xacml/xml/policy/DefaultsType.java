@@ -63,7 +63,7 @@ public class DefaultsType {
    /**
     * Sets the value of the xPathVersion property.
     */
-   public void setXPathVersion(String value) {
+   public void setXPathVersion(final String value) {
       this.xPathVersion = value;
    }
 

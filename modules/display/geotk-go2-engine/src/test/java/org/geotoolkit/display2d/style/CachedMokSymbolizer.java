@@ -28,13 +28,13 @@ import org.opengis.feature.Feature;
  */
 public class CachedMokSymbolizer extends CachedSymbolizer<MokSymbolizer>{
 
-    public CachedMokSymbolizer(MokSymbolizer point,
-            SymbolizerRendererService<MokSymbolizer,? extends CachedSymbolizer<MokSymbolizer>> renderer){
+    public CachedMokSymbolizer(final MokSymbolizer point,
+            final SymbolizerRendererService<MokSymbolizer,? extends CachedSymbolizer<MokSymbolizer>> renderer){
         super(point,renderer);
     }
 
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         return 0;
     }
 
@@ -43,7 +43,7 @@ public class CachedMokSymbolizer extends CachedSymbolizer<MokSymbolizer>{
     }
 
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return true;
     }
 

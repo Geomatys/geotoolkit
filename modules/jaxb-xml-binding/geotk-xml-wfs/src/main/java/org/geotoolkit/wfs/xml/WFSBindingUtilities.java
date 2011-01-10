@@ -47,7 +47,7 @@ import org.xml.sax.InputSource;
 public class WFSBindingUtilities {
 
 
-     public static WFSCapabilitiesType unmarshall(Object source, WFSVersion version) throws JAXBException{
+     public static WFSCapabilitiesType unmarshall(final Object source, final WFSVersion version) throws JAXBException{
 
          final MarshallerPool pool = WFSMarshallerPool.getInstance();
          Unmarshaller unMarshaller = null;

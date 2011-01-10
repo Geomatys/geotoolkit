@@ -59,7 +59,7 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
      * set the list of PropertyPanel to use
      * @param liste
      */
-    public void setPropertyPanels(List<PropertyPane> liste) {
+    public void setPropertyPanels(final List<PropertyPane> liste) {
         lst.clear();
         lst.addAll(liste);
     }
@@ -87,12 +87,12 @@ public class LayerPropertyItem extends AbstractTreePopupItem {
     }
 
     @Override
-    public boolean isValid(TreePath[] selection) {
+    public boolean isValid(final TreePath[] selection) {
         return uniqueAndType(selection,MapLayer.class);
     }
 
     @Override
-    public Component getComponent(TreePath[] selection) {
+    public Component getComponent(final TreePath[] selection) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
         layerRef = new WeakReference<MapLayer>((MapLayer) node.getUserObject());
         return this;

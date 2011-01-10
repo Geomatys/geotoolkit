@@ -79,7 +79,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public DataStore createDataStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
             return createDataStore(toParameterValueGroup(params));
         }catch(InvalidParameterValueException ex){
@@ -91,7 +91,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNewDataStore(Map<String, ? extends Serializable> params) throws DataStoreException {
+    public DataStore createNewDataStore(final Map<String, ? extends Serializable> params) throws DataStoreException {
         try{
             return createNewDataStore(toParameterValueGroup(params));
         }catch(InvalidParameterValueException ex){
@@ -103,7 +103,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public boolean canProcess(Map<String, ? extends Serializable> params) {
+    public boolean canProcess(final Map<String, ? extends Serializable> params) {
         try{
             return canProcess(toParameterValueGroup(params));
         }catch(InvalidParameterValueException ex){
@@ -115,7 +115,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
      * {@inheritDoc }
      */
     @Override
-    public boolean canProcess(ParameterValueGroup params) {
+    public boolean canProcess(final ParameterValueGroup params) {
         final ConformanceResult result = Parameters.isValid(params, getParametersDescriptor());
         return (result != null) && Boolean.TRUE.equals(result.pass());
     }
@@ -130,7 +130,7 @@ public abstract class AbstractDataStoreFactory extends Factory implements DataSt
         return result;
     }
 
-    protected ParameterValueGroup toParameterValueGroup(Map<String, ? extends Serializable> params) throws InvalidParameterValueException{
+    protected ParameterValueGroup toParameterValueGroup(final Map<String, ? extends Serializable> params) throws InvalidParameterValueException{
         final ParameterDescriptorGroup desc = getParametersDescriptor();
         final ParameterValueGroup values = desc.createValue();
 

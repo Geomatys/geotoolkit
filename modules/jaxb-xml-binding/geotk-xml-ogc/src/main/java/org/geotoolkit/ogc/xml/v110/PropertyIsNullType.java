@@ -64,7 +64,7 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
      /**
      * Build a new Property is null operator.
      */
-     public PropertyIsNullType(PropertyNameType prop) {
+     public PropertyIsNullType(final PropertyNameType prop) {
          this.propertyName = prop;
      }
      
@@ -78,7 +78,7 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
     /**
      * Sets the value of the propertyName property.
      */
-    public void setPropertyName(PropertyNameType propertyName) {
+    public void setPropertyName(final PropertyNameType propertyName) {
         this.propertyName = propertyName;
     }
     
@@ -99,11 +99,11 @@ public class PropertyIsNullType extends ComparisonOpsType implements PropertyIsN
         return propertyName;
     }
 
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit( this, extraData );
     }
 }

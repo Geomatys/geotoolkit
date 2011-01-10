@@ -81,7 +81,7 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
 
     @XmlElement(name="polygonMember", namespace = "http://www.opengis.net/gml")
     @XmlJavaTypeAdapter(PolygonPropertyAdapter.class)
-    public void setElements(Set<JTSPolygon> elements) {
+    public void setElements(final Set<JTSPolygon> elements) {
         this.elements = elements;
     }
 
@@ -96,7 +96,7 @@ public class JTSMultiPolygon extends AbstractJTSGeometry {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (this == object)
             return true;
         if (object instanceof JTSMultiPolygon && super.equals(object)) {

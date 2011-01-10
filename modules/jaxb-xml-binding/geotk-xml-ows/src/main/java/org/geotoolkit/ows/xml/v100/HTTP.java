@@ -72,14 +72,14 @@ public class HTTP implements AbstractHTTP {
     /**
      * build a new HTTP object.
      */
-    public HTTP(List<JAXBElement<RequestMethodType>> getOrPost){
+    public HTTP(final List<JAXBElement<RequestMethodType>> getOrPost){
         this.getOrPost = getOrPost;
     }
 
     /**
      * build a new HTTP object.
      */
-    public HTTP(RequestMethodType get, RequestMethodType post){
+    public HTTP(final RequestMethodType get, final RequestMethodType post){
         ObjectFactory factory = new ObjectFactory();
         this.getOrPost = new ArrayList<JAXBElement<RequestMethodType>>();
         if (get != null) {

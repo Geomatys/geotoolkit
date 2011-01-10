@@ -52,7 +52,7 @@ public class J2DNorthArrowUtilities {
      */
     public static void paint(final float rotation,
                               final Graphics2D g2d,
-                              int x, int y,
+                              final int x, final int y,
                               final NorthArrowTemplate template) throws PortrayalException{
         paint(rotation,g2d,x,y,false,template);
     }
@@ -68,7 +68,7 @@ public class J2DNorthArrowUtilities {
      */
     public static void paint(final float rotation,
                               final Graphics2D g2d,
-                              int x, int y, boolean svgQuality,
+                              final int x, final int y, final boolean svgQuality,
                               final NorthArrowTemplate template) throws PortrayalException{
 
         final Dimension estimation = estimate(g2d, template, false);
@@ -124,7 +124,7 @@ public class J2DNorthArrowUtilities {
         }
     }
 
-    public static Dimension estimate(Graphics2D g, NorthArrowTemplate template, boolean considerBackground){
+    public static Dimension estimate(final Graphics2D g, final NorthArrowTemplate template, final boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
 
         dim.width = template.getSize().width;

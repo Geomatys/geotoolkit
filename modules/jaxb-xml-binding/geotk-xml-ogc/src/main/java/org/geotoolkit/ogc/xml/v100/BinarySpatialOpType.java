@@ -77,7 +77,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
      * Sets the value of the propertyName property.
      * 
      */
-    public void setPropertyName(PropertyNameType value) {
+    public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
     }
 
@@ -93,7 +93,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
      * Sets the value of the geometry property.
      * 
      */
-    public void setGeometry(JAXBElement<? extends AbstractGeometryType> value) {
+    public void setGeometry(final JAXBElement<? extends AbstractGeometryType> value) {
         this.geometry = ((JAXBElement<? extends AbstractGeometryType> ) value);
     }
 
@@ -109,7 +109,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
      * Sets the value of the box property.
      * 
      */
-    public void setBox(BoxType value) {
+    public void setBox(final BoxType value) {
         this.box = value;
     }
 

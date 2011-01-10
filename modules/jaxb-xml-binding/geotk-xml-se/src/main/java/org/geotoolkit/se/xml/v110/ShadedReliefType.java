@@ -75,7 +75,7 @@ public class ShadedReliefType {
      *     {@link Boolean }
      *     
      */
-    public void setBrightnessOnly(Boolean value) {
+    public void setBrightnessOnly(final Boolean value) {
         this.brightnessOnly = value;
     }
 
@@ -99,7 +99,7 @@ public class ShadedReliefType {
      *     {@link Double }
      *     
      */
-    public void setReliefFactor(Double value) {
+    public void setReliefFactor(final Double value) {
         this.reliefFactor = value;
     }
 

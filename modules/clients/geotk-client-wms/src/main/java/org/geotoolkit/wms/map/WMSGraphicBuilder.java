@@ -73,7 +73,7 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     private WMSGraphicBuilder(){};
 
     @Override
-    public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
+    public Collection<GraphicJ2D> createGraphics(final MapLayer layer, final Canvas canvas) {
         if(layer instanceof WMSMapLayer && canvas instanceof J2DCanvas){
             return Collections.singleton((GraphicJ2D)
                     new WMSGraphic((J2DCanvas)canvas, (WMSMapLayer)layer));
@@ -88,7 +88,7 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     }
 
     @Override
-    public Image getLegend(MapLayer layer) throws PortrayalException {
+    public Image getLegend(final MapLayer layer) throws PortrayalException {
         final WMSMapLayer wmslayer = (WMSMapLayer) layer;
 
         final GetLegendRequest request = wmslayer.getServer().creategetLegend();
@@ -110,13 +110,13 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
         private final WMSMapLayer layer;
 
-        private WMSGraphic(J2DCanvas canvas, WMSMapLayer layer){
+        private WMSGraphic(final J2DCanvas canvas, final WMSMapLayer layer){
             super(canvas,canvas.getObjectiveCRS2D());
             this.layer = layer;
         }
 
         @Override
-        public void paint(RenderingContext2D context2D) {
+        public void paint(final RenderingContext2D context2D) {
             final CanvasMonitor monitor = context2D.getMonitor();
 
             final GetMapRequest request = layer.getServer().createGetMap();
@@ -180,7 +180,7 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         }
 
         @Override
-        public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+        public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
 
             if(!(context instanceof RenderingContext2D)){
                 return graphics;

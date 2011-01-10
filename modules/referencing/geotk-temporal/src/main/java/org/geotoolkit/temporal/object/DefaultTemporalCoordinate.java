@@ -36,7 +36,7 @@ public class DefaultTemporalCoordinate extends DefaultTemporalPosition implement
      */
     private Number coordinateValue;
 
-    public DefaultTemporalCoordinate(TemporalReferenceSystem frame, IndeterminateValue indeterminatePosition, Number coordinateValue) {
+    public DefaultTemporalCoordinate(final TemporalReferenceSystem frame, final IndeterminateValue indeterminatePosition, final Number coordinateValue) {
         super(frame, indeterminatePosition);
         this.coordinateValue = coordinateValue;
     }
@@ -51,7 +51,7 @@ public class DefaultTemporalCoordinate extends DefaultTemporalPosition implement
         return coordinateValue;
     }
 
-    public void setCoordinateValue(Number coordinateValue) {
+    public void setCoordinateValue(final Number coordinateValue) {
         this.coordinateValue = coordinateValue;
     }
 

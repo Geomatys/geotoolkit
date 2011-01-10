@@ -123,7 +123,7 @@ public class Schema extends OpenAttrs {
 
     }
 
-    public Schema(FormChoice elementFormDefault, String targetNamespace) {
+    public Schema(final FormChoice elementFormDefault, final String targetNamespace) {
         this.elementFormDefault = elementFormDefault;
         this.targetNamespace    = targetNamespace;
     }
@@ -176,7 +176,7 @@ public class Schema extends OpenAttrs {
         return result;
     }
 
-    public TopLevelElement getElementByName(String name) {
+    public TopLevelElement getElementByName(final String name) {
         if (name != null) {
             if (simpleTypeOrComplexTypeOrGroup != null) {
                 for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
@@ -208,7 +208,7 @@ public class Schema extends OpenAttrs {
         return result;
     }
 
-    public TopLevelComplexType getComplexTypeByName(String name) {
+    public TopLevelComplexType getComplexTypeByName(final String name) {
         if (name != null) {
             if (simpleTypeOrComplexTypeOrGroup != null) {
                 for (OpenAttrs element : simpleTypeOrComplexTypeOrGroup) {
@@ -225,21 +225,21 @@ public class Schema extends OpenAttrs {
     }
 
 
-    public void addImport(Import _import) {
+    public void addImport(final Import _import) {
         if (includeOrImportOrRedefine == null) {
             includeOrImportOrRedefine = new ArrayList<OpenAttrs>();
         }
         this.includeOrImportOrRedefine.add(_import);
     }
 
-    public void addElement(TopLevelElement element) {
+    public void addElement(final TopLevelElement element) {
         if (simpleTypeOrComplexTypeOrGroup == null) {
             simpleTypeOrComplexTypeOrGroup = new ArrayList<OpenAttrs>();
         }
         this.simpleTypeOrComplexTypeOrGroup.add(element);
     }
 
-    public void addComplexType(TopLevelComplexType element) {
+    public void addComplexType(final TopLevelComplexType element) {
         if (simpleTypeOrComplexTypeOrGroup == null) {
             simpleTypeOrComplexTypeOrGroup = new ArrayList<OpenAttrs>();
         }
@@ -267,7 +267,7 @@ public class Schema extends OpenAttrs {
      *     {@link String }
      *     
      */
-    public void setTargetNamespace(String value) {
+    public void setTargetNamespace(final String value) {
         this.targetNamespace = value;
     }
 
@@ -291,7 +291,7 @@ public class Schema extends OpenAttrs {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -339,7 +339,7 @@ public class Schema extends OpenAttrs {
      *     {@link FormChoice }
      *     
      */
-    public void setAttributeFormDefault(FormChoice value) {
+    public void setAttributeFormDefault(final FormChoice value) {
         this.attributeFormDefault = value;
     }
 
@@ -367,7 +367,7 @@ public class Schema extends OpenAttrs {
      *     {@link FormChoice }
      *     
      */
-    public void setElementFormDefault(FormChoice value) {
+    public void setElementFormDefault(final FormChoice value) {
         this.elementFormDefault = value;
     }
 
@@ -391,7 +391,7 @@ public class Schema extends OpenAttrs {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -415,7 +415,7 @@ public class Schema extends OpenAttrs {
      *     {@link String }
      *     
      */
-    public void setLang(String value) {
+    public void setLang(final String value) {
         this.lang = value;
     }
 

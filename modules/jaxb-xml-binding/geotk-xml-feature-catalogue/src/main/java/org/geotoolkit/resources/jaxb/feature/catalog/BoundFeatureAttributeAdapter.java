@@ -97,7 +97,7 @@ public class BoundFeatureAttributeAdapter extends XmlAdapter<BoundFeatureAttribu
      * @return A java object which represents the metadata value.
      */
     @Override
-    public BoundFeatureAttribute unmarshal(BoundFeatureAttributeAdapter value) throws Exception {
+    public BoundFeatureAttribute unmarshal(final BoundFeatureAttributeAdapter value) throws Exception {
         if (value == null) {
             return null;
         } else if (value.href != null) {
@@ -115,7 +115,7 @@ public class BoundFeatureAttributeAdapter extends XmlAdapter<BoundFeatureAttribu
      * @return The adapter for this BoundFeature.
      */
     @Override
-    public BoundFeatureAttributeAdapter marshal(BoundFeatureAttribute value) throws Exception {
+    public BoundFeatureAttributeAdapter marshal(final BoundFeatureAttribute value) throws Exception {
         return new BoundFeatureAttributeAdapter(value);
     }
 

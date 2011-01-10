@@ -74,7 +74,7 @@ public class ConceptualSchemeType {
      * Sets the value of the name property.
      * 
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -90,7 +90,7 @@ public class ConceptualSchemeType {
      * Sets the value of the document property.
      * 
      */
-    public void setDocument(String value) {
+    public void setDocument(final String value) {
         this.document = value;
     }
 
@@ -106,7 +106,7 @@ public class ConceptualSchemeType {
      * Sets the value of the authority property.
      * 
      */
-    public void setAuthority(String value) {
+    public void setAuthority(final String value) {
         this.authority = value;
     }
 

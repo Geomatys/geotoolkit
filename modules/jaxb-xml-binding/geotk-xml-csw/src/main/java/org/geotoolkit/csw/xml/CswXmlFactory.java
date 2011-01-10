@@ -28,7 +28,7 @@ import org.geotoolkit.csw.xml.v202.GetDomainResponseType;
  */
 public class CswXmlFactory {
 
-    public static GetDomainResponse getDomainResponse(String version, List<DomainValues> domainValues) {
+    public static GetDomainResponse getDomainResponse(final String version, final List<DomainValues> domainValues) {
         if ("2.0.2".equals(version)) {
             return new GetDomainResponseType(domainValues);
         } else if ("2.0.0".equals(version)) {
@@ -38,7 +38,7 @@ public class CswXmlFactory {
         }
     }
 
-    public static DomainValues getDomainValues(String version, String parameterName, String propertyName, List<String> listOfValues, QName type) {
+    public static DomainValues getDomainValues(final String version, final String parameterName, final String propertyName, final List<String> listOfValues, final QName type) {
         if ("2.0.2".equals(version)) {
             return new DomainValuesType(parameterName, null, listOfValues, type);
         } else if ("2.0.0".equals(version)) {

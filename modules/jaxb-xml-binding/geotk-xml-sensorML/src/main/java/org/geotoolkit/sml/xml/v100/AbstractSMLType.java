@@ -59,7 +59,7 @@ public abstract class AbstractSMLType extends AbstractFeatureEntry implements Ab
 
     }
 
-    public AbstractSMLType(AbstractSML sm) {
+    public AbstractSMLType(final AbstractSML sm) {
         super(sm);
     }
 }

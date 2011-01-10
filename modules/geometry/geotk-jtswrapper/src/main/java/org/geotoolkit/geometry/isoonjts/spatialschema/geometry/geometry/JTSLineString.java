@@ -72,7 +72,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
     /**
      * Creates a new {@code LineStringImpl}.
      */
-    public JTSLineString(CoordinateReferenceSystem crs) {
+    public JTSLineString(final CoordinateReferenceSystem crs) {
         super(crs);
         controlPoints = new JTSPointArray();
         ((JTSPointArray)controlPoints).setJTSParent(this);
@@ -303,7 +303,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
      * {@inheritDoc }
      */
     @Override
-    public DirectPosition forConstructiveParam(double cp) {
+    public DirectPosition forConstructiveParam(final double cp) {
         return null;
     }
 
@@ -311,7 +311,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
      * {@inheritDoc }
      */
     @Override
-    public DirectPosition forParam(double s) {
+    public DirectPosition forParam(final double s) {
         return null;
     }
 
@@ -353,7 +353,7 @@ public class JTSLineString extends AbstractJTSGenericCurve
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (this == object)
             return true;
 

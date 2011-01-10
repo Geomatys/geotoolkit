@@ -37,8 +37,8 @@ public class DefaultCanvasEvent extends CanvasEvent{
     private final RenderingState oldRenderingState;
     private final RenderingState newRenderingState;
 
-    public DefaultCanvasEvent(Canvas canvas,CanvasState oldCanvaState, CanvasState newCanvaState,
-        MathTransform mathChange, RenderingState oldRenderingState, RenderingState newRenderingState){
+    public DefaultCanvasEvent(final Canvas canvas,final CanvasState oldCanvaState, final CanvasState newCanvaState,
+        final MathTransform mathChange, final RenderingState oldRenderingState, final RenderingState newRenderingState){
         super(canvas);
         this.oldCanvaState = oldCanvaState;
         this.newCanvaState = newCanvaState;
@@ -63,7 +63,7 @@ public class DefaultCanvasEvent extends CanvasEvent{
     }
 
     @Override
-    public MathTransform getChange(CanvasState arg0) {
+    public MathTransform getChange(final CanvasState arg0) {
         return null;
     }
 

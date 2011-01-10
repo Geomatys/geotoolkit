@@ -105,8 +105,8 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
     };
 
     
-    public DefaultInterpolate(Expression LookUpValue, List<InterpolationPoint> values, 
-           Method method, Mode mode,Literal fallback){
+    public DefaultInterpolate(final Expression LookUpValue, List<InterpolationPoint> values, 
+           final Method method, final Mode mode,final Literal fallback){
                 
         if(values == null ){
             values = Collections.emptyList();
@@ -150,19 +150,19 @@ public class DefaultInterpolate extends AbstractExpression implements Interpolat
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         return evaluate(object, Object.class);
     }
 
 
 
     @Override
-    public Object evaluate(Object object, Class c) {
+    public Object evaluate(final Object object, final Class c) {
         if(object instanceof Feature){
             
             final Feature f = (Feature)object;

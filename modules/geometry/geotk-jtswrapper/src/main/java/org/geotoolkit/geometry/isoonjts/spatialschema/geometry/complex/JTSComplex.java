@@ -73,7 +73,7 @@ public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implemen
         this(null);
     }
 
-    public JTSComplex(CoordinateReferenceSystem crs) {
+    public JTSComplex(final CoordinateReferenceSystem crs) {
         super(crs);
         // Override a couple of methods to make sure that they invalidate our
         // cached JTS representation.
@@ -177,7 +177,7 @@ public class JTSComplex<T extends Geometry> extends AbstractJTSGeometry implemen
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (this == object)
             return true;
 

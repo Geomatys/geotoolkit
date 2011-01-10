@@ -105,15 +105,15 @@ public class Components implements AbstractComponents {
         
     }
 
-    public Components(ComponentList componentList) {
+    public Components(final ComponentList componentList) {
         this.componentList = componentList;
     }
 
-    public Components(List<ComponentPropertyType> component) {
+    public Components(final List<ComponentPropertyType> component) {
         this.componentList = new ComponentList(component);
     }
 
-    public Components(AbstractComponents components) {
+    public Components(final AbstractComponents components) {
         if (components != null) {
             this.actuate       = components.getActuate();
             this.arcrole       = components.getArcrole();
@@ -149,7 +149,7 @@ public class Components implements AbstractComponents {
      *     {@link Components.ComponentList }
      *     
      */
-    public void setComponentList(ComponentList value) {
+    public void setComponentList(final ComponentList value) {
         this.componentList = value;
     }
 
@@ -173,7 +173,7 @@ public class Components implements AbstractComponents {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -197,7 +197,7 @@ public class Components implements AbstractComponents {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -221,7 +221,7 @@ public class Components implements AbstractComponents {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -245,7 +245,7 @@ public class Components implements AbstractComponents {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -269,7 +269,7 @@ public class Components implements AbstractComponents {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -293,7 +293,7 @@ public class Components implements AbstractComponents {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -317,7 +317,7 @@ public class Components implements AbstractComponents {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -341,7 +341,7 @@ public class Components implements AbstractComponents {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

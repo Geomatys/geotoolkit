@@ -71,7 +71,7 @@ public class JFeatureCollectionOutline extends JPanel{
         add(BorderLayout.SOUTH,bottom);
     }
     
-    public void setTarget(FeatureCollection collection){
+    public void setTarget(final FeatureCollection collection){
         this.collection = collection;
         index = -1;
         size = collection.size();

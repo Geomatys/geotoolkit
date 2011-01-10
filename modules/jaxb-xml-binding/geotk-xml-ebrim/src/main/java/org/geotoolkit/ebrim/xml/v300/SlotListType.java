@@ -66,7 +66,7 @@ public class SlotListType {
     /**
      * Sets the value of the slot property.
      */
-    public void setSlot(SlotType slot) {
+    public void setSlot(final SlotType slot) {
         if (this.slot == null) {
             this.slot = new ArrayList<SlotType>();
         }
@@ -76,7 +76,7 @@ public class SlotListType {
     /**
      * Sets the value of the slot property.
      */
-    public void setSlot(List<SlotType> slot) {
+    public void setSlot(final List<SlotType> slot) {
         this.slot = slot;
     }
 

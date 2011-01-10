@@ -53,14 +53,14 @@ public class Segment
     /** 
      * Creates a new instance for the given ordinates.
      */
-    public Segment(double x1, double y1, double z1, double x2, double y2, double z2) {
+    public Segment(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2) {
       this(new Coordinate(x1, y1, z1), new Coordinate(x2, y2, z2));
     }
 
     /** 
      * Creates a new instance for the given ordinates,  with associated external data. 
      */
-    public Segment(double x1, double y1, double z1, double x2, double y2, double z2, Object data) {
+    public Segment(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2, final Object data) {
       this(new Coordinate(x1, y1, z1), new Coordinate(x2, y2, z2), data);
     }
 
@@ -71,7 +71,7 @@ public class Segment
      * @param p1 the end point
      * @param data an external data object
      */
-    public Segment(Coordinate p0, Coordinate p1, Object data) {
+    public Segment(final Coordinate p0, final Coordinate p1, final Object data) {
         ls = new LineSegment(p0, p1);
         this.data = data;
     }
@@ -82,7 +82,7 @@ public class Segment
      * @param p0 the start point
      * @param p1 the end point
      */
-    public Segment(Coordinate p0, Coordinate p1) {
+    public Segment(final Coordinate p0, final Coordinate p1) {
         ls = new LineSegment(p0, p1);
     }
 
@@ -187,7 +187,7 @@ public class Segment
      * 
      * @param data a data object
      */
-    public void setData(Object data) {
+    public void setData(final Object data) {
         this.data = data;
     }
 
@@ -198,7 +198,7 @@ public class Segment
      * @param s a segment
      * @return true if the segments are topologically equal
      */
-    public boolean equalsTopo(Segment s) {
+    public boolean equalsTopo(final Segment s) {
         return ls.equalsTopo(s.getLineSegment());
     }
 
@@ -208,7 +208,7 @@ public class Segment
      * @param s a segment
      * @return the intersection point, or <code>null</code> if there is none
      */
-    public Coordinate intersection(Segment s) {
+    public Coordinate intersection(final Segment s) {
         return ls.intersection(s.getLineSegment());
     }
 

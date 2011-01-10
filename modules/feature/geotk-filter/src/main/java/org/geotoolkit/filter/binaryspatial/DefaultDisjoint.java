@@ -37,7 +37,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Expression> implements Disjoint {
 
-    public DefaultDisjoint(Expression left, Expression right) {
+    public DefaultDisjoint(final Expression left, final Expression right) {
         super(left,right);
     }
 
@@ -45,7 +45,7 @@ public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Ex
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         Geometry leftGeom = left.evaluate(object, Geometry.class);
         Geometry rightGeom = right.evaluate(object, Geometry.class);
 
@@ -80,7 +80,7 @@ public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Ex
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -98,7 +98,7 @@ public class DefaultDisjoint extends AbstractBinarySpatialOperator<Expression,Ex
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

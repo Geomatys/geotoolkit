@@ -57,19 +57,19 @@ public class Phone implements AbstractPhone {
     public Phone() {
     }
 
-    public Phone(AbstractPhone phone) {
+    public Phone(final AbstractPhone phone) {
         if (phone != null) {
             this.facsimile = phone.getFacsimile();
             this.voice     = phone.getVoice();
         }
     }
 
-    public Phone(List<String> voice, List<String> facsimile) {
+    public Phone(final List<String> voice, final List<String> facsimile) {
         this.facsimile = facsimile;
         this.voice = voice;
     }
 
-    public Phone(String voice, String facsimile) {
+    public Phone(final String voice, final String facsimile) {
         this.facsimile = new ArrayList<String>();
         this.voice = new ArrayList<String>();
         if (facsimile != null) {

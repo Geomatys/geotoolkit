@@ -69,7 +69,7 @@ public class CoordinateType implements Coordinate {
 
     }
 
-    public CoordinateType(Coordinate c) {
+    public CoordinateType(final Coordinate c) {
         if (c != null) {
             this.name = c.getName();
             if (c.getCount() != null) {
@@ -84,30 +84,30 @@ public class CoordinateType implements Coordinate {
         }
     }
     
-    public CoordinateType(String name, QuantityType quantity) {
+    public CoordinateType(final String name, final QuantityType quantity) {
         this.name     = name;
         this.quantity = quantity;
     }
 
-    public CoordinateType(String name, Count count) {
+    public CoordinateType(final String name, final Count count) {
         this.name  = name;
         this.count = count;
     }
 
-    public CoordinateType(String name, TimeType time) {
+    public CoordinateType(final String name, final TimeType time) {
         this.name = name;
         this.time = time;
     }
 
-    public CoordinateType(QuantityType quantity) {
+    public CoordinateType(final QuantityType quantity) {
         this.quantity = quantity;
     }
 
-    public CoordinateType(Count count) {
+    public CoordinateType(final Count count) {
         this.count = count;
     }
 
-    public CoordinateType(TimeType time) {
+    public CoordinateType(final TimeType time) {
         this.time = time;
     }
 
@@ -122,7 +122,7 @@ public class CoordinateType implements Coordinate {
     /**
      * Sets the value of the count property.
      */
-    public void setCount(Count value) {
+    public void setCount(final Count value) {
         this.count = value;
     }
 
@@ -137,7 +137,7 @@ public class CoordinateType implements Coordinate {
     /**
      * Sets the value of the quantity property.
      */
-    public void setQuantity(QuantityType value) {
+    public void setQuantity(final QuantityType value) {
         this.quantity = value;
     }
 
@@ -153,7 +153,7 @@ public class CoordinateType implements Coordinate {
      * Sets the value of the time property.
      *
      */
-    public void setTime(TimeType value) {
+    public void setTime(final TimeType value) {
         this.time = value;
     }
 
@@ -173,7 +173,7 @@ public class CoordinateType implements Coordinate {
      *     {@link String }
      *
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

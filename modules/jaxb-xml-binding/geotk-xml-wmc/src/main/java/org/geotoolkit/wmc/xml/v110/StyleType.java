@@ -93,7 +93,7 @@ public class StyleType {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -117,7 +117,7 @@ public class StyleType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -141,7 +141,7 @@ public class StyleType {
      *     {@link String }
      *     
      */
-    public void setAbstract(String value) {
+    public void setAbstract(final String value) {
         this._abstract = value;
     }
 
@@ -165,7 +165,7 @@ public class StyleType {
      *     {@link URLType }
      *     
      */
-    public void setLegendURL(URLType value) {
+    public void setLegendURL(final URLType value) {
         this.legendURL = value;
     }
 
@@ -189,7 +189,7 @@ public class StyleType {
      *     {@link SLDType }
      *     
      */
-    public void setSLD(SLDType value) {
+    public void setSLD(final SLDType value) {
         this.sld = value;
     }
 
@@ -213,7 +213,7 @@ public class StyleType {
      *     {@link Boolean }
      *     
      */
-    public void setCurrent(Boolean value) {
+    public void setCurrent(final Boolean value) {
         this.current = value;
     }
 

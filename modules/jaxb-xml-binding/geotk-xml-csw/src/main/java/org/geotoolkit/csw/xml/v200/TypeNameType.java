@@ -65,7 +65,7 @@ public class TypeNameType {
 
     }
 
-    public TypeNameType(String localName, String namespace) {
+    public TypeNameType(final String localName, final String namespace) {
         this.value = localName;
         this.targetNamespace = namespace;
     }
@@ -82,7 +82,7 @@ public class TypeNameType {
      * Sets the value of the value property.
      * 
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -98,7 +98,7 @@ public class TypeNameType {
      * Sets the value of the targetNamespace property.
      * 
      */
-    public void setTargetNamespace(String value) {
+    public void setTargetNamespace(final String value) {
         this.targetNamespace = value;
     }
 

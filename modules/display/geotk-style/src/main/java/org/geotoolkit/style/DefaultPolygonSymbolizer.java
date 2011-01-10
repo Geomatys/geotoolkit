@@ -59,8 +59,8 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
      * @param name : can be null
      * @param desc : if null will be replaced by default description.
      */
-    public DefaultPolygonSymbolizer(Stroke stroke, Fill fill, Displacement disp,
-            Expression offset, Unit uom, String geom, String name, Description desc){
+    public DefaultPolygonSymbolizer(final Stroke stroke, final Fill fill, final Displacement disp,
+            final Expression offset, final Unit uom, final String geom, final String name, final Description desc){
         super(uom,geom,name,desc);
         this.stroke = stroke;
         this.fill = fill;
@@ -104,7 +104,7 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -112,7 +112,7 @@ public class DefaultPolygonSymbolizer extends AbstractSymbolizer implements Poly
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

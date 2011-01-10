@@ -75,7 +75,7 @@ public class RegistryPackageType extends RegistryEntryType {
     /**
      * Sets the value of the registryObjectList property.
      */
-    public void setRegistryObjectList(RegistryObjectListType value) {
+    public void setRegistryObjectList(final RegistryObjectListType value) {
         this.registryObjectList = value;
     }
 

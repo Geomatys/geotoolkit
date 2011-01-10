@@ -59,7 +59,7 @@ final class PolygonInclusion {
      * Construit un noeud qui enveloppera le polygone sp�cifi�.
      * Ce noeud n'aura aucune branche pour l'instant.
      */
-    private PolygonInclusion(Polyline polygon) {
+    private PolygonInclusion(final Polyline polygon) {
         this.polygon = polygon;
     }
 
@@ -206,7 +206,7 @@ final class PolygonInclusion {
      * Impl�mentation de la m�thode {@link #toString()}.
      * Cette m�thode s'appellera elle-m�me de fa�on recursive.
      */
-    private void toString(StringBuffer buffer, int indentation) {
+    private void toString(final StringBuffer buffer, final int indentation) {
         
         buffer.append(Strings.spaces(indentation));
         buffer.append(polygon);

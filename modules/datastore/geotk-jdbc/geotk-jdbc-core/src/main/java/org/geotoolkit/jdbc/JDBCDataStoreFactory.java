@@ -107,7 +107,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public boolean canProcess(ParameterValueGroup params) {
+    public boolean canProcess(final ParameterValueGroup params) {
         boolean valid = super.canProcess(params);
         if(valid){
             Object value = params.parameter(DBTYPE.getName().toString()).getValue();
@@ -169,7 +169,7 @@ public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 
 
     @Override
-    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

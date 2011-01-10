@@ -34,7 +34,7 @@ final class TreePopup extends JPopupMenu {
 
     private final JContextTree tree;
 
-    TreePopup(JContextTree tree) {
+    TreePopup(final JContextTree tree) {
         this.tree = tree;
     }
 
@@ -44,7 +44,7 @@ final class TreePopup extends JPopupMenu {
      * @param view 
      */
     @Override
-    public void setVisible(boolean view) {
+    public void setVisible(final boolean view) {
 
         if (view && tree != null) {
             removeAll();
@@ -83,7 +83,7 @@ final class TreePopup extends JPopupMenu {
      * {@inheritDoc }
      */
     @Override
-    public Component add(Component menuItem) {
+    public Component add(final Component menuItem) {
 
         if (getComponentCount() > 0) {
             if( getComponent(getComponentCount() - 1) instanceof SeparatorItem && menuItem instanceof SeparatorItem){

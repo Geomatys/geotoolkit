@@ -92,7 +92,7 @@ public class ContextGeneralPanel extends javax.swing.JPanel implements PropertyP
     
     
     @Override
-    public void setTarget(Object target) {
+    public void setTarget(final Object target) {
         if(target instanceof MapContext){
             context = (MapContext) target;
         }else{

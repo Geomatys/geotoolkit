@@ -116,7 +116,7 @@ public class ResponseDocumentType {
      *     {@link Boolean }
      *     
      */
-    public void setStoreExecuteResponse(Boolean value) {
+    public void setStoreExecuteResponse(final Boolean value) {
         this.storeExecuteResponse = value;
     }
 
@@ -144,7 +144,7 @@ public class ResponseDocumentType {
      *     {@link Boolean }
      *     
      */
-    public void setLineage(Boolean value) {
+    public void setLineage(final Boolean value) {
         this.lineage = value;
     }
 
@@ -172,7 +172,7 @@ public class ResponseDocumentType {
      *     {@link Boolean }
      *     
      */
-    public void setStatus(Boolean value) {
+    public void setStatus(final Boolean value) {
         this.status = value;
     }
 

@@ -78,7 +78,7 @@ public class ExtrinsicObjectType extends RegistryObjectType {
     /**
      * Sets the value of the contentVersionInfo property.
      */
-    public void setContentVersionInfo(VersionInfoType value) {
+    public void setContentVersionInfo(final VersionInfoType value) {
         this.contentVersionInfo = value;
     }
 
@@ -96,7 +96,7 @@ public class ExtrinsicObjectType extends RegistryObjectType {
     /**
      * Sets the value of the mimeType property.
      */
-    public void setMimeType(String value) {
+    public void setMimeType(final String value) {
         this.mimeType = value;
     }
 
@@ -114,7 +114,7 @@ public class ExtrinsicObjectType extends RegistryObjectType {
     /**
      * Sets the value of the isOpaque property.
      */
-    public void setIsOpaque(Boolean value) {
+    public void setIsOpaque(final Boolean value) {
         this.isOpaque = value;
     }
 

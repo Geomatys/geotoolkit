@@ -86,7 +86,7 @@ public class FilterCapabilities implements org.opengis.filter.capability.FilterC
     /**
      * Build a new filter capabilities (light version)
      */
-    public FilterCapabilities(ScalarCapabilities scalar, SpatialCapabilities spatial, IdCapabilities id) {
+    public FilterCapabilities(final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id) {
         this.spatialCapabilities = (SpatialCapabilitiesType) spatial;
         this.idCapabilities      = (IdCapabilitiesType)      id;
         this.scalarCapabilities  = (ScalarCapabilitiesType)  scalar;

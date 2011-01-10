@@ -54,7 +54,7 @@ public class AbstractEncodingEntry implements AbstractEncoding, Entry {
      */
     AbstractEncodingEntry() {}
 
-    public AbstractEncodingEntry(AbstractEncoding enc) {
+    public AbstractEncodingEntry(final AbstractEncoding enc) {
         if (enc != null) {
             this.id = enc.getId();
         }
@@ -63,7 +63,7 @@ public class AbstractEncodingEntry implements AbstractEncoding, Entry {
     /**
      *  An abstract encoding. used like super constructor
      */
-    protected AbstractEncodingEntry(String id) {
+    protected AbstractEncodingEntry(final String id) {
         this.id = id;
     }
     

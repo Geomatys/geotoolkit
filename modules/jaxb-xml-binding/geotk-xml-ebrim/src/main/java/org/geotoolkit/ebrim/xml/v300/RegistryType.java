@@ -84,7 +84,7 @@ public class RegistryType extends RegistryObjectType {
     /**
      * Sets the value of the operator property.
      */
-    public void setOperator(String value) {
+    public void setOperator(final String value) {
         this.operator = value;
     }
 
@@ -98,7 +98,7 @@ public class RegistryType extends RegistryObjectType {
     /**
      * Sets the value of the specificationVersion property.
      */
-    public void setSpecificationVersion(String value) {
+    public void setSpecificationVersion(final String value) {
         this.specificationVersion = value;
     }
 
@@ -112,7 +112,7 @@ public class RegistryType extends RegistryObjectType {
     /**
      * Sets the value of the replicationSyncLatency property.
      */
-    public void setReplicationSyncLatency(Duration value) {
+    public void setReplicationSyncLatency(final Duration value) {
         this.replicationSyncLatency = value;
     }
 
@@ -126,7 +126,7 @@ public class RegistryType extends RegistryObjectType {
     /**
      * Sets the value of the catalogingLatency property.
      */
-    public void setCatalogingLatency(Duration value) {
+    public void setCatalogingLatency(final Duration value) {
         this.catalogingLatency = value;
     }
 
@@ -144,7 +144,7 @@ public class RegistryType extends RegistryObjectType {
     /**
      * Sets the value of the conformanceProfile property.
      */
-    public void setConformanceProfile(String value) {
+    public void setConformanceProfile(final String value) {
         this.conformanceProfile = value;
     }
 

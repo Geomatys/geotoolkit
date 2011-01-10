@@ -37,7 +37,7 @@ import org.opengis.display.canvas.Canvas;
 public class FullLoadA3DGraphicBuilder implements GraphicBuilder<A3DGraphic>{
 
     @Override
-    public Collection<A3DGraphic> createGraphics(MapLayer layer, Canvas canvas) {
+    public Collection<A3DGraphic> createGraphics(final MapLayer layer, final Canvas canvas) {
 
         if(canvas == null || !(canvas instanceof A3DCanvas)){
             throw new IllegalArgumentException("Canvas must be an A3DCanvas");
@@ -62,7 +62,7 @@ public class FullLoadA3DGraphicBuilder implements GraphicBuilder<A3DGraphic>{
     }
 
     @Override
-    public Image getLegend(MapLayer layer) throws PortrayalException {
+    public Image getLegend(final MapLayer layer) throws PortrayalException {
         return null;
     }
 

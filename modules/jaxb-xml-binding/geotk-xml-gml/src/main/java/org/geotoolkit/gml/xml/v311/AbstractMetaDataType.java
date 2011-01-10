@@ -85,7 +85,7 @@ public abstract class AbstractMetaDataType {
      *     {@link String }
      *     
      */
-    public void setContent(String value) {
+    public void setContent(final String value) {
         this.content = value;
     }
 
@@ -109,7 +109,7 @@ public abstract class AbstractMetaDataType {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

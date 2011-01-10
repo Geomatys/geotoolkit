@@ -44,7 +44,7 @@ public class PropertyExistsFunction extends AbstractFunction {
         return getPropertyName(expr);
     }
 
-    private String getPropertyName(Expression expr) {
+    private String getPropertyName(final Expression expr) {
         String propertyName;
 
         if (expr instanceof Literal) {
@@ -64,7 +64,7 @@ public class PropertyExistsFunction extends AbstractFunction {
      *         name passed as this function argument, {@link Boolean#FALSE}
      *         otherwise.
      */
-    public Object evaluate(SimpleFeature feature) {
+    public Object evaluate(final SimpleFeature feature) {
         String propName = getPropertyName();
         AttributeDescriptor attributeType = feature.getFeatureType().getDescriptor(propName);
 
@@ -78,7 +78,7 @@ public class PropertyExistsFunction extends AbstractFunction {
      *         conventions for getters. {@link Boolean#FALSE} otherwise.
      */
     @Override
-    public Object evaluate(Object bean) {
+    public Object evaluate(final Object bean) {
         if (bean instanceof SimpleFeature) {
             return evaluate((SimpleFeature) bean);
         }
@@ -109,7 +109,7 @@ public class PropertyExistsFunction extends AbstractFunction {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if (obj == this) {
             return true;

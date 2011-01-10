@@ -78,7 +78,7 @@ public class UnitOfMeasureType {
      *     {@link String }
      *     
      */
-    public void setUom(String value) {
+    public void setUom(final String value) {
         this.uom = value;
     }
 

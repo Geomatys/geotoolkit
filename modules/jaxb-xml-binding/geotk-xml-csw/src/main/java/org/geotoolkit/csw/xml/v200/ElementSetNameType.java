@@ -68,7 +68,7 @@ public class ElementSetNameType implements ElementSetName {
     /**
      * Build a elementSetName with only the elementSet value (no typeNames).
      */
-    public ElementSetNameType(ElementSetType value){
+    public ElementSetNameType(final ElementSetType value){
         this.value = value;
     }
     
@@ -84,7 +84,7 @@ public class ElementSetNameType implements ElementSetName {
      * Named subsets of catalogue object properties; 
      * these views are bound to a specific information model and are defined within an application profile.
      */
-    public void setValue(ElementSetType value) {
+    public void setValue(final ElementSetType value) {
         this.value = value;
     }
 

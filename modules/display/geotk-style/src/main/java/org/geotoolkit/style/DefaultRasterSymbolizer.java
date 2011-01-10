@@ -70,17 +70,17 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
      * @param name : can be null
      * @param desc : if null will be replaced by default description.
      */
-    public DefaultRasterSymbolizer(Expression opacity,
-            ChannelSelection selection, 
-            OverlapBehavior overlap, 
-            ColorMap colorMap, 
-            ContrastEnhancement enhance,
-            ShadedRelief relief,
-            Symbolizer outline,
-            Unit uom,
-            String geom,
-            String name,
-            Description desc){
+    public DefaultRasterSymbolizer(final Expression opacity,
+            final ChannelSelection selection, 
+            final OverlapBehavior overlap, 
+            final ColorMap colorMap, 
+            final ContrastEnhancement enhance,
+            final ShadedRelief relief,
+            final Symbolizer outline,
+            final Unit uom,
+            final String geom,
+            final String name,
+            final Description desc){
         super(uom,geom,name,desc);
         this.opacity = (opacity == null || opacity == NIL) ? DEFAULT_RASTER_OPACITY : opacity;
         this.selection = (selection == null) ? DEFAULT_RASTER_CHANNEL_GRAY : selection;
@@ -151,7 +151,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
     
@@ -159,7 +159,7 @@ public class DefaultRasterSymbolizer extends AbstractSymbolizer implements Raste
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

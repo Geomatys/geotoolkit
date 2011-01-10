@@ -59,7 +59,7 @@ public class SubjectAttributeDesignatorType extends AttributeDesignatorType {
    /**
     * Build a new SubjectAttributeDesignator from an AttributeDesignator. 
     */
-   public SubjectAttributeDesignatorType(AttributeDesignatorType attribute, String subjectCategory) {
+   public SubjectAttributeDesignatorType(final AttributeDesignatorType attribute, final String subjectCategory) {
        super(attribute);
        this.subjectCategory = subjectCategory;
    }
@@ -78,7 +78,7 @@ public class SubjectAttributeDesignatorType extends AttributeDesignatorType {
    /**
     * Sets the value of the subjectCategory property.
     */
-   public void setSubjectCategory(String value) {
+   public void setSubjectCategory(final String value) {
       this.subjectCategory = value;
    }
 

@@ -22,12 +22,12 @@ import org.opengis.filter.expression.Expression;
 
 public class BetweenFunction extends AbstractFunction {
 
-    public BetweenFunction(Expression expr1, Expression expr2, Expression expr3) {
+    public BetweenFunction(final Expression expr1, final Expression expr2, final Expression expr3) {
         super(GeometryFunctionFactory.BETWEEN, new Expression[] {expr1, expr2, expr3}, null);
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         Object arg0;
         Object arg1;
         Object arg2;

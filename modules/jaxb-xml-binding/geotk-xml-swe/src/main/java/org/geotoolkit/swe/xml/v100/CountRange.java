@@ -79,7 +79,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
 
     }
 
-    public CountRange(AbstractCountRange q) {
+    public CountRange(final AbstractCountRange q) {
         super(q);
         if (q != null) {
             this.axisID         = q.getAxisID();
@@ -107,7 +107,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
     /**
      * Sets the value of the constraint property.
     */
-    public void setConstraint(AllowedValuesPropertyType value) {
+    public void setConstraint(final AllowedValuesPropertyType value) {
         this.constraint = value;
     }
 
@@ -122,7 +122,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
         return this.quality;
     }
 
-    public void setQuality(QualityPropertyType quality) {
+    public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
                 this.quality = new ArrayList<QualityPropertyType>();
@@ -131,7 +131,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
         }
     }
 
-    public void setQuality(List<QualityPropertyType> quality) {
+    public void setQuality(final List<QualityPropertyType> quality) {
         this.quality = quality;
     }
     
@@ -149,7 +149,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
      * Gets the value of the value property.
      *
      */
-    public void setValue(List<Integer> value) {
+    public void setValue(final List<Integer> value) {
         this.value = value;
     }
 
@@ -157,7 +157,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
      * Gets the value of the value property.
      *
      */
-    public void setValue(Integer value) {
+    public void setValue(final Integer value) {
         if (this.value == null) {
             this.value = new ArrayList<Integer>();
         }
@@ -174,7 +174,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -188,7 +188,7 @@ public class CountRange extends AbstractDataComponentType implements AbstractCou
     /**
      * Sets the value of the axisID property.
      */
-    public void setAxisID(String value) {
+    public void setAxisID(final String value) {
         this.axisID = value;
     }
 

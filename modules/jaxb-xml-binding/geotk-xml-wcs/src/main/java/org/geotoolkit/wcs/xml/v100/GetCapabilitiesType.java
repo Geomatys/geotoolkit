@@ -81,7 +81,7 @@ public class GetCapabilitiesType implements GetCapabilities {
     /**
      * Build a new getCapabilities request version 1.0.0.
      */
-    public GetCapabilitiesType(String section, String updateSequence){
+    public GetCapabilitiesType(String section, final String updateSequence){
         this.version = "1.0.0";
         this.updateSequence = updateSequence;
         if (section == null) {
@@ -201,7 +201,7 @@ public class GetCapabilitiesType implements GetCapabilities {
     }
 
     @Override
-    public boolean containsSection(String sectionName) {
+    public boolean containsSection(final String sectionName) {
         if (section != null) {
             return section.contains(sectionName);
         }

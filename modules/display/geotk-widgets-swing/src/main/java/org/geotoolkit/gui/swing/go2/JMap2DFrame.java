@@ -91,7 +91,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
     private final JMap2D guiMap;
     private final JContextTree guiContextTree;
     
-    private JMap2DFrame(MapContext context) {
+    private JMap2DFrame(final MapContext context) {
         initComponents();        
 
         guiContextTree = (JContextTree) jScrollPane1;
@@ -296,12 +296,12 @@ public class JMap2DFrame extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void jMenuItem1ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+private void jMenuItem1ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
     System.exit(0);
 }//GEN-LAST:event_jMenuItem1ActionPerformed
                  
 
-private void jButton3ActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
 
     try{
         BufferedImage image = (BufferedImage) guiMap.getCanvas().getSnapShot();

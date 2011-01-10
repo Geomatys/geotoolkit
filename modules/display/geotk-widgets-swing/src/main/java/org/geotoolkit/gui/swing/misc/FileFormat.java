@@ -59,7 +59,7 @@ public enum FileFormat {
     private final String[] ends;
     private WeakReference<FileFilter> ref;
 
-    FileFormat(String i18n, String... ends) {
+    FileFormat(final String i18n, final String... ends) {
         this.desc = MessageBundle.getI18NString(i18n);
         this.ends = new String[ends.length];
         String dot = ".";
@@ -95,7 +95,7 @@ public enum FileFormat {
         private final FileFormat format;
         private final String desc;
 
-        private SimpleFileFilter(FileFormat format) {
+        private SimpleFileFilter(final FileFormat format) {
             this.format = format;
 
             final StringBuilder buff = new StringBuilder();
@@ -116,7 +116,7 @@ public enum FileFormat {
         }
 
         @Override
-        public boolean accept(File pathname) {
+        public boolean accept(final File pathname) {
             final String[] ends = format.getFileEnds();
             final String nom = pathname.getName();
 

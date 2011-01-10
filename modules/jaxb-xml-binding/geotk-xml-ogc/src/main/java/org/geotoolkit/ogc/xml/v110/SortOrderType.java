@@ -46,7 +46,7 @@ public enum SortOrderType {
         return name();
     }
 
-    public static SortOrderType fromValue(String v) {
+    public static SortOrderType fromValue(final String v) {
         return valueOf(v);
     }
 

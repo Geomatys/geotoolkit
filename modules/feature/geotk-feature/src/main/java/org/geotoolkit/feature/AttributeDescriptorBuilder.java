@@ -114,7 +114,7 @@ public class AttributeDescriptorBuilder {
     /**
      * Constructs the builder specifying the factory used to build attribute types.
      */
-    public AttributeDescriptorBuilder(FeatureTypeFactory factory) {
+    public AttributeDescriptorBuilder(final FeatureTypeFactory factory) {
         if(factory == null){
             this.factory = FactoryFinder.getFeatureTypeFactory(null);
         }else{
@@ -150,15 +150,15 @@ public class AttributeDescriptorBuilder {
         this.name = name;
     }
 
-    public void setName(String localPart){
+    public void setName(final String localPart){
         this.name = new DefaultName(localPart);
     }
 
-    public void setName(String namespace, String localPart){
+    public void setName(final String namespace, final String localPart){
         this.name = new DefaultName(namespace,localPart);
     }
 
-    public void setName(String namespace, String separator, String localPart){
+    public void setName(final String namespace, final String separator, final String localPart){
         this.name = new DefaultName(namespace,separator,localPart);
     }
 
@@ -194,7 +194,7 @@ public class AttributeDescriptorBuilder {
         return maxOccurs;
     }
 
-    public void setDefaultValue(Object defaultValue) {
+    public void setDefaultValue(final Object defaultValue) {
         this.defaultValue = defaultValue;
     }
 
@@ -202,7 +202,7 @@ public class AttributeDescriptorBuilder {
         return defaultValue;
     }
 
-    public void setType(AttributeType type) {
+    public void setType(final AttributeType type) {
         this.type = type;
     }
 
@@ -261,12 +261,12 @@ public class AttributeDescriptorBuilder {
 
 
     public AttributeDescriptor create(final Name name, final Class binding,
-            int min, int max, boolean nillable, Map<Object,Object> userData) {
+            final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
         return create(name,binding,null,min,max,nillable,userData);
     }
 
     public AttributeDescriptor create(final Name name, final Class binding, final CoordinateReferenceSystem crs,
-            int min, int max, boolean nillable, Map<Object,Object> userData) {
+            final int min, final int max, final boolean nillable, final Map<Object,Object> userData) {
 
         final PropertyType at;
         if(Geometry.class.isAssignableFrom(binding) ||
@@ -287,12 +287,12 @@ public class AttributeDescriptorBuilder {
     }
 
     public AttributeDescriptor create(final PropertyType at, final Name name,
-            int min, int max, boolean nillable, Map<Object,Object> userData){
+            final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         return create(at,name,null,min,max,nillable,userData);
     }
 
     public AttributeDescriptor create(final PropertyType at, final Name name, final CoordinateReferenceSystem crs,
-            int min, int max, boolean nillable, Map<Object,Object> userData){
+            final int min, final int max, final boolean nillable, final Map<Object,Object> userData){
         Object defaultValue = null;
         if(!nillable){
             //search for the best default value.

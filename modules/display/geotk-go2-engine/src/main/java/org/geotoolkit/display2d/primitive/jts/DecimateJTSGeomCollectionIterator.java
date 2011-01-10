@@ -36,7 +36,7 @@ public final class DecimateJTSGeomCollectionIterator extends JTSGeomCollectionIt
 
     private final double[] resolution;
 
-    public DecimateJTSGeomCollectionIterator(GeometryCollection gc, AffineTransform trs,double[] resolution) {
+    public DecimateJTSGeomCollectionIterator(final GeometryCollection gc, final AffineTransform trs,final double[] resolution) {
         super(gc,trs);
         this.resolution = resolution;
         reset();
@@ -50,7 +50,7 @@ public final class DecimateJTSGeomCollectionIterator extends JTSGeomCollectionIt
      * @return the specific iterator for the geometry passed.
      */
     @Override
-    protected void prepareIterator(Geometry candidate) {
+    protected void prepareIterator(final Geometry candidate) {
 
         if (candidate.isEmpty()) {
             currentIterator = JTSEmptyIterator.INSTANCE;

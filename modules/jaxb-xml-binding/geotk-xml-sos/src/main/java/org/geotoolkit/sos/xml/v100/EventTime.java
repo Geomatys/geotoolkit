@@ -85,8 +85,8 @@ public class EventTime {
     /**
      * Build a new Event time with T_After parameter or T_Before or T_During
      */
-     public EventTime(BinaryTemporalOpType tAfter, BinaryTemporalOpType tBefore,
-             BinaryTemporalOpType tDuring){
+     public EventTime(final BinaryTemporalOpType tAfter, final BinaryTemporalOpType tBefore,
+             final BinaryTemporalOpType tDuring){
          this.tAfter  = tAfter;
          this.tBefore = tBefore;
          this.tDuring = tDuring;
@@ -95,7 +95,7 @@ public class EventTime {
      /**
      * Build a new Event time with T_Equals.
      */
-     public EventTime(BinaryTemporalOpType tEquals){
+     public EventTime(final BinaryTemporalOpType tEquals){
          this.tEquals = tEquals;
      }
      

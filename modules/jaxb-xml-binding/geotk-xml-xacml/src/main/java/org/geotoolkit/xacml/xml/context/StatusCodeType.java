@@ -68,7 +68,7 @@ public class StatusCodeType {
     * Sets the value of the statusCode property.
     * 
     */
-   public void setStatusCode(StatusCodeType value) {
+   public void setStatusCode(final StatusCodeType value) {
       this.statusCode = value;
    }
 
@@ -83,7 +83,7 @@ public class StatusCodeType {
    /**
     * Sets the value of the value property.
     */
-   public void setValue(String value) {
+   public void setValue(final String value) {
       this.value = value;
    }
 

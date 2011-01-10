@@ -87,7 +87,7 @@ public class ChannelSelection {
      *     {@link SelectedChannelType }
      *     
      */
-    public void setRedChannel(SelectedChannelType value) {
+    public void setRedChannel(final SelectedChannelType value) {
         this.redChannel = value;
     }
 
@@ -111,7 +111,7 @@ public class ChannelSelection {
      *     {@link SelectedChannelType }
      *     
      */
-    public void setGreenChannel(SelectedChannelType value) {
+    public void setGreenChannel(final SelectedChannelType value) {
         this.greenChannel = value;
     }
 
@@ -135,7 +135,7 @@ public class ChannelSelection {
      *     {@link SelectedChannelType }
      *     
      */
-    public void setBlueChannel(SelectedChannelType value) {
+    public void setBlueChannel(final SelectedChannelType value) {
         this.blueChannel = value;
     }
 
@@ -159,7 +159,7 @@ public class ChannelSelection {
      *     {@link SelectedChannelType }
      *     
      */
-    public void setGrayChannel(SelectedChannelType value) {
+    public void setGrayChannel(final SelectedChannelType value) {
         this.grayChannel = value;
     }
 

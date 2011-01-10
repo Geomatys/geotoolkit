@@ -97,7 +97,7 @@ public class PropertyTypeAdapter extends XmlAdapter<PropertyTypeAdapter, Propert
      * @return A java object which represents the metadata value.
      */
     @Override
-    public PropertyType unmarshal(PropertyTypeAdapter value) throws Exception {
+    public PropertyType unmarshal(final PropertyTypeAdapter value) throws Exception {
         if (value == null) {
             return null;
         } else if (value.href != null) {
@@ -115,7 +115,7 @@ public class PropertyTypeAdapter extends XmlAdapter<PropertyTypeAdapter, Propert
      * @return The adapter for this PropertyType.
      */
     @Override
-    public PropertyTypeAdapter marshal(PropertyType value) throws Exception {
+    public PropertyTypeAdapter marshal(final PropertyType value) throws Exception {
         return new PropertyTypeAdapter(value);
     }
 

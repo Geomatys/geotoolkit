@@ -80,7 +80,7 @@ public class PersonNameType {
     /**
      * Sets the value of the slot property.
      */
-    public void setSlot(SlotType slot) {
+    public void setSlot(final SlotType slot) {
         if (this.slot == null) {
             this.slot = new ArrayList<SlotType>();
         }
@@ -90,7 +90,7 @@ public class PersonNameType {
      /**
      * Sets the value of the slot property.
      */
-    public void setSlot(List<SlotType> slot) {
+    public void setSlot(final List<SlotType> slot) {
         this.slot = slot;
     }
 
@@ -105,7 +105,7 @@ public class PersonNameType {
     /**
      * Sets the value of the firstName property.
      */
-    public void setFirstName(String value) {
+    public void setFirstName(final String value) {
         this.firstName = value;
     }
 
@@ -119,7 +119,7 @@ public class PersonNameType {
     /**
      * Sets the value of the middleName property.
      */
-    public void setMiddleName(String value) {
+    public void setMiddleName(final String value) {
         this.middleName = value;
     }
 
@@ -133,7 +133,7 @@ public class PersonNameType {
     /**
      * Sets the value of the lastName property.
      */
-    public void setLastName(String value) {
+    public void setLastName(final String value) {
         this.lastName = value;
     }
 

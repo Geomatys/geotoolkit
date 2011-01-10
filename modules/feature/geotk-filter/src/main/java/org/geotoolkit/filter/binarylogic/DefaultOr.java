@@ -31,11 +31,11 @@ import org.opengis.filter.Or;
  */
 public class DefaultOr extends AbstractBinaryLogicOperator implements Or {
 
-    public DefaultOr(List<Filter> filters) {
+    public DefaultOr(final List<Filter> filters) {
         super(filters);
     }
 
-    public DefaultOr(Filter filter1, Filter filter2){
+    public DefaultOr(final Filter filter1, final Filter filter2){
         super(filter1,filter2);
     }
 
@@ -43,7 +43,7 @@ public class DefaultOr extends AbstractBinaryLogicOperator implements Or {
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         for (Filter filter : filterArray) {
             if (filter.evaluate(object)) {
                 return true;
@@ -56,7 +56,7 @@ public class DefaultOr extends AbstractBinaryLogicOperator implements Or {
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -74,7 +74,7 @@ public class DefaultOr extends AbstractBinaryLogicOperator implements Or {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

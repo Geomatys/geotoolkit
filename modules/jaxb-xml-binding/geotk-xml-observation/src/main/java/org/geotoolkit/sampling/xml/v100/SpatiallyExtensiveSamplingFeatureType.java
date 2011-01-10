@@ -55,7 +55,7 @@ public class SpatiallyExtensiveSamplingFeatureType extends SamplingFeatureEntry 
         
     }
 
-    public SpatiallyExtensiveSamplingFeatureType(String id, String name, String description,FeaturePropertyType sampledFeature) {
+    public SpatiallyExtensiveSamplingFeatureType(final String id, final String name, final String description,final FeaturePropertyType sampledFeature) {
         super(id, name, description, sampledFeature);
     }
 

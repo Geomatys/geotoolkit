@@ -37,7 +37,7 @@ public class MockWebMapServer extends WebMapServer{
     private final AbstractWMSCapabilities capa111;
     private final AbstractWMSCapabilities capa130;
 
-    public MockWebMapServer(WMSVersion version) throws MalformedURLException, JAXBException{
+    public MockWebMapServer(final WMSVersion version) throws MalformedURLException, JAXBException{
         super(new URL("http://localhost/mock/wms?"), version);
 
         final MarshallerPool pool = WMSMarshallerPool.getInstance();

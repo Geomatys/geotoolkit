@@ -68,7 +68,7 @@ public class NotifyActionType extends ActionType {
     /**
      * Sets the value of the notificationOption property.
      */
-    public void setNotificationOption(String value) {
+    public void setNotificationOption(final String value) {
         this.notificationOption = value;
     }
 
@@ -82,7 +82,7 @@ public class NotifyActionType extends ActionType {
     /**
      * Sets the value of the endPoint property.
      */
-    public void setEndPoint(String value) {
+    public void setEndPoint(final String value) {
         this.endPoint = value;
     }
 

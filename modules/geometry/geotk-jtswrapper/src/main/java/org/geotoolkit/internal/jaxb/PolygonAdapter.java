@@ -11,7 +11,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.geometry.JTSPolyg
 public class PolygonAdapter extends XmlAdapter<PolygonType, JTSPolygon> {
 
     @Override
-    public JTSPolygon unmarshal(PolygonType v) throws Exception {
+    public JTSPolygon unmarshal(final PolygonType v) throws Exception {
         if (v != null) {
             return new JTSPolygon(v.getSurfaceBoundary());
         }
@@ -19,7 +19,7 @@ public class PolygonAdapter extends XmlAdapter<PolygonType, JTSPolygon> {
     }
 
     @Override
-    public PolygonType marshal(JTSPolygon v) throws Exception {
+    public PolygonType marshal(final JTSPolygon v) throws Exception {
         return new PolygonType(v);
     }
 

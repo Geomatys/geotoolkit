@@ -33,7 +33,7 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
 
     private final T value;
 
-    public DefaultLiteral(T value) {
+    public DefaultLiteral(final T value) {
         this.value = value;
     }
 
@@ -41,12 +41,12 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
      * {@inheritDoc }
      */
     @Override
-    public T evaluate(Object feature) {
+    public T evaluate(final Object feature) {
         return value;
     }
 
     @Override
-    public <T> T evaluate(Object candidate, Class<T> target) {
+    public <T> T evaluate(final Object candidate, final Class<T> target) {
 
         if(value instanceof Geometry && com.vividsolutions.jts.geom.Geometry.class.isAssignableFrom(target)){
             final Geometry geo = (Geometry) value;
@@ -64,7 +64,7 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -88,7 +88,7 @@ public class DefaultLiteral<T> extends AbstractExpression implements Literal{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

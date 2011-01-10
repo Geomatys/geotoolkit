@@ -25,7 +25,7 @@ public class CurveLineAdapter<T> extends XmlAdapter<CurveLineAdapter, Orientable
 
     }
 
-    public CurveLineAdapter(OrientableCurve curve) {
+    public CurveLineAdapter(final OrientableCurve curve) {
         if (curve instanceof JTSCurve) {
             JTSLineString line = (JTSLineString) ((JTSCurve)curve).getSegments().get(0);
             this.lineString = FACTORY.createLineStringPosListType(new LineStringPosListType(line));
@@ -37,7 +37,7 @@ public class CurveLineAdapter<T> extends XmlAdapter<CurveLineAdapter, Orientable
 
 
     @Override
-    public OrientableCurve unmarshal(CurveLineAdapter v) throws Exception {
+    public OrientableCurve unmarshal(final CurveLineAdapter v) throws Exception {
         if (v != null && v.lineString != null && v.lineString.getValue() != null) {
             LineStringPosListType posList = (LineStringPosListType) v.lineString.getValue();
             JTSLineString line = posList.getJTSLineString();
@@ -50,7 +50,7 @@ public class CurveLineAdapter<T> extends XmlAdapter<CurveLineAdapter, Orientable
     }
 
     @Override
-    public CurveLineAdapter marshal(OrientableCurve v) throws Exception {
+    public CurveLineAdapter marshal(final OrientableCurve v) throws Exception {
         return new CurveLineAdapter(v);
     }
 

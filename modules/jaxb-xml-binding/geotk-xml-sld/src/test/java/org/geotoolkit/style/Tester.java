@@ -113,13 +113,13 @@ public class Tester {
    
     
     //--------------------- V1.0.0 ---------------------------------------------
-    private static void testSLDMarshall_V100(File file) {
+    private static void testSLDMarshall_V100(final File file) {
         StyledLayerDescriptor geoSLD = createSLD();
         org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = SLD_UTILITIES.transformV100(geoSLD);
         SLD_UTILITIES.marshallV100(sld, file);
     }
 
-    private static void testSLDUnMarshall_V100(File file) {        
+    private static void testSLDUnMarshall_V100(final File file) {        
         org.geotoolkit.sld.xml.v100.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshallV100(file);
         MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transformV100(sld);
 //        showSLD(geoSLD);
@@ -128,13 +128,13 @@ public class Tester {
     
     
     //--------------------- V1.1.0 ---------------------------------------------
-    private static void testSLDMarshall_V110(File file) {
+    private static void testSLDMarshall_V110(final File file) {
         StyledLayerDescriptor geoSLD = createSLD();
         org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.transformV110(geoSLD);
         SLD_UTILITIES.marshallV110(sld, file);
     }
 
-    private static void testSLDUnMarshall_V110(File file) throws FactoryException {
+    private static void testSLDUnMarshall_V110(final File file) throws FactoryException {
         org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld = SLD_UTILITIES.unmarshallV110(file);
         MutableStyledLayerDescriptor geoSLD = SLD_UTILITIES.transformV110(sld);
 //        showSLD(geoSLD);
@@ -318,7 +318,7 @@ public class Tester {
     }
     
     
-    private static void showSLD(StyledLayerDescriptor sld){
+    private static void showSLD(final StyledLayerDescriptor sld){
         System.out.println("-----------------------------------------------------");
         System.out.println(sld.toString());
         
@@ -335,7 +335,7 @@ public class Tester {
         
     }
     
-    private static void showSLD(org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld){
+    private static void showSLD(final org.geotoolkit.sld.xml.v110.StyledLayerDescriptor sld){
         
         System.out.println("NAME =" + sld.getName());
         

@@ -55,7 +55,7 @@ public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         super.setLayer(layer);
         guiSpecial.setLayer(layer);
     }
@@ -145,21 +145,21 @@ public class JLineCapExpressionPane extends StyleElementEditor<Expression>{
 
     }// </editor-fold>//GEN-END:initComponents
 
-private void guiSpecialPropertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
+private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
     if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)) {
         parse(guiSpecial.get());
     }
 }//GEN-LAST:event_guiSpecialPropertyChange
 
-private void guiRoundActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiRoundActionPerformed
+private void guiRoundActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiRoundActionPerformed
     parse(StyleConstants.STROKE_CAP_ROUND);
 }//GEN-LAST:event_guiRoundActionPerformed
 
-private void guiSquareActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiSquareActionPerformed
+private void guiSquareActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiSquareActionPerformed
     parse(StyleConstants.STROKE_CAP_SQUARE);
 }//GEN-LAST:event_guiSquareActionPerformed
 
-private void guiButtActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiButtActionPerformed
+private void guiButtActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiButtActionPerformed
     parse(StyleConstants.STROKE_CAP_BUTT);
 }//GEN-LAST:event_guiButtActionPerformed
 
@@ -173,7 +173,7 @@ private void guiButtActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiButtA
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void parse(Expression target) {
+    public void parse(final Expression target) {
         if(target != null){
             if(StyleConstants.STROKE_CAP_BUTT.equals(target)){
                 guiSpecial.parse(null);

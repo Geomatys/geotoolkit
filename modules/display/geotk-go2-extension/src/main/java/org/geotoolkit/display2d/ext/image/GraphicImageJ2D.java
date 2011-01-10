@@ -37,7 +37,7 @@ public class GraphicImageJ2D extends PositionedGraphic2D{
     private final ImageTemplate template;
 
 
-    public GraphicImageJ2D(final J2DCanvas canvas, ImageTemplate template){
+    public GraphicImageJ2D(final J2DCanvas canvas, final ImageTemplate template){
         super(canvas);
 
         this.template = template;

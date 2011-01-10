@@ -36,7 +36,7 @@ public class DefaultOrdinalReferenceSystem extends DefaultTemporalReferenceSyste
      */
     private Collection<OrdinalEra> ordinalEraSequence;
 
-    public DefaultOrdinalReferenceSystem(ReferenceIdentifier name, Extent domainOfValidity, Collection<OrdinalEra> ordinalEraSequence) {
+    public DefaultOrdinalReferenceSystem(final ReferenceIdentifier name, final Extent domainOfValidity, final Collection<OrdinalEra> ordinalEraSequence) {
         super(name, domainOfValidity);
         this.ordinalEraSequence = ordinalEraSequence;
     }

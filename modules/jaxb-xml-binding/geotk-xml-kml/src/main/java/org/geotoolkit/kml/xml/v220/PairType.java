@@ -93,7 +93,7 @@ public class PairType extends AbstractObjectType {
      *     {@link StyleStateEnumType }
      *     
      */
-    public void setKey(StyleStateEnumType value) {
+    public void setKey(final StyleStateEnumType value) {
         this.key = value;
     }
 
@@ -117,7 +117,7 @@ public class PairType extends AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setStyleUrl(String value) {
+    public void setStyleUrl(final String value) {
         this.styleUrl = value;
     }
 
@@ -145,7 +145,7 @@ public class PairType extends AbstractObjectType {
      *     {@link JAXBElement }{@code <}{@link StyleType }{@code >}
      *     
      */
-    public void setAbstractStyleSelectorGroup(JAXBElement<? extends AbstractStyleSelectorType> value) {
+    public void setAbstractStyleSelectorGroup(final JAXBElement<? extends AbstractStyleSelectorType> value) {
         this.abstractStyleSelectorGroup = ((JAXBElement<? extends AbstractStyleSelectorType> ) value);
     }
 

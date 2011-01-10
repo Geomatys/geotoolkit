@@ -43,7 +43,7 @@ public enum GetCapabilitiesValueType {
     GET_CAPABILITIES("GetCapabilities");
     private final String value;
 
-    GetCapabilitiesValueType(String v) {
+    GetCapabilitiesValueType(final String v) {
         value = v;
     }
 
@@ -51,7 +51,7 @@ public enum GetCapabilitiesValueType {
         return value;
     }
 
-    public static GetCapabilitiesValueType fromValue(String v) {
+    public static GetCapabilitiesValueType fromValue(final String v) {
         for (GetCapabilitiesValueType c: GetCapabilitiesValueType.values()) {
             if (c.value.equals(v)) {
                 return c;

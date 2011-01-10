@@ -36,7 +36,7 @@ public class FileSystemPageStoreTest extends TestCase {
      * 
      * @param arg0
      */
-    public FileSystemPageStoreTest(String arg0) {
+    public FileSystemPageStoreTest(final String arg0) {
         super(arg0);
     }
 

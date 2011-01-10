@@ -49,7 +49,7 @@ public class JNavigationBar extends JToolBar {
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JNavigationBar(A3DCanvas pane) {
+    public JNavigationBar(final A3DCanvas pane) {
         add(actionZoomAll);
         add(cameraSpeed);
         add(scaling);
@@ -60,7 +60,7 @@ public class JNavigationBar extends JToolBar {
      * set the related Map2D
      * @param map2d : related Map2D
      */
-    public void setMap(A3DCanvas map2d) {
+    public void setMap(final A3DCanvas map2d) {
         map = map2d;
         actionZoomAll.setMap(map);
         cameraSpeed.setMap(map);

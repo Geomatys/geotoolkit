@@ -26,7 +26,7 @@ public enum WFSVersion {
 
     private final String code;
 
-    WFSVersion(String code){
+    WFSVersion(final String code){
         this.code = code;
     }
 

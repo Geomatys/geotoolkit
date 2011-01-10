@@ -94,14 +94,14 @@ public class FeaturePropertyType {
     /**
      * Build a new feature.
      */
-    public FeaturePropertyType(JAXBElement<? extends AbstractFeatureEntry> feature) {
+    public FeaturePropertyType(final JAXBElement<? extends AbstractFeatureEntry> feature) {
         this.abstractFeature = feature;
     }
 
     /**
      * Build a new feature.
      */
-    public FeaturePropertyType(String href) {
+    public FeaturePropertyType(final String href) {
         this.href = href;
     }
 
@@ -145,7 +145,7 @@ public class FeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
      *     
      */
-    public void setAbstractFeature(JAXBElement<? extends AbstractFeatureEntry> value) {
+    public void setAbstractFeature(final JAXBElement<? extends AbstractFeatureEntry> value) {
         this.abstractFeature = ((JAXBElement<? extends AbstractFeatureEntry> ) value);
     }
 
@@ -169,7 +169,7 @@ public class FeaturePropertyType {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -197,7 +197,7 @@ public class FeaturePropertyType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -221,7 +221,7 @@ public class FeaturePropertyType {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -245,7 +245,7 @@ public class FeaturePropertyType {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -269,7 +269,7 @@ public class FeaturePropertyType {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -293,7 +293,7 @@ public class FeaturePropertyType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -317,7 +317,7 @@ public class FeaturePropertyType {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -341,7 +341,7 @@ public class FeaturePropertyType {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

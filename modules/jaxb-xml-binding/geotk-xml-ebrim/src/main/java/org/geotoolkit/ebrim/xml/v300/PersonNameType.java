@@ -65,7 +65,7 @@ public class PersonNameType {
     /**
      * Sets the value of the firstName property.
      */
-    public void setFirstName(String value) {
+    public void setFirstName(final String value) {
         this.firstName = value;
     }
 
@@ -79,7 +79,7 @@ public class PersonNameType {
     /**
      * Sets the value of the middleName property.
      */
-    public void setMiddleName(String value) {
+    public void setMiddleName(final String value) {
         this.middleName = value;
     }
 
@@ -93,7 +93,7 @@ public class PersonNameType {
     /**
      * Sets the value of the lastName property.
      */
-    public void setLastName(String value) {
+    public void setLastName(final String value) {
         this.lastName = value;
     }
 

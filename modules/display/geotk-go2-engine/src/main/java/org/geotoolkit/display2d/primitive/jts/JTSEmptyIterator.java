@@ -62,7 +62,7 @@ public class JTSEmptyIterator extends JTSGeometryIterator<Geometry> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         return 0;
     }
 
@@ -70,7 +70,7 @@ public class JTSEmptyIterator extends JTSGeometryIterator<Geometry> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(float[] coords) {
+    public int currentSegment(final float[] coords) {
         return 0;
     }
 

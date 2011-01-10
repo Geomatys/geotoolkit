@@ -92,7 +92,7 @@ public class WCSMapLayer extends AbstractMapLayer {
         return request;
     }
 
-    URL query(Envelope env, Dimension dim) throws MalformedURLException {
+    URL query(final Envelope env, final Dimension dim) throws MalformedURLException {
 
         final GetCoverageRequest request = server.createGetCoverage();
         request.setEnvelope(env);

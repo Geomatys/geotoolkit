@@ -33,7 +33,7 @@ public class DefaultSpatialOperators implements SpatialOperators {
 
     private final Map<String,SpatialOperator> operators = new HashMap<String, SpatialOperator>();
 
-    public DefaultSpatialOperators(SpatialOperator[] operators) {
+    public DefaultSpatialOperators(final SpatialOperator[] operators) {
         if(operators == null || operators.length == 0){
             throw new IllegalArgumentException("Functions must not be null or empty");
         }
@@ -54,7 +54,7 @@ public class DefaultSpatialOperators implements SpatialOperators {
      * {@inheritDoc }
      */
     @Override
-    public SpatialOperator getOperator(String name) {
+    public SpatialOperator getOperator(final String name) {
         return operators.get(name);
     }
 
@@ -62,7 +62,7 @@ public class DefaultSpatialOperators implements SpatialOperators {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

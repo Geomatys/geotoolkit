@@ -72,7 +72,7 @@ public class SamplingFeatureRelationPropertyType {
      *     {@link SamplingFeatureRelationType }
      *     
      */
-    public void setSamplingFeatureRelation(SamplingFeatureRelationEntry value) {
+    public void setSamplingFeatureRelation(final SamplingFeatureRelationEntry value) {
         this.samplingFeatureRelation = value;
     }
 

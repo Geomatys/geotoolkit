@@ -49,7 +49,7 @@ public enum ByteEncoding {
     HEX("hex");
     private final String value;
 
-    ByteEncoding(String v) {
+    ByteEncoding(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum ByteEncoding {
         return value;
     }
 
-    public static ByteEncoding fromValue(String v) {
+    public static ByteEncoding fromValue(final String v) {
         for (ByteEncoding c: ByteEncoding.values()) {
             if (c.value.equals(v)) {
                 return c;

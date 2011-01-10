@@ -88,7 +88,7 @@ import com.vividsolutions.jts.triangulate.quadedge.Vertex;
  */
 public class ConformingDelaunayTriangulator 
 {
-	private static Envelope computeVertexEnvelope(Collection vertices) {
+	private static Envelope computeVertexEnvelope(final Collection vertices) {
 		Envelope env = new Envelope();
 		for (Iterator i = vertices.iterator(); i.hasNext();) {
 			Vertex v = (Vertex) i.next();
@@ -127,8 +127,8 @@ public class ConformingDelaunayTriangulator
 	 * @param tolerance
 	 *          the distance tolerance below which points are considered identical
 	 */
-	public ConformingDelaunayTriangulator(Collection initialVertices,
-			double tolerance) {
+	public ConformingDelaunayTriangulator(final Collection initialVertices,
+			final double tolerance) {
 		this.initialVertices = new ArrayList(initialVertices);
 		this.tolerance = tolerance;
 		kdt = new KdTree(tolerance);
@@ -145,7 +145,7 @@ public class ConformingDelaunayTriangulator
 	 * @param segments a list of the constraint {@link Segment}s
 	 * @param segVertices the set of unique {@link ConstraintVertex}es referenced by the segments
 	 */
-	public void setConstraints(List segments, List segVertices) {
+	public void setConstraints(final List segments, final List segVertices) {
 		this.segments = segments;
 		this.segVertices = segVertices;
 	}
@@ -158,7 +158,7 @@ public class ConformingDelaunayTriangulator
 	 * 
 	 * @param splitFinder the ConstraintSplitPointFinder to be used
 	 */
-	public void setSplitPointFinder(ConstraintSplitPointFinder splitFinder) {
+	public void setSplitPointFinder(final ConstraintSplitPointFinder splitFinder) {
 		this.splitFinder = splitFinder;
 	}
 
@@ -187,7 +187,7 @@ public class ConformingDelaunayTriangulator
 	 * 
 	 * @param vertexFactory the ConstraintVertexFactory to be used
 	 */
-	public void setVertexFactory(ConstraintVertexFactory vertexFactory) {
+	public void setVertexFactory(final ConstraintVertexFactory vertexFactory) {
 		this.vertexFactory = vertexFactory;
 	}
 
@@ -312,7 +312,7 @@ public class ConformingDelaunayTriangulator
 		return pts;
 	}
 
-	private ConstraintVertex createVertex(Coordinate p) {
+	private ConstraintVertex createVertex(final Coordinate p) {
 		ConstraintVertex v = null;
 		if (vertexFactory != null)
 			v = vertexFactory.createVertex(p, null);
@@ -328,7 +328,7 @@ public class ConformingDelaunayTriangulator
 	 * @param seg the constraint segment it lies on
 	 * @return the new constraint vertex
 	 */
-	private ConstraintVertex createVertex(Coordinate p, Segment seg) {
+	private ConstraintVertex createVertex(final Coordinate p, final Segment seg) {
 		ConstraintVertex v = null;
 		if (vertexFactory != null)
 			v = vertexFactory.createVertex(p, seg);
@@ -343,7 +343,7 @@ public class ConformingDelaunayTriangulator
 	 * 
 	 * @param vertices a collection of ConstraintVertex
 	 */
-	private void insertSites(Collection vertices) {
+	private void insertSites(final Collection vertices) {
 		Debug.println("Adding sites: " + vertices.size());
 		for (Iterator i = vertices.iterator(); i.hasNext();) {
 			ConstraintVertex v = (ConstraintVertex) i.next();
@@ -351,7 +351,7 @@ public class ConformingDelaunayTriangulator
 		}
 	}
 
-	private ConstraintVertex insertSite(ConstraintVertex v) {
+	private ConstraintVertex insertSite(final ConstraintVertex v) {
 		KdNode kdnode = kdt.insert(v.getCoordinate(), v);
 		if (!kdnode.isRepeated()) {
 			incDel.insertSite(v);
@@ -375,7 +375,7 @@ public class ConformingDelaunayTriangulator
 	 * 
 	 * @param p the location of the site to insert
 	 */
-	public void insertSite(Coordinate p) {
+	public void insertSite(final Coordinate p) {
 		insertSite(createVertex(p));
 	}
 
@@ -437,7 +437,7 @@ public class ConformingDelaunayTriangulator
 	 * (q == null) missingSegs.add(s); } return missingSegs; }
 	 */
 
-	private int enforceGabriel(Collection segsToInsert) {
+	private int enforceGabriel(final Collection segsToInsert) {
 		List newSegments = new ArrayList();
 		int splits = 0;
 		List segsToRemove = new ArrayList();
@@ -524,7 +524,7 @@ public class ConformingDelaunayTriangulator
 	 * @return a point which is non-Gabriel
 	 * @return null if no point is non-Gabriel
 	 */
-	private Coordinate findNonGabrielPoint(Segment seg) {
+	private Coordinate findNonGabrielPoint(final Segment seg) {
 		Coordinate p = seg.getStart();
 		Coordinate q = seg.getEnd();
 		// Find the mid point on the line and compute the radius of enclosing circle

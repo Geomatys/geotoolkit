@@ -84,7 +84,7 @@ public class TransactionType extends BaseRequestType {
 
     }
 
-    public TransactionType(String service, String version, String handle, AllSomeType releaseAction, DeleteElementType delete) {
+    public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final DeleteElementType delete) {
         super(service, version, handle);
         this.releaseAction = releaseAction;
         this.insertOrUpdateOrDelete = new ArrayList<Object>();
@@ -133,7 +133,7 @@ public class TransactionType extends BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setLockId(String value) {
+    public void setLockId(final String value) {
         this.lockId = value;
     }
 
@@ -168,7 +168,7 @@ public class TransactionType extends BaseRequestType {
      *     {@link AllSomeType }
      *     
      */
-    public void setReleaseAction(AllSomeType value) {
+    public void setReleaseAction(final AllSomeType value) {
         this.releaseAction = value;
     }
 
@@ -191,7 +191,7 @@ public class TransactionType extends BaseRequestType {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }

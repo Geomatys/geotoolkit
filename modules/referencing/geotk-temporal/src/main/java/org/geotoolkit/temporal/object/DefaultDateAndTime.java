@@ -50,7 +50,7 @@ public class DefaultDateAndTime extends DefaultTemporalPosition implements DateA
      */
     private Number[] clockTime;
 
-    public DefaultDateAndTime(TemporalReferenceSystem frame, IndeterminateValue indeterminatePosition, InternationalString calendarEraName, int[] calendarDate, Number[] clockTime) {
+    public DefaultDateAndTime(final TemporalReferenceSystem frame, final IndeterminateValue indeterminatePosition, final InternationalString calendarEraName, final int[] calendarDate, final Number[] clockTime) {
         super(frame, indeterminatePosition);
         this.calendarDate = calendarDate;
         this.calendarEraName = calendarEraName;
@@ -88,15 +88,15 @@ public class DefaultDateAndTime extends DefaultTemporalPosition implements DateA
         return calendarDate;
     }
 
-    public void setCalendarEraName(InternationalString calendarEraName) {
+    public void setCalendarEraName(final InternationalString calendarEraName) {
         this.calendarEraName = calendarEraName;
     }
 
-    public void setCalendarDate(int[] calendarDate) {
+    public void setCalendarDate(final int[] calendarDate) {
         this.calendarDate = calendarDate;
     }
 
-    public void setClockTime(Number[] clockTime) {
+    public void setClockTime(final Number[] clockTime) {
         this.clockTime = clockTime;
     }
 

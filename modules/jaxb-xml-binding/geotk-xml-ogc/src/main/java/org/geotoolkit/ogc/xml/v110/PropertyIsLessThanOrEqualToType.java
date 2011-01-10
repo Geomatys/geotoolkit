@@ -40,7 +40,7 @@ public class PropertyIsLessThanOrEqualToType extends BinaryComparisonOpType impl
     /**
      * Build a new Binary comparison operator
      */
-    public  PropertyIsLessThanOrEqualToType(LiteralType literal, PropertyNameType propertyName, Boolean matchCase) {
+    public  PropertyIsLessThanOrEqualToType(final LiteralType literal, final PropertyNameType propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
 }

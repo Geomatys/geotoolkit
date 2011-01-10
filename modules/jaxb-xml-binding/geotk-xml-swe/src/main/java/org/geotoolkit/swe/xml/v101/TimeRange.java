@@ -80,11 +80,11 @@ public class TimeRange extends AbstractDataComponentEntry implements AbstractTim
 
     }
 
-    public TimeRange(List<String> value) {
+    public TimeRange(final List<String> value) {
         this.value = value;
     }
 
-    public TimeRange(AbstractTimeRange q) {
+    public TimeRange(final AbstractTimeRange q) {
         super(q);
         if (q != null) {
            /* if (q.getConstraint() != null) {
@@ -112,7 +112,7 @@ public class TimeRange extends AbstractDataComponentEntry implements AbstractTim
         return this.quality;
     }
 
-    public void setQuality(QualityPropertyType quality) {
+    public void setQuality(final QualityPropertyType quality) {
         this.quality = quality;
     }
 
@@ -127,7 +127,7 @@ public class TimeRange extends AbstractDataComponentEntry implements AbstractTim
     /**
      * Sets the value of the uom property.
      */
-    public void setUom(UomPropertyType value) {
+    public void setUom(final UomPropertyType value) {
         this.uom = value;
     }
 
@@ -158,7 +158,7 @@ public class TimeRange extends AbstractDataComponentEntry implements AbstractTim
      *     {@link String }
      *     
      */
-    public void setReferenceTime(String value) {
+    public void setReferenceTime(final String value) {
         this.referenceTime = value;
     }
 
@@ -182,7 +182,7 @@ public class TimeRange extends AbstractDataComponentEntry implements AbstractTim
      *     {@link String }
      *     
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -206,7 +206,7 @@ public class TimeRange extends AbstractDataComponentEntry implements AbstractTim
      *     {@link String }
      *     
      */
-    public void setLocalFrame(String value) {
+    public void setLocalFrame(final String value) {
         this.localFrame = value;
     }
 

@@ -98,7 +98,7 @@ public class AssociationRoleAdapter extends XmlAdapter<AssociationRoleAdapter, A
      * @return A java object which represents the metadata value.
      */
     @Override
-    public AssociationRole unmarshal(AssociationRoleAdapter value) throws Exception {
+    public AssociationRole unmarshal(final AssociationRoleAdapter value) throws Exception {
         if (value == null) {
             return null;
         } else if (value.href != null) {
@@ -116,7 +116,7 @@ public class AssociationRoleAdapter extends XmlAdapter<AssociationRoleAdapter, A
      * @return The adapter for this AssociationRole.
      */
     @Override
-    public AssociationRoleAdapter marshal(AssociationRole value) throws Exception {
+    public AssociationRoleAdapter marshal(final AssociationRole value) throws Exception {
         return new AssociationRoleAdapter(value);
     }
 

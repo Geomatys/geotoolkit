@@ -602,7 +602,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "NormalizedCurve", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<NormalizedCurveType> createNormalizedCurve(NormalizedCurveType value) {
+    public JAXBElement<NormalizedCurveType> createNormalizedCurve(final NormalizedCurveType value) {
         return new JAXBElement<NormalizedCurveType>(_NormalizedCurve_QNAME, NormalizedCurveType.class, null, value);
     }
 
@@ -611,7 +611,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "ConditionalValue", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<ConditionalValueType> createConditionalValue(ConditionalValueType value) {
+    public JAXBElement<ConditionalValueType> createConditionalValue(final ConditionalValueType value) {
         return new JAXBElement<ConditionalValueType>(_ConditionalValue_QNAME, ConditionalValueType.class, null, value);
     }
 
@@ -620,7 +620,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "XMLBlock")
-    public JAXBElement<XMLBlockType> createXMLBlock(XMLBlockType value) {
+    public JAXBElement<XMLBlockType> createXMLBlock(final XMLBlockType value) {
         return new JAXBElement<XMLBlockType>(_XMLBlock_QNAME, XMLBlockType.class, null, value);
     }
 
@@ -629,7 +629,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "Position", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<PositionType> createPosition(PositionType value) {
+    public JAXBElement<PositionType> createPosition(final PositionType value) {
         return new JAXBElement<PositionType>(_Position_QNAME, PositionType.class, null, value);
     }
 
@@ -638,7 +638,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "ConditionalData", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<ConditionalDataType> createConditionalData(ConditionalDataType value) {
+    public JAXBElement<ConditionalDataType> createConditionalData(final ConditionalDataType value) {
         return new JAXBElement<ConditionalDataType>(_ConditionalData_QNAME, ConditionalDataType.class, null, value);
     }
 
@@ -647,7 +647,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "SquareMatrix", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataArray")
-    public JAXBElement<SquareMatrixType> createSquareMatrix(SquareMatrixType value) {
+    public JAXBElement<SquareMatrixType> createSquareMatrix(final SquareMatrixType value) {
         return new JAXBElement<SquareMatrixType>(_SquareMatrix_QNAME, SquareMatrixType.class, null, value);
     }
 
@@ -656,7 +656,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "MultiplexedStreamFormat")
-    public JAXBElement<MultiplexedStreamFormatType> createMultiplexedStreamFormat(MultiplexedStreamFormatType value) {
+    public JAXBElement<MultiplexedStreamFormatType> createMultiplexedStreamFormat(final MultiplexedStreamFormatType value) {
         return new JAXBElement<MultiplexedStreamFormatType>(_MultiplexedStreamFormat_QNAME, MultiplexedStreamFormatType.class, null, value);
     }
 
@@ -665,7 +665,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "DataStreamDefinition")
-    public JAXBElement<DataStreamDefinitionType> createDataStreamDefinition(DataStreamDefinitionType value) {
+    public JAXBElement<DataStreamDefinitionType> createDataStreamDefinition(final DataStreamDefinitionType value) {
         return new JAXBElement<DataStreamDefinitionType>(_DataStreamDefinition_QNAME, DataStreamDefinitionType.class, null, value);
     }
 
@@ -674,7 +674,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "AbstractDataRecord")
-    public JAXBElement<AbstractDataRecordType> createAbstractDataRecord(AbstractDataRecordType value) {
+    public JAXBElement<AbstractDataRecordType> createAbstractDataRecord(final AbstractDataRecordType value) {
         return new JAXBElement<AbstractDataRecordType>(_AbstractDataRecord_QNAME, AbstractDataRecordType.class, null, value);
     }
 
@@ -683,7 +683,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "DataArray", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataArray")
-    public JAXBElement<DataArrayType> createDataArray(DataArrayType value) {
+    public JAXBElement<DataArrayType> createDataArray(final DataArrayType value) {
         return new JAXBElement<DataArrayType>(_DataArray_QNAME, DataArrayType.class, null, value);
     }
 
@@ -692,7 +692,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "DataRecord", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<DataRecordType> createDataRecord(DataRecordType value) {
+    public JAXBElement<DataRecordType> createDataRecord(final DataRecordType value) {
         return new JAXBElement<DataRecordType>(_DataRecord_QNAME, DataRecordType.class, null, value);
     }
 
@@ -701,7 +701,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "Vector", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<VectorType> createVector(VectorType value) {
+    public JAXBElement<VectorType> createVector(final VectorType value) {
         return new JAXBElement<VectorType>(_Vector_QNAME, VectorType.class, null, value);
     }
 
@@ -710,7 +710,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "AbstractDataArray")
-    public JAXBElement<AbstractDataArrayType> createAbstractDataArray(AbstractDataArrayType value) {
+    public JAXBElement<AbstractDataArrayType> createAbstractDataArray(final AbstractDataArrayType value) {
         return new JAXBElement<AbstractDataArrayType>(_AbstractDataArray_QNAME, AbstractDataArrayType.class, null, value);
     }
 
@@ -719,7 +719,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "SimpleDataRecord", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<SimpleDataRecordType> createSimpleDataRecord(SimpleDataRecordType value) {
+    public JAXBElement<SimpleDataRecordType> createSimpleDataRecord(final SimpleDataRecordType value) {
         return new JAXBElement<SimpleDataRecordType>(_SimpleDataRecord_QNAME, SimpleDataRecordType.class, null, value);
     }
 
@@ -728,7 +728,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "Item")
-    public JAXBElement<Object> createItem(Object value) {
+    public JAXBElement<Object> createItem(final Object value) {
         return new JAXBElement<Object>(_Item_QNAME, Object.class, null, value);
     }
 
@@ -737,7 +737,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "Curve", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataArray")
-    public JAXBElement<CurveType> createCurve(CurveType value) {
+    public JAXBElement<CurveType> createCurve(final CurveType value) {
         return new JAXBElement<CurveType>(_Curve_QNAME, CurveType.class, null, value);
     }
 
@@ -746,7 +746,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "Envelope", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<EnvelopeType> createEnvelope(EnvelopeType value) {
+    public JAXBElement<EnvelopeType> createEnvelope(final EnvelopeType value) {
         return new JAXBElement<EnvelopeType>(_Envelope_QNAME, EnvelopeType.class, null, value);
     }
 
@@ -755,7 +755,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "DataBlockDefinition")
-    public JAXBElement<DataBlockDefinitionType> createDataBlockDefinition(DataBlockDefinitionType value) {
+    public JAXBElement<DataBlockDefinitionType> createDataBlockDefinition(final DataBlockDefinitionType value) {
         return new JAXBElement<DataBlockDefinitionType>(_DataBlockDefinition_QNAME, DataBlockDefinitionType.class, null, value);
     }
 
@@ -765,7 +765,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "GeoLocationArea", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<GeoLocationArea> createGeoLocationArea(GeoLocationArea value) {
+    public JAXBElement<GeoLocationArea> createGeoLocationArea(final GeoLocationArea value) {
         return new JAXBElement<GeoLocationArea>(_GeoLocationArea_QNAME, GeoLocationArea.class, null, value);
     }
 
@@ -774,7 +774,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "valueList", scope = AllowedTokens.class)
-    public JAXBElement<List<String>> createAllowedTokensValueList(List<String> value) {
+    public JAXBElement<List<String>> createAllowedTokensValueList(final List<String> value) {
         return new JAXBElement<List<String>>(_AllowedTokensValueList_QNAME, ((Class) List.class), AllowedTokens.class, ((List<String> ) value));
     }
 
@@ -783,7 +783,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "interval", scope = AllowedTimes.class)
-    public JAXBElement<List<String>> createAllowedTimesInterval(List<String> value) {
+    public JAXBElement<List<String>> createAllowedTimesInterval(final List<String> value) {
         return new JAXBElement<List<String>>(_AllowedTimesInterval_QNAME, ((Class) List.class), AllowedTimes.class, ((List<String> ) value));
     }
 
@@ -792,7 +792,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "valueList", scope = AllowedTimes.class)
-    public JAXBElement<List<String>> createAllowedTimesValueList(List<String> value) {
+    public JAXBElement<List<String>> createAllowedTimesValueList(final List<String> value) {
         return new JAXBElement<List<String>>(_AllowedTokensValueList_QNAME, ((Class) List.class), AllowedTimes.class, ((List<String> ) value));
     }
 
@@ -801,7 +801,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "interval", scope = AllowedValues.class)
-    public JAXBElement<List<Double>> createAllowedValuesInterval(List<Double> value) {
+    public JAXBElement<List<Double>> createAllowedValuesInterval(final List<Double> value) {
         return new JAXBElement<List<Double>>(_AllowedTimesInterval_QNAME, ((Class) List.class), AllowedValues.class, ((List<Double> ) value));
     }
 
@@ -810,7 +810,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0", name = "valueList", scope = AllowedValues.class)
-    public JAXBElement<List<Double>> createAllowedValuesValueList(List<Double> value) {
+    public JAXBElement<List<Double>> createAllowedValuesValueList(final List<Double> value) {
         return new JAXBElement<List<Double>>(_AllowedTokensValueList_QNAME, ((Class) List.class), AllowedValues.class, ((List<Double> ) value));
     }
 

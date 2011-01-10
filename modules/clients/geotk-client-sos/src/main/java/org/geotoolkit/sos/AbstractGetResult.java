@@ -68,12 +68,12 @@ public abstract class AbstractGetResult extends AbstractSOSRequest implements Ge
     }
 
     @Override
-    public void setEventTimes(EventTime[] eventTimes) {
+    public void setEventTimes(final EventTime[] eventTimes) {
         this.eventTimes = eventTimes;
     }
 
     @Override
-    public void setObservationTemplateId(String observationTemplateId) {
+    public void setObservationTemplateId(final String observationTemplateId) {
         this.observationTemplateId = observationTemplateId;
     }
 

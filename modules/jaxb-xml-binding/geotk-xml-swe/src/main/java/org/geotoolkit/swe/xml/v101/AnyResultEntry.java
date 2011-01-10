@@ -65,7 +65,7 @@ public class AnyResultEntry implements AnyResult, Entry {
      * @param The result identifier.
      * @param reference The reference identifier.
      */
-    public AnyResultEntry(String id, ReferenceEntry reference) {
+    public AnyResultEntry(final String id, final ReferenceEntry reference) {
         this.id = id;
         this.reference = reference;
     }
@@ -76,7 +76,7 @@ public class AnyResultEntry implements AnyResult, Entry {
      * @param The result identifier.
      * @param reference The reference identifier.
      */
-    public AnyResultEntry(String id, DataArrayEntry array) {
+    public AnyResultEntry(final String id, final DataArrayEntry array) {
         this.id = id;
         this.array = new DataArrayPropertyType(array);
     }

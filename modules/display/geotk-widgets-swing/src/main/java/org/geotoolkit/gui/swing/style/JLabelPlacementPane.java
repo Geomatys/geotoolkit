@@ -46,7 +46,7 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiLine.setLayer(layer);
         guiPoint.setLayer(layer);
@@ -58,7 +58,7 @@ public class JLabelPlacementPane extends StyleElementEditor<LabelPlacement> {
     }
 
     @Override
-    public void parse(LabelPlacement target) {
+    public void parse(final LabelPlacement target) {
         placement = target;
 
 //        if (placement != null) {

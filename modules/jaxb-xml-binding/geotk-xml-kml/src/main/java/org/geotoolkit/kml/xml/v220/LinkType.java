@@ -105,7 +105,7 @@ public class LinkType extends BasicLinkType {
      *     {@link RefreshModeEnumType }
      *     
      */
-    public void setRefreshMode(RefreshModeEnumType value) {
+    public void setRefreshMode(final RefreshModeEnumType value) {
         this.refreshMode = value;
     }
 
@@ -129,7 +129,7 @@ public class LinkType extends BasicLinkType {
      *     {@link Double }
      *     
      */
-    public void setRefreshInterval(Double value) {
+    public void setRefreshInterval(final Double value) {
         this.refreshInterval = value;
     }
 
@@ -153,7 +153,7 @@ public class LinkType extends BasicLinkType {
      *     {@link ViewRefreshModeEnumType }
      *     
      */
-    public void setViewRefreshMode(ViewRefreshModeEnumType value) {
+    public void setViewRefreshMode(final ViewRefreshModeEnumType value) {
         this.viewRefreshMode = value;
     }
 
@@ -177,7 +177,7 @@ public class LinkType extends BasicLinkType {
      *     {@link Double }
      *     
      */
-    public void setViewRefreshTime(Double value) {
+    public void setViewRefreshTime(final Double value) {
         this.viewRefreshTime = value;
     }
 
@@ -201,7 +201,7 @@ public class LinkType extends BasicLinkType {
      *     {@link Double }
      *     
      */
-    public void setViewBoundScale(Double value) {
+    public void setViewBoundScale(final Double value) {
         this.viewBoundScale = value;
     }
 
@@ -225,7 +225,7 @@ public class LinkType extends BasicLinkType {
      *     {@link String }
      *     
      */
-    public void setViewFormat(String value) {
+    public void setViewFormat(final String value) {
         this.viewFormat = value;
     }
 
@@ -249,7 +249,7 @@ public class LinkType extends BasicLinkType {
      *     {@link String }
      *     
      */
-    public void setHttpQuery(String value) {
+    public void setHttpQuery(final String value) {
         this.httpQuery = value;
     }
 

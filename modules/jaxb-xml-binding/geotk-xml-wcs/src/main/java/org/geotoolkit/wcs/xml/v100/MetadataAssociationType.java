@@ -63,7 +63,7 @@ public class MetadataAssociationType extends MetaDataPropertyType {
     /**
      * build a metadata association
      */
-    public MetadataAssociationType(String href) {
+    public MetadataAssociationType(final String href) {
         super(href);
     }
     

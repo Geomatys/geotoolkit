@@ -24,12 +24,12 @@ import org.opengis.filter.expression.Expression;
 
 public class EqualsExactToleranceFunction extends AbstractFunction {
 
-    public EqualsExactToleranceFunction(Expression expr1, Expression expr2, Expression expr3) {
+    public EqualsExactToleranceFunction(final Expression expr1, final Expression expr2, final Expression expr3) {
         super(OtherFunctionFactory.EQUALS_EXACT_TOLERANCE, new Expression[]{expr1,expr2,expr3}, null);
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         Geometry arg0;
         Geometry arg1;
         double arg2;

@@ -66,11 +66,11 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
 
     protected BackgroundPainter painter = null;
 
-    protected J2DCanvas(CoordinateReferenceSystem crs,Hints hints) {
+    protected J2DCanvas(final CoordinateReferenceSystem crs,final Hints hints) {
         super(crs,hints);
     }
 
-    public void setBackgroundPainter(BackgroundPainter painter) {
+    public void setBackgroundPainter(final BackgroundPainter painter) {
         this.painter = painter;
     }
 
@@ -319,7 +319,7 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
         visitor.endVisit();
     }
 
-    private void search(SearchAreaJ2D mask, RenderingContext context, Graphic graphic, VisitFilter filter, List<Graphic> lst){
+    private void search(final SearchAreaJ2D mask, final RenderingContext context, final Graphic graphic, final VisitFilter filter, final List<Graphic> lst){
         if(graphic instanceof ReferencedGraphic){
             final ReferencedGraphic ref = (ReferencedGraphic) graphic;
             ref.getGraphicAt(context, mask, filter, lst);

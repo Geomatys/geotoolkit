@@ -70,14 +70,14 @@ public class NewGroupItem extends AbstractTreePopupItem{
     }
     
     @Override
-    public boolean isValid(TreePath[] selection) {
+    public boolean isValid(final TreePath[] selection) {
         if(selection.length > 1) return false;
         Object obj = ((DefaultMutableTreeNode)selection[0].getLastPathComponent()).getUserObject();
         return (obj instanceof MapItem && !(obj instanceof MapLayer));
     }
 
     @Override
-    public Component getComponent(TreePath[] selection) {
+    public Component getComponent(final TreePath[] selection) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
         pathRef = new WeakReference<MapItem>((MapItem) node.getUserObject());
         return this;

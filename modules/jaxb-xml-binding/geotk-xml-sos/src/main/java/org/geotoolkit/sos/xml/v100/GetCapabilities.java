@@ -61,15 +61,15 @@ public class GetCapabilities extends GetCapabilitiesType {
     /**
      * Build a new getCapabilities request with the specified service
      */
-    public  GetCapabilities(AcceptVersionsType acceptVersions, SectionsType sections,
-            AcceptFormatsType acceptFormats, String updateSequence, String service) {
+    public  GetCapabilities(final AcceptVersionsType acceptVersions, final SectionsType sections,
+            final AcceptFormatsType acceptFormats, final String updateSequence, final String service) {
         super(acceptVersions, sections, acceptFormats, updateSequence, service);
     }
 
      /**
      * Build a new getCapabilities (simplified version).
      */
-    public  GetCapabilities(String acceptVersions, String acceptFormats) {
+    public  GetCapabilities(final String acceptVersions, final String acceptFormats) {
         super(acceptVersions, acceptFormats, "SOS");
     }
 

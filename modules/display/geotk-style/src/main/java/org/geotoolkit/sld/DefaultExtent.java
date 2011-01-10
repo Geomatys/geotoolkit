@@ -33,7 +33,7 @@ class DefaultExtent implements Extent{
     /**
      * Default constructor.
      */
-    DefaultExtent(String name, String value){
+    DefaultExtent(final String name, final String value){
         if(name == null || value == null){
             throw new NullPointerException("Name and value can not be null.");
         }
@@ -58,7 +58,7 @@ class DefaultExtent implements Extent{
     }
 
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -66,7 +66,7 @@ class DefaultExtent implements Extent{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

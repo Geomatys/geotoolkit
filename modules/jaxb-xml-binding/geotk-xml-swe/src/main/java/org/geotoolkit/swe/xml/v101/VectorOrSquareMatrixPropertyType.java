@@ -62,7 +62,7 @@ public class VectorOrSquareMatrixPropertyType implements AbstractVectorOrSquareM
 
     }
 
-    public VectorOrSquareMatrixPropertyType(AbstractVectorOrSquareMatrixProperty av) {
+    public VectorOrSquareMatrixPropertyType(final AbstractVectorOrSquareMatrixProperty av) {
         if (av != null) {
             if (av.getVector() != null) {
                 this.vector = new VectorType(av.getVector());
@@ -73,11 +73,11 @@ public class VectorOrSquareMatrixPropertyType implements AbstractVectorOrSquareM
         }
     }
 
-    public VectorOrSquareMatrixPropertyType(VectorType vector) {
+    public VectorOrSquareMatrixPropertyType(final VectorType vector) {
         this.vector = vector;
     }
 
-    public VectorOrSquareMatrixPropertyType(SquareMatrixType squareMatrix) {
+    public VectorOrSquareMatrixPropertyType(final SquareMatrixType squareMatrix) {
         this.squareMatrix = squareMatrix;
     }
     
@@ -91,7 +91,7 @@ public class VectorOrSquareMatrixPropertyType implements AbstractVectorOrSquareM
     /**
      * Sets the value of the vector property.
      */
-    public void setVector(VectorType value) {
+    public void setVector(final VectorType value) {
         this.vector = value;
     }
 
@@ -105,7 +105,7 @@ public class VectorOrSquareMatrixPropertyType implements AbstractVectorOrSquareM
     /**
      * Sets the value of the squareMatrix property.
      */
-    public void setSquareMatrix(SquareMatrixType value) {
+    public void setSquareMatrix(final SquareMatrixType value) {
         this.squareMatrix = value;
     }
 

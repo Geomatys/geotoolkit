@@ -339,11 +339,11 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         add(panCenter, BorderLayout.CENTER);
     }// </editor-fold>//GEN-END:initComponents
 
-    private void actionEditer(ActionEvent evt) {//GEN-FIRST:event_actionEditer
+    private void actionEditer(final ActionEvent evt) {//GEN-FIRST:event_actionEditer
         tab_data.setEditable(((JCheckBox) evt.getSource()).isSelected());
     }//GEN-LAST:event_actionEditer
 
-    private void guiCommitActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiCommitActionPerformed
+    private void guiCommitActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiCommitActionPerformed
 
         if(layer != null){
             final FeatureMapLayer candidate = layer;
@@ -366,7 +366,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         }
     }//GEN-LAST:event_guiCommitActionPerformed
 
-    private void guiRollbackActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiRollbackActionPerformed
+    private void guiRollbackActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiRollbackActionPerformed
 
         if(layer != null){
             final FeatureMapLayer candidate = layer;
@@ -385,7 +385,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         }
     }//GEN-LAST:event_guiRollbackActionPerformed
 
-    private void guiShowIdActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiShowIdActionPerformed
+    private void guiShowIdActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiShowIdActionPerformed
         setTarget(layer);
     }//GEN-LAST:event_guiShowIdActionPerformed
 
@@ -401,7 +401,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     // End of variables declaration//GEN-END:variables
     
     @Override
-    public void setTarget(Object target) {
+    public void setTarget(final Object target) {
 
         if(layer != null){
             weakListener.unregisterSource(layer);
@@ -488,7 +488,7 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
         }
 
         @Override
-        public void setVisible(boolean visible) {
+        public void setVisible(final boolean visible) {
             DynamicMenu.this.removeAll();
             if(visible){
                 for(final JComponent item : actions){
@@ -509,17 +509,17 @@ public class LayerFeaturePropertyPanel extends javax.swing.JPanel implements Pro
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void propertyChange(PropertyChangeEvent event) {
+    public void propertyChange(final PropertyChangeEvent event) {
         if(MapLayer.SELECTION_FILTER_PROPERTY.equals(event.getPropertyName())){
             updateLayerSelection();
         }
     }
     @Override
-    public void styleChange(MapLayer source, EventObject event) {
+    public void styleChange(final MapLayer source, final EventObject event) {
     }
 
     @Override
-    public void itemChange(CollectionChangeEvent<MapItem> event) {
+    public void itemChange(final CollectionChangeEvent<MapItem> event) {
     }
 
 }

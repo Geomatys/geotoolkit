@@ -77,13 +77,13 @@ public class Rights implements AbstractRights {
 
     }
 
-    public Rights(Boolean copyRights, Boolean privacyAct, Documentation docu) {
+    public Rights(final Boolean copyRights, final Boolean privacyAct, final Documentation docu) {
         this.copyRights = copyRights;
         this.privacyAct = privacyAct;
         this.documentation = docu;
     }
 
-    public Rights(AbstractRights r) {
+    public Rights(final AbstractRights r) {
         if (r != null) {
             this.copyRights = r.isCopyRights();
             this.privacyAct = r.isPrivacyAct();
@@ -105,14 +105,14 @@ public class Rights implements AbstractRights {
     /**
      * Sets the value of the documentation property.
      */
-    public void setDocumentation(Documentation value) {
+    public void setDocumentation(final Documentation value) {
         this.documentation = value;
     }
 
     /**
      * Sets the value of the documentation property.
      */
-    public void setDocumentation(Document value) {
+    public void setDocumentation(final Document value) {
         this.documentation = new Documentation(value);
     }
 
@@ -126,7 +126,7 @@ public class Rights implements AbstractRights {
     /**
      * Sets the value of the copyRights property.
      */
-    public void setCopyRights(Boolean value) {
+    public void setCopyRights(final Boolean value) {
         this.copyRights = value;
     }
 
@@ -140,7 +140,7 @@ public class Rights implements AbstractRights {
     /**
      * Sets the value of the intellectualPropertyRights property.
      */
-    public void setIntellectualPropertyRights(Boolean value) {
+    public void setIntellectualPropertyRights(final Boolean value) {
         this.intellectualPropertyRights = value;
     }
 
@@ -154,7 +154,7 @@ public class Rights implements AbstractRights {
     /**
      * Sets the value of the privacyAct property.
      */
-    public void setPrivacyAct(Boolean value) {
+    public void setPrivacyAct(final Boolean value) {
         this.privacyAct = value;
     }
 
@@ -168,7 +168,7 @@ public class Rights implements AbstractRights {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

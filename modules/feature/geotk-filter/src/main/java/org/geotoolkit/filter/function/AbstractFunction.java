@@ -37,7 +37,7 @@ public abstract class AbstractFunction extends AbstractExpression implements Fun
     protected final List<Expression> parameters;
     protected final Literal fallback;
 
-    public AbstractFunction(String name, Expression[] parameters, Literal fallback) {
+    public AbstractFunction(final String name, final Expression[] parameters, final Literal fallback) {
         if(name == null){
             throw new NullPointerException("name can not be null");
         }
@@ -74,7 +74,7 @@ public abstract class AbstractFunction extends AbstractExpression implements Fun
      * {@inheritDoc }
      */
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -88,7 +88,7 @@ public abstract class AbstractFunction extends AbstractExpression implements Fun
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

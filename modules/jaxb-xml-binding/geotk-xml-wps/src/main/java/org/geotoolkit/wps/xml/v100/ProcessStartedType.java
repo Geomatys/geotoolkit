@@ -83,7 +83,7 @@ public class ProcessStartedType {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -107,7 +107,7 @@ public class ProcessStartedType {
      *     {@link Integer }
      *     
      */
-    public void setPercentCompleted(Integer value) {
+    public void setPercentCompleted(final Integer value) {
         this.percentCompleted = value;
     }
 

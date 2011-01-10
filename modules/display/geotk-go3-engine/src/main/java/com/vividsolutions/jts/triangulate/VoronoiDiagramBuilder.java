@@ -70,7 +70,7 @@ public class VoronoiDiagramBuilder
 	 * 
 	 * @param geom the geometry from which the sites will be extracted.
 	 */
-	public void setSites(Geometry geom)
+	public void setSites(final Geometry geom)
 	{
 		// remove any duplicate points (they will cause the triangulation to fail)
 		siteCoords = DelaunayTriangulationBuilder.extractUniqueCoordinates(geom);
@@ -82,7 +82,7 @@ public class VoronoiDiagramBuilder
 	 * 
 	 * @param geom a collection of Coordinates.
 	 */
-	public void setSites(Collection coords)
+	public void setSites(final Collection coords)
 	{
 		// remove any duplicate points (they will cause the triangulation to fail)
 		siteCoords = DelaunayTriangulationBuilder.unique(CoordinateArrays.toCoordinateArray(coords));
@@ -95,7 +95,7 @@ public class VoronoiDiagramBuilder
 	 * 
 	 * @param clipEnv the clip envelope.
 	 */
-	public void setClipEnvelope(Envelope clipEnv)
+	public void setClipEnvelope(final Envelope clipEnv)
 	{
 		this.clipEnv = clipEnv;
 	}
@@ -106,7 +106,7 @@ public class VoronoiDiagramBuilder
 	 * 
 	 * @param tolerance the tolerance distance to use
 	 */
-	public void setTolerance(double tolerance)
+	public void setTolerance(final double tolerance)
 	{
 		this.tolerance = tolerance;
 	}
@@ -147,7 +147,7 @@ public class VoronoiDiagramBuilder
 	 * @param geomFact the geometry factory to use to create the output
 	 * @return the faces of the diagram
 	 */
-	public Geometry getDiagram(GeometryFactory geomFact)
+	public Geometry getDiagram(final GeometryFactory geomFact)
 	{
 		create();
 		Geometry polys = subdiv.getVoronoiDiagram(geomFact);
@@ -156,7 +156,7 @@ public class VoronoiDiagramBuilder
 		return clipGeometryCollection(polys, diagramEnv);
 	}
 	
-	private static Geometry clipGeometryCollection(Geometry geom, Envelope clipEnv)
+	private static Geometry clipGeometryCollection(final Geometry geom, final Envelope clipEnv)
 	{
 		Geometry clipPoly = geom.getFactory().toGeometry(clipEnv);
 		List clipped = new ArrayList();

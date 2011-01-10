@@ -82,7 +82,7 @@ public class ViewContextType {
      *     {@link GeneralType }
      *     
      */
-    public void setGeneral(GeneralType value) {
+    public void setGeneral(final GeneralType value) {
         this.general = value;
     }
 
@@ -106,7 +106,7 @@ public class ViewContextType {
      *     {@link LayerListType }
      *     
      */
-    public void setLayerList(LayerListType value) {
+    public void setLayerList(final LayerListType value) {
         this.layerList = value;
     }
 
@@ -130,7 +130,7 @@ public class ViewContextType {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -158,7 +158,7 @@ public class ViewContextType {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

@@ -67,7 +67,7 @@ public class IdCapabilitiesType implements IdCapabilities {
     /**
      * Build a new ID capabilities
      */
-     public IdCapabilitiesType(boolean eid, boolean fid) {
+     public IdCapabilitiesType(final boolean eid, final boolean fid) {
         if (eid)
             this.eid = new EID();
         if (fid)

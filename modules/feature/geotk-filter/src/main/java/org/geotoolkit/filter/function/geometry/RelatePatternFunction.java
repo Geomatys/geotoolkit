@@ -23,12 +23,12 @@ import org.opengis.filter.expression.Expression;
 
 public class RelatePatternFunction extends AbstractFunction {
 
-    public RelatePatternFunction(Expression expr1, Expression expr2, Expression expr3) {
+    public RelatePatternFunction(final Expression expr1, final Expression expr2, final Expression expr3) {
         super(GeometryFunctionFactory.RELATE_PATTERN, new Expression[]{expr1, expr2, expr3}, null);
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         Geometry arg0;
         Geometry arg1;
         String arg2;

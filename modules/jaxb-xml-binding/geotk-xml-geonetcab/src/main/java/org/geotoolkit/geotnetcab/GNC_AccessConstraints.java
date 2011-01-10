@@ -99,7 +99,7 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
      *     {@link URL }
      *     
      */
-    public void setDataAccessConditionPortal(URI value) {
+    public void setDataAccessConditionPortal(final URI value) {
         this.dataAccessConditionPortal = value;
     }
 
@@ -124,7 +124,7 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
      *     {@link String }
      *     
      */
-    public void setNameOfConditions(String value) {
+    public void setNameOfConditions(final String value) {
         this.nameOfConditions = value;
     }
 
@@ -149,7 +149,7 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
      *     {@link Boolean }
      *     
      */
-    public void setNonCommercialUse(Boolean value) {
+    public void setNonCommercialUse(final Boolean value) {
         this.nonCommercialUse = value;
     }
 
@@ -169,11 +169,11 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
         return this.thematicUsage;
     }
 
-    public void setThematicUsage(List<GNC_ThematicTypeCode> thematicUsage) {
+    public void setThematicUsage(final List<GNC_ThematicTypeCode> thematicUsage) {
         this.thematicUsage = thematicUsage;
     }
 
-    public void setThematicUsage(GNC_ThematicTypeCode thematicUsage) {
+    public void setThematicUsage(final GNC_ThematicTypeCode thematicUsage) {
         if (this.thematicUsage == null) {
             this.thematicUsage = new ArrayList<GNC_ThematicTypeCode>();
         }
@@ -201,7 +201,7 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
      *     {@link GNCUseRestrictionsPropertyType }
      *     
      */
-    public void setUseRestrictions(GNC_UseRestrictions value) {
+    public void setUseRestrictions(final GNC_UseRestrictions value) {
         this.useRestrictions = value;
     }
 
@@ -221,11 +221,11 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
         return this.usersRestrictions;
     }
 
-    public void setUsersRestrictions(List<GNC_UsersRestrictions> usersRestrictions) {
+    public void setUsersRestrictions(final List<GNC_UsersRestrictions> usersRestrictions) {
         this.usersRestrictions = usersRestrictions;
     }
 
-    public void setUsersRestrictions(GNC_UsersRestrictions usersRestrictions) {
+    public void setUsersRestrictions(final GNC_UsersRestrictions usersRestrictions) {
         if (this.usersRestrictions == null) {
             this.usersRestrictions = new ArrayList<GNC_UsersRestrictions>();
         }
@@ -233,7 +233,7 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

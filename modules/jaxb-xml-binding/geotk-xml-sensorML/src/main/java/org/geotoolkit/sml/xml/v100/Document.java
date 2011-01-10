@@ -89,17 +89,17 @@ public class Document implements AbstractDocument {
 
     }
 
-    public Document(String description) {
+    public Document(final String description) {
         this.description = new StringOrRefType(description);
     }
 
-    public Document(String description, String format, List<OnlineResource> onlineResource) {
+    public Document(final String description, final String format, final List<OnlineResource> onlineResource) {
         this.description = new StringOrRefType(description);
         this.format      = format;
         this.onlineResource = onlineResource;
     }
 
-    public Document(AbstractDocument doc) {
+    public Document(final AbstractDocument doc) {
         if (doc != null) {
             if (doc.getContact() != null) {
                 this.contact = new Contact(doc.getContact());
@@ -128,14 +128,14 @@ public class Document implements AbstractDocument {
     /**
      * Sets the value of the description property.
      */
-    public void setDescription(StringOrRefType value) {
+    public void setDescription(final StringOrRefType value) {
         this.description = value;
     }
 
     /**
      * Sets the value of the description property.
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = new StringOrRefType(value);
     }
 
@@ -149,7 +149,7 @@ public class Document implements AbstractDocument {
     /**
      * Sets the value of the date property.
      */
-    public void setDate(String value) {
+    public void setDate(final String value) {
         this.date = value;
     }
 
@@ -163,7 +163,7 @@ public class Document implements AbstractDocument {
     /**
      * Person who is responsible for the document
     */
-    public void setContact(Contact value) {
+    public void setContact(final Contact value) {
         this.contact = value;
     }
 
@@ -177,7 +177,7 @@ public class Document implements AbstractDocument {
     /**
      * Sets the value of the format property.
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 
@@ -191,14 +191,14 @@ public class Document implements AbstractDocument {
         return this.onlineResource;
     }
 
-    public void setOnlineResource(OnlineResource onlineResource) {
+    public void setOnlineResource(final OnlineResource onlineResource) {
         if (this.onlineResource == null) {
             this.onlineResource = new ArrayList<OnlineResource>();
         }
         this.onlineResource.add(onlineResource);
     }
 
-    public void setOnlineResource(List<OnlineResource> onlineResource) {
+    public void setOnlineResource(final List<OnlineResource> onlineResource) {
         this.onlineResource = onlineResource;
     }
 
@@ -212,7 +212,7 @@ public class Document implements AbstractDocument {
     /**
      * Sets the value of the version property.
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -226,7 +226,7 @@ public class Document implements AbstractDocument {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

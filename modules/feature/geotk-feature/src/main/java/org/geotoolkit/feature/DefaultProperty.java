@@ -130,7 +130,7 @@ public class DefaultProperty<V extends Object, D extends PropertyDescriptor> imp
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

@@ -75,7 +75,7 @@ public class JTSPointGrid implements PointGrid {
      * @throws IndexOutOfBoundsException if an index is out of bounds.
      */
     @Override
-    public DirectPosition get(int row, int column) throws IndexOutOfBoundsException {
+    public DirectPosition get(final int row, final int column) throws IndexOutOfBoundsException {
         return getInternal( row, column );
     }
     
@@ -103,7 +103,7 @@ public class JTSPointGrid implements PointGrid {
      * @throws IndexOutOfBoundsException if an index is out of bounds.
      */
     @Override
-    public DirectPosition get(int row, int column, DirectPosition dest) throws IndexOutOfBoundsException {
+    public DirectPosition get(final int row, final int column, final DirectPosition dest) throws IndexOutOfBoundsException {
         DirectPosition target = new GeneralDirectPosition(getInternal( row, column ));
         
         if (dest == null || !dest.getCoordinateReferenceSystem().equals(target.getCoordinateReferenceSystem())){ 
@@ -124,7 +124,7 @@ public class JTSPointGrid implements PointGrid {
      * @param column
      * @return DirectPosition 
      */
-     DirectPosition getInternal( int row, int column ){
+     DirectPosition getInternal( final int row, final int column ){
         PointArray pointArray = pointGrid[row];
         return (DirectPosition) pointArray.positions().get( column ); 
     }
@@ -142,7 +142,7 @@ public class JTSPointGrid implements PointGrid {
      * @throws UnsupportedOperationException if this grid is immutable.
      */
     @Override
-    public void set(int row, int column, DirectPosition position) throws IndexOutOfBoundsException,
+    public void set(final int row, final int column, final DirectPosition position) throws IndexOutOfBoundsException,
                                                                          UnsupportedOperationException {
         DirectPosition target = new GeneralDirectPosition(getInternal(row, column));
         
@@ -160,7 +160,7 @@ public class JTSPointGrid implements PointGrid {
      * @throws IndexOutOfBoundsException if the index is out of bounds.
      */
     @Override
-    public PointArray getRow(int row) throws IndexOutOfBoundsException {
+    public PointArray getRow(final int row) throws IndexOutOfBoundsException {
         return pointGrid[row];
     }
 

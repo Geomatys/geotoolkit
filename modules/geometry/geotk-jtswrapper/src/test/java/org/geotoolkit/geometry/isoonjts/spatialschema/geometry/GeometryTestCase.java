@@ -58,7 +58,7 @@ public class GeometryTestCase {
      * Sets the geometry specified by the A tag
      * @param a
      */
-    public void setGeometryA(Geometry a) {
+    public void setGeometryA(final Geometry a) {
         geomA = a;
     }
 
@@ -66,7 +66,7 @@ public class GeometryTestCase {
      * Sets the geometry specified by the b tag
      * @param b
      */
-    public void setGeometryB(Geometry b) {
+    public void setGeometryB(final Geometry b) {
         geomB = b;
     }
 
@@ -75,7 +75,7 @@ public class GeometryTestCase {
      * A and B geometries.
      * @param op
      */
-    public void addTestOperation(GeometryTestOperation op) {
+    public void addTestOperation(final GeometryTestOperation op) {
         operationList.add(op);
     }
 
@@ -84,7 +84,7 @@ public class GeometryTestCase {
      * description is used for logging results.
      * @param desc
      */
-    public void setDescription(String desc) {
+    public void setDescription(final String desc) {
         description = desc;
     }
 

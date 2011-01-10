@@ -149,7 +149,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
      * This method is thread safe.
      */
     @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         final String oldName;
         synchronized (this) {
             oldName = this.name;
@@ -175,7 +175,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
      * This method is thread safe.
      */
     @Override
-    public void setDescription(Description desc) {
+    public void setDescription(final Description desc) {
         if (desc == null) {
             throw new NullPointerException("description can't be null");
         }
@@ -205,7 +205,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
      * This method is thread safe.
      */
     @Override
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         final String oldVersion;
         synchronized (this) {
             oldVersion = this.version;
@@ -241,7 +241,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -249,7 +249,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
     
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
+    protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
         
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
@@ -261,7 +261,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
         
     }
     
-    protected void fireLibraryChange(int type, SLDLibrary lib, NumberRange<Integer> range) {
+    protected void fireLibraryChange(final int type, final SLDLibrary lib, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<SLDLibrary> event = new CollectionChangeEvent<SLDLibrary>(this, lib, type, range, null);
@@ -273,7 +273,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 
     }
     
-    protected void fireLibraryChange(int type, SLDLibrary lib, NumberRange<Integer> range, EventObject subEvent) {
+    protected void fireLibraryChange(final int type, final SLDLibrary lib, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<SLDLibrary> event = new CollectionChangeEvent<SLDLibrary>(this, lib, type, range,subEvent);
@@ -285,7 +285,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 
     }
     
-    protected void fireLibraryChange(int type, Collection<? extends SLDLibrary> lib, NumberRange<Integer> range){
+    protected void fireLibraryChange(final int type, final Collection<? extends SLDLibrary> lib, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
         
         final CollectionChangeEvent<SLDLibrary> event = new CollectionChangeEvent<SLDLibrary>(this,lib,type,range, null);
@@ -297,7 +297,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
         
     }
     
-    protected void fireLayerChange(int type, MutableLayer layer, NumberRange<Integer> range) {
+    protected void fireLayerChange(final int type, final MutableLayer layer, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableLayer> event = new CollectionChangeEvent<MutableLayer>(this, layer, type, range, null);
@@ -309,7 +309,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 
     }
     
-    protected void fireLayerChange(int type, MutableLayer layer, NumberRange<Integer> range, EventObject subEvent) {
+    protected void fireLayerChange(final int type, final MutableLayer layer, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableLayer> event = new CollectionChangeEvent<MutableLayer>(this, layer, type, range,subEvent);
@@ -321,7 +321,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
 
     }
     
-    protected void fireLayerChange(int type, Collection<? extends MutableLayer> layer, NumberRange<Integer> range){
+    protected void fireLayerChange(final int type, final Collection<? extends MutableLayer> layer, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
         
         final CollectionChangeEvent<MutableLayer> event = new CollectionChangeEvent<MutableLayer>(this,layer,type,range, null);
@@ -337,7 +337,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
      * {@inheritDoc }
      */
     @Override
-    public void addListener(SLDListener listener) {
+    public void addListener(final SLDListener listener) {
         listeners.add(SLDListener.class, listener);
     }
 
@@ -345,7 +345,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(SLDListener listener) {
+    public void removeListener(final SLDListener listener) {
         listeners.remove(SLDListener.class, listener);
     }
     
@@ -353,7 +353,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

@@ -75,7 +75,7 @@ public class ImageOutlineType {
      *     {@link LineSymbolizerType }
      *     
      */
-    public void setLineSymbolizer(LineSymbolizerType value) {
+    public void setLineSymbolizer(final LineSymbolizerType value) {
         this.lineSymbolizer = value;
     }
 
@@ -99,7 +99,7 @@ public class ImageOutlineType {
      *     {@link PolygonSymbolizerType }
      *     
      */
-    public void setPolygonSymbolizer(PolygonSymbolizerType value) {
+    public void setPolygonSymbolizer(final PolygonSymbolizerType value) {
         this.polygonSymbolizer = value;
     }
 

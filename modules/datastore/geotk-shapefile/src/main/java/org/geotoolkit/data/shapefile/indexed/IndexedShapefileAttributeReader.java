@@ -43,15 +43,15 @@ public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> exten
     private int recno;
     private ShpData next;
 
-    public IndexedShapefileAttributeReader( List<? extends PropertyDescriptor> attributes,
-            ShapefileReader shp, IndexedDbaseFileReader dbf, CloseableCollection<ShpData> col,
-            T goodRecs) {
+    public IndexedShapefileAttributeReader( final List<? extends PropertyDescriptor> attributes,
+            final ShapefileReader shp, final IndexedDbaseFileReader dbf, final CloseableCollection<ShpData> col,
+            final T goodRecs) {
         this(attributes, shp, dbf, col, goodRecs,null);
     }
 
-    public IndexedShapefileAttributeReader( List<? extends PropertyDescriptor> attributes,
-            ShapefileReader shp, IndexedDbaseFileReader dbf, CloseableCollection<ShpData> col,
-            T goodRecs, double[] estimateRes) {
+    public IndexedShapefileAttributeReader( final List<? extends PropertyDescriptor> attributes,
+            final ShapefileReader shp, final IndexedDbaseFileReader dbf, final CloseableCollection<ShpData> col,
+            final T goodRecs, final double[] estimateRes) {
         this(attributes.toArray(new PropertyDescriptor[attributes.size()]), shp, dbf, col, goodRecs,estimateRes);
     }
 
@@ -64,9 +64,9 @@ public class IndexedShapefileAttributeReader <T extends Iterator<ShpData>> exten
      *              attributes will be read from the dbf file
      * @param goodRecs Collection of good indexes that match the query.
      */
-    public IndexedShapefileAttributeReader(PropertyDescriptor[] atts,
-            ShapefileReader shp, IndexedDbaseFileReader dbf,
-            CloseableCollection<ShpData> col, T goodRecs, double[] estimateRes) {
+    public IndexedShapefileAttributeReader(final PropertyDescriptor[] atts,
+            final ShapefileReader shp, final IndexedDbaseFileReader dbf,
+            final CloseableCollection<ShpData> col, final T goodRecs, final double[] estimateRes) {
         super(atts, shp, dbf,estimateRes);
         this.goodRecs = goodRecs;
         this.closeableCollection = col;

@@ -69,14 +69,14 @@ public class OutputType {
     /**
      * Build a new Output Type with the specified format and response CRS
      */
-    public OutputType(String format, String crs) {
+    public OutputType(final String format, final String crs) {
         this(format, crs, null);
     }
 
     /**
      * Build a new Output Type with the specified format and response CRS
      */
-    public OutputType(String format, String crs, List<Double> resolutions) {
+    public OutputType(final String format, final String crs, final List<Double> resolutions) {
         this.format = new CodeType(format);
         this.crs = new CodeType(crs);
         this.resolutions = resolutions;

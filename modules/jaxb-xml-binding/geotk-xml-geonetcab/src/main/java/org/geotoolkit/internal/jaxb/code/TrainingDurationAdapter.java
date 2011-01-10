@@ -58,7 +58,7 @@ public final class TrainingDurationAdapter extends CodeListAdapter<TrainingDurat
      * {@inheritDoc}
      */
     @Override
-    protected TrainingDurationAdapter wrap(CodeListProxy proxy) {
+    protected TrainingDurationAdapter wrap(final CodeListProxy proxy) {
         return new TrainingDurationAdapter(proxy);
     }
 

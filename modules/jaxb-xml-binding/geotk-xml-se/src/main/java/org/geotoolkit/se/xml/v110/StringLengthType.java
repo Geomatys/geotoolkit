@@ -74,7 +74,7 @@ public class StringLengthType
      *     {@link ParameterValueType }
      *     
      */
-    public void setStringValue(ParameterValueType value) {
+    public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
     }
 

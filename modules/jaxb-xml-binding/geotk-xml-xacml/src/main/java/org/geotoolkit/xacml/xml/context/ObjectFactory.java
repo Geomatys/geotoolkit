@@ -175,7 +175,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Status")
-   public JAXBElement<StatusType> createStatus(StatusType value) {
+   public JAXBElement<StatusType> createStatus(final StatusType value) {
       return new JAXBElement<StatusType>(_Status_QNAME, StatusType.class, null, value);
    }
 
@@ -184,7 +184,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Action")
-   public JAXBElement<ActionType> createAction(ActionType value) {
+   public JAXBElement<ActionType> createAction(final ActionType value) {
       return new JAXBElement<ActionType>(_Action_QNAME, ActionType.class, null, value);
    }
 
@@ -193,7 +193,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Decision")
-   public JAXBElement<DecisionType> createDecision(DecisionType value) {
+   public JAXBElement<DecisionType> createDecision(final DecisionType value) {
       return new JAXBElement<DecisionType>(_Decision_QNAME, DecisionType.class, null, value);
    }
 
@@ -202,7 +202,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Environment")
-   public JAXBElement<EnvironmentType> createEnvironment(EnvironmentType value) {
+   public JAXBElement<EnvironmentType> createEnvironment(final EnvironmentType value) {
       return new JAXBElement<EnvironmentType>(_Environment_QNAME, EnvironmentType.class, null, value);
    }
 
@@ -211,7 +211,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Subject")
-   public JAXBElement<SubjectType> createSubject(SubjectType value) {
+   public JAXBElement<SubjectType> createSubject(final SubjectType value) {
       return new JAXBElement<SubjectType>(_Subject_QNAME, SubjectType.class, null, value);
    }
 
@@ -220,7 +220,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "StatusDetail")
-   public JAXBElement<StatusDetailType> createStatusDetail(StatusDetailType value) {
+   public JAXBElement<StatusDetailType> createStatusDetail(final StatusDetailType value) {
       return new JAXBElement<StatusDetailType>(_StatusDetail_QNAME, StatusDetailType.class, null, value);
    }
 
@@ -229,7 +229,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "MissingAttributeDetail")
-   public JAXBElement<MissingAttributeDetailType> createMissingAttributeDetail(MissingAttributeDetailType value) {
+   public JAXBElement<MissingAttributeDetailType> createMissingAttributeDetail(final MissingAttributeDetailType value) {
       return new JAXBElement<MissingAttributeDetailType>(_MissingAttrDetail_QNAME,
             MissingAttributeDetailType.class, null, value);
    }
@@ -239,7 +239,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Response")
-   public JAXBElement<ResponseType> createResponse(ResponseType value) {
+   public JAXBElement<ResponseType> createResponse(final ResponseType value) {
       return new JAXBElement<ResponseType>(_Response_QNAME, ResponseType.class, null, value);
    }
 
@@ -248,7 +248,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "ResourceContent")
-   public JAXBElement<ResourceContentType> createResourceContent(ResourceContentType value) {
+   public JAXBElement<ResourceContentType> createResourceContent(final ResourceContentType value) {
       return new JAXBElement<ResourceContentType>(_ResourceContent_QNAME, ResourceContentType.class, null, value);
    }
 
@@ -257,7 +257,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Resource")
-   public JAXBElement<ResourceType> createResource(ResourceType value) {
+   public JAXBElement<ResourceType> createResource(final ResourceType value) {
       return new JAXBElement<ResourceType>(_Resource_QNAME, ResourceType.class, null, value);
    }
 
@@ -266,7 +266,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Request")
-   public JAXBElement<RequestType> createRequest(RequestType value) {
+   public JAXBElement<RequestType> createRequest(final RequestType value) {
       return new JAXBElement<RequestType>(_Request_QNAME, RequestType.class, null, value);
    }
 
@@ -275,7 +275,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Attribute")
-   public JAXBElement<AttributeType> createAttribute(AttributeType value) {
+   public JAXBElement<AttributeType> createAttribute(final AttributeType value) {
       return new JAXBElement<AttributeType>(_Attribute_QNAME, AttributeType.class, null, value);
    }
 
@@ -284,7 +284,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "Result")
-   public JAXBElement<ResultType> createResult(ResultType value) {
+   public JAXBElement<ResultType> createResult(final ResultType value) {
       return new JAXBElement<ResultType>(_Result_QNAME, ResultType.class, null, value);
    }
 
@@ -293,7 +293,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "AttributeValue")
-   public JAXBElement<AttributeValueType> createAttributeValue(AttributeValueType value) {
+   public JAXBElement<AttributeValueType> createAttributeValue(final AttributeValueType value) {
       return new JAXBElement<AttributeValueType>(_AttributeValue_QNAME, AttributeValueType.class, null, value);
    }
 
@@ -302,7 +302,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "StatusCode")
-   public JAXBElement<StatusCodeType> createStatusCode(StatusCodeType value) {
+   public JAXBElement<StatusCodeType> createStatusCode(final StatusCodeType value) {
       return new JAXBElement<StatusCodeType>(_StatusCode_QNAME, StatusCodeType.class, null, value);
    }
 
@@ -311,7 +311,7 @@ public class ObjectFactory {
     * 
     */
    @XmlElementDecl(namespace = "urn:oasis:names:tc:xacml:2.0:context:schema:os", name = "StatusMessage")
-   public JAXBElement<String> createStatusMessage(String value) {
+   public JAXBElement<String> createStatusMessage(final String value) {
       return new JAXBElement<String>(_StatusMessage_QNAME, String.class, null, value);
    }
 

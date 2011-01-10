@@ -31,20 +31,20 @@ public class DecimateMultiPointHandler extends MultiPointHandler {
     private final double resX;
     private final double resY;
 
-    public DecimateMultiPointHandler(boolean read3D, double[] res){
+    public DecimateMultiPointHandler(final boolean read3D, final double[] res){
         super(read3D);
         this.resX = res[0];
         this.resY = res[1];
     }
 
-    public DecimateMultiPointHandler(ShapeType type, boolean read3D, double[] res) throws DataStoreException{
+    public DecimateMultiPointHandler(final ShapeType type, final boolean read3D, final double[] res) throws DataStoreException{
         super(type,read3D);
         this.resX = res[0];
         this.resY = res[1];
     }
 
     @Override
-    public Object read(ByteBuffer buffer, ShapeType type) {
+    public Object read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
         }
@@ -74,7 +74,7 @@ public class DecimateMultiPointHandler extends MultiPointHandler {
 
     }
 
-    private int decimatePoint2D(double[] coords){
+    private int decimatePoint2D(final double[] coords){
         int lenght = 1;
 
         for(int i=2,j=0; i<coords.length; i+=2){

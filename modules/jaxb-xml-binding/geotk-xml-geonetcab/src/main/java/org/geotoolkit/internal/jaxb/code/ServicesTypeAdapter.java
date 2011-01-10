@@ -58,7 +58,7 @@ public final class ServicesTypeAdapter extends CodeListAdapter<ServicesTypeAdapt
      * {@inheritDoc}
      */
     @Override
-    protected ServicesTypeAdapter wrap(CodeListProxy proxy) {
+    protected ServicesTypeAdapter wrap(final CodeListProxy proxy) {
         return new ServicesTypeAdapter(proxy);
     }
 

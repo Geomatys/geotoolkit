@@ -76,7 +76,7 @@ public class DescribeCoverageType implements DescribeCoverage {
      * @param version The version of the service.
      * @param listOfCoverage a string containing many coverage name separated by a colon.
      */
-    public DescribeCoverageType(String listOfCoverage){
+    public DescribeCoverageType(final String listOfCoverage){
         this.service = "WCS";
         this.version = "1.1.1";
         identifier = new ArrayList<String>();
@@ -93,7 +93,7 @@ public class DescribeCoverageType implements DescribeCoverage {
      * @param version The version of the service.
      * @param coverages A list  of coverage name.
      */
-    public DescribeCoverageType(List<String> identifier){
+    public DescribeCoverageType(final List<String> identifier){
         this.service = "WCS";
         this.version = "1.1.1";
         this.identifier = identifier;
@@ -141,7 +141,7 @@ public class DescribeCoverageType implements DescribeCoverage {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

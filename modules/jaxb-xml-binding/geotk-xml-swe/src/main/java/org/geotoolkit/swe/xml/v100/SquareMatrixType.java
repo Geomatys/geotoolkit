@@ -62,7 +62,7 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
 
     }
 
-    public SquareMatrixType(AbstractSquareMatrix sm) {
+    public SquareMatrixType(final AbstractSquareMatrix sm) {
         super(sm);
         if (sm != null) {
             if (sm.getElementType() != null) {
@@ -97,7 +97,7 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
      *     {@link QuantityPropertyType }
      *     
      */
-    public void setElementType(QuantityPropertyType value) {
+    public void setElementType(final QuantityPropertyType value) {
         this.elementType = value;
     }
 
@@ -121,7 +121,7 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
      *     {@link BlockEncodingPropertyType }
      *     
      */
-    public void setEncoding(BlockEncodingPropertyType value) {
+    public void setEncoding(final BlockEncodingPropertyType value) {
         this.encoding = value;
     }
 
@@ -145,7 +145,7 @@ public class SquareMatrixType extends AbstractMatrixType implements AbstractSqua
      *     {@link DataValuePropertyType }
      *     
      */
-    public void setValues(DataValuePropertyType value) {
+    public void setValues(final DataValuePropertyType value) {
         this.values = value;
     }
 

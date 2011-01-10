@@ -89,7 +89,7 @@ public class RoleType extends CodeList<RoleType> {
      * Returns the FCRoleType that matches the given string, or returns a
      * new one if none match it.
      */
-    public static RoleType valueOf(String code) {
+    public static RoleType valueOf(final String code) {
         return valueOf(RoleType.class, code);
     }
    

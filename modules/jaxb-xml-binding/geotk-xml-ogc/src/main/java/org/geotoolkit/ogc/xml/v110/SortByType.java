@@ -65,7 +65,7 @@ public class SortByType {
     /**
      * Build a new sort by list.
      */
-    public SortByType(List<SortPropertyType> sortProperty) {
+    public SortByType(final List<SortPropertyType> sortProperty) {
         this.sortProperty = sortProperty;
     }
     

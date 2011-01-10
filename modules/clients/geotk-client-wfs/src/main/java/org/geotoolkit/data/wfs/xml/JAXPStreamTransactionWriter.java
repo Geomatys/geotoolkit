@@ -120,7 +120,7 @@ public class JAXPStreamTransactionWriter {
 
 
 
-    public void write(OutputStream out, TransactionRequest request) 
+    public void write(final OutputStream out, final TransactionRequest request) 
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
         final XMLStreamWriter streamWriter = outputFactory.createXMLStreamWriter(out);
@@ -145,7 +145,7 @@ public class JAXPStreamTransactionWriter {
         streamWriter.close();
     }
 
-    private void write(XMLStreamWriter writer, TransactionRequest request) 
+    private void write(final XMLStreamWriter writer, final TransactionRequest request) 
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
         writer.writeStartElement(WFS_PREFIX, TAG_TRANSACTION, WFS_NAMESPACE);
         writer.writeAttribute(PROP_SERVICE, "WFS");
@@ -213,7 +213,7 @@ public class JAXPStreamTransactionWriter {
 //        <xsd:enumeration value="GenerateNew"/>
 //     </xsd:restriction>
 //  </xsd:simpleType>
-    private void write(XMLStreamWriter writer, Insert element)
+    private void write(final XMLStreamWriter writer, final Insert element)
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
         writer.writeStartElement(WFS_PREFIX, TAG_INSERT, WFS_NAMESPACE);
 
@@ -270,7 +270,7 @@ public class JAXPStreamTransactionWriter {
 //          <xsd:element name="Value" minOccurs="0"/>
 //       </xsd:sequence>
 //    </xsd:complexType>
-    private void write(XMLStreamWriter writer, Update element)
+    private void write(final XMLStreamWriter writer, final Update element)
             throws XMLStreamException, FactoryException, JAXBException{
         writer.writeStartElement(WFS_PREFIX, TAG_UPDATE, WFS_NAMESPACE);
 
@@ -365,7 +365,7 @@ public class JAXPStreamTransactionWriter {
 //       <xsd:attribute name="handle" type="xsd:string" use="optional"/>
 //       <xsd:attribute name="typeName" type="xsd:QName" use="required"/>
 //    </xsd:complexType>
-    private void write(XMLStreamWriter writer, Delete element) throws XMLStreamException, JAXBException{
+    private void write(final XMLStreamWriter writer, final Delete element) throws XMLStreamException, JAXBException{
         writer.writeStartElement(WFS_PREFIX, TAG_DELETE, WFS_NAMESPACE);
 
         //write typename--------------------------------------------------------
@@ -399,7 +399,7 @@ public class JAXPStreamTransactionWriter {
 //       <xsd:attribute name="vendorId" type="xsd:string" use="required"/>
 //       <xsd:attribute name="safeToIgnore" type="xsd:boolean" use="required"/>
 //    </xsd:complexType>
-    private void write(XMLStreamWriter writer, Native element) throws XMLStreamException{
+    private void write(final XMLStreamWriter writer, final Native element) throws XMLStreamException{
         writer.writeStartElement(WFS_PREFIX, TAG_NATIVE, WFS_NAMESPACE);
 
         writer.writeAttribute(WFS_PREFIX, WFS_NAMESPACE, PROP_VENDORID, element.getVendorId());
@@ -408,7 +408,7 @@ public class JAXPStreamTransactionWriter {
         writer.writeEndElement();
     }
 
-    private static String bestType(Object candidate){
+    private static String bestType(final Object candidate){
 
         if(candidate instanceof String){
             return TYPE_STRING;

@@ -42,7 +42,7 @@ public final class DCPListAdapter extends CodeListAdapter<DCPListAdapter, DCPLis
     }
 
     @Override
-    protected DCPListAdapter wrap(CodeListProxy proxy) {
+    protected DCPListAdapter wrap(final CodeListProxy proxy) {
         return new DCPListAdapter(proxy);
     }
 

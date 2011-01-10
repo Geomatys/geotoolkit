@@ -53,7 +53,7 @@ public class ConstraintVertex extends Vertex {
      * 
      * @param p the location of the vertex
      */
-    public ConstraintVertex(Coordinate p) {
+    public ConstraintVertex(final Coordinate p) {
         super(p);
     }
 
@@ -62,7 +62,7 @@ public class ConstraintVertex extends Vertex {
      * 
      * @param isOnConstraint true if this vertex lies on a constraint
      */
-    public void setOnConstraint(boolean isOnConstraint) {
+    public void setOnConstraint(final boolean isOnConstraint) {
         this.isOnConstraint = isOnConstraint;
     }
 
@@ -80,7 +80,7 @@ public class ConstraintVertex extends Vertex {
      * 
      * @param constraint an object which carries information about the constraint this vertex lies on
      */
-    public void setConstraint(Object constraint) {
+    public void setConstraint(final Object constraint) {
         isOnConstraint = true;
         this.constraint = constraint;
     }
@@ -101,7 +101,7 @@ public class ConstraintVertex extends Vertex {
      * 
      * @param other the constraint vertex to merge
      */
-    protected void merge(ConstraintVertex other) {
+    protected void merge(final ConstraintVertex other) {
         if (other.isOnConstraint) {
             isOnConstraint = true;
             constraint = other.constraint;

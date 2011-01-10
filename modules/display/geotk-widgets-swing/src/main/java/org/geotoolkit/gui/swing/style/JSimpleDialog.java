@@ -42,7 +42,7 @@ public class JSimpleDialog extends javax.swing.JDialog {
     private static final ImageIcon ICO_CLOSE = IconBundle.getIcon("16_close");
     
     /** Creates new form JSimpleDialog */
-    public JSimpleDialog(java.awt.Frame parent, boolean modal,Component child) {
+    public JSimpleDialog(final java.awt.Frame parent, final boolean modal,final Component child) {
         super(parent, modal);
         initComponents();
         
@@ -85,7 +85,7 @@ public class JSimpleDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-private void guiCloseActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiCloseActionPerformed
+private void guiCloseActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiCloseActionPerformed
     
     this.dispose();
 }//GEN-LAST:event_guiCloseActionPerformed

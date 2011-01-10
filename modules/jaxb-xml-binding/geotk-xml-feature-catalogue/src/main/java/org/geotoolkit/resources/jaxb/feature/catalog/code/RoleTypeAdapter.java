@@ -41,7 +41,7 @@ public final class RoleTypeAdapter extends CodeListAdapter<RoleTypeAdapter, Role
     }
 
     @Override
-    protected RoleTypeAdapter wrap(CodeListProxy proxy) {
+    protected RoleTypeAdapter wrap(final CodeListProxy proxy) {
         return new RoleTypeAdapter(proxy);
     }
 

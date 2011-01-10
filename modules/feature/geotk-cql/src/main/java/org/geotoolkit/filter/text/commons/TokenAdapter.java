@@ -51,11 +51,11 @@ public class TokenAdapter implements IToken {
 
     private final Token cqlToken;
 
-    private TokenAdapter(Token token) {
+    private TokenAdapter(final Token token) {
         this.cqlToken = token;
     }
 
-    public static IToken newAdapterFor(Token token) {
+    public static IToken newAdapterFor(final Token token) {
         return new TokenAdapter(token);
     }
 

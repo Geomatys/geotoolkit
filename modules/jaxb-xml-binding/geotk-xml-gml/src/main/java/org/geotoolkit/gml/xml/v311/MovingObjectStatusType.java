@@ -93,7 +93,7 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
      *     {@link JAXBElement }{@code <}{@link LocationPropertyType }{@code >}
      *     
      */
-    public void setLocation(JAXBElement<? extends LocationPropertyType> value) {
+    public void setLocation(final JAXBElement<? extends LocationPropertyType> value) {
         this.location = ((JAXBElement<? extends LocationPropertyType> ) value);
     }
 
@@ -117,7 +117,7 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
      *     {@link MeasureType }
      *     
      */
-    public void setSpeed(MeasureType value) {
+    public void setSpeed(final MeasureType value) {
         this.speed = value;
     }
 
@@ -141,7 +141,7 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
      *     {@link DirectionPropertyType }
      *     
      */
-    public void setBearing(DirectionPropertyType value) {
+    public void setBearing(final DirectionPropertyType value) {
         this.bearing = value;
     }
 
@@ -165,7 +165,7 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
      *     {@link MeasureType }
      *     
      */
-    public void setAcceleration(MeasureType value) {
+    public void setAcceleration(final MeasureType value) {
         this.acceleration = value;
     }
 
@@ -189,7 +189,7 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
      *     {@link MeasureType }
      *     
      */
-    public void setElevation(MeasureType value) {
+    public void setElevation(final MeasureType value) {
         this.elevation = value;
     }
 
@@ -213,7 +213,7 @@ public class MovingObjectStatusType extends AbstractTimeSliceType {
      *     {@link StringOrRefType }
      *     
      */
-    public void setStatus(StringOrRefType value) {
+    public void setStatus(final StringOrRefType value) {
         this.status = value;
     }
 

@@ -66,7 +66,7 @@ public class ExternalLinkType extends RegistryObjectType {
     /**
      * Sets the value of the externalURI property.
      */
-    public void setExternalURI(String value) {
+    public void setExternalURI(final String value) {
         this.externalURI = value;
     }
 

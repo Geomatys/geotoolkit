@@ -39,12 +39,12 @@ public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
 
     private NorthArrowTemplate template;
 
-    public GraphicNorthArrowJ2D(J2DCanvas canvas, NorthArrowTemplate template){
+    public GraphicNorthArrowJ2D(final J2DCanvas canvas, final NorthArrowTemplate template){
         super(canvas);
         this.template = template;
     }
 
-    public void setTemplate(NorthArrowTemplate template) {
+    public void setTemplate(final NorthArrowTemplate template) {
         this.template = template;
     }
 
@@ -52,7 +52,7 @@ public class GraphicNorthArrowJ2D extends PositionedGraphic2D{
      * {@inheritDoc }
      */
     @Override
-    protected void paint(RenderingContext2D context, int position, int[] offset) {
+    protected void paint(final RenderingContext2D context, final int position, final int[] offset) {
 
         final Rectangle bounds = context.getCanvasDisplayBounds();
 

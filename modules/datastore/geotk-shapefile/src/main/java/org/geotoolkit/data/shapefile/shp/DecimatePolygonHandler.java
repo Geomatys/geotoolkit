@@ -38,20 +38,20 @@ public class DecimatePolygonHandler extends PolygonHandler {
     private final double resX;
     private final double resY;
 
-    public DecimatePolygonHandler(boolean read3D, double[] res){
+    public DecimatePolygonHandler(final boolean read3D, final double[] res){
         super(read3D);
         this.resX = res[0];
         this.resY = res[1];
     }
 
-    public DecimatePolygonHandler(ShapeType type, boolean read3D, double[] res) throws DataStoreException{
+    public DecimatePolygonHandler(final ShapeType type, final boolean read3D, final double[] res) throws DataStoreException{
         super(type,read3D);
         this.resX = res[0];
         this.resY = res[1];
     }
 
     @Override
-    public Object read(ByteBuffer buffer, ShapeType type) {
+    public Object read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
         }
@@ -135,7 +135,7 @@ public class DecimatePolygonHandler extends PolygonHandler {
         }
     }
 
-    private Coordinate[] decimateRing(Coordinate[] coords) {
+    private Coordinate[] decimateRing(final Coordinate[] coords) {
         int lenght = 1;
 
         for(int i=1,j=0; i<coords.length; i++){

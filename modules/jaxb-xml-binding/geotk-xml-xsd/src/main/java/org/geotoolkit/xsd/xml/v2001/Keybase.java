@@ -90,7 +90,7 @@ public class Keybase extends Annotated {
      *     {@link Selector }
      *     
      */
-    public void setSelector(Selector value) {
+    public void setSelector(final Selector value) {
         this.selector = value;
     }
 
@@ -143,7 +143,7 @@ public class Keybase extends Annotated {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

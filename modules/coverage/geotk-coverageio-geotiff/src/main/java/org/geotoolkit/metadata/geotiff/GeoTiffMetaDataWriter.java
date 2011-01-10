@@ -53,7 +53,7 @@ public class GeoTiffMetaDataWriter {
     /**
      * Complete the TIFF metadata tree with geotiff informations.
      */
-    public void fillMetadata(Node tiffTree, SpatialMetadata spatialMD) throws ImageMetadataException, IOException, FactoryException{
+    public void fillMetadata(final Node tiffTree, final SpatialMetadata spatialMD) throws ImageMetadataException, IOException, FactoryException{
 
         //container for informations which will be written
         final GeoTiffMetaDataStack stack = new GeoTiffMetaDataStack(tiffTree);

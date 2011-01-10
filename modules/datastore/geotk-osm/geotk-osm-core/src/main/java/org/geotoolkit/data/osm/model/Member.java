@@ -40,7 +40,7 @@ public class Member extends AbstractComplexAttribute<Collection<Property>,Identi
     private final MemberType type;
     private final String role;
 
-    public Member(long ref, MemberType type, String role) {
+    public Member(final long ref, final MemberType type, final String role) {
         super(ATT_RELATION_MEMBER,null);
         if(type == null){
             throw new NullPointerException("Member type can not be null.");
@@ -97,7 +97,7 @@ public class Member extends AbstractComplexAttribute<Collection<Property>,Identi
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -97,7 +97,7 @@ public class PlacemarkType extends AbstractFeatureType {
      *     {@link JAXBElement }{@code <}{@link ModelType }{@code >}
      *     
      */
-    public void setAbstractGeometryGroup(JAXBElement<? extends AbstractGeometryType> value) {
+    public void setAbstractGeometryGroup(final JAXBElement<? extends AbstractGeometryType> value) {
         this.abstractGeometryGroup = ((JAXBElement<? extends AbstractGeometryType> ) value);
     }
 

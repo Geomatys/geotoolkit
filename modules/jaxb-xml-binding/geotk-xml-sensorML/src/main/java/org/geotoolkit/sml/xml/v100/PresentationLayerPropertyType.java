@@ -100,7 +100,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     public PresentationLayerPropertyType() {
 
     }
-    public PresentationLayerPropertyType(AbstractPresentationLayerProperty la) {
+    public PresentationLayerPropertyType(final AbstractPresentationLayerProperty la) {
         if (la != null) {
             if (la.getDataBlockDefinition() != null) {
                 this.dataBlockDefinition = new DataBlockDefinitionType(la.getDataBlockDefinition());
@@ -134,7 +134,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     }
 
 
-    public PresentationLayerPropertyType(Category category) {
+    public PresentationLayerPropertyType(final Category category) {
         this.category = category;
     }
 
@@ -158,7 +158,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     /**
      * Sets the value of the abstractDataRecord property.
      */
-    public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordType> value) {
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
     }
 
@@ -172,7 +172,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     /**
      * Sets the value of the category property.
      */
-    public void setCategory(Category value) {
+    public void setCategory(final Category value) {
         this.category = value;
     }
 
@@ -187,7 +187,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      * Sets the value of the dataBlockDefinition property.
      * 
      */
-    public void setDataBlockDefinition(DataBlockDefinitionType value) {
+    public void setDataBlockDefinition(final DataBlockDefinitionType value) {
         this.dataBlockDefinition = value;
     }
 
@@ -201,7 +201,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     /**
      * Sets the value of the dataStreamDefinition property.
      */
-    public void setDataStreamDefinition(DataStreamDefinitionType value) {
+    public void setDataStreamDefinition(final DataStreamDefinitionType value) {
         this.dataStreamDefinition = value;
     }
 
@@ -225,7 +225,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -238,7 +238,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
 
     /**
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -252,7 +252,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -266,7 +266,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -280,7 +280,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -295,7 +295,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
      * Sets the value of the show property.
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -309,7 +309,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -323,7 +323,7 @@ public class PresentationLayerPropertyType implements AbstractPresentationLayerP
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

@@ -84,8 +84,8 @@ public class Operation implements AbstractOperation {
     /**
      * Build a new Operation.
      */
-    public Operation(List<DCP> dcp, List<DomainType> parameter, List<DomainType> constraint,
-            List<MetadataType> metadata, String name){
+    public Operation(final List<DCP> dcp, final List<DomainType> parameter, final List<DomainType> constraint,
+            final List<MetadataType> metadata, final String name){
         this.constraint = constraint;
         this.dcp        = dcp;
         this.metadata   = metadata;
@@ -119,7 +119,7 @@ public class Operation implements AbstractOperation {
      * Get a parameter from the specified parameter name
      */
     @Override
-    public DomainType getParameter(String name) {
+    public DomainType getParameter(final String name) {
         if (parameter == null) {
             return null;
         } else {
@@ -135,7 +135,7 @@ public class Operation implements AbstractOperation {
      * Get a parameter from the specified parameter name
      */
     @Override
-    public DomainType getParameterIgnoreCase(String name) {
+    public DomainType getParameterIgnoreCase(final String name) {
         if (parameter == null) {
             return null;
         } else {
@@ -150,7 +150,7 @@ public class Operation implements AbstractOperation {
     /**
      * Update the specified parameter with the list of values.
      */
-    public void updateParameter(String parameterName, Collection<String> values) {
+    public void updateParameter(final String parameterName, final Collection<String> values) {
         for (DomainType dom: parameter) {
             if (dom.getName().equals(parameterName)) {
                 dom.setAllowedValues(new AllowedValues(values));
@@ -161,7 +161,7 @@ public class Operation implements AbstractOperation {
     /**
      * Update the specified parameter with the specified range.
      */
-    public void updateParameter(String parameterName, RangeType range) {
+    public void updateParameter(final String parameterName, final RangeType range) {
         for (DomainType dom: parameter) {
             if (dom.getName().equals(parameterName)) {
                 AllowedValues av = dom.getAllowedValues();
@@ -181,7 +181,7 @@ public class Operation implements AbstractOperation {
     }
 
     @Override
-    public DomainType getConstraint(String name) {
+    public DomainType getConstraint(final String name) {
         if (constraint != null) {
             for (DomainType d : constraint) {
                 if (d.getName().equals(name))
@@ -193,7 +193,7 @@ public class Operation implements AbstractOperation {
     }
 
     @Override
-    public DomainType getConstraintIgnoreCase(String name) {
+    public DomainType getConstraintIgnoreCase(final String name) {
         if (constraint != null) {
             for (DomainType d : constraint) {
                 if (d.getName().equalsIgnoreCase(name))

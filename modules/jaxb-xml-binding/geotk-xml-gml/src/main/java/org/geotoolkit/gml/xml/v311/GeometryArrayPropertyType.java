@@ -133,7 +133,7 @@ public class GeometryArrayPropertyType {
      *
      *
      */
-    public void setJbAbstractGeometry(List<JAXBElement<? extends AbstractGeometryType>> abstractGeometry) {
+    public void setJbAbstractGeometry(final List<JAXBElement<? extends AbstractGeometryType>> abstractGeometry) {
         this.abstractGeometry = abstractGeometry;
     }
 
@@ -216,7 +216,7 @@ public class GeometryArrayPropertyType {
      *
      *
      */
-    public void setAbstractGeometry(List<? extends AbstractGeometryType> abstractGeometry) {
+    public void setAbstractGeometry(final List<? extends AbstractGeometryType> abstractGeometry) {
         if (this.abstractGeometry == null) {
             this.abstractGeometry = new ArrayList<JAXBElement<? extends AbstractGeometryType>>();
         }

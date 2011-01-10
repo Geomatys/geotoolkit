@@ -86,7 +86,7 @@ public class GNC_ApplicationFieldCode extends CodeList<GNC_ApplicationFieldCode>
      * Returns the GNC_DocumentTypeCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_ApplicationFieldCode valueOf(String code) {
+    public static GNC_ApplicationFieldCode valueOf(final String code) {
         return valueOf(GNC_ApplicationFieldCode.class, code);
     }
 }

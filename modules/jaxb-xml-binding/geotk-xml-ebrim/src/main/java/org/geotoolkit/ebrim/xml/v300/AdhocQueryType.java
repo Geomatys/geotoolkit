@@ -67,7 +67,7 @@ public class AdhocQueryType extends RegistryObjectType {
     /**
      * Sets the value of the queryExpression property.
     */
-    public void setQueryExpression(QueryExpressionType value) {
+    public void setQueryExpression(final QueryExpressionType value) {
         this.queryExpression = value;
     }
 

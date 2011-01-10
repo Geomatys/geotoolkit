@@ -118,7 +118,7 @@ public class Redefine
      *     {@link String }
      *     
      */
-    public void setSchemaLocation(String value) {
+    public void setSchemaLocation(final String value) {
         this.schemaLocation = value;
     }
 
@@ -142,7 +142,7 @@ public class Redefine
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

@@ -33,7 +33,7 @@ public class StatefullCachedRule {
     public final SymbolizerRenderer renderers[][];
     public final int elseRuleIndex;
 
-    public StatefullCachedRule(CachedRule[] rules, RenderingContext2D context) {
+    public StatefullCachedRule(final CachedRule[] rules, final RenderingContext2D context) {
 
         //sort the rules
         elseRuleIndex = sortByElseRule(rules);
@@ -53,7 +53,7 @@ public class StatefullCachedRule {
     /**
      * sort the rules, isolate the else rules, they must be handle differently
      */
-    public static int sortByElseRule(CachedRule[] sortedRules){
+    public static int sortByElseRule(final CachedRule[] sortedRules){
         int elseRuleIndex = sortedRules.length;
 
         for(int i=0; i<elseRuleIndex; i++){

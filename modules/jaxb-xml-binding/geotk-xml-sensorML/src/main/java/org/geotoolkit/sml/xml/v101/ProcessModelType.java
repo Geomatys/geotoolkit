@@ -58,7 +58,7 @@ public class ProcessModelType extends AbstractPureProcessType implements Abstrac
 
     }
 
-    public ProcessModelType(AbstractProcessModel pm) {
+    public ProcessModelType(final AbstractProcessModel pm) {
         super(pm);
         if (pm != null && pm.getMethod() != null) {
             this.method = new MethodPropertyType(pm.getMethod());
@@ -85,7 +85,7 @@ public class ProcessModelType extends AbstractPureProcessType implements Abstrac
      *     {@link MethodPropertyType }
      *     
      */
-    public void setMethod(MethodPropertyType value) {
+    public void setMethod(final MethodPropertyType value) {
         this.method = value;
     }
 

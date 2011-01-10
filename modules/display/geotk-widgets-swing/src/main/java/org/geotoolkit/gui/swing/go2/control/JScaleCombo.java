@@ -126,7 +126,7 @@ public class JScaleCombo extends JComboBox {
         return new ArrayList<Number>(scales);
     }
 
-    public void setStepSize(Number step){
+    public void setStepSize(final Number step){
         edit.setStepSize(step);
     }
 
@@ -134,7 +134,7 @@ public class JScaleCombo extends JComboBox {
         return edit.getStepSize();
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         if (this.map != null) {
             this.map.getCanvas().removeCanvasListener(listener);
         }
@@ -158,7 +158,7 @@ public class JScaleCombo extends JComboBox {
         }
 
         @Override
-        public Component getListCellRendererComponent(JList jlist, Object o, int i, boolean bln, boolean bln1) {
+        public Component getListCellRendererComponent(final JList jlist, final Object o, final int i, final boolean bln, final boolean bln1) {
             super.getListCellRendererComponent(jlist, o, i, bln, bln1);
             ScaleRenderer.this.setOpaque(false);
             final Long l = ((Number) o).longValue();
@@ -208,7 +208,7 @@ public class JScaleCombo extends JComboBox {
 
         }
 
-        public void setStepSize(Number step){
+        public void setStepSize(final Number step){
             SpinnerNumberModel model = (SpinnerNumberModel) field.getModel();
             model.setStepSize(step);
         }
@@ -219,7 +219,7 @@ public class JScaleCombo extends JComboBox {
         }
 
         @Override
-        public void setItem(Object anObject) {
+        public void setItem(final Object anObject) {
             if (anObject != null) {
                 field.setValue( ((Number)anObject).doubleValue());
             }
@@ -241,12 +241,12 @@ public class JScaleCombo extends JComboBox {
         }
 
         @Override
-        public void addActionListener(ActionListener l) {
+        public void addActionListener(final ActionListener l) {
             listeners.add(ActionListener.class, l);
         }
 
         @Override
-        public void removeActionListener(ActionListener l) {
+        public void removeActionListener(final ActionListener l) {
             listeners.remove(ActionListener.class, l);
         }
     }

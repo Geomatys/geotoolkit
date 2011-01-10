@@ -60,7 +60,7 @@ public class JOSMImportPane extends JPanel{
     }
 
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
 
         JFrame frm = new JFrame("OSM Postgres import.");

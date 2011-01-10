@@ -77,7 +77,7 @@ public class TileMatrixSetLink {
      *     {@link String }
      *     
      */
-    public void setTileMatrixSet(String value) {
+    public void setTileMatrixSet(final String value) {
         this.tileMatrixSet = value;
     }
 
@@ -103,7 +103,7 @@ public class TileMatrixSetLink {
      *     {@link TileMatrixSetLimits }
      *     
      */
-    public void setTileMatrixSetLimits(TileMatrixSetLimits value) {
+    public void setTileMatrixSetLimits(final TileMatrixSetLimits value) {
         this.tileMatrixSetLimits = value;
     }
 

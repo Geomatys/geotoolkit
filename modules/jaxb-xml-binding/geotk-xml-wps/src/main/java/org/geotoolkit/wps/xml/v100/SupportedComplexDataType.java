@@ -81,7 +81,7 @@ public class SupportedComplexDataType {
      *     {@link ComplexDataCombinationType }
      *     
      */
-    public void setDefault(ComplexDataCombinationType value) {
+    public void setDefault(final ComplexDataCombinationType value) {
         this._default = value;
     }
 
@@ -105,7 +105,7 @@ public class SupportedComplexDataType {
      *     {@link ComplexDataCombinationsType }
      *     
      */
-    public void setSupported(ComplexDataCombinationsType value) {
+    public void setSupported(final ComplexDataCombinationsType value) {
         this.supported = value;
     }
 

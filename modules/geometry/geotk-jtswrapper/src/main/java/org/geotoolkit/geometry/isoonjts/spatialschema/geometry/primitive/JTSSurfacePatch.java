@@ -49,7 +49,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
         this(null, null);
     }
     
-    public JTSSurfacePatch(SurfaceInterpolation interpolation, SurfaceBoundary boundary) {
+    public JTSSurfacePatch(final SurfaceInterpolation interpolation, final SurfaceBoundary boundary) {
         this.interpolation = interpolation;
         this.boundary = boundary;
     }
@@ -74,7 +74,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
         return null;
     }
 
-    public void setSurface(Surface surface) {
+    public void setSurface(final Surface surface) {
         this.surface = surface;
     }
 
@@ -117,7 +117,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
      * {@inheritDoc }
      */
     @Override
-    public final double[] getUpNormal(DirectPosition point) {
+    public final double[] getUpNormal(final DirectPosition point) {
         return new double [] { 0, 0, 1 };
     }
 
@@ -140,7 +140,7 @@ public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implemen
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this)
             return true;
 

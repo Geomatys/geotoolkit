@@ -219,7 +219,7 @@ public class AdministrativeArea {
      *     {@link AdministrativeArea.SubAdministrativeArea }
      *     
      */
-    public void setSubAdministrativeArea(AdministrativeArea.SubAdministrativeArea value) {
+    public void setSubAdministrativeArea(final AdministrativeArea.SubAdministrativeArea value) {
         this.subAdministrativeArea = value;
     }
 
@@ -243,7 +243,7 @@ public class AdministrativeArea {
      *     {@link Locality }
      *     
      */
-    public void setLocality(Locality value) {
+    public void setLocality(final Locality value) {
         this.locality = value;
     }
 
@@ -267,7 +267,7 @@ public class AdministrativeArea {
      *     {@link PostOffice }
      *     
      */
-    public void setPostOffice(PostOffice value) {
+    public void setPostOffice(final PostOffice value) {
         this.postOffice = value;
     }
 
@@ -291,7 +291,7 @@ public class AdministrativeArea {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -344,7 +344,7 @@ public class AdministrativeArea {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -368,7 +368,7 @@ public class AdministrativeArea {
      *     {@link String }
      *     
      */
-    public void setUsageType(String value) {
+    public void setUsageType(final String value) {
         this.usageType = value;
     }
 
@@ -392,7 +392,7 @@ public class AdministrativeArea {
      *     {@link String }
      *     
      */
-    public void setIndicator(String value) {
+    public void setIndicator(final String value) {
         this.indicator = value;
     }
 
@@ -470,7 +470,7 @@ public class AdministrativeArea {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -494,7 +494,7 @@ public class AdministrativeArea {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -518,7 +518,7 @@ public class AdministrativeArea {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -694,7 +694,7 @@ public class AdministrativeArea {
          *     {@link Locality }
          *     
          */
-        public void setLocality(Locality value) {
+        public void setLocality(final Locality value) {
             this.locality = value;
         }
 
@@ -718,7 +718,7 @@ public class AdministrativeArea {
          *     {@link PostOffice }
          *     
          */
-        public void setPostOffice(PostOffice value) {
+        public void setPostOffice(final PostOffice value) {
             this.postOffice = value;
         }
 
@@ -742,7 +742,7 @@ public class AdministrativeArea {
          *     {@link PostalCode }
          *     
          */
-        public void setPostalCode(PostalCode value) {
+        public void setPostalCode(final PostalCode value) {
             this.postalCode = value;
         }
 
@@ -795,7 +795,7 @@ public class AdministrativeArea {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -819,7 +819,7 @@ public class AdministrativeArea {
          *     {@link String }
          *     
          */
-        public void setUsageType(String value) {
+        public void setUsageType(final String value) {
             this.usageType = value;
         }
 
@@ -843,7 +843,7 @@ public class AdministrativeArea {
          *     {@link String }
          *     
          */
-        public void setIndicator(String value) {
+        public void setIndicator(final String value) {
             this.indicator = value;
         }
 
@@ -921,7 +921,7 @@ public class AdministrativeArea {
              *     {@link String }
              *     
              */
-            public void setContent(String value) {
+            public void setContent(final String value) {
                 this.content = value;
             }
 
@@ -945,7 +945,7 @@ public class AdministrativeArea {
              *     {@link String }
              *     
              */
-            public void setType(String value) {
+            public void setType(final String value) {
                 this.type = value;
             }
 
@@ -969,7 +969,7 @@ public class AdministrativeArea {
              *     {@link String }
              *     
              */
-            public void setCode(String value) {
+            public void setCode(final String value) {
                 this.code = value;
             }
 

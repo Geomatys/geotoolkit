@@ -98,7 +98,7 @@ public class JCoordinateBar extends JToolBar {
         this(null);
     }
 
-    public JCoordinateBar(JMap2D candidate) {
+    public JCoordinateBar(final JMap2D candidate) {
         setLayout(new BorderLayout(0,1));
         final JPanel bottom = new JPanel(new GridBagLayout());
         bottom.setOpaque(false);
@@ -373,7 +373,7 @@ public class JCoordinateBar extends JToolBar {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         guiCombo.setMap(map);
         guiTimeLine.setMap(map);
         guiElevationLine.setMap(map);
@@ -407,7 +407,7 @@ public class JCoordinateBar extends JToolBar {
         guiCRS.setEnabled(this.map != null);
     }
 
-    public void setScales(List<Number> scales){
+    public void setScales(final List<Number> scales){
         guiCombo.setScales(scales);
     }
 
@@ -415,7 +415,7 @@ public class JCoordinateBar extends JToolBar {
         return guiCombo.getScales();
     }
 
-    public void setStepSize(Number step){
+    public void setStepSize(final Number step){
         guiCombo.setStepSize(step);
     }
 
@@ -426,16 +426,16 @@ public class JCoordinateBar extends JToolBar {
     private class myListener extends MouseMotionAdapter implements PropertyChangeListener,CanvasListener{
 
         @Override
-        public void mouseMoved(MouseEvent e) {
+        public void mouseMoved(final MouseEvent e) {
             update(e);
         }
 
         @Override
-        public void mouseDragged(MouseEvent e) {
+        public void mouseDragged(final MouseEvent e) {
             update(e);
         }
 
-        private void update(MouseEvent event){
+        private void update(final MouseEvent event){
             
             Point2D coord = new DirectPosition2D();
             try {
@@ -459,13 +459,13 @@ public class JCoordinateBar extends JToolBar {
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent arg0) {
+        public void propertyChange(final PropertyChangeEvent arg0) {
             CoordinateReferenceSystem crs = map.getCanvas().getObjectiveCRS();
             guiCRS.setText(crs.getName().toString());
         }
 
         @Override
-        public void canvasChanged(CanvasEvent event) {
+        public void canvasChanged(final CanvasEvent event) {
 
             if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
                 guiPainting.setStringPainted(false);
@@ -481,7 +481,7 @@ public class JCoordinateBar extends JToolBar {
 
     }
 
-    private static ImageIcon addHorizontalMargin(ImageIcon icon, int margin){
+    private static ImageIcon addHorizontalMargin(final ImageIcon icon, final int margin){
         final Image img = icon.getImage();
         BufferedImage buffer = new BufferedImage(img.getWidth(null)+2*margin,img.getHeight(null),BufferedImage.TYPE_INT_ARGB);
         buffer.getGraphics().drawImage(img, margin, 0, null);

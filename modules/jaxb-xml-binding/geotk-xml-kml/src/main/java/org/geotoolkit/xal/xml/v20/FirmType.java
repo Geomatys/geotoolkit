@@ -203,7 +203,7 @@ public class FirmType {
      *     {@link MailStopType }
      *     
      */
-    public void setMailStop(MailStopType value) {
+    public void setMailStop(final MailStopType value) {
         this.mailStop = value;
     }
 
@@ -227,7 +227,7 @@ public class FirmType {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -280,7 +280,7 @@ public class FirmType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -358,7 +358,7 @@ public class FirmType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -382,7 +382,7 @@ public class FirmType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -406,7 +406,7 @@ public class FirmType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 

@@ -49,11 +49,11 @@ public interface StyleListener extends PropertyChangeListener{
 
         private final Collection<MutableLayerStyle> sources = new ArrayList<MutableLayerStyle>(1);
 
-        public Weak(StyleListener ref) {
+        public Weak(final StyleListener ref) {
             this(null,ref);
         }
 
-        public Weak(MutableLayerStyle source, StyleListener ref) {
+        public Weak(final MutableLayerStyle source, final StyleListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
@@ -61,7 +61,7 @@ public interface StyleListener extends PropertyChangeListener{
         /**
          * Register this listener on the given source.
          */
-        public synchronized void registerSource(MutableLayerStyle source){
+        public synchronized void registerSource(final MutableLayerStyle source){
             if(source != null){
                 //register in the new source
                 source.addListener(this);
@@ -72,7 +72,7 @@ public interface StyleListener extends PropertyChangeListener{
         /**
          * Unregister this listener on the given source.
          */
-        public synchronized void unregisterSource(MutableLayerStyle source){
+        public synchronized void unregisterSource(final MutableLayerStyle source){
             sources.remove(source);
             source.removeListener(this);
         }
@@ -86,7 +86,7 @@ public interface StyleListener extends PropertyChangeListener{
         }
 
         @Override
-        public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+        public void featureTypeStyleChange(final CollectionChangeEvent<MutableFeatureTypeStyle> event) {
             final StyleListener listener = get();
             if (listener != null) {
                 listener.featureTypeStyleChange(event);
@@ -95,7 +95,7 @@ public interface StyleListener extends PropertyChangeListener{
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             final StyleListener listener = get();
             if (listener != null) {
                 listener.propertyChange(evt);

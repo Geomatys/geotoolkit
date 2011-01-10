@@ -54,13 +54,13 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
      * @param p The polygon
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public JTSPolygonIterator(Polygon p, AffineTransform trs) {
+    public JTSPolygonIterator(final Polygon p, final AffineTransform trs) {
         super(p,trs);
         setGeometry(p);
     }
 
     @Override
-    public void setGeometry(Polygon geom) {
+    public void setGeometry(final Polygon geom) {
         this.geometry = geom;
         if(geom != null){
             int numInteriorRings = geom.getNumInteriorRing();
@@ -90,7 +90,7 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         // first make sure we're not at the last element, this prevents us from exceptions
         // in the case where coords.size() == 0
         if (currentCoord == csSize) {
@@ -112,7 +112,7 @@ public final  class JTSPolygonIterator extends JTSGeometryIterator<Polygon> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(float[] coords) {
+    public int currentSegment(final float[] coords) {
         // first make sure we're not at the last element, this prevents us from exceptions
         // in the case where coords.size() == 0
         if (currentCoord == csSize) {

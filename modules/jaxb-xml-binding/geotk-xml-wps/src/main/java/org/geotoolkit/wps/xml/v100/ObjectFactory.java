@@ -478,7 +478,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wps/1.0.0", name = "Capabilities")
-    public JAXBElement<WPSCapabilitiesType> createCapabilities(WPSCapabilitiesType value) {
+    public JAXBElement<WPSCapabilitiesType> createCapabilities(final WPSCapabilitiesType value) {
         return new JAXBElement<WPSCapabilitiesType>(_Capabilities_QNAME, WPSCapabilitiesType.class, null, value);
     }
 

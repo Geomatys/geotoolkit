@@ -58,7 +58,7 @@ public final class TrainingTypeAdapter extends CodeListAdapter<TrainingTypeAdapt
      * {@inheritDoc}
      */
     @Override
-    protected TrainingTypeAdapter wrap(CodeListProxy proxy) {
+    protected TrainingTypeAdapter wrap(final CodeListProxy proxy) {
         return new TrainingTypeAdapter(proxy);
     }
 

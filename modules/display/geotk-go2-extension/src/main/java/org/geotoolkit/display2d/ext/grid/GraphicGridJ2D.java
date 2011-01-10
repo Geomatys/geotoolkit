@@ -46,12 +46,12 @@ public class GraphicGridJ2D extends AbstractGraphicJ2D{
     }
 
     @Override
-    public void paint(RenderingContext2D context) {
+    public void paint(final RenderingContext2D context) {
         J2DGridUtilities.paint(context, template);
     }
 
     @Override
-    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
         return graphics;
     }
 

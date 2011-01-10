@@ -38,7 +38,7 @@ public class Bound {
      * @param ymax : maximum latitude
      * @return Immutable envelope in WGS84 with the given extents.
      */
-    public static Envelope create(double xmin, double xmax, double ymin, double ymax){
+    public static Envelope create(final double xmin, final double xmax, final double ymin, final double ymax){
         return new ImmutableEnvelope(DefaultGeographicCRS.WGS84, xmin, xmax, ymin, ymax);
     }
 

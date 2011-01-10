@@ -36,11 +36,11 @@ public class SimpleNode implements  Node {
   protected CQLParser parser;
   protected Token token;
 
-  public SimpleNode(int i) {
+  public SimpleNode(final int i) {
     id = i;
   }
 
-  public SimpleNode(CQLParser p, int i) {
+  public SimpleNode(final CQLParser p, final int i) {
     this(i);
     parser = p;
   }
@@ -66,7 +66,7 @@ public void jjtClose() {
   /* (non-Javadoc)
  * @see org.geotoolkit.filter.text.cql2.CQLNode#jjtSetParent(org.geotoolkit.filter.text.cql2.Node)
  */
-public void jjtSetParent(Node n) { parent = n; }
+public void jjtSetParent(final Node n) { parent = n; }
   /* (non-Javadoc)
  * @see org.geotoolkit.filter.text.cql2.CQLNode#jjtGetParent()
  */
@@ -75,7 +75,7 @@ public Node jjtGetParent() { return parent; }
   /* (non-Javadoc)
  * @see org.geotoolkit.filter.text.cql2.CQLNode#jjtAddChild(org.geotoolkit.filter.text.cql2.Node, int)
  */
-public void jjtAddChild(Node n, int i) {
+public void jjtAddChild(final Node n, final int i) {
     if (children == null) {
       children = new Node[i + 1];
     } else if (i >= children.length) {
@@ -89,7 +89,7 @@ public void jjtAddChild(Node n, int i) {
   /* (non-Javadoc)
  * @see org.geotoolkit.filter.text.cql2.CQLNode#jjtGetChild(int)
  */
-public Node jjtGetChild(int i) {
+public Node jjtGetChild(final int i) {
     return children[i];
   }
 
@@ -123,7 +123,7 @@ public String toString() { return CQLParserTreeConstants.jjtNodeName[id]; }
 /* (non-Javadoc)
  * @see org.geotoolkit.filter.text.generated.parsers.Node#toString(java.lang.String)
  */
-public String toString(String prefix) { return prefix + toString(); }
+public String toString(final String prefix) { return prefix + toString(); }
 
   /* Override this method if you want to customize how the node dumps
      out its children. */
@@ -134,7 +134,7 @@ public String toString(String prefix) { return prefix + toString(); }
 /* (non-Javadoc)
  * @see org.geotoolkit.filter.text.generated.parsers.Node#dump(java.lang.String)
  */
-public void dump(String prefix) {
+public void dump(final String prefix) {
     System.out.println(toString(prefix));
     if (children != null) {
       for (int i = 0; i < children.length; ++i) {

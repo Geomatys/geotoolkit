@@ -85,7 +85,7 @@ public class SurfaceType extends AbstractSurfaceType {
      *     {@link JAXBElement }{@code <}{@link PolygonPatchArrayPropertyType }{@code >}
      *     
      */
-    public void setJbPatches(JAXBElement<? extends SurfacePatchArrayPropertyType> value) {
+    public void setJbPatches(final JAXBElement<? extends SurfacePatchArrayPropertyType> value) {
         this.patches = ((JAXBElement<? extends SurfacePatchArrayPropertyType> ) value);
     }
 
@@ -116,7 +116,7 @@ public class SurfaceType extends AbstractSurfaceType {
      *     {@code <}{@link PolygonPatchArrayPropertyType }{@code >}
      *
      */
-    public void setPatches(SurfacePatchArrayPropertyType value) {
+    public void setPatches(final SurfacePatchArrayPropertyType value) {
         if (value != null) {
             final ObjectFactory factory = new ObjectFactory();
             if (value instanceof TrianglePatchArrayPropertyType) {

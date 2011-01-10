@@ -42,11 +42,11 @@ public class DefaultLinearLabelDescriptor implements LinearLabelDescriptor{
     private final boolean generalize;
     private final ProjectedGeometry geom;
     
-    public DefaultLinearLabelDescriptor(String text, Font textFont, Paint textPaint,
-            float haloWidth, Paint haloPaint, 
-            float gap, float initial, float offset,
-            boolean repeated, boolean aligned, boolean generalize,
-            ProjectedGeometry geom){
+    public DefaultLinearLabelDescriptor(final String text, final Font textFont, final Paint textPaint,
+            final float haloWidth, final Paint haloPaint, 
+            final float gap, final float initial, final float offset,
+            final boolean repeated, final boolean aligned, final boolean generalize,
+            final ProjectedGeometry geom){
         this.text = text;
         this.textFont = textFont;
         this.textPaint = textPaint;

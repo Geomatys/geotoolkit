@@ -91,7 +91,7 @@ public class Parameters {
      * 
      * @param channel
      */
-    public void setChannel(FileChannel channel) {
+    public void setChannel(final FileChannel channel) {
         this.channel = channel;
     }
 
@@ -100,7 +100,7 @@ public class Parameters {
      * 
      * @param definition
      */
-    public void setDataDef(DataDefinition definition) {
+    public void setDataDef(final DataDefinition definition) {
         dataDef = definition;
     }
 
@@ -109,7 +109,7 @@ public class Parameters {
      * 
      * @param i
      */
-    public void setMaxNodeEntries(int i) {
+    public void setMaxNodeEntries(final int i) {
         maxNodeEntries = i;
     }
 
@@ -118,7 +118,7 @@ public class Parameters {
      * 
      * @param i
      */
-    public void setMinNodeEntries(int i) {
+    public void setMinNodeEntries(final int i) {
         minNodeEntries = i;
     }
 
@@ -127,7 +127,7 @@ public class Parameters {
      * 
      * @param s
      */
-    public void setSplitAlg(short s) {
+    public void setSplitAlg(final short s) {
         splitAlg = s;
     }
 
@@ -144,7 +144,7 @@ public class Parameters {
      * 
      * @param b
      */
-    public void setForceChannel(boolean b) {
+    public void setForceChannel(final boolean b) {
         forceChannel = b;
     }
 
@@ -161,11 +161,11 @@ public class Parameters {
      * 
      * @param stack
      */
-    public void setFreePages(Stack stack) {
+    public void setFreePages(final Stack stack) {
         freePages = stack;
     }
 
-    public synchronized void setNodeCacheSize(int size) throws TreeException {
+    public synchronized void setNodeCacheSize(final int size) throws TreeException {
         if (this.cache != null) {
             this.flushCache();
         }
@@ -191,7 +191,7 @@ public class Parameters {
      * @throws IOException
      * @throws TreeException
      */
-    public synchronized FileSystemNode getFromCache(long offset)
+    public synchronized FileSystemNode getFromCache(final long offset)
             throws IOException, TreeException {
         FileSystemNode node = null;
 
@@ -216,7 +216,7 @@ public class Parameters {
      * @throws IOException
      *                 DOCUMENT ME!
      */
-    public synchronized long getNewNodeOffset(int len) throws IOException {
+    public synchronized long getNewNodeOffset(final int len) throws IOException {
         long offset = 0L;
 
         if (this.newNodeOffset == 0L) {
@@ -238,7 +238,7 @@ public class Parameters {
      * 
      * @throws TreeException
      */
-    public synchronized void putToCache(FileSystemNode node)
+    public synchronized void putToCache(final FileSystemNode node)
             throws TreeException {
         if (this.cache != null) {
             // If we have a cache store the node, we'll flush it later
@@ -255,7 +255,7 @@ public class Parameters {
      * @param node
      *                the node to remove
      */
-    public synchronized void removeFromCache(FileSystemNode node) {
+    public synchronized void removeFromCache(final FileSystemNode node) {
         if (this.cache != null) {
             this.cache.remove(node);
         }

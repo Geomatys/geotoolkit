@@ -30,15 +30,15 @@ public class StoreException extends Exception {
         super();
     }
 
-    public StoreException(String message) {
+    public StoreException(final String message) {
         super(message);
     }
 
-    public StoreException(Throwable cause) {
+    public StoreException(final Throwable cause) {
         super(cause);
     }
 
-    public StoreException(String message, Throwable cause) {
+    public StoreException(final String message, final Throwable cause) {
         super(message, cause);
     }
 }

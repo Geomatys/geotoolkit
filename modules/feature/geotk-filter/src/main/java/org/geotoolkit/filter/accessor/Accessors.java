@@ -67,7 +67,7 @@ public class Accessors {
      * @param target : expected output type
      * @return PropertyAccessor or null if none could match the given classes
      */
-    public static PropertyAccessor getAccessor(Class type, String xpath, Class target){
+    public static PropertyAccessor getAccessor(final Class type, final String xpath, final Class target){
         for(final PropertyAccessorFactory pf : ACCESSOR_FACTORIES){
             final PropertyAccessor pa = pf.createPropertyAccessor(type, xpath, target,null);
             if(pa != null) return pa;

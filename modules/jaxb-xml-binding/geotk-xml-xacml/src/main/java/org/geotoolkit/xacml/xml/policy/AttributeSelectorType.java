@@ -66,7 +66,7 @@ public class AttributeSelectorType extends ExpressionType {
    /**
     * Sets the value of the requestContextPath property.
     */
-   public void setRequestContextPath(String value) {
+   public void setRequestContextPath(final String value) {
       this.requestContextPath = value;
    }
 
@@ -80,7 +80,7 @@ public class AttributeSelectorType extends ExpressionType {
    /**
     * Sets the value of the dataType property.
     */
-   public void setDataType(String value) {
+   public void setDataType(final String value) {
       this.dataType = value;
    }
 
@@ -98,7 +98,7 @@ public class AttributeSelectorType extends ExpressionType {
    /**
     * Sets the value of the mustBePresent property.
     */
-   public void setMustBePresent(Boolean value) {
+   public void setMustBePresent(final Boolean value) {
       this.mustBePresent = value;
    }
 

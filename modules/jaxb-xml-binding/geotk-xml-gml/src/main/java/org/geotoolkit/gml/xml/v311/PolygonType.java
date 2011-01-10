@@ -66,7 +66,7 @@ public class PolygonType extends AbstractSurfaceType {
 
     }
     
-    public PolygonType(AbstractRingType exterior, List<? extends AbstractRingType> interiors) {
+    public PolygonType(final AbstractRingType exterior, final List<? extends AbstractRingType> interiors) {
         ObjectFactory factory = new ObjectFactory();
         if (exterior != null) {
             this.exterior = factory.createExterior(new AbstractRingPropertyType(exterior));
@@ -111,7 +111,7 @@ public class PolygonType extends AbstractSurfaceType {
      *
      * @param value allowed object is {@link AbstractRingPropertyType }
      */
-    public void setExterior(AbstractRingPropertyType value) {
+    public void setExterior(final AbstractRingPropertyType value) {
         final ObjectFactory factory = new ObjectFactory();
         this.exterior = factory.createExterior(value);
     }
@@ -124,7 +124,7 @@ public class PolygonType extends AbstractSurfaceType {
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public void setJbExterior(JAXBElement<AbstractRingPropertyType> value) {
+    public void setJbExterior(final JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
     }
 
@@ -163,11 +163,11 @@ public class PolygonType extends AbstractSurfaceType {
         return this.interior;
     }
 
-    public void setJbInterior(List<JAXBElement<AbstractRingPropertyType>> interior) {
+    public void setJbInterior(final List<JAXBElement<AbstractRingPropertyType>> interior) {
         this.interior = interior;
     }
 
-    public void setInterior(List<AbstractRingPropertyType> interior) {
+    public void setInterior(final List<AbstractRingPropertyType> interior) {
         if (this.interior == null) {
             this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
         }
@@ -179,7 +179,7 @@ public class PolygonType extends AbstractSurfaceType {
         }
     }
 
-    public void setInterior(AbstractRingPropertyType interior) {
+    public void setInterior(final AbstractRingPropertyType interior) {
         if (this.interior == null) {
             this.interior = new ArrayList<JAXBElement<AbstractRingPropertyType>>();
         }

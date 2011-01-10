@@ -55,7 +55,7 @@ public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRend
      * {@inheritDoc }
      */
     @Override
-    public CachedLineSymbolizer createCachedSymbolizer(LineSymbolizer symbol) {
+    public CachedLineSymbolizer createCachedSymbolizer(final LineSymbolizer symbol) {
         return new CachedLineSymbolizer(symbol,this);
     }
 
@@ -63,7 +63,7 @@ public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRend
      * {@inheritDoc }
      */
     @Override
-    public SymbolizerRenderer createRenderer(CachedLineSymbolizer symbol, RenderingContext2D context) {
+    public SymbolizerRenderer createRenderer(final CachedLineSymbolizer symbol, final RenderingContext2D context) {
         return new DefaultLineSymbolizerRenderer(symbol, context);
     }
 
@@ -71,7 +71,7 @@ public class DefaultLineSymbolizerRendererService extends AbstractSymbolizerRend
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedLineSymbolizer symbol, MapLayer layer) {
+    public void glyph(final Graphics2D g, final Rectangle2D rectangle, final CachedLineSymbolizer symbol, final MapLayer layer) {
         final AffineTransform affine = new AffineTransform(rectangle.getWidth(), 0, 0,
                 rectangle.getHeight(), rectangle.getX(), rectangle.getY());
 

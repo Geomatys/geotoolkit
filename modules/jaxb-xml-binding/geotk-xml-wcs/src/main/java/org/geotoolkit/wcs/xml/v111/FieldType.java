@@ -97,9 +97,9 @@ public class FieldType extends DescriptionType {
      * @param interpolationMethods
      * @param axis
      */
-    public FieldType(List<LanguageStringType> title,  List<LanguageStringType> _abstract,
-            List<KeywordsType> keywords, String identifier, UnNamedDomainType definition,
-            List<CodeType> nullValue, InterpolationMethods interpolationMethods, List<AxisType> axis) {
+    public FieldType(final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
+            final List<KeywordsType> keywords, final String identifier, final UnNamedDomainType definition,
+            final List<CodeType> nullValue, final InterpolationMethods interpolationMethods, final List<AxisType> axis) {
         super(title, _abstract, keywords);
         this.identifier           = identifier;
         this.interpolationMethods = interpolationMethods;
@@ -117,8 +117,8 @@ public class FieldType extends DescriptionType {
      * @param interpolationMethods
      * @param axis
      */
-    public FieldType(String identifier, UnNamedDomainType definition,
-            CodeType nullValue, InterpolationMethods interpolationMethods) {
+    public FieldType(final String identifier, UnNamedDomainType definition,
+            final CodeType nullValue, final InterpolationMethods interpolationMethods) {
         super();
         this.identifier           = identifier;
         this.interpolationMethods = interpolationMethods;

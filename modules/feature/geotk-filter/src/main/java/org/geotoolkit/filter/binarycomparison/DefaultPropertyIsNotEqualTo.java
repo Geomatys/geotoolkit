@@ -30,7 +30,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class DefaultPropertyIsNotEqualTo extends AbstractPropertyEqual implements PropertyIsNotEqualTo{
 
-    public DefaultPropertyIsNotEqualTo(Expression left, Expression right, boolean match) {
+    public DefaultPropertyIsNotEqualTo(final Expression left, final Expression right, final boolean match) {
         super(left,right,match);
     }
 
@@ -38,7 +38,7 @@ public class DefaultPropertyIsNotEqualTo extends AbstractPropertyEqual implement
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object candidate) {
+    public boolean evaluate(final Object candidate) {
         return !super.evaluate(candidate);
     }
 
@@ -46,7 +46,7 @@ public class DefaultPropertyIsNotEqualTo extends AbstractPropertyEqual implement
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -65,7 +65,7 @@ public class DefaultPropertyIsNotEqualTo extends AbstractPropertyEqual implement
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

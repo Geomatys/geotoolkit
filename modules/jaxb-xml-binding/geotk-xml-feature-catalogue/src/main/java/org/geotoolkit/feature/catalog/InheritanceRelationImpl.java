@@ -92,7 +92,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     /**
      * Clone a InheritanceRelation
      */
-    public InheritanceRelationImpl(InheritanceRelation relation) {
+    public InheritanceRelationImpl(final InheritanceRelation relation) {
         if (relation != null) {
             this.id             = relation.getId();
             this.description    = relation.getDescription();
@@ -106,7 +106,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     /**
      * Clone a InheritanceRelation
      */
-    public InheritanceRelationImpl(String name, String description ,Boolean uniqueInstance, FeatureType subtype, FeatureType supertype) {
+    public InheritanceRelationImpl(final String name, final String description ,final Boolean uniqueInstance, final FeatureType subtype, final FeatureType supertype) {
         this.description    = description;
         this.name           = name;
         this.subtype        = subtype;
@@ -126,7 +126,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      * Sets the value of the name property.
      * 
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -142,7 +142,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      * Sets the value of the description property.
      * 
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -158,7 +158,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      * Sets the value of the uniqueInstance property.
      * 
      */
-    public void setUniqueInstance(Boolean value) {
+    public void setUniqueInstance(final Boolean value) {
         this.uniqueInstance = value;
     }
 
@@ -172,7 +172,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     /**
      * Sets the value of the subtype property.
      */
-    public void setSubtype(FeatureType value) {
+    public void setSubtype(final FeatureType value) {
         this.subtype = value;
     }
 
@@ -188,7 +188,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
      * Sets the value of the supertype property.
      * 
      */
-    public void setSupertype(FeatureType value) {
+    public void setSupertype(final FeatureType value) {
         this.supertype = value;
     }
     
@@ -199,14 +199,14 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
         return this.id;
     }
     
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
     
     /**
      * set the feature in reference mode
      */
-    public void setReference(boolean mode) {
+    public void setReference(final boolean mode) {
         this.isReference = mode;
     }
     
@@ -223,7 +223,7 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
         return result;
     }
     
-    private void beforeMarshal(Marshaller marshaller) {
+    private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
             beforeMarshal(new HashMap<String, Referenceable>());
         }

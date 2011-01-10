@@ -26,7 +26,7 @@ import org.geotoolkit.data.osm.client.AbstractGetGPSTrace;
  */
 public class GetGPSTraces060 extends AbstractGetGPSTrace{
 
-    public GetGPSTraces060(String serverURL){
+    public GetGPSTraces060(final String serverURL){
         super(serverURL,"api/0.6/trackpoints?");
     }
 

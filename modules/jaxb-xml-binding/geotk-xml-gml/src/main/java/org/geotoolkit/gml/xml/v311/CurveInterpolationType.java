@@ -73,7 +73,7 @@ public enum CurveInterpolationType {
     RATIONAL_SPLINE("rationalSpline");
     private final String value;
 
-    CurveInterpolationType(String v) {
+    CurveInterpolationType(final String v) {
         value = v;
     }
 
@@ -81,7 +81,7 @@ public enum CurveInterpolationType {
         return value;
     }
 
-    public static CurveInterpolationType fromValue(String v) {
+    public static CurveInterpolationType fromValue(final String v) {
         for (CurveInterpolationType c: CurveInterpolationType.values()) {
             if (c.value.equals(v)) {
                 return c;

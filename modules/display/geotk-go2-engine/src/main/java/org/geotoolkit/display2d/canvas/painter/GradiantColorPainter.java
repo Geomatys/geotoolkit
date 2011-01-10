@@ -34,7 +34,7 @@ public class GradiantColorPainter implements BackgroundPainter{
     private static final Color COLOR_2 = Color.GRAY;
 
     @Override
-    public void paint(RenderingContext2D context) {
+    public void paint(final RenderingContext2D context) {
         Graphics2D g = context.getGraphics();
 
         Rectangle rect = context.getCanvasDisplayBounds();

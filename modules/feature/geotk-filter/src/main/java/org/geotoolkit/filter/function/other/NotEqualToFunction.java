@@ -28,7 +28,7 @@ public class NotEqualToFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         Object arg0;
         Object arg1;
 

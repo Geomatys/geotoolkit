@@ -30,11 +30,11 @@ public class LinearRingPosListType {
 
     }
 
-    public LinearRingPosListType(List<Double> value) {
+    public LinearRingPosListType(final List<Double> value) {
         this.posList = new PosListType(value);
     }
 
-    public LinearRingPosListType(JTSRing ring) {
+    public LinearRingPosListType(final JTSRing ring) {
         //this.srsName = CoordinateReferenceSystemAdapter.getSrsName(lineString.getCoordinateReferenceSystem());
 
         if (ring.getElements().size() == 1) {
@@ -86,7 +86,7 @@ public class LinearRingPosListType {
     /**
      * @param posList the posList to set
      */
-    public void setPosList(PosListType posList) {
+    public void setPosList(final PosListType posList) {
         this.posList = posList;
     }
 }

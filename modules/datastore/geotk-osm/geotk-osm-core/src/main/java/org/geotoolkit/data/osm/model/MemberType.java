@@ -32,7 +32,7 @@ public enum MemberType {
     final char c;
     final String att;
 
-    private MemberType(char c,String tag){
+    private MemberType(final char c,final String tag){
         this.c = c;
         this.att = tag;
     }
@@ -45,7 +45,7 @@ public enum MemberType {
         return att;
     }
 
-    public static MemberType valueOfIgnoreCase(String str) {
+    public static MemberType valueOfIgnoreCase(final String str) {
         if(BOUND.att.equalsIgnoreCase(str)){
             return BOUND;
         }else if(NODE.att.equalsIgnoreCase(str)){

@@ -35,18 +35,18 @@ public class GraphicProbe extends AbstractGraphicJ2D{
 
     private final ProbeMonitor monitor;
 
-    public GraphicProbe(J2DCanvas canvas, ProbeMonitor monitor){
+    public GraphicProbe(final J2DCanvas canvas, final ProbeMonitor monitor){
         super(canvas,canvas.getObjectiveCRS2D());
         this.monitor = monitor;
     }
 
     @Override
-    public void paint(RenderingContext2D context) {
+    public void paint(final RenderingContext2D context) {
         monitor.contextPaint(context);
     }
 
     @Override
-    public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
         return graphics;
     }
 

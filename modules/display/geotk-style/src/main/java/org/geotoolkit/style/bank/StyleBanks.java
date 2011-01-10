@@ -34,11 +34,11 @@ public class StyleBanks {
 
     private StyleBanks(){}
 
-    public static synchronized void registerBank(StyleBank bank){
+    public static synchronized void registerBank(final StyleBank bank){
         BANKS.add(bank);
     }
 
-    public static synchronized void unregisterBank(StyleBank bank){
+    public static synchronized void unregisterBank(final StyleBank bank){
         BANKS.remove(bank);
     }
 
@@ -46,11 +46,11 @@ public class StyleBanks {
         return new ArrayList<StyleBank>(BANKS);
     }
 
-    public static ElementNode createTree(ElementType type){
+    public static ElementNode createTree(final ElementType type){
         return createTree(type,(StyleBank)null);
     }
 
-    public static ElementNode createTree(ElementType type, StyleBank ... banks){
+    public static ElementNode createTree(final ElementType type, StyleBank ... banks){
         if(banks == null || (banks.length == 1 && banks[0] == null)){
             banks = getBanks().toArray(new StyleBank[BANKS.size()]);
         }
@@ -65,7 +65,7 @@ public class StyleBanks {
         return root;
     }
 
-    private static void wrap(AbstractElementNode root, ElementNode candidate, ElementType type){
+    private static void wrap(final AbstractElementNode root, final ElementNode candidate, final ElementType type){
         final ElementType candidateType = candidate.getType();
 
         if(!(candidateType.equals(ElementType.GROUP) || candidateType.equals(type))){
@@ -105,7 +105,7 @@ public class StyleBanks {
 
     }
 
-    private static void insertAlphabetic(DefaultMutableTreeNode parent, MutableTreeNode child){
+    private static void insertAlphabetic(final DefaultMutableTreeNode parent, final MutableTreeNode child){
         final String childName = child.toString();
         for(int i=0,n=parent.getChildCount();i<n;i++){
             final String str = parent.getChildAt(i).toString();

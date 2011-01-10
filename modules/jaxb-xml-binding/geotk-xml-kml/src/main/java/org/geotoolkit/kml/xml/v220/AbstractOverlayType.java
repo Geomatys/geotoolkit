@@ -102,7 +102,7 @@ public abstract class AbstractOverlayType
      *     {@link String }
      *     
      */
-    public void setColor(byte[] value) {
+    public void setColor(final byte[] value) {
         this.color = ((byte[]) value);
     }
 
@@ -126,7 +126,7 @@ public abstract class AbstractOverlayType
      *     {@link Integer }
      *     
      */
-    public void setDrawOrder(Integer value) {
+    public void setDrawOrder(final Integer value) {
         this.drawOrder = value;
     }
 
@@ -150,7 +150,7 @@ public abstract class AbstractOverlayType
      *     {@link LinkType }
      *     
      */
-    public void setIcon(LinkType value) {
+    public void setIcon(final LinkType value) {
         this.icon = value;
     }
 

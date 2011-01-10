@@ -82,7 +82,7 @@ public class MultiplicityRangeAdapter extends XmlAdapter<MultiplicityRangeAdapte
      * @return A java object which represents the metadata value.
      */
     @Override
-    public MultiplicityRange unmarshal(MultiplicityRangeAdapter value) throws Exception {
+    public MultiplicityRange unmarshal(final MultiplicityRangeAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -97,7 +97,7 @@ public class MultiplicityRangeAdapter extends XmlAdapter<MultiplicityRangeAdapte
      * @return The adapter for this MultiplicityRange.
      */
     @Override
-    public MultiplicityRangeAdapter marshal(MultiplicityRange value) throws Exception {
+    public MultiplicityRangeAdapter marshal(final MultiplicityRange value) throws Exception {
         return new MultiplicityRangeAdapter(value);
     }
 

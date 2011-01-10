@@ -65,7 +65,7 @@ public abstract class AbstractReadingTests{
 
     public static class ExpectedResult{
 
-        public ExpectedResult(Name name, FeatureType type, int size, Envelope env){
+        public ExpectedResult(final Name name, final FeatureType type, final int size, final Envelope env){
             this.name = name;
             this.type = type;
             this.size = size;
@@ -203,7 +203,7 @@ public abstract class AbstractReadingTests{
     /**
      * test different count with filters.
      */
-    private void testCounts(DataStore store, ExpectedResult candidate) throws Exception{
+    private void testCounts(final DataStore store, final ExpectedResult candidate) throws Exception{
 
         assertEquals(candidate.size, store.getCount(QueryBuilder.all(candidate.name)));
         
@@ -213,7 +213,7 @@ public abstract class AbstractReadingTests{
     /**
      * test different bounds with filters.
      */
-    private void testBounds(DataStore store, ExpectedResult candidate) throws Exception{
+    private void testBounds(final DataStore store, final ExpectedResult candidate) throws Exception{
         Envelope res = store.getEnvelope(QueryBuilder.all(candidate.name));
 
         if(candidate.env == null){
@@ -236,7 +236,7 @@ public abstract class AbstractReadingTests{
     /**
      * test different readers.
      */
-    private void testReaders(DataStore store, ExpectedResult candidate) throws Exception{
+    private void testReaders(final DataStore store, final ExpectedResult candidate) throws Exception{
         final FeatureType type = store.getFeatureType(candidate.name);
         final Collection<PropertyDescriptor> properties = type.getDescriptors();
         final QueryBuilder qb = new QueryBuilder();

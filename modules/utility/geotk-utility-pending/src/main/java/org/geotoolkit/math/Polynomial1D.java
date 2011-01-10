@@ -53,7 +53,7 @@ public class Polynomial1D extends Search1D {
      *
      * @param n ordre de l'interpolation.
      */
-    public Polynomial1D(int n) {
+    public Polynomial1D(final int n) {
         index = new int[n];
         c = new double[n];
         d = new double[n];
@@ -70,7 +70,7 @@ public class Polynomial1D extends Search1D {
      * @return				Valeur <var>y</var> interpolée.
      */
     @Override
-    protected double interpolate(double xi, boolean reUseIndex) throws ExtrapolationException {
+    protected double interpolate(final double xi, final boolean reUseIndex) throws ExtrapolationException {
         if (!reUseIndex) {
             copyIndexInto(index);
             if (ignoreYNaN) {
@@ -131,7 +131,7 @@ public class Polynomial1D extends Search1D {
      * @param xi valeur dont on veut vérifier si elle est dans les limites du tableau.
      * @return <code>false</code> si la valeur de <var>xi</var> est NaN ou en dehors du tableau <var>x</var>.
      */
-    public final static boolean isInRangeOf(float x[], float xi) {
+    public final static boolean isInRangeOf(final float x[], final float xi) {
         /*
          * Cette boucle n'est pas aussi inutile qu'elle en a l'air,
          * car elle permet de tenir compte des NaN. Ces derniers
@@ -178,7 +178,7 @@ public class Polynomial1D extends Search1D {
      * @return			Le tableau des <var>y</var>.
      */
     @Override
-    public double[] interpolateNaN(double dxStart, double dxStop) {
+    public double[] interpolateNaN(final double dxStart, final double dxStop) {
         return interpolateNaN(dxStart, dxStop, index.length >= 2 ? null : y);
     }
 }

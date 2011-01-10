@@ -67,7 +67,7 @@ public class TransactionSummaryType {
 
     }
 
-    public TransactionSummaryType(Integer totalInserted, Integer totalUpdated, Integer totalDeleted) {
+    public TransactionSummaryType(final Integer totalInserted, final Integer totalUpdated, final Integer totalDeleted) {
         this.totalDeleted  = totalDeleted;
         this.totalInserted = totalInserted;
         this.totalUpdated  = totalUpdated;
@@ -93,7 +93,7 @@ public class TransactionSummaryType {
      *     {@link Integer }
      *     
      */
-    public void setTotalInserted(Integer value) {
+    public void setTotalInserted(final Integer value) {
         this.totalInserted = value;
     }
 
@@ -117,7 +117,7 @@ public class TransactionSummaryType {
      *     {@link Integer }
      *     
      */
-    public void setTotalUpdated(Integer value) {
+    public void setTotalUpdated(final Integer value) {
         this.totalUpdated = value;
     }
 
@@ -141,7 +141,7 @@ public class TransactionSummaryType {
      *     {@link Integer }
      *     
      */
-    public void setTotalDeleted(Integer value) {
+    public void setTotalDeleted(final Integer value) {
         this.totalDeleted = value;
     }
 

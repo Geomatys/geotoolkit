@@ -39,7 +39,7 @@ public abstract class AbstractExpression implements Expression,Serializable {
      * to the wished class.
      */
     @Override
-    public <T> T evaluate(Object candidate, Class<T> target) {
+    public <T> T evaluate(final Object candidate, final Class<T> target) {
         return Converters.convert(evaluate(candidate), target);
     }
 

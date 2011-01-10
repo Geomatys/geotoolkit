@@ -97,7 +97,7 @@ public class FeatureCatalogueAdapter extends XmlAdapter<FeatureCatalogueAdapter,
      * @return A java object which represents the metadata value.
      */
     @Override
-    public FeatureCatalogue unmarshal(FeatureCatalogueAdapter value) throws Exception {
+    public FeatureCatalogue unmarshal(final FeatureCatalogueAdapter value) throws Exception {
         if (value == null) {
             return null;
         } else if (value.href != null) {
@@ -115,7 +115,7 @@ public class FeatureCatalogueAdapter extends XmlAdapter<FeatureCatalogueAdapter,
      * @return The adapter for this FeatureCatalogue.
      */
     @Override
-    public FeatureCatalogueAdapter marshal(FeatureCatalogue value) throws Exception {
+    public FeatureCatalogueAdapter marshal(final FeatureCatalogue value) throws Exception {
         if (value == null) {
             return null;
         } 

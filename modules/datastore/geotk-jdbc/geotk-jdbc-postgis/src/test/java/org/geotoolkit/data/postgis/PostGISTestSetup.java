@@ -24,7 +24,7 @@ import org.geotoolkit.jdbc.JDBCTestSetup;
 public class PostGISTestSetup extends JDBCTestSetup {
 
     @Override
-    protected void setUpDataStore(JDBCDataStore dataStore) {
+    protected void setUpDataStore(final JDBCDataStore dataStore) {
         super.setUpDataStore(dataStore);
         
         // the unit tests assume a non loose behaviour

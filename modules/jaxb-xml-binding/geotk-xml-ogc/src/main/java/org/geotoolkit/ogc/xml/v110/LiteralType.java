@@ -69,14 +69,14 @@ public class LiteralType implements Literal {
     /**
      * build a new Literal with the specified list of object
      */
-    public LiteralType(List<Object> content) {
+    public LiteralType(final List<Object> content) {
         this.content = content;
     }
     
      /**
      * build a new Literal with the specified Object.
      */
-    public LiteralType(Object content) {
+    public LiteralType(final Object content) {
         this.content = new ArrayList<Object>(); 
         this.content.add(content);
     }
@@ -84,7 +84,7 @@ public class LiteralType implements Literal {
     /**
      * build a new Literal with the specified String
      */
-    public LiteralType(String content) {
+    public LiteralType(final String content) {
         this.content = new ArrayList<Object>(); 
         this.content.add(content);
     }
@@ -103,7 +103,7 @@ public class LiteralType implements Literal {
     /**
      * Sets the value of the content property.
      */
-    public void setContent(Object content) {
+    public void setContent(final Object content) {
         if (this.content == null) {
             this.content = new ArrayList<Object>();
         }
@@ -113,7 +113,7 @@ public class LiteralType implements Literal {
     /**
      * Sets the value of the content property.
      */
-    public void setContent(List<Object> content) {
+    public void setContent(final List<Object> content) {
         this.content = content;
     }
     
@@ -149,11 +149,11 @@ public class LiteralType implements Literal {
         return null;
     }
 
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object evaluate(Object object, Class context) {
+    public Object evaluate(final Object object, final Class context) {
        Object literal = null;
        if (content != null && content.size() != 0) {
             literal = content.get(0);
@@ -200,7 +200,7 @@ public class LiteralType implements Literal {
      * @param visitor The visitor which requires access to this filter, the
      *        method must call visitor.visit(this);
      */
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
     	return visitor.visit(this,extraData);
     }
 

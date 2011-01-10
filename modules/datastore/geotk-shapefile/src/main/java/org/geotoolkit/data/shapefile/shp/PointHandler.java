@@ -33,11 +33,11 @@ import org.geotoolkit.storage.DataStoreException;
  */
 public class PointHandler extends AbstractShapeHandler {
 
-    public PointHandler(boolean read3D) {
+    public PointHandler(final boolean read3D) {
         super(ShapeType.POINT,read3D); //2d
     }
 
-    public PointHandler(ShapeType type, boolean read3D) throws DataStoreException {
+    public PointHandler(final ShapeType type, final boolean read3D) throws DataStoreException {
         super(type,read3D);
         if ((type != ShapeType.POINT) && (type != ShapeType.POINTM)
                 && (type != ShapeType.POINTZ)) { // 2d, 2d+m, 3d+m
@@ -57,7 +57,7 @@ public class PointHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public int getLength(Object geometry) {
+    public int getLength(final Object geometry) {
         final int length;
         if (shapeType == ShapeType.POINT) {
             length = 20;
@@ -73,13 +73,13 @@ public class PointHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public Object estimated(double minX, double maxX, double minY, double maxY) {
+    public Object estimated(final double minX, final double maxX, final double minY, final double maxY) {
         final Coordinate coord = new Coordinate((minX + maxX) / 2, (minY + maxY) / 2);
         return GEOMETRY_FACTORY.createPoint(coord);
     }
     
     @Override
-    public Object read(ByteBuffer buffer, ShapeType type) {
+    public Object read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
         }
@@ -107,7 +107,7 @@ public class PointHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public void write(ByteBuffer buffer, Object geometry) {
+    public void write(final ByteBuffer buffer, final Object geometry) {
         Coordinate c = ((Point) geometry).getCoordinate();
 
         buffer.putDouble(c.x);

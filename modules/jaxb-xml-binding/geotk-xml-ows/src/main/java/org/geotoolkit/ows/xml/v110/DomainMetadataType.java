@@ -69,7 +69,7 @@ public class DomainMetadataType {
     /**
      * Build a new Domaint metadata.
      */
-    public DomainMetadataType(String value, String reference){
+    public DomainMetadataType(final String value, final String reference){
         this.reference = reference;
         this.value     = value;
         

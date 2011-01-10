@@ -78,7 +78,7 @@ public class SamplingSolidType extends SpatiallyExtensiveSamplingFeatureType {
      *     {@link SolidPropertyType }
      *     
      */
-    public void setShape(SolidPropertyType value) {
+    public void setShape(final SolidPropertyType value) {
         this.shape = value;
     }
 
@@ -102,7 +102,7 @@ public class SamplingSolidType extends SpatiallyExtensiveSamplingFeatureType {
      *     {@link MeasureType }
      *     
      */
-    public void setVolume(MeasureType value) {
+    public void setVolume(final MeasureType value) {
         this.volume = value;
     }
 

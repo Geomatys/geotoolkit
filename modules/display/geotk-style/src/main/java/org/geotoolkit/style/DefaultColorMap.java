@@ -37,7 +37,7 @@ public class DefaultColorMap implements ColorMap{
      *
      * @param function : should not be null.
      */
-    public DefaultColorMap(Function function){
+    public DefaultColorMap(final Function function){
 //        if(function == null){
 //            throw new NullPointerException("A color map must have a function");
 //        }
@@ -56,7 +56,7 @@ public class DefaultColorMap implements ColorMap{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -64,7 +64,7 @@ public class DefaultColorMap implements ColorMap{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

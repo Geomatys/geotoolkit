@@ -58,7 +58,7 @@ public final class RelationNameAdapter extends CodeListAdapter<RelationNameAdapt
      * {@inheritDoc}
      */
     @Override
-    protected RelationNameAdapter wrap(CodeListProxy proxy) {
+    protected RelationNameAdapter wrap(final CodeListProxy proxy) {
         return new RelationNameAdapter(proxy);
     }
 

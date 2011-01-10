@@ -34,7 +34,7 @@ public class BorderCutter {
 
     private BorderCutter(){}
 
-    public static JComponent cut(JComponent sub, boolean top, boolean bottom, boolean left, boolean right){
+    public static JComponent cut(final JComponent sub, final boolean top, final boolean bottom, final boolean left, final boolean right){
         return new JCutter(sub,top,bottom,left,right);
     }
 
@@ -59,7 +59,7 @@ public class BorderCutter {
         private final boolean left;
         private final boolean right;
 
-        private JCutter(JComponent sub, boolean top, boolean bottom, boolean left, boolean right){
+        private JCutter(final JComponent sub, final boolean top, final boolean bottom, final boolean left, final boolean right){
             this.top = top;
             this.bottom = bottom;
             this.left = left;
@@ -95,7 +95,7 @@ public class BorderCutter {
 
 
         @Override
-        public void paint(Graphics g) {
+        public void paint(final Graphics g) {
             final Dimension dim = getSize();
             final Border border = sub.getBorder();
 

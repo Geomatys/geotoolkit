@@ -75,7 +75,7 @@ public class TestData {
     public Filter rv1Filter;
     public SimpleFeature newRiver;
 
-    public TestData(int initialFidValue) throws Exception {
+    public TestData(final int initialFidValue) throws Exception {
         this.initialFidValue = initialFidValue;
 
         gf = new GeometryFactory();
@@ -214,7 +214,7 @@ public class TestData {
      * Creates a line from the specified (<var>x</var>,<var>y</var>) coordinates.
      * The coordinates are stored in a flat array.
      */
-    public LineString line(int[] xy) {
+    public LineString line(final int[] xy) {
         Coordinate[] coords = new Coordinate[xy.length / 2];
 
         for (int i = 0; i < xy.length; i += 2) {
@@ -227,7 +227,7 @@ public class TestData {
     /**
      * Creates a multiline from the specified (<var>x</var>,<var>y</var>) coordinates.
      */
-    public MultiLineString lines(int[][] xy) {
+    public MultiLineString lines(final int[][] xy) {
         LineString[] lines = new LineString[xy.length];
 
         for (int i = 0; i < xy.length; i++) {
@@ -241,7 +241,7 @@ public class TestData {
      * Creates a polygon from the specified (<var>x</var>,<var>y</var>) coordinates.
      * The coordinates are stored in a flat array.
      */
-    public Polygon polygon(int[] xy) {
+    public Polygon polygon(final int[] xy) {
         LinearRing shell = ring(xy);
 
         return gf.createPolygon(shell, null);
@@ -251,7 +251,7 @@ public class TestData {
      * Creates a line from the specified (<var>x</var>,<var>y</var>) coordinates and
      * an arbitrary amount of holes.
      */
-    public Polygon polygon(int[] xy, int[][] holes) {
+    public Polygon polygon(final int[] xy, final int[][] holes) {
         if ((holes == null) || (holes.length == 0)) {
             return polygon(xy);
         }
@@ -271,7 +271,7 @@ public class TestData {
      * Creates a ring from the specified (<var>x</var>,<var>y</var>) coordinates.
      * The coordinates are stored in a flat array.
      */
-    public LinearRing ring(int[] xy) {
+    public LinearRing ring(final int[] xy) {
         Coordinate[] coords = new Coordinate[xy.length / 2];
 
         for (int i = 0; i < xy.length; i += 2) {

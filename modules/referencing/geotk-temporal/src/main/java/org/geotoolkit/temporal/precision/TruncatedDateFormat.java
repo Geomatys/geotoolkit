@@ -47,12 +47,12 @@ public class TruncatedDateFormat extends DateFormat {
     }
 
     @Override
-    public StringBuffer format(Date date, StringBuffer toAppendTo, FieldPosition fieldPosition) {
+    public StringBuffer format(final Date date, final StringBuffer toAppendTo, final FieldPosition fieldPosition) {
         return format.format(date, toAppendTo, fieldPosition);
     }
 
     @Override
-    public Date parse(String source, ParsePosition pos) {
+    public Date parse(final String source, final ParsePosition pos) {
         return format.parse(source, pos);
     }
 

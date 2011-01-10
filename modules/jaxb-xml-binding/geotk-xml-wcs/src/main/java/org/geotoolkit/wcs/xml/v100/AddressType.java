@@ -79,8 +79,8 @@ public class AddressType {
     /**
      * Build a new Adress.
      */
-    public AddressType(List<String> deliveryPoint, String city, String administrativeArea,
-            String postalCode, String country, List<String> electronicMailAddress){
+    public AddressType(final List<String> deliveryPoint, final String city, final String administrativeArea,
+            final String postalCode, final String country, final List<String> electronicMailAddress){
         this.administrativeArea    = administrativeArea;
         this.city                  = city;
         this.country               = country;
@@ -92,8 +92,8 @@ public class AddressType {
     /**
      * Build a simple new Adress.
      */
-    public AddressType(String deliveryPoint, String city, String administrativeArea,
-            String postalCode, String country, String electronicMailAddress){
+    public AddressType(final String deliveryPoint, final String city, final String administrativeArea,
+            final String postalCode, final String country, final String electronicMailAddress){
         this.administrativeArea    = administrativeArea;
         this.city                  = city;
         this.country               = country;

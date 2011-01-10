@@ -59,12 +59,12 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
 
     }
 
-    public DataRecordType(URI definition, List<DataComponentPropertyType> field) {
+    public DataRecordType(final URI definition, final List<DataComponentPropertyType> field) {
         super(definition);
         this.field = field;
     }
 
-    public DataRecordType(DataRecord dr) {
+    public DataRecordType(final DataRecord dr) {
         super(dr);
         if (dr != null && dr.getField() != null) {
             this.field = new ArrayList<DataComponentPropertyType>();
@@ -88,14 +88,14 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     /**
      * Gets the value of the field property.
      */
-    public void setField(List<DataComponentPropertyType> field) {
+    public void setField(final List<DataComponentPropertyType> field) {
         this.field = field;
     }
 
     /**
      * Gets the value of the field property.
      */
-    public void setField(DataComponentPropertyType field) {
+    public void setField(final DataComponentPropertyType field) {
         if (this.field == null) {
             this.field = new ArrayList<DataComponentPropertyType>();
         }
@@ -105,7 +105,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     /**
      * Sets the value of the field property.
      */
-    public void setField(QuantityType Quantity) {
+    public void setField(final QuantityType Quantity) {
         if (this.field == null) {
             this.field = new ArrayList<DataComponentPropertyType>();
         }
@@ -115,7 +115,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     /**
      * Sets the value of the field property.
      */
-    public void setField(DataRecordType record) {
+    public void setField(final DataRecordType record) {
         if (this.field == null) {
             this.field = new ArrayList<DataComponentPropertyType>();
         }
@@ -125,7 +125,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     /**
      * Sets the value of the field property.
      */
-    public void setField(TimeType time) {
+    public void setField(final TimeType time) {
         if (this.field == null) {
             this.field = new ArrayList<DataComponentPropertyType>();
         }
@@ -135,7 +135,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     /**
      * Sets the value of the field property.
      */
-    public void setField(TimeRange time) {
+    public void setField(final TimeRange time) {
         if (this.field == null) {
             this.field = new ArrayList<DataComponentPropertyType>();
         }
@@ -145,7 +145,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     /**
      * Sets the value of the field property.
      */
-    public void setField(QuantityRange qr) {
+    public void setField(final QuantityRange qr) {
         if (this.field == null) {
             this.field = new ArrayList<DataComponentPropertyType>();
         }
@@ -155,7 +155,7 @@ public class DataRecordType extends AbstractDataRecordType implements DataRecord
     /**
      * Sets the value of the field property.
      */
-    public void setField(BooleanType boo) {
+    public void setField(final BooleanType boo) {
         if (this.field == null) {
             this.field = new ArrayList<DataComponentPropertyType>();
         }

@@ -35,8 +35,8 @@ public class ShapeFIDReader implements FeatureIDReader {
     private int len;
     protected StringBuffer buffer;
 
-    public ShapeFIDReader(String typeName,
-            IndexedShapefileAttributeReader reader) {
+    public ShapeFIDReader(final String typeName,
+            final IndexedShapefileAttributeReader reader) {
         buffer = new StringBuffer(typeName);
         buffer.append('.');
         len = typeName.length() + 1;
@@ -44,8 +44,8 @@ public class ShapeFIDReader implements FeatureIDReader {
         this.reader = reader;
     }
 
-    public ShapeFIDReader(SimpleFeatureType featureType,
-            IndexedShapefileAttributeReader reader) {
+    public ShapeFIDReader(final SimpleFeatureType featureType,
+            final IndexedShapefileAttributeReader reader) {
         this(featureType.getTypeName(), reader);
     }
 

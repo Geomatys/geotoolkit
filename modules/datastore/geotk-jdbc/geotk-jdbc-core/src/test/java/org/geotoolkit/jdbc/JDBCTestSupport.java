@@ -92,7 +92,7 @@ public abstract class JDBCTestSupport extends TestCase {
      * tests are ignored.
      */
     @Override
-    public void run(TestResult result) {
+    public void run(final TestResult result) {
         JDBCTestSetup setup = createTestSetup();
         
         //check if the data source is available for this setup
@@ -165,14 +165,14 @@ public abstract class JDBCTestSupport extends TestCase {
      * Returns the table name as the datastore understands it (some datastore are incapable of supporting
      * mixed case names for example)
      */
-    protected String tname( String raw ) {
+    protected String tname( final String raw ) {
         return setup.typeName( raw );
     }
 
     /**
      * Returns Namespace name
      */
-    protected Name nsname( String raw ) {
+    protected Name nsname( final String raw ) {
         try {
             for (Name n : dataStore.getNames()) {
                 if(n.getLocalPart().equalsIgnoreCase(raw)){
@@ -190,7 +190,7 @@ public abstract class JDBCTestSupport extends TestCase {
      * Returns the attribute name as the datastore understands it (some datastore are incapable of supporting
      * mixed case names for example)
      */
-    protected String aname( String raw ) {
+    protected String aname( final String raw ) {
         return setup.attributeName( raw );
     }
     
@@ -198,7 +198,7 @@ public abstract class JDBCTestSupport extends TestCase {
      * Returns the attribute name as the datastore understands it (some datastore are incapable of supporting
      * mixed case names for example)
      */
-    protected Name aname( Name raw ) {
+    protected Name aname( final Name raw ) {
         return new DefaultName( raw.getNamespaceURI(), aname( raw.getLocalPart() ) );
     }
     
@@ -206,7 +206,7 @@ public abstract class JDBCTestSupport extends TestCase {
      * Checkes the two feature types are equal, taking into consideration the eventual modification
      * the datastore had to perform in order to actually manage the type (change in names case, for example)
      */
-    protected void assertFeatureTypesEqual(SimpleFeatureType expected, SimpleFeatureType actual) {
+    protected void assertFeatureTypesEqual(final SimpleFeatureType expected, final SimpleFeatureType actual) {
         for (int i = 0; i < expected.getAttributeCount(); i++) {
             AttributeDescriptor expectedAttribute = expected.getDescriptor(i);
             AttributeDescriptor actualAttribute = actual.getDescriptor(i);
@@ -226,7 +226,7 @@ public abstract class JDBCTestSupport extends TestCase {
      * Checkes the two feature types are equal, taking into consideration the eventual modification
      * the datastore had to perform in order to actually manage the type (change in names case, for example)
      */
-    protected void assertAttributesEqual(AttributeDescriptor expected, AttributeDescriptor actual) {
+    protected void assertAttributesEqual(final AttributeDescriptor expected, final AttributeDescriptor actual) {
         assertEquals(aname(expected.getName()).getLocalPart(), actual.getName().getLocalPart()); //ignore namespace
         assertEquals(expected.getMinOccurs(), actual.getMinOccurs());
         assertEquals(expected.getMaxOccurs(), actual.getMaxOccurs());
@@ -248,7 +248,7 @@ public abstract class JDBCTestSupport extends TestCase {
         
     }
     
-    protected boolean areCRSEqual(CoordinateReferenceSystem crs1, CoordinateReferenceSystem crs2) {
+    protected boolean areCRSEqual(final CoordinateReferenceSystem crs1, final CoordinateReferenceSystem crs2) {
     	
     	if (crs1==null && crs2==null)
     		return true;
@@ -279,7 +279,7 @@ public abstract class JDBCTestSupport extends TestCase {
     	return false;
    	}
 
-    protected boolean areReferencedEnvelopesEuqal(JTSEnvelope2D e1, JTSEnvelope2D e2) {
+    protected boolean areReferencedEnvelopesEuqal(final JTSEnvelope2D e1, final JTSEnvelope2D e2) {
 		
 		if (e1==null && e2 ==null) return true;
 		if (e1==null || e2 == null) return false;
@@ -294,7 +294,7 @@ public abstract class JDBCTestSupport extends TestCase {
 		return areCRSEqual(e1.getCoordinateReferenceSystem(), e2.getCoordinateReferenceSystem());
 	}
 
-    protected void assertPrimaryKeyAreDefined(SimpleFeatureType type, String ... fields){
+    protected void assertPrimaryKeyAreDefined(final SimpleFeatureType type, final String ... fields){
         final List<String> pkeyFields = new ArrayList<String>();
         for(String field : fields){
             pkeyFields.add(field);
@@ -308,7 +308,7 @@ public abstract class JDBCTestSupport extends TestCase {
         assertEquals(0, pkeyFields.size());
     }
 
-    protected void assertPrimaryKeyCanBeHidden(DataStore store, SimpleFeatureType sft){
+    protected void assertPrimaryKeyCanBeHidden(final DataStore store, final SimpleFeatureType sft){
         final List<String> pkeyFields = new ArrayList<String>();
         for(AttributeDescriptor att : sft.getAttributeDescriptors()){
             pkeyFields.remove(att.getLocalName());

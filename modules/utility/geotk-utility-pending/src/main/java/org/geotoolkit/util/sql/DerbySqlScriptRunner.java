@@ -31,7 +31,7 @@ import org.geotoolkit.internal.sql.ScriptRunner;
  */
 public class DerbySqlScriptRunner extends ScriptRunner {
 
-    public DerbySqlScriptRunner(Connection c) throws SQLException {
+    public DerbySqlScriptRunner(final Connection c) throws SQLException {
         super(c);
     }
 
@@ -47,7 +47,7 @@ public class DerbySqlScriptRunner extends ScriptRunner {
      * @throws IOException
      */
     @Override
-    protected int execute(StringBuilder sb) throws SQLException, IOException {
+    protected int execute(final StringBuilder sb) throws SQLException, IOException {
         String query = sb.toString();
         query        = query.replace("'false'", "'FALSE'");
         query        = query.replace("'true'", "'TRUE'");

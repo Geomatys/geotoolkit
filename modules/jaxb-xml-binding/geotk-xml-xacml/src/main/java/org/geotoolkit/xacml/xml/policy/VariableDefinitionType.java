@@ -66,7 +66,7 @@ public class VariableDefinitionType {
     * Sets the value of the expression property.
     * 
     */
-   public void setExpression(JAXBElement<?> value) {
+   public void setExpression(final JAXBElement<?> value) {
       this.expression = ((JAXBElement<?>) value);
    }
 
@@ -80,7 +80,7 @@ public class VariableDefinitionType {
    /**
     * Sets the value of the variableId property.
     */
-   public void setVariableId(String value) {
+   public void setVariableId(final String value) {
       this.variableId = value;
    }
 }

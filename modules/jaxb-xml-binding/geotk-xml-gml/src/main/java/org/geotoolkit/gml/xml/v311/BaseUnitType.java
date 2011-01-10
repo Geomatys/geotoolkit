@@ -75,7 +75,7 @@ public class BaseUnitType
      *     {@link ReferenceType }
      *     
      */
-    public void setUnitsSystem(ReferenceEntry value) {
+    public void setUnitsSystem(final ReferenceEntry value) {
         this.unitsSystem = value;
     }
 

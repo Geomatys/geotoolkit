@@ -73,7 +73,7 @@ public class KnotType {
      * Sets the value of the value property.
      * 
      */
-    public void setValue(double value) {
+    public void setValue(final double value) {
         this.value = value;
     }
 
@@ -97,7 +97,7 @@ public class KnotType {
      *     {@link Integer }
      *     
      */
-    public void setMultiplicity(Integer value) {
+    public void setMultiplicity(final Integer value) {
         this.multiplicity = value;
     }
 
@@ -113,7 +113,7 @@ public class KnotType {
      * Sets the value of the weight property.
      * 
      */
-    public void setWeight(double value) {
+    public void setWeight(final double value) {
         this.weight = value;
     }
 

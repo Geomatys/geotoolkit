@@ -32,11 +32,11 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
     protected final double[] coordinates;
     protected final int size;
 
-    ShapeCoordinateSequence2D(double[] coordinates){
+    ShapeCoordinateSequence2D(final double[] coordinates){
         this(coordinates, coordinates.length/2);
     }
 
-    ShapeCoordinateSequence2D(double[] coordinates, int size){
+    ShapeCoordinateSequence2D(final double[] coordinates, final int size){
         this.coordinates = coordinates;
         this.size = size;
     }
@@ -47,35 +47,35 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
     }
 
     @Override
-    public Coordinate getCoordinate(int index) {
+    public Coordinate getCoordinate(final int index) {
         final int i = index*2;
         return new Coordinate(coordinates[i], coordinates[i+1], Coordinate.NULL_ORDINATE);
     }
 
     @Override
-    public Coordinate getCoordinateCopy(int i) {
+    public Coordinate getCoordinateCopy(final int i) {
         return getCoordinate(i);
     }
 
     @Override
-    public void getCoordinate(int index, Coordinate coord) {
+    public void getCoordinate(final int index, final Coordinate coord) {
         final int i = index*2;
         coord.x = coordinates[i];
         coord.y = coordinates[i+1];
     }
 
     @Override
-    public double getX(int index) {
+    public double getX(final int index) {
         return coordinates[index*2];
     }
 
     @Override
-    public double getY(int index) {
+    public double getY(final int index) {
         return coordinates[index*2 + 1];
     }
 
     @Override
-    public double getOrdinate(int index, int ordinate) {
+    public double getOrdinate(final int index, final int ordinate) {
         return coordinates[index*2 + ordinate];
     }
 
@@ -85,7 +85,7 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
     }
 
     @Override
-    public void setOrdinate(int index, int ordinate, double value) {
+    public void setOrdinate(final int index, final int ordinate, final double value) {
         coordinates[index*2 + ordinate] = value;
     }
 
@@ -99,7 +99,7 @@ class ShapeCoordinateSequence2D implements CoordinateSequence {
     }
 
     @Override
-    public Envelope expandEnvelope(Envelope envlp) {
+    public Envelope expandEnvelope(final Envelope envlp) {
         if(size == 0){
             return envlp;
         }

@@ -71,8 +71,8 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
      * @param name : can be null
      * @param desc : if null will be replaced by default description.
      */
-    public DefaultTextSymbolizer(Expression label, Font font, LabelPlacement placement,
-            Halo halo, Fill fill, Unit uom, String geom, String name, Description desc){
+    public DefaultTextSymbolizer(final Expression label, final Font font, final LabelPlacement placement,
+            final Halo halo, final Fill fill, final Unit uom, final String geom, final String name, final Description desc){
         if(label == null){
             throw new NullPointerException("Label can not be null");
         }
@@ -164,7 +164,7 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -172,7 +172,7 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

@@ -96,12 +96,12 @@ public class EnvelopeWithTimePeriodType extends EnvelopeEntry {
      *     {@link String }
      *     
      */
-    public void setFrame(String value) {
+    public void setFrame(final String value) {
         this.frame = value;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -28,7 +28,7 @@ public class BindingImpl implements Binding {
     /**
      * Clone a Binding
      */
-    public BindingImpl(Binding feature) {
+    public BindingImpl(final Binding feature) {
         if (feature != null)
             this.description = feature.getDescription();
         
@@ -37,7 +37,7 @@ public class BindingImpl implements Binding {
         return description;
     }
     
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
     

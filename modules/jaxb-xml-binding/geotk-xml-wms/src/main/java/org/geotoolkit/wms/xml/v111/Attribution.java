@@ -55,7 +55,7 @@ public class Attribution {
     /**
      * Build a new Attribution.
      */
-    public Attribution(final String title, OnlineResource onlineResource, LogoURL logoURL) {
+    public Attribution(final String title, final OnlineResource onlineResource, final LogoURL logoURL) {
         this.title          = title;
         this.onlineResource = onlineResource;
         this.logoURL        = logoURL;
@@ -64,7 +64,7 @@ public class Attribution {
     /**
      * Build a new Attribution.
      */
-    public Attribution(final String title, String href, LogoURL logoURL) {
+    public Attribution(final String title, final String href, final LogoURL logoURL) {
         this.title          = title;
         this.onlineResource = new OnlineResource(href);
         this.logoURL        = logoURL;

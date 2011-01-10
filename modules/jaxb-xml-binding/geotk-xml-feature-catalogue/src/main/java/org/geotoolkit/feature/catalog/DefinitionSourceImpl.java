@@ -71,7 +71,7 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
     /**
      * Clone a DefinitionSource
      */
-    public DefinitionSourceImpl(DefinitionSource feature) {
+    public DefinitionSourceImpl(final DefinitionSource feature) {
         if (feature != null) {
             this.source = feature.getSource();
             this.id     = feature.getId();
@@ -82,7 +82,7 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
      /**
      * build a new definition source
      */
-    public DefinitionSourceImpl(String id, Citation source) {
+    public DefinitionSourceImpl(final String id, final Citation source) {
         this.id     = id;    
         this.source = source;
     }
@@ -98,11 +98,11 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
      * Sets the value of the source property.
      * 
      */
-    public void setSource(Citation value) {
+    public void setSource(final Citation value) {
         this.source = value;
     }
     
-    public void setReference(boolean isReference) {
+    public void setReference(final boolean isReference) {
         this.isReference = isReference;
     }
     
@@ -120,7 +120,7 @@ public class DefinitionSourceImpl implements DefinitionSource, Referenceable {
         return id;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
     

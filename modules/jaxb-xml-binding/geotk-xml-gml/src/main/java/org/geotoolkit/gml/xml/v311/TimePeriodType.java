@@ -82,7 +82,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
     /**
      * Build a new Time period bounded by the begin and end time specified.
      */
-    public TimePeriodType(TimePositionType beginPosition, TimePositionType endPosition){
+    public TimePeriodType(final TimePositionType beginPosition, final TimePositionType endPosition){
         this.beginPosition = beginPosition;
         this.endPosition   = endPosition;
     }
@@ -90,7 +90,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
     /**
      * Build a new Time period bounded by the begin and end time specified.
      */
-    public TimePeriodType(String beginValue, String endValue){
+    public TimePeriodType(final String beginValue, final String endValue){
         this.beginPosition = new TimePositionType(beginValue);
         this.endPosition   = new TimePositionType(endValue);
     }
@@ -98,7 +98,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
     /**
      * Build a new Time period bounded by the begin and with the end position "now".
      */
-    public TimePeriodType(TimePositionType beginPosition){
+    public TimePeriodType(final TimePositionType beginPosition){
         this.beginPosition = beginPosition;
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }
@@ -106,7 +106,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
     /**
      * Build a new Time period bounded by the begin and end time specified.
      */
-    public TimePeriodType(String beginValue){
+    public TimePeriodType(final String beginValue){
         this.beginPosition = new TimePositionType(beginValue);
         this.endPosition   = new TimePositionType(TimeIndeterminateValueType.NOW);
     }
@@ -114,7 +114,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
     /**
      * Build a new Time period bounded by an indeterminate time at begin.
      */
-    public TimePeriodType(TimeIndeterminateValueType indeterminateBegin, TimePositionType endPosition){
+    public TimePeriodType(final TimeIndeterminateValueType indeterminateBegin, final TimePositionType endPosition){
         this.beginPosition = new TimePositionType(indeterminateBegin);
         this.endPosition   = endPosition;
     }
@@ -122,7 +122,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
     /**
      * Build a new Time periodwith a duration.
      */
-    public TimePeriodType(Duration duration){
+    public TimePeriodType(final Duration duration){
         this.duration = duration;
     }
 
@@ -146,7 +146,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link TimePositionType }
      *     
      */
-    public void setBeginPosition(TimePositionType value) {
+    public void setBeginPosition(final TimePositionType value) {
         this.beginPosition = value;
     }
 
@@ -158,7 +158,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link TimePositionType }
      *
      */
-    public void setBeginPosition(Date value) {
+    public void setBeginPosition(final Date value) {
         this.beginPosition = new TimePositionType(value);
     }
 
@@ -170,7 +170,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link TimePositionType }
      *
      */
-    public void setBeginPosition(TimeIndeterminateValueType value) {
+    public void setBeginPosition(final TimeIndeterminateValueType value) {
         this.beginPosition = new TimePositionType(value);
     }
 
@@ -194,7 +194,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link TimeInstantPropertyType }
      *     
      */
-    public void setBegin(TimeInstantPropertyType value) {
+    public void setBegin(final TimeInstantPropertyType value) {
         this.begin = value;
     }
 
@@ -218,7 +218,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link TimePositionType }
      *     
      */
-    public void setEndPosition(TimePositionType value) {
+    public void setEndPosition(final TimePositionType value) {
         this.endPosition = value;
     }
 
@@ -230,7 +230,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link TimePositionType }
      *
      */
-    public void setEndPosition(Date value) {
+    public void setEndPosition(final Date value) {
         this.endPosition = new TimePositionType(value);
     }
 
@@ -242,7 +242,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link TimePositionType }
      *
      */
-    public void setEndPosition(TimeIndeterminateValueType value) {
+    public void setEndPosition(final TimeIndeterminateValueType value) {
         this.endPosition = new TimePositionType(value);
     }
 
@@ -266,7 +266,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link TimeInstantPropertyType }
      *     
      */
-    public void setEnd(TimeInstantPropertyType value) {
+    public void setEnd(final TimeInstantPropertyType value) {
         this.end = value;
     }
 
@@ -308,7 +308,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link Duration }
      *     
      */
-    public void setDuration(Duration value) {
+    public void setDuration(final Duration value) {
         this.duration = value;
     }
 
@@ -332,7 +332,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      *     {@link TimeIntervalLengthType }
      *     
      */
-    public void setTimeInterval(TimeIntervalLengthType value) {
+    public void setTimeInterval(final TimeIntervalLengthType value) {
         this.timeInterval = value;
     }
 

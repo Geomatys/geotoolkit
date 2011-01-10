@@ -126,7 +126,7 @@ public class Graphic {
      *     {@link ParameterValueType }
      *     
      */
-    public void setOpacity(ParameterValueType value) {
+    public void setOpacity(final ParameterValueType value) {
         this.opacity = value;
     }
 
@@ -150,7 +150,7 @@ public class Graphic {
      *     {@link ParameterValueType }
      *     
      */
-    public void setSize(ParameterValueType value) {
+    public void setSize(final ParameterValueType value) {
         this.size = value;
     }
 
@@ -174,7 +174,7 @@ public class Graphic {
      *     {@link ParameterValueType }
      *     
      */
-    public void setRotation(ParameterValueType value) {
+    public void setRotation(final ParameterValueType value) {
         this.rotation = value;
     }
 

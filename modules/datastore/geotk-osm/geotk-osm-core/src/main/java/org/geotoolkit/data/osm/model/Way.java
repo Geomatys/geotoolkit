@@ -47,9 +47,9 @@ public class Way extends IdentifiedElement{
     //todo, not pretty compact
     private final List<Long> nodes;
 
-    public Way(List<Long> nodes,
-            long id, int version, int changeset, User user,
-            long timestamp, Map<String,String> tags) {
+    public Way(final List<Long> nodes,
+            final long id, final int version, final int changeset, final User user,
+            final long timestamp, final Map<String,String> tags) {
         super(OSMModelConstants.DESC_WAY,id,version,changeset,user,timestamp,tags);
 
         if(nodes == null || nodes.isEmpty()){
@@ -126,7 +126,7 @@ public class Way extends IdentifiedElement{
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -77,7 +77,7 @@ public class Halo {
      *     {@link ParameterValueType }
      *     
      */
-    public void setRadius(ParameterValueType value) {
+    public void setRadius(final ParameterValueType value) {
         this.radius = value;
     }
 
@@ -101,7 +101,7 @@ public class Halo {
      *     {@link Fill }
      *     
      */
-    public void setFill(Fill value) {
+    public void setFill(final Fill value) {
         this.fill = value;
     }
 

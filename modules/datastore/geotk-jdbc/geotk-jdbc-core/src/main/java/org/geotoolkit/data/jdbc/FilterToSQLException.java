@@ -32,7 +32,7 @@ public class FilterToSQLException extends Exception {
      *
      * @param message Reason for the exception being thrown
      */
-    public FilterToSQLException(String message) {
+    public FilterToSQLException(final String message) {
         super(message);
     }
 
@@ -42,7 +42,7 @@ public class FilterToSQLException extends Exception {
      * @param msg A message explaining the exception
      * @param exp the throwable object which caused this exception
      */
-    public FilterToSQLException(String msg, Throwable exp) {
+    public FilterToSQLException(final String msg, final Throwable exp) {
         super(msg, exp);
     }
 }

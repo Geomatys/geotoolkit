@@ -48,8 +48,8 @@ public abstract class IdentifiedElement extends AbstractFeature<Collection<Prope
     protected final long timestamp;
     protected final List<Tag> tags;
 
-    public IdentifiedElement(AttributeDescriptor desc, long id, int version, int changeset, User user,
-            long timestamp, Map<String,String> tags) {
+    public IdentifiedElement(final AttributeDescriptor desc, final long id, final int version, final int changeset, final User user,
+            final long timestamp, final Map<String,String> tags) {
         super(desc,new DefaultFeatureId(String.valueOf(id)));
         this.id = id;
         this.version = version;
@@ -119,7 +119,7 @@ public abstract class IdentifiedElement extends AbstractFeature<Collection<Prope
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -41,7 +41,7 @@ public class IdInfo {
     /**
      * @param bounding The bounding to set.
      */
-    public void setBounding(Envelope bounding) {
+    public void setBounding(final Envelope bounding) {
         this.bounding = bounding;
     }
 
@@ -55,7 +55,7 @@ public class IdInfo {
     /**
      * @param lbounding The lbounding to set.
      */
-    public void setLbounding(Envelope lbounding) {
+    public void setLbounding(final Envelope lbounding) {
         this.lbounding = lbounding;
     }
 }

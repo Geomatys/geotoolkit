@@ -41,7 +41,7 @@ public class MultiLingualCapabilities extends AbstractExtendedCapabilitiesType {
 
     }
 
-    public MultiLingualCapabilities(InspireCapabilitiesType multiLingualCapabilities) {
+    public MultiLingualCapabilities(final InspireCapabilitiesType multiLingualCapabilities) {
         this.multiLingualCapabilities = multiLingualCapabilities;
     }
 
@@ -55,7 +55,7 @@ public class MultiLingualCapabilities extends AbstractExtendedCapabilitiesType {
     /**
      * @param multiLingualCapabilities the multiLingualCapabilities to set
      */
-    public void setMultiLingualCapabilities(InspireCapabilitiesType multiLingualCapabilities) {
+    public void setMultiLingualCapabilities(final InspireCapabilitiesType multiLingualCapabilities) {
         this.multiLingualCapabilities = multiLingualCapabilities;
     }
 

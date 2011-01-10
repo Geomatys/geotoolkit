@@ -61,7 +61,7 @@ public enum ShpFileType {
     public final String extension;
     public final String extensionWithPeriod;
 
-    private ShpFileType(String extension) {
+    private ShpFileType(final String extension) {
         this.extension = extension.toLowerCase();
         this.extensionWithPeriod = "." + this.extension;
     }
@@ -73,7 +73,7 @@ public enum ShpFileType {
      * For example if the file is c:\shapefiles\file1.dbf. The DBF type will
      * return c:\shapefiles\file1 but all other will return null.
      */
-    public String toBase(File file) {
+    public String toBase(final File file) {
         String path = file.getPath();
         return toBase(path);
     }
@@ -85,7 +85,7 @@ public enum ShpFileType {
      * For example if the file is c:\shapefiles\file1.dbf. The DBF type will
      * return c:\shapefiles\file1 but all other will return null.
      */
-    public String toBase(String path) {
+    public String toBase(final String path) {
         if (!path.toLowerCase().endsWith(extensionWithPeriod)
                 || path.equalsIgnoreCase(extensionWithPeriod)) {
             return null;
@@ -102,7 +102,7 @@ public enum ShpFileType {
      * For example if the file is c:\shapefiles\file1.dbf. The DBF type will
      * return c:\shapefiles\file1 but all other will return null.
      */
-    public String toBase(URL url) {
+    public String toBase(final URL url) {
         try {
             return toBase(java.net.URLDecoder.decode(url.toExternalForm(),"US-ASCII"));
         } catch (UnsupportedEncodingException e) {

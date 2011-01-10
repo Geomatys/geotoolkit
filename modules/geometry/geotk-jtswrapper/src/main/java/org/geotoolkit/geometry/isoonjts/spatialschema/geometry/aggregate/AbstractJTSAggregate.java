@@ -81,7 +81,7 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
         return elements;
     }
 
-    public void setElements(Set<T> elements) {
+    public void setElements(final Set<T> elements) {
         this.elements = elements;
     }
 
@@ -96,7 +96,7 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (this == object)
             return true;
         if (object instanceof AbstractJTSAggregate && super.equals(object)) {

@@ -41,7 +41,7 @@ public final class ProcessFinder {
     /**
      * Return the factory for the given authority code.
      */
-    public static ProcessFactory getProcessFactory(String authorityCode){
+    public static ProcessFactory getProcessFactory(final String authorityCode){
         final Iterator<ProcessFactory> ite = getProcessFactories();
         while(ite.hasNext()){
             final ProcessFactory candidate = ite.next();
@@ -63,7 +63,7 @@ public final class ProcessFinder {
      * @throws IllegalArgumentException if description could not be found
      */
     public static ProcessDescriptor getProcessDescriptor(String authority, 
-            String processName) throws IllegalArgumentException{
+            final String processName) throws IllegalArgumentException{
         if(authority != null && authority.trim().isEmpty()){
             authority = null;
         }

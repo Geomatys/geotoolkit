@@ -64,7 +64,7 @@ public class JDashPane extends javax.swing.JPanel {
      * 
      * @param dashes , the default dashes array
      */
-    public void setDashes(float[] dashes) {
+    public void setDashes(final float[] dashes) {
 
         if (dashes!= null && dashes.length != 0) {
             jsp_lenght.setValue(dashes[0]);
@@ -89,7 +89,7 @@ public class JDashPane extends javax.swing.JPanel {
      * 
      * @param exp default dashes offset
      */
-    public void setOffset(Expression exp){
+    public void setOffset(final Expression exp){
         
         if(exp != null){
             jsp_offset.setValue( Float.parseFloat(exp.toString()) );

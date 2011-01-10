@@ -39,11 +39,11 @@ public final class GO2Hints {
 
         private final String name;
 
-        private NamedKey(Class c){
+        private NamedKey(final Class c){
             this(c,null);
         }
 
-        private NamedKey(Class c, String name){
+        private NamedKey(final Class c, final String name){
             super(c);
             this.name = name;
         }

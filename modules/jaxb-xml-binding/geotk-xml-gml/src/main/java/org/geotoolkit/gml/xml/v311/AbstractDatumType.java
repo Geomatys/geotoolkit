@@ -82,7 +82,7 @@ public abstract class AbstractDatumType extends AbstractDatumBaseType {
 
     }
 
-    public AbstractDatumType(String id, String datumName, CodeType anchorPoint) {
+    public AbstractDatumType(final String id, final String datumName, final CodeType anchorPoint) {
         super(id, datumName);
         this.anchorPoint = anchorPoint;
     }

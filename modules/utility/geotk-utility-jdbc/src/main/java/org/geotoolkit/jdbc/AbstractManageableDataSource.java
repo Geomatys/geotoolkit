@@ -36,7 +36,7 @@ public abstract class AbstractManageableDataSource implements ManageableDataSour
 
     protected DataSource wrapped;
 
-    public AbstractManageableDataSource(DataSource wrapped) {
+    public AbstractManageableDataSource(final DataSource wrapped) {
         this.wrapped = wrapped;
     }
 
@@ -46,7 +46,7 @@ public abstract class AbstractManageableDataSource implements ManageableDataSour
     }
 
     @Override
-    public Connection getConnection(String username, String password)
+    public Connection getConnection(final String username, final String password)
             throws SQLException {
         return wrapped.getConnection(username, password);
     }
@@ -62,22 +62,22 @@ public abstract class AbstractManageableDataSource implements ManageableDataSour
     }
 
     @Override
-    public void setLoginTimeout(int seconds) throws SQLException {
+    public void setLoginTimeout(final int seconds) throws SQLException {
         wrapped.setLoginTimeout(seconds);
     }
 
     @Override
-    public void setLogWriter(PrintWriter out) throws SQLException {
+    public void setLogWriter(final PrintWriter out) throws SQLException {
         wrapped.setLogWriter(out);
     }
 
     @Override
-    public boolean isWrapperFor(Class c) throws SQLException {
+    public boolean isWrapperFor(final Class c) throws SQLException {
         return false;
     }
 
     @Override
-    public Object unwrap(Class arg0) throws SQLException {
+    public Object unwrap(final Class arg0) throws SQLException {
         throw new SQLException("This implementation cannot unwrap anything");
     }
 }

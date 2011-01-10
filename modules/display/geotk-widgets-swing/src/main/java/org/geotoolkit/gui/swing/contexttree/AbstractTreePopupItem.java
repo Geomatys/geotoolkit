@@ -35,12 +35,12 @@ public abstract class AbstractTreePopupItem extends JMenuItem implements TreePop
     public AbstractTreePopupItem() {
     }
 
-    public AbstractTreePopupItem(String str) {
+    public AbstractTreePopupItem(final String str) {
         super(str);
     }
 
     @Override
-    public void setMapView(JMap2D map){
+    public void setMapView(final JMap2D map){
         this.map = map;
     }
 
@@ -50,7 +50,7 @@ public abstract class AbstractTreePopupItem extends JMenuItem implements TreePop
     }
 
     @Override
-    public void setTree(JContextTree tree) {
+    public void setTree(final JContextTree tree) {
         this.tree = tree;
     }
 
@@ -59,7 +59,7 @@ public abstract class AbstractTreePopupItem extends JMenuItem implements TreePop
         return tree;
     }
 
-    protected static boolean uniqueAndType(TreePath[] selection,Class C) {
+    protected static boolean uniqueAndType(final TreePath[] selection,final Class C) {
         if (selection != null && selection.length == 1){
             TreePath path = selection[0];
             if( path != null && path.getLastPathComponent() != null && path.getLastPathComponent() instanceof DefaultMutableTreeNode) {

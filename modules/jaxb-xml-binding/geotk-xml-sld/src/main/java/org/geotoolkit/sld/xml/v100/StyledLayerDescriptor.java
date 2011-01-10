@@ -98,7 +98,7 @@ public class StyledLayerDescriptor {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -122,7 +122,7 @@ public class StyledLayerDescriptor {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -146,7 +146,7 @@ public class StyledLayerDescriptor {
      *     {@link String }
      *     
      */
-    public void setAbstract(String value) {
+    public void setAbstract(final String value) {
         this._abstract = value;
     }
 
@@ -204,7 +204,7 @@ public class StyledLayerDescriptor {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

@@ -33,7 +33,7 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
 
     private final PropertyAccessor accessor;
 
-    CachedPropertyName(String property, Class clazz) {
+    CachedPropertyName(final String property, final Class clazz) {
         if(property == null){
             throw new NullPointerException("Property name can not be null");
         }
@@ -53,7 +53,7 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
      * {@inheritDoc }
      */
     @Override
-    public Object evaluate(Object candidate) {
+    public Object evaluate(final Object candidate) {
         return accessor.get(candidate, property, null);
     }
 
@@ -61,7 +61,7 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -77,7 +77,7 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

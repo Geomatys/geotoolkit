@@ -58,7 +58,7 @@ public class JFontPane extends StyleElementEditor<Font>{
     }
     
     @Override
-    public void parse(Font font){        
+    public void parse(final Font font){        
         
         if(font != null){
             if(!font.getFamily().isEmpty()){
@@ -82,7 +82,7 @@ public class JFontPane extends StyleElementEditor<Font>{
     }
     
     @Override
-    public void setLayer(MapLayer layer){
+    public void setLayer(final MapLayer layer){
         guiFamily.setLayer(layer);
         guiSize.setLayer(layer);
         guiStyle.setLayer(layer);

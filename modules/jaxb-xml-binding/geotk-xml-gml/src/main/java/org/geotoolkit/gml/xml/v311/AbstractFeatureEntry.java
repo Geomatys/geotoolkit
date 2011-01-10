@@ -61,7 +61,7 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry implements A
      */
     public AbstractFeatureEntry() {}
 
-    public AbstractFeatureEntry(AbstractFeature af) {
+    public AbstractFeatureEntry(final AbstractFeature af) {
         super(af);
         if (af != null) {
             this.srsName   = af.getSrsName();
@@ -73,7 +73,7 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry implements A
     /**
      * Build a new light "Feature"
      */
-    public AbstractFeatureEntry(String id, String name, String description) {
+    public AbstractFeatureEntry(final String id, final String name, final String description) {
         super(id, name, description, null);
         this.boundedBy = new BoundingShapeEntry("not_bounded");
     }
@@ -81,8 +81,8 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry implements A
     /**
      * Build a new "Feature"
      */
-    public AbstractFeatureEntry(String id, String name, String description, ReferenceEntry descriptionReference,
-            BoundingShapeEntry boundedBy, List<String> srsName) {
+    public AbstractFeatureEntry(final String id, final String name, final String description, final ReferenceEntry descriptionReference,
+            final BoundingShapeEntry boundedBy, final List<String> srsName) {
         super(id, name, description, descriptionReference);
         this.srsName = srsName;
         if (boundedBy == null) {
@@ -102,14 +102,14 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry implements A
     /**
      * Gets the value of the boundedBy property.
      */
-    public void setBoundedBy(BoundingShapeEntry boundingShape) {
+    public void setBoundedBy(final BoundingShapeEntry boundingShape) {
         this.boundedBy = boundingShape;
     }
 
     /**
      * Gets the value of the boundedBy property.
      */
-    public void setBoundedBy(EnvelopeEntry envelope) {
+    public void setBoundedBy(final EnvelopeEntry envelope) {
         this.boundedBy = new BoundingShapeEntry(envelope);
     }
 
@@ -133,14 +133,14 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry implements A
     /**
      * Get srs name list
      */
-    public void setSrsName(List<String> srsName) {
+    public void setSrsName(final List<String> srsName) {
         this.srsName = srsName;
     }
 
     /**
      * Get srs name list
      */
-    public void getSrsName(String name){
+    public void getSrsName(final String name){
         if (srsName == null) {
             srsName = new ArrayList<String>();
         }
@@ -153,7 +153,7 @@ public abstract class AbstractFeatureEntry extends AbstractGMLEntry implements A
      * @param x The longitude value of the point.
      * @param y The latitude value of the point.
      */
-    public void updateBoundingShape(double x, double y) {
+    public void updateBoundingShape(final double x, final double y) {
         if (boundedBy != null && boundedBy.getEnvelope() != null) {
             EnvelopeEntry envelope = boundedBy.getEnvelope();
             if (envelope.getLowerCorner() != null) {

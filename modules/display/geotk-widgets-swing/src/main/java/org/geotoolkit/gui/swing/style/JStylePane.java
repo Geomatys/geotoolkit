@@ -154,7 +154,7 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
     }
 
@@ -164,7 +164,7 @@ public class JStylePane extends StyleElementEditor<MutableStyle>{
     }
 
     @Override
-    public void parse(MutableStyle target) {
+    public void parse(final MutableStyle target) {
         this.style = target;
         if(style != null){
             jtf_name.setText(style.getName());

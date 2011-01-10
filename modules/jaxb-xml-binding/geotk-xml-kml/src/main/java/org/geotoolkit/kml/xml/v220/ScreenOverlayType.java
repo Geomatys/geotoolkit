@@ -97,7 +97,7 @@ public class ScreenOverlayType
      *     {@link Vec2Type }
      *     
      */
-    public void setOverlayXY(Vec2Type value) {
+    public void setOverlayXY(final Vec2Type value) {
         this.overlayXY = value;
     }
 
@@ -121,7 +121,7 @@ public class ScreenOverlayType
      *     {@link Vec2Type }
      *     
      */
-    public void setScreenXY(Vec2Type value) {
+    public void setScreenXY(final Vec2Type value) {
         this.screenXY = value;
     }
 
@@ -145,7 +145,7 @@ public class ScreenOverlayType
      *     {@link Vec2Type }
      *     
      */
-    public void setRotationXY(Vec2Type value) {
+    public void setRotationXY(final Vec2Type value) {
         this.rotationXY = value;
     }
 
@@ -169,7 +169,7 @@ public class ScreenOverlayType
      *     {@link Vec2Type }
      *     
      */
-    public void setSize(Vec2Type value) {
+    public void setSize(final Vec2Type value) {
         this.size = value;
     }
 
@@ -193,7 +193,7 @@ public class ScreenOverlayType
      *     {@link Double }
      *     
      */
-    public void setRotation(Double value) {
+    public void setRotation(final Double value) {
         this.rotation = value;
     }
 

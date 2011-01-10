@@ -75,7 +75,7 @@ public class CoverageDescription implements DescribeCoverageResponse {
     /**
      * Build a new response for a DescribeCoverage request.
      */
-    public CoverageDescription(List<CoverageOfferingType> coverageOffering, String version) {
+    public CoverageDescription(final List<CoverageOfferingType> coverageOffering, final String version) {
         this.coverageOffering = coverageOffering;
         this.version           = version;
     }

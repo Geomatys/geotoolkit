@@ -81,7 +81,7 @@ public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
         return service;
     }
     
-    public void setService(AbstractService service) {
+    public void setService(final AbstractService service) {
         if (service instanceof Service)
             this.service = (Service) service;
         else
@@ -96,7 +96,7 @@ public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
         return capability;
     }
 
-    public void setCapability(AbstractCapability capability) {
+    public void setCapability(final AbstractCapability capability) {
         if (capability instanceof Capability) {
             this.capability = (Capability) capability;
         } else {
@@ -129,7 +129,7 @@ public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
      * 
      */
     @Override
-    public AbstractLayer getLayerFromName(String name) {
+    public AbstractLayer getLayerFromName(final String name) {
         final AbstractLayer[] stack = getLayerStackFromName(name);
         if(stack != null){
             return stack[stack.length-1];
@@ -140,7 +140,7 @@ public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
     /**
      * @return true if it founds the layer
      */
-    private static boolean searchLayerByName(List<AbstractLayer> stack, Layer candidate, String name){
+    private static boolean searchLayerByName(final List<AbstractLayer> stack, final Layer candidate, final String name){
         if(candidate == null){
             return false;
         }
@@ -168,7 +168,7 @@ public class WMT_MS_Capabilities extends AbstractWMSCapabilities {
     }
 
     @Override
-    public AbstractLayer[] getLayerStackFromName(String name) {
+    public AbstractLayer[] getLayerStackFromName(final String name) {
         final List<AbstractLayer> stack = new ArrayList<AbstractLayer>();
 
         if(searchLayerByName(stack, getCapability().getLayer(), name)){

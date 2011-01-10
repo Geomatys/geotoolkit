@@ -57,7 +57,7 @@ public class QueryUtilities {
      * @param source
      * @return true if the source is absolute
      */
-    public static boolean isAbsolute(Source source){
+    public static boolean isAbsolute(final Source source){
         if(source instanceof Join){
             final Join j = (Join) source;
             return isAbsolute(j.getLeft()) && isAbsolute(j.getRight());
@@ -78,7 +78,7 @@ public class QueryUtilities {
      * @param session
      * @return an absolute source
      */
-    public static Source makeAbsolute(Source source, Session session){
+    public static Source makeAbsolute(final Source source, final Session session){
         
         final Source absolute;
         if(source instanceof Join){
@@ -110,7 +110,7 @@ public class QueryUtilities {
         return absolute;
     }
 
-    public static Query makeAbsolute(Query query, Session session){
+    public static Query makeAbsolute(final Query query, final Session session){
         Source source = query.getSource();
         if(isAbsolute(source)){
             //nothing to change, query is absolute already
@@ -123,7 +123,7 @@ public class QueryUtilities {
         return qb.buildQuery();
     }
 
-    public static FeatureCollection evaluate(String id, Query query){
+    public static FeatureCollection evaluate(final String id, final Query query){
         return evaluate(id,query, null);
     }
 
@@ -138,7 +138,7 @@ public class QueryUtilities {
      * @param session : use this session if the query is not absolute
      * @return feature collection
      */
-    public static FeatureCollection evaluate(String id, Query query, Session session){
+    public static FeatureCollection evaluate(final String id, Query query, final Session session){
         query = QueryUtilities.makeAbsolute(query, session);
 
         final Source s = query.getSource();
@@ -166,7 +166,7 @@ public class QueryUtilities {
      * @param source
      * @return true if all source are writable
      */
-    public static boolean isWritable(Source source) throws DataStoreException{
+    public static boolean isWritable(final Source source) throws DataStoreException{
         if(source instanceof Join){
             final Join j = (Join) source;
             return isWritable(j.getLeft()) && isWritable(j.getRight());
@@ -194,7 +194,7 @@ public class QueryUtilities {
      * @param buffer : a collection buffer, can be null
      * @return a collection of sessions, never null but can be empty.
      */
-    public static Collection<Session> getSessions(Source source, Collection<Session> buffer){
+    public static Collection<Session> getSessions(final Source source, Collection<Session> buffer){
         if(buffer == null){
             buffer = new HashSet<Session>();
         }
@@ -213,7 +213,7 @@ public class QueryUtilities {
         return buffer;
     }
 
-    public static boolean queryAll(Query query){
+    public static boolean queryAll(final Query query){
 
         return     query.retrieveAllProperties()
                 && query.getCoordinateSystemReproject() == null

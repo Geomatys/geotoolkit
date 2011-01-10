@@ -31,7 +31,7 @@ public class ObjectAdapter extends XmlAdapter<String,Object>{
      * {@inheritDoc }
      */
     @Override
-    public Object unmarshal(String str) throws Exception {
+    public Object unmarshal(final String str) throws Exception {
         return str;
     }
 
@@ -39,7 +39,7 @@ public class ObjectAdapter extends XmlAdapter<String,Object>{
      * {@inheritDoc }
      */
     @Override
-    public String marshal(Object inter) throws Exception {
+    public String marshal(final Object inter) throws Exception {
         return inter.toString();
     }
 

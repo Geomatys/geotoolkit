@@ -102,7 +102,7 @@ public final class GeoTiffMetaDataReader {
     private final Node imgFileDir;
     private final Node geoKeyDir;
 
-    public GeoTiffMetaDataReader(IIOMetadata imageMetadata) throws IOException{
+    public GeoTiffMetaDataReader(final IIOMetadata imageMetadata) throws IOException{
         
         root = imageMetadata.getAsTree(imageMetadata.getNativeMetadataFormatName());
         if(root == null) throw new IOException("No image metadatas");
@@ -164,7 +164,7 @@ public final class GeoTiffMetaDataReader {
     /**
      * Fill the spatial metadatas with the values available in the geotiff tags.
      */
-    private void fillGridMetaDatas(SpatialMetadata metadatas, ValueMap entries) throws IOException{
+    private void fillGridMetaDatas(final SpatialMetadata metadatas, final ValueMap entries) throws IOException{
         final GridDomainAccessor accesor = new GridDomainAccessor(metadatas);
 
         /*
@@ -316,7 +316,7 @@ public final class GeoTiffMetaDataReader {
      * @return
      * @throws IOException
      */
-    private Object readValue(int tagNumber, int offset, int lenght) throws IOException{
+    private Object readValue(final int tagNumber, final int offset, final int lenght) throws IOException{
         final Node node = getNodeByNumber(imgFileDir, tagNumber);
         if(node == null){
             throw new IOException("Incorrect metadata description, no tag with number "+tagNumber);

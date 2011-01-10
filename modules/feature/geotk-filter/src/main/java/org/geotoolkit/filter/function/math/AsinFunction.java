@@ -28,7 +28,7 @@ public class AsinFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         final Number number = parameters.get(0).evaluate(feature, Number.class);
         if (number == null) {
             throw new IllegalArgumentException(

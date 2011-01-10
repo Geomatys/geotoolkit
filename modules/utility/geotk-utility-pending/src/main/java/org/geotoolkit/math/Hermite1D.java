@@ -88,7 +88,7 @@ public class Hermite1D extends Search1D {
     private double y2[];
 
     @Override
-    public void setData(double[] x, double[] y) {
+    public void setData(final double[] x, final double[] y) {
         super.setData(x, y);
         y2 = null;
     }
@@ -106,7 +106,7 @@ public class Hermite1D extends Search1D {
      *				or (2) when <code>HermiteSpline</code> is called repeatedly with the same tabulated
      *				function, so that the derivatives need be computed only once.
      */
-    public void setData(double[] x, double[] y, double[] y2) {
+    public void setData(final double[] x, final double[] y, final double[] y2) {
         super.setData(x, y);
         this.y2 = y2;
     }
@@ -127,7 +127,7 @@ public class Hermite1D extends Search1D {
      * @return				Interpolated values of function.
      */
     @Override
-    protected double interpolate(double xi, boolean reUseIndex) throws ExtrapolationException {
+    protected double interpolate(final double xi, final boolean reUseIndex) throws ExtrapolationException {
         if (ignoreYNaN && !reUseIndex) {
             validateIndex(y);
         }
@@ -182,7 +182,7 @@ public class Hermite1D extends Search1D {
      * @return <code>true</code> si le vecteur des <var>x</var>
      *         ou des <var>y</var> contient un NaN à cet index.
      */
-    private final boolean isNaN(int index) {
+    private final boolean isNaN(final int index) {
         return Double.isNaN(x[index]) || (ignoreYNaN && Double.isNaN(y[index]));
     }
 }

@@ -50,7 +50,7 @@ public class ColorDecoration extends JPanel implements MapDecoration{
     }
 
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         
     }
 

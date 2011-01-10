@@ -62,7 +62,7 @@ public class DistanceType {
     /**
      * An empty constructor used by JAXB
      */
-    public DistanceType(double value, String units) {
+    public DistanceType(final double value, final String units) {
         this.value = value;
         this.units = units;
     }

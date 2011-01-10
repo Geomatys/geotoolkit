@@ -85,7 +85,7 @@ public class UnitDefinitionType extends DefinitionType {
      *     {@link StringOrRefType }
      *     
      */
-    public void setQuantityType(StringOrRefType value) {
+    public void setQuantityType(final StringOrRefType value) {
         this.quantityType = value;
     }
 
@@ -99,7 +99,7 @@ public class UnitDefinitionType extends DefinitionType {
     /**
      * Sets the value of the quantityTypeReference property.
      */
-    public void getQuantityTypeReference(ReferenceEntry quantityTypeReference) {
+    public void getQuantityTypeReference(final ReferenceEntry quantityTypeReference) {
         this.quantityTypeReference = quantityTypeReference;
     }
 
@@ -123,7 +123,7 @@ public class UnitDefinitionType extends DefinitionType {
      *     {@link CodeType }
      *     
      */
-    public void setCatalogSymbol(CodeType value) {
+    public void setCatalogSymbol(final CodeType value) {
         this.catalogSymbol = value;
     }
 

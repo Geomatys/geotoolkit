@@ -88,7 +88,7 @@ public class BasicLinkType
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 

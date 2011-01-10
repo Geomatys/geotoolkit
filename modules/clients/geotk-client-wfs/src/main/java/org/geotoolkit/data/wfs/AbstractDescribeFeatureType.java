@@ -45,7 +45,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
 
     private String outputFormat;
 
-    protected AbstractDescribeFeatureType(String serverURL, String version){
+    protected AbstractDescribeFeatureType(final String serverURL, final String version){
         super(serverURL);
         this.version = version;
     }
@@ -62,7 +62,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
      * {@inheritDoc }
      */
     @Override
-    public void setTypeNames(List<QName> typeNames) {
+    public void setTypeNames(final List<QName> typeNames) {
         this.typeNames = typeNames;
     }
 
@@ -76,7 +76,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractRequest implem
     /**
      * {@inheritDoc }
      */
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
 

@@ -44,7 +44,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
     private final MouseListen mouseInputListener = new MouseListen();
     private double zoomFactor = 2;
 
-    public ZoomInHandler(JMap2D map) {
+    public ZoomInHandler(final JMap2D map) {
         super(map);
         
         final Toolkit tk = Toolkit.getDefaultToolkit();
@@ -58,7 +58,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
      * {@inheritDoc }
      */
     @Override
-    public void install(Component component) {
+    public void install(final Component component) {
         super.install(component);
         component.addMouseListener(mouseInputListener);
         component.addMouseMotionListener(mouseInputListener);
@@ -69,7 +69,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
      * {@inheritDoc }
      */
     @Override
-    public void uninstall(Component component) {
+    public void uninstall(final Component component) {
         super.uninstall(component);
         component.removeMouseListener(mouseInputListener);
         component.removeMouseMotionListener(mouseInputListener);
@@ -85,7 +85,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         private int mousebutton = 0;
 
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mouseClicked(final MouseEvent e) {
 
             mousebutton = e.getButton();
 
@@ -97,7 +97,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
+        public void mousePressed(final MouseEvent e) {
             startX = e.getX();
             startY = e.getY();
             lastX = 0;
@@ -114,7 +114,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) {
+        public void mouseReleased(final MouseEvent e) {
             int endX = e.getX();
             int endY = e.getY();
 
@@ -149,18 +149,18 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {
+        public void mouseEntered(final MouseEvent e) {
             map.getComponent().setCursor(CUR_ZOOM_IN);
         }
 
         @Override
-        public void mouseExited(MouseEvent e) {
+        public void mouseExited(final MouseEvent e) {
             decorationPane.setFill(false);
             decorationPane.setCoord(-10, -10,-10, -10, true);
         }
 
         @Override
-        public void mouseDragged(MouseEvent e) {
+        public void mouseDragged(final MouseEvent e) {
             int x = e.getX();
             int y = e.getY();
 
@@ -193,7 +193,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         }
 
         @Override
-        public void mouseMoved(MouseEvent e) {
+        public void mouseMoved(final MouseEvent e) {
 
 //            int width = map.getComponent().getWidth() / 2;
 //            int height = map.getComponent().getHeight() / 2;
@@ -207,7 +207,7 @@ public class ZoomInHandler extends AbstractNavigationHandler {
         }
 
         @Override
-        public void mouseWheelMoved(MouseWheelEvent e) {
+        public void mouseWheelMoved(final MouseWheelEvent e) {
             int rotate = e.getWheelRotation();
 
             if(rotate<0){

@@ -54,7 +54,7 @@ public class CachedStrokeSimple extends CachedStroke{
     private java.awt.Stroke cachedStroke = null;
     private Paint cachedPaint = null;
 
-    CachedStrokeSimple(Stroke stroke){
+    CachedStrokeSimple(final Stroke stroke){
         super(stroke);
     }
 
@@ -338,7 +338,7 @@ public class CachedStrokeSimple extends CachedStroke{
         return cachedPaint;
     }
 
-    public float getStrokeWidth(Feature feature){
+    public float getStrokeWidth(final Feature feature){
         float candidateWidth = cachedWidth;
         if(Float.isNaN(candidateWidth)){
             final Expression expWidth = styleElement.getWidth();
@@ -416,7 +416,7 @@ public class CachedStrokeSimple extends CachedStroke{
      * {@inheritDoc}
      */
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         evaluate();
 
         if(isStaticVisible == VisibilityState.VISIBLE){

@@ -37,7 +37,7 @@ public class InPolygonCandidate extends Candidate<PointLabelDescriptor> {
     public float correctionY = 0;
 
 
-    public InPolygonCandidate(PointLabelDescriptor desc, int width, int upper, int lower, float x, float y) {
+    public InPolygonCandidate(final PointLabelDescriptor desc, final int width, final int upper, final int lower, final float x, final float y) {
         super(desc);
         this.width = width;
         this.upper = upper;

@@ -65,7 +65,7 @@ public class ObservationTemplate {
     /**
      * Build a new ObservationTemplate
      */
-    public ObservationTemplate(ObservationEntry observation){
+    public ObservationTemplate(final ObservationEntry observation){
         this.observation = observation;
     }
     

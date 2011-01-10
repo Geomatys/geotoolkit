@@ -83,7 +83,7 @@ public class ConventionalUnitType
      *     {@link ConversionToPreferredUnitType }
      *     
      */
-    public void setConversionToPreferredUnit(ConversionToPreferredUnitType value) {
+    public void setConversionToPreferredUnit(final ConversionToPreferredUnitType value) {
         this.conversionToPreferredUnit = value;
     }
 
@@ -107,7 +107,7 @@ public class ConventionalUnitType
      *     {@link ConversionToPreferredUnitType }
      *     
      */
-    public void setRoughConversionToPreferredUnit(ConversionToPreferredUnitType value) {
+    public void setRoughConversionToPreferredUnit(final ConversionToPreferredUnitType value) {
         this.roughConversionToPreferredUnit = value;
     }
 

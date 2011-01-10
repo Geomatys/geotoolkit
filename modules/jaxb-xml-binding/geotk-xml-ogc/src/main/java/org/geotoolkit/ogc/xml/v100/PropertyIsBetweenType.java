@@ -73,7 +73,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
      * Sets the value of the expression property.
      * 
      */
-    public void setExpression(JAXBElement<?> value) {
+    public void setExpression(final JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
     }
 
@@ -89,7 +89,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
      * Sets the value of the lowerBoundary property.
      *     
      */
-    public void setLowerBoundary(LowerBoundaryType value) {
+    public void setLowerBoundary(final LowerBoundaryType value) {
         this.lowerBoundary = value;
     }
 
@@ -105,7 +105,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType {
      * Sets the value of the upperBoundary property.
      * 
      */
-    public void setUpperBoundary(UpperBoundaryType value) {
+    public void setUpperBoundary(final UpperBoundaryType value) {
         this.upperBoundary = value;
     }
 

@@ -58,7 +58,7 @@ public class FunctionType extends ExpressionType {
    /**
     * Sets the value of the functionId property.
     */
-   public void setFunctionId(String value) {
+   public void setFunctionId(final String value) {
       this.functionId = value;
    }
 

@@ -91,7 +91,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
 
     }
 
-    public BlockEncodingPropertyType(BlockEncodingProperty be) {
+    public BlockEncodingPropertyType(final BlockEncodingProperty be) {
         if (be != null) {
             this.actuate      = be.getActuate();
             this.arcrole      = be.getArcrole();
@@ -136,7 +136,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link StandardFormat }
      *     
      */
-    public void setStandardFormat(StandardFormat value) {
+    public void setStandardFormat(final StandardFormat value) {
         this.standardFormat = value;
     }
 
@@ -160,7 +160,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link BinaryBlock }
      *     
      */
-    public void setBinaryBlock(BinaryBlock value) {
+    public void setBinaryBlock(final BinaryBlock value) {
         this.binaryBlock = value;
     }
 
@@ -184,7 +184,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link TextBlock }
      *     
      */
-    public void setTextBlock(TextBlockEntry value) {
+    public void setTextBlock(final TextBlockEntry value) {
         this.textBlock = value;
     }
 
@@ -208,7 +208,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link XMLBlockType }
      *     
      */
-    public void setXMLBlock(XMLBlockType value) {
+    public void setXMLBlock(final XMLBlockType value) {
         this.xmlBlock = value;
     }
 
@@ -232,7 +232,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -256,7 +256,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -280,7 +280,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -304,7 +304,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -328,7 +328,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -352,7 +352,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -376,7 +376,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -400,7 +400,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

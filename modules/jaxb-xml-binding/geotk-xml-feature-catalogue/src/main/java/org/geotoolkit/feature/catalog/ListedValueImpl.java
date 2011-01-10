@@ -61,7 +61,7 @@ public class ListedValueImpl implements ListedValue {
     /**
      * Clone a Listed value
      */
-    public ListedValueImpl(ListedValue feature) {
+    public ListedValueImpl(final ListedValue feature) {
         if (feature != null) {
             this.definitionReference = feature.getDefinitionReference();
             this.code                = feature.getCode();
@@ -73,7 +73,7 @@ public class ListedValueImpl implements ListedValue {
     /**
      * Clone a DefinitionReference
      */
-    public ListedValueImpl(String code, String label, String definition, DefinitionReference definitionReference) {
+    public ListedValueImpl(final String code, final String label, final String definition, final DefinitionReference definitionReference) {
        
         this.definitionReference = definitionReference;
         this.code                = code;
@@ -93,7 +93,7 @@ public class ListedValueImpl implements ListedValue {
      * Sets the value of the label property.
      * 
      */
-    public void setLabel(String value) {
+    public void setLabel(final String value) {
         this.label = value;
     }
 
@@ -109,7 +109,7 @@ public class ListedValueImpl implements ListedValue {
      * Sets the value of the code property.
      * 
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 
@@ -125,7 +125,7 @@ public class ListedValueImpl implements ListedValue {
      * Sets the value of the definition property.
      * 
      */
-    public void setDefinition(String value) {
+    public void setDefinition(final String value) {
         this.definition = value;
     }
 
@@ -141,7 +141,7 @@ public class ListedValueImpl implements ListedValue {
      * Sets the value of the definitionReference property.
      * 
      */
-    public void setDefinitionReference(DefinitionReference value) {
+    public void setDefinitionReference(final DefinitionReference value) {
         this.definitionReference = value;
     }
     

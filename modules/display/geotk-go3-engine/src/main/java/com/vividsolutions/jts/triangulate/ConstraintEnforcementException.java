@@ -47,7 +47,7 @@ public class ConstraintEnforcementException extends RuntimeException {
 
     private static final long serialVersionUID = 386496846550080140L;
 
-    private static String msgWithCoord(String msg, Coordinate pt) {
+    private static String msgWithCoord(final String msg, final Coordinate pt) {
         if (pt != null)
             return msg + " [ " + WKTWriter.toPoint(pt) + " ]";
         return msg;
@@ -60,7 +60,7 @@ public class ConstraintEnforcementException extends RuntimeException {
      * 
      * @param msg a string
      */
-    public ConstraintEnforcementException(String msg) {
+    public ConstraintEnforcementException(final String msg) {
         super(msg);
     }
 
@@ -70,7 +70,7 @@ public class ConstraintEnforcementException extends RuntimeException {
      * @param msg a string
      * @param pt the location of the error
      */
-    public ConstraintEnforcementException(String msg, Coordinate pt) {
+    public ConstraintEnforcementException(final String msg, final Coordinate pt) {
         super(msgWithCoord(msg, pt));
         this.pt = new Coordinate(pt);
     }

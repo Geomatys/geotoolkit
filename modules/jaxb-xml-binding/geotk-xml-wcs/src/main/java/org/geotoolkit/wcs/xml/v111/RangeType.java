@@ -65,7 +65,7 @@ public class RangeType {
     /**
      * build a new range.
      */
-    public RangeType(List<FieldType> field) {
+    public RangeType(final List<FieldType> field) {
         this.field = field;
     }
     
@@ -73,7 +73,7 @@ public class RangeType {
      * build a new range.
      * The List element are in the parameters.
      */
-    public RangeType(FieldType... fields) {
+    public RangeType(final FieldType... fields) {
         this.field = new ArrayList<FieldType>();
         for (FieldType element:fields){
             field.add(element);

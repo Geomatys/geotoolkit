@@ -77,7 +77,7 @@ public class SolidType extends AbstractSolidType {
      *     {@link SurfacePropertyType }
      *     
      */
-    public void setExterior(SurfacePropertyType value) {
+    public void setExterior(final SurfacePropertyType value) {
         this.exterior = value;
     }
 

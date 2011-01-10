@@ -79,7 +79,7 @@ public enum TemporalOperatorNameType {
     TM_ENDS("TM_Ends");
     private final String value;
 
-    TemporalOperatorNameType(String v) {
+    TemporalOperatorNameType(final String v) {
         value = v;
     }
 
@@ -87,7 +87,7 @@ public enum TemporalOperatorNameType {
         return value;
     }
 
-    public static TemporalOperatorNameType fromValue(String v) {
+    public static TemporalOperatorNameType fromValue(final String v) {
         for (TemporalOperatorNameType c: TemporalOperatorNameType.values()) {
             if (c.value.equals(v)) {
                 return c;

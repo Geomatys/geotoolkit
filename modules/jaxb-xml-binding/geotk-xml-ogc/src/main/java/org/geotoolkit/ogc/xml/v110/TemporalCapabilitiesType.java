@@ -67,7 +67,7 @@ public class TemporalCapabilitiesType {
      * Sets the value of the temporalOperands property.
      * 
      */
-    public void setTemporalOperands(TemporalOperandsType value) {
+    public void setTemporalOperands(final TemporalOperandsType value) {
         this.temporalOperands = value;
     }
 
@@ -83,7 +83,7 @@ public class TemporalCapabilitiesType {
      * Sets the value of the temporalOperators property.
      * 
      */
-    public void setTemporalOperators(TemporalOperatorsType value) {
+    public void setTemporalOperators(final TemporalOperatorsType value) {
         this.temporalOperators = value;
     }
 

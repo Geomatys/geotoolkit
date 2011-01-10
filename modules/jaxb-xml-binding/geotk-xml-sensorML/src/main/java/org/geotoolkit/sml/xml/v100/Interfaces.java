@@ -92,11 +92,11 @@ public class Interfaces implements AbstractInterfaces {
 
     }
 
-    public Interfaces(InterfaceList interfaceList) {
+    public Interfaces(final InterfaceList interfaceList) {
         this.interfaceList = interfaceList;
     }
 
-    public Interfaces(AbstractInterfaces param) {
+    public Interfaces(final AbstractInterfaces param) {
         if (param != null) {
             if (param.getInterfaceList() != null) {
                 this.interfaceList = new InterfaceList(param.getInterfaceList());
@@ -121,7 +121,7 @@ public class Interfaces implements AbstractInterfaces {
     /**
      * Sets the value of the interfaceList property.
      */
-    public void setInterfaceList(InterfaceList value) {
+    public void setInterfaceList(final InterfaceList value) {
         this.interfaceList = value;
     }
 
@@ -145,7 +145,7 @@ public class Interfaces implements AbstractInterfaces {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -159,7 +159,7 @@ public class Interfaces implements AbstractInterfaces {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -174,7 +174,7 @@ public class Interfaces implements AbstractInterfaces {
      * Sets the value of the arcrole property.
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -188,7 +188,7 @@ public class Interfaces implements AbstractInterfaces {
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -202,7 +202,7 @@ public class Interfaces implements AbstractInterfaces {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -216,7 +216,7 @@ public class Interfaces implements AbstractInterfaces {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -230,7 +230,7 @@ public class Interfaces implements AbstractInterfaces {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -244,7 +244,7 @@ public class Interfaces implements AbstractInterfaces {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

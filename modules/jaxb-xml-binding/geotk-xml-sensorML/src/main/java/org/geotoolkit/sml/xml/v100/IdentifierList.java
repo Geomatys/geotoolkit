@@ -78,12 +78,12 @@ public class IdentifierList implements AbstractIdentifierList {
     public IdentifierList() {
     }
 
-    public IdentifierList(String id, List<Identifier> identifiers) {
+    public IdentifierList(final String id, final List<Identifier> identifiers) {
         this.id = id;
         this.identifier = identifiers;
     }
 
-    public IdentifierList(AbstractIdentifierList il) {
+    public IdentifierList(final AbstractIdentifierList il) {
         if (il != null) {
             this.id = il.getId();
             if (il.getIdentifier() != null) {
@@ -108,14 +108,14 @@ public class IdentifierList implements AbstractIdentifierList {
     /**
      * Gets the value of the identifier property.
      */
-    public void setIdentifier(List<Identifier> identifier) {
+    public void setIdentifier(final List<Identifier> identifier) {
         this.identifier = identifier;
     }
 
     /**
      * Gets the value of the identifier property.
      */
-    public void setIdentifier(Identifier identifier) {
+    public void setIdentifier(final Identifier identifier) {
         if (this.identifier == null) {
             this.identifier = new ArrayList<Identifier>();
         }
@@ -132,7 +132,7 @@ public class IdentifierList implements AbstractIdentifierList {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

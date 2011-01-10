@@ -82,15 +82,15 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     public GetCapabilitiesType(){ 
     }
 
-    public GetCapabilitiesType(String service){
+    public GetCapabilitiesType(final String service){
         this.service = service;
     }
     
     /**
      * Build a new GetCapabilities base request.
      */
-    public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
-            AcceptFormatsType acceptFormats, String updateSequence, String service){
+    public GetCapabilitiesType(final AcceptVersionsType acceptVersions, final SectionsType sections,
+            final AcceptFormatsType acceptFormats, final String updateSequence, final String service){
         this.acceptFormats  = acceptFormats;
         this.acceptVersions = acceptVersions;
         this.sections       = sections;
@@ -106,7 +106,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         return acceptVersions;
     }
 
-    public void setAcceptVersions(AcceptVersionsType acceptVersions) {
+    public void setAcceptVersions(final AcceptVersionsType acceptVersions) {
         this.acceptVersions = acceptVersions;
     }
 
@@ -118,7 +118,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         return sections;
     }
 
-    public void setSections(SectionsType sections) {
+    public void setSections(final SectionsType sections) {
         this.sections = sections;
     }
 
@@ -129,7 +129,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      * @return true if the request contains the specified section.
      */
     @Override
-    public boolean containsSection(String sectionName) {
+    public boolean containsSection(final String sectionName) {
         if (sections != null) {
             return sections.containsSection(sectionName);
         }
@@ -144,7 +144,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         return acceptFormats;
     }
 
-    public void setAcceptFormats(AcceptFormatsType acceptFormats) {
+    public void setAcceptFormats(final AcceptFormatsType acceptFormats) {
         this.acceptFormats = acceptFormats;
     }
 
@@ -176,7 +176,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     /**
     * Return the first outputFormat of the is if there is one
     */
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat(final String outputFormat) {
         acceptFormats = new AcceptFormatsType(outputFormat);
     }
 
@@ -187,7 +187,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         return updateSequence;
     }
 
-    public void setUpdateSequence(String updateSequence) {
+    public void setUpdateSequence(final String updateSequence) {
         this.updateSequence = updateSequence;
     }
 
@@ -209,7 +209,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
         return service;
     }
 
-    public void setService(String service) {
+    public void setService(final String service) {
         this.service = service;
     }
     

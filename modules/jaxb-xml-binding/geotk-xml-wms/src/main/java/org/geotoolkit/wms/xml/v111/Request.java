@@ -59,8 +59,8 @@ public class Request extends AbstractRequest {
 
     }
 
-    public Request(GetCapabilities getCapabilities, GetMap getMap, GetFeatureInfo getFeatureInfo, DescribeLayer describeLayer, GetLegendGraphic getLegendGraphic,
-            GetStyles getStyles, PutStyles putStyles) {
+    public Request(final GetCapabilities getCapabilities, final GetMap getMap, final GetFeatureInfo getFeatureInfo, final DescribeLayer describeLayer, final GetLegendGraphic getLegendGraphic,
+            final GetStyles getStyles, final PutStyles putStyles) {
         this.describeLayer    = describeLayer;
         this.getCapabilities  = getCapabilities;
         this.getFeatureInfo   = getFeatureInfo;
@@ -131,7 +131,7 @@ public class Request extends AbstractRequest {
     /**
      * update all the dcp ur with the specified one.
      */
-    public void updateURL(String url) {
+    public void updateURL(final String url) {
         if (getCapabilities != null) {
             getCapabilities.updateURL(url);
         }

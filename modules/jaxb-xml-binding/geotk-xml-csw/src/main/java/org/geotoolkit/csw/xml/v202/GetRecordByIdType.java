@@ -89,8 +89,8 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
      /**
      * An empty constructor used by JAXB
      */
-     public GetRecordByIdType(String service, String version, ElementSetNameType elementSetName,
-             String outputFormat, String outputSchema, List<String> id){
+     public GetRecordByIdType(final String service, final String version, final ElementSetNameType elementSetName,
+             final String outputFormat, final String outputSchema, final List<String> id){
          super(service, version);
          this.elementSetName = elementSetName;
          this.outputFormat   = outputFormat;
@@ -108,7 +108,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
         return id;
     }
 
-    public void setId(List<String> id) {
+    public void setId(final List<String> id) {
         this.id = id;
     }
 
@@ -119,7 +119,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
         return elementSetName;
     }
 
-    public void setElementSetName(ElementSetNameType elementSetName) {
+    public void setElementSetName(final ElementSetNameType elementSetName) {
         this.elementSetName = elementSetName;
     }
 
@@ -133,7 +133,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
     /**
      * Gets the value of the outputFormat property.
      */
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
 
@@ -144,7 +144,7 @@ public class GetRecordByIdType extends RequestBaseType implements GetRecordById 
         return outputSchema;
     }
 
-    public void setOutputSchema(String outputSchema) {
+    public void setOutputSchema(final String outputSchema) {
         this.outputSchema = outputSchema;
     }
 

@@ -34,16 +34,16 @@ public class StaticStringMapper implements JRMapper<String,Object> {
     private String value = "";
     private final JRMapperFactory<String,Object> factory;
 
-    StaticStringMapper(JRMapperFactory<String,Object> factory){
+    StaticStringMapper(final JRMapperFactory<String,Object> factory){
         this("",factory);
     }
 
-    StaticStringMapper(final String value,JRMapperFactory<String,Object> factory){
+    StaticStringMapper(final String value,final JRMapperFactory<String,Object> factory){
         this.value = value;
         this.factory = factory;
     }
 
-    public void setValue(String value){
+    public void setValue(final String value){
         this.value = value;
     }
 
@@ -55,7 +55,7 @@ public class StaticStringMapper implements JRMapper<String,Object> {
      * {@inheritDoc }
      */
     @Override
-    public void setCandidate(Object candidate) {
+    public void setCandidate(final Object candidate) {
     }
 
     /**
@@ -70,7 +70,7 @@ public class StaticStringMapper implements JRMapper<String,Object> {
      * {@inheritDoc }
      */
     @Override
-    public String getValue(Collection renderedValues) {
+    public String getValue(final Collection renderedValues) {
         return value;
     }
 

@@ -44,14 +44,14 @@ public class GenericMappingFeatureIterator<F extends Feature> implements Feature
     private final FeatureIterator<F> ite;
     private final FeatureMapper mapper;
 
-    public GenericMappingFeatureIterator(FeatureIterator<F> ite,
-            FeatureType originalType, FeatureType newType,
-            Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
-            Map<PropertyDescriptor,Object> defaults){
+    public GenericMappingFeatureIterator(final FeatureIterator<F> ite,
+            final FeatureType originalType, final FeatureType newType,
+            final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
+            final Map<PropertyDescriptor,Object> defaults){
         this(ite,new DefaultFeatureMapper((SimpleFeatureType)originalType,(SimpleFeatureType)newType,mapping,defaults));
     }
 
-    public GenericMappingFeatureIterator(FeatureIterator<F> ite, FeatureMapper mapper){
+    public GenericMappingFeatureIterator(final FeatureIterator<F> ite, final FeatureMapper mapper){
         this.ite = ite;
         this.mapper = mapper;
     }

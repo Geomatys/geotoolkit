@@ -105,7 +105,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
     /**
      * Build a new Binary spatial operator
      */
-    public BinarySpatialOpType(String propertyName, AbstractGeometryType geometry) {
+    public BinarySpatialOpType(final String propertyName, final AbstractGeometryType geometry) {
         this.propertyName     = ogcFactory.createPropertyName(new PropertyNameType(propertyName));
         this.abstractGeometry = getCorrectJaxbElement(geometry);
         
@@ -114,7 +114,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
     /**
      * Build a new Binary spatial operator
      */
-    public BinarySpatialOpType(PropertyNameType propertyName, Object geometry) {
+    public BinarySpatialOpType(final PropertyNameType propertyName, final Object geometry) {
         this.propertyName     = ogcFactory.createPropertyName(propertyName);
         if (geometry instanceof EnvelopeEntry) {
             this.envelope = gmlFactory.createEnvelope((EnvelopeEntry)geometry);
@@ -124,7 +124,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
         
     }
 
-    private JAXBElement<? extends AbstractGeometryType> getCorrectJaxbElement(Object geometry) {
+    private JAXBElement<? extends AbstractGeometryType> getCorrectJaxbElement(final Object geometry) {
         if (geometry instanceof PointType) {
             return gmlFactory.createPoint((PointType)geometry);
         } else if (geometry instanceof OrientableSurfaceType) {
@@ -230,11 +230,11 @@ public class BinarySpatialOpType extends SpatialOpsType {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -242,7 +242,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
         return abstractGeometry;
     }
 
-    public void setAbstractGeometry(JAXBElement<? extends AbstractGeometryType> abstractGeometry) {
+    public void setAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> abstractGeometry) {
         this.abstractGeometry = abstractGeometry;
     }
 
@@ -250,7 +250,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
         return propertyName;
     }
 
-    public void setPropertyName(JAXBElement<PropertyNameType> propertyName) {
+    public void setPropertyName(final JAXBElement<PropertyNameType> propertyName) {
         this.propertyName = propertyName;
     }
 
@@ -258,7 +258,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
         return envelope;
     }
 
-    public void setEnvelope(JAXBElement<EnvelopeEntry> envelope) {
+    public void setEnvelope(final JAXBElement<EnvelopeEntry> envelope) {
         this.envelope = envelope;
     }
 

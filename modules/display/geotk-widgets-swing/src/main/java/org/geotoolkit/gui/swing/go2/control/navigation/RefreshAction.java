@@ -41,7 +41,7 @@ public class RefreshAction extends AbstractAction {
         this(false);
     }
 
-    public RefreshAction(boolean big) {
+    public RefreshAction(final boolean big) {
         super("",(big)?ICON_REFRESH_24 : ICON_REFRESH_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_refresh"));
     }
@@ -50,7 +50,7 @@ public class RefreshAction extends AbstractAction {
      * {@inheritDoc }
      */
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null) {
             map.getCanvas().getController().repaint();
         }
@@ -60,7 +60,7 @@ public class RefreshAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

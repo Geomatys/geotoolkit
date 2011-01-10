@@ -54,7 +54,7 @@ public class ParameterValueReader extends StaxStreamReader {
      *
      * @param descriptorReader
      */
-    public ParameterValueReader(ParameterDescriptorReader descriptorReader) 
+    public ParameterValueReader(final ParameterDescriptorReader descriptorReader) 
             throws IOException, XMLStreamException, ClassNotFoundException{
         
         descriptorReader.read();
@@ -67,7 +67,7 @@ public class ParameterValueReader extends StaxStreamReader {
      *
      * @param descriptor
      */
-    public ParameterValueReader(GeneralParameterDescriptor descriptor){
+    public ParameterValueReader(final GeneralParameterDescriptor descriptor){
         this.descriptors = new HashMap<String, GeneralParameterDescriptor>();
         this.initDescriptors(descriptor);
     }
@@ -77,7 +77,7 @@ public class ParameterValueReader extends StaxStreamReader {
      *
      * @param descriptor
      */
-    private void initDescriptors(GeneralParameterDescriptor descriptor){
+    private void initDescriptors(final GeneralParameterDescriptor descriptor){
         this.descriptors.put(descriptor.getName().getCode(), descriptor);
         if(descriptor instanceof ParameterDescriptorGroup){
             for(GeneralParameterDescriptor d
@@ -120,7 +120,7 @@ public class ParameterValueReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private GeneralParameterValue readValue(String eName) 
+    private GeneralParameterValue readValue(final String eName) 
             throws XMLStreamException{
 
         final GeneralParameterValue result;
@@ -148,7 +148,7 @@ public class ParameterValueReader extends StaxStreamReader {
      * @return
      * @throws XMLStreamException
      */
-    private ParameterValueGroup readValueGroup(ParameterDescriptorGroup desc)
+    private ParameterValueGroup readValueGroup(final ParameterDescriptorGroup desc)
             throws XMLStreamException{
 
         final List<GeneralParameterValue> values = new ArrayList<GeneralParameterValue>();

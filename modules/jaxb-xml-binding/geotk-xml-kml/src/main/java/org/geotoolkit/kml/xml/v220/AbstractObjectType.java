@@ -142,7 +142,7 @@ public abstract class AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -166,7 +166,7 @@ public abstract class AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setTargetId(String value) {
+    public void setTargetId(final String value) {
         this.targetId = value;
     }
 

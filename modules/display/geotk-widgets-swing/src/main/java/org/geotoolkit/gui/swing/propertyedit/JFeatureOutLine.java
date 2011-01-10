@@ -72,7 +72,7 @@ public class JFeatureOutLine extends Outline{
     /**
      * Set the property to display in this component.
      */
-    public void setEdited(Property property){
+    public void setEdited(final Property property){
         this.edited = property;
         final TreeModel model = new DefaultTreeModel(toNode(property));
         setModel(DefaultOutlineModel.createOutlineModel(model, rowModel));
@@ -88,7 +88,7 @@ public class JFeatureOutLine extends Outline{
     }
 
     @Override
-    public TableCellEditor getCellEditor(int row, int column) {
+    public TableCellEditor getCellEditor(final int row, final int column) {
         final MutableTreeNode node = (MutableTreeNode) getValueAt(row, 0);
         final Property prop = (Property) node.getUserObject();
         final PropertyType type = prop.getType();
@@ -97,7 +97,7 @@ public class JFeatureOutLine extends Outline{
     }
 
     @Override
-    public TableCellEditor getDefaultEditor(Class<?> columnClass) {
+    public TableCellEditor getDefaultEditor(final Class<?> columnClass) {
         if(Date.class.isAssignableFrom(columnClass)){
             return new DatePickerCellEditor();
         }
@@ -105,7 +105,7 @@ public class JFeatureOutLine extends Outline{
     }
 
     @Override
-    public TableCellRenderer getCellRenderer(int row, int column) {
+    public TableCellRenderer getCellRenderer(final int row, final int column) {
         final Object value = getValueAt(row, column);
         if(value instanceof Geometry || value instanceof org.opengis.geometry.Geometry){
             return new GeometryCellRenderer();
@@ -113,7 +113,7 @@ public class JFeatureOutLine extends Outline{
         return super.getCellRenderer(row, column);
     }
       
-    private static MutableTreeNode toNode(Property property){
+    private static MutableTreeNode toNode(final Property property){
         final DefaultMutableTreeNode node = new DefaultMutableTreeNode(property){
 
             @Override
@@ -139,7 +139,7 @@ public class JFeatureOutLine extends Outline{
         }
 
         @Override
-        public Object getValueFor(Object o, int i) {
+        public Object getValueFor(final Object o, final int i) {
             MutableTreeNode node = (MutableTreeNode) o;
             final Property prop = (Property) node.getUserObject();
             
@@ -152,12 +152,12 @@ public class JFeatureOutLine extends Outline{
         }
 
         @Override
-        public Class getColumnClass(int i) {
+        public Class getColumnClass(final int i) {
             return Object.class;
         }
 
         @Override
-        public boolean isCellEditable(Object o, int i) {
+        public boolean isCellEditable(final Object o, final int i) {
             final MutableTreeNode node = (MutableTreeNode) o;
             final Property prop = (Property) node.getUserObject();
             final Class type = prop.getType().getBinding();
@@ -166,14 +166,14 @@ public class JFeatureOutLine extends Outline{
         }
 
         @Override
-        public void setValueFor(Object o, int i, Object value) {
+        public void setValueFor(final Object o, final int i, final Object value) {
             final MutableTreeNode node = (MutableTreeNode) o;
             final Property prop = (Property) node.getUserObject();
             prop.setValue(Converters.convert(value, prop.getType().getBinding()));
         }
 
         @Override
-        public String getColumnName(int i) {
+        public String getColumnName(final int i) {
             return "";
         }
         
@@ -182,12 +182,12 @@ public class JFeatureOutLine extends Outline{
     private static class PropertyDataProvider implements RenderDataProvider {
 
         @Override
-        public java.awt.Color getBackground(Object o) {
+        public java.awt.Color getBackground(final Object o) {
             return null;
         }
 
         @Override
-        public String getDisplayName(Object o) {
+        public String getDisplayName(final Object o) {
             final MutableTreeNode node = (MutableTreeNode) o;
             final Property prop = (Property) node.getUserObject();
             final StringBuilder sb = new StringBuilder();
@@ -212,12 +212,12 @@ public class JFeatureOutLine extends Outline{
         }
 
         @Override
-        public java.awt.Color getForeground(Object o) {
+        public java.awt.Color getForeground(final Object o) {
             return null;
         }
 
         @Override
-        public javax.swing.Icon getIcon(Object o) {
+        public javax.swing.Icon getIcon(final Object o) {
             final MutableTreeNode node = (MutableTreeNode) o;
             final Property prop = (Property) node.getUserObject();
             if(prop instanceof ComplexAttribute){
@@ -228,13 +228,13 @@ public class JFeatureOutLine extends Outline{
         }
 
         @Override
-        public String getTooltipText(Object o) {
+        public String getTooltipText(final Object o) {
             final MutableTreeNode node = (MutableTreeNode) o;
             return DefaultName.toJCRExtendedForm( ((Property) node.getUserObject()).getName());
         }
 
         @Override
-        public boolean isHtmlDisplayName(Object o) {
+        public boolean isHtmlDisplayName(final Object o) {
             return true;
         }
     }
@@ -242,7 +242,7 @@ public class JFeatureOutLine extends Outline{
     private final class GeometryCellRenderer extends DefaultOutlineCellRenderer{
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             final JLabel lbl = (JLabel) super.getTableCellRendererComponent(table,value,isSelected,hasFocus,row,column);
             if(value instanceof Geometry || value instanceof org.opengis.geometry.Geometry){
                 lbl.setText("~");

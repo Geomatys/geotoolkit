@@ -81,7 +81,7 @@ public class ExtensionType extends Annotated {
 
     }
 
-    public ExtensionType(QName base, ExplicitGroup sequence) {
+    public ExtensionType(final QName base, final ExplicitGroup sequence) {
         this.base     = base;
         this.sequence = sequence;
     }
@@ -105,7 +105,7 @@ public class ExtensionType extends Annotated {
      *     {@link GroupRef }
      *     
      */
-    public void setGroup(GroupRef value) {
+    public void setGroup(final GroupRef value) {
         this.group = value;
     }
 
@@ -129,7 +129,7 @@ public class ExtensionType extends Annotated {
      *     {@link All }
      *     
      */
-    public void setAll(All value) {
+    public void setAll(final All value) {
         this.all = value;
     }
 
@@ -153,7 +153,7 @@ public class ExtensionType extends Annotated {
      *     {@link ExplicitGroup }
      *     
      */
-    public void setChoice(ExplicitGroup value) {
+    public void setChoice(final ExplicitGroup value) {
         this.choice = value;
     }
 
@@ -177,7 +177,7 @@ public class ExtensionType extends Annotated {
      *     {@link ExplicitGroup }
      *     
      */
-    public void setSequence(ExplicitGroup value) {
+    public void setSequence(final ExplicitGroup value) {
         this.sequence = value;
     }
 
@@ -231,7 +231,7 @@ public class ExtensionType extends Annotated {
      *     {@link Wildcard }
      *     
      */
-    public void setAnyAttribute(Wildcard value) {
+    public void setAnyAttribute(final Wildcard value) {
         this.anyAttribute = value;
     }
 
@@ -255,7 +255,7 @@ public class ExtensionType extends Annotated {
      *     {@link QName }
      *     
      */
-    public void setBase(QName value) {
+    public void setBase(final QName value) {
         this.base = value;
     }
 

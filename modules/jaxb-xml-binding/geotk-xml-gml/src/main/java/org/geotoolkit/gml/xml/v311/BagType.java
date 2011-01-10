@@ -119,7 +119,7 @@ public class BagType
      *     {@link ArrayAssociationType }
      *     
      */
-    public void setMembers(ArrayAssociationType value) {
+    public void setMembers(final ArrayAssociationType value) {
         this.members = value;
     }
 

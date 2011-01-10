@@ -142,7 +142,7 @@ public class JBankPanel extends javax.swing.JPanel implements PropertyPane{
         }.start();
     }
 
-    private void explore(ElementNode node){
+    private void explore(final ElementNode node){
 
         Object obj = node.getUserObject();
 
@@ -155,7 +155,7 @@ public class JBankPanel extends javax.swing.JPanel implements PropertyPane{
         }
     }
 
-    private void append(String name, MutableStyle style){
+    private void append(final String name, final MutableStyle style){
         JToggleButton jb = new JToggleButton();
         jb.setBorderPainted(false);
         jb.setMaximumSize(new Dimension(maxWidth, maxWidth));
@@ -176,7 +176,7 @@ public class JBankPanel extends javax.swing.JPanel implements PropertyPane{
 
 
     @Override
-    public void setTarget(Object target) {
+    public void setTarget(final Object target) {
         if(layer instanceof MapLayer){
             this.layer = (MapLayer) layer;
         }else{

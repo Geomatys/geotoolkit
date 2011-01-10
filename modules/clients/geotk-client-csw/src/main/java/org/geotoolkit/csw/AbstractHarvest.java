@@ -69,7 +69,7 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
     }
 
     @Override
-    public void setNamespace(String namespace) {
+    public void setNamespace(final String namespace) {
         this.namespace = namespace;
     }
 
@@ -79,7 +79,7 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
     }
 
     @Override
-    public void setSource(String source) {
+    public void setSource(final String source) {
         this.source = source;
     }
 
@@ -89,7 +89,7 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
     }
 
     @Override
-    public void setResourceType(String resourceType) {
+    public void setResourceType(final String resourceType) {
         this.resourceType =  resourceType;
     }
 
@@ -99,7 +99,7 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
     }
 
     @Override
-    public void setResourceFormat(String resourceFormat) {
+    public void setResourceFormat(final String resourceFormat) {
         this.resourceFormat = resourceFormat;
     }
 
@@ -109,7 +109,7 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
     }
 
     @Override
-    public void setResponseHandler(String responseHandler) {
+    public void setResponseHandler(final String responseHandler) {
         this.responseHandler = responseHandler;
     }
 
@@ -119,7 +119,7 @@ public class AbstractHarvest extends AbstractCSWRequest implements HarvestReques
     }
 
     @Override
-    public void setHarvestInterval(String harvestInterval) {
+    public void setHarvestInterval(final String harvestInterval) {
         this.harvestInterval = harvestInterval;
     }
 

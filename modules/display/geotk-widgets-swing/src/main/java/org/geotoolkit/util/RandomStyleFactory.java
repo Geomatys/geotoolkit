@@ -138,7 +138,7 @@ public class RandomStyleFactory extends Factory {
         return style;
     }
 
-    public static MutableStyle createDefaultVectorStyle(FeatureCollection<SimpleFeature> fs){
+    public static MutableStyle createDefaultVectorStyle(final FeatureCollection<SimpleFeature> fs){
 
         final Symbolizer ps;
 
@@ -163,7 +163,7 @@ public class RandomStyleFactory extends Factory {
         return style;
     }
     
-    public static MutableStyle createRandomVectorStyle(FeatureCollection fs) {
+    public static MutableStyle createRandomVectorStyle(final FeatureCollection fs) {
         
         final Symbolizer ps;
         final FeatureType typ = fs.getFeatureType();

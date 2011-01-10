@@ -77,7 +77,7 @@ import org.opengis.style.TextSymbolizer;
 public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implements StyleVisitor{
 
     @Override
-    public Object visit(Style style, Object data) {
+    public Object visit(final Style style, Object data) {
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
         if(ftss != null){
             for(FeatureTypeStyle fts : ftss){
@@ -93,7 +93,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(FeatureTypeStyle featureTypeStyle, Object data) {
+    public Object visit(final FeatureTypeStyle featureTypeStyle, Object data) {
         final Id ids = featureTypeStyle.getFeatureInstanceIDs();
         if(ids != null){
             data = ids.accept(this, data);
@@ -108,7 +108,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(Rule rule, Object data) {
+    public Object visit(final Rule rule, Object data) {
         final Filter filter = rule.getFilter();
         if(filter != null){
             data = filter.accept(this, data);
@@ -127,7 +127,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(PointSymbolizer pointSymbolizer, Object data) {
+    public Object visit(final PointSymbolizer pointSymbolizer, Object data) {
         final Graphic gra = pointSymbolizer.getGraphic();
         if(gra != null){
             data = gra.accept(this, data);
@@ -136,7 +136,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(LineSymbolizer lineSymbolizer, Object data) {
+    public Object visit(final LineSymbolizer lineSymbolizer, Object data) {
         final Expression offset = lineSymbolizer.getPerpendicularOffset();
         if(offset != null){
             data = offset.accept(this, data);
@@ -149,7 +149,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(PolygonSymbolizer polygonSymbolizer, Object data) {
+    public Object visit(final PolygonSymbolizer polygonSymbolizer, Object data) {
         final Displacement disp = polygonSymbolizer.getDisplacement();
         if(disp != null){
             data = disp.accept(this, data);
@@ -170,7 +170,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(TextSymbolizer textSymbolizer, Object data) {
+    public Object visit(final TextSymbolizer textSymbolizer, Object data) {
         final Fill fill = textSymbolizer.getFill();
         if(fill != null){
             data = fill.accept(this, data);
@@ -195,7 +195,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(RasterSymbolizer rasterSymbolizer, Object data) {
+    public Object visit(final RasterSymbolizer rasterSymbolizer, Object data) {
         final ChannelSelection cs = rasterSymbolizer.getChannelSelection();
         if(cs != null){
             data = cs.accept(this, data);
@@ -224,7 +224,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(ExtensionSymbolizer extension, Object data) {
+    public Object visit(final ExtensionSymbolizer extension, Object data) {
         final Map<String,Expression> exps = extension.getParameters();
         if(exps != null){
             for(Expression exp : exps.values()){
@@ -235,12 +235,12 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(Description description, Object data) {
+    public Object visit(final Description description, final Object data) {
         return data;
     }
 
     @Override
-    public Object visit(Displacement displacement, Object data) {
+    public Object visit(final Displacement displacement, Object data) {
         final Expression x = displacement.getDisplacementX();
         if(x != null){
             data = x.accept(this, data);
@@ -253,7 +253,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(Fill fill, Object data) {
+    public Object visit(final Fill fill, Object data) {
         final Expression color = fill.getColor();
         if(color != null){
             data = color.accept(this, data);
@@ -270,7 +270,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(Font font, Object data) {
+    public Object visit(final Font font, Object data) {
         final List<Expression> families = font.getFamily();
         if(families != null){
             for(Expression family : families){
@@ -295,7 +295,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(Stroke stroke, Object data) {
+    public Object visit(final Stroke stroke, Object data) {
         final Expression color = stroke.getColor();
         if(color != null){
             data = color.accept(this, data);
@@ -340,7 +340,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(Graphic graphic, Object data) {
+    public Object visit(final Graphic graphic, Object data) {
         final AnchorPoint ac = graphic.getAnchorPoint();
         if(ac != null){
             data = ac.accept(this, data);
@@ -376,12 +376,12 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(GraphicFill graphicFill, Object data) {
+    public Object visit(final GraphicFill graphicFill, final Object data) {
         return visit((Graphic)graphicFill, data);
     }
 
     @Override
-    public Object visit(GraphicStroke graphicStroke, Object data) {
+    public Object visit(final GraphicStroke graphicStroke, Object data) {
         data = visit((Graphic)graphicStroke, data);
         final Expression gap = graphicStroke.getGap();
         if(gap != null){
@@ -395,7 +395,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(Mark mark, Object data) {
+    public Object visit(final Mark mark, Object data) {
         final ExternalMark em = mark.getExternalMark();
         if(em != null){
             data = em.accept(this, data);
@@ -416,12 +416,12 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(ExternalMark externalMark, Object data) {
+    public Object visit(final ExternalMark externalMark, final Object data) {
         return data;
     }
 
     @Override
-    public Object visit(ExternalGraphic externalGraphic, Object data) {
+    public Object visit(final ExternalGraphic externalGraphic, Object data) {
         final Collection<ColorReplacement> replaces = externalGraphic.getColorReplacements();
         if(replaces != null){
             for(ColorReplacement r : replaces){
@@ -432,7 +432,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(PointPlacement pointPlacement, Object data) {
+    public Object visit(final PointPlacement pointPlacement, Object data) {
         final AnchorPoint ap = pointPlacement.getAnchorPoint();
         if(ap != null){
             data = ap.accept(this, data);
@@ -449,7 +449,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(AnchorPoint anchorPoint, Object data) {
+    public Object visit(final AnchorPoint anchorPoint, Object data) {
         final Expression x = anchorPoint.getAnchorPointX();
         if(x != null){
             data = x.accept(this, data);
@@ -463,7 +463,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(LinePlacement linePlacement, Object data) {
+    public Object visit(final LinePlacement linePlacement, Object data) {
         final Expression gap = linePlacement.getGap();
         if(gap != null){
             data = gap.accept(this, data);
@@ -481,12 +481,12 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(GraphicLegend graphicLegend, Object data) {
+    public Object visit(final GraphicLegend graphicLegend, final Object data) {
         return visit((Graphic)graphicLegend, data);
     }
 
     @Override
-    public Object visit(Halo halo, Object data) {
+    public Object visit(final Halo halo, Object data) {
         final Fill fill = halo.getFill();
         if(fill != null){
             data = fill.accept(this, data);
@@ -501,7 +501,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(ColorMap colorMap, Object data) {
+    public Object visit(final ColorMap colorMap, Object data) {
         final Function fct = colorMap.getFunction();
         if(fct != null){
             data = fct.accept(this, data);
@@ -510,7 +510,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(ColorReplacement colorReplacement, Object data) {
+    public Object visit(final ColorReplacement colorReplacement, Object data) {
         final Function fct = colorReplacement.getRecoding();
         if(fct != null){
             data = fct.accept(this, data);
@@ -519,7 +519,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(ContrastEnhancement contrastEnhancement, Object data) {
+    public Object visit(final ContrastEnhancement contrastEnhancement, Object data) {
         final Expression gamma = contrastEnhancement.getGammaValue();
         if(gamma != null){
             data = gamma.accept(this, data);
@@ -528,7 +528,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(ChannelSelection channelSelection, Object data) {
+    public Object visit(final ChannelSelection channelSelection, Object data) {
         final SelectedChannelType sct = channelSelection.getGrayChannel();
         if(sct != null){
             data = sct.accept(this, data);
@@ -547,7 +547,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(SelectedChannelType selectChannelType, Object data) {
+    public Object visit(final SelectedChannelType selectChannelType, Object data) {
         final ContrastEnhancement enc = selectChannelType.getContrastEnhancement();
         if(enc != null){
             data = enc.accept(this, data);
@@ -556,7 +556,7 @@ public abstract class DefaultStyleVisitor extends DefaultFilterVisitor implement
     }
 
     @Override
-    public Object visit(ShadedRelief shadedRelief, Object data) {
+    public Object visit(final ShadedRelief shadedRelief, Object data) {
         final Expression exp = shadedRelief.getReliefFactor();
         if(exp != null){
             data = exp.accept(this, data);

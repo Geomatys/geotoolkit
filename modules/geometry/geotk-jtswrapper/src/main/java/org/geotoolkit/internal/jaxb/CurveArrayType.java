@@ -27,7 +27,7 @@ public class CurveArrayType {
 
     }
 
-    public CurveArrayType(List<CurveSegment> curveSegments)  {
+    public CurveArrayType(final List<CurveSegment> curveSegments)  {
         this.curveSegments = curveSegments;
     }
 
@@ -41,7 +41,7 @@ public class CurveArrayType {
     /**
      * @param curveSegments the curveSegments to set
      */
-    public void setCurveSegments(List<CurveSegment> curveSegments) {
+    public void setCurveSegments(final List<CurveSegment> curveSegments) {
         this.curveSegments = curveSegments;
     }
 }

@@ -83,7 +83,7 @@ public class DataDefinition implements AbstractDataDefinition {
 
     }
 
-    public DataDefinition(AbstractDataDefinition ddef) {
+    public DataDefinition(final AbstractDataDefinition ddef) {
         if (ddef != null) {
             this.actuate      = ddef.getActuate();
             this.arcrole      = ddef.getArcrole();
@@ -113,7 +113,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the dataBlockDefinition property.
      */
-    public void setDataBlockDefinition(DataBlockDefinitionType value) {
+    public void setDataBlockDefinition(final DataBlockDefinitionType value) {
         this.dataBlockDefinition = value;
     }
 
@@ -127,7 +127,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the dataStreamDefinition property.
      */
-    public void setDataStreamDefinition(DataStreamDefinitionType value) {
+    public void setDataStreamDefinition(final DataStreamDefinitionType value) {
         this.dataStreamDefinition = value;
     }
 
@@ -151,7 +151,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -165,7 +165,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -179,7 +179,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -193,7 +193,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -207,7 +207,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -221,7 +221,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -235,7 +235,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -249,7 +249,7 @@ public class DataDefinition implements AbstractDataDefinition {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 }

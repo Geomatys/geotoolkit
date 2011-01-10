@@ -95,7 +95,7 @@ public class LodType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setMinLodPixels(Double value) {
+    public void setMinLodPixels(final Double value) {
         this.minLodPixels = value;
     }
 
@@ -119,7 +119,7 @@ public class LodType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setMaxLodPixels(Double value) {
+    public void setMaxLodPixels(final Double value) {
         this.maxLodPixels = value;
     }
 
@@ -143,7 +143,7 @@ public class LodType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setMinFadeExtent(Double value) {
+    public void setMinFadeExtent(final Double value) {
         this.minFadeExtent = value;
     }
 
@@ -167,7 +167,7 @@ public class LodType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setMaxFadeExtent(Double value) {
+    public void setMaxFadeExtent(final Double value) {
         this.maxFadeExtent = value;
     }
 

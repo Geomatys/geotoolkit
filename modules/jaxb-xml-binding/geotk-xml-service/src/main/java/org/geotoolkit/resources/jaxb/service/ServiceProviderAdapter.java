@@ -84,7 +84,7 @@ public class ServiceProviderAdapter extends XmlAdapter<ServiceProviderAdapter, S
      * @return A java object which represents the metadata value.
      */
     @Override
-    public ServiceProvider unmarshal(ServiceProviderAdapter value) throws Exception {
+    public ServiceProvider unmarshal(final ServiceProviderAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class ServiceProviderAdapter extends XmlAdapter<ServiceProviderAdapter, S
      * @return The adapter for this ServiceProvider.
      */
     @Override
-    public ServiceProviderAdapter marshal(ServiceProvider value) throws Exception {
+    public ServiceProviderAdapter marshal(final ServiceProvider value) throws Exception {
         return new ServiceProviderAdapter(value);
     }
 

@@ -41,7 +41,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.isotc211.org/2005/srv", name = "SV_ServiceIdentification", substitutionHeadNamespace = "http://www.isotc211.org/2005/srv")
-    public JAXBElement<ServiceIdentificationImpl> createServiceIdentification(ServiceIdentificationImpl value) {
+    public JAXBElement<ServiceIdentificationImpl> createServiceIdentification(final ServiceIdentificationImpl value) {
         return new JAXBElement<ServiceIdentificationImpl>(_ServiceIdentification_QNAME, ServiceIdentificationImpl.class, null, value);
     }
 

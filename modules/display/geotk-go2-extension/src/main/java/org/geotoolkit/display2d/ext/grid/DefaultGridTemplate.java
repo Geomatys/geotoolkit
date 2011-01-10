@@ -46,10 +46,10 @@ public class DefaultGridTemplate implements GridTemplate{
     private final float haloWidth;
     private final Paint haloPaint;
 
-    public DefaultGridTemplate(CoordinateReferenceSystem crs, Stroke mainLineStroke,
-            Paint mainLinePaint, Stroke lineStroke, Paint linePaint, Font mainLabelFont,
-            Paint mainLabelPaint, float mainHaloWidth, Paint mainHaloPaint, Font labelFont,
-            Paint labelPaint, float haloWidth, Paint haloPaint) {
+    public DefaultGridTemplate(final CoordinateReferenceSystem crs, final Stroke mainLineStroke,
+            final Paint mainLinePaint, final Stroke lineStroke, final Paint linePaint, final Font mainLabelFont,
+            final Paint mainLabelPaint, final float mainHaloWidth, final Paint mainHaloPaint, final Font labelFont,
+            final Paint labelPaint, final float haloWidth, final Paint haloPaint) {
         this.crs = crs;
         this.mainLineStroke = mainLineStroke;
         this.mainLinePaint = mainLinePaint;

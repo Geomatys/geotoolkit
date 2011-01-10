@@ -82,8 +82,8 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     /**
      * Build a new operation metadata.
      */
-    public OperationsMetadata(List<Operation> operation, List<DomainType> parameter, List<DomainType> constraint,
-            MultiLingualCapabilities extendedCapabilities){
+    public OperationsMetadata(final List<Operation> operation, final List<DomainType> parameter, final List<DomainType> constraint,
+            final MultiLingualCapabilities extendedCapabilities){
         
         this.constraint           = constraint;
         this.extendedCapabilities = extendedCapabilities;
@@ -106,7 +106,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     /**
      * Return the operation for the specified name
      */
-    public Operation getOperation(String operationName) {
+    public Operation getOperation(final String operationName) {
         for (Operation op: operation){
             if (op.getName().equalsIgnoreCase(operationName)) {
                 return op;
@@ -120,7 +120,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * 
      * @param operationName the name of the operation to remove.
      */
-    public void removeOperation(String operationName) {
+    public void removeOperation(final String operationName) {
         for (Operation op: operation){
             if (op.getName().equalsIgnoreCase(operationName)) {
                 operation.remove(op);
@@ -136,7 +136,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * @param service the initials of the web serviceType (WMS, SOS, WCS, CSW, ...).
      * This string correspound to the resource name in lower case.
      */
-    public void updateURL(String url) {
+    public void updateURL(final String url) {
        for (Operation op: operation) {
             for (DCP dcp: op.getDCP()) {
                 for (OnlineResourceType method:dcp.getHTTP().getGetOrPost()) {
@@ -164,7 +164,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         return constraint;
     }
     
-    public DomainType getConstraint(String name) {
+    public DomainType getConstraint(final String name) {
         if (constraint == null)
             constraint = new ArrayList<DomainType>();
         
@@ -175,7 +175,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         return null; 
     }
     
-    public void removeConstraint(String name) {
+    public void removeConstraint(final String name) {
         if (constraint == null) {
             constraint = new ArrayList<DomainType>();
             return;
@@ -187,7 +187,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
         }
     }
     
-     public void removeConstraint(DomainType constraint) {
+     public void removeConstraint(final DomainType constraint) {
         if (this.constraint == null) {
             this.constraint = new ArrayList<DomainType>();
             return;
@@ -211,7 +211,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * Gets the value of the extendedCapabilities property.
      *
      */
-    public void setExtendedCapabilities(MultiLingualCapabilities extendedCapabilities) {
+    public void setExtendedCapabilities(final MultiLingualCapabilities extendedCapabilities) {
         this.extendedCapabilities = extendedCapabilities;
     }
 

@@ -77,8 +77,8 @@ public class DirectPositionType implements DirectPosition {
      * @param value
      * @param uomLabels
      */
-    public DirectPositionType(String srsName, int srsDimension, List<String> axisLabels,
-            List<Double> value, List<String> uomLabels)
+    public DirectPositionType(final String srsName, final int srsDimension, final List<String> axisLabels,
+            final List<Double> value, final List<String> uomLabels)
     {
         this.srsName      = srsName;
         this.srsDimension = Integer.valueOf(srsDimension);
@@ -94,8 +94,8 @@ public class DirectPositionType implements DirectPosition {
      * @param axisLabels
      * @param value
      */
-    public DirectPositionType(String srsName, int srsDimension, List<String> axisLabels,
-            List<Double> value)
+    public DirectPositionType(final String srsName, final int srsDimension, final List<String> axisLabels,
+            final List<Double> value)
     {
         this.srsName      = srsName;
         this.srsDimension = Integer.valueOf(srsDimension);
@@ -109,7 +109,7 @@ public class DirectPositionType implements DirectPosition {
      * @param srsDimension
      * @param value
      */
-    public DirectPositionType(String srsName, int srsDimension, List<Double> value) {
+    public DirectPositionType(final String srsName, final int srsDimension, final List<Double> value) {
         this.srsName      = srsName;
         this.srsDimension = Integer.valueOf(srsDimension);
         this.value        = value;
@@ -121,7 +121,7 @@ public class DirectPositionType implements DirectPosition {
      * @param
      * @param value a List of coordinates.
      */
-    public DirectPositionType(List<Double> value) {
+    public DirectPositionType(final List<Double> value) {
         this.value        = value;
         this.srsDimension = null;
     }
@@ -131,7 +131,7 @@ public class DirectPositionType implements DirectPosition {
      *
      * @param values a List of coordinates.
      */
-    public DirectPositionType(Double... values) {
+    public DirectPositionType(final Double... values) {
         this.value = new ArrayList<Double>();
         for (Double pt: values) {
             this.value.add(pt);
@@ -144,7 +144,7 @@ public class DirectPositionType implements DirectPosition {
      *
      * @param values a List of coordinates.
      */
-    public DirectPositionType(Position position) {
+    public DirectPositionType(final Position position) {
         if (position != null) {
             this.value = new ArrayList<Double>();
             for (double d : position.getDirectPosition().getCoordinate()) {
@@ -192,7 +192,7 @@ public class DirectPositionType implements DirectPosition {
      *     {@link String }
      *
      */
-    public void setSrsName(String value) {
+    public void setSrsName(final String value) {
         this.srsName = value;
     }
 
@@ -216,7 +216,7 @@ public class DirectPositionType implements DirectPosition {
      *     {@link BigInteger }
      *
      */
-    public void setSrsDimension(Integer value) {
+    public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
     }
 
@@ -276,12 +276,12 @@ public class DirectPositionType implements DirectPosition {
     }
 
     @Override
-    public double getOrdinate(int dimension) throws IndexOutOfBoundsException {
+    public double getOrdinate(final int dimension) throws IndexOutOfBoundsException {
         return value.get(dimension);
     }
 
     @Override
-    public void setOrdinate(int dimension, double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
+    public void setOrdinate(final int dimension, final double value) throws IndexOutOfBoundsException, UnsupportedOperationException {
         this.value.remove(dimension);
         this.value.add(dimension, value);
     }

@@ -80,7 +80,7 @@ public class JMap2D extends JPanel{
         this(false);
     }
 
-    public JMap2D(boolean statefull){
+    public JMap2D(final boolean statefull){
         setLayout(new BorderLayout());
         setPreferredSize(new Dimension(150,150));
         mapDecorationPane.setLayout(new BufferLayout());
@@ -147,7 +147,7 @@ public class JMap2D extends JPanel{
         return geoComponent.getCanvas();
     }
 
-    public void setStatefull(boolean stateFull){
+    public void setStatefull(final boolean stateFull){
         this.statefull = stateFull;
         final MapContext context = getContainer().getContext();
         final ContextContainer2D container = new DefaultContextContainer2D(geoComponent.getCanvas(), stateFull);
@@ -175,7 +175,7 @@ public class JMap2D extends JPanel{
         return handler;
     }
 
-    public void setHandler(CanvasHandler handler){
+    public void setHandler(final CanvasHandler handler){
 
         if(this.handler != handler) {
             //TODO : check for possible vetos
@@ -198,7 +198,7 @@ public class JMap2D extends JPanel{
     }
 
     //----------------------Use as extend for subclasses------------------------
-    protected void setRendering(boolean render) {
+    protected void setRendering(final boolean render) {
         informationDecoration.setPaintingIconVisible(render);
     }
 
@@ -207,7 +207,7 @@ public class JMap2D extends JPanel{
      * set the top InformationDecoration of the map2d widget
      * @param info , can't be null
      */
-    public void setInformationDecoration(InformationDecoration info) {
+    public void setInformationDecoration(final InformationDecoration info) {
         if (info == null) {
             throw new NullPointerException("info decoration can't be null");
         }
@@ -232,7 +232,7 @@ public class JMap2D extends JPanel{
      * set the decoration behind the map
      * @param back : MapDecoration, can't be null
      */
-    public void setBackgroundDecoration(MapDecoration back) {
+    public void setBackgroundDecoration(final MapDecoration back) {
 
         if (back == null) {
             throw new NullPointerException("background decoration can't be null");
@@ -258,7 +258,7 @@ public class JMap2D extends JPanel{
      * add a Decoration between the map and the information top decoration
      * @param deco : MapDecoration to add
      */
-    public void addDecoration(MapDecoration deco) {
+    public void addDecoration(final MapDecoration deco) {
 
         if (deco != null && !userDecorations.contains(deco)) {
             deco.setMap2D(this);
@@ -274,7 +274,7 @@ public class JMap2D extends JPanel{
      * @param index : index where to isert the decoration
      * @param deco : MapDecoration to add
      */
-    public void addDecoration(int index, MapDecoration deco) {
+    public void addDecoration(final int index, final MapDecoration deco) {
 
         if (deco != null && !userDecorations.contains(deco)) {
             deco.setMap2D(this);
@@ -291,7 +291,7 @@ public class JMap2D extends JPanel{
      * @return index of the MapDecoration
      * @throw ClassCastException or NullPointerException
      */
-    public int getDecorationIndex(MapDecoration deco) {
+    public int getDecorationIndex(final MapDecoration deco) {
         return userDecorations.indexOf(deco);
     }
 
@@ -299,7 +299,7 @@ public class JMap2D extends JPanel{
      * remove a MapDecoration
      * @param deco : MapDecoration to remove
      */
-    public void removeDecoration(MapDecoration deco) {
+    public void removeDecoration(final MapDecoration deco) {
         if (deco != null && userDecorations.contains(deco)) {
             deco.setMap2D(null);
             deco.dispose();
@@ -324,7 +324,7 @@ public class JMap2D extends JPanel{
      * for edition/selection/navigation.
      * @param deco : MapDecoration to add
      */
-    protected void addMapDecoration(MapDecoration deco) {
+    protected void addMapDecoration(final MapDecoration deco) {
         mapDecorationPane.add(deco.geComponent(), Integer.valueOf(nextMapDecorationIndex));
         nextMapDecorationIndex++;
     }

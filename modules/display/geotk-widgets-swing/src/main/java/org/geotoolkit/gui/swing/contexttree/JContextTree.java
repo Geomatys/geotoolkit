@@ -116,7 +116,7 @@ public class JContextTree extends JScrollPane {
         initCellEditAcceleration();
     }
 
-    public void setRootVisible(boolean visible){
+    public void setRootVisible(final boolean visible){
         tree.setRootVisible(visible);
     }
 
@@ -128,7 +128,7 @@ public class JContextTree extends JScrollPane {
         return tree.isEditable();
     }
 
-    public void setEditable(boolean edit){
+    public void setEditable(final boolean edit){
         tree.setEditable(edit);
     }
 
@@ -159,7 +159,7 @@ public class JContextTree extends JScrollPane {
         return tree;
     }
 
-    private int getRowAt(Point p){
+    private int getRowAt(final Point p){
         int row = tree.getRowForLocation(p.x, p.y);
         if(row == -1){
             //more intensive search, row selectable area might be small
@@ -263,7 +263,7 @@ public class JContextTree extends JScrollPane {
         });
     }
 
-    private static String label(Description desc){
+    private static String label(final Description desc){
         if(desc != null && desc.getTitle() != null){
             return desc.getTitle().toString();
         }else{
@@ -337,16 +337,16 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public Component getTreeCellRendererComponent(JTree tree, Object obj, boolean selected, boolean expanded, boolean leaf, int row, boolean hasFocus) {
+        public Component getTreeCellRendererComponent(final JTree tree, final Object obj, final boolean selected, final boolean expanded, final boolean leaf, final int row, final boolean hasFocus) {
             return getComponent(obj, false);
         }
 
         @Override
-        public Component getTreeCellEditorComponent(JTree tree, Object obj, boolean isSelected, boolean expanded, boolean leaf, int row) {
+        public Component getTreeCellEditorComponent(final JTree tree, final Object obj, final boolean isSelected, final boolean expanded, final boolean leaf, final int row) {
             return getComponent(obj, true);
         }
 
-        private Component getComponent(Object obj, boolean edition){
+        private Component getComponent(Object obj, final boolean edition){
             final DefaultMutableTreeNode node = (DefaultMutableTreeNode) obj;
             if (node != null) obj = node.getUserObject();
             value = obj;
@@ -458,7 +458,7 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public boolean isCellEditable(EventObject anEvent) {
+        public boolean isCellEditable(final EventObject anEvent) {
             final TreePath path = tree.getSelectionPath();
             if(path != null){
                 final Object obj = ((DefaultMutableTreeNode)path.getLastPathComponent()).getUserObject();
@@ -468,7 +468,7 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public boolean shouldSelectCell(EventObject anEvent) {
+        public boolean shouldSelectCell(final EventObject anEvent) {
             return true;
         }
 
@@ -482,23 +482,23 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public void addCellEditorListener(CellEditorListener l) {
+        public void addCellEditorListener(final CellEditorListener l) {
         }
 
         @Override
-        public void removeCellEditorListener(CellEditorListener l) {
+        public void removeCellEditorListener(final CellEditorListener l) {
         }
     }
 
     private class LayerHandler extends TransferHandler {
 
         @Override
-        public int getSourceActions(JComponent c) {
+        public int getSourceActions(final JComponent c) {
             return TransferHandler.MOVE;
         }
 
         @Override
-        protected Transferable createTransferable(JComponent c) {
+        protected Transferable createTransferable(final JComponent c) {
             final JTree tree = (JTree) c;
             final TreePath path = tree.getSelectionPath();
             final DefaultMutableTreeNode node = (DefaultMutableTreeNode) path.getLastPathComponent();
@@ -511,7 +511,7 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public boolean canImport(TransferHandler.TransferSupport support) {
+        public boolean canImport(final TransferHandler.TransferSupport support) {
 
             if (!support.isDataFlavorSupported(ITEM_FLAVOR) || !support.isDrop()) {
                 return false;
@@ -522,7 +522,7 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public boolean importData(TransferHandler.TransferSupport support) {
+        public boolean importData(final TransferHandler.TransferSupport support) {
             if (!canImport(support)) {
                 return false;
             }
@@ -602,7 +602,7 @@ public class JContextTree extends JScrollPane {
 
         private final TreePath path;
 
-        private MapItemTransferable(TreePath path) {
+        private MapItemTransferable(final TreePath path) {
             this.path = path;
         }
 
@@ -612,12 +612,12 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public boolean isDataFlavorSupported(DataFlavor flavor) {
+        public boolean isDataFlavorSupported(final DataFlavor flavor) {
             return flavor.equals(ITEM_FLAVOR);
         }
 
         @Override
-        public Object getTransferData(DataFlavor flavor) throws UnsupportedFlavorException, IOException {
+        public Object getTransferData(final DataFlavor flavor) throws UnsupportedFlavorException, IOException {
             if(ITEM_FLAVOR.equals(flavor)){
                 return path;
             }
@@ -627,7 +627,7 @@ public class JContextTree extends JScrollPane {
 
     private class MapItemTreeNode extends DefaultMutableTreeNode implements ItemListener{
 
-        private MapItemTreeNode(MapItem item){
+        private MapItemTreeNode(final MapItem item){
             super(item);
             if(item == null){
                 throw new NullArgumentException("Item can not be null.");
@@ -643,7 +643,7 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public void setUserObject(Object userObject) {
+        public void setUserObject(final Object userObject) {
             //not allowed to modify this object
         }
 
@@ -664,7 +664,7 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public synchronized void itemChange(CollectionChangeEvent<MapItem> event) {
+        public synchronized void itemChange(final CollectionChangeEvent<MapItem> event) {
 
             if(CollectionChangeEvent.ITEM_ADDED == event.getType()){
 
@@ -703,7 +703,7 @@ public class JContextTree extends JScrollPane {
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
 
             if(MapLayer.STYLE_PROPERTY.equals(evt.getPropertyName())){
                 //must regenerate style node elements
@@ -714,7 +714,7 @@ public class JContextTree extends JScrollPane {
             }
         }
 
-        private void fillStyleNodes(MapLayer layer){
+        private void fillStyleNodes(final MapLayer layer){
 
             final GraphicBuilder gb = layer.getGraphicBuilder(GraphicJ2D.class);
 

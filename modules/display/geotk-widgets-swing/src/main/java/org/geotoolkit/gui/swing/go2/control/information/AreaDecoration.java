@@ -89,13 +89,13 @@ public class AreaDecoration extends AbstractGeometryDecoration {
     }
 
     @Override
-    public void setGeometries(Collection<? extends Geometry> geoms) {
+    public void setGeometries(final Collection<? extends Geometry> geoms) {
         super.setGeometries(geoms);
         updateArea();
     }
     
     @Override
-    protected void paintGeometry(Graphics2D g2, RenderingContext2D context, ProjectedGeometry projectedGeom) throws TransformException {
+    protected void paintGeometry(final Graphics2D g2, final RenderingContext2D context, final ProjectedGeometry projectedGeom) throws TransformException {
         context.switchToDisplayCRS();
 
         final Geometry objectiveGeom = projectedGeom.getObjectiveGeometryJTS();
@@ -158,7 +158,7 @@ public class AreaDecoration extends AbstractGeometryDecoration {
 
     }
 
-    private void paintCross(Graphics2D g2, double[] crds){
+    private void paintCross(final Graphics2D g2, final double[] crds){
         g2.setStroke(new BasicStroke(3,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER));
         //draw a shadow
         crds[0] +=SHADOW_STEP;

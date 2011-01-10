@@ -91,12 +91,12 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
          * @param regularExpression
          *            a regular expression as used by the {@code java.util.regex} package
          */
-        public RegExFIDValidator(String regularExpression) {
+        public RegExFIDValidator(final String regularExpression) {
             pattern = Pattern.compile(regularExpression);
         }
 
         @Override
-        public boolean isValid(String fid) {
+        public boolean isValid(final String fid) {
             return pattern.matcher(fid).matches();
         }
     }
@@ -118,12 +118,12 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
 
     private FIDValidator fidValidator = ANY_FID_VALID;
 
-    public void setFIDValidator(FIDValidator validator) {
+    public void setFIDValidator(final FIDValidator validator) {
         this.fidValidator = validator == null ? ANY_FID_VALID : validator;
     }
 
     @Override
-    public Object visit(And filter, Object extraData) {
+    public Object visit(final And filter, final Object extraData) {
         // scan, clone and simplify the children
         final List<Filter> children = filter.getChildren();
         final List<Filter> newChildren = new ArrayList<Filter>(children.size());
@@ -156,7 +156,7 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
     }
     
     @Override
-    public Object visit(Or filter, Object extraData) {
+    public Object visit(final Or filter, final Object extraData) {
      // scan, clone and simplify the children
         final List<Filter> children = filter.getChildren();
         final List<Filter> newChildren = new ArrayList<Filter>(children.size());
@@ -196,7 +196,7 @@ public class SimplifyingFilterVisitor extends DuplicatingFilterVisitor {
      *         {@link Filter#EXCLUDE} if none matches or the filter is already empty 
      */
     @Override
-    public Object visit(Id filter, Object extraData) {
+    public Object visit(final Id filter, final Object extraData) {
         // if the set of ID is empty, it's actually equivalent to Filter.EXCLUDE
         if (filter.getIDs().size() == 0) {
             return Filter.EXCLUDE;

@@ -81,7 +81,7 @@ public class PolygonSymbolizer
      *     {@link Geometry }
      *     
      */
-    public void setGeometry(Geometry value) {
+    public void setGeometry(final Geometry value) {
         this.geometry = value;
     }
 
@@ -105,7 +105,7 @@ public class PolygonSymbolizer
      *     {@link Fill }
      *     
      */
-    public void setFill(Fill value) {
+    public void setFill(final Fill value) {
         this.fill = value;
     }
 
@@ -129,7 +129,7 @@ public class PolygonSymbolizer
      *     {@link Stroke }
      *     
      */
-    public void setStroke(Stroke value) {
+    public void setStroke(final Stroke value) {
         this.stroke = value;
     }
 

@@ -43,7 +43,7 @@ public enum GetFeatureInfoValueType {
     GET_FEATURE_INFO("GetFeatureInfo");
     private final String value;
 
-    GetFeatureInfoValueType(String v) {
+    GetFeatureInfoValueType(final String v) {
         value = v;
     }
 
@@ -51,7 +51,7 @@ public enum GetFeatureInfoValueType {
         return value;
     }
 
-    public static GetFeatureInfoValueType fromValue(String v) {
+    public static GetFeatureInfoValueType fromValue(final String v) {
         for (GetFeatureInfoValueType c: GetFeatureInfoValueType.values()) {
             if (c.value.equals(v)) {
                 return c;

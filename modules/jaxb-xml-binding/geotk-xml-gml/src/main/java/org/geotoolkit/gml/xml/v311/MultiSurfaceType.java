@@ -69,11 +69,11 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType {
         return this.surfaceMember;
     }
 
-    public void setSurfaceMember(List<SurfacePropertyType> surfaceMember) {
+    public void setSurfaceMember(final List<SurfacePropertyType> surfaceMember) {
         this.surfaceMember = surfaceMember;
     }
 
-    public void setSurfaceMember(SurfacePropertyType surfaceMember) {
+    public void setSurfaceMember(final SurfacePropertyType surfaceMember) {
         if (this.surfaceMember == null) {
             this.surfaceMember = new ArrayList<SurfacePropertyType>();
         }
@@ -100,22 +100,22 @@ public class MultiSurfaceType extends AbstractGeometricAggregateType {
      *     {@link SurfaceArrayPropertyType }
      *     
      */
-    public void setSurfaceMembers(SurfaceArrayPropertyType value) {
+    public void setSurfaceMembers(final SurfaceArrayPropertyType value) {
         this.surfaceMembers = value;
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

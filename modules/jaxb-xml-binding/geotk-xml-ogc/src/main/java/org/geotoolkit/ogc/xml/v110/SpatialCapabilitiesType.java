@@ -72,7 +72,7 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
     /**
      * Build a new SpatialCapabilities 
      */
-    public SpatialCapabilitiesType(GeometryOperand[] geometryOperands, SpatialOperators spatial) {
+    public SpatialCapabilitiesType(final GeometryOperand[] geometryOperands, final SpatialOperators spatial) {
         this.geometryOperands = new GeometryOperandsType(geometryOperands);
         this.spatialOperators = (SpatialOperatorsType) spatial;
     }
@@ -80,7 +80,7 @@ public class SpatialCapabilitiesType implements SpatialCapabilities {
     /**
      * Build a new SpatialCapabilities
      */
-    public SpatialCapabilitiesType(GeometryOperandsType geometryOperands, SpatialOperators spatial) {
+    public SpatialCapabilitiesType(final GeometryOperandsType geometryOperands, final SpatialOperators spatial) {
         this.geometryOperands = geometryOperands;
         this.spatialOperators = (SpatialOperatorsType) spatial;
     }

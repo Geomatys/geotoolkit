@@ -100,7 +100,7 @@ public class TimePosition implements AbstractTimePosition {
 
     }
 
-    public TimePosition(AbstractTimePosition tp) {
+    public TimePosition(final AbstractTimePosition tp) {
         if (tp != null) {
             this.actuate      = tp.getActuate();
             this.arcrole      = tp.getArcrole();
@@ -146,7 +146,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the time property.
      */
-    public void setTime(TimeType value) {
+    public void setTime(final TimeType value) {
         this.time = value;
     }
 
@@ -167,7 +167,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the process property.
      */
-    public void setProcess(JAXBElement<? extends AbstractProcessType> value) {
+    public void setProcess(final JAXBElement<? extends AbstractProcessType> value) {
         this.process = ((JAXBElement<? extends AbstractProcessType> ) value);
     }
 
@@ -181,7 +181,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the name property.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -205,7 +205,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -219,7 +219,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -233,7 +233,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -247,7 +247,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -261,7 +261,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -275,7 +275,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -289,7 +289,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -303,7 +303,7 @@ public class TimePosition implements AbstractTimePosition {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

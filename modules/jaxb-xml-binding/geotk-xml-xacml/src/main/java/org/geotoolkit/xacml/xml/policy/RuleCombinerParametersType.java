@@ -57,7 +57,7 @@ public class RuleCombinerParametersType extends CombinerParametersType {
    /**
     * Sets the value of the ruleIdRef property.
     */
-   public void setRuleIdRef(String value) {
+   public void setRuleIdRef(final String value) {
       this.ruleIdRef = value;
    }
 

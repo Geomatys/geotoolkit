@@ -85,7 +85,7 @@ public class LabelStyleType
      *     {@link Double }
      *     
      */
-    public void setScaleDenominator(Double value) {
+    public void setScaleDenominator(final Double value) {
         this.scaleDenominator = value;
     }
 

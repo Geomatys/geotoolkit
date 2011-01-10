@@ -130,7 +130,7 @@ public class GraphicType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setOpacity(ParameterValueType value) {
+    public void setOpacity(final ParameterValueType value) {
         this.opacity = value;
     }
 
@@ -154,7 +154,7 @@ public class GraphicType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setSize(ParameterValueType value) {
+    public void setSize(final ParameterValueType value) {
         this.size = value;
     }
 
@@ -178,7 +178,7 @@ public class GraphicType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setRotation(ParameterValueType value) {
+    public void setRotation(final ParameterValueType value) {
         this.rotation = value;
     }
 
@@ -202,7 +202,7 @@ public class GraphicType {
      *     {@link AnchorPointType }
      *     
      */
-    public void setAnchorPoint(AnchorPointType value) {
+    public void setAnchorPoint(final AnchorPointType value) {
         this.anchorPoint = value;
     }
 
@@ -226,7 +226,7 @@ public class GraphicType {
      *     {@link DisplacementType }
      *     
      */
-    public void setDisplacement(DisplacementType value) {
+    public void setDisplacement(final DisplacementType value) {
         this.displacement = value;
     }
 

@@ -69,14 +69,14 @@ public abstract class AbstractDescriptionBaseType {
     /**
      * build the base of a description.
      */
-    public AbstractDescriptionBaseType(List<MetadataLinkType> metadataLink){
+    public AbstractDescriptionBaseType(final List<MetadataLinkType> metadataLink){
         this.metadataLink = metadataLink;
     }
     
     /**
      * build the base of a description.
      */
-    public AbstractDescriptionBaseType(MetadataLinkType... metadataLinks){
+    public AbstractDescriptionBaseType(final MetadataLinkType... metadataLinks){
         this.metadataLink = new ArrayList<MetadataLinkType>();
         
         for (MetadataLinkType e: metadataLinks){
@@ -100,7 +100,7 @@ public abstract class AbstractDescriptionBaseType {
      * Gets the value of the metadataLink property.
      *
      */
-    public void setMetadataLink(List<MetadataLinkType> ml) {
+    public void setMetadataLink(final List<MetadataLinkType> ml) {
         this.metadataLink = ml;
     }
 

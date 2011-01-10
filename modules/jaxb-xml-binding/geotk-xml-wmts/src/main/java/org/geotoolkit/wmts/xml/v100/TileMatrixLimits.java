@@ -95,7 +95,7 @@ public class TileMatrixLimits {
      *     {@link String }
      *     
      */
-    public void setTileMatrix(String value) {
+    public void setTileMatrix(final String value) {
         this.tileMatrix = value;
     }
 
@@ -119,7 +119,7 @@ public class TileMatrixLimits {
      *     {@link Integer }
      *     
      */
-    public void setMinTileRow(Integer value) {
+    public void setMinTileRow(final Integer value) {
         this.minTileRow = value;
     }
 
@@ -143,7 +143,7 @@ public class TileMatrixLimits {
      *     {@link Integer }
      *     
      */
-    public void setMaxTileRow(Integer value) {
+    public void setMaxTileRow(final Integer value) {
         this.maxTileRow = value;
     }
 
@@ -167,7 +167,7 @@ public class TileMatrixLimits {
      *     {@link Integer }
      *     
      */
-    public void setMinTileCol(Integer value) {
+    public void setMinTileCol(final Integer value) {
         this.minTileCol = value;
     }
 
@@ -191,7 +191,7 @@ public class TileMatrixLimits {
      *     {@link Integer }
      *     
      */
-    public void setMaxTileCol(Integer value) {
+    public void setMaxTileCol(final Integer value) {
         this.maxTileCol = value;
     }
 

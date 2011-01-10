@@ -50,13 +50,13 @@ public class DefaultSelectionDecoration extends JComponent implements MapDecorat
     
     
     
-    public void setPoints(List<Point> points){
+    public void setPoints(final List<Point> points){
         this.points = points;
         repaint();
     }
     
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(final Graphics g) {
         if(points != null && points.size() > 1){
 
             Graphics2D g2 = (Graphics2D) g;
@@ -97,7 +97,7 @@ public class DefaultSelectionDecoration extends JComponent implements MapDecorat
     }
 
 
-    private void paintCross(Graphics2D g2, Point p){
+    private void paintCross(final Graphics2D g2, final Point p){
         g2.setStroke(new BasicStroke(3,BasicStroke.CAP_BUTT,BasicStroke.JOIN_MITER));
         //draw a shadow
         p.x +=SHADOW_STEP;
@@ -124,7 +124,7 @@ public class DefaultSelectionDecoration extends JComponent implements MapDecorat
     }
     
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         
     }
 

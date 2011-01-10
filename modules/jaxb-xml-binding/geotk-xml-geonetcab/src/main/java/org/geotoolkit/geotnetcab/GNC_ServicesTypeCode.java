@@ -89,7 +89,7 @@ public class GNC_ServicesTypeCode extends CodeList<GNC_ServicesTypeCode>  {
      * Returns the GNC_ServicesTypeCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_ServicesTypeCode valueOf(String code) {
+    public static GNC_ServicesTypeCode valueOf(final String code) {
         return valueOf(GNC_ServicesTypeCode.class, code);
     }
 }

@@ -44,7 +44,7 @@ public class PatternSymbolizer extends AbstractExtensionSymbolizer{
     private static final class ExpComparator implements Comparator<Expression>{
 
         @Override
-        public int compare(Expression t, Expression t1) {
+        public int compare(final Expression t, final Expression t1) {
             final Literal left = (Literal) t;
             final Literal right = (Literal) t1;
 
@@ -73,7 +73,7 @@ public class PatternSymbolizer extends AbstractExtensionSymbolizer{
 
     private final ThreshholdsBelongTo belongTo;
 
-    public PatternSymbolizer(Expression channel, Map<Expression,List <Symbolizer>> ranges, ThreshholdsBelongTo belong) {
+    public PatternSymbolizer(final Expression channel, final Map<Expression,List <Symbolizer>> ranges, final ThreshholdsBelongTo belong) {
         super(NonSI.PIXEL, "", "", null);
         this.channel = channel;
         this.thredholds.putAll(ranges);

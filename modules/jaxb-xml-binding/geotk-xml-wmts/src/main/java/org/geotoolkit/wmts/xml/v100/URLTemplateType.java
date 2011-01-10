@@ -71,7 +71,7 @@ public class URLTemplateType {
 
     }
 
-    public URLTemplateType(String format, String resourceType, String template){
+    public URLTemplateType(final String format, final String resourceType, final String template){
         this.format = format;
         this.resourceType = resourceType;
         this.template = template;
@@ -97,7 +97,7 @@ public class URLTemplateType {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 
@@ -121,7 +121,7 @@ public class URLTemplateType {
      *     {@link String }
      *     
      */
-    public void setResourceType(String value) {
+    public void setResourceType(final String value) {
         this.resourceType = value;
     }
 
@@ -145,7 +145,7 @@ public class URLTemplateType {
      *     {@link String }
      *     
      */
-    public void setTemplate(String value) {
+    public void setTemplate(final String value) {
         this.template = value;
     }
 

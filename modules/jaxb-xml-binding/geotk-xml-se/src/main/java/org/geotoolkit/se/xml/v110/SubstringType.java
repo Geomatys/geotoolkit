@@ -82,7 +82,7 @@ public class SubstringType
      *     {@link ParameterValueType }
      *     
      */
-    public void setStringValue(ParameterValueType value) {
+    public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
     }
 
@@ -106,7 +106,7 @@ public class SubstringType
      *     {@link ParameterValueType }
      *     
      */
-    public void setPosition(ParameterValueType value) {
+    public void setPosition(final ParameterValueType value) {
         this.position = value;
     }
 
@@ -130,7 +130,7 @@ public class SubstringType
      *     {@link ParameterValueType }
      *     
      */
-    public void setLength(ParameterValueType value) {
+    public void setLength(final ParameterValueType value) {
         this.length = value;
     }
 

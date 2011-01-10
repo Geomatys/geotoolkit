@@ -47,17 +47,17 @@ public class SeparatorItem extends JSeparator implements TreePopupItem{
     }
     
     @Override
-    public boolean isValid(TreePath[] selection) {
+    public boolean isValid(final TreePath[] selection) {
         return true;
     }
 
     @Override
-    public Component getComponent(TreePath[] selection) {
+    public Component getComponent(final TreePath[] selection) {
         return this;
     }
 
     @Override
-    public void setTree(JContextTree tree) {
+    public void setTree(final JContextTree tree) {
         this.tree = tree;
     }
 
@@ -67,7 +67,7 @@ public class SeparatorItem extends JSeparator implements TreePopupItem{
     }
 
     @Override
-    public void setMapView(JMap2D map) {
+    public void setMapView(final JMap2D map) {
         this.map = map;
     }
 

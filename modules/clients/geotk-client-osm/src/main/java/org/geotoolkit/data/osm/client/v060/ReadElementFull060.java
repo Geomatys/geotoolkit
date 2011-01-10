@@ -28,7 +28,7 @@ import org.geotoolkit.data.osm.model.Way;
  */
 public class ReadElementFull060 extends AbstractReadElementFull{
 
-    public ReadElementFull060(String serveruURL){
+    public ReadElementFull060(final String serveruURL){
         super(serveruURL,"/api/0.6/");
     }
 

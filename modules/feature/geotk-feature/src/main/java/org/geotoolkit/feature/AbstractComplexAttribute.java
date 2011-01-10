@@ -45,7 +45,7 @@ import org.opengis.filter.identity.Identifier;
 public abstract class AbstractComplexAttribute<V extends Collection<Property>,I extends Identifier> extends DefaultAttribute<V,AttributeDescriptor,I>
         implements ComplexAttribute {
 
-    protected AbstractComplexAttribute(AttributeDescriptor descriptor, I id) {
+    protected AbstractComplexAttribute(final AttributeDescriptor descriptor, final I id) {
         super( null , descriptor, id );
     }
 
@@ -69,7 +69,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * {@inheritDoc }
      */
     @Override
-    public Collection<Property> getProperties(Name name) {
+    public Collection<Property> getProperties(final Name name) {
         if(name.getNamespaceURI() == null){
             return getProperties(name.getLocalPart());
         }
@@ -88,7 +88,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * {@inheritDoc }
      */
     @Override
-    public Collection<Property> getProperties(String name) {
+    public Collection<Property> getProperties(final String name) {
         //we size it to 1, in most of the cases there is always a single property for a name.
         final List<Property> matches = new ArrayList<Property>(1);
         for(Property prop : getProperties()){
@@ -103,7 +103,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * {@inheritDoc }
      */
     @Override
-    public Property getProperty(Name name) {
+    public Property getProperty(final Name name) {
         if(name.getNamespaceURI() == null){
             return getProperty(name.getLocalPart());
         }
@@ -120,7 +120,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * {@inheritDoc }
      */
     @Override
-    public Property getProperty(String name) {
+    public Property getProperty(final String name) {
         //TODO find a faster way, hashmap ?
         for(Property prop : getProperties()){
             if(DefaultName.match(prop.getName(),name)){
@@ -134,7 +134,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * {@inheritDoc }
      */
     @Override
-    public void setValue(Object newValue) throws IllegalArgumentException,
+    public void setValue(final Object newValue) throws IllegalArgumentException,
             IllegalStateException {
         setValue((Collection<Property>)newValue);
     }
@@ -143,7 +143,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * {@inheritDoc }
      */
     @Override
-    public void setValue(Collection<Property> newValues) {
+    public void setValue(final Collection<Property> newValues) {
         final Collection<Property> props = getProperties();
         if(props.size() != newValues.size()){
             throw new IllegalArgumentException("Expected size of the collection is " 
@@ -198,7 +198,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      * @param path
      * @param last node of the tree
      */
-    private static void toString(TableWriter tablewriter, Property property, Integer index, boolean last, String... path){
+    private static void toString(final TableWriter tablewriter, final Property property, final Integer index, final boolean last, final String... path){
 
         //draw the path.
         for(String t : path){
@@ -267,13 +267,13 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
     }
 
-    private static String[] append(String[] array, String end){
+    private static String[] append(String[] array, final String end){
         array = Arrays.copyOf(array, array.length+1);
         array[array.length-1] = end;
         return array;
     }
 
-    private static String[] last(String[] array, String end){
+    private static String[] last(String[] array, final String end){
         array = array.clone();
         if(array.length>0){
             array[array.length-1] = end;

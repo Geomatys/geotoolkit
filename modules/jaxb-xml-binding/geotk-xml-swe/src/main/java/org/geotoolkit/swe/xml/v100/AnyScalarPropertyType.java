@@ -108,37 +108,37 @@ public class AnyScalarPropertyType implements AnyScalar {
 
     }
 
-    public AnyScalarPropertyType(String name, Count count) {
+    public AnyScalarPropertyType(final String name, final Count count) {
         this.name  = name;
         this.count = count;
     }
 
-    public AnyScalarPropertyType(String name, QuantityType quantity) {
+    public AnyScalarPropertyType(final String name, final QuantityType quantity) {
         this.name     = name;
         this.quantity = quantity;
     }
 
-    public AnyScalarPropertyType(String name, TimeType time) {
+    public AnyScalarPropertyType(final String name, final TimeType time) {
         this.name  = name;
         this.time  = time;
     }
 
-    public AnyScalarPropertyType(String name, BooleanType _boolean) {
+    public AnyScalarPropertyType(final String name, final BooleanType _boolean) {
         this.name  = name;
         this._boolean = _boolean;
     }
 
-    public AnyScalarPropertyType(String name, Category category) {
+    public AnyScalarPropertyType(final String name, final Category category) {
         this.name  = name;
         this.category = category;
     }
 
-    public AnyScalarPropertyType(String name, Text text) {
+    public AnyScalarPropertyType(final String name, final Text text) {
         this.name  = name;
         this.text  = text;
     }
 
-    public AnyScalarPropertyType(AnyScalar sc) {
+    public AnyScalarPropertyType(final AnyScalar sc) {
         if (sc != null) {
             if (sc.getValue() != null) {
                 AbstractDataComponent component = sc.getValue();
@@ -229,7 +229,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link Count }
      *     
      */
-    public void setCount(Count value) {
+    public void setCount(final Count value) {
         this.count = value;
     }
 
@@ -253,7 +253,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link Quantity }
      *     
      */
-    public void setQuantity(QuantityType value) {
+    public void setQuantity(final QuantityType value) {
         this.quantity = value;
     }
 
@@ -277,7 +277,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link Time }
      *     
      */
-    public void setTime(TimeType value) {
+    public void setTime(final TimeType value) {
         this.time = value;
     }
 
@@ -301,7 +301,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link Boolean }
      *     
      */
-    public void setBoolean(BooleanType value) {
+    public void setBoolean(final BooleanType value) {
         this._boolean = value;
     }
 
@@ -325,7 +325,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link Category }
      *     
      */
-    public void setCategory(Category value) {
+    public void setCategory(final Category value) {
         this.category = value;
     }
 
@@ -349,7 +349,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link Text }
      *     
      */
-    public void setText(Text value) {
+    public void setText(final Text value) {
         this.text = value;
     }
 
@@ -373,7 +373,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -397,7 +397,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -421,7 +421,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -445,7 +445,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -469,7 +469,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -493,7 +493,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -517,7 +517,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -541,7 +541,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -565,7 +565,7 @@ public class AnyScalarPropertyType implements AnyScalar {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

@@ -77,11 +77,11 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         guiSepGeometry.setTitle("PostGIS Geometry");
     }
 
-    public void setOsmFile(File osmFile) {
+    public void setOsmFile(final File osmFile) {
         this.osmFile = osmFile;
     }
 
-    public void setDBParameters(Map<String, Serializable> dbParameters) {
+    public void setDBParameters(final Map<String, Serializable> dbParameters) {
         this.dbParameters = dbParameters;
     }
 
@@ -224,7 +224,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         pgDB.commit();
     }
 
-    private void restartAt(long index) throws SQLException, XMLStreamException{
+    private void restartAt(final long index) throws SQLException, XMLStreamException{
         guiLblRestart.setBusy(true);
         final long before = System.currentTimeMillis();
 
@@ -827,7 +827,7 @@ public class JOSMDBCreationPane extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiCreateActionPerformed
+    private void guiCreateActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiCreateActionPerformed
 
         new Thread(){
             @Override

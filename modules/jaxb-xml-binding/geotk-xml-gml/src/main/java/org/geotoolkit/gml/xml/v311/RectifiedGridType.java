@@ -64,7 +64,7 @@ public class RectifiedGridType extends GridType {
 
     }
 
-    public RectifiedGridType(RectifiedGrid grid) {
+    public RectifiedGridType(final RectifiedGrid grid) {
        super(grid);
        if (grid != null) {
            origin       = new PointType(grid.getOrigin(), false);
@@ -84,7 +84,7 @@ public class RectifiedGridType extends GridType {
         return origin;
     }
 
-    public void setOrigin(PointType origin) {
+    public void setOrigin(final PointType origin) {
         this.origin = origin;
     }
 
@@ -98,7 +98,7 @@ public class RectifiedGridType extends GridType {
     /**
      * Sets the value of the offsetVector property
      */
-    public void setOffsetVector(List<VectorType> offsetVector) {
+    public void setOffsetVector(final List<VectorType> offsetVector) {
         this.offsetVector = offsetVector;
     }
 

@@ -143,7 +143,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Sets the value of the name property.
      */
-    public void setName(InternationalStringType value) {
+    public void setName(final InternationalStringType value) {
         this.name = value;
     }
 
@@ -158,7 +158,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Sets the value of the description property.
      */
-    public void setDescription(InternationalStringType value) {
+    public void setDescription(final InternationalStringType value) {
         this.description = value;
     }
 
@@ -176,7 +176,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Sets the value of the slot property.
      */
-    public void setSlot(SlotType slot) {
+    public void setSlot(final SlotType slot) {
         if (this.slot == null) {
             this.slot = new ArrayList<SlotType>();
         }
@@ -186,7 +186,7 @@ public class RegistryObjectType implements RegistryObject {
      /**
      * Sets the value of the slot property.
      */
-    public void setSlot(List<SlotType> slot) {
+    public void setSlot(final List<SlotType> slot) {
         this.slot = slot;
     }
 
@@ -204,7 +204,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Sets the value of the classification property.
      */
-    public void setClassification(ClassificationType classification) {
+    public void setClassification(final ClassificationType classification) {
         if (this.classification == null) {
             this.classification = new ArrayList<ClassificationType>();
         }
@@ -214,7 +214,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Sets the value of the classification property.
      */
-    public void setClassification(List<ClassificationType> classification) {
+    public void setClassification(final List<ClassificationType> classification) {
        this.classification = classification;
     }
 
@@ -231,7 +231,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Sets the value of the externalIdentifier property.
      */
-    public void setExternalIdentifier(ExternalIdentifierType externalIdentifier) {
+    public void setExternalIdentifier(final ExternalIdentifierType externalIdentifier) {
         if (this.externalIdentifier == null) {
             this.externalIdentifier = new ArrayList<ExternalIdentifierType>();
         }
@@ -260,7 +260,7 @@ public class RegistryObjectType implements RegistryObject {
      * Sets the value of the id property.
      * 
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -274,7 +274,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Sets the value of the home property.
      */
-    public void setHome(String value) {
+    public void setHome(final String value) {
         this.home = value;
     }
 
@@ -288,7 +288,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Sets the value of the objectType property.
      */
-    public void setObjectType(String value) {
+    public void setObjectType(final String value) {
         this.objectType = value;
     }
 
@@ -302,7 +302,7 @@ public class RegistryObjectType implements RegistryObject {
     /**
      * Sets the value of the status property.
      */
-    public void setStatus(String value) {
+    public void setStatus(final String value) {
         this.status = value;
     }
 

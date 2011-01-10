@@ -93,7 +93,7 @@ public class WPSCapabilitiesType
      *     {@link ProcessOfferings }
      *     
      */
-    public void setProcessOfferings(ProcessOfferings value) {
+    public void setProcessOfferings(final ProcessOfferings value) {
         this.processOfferings = value;
     }
 
@@ -117,7 +117,7 @@ public class WPSCapabilitiesType
      *     {@link Languages }
      *     
      */
-    public void setLanguages(Languages value) {
+    public void setLanguages(final Languages value) {
         this.languages = value;
     }
 
@@ -141,7 +141,7 @@ public class WPSCapabilitiesType
      *     {@link WSDL }
      *     
      */
-    public void setWSDL(WSDL value) {
+    public void setWSDL(final WSDL value) {
         this.wsdl = value;
     }
 
@@ -169,7 +169,7 @@ public class WPSCapabilitiesType
      *     {@link String }
      *     
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -193,7 +193,7 @@ public class WPSCapabilitiesType
      *     {@link String }
      *     
      */
-    public void setLang(String value) {
+    public void setLang(final String value) {
         this.lang = value;
     }
 

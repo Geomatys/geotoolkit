@@ -76,7 +76,7 @@ public class KdTree
 	 * @param tolerance
 	 *          the tolerance distance for considering two points equal
 	 */
-	public KdTree(double tolerance) {
+	public KdTree(final double tolerance) {
 		this.tolerance = tolerance;
 	}
 
@@ -87,7 +87,7 @@ public class KdTree
 	 *          the point to insert
 	 * @return the kdnode containing the point
 	 */
-	public KdNode insert(Coordinate p) {
+	public KdNode insert(final Coordinate p) {
 		return insert(p, null);
 	}
 
@@ -102,7 +102,7 @@ public class KdTree
 	 *         node is returned with its counter incremented. This can be checked
 	 *         by testing returnedNode.getCount() > 1.
 	 */
-	public KdNode insert(Coordinate p, Object data) {
+	public KdNode insert(final Coordinate p, final Object data) {
 		if (root == null) {
 			root = new KdNode(p, data);
 			return root;
@@ -159,8 +159,8 @@ public class KdTree
 		return node;
 	}
 
-	private void queryNode(KdNode currentNode, KdNode bottomNode,
-			Envelope queryEnv, boolean odd, List result) {
+	private void queryNode(final KdNode currentNode, final KdNode bottomNode,
+			final Envelope queryEnv, final boolean odd, final List result) {
 		if (currentNode == bottomNode)
 			return;
 
@@ -198,7 +198,7 @@ public class KdTree
 	 *          the range rectangle to query
 	 * @return a list of the KdNodes found
 	 */
-	public List query(Envelope queryEnv) {
+	public List query(final Envelope queryEnv) {
 		List result = new ArrayList();
 		queryNode(root, last, queryEnv, true, result);
 		return result;
@@ -212,7 +212,7 @@ public class KdTree
 	 * @param result
 	 *          a list to accumulate the result nodes into
 	 */
-	public void query(Envelope queryEnv, List result) {
+	public void query(final Envelope queryEnv, final List result) {
 		queryNode(root, last, queryEnv, true, result);
 	}
 }

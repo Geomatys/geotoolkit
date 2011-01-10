@@ -27,7 +27,7 @@ import org.geotoolkit.jdbc.JDBCDataStore;
 public class PostGISPSTestSetup extends PostGISTestSetup {
 
     @Override
-    protected void setUpDataStore(JDBCDataStore dataStore) {
+    protected void setUpDataStore(final JDBCDataStore dataStore) {
         super.setUpDataStore(dataStore);
         
         // for this test we need a PS based dialect
@@ -37,7 +37,7 @@ public class PostGISPSTestSetup extends PostGISTestSetup {
     }
 
     @Override
-    protected void fillConnectionProperties(Properties db) throws IOException {
+    protected void fillConnectionProperties(final Properties db) throws IOException {
         // override to use the same property file as the non ps path
         db.load( PostGISTestSetup.class.getResourceAsStream( "db.properties") );
     }

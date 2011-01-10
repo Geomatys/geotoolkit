@@ -90,7 +90,7 @@ public class NamedLayer {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -114,7 +114,7 @@ public class NamedLayer {
      *     {@link LayerFeatureConstraints }
      *     
      */
-    public void setLayerFeatureConstraints(LayerFeatureConstraints value) {
+    public void setLayerFeatureConstraints(final LayerFeatureConstraints value) {
         this.layerFeatureConstraints = value;
     }
 

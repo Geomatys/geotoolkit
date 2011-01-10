@@ -39,7 +39,7 @@ public class A3DPaintingUpdater extends Thread {
     private final WeakReference<LwjglAwtCanvas> canvasRef;
     private final Updater updater;
 
-    public A3DPaintingUpdater(LwjglAwtCanvas canvas, Updater updater) {
+    public A3DPaintingUpdater(final LwjglAwtCanvas canvas, final Updater updater) {
         canvasRef = new WeakReference<LwjglAwtCanvas>(canvas);
         this.updater = updater;
     }

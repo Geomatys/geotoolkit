@@ -67,7 +67,7 @@ public class CoverageLayerNode extends A3DGraphic{
 
     private final CoverageMapLayer layer;
 
-    public CoverageLayerNode(A3DCanvas canvas, CoverageMapLayer layer) {
+    public CoverageLayerNode(final A3DCanvas canvas, final CoverageMapLayer layer) {
         super(canvas);
         this.layer = layer;
 
@@ -124,7 +124,7 @@ public class CoverageLayerNode extends A3DGraphic{
     }
 
     @Override
-    public void draw(Renderer r) {
+    public void draw(final Renderer r) {
 
         if(update){
             synchronized(meshes){

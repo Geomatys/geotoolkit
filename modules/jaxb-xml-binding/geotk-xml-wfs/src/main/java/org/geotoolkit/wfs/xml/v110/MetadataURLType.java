@@ -88,7 +88,7 @@ public class MetadataURLType {
 
     }
 
-    public MetadataURLType(String value, String type, String format) {
+    public MetadataURLType(final String value, final String type, final String format) {
         this.format = format;
         this.value  = value;
         this.type   = type;
@@ -114,7 +114,7 @@ public class MetadataURLType {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -138,7 +138,7 @@ public class MetadataURLType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -162,7 +162,7 @@ public class MetadataURLType {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 

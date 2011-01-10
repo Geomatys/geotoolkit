@@ -55,7 +55,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
     }
 
@@ -65,7 +65,7 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
     }
     
     @Override
-    public void parse(ChannelSelection channel) {
+    public void parse(final ChannelSelection channel) {
         this.channel = channel;
         if (channel != null) {
             guiGray.parse(channel.getGrayChannel());
@@ -230,11 +230,11 @@ public class JChannelSelectionPane extends StyleElementEditor<ChannelSelection>{
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void guiChkGrayActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiChkGrayActionPerformed
+private void guiChkGrayActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiChkGrayActionPerformed
     lock();
 }//GEN-LAST:event_guiChkGrayActionPerformed
 
-private void guiChkRGBActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiChkRGBActionPerformed
+private void guiChkRGBActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiChkRGBActionPerformed
     lock();
 }//GEN-LAST:event_guiChkRGBActionPerformed
 

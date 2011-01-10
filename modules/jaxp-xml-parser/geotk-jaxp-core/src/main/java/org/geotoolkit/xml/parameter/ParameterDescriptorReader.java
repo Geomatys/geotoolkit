@@ -104,7 +104,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
      * @param occurrence
      * @return
      */
-    private int readOccurrences(String occurrence) {
+    private int readOccurrences(final String occurrence) {
         if (VAL_XSD_UNBOUNDED.equals(occurrence)) {
             return Integer.MAX_VALUE;
         } else {
@@ -124,7 +124,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
      * @throws ClassNotFoundException
      */
     private GeneralParameterDescriptor readGeneralParameterDescriptor(
-            String descriptorCodeName, int minOcc, int maxOcc, String defaultValue)
+            final String descriptorCodeName, final int minOcc, final int maxOcc, final String defaultValue)
             throws XMLStreamException, ClassNotFoundException {
 
         GeneralParameterDescriptor descriptor = null;
@@ -174,7 +174,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
      * @throws ClassNotFoundException
      */
     private ParameterDescriptor readParameterDescriptor(
-            String descriptorCodeName, int minOcc, Object defaultValue)
+            final String descriptorCodeName, final int minOcc, Object defaultValue)
             throws XMLStreamException, ClassNotFoundException {
 
         Class c = null;
@@ -269,7 +269,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
      * @throws ClassNotFoundException
      */
     private ParameterDescriptorGroup readParameterDescriptorGroup(
-            String descriptorCodeName, int minimumOccurs, int maximumOccurs)
+            final String descriptorCodeName, final int minimumOccurs, final int maximumOccurs)
             throws XMLStreamException, ClassNotFoundException {
 
         final List<GeneralParameterDescriptor> descs = new ArrayList<GeneralParameterDescriptor>();
@@ -338,7 +338,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
      * @return
      */
     private ReferenceIdentifier readName(
-            String code, String codeSpace, String version) {
+            final String code, final String codeSpace, final String version) {
 
 //        Citation authority = null;
         final Map<String, Object> properties = new HashMap<String, Object>();
@@ -363,7 +363,7 @@ public class ParameterDescriptorReader extends StaxStreamReader {
      * @throws XMLStreamException
      * @throws ClassNotFoundException
      */
-    private SimpleEntry<ValuesTopology, SimpleEntry<Object, ValueType>[]> readValues(Class c)
+    private SimpleEntry<ValuesTopology, SimpleEntry<Object, ValueType>[]> readValues(final Class c)
             throws XMLStreamException, ClassNotFoundException {
 
         final List<SimpleEntry<Object, ValueType>> values = new ArrayList<SimpleEntry<Object, ValueType>>();

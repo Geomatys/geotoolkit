@@ -45,11 +45,11 @@ public class Boundary {
     private final LinkedList<LinkedList<Coordinate>> floatings = new LinkedList<LinkedList<Coordinate>>();
     public final NumberRange range;
 
-    public Boundary(NumberRange range){
+    public Boundary(final NumberRange range){
         this.range = range;
     }
     
-    public void start(int firstX, int secondX, int y){
+    public void start(final int firstX, final int secondX, final int y){
         if(firstX == secondX) throw new IllegalArgumentException("bugging algorithm");
         final LinkedList<Coordinate> exterior = new LinkedList<Coordinate>();
         exterior.addFirst(new Coordinate(firstX, y));
@@ -214,8 +214,8 @@ public class Boundary {
         throw new IllegalArgumentException("bugging algorithm");
     }
 
-    private void combine(LinkedList<Coordinate> fromList, boolean fromStart,
-                         LinkedList<Coordinate> toList, boolean toStart){
+    private void combine(final LinkedList<Coordinate> fromList, final boolean fromStart,
+                         final LinkedList<Coordinate> toList, final boolean toStart){
 
         if(fromStart){
             if(toStart){
@@ -272,7 +272,7 @@ public class Boundary {
 
 
 
-    private Polygon finish(LinkedList<Coordinate> coords){
+    private Polygon finish(final LinkedList<Coordinate> coords){
 
         if(floatings.size() == 1){
             //closing the polygon enveloppe
@@ -300,7 +300,7 @@ public class Boundary {
 
     }
 
-    private static void reverse(Coordinate[] array){
+    private static void reverse(final Coordinate[] array){
         for(int l=0, r=array.length-1; l<r; l++, r--) {
             Coordinate temp = array[l];
             array[l] = array[r];
@@ -308,7 +308,7 @@ public class Boundary {
         }
     }
 
-    public Polygon merge(Boundary candidate){
+    public Polygon merge(final Boundary candidate){
 
         //System.err.println("M > before : " + toString());
         //System.err.println("M > with : " + candidate.toString());

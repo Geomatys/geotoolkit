@@ -92,7 +92,7 @@ public class Security implements AbstractSecurity {
 
     }
 
-    public Security(AbstractSecurity that) {
+    public Security(final AbstractSecurity that) {
         this.fgIsourceOpen         = that.getFGIsourceOpen();
         this.sarIdentifier         = that.getSARIdentifier();
         this.scIcontrols           = that.getSCIcontrols();
@@ -387,7 +387,7 @@ public class Security implements AbstractSecurity {
      *     {@link String }
      *     
      */
-    public void setClassifiedBy(String value) {
+    public void setClassifiedBy(final String value) {
         this.classifiedBy = value;
     }
 
@@ -411,7 +411,7 @@ public class Security implements AbstractSecurity {
      *     {@link String }
      *     
      */
-    public void setClassificationReason(String value) {
+    public void setClassificationReason(final String value) {
         this.classificationReason = value;
     }
 
@@ -435,7 +435,7 @@ public class Security implements AbstractSecurity {
      *     {@link String }
      *     
      */
-    public void setDerivedFrom(String value) {
+    public void setDerivedFrom(final String value) {
         this.derivedFrom = value;
     }
 
@@ -459,7 +459,7 @@ public class Security implements AbstractSecurity {
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public void setDeclassDate(XMLGregorianCalendar value) {
+    public void setDeclassDate(final XMLGregorianCalendar value) {
         this.declassDate = value;
     }
 
@@ -483,7 +483,7 @@ public class Security implements AbstractSecurity {
      *     {@link String }
      *     
      */
-    public void setDeclassEvent(String value) {
+    public void setDeclassEvent(final String value) {
         this.declassEvent = value;
     }
 
@@ -565,7 +565,7 @@ public class Security implements AbstractSecurity {
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public void setDateOfExemptedSource(XMLGregorianCalendar value) {
+    public void setDateOfExemptedSource(final XMLGregorianCalendar value) {
         this.dateOfExemptedSource = value;
     }
 
@@ -589,7 +589,7 @@ public class Security implements AbstractSecurity {
      *     {@link Boolean }
      *     
      */
-    public void setDeclassManualReview(Boolean value) {
+    public void setDeclassManualReview(final Boolean value) {
         this.declassManualReview = value;
     }
 

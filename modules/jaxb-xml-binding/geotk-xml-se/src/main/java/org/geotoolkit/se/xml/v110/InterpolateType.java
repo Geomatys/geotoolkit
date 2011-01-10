@@ -86,7 +86,7 @@ public class InterpolateType
      *     {@link ParameterValueType }
      *     
      */
-    public void setLookupValue(ParameterValueType value) {
+    public void setLookupValue(final ParameterValueType value) {
         this.lookupValue = value;
     }
 
@@ -139,7 +139,7 @@ public class InterpolateType
      *     {@link ModeType }
      *     
      */
-    public void setMode(ModeType value) {
+    public void setMode(final ModeType value) {
         this.mode = value;
     }
 
@@ -163,7 +163,7 @@ public class InterpolateType
      *     {@link MethodType }
      *     
      */
-    public void setMethod(MethodType value) {
+    public void setMethod(final MethodType value) {
         this.method = value;
     }
 

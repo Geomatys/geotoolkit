@@ -36,7 +36,7 @@ class DefaultCoverageConstraint implements CoverageConstraint{
     /**
      * default constructor.
      */
-    DefaultCoverageConstraint(String coverageName, CoverageExtent extent){
+    DefaultCoverageConstraint(final String coverageName, final CoverageExtent extent){
         if(coverageName == null){
             throw new NullPointerException("Coverage name can not be null.");
         }
@@ -65,7 +65,7 @@ class DefaultCoverageConstraint implements CoverageConstraint{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -73,7 +73,7 @@ class DefaultCoverageConstraint implements CoverageConstraint{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

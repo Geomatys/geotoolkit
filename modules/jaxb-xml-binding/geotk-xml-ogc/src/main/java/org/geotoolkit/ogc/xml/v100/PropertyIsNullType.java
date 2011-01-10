@@ -67,7 +67,7 @@ public class PropertyIsNullType extends ComparisonOpsType {
      * Sets the value of the propertyName property.
      * 
      */
-    public void setPropertyName(PropertyNameType value) {
+    public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
     }
 
@@ -83,7 +83,7 @@ public class PropertyIsNullType extends ComparisonOpsType {
      * Sets the value of the literal property.
      * 
      */
-    public void setLiteral(LiteralType value) {
+    public void setLiteral(final LiteralType value) {
         this.literal = value;
     }
 

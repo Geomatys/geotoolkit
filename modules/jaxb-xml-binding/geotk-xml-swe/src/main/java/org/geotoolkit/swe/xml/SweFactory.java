@@ -38,7 +38,7 @@ public class SweFactory {
      *
      * @param version The SWE version.
      */
-    public SweFactory(String version) {
+    public SweFactory(final String version) {
         this.version = version;
     }
 
@@ -49,7 +49,7 @@ public class SweFactory {
      * @param quantity
      * @return
      */
-    public Coordinate createCoordinate(String name, Quantity quantity) {
+    public Coordinate createCoordinate(final String name, final Quantity quantity) {
         if ("1.0.0".equals(version)) {
             if (quantity != null && !(quantity instanceof org.geotoolkit.swe.xml.v100.QuantityType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for quantity object.");
@@ -75,7 +75,7 @@ public class SweFactory {
      * @param value
      * @return
      */
-    public Quantity createQuantity(String definition, UomProperty uom, Double value) {
+    public Quantity createQuantity(final String definition, final UomProperty uom, final Double value) {
 
         if ("1.0.0".equals(version)) {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v100.UomPropertyType)) {
@@ -106,7 +106,7 @@ public class SweFactory {
      * @param value
      * @return
      */
-    public Quantity createQuantity(String axisID, String definition, UomProperty uom, Double value) {
+    public Quantity createQuantity(final String axisID, final String definition, final UomProperty uom, final Double value) {
 
         if ("1.0.0".equals(version)) {
             if (uom != null && !(uom instanceof org.geotoolkit.swe.xml.v100.UomPropertyType)) {
@@ -138,7 +138,7 @@ public class SweFactory {
      * @param href
      * @return
      */
-    public UomProperty createUomProperty(String code, String href) {
+    public UomProperty createUomProperty(final String code, final String href) {
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.swe.xml.v100.UomPropertyType(code, href);
         } else if ("1.0.1".equals(version)) {
@@ -148,7 +148,7 @@ public class SweFactory {
         }
     }
 
-    public Position createPosition(URI referenceFrame, URI localFrame, Vector location, Vector orientation) {
+    public Position createPosition(final URI referenceFrame, final URI localFrame, final Vector location, final Vector orientation) {
 
         if ("1.0.0".equals(version)) {
             if (!(location instanceof org.geotoolkit.swe.xml.v100.VectorType) || !(orientation instanceof org.geotoolkit.swe.xml.v100.VectorType)) {
@@ -172,7 +172,7 @@ public class SweFactory {
         }
     }
 
-    public Position createPosition(URI referenceFrame, URI localFrame, Vector location) {
+    public Position createPosition(final URI referenceFrame, final URI localFrame, final Vector location) {
 
         if ("1.0.0".equals(version)) {
             if (!(location instanceof org.geotoolkit.swe.xml.v100.VectorType)) {
@@ -199,7 +199,7 @@ public class SweFactory {
      * Build a Vector in the factory version.
      *
      */
-    public Vector createVector(String definition, List<? extends Coordinate> coordinates) {
+    public Vector createVector(final String definition, final List<? extends Coordinate> coordinates) {
         if ("1.0.0".equals(version)) {
             URI def = URI.create(definition);
             return new org.geotoolkit.swe.xml.v100.VectorType(def,
@@ -212,7 +212,7 @@ public class SweFactory {
         }
     }
 
-    public AnyScalar createAnyScalar(String name, Quantity quantity) {
+    public AnyScalar createAnyScalar(final String name, final Quantity quantity) {
 
         if ("1.0.0".equals(version)) {
             if (!(quantity instanceof org.geotoolkit.swe.xml.v100.QuantityType)) {
@@ -232,7 +232,7 @@ public class SweFactory {
         }
     }
 
-    public SimpleDataRecord createSimpleDataRecord(List<? extends AnyScalar> fields) {
+    public SimpleDataRecord createSimpleDataRecord(final List<? extends AnyScalar> fields) {
 
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.swe.xml.v100.SimpleDataRecordType((List<org.geotoolkit.swe.xml.v100.AnyScalarPropertyType>)fields);

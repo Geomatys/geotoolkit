@@ -61,7 +61,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      * visit each expression and check that they are static
      */
     @Override
-    public Boolean visit(NilExpression expression, Object data) {
+    public Boolean visit(final NilExpression expression, final Object data) {
         return Boolean.TRUE;
     }
 
@@ -69,7 +69,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      * visit each expression and check that they are static
      */
     @Override
-    public Boolean visit(Add expression, Object data) {
+    public Boolean visit(final Add expression, final Object data) {
         return (Boolean)expression.getExpression1().accept(this, data) &&
                (Boolean)expression.getExpression2().accept(this, data);
     }
@@ -78,7 +78,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      * visit each expression and check that they are static
      */
     @Override
-    public Boolean visit(Divide expression, Object data) {
+    public Boolean visit(final Divide expression, final Object data) {
         return (Boolean)expression.getExpression1().accept(this, data) &&
                (Boolean)expression.getExpression2().accept(this, data);
     }
@@ -87,7 +87,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      * Visit each parameter and check if they are static
      */
     @Override
-    public Boolean visit(Function expression, Object data) {
+    public Boolean visit(final Function expression, final Object data) {
         final List<Expression> parameters = expression.getParameters();
         if (parameters != null) {
             for (final Expression parameter : parameters) {
@@ -102,7 +102,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      * @return true
      */
     @Override
-    public Boolean visit(Literal expression, Object data) {
+    public Boolean visit(final Literal expression, final Object data) {
         return Boolean.TRUE;
     }
 
@@ -111,7 +111,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      * @return true if getExpression1 and getExpression2 are static
      */
     @Override
-    public Boolean visit(Multiply expression, Object data) {
+    public Boolean visit(final Multiply expression, final Object data) {
         return (Boolean)expression.getExpression1().accept(this, data) &&
                (Boolean)expression.getExpression2().accept(this, data);
     }
@@ -122,7 +122,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      * @return false
      */
     @Override
-    public Boolean visit(PropertyName expression, Object data) {
+    public Boolean visit(final PropertyName expression, final Object data) {
         return Boolean.FALSE;
     }
 
@@ -131,7 +131,7 @@ public class IsStaticExpressionVisitor implements ExpressionVisitor {
      * @return true if getExpression1 and getExpression2 are static
      */
     @Override
-    public Boolean visit(Subtract expression, Object data) {
+    public Boolean visit(final Subtract expression, final Object data) {
         return (Boolean)expression.getExpression1().accept(this, data) &&
                (Boolean)expression.getExpression2().accept(this, data);
     }

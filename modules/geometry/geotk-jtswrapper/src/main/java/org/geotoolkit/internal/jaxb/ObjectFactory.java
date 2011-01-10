@@ -98,78 +98,78 @@ public class ObjectFactory {
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Value")
-    public JAXBElement<Object> createValue(Object value) {
+    public JAXBElement<Object> createValue(final Object value) {
         return new JAXBElement<Object>(VALUE_QNAME, Object.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Point")
-    public JAXBElement<JTSPoint> createJTSPoint(JTSPoint value) {
+    public JAXBElement<JTSPoint> createJTSPoint(final JTSPoint value) {
         return new JAXBElement<JTSPoint>(POINT_QNAME, JTSPoint.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LineString")
-    public JAXBElement<LineStringPosListType> createLineStringPosListType(LineStringPosListType value) {
+    public JAXBElement<LineStringPosListType> createLineStringPosListType(final LineStringPosListType value) {
         return new JAXBElement<LineStringPosListType>(LINE_STRING_QNAME, LineStringPosListType.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LinearRing")
-    public JAXBElement<JTSRing> createJTSRing(JTSRing value) {
+    public JAXBElement<JTSRing> createJTSRing(final JTSRing value) {
         return new JAXBElement<JTSRing>(RING_QNAME, JTSRing.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Curve")
-    public JAXBElement<JTSCurve> createJTSCurve(JTSCurve value) {
+    public JAXBElement<JTSCurve> createJTSCurve(final JTSCurve value) {
         return new JAXBElement<JTSCurve>(CURVE_QNAME, JTSCurve.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Envelope")
-    public JAXBElement<JTSEnvelope> createJTSEnvelope(JTSEnvelope value) {
+    public JAXBElement<JTSEnvelope> createJTSEnvelope(final JTSEnvelope value) {
         return new JAXBElement<JTSEnvelope>(ENVELOPE_QNAME, JTSEnvelope.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiPoint")
-    public JAXBElement<JTSMultiPoint> createJTSMultiPoint(JTSMultiPoint value) {
+    public JAXBElement<JTSMultiPoint> createJTSMultiPoint(final JTSMultiPoint value) {
         return new JAXBElement<JTSMultiPoint>(MULTI_POINT_QNAME, JTSMultiPoint.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiSurface")
-    public JAXBElement<JTSMultiSurface> createJTSMultiSurface(JTSMultiSurface value) {
+    public JAXBElement<JTSMultiSurface> createJTSMultiSurface(final JTSMultiSurface value) {
         return new JAXBElement<JTSMultiSurface>(MULTI_SURFACE_QNAME, JTSMultiSurface.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiCurve")
-    public JAXBElement<JTSMultiCurve> createJTSMultiCurve(JTSMultiCurve value) {
+    public JAXBElement<JTSMultiCurve> createJTSMultiCurve(final JTSMultiCurve value) {
         return new JAXBElement<JTSMultiCurve>(MULTI_CURVE_QNAME, JTSMultiCurve.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiPolygon")
-    public JAXBElement<JTSMultiPolygon> createJTSMultiPolygon(JTSMultiPolygon value) {
+    public JAXBElement<JTSMultiPolygon> createJTSMultiPolygon(final JTSMultiPolygon value) {
         return new JAXBElement<JTSMultiPolygon>(MULTI_POLYGON_QNAME, JTSMultiPolygon.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiGeometry")
-    public JAXBElement<JTSMultiPrimitive> createJTSMultiGeometry(JTSMultiPrimitive value) {
+    public JAXBElement<JTSMultiPrimitive> createJTSMultiGeometry(final JTSMultiPrimitive value) {
         return new JAXBElement<JTSMultiPrimitive>(MULTI_GEOMETRY_QNAME, JTSMultiPrimitive.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CompositeCurve")
-    public JAXBElement<JTSCompositeCurve> createJTSCompositeCurve(JTSCompositeCurve value) {
+    public JAXBElement<JTSCompositeCurve> createJTSCompositeCurve(final JTSCompositeCurve value) {
         return new JAXBElement<JTSCompositeCurve>(COMPOSITE_CURVE_QNAME, JTSCompositeCurve.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "PolyhedralSurface")
     @XmlJavaTypeAdapter(PolyhedralSurfaceAdapter.class)
-    public JAXBElement<JTSPolyhedralSurface> createJTSPolyhedralSurface(JTSPolyhedralSurface value) {
+    public JAXBElement<JTSPolyhedralSurface> createJTSPolyhedralSurface(final JTSPolyhedralSurface value) {
         return new JAXBElement<JTSPolyhedralSurface>(POLYHEDRAL_SURFACE_QNAME, JTSPolyhedralSurface.class, null, value);
     }
 
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Polygon")
     @XmlJavaTypeAdapter(PolygonAdapter.class)
-    public JAXBElement<JTSPolygon> createJTSPolygon(JTSPolygon value) {
+    public JAXBElement<JTSPolygon> createJTSPolygon(final JTSPolygon value) {
         return new JAXBElement<JTSPolygon>(POLYGON_QNAME, JTSPolygon.class, null, value);
     }
 
-    public JAXBElement<?> buildAnyGeometry(Geometry value) {
+    public JAXBElement<?> buildAnyGeometry(final Geometry value) {
         if (value instanceof JTSPoint) {
             return createJTSPoint((JTSPoint) value);
 

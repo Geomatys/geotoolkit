@@ -31,7 +31,7 @@ public class CopyRight {
     private final Integer year;
     private final URI license;
 
-    public CopyRight(String author, Integer year, URI license){
+    public CopyRight(final String author, final Integer year, final URI license){
         this.author = author;
         this.year = year;
         this.license = license;
@@ -67,7 +67,7 @@ public class CopyRight {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

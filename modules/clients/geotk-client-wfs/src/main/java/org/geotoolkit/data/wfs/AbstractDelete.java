@@ -36,7 +36,7 @@ public class AbstractDelete implements Delete{
     }
 
     @Override
-    public void setHandle(String handle) {
+    public void setHandle(final String handle) {
         this.handle = handle;
     }
 
@@ -46,7 +46,7 @@ public class AbstractDelete implements Delete{
     }
 
     @Override
-    public void setFilter(Filter filter) {
+    public void setFilter(final Filter filter) {
         this.filter = filter;
     }
 
@@ -56,7 +56,7 @@ public class AbstractDelete implements Delete{
     }
 
     @Override
-    public void setTypeName(Name type) {
+    public void setTypeName(final Name type) {
         this.typeName = type;
     }
 

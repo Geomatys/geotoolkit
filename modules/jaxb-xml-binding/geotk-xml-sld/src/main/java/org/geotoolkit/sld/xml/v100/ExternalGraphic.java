@@ -77,7 +77,7 @@ public class ExternalGraphic {
      *     {@link OnlineResource }
      *     
      */
-    public void setOnlineResource(OnlineResource value) {
+    public void setOnlineResource(final OnlineResource value) {
         this.onlineResource = value;
     }
 
@@ -101,7 +101,7 @@ public class ExternalGraphic {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 

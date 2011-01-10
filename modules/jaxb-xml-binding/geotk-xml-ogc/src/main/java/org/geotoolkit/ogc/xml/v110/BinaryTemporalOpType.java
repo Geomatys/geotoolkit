@@ -91,7 +91,7 @@ public class BinaryTemporalOpType extends TemporalOpsType {
     /**
      * Build a new temporal operator with the specified objects.
      */
-    public BinaryTemporalOpType(Object... elements){
+    public BinaryTemporalOpType(final Object... elements){
         rest = new ArrayList<Object>();
         for (Object obj: elements){
             rest.add(obj);
@@ -118,7 +118,7 @@ public class BinaryTemporalOpType extends TemporalOpsType {
     /**
      * @param propertyName the propertyName to set
      */
-    public void setPropertyName(String propertyName) {
+    public void setPropertyName(final String propertyName) {
         this.propertyName = propertyName;
     }
 

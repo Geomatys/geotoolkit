@@ -50,16 +50,16 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     private Feature feature;
 
 
-    public StatefullProjectedFeature(StatefullContextParams params){
+    public StatefullProjectedFeature(final StatefullContextParams params){
         this(params,null);
     }
 
-    public StatefullProjectedFeature(StatefullContextParams params, Feature feature){
+    public StatefullProjectedFeature(final StatefullContextParams params, final Feature feature){
         this.params = params;
         this.feature = feature;
     }
 
-    public void setFeature(Feature feature) {
+    public void setFeature(final Feature feature) {
         //we dont test if it is the same feature or not, even
         //if it's the same feature, it might have change so we clear the cache anyway.
         clearDataCache();
@@ -127,7 +127,7 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     }
 
     @Override
-    public void setVisible(boolean visible) {
+    public void setVisible(final boolean visible) {
     }
 
     @Override

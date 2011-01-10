@@ -88,7 +88,7 @@ public class GNC_DocumentsTypeCode extends CodeList<GNC_DocumentsTypeCode>  {
      * Returns the GNC_DocumentTypeCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_DocumentsTypeCode valueOf(String code) {
+    public static GNC_DocumentsTypeCode valueOf(final String code) {
         return valueOf(GNC_DocumentsTypeCode.class, code);
     }
 }

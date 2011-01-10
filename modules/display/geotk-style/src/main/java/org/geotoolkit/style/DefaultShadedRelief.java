@@ -41,7 +41,7 @@ public class DefaultShadedRelief implements ShadedRelief{
      * @param bright : can be null
      * @param relief : if null or Expression.NIL will be replaced by default description.
      */
-    public DefaultShadedRelief(boolean bright, Expression relief){
+    public DefaultShadedRelief(final boolean bright, final Expression relief){
         this.bright = bright;
         this.relief = (relief == null || relief == NIL) ? DEFAULT_SHADED_RELIEF_FACTOR : relief;
     }
@@ -66,7 +66,7 @@ public class DefaultShadedRelief implements ShadedRelief{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -74,7 +74,7 @@ public class DefaultShadedRelief implements ShadedRelief{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

@@ -56,7 +56,7 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
         
     }
 
-    public QuantityType(Quantity q) {
+    public QuantityType(final Quantity q) {
         super(q);
         if (q != null) {
             this.axisID         = q.getAxisID();
@@ -80,7 +80,7 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     /**
      * Build a new QuantityType
      */
-    public QuantityType(String definition, String uomCode, String uomHref) {
+    public QuantityType(final String definition, final String uomCode, final String uomHref) {
         super(null, definition, null);
         this.uom = new UomPropertyType(uomCode, uomHref);
     }
@@ -88,19 +88,19 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     /**
      * Build a new QuantityType
      */
-    public QuantityType(String definition, String uomCode) {
+    public QuantityType(final String definition, final String uomCode) {
         super(null, definition, null);
         this.uom = new UomPropertyType(uomCode, null);
     }
 
 
-    public QuantityType(String definition, UomPropertyType uom, Double value) {
+    public QuantityType(final String definition, final UomPropertyType uom, final Double value) {
         super(definition);
         this.uom   = uom;
         this.value = value;
     }
 
-    public QuantityType(String axisID, String definition, UomPropertyType uom, Double value) {
+    public QuantityType(final String axisID, final String definition, final UomPropertyType uom, final Double value) {
         super(definition);
         this.axisID = axisID;
         this.uom    = uom;
@@ -131,7 +131,7 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     /**
      * Sets the value of the axisID property.
      */
-    public void setAxisID(String value) {
+    public void setAxisID(final String value) {
         this.axisID = value;
     }
     
@@ -152,7 +152,7 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     /**
      * @param constraint the constraint to set
      */
-    public void setConstraint(AllowedValuesPropertyType constraint) {
+    public void setConstraint(final AllowedValuesPropertyType constraint) {
         this.constraint = constraint;
     }
 
@@ -166,11 +166,11 @@ public class QuantityType extends AbstractDataComponentEntry implements Quantity
     /**
      * @param quality the quality to set
      */
-    public void setQuality(List<QualityPropertyType> quality) {
+    public void setQuality(final List<QualityPropertyType> quality) {
         this.quality = quality;
     }
 
-    public void setQuality(QualityPropertyType quality) {
+    public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
                 this.quality = new ArrayList<QualityPropertyType>();

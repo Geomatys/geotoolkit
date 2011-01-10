@@ -98,12 +98,12 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
 
     protected final MutableStyleFactory styleFactory;
 
-    public SE100toGTTransformer(FilterFactory2 filterFactory, MutableStyleFactory styleFactory) {
+    public SE100toGTTransformer(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory) {
         super(filterFactory);
         this.styleFactory = styleFactory;
     }
 
-    public OnlineResource visitOnlineResource(org.geotoolkit.sld.xml.v100.OnlineResource ort) {
+    public OnlineResource visitOnlineResource(final org.geotoolkit.sld.xml.v100.OnlineResource ort) {
         if(ort == null){
             return null;
         }
@@ -122,12 +122,12 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         return null;
     }
 
-    public String visitGeom(org.geotoolkit.sld.xml.v100.Geometry geometry) {
+    public String visitGeom(final org.geotoolkit.sld.xml.v100.Geometry geometry) {
         if(geometry == null || geometry.getPropertyName() == null || geometry.getPropertyName().getContent().trim().isEmpty()) return null;
         return geometry.getPropertyName().getContent();
     }
 
-    public Object visitSVG(org.geotoolkit.sld.xml.v100.CssParameter css) {
+    public Object visitSVG(final org.geotoolkit.sld.xml.v100.CssParameter css) {
         
 //        JAXBElementFunctionType> 
 //        String 
@@ -196,14 +196,14 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         return null;
     }
 
-    public Unit visitUOM(String uom) {
+    public Unit visitUOM(final String uom) {
         throw new UnsupportedOperationException("Not yet implemented");
     }
 
     /**
      * Transform a parametervaluetype in Expression.
      */
-    public Expression visitExpression(org.geotoolkit.sld.xml.v100.ParameterValueType param) {
+    public Expression visitExpression(final org.geotoolkit.sld.xml.v100.ParameterValueType param) {
         if(param == null) return null;
 
 //        Objects of the following type(s) are allowed in the list
@@ -245,7 +245,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 userstyle in GT style.
      */
-    public MutableStyle visitUserStyle(org.geotoolkit.sld.xml.v100.UserStyle us) {
+    public MutableStyle visitUserStyle(final org.geotoolkit.sld.xml.v100.UserStyle us) {
         if(us == null){
             return null;
         }else{
@@ -272,7 +272,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 FeatureTypeStyle or CoverageStyle in GT FTS.
      */
-    public MutableFeatureTypeStyle visitFTS(org.geotoolkit.sld.xml.v100.FeatureTypeStyle obj){
+    public MutableFeatureTypeStyle visitFTS(final org.geotoolkit.sld.xml.v100.FeatureTypeStyle obj){
         if(obj == null) return null;        
     
         final MutableFeatureTypeStyle fts = styleFactory.featureTypeStyle();
@@ -301,7 +301,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform SLD v1.0 semantics in GT semantics.
      */
-    public Collection<? extends SemanticType> visitSemantics(List<String> strs){
+    public Collection<? extends SemanticType> visitSemantics(final List<String> strs){
 
         if(strs == null || strs.isEmpty()){
             return Collections.emptyList();
@@ -332,7 +332,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Trasnform SLD v1.0 rule in GT Rule.
      */
-    public MutableRule visitRule(org.geotoolkit.sld.xml.v100.Rule rt) {
+    public MutableRule visitRule(final org.geotoolkit.sld.xml.v100.Rule rt) {
 
         final MutableRule rule = styleFactory.rule();
 
@@ -386,7 +386,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 point symbolizer in GT point symbolizer.
      */
-    public PointSymbolizer visit(org.geotoolkit.sld.xml.v100.PointSymbolizer pst) {
+    public PointSymbolizer visit(final org.geotoolkit.sld.xml.v100.PointSymbolizer pst) {
         if(pst == null) return null;
 
         final Graphic graphic = (pst.getGraphic() == null) ? styleFactory.graphic() : visit(pst.getGraphic());
@@ -401,7 +401,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 line symbolizer in GT line symbolizer.
      */
-    public LineSymbolizer visit(org.geotoolkit.sld.xml.v100.LineSymbolizer lst) {
+    public LineSymbolizer visit(final org.geotoolkit.sld.xml.v100.LineSymbolizer lst) {
         if(lst == null) return null;
 
         final Stroke stroke = visit(lst.getStroke());
@@ -417,7 +417,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 polygon symbolizer in GT polygon symbolizer.
      */
-    public PolygonSymbolizer visit(org.geotoolkit.sld.xml.v100.PolygonSymbolizer pst) {
+    public PolygonSymbolizer visit(final org.geotoolkit.sld.xml.v100.PolygonSymbolizer pst) {
         if(pst == null) return null;
 
         final Stroke stroke = visit(pst.getStroke());
@@ -435,7 +435,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 raster symbolizer in GT raster symbolizer.
      */
-    public RasterSymbolizer visit(org.geotoolkit.sld.xml.v100.RasterSymbolizer rst) {
+    public RasterSymbolizer visit(final org.geotoolkit.sld.xml.v100.RasterSymbolizer rst) {
         if(rst == null) return null;
 
         final Expression opacity = (rst.getOpacity() == null) ? filterFactory.literal(1) : visitExpression(rst.getOpacity());
@@ -458,7 +458,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 text symbolizer in GT text symbolizer.
      */
-    public TextSymbolizer visit(org.geotoolkit.sld.xml.v100.TextSymbolizer tst) {
+    public TextSymbolizer visit(final org.geotoolkit.sld.xml.v100.TextSymbolizer tst) {
         if(tst == null) return null;
 
         final Expression label = visitExpression(tst.getLabel());
@@ -481,7 +481,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 legend in GT legend.
      */
-    public GraphicLegend visitLegend(org.geotoolkit.sld.xml.v100.LegendGraphic legendGraphic) {
+    public GraphicLegend visitLegend(final org.geotoolkit.sld.xml.v100.LegendGraphic legendGraphic) {
         if(legendGraphic == null || legendGraphic.getGraphic() == null){
             return null;
         }
@@ -497,7 +497,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 graphic in GT graphic.
      */
-    private Graphic visit(org.geotoolkit.sld.xml.v100.Graphic graphic) {
+    private Graphic visit(final org.geotoolkit.sld.xml.v100.Graphic graphic) {
         if(graphic == null) return null;
 
         final List<GraphicalSymbol> symbols = new ArrayList<GraphicalSymbol>();
@@ -522,7 +522,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 stroke in GT stroke.
      */
-    private Stroke visit(org.geotoolkit.sld.xml.v100.Stroke strk) {
+    private Stroke visit(final org.geotoolkit.sld.xml.v100.Stroke strk) {
         if(strk == null) return null;
 
         final GraphicFill fill = visit(strk.getGraphicFill());
@@ -568,7 +568,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 fill in GT fill.
      */
-    private Fill visit(org.geotoolkit.sld.xml.v100.Fill fl) {
+    private Fill visit(final org.geotoolkit.sld.xml.v100.Fill fl) {
         if(fl == null) return null;
 
         final GraphicFill fill = visit(fl.getGraphicFill());
@@ -590,7 +590,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 displacement in GT displacement.
      */
-    private Displacement visit(org.geotoolkit.sld.xml.v100.Displacement displacement) {
+    private Displacement visit(final org.geotoolkit.sld.xml.v100.Displacement displacement) {
         if(displacement == null) return null;
         
         final Expression x = visitExpression(displacement.getDisplacementX());
@@ -602,7 +602,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 overlap in GT overlap.
      */
-    private OverlapBehavior visitOverLap(org.geotoolkit.sld.xml.v100.OverlapBehavior overlapBehavior) {
+    private OverlapBehavior visitOverLap(final org.geotoolkit.sld.xml.v100.OverlapBehavior overlapBehavior) {
         if(overlapBehavior == null) return OverlapBehavior.LATEST_ON_TOP;
         
         if(overlapBehavior.getAVERAGE() != null){
@@ -621,7 +621,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 channelselection in GT channel selection
      */
-    private ChannelSelection visit(org.geotoolkit.sld.xml.v100.ChannelSelection channelSelection) {
+    private ChannelSelection visit(final org.geotoolkit.sld.xml.v100.ChannelSelection channelSelection) {
         if(channelSelection == null) return null;
         
         if(channelSelection.getGrayChannel() != null){
@@ -636,7 +636,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         
     }
 
-    private ColorMap visit(org.geotoolkit.sld.xml.v100.ColorMap colorMap) {
+    private ColorMap visit(final org.geotoolkit.sld.xml.v100.ColorMap colorMap) {
         if(colorMap == null) return null;
         
         final Function function = null;
@@ -654,7 +654,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 contrastEnchancement in GT contrastEnchancement.
      */
-    private ContrastEnhancement visit(org.geotoolkit.sld.xml.v100.ContrastEnhancement contrastEnhancement) {
+    private ContrastEnhancement visit(final org.geotoolkit.sld.xml.v100.ContrastEnhancement contrastEnhancement) {
         if(contrastEnhancement == null) return null;
         
         final Expression gamma = filterFactory.literal(contrastEnhancement.getGammaValue());
@@ -672,7 +672,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 outline in GT outline.
      */
-    private Symbolizer visit(org.geotoolkit.sld.xml.v100.ImageOutline imageOutline) {
+    private Symbolizer visit(final org.geotoolkit.sld.xml.v100.ImageOutline imageOutline) {
         if(imageOutline == null) return null;
         
         if(imageOutline.getLineSymbolizer() != null){
@@ -687,7 +687,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 shadedRelief in GT shadedRelief.
      */
-    private ShadedRelief visit(org.geotoolkit.sld.xml.v100.ShadedRelief shadedRelief) {
+    private ShadedRelief visit(final org.geotoolkit.sld.xml.v100.ShadedRelief shadedRelief) {
         if(shadedRelief == null) return null;
         
         final boolean bright = shadedRelief.isBrightnessOnly();
@@ -699,7 +699,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 font in GT font.
      */
-    private Font visit(org.geotoolkit.sld.xml.v100.Font font) {
+    private Font visit(final org.geotoolkit.sld.xml.v100.Font font) {
         if(font == null) return null;
         
         final List<Expression> family = new ArrayList<Expression>();
@@ -726,7 +726,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 halo in GT halo.
      */
-    private Halo visit(org.geotoolkit.sld.xml.v100.Halo halo) {
+    private Halo visit(final org.geotoolkit.sld.xml.v100.Halo halo) {
         if(halo == null) return null;
         
         final Fill fill = visit(halo.getFill());
@@ -738,7 +738,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 label placement in GT label placement.
      */
-    private LabelPlacement visit(org.geotoolkit.sld.xml.v100.LabelPlacement labelPlacement) {
+    private LabelPlacement visit(final org.geotoolkit.sld.xml.v100.LabelPlacement labelPlacement) {
         if(labelPlacement == null) return null;
         
         if(labelPlacement.getLinePlacement() != null){
@@ -754,7 +754,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 anchor in GT anchor.
      */
-    private AnchorPoint visit(org.geotoolkit.sld.xml.v100.AnchorPoint anchorPoint) {
+    private AnchorPoint visit(final org.geotoolkit.sld.xml.v100.AnchorPoint anchorPoint) {
         if(anchorPoint == null) return null;
         
         final Expression x = visitExpression(anchorPoint.getAnchorPointX());
@@ -766,7 +766,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 mark in GT mark.
      */
-    private Mark visit(org.geotoolkit.sld.xml.v100.Mark markType) {
+    private Mark visit(final org.geotoolkit.sld.xml.v100.Mark markType) {
         if(markType == null) return null;
         
         final Expression wkn = filterFactory.literal(markType.getWellKnownName());
@@ -776,7 +776,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
         return styleFactory.mark(wkn, fill, stroke);
     }
 
-    private ExternalGraphic visit(org.geotoolkit.sld.xml.v100.ExternalGraphic externalGraphicType) {
+    private ExternalGraphic visit(final org.geotoolkit.sld.xml.v100.ExternalGraphic externalGraphicType) {
         if(externalGraphicType == null) return null;
         
         final OnlineResource resource = visitOnlineResource(externalGraphicType.getOnlineResource());
@@ -796,7 +796,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 graphic fill in GT graphic fill.
      */
-    private GraphicFill visit(org.geotoolkit.sld.xml.v100.GraphicFill graphicFill) {
+    private GraphicFill visit(final org.geotoolkit.sld.xml.v100.GraphicFill graphicFill) {
         if(graphicFill == null || graphicFill.getGraphic() == null){
             return null;
         }
@@ -812,7 +812,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 graphic stroke in GT graphic stroke.
      */
-    private GraphicStroke visit(org.geotoolkit.sld.xml.v100.GraphicStroke graphicStroke) {
+    private GraphicStroke visit(final org.geotoolkit.sld.xml.v100.GraphicStroke graphicStroke) {
         if(graphicStroke == null || graphicStroke.getGraphic() == null){
             return null;
         }
@@ -831,7 +831,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      * Transform a SLD v1.0 selected channel in GT selected channel.
      */
-    private SelectedChannelType visit(org.geotoolkit.sld.xml.v100.SelectedChannelType channel) {
+    private SelectedChannelType visit(final org.geotoolkit.sld.xml.v100.SelectedChannelType channel) {
         if(channel == null) return null;
         
         final String name = channel.getSourceChannelName();
@@ -844,7 +844,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 lineplacement in GT line placement.
      */
-    private LinePlacement visit(org.geotoolkit.sld.xml.v100.LinePlacement linePlacement) {
+    private LinePlacement visit(final org.geotoolkit.sld.xml.v100.LinePlacement linePlacement) {
         if(linePlacement == null) return null;
         
         final Expression offset = visitExpression(linePlacement.getPerpendicularOffset());
@@ -860,7 +860,7 @@ public class SE100toGTTransformer extends OGC100toGTTransformer {
     /**
      *  Transform a SLD v1.0 pointplacement in GT point placement.
      */
-    private PointPlacement visit(org.geotoolkit.sld.xml.v100.PointPlacement pointPlacement) {
+    private PointPlacement visit(final org.geotoolkit.sld.xml.v100.PointPlacement pointPlacement) {
         if(pointPlacement == null) return null;
         
         final AnchorPoint anchor = visit(pointPlacement.getAnchorPoint());

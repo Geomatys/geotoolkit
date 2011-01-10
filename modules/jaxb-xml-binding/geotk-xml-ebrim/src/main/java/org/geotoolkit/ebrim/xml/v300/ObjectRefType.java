@@ -66,7 +66,7 @@ public class ObjectRefType extends IdentifiableType {
     /**
      * Sets the value of the createReplica property.
      */
-    public void setCreateReplica(Boolean value) {
+    public void setCreateReplica(final Boolean value) {
         this.createReplica = value;
     }
 

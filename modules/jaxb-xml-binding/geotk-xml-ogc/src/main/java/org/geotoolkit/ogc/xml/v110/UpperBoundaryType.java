@@ -60,11 +60,11 @@ public class UpperBoundaryType implements Expression {
 
     }
 
-    public UpperBoundaryType(JAXBElement<?> expression) {
+    public UpperBoundaryType(final JAXBElement<?> expression) {
         this.expression = expression;
     }
 
-    public UpperBoundaryType(LiteralType literal) {
+    public UpperBoundaryType(final LiteralType literal) {
         ObjectFactory factory = new ObjectFactory();
         this.expression = factory.createLiteral(literal);
     }
@@ -131,7 +131,7 @@ public class UpperBoundaryType implements Expression {
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
      *
      */
-    public void setExpression(JAXBElement<?> value) {
+    public void setExpression(final JAXBElement<?> value) {
         this.expression = ((JAXBElement<?> ) value);
     }
 
@@ -168,15 +168,15 @@ public class UpperBoundaryType implements Expression {
         return null;
     }
 
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return extraData;
     }
 

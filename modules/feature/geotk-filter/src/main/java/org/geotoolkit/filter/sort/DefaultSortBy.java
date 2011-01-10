@@ -33,7 +33,7 @@ public class DefaultSortBy implements SortBy,Serializable{
     private final PropertyName property;
     private final SortOrder order;
 
-    public DefaultSortBy(PropertyName property, SortOrder order) {
+    public DefaultSortBy(final PropertyName property, final SortOrder order) {
         if(property == null || order == null){
             throw new NullPointerException("Property and sort order can not be null.");
         }
@@ -69,7 +69,7 @@ public class DefaultSortBy implements SortBy,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

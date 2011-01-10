@@ -33,7 +33,7 @@ class DefaultRemoteOWS implements RemoteOWS{
     private final OnlineResource online;
     
     
-    DefaultRemoteOWS(String service, OnlineResource online){
+    DefaultRemoteOWS(final String service, final OnlineResource online){
         if(service == null || online == null){
             throw new NullPointerException("Service and online resource can not be null.");
         }
@@ -61,7 +61,7 @@ class DefaultRemoteOWS implements RemoteOWS{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -69,7 +69,7 @@ class DefaultRemoteOWS implements RemoteOWS{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

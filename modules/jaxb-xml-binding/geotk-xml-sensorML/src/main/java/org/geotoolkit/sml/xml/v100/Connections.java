@@ -69,11 +69,11 @@ public class Connections implements AbstractConnections {
         
     }
 
-    public Connections(ConnectionList connectionList) {
+    public Connections(final ConnectionList connectionList) {
         this.connectionList = connectionList;
     }
 
-    public Connections(AbstractConnections connections) {
+    public Connections(final AbstractConnections connections) {
         if (connections != null) {
             this.connectionList = new ConnectionList(connections.getConnectionList());
         }
@@ -90,7 +90,7 @@ public class Connections implements AbstractConnections {
     /**
      * Sets the value of the connectionList property.
      */
-    public void setConnectionList(ConnectionList value) {
+    public void setConnectionList(final ConnectionList value) {
         this.connectionList = value;
     }
 

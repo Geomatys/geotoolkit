@@ -72,7 +72,7 @@ public class RequestBaseType implements RequestBase {
     /**
      * Build a base request
      */
-    public RequestBaseType(String version) {
+    public RequestBaseType(final String version) {
         this.version = version;
         this.service = "SOS";
     }
@@ -80,7 +80,7 @@ public class RequestBaseType implements RequestBase {
     /**
      * Build a base request
      */
-    public RequestBaseType(String version, String service) {
+    public RequestBaseType(final String version, final String service) {
         this.version = version;
         this.service = service;
     }

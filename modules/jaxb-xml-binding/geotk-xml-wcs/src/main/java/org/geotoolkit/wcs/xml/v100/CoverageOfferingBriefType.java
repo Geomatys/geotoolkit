@@ -66,8 +66,8 @@ public class CoverageOfferingBriefType extends AbstractDescriptionType implement
     public CoverageOfferingBriefType(){
     }
     
-    public CoverageOfferingBriefType(List<MetadataLinkType> metadataLink, String name, String label, String description,
-            LonLatEnvelopeType lonLatEnvelope, Keywords keywords) {
+    public CoverageOfferingBriefType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description,
+            final LonLatEnvelopeType lonLatEnvelope, final Keywords keywords) {
         super(metadataLink, name, label, description);
         this.lonLatEnvelope = lonLatEnvelope;
         this.keywords       = keywords;
@@ -78,7 +78,7 @@ public class CoverageOfferingBriefType extends AbstractDescriptionType implement
         return this.lonLatEnvelope;
     }
     
-    public void setLonLatEnvelope(LonLatEnvelopeType lonLatEnvelope) {
+    public void setLonLatEnvelope(final LonLatEnvelopeType lonLatEnvelope) {
         this.lonLatEnvelope = lonLatEnvelope;
     } 
     
@@ -86,7 +86,7 @@ public class CoverageOfferingBriefType extends AbstractDescriptionType implement
         return this.keywords;
     }
 
-    public void setKeywords(Keywords keywords) {
+    public void setKeywords(final Keywords keywords) {
         this.keywords = keywords;
     }
 

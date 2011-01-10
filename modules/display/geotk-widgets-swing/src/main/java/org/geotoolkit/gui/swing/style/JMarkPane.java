@@ -67,7 +67,7 @@ public class JMarkPane extends StyleElementEditor<Mark> {
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiFill.setLayer(layer);
         guiStroke.setLayer(layer);
@@ -80,7 +80,7 @@ public class JMarkPane extends StyleElementEditor<Mark> {
     }
 
     @Override
-    public void parse(Mark mark) {
+    public void parse(final Mark mark) {
         if (mark != null) {
             guiFill.parse(mark.getFill());
             guiStroke.parse(mark.getStroke());

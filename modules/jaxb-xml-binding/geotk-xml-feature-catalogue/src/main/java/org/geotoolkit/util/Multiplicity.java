@@ -57,7 +57,7 @@ public class Multiplicity {
     /**
      * Build a simple Mulitiplicity 
      */
-    public Multiplicity(MultiplicityRange range) {
+    public Multiplicity(final MultiplicityRange range) {
         this.range = new ArrayList<MultiplicityRange>();
         this.range.add(range);
     }
@@ -65,7 +65,7 @@ public class Multiplicity {
     /**
      * Build a complex Mulitiplicity 
      */
-    public Multiplicity(List<MultiplicityRange> range) {
+    public Multiplicity(final List<MultiplicityRange> range) {
         this.range = range;
     }
     
@@ -82,7 +82,7 @@ public class Multiplicity {
     /**
      * sets the value of the range property.
      */
-    public void setRange(List<MultiplicityRange> range) {
+    public void setRange(final List<MultiplicityRange> range) {
         this.range = range;
     }
     
@@ -90,7 +90,7 @@ public class Multiplicity {
     /**
      * sets the value of the range property.
      */
-    public void setRange(MultiplicityRange range) {
+    public void setRange(final MultiplicityRange range) {
         if (this.range == null) {
             this.range = new ArrayList<MultiplicityRange>();
         }

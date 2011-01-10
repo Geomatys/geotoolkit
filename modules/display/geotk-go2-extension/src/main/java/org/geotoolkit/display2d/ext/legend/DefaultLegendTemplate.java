@@ -38,8 +38,8 @@ public class DefaultLegendTemplate implements LegendTemplate{
     private final BackgroundTemplate background;
 
 
-    public DefaultLegendTemplate(BackgroundTemplate background,
-            float gap, Dimension glyphSize, Font rulefont, boolean layerVisible, Font layerFont) {
+    public DefaultLegendTemplate(final BackgroundTemplate background,
+            final float gap, final Dimension glyphSize, final Font rulefont, final boolean layerVisible, final Font layerFont) {
         this.background = background;
         this.gap = gap;
         this.glyphSize = glyphSize;

@@ -46,7 +46,7 @@ final class DefaultIterator extends PointIterator {
     /**
      * Construit un it�rateur qui balaiera la plage sp�cifi�e d'un tableau de donn�es.
      */
-    public DefaultIterator(float[] array, int lower, int upper) {
+    public DefaultIterator(final float[] array, final int lower, final int upper) {
         this.array = array;
         this.index = lower;
         this.upper = upper;

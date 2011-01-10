@@ -61,7 +61,7 @@ public class SystemType extends AbstractComponentType implements System {
 
     }
 
-    public SystemType(System sy) {
+    public SystemType(final System sy) {
         super(sy);
         if (sy != null) {
             if (sy.getComponents() != null) {
@@ -87,7 +87,7 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @param components the components to set
      */
-    public void setComponents(Components components) {
+    public void setComponents(final Components components) {
         if (components != null) {
             this.components = components;
         }
@@ -104,7 +104,7 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @param positions the positions to set
      */
-    public void setPositions(Positions positions) {
+    public void setPositions(final Positions positions) {
         if (positions != null) {
             this.positions = positions;
         }
@@ -121,7 +121,7 @@ public class SystemType extends AbstractComponentType implements System {
     /**
      * @param connections the connections to set
      */
-    public void setConnections(Connections connections) {
+    public void setConnections(final Connections connections) {
         this.connections = connections;
     }
 

@@ -698,7 +698,7 @@ public class DefaultStyleFactory extends Factory implements MutableStyleFactory 
 
     @Override
     public Font font(final Expression fontFamily, final Expression fontStyle, final Expression fontWeight,
-        Expression fontSize){
+        final Expression fontSize){
         return new DefaultFont(Collections.singletonList(fontFamily), fontStyle, fontWeight, fontSize);
     }
 

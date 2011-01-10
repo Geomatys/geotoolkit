@@ -377,7 +377,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "ElementSetName", defaultValue = "summary")
-    public JAXBElement<ElementSetNameType> createElementSetName(ElementSetNameType value) {
+    public JAXBElement<ElementSetNameType> createElementSetName(final ElementSetNameType value) {
         return new JAXBElement<ElementSetNameType>(_ElementSetName_QNAME, ElementSetNameType.class, null, value);
     }
 
@@ -413,7 +413,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Record", substitutionHeadNamespace = "http://www.opengis.net/cat/csw/2.0.2", substitutionHeadName = "AbstractRecord")
-    public JAXBElement<RecordType> createRecord(RecordType value) {
+    public JAXBElement<RecordType> createRecord(final RecordType value) {
         return new JAXBElement<RecordType>(_Record_QNAME, RecordType.class, null, value);
     }
 
@@ -422,7 +422,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "RecordProperty")
-    public JAXBElement<RecordPropertyType> createRecordProperty(RecordPropertyType value) {
+    public JAXBElement<RecordPropertyType> createRecordProperty(final RecordPropertyType value) {
         return new JAXBElement<RecordPropertyType>(_RecordProperty_QNAME, RecordPropertyType.class, null, value);
     }
 
@@ -431,7 +431,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetRecordByIdResponse")
-    public JAXBElement<GetRecordByIdResponseType> createGetRecordByIdResponse(GetRecordByIdResponseType value) {
+    public JAXBElement<GetRecordByIdResponseType> createGetRecordByIdResponse(final GetRecordByIdResponseType value) {
         return new JAXBElement<GetRecordByIdResponseType>(_GetRecordByIdResponse_QNAME, GetRecordByIdResponseType.class, null, value);
     }
 
@@ -440,7 +440,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetDomainResponse")
-    public JAXBElement<GetDomainResponseType> createGetDomainResponse(GetDomainResponseType value) {
+    public JAXBElement<GetDomainResponseType> createGetDomainResponse(final GetDomainResponseType value) {
         return new JAXBElement<GetDomainResponseType>(_GetDomainResponse_QNAME, GetDomainResponseType.class, null, value);
     }
 
@@ -449,7 +449,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "BriefRecord", substitutionHeadNamespace = "http://www.opengis.net/cat/csw/2.0.2", substitutionHeadName = "AbstractRecord")
-    public JAXBElement<BriefRecordType> createBriefRecord(BriefRecordType value) {
+    public JAXBElement<BriefRecordType> createBriefRecord(final BriefRecordType value) {
         return new JAXBElement<BriefRecordType>(_BriefRecord_QNAME, BriefRecordType.class, null, value);
     }
 
@@ -458,7 +458,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "AbstractQuery")
-    public JAXBElement<AbstractQueryType> createAbstractQuery(AbstractQueryType value) {
+    public JAXBElement<AbstractQueryType> createAbstractQuery(final AbstractQueryType value) {
         return new JAXBElement<AbstractQueryType>(_AbstractQuery_QNAME, AbstractQueryType.class, null, value);
     }
 
@@ -467,7 +467,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "DescribeRecordResponse")
-    public JAXBElement<DescribeRecordResponseType> createDescribeRecordResponse(DescribeRecordResponseType value) {
+    public JAXBElement<DescribeRecordResponseType> createDescribeRecordResponse(final DescribeRecordResponseType value) {
         return new JAXBElement<DescribeRecordResponseType>(_DescribeRecordResponse_QNAME, DescribeRecordResponseType.class, null, value);
     }
 
@@ -494,7 +494,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Constraint")
-    public JAXBElement<QueryConstraintType> createConstraint(QueryConstraintType value) {
+    public JAXBElement<QueryConstraintType> createConstraint(final QueryConstraintType value) {
         return new JAXBElement<QueryConstraintType>(_Constraint_QNAME, QueryConstraintType.class, null, value);
     }
 
@@ -503,7 +503,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "SummaryRecord", substitutionHeadNamespace = "http://www.opengis.net/cat/csw/2.0.2", substitutionHeadName = "AbstractRecord")
-    public JAXBElement<SummaryRecordType> createSummaryRecord(SummaryRecordType value) {
+    public JAXBElement<SummaryRecordType> createSummaryRecord(final SummaryRecordType value) {
         return new JAXBElement<SummaryRecordType>(_SummaryRecord_QNAME, SummaryRecordType.class, null, value);
     }
 
@@ -512,7 +512,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "DCMIRecord", substitutionHeadNamespace = "http://www.opengis.net/cat/csw/2.0.2", substitutionHeadName = "AbstractRecord")
-    public JAXBElement<DCMIRecordType> createDCMIRecord(DCMIRecordType value) {
+    public JAXBElement<DCMIRecordType> createDCMIRecord(final DCMIRecordType value) {
         return new JAXBElement<DCMIRecordType>(_DCMIRecord_QNAME, DCMIRecordType.class, null, value);
     }
 
@@ -521,7 +521,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetRecordById")
-    public JAXBElement<GetRecordByIdType> createGetRecordById(GetRecordByIdType value) {
+    public JAXBElement<GetRecordByIdType> createGetRecordById(final GetRecordByIdType value) {
         return new JAXBElement<GetRecordByIdType>(_GetRecordById_QNAME, GetRecordByIdType.class, null, value);
     }
 
@@ -548,7 +548,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "GetRecordsResponse")
-    public JAXBElement<GetRecordsResponseType> createGetRecordsResponse(GetRecordsResponseType value) {
+    public JAXBElement<GetRecordsResponseType> createGetRecordsResponse(final GetRecordsResponseType value) {
         return new JAXBElement<GetRecordsResponseType>(_GetRecordsResponse_QNAME, GetRecordsResponseType.class, null, value);
     }
 
@@ -557,7 +557,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "HarvestResponse")
-    public JAXBElement<HarvestResponseType> createHarvestResponse(HarvestResponseType value) {
+    public JAXBElement<HarvestResponseType> createHarvestResponse(final HarvestResponseType value) {
         return new JAXBElement<HarvestResponseType>(_HarvestResponse_QNAME, HarvestResponseType.class, null, value);
     }
 
@@ -566,7 +566,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "AbstractRecord")
-    public JAXBElement<AbstractRecordType> createAbstractRecord(AbstractRecordType value) {
+    public JAXBElement<AbstractRecordType> createAbstractRecord(final AbstractRecordType value) {
         return new JAXBElement<AbstractRecordType>(_AbstractRecord_QNAME, AbstractRecordType.class, null, value);
     }
 
@@ -575,7 +575,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "Acknowledgement")
-    public JAXBElement<AcknowledgementType> createAcknowledgement(AcknowledgementType value) {
+    public JAXBElement<AcknowledgementType> createAcknowledgement(final AcknowledgementType value) {
         return new JAXBElement<AcknowledgementType>(_Acknowledgement_QNAME, AcknowledgementType.class, null, value);
     }
 
@@ -584,7 +584,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "DescribeRecord")
-    public JAXBElement<DescribeRecordType> createDescribeRecord(DescribeRecordType value) {
+    public JAXBElement<DescribeRecordType> createDescribeRecord(final DescribeRecordType value) {
         return new JAXBElement<DescribeRecordType>(_DescribeRecord_QNAME, DescribeRecordType.class, null, value);
     }
 
@@ -593,7 +593,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/csw/2.0.2", name = "TransactionResponse")
-    public JAXBElement<TransactionResponseType> createTransactionResponse(TransactionResponseType value) {
+    public JAXBElement<TransactionResponseType> createTransactionResponse(final TransactionResponseType value) {
         return new JAXBElement<TransactionResponseType>(_TransactionResponse_QNAME, TransactionResponseType.class, null, value);
     }
 

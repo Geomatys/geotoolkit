@@ -59,7 +59,7 @@ public class ScaleBarMapperFactory implements JRMapperFactory<JRRenderable,MapCo
      * {@inheritDoc }
      */
     @Override
-    public Image getIcon(int type) {
+    public Image getIcon(final int type) {
         return ICON.getImage();
     }
 

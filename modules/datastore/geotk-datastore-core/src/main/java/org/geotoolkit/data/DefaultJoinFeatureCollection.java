@@ -68,7 +68,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     private AttributeDescriptor leftDesc = null;
     private AttributeDescriptor rightDesc = null;
 
-    public DefaultJoinFeatureCollection(String id, Query query){
+    public DefaultJoinFeatureCollection(final String id, final Query query){
         super(id,query.getSource());
 
         final Source src = query.getSource();
@@ -126,7 +126,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
      * @return aggregated features
      * @throws DataStoreException
      */
-    private Feature toFeature(Feature left, Feature right) throws DataStoreException{
+    private Feature toFeature(final Feature left, final Feature right) throws DataStoreException{
         final FeatureType type = getFeatureType(); //force creating type.
 
         final Collection<Property> properties = new ArrayList<Property>();
@@ -148,14 +148,14 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     }
 
     @Override
-    public FeatureCollection<Feature> subCollection(Query query) throws DataStoreException {
+    public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
         final Query combine = QueryUtilities.subQuery(this.query, query);
         //the result should be an absolute query too.
         return QueryUtilities.evaluate("sub-"+getID(), combine);
     }
 
     @Override
-    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
         final JoinType jt = getSource().getJoinType();
 
         try{
@@ -174,7 +174,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     }
 
     @Override
-    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
         if(isWritable()){
             throw new UnsupportedOperationException("Not supported yet.");
         }else{
@@ -183,7 +183,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
     }
 
     @Override
-    public void remove(Filter filter) throws DataStoreException {
+    public void remove(final Filter filter) throws DataStoreException {
         if(isWritable()){
             throw new UnsupportedOperationException("Not supported yet.");
         }else{
@@ -201,7 +201,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
         private Feature leftFeature;
         private Feature combined;
 
-        JoinInnerRowIterator(Hints hints) throws DataStoreException{
+        JoinInnerRowIterator(final Hints hints) throws DataStoreException{
             leftIterator = leftCollection.iterator();
         }
 
@@ -284,7 +284,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
 
         }
 
-        private Feature checkValid(Feature left, Feature right) throws DataStoreException{
+        private Feature checkValid(final Feature left, final Feature right) throws DataStoreException{
             final Feature candidate = toFeature(left,right);
 
             if(query.getFilter().evaluate(candidate)){
@@ -314,7 +314,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
         private Feature primeFeature;
         private Feature nextFeature;
 
-        JoinOuterRowIterator(boolean left, Hints hints) throws DataStoreException{
+        JoinOuterRowIterator(final boolean left, final Hints hints) throws DataStoreException{
             this.left = left;
             if(left){
                 primeIterator = leftCollection.iterator();
@@ -415,7 +415,7 @@ public class DefaultJoinFeatureCollection extends AbstractFeatureCollection<Feat
 
         }
 
-        private Feature checkValid(Feature left, Feature right, boolean leftJoin) throws DataStoreException{
+        private Feature checkValid(final Feature left, final Feature right, final boolean leftJoin) throws DataStoreException{
             final Feature candidate;
             if(leftJoin){
                 candidate = toFeature(left,right);

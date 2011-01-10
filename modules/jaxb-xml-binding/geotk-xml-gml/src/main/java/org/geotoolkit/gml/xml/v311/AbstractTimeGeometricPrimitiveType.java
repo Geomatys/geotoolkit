@@ -82,11 +82,11 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
      *     {@link String }
      *     
      */
-    public void setFrame(String value) {
+    public void setFrame(final String value) {
         this.frame = value;
     }
 
-    public Duration distance(TemporalGeometricPrimitive tgp) {
+    public Duration distance(final TemporalGeometricPrimitive tgp) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -85,7 +85,7 @@ public class DefinitionReferenceAdapter extends XmlAdapter<DefinitionReferenceAd
      * @return A java object which represents the metadata value.
      */
     @Override
-    public DefinitionReference unmarshal(DefinitionReferenceAdapter value) throws Exception {
+    public DefinitionReference unmarshal(final DefinitionReferenceAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -100,7 +100,7 @@ public class DefinitionReferenceAdapter extends XmlAdapter<DefinitionReferenceAd
      * @return The adapter for this DefinitionReference.
      */
     @Override
-    public DefinitionReferenceAdapter marshal(DefinitionReference value) throws Exception {
+    public DefinitionReferenceAdapter marshal(final DefinitionReference value) throws Exception {
         if (value == null) {
             return null;
         }

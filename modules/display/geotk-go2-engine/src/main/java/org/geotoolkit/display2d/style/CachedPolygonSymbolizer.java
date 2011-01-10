@@ -47,8 +47,8 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     private final CachedFill cacheFill;
         
     
-    public CachedPolygonSymbolizer(PolygonSymbolizer poly,
-            SymbolizerRendererService<PolygonSymbolizer,? extends CachedSymbolizer<PolygonSymbolizer>> renderer){
+    public CachedPolygonSymbolizer(final PolygonSymbolizer poly,
+            final SymbolizerRendererService<PolygonSymbolizer,? extends CachedSymbolizer<PolygonSymbolizer>> renderer){
         super(poly,renderer);
 
         final Stroke str = poly.getStroke();
@@ -132,26 +132,26 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         return cacheStroke;
     }
 
-    public boolean isStrokeVisible(Feature feature){
+    public boolean isStrokeVisible(final Feature feature){
         return cacheStroke != null && cacheStroke.isVisible(feature);
     }
 
-    public boolean isFillVisible(Feature feature){
+    public boolean isFillVisible(final Feature feature){
         return cacheFill != null && cacheFill.isVisible(feature);
     }
 
-    public AlphaComposite getJ2DFillComposite(Feature feature){
+    public AlphaComposite getJ2DFillComposite(final Feature feature){
         return cacheFill.getJ2DComposite(feature);
     }
     
-    public Paint getJ2DFillPaint(Feature feature, int x, int y, float coeff, final RenderingHints hints){
+    public Paint getJ2DFillPaint(final Feature feature, final int x, final int y, final float coeff, final RenderingHints hints){
         return cacheFill.getJ2DPaint(feature, x,y, coeff,hints);
     }
 
     /**
      * @return a float value of this style offset
      */
-    public float getOffset(Feature feature, float coeff){
+    public float getOffset(final Feature feature, final float coeff){
         evaluate();
         
         if(Float.isNaN(cachedOffset)){
@@ -166,7 +166,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     /**
      * @return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(Feature feature){
+    public float[] getDisplacement(final Feature feature){
         evaluate();
         
         final float[] disps = new float[2];
@@ -195,7 +195,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(Feature feature){
+    public boolean isVisible(final Feature feature){
         return (cacheStroke == null || cacheStroke.isVisible(feature))
                 || (cacheFill == null || cacheFill.isVisible(feature));
     }
@@ -227,7 +227,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         if(cacheStroke == null){
             return 0f;
         }else{

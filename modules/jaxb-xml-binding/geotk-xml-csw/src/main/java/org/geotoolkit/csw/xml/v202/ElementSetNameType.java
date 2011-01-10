@@ -69,7 +69,7 @@ public class ElementSetNameType implements ElementSetName {
     /**
      * Build a elementSetName with only the elementSet value (no typeNames).
      */
-    public ElementSetNameType(ElementSetType value){
+    public ElementSetNameType(final ElementSetType value){
         this.value = value;
     }
 
@@ -89,7 +89,7 @@ public class ElementSetNameType implements ElementSetName {
      * are defined in an application profile.
      * 
      */
-    public void setValue(ElementSetType value) {
+    public void setValue(final ElementSetType value) {
         this.value = value;
     }
 
@@ -107,7 +107,7 @@ public class ElementSetNameType implements ElementSetName {
     /**
      * sets the value of the typeNames property.
      */
-    public void setTypeNames(QName typeName) {
+    public void setTypeNames(final QName typeName) {
         if (this.typeNames == null) {
             this.typeNames = new ArrayList<QName>();
         }
@@ -117,7 +117,7 @@ public class ElementSetNameType implements ElementSetName {
     /**
      * sets the value of the typeNames property.
      */
-    public void setTypeNames(List<QName> typeNames) {
+    public void setTypeNames(final List<QName> typeNames) {
         this.typeNames = typeNames;
     }
     

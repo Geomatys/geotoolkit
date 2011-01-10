@@ -42,7 +42,7 @@ public class GetMap130 extends AbstractGetMap {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetMap130(String serverURL){
+    public GetMap130(final String serverURL){
         super(serverURL,"1.3.0");
     }
 

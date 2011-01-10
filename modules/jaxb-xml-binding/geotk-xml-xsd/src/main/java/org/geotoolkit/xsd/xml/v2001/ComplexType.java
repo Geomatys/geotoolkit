@@ -101,7 +101,7 @@ public abstract class ComplexType extends Annotated {
 
     }
 
-    public ComplexType(String name, ComplexContent complexContent) {
+    public ComplexType(final String name, final ComplexContent complexContent) {
         this.name           = name;
         this.complexContent = complexContent;
     }
@@ -126,7 +126,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link SimpleContent }
      *     
      */
-    public void setSimpleContent(SimpleContent value) {
+    public void setSimpleContent(final SimpleContent value) {
         this.simpleContent = value;
     }
 
@@ -150,7 +150,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link ComplexContent }
      *     
      */
-    public void setComplexContent(ComplexContent value) {
+    public void setComplexContent(final ComplexContent value) {
         this.complexContent = value;
     }
 
@@ -174,7 +174,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link GroupRef }
      *     
      */
-    public void setGroup(GroupRef value) {
+    public void setGroup(final GroupRef value) {
         this.group = value;
     }
 
@@ -198,7 +198,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link All }
      *     
      */
-    public void setAll(All value) {
+    public void setAll(final All value) {
         this.all = value;
     }
 
@@ -222,7 +222,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link ExplicitGroup }
      *     
      */
-    public void setChoice(ExplicitGroup value) {
+    public void setChoice(final ExplicitGroup value) {
         this.choice = value;
     }
 
@@ -246,7 +246,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link ExplicitGroup }
      *     
      */
-    public void setSequence(ExplicitGroup value) {
+    public void setSequence(final ExplicitGroup value) {
         this.sequence = value;
     }
 
@@ -286,7 +286,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link Wildcard }
      *     
      */
-    public void setAnyAttribute(Wildcard value) {
+    public void setAnyAttribute(final Wildcard value) {
         this.anyAttribute = value;
     }
 
@@ -310,7 +310,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -338,7 +338,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link Boolean }
      *     
      */
-    public void setMixed(Boolean value) {
+    public void setMixed(final Boolean value) {
         this.mixed = value;
     }
 
@@ -366,7 +366,7 @@ public abstract class ComplexType extends Annotated {
      *     {@link Boolean }
      *     
      */
-    public void setAbstract(Boolean value) {
+    public void setAbstract(final Boolean value) {
         this._abstract = value;
     }
 

@@ -182,7 +182,7 @@ public class ObservationEntry implements Observation, Entry {
      /**
      * Build a clone of an observation
      */
-    public ObservationEntry(ObservationEntry observation) {
+    public ObservationEntry(final ObservationEntry observation) {
         this.definition          = observation.definition;
         this.featureOfInterest   = observation.featureOfInterest;
         this.name                = observation.name;
@@ -316,7 +316,7 @@ public class ObservationEntry implements Observation, Entry {
      * Construit un nouveau template temporaire d'observation a partir d'un template fournit en argument.
      * On y rajoute un samplingTime et un id temporaire. 
      */
-    public ObservationEntry getTemporaryTemplate(String temporaryName, AbstractTimeGeometricPrimitiveType time) {
+    public ObservationEntry getTemporaryTemplate(final String temporaryName, AbstractTimeGeometricPrimitiveType time) {
         if (time == null) { 
             TimePositionType begin = new  TimePositionType("1900-01-01T00:00:00");
             time = new TimePeriodType(begin);
@@ -348,7 +348,7 @@ public class ObservationEntry implements Observation, Entry {
     
     /**
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name  = name;
     }
     
@@ -377,7 +377,7 @@ public class ObservationEntry implements Observation, Entry {
         return null;
     }
 
-    public void setFeatureOfInterest(AbstractFeatureEntry featureOfInterest) {
+    public void setFeatureOfInterest(final AbstractFeatureEntry featureOfInterest) {
         if (featureOfInterest != null) {
             if (featureOfInterest instanceof SamplingPointEntry) {
                 this.featureOfInterest = new FeaturePropertyType(SAMPLING_FACTORY.createSamplingPoint((SamplingPointEntry) featureOfInterest));
@@ -397,7 +397,7 @@ public class ObservationEntry implements Observation, Entry {
         return featureOfInterest;
     }
 
-    public void setPropertyFeatureOfInterest(FeaturePropertyType featureOfInterest){
+    public void setPropertyFeatureOfInterest(final FeaturePropertyType featureOfInterest){
         this.featureOfInterest = featureOfInterest;
     }
 
@@ -416,7 +416,7 @@ public class ObservationEntry implements Observation, Entry {
     /**
      * {@inheritDoc}
      */
-    public void setObservedProperty(PhenomenonEntry observedProperty) {
+    public void setObservedProperty(final PhenomenonEntry observedProperty) {
         if (observedProperty != null) {
             this.observedProperty = new PhenomenonPropertyType(observedProperty);
         }
@@ -437,7 +437,7 @@ public class ObservationEntry implements Observation, Entry {
     /**
      * fixe le capteur qui a effectué cette observation.
      */
-    public void setProcedure(ProcessEntry process) {
+    public void setProcedure(final ProcessEntry process) {
         this.procedure = process;
     }
 
@@ -463,7 +463,7 @@ public class ObservationEntry implements Observation, Entry {
     /**
      * Set the result of the observation.
      */
-    public void setResult(Object result) {
+    public void setResult(final Object result) {
         if (!(result instanceof ReferenceEntry) && !(result instanceof AnyResultEntry) &&
             !(result instanceof DataArrayPropertyType) && !(result instanceof MeasureEntry)) {
             throw new IllegalArgumentException("this type " + result.getClass().getSimpleName() +
@@ -481,7 +481,7 @@ public class ObservationEntry implements Observation, Entry {
       * @param lastDate The last date of measure. If this parameter is null, the last date will be kept.
      * @throws IllegalArgumentException if the resulat of the observation is not a DataArray.
      */
-    public void updateDataArrayResult(String values, int nbResult, String lastDate) {
+    public void updateDataArrayResult(final String values, final int nbResult, final String lastDate) {
         if (lastDate != null) {
             extendSamplingTime(lastDate);
         }
@@ -507,14 +507,14 @@ public class ObservationEntry implements Observation, Entry {
     /**
      * {@inheritDoc}
      */
-    public void setSamplingTime(AbstractTimeGeometricPrimitiveType value) {
+    public void setSamplingTime(final AbstractTimeGeometricPrimitiveType value) {
         this.samplingTime = new TimeGeometricPrimitivePropertyType(value);
     }
 
     /**
      * {@inheritDoc}
      */
-    public void extendSamplingTime(String newEndBound) {
+    public void extendSamplingTime(final String newEndBound) {
         if (samplingTime != null && samplingTime.getTimeGeometricPrimitive() instanceof TimePeriodType) {
             ((TimePeriodType)samplingTime.getTimeGeometricPrimitive()).setEndPosition(new TimePositionType(newEndBound));
         }
@@ -559,7 +559,7 @@ public class ObservationEntry implements Observation, Entry {
     /**
      * Return true if the observation match the specified template.
      */ 
-    public boolean matchTemplate(ObservationEntry template) {
+    public boolean matchTemplate(final ObservationEntry template) {
         
         boolean obsProperty = false;
         if (this.observedProperty != null && template.observedProperty != null) {

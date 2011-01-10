@@ -69,7 +69,7 @@ public class OnlineResourceType {
 
     }
 
-    public OnlineResourceType(String href) {
+    public OnlineResourceType(final String href) {
         this.href = href;
     }
 
@@ -96,7 +96,7 @@ public class OnlineResourceType {
      * Gets the value of the href property.
      * 
      */
-    public void setHref(String href) {
+    public void setHref(final String href) {
         this.href = href;
     }
 

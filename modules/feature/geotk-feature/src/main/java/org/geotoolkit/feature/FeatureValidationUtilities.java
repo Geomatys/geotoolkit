@@ -198,7 +198,7 @@ public class FeatureValidationUtilities {
         return value;
     }
 
-    protected static void validate(final AttributeType type, final Object value, boolean isSuper)
+    protected static void validate(final AttributeType type, final Object value, final boolean isSuper)
             throws IllegalAttributeException{
         if (!isSuper) {
             // JD: This is an issue with how the xml simpel type hierarchy

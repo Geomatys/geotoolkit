@@ -429,7 +429,7 @@ public class GeometricUtilities {
      * 
      * @return True if the line crosses the envelope.
      */
-    public static boolean crosses(GeneralEnvelope boundingBox, Line2D line) {
+    public static boolean crosses(final GeneralEnvelope boundingBox, final Line2D line) {
         final CoordinateReferenceSystem crs = boundingBox.getCoordinateReferenceSystem();
         final GeneralDirectPosition tempPoint1 = new GeneralDirectPosition(line.getX1(), line.getY1());
         tempPoint1.setCoordinateReferenceSystem(crs);
@@ -452,7 +452,7 @@ public class GeometricUtilities {
      * 
      * @return True if the point crosses the envelope.
      */
-    public static boolean crosses(GeneralEnvelope boundingBox, GeneralDirectPosition point) {
+    public static boolean crosses(final GeneralEnvelope boundingBox, final GeneralDirectPosition point) {
         for (Line2D l : getBorder(boundingBox)) {
             if (l.intersectsLine(point.getOrdinate(0), point.getOrdinate(1), point.getOrdinate(0), point.getOrdinate(1))) {
                 return true;
@@ -470,7 +470,7 @@ public class GeometricUtilities {
      * 
      * @return True if the envelope contain the line.
      */
-    public static boolean contains(GeneralEnvelope boundingBox, Line2D line) {
+    public static boolean contains(final GeneralEnvelope boundingBox, final Line2D line) {
         final CoordinateReferenceSystem crs = boundingBox.getCoordinateReferenceSystem();
         final GeneralDirectPosition tempPoint1 = new GeneralDirectPosition(line.getX1(), line.getY1());
         tempPoint1.setCoordinateReferenceSystem(crs);
@@ -490,7 +490,7 @@ public class GeometricUtilities {
      * 
      * @return True if the two envelope are overlaping.
      */
-    public static boolean overlaps(GeneralEnvelope boundingBox1, GeneralEnvelope boundingBox2) {
+    public static boolean overlaps(final GeneralEnvelope boundingBox1, final GeneralEnvelope boundingBox2) {
         
         if ((boundingBox1.contains(boundingBox2, true) || boundingBox2.contains(boundingBox1, true)))
             return false;
@@ -548,7 +548,7 @@ public class GeometricUtilities {
      * @throws org.opengis.util.FactoryException
      * @throws org.opengis.referencing.operation.TransformException
      */
-    public static Object reprojectGeometry(final String targetCRSName, final String sourceCRSName, Object geometry) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
+    public static Object reprojectGeometry(final String targetCRSName, final String sourceCRSName, final Object geometry) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
         final CoordinateReferenceSystem targetCRS = CRS.decode(targetCRSName,true);
         final CoordinateReferenceSystem sourceCRS = CRS.decode(sourceCRSName,true);
         
@@ -606,7 +606,7 @@ public class GeometricUtilities {
      * @throws org.opengis.util.FactoryException
      * @throws org.opengis.referencing.operation.TransformException
      */
-    public static Object reprojectBbox2DString(final String sourceCRSName, final String targetCRSName,  String boundingBox) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
+    public static Object reprojectBbox2DString(final String sourceCRSName, final String targetCRSName,  final String boundingBox) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
       
       final String[] bbox = boundingBox.split(",");
       double[] lowerCorner ={Double.parseDouble(bbox[1]),Double.parseDouble(bbox[0])};

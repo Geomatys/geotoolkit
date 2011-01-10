@@ -42,7 +42,7 @@ public class InformationAction extends AbstractAction {
         this(false);
     }
 
-    public InformationAction(boolean big){
+    public InformationAction(final boolean big){
         super("",(big) ? ICON_INFO_24 : ICON_INFO_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_information"));
     }
@@ -51,12 +51,12 @@ public class InformationAction extends AbstractAction {
         return presenter;
     }
 
-    public void setPresenter(InformationPresenter presenter) {
+    public void setPresenter(final InformationPresenter presenter) {
         this.presenter = presenter;
     }
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null) {
             final InformationHandler handler = new InformationHandler(map);
             if(presenter != null){
@@ -70,7 +70,7 @@ public class InformationAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

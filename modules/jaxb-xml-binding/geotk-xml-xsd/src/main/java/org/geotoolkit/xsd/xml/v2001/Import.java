@@ -60,7 +60,7 @@ public class Import extends Annotated {
 
     }
 
-    public Import(String namespace, String schemaLocation) {
+    public Import(final String namespace, final String schemaLocation) {
         this.namespace      = namespace;
         this.schemaLocation = schemaLocation;
     }
@@ -75,7 +75,7 @@ public class Import extends Annotated {
     /**
      * Sets the value of the namespace property.
      */
-    public void setNamespace(String value) {
+    public void setNamespace(final String value) {
         this.namespace = value;
     }
 
@@ -90,7 +90,7 @@ public class Import extends Annotated {
      * Sets the value of the schemaLocation property.
      * 
      */
-    public void setSchemaLocation(String value) {
+    public void setSchemaLocation(final String value) {
         this.schemaLocation = value;
     }
 

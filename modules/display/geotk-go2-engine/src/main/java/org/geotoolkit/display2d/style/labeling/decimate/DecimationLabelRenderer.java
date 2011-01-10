@@ -61,7 +61,7 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
      * {@inheritDoc }
      */
     @Override
-    public void setRenderingContext(RenderingContext2D context){
+    public void setRenderingContext(final RenderingContext2D context){
         super.setRenderingContext(context);
         LinearRenderer = new LinearLabelCandidateRenderer(context);
         pointRenderer = new PointLabelCandidateRenderer(context);
@@ -201,7 +201,7 @@ public class DecimationLabelRenderer extends DefaultLabelRenderer{
         private final boolean obstacle;
         private final boolean labelled;
 
-        public DecimateLabelLayer(boolean isObstacle, boolean isLabelled) {
+        public DecimateLabelLayer(final boolean isObstacle, final boolean isLabelled) {
             this.labelled = isLabelled;
             this.obstacle = isObstacle;
         }

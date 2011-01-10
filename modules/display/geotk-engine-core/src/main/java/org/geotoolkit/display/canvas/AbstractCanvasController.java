@@ -37,7 +37,7 @@ public abstract class AbstractCanvasController implements CanvasController{
     //////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void setTitle(InternationalString title) {
+    public void setTitle(final InternationalString title) {
         throw new UnsupportedOperationException("Not supported. Obsolete.");
     }
 

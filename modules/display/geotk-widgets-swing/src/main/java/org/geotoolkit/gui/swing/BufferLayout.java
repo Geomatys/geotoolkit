@@ -34,23 +34,23 @@ public class BufferLayout implements LayoutManager{
     public BufferLayout() {}
 
     @Override
-    public void addLayoutComponent(String name, Component comp) {}
+    public void addLayoutComponent(final String name, final Component comp) {}
 
     @Override
-    public void removeLayoutComponent(Component comp) {}
+    public void removeLayoutComponent(final Component comp) {}
     
     @Override
-    public Dimension preferredLayoutSize(Container parent) {
+    public Dimension preferredLayoutSize(final Container parent) {
         return new Dimension(0, 0);
     }
 
     @Override
-    public Dimension minimumLayoutSize(Container parent) {
+    public Dimension minimumLayoutSize(final Container parent) {
         return new Dimension(0, 0);
     }
     
     @Override
-    public void layoutContainer(Container parent) {
+    public void layoutContainer(final Container parent) {
         int maxWidth = parent.getWidth();
         int maxHeight = parent.getHeight();
         int nComps = parent.getComponentCount();    

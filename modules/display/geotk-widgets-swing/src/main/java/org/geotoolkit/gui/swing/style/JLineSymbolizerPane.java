@@ -56,7 +56,7 @@ public class JLineSymbolizerPane extends  StyleElementEditor<LineSymbolizer> {
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer){
+    public void setLayer(final MapLayer layer){
         this.layer = layer;
         guiStroke.setLayer(layer);
         guiGeom.setLayer(layer);
@@ -76,7 +76,7 @@ public class JLineSymbolizerPane extends  StyleElementEditor<LineSymbolizer> {
      * {@inheritDoc }
      */
     @Override
-    public void parse(LineSymbolizer symbol) {
+    public void parse(final LineSymbolizer symbol) {
         
         if (symbol != null) {            
             guiGeom.setGeom(symbol.getGeometryPropertyName());

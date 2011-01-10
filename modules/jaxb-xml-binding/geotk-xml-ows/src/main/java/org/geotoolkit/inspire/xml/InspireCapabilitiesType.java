@@ -63,12 +63,12 @@ public class InspireCapabilitiesType {
 
     }
 
-    public InspireCapabilitiesType(List<String> languages) {
+    public InspireCapabilitiesType(final List<String> languages) {
         this.languages = new LanguagesType(languages);
         this.translatedCapabilities = null;
     }
 
-    public InspireCapabilitiesType(LanguagesType languages, TranslatedCapabilitiesType translatedCapabilities) {
+    public InspireCapabilitiesType(final LanguagesType languages, final TranslatedCapabilitiesType translatedCapabilities) {
         this.languages = languages;
         this.translatedCapabilities = translatedCapabilities;
     }
@@ -83,7 +83,7 @@ public class InspireCapabilitiesType {
     /**
      * Sets the value of the languages property.
      */
-    public void setLanguages(LanguagesType value) {
+    public void setLanguages(final LanguagesType value) {
         this.languages = value;
     }
 
@@ -97,7 +97,7 @@ public class InspireCapabilitiesType {
     /**
      * Sets the value of the translatedCapabilities property.
      */
-    public void setTranslatedCapabilities(TranslatedCapabilitiesType value) {
+    public void setTranslatedCapabilities(final TranslatedCapabilitiesType value) {
         this.translatedCapabilities = value;
     }
 

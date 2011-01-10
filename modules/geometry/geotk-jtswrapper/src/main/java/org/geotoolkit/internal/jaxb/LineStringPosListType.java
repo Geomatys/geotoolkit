@@ -36,11 +36,11 @@ public class LineStringPosListType {
 
     }
 
-    public LineStringPosListType(List<Double> value) {
+    public LineStringPosListType(final List<Double> value) {
         this.posList = new PosListType(value);
     }
 
-    public LineStringPosListType(JTSLineString lineString) {
+    public LineStringPosListType(final JTSLineString lineString) {
         this.srsName = CoordinateReferenceSystemAdapter.getSrsName(lineString.getCoordinateReferenceSystem());
         List<Double> value = new ArrayList<Double>();
         for (Position p : lineString.getPositions()) {
@@ -78,7 +78,7 @@ public class LineStringPosListType {
     /**
      * @param srsName the srsName to set
      */
-    public void setSrsName(String srsName) {
+    public void setSrsName(final String srsName) {
         this.srsName = srsName;
     }
 
@@ -92,7 +92,7 @@ public class LineStringPosListType {
     /**
      * @param posList the posList to set
      */
-    public void setPosList(PosListType posList) {
+    public void setPosList(final PosListType posList) {
         this.posList = posList;
     }
 }

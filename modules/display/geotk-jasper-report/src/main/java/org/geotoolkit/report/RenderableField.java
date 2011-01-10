@@ -44,7 +44,7 @@ public class RenderableField implements JRRenderable {
         return id;
     }
 
-    public void setDelegate(JRRenderable delegate) {
+    public void setDelegate(final JRRenderable delegate) {
         this.delegate = delegate;
     }
 
@@ -85,7 +85,7 @@ public class RenderableField implements JRRenderable {
     }
 
     @Override
-    public void render(Graphics2D gd, Rectangle2D rd) throws JRException {
+    public void render(final Graphics2D gd, final Rectangle2D rd) throws JRException {
         if(delegate == null){
             throw new IllegalStateException(ERROR_MSG + this.getClass());
         }

@@ -68,12 +68,12 @@ public class InterfaceList implements AbstractInterfaceList {
 
     }
 
-    public InterfaceList(String id, List<Interface> _interface) {
+    public InterfaceList(final String id, final List<Interface> _interface) {
         this._interface = _interface;
         this.id = id;
     }
 
-    public InterfaceList(AbstractInterfaceList al) {
+    public InterfaceList(final AbstractInterfaceList al) {
         if (al != null) {
             this.id = al.getId();
             if (al.getInterface() != null) {
@@ -98,14 +98,14 @@ public class InterfaceList implements AbstractInterfaceList {
     /**
      * Gets the value of the interface property.
      */
-    public void setInterface(List<Interface> _interface) {
+    public void setInterface(final List<Interface> _interface) {
         this._interface = _interface;
     }
 
     /**
      * Gets the value of the interface property.
      */
-    public void setInterface(Interface _interface) {
+    public void setInterface(final Interface _interface) {
         if (this._interface == null) {
             this._interface = new ArrayList<Interface>();
         }
@@ -122,7 +122,7 @@ public class InterfaceList implements AbstractInterfaceList {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

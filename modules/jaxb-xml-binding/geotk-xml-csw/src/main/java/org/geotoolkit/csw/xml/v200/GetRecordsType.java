@@ -115,10 +115,10 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
     /**
      * Build a new GetRecords request
      */
-    public GetRecordsType(String service, String version, ResultType resultType, 
-            String requestId, String outputFormat, String outputSchema, Integer startPosition,
-            Integer maxRecords, AbstractQueryType abstractQuery,
-            DistributedSearchType distributedSearch) {
+    public GetRecordsType(final String service, final String version, final ResultType resultType, 
+            final String requestId, final String outputFormat, final String outputSchema, final Integer startPosition,
+            final Integer maxRecords, final AbstractQueryType abstractQuery,
+            final DistributedSearchType distributedSearch) {
         
         super(service, version);
         this.resultType        = resultType;
@@ -145,7 +145,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the distributedSearch property.
      * 
      */
-    public void setDistributedSearch(DistributedSearchType value) {
+    public void setDistributedSearch(final DistributedSearchType value) {
         this.distributedSearch = value;
     }
 
@@ -179,7 +179,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the abstractQuery property.
      * 
      */
-    public void setAbstractQuery(AbstractQueryType value) {
+    public void setAbstractQuery(final AbstractQueryType value) {
         this.abstractQuery = value;
     }
 
@@ -194,7 +194,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the requestId property.
      * 
      */
-    public void setRequestId(String value) {
+    public void setRequestId(final String value) {
         this.requestId = value;
     }
 
@@ -213,14 +213,14 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the resultType property.
      * 
      */
-    public void setResultType(ResultType value) {
+    public void setResultType(final ResultType value) {
         this.resultType = value;
     }
     
     /**
      * Sets the value of the resultType property which is a string.
      */
-    public void setResultType(String resultType) {
+    public void setResultType(final String resultType) {
         this.resultType = ResultType.fromValue(resultType);
     }
 
@@ -240,7 +240,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the outputFormat property.
      * 
      */
-    public void setOutputFormat(String value) {
+    public void setOutputFormat(final String value) {
         this.outputFormat = value;
     }
 
@@ -255,7 +255,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the outputSchema property.
      * 
      */
-    public void setOutputSchema(String value) {
+    public void setOutputSchema(final String value) {
         this.outputSchema = value;
     }
 
@@ -275,7 +275,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the startPosition property.
      * 
      */
-    public void setStartPosition(Integer value) {
+    public void setStartPosition(final Integer value) {
         this.startPosition = value;
     }
 
@@ -295,11 +295,11 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * Sets the value of the maxRecords property.
      * 
      */
-    public void setMaxRecords(Integer value) {
+    public void setMaxRecords(final Integer value) {
         this.maxRecords = value;
     }
 
-    public void setTypeNames(List<QName> typeNames) {
+    public void setTypeNames(final List<QName> typeNames) {
         if (typeNames != null) {
             abstractQuery.setTypeNames(typeNames);
         }
@@ -309,7 +309,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
         abstractQuery.setConstraint(null);
     }
 
-    public void setCQLConstraint(String CQLQuery) {
+    public void setCQLConstraint(final String CQLQuery) {
         abstractQuery.setConstraint(new QueryConstraintType(CQLQuery, "1.1.0"));
     }
     
@@ -317,7 +317,7 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
      * This method set a query constraint by a filter.
      * @param filter FilterType
      */
-    public void setFilterConstraint(FilterType filter) {
+    public void setFilterConstraint(final FilterType filter) {
         abstractQuery.setConstraint(new QueryConstraintType(filter, "1.1.0"));
     }
 

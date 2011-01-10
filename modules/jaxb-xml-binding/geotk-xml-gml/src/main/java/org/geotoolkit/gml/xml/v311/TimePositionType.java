@@ -91,7 +91,7 @@ public class TimePositionType implements Position {
      *
      * @param value a date.
      */
-    public TimePositionType(String value){
+    public TimePositionType(final String value){
         this.value = value;
     }
 
@@ -99,7 +99,7 @@ public class TimePositionType implements Position {
      * build a simple Timposition with an indeterminate value.
      *
      */
-    public TimePositionType(TimeIndeterminateValueType indeterminatePosition){
+    public TimePositionType(final TimeIndeterminateValueType indeterminatePosition){
         this.indeterminatePosition = indeterminatePosition;
         value = "";
     }
@@ -109,7 +109,7 @@ public class TimePositionType implements Position {
      *
      * @param value a date.
      */
-    public TimePositionType(Timestamp time){
+    public TimePositionType(final Timestamp time){
         this.value = time.toString();
     }
 
@@ -118,7 +118,7 @@ public class TimePositionType implements Position {
      *
      * @param value a date.
      */
-    public TimePositionType(Date time){
+    public TimePositionType(final Date time){
         this.value = formatter.format(time);
     }
 
@@ -157,7 +157,7 @@ public class TimePositionType implements Position {
      *     {@link String }
      *     
      */
-    public void setFrame(String value) {
+    public void setFrame(final String value) {
         this.frame = value;
     }
 
@@ -181,7 +181,7 @@ public class TimePositionType implements Position {
      *     {@link String }
      *     
      */
-    public void setCalendarEraName(String value) {
+    public void setCalendarEraName(final String value) {
         this.calendarEraName = value;
     }
 
@@ -205,7 +205,7 @@ public class TimePositionType implements Position {
      *     {@link TimeIndeterminateValueType }
      *     
      */
-    public void setIndeterminatePosition(TimeIndeterminateValueType value) {
+    public void setIndeterminatePosition(final TimeIndeterminateValueType value) {
         this.indeterminatePosition = value;
     }
 

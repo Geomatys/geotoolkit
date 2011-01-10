@@ -66,7 +66,7 @@ public class PropertyType {
 
     }
 
-    public PropertyType(QName name, ValueType value) {
+    public PropertyType(final QName name, final ValueType value) {
         this.name  = name;
         this.value = value;
     }
@@ -81,7 +81,7 @@ public class PropertyType {
     /**
      * Sets the value of the name property.
      */
-    public void setName(QName value) {
+    public void setName(final QName value) {
         this.name = value;
     }
 
@@ -98,7 +98,7 @@ public class PropertyType {
     /**
      * Sets the value of the value property.
      */
-    public void setValue(ValueType value) {
+    public void setValue(final ValueType value) {
         this.value = value;
     }
 
@@ -116,7 +116,7 @@ public class PropertyType {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }

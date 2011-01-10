@@ -52,7 +52,7 @@ public class DoubleRenderer implements NavigatorRenderer{
     }
 
     @Override
-    public void render(JNavigator navigator, Graphics2D g, Rectangle area) {
+    public void render(final JNavigator navigator, final Graphics2D g, final Rectangle area) {
 
         final int extent;
         final int orientation = navigator.getOrientation();

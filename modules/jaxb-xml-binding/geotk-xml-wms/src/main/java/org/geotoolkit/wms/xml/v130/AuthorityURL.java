@@ -70,7 +70,7 @@ public class AuthorityURL {
     /**
      *
      */
-    public AuthorityURL(final String name, OnlineResource onlineResource) {
+    public AuthorityURL(final String name, final OnlineResource onlineResource) {
         this.name = name;
         this.onlineResource = onlineResource;
     }
@@ -78,7 +78,7 @@ public class AuthorityURL {
     /**
      *
      */
-    public AuthorityURL(final String name, String href) {
+    public AuthorityURL(final String name, final String href) {
         this.name = name;
         this.onlineResource = new OnlineResource(href);
     }

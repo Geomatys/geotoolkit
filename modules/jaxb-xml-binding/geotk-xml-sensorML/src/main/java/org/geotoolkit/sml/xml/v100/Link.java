@@ -82,13 +82,13 @@ public class Link implements AbstractLink {
 
     }
 
-    public Link(String type, LinkRef source, LinkRef destination) {
+    public Link(final String type, final LinkRef source, final LinkRef destination) {
         this.destination = destination;
         this.source      = source;
         this.type        = type;
     }
 
-    public Link(AbstractLink link) {
+    public Link(final AbstractLink link) {
         if (link != null) {
             this.type        = link.getType();
             if (link.getSource() != null) {
@@ -112,7 +112,7 @@ public class Link implements AbstractLink {
     /**
      * Sets the value of the source property.
      */
-    public void setSource(LinkRef value) {
+    public void setSource(final LinkRef value) {
         this.source = value;
     }
 
@@ -127,7 +127,7 @@ public class Link implements AbstractLink {
     /**
      * Sets the value of the destination property.
      */
-    public void setDestination(LinkRef value) {
+    public void setDestination(final LinkRef value) {
         this.destination = value;
     }
 
@@ -143,7 +143,7 @@ public class Link implements AbstractLink {
      * Sets the value of the type property.
      */
     @Override
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

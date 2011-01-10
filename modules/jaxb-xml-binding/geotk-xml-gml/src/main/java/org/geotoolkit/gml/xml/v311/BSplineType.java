@@ -151,7 +151,7 @@ public class BSplineType
      *     {@link DirectPositionListType }
      *     
      */
-    public void setPosList(DirectPositionListType value) {
+    public void setPosList(final DirectPositionListType value) {
         this.posList = value;
     }
 
@@ -175,7 +175,7 @@ public class BSplineType
      *     {@link CoordinatesType }
      *     
      */
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 
@@ -199,7 +199,7 @@ public class BSplineType
      *     {@link Integer }
      *     
      */
-    public void setDegree(Integer value) {
+    public void setDegree(final Integer value) {
         this.degree = value;
     }
 
@@ -256,7 +256,7 @@ public class BSplineType
      *     {@link CurveInterpolationType }
      *     
      */
-    public void setInterpolation(CurveInterpolationType value) {
+    public void setInterpolation(final CurveInterpolationType value) {
         this.interpolation = value;
     }
 
@@ -280,7 +280,7 @@ public class BSplineType
      *     {@link Boolean }
      *     
      */
-    public void setIsPolynomial(Boolean value) {
+    public void setIsPolynomial(final Boolean value) {
         this.isPolynomial = value;
     }
 
@@ -304,7 +304,7 @@ public class BSplineType
      *     {@link KnotTypesType }
      *     
      */
-    public void setKnotType(KnotTypesType value) {
+    public void setKnotType(final KnotTypesType value) {
         this.knotType = value;
     }
 

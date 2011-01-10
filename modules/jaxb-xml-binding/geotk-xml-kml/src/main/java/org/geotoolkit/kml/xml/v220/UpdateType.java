@@ -94,7 +94,7 @@ public class UpdateType {
      *     {@link String }
      *     
      */
-    public void setTargetHref(String value) {
+    public void setTargetHref(final String value) {
         this.targetHref = value;
     }
 

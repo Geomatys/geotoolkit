@@ -74,7 +74,7 @@ public class DistributedSearchType implements DistributedSearch {
      * Sets the value of the hopCount property.
      * 
      */
-    public void setHopCount(BigInteger value) {
+    public void setHopCount(final BigInteger value) {
         this.hopCount = value;
     }
 

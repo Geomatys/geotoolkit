@@ -53,7 +53,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer){
+    public void setLayer(final MapLayer layer){
         guiX.setLayer(layer);
         guiY.setLayer(layer);
         this.layer = layer;
@@ -71,7 +71,7 @@ public class JAnchorPointPane extends StyleElementEditor<AnchorPoint>{
      * {@inheritDoc }
      */
     @Override
-    public void parse(AnchorPoint anchor) {
+    public void parse(final AnchorPoint anchor) {
         if(anchor != null){
             guiX.parse(anchor.getAnchorPointX());
             guiY.parse(anchor.getAnchorPointY());

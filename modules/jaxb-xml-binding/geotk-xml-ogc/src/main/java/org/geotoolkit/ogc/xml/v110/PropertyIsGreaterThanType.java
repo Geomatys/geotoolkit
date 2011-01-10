@@ -40,7 +40,7 @@ public class PropertyIsGreaterThanType extends BinaryComparisonOpType implements
     /**
      * Build a new Binary comparison operator
      */
-    public PropertyIsGreaterThanType(LiteralType literal, PropertyNameType propertyName, Boolean matchCase) {
+    public PropertyIsGreaterThanType(final LiteralType literal, final PropertyNameType propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
 

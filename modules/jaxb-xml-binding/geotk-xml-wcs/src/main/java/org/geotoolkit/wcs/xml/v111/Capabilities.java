@@ -66,8 +66,8 @@ public class Capabilities extends CapabilitiesBaseType implements GetCapabilitie
     /**
      * Build a new Capabilities document.
      */
-    public Capabilities(ServiceIdentification serviceIdentification, ServiceProvider serviceProvider,
-            OperationsMetadata operationsMetadata, String version, String updateSequence, Contents contents) {
+    public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final Contents contents) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         this.contents = contents;
     }
@@ -80,7 +80,7 @@ public class Capabilities extends CapabilitiesBaseType implements GetCapabilitie
         return contents;
     }
     
-    public void setContents(Contents contents) {
+    public void setContents(final Contents contents) {
         this.contents = contents;
     }
 }

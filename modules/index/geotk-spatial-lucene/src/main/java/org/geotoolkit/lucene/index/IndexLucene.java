@@ -118,7 +118,7 @@ public abstract class IndexLucene {
     /**
      * @param logLevel the logLevel to set
      */
-    public void setLogLevel(Level logLevel) {
+    public void setLogLevel(final Level logLevel) {
         this.logLevel = logLevel;
     }
 

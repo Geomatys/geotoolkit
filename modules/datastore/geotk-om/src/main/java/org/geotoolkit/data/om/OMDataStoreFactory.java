@@ -109,7 +109,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public boolean canProcess(ParameterValueGroup params) {
+    public boolean canProcess(final ParameterValueGroup params) {
         boolean valid = super.canProcess(params);
         if(valid){
             Object value = params.parameter(DBTYPE.getName().toString()).getValue();
@@ -124,7 +124,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
         try{
             //create a datasource
             final BasicDataSource dataSource = new BasicDataSource();
@@ -159,7 +159,7 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
     }
 
     @Override
-    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

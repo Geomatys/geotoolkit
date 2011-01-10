@@ -35,7 +35,7 @@ public class ChartDef implements JRRenderable{
     private final String id = System.currentTimeMillis() + "-" + Math.random();
     private final JFreeChart chart;
 
-    public ChartDef(JFreeChart chart){
+    public ChartDef(final JFreeChart chart){
         this.chart = chart;
     }
 

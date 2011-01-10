@@ -92,7 +92,7 @@ public class SurfaceArrayPropertyType {
      *
      *
      */
-    public void setJbAbstractSurface(List<JAXBElement<? extends AbstractSurfaceType>> abstractSurface) {
+    public void setJbAbstractSurface(final List<JAXBElement<? extends AbstractSurfaceType>> abstractSurface) {
         this.abstractSurface = abstractSurface;
     }
 
@@ -135,7 +135,7 @@ public class SurfaceArrayPropertyType {
      *
      *
      */
-    public void setAbstractSurface(List<? extends AbstractSurfaceType> abstractSurface) {
+    public void setAbstractSurface(final List<? extends AbstractSurfaceType> abstractSurface) {
         this.abstractSurface = new ArrayList<JAXBElement<? extends AbstractSurfaceType>>();
         for (AbstractSurfaceType value : abstractSurface) {
             final ObjectFactory factory = new ObjectFactory();

@@ -44,7 +44,7 @@ public class IndexHeader {
 
     private final byte byteOrder;
 
-    public IndexHeader(byte byteOrder) {
+    public IndexHeader(final byte byteOrder) {
         this.byteOrder = byteOrder;
     }
 
@@ -56,7 +56,7 @@ public class IndexHeader {
      * @throws IOException
      * @throws StoreException
      */
-    public IndexHeader(ReadableByteChannel channel) throws IOException,
+    public IndexHeader(final ReadableByteChannel channel) throws IOException,
             StoreException {
         final ByteBuffer buf = ByteBuffer.allocate(8);
 
@@ -91,7 +91,7 @@ public class IndexHeader {
         }
     }
 
-    public void writeTo(ByteBuffer buf) {
+    public void writeTo(final ByteBuffer buf) {
         final Charset charSet = Charset.forName("US-ASCII");
 
         final ByteBuffer tmp = charSet.encode(SIGNATURE);
@@ -122,7 +122,7 @@ public class IndexHeader {
      * DOCUMENT ME!
      * @param order
      */
-    public static ByteOrder byteToOrder(byte order) {
+    public static ByteOrder byteToOrder(final byte order) {
         ByteOrder ret = null;
 
         switch (order) {

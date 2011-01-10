@@ -64,8 +64,8 @@ public class DefaultGraphic implements Graphic{
      * @param anchor : if null will be replaced by default value.
      * @param disp : if null will be replaced by default value.
      */
-    public DefaultGraphic(List<GraphicalSymbol> symbols, Expression opacity, Expression size,
-            Expression rotation, AnchorPoint anchor, Displacement disp){
+    public DefaultGraphic(final List<GraphicalSymbol> symbols, final Expression opacity, final Expression size,
+            final Expression rotation, final AnchorPoint anchor, final Displacement disp){
         
         if(symbols == null || symbols.isEmpty()){
             this.symbols = Collections.singletonList((GraphicalSymbol)DEFAULT_GRAPHICAL_SYMBOL);
@@ -129,7 +129,7 @@ public class DefaultGraphic implements Graphic{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -145,7 +145,7 @@ public class DefaultGraphic implements Graphic{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

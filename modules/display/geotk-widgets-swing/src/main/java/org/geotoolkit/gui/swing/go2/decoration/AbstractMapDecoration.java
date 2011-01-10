@@ -32,7 +32,7 @@ public abstract class AbstractMapDecoration implements MapDecoration{
     protected JMap2D map = null;
     
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         this.map = map;
     }
 

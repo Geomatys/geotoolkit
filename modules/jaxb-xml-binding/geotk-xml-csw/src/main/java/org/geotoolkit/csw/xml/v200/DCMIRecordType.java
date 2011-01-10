@@ -171,10 +171,10 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
     }
         
     
-    public DCMIRecordType(SimpleLiteral identifier, SimpleLiteral title, SimpleLiteral type, 
-            List<SimpleLiteral> subjects, SimpleLiteral format, SimpleLiteral modified, SimpleLiteral _abstract,
-            SimpleLiteral creator, SimpleLiteral distributor, SimpleLiteral language, SimpleLiteral spatial, 
-            SimpleLiteral references) {
+    public DCMIRecordType(final SimpleLiteral identifier, final SimpleLiteral title, final SimpleLiteral type, 
+            final List<SimpleLiteral> subjects, final SimpleLiteral format, final SimpleLiteral modified, final SimpleLiteral _abstract,
+            final SimpleLiteral creator, final SimpleLiteral distributor, final SimpleLiteral language, final SimpleLiteral spatial, 
+            final SimpleLiteral references) {
         
         this.identifier = dublinFactory.createIdentifier(identifier);
         this.title      = dublinFactory.createTitle(title);
@@ -210,7 +210,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return Collections.unmodifiableList(dcElement);
     }
     
-    public void setIdentifier(SimpleLiteral identifier) {
+    public void setIdentifier(final SimpleLiteral identifier) {
         this.identifier = dublinFactory.createIdentifier(identifier);
     }
     
@@ -220,7 +220,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return null;
     }
     
-    public void setTitle(SimpleLiteral title) {
+    public void setTitle(final SimpleLiteral title) {
         this.title = dublinFactory.createTitle(title);
     }
     
@@ -230,7 +230,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return null;
     }
     
-    public void setType(SimpleLiteral type) {
+    public void setType(final SimpleLiteral type) {
         this.type = dublinFactory.createType(type);
     }
     
@@ -240,14 +240,14 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return null;
     }
     
-    public void setSubject(List<SimpleLiteral> subjects) {
+    public void setSubject(final List<SimpleLiteral> subjects) {
         this.subject = new ArrayList<JAXBElement<SimpleLiteral>>();
         for (SimpleLiteral sub: subjects) {
             this.subject.add(dublinFactory.createSubject(sub));
         }
     }
     
-    public void setSubject(SimpleLiteral subject) {
+    public void setSubject(final SimpleLiteral subject) {
         if (this.subject == null) {
             this.subject = new ArrayList<JAXBElement<SimpleLiteral>>();
         }
@@ -264,11 +264,11 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return response;
     }
     
-    public void setFormat(SimpleLiteral format) {
+    public void setFormat(final SimpleLiteral format) {
         this.format = Arrays.asList(dublinFactory.createFormat(format));
     }
     
-    public void setFormat(List<SimpleLiteral> format) {
+    public void setFormat(final List<SimpleLiteral> format) {
         this.format = new ArrayList<JAXBElement<SimpleLiteral>>();
         for (SimpleLiteral c : format) {
             this.format.add(dublinFactory.createFormat(c));
@@ -285,7 +285,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return response;
     }
     
-    public void setModified(SimpleLiteral modified) {
+    public void setModified(final SimpleLiteral modified) {
         this.modified = dublinTermFactory.createModified(modified);
     }
     
@@ -295,11 +295,11 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return null;
     }
     
-    public void setAbstract(SimpleLiteral _abstract) {
+    public void setAbstract(final SimpleLiteral _abstract) {
         this._abstract = Arrays.asList(dublinTermFactory.createAbstract(_abstract));
     }
     
-    public void setAbstract(List<SimpleLiteral> _abstract) {
+    public void setAbstract(final List<SimpleLiteral> _abstract) {
        this._abstract = new ArrayList<JAXBElement<SimpleLiteral>>();
        for (SimpleLiteral c : _abstract) {
             this._abstract.add(dublinTermFactory.createAbstract(c));
@@ -316,11 +316,11 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return response;
     }
     
-    public void setCreator(SimpleLiteral creator) {
+    public void setCreator(final SimpleLiteral creator) {
         this.creator = Arrays.asList(dublinFactory.createCreator(creator));
     }
     
-    public void setCreator(List<SimpleLiteral> creator) {
+    public void setCreator(final List<SimpleLiteral> creator) {
         this.creator = new ArrayList<JAXBElement<SimpleLiteral>>();
         for (SimpleLiteral c : creator) {
             this.creator.add(dublinFactory.createCreator(c));
@@ -337,7 +337,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return response;
     }
     
-    public void setDistributor(SimpleLiteral distributor) {
+    public void setDistributor(final SimpleLiteral distributor) {
         this.distributor = dublinFactory.createPublisher(distributor);
     }
     
@@ -347,7 +347,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return null;
     }
     
-    public void setLanguage(SimpleLiteral language) {
+    public void setLanguage(final SimpleLiteral language) {
         this.language = dublinFactory.createLanguage(language);
     }
     
@@ -357,7 +357,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return null;
     }
     
-    public void setRelation(SimpleLiteral relation) {
+    public void setRelation(final SimpleLiteral relation) {
         this.dcElement.add(dublinFactory.createRelation(relation));
     }
     
@@ -371,7 +371,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return result;
     }
     
-    public void setSource(SimpleLiteral source) {
+    public void setSource(final SimpleLiteral source) {
         this.dcElement.add(dublinFactory.createSource(source));
     }
     
@@ -385,7 +385,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return result;
     }
     
-    public void setCoverage(SimpleLiteral coverage) {
+    public void setCoverage(final SimpleLiteral coverage) {
         this.dcElement.add(dublinFactory.createCoverage(coverage));
     }
     
@@ -400,7 +400,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return result;
     }
     
-    public void setDate(SimpleLiteral date) {
+    public void setDate(final SimpleLiteral date) {
         this.dcElement.add(dublinFactory.createDate(date));
     }
     
@@ -413,7 +413,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return null;
     }
     
-    public void setRights(SimpleLiteral rights) {
+    public void setRights(final SimpleLiteral rights) {
         this.dcElement.add(dublinFactory.createRights(rights));
     }
     
@@ -427,7 +427,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return result;
     }
     
-    public void setSpatial(SimpleLiteral spatial) {
+    public void setSpatial(final SimpleLiteral spatial) {
         this.spatial = dublinTermFactory.createSpatial(spatial);
     }
     
@@ -437,7 +437,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return null;
     }
     
-    public void setReferences(SimpleLiteral references) {
+    public void setReferences(final SimpleLiteral references) {
         this.references = dublinTermFactory.createReferences(references);
     }
     
@@ -447,7 +447,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return null;
     }
     
-    public void setPublisher(SimpleLiteral publisher) {
+    public void setPublisher(final SimpleLiteral publisher) {
         this.dcElement.add(dublinFactory.createPublisher(publisher));
     }
     
@@ -461,7 +461,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return result;
     }
     
-    public void setContributor(SimpleLiteral contributor) {
+    public void setContributor(final SimpleLiteral contributor) {
         this.dcElement.add(dublinFactory.createContributor(contributor));
     }
     
@@ -475,7 +475,7 @@ public class DCMIRecordType extends AbstractRecordType implements DCMIRecord {
         return result;
     }
     
-    public void setDescription(SimpleLiteral description) {
+    public void setDescription(final SimpleLiteral description) {
         this.dcElement.add(dublinFactory.createDescription(description));
     }
     

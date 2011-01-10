@@ -40,7 +40,7 @@ public class AbstractNavigationHandler implements CanvasHandler{
     protected final JMap2D map;
     protected final ZoomDecoration decorationPane = new ZoomDecoration();
 
-    public AbstractNavigationHandler(JMap2D map) {
+    public AbstractNavigationHandler(final JMap2D map) {
         this.map = map;
     }
 
@@ -94,7 +94,7 @@ public class AbstractNavigationHandler implements CanvasHandler{
     /**
      * Drag the map from coordinate 1 to coordinate 2.
      */
-    protected void processDrag(int x1, int y1, int x2, int y2) {
+    protected void processDrag(final int x1, final int y1, final int x2, final int y2) {
         try {
             map.getCanvas().getController().translateDisplay(x2 - x1, y2 - y1);
         } catch (NoninvertibleTransformException ex) {
@@ -114,7 +114,7 @@ public class AbstractNavigationHandler implements CanvasHandler{
      * {@inheritDoc }
      */
     @Override
-    public void install(Component component) {
+    public void install(final Component component) {
         map.addDecoration(0,decorationPane);
     }
 
@@ -122,7 +122,7 @@ public class AbstractNavigationHandler implements CanvasHandler{
      * {@inheritDoc }
      */
     @Override
-    public void uninstall(Component component) {
+    public void uninstall(final Component component) {
         map.removeDecoration(decorationPane);
     }
 

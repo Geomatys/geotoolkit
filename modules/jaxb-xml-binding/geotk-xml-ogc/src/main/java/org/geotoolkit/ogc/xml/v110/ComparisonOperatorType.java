@@ -66,7 +66,7 @@ public enum ComparisonOperatorType implements Operator {
     NULL_CHECK("NullCheck");
     private final String value;
 
-    ComparisonOperatorType(String v) {
+    ComparisonOperatorType(final String v) {
         value = v;
     }
 
@@ -74,7 +74,7 @@ public enum ComparisonOperatorType implements Operator {
         return value;
     }
 
-    public static ComparisonOperatorType fromValue(String v) {
+    public static ComparisonOperatorType fromValue(final String v) {
         for (ComparisonOperatorType c: ComparisonOperatorType.values()) {
             if (c.value.equals(v)) {
                 return c;

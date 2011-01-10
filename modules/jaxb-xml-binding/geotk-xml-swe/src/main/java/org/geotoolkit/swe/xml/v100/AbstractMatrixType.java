@@ -63,7 +63,7 @@ public class AbstractMatrixType extends AbstractDataArrayType implements Abstrac
 
     }
 
-    public AbstractMatrixType(AbstractMatrix am) {
+    public AbstractMatrixType(final AbstractMatrix am) {
         super(am);
         if (am != null) {
             this.localFrame = am.getLocalFrame();
@@ -81,7 +81,7 @@ public class AbstractMatrixType extends AbstractDataArrayType implements Abstrac
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -95,7 +95,7 @@ public class AbstractMatrixType extends AbstractDataArrayType implements Abstrac
     /**
      * Sets the value of the localFrame property.
      */
-    public void setLocalFrame(String value) {
+    public void setLocalFrame(final String value) {
         this.localFrame = value;
     }
 

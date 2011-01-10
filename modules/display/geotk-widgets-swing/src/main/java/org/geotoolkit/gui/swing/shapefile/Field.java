@@ -29,7 +29,7 @@ class Field {
         return name;
     }
 
-    void setName(String name) {
+    void setName(final String name) {
         this.name = name;
     }
 
@@ -37,7 +37,7 @@ class Field {
         return type;
     }
 
-    void setType(FieldType type) {
+    void setType(final FieldType type) {
         this.type = type;
     }
     

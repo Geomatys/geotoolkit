@@ -63,7 +63,7 @@ public final class DynamicSymbolFactoryFinder {
     /**
      * @see org.geotoolkit.renderer.style.ExternalGraphicFactory#getImage(java.net.URI, java.lang.String, java.lang.Float, RenderingHints)
      */
-    public static BufferedImage getImage(URI uri, String mime, Float size, RenderingHints hints) throws Exception{
+    public static BufferedImage getImage(final URI uri, final String mime, final Float size, final RenderingHints hints) throws Exception{
         final Iterator<ExternalGraphicFactory> ite = getExternalGraphicFactories();
         while(ite.hasNext()){
             final ExternalGraphicFactory factory = ite.next();
@@ -77,8 +77,8 @@ public final class DynamicSymbolFactoryFinder {
     /**
      * @see org.geotoolkit.renderer.style.ExternalGraphicFactory#getImage(java.net.URI, java.lang.String, java.lang.Float, RenderingHints)
      */
-    public static void renderImage(URI uri, String mime, Float size, Graphics2D g,
-            Point2D center,RenderingHints hints) throws Exception{
+    public static void renderImage(final URI uri, final String mime, final Float size, final Graphics2D g,
+            final Point2D center,final RenderingHints hints) throws Exception{
         final Iterator<ExternalGraphicFactory> ite = getExternalGraphicFactories();
         while(ite.hasNext()){
             final ExternalGraphicFactory factory = ite.next();

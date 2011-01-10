@@ -159,7 +159,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public DataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
 
         URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
@@ -222,7 +222,7 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
         URL url = (URL) params.parameter(URLP.getName().toString()).getValue();
         Boolean isMemoryMapped = (Boolean) params.parameter(MEMORY_MAPPED.getName().toString()).getValue();
         String namespace = (String) params.parameter(NAMESPACE.getName().toString()).getValue();

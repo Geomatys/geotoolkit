@@ -72,7 +72,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
      * {@inheritDoc }
      */
     @Override
-    public String write(FeatureType feature) throws JAXBException {
+    public String write(final FeatureType feature) throws JAXBException {
         final StringWriter sw = new StringWriter();
         write(feature,sw);
         return sw.toString();
@@ -82,7 +82,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
      * {@inheritDoc }
      */
     @Override
-    public void write(FeatureType feature, Writer writer) throws JAXBException {
+    public void write(final FeatureType feature, final Writer writer) throws JAXBException {
         final Schema schema = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
         try {
@@ -99,7 +99,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
      * {@inheritDoc }
      */
     @Override
-    public void write(FeatureType feature, OutputStream stream) throws JAXBException {
+    public void write(final FeatureType feature, final OutputStream stream) throws JAXBException {
         final Schema schema = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
         try {
@@ -116,7 +116,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
      * {@inheritDoc }
      */
     @Override
-    public Schema getSchemaFromFeatureType(List<FeatureType> featureTypes) {
+    public Schema getSchemaFromFeatureType(final List<FeatureType> featureTypes) {
         if (featureTypes != null && featureTypes.size() > 0) {
             // we get the first namespace
             String typeNamespace = null;
@@ -139,7 +139,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
      * {@inheritDoc }
      */
     @Override
-    public Schema getSchemaFromFeatureType(FeatureType featureType) {
+    public Schema getSchemaFromFeatureType(final FeatureType featureType) {
         if (featureType != null) {
             final String typeNamespace = featureType.getName().getNamespaceURI();
             final Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
@@ -150,7 +150,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         return null;
     }
 
-    private void fillSchemaWithFeatureType(FeatureType featureType, Schema schema) {
+    private void fillSchemaWithFeatureType(final FeatureType featureType, final Schema schema) {
         
         final String typeNamespace    = featureType.getName().getNamespaceURI();
         final String elementName      = featureType.getName().getLocalPart();

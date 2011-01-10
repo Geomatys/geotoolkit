@@ -91,7 +91,7 @@ public class BoundingBoxType {
      * @param minx
      * @param miny
      */
-    public BoundingBoxType(String crs, double minx, double miny, double maxx, double maxy){
+    public BoundingBoxType(final String crs, final double minx, final double miny, final double maxx, final double maxy){
         this.dimensions = new BigInteger("2");
         this.lowerCorner.add(minx);
         this.lowerCorner.add(miny);
@@ -111,28 +111,28 @@ public class BoundingBoxType {
     /**
      * Set the lower corner list.
      */
-    public void setLowerCorner(List<Double> lowerCorner) {
+    public void setLowerCorner(final List<Double> lowerCorner) {
         this.lowerCorner = lowerCorner;
     }
     
     /**
      * Set the upper corner list.
      */
-    public void setUpperCorner(List<Double> upperCorner) {
+    public void setUpperCorner(final List<Double> upperCorner) {
         this.upperCorner = upperCorner;
     }
     
     /**
      * add a point to the lower corner list.
      */
-    public void setLowerCorner(Double point) {
+    public void setLowerCorner(final Double point) {
         this.lowerCorner.add(point);
     }
     
     /**
      * add a point to the upper corner list.
      */
-    public void setUpperCorner(Double point) {
+    public void setUpperCorner(final Double point) {
         this.upperCorner.add(point);
     }
     
@@ -155,7 +155,7 @@ public class BoundingBoxType {
     /**
      * set the crs value
      */
-    public void setCrs(String crs) {
+    public void setCrs(final String crs) {
         this.crs = crs;
     }
 

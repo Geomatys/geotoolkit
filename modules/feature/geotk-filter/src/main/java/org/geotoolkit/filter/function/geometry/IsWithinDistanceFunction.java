@@ -23,12 +23,12 @@ import org.opengis.filter.expression.Expression;
 
 public class IsWithinDistanceFunction extends AbstractFunction {
 
-    public IsWithinDistanceFunction(Expression expr1, Expression expr2, Expression expr3) {
+    public IsWithinDistanceFunction(final Expression expr1, final Expression expr2, final Expression expr3) {
         super(GeometryFunctionFactory.IS_WITHIN_DISTANCE, new Expression[]{expr1, expr2, expr3}, null);
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         Geometry arg0;
         Geometry arg1;
         double arg2;

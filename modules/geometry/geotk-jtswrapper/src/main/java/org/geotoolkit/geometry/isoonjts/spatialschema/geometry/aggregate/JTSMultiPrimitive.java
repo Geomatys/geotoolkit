@@ -25,7 +25,7 @@ public class JTSMultiPrimitive extends AbstractJTSAggregate<Primitive> implement
     @XmlElement(name="geometryMember", namespace = "http://www.opengis.net/gml")
     @XmlJavaTypeAdapter(GeometryAdapter.class)
     @Override
-    public void setElements(Set<Primitive> element) {
+    public void setElements(final Set<Primitive> element) {
         super.setElements(element);
     }
 }

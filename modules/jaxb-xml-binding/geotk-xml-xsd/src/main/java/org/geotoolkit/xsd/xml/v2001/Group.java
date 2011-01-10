@@ -123,7 +123,7 @@ public abstract class Group extends Annotated {
         return result;
     }
 
-    public void addElement(TopLevelElement element) {
+    public void addElement(final TopLevelElement element) {
         if (particle == null) {
             particle = new ArrayList<Object>();
         }
@@ -150,7 +150,7 @@ public abstract class Group extends Annotated {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -174,7 +174,7 @@ public abstract class Group extends Annotated {
      *     {@link QName }
      *     
      */
-    public void setRef(QName value) {
+    public void setRef(final QName value) {
         this.ref = value;
     }
 
@@ -202,7 +202,7 @@ public abstract class Group extends Annotated {
      *     {@link BigInteger }
      *     
      */
-    public void setMinOccurs(Integer value) {
+    public void setMinOccurs(final Integer value) {
         this.minOccurs = value;
     }
 
@@ -230,7 +230,7 @@ public abstract class Group extends Annotated {
      *     {@link String }
      *     
      */
-    public void setMaxOccurs(String value) {
+    public void setMaxOccurs(final String value) {
         this.maxOccurs = value;
     }
 

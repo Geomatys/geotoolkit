@@ -55,7 +55,7 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
                 DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,LOOSEBBOX,PREPARED_STATEMENTS});
 
     @Override
-    protected SQLDialect createSQLDialect(JDBCDataStore dataStore) {
+    protected SQLDialect createSQLDialect(final JDBCDataStore dataStore) {
         return new PostGISDialect(dataStore);
     }
 

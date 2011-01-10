@@ -57,7 +57,7 @@ public class SmlFactory {
      *
      * @param version The sensorML version.
      */
-    public SmlFactory(String version) {
+    public SmlFactory(final String version) {
         this.version = version;
     }
 
@@ -68,7 +68,7 @@ public class SmlFactory {
      * @param quantity
      * @return
      */
-    public IoComponent createIoComponent(String name, Quantity quantity) {
+    public IoComponent createIoComponent(final String name, final Quantity quantity) {
 
         if ("1.0.0".equals(version)) {
             if (quantity != null && !(quantity instanceof org.geotoolkit.swe.xml.v100.QuantityType)) {
@@ -95,7 +95,7 @@ public class SmlFactory {
      * @param quantity
      * @return
      */
-    public IoComponent createIoComponent(String name, SimpleDataRecord record) {
+    public IoComponent createIoComponent(final String name, final SimpleDataRecord record) {
 
         if ("1.0.0".equals(version)) {
             if (record != null && !(record instanceof org.geotoolkit.swe.xml.v100.SimpleDataRecordType)) {
@@ -122,7 +122,7 @@ public class SmlFactory {
      * @param quantity
      * @return
      */
-    public AbstractInputs createInputs(List<? extends IoComponent> inputList) {
+    public AbstractInputs createInputs(final List<? extends IoComponent> inputList) {
 
         if ("1.0.0".equals(version)) {
             if (inputList == null) {
@@ -147,7 +147,7 @@ public class SmlFactory {
      * @param quantity
      * @return
      */
-    public AbstractOutputs createOutputs(List<? extends IoComponent> outputList) {
+    public AbstractOutputs createOutputs(final List<? extends IoComponent> outputList) {
 
         if ("1.0.0".equals(version)) {
             if (outputList == null) {
@@ -172,7 +172,7 @@ public class SmlFactory {
      * @param quantity
      * @return
      */
-    public AbstractPosition createPosition(String name, Position position) {
+    public AbstractPosition createPosition(final String name, final Position position) {
 
         if ("1.0.0".equals(version)) {
             if (position != null && !(position instanceof org.geotoolkit.swe.xml.v100.PositionType)) {
@@ -197,7 +197,7 @@ public class SmlFactory {
      * @param quantity
      * @return
      */
-    public AbstractPositions createPositions(String id , List<? extends AbstractPosition> positions) {
+    public AbstractPositions createPositions(final String id , final List<? extends AbstractPosition> positions) {
 
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sml.xml.v100.Positions(id, (List<org.geotoolkit.sml.xml.v100.Position>) positions);
@@ -214,7 +214,7 @@ public class SmlFactory {
      * Build a ValidTime in the factory version.
      *
      */
-    public AbstractValidTime createValidTime(String begin, String end) {
+    public AbstractValidTime createValidTime(final String begin, final String end) {
 
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sml.xml.v100.ValidTime(begin, end);
@@ -231,7 +231,7 @@ public class SmlFactory {
      * Build a ValidTime in the factory version.
      *
      */
-    public ComponentProperty createComponentProperty(String href) {
+    public ComponentProperty createComponentProperty(final String href) {
 
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sml.xml.v100.ComponentPropertyType(href);
@@ -251,7 +251,7 @@ public class SmlFactory {
      * @param quantity
      * @return
      */
-    public AbstractComponents createComponents(List<? extends ComponentProperty> components) {
+    public AbstractComponents createComponents(final List<? extends ComponentProperty> components) {
 
         if ("1.0.0".equals(version)) {
             return new org.geotoolkit.sml.xml.v100.Components((List<org.geotoolkit.sml.xml.v100.ComponentPropertyType>) components);
@@ -264,7 +264,7 @@ public class SmlFactory {
         }
     }
 
-    public static org.geotoolkit.sml.xml.v101.SensorML convertTo101(org.geotoolkit.sml.xml.v100.SensorML sensor) {
+    public static org.geotoolkit.sml.xml.v101.SensorML convertTo101(final org.geotoolkit.sml.xml.v100.SensorML sensor) {
         List<org.geotoolkit.sml.xml.v101.SensorML.Member> newMembers = new ArrayList<org.geotoolkit.sml.xml.v101.SensorML.Member>();
 
         for (Member oldMember : sensor.getMember()) {

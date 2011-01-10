@@ -46,7 +46,7 @@ public enum ResultTypeType {
     HITS("hits");
     private final String value;
 
-    ResultTypeType(String v) {
+    ResultTypeType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum ResultTypeType {
         return value;
     }
 
-    public static ResultTypeType fromValue(String v) {
+    public static ResultTypeType fromValue(final String v) {
         for (ResultTypeType c: ResultTypeType.values()) {
             if (c.value.equals(v)) {
                 return c;

@@ -48,7 +48,7 @@ public class WebCoverageServer implements Server {
     private final URL serverURL;
     private WCSCapabilitiesType capabilities;
 
-    public WebCoverageServer(URL serverURL, String version) {
+    public WebCoverageServer(final URL serverURL, final String version) {
         if (version.equals("1.0.0")) {
             this.version = WCSVersion.v100;
         } else {

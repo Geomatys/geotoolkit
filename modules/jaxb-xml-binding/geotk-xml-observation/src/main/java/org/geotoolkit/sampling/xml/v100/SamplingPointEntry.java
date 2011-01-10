@@ -75,7 +75,7 @@ public class SamplingPointEntry extends SamplingFeatureEntry implements Sampling
         this.position = location;
     }
 
-    public SamplingPointEntry(String identifier, String name, double x, double y) {
+    public SamplingPointEntry(final String identifier, final String name, final double x, final double y) {
         super(identifier, name,  null, new FeaturePropertyType(""));
         final DirectPositionType pos  = new DirectPositionType("urn:ogc:crs:espg:4326", 2, new ArrayList<Double>(Arrays.asList(y, x)));
         this.position = new PointPropertyType(new PointType(null, pos));

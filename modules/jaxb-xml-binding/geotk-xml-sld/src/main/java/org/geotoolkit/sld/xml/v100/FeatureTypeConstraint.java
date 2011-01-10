@@ -84,7 +84,7 @@ public class FeatureTypeConstraint {
      *     {@link String }
      *     
      */
-    public void setFeatureTypeName(String value) {
+    public void setFeatureTypeName(final String value) {
         this.featureTypeName = value;
     }
 
@@ -108,7 +108,7 @@ public class FeatureTypeConstraint {
      *     {@link FilterType }
      *     
      */
-    public void setFilter(FilterType value) {
+    public void setFilter(final FilterType value) {
         this.filter = value;
     }
 

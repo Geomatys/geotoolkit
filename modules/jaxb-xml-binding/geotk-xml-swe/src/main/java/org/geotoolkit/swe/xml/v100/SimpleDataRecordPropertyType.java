@@ -58,7 +58,7 @@ public class SimpleDataRecordPropertyType implements SimpleDataRecordProperty {
 
     }
 
-    public SimpleDataRecordPropertyType(SimpleDataRecordProperty sd) {
+    public SimpleDataRecordPropertyType(final SimpleDataRecordProperty sd) {
        if (sd != null && sd.getSimpleDataRecord() != null) {
            this.simpleDataRecord = new SimpleDataRecordType(sd.getSimpleDataRecord());
        }
@@ -74,7 +74,7 @@ public class SimpleDataRecordPropertyType implements SimpleDataRecordProperty {
     /**
      * Sets the value of the simpleDataRecord property.
      */
-    public void setSimpleDataRecord(SimpleDataRecordType value) {
+    public void setSimpleDataRecord(final SimpleDataRecordType value) {
         this.simpleDataRecord = value;
     }
 

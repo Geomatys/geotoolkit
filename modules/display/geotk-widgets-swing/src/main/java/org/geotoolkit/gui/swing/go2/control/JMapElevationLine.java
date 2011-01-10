@@ -364,7 +364,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
      * Disable spinner the time to update there values, otherwise
      * the listener will cause the canvas to be repainted.
      */
-    private synchronized void updateSpiners(double min, double max){
+    private synchronized void updateSpiners(final double min, final double max){
         modelBas.removeChangeListener(spinnerListener);
         modelHaut.removeChangeListener(spinnerListener);
 
@@ -379,7 +379,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         if(this.map != null){
             this.map.getCanvas().removePropertyChangeListener(this);
         }
@@ -403,7 +403,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
     private volatile Double popupEdit = null;
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
 
         if(map != null){
             final Double[] range = map.getCanvas().getController().getElevationRange();
@@ -439,7 +439,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
 
         if(selected >= 0 && edit != null){
 
@@ -470,7 +470,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
 
         if(selected >= 0){
             //drag one limit
@@ -493,7 +493,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
 
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(final PropertyChangeEvent evt) {
         if(evt.getPropertyName().equals(CanvasController2D.ELEVATION_PROPERTY)){
             Double[] range = map.getCanvas().getController().getElevationRange();
 
@@ -522,7 +522,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
         }
 
         @Override
-        protected void paintComponent(Graphics g) {
+        protected void paintComponent(final Graphics g) {
             super.paintComponent(g);
 
             if(map == null) return;

@@ -73,7 +73,7 @@ public class GPXDataStore extends AbstractDataStore{
 
     private final File file;
 
-    public GPXDataStore(File f){
+    public GPXDataStore(final File f){
         super(null);
         this.file = f;
     }
@@ -113,7 +113,7 @@ public class GPXDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         if(TYPE_GPX_ENTITY.getName().equals(typeName)){
             return TYPE_GPX_ENTITY;
         }else if(TYPE_WAYPOINT.getName().equals(typeName)){
@@ -128,14 +128,14 @@ public class GPXDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
         final FeatureReader fr = new GPXFeatureReader(ft);
         return handleRemaining(fr, query);
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         final FeatureType ft = getFeatureType(typeName);
         final FeatureWriter fw = new GPXFeatureWriter(ft);
         return handleRemaining(fw, filter);
@@ -151,32 +151,32 @@ public class GPXDataStore extends AbstractDataStore{
     }
 
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("New schema creation not allowed on GPX files.");
     }
 
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Delete schema not allowed on GPX files.");
     }
 
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Update schema not allowed on GPX files.");
     }
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures);
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
@@ -187,7 +187,7 @@ public class GPXDataStore extends AbstractDataStore{
         protected final GPXReader reader;
         protected Feature current = null;
 
-        private GPXFeatureReader(FeatureType restriction) throws DataStoreException{
+        private GPXFeatureReader(final FeatureType restriction) throws DataStoreException{
             RWLock.readLock().lock();
             this.restriction = restriction;
 
@@ -275,7 +275,7 @@ public class GPXDataStore extends AbstractDataStore{
         private Feature edited = null;
         private Feature lastWritten = null;
 
-        private GPXFeatureWriter(FeatureType restriction) throws DataStoreException{
+        private GPXFeatureWriter(final FeatureType restriction) throws DataStoreException{
             super(restriction);
 
             if(restriction == TYPE_GPX_ENTITY){

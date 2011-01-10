@@ -67,7 +67,7 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
 
     }
 
-    public AbstractComponentType(AbstractComponent ac) {
+    public AbstractComponentType(final AbstractComponent ac) {
         super(ac);
         if (ac != null) {
             if (ac.getInputs() != null) {
@@ -92,7 +92,7 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
     /**
      * @param inputs the inputs to set
      */
-    public void setInputs(AbstractInputs inputs) {
+    public void setInputs(final AbstractInputs inputs) {
         this.inputs = new Inputs(inputs);
     }
 
@@ -106,7 +106,7 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
     /**
      * @param outputs the outputs to set
      */
-    public void setOutputs(AbstractOutputs outputs) {
+    public void setOutputs(final AbstractOutputs outputs) {
         this.outputs = new Outputs(outputs);
     }
 
@@ -120,7 +120,7 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
     /**
      * @param parameters the parameters to set
      */
-    public void setParameters(AbstractParameters parameters) {
+    public void setParameters(final AbstractParameters parameters) {
         this.parameters = new Parameters(parameters);
     }
 

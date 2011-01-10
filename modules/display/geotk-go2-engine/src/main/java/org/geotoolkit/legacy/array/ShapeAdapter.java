@@ -87,7 +87,7 @@ final class ShapeAdapter implements Shape, Serializable {
      * The default implementation conservatively returns <code>false</code>.
      */
     @Override
-    public boolean contains(Point2D p) {
+    public boolean contains(final Point2D p) {
         return false;
     }
     
@@ -96,7 +96,7 @@ final class ShapeAdapter implements Shape, Serializable {
      * The default implementation conservatively returns <code>false</code>.
      */
     @Override
-    public boolean contains(double x, double y) {
+    public boolean contains(final double x, final double y) {
         return false;
     }
 
@@ -105,7 +105,7 @@ final class ShapeAdapter implements Shape, Serializable {
      * The default implementation conservatively returns <code>false</code>.
      */
     @Override
-    public boolean contains(Rectangle2D rectangle) {
+    public boolean contains(final Rectangle2D rectangle) {
         return false;
     }
     
@@ -114,7 +114,7 @@ final class ShapeAdapter implements Shape, Serializable {
      * The default implementation conservatively returns <code>false</code>.
      */
     @Override
-    public boolean contains(double x, double y, double w, double h) {
+    public boolean contains(final double x, final double y, final double w, final double h) {
         return false;
     }
     
@@ -122,7 +122,7 @@ final class ShapeAdapter implements Shape, Serializable {
      * Tests if the interior of the shape intersects the interior of a specified rectangle.
      */
     @Override
-    public boolean intersects(Rectangle2D r) {
+    public boolean intersects(final Rectangle2D r) {
         return getInternalBounds2D().intersects(r);
     }
     
@@ -130,7 +130,7 @@ final class ShapeAdapter implements Shape, Serializable {
      * Tests if the interior of the shape intersects the interior of a specified rectangle.
      */
     @Override
-    public boolean intersects(double x, double y, double w, double h) {
+    public boolean intersects(final double x, final double y, final double w, final double h) {
         return getInternalBounds2D().intersects(x,y,w,h);
     }
     
@@ -190,7 +190,7 @@ final class ShapeAdapter implements Shape, Serializable {
      * instructions).
      */
     @Override
-    public PathIterator getPathIterator(AffineTransform at, double flatness) {
+    public PathIterator getPathIterator(final AffineTransform at, final double flatness) {
         return getPathIterator(at);
     }
 

@@ -66,7 +66,7 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
     /**
      * Build a new FeaturId with the specified ID
      */
-    public FeatureIdType(String fid) {
+    public FeatureIdType(final String fid) {
         this.fid = fid;
     }
     
@@ -81,11 +81,11 @@ public class FeatureIdType extends AbstractIdType implements FeatureId {
         return fid;
     }
 
-    public void setFid(String fid) {
+    public void setFid(final String fid) {
         this.fid = fid;
     }
 
-    public boolean matches(Object feature) {
+    public boolean matches(final Object feature) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

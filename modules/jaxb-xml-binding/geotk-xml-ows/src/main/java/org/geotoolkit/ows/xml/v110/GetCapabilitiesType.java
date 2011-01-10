@@ -79,15 +79,15 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
 
     /**
      */
-    public GetCapabilitiesType(String service){
+    public GetCapabilitiesType(final String service){
         this.service = service;
     }
     
     /**
      * Build a new GetCapabilities base request.
      */
-    public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
-            AcceptFormatsType acceptFormats, String updateSequence, String service){
+    public GetCapabilitiesType(final AcceptVersionsType acceptVersions, final SectionsType sections,
+            final AcceptFormatsType acceptFormats, final String updateSequence, final String service){
         this.acceptFormats  = acceptFormats;
         this.acceptVersions = acceptVersions;
         this.sections       = sections;
@@ -99,7 +99,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
     /**
      * Build a new GetCapabilities base request.
      */
-    public GetCapabilitiesType(String acceptVersions, String acceptFormats, String service){
+    public GetCapabilitiesType(final String acceptVersions, final String acceptFormats, final String service){
         this.acceptFormats  = new AcceptFormatsType(acceptFormats);
         this.acceptVersions = new AcceptVersionsType(acceptVersions);
         this.sections       = new SectionsType("All");
@@ -127,7 +127,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      * @param sectionName The name of the searched section.
      * @return true if the request contains the specified section.
      */
-    public boolean containsSection(String sectionName) {
+    public boolean containsSection(final String sectionName) {
         if (sections != null) {
             return sections.containsSection(sectionName);
         }
@@ -180,7 +180,7 @@ public class GetCapabilitiesType implements AbstractGetCapabilities {
      *     {@link String }
      *
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
     

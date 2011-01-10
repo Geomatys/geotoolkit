@@ -72,7 +72,7 @@ public class FormatType {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -96,7 +96,7 @@ public class FormatType {
      *     {@link Boolean }
      *     
      */
-    public void setCurrent(Boolean value) {
+    public void setCurrent(final Boolean value) {
         this.current = value;
     }
 

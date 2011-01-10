@@ -32,7 +32,7 @@ public final class DefaultSelector implements Selector{
     private final Name typeName;
     private final String name;
 
-    public DefaultSelector(Session session, Name typeName, String selectorName) {
+    public DefaultSelector(final Session session, final Name typeName, final String selectorName) {
 
         if(typeName == null){
             throw new NullPointerException("Selector feature type name must not be null.");

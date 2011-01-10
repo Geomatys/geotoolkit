@@ -75,7 +75,7 @@ public class ExceptionType {
      * @param exceptionText
      * @param exceptionCode
      */
-    public ExceptionType(String exceptionText, String exceptionCode, String locator) {
+    public ExceptionType(final String exceptionText, final String exceptionCode, final String locator) {
         this.exceptionText = new ArrayList<String>();
         this.exceptionText.add(exceptionText);
         this.exceptionCode = exceptionCode;

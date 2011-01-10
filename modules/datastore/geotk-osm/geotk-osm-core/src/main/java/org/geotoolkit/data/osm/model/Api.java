@@ -33,8 +33,8 @@ public class Api {
     private final int changesetMaximum;
     private final int timeout;
 
-    public Api(String versionMinimum, String versionMaximum, double areaMaximum,
-            int tracePointsPerPage, int wayNodeMaximum, int changesetMaximum, int timeout) {
+    public Api(final String versionMinimum, final String versionMaximum, final double areaMaximum,
+            final int tracePointsPerPage, final int wayNodeMaximum, final int changesetMaximum, final int timeout) {
         this.versionMinimum = versionMinimum;
         this.versionMaximum = versionMaximum;
         this.areaMaximum = areaMaximum;

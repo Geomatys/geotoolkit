@@ -70,7 +70,7 @@ public class RegistryObjectListType {
     /**
      * Sets the value of the registryObject property.
      */
-    public void setRegistryObject(RegistryObjectType registryObject) {
+    public void setRegistryObject(final RegistryObjectType registryObject) {
         if (this.registryObject == null) {
             this.registryObject = new ArrayList<RegistryObjectType>();
         }
@@ -80,7 +80,7 @@ public class RegistryObjectListType {
     /**
      * Sets the value of the registryObject property.
      */
-    public void setRegistryObject(List<RegistryObjectType> registryObject) {
+    public void setRegistryObject(final List<RegistryObjectType> registryObject) {
         this.registryObject = registryObject;
     }
 
@@ -99,7 +99,7 @@ public class RegistryObjectListType {
      * Sets the value of the objectRef property.
      * 
      */
-    public void setObjectRef(List<ObjectRefType> objectRef) {
+    public void setObjectRef(final List<ObjectRefType> objectRef) {
         this.objectRef = objectRef;
     }
     
@@ -107,7 +107,7 @@ public class RegistryObjectListType {
      * Sets the value of the objectRef property.
      * 
      */
-    public void setObjectRef(ObjectRefType objectRef) {
+    public void setObjectRef(final ObjectRefType objectRef) {
         if (this.objectRef == null) {
             this.objectRef = new ArrayList<ObjectRefType>();
         }

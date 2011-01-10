@@ -81,7 +81,7 @@ public class GetCapabilities {
      *     {@link AcceptVersionsType }
      *     
      */
-    public void setAcceptVersions(AcceptVersionsType value) {
+    public void setAcceptVersions(final AcceptVersionsType value) {
         this.acceptVersions = value;
     }
 
@@ -109,7 +109,7 @@ public class GetCapabilities {
      *     {@link String }
      *     
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -133,7 +133,7 @@ public class GetCapabilities {
      *     {@link String }
      *     
      */
-    public void setLanguage(String value) {
+    public void setLanguage(final String value) {
         this.language = value;
     }
 

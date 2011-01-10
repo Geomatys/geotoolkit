@@ -88,12 +88,12 @@ public class UomPropertyType implements UomProperty {
 
     }
 
-    public UomPropertyType(String code, String href) {
+    public UomPropertyType(final String code, final String href) {
         this.code = code;
         this.href = href;
     }
 
-    public UomPropertyType(UomProperty uom) {
+    public UomPropertyType(final UomProperty uom) {
         if (uom != null) {
             this.actuate   = uom.getActuate();
             this.arcrole   = uom.getArcrole();
@@ -141,7 +141,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link JAXBElement }{@code <}{@link BaseUnitType }{@code >}
      *     
      */
-    public void setUnitDefinition(JAXBElement<? extends UnitDefinitionType> value) {
+    public void setUnitDefinition(final JAXBElement<? extends UnitDefinitionType> value) {
         this.unitDefinition = ((JAXBElement<? extends UnitDefinitionType> ) value);
     }
 
@@ -165,7 +165,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link String }
      *     
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 
@@ -189,7 +189,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -213,7 +213,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -237,7 +237,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -261,7 +261,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -285,7 +285,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -309,7 +309,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -333,7 +333,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -357,7 +357,7 @@ public class UomPropertyType implements UomProperty {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

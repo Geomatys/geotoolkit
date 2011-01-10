@@ -33,7 +33,7 @@ public class CachedHalo extends Cache<Halo>{
     private final CachedFill cachedFill;
     private float cachedWidth = Float.NaN;
     
-    private CachedHalo(Halo halo){
+    private CachedHalo(final Halo halo){
         super(halo);
         cachedFill = CachedFill.cache(halo.getFill());
     }
@@ -46,27 +46,27 @@ public class CachedHalo extends Cache<Halo>{
         isNotEvaluated = false;
     }
 
-    public Composite getJ2DComposite(Feature feature){
+    public Composite getJ2DComposite(final Feature feature){
         return cachedFill.getJ2DComposite(feature);
     }
     
-    public Paint getJ2DPaint(Feature feature,int x, int y, RenderingHints hints){
+    public Paint getJ2DPaint(final Feature feature,final int x, final int y, final RenderingHints hints){
         return cachedFill.getJ2DPaint(feature, x, y, 1f, hints);
     }
     
-    public float getWidth(Feature feature){
+    public float getWidth(final Feature feature){
         float j2dWidth = GO2Utilities.evaluate(styleElement.getRadius(), null, Float.class, 1f);
         return j2dWidth;
     }
     
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         evaluate();
         
         return (cachedWidth >0);
     }
 
-    public static CachedHalo cache(Halo halo){
+    public static CachedHalo cache(final Halo halo){
         return new CachedHalo(halo);
     }
 }

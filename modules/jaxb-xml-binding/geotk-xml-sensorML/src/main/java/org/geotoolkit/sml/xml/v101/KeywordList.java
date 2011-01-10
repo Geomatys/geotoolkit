@@ -75,7 +75,7 @@ public class KeywordList implements AbstractKeywordList {
     public KeywordList() {
     }
 
-    public KeywordList(AbstractKeywordList kl) {
+    public KeywordList(final AbstractKeywordList kl) {
         if (kl != null) {
             this.codeSpace = kl.getCodeSpace();
             this.id        = kl.getId();
@@ -83,7 +83,7 @@ public class KeywordList implements AbstractKeywordList {
         }
     }
 
-    public KeywordList(URI codeSpace, List<String> keyword) {
+    public KeywordList(final URI codeSpace, final List<String> keyword) {
         this.codeSpace = codeSpace;
         this.keyword = keyword;
     }
@@ -118,7 +118,7 @@ public class KeywordList implements AbstractKeywordList {
      *     {@link String }
      *
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -142,7 +142,7 @@ public class KeywordList implements AbstractKeywordList {
      *     {@link String }
      *
      */
-    public void setCodeSpace(URI value) {
+    public void setCodeSpace(final URI value) {
         this.codeSpace = value;
     }
 

@@ -39,7 +39,7 @@ public enum ResponseModeType {
     RESULT_TEMPLATE("resultTemplate");
     private final String value;
 
-    ResponseModeType(String v) {
+    ResponseModeType(final String v) {
         value = v;
     }
 
@@ -47,7 +47,7 @@ public enum ResponseModeType {
         return value;
     }
 
-    public static ResponseModeType fromValue(String v) {
+    public static ResponseModeType fromValue(final String v) {
         for (ResponseModeType c: ResponseModeType.values()) {
             if (c.value.equals(v)) {
                 return c;

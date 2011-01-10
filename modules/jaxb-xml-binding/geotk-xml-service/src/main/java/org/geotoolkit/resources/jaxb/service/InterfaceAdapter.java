@@ -84,7 +84,7 @@ public class InterfaceAdapter extends XmlAdapter<InterfaceAdapter, Interface> {
      * @return A java object which represents the metadata value.
      */
     @Override
-    public Interface unmarshal(InterfaceAdapter value) throws Exception {
+    public Interface unmarshal(final InterfaceAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class InterfaceAdapter extends XmlAdapter<InterfaceAdapter, Interface> {
      * @return The adapter for this interface.
      */
     @Override
-    public InterfaceAdapter marshal(Interface value) throws Exception {
+    public InterfaceAdapter marshal(final Interface value) throws Exception {
         return new InterfaceAdapter(value);
     }
 

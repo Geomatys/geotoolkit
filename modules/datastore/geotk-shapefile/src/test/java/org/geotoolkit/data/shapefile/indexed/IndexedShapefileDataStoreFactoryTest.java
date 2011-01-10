@@ -71,7 +71,7 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         assertNotSame(ds1, ds2);
     }
 
-    private ShapefileDataStore testCreateDataStore(boolean createIndex)
+    private ShapefileDataStore testCreateDataStore(final boolean createIndex)
             throws Exception {
         return testCreateDataStore(true, createIndex);
     }
@@ -92,8 +92,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
                 .getNamespaceURI());
     }
 
-    private ShapefileDataStore testCreateDataStore(boolean newDS,
-            boolean createIndex) throws Exception {
+    private ShapefileDataStore testCreateDataStore(final boolean newDS,
+            final boolean createIndex) throws Exception {
         copyShapefiles(IndexedShapefileDataStoreTest.STATE_POP);
         Map map = new HashMap();
         map.put(ShapefileDataStoreFactory.URLP.getName().toString(), ShapeTestData.url(AbstractTestCaseSupport.class,
@@ -117,8 +117,8 @@ public class IndexedShapefileDataStoreFactoryTest extends AbstractTestCaseSuppor
         return ds;
     }
 
-    private void testDataStore(IndexType treeType, boolean createIndex,
-            IndexedShapefileDataStore ds) {
+    private void testDataStore(final IndexType treeType, final boolean createIndex,
+            final IndexedShapefileDataStore ds) {
         assertNotNull(ds);
         assertEquals(treeType, ds.treeType);
         assertEquals(treeType != IndexType.NONE, ds.useIndex);

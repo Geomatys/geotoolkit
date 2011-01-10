@@ -66,9 +66,9 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
     private boolean hasNext = false;
     private int geomAttIndex = 0;
 
-    public IndexedBBoxShapefileAttributeReader(List<? extends PropertyDescriptor> properties,
-            ShapefileReader shpReader, IndexedDbaseFileReader dbfR, CloseableCollection<ShpData> goodRec,
-            LazyTyleSearchIterator.Buffered<ShpData> ite, Envelope bbox, boolean loose, double[] estimateRes, double[] minRes) {
+    public IndexedBBoxShapefileAttributeReader(final List<? extends PropertyDescriptor> properties,
+            final ShapefileReader shpReader, final IndexedDbaseFileReader dbfR, final CloseableCollection<ShpData> goodRec,
+            final LazyTyleSearchIterator.Buffered<ShpData> ite, final Envelope bbox, final boolean loose, final double[] estimateRes, final double[] minRes) {
         super(properties, shpReader, dbfR, goodRec, ite,estimateRes);
         this.bboxMinX = bbox.getMinX();
         this.bboxMinY = bbox.getMinY();
@@ -106,7 +106,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
     }
 
     @Override
-    public void read(Object[] buffer) throws IOException {
+    public void read(final Object[] buffer) throws IOException {
         System.arraycopy(this.buffer, 0, buffer, 0, this.buffer.length);
     }
 
@@ -159,7 +159,7 @@ public class IndexedBBoxShapefileAttributeReader extends IndexedShapefileAttribu
      * @param env
      * @return Geometry
      */
-    private static PreparedGeometry toGeometry(Envelope env) {
+    private static PreparedGeometry toGeometry(final Envelope env) {
         final Coordinate[] coords = new Coordinate[5];
         coords[0] = new Coordinate(env.getMinX(), env.getMinY());
         coords[1] = new Coordinate(env.getMinX(), env.getMaxY());

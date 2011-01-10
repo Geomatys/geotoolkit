@@ -82,7 +82,7 @@ public class ObligationType {
    /**
     * Sets the value of the obligationId property.
     */
-   public void setObligationId(String value) {
+   public void setObligationId(final String value) {
       this.obligationId = value;
    }
 
@@ -96,7 +96,7 @@ public class ObligationType {
    /**
     * Sets the value of the fulfillOn property.
     */
-   public void setFulfillOn(EffectType value) {
+   public void setFulfillOn(final EffectType value) {
       this.fulfillOn = value;
    }
 

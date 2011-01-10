@@ -68,17 +68,17 @@ public class PositionList implements AbstractPositionList {
 
     }
 
-    public PositionList(String id , TimePosition timePosition) {
+    public PositionList(final String id , final TimePosition timePosition) {
         this.id           = id;
         this.timePosition = timePosition;
     }
 
-    public PositionList(String id , List<Position> position) {
+    public PositionList(final String id , final List<Position> position) {
         this.position = position;
         this.id       = id;
     }
 
-    public PositionList(AbstractPositionList pos) {
+    public PositionList(final AbstractPositionList pos) {
         this.id = pos.getId();
         this.timePosition = (TimePosition) pos.getTimePosition();
         this.position = (List<Position>) pos.getPosition();
@@ -97,14 +97,14 @@ public class PositionList implements AbstractPositionList {
     /**
      * Gets the value of the position property.
      */
-    public void setPosition(List<Position> position) {
+    public void setPosition(final List<Position> position) {
         this.position = position;
     }
 
     /**
      * Gets the value of the position property.
      */
-    public void setPosition(Position position) {
+    public void setPosition(final Position position) {
         if (this.position == null) {
             this.position = new ArrayList<Position>();
         }
@@ -131,7 +131,7 @@ public class PositionList implements AbstractPositionList {
      *     {@link TimePosition }
      *
      */
-    public void setTimePosition(TimePosition value) {
+    public void setTimePosition(final TimePosition value) {
         this.timePosition = value;
     }
 
@@ -155,7 +155,7 @@ public class PositionList implements AbstractPositionList {
      *     {@link String }
      *
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

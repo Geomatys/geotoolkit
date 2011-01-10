@@ -60,7 +60,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
     protected F modified = null;
     private boolean remove = false;
 
-    private GenericFeatureWriter(final DataStore store, final Name typeName, Filter filter) throws DataStoreException {
+    private GenericFeatureWriter(final DataStore store, final Name typeName, final Filter filter) throws DataStoreException {
         this.store = store;
         this.typeName = typeName;
         reader = store.getFeatureReader(QueryBuilder.filtered(typeName, filter));
@@ -161,7 +161,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
         remove = false;
     }
 
-    private boolean safeEqual(Object o1, Object o2){
+    private boolean safeEqual(final Object o1, final Object o2){
         if(o1 == null && o2 == null){
             return true;
         }else if(o1 != null){
@@ -182,12 +182,12 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
     }
 
     public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(
-            DataStore store, Name typeName, Filter filter) throws DataStoreException{
+            final DataStore store, final Name typeName, final Filter filter) throws DataStoreException{
         return new GenericFeatureWriter<T, F>(store, typeName, filter);
     }
 
     public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrapAppend(
-            DataStore store, Name typeName) throws DataStoreException{
+            final DataStore store, final Name typeName) throws DataStoreException{
         return wrap(store,typeName,Filter.EXCLUDE);
     }
 

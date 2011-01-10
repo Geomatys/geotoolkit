@@ -86,7 +86,7 @@ public class BindingAdapter extends XmlAdapter<BindingAdapter, Binding> {
      * @return A java object which represents the metadata value.
      */
     @Override
-    public Binding unmarshal(BindingAdapter value) throws Exception {
+    public Binding unmarshal(final BindingAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -101,7 +101,7 @@ public class BindingAdapter extends XmlAdapter<BindingAdapter, Binding> {
      * @return The adapter for this Binding.
      */
     @Override
-    public BindingAdapter marshal(Binding value) throws Exception {
+    public BindingAdapter marshal(final Binding value) throws Exception {
         return new BindingAdapter(value);
     }
 

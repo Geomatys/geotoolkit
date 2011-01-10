@@ -45,13 +45,13 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
     private final RenderingContext2D context;
     private final Graphics2D g2;
 
-    public PointLabelCandidateRenderer(RenderingContext2D context) {
+    public PointLabelCandidateRenderer(final RenderingContext2D context) {
         this.context = context;
         g2 = context.getGraphics();
     }
 
     @Override
-    public Candidate generateCandidat(PointLabelDescriptor label) {
+    public Candidate generateCandidat(final PointLabelDescriptor label) {
 
         Shape shape = null;
 
@@ -88,7 +88,7 @@ public class PointLabelCandidateRenderer implements LabelCandidateRenderer<Point
     }
 
     @Override
-    public void render(Candidate candidate) {
+    public void render(final Candidate candidate) {
         if(!(candidate instanceof PointCandidate)) return;
 
         final PointCandidate pointCandidate = (PointCandidate) candidate;

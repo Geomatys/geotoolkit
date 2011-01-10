@@ -66,7 +66,7 @@ public class WaitingAnim extends JPanel{
     private final List<Color> colors= new ArrayList<Color>();
     private RadialGradientPaint radial = null;
     
-    public WaitingAnim(boolean animated) {
+    public WaitingAnim(final boolean animated) {
         super(new BorderLayout());
         setOpaque(true);
         setBackground(Color.WHITE);
@@ -101,7 +101,7 @@ public class WaitingAnim extends JPanel{
     }
 
     @Override
-    public void setVisible(boolean aFlag) {
+    public void setVisible(final boolean aFlag) {
         if(aFlag){
             startWaitSequence();
         }else{
@@ -125,7 +125,7 @@ public class WaitingAnim extends JPanel{
         return propagation;
     }
 
-    public void setPropagation(float prop) {
+    public void setPropagation(final float prop) {
         this.propagation = prop;
 
         final int width = getWidth()-1;
@@ -199,12 +199,12 @@ public class WaitingAnim extends JPanel{
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
         paintWaiting(g);
     }
     
-    public void setMap(JMap2D map){
+    public void setMap(final JMap2D map){
         this.map = map;
     }
     

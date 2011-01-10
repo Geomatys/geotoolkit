@@ -284,7 +284,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/1.0", name = "srsName", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "AbstractMetaData")
-    public JAXBElement<CodeType> createSrsName(CodeType value) {
+    public JAXBElement<CodeType> createSrsName(final CodeType value) {
         return new JAXBElement<CodeType>(_SrsName_QNAME, CodeType.class, null, value);
     }
 
@@ -293,7 +293,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/1.0", name = "supportedSensorDescription", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "AbstractMetaData")
-    public JAXBElement<QName> createSupportedSensorDescription(QName value) {
+    public JAXBElement<QName> createSupportedSensorDescription(final QName value) {
         return new JAXBElement<QName>(_SupportedSensorDescription_QNAME, QName.class, null, value);
     }
 
@@ -302,7 +302,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sos/1.0", name = "supportedSRS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "name")
-    public JAXBElement<CodeType> createSupportedSRS(CodeType value) {
+    public JAXBElement<CodeType> createSupportedSRS(final CodeType value) {
         return new JAXBElement<CodeType>(_SupportedSRS_QNAME, CodeType.class, null, value);
     }
 }

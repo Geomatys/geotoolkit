@@ -34,7 +34,7 @@ public abstract class AbstractJTSComposite extends JTSComplex implements Composi
         this(null);
     }
 
-    public AbstractJTSComposite(CoordinateReferenceSystem crs) {
+    public AbstractJTSComposite(final CoordinateReferenceSystem crs) {
         super(crs);
     }
 

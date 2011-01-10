@@ -154,16 +154,16 @@ public class Concept implements Serializable {
         
     }
 
-    public Concept(String about) {
+    public Concept(final String about) {
         this.about = about;
     }
 
-    public Concept(String about, String prefLabel) {
+    public Concept(final String about, final String prefLabel) {
         this.about     = about;
         this.prefLabel = prefLabel;
     }
 
-    public Concept(String about, String externalID, String prefLabel, String altLabel, String definition, String date) {
+    public Concept(final String about, final String externalID, final String prefLabel, final String altLabel, final String definition, final String date) {
         this.about      = about;
         this.altLabel   = Arrays.asList(altLabel);
         this.date       = date;
@@ -172,7 +172,7 @@ public class Concept implements Serializable {
         this.prefLabel  = prefLabel;
     }
 
-    public Concept(String about, String externalID, String prefLabel, List<String >altLabel, String definition, String date) {
+    public Concept(final String about, final String externalID, final String prefLabel, final List<String >altLabel, final String definition, final String date) {
         this.about      = about;
         this.altLabel   = altLabel;
         this.date       = date;
@@ -181,7 +181,7 @@ public class Concept implements Serializable {
         this.prefLabel  = prefLabel;
     }
 
-    public String getPropertyValue(String property) {
+    public String getPropertyValue(final String property) {
         if (property != null) {
             if (property.equals("http://www.w3.org/2004/02/skos/core#definition") || property.equals("definition")) {
                 return definition;
@@ -223,7 +223,7 @@ public class Concept implements Serializable {
         return response;
     }
 
-    public List<String> getRelations(String property) {
+    public List<String> getRelations(final String property) {
         if ("http://www.w3.org/2004/02/skos/core#narrower".equals(property)) {
             return narrower;
         }
@@ -241,7 +241,7 @@ public class Concept implements Serializable {
         return about;
     }
 
-    public void setAbout(String about) {
+    public void setAbout(final String about) {
         this.about = about;
     }
 
@@ -249,7 +249,7 @@ public class Concept implements Serializable {
         return externalID;
     }
 
-    public void setExternalID(String externalID) {
+    public void setExternalID(final String externalID) {
         this.externalID = externalID;
     }
 
@@ -257,7 +257,7 @@ public class Concept implements Serializable {
         return prefLabel;
     }
 
-    public void setPrefLabel(String prefLabel) {
+    public void setPrefLabel(final String prefLabel) {
         this.prefLabel = prefLabel;
     }
 
@@ -268,11 +268,11 @@ public class Concept implements Serializable {
         return altLabel;
     }
 
-    public void setAltLabel(List<String> altLabel) {
+    public void setAltLabel(final List<String> altLabel) {
         this.altLabel = altLabel;
     }
 
-    public void addAltLabel(String altLabel) {
+    public void addAltLabel(final String altLabel) {
         if (this.altLabel == null) {
             this.altLabel = new ArrayList<String>();
         }
@@ -283,7 +283,7 @@ public class Concept implements Serializable {
         return definition;
     }
 
-    public void setDefinition(String definition) {
+    public void setDefinition(final String definition) {
         this.definition = definition;
     }
 
@@ -291,7 +291,7 @@ public class Concept implements Serializable {
         return date;
     }
 
-    public void setDate(String date) {
+    public void setDate(final String date) {
         this.date = date;
     }
     
@@ -305,7 +305,7 @@ public class Concept implements Serializable {
     /**
      * @param description the description to set
      */
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -319,7 +319,7 @@ public class Concept implements Serializable {
     /**
      * @param language the language to set
      */
-    public void setLanguage(String language) {
+    public void setLanguage(final String language) {
         this.language = language;
     }
 
@@ -333,7 +333,7 @@ public class Concept implements Serializable {
     /**
      * @param rights the rights to set
      */
-    public void setRights(String rights) {
+    public void setRights(final String rights) {
         this.rights = rights;
     }
 
@@ -347,7 +347,7 @@ public class Concept implements Serializable {
     /**
      * @param title the title to set
      */
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -361,7 +361,7 @@ public class Concept implements Serializable {
     /**
      * @param issued the issued to set
      */
-    public void setIssued(String issued) {
+    public void setIssued(final String issued) {
         this.issued = issued;
     }
 
@@ -375,7 +375,7 @@ public class Concept implements Serializable {
     /**
      * @param modified the modified to set
      */
-    public void setModified(String modified) {
+    public void setModified(final String modified) {
         this.modified = modified;
     }
 
@@ -389,7 +389,7 @@ public class Concept implements Serializable {
     /**
      * @param type the type to set
      */
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -403,7 +403,7 @@ public class Concept implements Serializable {
     /**
      * @param value the value to set
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -417,7 +417,7 @@ public class Concept implements Serializable {
     /**
      * @param label the label to set
      */
-    public void setLabel(String label) {
+    public void setLabel(final String label) {
         this.label = label;
     }
 
@@ -431,7 +431,7 @@ public class Concept implements Serializable {
     /**
      * @param creator the creator to set
      */
-    public void setCreator(String creator) {
+    public void setCreator(final String creator) {
         this.creator = creator;
     }
 
@@ -448,14 +448,14 @@ public class Concept implements Serializable {
     /**
      * @param broader the broader to set
      */
-    public void setBroader(List<String> broader) {
+    public void setBroader(final List<String> broader) {
         this.broader = broader;
     }
 
     /**
      * @param broader the broader to add
      */
-    public void addBroader(String broader) {
+    public void addBroader(final String broader) {
         if (this.broader == null) {
             this.broader = new ArrayList<String>();
         }
@@ -473,7 +473,7 @@ public class Concept implements Serializable {
     /**
      * @param broaderConcept the broaderConcept to set
      */
-    public void setBroaderConcept(List<Concept> broaderConcept) {
+    public void setBroaderConcept(final List<Concept> broaderConcept) {
         this.broaderConcept = broaderConcept;
     }
 
@@ -487,7 +487,7 @@ public class Concept implements Serializable {
     /**
      * @param creatorConcept the creatorConcept to set
      */
-    public void setCreatorConcept(Concept creatorConcept) {
+    public void setCreatorConcept(final Concept creatorConcept) {
         this.creatorConcept = creatorConcept;
     }
 
@@ -501,7 +501,7 @@ public class Concept implements Serializable {
     /**
      * @param changeNote the changeNote to set
      */
-    public void setChangeNote(String changeNote) {
+    public void setChangeNote(final String changeNote) {
         this.changeNote = changeNote;
     }
 
@@ -515,14 +515,14 @@ public class Concept implements Serializable {
     /**
      * @param narrower the narrower to set
      */
-    public void setNarrower(List<String> narrower) {
+    public void setNarrower(final List<String> narrower) {
         this.narrower = narrower;
     }
 
     /**
      * @param broader the broader to add
      */
-    public void addNarrower(String narrower) {
+    public void addNarrower(final String narrower) {
         if (this.narrower == null) {
             this.narrower = new ArrayList<String>();
         }
@@ -540,7 +540,7 @@ public class Concept implements Serializable {
     /**
      * @param narrowerConcept the narrowerConcept to set
      */
-    public void setNarrowerConcept(List<Concept> narrowerConcept) {
+    public void setNarrowerConcept(final List<Concept> narrowerConcept) {
         this.narrowerConcept = narrowerConcept;
     }
 
@@ -554,7 +554,7 @@ public class Concept implements Serializable {
     /**
      * @param related the related to set
      */
-    public void setRelated(String related) {
+    public void setRelated(final String related) {
         this.related = related;
     }
 
@@ -568,7 +568,7 @@ public class Concept implements Serializable {
     /**
      * @param scopeNote the scopeNote to set
      */
-    public void setScopeNote(String scopeNote) {
+    public void setScopeNote(final String scopeNote) {
         this.scopeNote = scopeNote;
     }
 
@@ -582,7 +582,7 @@ public class Concept implements Serializable {
     /**
      * @param name the name to set
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -596,7 +596,7 @@ public class Concept implements Serializable {
     /**
      * @param example the example to set
      */
-    public void setExample(String example) {
+    public void setExample(final String example) {
         this.example = example;
     }
 
@@ -610,7 +610,7 @@ public class Concept implements Serializable {
     /**
      * @param geometry the geometry to set
      */
-    public void setGeometry(List<AbstractGMLEntry> geometry) {
+    public void setGeometry(final List<AbstractGMLEntry> geometry) {
         this.geometry = geometry;
     }
 

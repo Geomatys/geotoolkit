@@ -49,7 +49,7 @@ public enum KnotTypesType {
     PIECEWISE_BEZIER("piecewiseBezier");
     private final String value;
 
-    KnotTypesType(String v) {
+    KnotTypesType(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum KnotTypesType {
         return value;
     }
 
-    public static KnotTypesType fromValue(String v) {
+    public static KnotTypesType fromValue(final String v) {
         for (KnotTypesType c: KnotTypesType.values()) {
             if (c.value.equals(v)) {
                 return c;

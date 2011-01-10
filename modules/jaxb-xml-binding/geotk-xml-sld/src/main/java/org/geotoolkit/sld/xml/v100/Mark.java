@@ -81,7 +81,7 @@ public class Mark {
      *     {@link String }
      *     
      */
-    public void setWellKnownName(String value) {
+    public void setWellKnownName(final String value) {
         this.wellKnownName = value;
     }
 
@@ -105,7 +105,7 @@ public class Mark {
      *     {@link Fill }
      *     
      */
-    public void setFill(Fill value) {
+    public void setFill(final Fill value) {
         this.fill = value;
     }
 
@@ -129,7 +129,7 @@ public class Mark {
      *     {@link Stroke }
      *     
      */
-    public void setStroke(Stroke value) {
+    public void setStroke(final Stroke value) {
         this.stroke = value;
     }
 

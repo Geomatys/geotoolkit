@@ -38,7 +38,7 @@ public abstract class AbstractReadElementHistory extends AbstractRequest impleme
      *
      * @param serverURL The server url.
      */
-    protected AbstractReadElementHistory(final String serverURL, String subpath){
+    protected AbstractReadElementHistory(final String serverURL, final String subpath){
         super(serverURL, subpath);
     }
 
@@ -54,7 +54,7 @@ public abstract class AbstractReadElementHistory extends AbstractRequest impleme
      * {@inheritDoc }
      */
     @Override
-    public void setElementType(Class<?> clazz) {
+    public void setElementType(final Class<?> clazz) {
         this.type = clazz;
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractReadElementHistory extends AbstractRequest impleme
      * {@inheritDoc }
      */
     @Override
-    public void setId(long id) {
+    public void setId(final long id) {
         this.id = id;
     }
 

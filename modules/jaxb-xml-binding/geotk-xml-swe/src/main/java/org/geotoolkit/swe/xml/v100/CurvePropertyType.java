@@ -58,7 +58,7 @@ public class CurvePropertyType implements AbstractCurveProperty {
 
     }
 
-    public CurvePropertyType(AbstractCurveProperty cp) {
+    public CurvePropertyType(final AbstractCurveProperty cp) {
         if (cp != null && cp.getCurve() != null) {
             this.curve = new CurveType(cp.getCurve());
         }
@@ -84,7 +84,7 @@ public class CurvePropertyType implements AbstractCurveProperty {
      *     {@link CurveType }
      *     
      */
-    public void setCurve(CurveType value) {
+    public void setCurve(final CurveType value) {
         this.curve = value;
     }
 

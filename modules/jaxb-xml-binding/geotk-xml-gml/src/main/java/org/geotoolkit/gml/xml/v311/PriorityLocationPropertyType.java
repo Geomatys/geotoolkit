@@ -71,7 +71,7 @@ public class PriorityLocationPropertyType
      *     {@link String }
      *     
      */
-    public void setPriority(String value) {
+    public void setPriority(final String value) {
         this.priority = value;
     }
 

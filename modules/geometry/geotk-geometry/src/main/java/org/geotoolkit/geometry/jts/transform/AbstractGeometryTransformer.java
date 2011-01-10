@@ -46,7 +46,7 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
         this((CoordinateSequenceFactory)null);
     }
 
-    public AbstractGeometryTransformer(CoordinateSequenceFactory csf){
+    public AbstractGeometryTransformer(final CoordinateSequenceFactory csf){
         if(csf == null){
             this.gf = new GeometryFactory();
             this.csf = gf.getCoordinateSequenceFactory();
@@ -57,7 +57,7 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
         
     }
 
-    public AbstractGeometryTransformer(GeometryFactory gf){
+    public AbstractGeometryTransformer(final GeometryFactory gf){
         if(gf == null){
             this.gf = new GeometryFactory();
             this.csf = gf.getCoordinateSequenceFactory();
@@ -68,7 +68,7 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
     }
 
     @Override
-    public Geometry transform(Geometry geom) throws TransformException {
+    public Geometry transform(final Geometry geom) throws TransformException {
         if(geom instanceof Point){
             return transform((Point)geom);
         }else if(geom instanceof MultiPoint){
@@ -88,12 +88,12 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
         }
     }
 
-    protected Point transform(Point geom) throws TransformException{
+    protected Point transform(final Point geom) throws TransformException{
         //nothing to decimate
         return geom;
     }
 
-    protected MultiPoint transform(MultiPoint geom) throws TransformException{
+    protected MultiPoint transform(final MultiPoint geom) throws TransformException{
         final int nbGeom = geom.getNumGeometries();
 
         if(nbGeom == 1){
@@ -110,12 +110,12 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
         }
     }
 
-    protected LineString transform(LineString geom) throws TransformException{
+    protected LineString transform(final LineString geom) throws TransformException{
         final CoordinateSequence seq = transform(geom.getCoordinateSequence(),2);
         return gf.createLineString(seq);
     }
 
-    protected LinearRing transform(LinearRing geom) throws TransformException{
+    protected LinearRing transform(final LinearRing geom) throws TransformException{
         final CoordinateSequence seq = transform(geom.getCoordinateSequence(),4);
         return gf.createLinearRing(seq);
     }
@@ -124,7 +124,7 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
      * Sub classes may override this method is they wish to remove some of the sub geometries
      * if they are too small.
      */
-    protected MultiLineString transform(MultiLineString geom) throws TransformException{
+    protected MultiLineString transform(final MultiLineString geom) throws TransformException{
         final LineString[] subs = new LineString[geom.getNumGeometries()];
         //todo we could remove sub geometries in some cases
         for(int i=0; i<subs.length; i++){
@@ -137,7 +137,7 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
      * Sub classes may override this method is they wish to remove some of the sub geometries
      * if they are too small.
      */
-    protected Polygon transform(Polygon geom) throws TransformException{
+    protected Polygon transform(final Polygon geom) throws TransformException{
         final LinearRing exterior = transform((LinearRing)geom.getExteriorRing());
         final LinearRing[] holes = new LinearRing[geom.getNumInteriorRing()];
         for(int i=0; i<holes.length; i++){
@@ -150,7 +150,7 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
      * Sub classes may override this method is they wish to remove some of the sub geometries
      * if they are too small.
      */
-    protected MultiPolygon transform(MultiPolygon geom) throws TransformException{
+    protected MultiPolygon transform(final MultiPolygon geom) throws TransformException{
         final Polygon[] subs = new Polygon[geom.getNumGeometries()];
         for(int i=0; i<subs.length; i++){
             subs[i] = transform((Polygon)geom.getGeometryN(i));

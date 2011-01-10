@@ -47,7 +47,7 @@ public class LoadingLockableUI extends LockableUI implements ActionListener {
     }
 
     @Override
-    public void paint(Graphics g, JComponent comp) {
+    public void paint(final Graphics g, final JComponent comp) {
         super.paint(g, comp);
         if (isLocked()) {
             busyPainter.paint((Graphics2D)g, comp, comp.getWidth(), comp.getHeight());
@@ -55,7 +55,7 @@ public class LoadingLockableUI extends LockableUI implements ActionListener {
     }
 
     @Override
-    public void setLocked(boolean isLocked) {
+    public void setLocked(final boolean isLocked) {
         super.setLocked(isLocked);
         if (isLocked) {
             timer.start();
@@ -65,7 +65,7 @@ public class LoadingLockableUI extends LockableUI implements ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
+    public void actionPerformed(final ActionEvent e) {
         frameNumber = (frameNumber + 1) % 8;
         busyPainter.setFrame(frameNumber);
         setDirty(true);

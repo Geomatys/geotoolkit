@@ -90,7 +90,7 @@ public class GNC_EOProductTypeCode extends CodeList<GNC_EOProductTypeCode>  {
      * Returns the GNC_EOProductTypeCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_EOProductTypeCode valueOf(String code) {
+    public static GNC_EOProductTypeCode valueOf(final String code) {
         return valueOf(GNC_EOProductTypeCode.class, code);
     }
 }

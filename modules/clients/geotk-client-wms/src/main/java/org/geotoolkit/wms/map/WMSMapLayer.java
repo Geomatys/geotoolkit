@@ -209,7 +209,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * The result image might not be pretty, but still better than no image.
      * @param useLocalReprojection
      */
-    public void setUseLocalReprojection(boolean useLocalReprojection) {
+    public void setUseLocalReprojection(final boolean useLocalReprojection) {
         this.useLocalReprojection = useLocalReprojection;
     }
 
@@ -222,7 +222,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * date provided in the layer getCapabilities.
      * @param matchCapabilitiesDates
      */
-    public void setMatchCapabilitiesDates(boolean matchCapabilitiesDates) {
+    public void setMatchCapabilitiesDates(final boolean matchCapabilitiesDates) {
         this.matchCapabilitiesDates = matchCapabilitiesDates;
     }
 
@@ -267,14 +267,14 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @throws MalformedURLException if the generated url is invalid.
      * @throws TransformException if the tranformation between 2 CRS failed.
      */
-    public URL query(Envelope env, final Dimension rect) throws MalformedURLException, TransformException, FactoryException {
+    public URL query(final Envelope env, final Dimension rect) throws MalformedURLException, TransformException, FactoryException {
         final GetMapRequest request = server.createGetMap();
         prepareQuery(request, new GeneralEnvelope(env), rect, null);
         return request.getURL();
     }
 
-    public URL queryFeatureInfo(Envelope env, final Dimension rect, int x, int y,
-            final String[] queryLayers, final String infoFormat, int featureCount)
+    public URL queryFeatureInfo(final Envelope env, final Dimension rect, int x, int y,
+            final String[] queryLayers, final String infoFormat, final int featureCount)
             throws TransformException, FactoryException, MalformedURLException, NoninvertibleTransformException {
 
         final GetFeatureInfoRequest request = getServer().createGetFeatureInfo();
@@ -329,7 +329,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @param env
      * @param dim
      */
-    void prepareQuery(GetMapRequest request, final GeneralEnvelope env, Dimension dim, Point2D pickCoord) throws TransformException, FactoryException{
+    void prepareQuery(final GetMapRequest request, final GeneralEnvelope env, final Dimension dim, final Point2D pickCoord) throws TransformException, FactoryException{
 
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
         CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
@@ -419,7 +419,7 @@ public class WMSMapLayer extends AbstractMapLayer {
         prepareGetMapRequest(request, fakeEnv, dim);
     }
 
-    private void prepareGetMapRequest(GetMapRequest request, Envelope env, final Dimension rect) throws TransformException{
+    private void prepareGetMapRequest(final GetMapRequest request, Envelope env, final Dimension rect) throws TransformException{
         //check the politics, the distant wms server might not be strict on axis orders
         // nor in it's crs definitions between CRS:84 and EPSG:4326
         final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());
@@ -571,7 +571,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      *
      * @param sldVersion
      */
-    public void setSldVersion(String sldVersion) {
+    public void setSldVersion(final String sldVersion) {
         this.sldVersion = sldVersion;
     }
 
@@ -581,7 +581,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      *
      * @param format The mime type of an output format.
      */
-    public void setFormat(String format) {
+    public void setFormat(final String format) {
         if (format == null) {
             throw new NullArgumentException("format  = "+format);
         }
@@ -610,7 +610,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     /**
      * @param exceptionsFormat the exceptionsFormat to set
      */
-    public void setExceptionsFormat(String exceptionsFormat) {
+    public void setExceptionsFormat(final String exceptionsFormat) {
         this.exceptionsFormat = exceptionsFormat;
     }
 
@@ -624,7 +624,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     /**
      * @param transparent the transparent to set
      */
-    public void setTransparent(Boolean transparent) {
+    public void setTransparent(final Boolean transparent) {
         this.transparent = transparent;
     }
 
@@ -689,7 +689,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     /**
      * Search in the getCapabilities the closest date.
      */
-    Long findClosestDate(long date) {
+    Long findClosestDate(final long date) {
         final AbstractLayer layer = server.getCapabilities().getLayerFromName(layers[0]);
 
         if(layer != null){

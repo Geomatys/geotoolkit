@@ -55,12 +55,12 @@ public class DefinitionProxyType extends DefinitionType {
 
     DefinitionProxyType() {}
 
-    public DefinitionProxyType(String id, ReferenceEntry definiReferenceType) {
+    public DefinitionProxyType(final String id, final ReferenceEntry definiReferenceType) {
         super(id);
         this.definitionRef = definiReferenceType;
     }
 
-    public DefinitionProxyType(String id, String name, String description, ReferenceEntry definiReferenceType) {
+    public DefinitionProxyType(final String id, final String name, final String description, final ReferenceEntry definiReferenceType) {
         super(id, name, description);
         this.definitionRef = definiReferenceType;
     }
@@ -85,7 +85,7 @@ public class DefinitionProxyType extends DefinitionType {
      *     {@link ReferenceType }
      *     
      */
-    public void setDefinitionRef(ReferenceEntry value) {
+    public void setDefinitionRef(final ReferenceEntry value) {
         this.definitionRef = value;
     }
 

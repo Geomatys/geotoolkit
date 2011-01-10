@@ -57,7 +57,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiColor.setLayer(layer);
         guiAlpha.setLayer(layer);
@@ -75,7 +75,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
      * {@inheritDoc }
      */
     @Override
-    public void parse(Fill fill) {
+    public void parse(final Fill fill) {
         this.fill = fill;
         if (fill != null) {
             guiColor.parse(fill.getColor());
@@ -167,7 +167,7 @@ public class JFillPane extends StyleElementEditor<Fill>{
                     .addComponent(butFill, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)))
         );
     }// </editor-fold>//GEN-END:initComponents
-    private void butFillActionPerformed(ActionEvent evt) {//GEN-FIRST:event_butFillActionPerformed
+    private void butFillActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butFillActionPerformed
 //        JDialog dia = new JDialog();
 //
 //        JGraphicPane pane = new JGraphicPane();

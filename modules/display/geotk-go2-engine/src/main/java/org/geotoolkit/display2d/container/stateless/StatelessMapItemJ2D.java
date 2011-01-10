@@ -116,7 +116,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
 
     }
 
-    protected GraphicJ2D parseChild(final MapItem child, int index){
+    protected GraphicJ2D parseChild(final MapItem child, final int index){
 
         //TODO simplify
         if (child instanceof FeatureMapLayer){
@@ -144,7 +144,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     }
 
     @Override
-    public void paint(RenderingContext2D renderingContext) {
+    public void paint(final RenderingContext2D renderingContext) {
 
         //we abort painting if the item is not visible.
         if (!item.isVisible()) return;
@@ -164,7 +164,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
      * {@inheritDoc }
      */
     @Override
-    public List<Graphic> getGraphicAt(RenderingContext rdcontext, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+    public List<Graphic> getGraphicAt(final RenderingContext rdcontext, final SearchArea mask, final VisitFilter filter, List<Graphic> graphics) {
 
         //we abort painting if the item is not visible.
         if (!item.isVisible()) return graphics;
@@ -182,7 +182,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     // item listener ----------------------------------------------
 
     @Override
-    public void propertyChange(PropertyChangeEvent event) {
+    public void propertyChange(final PropertyChangeEvent event) {
         if(getCanvas().getController().isAutoRepaint()){
             final String propName = event.getPropertyName();
             if(MapItem.VISIBILITY_PROPERTY.equals(propName)){
@@ -193,7 +193,7 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     }
 
     @Override
-    public void itemChange(CollectionChangeEvent<MapItem> event) {
+    public void itemChange(final CollectionChangeEvent<MapItem> event) {
         final int type = event.getType();
 
         if(CollectionChangeEvent.ITEM_ADDED == type){
@@ -243,12 +243,12 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
 
     //tyling utilities ---------------------------------------------------------
 
-    protected static BufferedImage createBufferedImage(ColorModel cm, SampleModel model){
+    protected static BufferedImage createBufferedImage(final ColorModel cm, final SampleModel model){
         final WritableRaster raster = TILE_FACTORY.createTile(model, pt);
         return new BufferedImage(cm, raster, cm.isAlphaPremultiplied(), null);
     }
 
-    protected static void recycleBufferedImage(BufferedImage img){
+    protected static void recycleBufferedImage(final BufferedImage img){
         if(img != null){
             TILE_RECYCLER.recycleTile(img.getRaster());
         }

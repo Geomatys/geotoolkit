@@ -75,7 +75,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
 
     }
 
-    public ConditionalDataType(AbstractConditionalData da) {
+    public ConditionalDataType(final AbstractConditionalData da) {
         super(da);
         if (da != null && da.getCase() != null) {
             this._case = new ArrayList<Case>();
@@ -154,7 +154,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
 
         }
 
-        public Case(AbstractCase ac) {
+        public Case(final AbstractCase ac) {
             if (ac != null)  {
                 this.actuate = ac.getActuate();
                 this.arcrole = ac.getArcrole();
@@ -181,7 +181,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
         /**
          * Sets the value of the conditionalValue property.
          */
-        public void setConditionalValue(ConditionalValueType value) {
+        public void setConditionalValue(final ConditionalValueType value) {
             this.conditionalValue = value;
         }
 
@@ -195,7 +195,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
         /**
          * Sets the value of the name property.
          */
-        public void setName(String value) {
+        public void setName(final String value) {
             this.name = value;
         }
 
@@ -209,7 +209,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
         /**
          * Sets the value of the remoteSchema property.
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -225,7 +225,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
          * Sets the value of the type property.
          * 
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -239,7 +239,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
         /**
          * Sets the value of the href property.
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -253,7 +253,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
         /**
          * Sets the value of the role property.
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -267,7 +267,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
         /**
          * Sets the value of the arcrole property.
          */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -281,7 +281,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
         /**
          * Sets the value of the title property.
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -296,7 +296,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
         /**
          * Sets the value of the show property.
          */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -311,7 +311,7 @@ public class ConditionalDataType extends AbstractDataRecordType implements Abstr
          * Sets the value of the actuate property.
          * 
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 

@@ -50,7 +50,7 @@ public class StaticStringMapperFactory implements JRMapperFactory<String,Object>
         return new StaticStringMapper(this);
     }
 
-    public StaticStringMapper createMapper(String value) {
+    public StaticStringMapper createMapper(final String value) {
         return new StaticStringMapper(value,this);
     }
 
@@ -58,7 +58,7 @@ public class StaticStringMapperFactory implements JRMapperFactory<String,Object>
      * {@inheritDoc }
      */
     @Override
-    public Image getIcon(int type) {
+    public Image getIcon(final int type) {
         return null;
     }
 

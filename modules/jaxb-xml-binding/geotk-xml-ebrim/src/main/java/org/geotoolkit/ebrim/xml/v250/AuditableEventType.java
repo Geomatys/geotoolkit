@@ -84,7 +84,7 @@ public class AuditableEventType extends RegistryObjectType {
     /**
      * Sets the value of the affectedObject property.
     */
-    public void setAffectedObject(ObjectRefListType value) {
+    public void setAffectedObject(final ObjectRefListType value) {
         this.affectedObject = value;
     }
 
@@ -98,7 +98,7 @@ public class AuditableEventType extends RegistryObjectType {
     /**
      * Sets the value of the eventType property.
      */
-    public void setEventType(String value) {
+    public void setEventType(final String value) {
         this.eventType = value;
     }
 
@@ -112,7 +112,7 @@ public class AuditableEventType extends RegistryObjectType {
     /**
      * Sets the value of the timestamp property.
      */
-    public void setTimestamp(XMLGregorianCalendar value) {
+    public void setTimestamp(final XMLGregorianCalendar value) {
         this.timestamp = value;
     }
 
@@ -126,7 +126,7 @@ public class AuditableEventType extends RegistryObjectType {
     /**
      * Sets the value of the user property.
      */
-    public void setUser(String value) {
+    public void setUser(final String value) {
         this.user = value;
     }
 
@@ -140,7 +140,7 @@ public class AuditableEventType extends RegistryObjectType {
     /**
      * Sets the value of the requestId property.
     */
-    public void setRequestId(String value) {
+    public void setRequestId(final String value) {
         this.requestId = value;
     }
 

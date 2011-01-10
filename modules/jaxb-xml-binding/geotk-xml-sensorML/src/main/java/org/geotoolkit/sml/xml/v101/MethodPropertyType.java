@@ -79,11 +79,11 @@ public class MethodPropertyType implements AbstractMethodProperty {
 
     }
 
-    public MethodPropertyType(String href) {
+    public MethodPropertyType(final String href) {
         this.href = href;
     }
 
-    public MethodPropertyType(AbstractMethodProperty meth) {
+    public MethodPropertyType(final AbstractMethodProperty meth) {
         if (meth != null) {
             this.actuate = meth.getActuate();
             this.arcrole = meth.getArcrole();
@@ -119,7 +119,7 @@ public class MethodPropertyType implements AbstractMethodProperty {
      *     {@link ProcessMethodType }
      *     
      */
-    public void setProcessMethod(ProcessMethodType value) {
+    public void setProcessMethod(final ProcessMethodType value) {
         this.processMethod = value;
     }
 
@@ -143,7 +143,7 @@ public class MethodPropertyType implements AbstractMethodProperty {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -167,7 +167,7 @@ public class MethodPropertyType implements AbstractMethodProperty {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -191,7 +191,7 @@ public class MethodPropertyType implements AbstractMethodProperty {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -215,7 +215,7 @@ public class MethodPropertyType implements AbstractMethodProperty {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -239,7 +239,7 @@ public class MethodPropertyType implements AbstractMethodProperty {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -263,7 +263,7 @@ public class MethodPropertyType implements AbstractMethodProperty {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -287,7 +287,7 @@ public class MethodPropertyType implements AbstractMethodProperty {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -311,7 +311,7 @@ public class MethodPropertyType implements AbstractMethodProperty {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

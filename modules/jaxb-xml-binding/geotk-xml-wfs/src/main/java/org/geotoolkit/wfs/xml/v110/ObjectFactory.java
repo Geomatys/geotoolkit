@@ -348,7 +348,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "GetFeature")
-    public JAXBElement<GetFeatureType> createGetFeature(GetFeatureType value) {
+    public JAXBElement<GetFeatureType> createGetFeature(final GetFeatureType value) {
         return new JAXBElement<GetFeatureType>(_GetFeature_QNAME, GetFeatureType.class, null, value);
     }
 
@@ -357,7 +357,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Property")
-    public JAXBElement<PropertyType> createProperty(PropertyType value) {
+    public JAXBElement<PropertyType> createProperty(final PropertyType value) {
         return new JAXBElement<PropertyType>(_Property_QNAME, PropertyType.class, null, value);
     }
 
@@ -366,7 +366,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "DescribeFeatureType")
-    public JAXBElement<DescribeFeatureTypeType> createDescribeFeatureType(DescribeFeatureTypeType value) {
+    public JAXBElement<DescribeFeatureTypeType> createDescribeFeatureType(final DescribeFeatureTypeType value) {
         return new JAXBElement<DescribeFeatureTypeType>(_DescribeFeatureType_QNAME, DescribeFeatureTypeType.class, null, value);
     }
 
@@ -375,7 +375,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "FeatureTypeList")
-    public JAXBElement<FeatureTypeListType> createFeatureTypeList(FeatureTypeListType value) {
+    public JAXBElement<FeatureTypeListType> createFeatureTypeList(final FeatureTypeListType value) {
         return new JAXBElement<FeatureTypeListType>(_FeatureTypeList_QNAME, FeatureTypeListType.class, null, value);
     }
 
@@ -384,7 +384,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "LockFeature")
-    public JAXBElement<LockFeatureType> createLockFeature(LockFeatureType value) {
+    public JAXBElement<LockFeatureType> createLockFeature(final LockFeatureType value) {
         return new JAXBElement<LockFeatureType>(_LockFeature_QNAME, LockFeatureType.class, null, value);
     }
 
@@ -393,7 +393,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "ServesGMLObjectTypeList")
-    public JAXBElement<GMLObjectTypeListType> createServesGMLObjectTypeList(GMLObjectTypeListType value) {
+    public JAXBElement<GMLObjectTypeListType> createServesGMLObjectTypeList(final GMLObjectTypeListType value) {
         return new JAXBElement<GMLObjectTypeListType>(_ServesGMLObjectTypeList_QNAME, GMLObjectTypeListType.class, null, value);
     }
 
@@ -402,7 +402,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Update")
-    public JAXBElement<UpdateElementType> createUpdate(UpdateElementType value) {
+    public JAXBElement<UpdateElementType> createUpdate(final UpdateElementType value) {
         return new JAXBElement<UpdateElementType>(_Update_QNAME, UpdateElementType.class, null, value);
     }
 
@@ -411,7 +411,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "PropertyName")
-    public JAXBElement<String> createPropertyName(String value) {
+    public JAXBElement<String> createPropertyName(final String value) {
         return new JAXBElement<String>(_PropertyName_QNAME, String.class, null, value);
     }
 
@@ -420,7 +420,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "TransactionResponse")
-    public JAXBElement<TransactionResponseType> createTransactionResponse(TransactionResponseType value) {
+    public JAXBElement<TransactionResponseType> createTransactionResponse(final TransactionResponseType value) {
         return new JAXBElement<TransactionResponseType>(_TransactionResponse_QNAME, TransactionResponseType.class, null, value);
     }
 
@@ -429,7 +429,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "GetGmlObject")
-    public JAXBElement<GetGmlObjectType> createGetGmlObject(GetGmlObjectType value) {
+    public JAXBElement<GetGmlObjectType> createGetGmlObject(final GetGmlObjectType value) {
         return new JAXBElement<GetGmlObjectType>(_GetGmlObject_QNAME, GetGmlObjectType.class, null, value);
     }
 
@@ -438,7 +438,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "GetCapabilities")
-    public JAXBElement<GetCapabilitiesType> createGetCapabilities(GetCapabilitiesType value) {
+    public JAXBElement<GetCapabilitiesType> createGetCapabilities(final GetCapabilitiesType value) {
         return new JAXBElement<GetCapabilitiesType>(_GetCapabilities_QNAME, GetCapabilitiesType.class, null, value);
     }
 
@@ -447,7 +447,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Native")
-    public JAXBElement<NativeType> createNative(NativeType value) {
+    public JAXBElement<NativeType> createNative(final NativeType value) {
         return new JAXBElement<NativeType>(_Native_QNAME, NativeType.class, null, value);
     }
 
@@ -456,7 +456,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "WFS_Capabilities")
-    public JAXBElement<WFSCapabilitiesType> createWFSCapabilities(WFSCapabilitiesType value) {
+    public JAXBElement<WFSCapabilitiesType> createWFSCapabilities(final WFSCapabilitiesType value) {
         return new JAXBElement<WFSCapabilitiesType>(_WFSCapabilities_QNAME, WFSCapabilitiesType.class, null, value);
     }
 
@@ -465,7 +465,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "LockFeatureResponse")
-    public JAXBElement<LockFeatureResponseType> createLockFeatureResponse(LockFeatureResponseType value) {
+    public JAXBElement<LockFeatureResponseType> createLockFeatureResponse(final LockFeatureResponseType value) {
         return new JAXBElement<LockFeatureResponseType>(_LockFeatureResponse_QNAME, LockFeatureResponseType.class, null, value);
     }
 
@@ -474,7 +474,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "LockId")
-    public JAXBElement<String> createLockId(String value) {
+    public JAXBElement<String> createLockId(final String value) {
         return new JAXBElement<String>(_LockId_QNAME, String.class, null, value);
     }
 
@@ -483,7 +483,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "SupportsGMLObjectTypeList")
-    public JAXBElement<GMLObjectTypeListType> createSupportsGMLObjectTypeList(GMLObjectTypeListType value) {
+    public JAXBElement<GMLObjectTypeListType> createSupportsGMLObjectTypeList(final GMLObjectTypeListType value) {
         return new JAXBElement<GMLObjectTypeListType>(_SupportsGMLObjectTypeList_QNAME, GMLObjectTypeListType.class, null, value);
     }
 
@@ -492,7 +492,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Insert")
-    public JAXBElement<InsertElementType> createInsert(InsertElementType value) {
+    public JAXBElement<InsertElementType> createInsert(final InsertElementType value) {
         return new JAXBElement<InsertElementType>(_Insert_QNAME, InsertElementType.class, null, value);
     }
 
@@ -501,7 +501,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Transaction")
-    public JAXBElement<TransactionType> createTransaction(TransactionType value) {
+    public JAXBElement<TransactionType> createTransaction(final TransactionType value) {
         return new JAXBElement<TransactionType>(_Transaction_QNAME, TransactionType.class, null, value);
     }
 
@@ -510,7 +510,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Query")
-    public JAXBElement<QueryType> createQuery(QueryType value) {
+    public JAXBElement<QueryType> createQuery(final QueryType value) {
         return new JAXBElement<QueryType>(_Query_QNAME, QueryType.class, null, value);
     }
 
@@ -519,7 +519,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "GetFeatureWithLock")
-    public JAXBElement<GetFeatureWithLockType> createGetFeatureWithLock(GetFeatureWithLockType value) {
+    public JAXBElement<GetFeatureWithLockType> createGetFeatureWithLock(final GetFeatureWithLockType value) {
         return new JAXBElement<GetFeatureWithLockType>(_GetFeatureWithLock_QNAME, GetFeatureWithLockType.class, null, value);
     }
 
@@ -528,7 +528,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Delete")
-    public JAXBElement<DeleteElementType> createDelete(DeleteElementType value) {
+    public JAXBElement<DeleteElementType> createDelete(final DeleteElementType value) {
         return new JAXBElement<DeleteElementType>(_Delete_QNAME, DeleteElementType.class, null, value);
     }
 
@@ -537,7 +537,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Value" , substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractObject")
-    public JAXBElement<Object> createValue(Object value) {
+    public JAXBElement<Object> createValue(final Object value) {
         return new JAXBElement<Object>(_Value_QNAME, Object.class, null, value);
     }
 
@@ -546,7 +546,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "FeatureCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeatureCollection")
-    public JAXBElement<FeatureCollectionType> createFeatureCollection(FeatureCollectionType value) {
+    public JAXBElement<FeatureCollectionType> createFeatureCollection(final FeatureCollectionType value) {
         return new JAXBElement<FeatureCollectionType>(_FeatureCollection_QNAME, FeatureCollectionType.class, null, value);
     }
 

@@ -71,7 +71,7 @@ public class LegendURL extends OnlineResourceType {
     }
 
     public LegendURL(final String format, final BigInteger width,
-            final BigInteger height, Double minScaleDenominator, Double maxScaleDenominator) {
+            final BigInteger height, final Double minScaleDenominator, final Double maxScaleDenominator) {
         this.format              = format;
         this.height              = height;
         this.width               = width;
@@ -99,7 +99,7 @@ public class LegendURL extends OnlineResourceType {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 
@@ -123,7 +123,7 @@ public class LegendURL extends OnlineResourceType {
      *     {@link Double }
      *     
      */
-    public void setMinScaleDenominator(Double value) {
+    public void setMinScaleDenominator(final Double value) {
         this.minScaleDenominator = value;
     }
 
@@ -147,7 +147,7 @@ public class LegendURL extends OnlineResourceType {
      *     {@link Double }
      *     
      */
-    public void setMaxScaleDenominator(Double value) {
+    public void setMaxScaleDenominator(final Double value) {
         this.maxScaleDenominator = value;
     }
 
@@ -171,7 +171,7 @@ public class LegendURL extends OnlineResourceType {
      *     {@link BigInteger }
      *     
      */
-    public void setWidth(BigInteger value) {
+    public void setWidth(final BigInteger value) {
         this.width = value;
     }
 
@@ -195,7 +195,7 @@ public class LegendURL extends OnlineResourceType {
      *     {@link BigInteger }
      *     
      */
-    public void setHeight(BigInteger value) {
+    public void setHeight(final BigInteger value) {
         this.height = value;
     }
 

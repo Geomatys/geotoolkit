@@ -65,7 +65,7 @@ public enum ResultType {
     VALIDATE("validate");
     private final String value;
 
-    ResultType(String v) {
+    ResultType(final String v) {
         value = v;
     }
 
@@ -73,7 +73,7 @@ public enum ResultType {
         return value;
     }
 
-    public static ResultType fromValue(String v) {
+    public static ResultType fromValue(final String v) {
         for (ResultType c: ResultType.values()) {
             if (c.value.equals(v)) {
                 return c;

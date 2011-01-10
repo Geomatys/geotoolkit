@@ -38,7 +38,7 @@ public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory 
      * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.Coordinate[])
      */
     @Override
-    public CoordinateSequence create(Coordinate[] coordinates) {
+    public CoordinateSequence create(final Coordinate[] coordinates) {
         return new LiteCoordinateSequence(coordinates);
     }
 
@@ -46,7 +46,7 @@ public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory 
      * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(com.vividsolutions.jts.geom.CoordinateSequence)
      */
     @Override
-    public CoordinateSequence create(CoordinateSequence coordSeq) {
+    public CoordinateSequence create(final CoordinateSequence coordSeq) {
         return new LiteCoordinateSequence(coordSeq.toCoordinateArray());
     }
 
@@ -54,14 +54,14 @@ public class LiteCoordinateSequenceFactory implements CoordinateSequenceFactory 
      * @see com.vividsolutions.jts.geom.CoordinateSequenceFactory#create(int, int)
      */
     @Override
-    public CoordinateSequence create(int size, int dimension) {
+    public CoordinateSequence create(final int size, final int dimension) {
         return new LiteCoordinateSequence(size, dimension);
     }
 
     /**
      * @param points
      */
-    public CoordinateSequence create(double[] points) {
+    public CoordinateSequence create(final double[] points) {
         return new LiteCoordinateSequence(points);
     }
 

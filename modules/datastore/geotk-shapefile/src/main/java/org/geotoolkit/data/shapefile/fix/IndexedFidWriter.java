@@ -58,7 +58,7 @@ public class IndexedFidWriter {
      * @param shpFiles The shapefiles to used
      * @throws IOException
      */
-    public IndexedFidWriter( ShpFiles shpFiles ) throws IOException {
+    public IndexedFidWriter( final ShpFiles shpFiles ) throws IOException {
         storageFile = shpFiles.getStorageFile(FIX);
         init(shpFiles, storageFile);
     }
@@ -71,14 +71,14 @@ public class IndexedFidWriter {
      * @param storageFile the storage file that will be written to.  It will NOT be closed.
      * @throws IOException
      */
-    public IndexedFidWriter( ShpFiles shpFiles, StorageFile storageFile ) throws IOException {
+    public IndexedFidWriter( final ShpFiles shpFiles, final StorageFile storageFile ) throws IOException {
         // Note do NOT assign storageFile so that it is closed because this method method requires that
         // the caller close the storage file.
         // Call the single argument constructor instead
         init(shpFiles, storageFile);
     }
 
-    private void init( ShpFiles shpFiles, StorageFile storageFile ) throws IOException {
+    private void init( final ShpFiles shpFiles, final StorageFile storageFile ) throws IOException {
         if (!shpFiles.isLocal()) {
             throw new IllegalArgumentException(
                     "Currently only local files are supported for writing");
@@ -258,14 +258,14 @@ public class IndexedFidWriter {
     /**
      * Generates the FID index file for the shpFile
      */
-    public static synchronized void generate(URL shpURL) throws IOException {
+    public static synchronized void generate(final URL shpURL) throws IOException {
         generate(new ShpFiles(shpURL));
     }
 
     /**
      * Generates the FID index file for the shpFiles
      */
-    public static void generate(ShpFiles shpFiles) throws IOException {
+    public static void generate(final ShpFiles shpFiles) throws IOException {
         LOGGER.fine("Generating fids for " + shpFiles.get(SHP));
 
         ShxReader indexFile = null;

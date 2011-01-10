@@ -32,7 +32,7 @@ public final class MapAccessorFactory implements PropertyAccessorFactory{
     private static final MapAccessor ACCESSOR = new MapAccessor();
 
     @Override
-    public PropertyAccessor createPropertyAccessor(Class type, String xpath, Class target, Hints hints) {
+    public PropertyAccessor createPropertyAccessor(final Class type, final String xpath, final Class target, final Hints hints) {
         if(ACCESSOR.canHandle(type, xpath, target)){
             return ACCESSOR;
         }
@@ -47,24 +47,24 @@ public final class MapAccessorFactory implements PropertyAccessorFactory{
     private static class MapAccessor implements PropertyAccessor,Serializable{
 
         @Override
-        public boolean canHandle(Class clazz, String xpath, Class target) {
+        public boolean canHandle(final Class clazz, final String xpath, final Class target) {
             return Map.class.isAssignableFrom(clazz);
         }
 
         @Override
-        public Object get(Object object, String xpath, Class target) throws IllegalArgumentException {
+        public Object get(final Object object, final String xpath, final Class target) throws IllegalArgumentException {
             final Map map = (Map) object;
             return Converters.convert(map.get(xpath),target);
         }
 
         @Override
-        public void set(Object object, String xpath, Object value, Class target) throws IllegalArgumentException {
+        public void set(final Object object, final String xpath, final Object value, final Class target) throws IllegalArgumentException {
             final Map map = (Map) object;
             map.put(xpath, Converters.convert(value, target));
         }
 
         @Override
-        public boolean equals(Object obj) {
+        public boolean equals(final Object obj) {
             if (obj == null) {
                 return false;
             }

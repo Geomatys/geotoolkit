@@ -104,17 +104,17 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit( ExcludeFilter filter, Object data ) {
+    public Object visit( final ExcludeFilter filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( IncludeFilter filter, Object data ) {
+    public Object visit( final IncludeFilter filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( And filter, Object data ) {
+    public Object visit( final And filter, Object data ) {
         if( data == null ) return null;
         if (filter.getChildren() != null) {
             for( Filter child : filter.getChildren() ) {
@@ -126,12 +126,12 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit( Id filter, Object data ) {
+    public Object visit( final Id filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Not filter, Object data ) {
+    public Object visit( final Not filter, Object data ) {
         if( data == null ) return data;
 
         Filter child = filter.getFilter();
@@ -142,7 +142,7 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit( Or filter, Object data ) {
+    public Object visit( final Or filter, Object data ) {
         if( data == null ) return null;
         if (filter.getChildren() != null) {
             for( Filter child : filter.getChildren() ) {
@@ -154,147 +154,147 @@ public abstract class NullFilterVisitor implements FilterVisitor, ExpressionVisi
     }
 
     @Override
-    public Object visit( PropertyIsBetween filter, Object data ) {
+    public Object visit( final PropertyIsBetween filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( PropertyIsEqualTo filter, Object data ) {
+    public Object visit( final PropertyIsEqualTo filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( PropertyIsNotEqualTo filter, Object data ) {
+    public Object visit( final PropertyIsNotEqualTo filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( PropertyIsGreaterThan filter, Object data ) {
+    public Object visit( final PropertyIsGreaterThan filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( PropertyIsGreaterThanOrEqualTo filter, Object data ) {
+    public Object visit( final PropertyIsGreaterThanOrEqualTo filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( PropertyIsLessThan filter, Object data ) {        
+    public Object visit( final PropertyIsLessThan filter, final Object data ) {        
         return data;
     }
 
     @Override
-    public Object visit( PropertyIsLessThanOrEqualTo filter, Object data ) {
+    public Object visit( final PropertyIsLessThanOrEqualTo filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( PropertyIsLike filter, Object data ) {        
+    public Object visit( final PropertyIsLike filter, final Object data ) {        
         return data;
     }
 
     @Override
-    public Object visit( PropertyIsNull filter, Object data ) {
+    public Object visit( final PropertyIsNull filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( final BBOX filter, Object data ) {
+    public Object visit( final BBOX filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Beyond filter, Object data ) {
+    public Object visit( final Beyond filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Contains filter, Object data ) {
+    public Object visit( final Contains filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Crosses filter, Object data ) {
+    public Object visit( final Crosses filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Disjoint filter, Object data ) {
+    public Object visit( final Disjoint filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( DWithin filter, Object data ) {
+    public Object visit( final DWithin filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Equals filter, Object data ) {
+    public Object visit( final Equals filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Intersects filter, Object data ) {
+    public Object visit( final Intersects filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Overlaps filter, Object data ) {
+    public Object visit( final Overlaps filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Touches filter, Object data ) {
+    public Object visit( final Touches filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Within filter, Object data ) {
+    public Object visit( final Within filter, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visitNullFilter( Object data ) {
+    public Object visitNullFilter( final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( NilExpression expression, Object data ) {        
+    public Object visit( final NilExpression expression, final Object data ) {        
         return null;
     }
 
     @Override
-    public Object visit( Add expression, Object data ) {
+    public Object visit( final Add expression, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Divide expression, Object data ) {
+    public Object visit( final Divide expression, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Function expression, Object data ) {
+    public Object visit( final Function expression, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Literal expression, Object data ) {        
+    public Object visit( final Literal expression, final Object data ) {        
         return data;
     }
 
     @Override
-    public Object visit( Multiply expression, Object data ) {
+    public Object visit( final Multiply expression, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( PropertyName expression, Object data ) {
+    public Object visit( final PropertyName expression, final Object data ) {
         return data;
     }
 
     @Override
-    public Object visit( Subtract expression, Object data ) {
+    public Object visit( final Subtract expression, final Object data ) {
         return data;
     }
 }

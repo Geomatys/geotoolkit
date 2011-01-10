@@ -221,7 +221,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wmts/1.0", name = "Layer", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "DatasetDescriptionSummary")
-    public JAXBElement<LayerType> createLayer(LayerType value) {
+    public JAXBElement<LayerType> createLayer(final LayerType value) {
         return new JAXBElement<LayerType>(_Layer_QNAME, LayerType.class, null, value);
     }
 

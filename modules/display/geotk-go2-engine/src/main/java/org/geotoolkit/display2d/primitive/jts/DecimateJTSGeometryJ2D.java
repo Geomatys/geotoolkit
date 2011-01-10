@@ -43,7 +43,7 @@ public class DecimateJTSGeometryJ2D extends JTSGeometryJ2D {
      *
      * @param geom - the wrapped geometry
      */
-    public DecimateJTSGeometryJ2D(Geometry geom, double[] resolution) {
+    public DecimateJTSGeometryJ2D(final Geometry geom, final double[] resolution) {
         super(geom);
         this.resolution = resolution;
     }
@@ -53,7 +53,7 @@ public class DecimateJTSGeometryJ2D extends JTSGeometryJ2D {
      * {@inheritDoc }
      */
     @Override
-    public PathIterator getPathIterator(AffineTransform at) {
+    public PathIterator getPathIterator(final AffineTransform at) {
 
         if(iterator == null){
             if (this.geometry.isEmpty()) {

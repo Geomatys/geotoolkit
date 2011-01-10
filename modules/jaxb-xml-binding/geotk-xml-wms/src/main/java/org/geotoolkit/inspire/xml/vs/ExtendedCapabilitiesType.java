@@ -96,7 +96,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param resourcelocator the resourcelocator to set
      */
-    public void setResourcelocator(OnlineResource resourcelocator) {
+    public void setResourcelocator(final OnlineResource resourcelocator) {
         this.resourcelocator = resourcelocator;
     }
 
@@ -110,7 +110,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param metadataUrl the metadataUrl to set
      */
-    public void setMetadataUrl(OnlineResource metadataUrl) {
+    public void setMetadataUrl(final OnlineResource metadataUrl) {
         this.metadataUrl = metadataUrl;
     }
 
@@ -124,7 +124,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param resourceType the resourceType to set
      */
-    public void setResourceType(ScopeCode resourceType) {
+    public void setResourceType(final ScopeCode resourceType) {
         this.resourceType = resourceType;
     }
 
@@ -138,7 +138,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param temporalRefererence the temporalRefererence to set
      */
-    public void setTemporalRefererence(Extent temporalRefererence) {
+    public void setTemporalRefererence(final Extent temporalRefererence) {
         this.temporalRefererence = temporalRefererence;
     }
 
@@ -152,7 +152,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param conformity the conformity to set
      */
-    public void setConformity(ConformanceResult conformity) {
+    public void setConformity(final ConformanceResult conformity) {
         this.conformity = conformity;
     }
 
@@ -166,7 +166,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param metadataPointOfContact the metadataPointOfContact to set
      */
-    public void setMetadataPointOfContact(ResponsibleParty metadataPointOfContact) {
+    public void setMetadataPointOfContact(final ResponsibleParty metadataPointOfContact) {
         this.metadataPointOfContact = metadataPointOfContact;
     }
 
@@ -180,7 +180,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param metadataDate the metadataDate to set
      */
-    public void setMetadataDate(Date metadataDate) {
+    public void setMetadataDate(final Date metadataDate) {
         this.metadataDate = metadataDate;
     }
 
@@ -194,7 +194,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param spatialDataService the spatialDataService to set
      */
-    public void setSpatialDataService(ServiceType spatialDataService) {
+    public void setSpatialDataService(final ServiceType spatialDataService) {
         this.spatialDataService = spatialDataService;
     }
 
@@ -208,7 +208,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param languages the languages to set
      */
-    public void setLanguages(LanguagesType languages) {
+    public void setLanguages(final LanguagesType languages) {
         this.languages = languages;
     }
 
@@ -222,7 +222,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param currentLanguage the currentLanguage to set
      */
-    public void setCurrentLanguage(String currentLanguage) {
+    public void setCurrentLanguage(final String currentLanguage) {
         this.currentLanguage = currentLanguage;
     }
 
@@ -236,7 +236,7 @@ public class ExtendedCapabilitiesType {
     /**
      * @param inpireKeywords the inpireKeywords to set
      */
-    public void setInpireKeywords(Keywords inpireKeywords) {
+    public void setInpireKeywords(final Keywords inpireKeywords) {
         this.inpireKeywords = inpireKeywords;
     }
 

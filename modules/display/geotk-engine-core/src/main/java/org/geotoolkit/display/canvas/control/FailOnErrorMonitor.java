@@ -34,7 +34,7 @@ public class FailOnErrorMonitor extends AbstractCanvasMonitor{
      * {@inheritDoc }
      */
     @Override
-    public void exceptionOccured(Exception ex, Level level) {
+    public void exceptionOccured(final Exception ex, final Level level) {
         //log the error
         LOGGER.log(level,"", ex);
         //and request stop rendering

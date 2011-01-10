@@ -74,7 +74,7 @@ public class ServiceSpecificationImpl implements ServiceSpecification {
     /**
      * Sets the name of the service.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -89,7 +89,7 @@ public class ServiceSpecificationImpl implements ServiceSpecification {
     /**
      * Sets the value of the opModel property.
      */
-    public void setOpModel(OperationModel value) {
+    public void setOpModel(final OperationModel value) {
         this.opModel = value;
     }
 
@@ -104,7 +104,7 @@ public class ServiceSpecificationImpl implements ServiceSpecification {
     /**
      * Sets the value of the typeSpec property.
      */
-    public void setTypeSpec(PlatformNeutralServiceSpecification value) {
+    public void setTypeSpec(final PlatformNeutralServiceSpecification value) {
         this.typeSpec = value;
     }
 
@@ -119,11 +119,11 @@ public class ServiceSpecificationImpl implements ServiceSpecification {
         return this.theSVInterface;
     }
     
-    public void setTheSVInterface(Collection<Interface> theSVInterface) {
+    public void setTheSVInterface(final Collection<Interface> theSVInterface) {
          this.theSVInterface = theSVInterface;
     }
     
-    public void setTheSVInterface(Interface theSVInterface) {
+    public void setTheSVInterface(final Interface theSVInterface) {
         if (this.theSVInterface == null) {
             this.theSVInterface = new ArrayList<Interface>();
         }

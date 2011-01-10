@@ -126,7 +126,7 @@ public class Layer extends AbstractLayer {
       * @param exGeographicBoundingBox A general bounding box including all the child map.
       */
      public Layer(final String title, final String _abstract, final List<String> crs, 
-             final LatLonBoundingBox latLonBoundingBox, List<AbstractLayer> layers) {
+             final LatLonBoundingBox latLonBoundingBox, final List<AbstractLayer> layers) {
          this.title                   = title;
          this._abstract               = _abstract;
          this.layer                   = new ArrayList<Layer>();
@@ -152,7 +152,7 @@ public class Layer extends AbstractLayer {
       * @param exGeographicBoundingBox A general bounding box including all the child map.
       */
      public Layer(final String name, final String title, final String _abstract, final List<String> crs, 
-             final LatLonBoundingBox latLonBoundingBox, List<AbstractLayer> layers) {
+             final LatLonBoundingBox latLonBoundingBox, final List<AbstractLayer> layers) {
          this(title,_abstract,crs,latLonBoundingBox,layers);
          this.name = name;
             
@@ -487,168 +487,168 @@ public class Layer extends AbstractLayer {
     /**
      * @param name the name to set
      */
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
     /**
      * @param title the title to set
      */
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
     /**
      * @param abstract the _abstract to set
      */
-    public void setAbstract(String abstrac) {
+    public void setAbstract(final String abstrac) {
         this._abstract = abstrac;
     }
 
     /**
      * @param keywordList the keywordList to set
      */
-    public void setKeywordList(KeywordList keywordList) {
+    public void setKeywordList(final KeywordList keywordList) {
         this.keywordList = keywordList;
     }
 
     /**
      * @param dimension the dimension to set
      */
-    public void setDimension(List<Dimension> dimension) {
+    public void setDimension(final List<Dimension> dimension) {
         this.dimension = dimension;
     }
 
     /**
      * @param srs the srs to set
      */
-    public void setSrs(List<String> srs) {
+    public void setSrs(final List<String> srs) {
         this.srs = srs;
     }
 
     /**
      * @param extent the extent to set
      */
-    public void setExtent(List<Extent> extent) {
+    public void setExtent(final List<Extent> extent) {
         this.extent = extent;
     }
 
     /**
      * @param latLonBoundingBox the latLonBoundingBox to set
      */
-    public void setLatLonBoundingBox(LatLonBoundingBox latLonBoundingBox) {
+    public void setLatLonBoundingBox(final LatLonBoundingBox latLonBoundingBox) {
         this.latLonBoundingBox = latLonBoundingBox;
     }
 
     /**
      * @param boundingBox the boundingBox to set
      */
-    public void setBoundingBox(List<BoundingBox> boundingBox) {
+    public void setBoundingBox(final List<BoundingBox> boundingBox) {
         this.boundingBox = boundingBox;
     }
 
     /**
      * @param attribution the attribution to set
      */
-    public void setAttribution(Attribution attribution) {
+    public void setAttribution(final Attribution attribution) {
         this.attribution = attribution;
     }
 
     /**
      * @param authorityURL the authorityURL to set
      */
-    public void setAuthorityURL(List<AuthorityURL> authorityURL) {
+    public void setAuthorityURL(final List<AuthorityURL> authorityURL) {
         this.authorityURL = authorityURL;
     }
 
     /**
      * @param identifier the identifier to set
      */
-    public void setIdentifier(List<Identifier> identifier) {
+    public void setIdentifier(final List<Identifier> identifier) {
         this.identifier = identifier;
     }
 
     /**
      * @param metadataURL the metadataURL to set
      */
-    public void setMetadataURL(List<MetadataURL> metadataURL) {
+    public void setMetadataURL(final List<MetadataURL> metadataURL) {
         this.metadataURL = metadataURL;
     }
 
     /**
      * @param dataURL the dataURL to set
      */
-    public void setDataURL(List<DataURL> dataURL) {
+    public void setDataURL(final List<DataURL> dataURL) {
         this.dataURL = dataURL;
     }
 
     /**
      * @param featureListURL the featureListURL to set
      */
-    public void setFeatureListURL(List<FeatureListURL> featureListURL) {
+    public void setFeatureListURL(final List<FeatureListURL> featureListURL) {
         this.featureListURL = featureListURL;
     }
 
     /**
      * @param style the style to set
      */
-    public void setStyle(List<Style> style) {
+    public void setStyle(final List<Style> style) {
         this.style = style;
     }
 
     /**
      * @param scaleHint the scaleHint to set
      */
-    public void setScaleHint(ScaleHint scaleHint) {
+    public void setScaleHint(final ScaleHint scaleHint) {
         this.scaleHint = scaleHint;
     }
 
     /**
      * @param layer the layer to set
      */
-    public void setLayer(List<Layer> layer) {
+    public void setLayer(final List<Layer> layer) {
         this.layer = layer;
     }
 
     /**
      * @param queryable the queryable to set
      */
-    public void setQueryable(String queryable) {
+    public void setQueryable(final String queryable) {
         this.queryable = queryable;
     }
 
     /**
      * @param cascaded the cascaded to set
      */
-    public void setCascaded(Integer cascaded) {
+    public void setCascaded(final Integer cascaded) {
         this.cascaded = cascaded;
     }
 
     /**
      * @param opaque the opaque to set
      */
-    public void setOpaque(Integer opaque) {
+    public void setOpaque(final Integer opaque) {
         this.opaque = opaque;
     }
 
     /**
      * @param noSubsets the noSubsets to set
      */
-    public void setNoSubsets(Integer noSubsets) {
+    public void setNoSubsets(final Integer noSubsets) {
         this.noSubsets = noSubsets;
     }
 
     /**
      * @param fixedWidth the fixedWidth to set
      */
-    public void setFixedWidth(Integer fixedWidth) {
+    public void setFixedWidth(final Integer fixedWidth) {
         this.fixedWidth = fixedWidth;
     }
 
     /**
      * @param fixedHeight the fixedHeight to set
      */
-    public void setFixedHeight(Integer fixedHeight) {
+    public void setFixedHeight(final Integer fixedHeight) {
         this.fixedHeight = fixedHeight;
     }
     

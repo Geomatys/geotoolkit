@@ -13,7 +13,7 @@ public class PolyhedralSurfaceAdapter extends XmlAdapter<PolyhedralSurfaceType, 
 
 
     @Override
-    public JTSPolyhedralSurface unmarshal(PolyhedralSurfaceType v) throws Exception {
+    public JTSPolyhedralSurface unmarshal(final PolyhedralSurfaceType v) throws Exception {
         if (v != null) {
             JTSPolyhedralSurface result = new JTSPolyhedralSurface(v.getCoordinateReferenceSystem());
             result.getPatches().addAll(v.getPatches());
@@ -22,7 +22,7 @@ public class PolyhedralSurfaceAdapter extends XmlAdapter<PolyhedralSurfaceType, 
     }
 
     @Override
-    public PolyhedralSurfaceType marshal(JTSPolyhedralSurface v) throws Exception {
+    public PolyhedralSurfaceType marshal(final JTSPolyhedralSurface v) throws Exception {
         return new PolyhedralSurfaceType(v);
     }
 

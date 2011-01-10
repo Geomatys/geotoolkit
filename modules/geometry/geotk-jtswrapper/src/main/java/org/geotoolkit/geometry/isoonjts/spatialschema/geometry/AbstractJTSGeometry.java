@@ -98,12 +98,12 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * @param coordinateReferenceSystem CRS for this geometry's vertices.
      * @param mutable Whether or not changes will be allowed.
      */
-    public AbstractJTSGeometry(final CoordinateReferenceSystem coordinateReferenceSystem, boolean mutable) {
+    public AbstractJTSGeometry(final CoordinateReferenceSystem coordinateReferenceSystem, final boolean mutable) {
         this.coordinateReferenceSystem = coordinateReferenceSystem;
         this.mutable = mutable;
     }
 
-    public void setParent(JTSGeometry parent) {
+    public void setParent(final JTSGeometry parent) {
         this.parent = parent;
     }
 
@@ -135,7 +135,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * creates a Geometry from a JTS geometry.  This prevents the Geometry from
      * having to recompute the JTS peer the first time.
      */
-    protected final void setJTSPeer(com.vividsolutions.jts.geom.Geometry g) {
+    protected final void setJTSPeer(final com.vividsolutions.jts.geom.Geometry g) {
         jtsPeer = g;
     }
 
@@ -160,7 +160,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         return coordinateReferenceSystem;
     }
 
-    public final void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+    public final void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
         this.coordinateReferenceSystem = crs;
     }
 
@@ -506,7 +506,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * tolerance of the floating point representation.
      */
     @Override
-    public boolean contains(DirectPosition point) {
+    public boolean contains(final DirectPosition point) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 JTSUtils.directPositionToPoint(point);
@@ -517,7 +517,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      * Returns true if this geometry completely contains the given geometry.
      */
     @Override
-    public boolean contains(TransfiniteSet pointSet) {
+    public boolean contains(final TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
@@ -525,12 +525,12 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     }
 
     @Override
-    public double distance(Geometry otherGeometry) {
+    public double distance(final Geometry otherGeometry) {
         return getDistance(otherGeometry);
     }
 
     @Override
-    public TransfiniteSet difference(TransfiniteSet pointSet) {
+    public TransfiniteSet difference(final TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
@@ -539,7 +539,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     }
 
     @Override
-    public boolean equals(TransfiniteSet pointSet) {
+    public boolean equals(final TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
@@ -547,7 +547,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     }
 
     @Override
-    public TransfiniteSet intersection(TransfiniteSet pointSet) {
+    public TransfiniteSet intersection(final TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
@@ -556,7 +556,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     }
 
     @Override
-    public boolean intersects(TransfiniteSet pointSet) {
+    public boolean intersects(final TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
@@ -564,7 +564,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     }
 
     @Override
-    public TransfiniteSet symmetricDifference(TransfiniteSet pointSet) {
+    public TransfiniteSet symmetricDifference(final TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
@@ -573,7 +573,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     }
 
     @Override
-    public TransfiniteSet union(TransfiniteSet pointSet) {
+    public TransfiniteSet union(final TransfiniteSet pointSet) {
         com.vividsolutions.jts.geom.Geometry jtsGeom1 = getJTSGeometry();
         com.vividsolutions.jts.geom.Geometry jtsGeom2 =
                 ((JTSGeometry) pointSet).getJTSGeometry();
@@ -661,16 +661,16 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
         private DirectPosition src;
         private DirectPosition dst;
 
-        public MathTransformFilter(MathTransform transform,
-                CoordinateReferenceSystem oldCRS,
-                CoordinateReferenceSystem newCRS) {
+        public MathTransformFilter(final MathTransform transform,
+                final CoordinateReferenceSystem oldCRS,
+                final CoordinateReferenceSystem newCRS) {
             this.transform = transform;
             src = new GeneralDirectPosition(oldCRS);
             dst = new GeneralDirectPosition(newCRS);
         }
 
         @Override
-        public void filter(com.vividsolutions.jts.geom.Coordinate coord) {
+        public void filter(final com.vividsolutions.jts.geom.Coordinate coord) {
             // Load the input into a DirectPosition
             JTSUtils.coordinateToDirectPosition(coord, src);
             try {
@@ -687,7 +687,7 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this)
             return true;
 

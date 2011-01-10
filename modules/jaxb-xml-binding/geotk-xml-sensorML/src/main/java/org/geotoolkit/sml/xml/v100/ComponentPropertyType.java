@@ -92,7 +92,7 @@ public class ComponentPropertyType implements ComponentProperty {
 
     }
 
-    public ComponentPropertyType(ComponentProperty cp) {
+    public ComponentPropertyType(final ComponentProperty cp) {
         if (cp != null) {
             this.actuate       = cp.getActuate();
             this.arcrole       = cp.getArcrole();
@@ -125,21 +125,21 @@ public class ComponentPropertyType implements ComponentProperty {
         }
     }
 
-    public ComponentPropertyType(String href) {
+    public ComponentPropertyType(final String href) {
         this.href = href;
     }
 
-    public ComponentPropertyType(String name, JAXBElement<? extends AbstractProcessType> process) {
+    public ComponentPropertyType(final String name, final JAXBElement<? extends AbstractProcessType> process) {
         this.name    = name;
         this.process = process;
     }
 
-    public ComponentPropertyType(ComponentType process) {
+    public ComponentPropertyType(final ComponentType process) {
         ObjectFactory factory = new ObjectFactory();
         this.process = factory.createComponent(process);
     }
 
-    public ComponentPropertyType(String name, String role, String href) {
+    public ComponentPropertyType(final String name, final String role, final String href) {
         this.name    = name;
         this.href    = href;
         this.role    = role;
@@ -162,14 +162,14 @@ public class ComponentPropertyType implements ComponentProperty {
     /**
      * Sets the value of the process property.
      */
-    public void setJBProcess(JAXBElement<? extends AbstractProcessType> value) {
+    public void setJBProcess(final JAXBElement<? extends AbstractProcessType> value) {
         this.process = ((JAXBElement<? extends AbstractProcessType>) value);
     }
 
     /**
      * Sets the value of the process property.
      */
-    public void setProcess(AbstractProcessType value) {
+    public void setProcess(final AbstractProcessType value) {
         ObjectFactory factory = new ObjectFactory();
         if (value instanceof System) {
             this.process = factory.createSystem((SystemType) value);
@@ -198,7 +198,7 @@ public class ComponentPropertyType implements ComponentProperty {
     /**
      * Sets the value of the name property.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -222,7 +222,7 @@ public class ComponentPropertyType implements ComponentProperty {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -237,7 +237,7 @@ public class ComponentPropertyType implements ComponentProperty {
      * Sets the value of the actuate property.
      *
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -251,7 +251,7 @@ public class ComponentPropertyType implements ComponentProperty {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -266,7 +266,7 @@ public class ComponentPropertyType implements ComponentProperty {
      * Sets the value of the href property.
      *
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -280,7 +280,7 @@ public class ComponentPropertyType implements ComponentProperty {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -294,7 +294,7 @@ public class ComponentPropertyType implements ComponentProperty {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -309,7 +309,7 @@ public class ComponentPropertyType implements ComponentProperty {
      * Sets the value of the title property.
      *
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -323,7 +323,7 @@ public class ComponentPropertyType implements ComponentProperty {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

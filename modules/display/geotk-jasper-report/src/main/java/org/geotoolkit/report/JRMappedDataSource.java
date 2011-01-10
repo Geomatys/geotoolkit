@@ -81,7 +81,7 @@ public class JRMappedDataSource<C> implements JRDataSource{
      *
      * @param iterator : iterator of C
      */
-    public void setIterator(Iterator<C> iterator){
+    public void setIterator(final Iterator<C> iterator){
         this.iterator = iterator;
     }
 

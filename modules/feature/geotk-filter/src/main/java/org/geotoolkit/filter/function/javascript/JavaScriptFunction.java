@@ -100,7 +100,7 @@ public class JavaScriptFunction extends AbstractFunction {
     }
 
     
-    private static Expression[] prepare(Expression jsFunction){
+    private static Expression[] prepare(final Expression jsFunction){
         final String str = jsFunction.evaluate(null, String.class);
 
         final List<Expression> properties = new ArrayList<Expression>();
@@ -134,7 +134,7 @@ public class JavaScriptFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
 
         final Bindings bindings = getEngine().createBindings();
 

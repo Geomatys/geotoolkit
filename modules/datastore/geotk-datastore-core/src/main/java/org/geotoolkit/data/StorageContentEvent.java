@@ -42,7 +42,7 @@ public class StorageContentEvent extends EventObject{
     private final Name name;
     private Id ids;
 
-    public StorageContentEvent(Object source, Type type, Name name, Id candidates){
+    public StorageContentEvent(final Object source, final Type type, final Name name, final Id candidates){
         super(source);
 
         this.type = type;
@@ -77,19 +77,19 @@ public class StorageContentEvent extends EventObject{
 
 
 
-    public static StorageContentEvent createAddEvent(Object source, Name name, Id ids){
+    public static StorageContentEvent createAddEvent(final Object source, final Name name, final Id ids){
         return new StorageContentEvent(source, Type.ADD, name, ids);
     }
 
-    public static StorageContentEvent createUpdateEvent(Object source, Name name, Id ids){
+    public static StorageContentEvent createUpdateEvent(final Object source, final Name name, final Id ids){
         return new StorageContentEvent(source, Type.UPDATE, name, ids);
     }
 
-    public static StorageContentEvent createDeleteEvent(Object source, Name name, Id ids){
+    public static StorageContentEvent createDeleteEvent(final Object source, final Name name, final Id ids){
         return new StorageContentEvent(source, Type.DELETE, name, ids);
     }
 
-    public static StorageContentEvent resetSource(Object source, StorageContentEvent event){
+    public static StorageContentEvent resetSource(final Object source, final StorageContentEvent event){
         return new StorageContentEvent(source, event.type, event.name, event.ids);
     }
 

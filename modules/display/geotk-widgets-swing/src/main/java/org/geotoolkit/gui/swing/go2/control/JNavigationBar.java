@@ -55,11 +55,11 @@ public class JNavigationBar extends JToolBar implements MapControlBar{
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JNavigationBar(JMap2D pane) {
+    public JNavigationBar(final JMap2D pane) {
         this(pane,false);
     }
 
-    public JNavigationBar(JMap2D pane, boolean bigIcons) {
+    public JNavigationBar(final JMap2D pane, final boolean bigIcons) {
         actionZoomAll = new ZoomAllAction(bigIcons);
         actionZoomIn = new ZoomInAction(bigIcons);
         actionZoomOut = new ZoomOutAction(bigIcons);
@@ -78,7 +78,7 @@ public class JNavigationBar extends JToolBar implements MapControlBar{
      * set the related Map2D
      * @param map2d : related Map2D
      */
-    public void setMap(JMap2D map2d) {
+    public void setMap(final JMap2D map2d) {
         map = map2d;
         actionRefresh.setMap(map);
         actionZoomAll.setMap(map);

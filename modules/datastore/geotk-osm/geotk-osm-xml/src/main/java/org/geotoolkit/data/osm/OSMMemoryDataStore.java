@@ -117,7 +117,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
 
     private final MemoryDataStore memoryStore;
 
-    public OSMMemoryDataStore(Object input) throws IOException, XMLStreamException, DataStoreException{
+    public OSMMemoryDataStore(final Object input) throws IOException, XMLStreamException, DataStoreException{
         super(null);
         memoryStore = new MemoryDataStore();
         memoryStore.createSchema(TYPE_NODE.getName(), TYPE_NODE);
@@ -157,7 +157,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         if(TYPE_NODE.getName().equals(typeName)){
             return TYPE_NODE;
         }else if(TYPE_WAY_EXTENDED.getName().equals(typeName)){
@@ -170,7 +170,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName());
 
         FeatureReader fr = memoryStore.getFeatureReader(QueryBuilder.all(query.getTypeName()));
@@ -184,7 +184,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         throw new UnsupportedOperationException("Not yet.");
     }
 
@@ -198,32 +198,32 @@ public class OSMMemoryDataStore extends AbstractDataStore{
     }
 
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("New schema creation not allowed on GPX files.");
     }
 
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Delete schema not allowed on GPX files.");
     }
 
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Update schema not allowed on GPX files.");
     }
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures);
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
@@ -231,7 +231,7 @@ public class OSMMemoryDataStore extends AbstractDataStore{
 
         private final long nodeId;
 
-        public OSMNodeAttribute(AttributeDescriptor desc, long nodeId) {
+        public OSMNodeAttribute(final AttributeDescriptor desc, final long nodeId) {
             super(null, desc, null);
             this.nodeId = nodeId;
         }

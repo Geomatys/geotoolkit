@@ -88,7 +88,7 @@ public class TimeIntervalLengthType {
      *     {@link BigDecimal }
      *     
      */
-    public void setValue(BigDecimal value) {
+    public void setValue(final BigDecimal value) {
         this.value = value;
     }
 
@@ -112,7 +112,7 @@ public class TimeIntervalLengthType {
      *     {@link String }
      *     
      */
-    public void setUnit(String value) {
+    public void setUnit(final String value) {
         this.unit = value;
     }
 
@@ -136,7 +136,7 @@ public class TimeIntervalLengthType {
      *     {@link Integer }
      *     
      */
-    public void setRadix(Integer value) {
+    public void setRadix(final Integer value) {
         this.radix = value;
     }
 
@@ -160,7 +160,7 @@ public class TimeIntervalLengthType {
      *     {@link Integer }
      *     
      */
-    public void setFactor(Integer value) {
+    public void setFactor(final Integer value) {
         this.factor = value;
     }
 

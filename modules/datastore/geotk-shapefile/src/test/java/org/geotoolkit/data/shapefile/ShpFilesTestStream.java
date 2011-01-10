@@ -185,7 +185,7 @@ public class ShpFilesTestStream extends TestCase {
         
         assertEquals(0, files.numberOfLocks());
     }
-    private void doRead(ShpFileType shpFileType) throws IOException {
+    private void doRead(final ShpFileType shpFileType) throws IOException {
         ReadableByteChannel in = files.getReadChannel(shpFileType, this);
         assertEquals(1, files.numberOfLocks());
         assertTrue(in instanceof FileChannel);
@@ -208,7 +208,7 @@ public class ShpFilesTestStream extends TestCase {
         assertEquals(shpFileType.name(), read);
     }
 
-    private void doWrite(ShpFileType shpFileType) throws IOException {
+    private void doWrite(final ShpFileType shpFileType) throws IOException {
         WritableByteChannel out = files.getWriteChannel(shpFileType, this);
         assertEquals(1, files.numberOfLocks());
         assertTrue(out instanceof FileChannel);

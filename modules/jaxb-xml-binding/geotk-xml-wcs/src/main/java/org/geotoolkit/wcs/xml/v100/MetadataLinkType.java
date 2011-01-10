@@ -70,7 +70,7 @@ public class MetadataLinkType extends MetadataAssociationType {
     /**
      * Build a new link (with only href attribute fill).
      */
-    public MetadataLinkType(String href) {
+    public MetadataLinkType(final String href) {
         super(href);
     }
     

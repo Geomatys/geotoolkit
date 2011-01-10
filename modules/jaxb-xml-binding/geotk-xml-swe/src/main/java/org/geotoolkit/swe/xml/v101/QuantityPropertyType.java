@@ -58,7 +58,7 @@ public class QuantityPropertyType implements AbstractQuantityProperty {
 
     }
 
-    public QuantityPropertyType(AbstractQuantityProperty qp) {
+    public QuantityPropertyType(final AbstractQuantityProperty qp) {
         if (qp != null && qp.getQuantity() != null) {
             this.quantity = new QuantityType(qp.getQuantity());
         }
@@ -74,7 +74,7 @@ public class QuantityPropertyType implements AbstractQuantityProperty {
     /**
      * Sets the value of the quantity property.
     */
-    public void setQuantity(QuantityType value) {
+    public void setQuantity(final QuantityType value) {
         this.quantity = value;
     }
 

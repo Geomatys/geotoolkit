@@ -56,7 +56,7 @@ public class DefaultSession extends AbstractSession {
     private final DefaultSessionDiff diff;
     private final boolean async;
 
-    public DefaultSession(DataStore store, boolean async){
+    public DefaultSession(final DataStore store, final boolean async){
         super(store);
         
         this.diff = new DefaultSessionDiff();
@@ -77,7 +77,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public FeatureCollection getFeatureCollection(Query query) {
+    public FeatureCollection getFeatureCollection(final Query query) {
         return QueryUtilities.evaluate("id", query,this);
     }
 
@@ -85,7 +85,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator getFeatureIterator(Query original) throws DataStoreException {
+    public FeatureIterator getFeatureIterator(final Query original) throws DataStoreException {
         final List<Delta> deltas = diff.getDeltas();
 
         //we must store the modified queries to iterate on them in reverse order.
@@ -110,7 +110,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void addFeatures(Name groupName, Collection newFeatures) throws DataStoreException {
+    public void addFeatures(final Name groupName, final Collection newFeatures) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -125,7 +125,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends AttributeDescriptor,? extends Object> values) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -171,7 +171,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         //will raise an error if the name doesnt exist
         store.getFeatureType(groupName);
 
@@ -235,7 +235,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public long getCount(Query original) throws DataStoreException {
+    public long getCount(final Query original) throws DataStoreException {
         final List<Delta> deltas = diff.getDeltas();
 
         //we must store the modified queries to iterate on them in reverse order.
@@ -260,7 +260,7 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(Query original) throws DataStoreException {
+    public Envelope getEnvelope(final Query original) throws DataStoreException {
         final List<Delta> deltas = diff.getDeltas();
 
         //we must store the modified queries to iterate on them in reverse order.

@@ -31,7 +31,7 @@ import org.geotoolkit.feature.FeatureFlatTest;
  */                                
 public class DefaultCoreSuite extends TestCase {
     private static final Logger LOGGER = org.geotoolkit.util.logging.Logging.getLogger("org.geotoolkit.core");
-    public DefaultCoreSuite(java.lang.String testName) {
+    public DefaultCoreSuite(final java.lang.String testName) {
         super(testName);
     }        
     

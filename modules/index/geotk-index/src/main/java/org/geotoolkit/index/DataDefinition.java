@@ -33,7 +33,7 @@ public class DataDefinition {
     private final Charset charset;
     private final List<Field> fields;
 
-    public DataDefinition(String charset, Class ... fields) {
+    public DataDefinition(final String charset, final Class ... fields) {
 
         if(charset == null){
             throw new IllegalArgumentException("Charset can not be null");
@@ -61,7 +61,7 @@ public class DataDefinition {
         return this.fields.size();
     }
 
-    public Field getField(int i) {
+    public Field getField(final int i) {
         return this.fields.get(i);
     }
 
@@ -83,7 +83,7 @@ public class DataDefinition {
      * @throws TreeException
      *                 DOCUMENT ME!
      */
-    public void addField(Class clazz) {
+    public void addField(final Class clazz) {
         if (clazz == Short.class) {
             this.fields.add(new Field(clazz, 2));
         } else if (clazz == Integer.class) {
@@ -107,7 +107,7 @@ public class DataDefinition {
      * 
      * @param len
      */
-    public void addField(int len) {
+    public void addField(final int len) {
         this.fields.add(new Field(String.class, len));
     }
 
@@ -152,7 +152,7 @@ public class DataDefinition {
         private final Class clazz;
         private final int len;
 
-        public Field(Class clazz, int len) {
+        public Field(final Class clazz, final int len) {
             this.clazz = clazz;
             this.len = len;
         }

@@ -34,7 +34,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
 
     private static final double EPS = 1E-12;
 
-    public AbstractPropertyEqual(Expression left, Expression right, boolean match) {
+    public AbstractPropertyEqual(final Expression left, final Expression right, final boolean match) {
         super(left,right,match);
     }
 
@@ -42,7 +42,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object candidate) {
+    public boolean evaluate(final Object candidate) {
         final Object value1 = left.evaluate(candidate);
         final Object value2 = right.evaluate(candidate);
 
@@ -92,7 +92,7 @@ public abstract class AbstractPropertyEqual extends AbstractBinaryComparisonOper
         return false;
     }
 
-    private boolean equalOrNumberEqual(Object value1, Object value2){
+    private boolean equalOrNumberEqual(final Object value1, final Object value2){
 
         //test general equal case
         if(!match && value1 instanceof String && value2 instanceof String){

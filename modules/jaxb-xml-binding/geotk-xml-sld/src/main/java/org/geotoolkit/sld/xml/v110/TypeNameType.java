@@ -61,7 +61,7 @@ public class TypeNameType {
      * 
      * @param coverageName
      */
-    public TypeNameType(String coverageName) {
+    public TypeNameType(final String coverageName) {
         this.coverageName = coverageName;
     }
     

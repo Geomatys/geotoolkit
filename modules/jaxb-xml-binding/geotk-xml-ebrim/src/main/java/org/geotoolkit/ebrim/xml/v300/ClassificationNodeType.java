@@ -85,7 +85,7 @@ public class ClassificationNodeType extends RegistryObjectType {
     /**
      * Sets the value of the classificationNode property.
      */
-    public void setClassificationNode(ClassificationNodeType classificationNode) {
+    public void setClassificationNode(final ClassificationNodeType classificationNode) {
         if (this.classificationNode == null) {
             this.classificationNode = new ArrayList<ClassificationNodeType>();
         }
@@ -95,7 +95,7 @@ public class ClassificationNodeType extends RegistryObjectType {
     /**
      * Sets the value of the classificationNode property.
      */
-    public void setClassificationNode(List<ClassificationNodeType> classificationNode) {
+    public void setClassificationNode(final List<ClassificationNodeType> classificationNode) {
         this.classificationNode = classificationNode;
     }
 
@@ -109,7 +109,7 @@ public class ClassificationNodeType extends RegistryObjectType {
     /**
      * Sets the value of the parent property.
      */
-    public void setParent(String value) {
+    public void setParent(final String value) {
         this.parent = value;
     }
 
@@ -123,7 +123,7 @@ public class ClassificationNodeType extends RegistryObjectType {
     /**
      * Sets the value of the code property.
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 
@@ -137,7 +137,7 @@ public class ClassificationNodeType extends RegistryObjectType {
     /**
      * Sets the value of the path property.
      */
-    public void setPath(String value) {
+    public void setPath(final String value) {
         this.path = value;
     }
 

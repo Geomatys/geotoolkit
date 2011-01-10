@@ -81,7 +81,7 @@ public class Request extends AbstractRequest {
      * Build a new Request.
      */
     public Request(final OperationType getCapabilities, final OperationType getMap,
-            final OperationType getFeatureInfo, JAXBElement<OperationType>... extendedOperations) {
+            final OperationType getFeatureInfo, final JAXBElement<OperationType>... extendedOperations) {
         this.getCapabilities = getCapabilities;
         this.getFeatureInfo  = getFeatureInfo;
         this.getMap          = getMap;
@@ -123,7 +123,7 @@ public class Request extends AbstractRequest {
     /**
      * update all the dcp ur with the specified one.
      */
-    public void updateURL(String url) {
+    public void updateURL(final String url) {
         if (getCapabilities != null) {
             getCapabilities.updateURL(url);
         }

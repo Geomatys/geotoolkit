@@ -59,7 +59,7 @@ public class NorthArrowMapperFactory implements JRMapperFactory<JRRenderable,Map
      * {@inheritDoc }
      */
     @Override
-    public Image getIcon(int type) {
+    public Image getIcon(final int type) {
         return ICON.getImage();
     }
 

@@ -100,8 +100,8 @@ public class QueryType extends AbstractQueryType {
      * @param sortBy A sort by Object.
      * @param constraint A constraint object containing the different filters to constraint the query.            
      */
-    public QueryType(List<QName> typeNames, ElementSetNameType elementSetName, SortByType sortBy,
-            QueryConstraintType constraint) {
+    public QueryType(final List<QName> typeNames, final ElementSetNameType elementSetName, final SortByType sortBy,
+            final QueryConstraintType constraint) {
         
         this.typeNames      = typeNames;
         this.elementSetName = elementSetName; 
@@ -117,8 +117,8 @@ public class QueryType extends AbstractQueryType {
      * @param sortBy A sort by Object.
      * @param constraint A constraint object containing the different filters to constraint the query.            
      */
-    public QueryType(List<QName> typeNames, List<QName> elementName, SortByType sortBy,
-            QueryConstraintType constraint) {
+    public QueryType(final List<QName> typeNames, final List<QName> elementName, final SortByType sortBy,
+            final QueryConstraintType constraint) {
         
         this.typeNames      = typeNames;
         this.elementName    = elementName; 
@@ -136,7 +136,7 @@ public class QueryType extends AbstractQueryType {
     /**
      * Sets the value of the elementSetName property.
      */
-    public void setElementSetName(ElementSetNameType elementSetName) {
+    public void setElementSetName(final ElementSetNameType elementSetName) {
         this.elementSetName = elementSetName;
     }
 
@@ -154,7 +154,7 @@ public class QueryType extends AbstractQueryType {
     /**
      * Sets the value of the elementName property.
      */
-    public void setElementName(QName elementName) {
+    public void setElementName(final QName elementName) {
         if (this.elementName == null) {
             this.elementName = new ArrayList<QName>();
         }
@@ -164,7 +164,7 @@ public class QueryType extends AbstractQueryType {
     /**
      * Sets the value of the elementName property.
      */
-    public void setElementName(List<QName> elementName) {
+    public void setElementName(final List<QName> elementName) {
         this.elementName = elementName;
     }
 
@@ -176,7 +176,7 @@ public class QueryType extends AbstractQueryType {
     }
     
     @Override
-    public void setConstraint(QueryConstraintType value) {
+    public void setConstraint(final QueryConstraintType value) {
        this.constraint = value;
     }
 
@@ -190,7 +190,7 @@ public class QueryType extends AbstractQueryType {
     /**
      * Sets the value of the sortBy property.
      */
-    public void setSortBy(SortByType sortBy) {
+    public void setSortBy(final SortByType sortBy) {
         this.sortBy = sortBy;
     }
 
@@ -205,14 +205,14 @@ public class QueryType extends AbstractQueryType {
         return Collections.unmodifiableList(typeNames);
     }
     
-    public void setTypeNames(List<QName> typeNames) {
+    public void setTypeNames(final List<QName> typeNames) {
         this.typeNames = typeNames;
     }
     
     /**
      * Sets the value of the typeNames property.
      */
-    public void setTypeNames(QName typeName) {
+    public void setTypeNames(final QName typeName) {
         if (typeNames == null) {
             typeNames = new ArrayList<QName>();
         }

@@ -95,7 +95,7 @@ public class RecolorFunction extends AbstractExpression implements Function {
         }
     };
 
-    public RecolorFunction(List<ColorItem> items, Literal fallback){
+    public RecolorFunction(final List<ColorItem> items, final Literal fallback){
         this.items = items;
         this.fallback = fallback;
     }
@@ -115,12 +115,12 @@ public class RecolorFunction extends AbstractExpression implements Function {
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
 
         if(!(object instanceof Image)){
             throw new IllegalArgumentException("Unexpected type : " + object + ", need Image.");

@@ -46,7 +46,7 @@ public enum ThreshholdsBelongToType {
     PRECEDING("preceding");
     private final String value;
 
-    ThreshholdsBelongToType(String v) {
+    ThreshholdsBelongToType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum ThreshholdsBelongToType {
         return value;
     }
 
-    public static ThreshholdsBelongToType fromValue(String v) {
+    public static ThreshholdsBelongToType fromValue(final String v) {
         for (ThreshholdsBelongToType c: ThreshholdsBelongToType.values()) {
             if (c.value.equals(v)) {
                 return c;

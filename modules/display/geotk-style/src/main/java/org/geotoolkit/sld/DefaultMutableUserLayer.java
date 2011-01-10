@@ -123,7 +123,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      * This method is thread safe.
      */
     @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         final String oldName;
         synchronized (this) {
             oldName = this.name;
@@ -149,7 +149,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      * This method is thread safe.
      */
     @Override
-    public void setDescription(Description desc) {
+    public void setDescription(final Description desc) {
         if (desc == null) {
             throw new NullPointerException("description can't be null");
         }
@@ -179,7 +179,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      * This method is thread safe.
      */
     @Override
-    public void setSource(Source source) {
+    public void setSource(final Source source) {
         final Source oldSource;
         synchronized (this) {
             oldSource = this.source;
@@ -207,7 +207,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      * This method is thread safe.
      */
     @Override
-    public void setConstraints(MutableConstraints constraints) {
+    public void setConstraints(final MutableConstraints constraints) {
         if (constraints == null) {
             throw new NullPointerException("constraints can't be null");
         }
@@ -240,7 +240,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -248,7 +248,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
     
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
+    protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
         
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
@@ -260,7 +260,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
         
     }
     
-    protected void fireStyleChange(int type, MutableLayerStyle layer, NumberRange<Integer> range) {
+    protected void fireStyleChange(final int type, final MutableLayerStyle layer, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableLayerStyle> event = new CollectionChangeEvent<MutableLayerStyle>(this, layer, type, range, null);
@@ -272,7 +272,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
 
     }
     
-    protected void fireStyleChange(int type, MutableLayerStyle layer, NumberRange<Integer> range, EventObject subEvent) {
+    protected void fireStyleChange(final int type, final MutableLayerStyle layer, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableLayerStyle> event = new CollectionChangeEvent<MutableLayerStyle>(this, layer, type, range,subEvent);
@@ -284,7 +284,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
 
     }
     
-    protected void fireStyleChange(int type, Collection<? extends MutableLayerStyle> layer, NumberRange<Integer> range){
+    protected void fireStyleChange(final int type, final Collection<? extends MutableLayerStyle> layer, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
         
         final CollectionChangeEvent<MutableLayerStyle> event = new CollectionChangeEvent<MutableLayerStyle>(this,layer,type,range, null);
@@ -296,7 +296,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
         
     }
     
-    protected void fireConstraintChange(CollectionChangeEvent<? extends Constraint> event){
+    protected void fireConstraintChange(final CollectionChangeEvent<? extends Constraint> event){
         CollectionChangeEvent<Constraint> newEvent = new CollectionChangeEvent<Constraint>(this,event.getItems(),event.getType(),event.getRange(),null);
         
         final LayerListener[] lists = listeners.getListeners(LayerListener.class);
@@ -311,11 +311,11 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
     //--------------------------------------------------------------------------
     
     @Override
-    public void propertyChange(PropertyChangeEvent event) {
+    public void propertyChange(final PropertyChangeEvent event) {
         fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
     }
     @Override
-    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+    public void featureTypeStyleChange(final CollectionChangeEvent<MutableFeatureTypeStyle> event) {
         fireStyleChange(CollectionChangeEvent.ITEM_CHANGED, (MutableLayerStyle)event.getSource(), null, event);
     }
 
@@ -324,7 +324,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      * {@inheritDoc }
      */
     @Override
-    public void addListener(LayerListener listener) {
+    public void addListener(final LayerListener listener) {
         listeners.add(LayerListener.class, listener);
     }
 
@@ -332,7 +332,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(LayerListener listener) {
+    public void removeListener(final LayerListener listener) {
         listeners.remove(LayerListener.class, listener);
     }
 
@@ -340,7 +340,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

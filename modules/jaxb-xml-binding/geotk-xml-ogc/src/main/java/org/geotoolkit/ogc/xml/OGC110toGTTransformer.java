@@ -66,12 +66,12 @@ public class OGC110toGTTransformer {
 
     private final Map<String, String> namespaceMapping;
 
-    public OGC110toGTTransformer(FilterFactory2 factory) {
+    public OGC110toGTTransformer(final FilterFactory2 factory) {
         this.filterFactory   = factory;
         this.namespaceMapping = null;
     }
 
-    public OGC110toGTTransformer(FilterFactory2 factory, Map<String, String> namespaceMapping) {
+    public OGC110toGTTransformer(final FilterFactory2 factory, final Map<String, String> namespaceMapping) {
         this.filterFactory = factory;
         this.namespaceMapping = namespaceMapping;
     }
@@ -79,7 +79,7 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD filter v1.1 in GT filter.
      */
-    public Filter visitFilter(org.geotoolkit.ogc.xml.v110.FilterType ft)
+    public Filter visitFilter(final org.geotoolkit.ogc.xml.v110.FilterType ft)
             throws FactoryException{
         if(ft == null)return null;        
         
@@ -368,7 +368,7 @@ public class OGC110toGTTransformer {
     /**
      * Transform a SLD IDS Filter v1.1 in GT filter.
      */
-    public Filter visitIds(List<JAXBElement<? extends AbstractIdType>> lst){
+    public Filter visitIds(final List<JAXBElement<? extends AbstractIdType>> lst){
         final Set<Identifier> ids = new HashSet<Identifier>();
         
         for(final JAXBElement<? extends org.geotoolkit.ogc.xml.v110.AbstractIdType> id : lst){
@@ -383,7 +383,7 @@ public class OGC110toGTTransformer {
         return filterFactory.id(ids);
     }
 
-    public List<SortBy> visitSortBy(SortByType type){
+    public List<SortBy> visitSortBy(final SortByType type){
         final List<SortBy> sorts = new ArrayList<SortBy>();
 
         for(final SortPropertyType spt : type.getSortProperty()){
@@ -394,12 +394,12 @@ public class OGC110toGTTransformer {
         return sorts;
     }
 
-    public Expression visit(JAXBElement<? extends AbstractGeometryType> ele)
+    public Expression visit(final JAXBElement<? extends AbstractGeometryType> ele)
             throws NoSuchAuthorityCodeException, FactoryException{
         return filterFactory.literal(GeometrytoJTS.toJTS(ele.getValue()));
     }
 
-    public Expression visitEnv(JAXBElement<EnvelopeEntry> env) throws FactoryException{
+    public Expression visitEnv(final JAXBElement<EnvelopeEntry> env) throws FactoryException{
         final EnvelopeEntry entry = env.getValue();
         String srs = entry.getSrsName();
         DirectPositionType lower = entry.getLowerCorner();
@@ -412,12 +412,12 @@ public class OGC110toGTTransformer {
         return filterFactory.literal(genv);
     }
 
-    public PropertyName visitPropertyName(PropertyNameType pnt){
+    public PropertyName visitPropertyName(final PropertyNameType pnt){
         if (pnt != null)
             return visitPropertyName(pnt.getContent());
         return null;
     }
-    public PropertyName visitPropertyName(String pnt){
+    public PropertyName visitPropertyName(final String pnt){
         String brutPname = pnt;
         if (brutPname.indexOf(':') == -1)
             return filterFactory.property(brutPname);
@@ -449,7 +449,7 @@ public class OGC110toGTTransformer {
     /**
      * Transform a JaxBelement in Expression.
      */
-    public Expression visitExpression(JAXBElement<?> jax){
+    public Expression visitExpression(final JAXBElement<?> jax){
 //        JAXBElementFunctionType>  ---NS
 //        JAXBElementExpressionType> ---k
 //        JAXBElementLiteralType> ---k
@@ -502,7 +502,7 @@ public class OGC110toGTTransformer {
     /**
      * Transform a literalType in Expression.
      */
-    public Expression visitExpression(LiteralType type){
+    public Expression visitExpression(final LiteralType type){
         final List<Object> content = type.getContent();
         
         for(final Object obj : content){
@@ -517,7 +517,7 @@ public class OGC110toGTTransformer {
     /**
      * Change a QName in Name.
      */
-    public Name visitQName(QName qname){
+    public Name visitQName(final QName qname){
         if(qname == null) return null;
         return new DefaultName(qname);
     }

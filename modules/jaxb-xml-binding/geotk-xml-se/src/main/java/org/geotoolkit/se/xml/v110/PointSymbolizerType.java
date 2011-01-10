@@ -77,7 +77,7 @@ public class PointSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public void setGeometry(GeometryType value) {
+    public void setGeometry(final GeometryType value) {
         this.geometry = value;
     }
 
@@ -101,7 +101,7 @@ public class PointSymbolizerType
      *     {@link GraphicType }
      *     
      */
-    public void setGraphic(GraphicType value) {
+    public void setGraphic(final GraphicType value) {
         this.graphic = value;
     }
 

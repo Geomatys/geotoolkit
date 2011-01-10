@@ -93,7 +93,7 @@ public class DimensionType {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -117,7 +117,7 @@ public class DimensionType {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -141,7 +141,7 @@ public class DimensionType {
      *     {@link String }
      *     
      */
-    public void setUnits(String value) {
+    public void setUnits(final String value) {
         this.units = value;
     }
 
@@ -165,7 +165,7 @@ public class DimensionType {
      *     {@link String }
      *     
      */
-    public void setUnitSymbol(String value) {
+    public void setUnitSymbol(final String value) {
         this.unitSymbol = value;
     }
 
@@ -189,7 +189,7 @@ public class DimensionType {
      *     {@link String }
      *     
      */
-    public void setUserValue(String value) {
+    public void setUserValue(final String value) {
         this.userValue = value;
     }
 
@@ -213,7 +213,7 @@ public class DimensionType {
      *     {@link String }
      *     
      */
-    public void setDefault(String value) {
+    public void setDefault(final String value) {
         this._default = value;
     }
 
@@ -237,7 +237,7 @@ public class DimensionType {
      *     {@link Boolean }
      *     
      */
-    public void setMultipleValues(Boolean value) {
+    public void setMultipleValues(final Boolean value) {
         this.multipleValues = value;
     }
 
@@ -261,7 +261,7 @@ public class DimensionType {
      *     {@link Boolean }
      *     
      */
-    public void setNearestValue(Boolean value) {
+    public void setNearestValue(final Boolean value) {
         this.nearestValue = value;
     }
 
@@ -285,7 +285,7 @@ public class DimensionType {
      *     {@link Boolean }
      *     
      */
-    public void setCurrent(Boolean value) {
+    public void setCurrent(final Boolean value) {
         this.current = value;
     }
 

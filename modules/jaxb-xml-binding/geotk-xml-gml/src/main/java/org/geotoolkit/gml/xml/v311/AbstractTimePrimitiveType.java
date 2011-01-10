@@ -74,7 +74,7 @@ public abstract class AbstractTimePrimitiveType extends AbstractTimeObjectType i
         return this.relatedTime;
     }
 
-    public RelativePosition relativePosition(TemporalPrimitive tp) {
+    public RelativePosition relativePosition(final TemporalPrimitive tp) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

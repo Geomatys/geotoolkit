@@ -69,7 +69,7 @@ public class StatusType {
     * Sets the value of the statusCode property.
     * 
     */
-   public void setStatusCode(StatusCodeType value) {
+   public void setStatusCode(final StatusCodeType value) {
       this.statusCode = value;
    }
 
@@ -85,7 +85,7 @@ public class StatusType {
     * Sets the value of the statusMessage property.
     * 
     */
-   public void setStatusMessage(String value) {
+   public void setStatusMessage(final String value) {
       this.statusMessage = value;
    }
 
@@ -100,7 +100,7 @@ public class StatusType {
    /**
     * Sets the value of the statusDetail property.
     */
-   public void setStatusDetail(StatusDetailType value) {
+   public void setStatusDetail(final StatusDetailType value) {
       this.statusDetail = value;
    }
 

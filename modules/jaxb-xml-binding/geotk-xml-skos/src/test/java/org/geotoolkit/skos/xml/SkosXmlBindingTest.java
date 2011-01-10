@@ -163,7 +163,7 @@ public class SkosXmlBindingTest {
         assertEquals(expResult, result);
     }
 
-    private String removeXmlns(String xml) {
+    private String removeXmlns(final String xml) {
 
         String s = xml;
         s = s.replaceAll("xmlns=\"[^\"]*\" ", "");

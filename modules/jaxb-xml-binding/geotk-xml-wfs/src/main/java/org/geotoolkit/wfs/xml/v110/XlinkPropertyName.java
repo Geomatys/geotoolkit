@@ -80,7 +80,7 @@ public class XlinkPropertyName {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -104,7 +104,7 @@ public class XlinkPropertyName {
      *     {@link String }
      *     
      */
-    public void setTraverseXlinkDepth(String value) {
+    public void setTraverseXlinkDepth(final String value) {
         this.traverseXlinkDepth = value;
     }
 
@@ -128,7 +128,7 @@ public class XlinkPropertyName {
      *     {@link BigInteger }
      *     
      */
-    public void setTraverseXlinkExpiry(BigInteger value) {
+    public void setTraverseXlinkExpiry(final BigInteger value) {
         this.traverseXlinkExpiry = value;
     }
 

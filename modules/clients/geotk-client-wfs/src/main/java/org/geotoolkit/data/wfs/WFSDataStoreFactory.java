@@ -77,7 +77,7 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public synchronized WFSDataStore createDataStore(ParameterValueGroup params) throws DataStoreException {
+    public synchronized WFSDataStore createDataStore(final ParameterValueGroup params) throws DataStoreException {
         final URI serverURI       = (URI) params.parameter(SERVER_URI.getName().getCode()).getValue();
         final boolean postrequest = params.parameter(POST_REQUEST.getName().getCode()).booleanValue();
 
@@ -99,7 +99,7 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory{
      * {@inheritDoc }
      */
     @Override
-    public DataStore createNewDataStore(ParameterValueGroup params) throws DataStoreException {
+    public DataStore createNewDataStore(final ParameterValueGroup params) throws DataStoreException {
         throw new DataStoreException("Can not create any new WFS DataStore");
     }
 

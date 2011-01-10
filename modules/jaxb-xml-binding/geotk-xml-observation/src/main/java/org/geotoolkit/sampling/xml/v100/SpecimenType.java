@@ -113,7 +113,7 @@ public class SpecimenType extends SamplingFeatureEntry {
      *     {@link CodeType }
      *     
      */
-    public void setMaterialClass(CodeType value) {
+    public void setMaterialClass(final CodeType value) {
         this.materialClass = value;
     }
 
@@ -137,7 +137,7 @@ public class SpecimenType extends SamplingFeatureEntry {
      *     {@link LocationPropertyType }
      *     
      */
-    public void setCurrentLocation(LocationPropertyType value) {
+    public void setCurrentLocation(final LocationPropertyType value) {
         this.currentLocation = value;
     }
 
@@ -161,7 +161,7 @@ public class SpecimenType extends SamplingFeatureEntry {
      *     {@link SpecimenType.Size }
      *     
      */
-    public void setSize(SpecimenType.Size value) {
+    public void setSize(final SpecimenType.Size value) {
         this.size = value;
     }
 
@@ -185,7 +185,7 @@ public class SpecimenType extends SamplingFeatureEntry {
      *     {@link ReferenceType }
      *     
      */
-    public void setSamplingMethod(ReferenceEntry value) {
+    public void setSamplingMethod(final ReferenceEntry value) {
         this.samplingMethod = value;
     }
 
@@ -209,7 +209,7 @@ public class SpecimenType extends SamplingFeatureEntry {
      *     {@link TimePrimitivePropertyType }
      *     
      */
-    public void setSamplingTime(TimePrimitivePropertyType value) {
+    public void setSamplingTime(final TimePrimitivePropertyType value) {
         this.samplingTime = value;
     }
 
@@ -307,7 +307,7 @@ public class SpecimenType extends SamplingFeatureEntry {
          *     {@link String }
          *     
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -335,7 +335,7 @@ public class SpecimenType extends SamplingFeatureEntry {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -359,7 +359,7 @@ public class SpecimenType extends SamplingFeatureEntry {
          *     {@link String }
          *     
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -383,7 +383,7 @@ public class SpecimenType extends SamplingFeatureEntry {
          *     {@link String }
          *     
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -407,7 +407,7 @@ public class SpecimenType extends SamplingFeatureEntry {
          *     {@link String }
          *     
          */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -431,7 +431,7 @@ public class SpecimenType extends SamplingFeatureEntry {
          *     {@link String }
          *     
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -455,7 +455,7 @@ public class SpecimenType extends SamplingFeatureEntry {
          *     {@link String }
          *     
          */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -479,7 +479,7 @@ public class SpecimenType extends SamplingFeatureEntry {
          *     {@link String }
          *     
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 

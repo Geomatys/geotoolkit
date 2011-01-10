@@ -73,7 +73,7 @@ public class ObjectRefType {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -87,7 +87,7 @@ public class ObjectRefType {
     /**
      * Sets the value of the home property.
      */
-    public void setHome(String value) {
+    public void setHome(final String value) {
         this.home = value;
     }
 
@@ -105,7 +105,7 @@ public class ObjectRefType {
     /**
      * Sets the value of the createReplica property.
     */
-    public void setCreateReplica(Boolean value) {
+    public void setCreateReplica(final Boolean value) {
         this.createReplica = value;
     }
 

@@ -53,7 +53,7 @@ public class VectorType extends DirectPositionType {
 
     }
 
-    public VectorType(double[] values) {
+    public VectorType(final double[] values) {
         super(values);
     }
 }

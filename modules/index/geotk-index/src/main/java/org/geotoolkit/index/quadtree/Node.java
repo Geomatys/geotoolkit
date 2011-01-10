@@ -35,16 +35,16 @@ public class Node extends AbstractNode{
     /**
      * @param envelope the node bounds [MinX,MinY,MaxX,MaxY]
      */
-    public Node(double minx, double miny, double maxx, double maxy) {
+    public Node(final double minx, final double miny, final double maxx, final double maxy) {
         super(minx,miny,maxx,maxy);
     }
 
-    public Node(Envelope env) {
+    public Node(final Envelope env) {
         super(env);
     }
 
     @Override
-    public void setSubNodes(AbstractNode ... nodes) {
+    public void setSubNodes(final AbstractNode ... nodes) {
         n0 = null;
         n1 = null;
         n2 = null;
@@ -77,7 +77,7 @@ public class Node extends AbstractNode{
     }
 
     @Override
-    public AbstractNode getSubNode(int pos) throws StoreException {
+    public AbstractNode getSubNode(final int pos) throws StoreException {
         switch(pos){
             case 0: return n0;
             case 1: return n1;

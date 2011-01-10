@@ -82,7 +82,7 @@ public class GNC_RelationType implements org.opengis.metadata.geonetcab.GNC_Rela
      *     {@link GNCRelationNameCodePropertyType }
      *     
      */
-    public void setRelationName(GNC_RelationNameCode value) {
+    public void setRelationName(final GNC_RelationNameCode value) {
         this.relationName = value;
     }
 
@@ -102,11 +102,11 @@ public class GNC_RelationType implements org.opengis.metadata.geonetcab.GNC_Rela
         return this.organisationIdentifier;
     }
 
-    public void setOrganisationIdentifier(List<GNC_OrganisationEntitie> organisationIdentifier) {
+    public void setOrganisationIdentifier(final List<GNC_OrganisationEntitie> organisationIdentifier) {
         this.organisationIdentifier = organisationIdentifier;
     }
 
-    public void setOrganisationIdentifier(GNC_OrganisationEntitie organisationIdentifier) {
+    public void setOrganisationIdentifier(final GNC_OrganisationEntitie organisationIdentifier) {
         if (this.organisationIdentifier == null) {
             this.organisationIdentifier = new ArrayList<GNC_OrganisationEntitie>();
         }
@@ -114,7 +114,7 @@ public class GNC_RelationType implements org.opengis.metadata.geonetcab.GNC_Rela
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

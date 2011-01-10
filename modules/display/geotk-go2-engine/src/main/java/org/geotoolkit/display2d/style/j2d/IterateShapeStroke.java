@@ -39,14 +39,14 @@ public class IterateShapeStroke implements Stroke {
     private final float gap;
     private final Shape motif;
 
-    public IterateShapeStroke(float initialGap, float gap, Shape motif) {
+    public IterateShapeStroke(final float initialGap, final float gap, final Shape motif) {
         this.initialGap = initialGap;
         this.gap = gap;
         this.motif = motif;
     }
 
     @Override
-    public Shape createStrokedShape(Shape shape) {
+    public Shape createStrokedShape(final Shape shape) {
         final PathIterator it = new FlatteningPathIterator(shape.getPathIterator(null), 1d);
         final PathWalker walker = new DefaultPathWalker(it);
 
@@ -73,7 +73,7 @@ public class IterateShapeStroke implements Stroke {
     ////////////////////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static Shape resize(Shape shape, float size){
+    public static Shape resize(Shape shape, final float size){
         shape = anchor(shape, 0.5f);
         final Rectangle2D bounds = shape.getBounds2D();
 
@@ -87,7 +87,7 @@ public class IterateShapeStroke implements Stroke {
         return shape;
     }
 
-    public static Shape anchor(Shape shape, float anchorY){
+    public static Shape anchor(final Shape shape, final float anchorY){
         final Rectangle2D bounds = shape.getBounds2D();
         AffineTransform t = new AffineTransform();
         t.setToTranslation(-bounds.getCenterX(), -bounds.getMinY() - bounds.getHeight()*anchorY);

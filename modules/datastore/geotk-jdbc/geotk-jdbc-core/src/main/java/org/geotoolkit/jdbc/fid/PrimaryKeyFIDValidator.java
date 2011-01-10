@@ -31,7 +31,7 @@ public class PrimaryKeyFIDValidator implements FIDValidator {
     private final PrimaryKey key;
     private final DefaultJDBCDataStore store;
 
-    public PrimaryKeyFIDValidator(DefaultJDBCDataStore store, PrimaryKey key) {
+    public PrimaryKeyFIDValidator(final DefaultJDBCDataStore store, final PrimaryKey key) {
         this.store = store;
         this.key = key;
     }

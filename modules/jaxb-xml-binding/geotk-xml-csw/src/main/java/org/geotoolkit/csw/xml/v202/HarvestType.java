@@ -109,8 +109,8 @@ public class HarvestType extends RequestBaseType implements Harvest {
      * @param handler
      * @param harvestInterval
      */
-    public HarvestType(String service, String version, String source, String resourceType, 
-            String resourceFormat, String handler, Duration harvestInterval) {
+    public HarvestType(final String service, final String version, final String source, final String resourceType, 
+            final String resourceFormat, final String handler, final Duration harvestInterval) {
         super(service, version);
         this.source          = source;
         this.resourceType    = resourceType;
@@ -131,7 +131,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     /**
      * sets the value of the source property.
      */
-    public void setSource(String source) {
+    public void setSource(final String source) {
         this.source = source;
     }
 
@@ -145,7 +145,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     /**
      * Sets the value of the resourceType property.
      */
-    public void setResourceType(String resourceType) {
+    public void setResourceType(final String resourceType) {
         this.resourceType = resourceType;
     }
 
@@ -159,7 +159,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     /**
      * Sets the value of the resourceFormat property.
      */
-    public void setResourceFormat(String resourceFormat) {
+    public void setResourceFormat(final String resourceFormat) {
         this.resourceFormat = resourceFormat;
     }
 
@@ -174,7 +174,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
     /**
      * Sets the value of the harvestInterval property.
      */
-    public void setHarvestInterval(Duration harvestInterval) {
+    public void setHarvestInterval(final Duration harvestInterval) {
         this.harvestInterval = harvestInterval;
     }
 
@@ -188,7 +188,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
         return Collections.unmodifiableList(responseHandler);
     }
 
-    public void setResponseHandler(List<String> responseHandler) {
+    public void setResponseHandler(final List<String> responseHandler) {
         this.responseHandler = responseHandler;
     }
 
@@ -196,7 +196,7 @@ public class HarvestType extends RequestBaseType implements Harvest {
         return "application/xml";
     }
 
-    public void setOutputFormat(String value) {}
+    public void setOutputFormat(final String value) {}
 
     /**
      * Verify if this entry is identical to the specified object.

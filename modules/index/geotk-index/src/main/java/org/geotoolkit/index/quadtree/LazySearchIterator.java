@@ -40,7 +40,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
         private final AbstractNode node;
         int childIndex;
 
-        private Segment(AbstractNode node, int childIndex){
+        private Segment(final AbstractNode node, final int childIndex){
             this.node = node;
             this.childIndex = childIndex;
         }
@@ -56,7 +56,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
     //curent visited node
     private AbstractNode current = null;
 
-    public LazySearchIterator(AbstractNode node, Envelope bounds, double[] minRes) {
+    public LazySearchIterator(final AbstractNode node, final Envelope bounds, final double[] minRes) {
         this.bounds = bounds;
         this.closed = false;
 
@@ -184,7 +184,7 @@ public class LazySearchIterator implements SearchIterator<AbstractNode> {
 
         private T next = null;
 
-        public Buffered(AbstractNode node, Envelope bounds, double[] minRes, DataReader reader, int bufferSize){
+        public Buffered(final AbstractNode node, final Envelope bounds, final double[] minRes, final DataReader reader, final int bufferSize){
             this.bufferSize = bufferSize;
             this.reader = reader;
             this.ite = new LazySearchIterator(node, bounds, minRes);

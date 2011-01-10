@@ -81,7 +81,7 @@ public class ServerType {
      *     {@link OnlineResourceType }
      *     
      */
-    public void setOnlineResource(OnlineResourceType value) {
+    public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
     }
 
@@ -105,7 +105,7 @@ public class ServerType {
      *     {@link ServiceType }
      *     
      */
-    public void setService(ServiceType value) {
+    public void setService(final ServiceType value) {
         this.service = value;
     }
 
@@ -129,7 +129,7 @@ public class ServerType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -153,7 +153,7 @@ public class ServerType {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

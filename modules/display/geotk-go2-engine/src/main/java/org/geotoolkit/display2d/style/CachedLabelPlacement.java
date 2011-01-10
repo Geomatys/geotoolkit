@@ -27,7 +27,7 @@ import org.opengis.style.LabelPlacement;
  */
 public abstract class CachedLabelPlacement<T extends LabelPlacement> extends Cache<T>{
 
-    protected CachedLabelPlacement(T element){
+    protected CachedLabelPlacement(final T element){
         super(element);
     }
     

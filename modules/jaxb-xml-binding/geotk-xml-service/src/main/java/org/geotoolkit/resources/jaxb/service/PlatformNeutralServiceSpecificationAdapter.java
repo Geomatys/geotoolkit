@@ -85,7 +85,7 @@ public class PlatformNeutralServiceSpecificationAdapter extends XmlAdapter<Platf
      * @return A java object which represents the metadata value.
      */
     @Override
-    public PlatformNeutralServiceSpecification unmarshal(PlatformNeutralServiceSpecificationAdapter value) throws Exception {
+    public PlatformNeutralServiceSpecification unmarshal(final PlatformNeutralServiceSpecificationAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -100,7 +100,7 @@ public class PlatformNeutralServiceSpecificationAdapter extends XmlAdapter<Platf
      * @return The adapter for this PlatformNeutralServiceSpecification.
      */
     @Override
-    public PlatformNeutralServiceSpecificationAdapter marshal(PlatformNeutralServiceSpecification value) throws Exception {
+    public PlatformNeutralServiceSpecificationAdapter marshal(final PlatformNeutralServiceSpecification value) throws Exception {
         return new PlatformNeutralServiceSpecificationAdapter(value);
     }
 

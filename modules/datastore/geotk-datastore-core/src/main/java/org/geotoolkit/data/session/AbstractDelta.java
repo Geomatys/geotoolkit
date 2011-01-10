@@ -37,7 +37,7 @@ abstract class AbstractDelta implements Delta{
 
     protected final Session session;
 
-    public AbstractDelta(Session session){
+    public AbstractDelta(final Session session){
         if(session == null){
             throw new NullPointerException("Session can not be null.");
         }

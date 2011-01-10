@@ -59,7 +59,7 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
      * @param iterator FeatureReader to sort
      * @param orders sorting orders
      */
-    private GenericSortByFeatureIterator(final R iterator, SortBy[] orders) {
+    private GenericSortByFeatureIterator(final R iterator, final SortBy[] orders) {
         this.iterator = iterator;
         this.comparator = new SortByComparator(orders);
     }
@@ -136,7 +136,7 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
     private static final class GenericSortByFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericSortByFeatureIterator<F,R> implements FeatureReader<T,F>{
 
-        private GenericSortByFeatureReader(R reader,SortBy[] orders){
+        private GenericSortByFeatureReader(final R reader,final SortBy[] orders){
             super(reader,orders);
         }
 
@@ -150,14 +150,14 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureReader will a sort by order.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(FeatureReader<T,F> reader, SortBy[] orders){
+    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(final FeatureReader<T,F> reader, final SortBy[] orders){
         return new GenericSortByFeatureReader(reader, orders);
     }
 
     /**
      * Wrap a FeatureIterator will a sort by order.
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, SortBy[] orders){
+    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final SortBy[] orders){
         return new GenericSortByFeatureIterator(reader, orders);
     }
 

@@ -41,7 +41,7 @@ public class LinkRef implements AbstractLinkRef {
     public LinkRef() {
     }
 
-    public LinkRef(String ref) {
+    public LinkRef(final String ref) {
         this.ref = ref;
     }
 
@@ -55,7 +55,7 @@ public class LinkRef implements AbstractLinkRef {
     /**
      * Sets the value of the ref property.
      */
-    public void setRef(String value) {
+    public void setRef(final String value) {
         this.ref = value;
     }
 

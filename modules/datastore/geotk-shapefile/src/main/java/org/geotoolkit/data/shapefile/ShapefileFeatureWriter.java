@@ -101,8 +101,8 @@ public class ShapefileFeatureWriter implements FeatureWriter<SimpleFeatureType, 
     private final FileChannel dbfChannel;
     private final Charset dbfCharset;
 
-    public ShapefileFeatureWriter(String typeName, ShpFiles shpFiles, ShapefileAttributeReader attsReader,  
-            FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, Charset charset) throws IOException,DataStoreException {
+    public ShapefileFeatureWriter(final String typeName, final ShpFiles shpFiles, final ShapefileAttributeReader attsReader,  
+            final FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, final Charset charset) throws IOException,DataStoreException {
         this.shpFiles = shpFiles;
         this.dbfCharset = charset;
         // set up reader

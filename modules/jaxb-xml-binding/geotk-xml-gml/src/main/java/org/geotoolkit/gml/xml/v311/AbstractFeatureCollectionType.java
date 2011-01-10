@@ -64,7 +64,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry
 
     }
 
-    public AbstractFeatureCollectionType(String id, String name, String description, List<FeaturePropertyType> featureMember) {
+    public AbstractFeatureCollectionType(final String id, final String name, final String description, final List<FeaturePropertyType> featureMember) {
         super(id, name, description);
         this.featureMember = featureMember;
     }
@@ -82,7 +82,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry
     /**
      * Gets the value of the featureMember property.
      */
-    public void addFeatureMember(FeaturePropertyType feature) {
+    public void addFeatureMember(final FeaturePropertyType feature) {
         if (featureMember == null) {
             featureMember = new ArrayList<FeaturePropertyType>();
         }
@@ -95,7 +95,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry
      * @param featureId
      * @return
      */
-    public boolean containsFeature(String featureId) {
+    public boolean containsFeature(final String featureId) {
         if (featureMember != null) {
             for (FeaturePropertyType feat : featureMember) {
                 if (feat.getHref() != null && feat.getHref().equals(featureId)) {
@@ -126,7 +126,7 @@ public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry
      *     {@link FeatureArrayPropertyType }
      *     
      */
-    public void setFeatureMembers(FeatureArrayPropertyType value) {
+    public void setFeatureMembers(final FeatureArrayPropertyType value) {
         this.featureMembers = value;
     }
 

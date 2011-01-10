@@ -73,7 +73,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     /**
      * Direct constructor for test cases
      */
-    public JTSGeometryFactory( CoordinateReferenceSystem crs ) {
+    public JTSGeometryFactory( final CoordinateReferenceSystem crs ) {
         this.crs = crs;
     }
 
@@ -90,7 +90,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
     }
     
 
-    public Position createPosition( DirectPosition point ) {
+    public Position createPosition( final DirectPosition point ) {
         return new GeneralDirectPosition( point );
     }
 
@@ -236,7 +236,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * {@inheritDoc }
      */
     @Override
-    public BSplineCurve createBSplineCurve(int arg0, PointArray arg1, List arg2, KnotType arg3)
+    public BSplineCurve createBSplineCurve(final int arg0, final PointArray arg1, final List arg2, final KnotType arg3)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
@@ -246,7 +246,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * {@inheritDoc }
      */
     @Override
-    public Polygon createPolygon(SurfaceBoundary boundary) throws MismatchedReferenceSystemException,
+    public Polygon createPolygon(final SurfaceBoundary boundary) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         JTSPolygon result = new JTSPolygon(boundary);
         return result;
@@ -256,7 +256,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * {@inheritDoc }
      */
     @Override
-    public Polygon createPolygon(SurfaceBoundary boundary, Surface spanningSurface)
+    public Polygon createPolygon(final SurfaceBoundary boundary, final Surface spanningSurface)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         JTSPolygon result = new JTSPolygon(boundary, Collections.singletonList(spanningSurface));
         return result;
@@ -266,7 +266,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * {@inheritDoc }
      */
     @Override
-    public Tin createTin(Set arg0, Set arg1, Set arg2, double arg3)
+    public Tin createTin(final Set arg0, final Set arg1, final Set arg2, final double arg3)
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
@@ -279,7 +279,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * @throws MismatchedReferenceSystemException
      * @see org.opengis.geometry.coordinate.Factory#createSurfaceBoundary(org.opengis.geometry.primitive.Ring, java.util.List)
      */
-    public SurfaceBoundary createSurfaceBoundary(Ring exterior, List interiors) throws MismatchedReferenceSystemException {
+    public SurfaceBoundary createSurfaceBoundary(final Ring exterior, final List interiors) throws MismatchedReferenceSystemException {
         return new JTSSurfaceBoundary(crs, exterior, (Ring []) interiors.toArray(new Ring[interiors.size()]));
     }
     
@@ -308,7 +308,7 @@ public class JTSGeometryFactory extends Factory implements GeometryFactory {
      * {@inheritDoc }
      */
     @Override
-    public BSplineSurface createBSplineSurface( List arg0, int[] arg1, List[] arg2, KnotType arg3 ) throws MismatchedReferenceSystemException, MismatchedDimensionException {
+    public BSplineSurface createBSplineSurface( final List arg0, final int[] arg1, final List[] arg2, final KnotType arg3 ) throws MismatchedReferenceSystemException, MismatchedDimensionException {
         throw new UnsupportedOperationException(
             "This is the JTS Wrapper Factory which only supports implementations that align with the Simple Feature for SQL Specification.");
     }

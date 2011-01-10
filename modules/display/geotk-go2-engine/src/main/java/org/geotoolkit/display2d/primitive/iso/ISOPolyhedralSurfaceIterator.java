@@ -61,7 +61,7 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
      * @param p The polygon
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public ISOPolyhedralSurfaceIterator(PolyhedralSurface p, AffineTransform trs) {
+    public ISOPolyhedralSurfaceIterator(final PolyhedralSurface p, final AffineTransform trs) {
         super(p,trs);
 
         curves = new ArrayList<OrientableCurve>();
@@ -88,7 +88,7 @@ public final  class ISOPolyhedralSurfaceIterator extends ISOGeometryIterator<Pol
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         if(empty) return 0;
         
         // first make sure we're not at the last element, this prevents us from exceptions

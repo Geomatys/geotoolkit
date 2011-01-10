@@ -69,7 +69,7 @@ public class AreaHandler implements CanvasHandler {
     private final AreaDecoration deco = new AreaDecoration();
     private final JMap2D map;
 
-    public AreaHandler(JMap2D map) {
+    public AreaHandler(final JMap2D map) {
         this.map = map;
         mouseInputListener = new MouseListen();
     }
@@ -78,7 +78,7 @@ public class AreaHandler implements CanvasHandler {
      * {@inheritDoc }
      */
     @Override
-    public void install(Component component) {
+    public void install(final Component component) {
         mouseInputListener.install(component);
         map.addDecoration(0,deco);
     }
@@ -87,7 +87,7 @@ public class AreaHandler implements CanvasHandler {
      * {@inheritDoc }
      */
     @Override
-    public void uninstall(Component component) {
+    public void uninstall(final Component component) {
         mouseInputListener.uninstall(component);
         map.removeDecoration(deco);
     }
@@ -124,7 +124,7 @@ public class AreaHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mouseClicked(final MouseEvent e) {
 
             int mousebutton = e.getButton();
             if (mousebutton == MouseEvent.BUTTON1) {
@@ -149,7 +149,7 @@ public class AreaHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {
+        public void mouseEntered(final MouseEvent e) {
             map.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         }
 

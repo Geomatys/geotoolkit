@@ -20,7 +20,7 @@ import java.sql.SQLException;
 
 public abstract class JDBC3DTestSetup extends JDBCDelegatingTestSetup {
 
-    protected JDBC3DTestSetup(JDBCTestSetup delegate) {
+    protected JDBC3DTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
     }
 

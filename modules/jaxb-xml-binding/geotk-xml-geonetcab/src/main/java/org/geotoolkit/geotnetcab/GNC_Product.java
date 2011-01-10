@@ -83,7 +83,7 @@ public class GNC_Product extends GNC_MaterialResource implements org.opengis.met
      *     {@link GNCProductTypeCodePropertyType }
      *     
      */
-    public void setTypeOfProducts(GNC_ProductTypeCode value) {
+    public void setTypeOfProducts(final GNC_ProductTypeCode value) {
         this.typeOfProducts = value;
     }
 

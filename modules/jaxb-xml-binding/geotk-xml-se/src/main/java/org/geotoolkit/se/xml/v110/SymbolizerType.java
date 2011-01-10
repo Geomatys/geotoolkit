@@ -102,7 +102,7 @@ public abstract class SymbolizerType {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -126,7 +126,7 @@ public abstract class SymbolizerType {
      *     {@link DescriptionType }
      *     
      */
-    public void setDescription(DescriptionType value) {
+    public void setDescription(final DescriptionType value) {
         this.description = value;
     }
 
@@ -150,7 +150,7 @@ public abstract class SymbolizerType {
      *     {@link BaseSymbolizerType }
      *     
      */
-    public void setBaseSymbolizer(BaseSymbolizerType value) {
+    public void setBaseSymbolizer(final BaseSymbolizerType value) {
         this.baseSymbolizer = value;
     }
 
@@ -174,7 +174,7 @@ public abstract class SymbolizerType {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -198,7 +198,7 @@ public abstract class SymbolizerType {
      *     {@link String }
      *     
      */
-    public void setUom(String value) {
+    public void setUom(final String value) {
         this.uom = value;
     }
 

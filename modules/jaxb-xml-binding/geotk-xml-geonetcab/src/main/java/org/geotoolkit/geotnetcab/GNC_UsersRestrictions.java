@@ -85,7 +85,7 @@ public class GNC_UsersRestrictions implements org.opengis.metadata.geonetcab.GNC
      *     {@link GNCOrganisationTypeCodePropertyType }
      *     
      */
-    public void setCategoryOfUsers(GNC_OrganisationTypeCode value) {
+    public void setCategoryOfUsers(final GNC_OrganisationTypeCode value) {
         this.categoryOfUsers = value;
     }
 
@@ -105,11 +105,11 @@ public class GNC_UsersRestrictions implements org.opengis.metadata.geonetcab.GNC
         return this.extentOfRestrictions;
     }
 
-    public void setExtentOfRestrictions(List<GeographicDescription> extentOfRestrictions) {
+    public void setExtentOfRestrictions(final List<GeographicDescription> extentOfRestrictions) {
         this.extentOfRestrictions = extentOfRestrictions;
     }
 
-    public void setExtentOfRestrictions(GeographicDescription extentOfRestrictions) {
+    public void setExtentOfRestrictions(final GeographicDescription extentOfRestrictions) {
         if (this.extentOfRestrictions == null) {
             this.extentOfRestrictions = new ArrayList<GeographicDescription>();
         }
@@ -137,12 +137,12 @@ public class GNC_UsersRestrictions implements org.opengis.metadata.geonetcab.GNC
      *     {@link String }
      *     
      */
-    public void setOtherConstraints(String value) {
+    public void setOtherConstraints(final String value) {
         this.otherConstraints = value;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

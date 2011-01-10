@@ -78,22 +78,22 @@ public abstract class AbstractDescribeRecord extends AbstractCSWRequest implemen
     }
 
     @Override
-    public void setNamespace(String namespace) {
+    public void setNamespace(final String namespace) {
         this.namespace = namespace;
     }
 
     @Override
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
 
     @Override
-    public void setSchemaLanguage(String schemaLanguage) {
+    public void setSchemaLanguage(final String schemaLanguage) {
         this.schemaLanguage = schemaLanguage;
     }
 
     @Override
-    public void setTypeNames(QName... typeName) {
+    public void setTypeNames(final QName... typeName) {
         this.typeNames = typeName;
     }
 

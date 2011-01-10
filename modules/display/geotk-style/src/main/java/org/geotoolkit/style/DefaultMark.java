@@ -51,7 +51,7 @@ public class DefaultMark implements Mark{
      * @param fill : if null will be replaced by default value.
      * @param stroke : if null will be replaced by default value.
      */
-    public DefaultMark(Expression wkn, Fill fill, Stroke stroke){
+    public DefaultMark(final Expression wkn, final Fill fill, final Stroke stroke){
         this.wkn = (wkn == null || wkn == NIL) ? DEFAULT_MARK_WKN : wkn;
         this.external = null;
         this.fill = (fill == null) ? DEFAULT_FILL : fill;
@@ -65,7 +65,7 @@ public class DefaultMark implements Mark{
      * @param fill : if null will be replaced by default value.
      * @param stroke : if null will be replaced by default value.
      */
-    DefaultMark(ExternalMark external, Fill fill, Stroke stroke){
+    DefaultMark(final ExternalMark external, final Fill fill, final Stroke stroke){
         if(external == null){
             this.wkn = DEFAULT_MARK_WKN;
             this.external = null;
@@ -115,7 +115,7 @@ public class DefaultMark implements Mark{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -123,7 +123,7 @@ public class DefaultMark implements Mark{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

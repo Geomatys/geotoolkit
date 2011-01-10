@@ -83,7 +83,7 @@ public class GNC_EOProduct extends GNC_Product implements org.opengis.metadata.g
      *     {@link Lineage }
      *     
      */
-    public void setLineage(Lineage value) {
+    public void setLineage(final Lineage value) {
         this.lineage = value;
     }
 
@@ -107,7 +107,7 @@ public class GNC_EOProduct extends GNC_Product implements org.opengis.metadata.g
      *     {@link GNCEOProductTypeCodePropertyType }
      *     
      */
-    public void setTypeOfEOProducts(GNC_EOProductTypeCode value) {
+    public void setTypeOfEOProducts(final GNC_EOProductTypeCode value) {
         this.typeOfEOProducts = value;
     }
 

@@ -88,7 +88,7 @@ public class AllowedValues implements AbstractAllowedValues {
 
     }
 
-    public AllowedValues(AbstractAllowedValues av) {
+    public AllowedValues(final AbstractAllowedValues av) {
         if (av != null) {
             this.id = av.getId();
             this.max = av.getMax();
@@ -107,7 +107,7 @@ public class AllowedValues implements AbstractAllowedValues {
         return null;
     }
 
-    public void setInterval(List<Double> interval) {
+    public void setInterval(final List<Double> interval) {
         if (interval != null) {
             if (this.intervalOrValueList == null) {
                 this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
@@ -117,7 +117,7 @@ public class AllowedValues implements AbstractAllowedValues {
         }
     }
 
-    public void setInterval(Double interval) {
+    public void setInterval(final Double interval) {
         if (interval != null) {
             if (this.intervalOrValueList == null) {
                 this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
@@ -154,7 +154,7 @@ public class AllowedValues implements AbstractAllowedValues {
         return null;
     }
 
-    public void setValueList(List<Double> valueList) {
+    public void setValueList(final List<Double> valueList) {
         if (valueList != null) {
             if (this.intervalOrValueList == null) {
                 this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
@@ -164,7 +164,7 @@ public class AllowedValues implements AbstractAllowedValues {
         }
     }
 
-   public void setValueList(Double interval) {
+   public void setValueList(final Double interval) {
         if (interval != null) {
             if (this.intervalOrValueList == null) {
                 this.intervalOrValueList = new ArrayList<JAXBElement<List<Double>>>();
@@ -212,7 +212,7 @@ public class AllowedValues implements AbstractAllowedValues {
      *     {@link Double }
      *     
      */
-    public void setMin(Double value) {
+    public void setMin(final Double value) {
         this.min = value;
     }
 
@@ -236,7 +236,7 @@ public class AllowedValues implements AbstractAllowedValues {
      *     {@link Double }
      *     
      */
-    public void setMax(Double value) {
+    public void setMax(final Double value) {
         this.max = value;
     }
 
@@ -271,7 +271,7 @@ public class AllowedValues implements AbstractAllowedValues {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

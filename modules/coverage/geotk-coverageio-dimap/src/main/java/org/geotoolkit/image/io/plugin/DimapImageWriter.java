@@ -85,7 +85,7 @@ public class DimapImageWriter extends ImageWriterAdapter{
      * Add support for "dim" writerId, other cases are delegated to the parent class.
      */
     @Override
-    protected Object createOutput(String writerID) throws IOException {
+    protected Object createOutput(final String writerID) throws IOException {
         if ("dim".equalsIgnoreCase(writerID)) {
             return IOUtilities.changeExtension(output, "dim");
         }

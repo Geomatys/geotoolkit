@@ -60,11 +60,11 @@ public class DescribeResultModel extends RequestBaseType {
      */
     DescribeResultModel() {}
 
-    public DescribeResultModel(QName resultName) {
+    public DescribeResultModel(final QName resultName) {
         this.resultName = resultName;
     }
 
-    public DescribeResultModel(String version, QName resultName) {
+    public DescribeResultModel(final String version, final QName resultName) {
         super(version);
         this.resultName = resultName;
     }

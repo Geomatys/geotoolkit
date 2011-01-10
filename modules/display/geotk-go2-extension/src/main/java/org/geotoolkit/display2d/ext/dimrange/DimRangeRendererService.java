@@ -61,22 +61,22 @@ public class DimRangeRendererService extends AbstractSymbolizerRendererService<D
     }
 
     @Override
-    public CachedDimRangeSymbolizer createCachedSymbolizer(DimRangeSymbolizer symbol) {
+    public CachedDimRangeSymbolizer createCachedSymbolizer(final DimRangeSymbolizer symbol) {
         return new CachedDimRangeSymbolizer(symbol,this);
     }
 
     @Override
-    public SymbolizerRenderer createRenderer(CachedDimRangeSymbolizer symbol, RenderingContext2D context) {
+    public SymbolizerRenderer createRenderer(final CachedDimRangeSymbolizer symbol, final RenderingContext2D context) {
         return new DimRangeRenderer(symbol, context);
     }
 
     @Override
-    public Rectangle2D glyphPreferredSize(CachedDimRangeSymbolizer symbol,MapLayer layer) {
+    public Rectangle2D glyphPreferredSize(final CachedDimRangeSymbolizer symbol,final MapLayer layer) {
         return new Rectangle2D.Double(0, 0, 120, 20);
     }
 
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedDimRangeSymbolizer symbol, MapLayer layer) {
+    public void glyph(final Graphics2D g, final Rectangle2D rect, final CachedDimRangeSymbolizer symbol, final MapLayer layer) {
 
         int[] ARGB = new int[]{Color.RED.getRGB(),Color.GREEN.getRGB(),Color.BLUE.getRGB()};
 

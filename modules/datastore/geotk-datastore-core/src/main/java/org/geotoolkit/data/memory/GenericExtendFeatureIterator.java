@@ -67,7 +67,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
      * @param mask : expected feature type
      * @param extend : classe that provide new properties
      */
-    private GenericExtendFeatureIterator(final R iterator, FeatureType mask, FeatureExtend extend) {
+    private GenericExtendFeatureIterator(final R iterator, final FeatureType mask, final FeatureExtend extend) {
         this.iterator = iterator;
         this.mask = mask;
         this.extend = extend;
@@ -117,7 +117,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
     private static final class GenericSeparateExtendFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericExtendFeatureIterator<F,R> implements FeatureReader<T,F>{
 
-        private GenericSeparateExtendFeatureReader(R reader, T mask, FeatureExtend extend){
+        private GenericSeparateExtendFeatureReader(final R reader, final T mask, final FeatureExtend extend){
             super(reader, mask, extend);
         }
 
@@ -132,7 +132,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
      * Wrap a FeatureReader with a new featuretype.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
-            FeatureReader<T,F> reader, FeatureExtend extend, Hints hints){
+            final FeatureReader<T,F> reader, final FeatureExtend extend, final Hints hints){
 
         final FeatureType mask = extend.getExtendedType(reader.getFeatureType());
 
@@ -144,13 +144,13 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         return new GenericSeparateExtendFeatureReader(reader, mask, extend);
     }
 
-    public static FeatureCollection wrap(FeatureCollection col, FeatureExtend extend, Hints hints){
+    public static FeatureCollection wrap(final FeatureCollection col, final FeatureExtend extend, final Hints hints){
         return new ExtendFeatureCollection(col, extend, hints);
     }
 
     private static class NoCopyFeature extends AbstractFeature<Collection<Property>>{
 
-        private NoCopyFeature(AttributeDescriptor desc, Collection<Property> props, FeatureId id){
+        private NoCopyFeature(final AttributeDescriptor desc, final Collection<Property> props, final FeatureId id){
             super(desc, id);
             this.value = props;
         }
@@ -163,7 +163,7 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         protected final FeatureType mask;
         protected final FeatureExtend extend;
 
-        private ExtendFeatureCollection(FeatureCollection col, FeatureExtend extend, Hints hints){
+        private ExtendFeatureCollection(final FeatureCollection col, final FeatureExtend extend, final Hints hints){
             super(col.getID(),col.getSource());
             this.mask = extend.getExtendedType(col.getFeatureType());
             this.extend = extend;
@@ -176,24 +176,24 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         }
 
         @Override
-        public FeatureCollection subCollection(Query query) throws DataStoreException {
+        public FeatureCollection subCollection(final Query query) throws DataStoreException {
             final FeatureCollection sub = col.subCollection(query);
             return new ExtendFeatureCollection(sub, extend, query.getHints());
         }
 
         @Override
-        public FeatureIterator iterator(Hints hints) throws DataStoreRuntimeException {
+        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
             final FeatureIterator sub = col.iterator(hints);
             return new GenericExtendFeatureIterator(sub, mask, extend);
         }
 
         @Override
-        public void update(Filter filter, Map values) throws DataStoreException {
+        public void update(final Filter filter, final Map values) throws DataStoreException {
             col.update(filter, values);
         }
 
         @Override
-        public void remove(Filter filter) throws DataStoreException {
+        public void remove(final Filter filter) throws DataStoreException {
             col.remove(filter);
         }
 
@@ -207,17 +207,17 @@ public class GenericExtendFeatureIterator<F extends Feature, R extends FeatureIt
         protected final PropertyDescriptor[] descs;
         protected final FeatureType extendedType;
 
-        public FeatureExtend(PropertyDescriptor ... descs){
+        public FeatureExtend(final PropertyDescriptor ... descs){
             this.descs = descs;
             this.extendedType = null;
         }
 
-        public FeatureExtend(FeatureType extendedType){
+        public FeatureExtend(final FeatureType extendedType){
             this.descs = null;
             this.extendedType = extendedType;
         }
 
-        public FeatureType getExtendedType(FeatureType original){
+        public FeatureType getExtendedType(final FeatureType original){
             if(extendedType != null){
                 return extendedType;
             }else{

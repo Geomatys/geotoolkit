@@ -42,7 +42,7 @@ public class ZoomInAction extends AbstractAction {
         this(false);
     }
 
-    public ZoomInAction(boolean big) {
+    public ZoomInAction(final boolean big) {
         super("",(big)?ICON_ZOOM_IN_24 : ICON_ZOOM_IN_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_in"));
     }
@@ -51,7 +51,7 @@ public class ZoomInAction extends AbstractAction {
      * {@inheritDoc }
      */
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
             map.setHandler(new ZoomInHandler(map));
 //            map.getCanvas().getController().scale(2);
@@ -62,7 +62,7 @@ public class ZoomInAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

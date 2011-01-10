@@ -28,7 +28,7 @@ public class BackgroundPainterGroup implements BackgroundPainter{
 
     private final BackgroundPainter[] painters;
 
-    private BackgroundPainterGroup(BackgroundPainter ... painters){
+    private BackgroundPainterGroup(final BackgroundPainter ... painters){
         this.painters = painters.clone();
     }
 
@@ -36,17 +36,17 @@ public class BackgroundPainterGroup implements BackgroundPainter{
      * {@inheritDoc }
      */
     @Override
-    public void paint(RenderingContext2D context) {
+    public void paint(final RenderingContext2D context) {
         for(BackgroundPainter painter : painters){
             painter.paint(context);
         }
     }
 
-    public static BackgroundPainterGroup wrap(BackgroundPainter ... painters){
+    public static BackgroundPainterGroup wrap(final BackgroundPainter ... painters){
         return new BackgroundPainterGroup(painters);
     }
 
-    public static BackgroundPainterGroup wrap(List<BackgroundPainter> painters){
+    public static BackgroundPainterGroup wrap(final List<BackgroundPainter> painters){
         return new BackgroundPainterGroup(painters.toArray(new BackgroundPainter[painters.size()]));
     }
 

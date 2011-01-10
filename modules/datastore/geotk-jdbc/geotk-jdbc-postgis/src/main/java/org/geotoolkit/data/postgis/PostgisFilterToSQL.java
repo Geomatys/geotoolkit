@@ -162,7 +162,7 @@ public class PostgisFilterToSQL extends FilterToSQL {
                 swapped, extraData);
     }
 
-    private double checkInfinites(double candidate){
+    private double checkInfinites(final double candidate){
         if(candidate == Double.NEGATIVE_INFINITY){
             return Double.MIN_VALUE;
         }else if(candidate == Double.POSITIVE_INFINITY){

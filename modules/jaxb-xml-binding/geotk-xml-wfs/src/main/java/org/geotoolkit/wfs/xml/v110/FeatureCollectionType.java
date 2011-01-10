@@ -69,7 +69,7 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
 
     }
 
-    public FeatureCollectionType(Integer numberOfFeatures, XMLGregorianCalendar timeStamp) {
+    public FeatureCollectionType(final Integer numberOfFeatures, final XMLGregorianCalendar timeStamp) {
         this.numberOfFeatures = numberOfFeatures;
         this.timeStamp        = timeStamp;
     }
@@ -94,7 +94,7 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
      *     {@link String }
      *     
      */
-    public void setLockId(String value) {
+    public void setLockId(final String value) {
         this.lockId = value;
     }
 
@@ -118,7 +118,7 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
      *     {@link XMLGregorianCalendar }
      *     
      */
-    public void setTimeStamp(XMLGregorianCalendar value) {
+    public void setTimeStamp(final XMLGregorianCalendar value) {
         this.timeStamp = value;
     }
 
@@ -142,7 +142,7 @@ public class FeatureCollectionType extends AbstractFeatureCollectionType impleme
      *     {@link Integer }
      *     
      */
-    public void setNumberOfFeatures(Integer value) {
+    public void setNumberOfFeatures(final Integer value) {
         this.numberOfFeatures = value;
     }
 

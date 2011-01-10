@@ -92,14 +92,14 @@ public class LineStringType extends AbstractCurveType {
     /**
      * Build a new LineString with the specified coordinates
      */
-    public LineStringType(CoordinatesType coordinates) {
+    public LineStringType(final CoordinatesType coordinates) {
         this.coordinates = coordinates;
     }
 
     /**
      * Build a new LineString with the specified coordinates
      */
-    public LineStringType(List<DirectPosition> positions) {
+    public LineStringType(final List<DirectPosition> positions) {
         this.pos = new ArrayList<DirectPositionType>();
         for (DirectPosition currentPos : positions) {
             DirectPositionType position = new DirectPositionType(currentPos);
@@ -110,7 +110,7 @@ public class LineStringType extends AbstractCurveType {
     /**
      * Build a new LineString with the specified coordinates
      */
-    public LineStringType(String id, String srsname, Collection<DirectPositionType> positions) {
+    public LineStringType(final String id, final String srsname, final Collection<DirectPositionType> positions) {
         super(id, srsname);
         this.pos = new ArrayList<DirectPositionType>();
         for (DirectPositionType currentPos : positions) {
@@ -162,7 +162,7 @@ public class LineStringType extends AbstractCurveType {
      *     {@link DirectPositionListType }
      *     
      */
-    public void setPosList(DirectPositionListType value) {
+    public void setPosList(final DirectPositionListType value) {
         this.posList = value;
     }
 
@@ -186,7 +186,7 @@ public class LineStringType extends AbstractCurveType {
      *     {@link CoordinatesType }
      *     
      */
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 
@@ -228,7 +228,7 @@ public class LineStringType extends AbstractCurveType {
         return hash;
     }
 
-    private boolean JAXBElementEquals(JAXBElement a, JAXBElement b) {
+    private boolean JAXBElementEquals(final JAXBElement a, final JAXBElement b) {
         if (a  != null && b != null) {
             return Utilities.equals(a.getValue(), b.getValue());
         } else if (a == null && b == null) {

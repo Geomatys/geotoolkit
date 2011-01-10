@@ -54,7 +54,7 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
     public DefaultInstant() {
     }
 
-    public DefaultInstant(Position position) {
+    public DefaultInstant(final Position position) {
         this.position = position;
     }
 
@@ -86,15 +86,15 @@ public class DefaultInstant extends DefaultTemporalGeometricPrimitive implements
         return endBy;
     }
 
-    public void setPosition(Position position) {
+    public void setPosition(final Position position) {
         this.position = position;
     }
 
-    public void setBegunBy(Collection<Period> begunBy) {
+    public void setBegunBy(final Collection<Period> begunBy) {
         this.begunBy = begunBy;
     }
 
-    public void setEndBy(Collection<Period> endBy) {
+    public void setEndBy(final Collection<Period> endBy) {
         this.endBy = endBy;
     }
 

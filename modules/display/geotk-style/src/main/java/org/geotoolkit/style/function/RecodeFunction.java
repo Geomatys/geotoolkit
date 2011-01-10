@@ -91,7 +91,7 @@ public class RecodeFunction extends AbstractExpression implements Recode {
         }
     };
 
-    public RecodeFunction(List<MapItem> items, Expression lookup, Literal fallback){
+    public RecodeFunction(final List<MapItem> items, final Expression lookup, final Literal fallback){
         this.items = items;
         this.lookup = lookup;
         this.fallback = fallback;
@@ -118,12 +118,12 @@ public class RecodeFunction extends AbstractExpression implements Recode {
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         final Expression lookupExp = lookup;
 
         if(object instanceof Image){

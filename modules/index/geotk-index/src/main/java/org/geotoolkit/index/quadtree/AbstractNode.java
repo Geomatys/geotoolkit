@@ -47,14 +47,14 @@ public abstract class AbstractNode {
     /**
      * @param env the node envelope
      */
-    public AbstractNode(Envelope env) {
+    public AbstractNode(final Envelope env) {
         this(env.getMinX(),env.getMinY(),env.getMaxX(),env.getMaxY());
     }
 
     /**
      * @param envelope the node bounds [MinX,MinY,MaxX,MaxY]
      */
-    public AbstractNode(double minx, double miny, double maxx, double maxy) {
+    public AbstractNode(final double minx, final double miny, final double maxx, final double maxy) {
         this.minx = minx;
         this.miny = miny;
         this.maxx = maxx;
@@ -72,21 +72,21 @@ public abstract class AbstractNode {
         return new double[]{minx,miny,maxx,maxy};
     }
 
-    public void setEnvelope(double minx, double miny, double maxx, double maxy) {
+    public void setEnvelope(final double minx, final double miny, final double maxx, final double maxy) {
         this.minx = minx;
         this.miny = miny;
         this.maxx = maxx;
         this.maxy = maxy;
     }
 
-    public void setEnvelope(double[] env) {
+    public void setEnvelope(final double[] env) {
         this.minx = env[0];
         this.miny = env[1];
         this.maxx = env[2];
         this.maxy = env[3];
     }
 
-    public Envelope getBounds(Envelope buffer){
+    public Envelope getBounds(final Envelope buffer){
         buffer.init(minx, maxx, miny, maxy);
         return buffer;
     }
@@ -119,7 +119,7 @@ public abstract class AbstractNode {
      * 
      * @param id
      */
-    public void addShapeId(int id) {
+    public void addShapeId(final int id) {
         final int[] old = shapesId;
         final int size = shapesId.length;
         shapesId = new int[size+1];
@@ -134,7 +134,7 @@ public abstract class AbstractNode {
      * @return The shape id (or recno) at the requested position
      * @throws ArrayIndexOutOfBoundsException DOCUMENT ME!
      */
-    public int getShapeId(int pos) {
+    public int getShapeId(final int pos) {
         return this.shapesId[pos];
     }
 
@@ -142,7 +142,7 @@ public abstract class AbstractNode {
      * Sets the shape ids
      * @param ids
      */
-    public void setShapesId(int[] ids) {
+    public void setShapesId(final int[] ids) {
         if (ids == null) {
             this.shapesId = EMPTY_ARRAY;
         } else {
@@ -169,7 +169,7 @@ public abstract class AbstractNode {
      * @param env
      * @return
      */
-    public String toString(Envelope env) {
+    public String toString(final Envelope env) {
         final StringBuilder sb = new StringBuilder();
 
         if(env != null && env.intersects(getBounds(new Envelope()))){
@@ -210,14 +210,14 @@ public abstract class AbstractNode {
         return sb.toString();
     }
 
-    public boolean intersects(Envelope other){
+    public boolean intersects(final Envelope other){
         return !(other.getMinX() > maxx ||
                  other.getMaxX() < minx ||
                  other.getMinY() > maxy ||
                  other.getMaxY() < miny);
     }
 
-    public int relation(Envelope other){
+    public int relation(final Envelope other){
         final double envMinx = other.getMinX();
         final double envMaxx = other.getMaxX();
         final double envMiny = other.getMinY();
@@ -243,7 +243,7 @@ public abstract class AbstractNode {
     /**
      * Returns true if the node is larger or heigher then the given resolution.
      */
-    public boolean isBigger(double[] res){
+    public boolean isBigger(final double[] res){
         if(res != null){
             return (res[0] <= maxx-minx) || (res[1] <= maxy-miny);
         }

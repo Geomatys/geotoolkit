@@ -24,7 +24,7 @@ public class PolygonPatchesListType {
 
     }
 
-    public PolygonPatchesListType(List<JTSPolygon> patches) {
+    public PolygonPatchesListType(final List<JTSPolygon> patches) {
         for (JTSPolygon polygon : patches) {
             JTSSurfaceBoundary patch = (JTSSurfaceBoundary) polygon.getBoundary();
             patch.setCoordinateReferenceSystem(null);
@@ -43,14 +43,14 @@ public class PolygonPatchesListType {
     /**
      * @param patches the patches to set
      */
-    public void setPatches(List<JTSSurfaceBoundary> patches) {
+    public void setPatches(final List<JTSSurfaceBoundary> patches) {
         this.patches = patches;
     }
 
     /**
      * @param patches the patches to set
      */
-    public void setPolygonPatches(List<JTSPolygon> patches) {
+    public void setPolygonPatches(final List<JTSPolygon> patches) {
         this.patches = new ArrayList<JTSSurfaceBoundary>();
         for (JTSPolygon p : patches) {
             this.patches.add((JTSSurfaceBoundary) p.getBoundary());

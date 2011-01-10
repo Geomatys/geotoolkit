@@ -146,7 +146,7 @@ public class WCSCapabilityType {
         return request;
     }
 
-    public void setRequest(WCSCapabilityType.Request request) {
+    public void setRequest(final WCSCapabilityType.Request request) {
         this.request = request;
     }
 
@@ -180,7 +180,7 @@ public class WCSCapabilityType {
         return updateSequence;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 
@@ -302,7 +302,7 @@ public class WCSCapabilityType {
         /**
          * Sets the value of the getCapabilities property.
          */
-        public void setGetCapabilities(WCSCapabilityType.Request.GetCapabilities value) {
+        public void setGetCapabilities(final WCSCapabilityType.Request.GetCapabilities value) {
             this.getCapabilities = value;
         }
 
@@ -317,7 +317,7 @@ public class WCSCapabilityType {
          * Sets the value of the describeCoverage property.
          * 
          */
-        public void setDescribeCoverage(WCSCapabilityType.Request.DescribeCoverage value) {
+        public void setDescribeCoverage(final WCSCapabilityType.Request.DescribeCoverage value) {
             this.describeCoverage = value;
         }
 
@@ -333,7 +333,7 @@ public class WCSCapabilityType {
          * Sets the value of the getCoverage property.
          * 
          */
-        public void setGetCoverage(WCSCapabilityType.Request.GetCoverage value) {
+        public void setGetCoverage(final WCSCapabilityType.Request.GetCoverage value) {
             this.getCoverage = value;
         }
 
@@ -341,7 +341,7 @@ public class WCSCapabilityType {
          * 
          * @param url
          */
-        public void updateURL(String url) {
+        public void updateURL(final String url) {
             if (describeCoverage != null) {
                 describeCoverage.updateURL(url);
             }
@@ -386,7 +386,7 @@ public class WCSCapabilityType {
 
             }
 
-            public DescribeCoverage(List<DCPTypeType> dcp) {
+            public DescribeCoverage(final List<DCPTypeType> dcp) {
                 this.dcpType = dcp;
             }
 
@@ -401,7 +401,7 @@ public class WCSCapabilityType {
                 return this.dcpType;
             }
 
-            public void updateURL(String url) {
+            public void updateURL(final String url) {
                 if (this.dcpType != null) {
                     for (DCPTypeType dcp : dcpType) {
                         dcp.updateURL(url);
@@ -444,7 +444,7 @@ public class WCSCapabilityType {
 
             }
 
-            public GetCapabilities(List<DCPTypeType> dcp) {
+            public GetCapabilities(final List<DCPTypeType> dcp) {
                 this.dcpType = dcp;
             }
             
@@ -459,7 +459,7 @@ public class WCSCapabilityType {
                 return this.dcpType;
             }
 
-            public void updateURL(String url) {
+            public void updateURL(final String url) {
                 if (this.dcpType != null) {
                     for (DCPTypeType dcp : dcpType) {
                         dcp.updateURL(url);
@@ -502,7 +502,7 @@ public class WCSCapabilityType {
 
             }
 
-            public GetCoverage(List<DCPTypeType> dcp) {
+            public GetCoverage(final List<DCPTypeType> dcp) {
                 this.dcpType = dcp;
             }
 
@@ -517,7 +517,7 @@ public class WCSCapabilityType {
                 return this.dcpType;
             }
 
-            public void updateURL(String url) {
+            public void updateURL(final String url) {
                 if (this.dcpType != null) {
                     for (DCPTypeType dcp : dcpType) {
                         dcp.updateURL(url);
@@ -578,7 +578,7 @@ public class WCSCapabilityType {
          *     {@link Object }
          *     
          */
-        public void setAny(Object value) {
+        public void setAny(final Object value) {
             this.any = value;
         }
 

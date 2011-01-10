@@ -243,23 +243,23 @@ public final class GO2Utilities {
 
     private GO2Utilities() {}
 
-    public static void portray(final ProjectedFeature feature, CachedSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException{
+    public static void portray(final ProjectedFeature feature, final CachedSymbolizer symbol,
+            final RenderingContext2D context) throws PortrayalException{
         final SymbolizerRendererService renderer = findRenderer(symbol);
         if(renderer != null){
             renderer.portray(feature, symbol, context);
         }
     }
 
-    public static void portray(final ProjectedCoverage graphic, CachedSymbolizer symbol,
-            RenderingContext2D context) throws PortrayalException {
+    public static void portray(final ProjectedCoverage graphic, final CachedSymbolizer symbol,
+            final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRendererService renderer = findRenderer(symbol);
         if(renderer != null){
             renderer.portray(graphic, symbol, context);
         }
     }
 
-    public static void portray(RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{
+    public static void portray(final RenderingContext2D renderingContext, GridCoverage2D dataCoverage) throws PortrayalException{
         final CanvasMonitor monitor = renderingContext.getMonitor();
         final Graphics2D g2d = renderingContext.getGraphics();
 
@@ -511,15 +511,15 @@ public final class GO2Utilities {
     // geometries operations ///////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static Shape toJava2D(Geometry geom){
+    public static Shape toJava2D(final Geometry geom){
         return new JTSGeometryJ2D(geom);
     }
 
-    public static Shape toJava2D(Geometry geom, double[] resolution){
+    public static Shape toJava2D(final Geometry geom, final double[] resolution){
         return new DecimateJTSGeometryJ2D(geom,resolution);
     }
 
-    public static Shape toJava2D(org.opengis.geometry.Geometry geom){
+    public static Shape toJava2D(final org.opengis.geometry.Geometry geom){
         if(geom instanceof JTSGeometry){
             final JTSGeometry geo = (JTSGeometry) geom;
             return toJava2D(geo.getJTSGeometry());
@@ -528,7 +528,7 @@ public final class GO2Utilities {
         }
     }
 
-    public static Geometry toJTS(Shape candidate){
+    public static Geometry toJTS(final Shape candidate){
         final PathIterator ite = candidate.getPathIterator(null);
         final List<Coordinate> coords = new ArrayList<Coordinate>();
 
@@ -544,7 +544,7 @@ public final class GO2Utilities {
         return JTS_FACTORY.createPolygon(ring, new LinearRing[0]);
     }
 
-    public static boolean testHit(VisitFilter filter, Geometry left, Geometry right){
+    public static boolean testHit(final VisitFilter filter, final Geometry left, final Geometry right){
 
         switch(filter){
             case INTERSECTS :
@@ -556,7 +556,7 @@ public final class GO2Utilities {
         return false;
     }
 
-    public static boolean testHit(VisitFilter filter, org.opengis.geometry.Geometry left, org.opengis.geometry.Geometry right){
+    public static boolean testHit(final VisitFilter filter, final org.opengis.geometry.Geometry left, final org.opengis.geometry.Geometry right){
 
         switch(filter){
             case INTERSECTS :
@@ -575,7 +575,7 @@ public final class GO2Utilities {
     /**
      * Make a new envelope with vertical and temporal dimensions.
      */
-    public static GeneralEnvelope combine(Envelope bounds, Date[] temporal, Double[] elevation) throws TransformException{
+    public static GeneralEnvelope combine(final Envelope bounds, final Date[] temporal, final Double[] elevation) throws TransformException{
         CoordinateReferenceSystem crs = bounds.getCoordinateReferenceSystem();
         Rectangle2D rect = new Rectangle2D.Double(
                 bounds.getMinimum(0),
@@ -588,8 +588,8 @@ public final class GO2Utilities {
     /**
      * Make a new envelope with vertical and temporal dimensions.
      */
-    public static GeneralEnvelope combine(CoordinateReferenceSystem crs, Rectangle2D bounds,
-            Date[] temporal, Double[] elevation) throws TransformException{
+    public static GeneralEnvelope combine(CoordinateReferenceSystem crs, final Rectangle2D bounds,
+            final Date[] temporal, final Double[] elevation) throws TransformException{
         final CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
         TemporalCRS temporalDim = null;
         VerticalCRS verticalDim = null;
@@ -653,8 +653,8 @@ public final class GO2Utilities {
         return env;
     }
 
-    public static CoordinateReferenceSystem change2DComponent( CoordinateReferenceSystem originalCRS,
-            CoordinateReferenceSystem crs2D) throws TransformException {
+    public static CoordinateReferenceSystem change2DComponent( final CoordinateReferenceSystem originalCRS,
+            final CoordinateReferenceSystem crs2D) throws TransformException {
         if(crs2D.getCoordinateSystem().getDimension() != 2){
             throw new IllegalArgumentException("Expected a 2D CRS");
         }
@@ -693,7 +693,7 @@ public final class GO2Utilities {
      * Transform the CRS 2D component of this envelope.
      * This preserve temporal/elevation or other axis.
      */
-    public static Envelope transform2DCRS(Envelope env, CoordinateReferenceSystem crs2D) throws TransformException{
+    public static Envelope transform2DCRS(final Envelope env, final CoordinateReferenceSystem crs2D) throws TransformException{
         final CoordinateReferenceSystem originalCRS = env.getCoordinateReferenceSystem();
         final CoordinateReferenceSystem targetCRS = change2DComponent(originalCRS, crs2D);
         return CRS.transform(env, targetCRS);
@@ -703,7 +703,7 @@ public final class GO2Utilities {
      * Tryes to change a coordinate reference system axis order to place the east axis first.
      * Reproject the envelope.
      */
-    public static Envelope setLongitudeFirst(Envelope env) throws TransformException, FactoryException{
+    public static Envelope setLongitudeFirst(final Envelope env) throws TransformException, FactoryException{
         if(env == null) return env;
 
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
@@ -714,7 +714,7 @@ public final class GO2Utilities {
     /**
      * Tryes to change a coordinate reference system axis order to place the east axis first.
      */
-    public static CoordinateReferenceSystem setLongitudeFirst(CoordinateReferenceSystem crs) throws FactoryException{
+    public static CoordinateReferenceSystem setLongitudeFirst(final CoordinateReferenceSystem crs) throws FactoryException{
         if(crs instanceof SingleCRS){
             final SingleCRS singlecrs = (SingleCRS) crs;
             final CoordinateSystem cs = singlecrs.getCoordinateSystem();
@@ -779,7 +779,7 @@ public final class GO2Utilities {
      * This method assume that the Y axis of the rectangle is going down.
      * This return the display to objective transform (rect to env).
      */
-    public static AffineTransform toAffine(Dimension rect, Envelope env){
+    public static AffineTransform toAffine(final Dimension rect, final Envelope env){
         final double minx = env.getMinimum(0);
         final double maxy = env.getMaximum(1);
         final double scaleX = env.getSpan(0)/rect.width;
@@ -791,7 +791,7 @@ public final class GO2Utilities {
     // renderers cache /////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static SymbolizerRendererService findRenderer(CachedSymbolizer symbol){
+    public static SymbolizerRendererService findRenderer(final CachedSymbolizer symbol){
         final Class<? extends CachedSymbolizer> type = symbol.getClass();
         SymbolizerRendererService candidate = RENDERERS.get(type);
         if (candidate != null) {
@@ -825,7 +825,7 @@ public final class GO2Utilities {
         return null;
     }
 
-    public static SymbolizerRendererService findRenderer(Class<? extends Symbolizer> type){
+    public static SymbolizerRendererService findRenderer(final Class<? extends Symbolizer> type){
         for(SymbolizerRendererService renderer : RENDERERS.values()){
             if(renderer.getSymbolizerClass().isAssignableFrom(type)){
                 return renderer;
@@ -839,7 +839,7 @@ public final class GO2Utilities {
      * @param references classes
      * @return closesest reference class or null if none match the candidate class
      */
-    private static Class findClosestParent(Class candidate, Class ... references){
+    private static Class findClosestParent(final Class candidate, final Class ... references){
 
         int closestIndice = Integer.MAX_VALUE;
         Class<?> closest = null;
@@ -891,7 +891,7 @@ public final class GO2Utilities {
         return -1;
     }
 
-    private static Collection<Class<?>> findMostSpecialize(Collection<Class<?>> classes) {
+    private static Collection<Class<?>> findMostSpecialize(final Collection<Class<?>> classes) {
         final Set<Class<?>> specialized = new HashSet<Class<?>>();
 
         candidates :
@@ -930,8 +930,8 @@ public final class GO2Utilities {
     // rewrite coverage read param  ////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static GridCoverage reCalculate(GridCoverageReader reader, GridCoverageReadParam params,
-            RenderingContext2D context) throws CoverageStoreException, TransformException{
+    public static GridCoverage reCalculate(final GridCoverageReader reader, final GridCoverageReadParam params,
+            final RenderingContext2D context) throws CoverageStoreException, TransformException{
         final CoordinateReferenceSystem sourceCRS = reader.getGridGeometry(0).getCoordinateReferenceSystem();
         final CoordinateReferenceSystem targetCRS = params.getEnvelope().getCoordinateReferenceSystem();
 
@@ -967,7 +967,7 @@ public final class GO2Utilities {
     /**
      * Calculate the coefficient between the objective unit and the given one.
      */
-    public static float calculateScaleCoefficient(RenderingContext2D context, Unit<Length> symbolUnit){
+    public static float calculateScaleCoefficient(final RenderingContext2D context, final Unit<Length> symbolUnit){
         final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
 
         if(symbolUnit == null || objectiveCRS == null){
@@ -1046,7 +1046,7 @@ public final class GO2Utilities {
     // information about styles ////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static double computeSEScale(RenderingContext2D context) {
+    public static double computeSEScale(final RenderingContext2D context) {
         final Envelope envelope = context.getCanvasObjectiveBounds2D();
         final CoordinateReferenceSystem objCRS = envelope.getCoordinateReferenceSystem();
         final AffineTransform objToDisp = context.getObjectiveToDisplay();
@@ -1068,7 +1068,7 @@ public final class GO2Utilities {
         }
     }
 
-    public static float[] validDashes(float[] dashes) {
+    public static float[] validDashes(final float[] dashes) {
         if (dashes == null || dashes.length == 0) {
             return null;
         } else {
@@ -1076,7 +1076,7 @@ public final class GO2Utilities {
         }
     }
 
-    public static <T> T evaluate(Expression exp, Feature feature, Class<T> type, T defaultValue ){
+    public static <T> T evaluate(final Expression exp, final Feature feature, final Class<T> type, final T defaultValue ){
         T value;
         if(exp == null || (value = exp.evaluate(feature, type)) == null){
             value = defaultValue;
@@ -1138,7 +1138,7 @@ public final class GO2Utilities {
         return (Collection<String>) exp.accept(ListingPropertyVisitor.VISITOR, collection);
     }
 
-    public static boolean isStatic(Expression exp){
+    public static boolean isStatic(final Expression exp){
         if(exp == null) return true;
         return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
     }
@@ -1146,7 +1146,7 @@ public final class GO2Utilities {
     /**
      * Returns the symbolizers that apply on the given feature.
      */
-    public static List<CachedSymbolizer> getSymbolizer(Feature feature, Style style) {
+    public static List<CachedSymbolizer> getSymbolizer(final Feature feature, final Style style) {
         final List<CachedSymbolizer> symbols = new ArrayList<CachedSymbolizer>();
 
         final FeatureType ftype = feature.getType();
@@ -1217,7 +1217,7 @@ public final class GO2Utilities {
      *
      * @return true if there is a visible margin used in this symbols.
      */
-    public static boolean visibleMargin(final CachedRule[] rules, float minMargin, RenderingContext2D context){
+    public static boolean visibleMargin(final CachedRule[] rules, final float minMargin, final RenderingContext2D context){
         for(CachedRule r : rules){
             for(CachedSymbolizer s : r.symbolizers()){
                 final float m = s.getMargin(null, context);
@@ -1230,7 +1230,7 @@ public final class GO2Utilities {
         return false;
     }
 
-    public static List<Rule> getValidRules(final Style style, final double scale, FeatureType type) {
+    public static List<Rule> getValidRules(final Style style, final double scale, final FeatureType type) {
         final List<Rule> validRules = new ArrayList<Rule>();
 
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
@@ -1298,7 +1298,7 @@ public final class GO2Utilities {
         return validRules;
     }
 
-    public static CachedRule[] getValidCachedRules(final Style style, final double scale, FeatureType type) {
+    public static CachedRule[] getValidCachedRules(final Style style, final double scale, final FeatureType type) {
         final List<CachedRule> validRules = new ArrayList<CachedRule>();
 
         final List<? extends FeatureTypeStyle> ftss = style.featureTypeStyles();
@@ -1439,11 +1439,11 @@ public final class GO2Utilities {
     // SYMBOLIZER CACHES ///////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public static CachedRule getCached(Rule rule){
+    public static CachedRule getCached(final Rule rule){
         return new CachedRule(rule);
     }
 
-    public static CachedSymbolizer getCached(Symbolizer symbol){
+    public static CachedSymbolizer getCached(final Symbolizer symbol){
 
         CachedSymbolizer value = CACHE.peek(symbol);
         if (value == null) {
@@ -1480,7 +1480,7 @@ public final class GO2Utilities {
      * @return Opaque color resulting from the merge
      * @throws IllegalArgumentException if first color is not opaque
      */
-    public static Color mergeColors(Color c1, Color c2) throws IllegalArgumentException{
+    public static Color mergeColors(final Color c1, final Color c2) throws IllegalArgumentException{
 
         if(c1.getAlpha() != 255){
             throw new IllegalArgumentException("First color must be opaque");

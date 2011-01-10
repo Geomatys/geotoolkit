@@ -37,8 +37,8 @@ public class AxisDescriptionType extends AbstractDescriptionType {
 
     public AxisDescriptionType() {}
 
-    public AxisDescriptionType(List<MetadataLinkType> metadataLink, String name, String label,
-            String description, final ValueEnumBaseType values)
+    public AxisDescriptionType(final List<MetadataLinkType> metadataLink, final String name, final String label,
+            final String description, final ValueEnumBaseType values)
     {
         super(metadataLink, name, label, description);
         this.values = values;

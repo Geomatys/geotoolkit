@@ -74,7 +74,7 @@ public class FileUtilities {
      * @param dest The destination directory.
      * @throws IOException
      */
-    public static void copy(File src, File dest) throws IOException {
+    public static void copy(final File src, final File dest) throws IOException {
         if (src == null || dest == null) {
             LOGGER.warning("Source and destination files must not be null for the copy");
             return;
@@ -127,7 +127,7 @@ public class FileUtilities {
      * 
      * @param file The File or directory to delete.
      */
-    public static boolean deleteDirectory(File dir) {
+    public static boolean deleteDirectory(final File dir) {
         if (dir.isDirectory()) {
             for (File f : dir.listFiles()) {
                 deleteDirectory(f);
@@ -144,7 +144,7 @@ public class FileUtilities {
      *
      * @throws IOException if the file does not exist or cannot be read.
      */
-    public static void appendToFile(String text, String urlFile) throws IOException {
+    public static void appendToFile(final String text, final String urlFile) throws IOException {
 
         //true means we append a the end of the file
         final FileWriter fw = new FileWriter(urlFile, true);
@@ -178,7 +178,7 @@ public class FileUtilities {
      * @return The file contents as string
      * @throws IOException if the file does not exist or cannot be read.
      */
-    public static String getStringFromFile(File f) throws IOException {
+    public static String getStringFromFile(final File f) throws IOException {
 
         final StringBuilder sb = new StringBuilder();
         final BufferedReader br = new BufferedReader(new FileReader(f));
@@ -197,7 +197,7 @@ public class FileUtilities {
      * @return The file contents as string
      * @throws IOException if the file does not exist or cannot be read.
      */
-    public static String getStringFromStream(InputStream stream) throws IOException {
+    public static String getStringFromStream(final InputStream stream) throws IOException {
 
         final StringBuilder sb  = new StringBuilder();
         final BufferedReader br = new BufferedReader(new InputStreamReader(stream, "UTF-8"));
@@ -475,7 +475,7 @@ public class FileUtilities {
      * @return a list of package names.
      * @throws java.io.IOException
      */
-    public static List<String> scan(final URI u, final String filePackageName, boolean directory) throws IOException {
+    public static List<String> scan(final URI u, final String filePackageName, final boolean directory) throws IOException {
         final List<String> result = new ArrayList<String>();
         final String scheme = u.getScheme();
         if (scheme.equals("file")) {
@@ -519,7 +519,7 @@ public class FileUtilities {
      *
      * @return a list of package names.
      */
-    public static List<String> scanDirectory(final File root, final String parent, boolean directory) {
+    public static List<String> scanDirectory(final File root, final String parent, final boolean directory) {
         final List<String> result = new ArrayList<String>();
         for (File child : root.listFiles()) {
             if (child.isDirectory()) {
@@ -554,7 +554,7 @@ public class FileUtilities {
      * @return a list of package names.
      * @throws java.io.IOException
      */
-    public static List<String> scanJar(final File file, final String parent, boolean directory) throws IOException {
+    public static List<String> scanJar(final File file, final String parent, final boolean directory) throws IOException {
         final List<String> result = new ArrayList<String>();
         final JarFile jar = new JarFile(file);
         final Enumeration<JarEntry> entries = jar.entries();
@@ -584,7 +584,7 @@ public class FileUtilities {
      * @return The file contents as string
      * @throws IOException if the file does not exist or cannot be read.
      */
-    public static void stringToFile(File f, String s) throws IOException {
+    public static void stringToFile(final File f, final String s) throws IOException {
 
         final BufferedWriter bw = new BufferedWriter(new FileWriter(f));
         bw.write(s);

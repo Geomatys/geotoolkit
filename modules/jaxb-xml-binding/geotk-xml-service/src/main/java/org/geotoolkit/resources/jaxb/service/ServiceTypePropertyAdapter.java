@@ -84,7 +84,7 @@ public class ServiceTypePropertyAdapter extends XmlAdapter<ServiceTypePropertyAd
      * @return A java object which represents the serviceType value.
      */
     @Override
-    public ServiceType unmarshal(ServiceTypePropertyAdapter value) throws Exception {
+    public ServiceType unmarshal(final ServiceTypePropertyAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class ServiceTypePropertyAdapter extends XmlAdapter<ServiceTypePropertyAd
      * @return The adapter for this interface.
      */
     @Override
-    public ServiceTypePropertyAdapter marshal(ServiceType value) throws Exception {
+    public ServiceTypePropertyAdapter marshal(final ServiceType value) throws Exception {
         return new ServiceTypePropertyAdapter(value);
     }
 

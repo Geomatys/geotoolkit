@@ -88,7 +88,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
     /**
      * Clone a ServiceIdentification
      */
-    public ServiceIdentificationImpl(ServiceIdentification service) {
+    public ServiceIdentificationImpl(final ServiceIdentification service) {
         this.containsOperations = service.getContainsOperations();
         this.serviceTypeVersion = service.getServiceTypeVersion();
         this.accessProperties   = service.getAccessProperties();
@@ -104,7 +104,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
     /**
      * Build a new Service identification
      */
-    public ServiceIdentificationImpl(Collection<OperationMetadata> operations, GenericName serviceType, CouplingType couplingType) {
+    public ServiceIdentificationImpl(final Collection<OperationMetadata> operations, final GenericName serviceType, final CouplingType couplingType) {
         this.containsOperations = operations;
         this.serviceType        = serviceType;
         this.couplingType       = couplingType;
@@ -123,7 +123,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * Sets the value of the serviceType property.
      * 
      */
-    public synchronized void setServiceType(GenericName value) {
+    public synchronized void setServiceType(final GenericName value) {
         this.serviceType = value;
     }
 
@@ -137,7 +137,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
         return serviceTypeVersion = nonNullCollection(serviceTypeVersion, String.class);
     }
 
-     public synchronized void setServiceTypeVersion(Collection<? extends String> serviceTypeVersion) {
+     public synchronized void setServiceTypeVersion(final Collection<? extends String> serviceTypeVersion) {
          this.serviceTypeVersion = copyCollection(serviceTypeVersion, this.serviceTypeVersion, String.class);
      }
     /**
@@ -152,7 +152,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
     /**
      * Sets the value of the accessProperties property.
     */
-    public synchronized void setAccessProperties(StandardOrderProcess value) {
+    public synchronized void setAccessProperties(final StandardOrderProcess value) {
         this.accessProperties = value;
     }
 
@@ -169,7 +169,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * Sets the value of the restrictions property.
      * 
     */
-    public synchronized void setRestrictions(Constraints value) {
+    public synchronized void setRestrictions(final Constraints value) {
         this.restrictions = value;
     }
 
@@ -195,7 +195,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
         return coupledResource = nonNullCollection(coupledResource, CoupledResource.class);
     }
     
-    public synchronized void setCoupledResource(Collection<? extends CoupledResource> coupledResource) {
+    public synchronized void setCoupledResource(final Collection<? extends CoupledResource> coupledResource) {
         this.coupledResource = copyCollection(coupledResource, this.coupledResource, CoupledResource.class);
     }
 
@@ -213,7 +213,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
      * Sets the value of the couplingType property.
      * 
     */
-    public synchronized void setCouplingType(CouplingType value) {
+    public synchronized void setCouplingType(final CouplingType value) {
         this.couplingType = value;
     }
 
@@ -226,7 +226,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
         return containsOperations = nonNullCollection(containsOperations, OperationMetadata.class);
     }
     
-    public synchronized void setContainsOperations(Collection<? extends OperationMetadata> containsOperations) {
+    public synchronized void setContainsOperations(final Collection<? extends OperationMetadata> containsOperations) {
         this.containsOperations = copyCollection(containsOperations, this.containsOperations, OperationMetadata.class);
     }
     
@@ -240,7 +240,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
         return operatesOn = nonNullCollection(operatesOn, DataIdentification.class);
     }
     
-    public void setOperatesOn(Collection<? extends DataIdentification> operatesOn) {
+    public void setOperatesOn(final Collection<? extends DataIdentification> operatesOn) {
         this.operatesOn = copyCollection(operatesOn, this.operatesOn, DataIdentification.class);
     }
 
@@ -252,7 +252,7 @@ public class ServiceIdentificationImpl extends AbstractIdentification implements
     }
     
     @Deprecated
-    public synchronized void setProvider(Collection<? extends ServiceProvider> provider) {
+    public synchronized void setProvider(final Collection<? extends ServiceProvider> provider) {
         this.provider = copyCollection(provider, this.provider, ServiceProvider.class);
     }
     

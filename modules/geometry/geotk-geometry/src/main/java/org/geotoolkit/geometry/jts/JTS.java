@@ -550,7 +550,7 @@ public final class JTS {
      *
      * @since 2.4
      */
-    public static Polygon toGeometry(Envelope envelope) {
+    public static Polygon toGeometry(final Envelope envelope) {
         GeometryFactory gf = new GeometryFactory();
 
         return gf.createPolygon(gf.createLinearRing(
@@ -571,7 +571,7 @@ public final class JTS {
      * @param geom Provided Geometry
      * @return RefernecedEnveleope describing the bounds of the provided Geometry
      */
-    public static JTSEnvelope2D toEnvelope(Geometry geom) {
+    public static JTSEnvelope2D toEnvelope(final Geometry geom) {
         if (geom == null) {
             return null; //return new ReferencedEnvelope(); // very empty!
         }
@@ -609,7 +609,7 @@ public final class JTS {
      *
      * @since 2.4
      */
-    public static Polygon toGeometry(BoundingBox envelope) {
+    public static Polygon toGeometry(final BoundingBox envelope) {
         GeometryFactory gf = new GeometryFactory();
 
         return gf.createPolygon(gf.createLinearRing(
@@ -632,7 +632,7 @@ public final class JTS {
      * @throws ProjectionException
      * @since 2.4
      */
-    public static void checkCoordinatesRange(Geometry geom, CoordinateReferenceSystem crs)
+    public static void checkCoordinatesRange(final Geometry geom, final CoordinateReferenceSystem crs)
             throws ProjectionException {
         // named x,y, but could be anything
         CoordinateSystemAxis x = crs.getCoordinateSystem().getAxis(0);

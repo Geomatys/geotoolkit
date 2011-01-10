@@ -80,7 +80,7 @@ public class BoundingBoxType {
      *     {@link String }
      *     
      */
-    public void setSRS(String value) {
+    public void setSRS(final String value) {
         this.srs = value;
     }
 
@@ -104,7 +104,7 @@ public class BoundingBoxType {
      *     {@link BigDecimal }
      *     
      */
-    public void setMaxx(BigDecimal value) {
+    public void setMaxx(final BigDecimal value) {
         this.maxx = value;
     }
 
@@ -128,7 +128,7 @@ public class BoundingBoxType {
      *     {@link BigDecimal }
      *     
      */
-    public void setMaxy(BigDecimal value) {
+    public void setMaxy(final BigDecimal value) {
         this.maxy = value;
     }
 
@@ -152,7 +152,7 @@ public class BoundingBoxType {
      *     {@link BigDecimal }
      *     
      */
-    public void setMinx(BigDecimal value) {
+    public void setMinx(final BigDecimal value) {
         this.minx = value;
     }
 
@@ -176,7 +176,7 @@ public class BoundingBoxType {
      *     {@link BigDecimal }
      *     
      */
-    public void setMiny(BigDecimal value) {
+    public void setMiny(final BigDecimal value) {
         this.miny = value;
     }
 

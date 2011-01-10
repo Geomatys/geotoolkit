@@ -53,7 +53,7 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
      *
      * @param iterator FeatureReader to modify
      */
-    private GenericModifyFeatureIterator(final R iterator, Filter filter, Map<PropertyDescriptor,Object> newValues) {
+    private GenericModifyFeatureIterator(final R iterator, final Filter filter, final Map<PropertyDescriptor,Object> newValues) {
         this.iterator = iterator;
         this.filter = filter;
         this.values = newValues;
@@ -133,7 +133,7 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureIterator with a modifiycation set
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values){
+    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values){
         return new GenericModifyFeatureIterator(reader, filter, values);
     }
 

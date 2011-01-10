@@ -87,7 +87,7 @@ public class RegionType extends AbstractObjectType {
      *     {@link LatLonAltBoxType }
      *     
      */
-    public void setLatLonAltBox(LatLonAltBoxType value) {
+    public void setLatLonAltBox(final LatLonAltBoxType value) {
         this.latLonAltBox = value;
     }
 
@@ -111,7 +111,7 @@ public class RegionType extends AbstractObjectType {
      *     {@link LodType }
      *     
      */
-    public void setLod(LodType value) {
+    public void setLod(final LodType value) {
         this.lod = value;
     }
 

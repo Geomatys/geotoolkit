@@ -36,7 +36,7 @@ public class BeyondType extends DistanceBufferType implements Beyond {
     /**
      * Build a new Beyond Type
      */
-    public BeyondType(String propertyName, AbstractGeometryType geometry, double distance, String unit) {
+    public BeyondType(final String propertyName, final AbstractGeometryType geometry, final double distance, final String unit) {
         super(propertyName, geometry, distance, unit);
     }
     

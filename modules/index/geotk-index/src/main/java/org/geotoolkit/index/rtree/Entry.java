@@ -29,7 +29,7 @@ public class Entry<T> implements Cloneable {
     private T data;
     private EntryBoundsChangeListener listener;
 
-    public Entry(Envelope e, T data) {
+    public Entry(final Envelope e, final T data) {
         this.bounds = e;
         this.data = data;
     }
@@ -50,7 +50,7 @@ public class Entry<T> implements Cloneable {
         return data;
     }
 
-    public void setData(T data) {
+    public void setData(final T data) {
         this.data = data;
     }
 
@@ -59,7 +59,7 @@ public class Entry<T> implements Cloneable {
      * 
      * @param envelope
      */
-    void setBounds(Envelope envelope) {
+    void setBounds(final Envelope envelope) {
         bounds = envelope;
 
         if (this.listener != null) {
@@ -91,12 +91,12 @@ public class Entry<T> implements Cloneable {
      * 
      * @param listener
      */
-    public void setListener(EntryBoundsChangeListener listener) {
+    public void setListener(final EntryBoundsChangeListener listener) {
         this.listener = listener;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

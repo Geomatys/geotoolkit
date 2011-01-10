@@ -43,7 +43,7 @@ class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
     /**
      * default constructor.
      */
-    DefaultFeatureTypeConstraint(Name name, Filter filter, List<Extent> extents){
+    DefaultFeatureTypeConstraint(final Name name, final Filter filter, final List<Extent> extents){
         this.featureName = name;
         this.filter = filter;
         
@@ -82,7 +82,7 @@ class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
     }
     
     @Override
-    public Object accept(SLDVisitor visitor, Object extraData) {
+    public Object accept(final SLDVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -90,7 +90,7 @@ class DefaultFeatureTypeConstraint implements FeatureTypeConstraint{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

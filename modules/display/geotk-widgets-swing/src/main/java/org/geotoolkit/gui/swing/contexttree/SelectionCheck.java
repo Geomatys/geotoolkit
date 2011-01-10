@@ -37,7 +37,7 @@ class SelectionCheck extends JCheckBox {
     private static final ImageIcon ICO_NOSELECT = IconBundle.getIcon("16_noselect");
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(final Graphics g) {
         int x = (getWidth() - 16) / 2;
         int y = (getHeight() - 16) / 2;
         g.drawImage((isSelected()) ? ICO_SELECT.getImage() : ICO_NOSELECT.getImage(), x, y, this);

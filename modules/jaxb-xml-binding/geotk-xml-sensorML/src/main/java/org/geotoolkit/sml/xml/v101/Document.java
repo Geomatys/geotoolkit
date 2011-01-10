@@ -92,7 +92,7 @@ public class Document implements AbstractDocument {
 
     }
 
-    public Document(AbstractDocument doc) {
+    public Document(final AbstractDocument doc) {
         if (doc != null) {
             if (doc.getContact() != null) {
                 this.contact = new Contact(doc.getContact());
@@ -111,11 +111,11 @@ public class Document implements AbstractDocument {
         }
     }
 
-    public Document(String description) {
+    public Document(final String description) {
         this.description = new StringOrRefType(description);
     }
 
-    public Document(String description, String format, List<OnlineResource> onlineResource) {
+    public Document(final String description, final String format, final List<OnlineResource> onlineResource) {
         this.description = new StringOrRefType(description);
         this.format      = format;
         this.onlineResource = onlineResource;
@@ -141,7 +141,7 @@ public class Document implements AbstractDocument {
      *     {@link StringOrRefType }
      *     
      */
-    public void setDescription(StringOrRefType value) {
+    public void setDescription(final StringOrRefType value) {
         this.description = value;
     }
 
@@ -165,7 +165,7 @@ public class Document implements AbstractDocument {
      *     {@link String }
      *     
      */
-    public void setDate(String value) {
+    public void setDate(final String value) {
         this.date = value;
     }
 
@@ -189,7 +189,7 @@ public class Document implements AbstractDocument {
      *     {@link Contact }
      *     
      */
-    public void setContact(Contact value) {
+    public void setContact(final Contact value) {
         this.contact = value;
     }
 
@@ -213,7 +213,7 @@ public class Document implements AbstractDocument {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 
@@ -266,7 +266,7 @@ public class Document implements AbstractDocument {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -290,7 +290,7 @@ public class Document implements AbstractDocument {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

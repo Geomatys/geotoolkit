@@ -60,7 +60,7 @@ public class MultiGeometryType extends AbstractGeometricAggregateType {
 
     MultiGeometryType() {}
 
-    public MultiGeometryType(List<GeometryPropertyType> geometryMember) {
+    public MultiGeometryType(final List<GeometryPropertyType> geometryMember) {
         this.geometryMember = geometryMember;
     }
 
@@ -80,7 +80,7 @@ public class MultiGeometryType extends AbstractGeometricAggregateType {
     /**
      * Sets the value of the geometryMember property.
      */
-    public void setGeometryMember(List<GeometryPropertyType> geometryMember) {
+    public void setGeometryMember(final List<GeometryPropertyType> geometryMember) {
         this.geometryMember = geometryMember;
     }
 
@@ -104,22 +104,22 @@ public class MultiGeometryType extends AbstractGeometricAggregateType {
      *     {@link GeometryArrayPropertyType }
      *     
      */
-    public void setGeometryMembers(GeometryArrayPropertyType value) {
+    public void setGeometryMembers(final GeometryArrayPropertyType value) {
         this.geometryMembers = value;
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

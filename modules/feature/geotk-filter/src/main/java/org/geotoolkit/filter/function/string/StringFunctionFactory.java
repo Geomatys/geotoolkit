@@ -70,7 +70,7 @@ public class StringFunctionFactory implements FunctionFactory{
      * {@inheritDoc }
      */
     @Override
-    public Function createFunction(String name, Literal fallback, Expression... parameters) throws IllegalArgumentException {
+    public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
 
         if(name.equals(CONCAT)) return new ConcatFunction(parameters[0], parameters[1]);
         if(name.equals(ENDS_WITH)) return new EndsWithFunction(parameters[0], parameters[1]);

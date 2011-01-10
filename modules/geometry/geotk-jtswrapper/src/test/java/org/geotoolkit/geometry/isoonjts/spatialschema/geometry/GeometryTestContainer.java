@@ -43,7 +43,7 @@ public class GeometryTestContainer {
      * Adds a constructed test case into the list of available tests
      * @param testCase
      */
-    public void addTestCase(GeometryTestCase testCase) {
+    public void addTestCase(final GeometryTestCase testCase) {
         testCases.add(testCase);
     }
 

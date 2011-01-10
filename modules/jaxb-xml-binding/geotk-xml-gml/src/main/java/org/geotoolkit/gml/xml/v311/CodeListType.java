@@ -69,14 +69,14 @@ public class CodeListType {
     /**
      * Build a new List of code (without namespace).
      */
-    public CodeListType(List<String> value) {
+    public CodeListType(final List<String> value) {
         this.value = value;
     }
 
     /**
      * Build a new List of code with the specified namespace.
      */
-    public CodeListType(List<String> value, String codeSpace) {
+    public CodeListType(final List<String> value, final String codeSpace) {
         this.value     = value;
         this.codeSpace = codeSpace;
     }
@@ -85,7 +85,7 @@ public class CodeListType {
      * Build a new List of code (without namespace),
      * with all the element of the list in the parameters.
      */
-    public CodeListType(String... values) {
+    public CodeListType(final String... values) {
         this.value = new ArrayList<String>();
         for (String element:values) {
             this.value.add(element);
@@ -141,7 +141,7 @@ public class CodeListType {
      *     {@link String }
      *     
      */
-    public void setCodeSpace(String value) {
+    public void setCodeSpace(final String value) {
         this.codeSpace = value;
     }
 

@@ -78,8 +78,8 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     /**
      * Build a new operation metadata.
      */
-    public OperationsMetadata(List<Operation> operation, List<DomainType> parameter, List<DomainType> constraint,
-            Object extendedCapabilities){
+    public OperationsMetadata(final List<Operation> operation, final List<DomainType> parameter, final List<DomainType> constraint,
+            final Object extendedCapabilities){
         
         this.constraint           = constraint;
         this.extendedCapabilities = extendedCapabilities;
@@ -102,7 +102,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      * 
      * @param operationName the name of the operation to remove.
      */
-    public void removeOperation(String operationName) {
+    public void removeOperation(final String operationName) {
         for (Operation op: operation){
             if (op.getName().equals(operationName)) {
                 operation.remove(op);
@@ -114,7 +114,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
     /**
      * Return the operation for the specified name
      */
-    public Operation getOperation(String operationName) {
+    public Operation getOperation(final String operationName) {
         for (Operation op: operation){
             if (op.getName().equalsIgnoreCase(operationName)) {
                 return op;
@@ -128,7 +128,7 @@ public class OperationsMetadata implements AbstractOperationsMetadata {
      *
      * @param url The url of the web application.
      */
-    public void updateURL(String url) {
+    public void updateURL(final String url) {
        for (Operation op: operation) {
             for (DCP dcp: op.getDCP()) {
                 for (OnlineResourceType method:dcp.getHTTP().getGetOrPost()) {

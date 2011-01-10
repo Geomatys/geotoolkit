@@ -61,11 +61,11 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
 
     SimpleFeatureBuilder builder;
 
-    public SimpleFeatureBuilderTest(String testName) throws Exception {
+    public SimpleFeatureBuilderTest(final String testName) throws Exception {
         super(testName);
     }
 
-    public static void main(String[] args) {
+    public static void main(final String[] args) {
         junit.textui.TestRunner.run(suite());
     }
 
@@ -327,7 +327,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
         assertDuplicate("point", point, FeatureUtilities.duplicate(point));
     }
 
-    protected void assertDuplicate(String message, Object expected, Object value) {
+    protected void assertDuplicate(final String message, final Object expected, final Object value) {
         // Ensure value is equal to expected
         if (expected.getClass().isArray()) {
             int length1 = Array.getLength(expected);

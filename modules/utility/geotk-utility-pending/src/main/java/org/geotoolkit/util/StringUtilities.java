@@ -52,7 +52,7 @@ public final class StringUtilities {
      * @param key :  the string to encode.
      * @return the value (string) hexadecimal on 32 bits
      */
-    public static String MD5encode(String key) {
+    public static String MD5encode(final String key) {
 
         final byte[] uniqueKey = key.getBytes();
         byte[] hash = null;
@@ -154,7 +154,7 @@ public final class StringUtilities {
      * @param str The value searched.
      * @return
      */
-    public static boolean containsIgnoreCase(List<String> list, String str) {
+    public static boolean containsIgnoreCase(final List<String> list, final String str) {
         boolean strAvailable = false;
         if (list != null) {
             for (String s : list) {
@@ -205,7 +205,7 @@ public final class StringUtilities {
      * @param occ : Occurence to search
      * @return array of all occurence indexes
      */
-    public static int[] getIndexes(String s, char occ) {
+    public static int[] getIndexes(final String s, final char occ) {
         int pos = s.indexOf(occ);
         if(pos <0){
             return EMPTY_INT_ARRAY;
@@ -232,7 +232,7 @@ public final class StringUtilities {
      * @deprecated Moved to {@link org.geotoolkit.util.Strings#count(String, String)}.
      */
     @Deprecated
-    public static int getOccurence(String s, String occ) {
+    public static int getOccurence(final String s, final String occ) {
         int cnt = 0;
         int pos = s.indexOf(occ);
         for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
@@ -299,7 +299,7 @@ public final class StringUtilities {
      * @param xml
      * @return
      */
-    public static String removeXmlns(String xml) {
+    public static String removeXmlns(final String xml) {
         String s = xml;
         s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
         s = s.replaceAll("xmlns=\"[^\"]*\"", "");
@@ -328,7 +328,7 @@ public final class StringUtilities {
      * @deprecated Use {@link java.util.Collections#sort(List)} instead.
      */
     @Deprecated
-    public static List<String> sortStringList(List<String> toSort) {
+    public static List<String> sortStringList(final List<String> toSort) {
         final int elements = toSort.size();
         for (int i = (elements - 1); i > 0; i--) {
             for (int j = 0; j < i; j++) {
@@ -348,7 +348,7 @@ public final class StringUtilities {
      * @param string2 the second string
      * @return true if <code>string1</code> starts with <code>string2</code>; false otherwise
      */
-    public static boolean startsWithIgnoreCase(String string1, String string2) {
+    public static boolean startsWithIgnoreCase(final String string1, final String string2) {
         // this could be optimized, but anyway it doesn't seem to be a performance killer
         return string1.toUpperCase().startsWith(string2.toUpperCase());
     }
@@ -405,7 +405,7 @@ public final class StringUtilities {
      * @param commaSeparatedString A string which contains comma(s).
      * @return A list of elements that were contained in the string separated by comma(s).
      */
-    public static List<String> toStringList(String commaSeparatedString) {
+    public static List<String> toStringList(final String commaSeparatedString) {
         return toStringList(commaSeparatedString, ',');
     }
 
@@ -451,11 +451,11 @@ public final class StringUtilities {
         return result.toString();
     }
 
-    public static String toStringTree(Object ... objects){
+    public static String toStringTree(final Object ... objects){
         return toStringTree(Arrays.asList(objects));
     }
 
-    public static String toStringTree(Collection<?> objects){
+    public static String toStringTree(final Collection<?> objects){
         final StringBuilder sb = new StringBuilder();
 
         final int size = objects.size();

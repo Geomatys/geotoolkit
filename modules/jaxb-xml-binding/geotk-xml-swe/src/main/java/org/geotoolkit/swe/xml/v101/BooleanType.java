@@ -49,7 +49,7 @@ public class BooleanType extends AbstractDataComponentEntry  implements Abstract
     /**
      * Build a new TimeType
      */
-    public BooleanType(AbstractBoolean bool) {
+    public BooleanType(final AbstractBoolean bool) {
         super(bool);
         if (bool != null) {
             this.value  = bool.isValue();
@@ -62,7 +62,7 @@ public class BooleanType extends AbstractDataComponentEntry  implements Abstract
     /**
      * Build a new TimeType
      */
-    public BooleanType(String definition, java.lang.Boolean value) {
+    public BooleanType(final String definition, final java.lang.Boolean value) {
         super(null, definition, null);
         this.value = value;
         

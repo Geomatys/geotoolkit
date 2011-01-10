@@ -81,7 +81,7 @@ public class LineSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public void setGeometry(GeometryType value) {
+    public void setGeometry(final GeometryType value) {
         this.geometry = value;
     }
 
@@ -105,7 +105,7 @@ public class LineSymbolizerType
      *     {@link StrokeType }
      *     
      */
-    public void setStroke(StrokeType value) {
+    public void setStroke(final StrokeType value) {
         this.stroke = value;
     }
 
@@ -129,7 +129,7 @@ public class LineSymbolizerType
      *     {@link ParameterValueType }
      *     
      */
-    public void setPerpendicularOffset(ParameterValueType value) {
+    public void setPerpendicularOffset(final ParameterValueType value) {
         this.perpendicularOffset = value;
     }
 

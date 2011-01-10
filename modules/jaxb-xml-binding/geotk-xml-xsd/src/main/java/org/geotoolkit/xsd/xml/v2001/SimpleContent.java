@@ -74,7 +74,7 @@ public class SimpleContent extends Annotated {
      *     {@link SimpleRestrictionType }
      *     
      */
-    public void setRestriction(SimpleRestrictionType value) {
+    public void setRestriction(final SimpleRestrictionType value) {
         this.restriction = value;
     }
 
@@ -98,7 +98,7 @@ public class SimpleContent extends Annotated {
      *     {@link SimpleExtensionType }
      *     
      */
-    public void setExtension(SimpleExtensionType value) {
+    public void setExtension(final SimpleExtensionType value) {
         this.extension = value;
     }
 

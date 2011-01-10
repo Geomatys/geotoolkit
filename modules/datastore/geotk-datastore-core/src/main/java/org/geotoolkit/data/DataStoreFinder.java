@@ -74,7 +74,7 @@ public final class DataStoreFinder{
      * This is a utility method that will redirect to getDataStore(java.util.Map)
      */
     public static synchronized DataStore getDataStore(
-            String key, Serializable value) throws DataStoreException{
+            final String key, final Serializable value) throws DataStoreException{
         return getDataStore(Collections.singletonMap(key, value));
     }
 
@@ -96,7 +96,7 @@ public final class DataStoreFinder{
      *             to the specified resource without errors.
      */
     public static synchronized DataStore getDataStore(
-            Map<String, Serializable> params) throws DataStoreException {
+            final Map<String, Serializable> params) throws DataStoreException {
         final Iterator<DataStoreFactory> ps = getAvailableDataStores();
 
 
@@ -158,7 +158,7 @@ public final class DataStoreFinder{
      *             to the specified resource without errors.
      */
     public static synchronized DataStore getDataStore(
-            ParameterValueGroup parameters) throws DataStoreException {
+            final ParameterValueGroup parameters) throws DataStoreException {
         final Iterator<DataStoreFactory> ps = getAvailableDataStores();
 
         DataStoreException canProcessButNotAvailable = null;

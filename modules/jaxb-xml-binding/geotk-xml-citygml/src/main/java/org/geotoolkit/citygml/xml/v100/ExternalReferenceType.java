@@ -83,7 +83,7 @@ public class ExternalReferenceType {
      *     {@link String }
      *     
      */
-    public void setInformationSystem(String value) {
+    public void setInformationSystem(final String value) {
         this.informationSystem = value;
     }
 
@@ -107,7 +107,7 @@ public class ExternalReferenceType {
      *     {@link ExternalObjectReferenceType }
      *     
      */
-    public void setExternalObject(ExternalObjectReferenceType value) {
+    public void setExternalObject(final ExternalObjectReferenceType value) {
         this.externalObject = value;
     }
 

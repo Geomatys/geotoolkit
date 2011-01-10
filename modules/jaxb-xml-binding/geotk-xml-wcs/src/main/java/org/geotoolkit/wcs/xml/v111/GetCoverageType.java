@@ -103,8 +103,8 @@ public class GetCoverageType implements GetCoverage {
     /**
      * Build a new GetCoverage request (1.1.1)
      */
-    public GetCoverageType(CodeType identifier, DomainSubsetType domainSubset,
-            RangeSubsetType rangeSubset, OutputType output) {
+    public GetCoverageType(final CodeType identifier, final DomainSubsetType domainSubset,
+            final RangeSubsetType rangeSubset, final OutputType output) {
         
         this.domainSubset        = domainSubset;
         this.output              = output;

@@ -45,7 +45,7 @@ import org.opengis.filter.identity.FeatureId;
  */
 public final class DefaultSimpleFeature extends AbstractSimpleFeature {
 
-    private static List<Property> toProperties(SimpleFeatureType sft, Object[] values){
+    private static List<Property> toProperties(final SimpleFeatureType sft, final Object[] values){
         final int n = sft.getAttributeCount();
         final List<Property> properties = new ArrayList<Property>(n);
         for(int i=0; i<n; i++){
@@ -70,19 +70,19 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      */
     private final boolean validating;
 
-    public DefaultSimpleFeature(SimpleFeatureType featureType, FeatureId id, Object[] values, boolean validating){
+    public DefaultSimpleFeature(final SimpleFeatureType featureType, final FeatureId id, final Object[] values, final boolean validating){
         this(featureType, id, toProperties(featureType,values), validating);
     }
 
-    public DefaultSimpleFeature(SimpleFeatureType type, FeatureId id, List<Property> properties, boolean validating){
+    public DefaultSimpleFeature(final SimpleFeatureType type, final FeatureId id, final List<Property> properties, final boolean validating){
         this(new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),id,properties,validating);
     }
 
-    public DefaultSimpleFeature(AttributeDescriptor desc, FeatureId id, Object[] values, boolean validating){
+    public DefaultSimpleFeature(final AttributeDescriptor desc, final FeatureId id, final Object[] values, final boolean validating){
         this(desc, id, toProperties((SimpleFeatureType) desc.getType(),values), validating);
     }
 
-    public DefaultSimpleFeature(AttributeDescriptor desc, FeatureId id, List<Property> properties, boolean validating){
+    public DefaultSimpleFeature(final AttributeDescriptor desc, final FeatureId id, final List<Property> properties, final boolean validating){
         super(desc,id);
 
         // in the most common case reuse the map cached in the feature type
@@ -125,12 +125,12 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
         return id;
     }
 
-    public void setIdentifier(FeatureId fid){
+    public void setIdentifier(final FeatureId fid){
         this.id = fid;
         this.strID = fid.getID();
     }
 
-    public void setId(String id){
+    public void setId(final String id){
         this.strID = id;
         this.id = null;
     }
@@ -163,7 +163,7 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
      *         otherwise.
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

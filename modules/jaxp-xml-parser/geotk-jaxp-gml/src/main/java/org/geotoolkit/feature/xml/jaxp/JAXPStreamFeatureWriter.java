@@ -336,7 +336,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
 
     }
 
-    private void writeBounds(Envelope bounds, XMLStreamWriter streamWriter) throws XMLStreamException {
+    private void writeBounds(final Envelope bounds, final XMLStreamWriter streamWriter) throws XMLStreamException {
         if (bounds != null) {
 
             String srsName = null;
@@ -400,7 +400,7 @@ public class JAXPStreamFeatureWriter extends StaxStreamWriter implements XmlFeat
         public boolean unknow;
         public String prefix;
 
-        public Prefix(boolean unknow, String prefix) {
+        public Prefix(final boolean unknow, final String prefix) {
             this.prefix = prefix;
             this.unknow = unknow;
         }

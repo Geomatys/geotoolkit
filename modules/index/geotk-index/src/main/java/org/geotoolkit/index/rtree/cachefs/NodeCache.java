@@ -45,12 +45,12 @@ public class NodeCache extends LinkedHashMap {
      * @param capacity
      *                the capacity of the cache
      */
-    public NodeCache(int capacity) {
+    public NodeCache(final int capacity) {
         super(capacity);
         this.maxElements = capacity;
     }
 
-    protected boolean removeEldestEntry(Map.Entry eldest) {
+    protected boolean removeEldestEntry(final Map.Entry eldest) {
         boolean ret = this.size() > this.maxElements;
 
         if (ret) {

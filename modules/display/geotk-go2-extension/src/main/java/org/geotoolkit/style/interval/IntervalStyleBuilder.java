@@ -110,7 +110,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         this(null,null);
     }
 
-    public IntervalStyleBuilder(MutableStyleFactory styleFactory, FilterFactory filterFactory){
+    public IntervalStyleBuilder(final MutableStyleFactory styleFactory, final FilterFactory filterFactory){
         if(styleFactory == null){
              sf = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
         }else{
@@ -165,7 +165,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         return allValues.clone();
     }
 
-    public void setValues(double[] values) {
+    public void setValues(final double[] values) {
         this.values = values;
     }
 
@@ -173,14 +173,14 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         analyze = false;
     }
 
-    public void setLayer(FeatureMapLayer layer) {
+    public void setLayer(final FeatureMapLayer layer) {
         this.layer = layer;
         genericAnalyze = false;
         reset();
         isIntervalStyle(layer.getStyle());
     }
 
-    public boolean isIntervalStyle(MutableStyle style){
+    public boolean isIntervalStyle(final MutableStyle style){
 
         if(style.featureTypeStyles().size() != 1) return false;
 
@@ -275,19 +275,19 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         return layer;
     }
 
-    public void setClassification(PropertyName classification) {
+    public void setClassification(final PropertyName classification) {
         this.classification = classification;
         genericAnalyze = false;
         reset();
     }
 
-    public void setNormalize(PropertyName normalize) {
+    public void setNormalize(final PropertyName normalize) {
         this.normalize = normalize;
         genericAnalyze = false;
         reset();
     }
 
-    public void setMethod(METHOD method) {
+    public void setMethod(final METHOD method) {
         this.method = method;
         reset();
     }
@@ -296,7 +296,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         return method;
     }
 
-    public void setNbClasses(int nbClasses) {
+    public void setNbClasses(final int nbClasses) {
         this.nbClasses = nbClasses;
         reset();
     }
@@ -315,7 +315,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         return template;
     }
 
-    public void setTemplate(Symbolizer template) {
+    public void setTemplate(final Symbolizer template) {
         this.template = template;
     }
 
@@ -463,14 +463,14 @@ public class IntervalStyleBuilder extends AbstractTableModel{
         analyze = true;
     }
 
-    private Symbolizer createSymbolizer(IntervalPalette palette,double step){
+    private Symbolizer createSymbolizer(final IntervalPalette palette,final double step){
         return derivateSymbolizer(template, palette.interpolate(step));
     }
 
     /**
      * Derivate a symbolizer with a new color.
      */
-    private Symbolizer derivateSymbolizer(Symbolizer symbol, Color color){
+    private Symbolizer derivateSymbolizer(final Symbolizer symbol, final Color color){
 
         if(symbol instanceof PolygonSymbolizer){
             PolygonSymbolizer ps = (PolygonSymbolizer)symbol;
@@ -501,7 +501,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
     }
 
-    public List<MutableRule> generateRules(IntervalPalette palette){
+    public List<MutableRule> generateRules(final IntervalPalette palette){
         analyze();
         List<MutableRule> rules = new ArrayList<MutableRule>();
 
@@ -560,13 +560,13 @@ public class IntervalStyleBuilder extends AbstractTableModel{
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
+    public Object getValueAt(final int rowIndex, final int columnIndex) {
         analyze();
         return values[rowIndex];
     }
 
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(final int rowIndex, final int columnIndex) {
         return method == METHOD.MANUAL;
     }
 

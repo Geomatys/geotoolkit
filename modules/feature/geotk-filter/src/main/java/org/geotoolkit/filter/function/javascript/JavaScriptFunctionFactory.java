@@ -51,7 +51,7 @@ public class JavaScriptFunctionFactory implements FunctionFactory{
      * {@inheritDoc }
      */
     @Override
-    public Function createFunction(String name, Literal fallback, Expression... parameters) throws IllegalArgumentException {
+    public Function createFunction(final String name, final Literal fallback, final Expression... parameters) throws IllegalArgumentException {
 
         if(name.equals(JAVASCRIPT)){
             try {

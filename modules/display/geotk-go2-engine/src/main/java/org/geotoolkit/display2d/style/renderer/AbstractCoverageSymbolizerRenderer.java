@@ -41,17 +41,17 @@ import org.opengis.style.Symbolizer;
 public abstract class AbstractCoverageSymbolizerRenderer<C extends CachedSymbolizer<? extends Symbolizer>> extends AbstractSymbolizerRenderer<C>{
 
 
-    public AbstractCoverageSymbolizerRenderer(C symbol, RenderingContext2D context){
+    public AbstractCoverageSymbolizerRenderer(final C symbol, final RenderingContext2D context){
         super(symbol,context);
     }
 
     @Override
-    public void portray(ProjectedFeature graphic) throws PortrayalException {
+    public void portray(final ProjectedFeature graphic) throws PortrayalException {
         //nothing to paint
     }
 
     @Override
-    public boolean hit(ProjectedFeature graphic, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedFeature graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         //nothing to hit
         return false;
     }

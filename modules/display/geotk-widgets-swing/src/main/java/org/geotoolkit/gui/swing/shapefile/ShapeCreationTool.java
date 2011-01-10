@@ -78,7 +78,7 @@ public class ShapeCreationTool extends JPanel {
         guiFileName.setText(file.getAbsolutePath());
     }
 
-    private void createShape(String name) {
+    private void createShape(final String name) {
         try {
             // Create the DataStoreFactory
             final FileDataStoreFactory factory = new ShapefileDataStoreFactory();
@@ -372,15 +372,15 @@ public class ShapeCreationTool extends JPanel {
                 .addContainerGap())
         );
     }// </editor-fold>//GEN-END:initComponents
-    private void createAction(ActionEvent evt) {//GEN-FIRST:event_createAction
+    private void createAction(final ActionEvent evt) {//GEN-FIRST:event_createAction
         createShape(guiFileName.getText());
     }//GEN-LAST:event_createAction
 
-    private void addAction(ActionEvent evt) {//GEN-FIRST:event_addAction
+    private void addAction(final ActionEvent evt) {//GEN-FIRST:event_addAction
         model.addAttribut();
     }//GEN-LAST:event_addAction
 
-    private void deleteAction(ActionEvent evt) {//GEN-FIRST:event_deleteAction
+    private void deleteAction(final ActionEvent evt) {//GEN-FIRST:event_deleteAction
 
         final int selected = guiTable.getSelectionModel().getMinSelectionIndex();
         if (selected >= 0) {
@@ -390,7 +390,7 @@ public class ShapeCreationTool extends JPanel {
         
     }//GEN-LAST:event_deleteAction
 
-    private void upAction(ActionEvent evt) {//GEN-FIRST:event_upAction
+    private void upAction(final ActionEvent evt) {//GEN-FIRST:event_upAction
         final int selected = guiTable.getSelectionModel().getMinSelectionIndex();
         if (selected >= 0) {
             final Field data = model.getDataAt(selected);
@@ -398,7 +398,7 @@ public class ShapeCreationTool extends JPanel {
         }
     }//GEN-LAST:event_upAction
 
-    private void downAction(ActionEvent evt) {//GEN-FIRST:event_downAction
+    private void downAction(final ActionEvent evt) {//GEN-FIRST:event_downAction
         final int selected = guiTable.getSelectionModel().getMinSelectionIndex();
         if (selected >= 0) {
             final Field data = model.getDataAt(selected);
@@ -406,23 +406,23 @@ public class ShapeCreationTool extends JPanel {
         }
     }//GEN-LAST:event_downAction
 
-    private void geomPointAction(ActionEvent evt) {//GEN-FIRST:event_geomPointAction
+    private void geomPointAction(final ActionEvent evt) {//GEN-FIRST:event_geomPointAction
         geotype = "Point";
     }//GEN-LAST:event_geomPointAction
 
-    private void geomMultiPointAction(ActionEvent evt) {//GEN-FIRST:event_geomMultiPointAction
+    private void geomMultiPointAction(final ActionEvent evt) {//GEN-FIRST:event_geomMultiPointAction
         geotype = "MultiPoint";
     }//GEN-LAST:event_geomMultiPointAction
 
-    private void geomMultilineAction(ActionEvent evt) {//GEN-FIRST:event_geomMultilineAction
+    private void geomMultilineAction(final ActionEvent evt) {//GEN-FIRST:event_geomMultilineAction
         geotype = "MultiLineString";
     }//GEN-LAST:event_geomMultilineAction
 
-    private void geomMultiPolygonAction(ActionEvent evt) {//GEN-FIRST:event_geomMultiPolygonAction
+    private void geomMultiPolygonAction(final ActionEvent evt) {//GEN-FIRST:event_geomMultiPolygonAction
         geotype = "MultiPolygon";
     }//GEN-LAST:event_geomMultiPolygonAction
 
-    private void crsAction(ActionEvent evt) {//GEN-FIRST:event_crsAction
+    private void crsAction(final ActionEvent evt) {//GEN-FIRST:event_crsAction
         final JCRSChooser jcrs = new JCRSChooser(null, true);
         jcrs.setCRS(crs);
         final JCRSChooser.ACTION act = jcrs.showDialog();
@@ -435,7 +435,7 @@ public class ShapeCreationTool extends JPanel {
                 
     }//GEN-LAST:event_crsAction
 
-    private void fileAction(ActionEvent evt) {//GEN-FIRST:event_fileAction
+    private void fileAction(final ActionEvent evt) {//GEN-FIRST:event_fileAction
         final JFileChooser jfc = new JFileChooser(file);
         final int act = jfc.showSaveDialog(null);
 

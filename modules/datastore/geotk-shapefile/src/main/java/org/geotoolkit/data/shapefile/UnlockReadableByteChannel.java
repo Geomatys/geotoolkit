@@ -37,8 +37,8 @@ public class UnlockReadableByteChannel implements ReadableByteChannel {
     private final Object requestor;
     private boolean closed;
 
-    public UnlockReadableByteChannel(ReadableByteChannel newChannel,
-            ShpFiles shapefileFiles, URL url, Object requestor) {
+    public UnlockReadableByteChannel(final ReadableByteChannel newChannel,
+            final ShpFiles shapefileFiles, final URL url, final Object requestor) {
         this.wrapped = newChannel;
         this.shapefileFiles = shapefileFiles;
         this.url = url;
@@ -73,7 +73,7 @@ public class UnlockReadableByteChannel implements ReadableByteChannel {
      * {@inheritDoc }
      */
     @Override
-    public int read(ByteBuffer dst) throws IOException {
+    public int read(final ByteBuffer dst) throws IOException {
         return wrapped.read(dst);
     }
 

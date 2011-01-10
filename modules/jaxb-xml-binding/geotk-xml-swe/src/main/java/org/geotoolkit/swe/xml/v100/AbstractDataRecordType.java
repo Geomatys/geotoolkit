@@ -57,7 +57,7 @@ public abstract class AbstractDataRecordType extends AbstractDataComponentType i
 
     }
 
-    public AbstractDataRecordType(URI definition) {
+    public AbstractDataRecordType(final URI definition) {
         super(definition);
     }
 

@@ -94,7 +94,7 @@ public class GNC_ProductTypeCode extends CodeList<GNC_ProductTypeCode>  {
      * Returns the GNC_ProductTypeCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_ProductTypeCode valueOf(String code) {
+    public static GNC_ProductTypeCode valueOf(final String code) {
         return valueOf(GNC_ProductTypeCode.class, code);
     }
 }

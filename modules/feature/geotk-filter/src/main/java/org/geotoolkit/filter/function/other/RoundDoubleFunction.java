@@ -28,7 +28,7 @@ public class RoundDoubleFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         double arg0;
 
         try { // attempt to get value and perform conversion

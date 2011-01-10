@@ -57,7 +57,7 @@ class DefaultQuery implements Query {
      *
      * @param typeName the name of the featureType to retrieve
      */
-    DefaultQuery(final Source name, Name[] attributs) {
+    DefaultQuery(final Source name, final Name[] attributs) {
         this(name,
                 Filter.INCLUDE,
                 attributs,
@@ -69,9 +69,9 @@ class DefaultQuery implements Query {
                 null);
     }
 
-    DefaultQuery(final Source source, Filter filter, Name[] attributs, SortBy[] sort,
-            CoordinateReferenceSystem crs, int startIndex, Integer MaxFeature, 
-            double[] resolution, Hints hints){
+    DefaultQuery(final Source source, final Filter filter, final Name[] attributs, final SortBy[] sort,
+            final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature, 
+            final double[] resolution, final Hints hints){
 
         if(source == null){
             throw new NullPointerException("Query source can not be null");
@@ -265,7 +265,7 @@ class DefaultQuery implements Query {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

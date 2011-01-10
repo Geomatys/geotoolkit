@@ -67,7 +67,7 @@ public class ContactType {
      /**
       * Build a new Contact 
       */
-     public ContactType(TelephoneType phone, AddressType address, OnlineResourceType onlineResource) {
+     public ContactType(final TelephoneType phone, final AddressType address, final OnlineResourceType onlineResource) {
          this.address        = address;
          this.phone          = phone;
          this.onlineResource = onlineResource;

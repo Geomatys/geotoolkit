@@ -94,7 +94,7 @@ public class BriefRecordType extends AbstractRecordType {
      * @param type
      * @param bbox
      */
-    public BriefRecordType(SimpleLiteral identifier, SimpleLiteral title, SimpleLiteral type, List<BoundingBoxType> bboxes) {
+    public BriefRecordType(SimpleLiteral identifier, SimpleLiteral title, final SimpleLiteral type, final List<BoundingBoxType> bboxes) {
         
         this.identifier = new ArrayList<SimpleLiteral>();
         if (identifier == null)
@@ -127,7 +127,7 @@ public class BriefRecordType extends AbstractRecordType {
      * @param type
      * @param bbox
      */
-    public BriefRecordType(List<SimpleLiteral> identifier, List<SimpleLiteral> title, SimpleLiteral type, List<BoundingBoxType> bboxes) {
+    public BriefRecordType(final List<SimpleLiteral> identifier, final List<SimpleLiteral> title, final SimpleLiteral type, final List<BoundingBoxType> bboxes) {
 
         this.identifier = identifier;
         this.title      = title;

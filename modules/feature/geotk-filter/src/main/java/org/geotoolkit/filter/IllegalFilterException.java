@@ -33,7 +33,7 @@ public class IllegalFilterException extends RuntimeException {
      *
      * @param message information on the error.
      */
-    public IllegalFilterException(String message) {
+    public IllegalFilterException(final String message) {
         super(message);
     }
 
@@ -43,7 +43,7 @@ public class IllegalFilterException extends RuntimeException {
      *
      * @param cause the root cause of the exceptions.
      */
-    public IllegalFilterException(Exception cause) {
+    public IllegalFilterException(final Exception cause) {
         super(cause);
     }
 
@@ -54,7 +54,7 @@ public class IllegalFilterException extends RuntimeException {
      * @param msg the detail message.
      * @param cause the root cause of the exceptions.
      */
-    public IllegalFilterException(String msg, Exception cause) {
+    public IllegalFilterException(final String msg, final Exception cause) {
         super(msg, cause);
     }
 }

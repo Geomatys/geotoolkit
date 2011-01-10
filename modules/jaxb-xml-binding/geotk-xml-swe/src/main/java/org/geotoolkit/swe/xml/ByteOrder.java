@@ -46,7 +46,7 @@ public enum ByteOrder {
     LITTLE_ENDIAN("littleEndian");
     private final String value;
 
-    ByteOrder(String v) {
+    ByteOrder(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum ByteOrder {
         return value;
     }
 
-    public static ByteOrder fromValue(String v) {
+    public static ByteOrder fromValue(final String v) {
         for (ByteOrder c: ByteOrder.values()) {
             if (c.value.equals(v)) {
                 return c;

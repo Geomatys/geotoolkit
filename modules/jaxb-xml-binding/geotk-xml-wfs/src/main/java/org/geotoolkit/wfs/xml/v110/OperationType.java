@@ -58,7 +58,7 @@ public enum OperationType {
     GET_GML_OBJECT("GetGmlObject");
     private final String value;
 
-    OperationType(String v) {
+    OperationType(final String v) {
         value = v;
     }
 
@@ -66,7 +66,7 @@ public enum OperationType {
         return value;
     }
 
-    public static OperationType fromValue(String v) {
+    public static OperationType fromValue(final String v) {
         for (OperationType c: OperationType.values()) {
             if (c.value.equals(v)) {
                 return c;

@@ -29,7 +29,7 @@ public class DefaultOperator implements Operator{
 
     private final String name;
 
-    public DefaultOperator(String name) {
+    public DefaultOperator(final String name) {
         if(name == null){
             throw new NullPointerException("Operator name can not be null");
         }
@@ -48,7 +48,7 @@ public class DefaultOperator implements Operator{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

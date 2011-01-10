@@ -107,7 +107,7 @@ public class SensorML extends AbstractSensorML {
 
     }
 
-    public SensorML(String version, List<Member> members) {
+    public SensorML(final String version, final List<Member> members) {
         this.version = version;
         this.member  = members;
     }
@@ -152,7 +152,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Sets the value of the validTime property.
      */
-    public void setValidTime(ValidTime value) {
+    public void setValidTime(final ValidTime value) {
         this.validTime = value;
     }
 
@@ -166,7 +166,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Sets the value of the securityConstraint property.
      */
-    public void setSecurityConstraint(SecurityConstraint value) {
+    public void setSecurityConstraint(final SecurityConstraint value) {
         this.securityConstraint = value;
     }
 
@@ -242,14 +242,14 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the member property.
      */
-    public void setMember(List<Member> member) {
+    public void setMember(final List<Member> member) {
         this.member = member;
     }
 
     /**
      * Gets the value of the member property.
      */
-    public void setMember(Member member) {
+    public void setMember(final Member member) {
         if (this.member == null) {
             this.member = new ArrayList<Member>();
         }
@@ -259,7 +259,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the member property.
      */
-    public void setMember(SystemType member) {
+    public void setMember(final SystemType member) {
         if (this.member == null) {
             this.member = new ArrayList<Member>();
         }
@@ -269,7 +269,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Gets the value of the member property.
      */
-    public void setMember(ComponentType member) {
+    public void setMember(final ComponentType member) {
         if (this.member == null) {
             this.member = new ArrayList<Member>();
         }
@@ -291,7 +291,7 @@ public class SensorML extends AbstractSensorML {
     /**
      * Sets the value of the version property.
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

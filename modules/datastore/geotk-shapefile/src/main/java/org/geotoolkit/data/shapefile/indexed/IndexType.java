@@ -35,7 +35,7 @@ public enum IndexType {
 
     public final ShpFileType shpFileType;
 
-    private IndexType(ShpFileType shpFileType) {
+    private IndexType(final ShpFileType shpFileType) {
         this.shpFileType = shpFileType;
     }
 }

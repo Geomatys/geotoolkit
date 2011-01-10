@@ -30,7 +30,7 @@ import org.geotoolkit.map.CoverageMapLayer;
 public class CoverageMetaDataPanel extends IIOMetadataPanel implements PropertyPane{
 
     @Override
-    public void setTarget(Object target) {
+    public void setTarget(final Object target) {
         if(target instanceof CoverageMapLayer){
             final CoverageMapLayer layer = (CoverageMapLayer) target;
             final GridCoverageReader reader = layer.getCoverageReader();

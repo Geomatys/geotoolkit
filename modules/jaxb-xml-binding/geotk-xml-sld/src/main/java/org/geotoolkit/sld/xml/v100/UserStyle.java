@@ -91,7 +91,7 @@ public class UserStyle {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -115,7 +115,7 @@ public class UserStyle {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -139,7 +139,7 @@ public class UserStyle {
      *     {@link String }
      *     
      */
-    public void setAbstract(String value) {
+    public void setAbstract(final String value) {
         this._abstract = value;
     }
 
@@ -163,7 +163,7 @@ public class UserStyle {
      *     {@link Boolean }
      *     
      */
-    public void setIsDefault(Boolean value) {
+    public void setIsDefault(final Boolean value) {
         this.isDefault = value;
     }
 

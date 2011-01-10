@@ -33,7 +33,7 @@ import org.geotoolkit.report.attribut.context.JRContextAttMapper;
 @Deprecated
 public class ContextTitleMapper extends JRContextAttMapper{
 
-    ContextTitleMapper(JRMapperFactory<String,MapContext> factory){
+    ContextTitleMapper(final JRMapperFactory<String,MapContext> factory){
         super(factory);
     }
 
@@ -41,7 +41,7 @@ public class ContextTitleMapper extends JRContextAttMapper{
      * {@inheritDoc }
      */
     @Override
-    public String create(MapContext candidate, Collection<Object> renderedValues) {
+    public String create(final MapContext candidate, final Collection<Object> renderedValues) {
         return candidate.getDescription().getTitle().toString();
     }
 

@@ -89,7 +89,7 @@ public class MemoryDataStore extends AbstractDataStore{
         private final String base;
         private final AtomicLong inc = new AtomicLong();
 
-        public SimpleGroup(SimpleFeatureType type) {
+        public SimpleGroup(final SimpleFeatureType type) {
             this.type = type;
             this.base = type.getName().getLocalPart()+".";
             this.features = new ConcurrentHashMap<String, Object[]>();
@@ -113,7 +113,7 @@ public class MemoryDataStore extends AbstractDataStore{
         }
 
         @Override
-        public Iterator<Feature> createIterator(Id ids) {
+        public Iterator<Feature> createIterator(final Id ids) {
             return null;
         }
 
@@ -126,7 +126,7 @@ public class MemoryDataStore extends AbstractDataStore{
         final FeatureType type;
         final Map<String,Feature> features;
 
-        ComplexGroup(FeatureType type){
+        ComplexGroup(final FeatureType type){
             this.type = type;
             this.features = new ConcurrentHashMap<String, Feature>();
         }
@@ -137,7 +137,7 @@ public class MemoryDataStore extends AbstractDataStore{
         }
 
         @Override
-        public Iterator<? extends Feature> createIterator(Id ids) {
+        public Iterator<? extends Feature> createIterator(final Id ids) {
 
             if(ids == null){
                 return features.values().iterator();
@@ -196,7 +196,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * @param singleTypeLock : true if you don't want any other types to be create or
      * this type to be deleted.
      */
-    public MemoryDataStore(FeatureType type, boolean singleTypeLock){
+    public MemoryDataStore(final FeatureType type, final boolean singleTypeLock){
         super(null);
         this.singleTypeLock = singleTypeLock;
         Name name = type.getName();
@@ -222,7 +222,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(Name name) throws DataStoreException {
+    public FeatureType getFeatureType(final Name name) throws DataStoreException {
         final Group grp = groups.get(name);
 
         if(grp == null){
@@ -236,7 +236,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void createSchema(Name name, FeatureType featureType) throws DataStoreException {
+    public synchronized void createSchema(final Name name, final FeatureType featureType) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
                 "Memory datastore is in single type mode. Schema modification are not allowed.");
 
@@ -268,7 +268,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public synchronized void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
                 "Memory datastore is in single type mode. Schema modification are not allowed.");
 
@@ -305,7 +305,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public synchronized void deleteSchema(Name typeName) throws DataStoreException {
+    public synchronized void deleteSchema(final Name typeName) throws DataStoreException {
         if(singleTypeLock) throw new DataStoreException(
                 "Memory datastore is in single type mode. Schema modification are not allowed.");
 
@@ -334,7 +334,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> collection) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> collection) throws DataStoreException {
         typeCheck(groupName);
         final Group grp = groups.get(groupName);
 
@@ -403,7 +403,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
@@ -411,7 +411,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
@@ -419,7 +419,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         final Group grp = groups.get(query.getTypeName());
 
         if(grp == null){
@@ -462,7 +462,7 @@ public class MemoryDataStore extends AbstractDataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, Filter filter) throws DataStoreException {
         final FeatureType type = getFeatureType(typeName);
         final FeatureWriter writer;
 
@@ -512,7 +512,7 @@ public class MemoryDataStore extends AbstractDataStore{
         private F currentFeature = null;
         private F modified = null;
 
-        MemoryFeatureWriter(SimpleGroup group) throws SchemaException{
+        MemoryFeatureWriter(final SimpleGroup group) throws SchemaException{
             this.grp = group;
             this.ids = grp.createFIDReader();
             this.properties = grp.createPropertyReader();

@@ -83,43 +83,43 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
     public MockGeometryFactory() {
         this(DefaultGeographicCRS.WGS84);
     }
-    public MockGeometryFactory( CoordinateReferenceSystem crs ) {
+    public MockGeometryFactory( final CoordinateReferenceSystem crs ) {
         this.crs = crs;
     }
-    public Arc createArc( Position startPoint, Position midPoint, Position endPoint )
+    public Arc createArc( final Position startPoint, final Position midPoint, final Position endPoint )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return null;
     }
 
-    public Arc createArc( Position startPoint, Position endPoint, double bulge, double[] normal )
+    public Arc createArc( final Position startPoint, final Position endPoint, final double bulge, final double[] normal )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return null;
     }
 
-    public ArcByBulge createArcByBulge( Position startPoint, Position endPoint, double bulge,
-            double[] normal ) throws MismatchedReferenceSystemException,
+    public ArcByBulge createArcByBulge( final Position startPoint, final Position endPoint, final double bulge,
+            final double[] normal ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         return null;
     }
 
-    public ArcString createArcString( List points ) throws MismatchedReferenceSystemException,
+    public ArcString createArcString( final List points ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         return null;
     }
 
-    public ArcStringByBulge createArcStringByBulge( List points, double[] bulges, List normals )
+    public ArcStringByBulge createArcStringByBulge( final List points, final double[] bulges, final List normals )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return null;
     }
 
-    public BSplineCurve createBSplineCurve( int degree, PointArray points, List knots,
-            KnotType knotSpec ) throws MismatchedReferenceSystemException,
+    public BSplineCurve createBSplineCurve( final int degree, final PointArray points, final List knots,
+            final KnotType knotSpec ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         return null;
     }
 
-    public BSplineSurface createBSplineSurface( List points, int[] degree, List[] knots,
-            KnotType knotSpec ) throws MismatchedReferenceSystemException,
+    public BSplineSurface createBSplineSurface( final List points, final int[] degree, final List[] knots,
+            final KnotType knotSpec ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         return null;
     }
@@ -128,7 +128,7 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
         return new MockDirectPosition();
     }
 
-    public DirectPosition createDirectPosition( double[] coordinates ) {
+    public DirectPosition createDirectPosition( final double[] coordinates ) {
         return new MockDirectPosition(coordinates);
     }
 
@@ -138,7 +138,7 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
     }
 
     @Override
-    public Position createPosition(Position position) {
+    public Position createPosition(final Position position) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -148,12 +148,12 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
     }
 
     @Override
-    public PointArray createPointArray(double[] coordinates, int start, int length) {
+    public PointArray createPointArray(final double[] coordinates, final int start, final int length) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public PointArray createPointArray(float[] coordinates, int start, int length) {
+    public PointArray createPointArray(final float[] coordinates, final int start, final int length) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     class MockDirectPosition implements DirectPosition {
@@ -162,11 +162,11 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             this(new double[crs.getCoordinateSystem().getDimension()]);
         }
 
-        public MockDirectPosition( double[] coordinates ) {
+        public MockDirectPosition( final double[] coordinates ) {
             this.coordinates = coordinates;
         }
 
-        public MockDirectPosition( DirectPosition position ) {
+        public MockDirectPosition( final DirectPosition position ) {
             assert position.getCoordinateReferenceSystem() == crs;
             coordinates = position.getCoordinate();
         }
@@ -187,11 +187,11 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             return crs.getCoordinateSystem().getDimension();
         }
 
-        public double getOrdinate( int dimension ) throws IndexOutOfBoundsException {
+        public double getOrdinate( final int dimension ) throws IndexOutOfBoundsException {
             return coordinates[dimension];
         }
 
-        public void setOrdinate( int dimension, double value ) throws IndexOutOfBoundsException {
+        public void setOrdinate( final int dimension, final double value ) throws IndexOutOfBoundsException {
             coordinates[dimension] = value;
 
         }
@@ -251,24 +251,24 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
         };
     }
 
-    public Geodesic createGeodesic( Position startPoint, Position endPoint )
+    public Geodesic createGeodesic( final Position startPoint, final Position endPoint )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
     }
 
-    public GeodesicString createGeodesicString( List points )
+    public GeodesicString createGeodesicString( final List points )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return null;
     }
 
-    public LineSegment createLineSegment( Position startPoint, Position endPoint )
+    public LineSegment createLineSegment( final Position startPoint, final Position endPoint )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return null;
     }
 
     /** Takes a List<Position> ... */
-    public LineString createLineString( List points ) throws MismatchedReferenceSystemException,
+    public LineString createLineString( final List points ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         return new LineString(){
             PointArray points;
@@ -368,22 +368,22 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
         return null;
     }
 
-    public Polygon createPolygon( SurfaceBoundary boundary )
+    public Polygon createPolygon( final SurfaceBoundary boundary )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return null;
     }
 
-    public Polygon createPolygon( SurfaceBoundary boundary, Surface spanSurface )
+    public Polygon createPolygon( final SurfaceBoundary boundary, final Surface spanSurface )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return null;
     }
 
-    public PolyhedralSurface createPolyhedralSurface( List tiles )
+    public PolyhedralSurface createPolyhedralSurface( final List tiles )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return null;
     }
 
-    public Tin createTin( Set post, Set stopLines, Set breakLines, double maxLength )
+    public Tin createTin( final Set post, final Set stopLines, final Set breakLines, final double maxLength )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         return null;
     }
@@ -397,7 +397,7 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
     }
     class MockCurve implements Curve {
         List segments;
-        MockCurve( List segments ) {
+        MockCurve( final List segments ) {
             this.segments = segments;
         }
         public List getSegments() {
@@ -438,7 +438,7 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             return null;
         }
 
-        public Geometry getBuffer( double distance ) {
+        public Geometry getBuffer( final double distance ) {
             return null;
         }
 
@@ -462,15 +462,15 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             return crs;
         }
 
-        public int getDimension( DirectPosition point ) {
+        public int getDimension( final DirectPosition point ) {
             return 0;
         }
 
-        public double distance(Geometry geometry) {
+        public double distance(final Geometry geometry) {
             return 0;
         }
 
-        public double getDistance(Geometry geometry) {
+        public double getDistance(final Geometry geometry) {
             return distance(geometry);
         }
 
@@ -510,56 +510,56 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             return this;
         }
 
-        public Geometry transform( CoordinateReferenceSystem newCRS ) throws TransformException {
+        public Geometry transform( final CoordinateReferenceSystem newCRS ) throws TransformException {
             return null;
         }
 
-        public Geometry transform( CoordinateReferenceSystem newCRS, MathTransform transform )
+        public Geometry transform( final CoordinateReferenceSystem newCRS, final MathTransform transform )
                 throws TransformException {
             return null;
         }
 
-        public boolean contains( TransfiniteSet pointSet ) {
+        public boolean contains( final TransfiniteSet pointSet ) {
             return false;
         }
 
-        public boolean contains( DirectPosition point ) {
+        public boolean contains( final DirectPosition point ) {
             return false;
         }
 
-        public TransfiniteSet difference( TransfiniteSet pointSet ) {
+        public TransfiniteSet difference( final TransfiniteSet pointSet ) {
             return null;
         }
 
-        public boolean equals( TransfiniteSet pointSet ) {
+        public boolean equals( final TransfiniteSet pointSet ) {
             return false;
         }
 
-        public TransfiniteSet intersection( TransfiniteSet pointSet ) {
+        public TransfiniteSet intersection( final TransfiniteSet pointSet ) {
             return null;
         }
 
-        public boolean intersects( TransfiniteSet pointSet ) {
+        public boolean intersects( final TransfiniteSet pointSet ) {
             return false;
         }
 
-        public TransfiniteSet symmetricDifference( TransfiniteSet pointSet ) {
+        public TransfiniteSet symmetricDifference( final TransfiniteSet pointSet ) {
             return null;
         }
 
-        public TransfiniteSet union( TransfiniteSet pointSet ) {
+        public TransfiniteSet union( final TransfiniteSet pointSet ) {
             return null;
         }
 
-        public LineString asLineString( double maxSpacing, double maxOffset ) {
+        public LineString asLineString( final double maxSpacing, final double maxOffset ) {
             return null;
         }
 
-        public DirectPosition forConstructiveParam( double cp ) {
+        public DirectPosition forConstructiveParam( final double cp ) {
             return null;
         }
 
-        public DirectPosition forParam( double s ) {
+        public DirectPosition forParam( final double s ) {
             return null;
         }
 
@@ -575,7 +575,7 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             return null;
         }
 
-        public ParamForPoint getParamForPoint( DirectPosition p ) {
+        public ParamForPoint getParamForPoint( final DirectPosition p ) {
             return null;
         }
 
@@ -591,35 +591,35 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             return null;
         }
 
-        public double[] getTangent( double s ) {
+        public double[] getTangent( final double s ) {
             return null;
         }
 
-        public double length( Position point1, Position point2 ) {
+        public double length( final Position point1, final Position point2 ) {
             return 0;
         }
 
-        public double length( double cparam1, double cparam2 ) {
+        public double length( final double cparam1, final double cparam2 ) {
             return 0;
         }
     }
 
-    public Point createPoint( double[] coordinates ) throws MismatchedDimensionException {
+    public Point createPoint( final double[] coordinates ) throws MismatchedDimensionException {
         return createPoint(createPoint(coordinates));
     }
-    public Point createPoint( Position position ) throws MismatchedReferenceSystemException,
+    public Point createPoint( final Position position ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         return new MockPoint(position.getDirectPosition());
     }
     class MockPoint implements Point {
         private DirectPosition position;
-        MockPoint( DirectPosition position ) {
+        MockPoint( final DirectPosition position ) {
             this.position = position;
         }
         public MockPoint clone() {
             return new MockPoint(new MockDirectPosition(position));
         }
-        public Bearing getBearing( Position toPoint ) {
+        public Bearing getBearing( final Position toPoint ) {
             return null;
         }
         public DirectPosition getDirectPosition() {
@@ -629,11 +629,11 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
         public DirectPosition getPosition() {
             return position;
         }
-        public void setDirectPosition( DirectPosition position ) throws UnmodifiableGeometryException {
+        public void setDirectPosition( final DirectPosition position ) throws UnmodifiableGeometryException {
             this.position = position;
         }
         @Deprecated
-        public void setPosition( DirectPosition position ) throws UnmodifiableGeometryException {
+        public void setPosition( final DirectPosition position ) throws UnmodifiableGeometryException {
             this.position = position;
         }
         public Set getComplexes() {
@@ -660,7 +660,7 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             return null;
         }
 
-        public Geometry getBuffer( double distance ) {
+        public Geometry getBuffer( final double distance ) {
             return null;
         }
 
@@ -684,15 +684,15 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             return crs;
         }
 
-        public int getDimension( DirectPosition point ) {
+        public int getDimension( final DirectPosition point ) {
             return 0;
         }
 
-        public double distance(Geometry geometry) {
+        public double distance(final Geometry geometry) {
             return 0;
         }
 
-        public double getDistance(Geometry geometry) {
+        public double getDistance(final Geometry geometry) {
             return distance(geometry);
         }
 
@@ -728,74 +728,74 @@ public class MockGeometryFactory implements GeometryFactory, PrimitiveFactory, P
             return null;
         }
 
-        public Geometry transform( CoordinateReferenceSystem newCRS ) throws TransformException {
+        public Geometry transform( final CoordinateReferenceSystem newCRS ) throws TransformException {
             return null;
         }
 
-        public Geometry transform( CoordinateReferenceSystem newCRS, MathTransform transform )
+        public Geometry transform( final CoordinateReferenceSystem newCRS, final MathTransform transform )
                 throws TransformException {
             return null;
         }
 
-        public boolean contains( TransfiniteSet pointSet ) {
+        public boolean contains( final TransfiniteSet pointSet ) {
             return pointSet.contains(position);
         }
 
-        public boolean contains( DirectPosition point ) {
+        public boolean contains( final DirectPosition point ) {
             return point.equals(position);
         }
 
-        public TransfiniteSet difference( TransfiniteSet pointSet ) {
+        public TransfiniteSet difference( final TransfiniteSet pointSet ) {
             return null;
         }
 
-        public boolean equals( TransfiniteSet pointSet ) {
+        public boolean equals( final TransfiniteSet pointSet ) {
             return false;
         }
 
-        public TransfiniteSet intersection( TransfiniteSet pointSet ) {
+        public TransfiniteSet intersection( final TransfiniteSet pointSet ) {
             return null;
         }
 
-        public boolean intersects( TransfiniteSet pointSet ) {
+        public boolean intersects( final TransfiniteSet pointSet ) {
             return false;
         }
 
-        public TransfiniteSet symmetricDifference( TransfiniteSet pointSet ) {
+        public TransfiniteSet symmetricDifference( final TransfiniteSet pointSet ) {
             return null;
         }
 
-        public TransfiniteSet union( TransfiniteSet pointSet ) {
+        public TransfiniteSet union( final TransfiniteSet pointSet ) {
             return null;
         }
     }
 
-    public Primitive createPrimitive( Envelope envelope )
+    public Primitive createPrimitive( final Envelope envelope )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
     }
-    public Ring createRing( List curves ) throws MismatchedReferenceSystemException,
+    public Ring createRing( final List curves ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
     }
-    public Solid createSolid( SolidBoundary boundary ) throws MismatchedReferenceSystemException,
+    public Solid createSolid( final SolidBoundary boundary ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
     }
-    public Surface createSurface( List surfaces ) throws MismatchedReferenceSystemException,
+    public Surface createSurface( final List surfaces ) throws MismatchedReferenceSystemException,
             MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
     }
-    public Surface createSurface( SurfaceBoundary boundary )
+    public Surface createSurface( final SurfaceBoundary boundary )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;
     }
-    public SurfaceBoundary createSurfaceBoundary( Ring exterior, List interiors )
+    public SurfaceBoundary createSurfaceBoundary( final Ring exterior, final List interiors )
             throws MismatchedReferenceSystemException, MismatchedDimensionException {
         // TODO Auto-generated method stub
         return null;

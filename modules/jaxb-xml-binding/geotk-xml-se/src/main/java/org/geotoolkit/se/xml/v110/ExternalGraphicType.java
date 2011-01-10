@@ -87,7 +87,7 @@ public class ExternalGraphicType {
      *     {@link OnlineResourceType }
      *     
      */
-    public void setOnlineResource(OnlineResourceType value) {
+    public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
     }
 
@@ -111,7 +111,7 @@ public class ExternalGraphicType {
      *     {@link InlineContentType }
      *     
      */
-    public void setInlineContent(InlineContentType value) {
+    public void setInlineContent(final InlineContentType value) {
         this.inlineContent = value;
     }
 
@@ -135,7 +135,7 @@ public class ExternalGraphicType {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 

@@ -70,7 +70,7 @@ public enum SpatialOperatorNameType {
     D_WITHIN("DWithin");
     private final String value;
 
-    SpatialOperatorNameType(String v) {
+    SpatialOperatorNameType(final String v) {
         value = v;
     }
 
@@ -78,7 +78,7 @@ public enum SpatialOperatorNameType {
         return value;
     }
 
-    public static SpatialOperatorNameType fromValue(String v) {
+    public static SpatialOperatorNameType fromValue(final String v) {
         for (SpatialOperatorNameType c: SpatialOperatorNameType.values()) {
             if (c.value.equals(v)) {
                 return c;

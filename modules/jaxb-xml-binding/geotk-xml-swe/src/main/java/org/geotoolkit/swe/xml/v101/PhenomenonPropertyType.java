@@ -99,14 +99,14 @@ public class PhenomenonPropertyType {
     /**
      * An empty constructor used by JAXB.
      */
-    public PhenomenonPropertyType(String href) {
+    public PhenomenonPropertyType(final String href) {
         this.href = href;
     }
     
     /**
      * Build a new Phenomenon Property.
      */
-    public PhenomenonPropertyType(PhenomenonEntry observedProperty) {
+    public PhenomenonPropertyType(final PhenomenonEntry observedProperty) {
         
         if (observedProperty instanceof CompositePhenomenonEntry) {
             this.compositePhenomenon       = (CompositePhenomenonEntry)observedProperty;
@@ -147,7 +147,7 @@ public class PhenomenonPropertyType {
             return null;
     }
 
-    public void setPhenomenon(PhenomenonEntry pheno) {
+    public void setPhenomenon(final PhenomenonEntry pheno) {
         
         if (pheno instanceof CompositePhenomenonEntry) {
             this.compositePhenomenon   = (CompositePhenomenonEntry)pheno;

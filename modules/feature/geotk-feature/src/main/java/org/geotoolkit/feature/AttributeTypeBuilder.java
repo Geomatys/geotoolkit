@@ -202,15 +202,15 @@ public class AttributeTypeBuilder {
         this.name = name;
     }
 
-    public void setName(String localPart){
+    public void setName(final String localPart){
         this.name = new DefaultName(localPart);
     }
 
-    public void setName(String namespace, String localPart){
+    public void setName(final String namespace, final String localPart){
         this.name = new DefaultName(namespace,localPart);
     }
 
-    public void setName(String namespace, String separator, String localPart){
+    public void setName(final String namespace, final String separator, final String localPart){
         this.name = new DefaultName(namespace,separator,localPart);
     }
 

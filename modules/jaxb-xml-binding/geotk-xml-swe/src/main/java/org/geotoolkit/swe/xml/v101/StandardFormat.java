@@ -59,7 +59,7 @@ public class StandardFormat extends AbstractEncodingEntry implements AbstractSta
 
     }
 
-    public StandardFormat(AbstractStandardFormat as) {
+    public StandardFormat(final AbstractStandardFormat as) {
         super(as);
         if (as != null) {
             this.mimeType = as.getMimeType();
@@ -76,7 +76,7 @@ public class StandardFormat extends AbstractEncodingEntry implements AbstractSta
     /**
      * Sets the value of the mimeType property.
      */
-    public void setMimeType(String value) {
+    public void setMimeType(final String value) {
         this.mimeType = value;
     }
 

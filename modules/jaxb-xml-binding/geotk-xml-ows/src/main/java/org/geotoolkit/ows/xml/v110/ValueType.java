@@ -60,7 +60,7 @@ public class ValueType {
     /**
      * Build a new Value.
      */
-    public ValueType(String value){
+    public ValueType(final String value){
         this.value = value;
     }
     

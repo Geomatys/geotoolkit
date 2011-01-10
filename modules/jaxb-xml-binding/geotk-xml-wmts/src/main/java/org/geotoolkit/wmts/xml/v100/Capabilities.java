@@ -77,8 +77,8 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
 
     }
 
-    public Capabilities(ServiceIdentification serviceIdentification, ServiceProvider serviceProvider,
-            OperationsMetadata operationsMetadata, String version, String updateSequence, ContentsType con, List<Themes> them) {
+    public Capabilities(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence, final ContentsType con, final List<Themes> them) {
         super(serviceIdentification, serviceProvider, operationsMetadata, version, updateSequence);
         this.contents = con;
         this.themes = them;
@@ -104,7 +104,7 @@ public class Capabilities extends CapabilitiesBaseType implements WMTSResponse {
      *     {@link ContentsType }
      *     
      */
-    public void setContents(ContentsType value) {
+    public void setContents(final ContentsType value) {
         this.contents = value;
     }
 

@@ -74,7 +74,7 @@ public class ExternalObjectReferenceType {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -98,7 +98,7 @@ public class ExternalObjectReferenceType {
      *     {@link String }
      *     
      */
-    public void setUri(String value) {
+    public void setUri(final String value) {
         this.uri = value;
     }
 

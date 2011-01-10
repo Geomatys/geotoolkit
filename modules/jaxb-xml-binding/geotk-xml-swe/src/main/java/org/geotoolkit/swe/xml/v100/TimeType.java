@@ -82,12 +82,12 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
 
     }
 
-    public TimeType(URI definition, UomPropertyType uom) {
+    public TimeType(final URI definition, final UomPropertyType uom) {
         super(definition);
         this.uom = uom;
     }
 
-    public TimeType(AbstractTime time) {
+    public TimeType(final AbstractTime time) {
         super(time);
         if (time != null) {
             if (time.getUom() != null) {
@@ -111,7 +111,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     /**
      * Sets the value of the uom property.
       */
-    public void setUom(UomPropertyType value) {
+    public void setUom(final UomPropertyType value) {
         this.uom = value;
     }
 
@@ -127,7 +127,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
      * Sets the value of the constraint property.
      *     
      */
-    public void setConstraint(AllowedTimesPropertyType value) {
+    public void setConstraint(final AllowedTimesPropertyType value) {
         this.constraint = value;
     }
 
@@ -141,7 +141,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     /**
      * Sets the value of the quality property.
      */
-    public void setQuality(QualityPropertyType value) {
+    public void setQuality(final QualityPropertyType value) {
         this.quality = value;
     }
 
@@ -165,7 +165,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     /**
      * Sets the value of the referenceTime property.
      */
-    public void setReferenceTime(String value) {
+    public void setReferenceTime(final String value) {
         this.referenceTime = value;
     }
 
@@ -179,7 +179,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -193,7 +193,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
     /**
      * Sets the value of the localFrame property.
      */
-    public void setLocalFrame(String value) {
+    public void setLocalFrame(final String value) {
         this.localFrame = value;
     }
 

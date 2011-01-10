@@ -91,7 +91,7 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
 
     }
 
-    public DataSourceType(AbstractDataSource ds) {
+    public DataSourceType(final AbstractDataSource ds) {
         super(ds);
         if (ds != null) {
             if (ds.getDataDefinition() != null) {
@@ -116,7 +116,7 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
     /**
      * Sets the value of the dataDefinition property.
      */
-    public void setDataDefinition(DataDefinition value) {
+    public void setDataDefinition(final DataDefinition value) {
         this.dataDefinition = value;
     }
 
@@ -130,7 +130,7 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
     /**
      * Sets the value of the values property.
      */
-    public void setValues(Values value) {
+    public void setValues(final Values value) {
         this.values = value;
     }
 
@@ -144,7 +144,7 @@ public class DataSourceType extends AbstractProcessType implements AbstractDataS
     /**
      * Sets the value of the observationReference property.
      */
-    public void setObservationReference(ObservationReference value) {
+    public void setObservationReference(final ObservationReference value) {
         this.observationReference = value;
     }
 

@@ -76,8 +76,8 @@ public class RangeType {
     /**
      * Build a new full Range.
      */
-    public RangeType(ValueType minimumValue, ValueType maximumValue, ValueType spacing,
-            List<String> rangeClosure){
+    public RangeType(final ValueType minimumValue, final ValueType maximumValue, final ValueType spacing,
+            final List<String> rangeClosure){
         this.maximumValue = maximumValue;
         this.minimumValue = minimumValue;
         this.rangeClosure = rangeClosure;
@@ -87,7 +87,7 @@ public class RangeType {
     /**
      * Build a new light Range.
      */
-    public RangeType(String minimumValue, String maximumValue){
+    public RangeType(final String minimumValue, final String maximumValue){
         this.maximumValue = new ValueType(maximumValue);
         this.minimumValue = new ValueType(minimumValue);
     }

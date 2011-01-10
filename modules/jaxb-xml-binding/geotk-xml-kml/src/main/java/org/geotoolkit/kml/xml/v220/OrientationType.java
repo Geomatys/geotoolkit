@@ -93,7 +93,7 @@ public class OrientationType
      *     {@link Double }
      *     
      */
-    public void setHeading(Double value) {
+    public void setHeading(final Double value) {
         this.heading = value;
     }
 
@@ -117,7 +117,7 @@ public class OrientationType
      *     {@link Double }
      *     
      */
-    public void setTilt(Double value) {
+    public void setTilt(final Double value) {
         this.tilt = value;
     }
 
@@ -141,7 +141,7 @@ public class OrientationType
      *     {@link Double }
      *     
      */
-    public void setRoll(Double value) {
+    public void setRoll(final Double value) {
         this.roll = value;
     }
 

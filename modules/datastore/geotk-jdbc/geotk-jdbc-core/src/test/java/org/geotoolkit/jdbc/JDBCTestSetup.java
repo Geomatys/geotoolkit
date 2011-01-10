@@ -69,7 +69,7 @@ public abstract class JDBCTestSetup {
     protected void setUpData() throws Exception {
     }
 
-    protected void setUpDataStore(JDBCDataStore dataStore) {
+    protected void setUpDataStore(final JDBCDataStore dataStore) {
     }
 
     public void tearDown() throws Exception {
@@ -85,14 +85,14 @@ public abstract class JDBCTestSetup {
      *
      * @param input The sql.
      */
-    protected void run(String input) throws Exception {
+    protected void run(final String input) throws Exception {
         run(new ByteArrayInputStream(input.getBytes()));
     }
     
     /**
      * Executes {@link #run(String)} ignoring any exceptions.
     */
-    protected void runSafe( String input ) { 
+    protected void runSafe( final String input ) { 
         try {
             run( input );
         }
@@ -106,7 +106,7 @@ public abstract class JDBCTestSetup {
      *
      * @param script Input stream to the sql script to run.
      */
-    protected void run(InputStream script) throws Exception {
+    protected void run(final InputStream script) throws Exception {
         //load the script
         BufferedReader reader = new BufferedReader(new InputStreamReader(script));
 
@@ -144,7 +144,7 @@ public abstract class JDBCTestSetup {
      * </p>
      *
      */
-    protected String typeName( String raw ) {
+    protected String typeName( final String raw ) {
         return raw;
     }
     
@@ -157,7 +157,7 @@ public abstract class JDBCTestSetup {
      * upper or lower case. 
      * </p>
      */
-    protected String attributeName( String raw ) {
+    protected String attributeName( final String raw ) {
         return raw;
     }
     
@@ -201,17 +201,17 @@ public abstract class JDBCTestSetup {
      * @param db
      * @throws IOException
      */
-    protected void fillConnectionProperties(Properties db) throws IOException {
+    protected void fillConnectionProperties(final Properties db) throws IOException {
         db.load( getClass().getResourceAsStream( "db.properties") );
     }
     
-    protected void initializeDataSource( BasicDataSource ds, Properties db ) {
+    protected void initializeDataSource( final BasicDataSource ds, final Properties db ) {
         
     }
 
     protected abstract JDBCDataStoreFactory createDataStoreFactory();
     
-    protected final SQLDialect createSQLDialect(JDBCDataStore dataStore) {
+    protected final SQLDialect createSQLDialect(final JDBCDataStore dataStore) {
         return null;
     }
 }

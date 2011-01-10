@@ -155,7 +155,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
     }
 
     @Override
-    public IToken getTokenInPosition(int index) {
+    public IToken getTokenInPosition(final int index) {
         return TokenAdapter.newAdapterFor(super.getToken(index));
     }
 
@@ -174,14 +174,14 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
     }
 
     @Override
-    public final void jjtreeOpenNodeScope(Node n) {
+    public final void jjtreeOpenNodeScope(final Node n) {
     }
 
     /**
      * called by parser when the node is closed.
      */
     @Override
-    public final void jjtreeCloseNodeScope(Node n) throws ParseException {
+    public final void jjtreeCloseNodeScope(final Node n) throws ParseException {
 
         try {
             Object built = build(n);
@@ -203,7 +203,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
      * @return Filter or Expression
      * @throws CQLException
      */
-    private Object build(Node n) throws CQLException {
+    private Object build(final Node n) throws CQLException {
 
         switch (n.getType()) {
 
@@ -488,7 +488,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
         return null;
     }
 
-    private BinaryExpression buildBinaryExpression(int nodeType) throws CQLException {
+    private BinaryExpression buildBinaryExpression(final int nodeType) throws CQLException {
 
         BinaryExpression expr = null;
 
@@ -520,7 +520,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
         return expr;
     }
 
-    private Filter buildLogicFilter(int nodeType) throws CQLException {
+    private Filter buildLogicFilter(final int nodeType) throws CQLException {
         try {
             final Filter logicFilter;
 
@@ -599,7 +599,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
         return filter;
     }
 
-    private org.opengis.filter.spatial.BBOX buildBBox(int nodeType) throws CQLException {
+    private org.opengis.filter.spatial.BBOX buildBBox(final int nodeType) throws CQLException {
 
         if (nodeType == JJTROUTINEINVOCATION_GEOOP_BBOX_SRS_NODE) {
             return builder.buildBBoxWithCRS();
@@ -785,7 +785,7 @@ public class ECQLCompiler extends ECQLParser implements ICompiler{
      * @return BinaryComparisonOperator
      * @throws CQLException
      */
-    private BinaryComparisonOperator buildBinaryComparasionOperator(int filterType)
+    private BinaryComparisonOperator buildBinaryComparasionOperator(final int filterType)
             throws CQLException
     {
 

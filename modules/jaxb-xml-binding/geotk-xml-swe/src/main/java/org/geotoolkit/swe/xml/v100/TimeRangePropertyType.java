@@ -58,7 +58,7 @@ public class TimeRangePropertyType implements AbstractTimeRangeProperty {
 
     }
 
-    public TimeRangePropertyType(AbstractTimeRangeProperty tr) {
+    public TimeRangePropertyType(final AbstractTimeRangeProperty tr) {
         if (tr != null && tr.getTimeRange() != null) {
             this.timeRange = new TimeRange(tr.getTimeRange());
         }
@@ -74,7 +74,7 @@ public class TimeRangePropertyType implements AbstractTimeRangeProperty {
     /**
      * Sets the value of the timeRange property.
      */
-    public void setTimeRange(TimeRange value) {
+    public void setTimeRange(final TimeRange value) {
         this.timeRange = value;
     }
 

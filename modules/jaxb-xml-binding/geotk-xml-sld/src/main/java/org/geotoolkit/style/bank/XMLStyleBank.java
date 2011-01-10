@@ -61,7 +61,7 @@ public class XMLStyleBank implements StyleBank{
     private ElementNode rootNode;
 
 
-    public XMLStyleBank(File folder) {
+    public XMLStyleBank(final File folder) {
         this.folder = folder;
     }
 
@@ -75,7 +75,7 @@ public class XMLStyleBank implements StyleBank{
         return rootNode;
     }
 
-    private ElementNode visit(File file, AbstractElementNode parent) {
+    private ElementNode visit(final File file, AbstractElementNode parent) {
 
         if (file.isDirectory()) {
             DefaultGroupNode node = new DefaultGroupNode(file.getName(), null);
@@ -103,7 +103,7 @@ public class XMLStyleBank implements StyleBank{
         return parent;
     }
 
-    private boolean test(File candidate){
+    private boolean test(final File candidate){
         final String fullName = candidate.getName();
         final String lowerCase = fullName.toLowerCase();
 
@@ -220,7 +220,7 @@ public class XMLStyleBank implements StyleBank{
 
         private final File f;
 
-        private XMLElementNode(File file){
+        private XMLElementNode(final File file){
             super(file.getName().substring(0, file.getName().length()-4), null, ElementType.STYLE);
             this.f = file;
         }

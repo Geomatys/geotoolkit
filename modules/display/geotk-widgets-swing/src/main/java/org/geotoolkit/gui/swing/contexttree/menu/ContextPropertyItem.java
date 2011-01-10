@@ -70,12 +70,12 @@ public class ContextPropertyItem extends AbstractTreePopupItem{
     }
             
     @Override
-    public boolean isValid(TreePath[] selection) {
+    public boolean isValid(final TreePath[] selection) {
         return uniqueAndType(selection,MapContext.class);
     }
 
     @Override
-    public Component getComponent(TreePath[] selection) {
+    public Component getComponent(final TreePath[] selection) {
         DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
         contextRef = new WeakReference<MapContext>((MapContext) node.getUserObject()) ;
         return this;

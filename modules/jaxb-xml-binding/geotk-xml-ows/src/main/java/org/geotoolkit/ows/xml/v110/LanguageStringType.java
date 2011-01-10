@@ -64,7 +64,7 @@ public class LanguageStringType {
     /**
      * Build a new String in the specified language.
      */
-    public LanguageStringType(String value, String lang){
+    public LanguageStringType(final String value, final String lang){
         this.lang  = lang;
         this.value = value;
     }
@@ -72,7 +72,7 @@ public class LanguageStringType {
     /**
      * Build a new String without specifying the language.
      */
-    public LanguageStringType(String value){
+    public LanguageStringType(final String value){
         this.value = value;
     }
     

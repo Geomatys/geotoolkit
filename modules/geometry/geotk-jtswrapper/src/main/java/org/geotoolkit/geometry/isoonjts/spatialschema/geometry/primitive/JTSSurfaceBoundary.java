@@ -40,12 +40,12 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
         
     }
     
-    public JTSSurfaceBoundary(CoordinateReferenceSystem crs, Ring exterior, List<Ring> interior) {
+    public JTSSurfaceBoundary(final CoordinateReferenceSystem crs, final Ring exterior, final List<Ring> interior) {
         super(crs);
         this.exterior = exterior;
         this.interior = interior;
     }
-    public JTSSurfaceBoundary(CoordinateReferenceSystem crs, Ring exterior, Ring [] interior) {
+    public JTSSurfaceBoundary(final CoordinateReferenceSystem crs, final Ring exterior, final Ring [] interior) {
         super(crs);
         this.exterior = exterior;
         if (interior != null) {
@@ -70,7 +70,7 @@ public class JTSSurfaceBoundary extends JTSPrimitiveBoundary implements SurfaceB
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this)
             return true;
 

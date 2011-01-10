@@ -100,7 +100,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JSelectionBar(JMap2D map) {
+    public JSelectionBar(final JMap2D map) {
         setMap(map);
 
         final JPopupMenu menu = new JPopupMenu();
@@ -157,7 +157,7 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     }
 
     @Override
-    public void setMap(JMap2D map2d) {
+    public void setMap(final JMap2D map2d) {
         map = map2d;
 
         if(map != null){

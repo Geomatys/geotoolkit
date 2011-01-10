@@ -72,7 +72,7 @@ public class JEditionBar extends JToolBar implements MapControlBar{
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JEditionBar(JMap2D map) {
+    public JEditionBar(final JMap2D map) {
         setMap(map);
 
         guiEdit.addActionListener(listener);
@@ -85,7 +85,7 @@ public class JEditionBar extends JToolBar implements MapControlBar{
      * @param map2d : related Map2D
      */
     @Override
-    public void setMap(JMap2D map2d) {
+    public void setMap(final JMap2D map2d) {
         map = map2d;
 
         guiEdit.setEnabled(false);

@@ -86,8 +86,8 @@ public class ImageCRSRefType {
      /**
      * build a new reference of imageCRS
      */
-    public ImageCRSRefType(ImageCRSType imageCRS, String remoteSchema, String type, 
-            String href, String role, String arcrole, String title, String show, String actuate) {
+    public ImageCRSRefType(final ImageCRSType imageCRS, final String remoteSchema, final String type, 
+            final String href, final String role, final String arcrole, final String title, final String show, final String actuate) {
         this.actuate      = actuate;
         this.arcrole      = arcrole;
         this.href         = href;

@@ -58,7 +58,7 @@ public final class RankNameAdapter extends CodeListAdapter<RankNameAdapter, NATS
      * {@inheritDoc}
      */
     @Override
-    protected RankNameAdapter wrap(CodeListProxy proxy) {
+    protected RankNameAdapter wrap(final CodeListProxy proxy) {
         return new RankNameAdapter(proxy);
     }
 

@@ -831,7 +831,7 @@ public class GeoTiffRWTest {
     }
 
 
-    private void test(String fileName, CoordinateReferenceSystem crs, AffineTransform gridToCRS)
+    private void test(final String fileName, final CoordinateReferenceSystem crs, final AffineTransform gridToCRS)
             throws FileNotFoundException, IOException, CoverageStoreException{
 
         File file = TestData.file(GeoTiffRWTest.class, fileName);
@@ -876,7 +876,7 @@ public class GeoTiffRWTest {
     /**
      * Copy coverage, in new file and retest it later.
      */
-    private static File write(GridCoverage2D coverage, SpatialMetadata metadata) throws IOException, CoverageStoreException{
+    private static File write(final GridCoverage2D coverage, final SpatialMetadata metadata) throws IOException, CoverageStoreException{
         final File tempFile = File.createTempFile("coverage", ".tiff");
         tempFile.deleteOnExit();
 

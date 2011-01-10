@@ -75,7 +75,7 @@ public class DisplacementType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setDisplacementX(ParameterValueType value) {
+    public void setDisplacementX(final ParameterValueType value) {
         this.displacementX = value;
     }
 
@@ -99,7 +99,7 @@ public class DisplacementType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setDisplacementY(ParameterValueType value) {
+    public void setDisplacementY(final ParameterValueType value) {
         this.displacementY = value;
     }
 

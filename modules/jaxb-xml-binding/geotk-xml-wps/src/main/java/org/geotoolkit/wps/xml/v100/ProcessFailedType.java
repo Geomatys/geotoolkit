@@ -74,7 +74,7 @@ public class ProcessFailedType {
      *     {@link ExceptionReport }
      *     
      */
-    public void setExceptionReport(ExceptionReport value) {
+    public void setExceptionReport(final ExceptionReport value) {
         this.exceptionReport = value;
     }
 

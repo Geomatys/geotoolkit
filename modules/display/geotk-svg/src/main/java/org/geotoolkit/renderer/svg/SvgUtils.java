@@ -57,52 +57,52 @@ public class SvgUtils {
 
     private SvgUtils(){}
 
-    public static Image read(Document svgdom, final Dimension dim) throws TranscoderException, IOException{
+    public static Image read(final Document svgdom, final Dimension dim) throws TranscoderException, IOException{
         return read(svgdom,dim,null);
     }
 
-    public static Image read(InputStream stream, final Dimension dim) throws TranscoderException, IOException{
+    public static Image read(final InputStream stream, final Dimension dim) throws TranscoderException, IOException{
        return read(stream,dim,null);
     }
 
-    public static Image read(Reader svgfile, final Dimension dim) throws TranscoderException, IOException{
+    public static Image read(final Reader svgfile, final Dimension dim) throws TranscoderException, IOException{
         return read(svgfile,dim,null);
     }
 
-    public static Image read(String svgfile, final Dimension dim) throws TranscoderException, IOException{
+    public static Image read(final String svgfile, final Dimension dim) throws TranscoderException, IOException{
         return read(svgfile,dim,null);
     }
 
-    public static Image read(XMLReader svgfile, final Dimension dim) throws TranscoderException, IOException{
+    public static Image read(final XMLReader svgfile, final Dimension dim) throws TranscoderException, IOException{
         return read(svgfile,dim,null);
     }
 
-    public static Image read(Document svgdom, final Dimension dim, RenderingHints hints) throws TranscoderException, IOException{
+    public static Image read(final Document svgdom, final Dimension dim, final RenderingHints hints) throws TranscoderException, IOException{
         final TranscoderInput in = new TranscoderInput(svgdom);
         return read(in, dim, hints);
     }
 
-    public static Image read(InputStream stream, final Dimension dim, RenderingHints hints) throws TranscoderException, IOException{
+    public static Image read(final InputStream stream, final Dimension dim, final RenderingHints hints) throws TranscoderException, IOException{
         final TranscoderInput in = new TranscoderInput(stream);
         return read(in, dim, hints);
     }
 
-    public static Image read(Reader svgfile, final Dimension dim, RenderingHints hints) throws TranscoderException, IOException{
+    public static Image read(final Reader svgfile, final Dimension dim, final RenderingHints hints) throws TranscoderException, IOException{
         final TranscoderInput in = new TranscoderInput(svgfile);
         return read(in, dim, hints);
     }
     
-    public static Image read(String svgfile, final Dimension dim, RenderingHints hints) throws TranscoderException, IOException{
+    public static Image read(final String svgfile, final Dimension dim, final RenderingHints hints) throws TranscoderException, IOException{
         final TranscoderInput in = new TranscoderInput(svgfile);
         return read(in, dim, hints);
     }
 
-    public static Image read(XMLReader svgfile, final Dimension dim, RenderingHints hints) throws TranscoderException, IOException{
+    public static Image read(final XMLReader svgfile, final Dimension dim, final RenderingHints hints) throws TranscoderException, IOException{
         final TranscoderInput in = new TranscoderInput(svgfile);
         return read(in, dim, hints);
     }
 
-    public static Image read(TranscoderInput in, Dimension dim, RenderingHints hints) throws TranscoderException, IOException{
+    public static Image read(final TranscoderInput in, final Dimension dim, final RenderingHints hints) throws TranscoderException, IOException{
 
         if(dim.height <=0 || dim.width <=0){
             throw new IllegalArgumentException("Height and width must be superior to 0");
@@ -126,7 +126,7 @@ public class SvgUtils {
         return svgTranscoder.getImage();
     }
 
-    public static void render(URI in, Point2D dim, Graphics2D g, RenderingHints hints) throws TranscoderException, IOException{
+    public static void render(final URI in, final Point2D dim, final Graphics2D g, final RenderingHints hints) throws TranscoderException, IOException{
         if(dim.getY() <=0 || dim.getX() <=0){
             throw new IllegalArgumentException("Height and width must be superior to 0");
         }
@@ -145,7 +145,7 @@ public class SvgUtils {
         private final GraphicsNode node;
         private Rectangle2D bounds;
 
-        public RenderableSVG(SVGDocument doc) {
+        public RenderableSVG(final SVGDocument doc) {
             final UserAgent userAgent   = new UserAgentAdapter();
             final DocumentLoader loader = new DocumentLoader(userAgent);
             final BridgeContext ctx     = new BridgeContext(userAgent, loader);
@@ -162,7 +162,7 @@ public class SvgUtils {
             }
         }
 
-        public void paint(Graphics2D g, Point2D dim) {
+        public void paint(final Graphics2D g, final Point2D dim) {
             final double scaleX = dim.getX() / bounds.getWidth();
             final double scaleY = dim.getY() / bounds.getHeight();
             g.scale(scaleX, scaleY);

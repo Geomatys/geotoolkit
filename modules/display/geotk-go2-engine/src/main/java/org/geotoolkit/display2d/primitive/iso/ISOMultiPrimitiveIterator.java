@@ -42,7 +42,7 @@ public final class ISOMultiPrimitiveIterator extends ISOGeometryIterator<MultiPr
     private boolean done = false;
     private final List<Primitive> primitives = new ArrayList<Primitive>();
 
-    public ISOMultiPrimitiveIterator(MultiPrimitive gc, AffineTransform trs) {
+    public ISOMultiPrimitiveIterator(final MultiPrimitive gc, final AffineTransform trs) {
         super(gc,trs);
         primitives.addAll(gc.getElements());
         reset();
@@ -61,7 +61,7 @@ public final class ISOMultiPrimitiveIterator extends ISOGeometryIterator<MultiPr
      *
      * @return the specific iterator for the geometry passed.
      */
-    private ISOGeometryIterator getIterator(Geometry candidate) {
+    private ISOGeometryIterator getIterator(final Geometry candidate) {
         ISOGeometryIterator iterator = null;
 
 //        if (candidate.isEmpty()) {
@@ -84,7 +84,7 @@ public final class ISOMultiPrimitiveIterator extends ISOGeometryIterator<MultiPr
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         return currentIterator.currentSegment(coords);
     }
 
@@ -92,7 +92,7 @@ public final class ISOMultiPrimitiveIterator extends ISOGeometryIterator<MultiPr
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(float[] coords) {
+    public int currentSegment(final float[] coords) {
         return currentIterator.currentSegment(coords);
     }
 

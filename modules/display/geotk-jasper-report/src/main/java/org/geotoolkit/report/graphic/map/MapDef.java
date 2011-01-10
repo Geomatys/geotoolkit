@@ -41,7 +41,7 @@ public final class MapDef extends RenderableField{
         this(null,null,null,null);
     }
 
-    public MapDef(CanvasDef canvasDef, SceneDef sceneDef, ViewDef viewDef, OutputDef outputDef) {
+    public MapDef(final CanvasDef canvasDef, final SceneDef sceneDef, final ViewDef viewDef, final OutputDef outputDef) {
         this.canvasDef = (canvasDef!=null)? canvasDef : new CanvasDef();
         this.sceneDef = (sceneDef!=null)? sceneDef : new SceneDef();
         this.viewDef = (viewDef!=null)? viewDef : new ViewDef();
@@ -52,7 +52,7 @@ public final class MapDef extends RenderableField{
         return canvasDef;
     }
 
-    public void setCanvasDef(CanvasDef canvasDef) {
+    public void setCanvasDef(final CanvasDef canvasDef) {
         this.canvasDef = canvasDef;
     }
 
@@ -60,7 +60,7 @@ public final class MapDef extends RenderableField{
         return sceneDef;
     }
 
-    public void setSceneDef(SceneDef sceneDef) {
+    public void setSceneDef(final SceneDef sceneDef) {
         this.sceneDef = sceneDef;
     }
 
@@ -68,7 +68,7 @@ public final class MapDef extends RenderableField{
         return viewDef;
     }
 
-    public void setViewDef(ViewDef viewDef) {
+    public void setViewDef(final ViewDef viewDef) {
         this.viewDef = viewDef;
     }
 
@@ -76,7 +76,7 @@ public final class MapDef extends RenderableField{
         return outputDef;
     }
 
-    public void setOutputDef(OutputDef outputDef) {
+    public void setOutputDef(final OutputDef outputDef) {
         this.outputDef = outputDef;
     }
 

@@ -53,9 +53,9 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     private final Map<PropertyDescriptor,Object> defaults;
     private final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping;
 
-    public GenericMappingFeatureCollection(FeatureCollection original, FeatureType newType,
-            Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
-            Map<PropertyDescriptor,Object> defaults){
+    public GenericMappingFeatureCollection(final FeatureCollection original, final FeatureType newType,
+            final Map<PropertyDescriptor,List<PropertyDescriptor>> mapping,
+            final Map<PropertyDescriptor,Object> defaults){
         this.original = original;
         this.mapping = mapping;
         this.defaults = defaults;
@@ -93,7 +93,7 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     }
 
     @Override
-    public FeatureCollection<F> subCollection(Query query) throws DataStoreException {
+    public FeatureCollection<F> subCollection(final Query query) throws DataStoreException {
         throw new UnsupportedOperationException("Mapping feature collection is not made to allow sub query.");
     }
 
@@ -103,17 +103,17 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     }
 
     @Override
-    public FeatureIterator<F> iterator(Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<F> iterator(final Hints hints) throws DataStoreRuntimeException {
         return new GenericMappingFeatureIterator<F>(original.iterator(), original.getFeatureType(), type, mapping, defaults);
     }
 
     @Override
-    public void addStorageListener(StorageListener listener) {
+    public void addStorageListener(final StorageListener listener) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void removeStorageListener(StorageListener listener) {
+    public void removeStorageListener(final StorageListener listener) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -132,37 +132,37 @@ public class GenericMappingFeatureCollection<F extends Feature> extends Abstract
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public void update(Filter filter, AttributeDescriptor desc, Object value) throws DataStoreException {
+    public void update(final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
         throw new DataStoreException("Not writable");
     }
 
     @Override
-    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not writable");
     }
 
     @Override
-    public void remove(Filter filter) throws DataStoreException {
+    public void remove(final Filter filter) throws DataStoreException {
         throw new DataStoreException("Not writable");
     }
 
     @Override
-    public boolean add(F e) {
+    public boolean add(final F e) {
         throw new DataStoreRuntimeException("Not writable");
     }
 
     @Override
-    public boolean remove(Object o) {
+    public boolean remove(final Object o) {
         throw new DataStoreRuntimeException("Not writable");
     }
 
     @Override
-    public boolean addAll(Collection<? extends F> clctn) {
+    public boolean addAll(final Collection<? extends F> clctn) {
         throw new DataStoreRuntimeException("Not writable");
     }
 
     @Override
-    public boolean removeAll(Collection<?> clctn) {
+    public boolean removeAll(final Collection<?> clctn) {
         throw new DataStoreRuntimeException("Not writable");
     }
 

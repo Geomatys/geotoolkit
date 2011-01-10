@@ -74,7 +74,7 @@ public class PostalAddressType {
     /**
      * Sets the value of the city property.
      */
-    public void setCity(String value) {
+    public void setCity(final String value) {
         this.city = value;
     }
 
@@ -88,7 +88,7 @@ public class PostalAddressType {
     /**
      * Sets the value of the country property.
      */
-    public void setCountry(String value) {
+    public void setCountry(final String value) {
         this.country = value;
     }
 
@@ -102,7 +102,7 @@ public class PostalAddressType {
     /**
      * Sets the value of the postalCode property.
      */
-    public void setPostalCode(String value) {
+    public void setPostalCode(final String value) {
         this.postalCode = value;
     }
 
@@ -116,7 +116,7 @@ public class PostalAddressType {
     /**
      * Sets the value of the stateOrProvince property.
      */
-    public void setStateOrProvince(String value) {
+    public void setStateOrProvince(final String value) {
         this.stateOrProvince = value;
     }
 
@@ -130,7 +130,7 @@ public class PostalAddressType {
     /**
      * Sets the value of the street property.
      */
-    public void setStreet(String value) {
+    public void setStreet(final String value) {
         this.street = value;
     }
 
@@ -144,7 +144,7 @@ public class PostalAddressType {
     /**
      * Sets the value of the streetNumber property.
      */
-    public void setStreetNumber(String value) {
+    public void setStreetNumber(final String value) {
         this.streetNumber = value;
     }
 

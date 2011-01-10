@@ -55,7 +55,7 @@ public class PlatformSpecificServiceSpecificationImpl extends PlatformNeutralSer
     /**
      * Clone a PlatformSpecificServiceSpecification
      */
-    public PlatformSpecificServiceSpecificationImpl(PlatformSpecificServiceSpecification platform) {
+    public PlatformSpecificServiceSpecificationImpl(final PlatformSpecificServiceSpecification platform) {
         super((PlatformNeutralServiceSpecification)platform);
         this.implementation = platform.getImplementation();
         this.dcp            = platform.getDCP();
@@ -73,7 +73,7 @@ public class PlatformSpecificServiceSpecificationImpl extends PlatformNeutralSer
      * Sets the value of the dcp property.
      * 
      */
-    public void setDCP(DCPList value) {
+    public void setDCP(final DCPList value) {
         this.dcp = value;
     }
 
@@ -89,11 +89,11 @@ public class PlatformSpecificServiceSpecificationImpl extends PlatformNeutralSer
         return this.implementation;
     }
     
-    public void setImplementation(Collection<Service> implementation) {
+    public void setImplementation(final Collection<Service> implementation) {
          this.implementation = implementation;
     }
     
-    public void setImplementation(Service implementation) {
+    public void setImplementation(final Service implementation) {
         if (this.implementation == null) {
             this.implementation = new ArrayList<Service>();
         }

@@ -84,7 +84,7 @@ public class ServiceAdapter extends XmlAdapter<ServiceAdapter, Service> {
      * @return A java object which represents the service value.
      */
     @Override
-    public Service unmarshal(ServiceAdapter value) throws Exception {
+    public Service unmarshal(final ServiceAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class ServiceAdapter extends XmlAdapter<ServiceAdapter, Service> {
      * @return The adapter for this interface.
      */
     @Override
-    public ServiceAdapter marshal(Service value) throws Exception {
+    public ServiceAdapter marshal(final Service value) throws Exception {
         return new ServiceAdapter(value);
     }
 

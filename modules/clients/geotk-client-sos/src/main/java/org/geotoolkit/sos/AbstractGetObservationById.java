@@ -86,27 +86,27 @@ public abstract class AbstractGetObservationById extends AbstractSOSRequest impl
     }
 
     @Override
-    public void setObservationId(String observationId) {
+    public void setObservationId(final String observationId) {
         this.observationId = observationId;
     }
 
     @Override
-    public void setResponseFormat(String responseFormat) {
+    public void setResponseFormat(final String responseFormat) {
         this.responseFormat = responseFormat;
     }
 
     @Override
-    public void setResponseMode(ResponseModeType responseMode) {
+    public void setResponseMode(final ResponseModeType responseMode) {
         this.responseMode = responseMode;
     }
 
     @Override
-    public void setResultModel(QName resultModel) {
+    public void setResultModel(final QName resultModel) {
         this.resultModel = resultModel;
     }
 
     @Override
-    public void setSrsName(String srsName) {
+    public void setSrsName(final String srsName) {
         this.srsName = srsName;
     }
 

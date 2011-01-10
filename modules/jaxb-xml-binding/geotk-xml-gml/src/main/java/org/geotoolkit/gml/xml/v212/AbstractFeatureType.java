@@ -97,7 +97,7 @@ public abstract class AbstractFeatureType {
      *     {@link String }
      *     
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -121,7 +121,7 @@ public abstract class AbstractFeatureType {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -145,7 +145,7 @@ public abstract class AbstractFeatureType {
      *     {@link BoundingShapeType }
      *     
      */
-    public void setBoundedBy(BoundingShapeType value) {
+    public void setBoundedBy(final BoundingShapeType value) {
         this.boundedBy = value;
     }
 
@@ -169,7 +169,7 @@ public abstract class AbstractFeatureType {
      *     {@link String }
      *     
      */
-    public void setFid(String value) {
+    public void setFid(final String value) {
         this.fid = value;
     }
 

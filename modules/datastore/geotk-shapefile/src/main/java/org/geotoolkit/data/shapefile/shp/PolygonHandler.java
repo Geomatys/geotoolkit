@@ -49,11 +49,11 @@ public class PolygonHandler extends AbstractShapeHandler {
     protected final List<LinearRing> shells = new ArrayList<LinearRing>();
     protected final List<LinearRing> holes = new ArrayList<LinearRing>();
 
-    public PolygonHandler(boolean read3D) {
+    public PolygonHandler(final boolean read3D) {
         super(ShapeType.POLYGON,read3D);
     }
 
-    public PolygonHandler(ShapeType type, boolean read3D) throws DataStoreException {
+    public PolygonHandler(final ShapeType type, final boolean read3D) throws DataStoreException {
         super(type,read3D);
         if ((type != ShapeType.POLYGON) && (type != ShapeType.POLYGONM)
                 && (type != ShapeType.POLYGONZ)) {
@@ -63,7 +63,7 @@ public class PolygonHandler extends AbstractShapeHandler {
     }
 
     // returns true if testPoint is a point in the pointList list.
-    protected boolean pointInList(Coordinate testPoint, Coordinate[] pointList) {
+    protected boolean pointInList(final Coordinate testPoint, final Coordinate[] pointList) {
         Coordinate p;
 
         for (int t = pointList.length - 1; t >= 0; t--) {
@@ -92,7 +92,7 @@ public class PolygonHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public int getLength(Object geometry) {
+    public int getLength(final Object geometry) {
         final MultiPolygon multi;
 
         if (geometry instanceof MultiPolygon) {
@@ -126,7 +126,7 @@ public class PolygonHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public Object estimated(double minX, double maxX, double minY, double maxY) {
+    public Object estimated(final double minX, final double maxX, final double minY, final double maxY) {
         final double[] array = new double[]{
             minX,minY,
             minX,maxY,
@@ -139,7 +139,7 @@ public class PolygonHandler extends AbstractShapeHandler {
     }
     
     @Override
-    public Object read(ByteBuffer buffer, ShapeType type) {
+    public Object read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
         }
@@ -423,11 +423,11 @@ public class PolygonHandler extends AbstractShapeHandler {
         return holesForShells;
     }
 
-    protected MultiPolygon createMulti(LinearRing single) {
+    protected MultiPolygon createMulti(final LinearRing single) {
         return createMulti(single, java.util.Collections.EMPTY_LIST);
     }
 
-    protected MultiPolygon createMulti(LinearRing single, List<LinearRing> holes) {
+    protected MultiPolygon createMulti(final LinearRing single, final List<LinearRing> holes) {
         return GEOMETRY_FACTORY
                 .createMultiPolygon(new Polygon[] { GEOMETRY_FACTORY
                         .createPolygon(single, holes.toArray(new LinearRing[holes.size()])) });
@@ -438,7 +438,7 @@ public class PolygonHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public void write(ByteBuffer buffer, Object geometry) {
+    public void write(final ByteBuffer buffer, final Object geometry) {
         final MultiPolygon multi;
         
         if (geometry instanceof MultiPolygon) {

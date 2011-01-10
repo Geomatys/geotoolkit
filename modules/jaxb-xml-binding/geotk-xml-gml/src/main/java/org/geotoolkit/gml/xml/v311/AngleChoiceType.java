@@ -74,7 +74,7 @@ public class AngleChoiceType {
      *     {@link MeasureType }
      *     
      */
-    public void setAngle(MeasureType value) {
+    public void setAngle(final MeasureType value) {
         this.angle = value;
     }
 
@@ -98,7 +98,7 @@ public class AngleChoiceType {
      *     {@link DMSAngleType }
      *     
      */
-    public void setDmsAngle(DMSAngleType value) {
+    public void setDmsAngle(final DMSAngleType value) {
         this.dmsAngle = value;
     }
 

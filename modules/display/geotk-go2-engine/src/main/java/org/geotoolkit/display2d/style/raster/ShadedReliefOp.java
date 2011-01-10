@@ -72,7 +72,7 @@ public class ShadedReliefOp extends AreaOpImage{
         SHADOW_MODEL = ColorUtilities.getIndexColorModel(ARGB, 1, 1, -1);
     }
 
-    public ShadedReliefOp(RenderedImage source, ImageLayout layout, Map configuration, BorderExtender extender){
+    public ShadedReliefOp(final RenderedImage source, final ImageLayout layout, final Map configuration, final BorderExtender extender){
         super(source,
               ((layout != null)? layout.setColorModel(SHADOW_MODEL) :
                   new ImageLayout().setColorModel(SHADOW_MODEL)),
@@ -86,7 +86,7 @@ public class ShadedReliefOp extends AreaOpImage{
     }
 
     @Override
-    protected void computeRect(PlanarImage[] sources, WritableRaster dest, Rectangle destRect) {
+    protected void computeRect(final PlanarImage[] sources, final WritableRaster dest, final Rectangle destRect) {
         final PlanarImage source = sources[0];
 
 

@@ -62,7 +62,7 @@ public abstract class AbstractDatumBaseType extends DefinitionType {
 
     }
 
-    public AbstractDatumBaseType(String id, String datumName) {
+    public AbstractDatumBaseType(final String id, final String datumName) {
         super(id);
         this.datumName = datumName;
     }
@@ -77,7 +77,7 @@ public abstract class AbstractDatumBaseType extends DefinitionType {
     /**
      * @param datumName the datumName to set
      */
-    public void setDatumName(String datumName) {
+    public void setDatumName(final String datumName) {
         this.datumName = datumName;
     }
 

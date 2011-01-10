@@ -63,7 +63,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiOpacity.setLayer(layer);
         guiGeom.setLayer(layer);
@@ -84,7 +84,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
      * {@inheritDoc }
      */
     @Override
-    public void parse(RasterSymbolizer symbol) {
+    public void parse(final RasterSymbolizer symbol) {
     
         if (symbol != null) {
             guiGeom.setGeom(symbol.getGeometryPropertyName());
@@ -364,7 +364,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void butPolygonSymbolizerActionPerformed(ActionEvent evt) {//GEN-FIRST:event_butPolygonSymbolizerActionPerformed
+    private void butPolygonSymbolizerActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butPolygonSymbolizerActionPerformed
 //        JDialog dia = new JDialog();
 //        dia.setModal(true);
 //        
@@ -381,7 +381,7 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 //        outLine = pane.getEdited();
     }//GEN-LAST:event_butPolygonSymbolizerActionPerformed
 
-    private void butLineSymbolizerActionPerformed(ActionEvent evt) {//GEN-FIRST:event_butLineSymbolizerActionPerformed
+    private void butLineSymbolizerActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butLineSymbolizerActionPerformed
 //        JDialog dia = new JDialog();
 //        dia.setModal(true);
 //        
@@ -398,19 +398,19 @@ public class JRasterSymbolizerPane extends StyleElementEditor<RasterSymbolizer> 
 //        outLine = pane.getEdited();
     }//GEN-LAST:event_butLineSymbolizerActionPerformed
 
-    private void guiLineActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiLineActionPerformed
+    private void guiLineActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiLineActionPerformed
         testOutLine();
 }//GEN-LAST:event_guiLineActionPerformed
 
-    private void guinoneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guinoneActionPerformed
+    private void guinoneActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guinoneActionPerformed
        testOutLine();
     }//GEN-LAST:event_guinoneActionPerformed
 
-    private void guiPolygonActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiPolygonActionPerformed
+    private void guiPolygonActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiPolygonActionPerformed
         testOutLine();
     }//GEN-LAST:event_guiPolygonActionPerformed
 
-    private void butChannelsActionPerformed(ActionEvent evt) {//GEN-FIRST:event_butChannelsActionPerformed
+    private void butChannelsActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butChannelsActionPerformed
         
 //        JDialog dia = new JDialog();
 //        

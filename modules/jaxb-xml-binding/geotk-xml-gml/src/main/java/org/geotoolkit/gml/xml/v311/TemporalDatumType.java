@@ -70,7 +70,7 @@ public class TemporalDatumType extends TemporalDatumBaseType {
      * Sets the value of the origin property.
      * 
      */
-    public void setOrigin(XMLGregorianCalendar value) {
+    public void setOrigin(final XMLGregorianCalendar value) {
         this.origin = value;
     }
 

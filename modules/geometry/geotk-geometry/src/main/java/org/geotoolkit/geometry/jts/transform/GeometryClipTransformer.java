@@ -89,7 +89,7 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
 
     private Geometry currentGeometry;
 
-    public GeometryClipTransformer(Rectangle2D clip){
+    public GeometryClipTransformer(final Rectangle2D clip){
         super();
         if(clip == null){
             throw new NullPointerException("Clip rectangle must not be null");
@@ -99,7 +99,7 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
         init();
     }
 
-    public GeometryClipTransformer(Rectangle2D clip, CoordinateSequenceFactory csf){
+    public GeometryClipTransformer(final Rectangle2D clip, final CoordinateSequenceFactory csf){
         super(csf);
         if(clip == null){
             throw new NullPointerException("Clip rectangle must not be null");
@@ -109,7 +109,7 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
         init();
     }
 
-    public GeometryClipTransformer(Rectangle2D clip, GeometryFactory gf){
+    public GeometryClipTransformer(final Rectangle2D clip, final GeometryFactory gf){
         super(gf);
         if(clip == null){
             throw new NullPointerException("Clip rectangle must not be null");
@@ -126,7 +126,7 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
         ymax = (float) clip.getMaxY();
     }
 
-    private boolean next(CoordinateSequence sequence){
+    private boolean next(final CoordinateSequence sequence){
         if(index == sequence.size()-1){
             return false;
         }
@@ -140,13 +140,13 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
     }
 
     @Override
-    public Geometry transform(Geometry geom) throws TransformException {
+    public Geometry transform(final Geometry geom) throws TransformException {
         currentGeometry = geom;
         return super.transform(geom);
     }
 
     @Override
-    public CoordinateSequence transform(CoordinateSequence cs, int minpoints) {
+    public CoordinateSequence transform(final CoordinateSequence cs, final int minpoints) {
 
         double[] result = null;
 
@@ -514,7 +514,7 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
      *                This polyline will never be modified.
      * @return <code>result</code>, or a new polyline if <code>result</code> was null.
      */
-    private double[] attach(double[] result, CoordinateSequence cs, int lower, int upper) {
+    private double[] attach(double[] result, final CoordinateSequence cs, final int lower, final int upper) {
         if(borderLength > 0){
             if(result == null){
                 result = new double[borderLength];

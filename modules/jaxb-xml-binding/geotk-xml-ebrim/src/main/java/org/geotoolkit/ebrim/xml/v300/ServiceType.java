@@ -68,7 +68,7 @@ public class ServiceType extends RegistryObjectType {
     /**
      * Sets the value of the serviceBinding property.
      */
-    public void setServiceBinding(ServiceBindingType serviceBinding) {
+    public void setServiceBinding(final ServiceBindingType serviceBinding) {
         if (this.serviceBinding == null) {
             this.serviceBinding = new ArrayList<ServiceBindingType>();
         }
@@ -78,7 +78,7 @@ public class ServiceType extends RegistryObjectType {
     /**
      * Sets the value of the serviceBinding property.
      */
-    public void setServiceBinding(List<ServiceBindingType> serviceBinding) {
+    public void setServiceBinding(final List<ServiceBindingType> serviceBinding) {
         this.serviceBinding = serviceBinding;
     }
 

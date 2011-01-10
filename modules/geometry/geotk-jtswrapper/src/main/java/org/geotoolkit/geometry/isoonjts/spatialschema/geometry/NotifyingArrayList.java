@@ -33,11 +33,11 @@ public class NotifyingArrayList<T> extends ArrayList<T> {
         this( null );
     }
 
-    public NotifyingArrayList(JTSGeometry parent) {
+    public NotifyingArrayList(final JTSGeometry parent) {
         this.parent = parent;
     }
 
-    public void setJTSParent( JTSGeometry parent ){
+    public void setJTSParent( final JTSGeometry parent ){
         this.parent = parent;
     }
 
@@ -50,27 +50,27 @@ public class NotifyingArrayList<T> extends ArrayList<T> {
     }
 
     @Override
-    public void add(int index, T element) {
+    public void add(final int index, final T element) {
         super.add(index, element);
         if (parent != null) parent.invalidateCachedJTSPeer();
     }
 
     @Override
-    public boolean add(T o) {
+    public boolean add(final T o) {
         boolean result = super.add(o);
         if (parent != null) parent.invalidateCachedJTSPeer();
         return result;
     }
 
     @Override
-    public boolean addAll(Collection<? extends T> c) {
+    public boolean addAll(final Collection<? extends T> c) {
         boolean result = super.addAll(c);
         if (parent != null) parent.invalidateCachedJTSPeer();
         return result;
     }
 
     @Override
-    public boolean addAll(int index, Collection<? extends T> c) {
+    public boolean addAll(final int index, final Collection<? extends T> c) {
         boolean result = super.addAll(index, c);
         if (parent != null) parent.invalidateCachedJTSPeer();
         return result;
@@ -83,14 +83,14 @@ public class NotifyingArrayList<T> extends ArrayList<T> {
     }
 
     @Override
-    public T remove(int index) {
+    public T remove(final int index) {
         T result = super.remove(index);
         if (parent != null) parent.invalidateCachedJTSPeer();
         return result;
     }
 
     @Override
-    public T set(int index, T element) {
+    public T set(final int index, final T element) {
         T result = super.set(index, element);
         if (parent != null) parent.invalidateCachedJTSPeer();
         return result;

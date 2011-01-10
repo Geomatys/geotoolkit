@@ -37,7 +37,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,Expression> implements Intersects {
 
-    public DefaultIntersect(Expression left, Expression right) {
+    public DefaultIntersect(final Expression left, final Expression right) {
         super(left,right);
     }
 
@@ -45,7 +45,7 @@ public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,E
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         Geometry leftGeom = left.evaluate(object, Geometry.class);
         Geometry rightGeom = right.evaluate(object, Geometry.class);
 
@@ -80,7 +80,7 @@ public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,E
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -98,7 +98,7 @@ public class DefaultIntersect extends AbstractBinarySpatialOperator<Expression,E
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

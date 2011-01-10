@@ -77,7 +77,7 @@ public class RangeSubsetType implements RangeSubset {
         
     }
     
-    public RangeSubsetType(List<FieldSubset> fieldSubset) {
+    public RangeSubsetType(final List<FieldSubset> fieldSubset) {
         this.fieldSubset = fieldSubset;
     }
     
@@ -136,7 +136,7 @@ public class RangeSubsetType implements RangeSubset {
             
         }
         
-        public FieldSubset(String identifier, String interpolationType) {
+        public FieldSubset(final String identifier, final String interpolationType) {
             this.identifier        = new CodeType(identifier);
             this.interpolationType = interpolationType;
         }

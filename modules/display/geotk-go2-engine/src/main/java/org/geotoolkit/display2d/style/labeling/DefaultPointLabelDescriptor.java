@@ -44,13 +44,13 @@ public class DefaultPointLabelDescriptor implements PointLabelDescriptor{
     private final CoordinateReferenceSystem crs;
     private final ProjectedGeometry geom;
     
-    public DefaultPointLabelDescriptor(String text, Font textFont, Paint textPaint,
-            float haloWidth, Paint haloPaint, 
-            float anchorX, float anchorY, 
-            float dispX, float dispY,
-            float rotation,
-            CoordinateReferenceSystem crs,
-            ProjectedGeometry geom){
+    public DefaultPointLabelDescriptor(final String text, final Font textFont, final Paint textPaint,
+            final float haloWidth, final Paint haloPaint, 
+            final float anchorX, final float anchorY, 
+            final float dispX, final float dispY,
+            final float rotation,
+            final CoordinateReferenceSystem crs,
+            final ProjectedGeometry geom){
         this.text = text;
         this.textFont = textFont;
         this.textPaint = textPaint;

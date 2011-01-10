@@ -49,7 +49,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiGraphic.setLayer(layer);
         guiGeom.setLayer(layer);
@@ -68,7 +68,7 @@ public class JPointSymbolizerPane extends StyleElementEditor<PointSymbolizer> {
      * {@inheritDoc }
      */
     @Override
-    public void parse(PointSymbolizer symbol) {
+    public void parse(final PointSymbolizer symbol) {
         if (symbol instanceof PointSymbolizer) {
             guiGeom.setGeom(symbol.getGeometryPropertyName());
             guiUOM.parse(symbol.getUnitOfMeasure());

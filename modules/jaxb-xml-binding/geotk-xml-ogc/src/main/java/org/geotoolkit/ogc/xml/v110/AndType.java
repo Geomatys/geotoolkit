@@ -40,7 +40,7 @@ public class AndType extends BinaryLogicOpType implements And {
      /**
       * Build a new Binary logic operator 
       */
-     public AndType(Object... operators) {
+     public AndType(final Object... operators) {
          super(operators);
          
      }

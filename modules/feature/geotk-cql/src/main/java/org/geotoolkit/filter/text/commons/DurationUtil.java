@@ -192,7 +192,7 @@ final class DurationUtil {
      *         return date value.
      *
      */
-    private static Date computeDateFromDurationDate(final Date date, final String duration, int sign) {
+    private static Date computeDateFromDurationDate(final Date date, final String duration, final int sign) {
         final int[] durationDate = extractDurationDate(duration);
 
         if (isNull(durationDate)) {
@@ -226,7 +226,7 @@ final class DurationUtil {
      * @param durDate
      * @return true if has some greater than or equal 0
      */
-    private static boolean isNull(int[] durDate) {
+    private static boolean isNull(final int[] durDate) {
         for (int i = 0; i < durDate.length; i++) {
             if (durDate[i] >= 0) {
                 return false;
@@ -287,7 +287,7 @@ final class DurationUtil {
      *
      * @return a Date
      */
-    public static Date subtractDurationToDate(Date date, String duration) {
+    public static Date subtractDurationToDate(final Date date, final String duration) {
         final int negative = -1;
 
         Date computedDate = computeDateFromDurationDate(date, duration, negative);

@@ -37,7 +37,7 @@ public class CloseableArrayList<T extends Data> extends ArrayList<T> implements
     public CloseableArrayList() {
     }
 
-    public CloseableArrayList(int length) {
+    public CloseableArrayList(final int length) {
         super(length);
     }
     
@@ -47,7 +47,7 @@ public class CloseableArrayList<T extends Data> extends ArrayList<T> implements
     }
 
     @Override
-    public void closeIterator( Iterator<T> iter ) throws IOException {
+    public void closeIterator( final Iterator<T> iter ) throws IOException {
         // do nothing
     }
     

@@ -65,7 +65,7 @@ public class LonLatEnvelopeBaseType extends EnvelopeEntry implements Envelope{
     LonLatEnvelopeBaseType(){
     }
     
-    public LonLatEnvelopeBaseType(List<DirectPositionType> pos, String srsName) {
+    public LonLatEnvelopeBaseType(final List<DirectPositionType> pos, final String srsName) {
         super(pos, srsName);
     }
 
@@ -87,22 +87,22 @@ public class LonLatEnvelopeBaseType extends EnvelopeEntry implements Envelope{
     }
 
     @Override
-    public double getMinimum(int dimension) throws IndexOutOfBoundsException {
+    public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
         return getPos().get(0).getOrdinate(dimension);
     }
 
     @Override
-    public double getMaximum(int dimension) throws IndexOutOfBoundsException {
+    public double getMaximum(final int dimension) throws IndexOutOfBoundsException {
         return getPos().get(1).getOrdinate(dimension);
     }
 
     @Override
-    public double getMedian(int dimension) throws IndexOutOfBoundsException {
+    public double getMedian(final int dimension) throws IndexOutOfBoundsException {
         return (getMinimum(dimension) + getMaximum(dimension)) /2 ;
     }
 
     @Override
-    public double getSpan(int dimension) throws IndexOutOfBoundsException {
+    public double getSpan(final int dimension) throws IndexOutOfBoundsException {
         return getMaximum(dimension) - getMinimum(dimension);
     }
 }

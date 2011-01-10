@@ -79,7 +79,7 @@ public class PointPlacementType {
      *     {@link AnchorPointType }
      *     
      */
-    public void setAnchorPoint(AnchorPointType value) {
+    public void setAnchorPoint(final AnchorPointType value) {
         this.anchorPoint = value;
     }
 
@@ -103,7 +103,7 @@ public class PointPlacementType {
      *     {@link DisplacementType }
      *     
      */
-    public void setDisplacement(DisplacementType value) {
+    public void setDisplacement(final DisplacementType value) {
         this.displacement = value;
     }
 
@@ -127,7 +127,7 @@ public class PointPlacementType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setRotation(ParameterValueType value) {
+    public void setRotation(final ParameterValueType value) {
         this.rotation = value;
     }
 

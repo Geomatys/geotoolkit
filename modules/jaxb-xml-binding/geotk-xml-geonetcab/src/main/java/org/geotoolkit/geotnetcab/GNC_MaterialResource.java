@@ -96,7 +96,7 @@ public class GNC_MaterialResource extends GNC_Resource implements org.opengis.me
      *     {@link Boolean }
      *     
      */
-    public void setIsStillInProduction(Boolean value) {
+    public void setIsStillInProduction(final Boolean value) {
         this.isStillInProduction = value;
     }
 
@@ -116,11 +116,11 @@ public class GNC_MaterialResource extends GNC_Resource implements org.opengis.me
         return this.userDefinedMetadata;
     }
 
-    public void setUserDefinedMetadata(List<GNC_UserDefinedMetadata> feedback) {
+    public void setUserDefinedMetadata(final List<GNC_UserDefinedMetadata> feedback) {
         this.userDefinedMetadata = feedback;
     }
 
-    public void setUserDefinedMetadata(GNC_UserDefinedMetadata userDefinedMetadata) {
+    public void setUserDefinedMetadata(final GNC_UserDefinedMetadata userDefinedMetadata) {
         if (this.userDefinedMetadata == null) {
             this.userDefinedMetadata = new ArrayList<GNC_UserDefinedMetadata>();
         }
@@ -143,11 +143,11 @@ public class GNC_MaterialResource extends GNC_Resource implements org.opengis.me
         return this.access;
     }
 
-    public void setAccess(List<GNC_Access> access) {
+    public void setAccess(final List<GNC_Access> access) {
         this.access = access;
     }
 
-    public void setAccess(GNC_Access access) {
+    public void setAccess(final GNC_Access access) {
         if (this.access == null) {
             this.access = new ArrayList<GNC_Access>();
         }
@@ -170,11 +170,11 @@ public class GNC_MaterialResource extends GNC_Resource implements org.opengis.me
         return this.relationType;
     }
 
-    public void setRelationType(List<GNC_RelationType> relationType) {
+    public void setRelationType(final List<GNC_RelationType> relationType) {
         this.relationType = relationType;
     }
 
-    public void setRelationType(GNC_RelationType relationType) {
+    public void setRelationType(final GNC_RelationType relationType) {
         if (this.relationType == null) {
             this.relationType = new ArrayList<GNC_RelationType>();
         }

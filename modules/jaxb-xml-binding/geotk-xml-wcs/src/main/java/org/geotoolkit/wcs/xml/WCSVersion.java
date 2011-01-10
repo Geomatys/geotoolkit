@@ -28,7 +28,7 @@ public enum WCSVersion {
 
     private final String code;
 
-    WCSVersion(String code){
+    WCSVersion(final String code){
         this.code = code;
     }
 

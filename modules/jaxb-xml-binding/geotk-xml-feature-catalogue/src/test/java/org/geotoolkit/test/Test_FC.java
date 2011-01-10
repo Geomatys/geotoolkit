@@ -80,7 +80,7 @@ public class Test_FC {
      * @throws Exception*/
     public static Logger logger = Logger.getLogger("main");
      
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
 
         
         //String fileName = "generated19110-InheritanceRelation-.xml";

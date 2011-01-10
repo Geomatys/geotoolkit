@@ -57,7 +57,7 @@ public class GPXWriter100 extends StaxStreamWriter{
 
     private final String creator;
 
-    public GPXWriter100(String creator){
+    public GPXWriter100(final String creator){
         if(creator == null){
             throw new NullArgumentException("Creator can not be null.");
         }
@@ -84,8 +84,8 @@ public class GPXWriter100 extends StaxStreamWriter{
         writer.writeDefaultNamespace(GPX_NAMESPACE);
     }
 
-    public void write(MetaData metadata, Collection<? extends Feature> wayPoints,
-            Collection<? extends Feature> routes, Collection<? extends Feature> tracks) throws XMLStreamException{
+    public void write(final MetaData metadata, final Collection<? extends Feature> wayPoints,
+            final Collection<? extends Feature> routes, final Collection<? extends Feature> tracks) throws XMLStreamException{
 
         writeGPXTag();
 
@@ -150,7 +150,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void write(MetaData metadata) throws XMLStreamException{
+    public void write(final MetaData metadata) throws XMLStreamException{
         writeSimpleTag(GPX_NAMESPACE, TAG_NAME, metadata.getName());
         writeSimpleTag(GPX_NAMESPACE, TAG_DESC, metadata.getDescription());
 
@@ -174,7 +174,7 @@ public class GPXWriter100 extends StaxStreamWriter{
 
     }
 
-    public void writeWayPoint(Feature feature, final String tagName) throws XMLStreamException{
+    public void writeWayPoint(final Feature feature, final String tagName) throws XMLStreamException{
         if(feature == null) return;
 
         writer.writeStartElement(GPX_NAMESPACE, tagName);
@@ -205,7 +205,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writeRoute(Feature feature) throws XMLStreamException{
+    public void writeRoute(final Feature feature) throws XMLStreamException{
         if(feature == null) return;
 
         writer.writeStartElement(GPX_NAMESPACE, TAG_RTE);
@@ -225,7 +225,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writeTrack(Feature feature) throws XMLStreamException{
+    public void writeTrack(final Feature feature) throws XMLStreamException{
         if(feature == null) return;
 
         writer.writeStartElement(GPX_NAMESPACE, TAG_TRK);
@@ -245,7 +245,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writeTrackSegment(ComplexAttribute feature) throws XMLStreamException{
+    public void writeTrackSegment(final ComplexAttribute feature) throws XMLStreamException{
         if(feature == null) return;
         writer.writeStartElement(GPX_NAMESPACE, TAG_TRK_SEG);
 
@@ -256,7 +256,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writeLinks(Collection<Property> props) throws XMLStreamException{
+    public void writeLinks(final Collection<Property> props) throws XMLStreamException{
         if(props == null || props.isEmpty()) return;
         final List<URI> uris = new ArrayList<URI>();
         for(final Property prop : props){
@@ -268,14 +268,14 @@ public class GPXWriter100 extends StaxStreamWriter{
         writeLinkURIs(uris);
     }
 
-    public void writeLinkURIs(Collection<URI> links) throws XMLStreamException{
+    public void writeLinkURIs(final Collection<URI> links) throws XMLStreamException{
         if(links != null && !links.isEmpty()){
             //in gpx 1.0 we only have one link available
             writeLink(links.iterator().next());
         }
     }
 
-    public void writeLink(URI uri) throws XMLStreamException{
+    public void writeLink(final URI uri) throws XMLStreamException{
         if(uri == null) return;
 
         writer.writeStartElement(GPX_NAMESPACE, TAG_LINK);
@@ -283,7 +283,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writeBounds(Envelope env) throws XMLStreamException{
+    public void writeBounds(final Envelope env) throws XMLStreamException{
         if(env == null) return;
 
         writer.writeStartElement(GPX_NAMESPACE, TAG_BOUNDS);
@@ -296,7 +296,7 @@ public class GPXWriter100 extends StaxStreamWriter{
         writer.writeEndElement();
     }
 
-    public void writeProperty(String tagName,Property prop) throws XMLStreamException{
+    public void writeProperty(final String tagName,final Property prop) throws XMLStreamException{
         if(prop == null) return;
 
         Object val = prop.getValue();

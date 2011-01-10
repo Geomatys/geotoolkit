@@ -56,7 +56,7 @@ public class DefinitionReferenceImpl implements DefinitionReference {
     /**
      * Clone a DefinitionReference
      */
-    public DefinitionReferenceImpl(DefinitionReference feature) {
+    public DefinitionReferenceImpl(final DefinitionReference feature) {
         if (feature != null) {
             this.definitionSource = feature.getDefinitionSource();
             this.sourceIdentifier = feature.getSourceIdentifier();
@@ -66,7 +66,7 @@ public class DefinitionReferenceImpl implements DefinitionReference {
     /**
      *Build a new definition reference
      */
-    public DefinitionReferenceImpl(String sourceIdentifier, DefinitionSource definitionSource) {
+    public DefinitionReferenceImpl(final String sourceIdentifier, final DefinitionSource definitionSource) {
 
         this.definitionSource = definitionSource;
         this.sourceIdentifier = sourceIdentifier;
@@ -84,7 +84,7 @@ public class DefinitionReferenceImpl implements DefinitionReference {
      * Sets the value of the sourceIdentifier property.
      * 
      */
-    public void setSourceIdentifier(String value) {
+    public void setSourceIdentifier(final String value) {
         this.sourceIdentifier = value;
     }
 
@@ -99,7 +99,7 @@ public class DefinitionReferenceImpl implements DefinitionReference {
     /**
      * Sets the value of the definitionSource property.
      */
-    public void setDefinitionSource(DefinitionSource value) {
+    public void setDefinitionSource(final DefinitionSource value) {
         this.definitionSource = value;
     }
     

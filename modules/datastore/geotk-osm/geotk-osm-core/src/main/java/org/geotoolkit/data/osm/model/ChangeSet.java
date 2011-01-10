@@ -37,7 +37,7 @@ import org.opengis.geometry.Envelope;
  */
 public class ChangeSet {
 
-    private static List<Tag> toList(Map<String,String> tags){
+    private static List<Tag> toList(final Map<String,String> tags){
         final List<Tag> lstTag;
         if(tags == null || tags.isEmpty()){
             lstTag = Collections.EMPTY_LIST;
@@ -57,11 +57,11 @@ public class ChangeSet {
     private final Envelope env;
     private final List<Tag> tags;
 
-    public ChangeSet(Integer id, User user, Long timestamp, Boolean open, Envelope env, Map<String,String> tags) {
+    public ChangeSet(final Integer id, final User user, final Long timestamp, final Boolean open, final Envelope env, final Map<String,String> tags) {
         this(id,user,timestamp,open,env,toList(tags));
     }
 
-    public ChangeSet(Integer id, User user, Long timestamp, Boolean open, Envelope env, List<Tag> tags) {
+    public ChangeSet(final Integer id, final User user, final Long timestamp, final Boolean open, final Envelope env, final List<Tag> tags) {
         this.id = id;
         this.user = (user == null) ? User.NONE : user;
         this.timestamp = timestamp;
@@ -133,7 +133,7 @@ public class ChangeSet {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

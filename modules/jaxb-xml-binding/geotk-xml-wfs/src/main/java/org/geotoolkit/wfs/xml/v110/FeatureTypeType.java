@@ -118,7 +118,7 @@ public class FeatureTypeType {
 
     }
 
-    public FeatureTypeType(QName name, String title, String defaultSRS, List<String> otherCRS, List<WGS84BoundingBoxType> wgs84BoundingBox) {
+    public FeatureTypeType(final QName name, final String title, final String defaultSRS, final List<String> otherCRS, final List<WGS84BoundingBoxType> wgs84BoundingBox) {
         this.name       = name;
         this.title      = title;
         this.defaultSRS = defaultSRS;
@@ -146,7 +146,7 @@ public class FeatureTypeType {
      *     {@link QName }
      *     
      */
-    public void setName(QName value) {
+    public void setName(final QName value) {
         this.name = value;
     }
 
@@ -170,7 +170,7 @@ public class FeatureTypeType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -194,7 +194,7 @@ public class FeatureTypeType {
      *     {@link String }
      *     
      */
-    public void setAbstract(String value) {
+    public void setAbstract(final String value) {
         this._abstract = value;
     }
 
@@ -228,7 +228,7 @@ public class FeatureTypeType {
      *     {@link String }
      *     
      */
-    public void setDefaultSRS(String value) {
+    public void setDefaultSRS(final String value) {
         this.defaultSRS = value;
     }
 
@@ -245,7 +245,7 @@ public class FeatureTypeType {
     /**
      * Gets the value of the otherSRS property.
      */
-    public void setOtherSRS(List<String> otherCRS) {
+    public void setOtherSRS(final List<String> otherCRS) {
         this.otherSRS = otherCRS;
     }
 
@@ -269,7 +269,7 @@ public class FeatureTypeType {
      *     {@link FeatureTypeType.NoSRS }
      *     
      */
-    public void setNoSRS(FeatureTypeType.NoSRS value) {
+    public void setNoSRS(final FeatureTypeType.NoSRS value) {
         this.noSRS = value;
     }
 
@@ -293,7 +293,7 @@ public class FeatureTypeType {
      *     {@link OperationsType }
      *     
      */
-    public void setOperations(OperationsType value) {
+    public void setOperations(final OperationsType value) {
         this.operations = value;
     }
 
@@ -317,7 +317,7 @@ public class FeatureTypeType {
      *     {@link OutputFormatListType }
      *     
      */
-    public void setOutputFormats(OutputFormatListType value) {
+    public void setOutputFormats(final OutputFormatListType value) {
         this.outputFormats = value;
     }
 

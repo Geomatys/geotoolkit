@@ -111,7 +111,7 @@ public class ArcByCenterPointType
      *     {@link DirectPositionType }
      *     
      */
-    public void setPos(DirectPositionType value) {
+    public void setPos(final DirectPositionType value) {
         this.pos = value;
     }
 
@@ -135,7 +135,7 @@ public class ArcByCenterPointType
      *     {@link PointPropertyType }
      *     
      */
-    public void setPointProperty(PointPropertyType value) {
+    public void setPointProperty(final PointPropertyType value) {
         this.pointProperty = value;
     }
 
@@ -159,7 +159,7 @@ public class ArcByCenterPointType
      *     {@link PointPropertyType }
      *     
      */
-    public void setPointRep(PointPropertyType value) {
+    public void setPointRep(final PointPropertyType value) {
         this.pointRep = value;
     }
 
@@ -183,7 +183,7 @@ public class ArcByCenterPointType
      *     {@link DirectPositionListType }
      *     
      */
-    public void setPosList(DirectPositionListType value) {
+    public void setPosList(final DirectPositionListType value) {
         this.posList = value;
     }
 
@@ -207,7 +207,7 @@ public class ArcByCenterPointType
      *     {@link CoordinatesType }
      *     
      */
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 
@@ -231,7 +231,7 @@ public class ArcByCenterPointType
      *     {@link LengthType }
      *     
      */
-    public void setRadius(LengthType value) {
+    public void setRadius(final LengthType value) {
         this.radius = value;
     }
 
@@ -255,7 +255,7 @@ public class ArcByCenterPointType
      *     {@link AngleType }
      *     
      */
-    public void setStartAngle(AngleType value) {
+    public void setStartAngle(final AngleType value) {
         this.startAngle = value;
     }
 
@@ -279,7 +279,7 @@ public class ArcByCenterPointType
      *     {@link AngleType }
      *     
      */
-    public void setEndAngle(AngleType value) {
+    public void setEndAngle(final AngleType value) {
         this.endAngle = value;
     }
 
@@ -307,7 +307,7 @@ public class ArcByCenterPointType
      *     {@link CurveInterpolationType }
      *     
      */
-    public void setInterpolation(CurveInterpolationType value) {
+    public void setInterpolation(final CurveInterpolationType value) {
         this.interpolation = value;
     }
 
@@ -335,7 +335,7 @@ public class ArcByCenterPointType
      *     {@link Integer }
      *     
      */
-    public void setNumArc(Integer value) {
+    public void setNumArc(final Integer value) {
         this.numArc = value;
     }
 

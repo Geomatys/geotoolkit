@@ -112,7 +112,7 @@ public class DefaultPropertyDescriptor<T extends PropertyType> implements Proper
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (!(obj instanceof DefaultPropertyDescriptor)) {
             return false;
         }

@@ -81,7 +81,7 @@ public class RectangleType extends AbstractSurfacePatchType {
      *     {@link JAXBElement }{@code <}{@link AbstractRingPropertyType }{@code >}
      *     
      */
-    public void setJbExterior(JAXBElement<AbstractRingPropertyType> value) {
+    public void setJbExterior(final JAXBElement<AbstractRingPropertyType> value) {
         this.exterior = ((JAXBElement<AbstractRingPropertyType> ) value);
     }
 
@@ -110,7 +110,7 @@ public class RectangleType extends AbstractSurfacePatchType {
      *     {@code <}{@link AbstractRingPropertyType }{@code >}
      *
      */
-    public void setExterior(AbstractRingPropertyType value) {
+    public void setExterior(final AbstractRingPropertyType value) {
         ObjectFactory factory = new ObjectFactory();
         this.exterior =  factory.createExterior(value);
     }
@@ -139,7 +139,7 @@ public class RectangleType extends AbstractSurfacePatchType {
      *     {@link SurfaceInterpolationType }
      *     
      */
-    public void setInterpolation(SurfaceInterpolationType value) {
+    public void setInterpolation(final SurfaceInterpolationType value) {
         this.interpolation = value;
     }
 

@@ -88,7 +88,7 @@ public class TransactionType extends RequestBaseType implements Transaction {
     /**
      * Build a new transaction request to insert a list of object
      */
-    public TransactionType(String service, String version, InsertType... inserts) {
+    public TransactionType(final String service, final String version, final InsertType... inserts) {
         super(service, version);
         insertOrUpdateOrDelete = new ArrayList<Object>();
         for (InsertType insert: inserts) {
@@ -100,7 +100,7 @@ public class TransactionType extends RequestBaseType implements Transaction {
     /**
      * Build a new transaction request to insert a list of object
      */
-    public TransactionType(String service, String version, UpdateType... updates) {
+    public TransactionType(final String service, final String version, final UpdateType... updates) {
         super(service, version);
         insertOrUpdateOrDelete = new ArrayList<Object>();
         for (UpdateType update: updates) {
@@ -112,7 +112,7 @@ public class TransactionType extends RequestBaseType implements Transaction {
     /**
      * Build a new transaction request to delete a list of object
      */
-    public TransactionType(String service, String version, DeleteType delete) {
+    public TransactionType(final String service, final String version, final DeleteType delete) {
         super(service, version);
         insertOrUpdateOrDelete = new ArrayList<Object>();
         if (delete != null)
@@ -153,7 +153,7 @@ public class TransactionType extends RequestBaseType implements Transaction {
         return "application/xml";
     }
 
-    public void setOutputFormat(String value) {}
+    public void setOutputFormat(final String value) {}
 
     /**
      * Verify if this entry is identical to the specified object.

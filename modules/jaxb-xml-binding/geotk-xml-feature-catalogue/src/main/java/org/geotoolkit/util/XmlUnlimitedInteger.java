@@ -42,11 +42,11 @@ public class XmlUnlimitedInteger {
     public XmlUnlimitedInteger() {
     }
     
-    public XmlUnlimitedInteger(int value) {
+    public XmlUnlimitedInteger(final int value) {
         this.value = value;
     }
 
-    public XmlUnlimitedInteger(UnlimitedInteger multiplicity) {
+    public XmlUnlimitedInteger(final UnlimitedInteger multiplicity) {
         this.isInfinite = false;
         if (multiplicity != null) {
             this.isInfinite =  multiplicity.isInfinite();
@@ -65,7 +65,7 @@ public class XmlUnlimitedInteger {
         return value;
     }
     
-    public void setValue(Integer value) {
+    public void setValue(final Integer value) {
         this.value = value;
     }
 

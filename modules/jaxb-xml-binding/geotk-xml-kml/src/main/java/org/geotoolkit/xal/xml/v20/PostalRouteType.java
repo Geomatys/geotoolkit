@@ -180,7 +180,7 @@ public class PostalRouteType {
      *     {@link PostalRouteType.PostalRouteNumber }
      *     
      */
-    public void setPostalRouteNumber(PostalRouteType.PostalRouteNumber value) {
+    public void setPostalRouteNumber(final PostalRouteType.PostalRouteNumber value) {
         this.postalRouteNumber = value;
     }
 
@@ -204,7 +204,7 @@ public class PostalRouteType {
      *     {@link PostBox }
      *     
      */
-    public void setPostBox(PostBox value) {
+    public void setPostBox(final PostBox value) {
         this.postBox = value;
     }
 
@@ -257,7 +257,7 @@ public class PostalRouteType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -335,7 +335,7 @@ public class PostalRouteType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -359,7 +359,7 @@ public class PostalRouteType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -383,7 +383,7 @@ public class PostalRouteType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -459,7 +459,7 @@ public class PostalRouteType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -483,7 +483,7 @@ public class PostalRouteType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 

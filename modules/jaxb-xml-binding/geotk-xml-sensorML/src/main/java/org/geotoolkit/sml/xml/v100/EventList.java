@@ -83,7 +83,7 @@ public class EventList implements AbstractEventList {
 
     }
 
-    public EventList(AbstractEventList el) {
+    public EventList(final AbstractEventList el) {
         if (el != null) {
             this.id = el.getId();
             if (el.getMember() != null) {
@@ -108,14 +108,14 @@ public class EventList implements AbstractEventList {
     /**
      * Gets the value of the member property.
      */
-    public void setMember(List<EventListMember> member) {
+    public void setMember(final List<EventListMember> member) {
         this.member = member;
     }
 
     /**
      * Gets the value of the member property.
      */
-    public void setMember(EventListMember member) {
+    public void setMember(final EventListMember member) {
         if (this.member == null) {
             this.member = new ArrayList<EventListMember>();
         }
@@ -133,7 +133,7 @@ public class EventList implements AbstractEventList {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

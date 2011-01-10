@@ -57,18 +57,18 @@ public class MapFieldRenderer implements JRFieldRenderer{
     }
 
     @Override
-    public boolean canHandle(JRField field) {
+    public boolean canHandle(final JRField field) {
         return field.getValueClass() == MapDef.class;
     }
 
     @Override
-    public PropertyDescriptor createDescriptor(JRField field) {
+    public PropertyDescriptor createDescriptor(final JRField field) {
         final String name = field.getName();
         return new DefaultAttributeDescriptor(TYPE, DefaultName.valueOf(name), 1, 1, true, null);
     }
 
     @Override
-    public Object createValue(JRField field, Feature feature) {
+    public Object createValue(final JRField field, final Feature feature) {
         final String name = field.getName();
         final Property prop = feature.getProperty(name);
         final MapDef map = (MapDef) prop.getValue();

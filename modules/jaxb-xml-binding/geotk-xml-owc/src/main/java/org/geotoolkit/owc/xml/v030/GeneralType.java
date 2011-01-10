@@ -117,7 +117,7 @@ public class GeneralType {
      *     {@link WindowType }
      *     
      */
-    public void setWindow(WindowType value) {
+    public void setWindow(final WindowType value) {
         this.window = value;
     }
 
@@ -143,7 +143,7 @@ public class GeneralType {
      *     {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
      *     
      */
-    public void setBoundingBox(JAXBElement<? extends BoundingBoxType> value) {
+    public void setBoundingBox(final JAXBElement<? extends BoundingBoxType> value) {
         this.boundingBox = ((JAXBElement<? extends BoundingBoxType> ) value);
     }
 
@@ -167,7 +167,7 @@ public class GeneralType {
      *     {@link Double }
      *     
      */
-    public void setMinScaleDenominator(Double value) {
+    public void setMinScaleDenominator(final Double value) {
         this.minScaleDenominator = value;
     }
 
@@ -191,7 +191,7 @@ public class GeneralType {
      *     {@link Double }
      *     
      */
-    public void setMaxScaleDenominator(Double value) {
+    public void setMaxScaleDenominator(final Double value) {
         this.maxScaleDenominator = value;
     }
 
@@ -215,7 +215,7 @@ public class GeneralType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -239,7 +239,7 @@ public class GeneralType {
      *     {@link String }
      *     
      */
-    public void setAbstract(String value) {
+    public void setAbstract(final String value) {
         this._abstract = value;
     }
 
@@ -263,7 +263,7 @@ public class GeneralType {
      *     {@link KeywordsType }
      *     
      */
-    public void setKeywords(KeywordsType value) {
+    public void setKeywords(final KeywordsType value) {
         this.keywords = value;
     }
 
@@ -287,7 +287,7 @@ public class GeneralType {
      *     {@link URLType }
      *     
      */
-    public void setLogoURL(URLType value) {
+    public void setLogoURL(final URLType value) {
         this.logoURL = value;
     }
 
@@ -311,7 +311,7 @@ public class GeneralType {
      *     {@link URLType }
      *     
      */
-    public void setDescriptionURL(URLType value) {
+    public void setDescriptionURL(final URLType value) {
         this.descriptionURL = value;
     }
 
@@ -335,7 +335,7 @@ public class GeneralType {
      *     {@link ServiceProvider }
      *     
      */
-    public void setServiceProvider(ServiceProvider value) {
+    public void setServiceProvider(final ServiceProvider value) {
         this.serviceProvider = value;
     }
 
@@ -359,7 +359,7 @@ public class GeneralType {
      *     {@link ExtensionType }
      *     
      */
-    public void setExtension(ExtensionType value) {
+    public void setExtension(final ExtensionType value) {
         this.extension = value;
     }
 

@@ -61,7 +61,7 @@ public class MultiplicityRange {
     /**
      * An empty constructor used by JAXB
      */
-    public MultiplicityRange(int lower, UnlimitedInteger upper) {
+    public MultiplicityRange(final int lower, final UnlimitedInteger upper) {
         this.lower = lower;
         this.upper = upper;
     }
@@ -77,7 +77,7 @@ public class MultiplicityRange {
      * Sets the value of the lower property.
      * 
     */
-    public void setLower(Integer value) {
+    public void setLower(final Integer value) {
         this.lower = value;
     }
 
@@ -92,7 +92,7 @@ public class MultiplicityRange {
      * Sets the value of the upper property.
      * 
      */
-    public void setUpper(UnlimitedInteger value) {
+    public void setUpper(final UnlimitedInteger value) {
         this.upper = value;
     }
     
@@ -100,7 +100,7 @@ public class MultiplicityRange {
     public String toString() {
         return "[MultiplicityRange]: lower=" + lower + " upper=" + upper; 
     }
-    public String toString(String margin) {
+    public String toString(final String margin) {
         return margin + "[MultiplicityRange]: lower=" + lower + " upper=" + upper; 
     }
     

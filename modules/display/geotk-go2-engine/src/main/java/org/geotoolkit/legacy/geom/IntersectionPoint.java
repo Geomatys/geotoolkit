@@ -158,7 +158,7 @@ final class IntersectionPoint extends Point2D.Double implements Comparable {
      *         point <code>o</code> in a particular direction (generally clockwise).
      */
     @Override
-    public int compareTo(Object o) {
+    public int compareTo(final Object o) {
         return compareTo((IntersectionPoint) o);
     }
 

@@ -93,7 +93,7 @@ public class GridCoverageReaders {
      * @param metadata : metadata to fill, if null it will create one.
      * @return Metadata, never null
      */
-    public static DefaultMetadata fillMetadata(GridCoverageReader reader, DefaultMetadata metadata) 
+    public static DefaultMetadata fillMetadata(final GridCoverageReader reader, DefaultMetadata metadata) 
             throws CoverageStoreException, TransformException{
         if(metadata == null){
             metadata = new DefaultMetadata();
@@ -131,7 +131,7 @@ public class GridCoverageReaders {
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.
      * Use this reader if you know you have a small image.
      */
-    public static GridCoverageReader createSimpleReader(File input) throws CoverageStoreException{
+    public static GridCoverageReader createSimpleReader(final File input) throws CoverageStoreException{
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(input);
         return ic;
@@ -143,7 +143,7 @@ public class GridCoverageReaders {
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
      */
-    public static GridCoverageReader createMosaicReader(File input) throws IOException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(final File input) throws IOException, CoverageStoreException{
         final int tileSize = 512;
         final File tileFolder = getTempFolder(input,tileSize);
         return createMosaicReader(input, tileSize, tileFolder);
@@ -155,7 +155,7 @@ public class GridCoverageReaders {
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
      */
-    public static GridCoverageReader createMosaicReader(URL input) throws IOException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(final URL input) throws IOException, CoverageStoreException{
         final int tileSize = 512;
         final File tileFolder = getTempFolder(input,tileSize);
         return createMosaicReader(input, tileSize, tileFolder);
@@ -168,7 +168,7 @@ public class GridCoverageReaders {
      * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
      * @param tileFolder : cache directory where tiles will be stored
      */
-    public static GridCoverageReader createMosaicReader(File input, int tileSize, File tileFolder) throws IOException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(final File input, final int tileSize, final File tileFolder) throws IOException, CoverageStoreException{
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(reader);
@@ -182,7 +182,7 @@ public class GridCoverageReaders {
      * @param tileSize : favorite tile size, this should go over 2000, recommmanded 512 or 256.
      * @param tileFolder : cache directory where tiles will be stored
      */
-    public static GridCoverageReader createMosaicReader(URL input, int tileSize, File tileFolder) throws IOException, CoverageStoreException{
+    public static GridCoverageReader createMosaicReader(final URL input, final int tileSize, final File tileFolder) throws IOException, CoverageStoreException{
         final ImageReader reader = buildMosaicReader(input, tileSize, tileFolder);
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(reader);
@@ -199,7 +199,7 @@ public class GridCoverageReaders {
      * @throws IOException
      * @throws CoverageStoreException
      */
-    public static Entry<TileManager,CoordinateReferenceSystem> openTileManager(File file) throws IOException, CoverageStoreException{
+    public static Entry<TileManager,CoordinateReferenceSystem> openTileManager(final File file) throws IOException, CoverageStoreException{
         TileManager manager = null;
         final CoordinateReferenceSystem crs;
         if(file.exists() && !file.isDirectory()){
@@ -306,7 +306,7 @@ public class GridCoverageReaders {
      * @throws IOException
      * @throws CoverageStoreException
      */
-    public static GridCoverageReader openMosaic(File file) throws IOException, CoverageStoreException{
+    public static GridCoverageReader openMosaic(final File file) throws IOException, CoverageStoreException{
         final Entry<TileManager,CoordinateReferenceSystem> entry = openTileManager(file);
         return toCoverageReader(entry.getKey(), entry.getValue());
     }
@@ -316,7 +316,7 @@ public class GridCoverageReaders {
      *
      * @param file The starting file or folder.
      */
-    private static CoordinateReferenceSystem visit(final File file, Collection<Tile> tiles) {
+    private static CoordinateReferenceSystem visit(final File file, final Collection<Tile> tiles) {
 
         CoordinateReferenceSystem crs = null;
 
@@ -343,7 +343,7 @@ public class GridCoverageReaders {
     /**
      * @param candidate to be an coverage tile.
      */
-    private static CoordinateReferenceSystem test(final File candidate, Collection<Tile> tiles){
+    private static CoordinateReferenceSystem test(final File candidate, final Collection<Tile> tiles){
         if (candidate.isFile()){
             try {
                 final ImageReader reader = XImageIO.getReader(candidate, Boolean.FALSE, Boolean.FALSE);
@@ -389,7 +389,7 @@ public class GridCoverageReaders {
     /**
      * Create a Mosaic reader.
      */
-    private static ImageReader buildMosaicReader(Object input, int tileSize, File tileFolder) throws IOException{
+    private static ImageReader buildMosaicReader(final Object input, final int tileSize, final File tileFolder) throws IOException{
         final TileManager manager = buildTileManager(input, tileSize, tileFolder);
         final MosaicImageReader reader = new MosaicImageReader();
         reader.setInput(manager);
@@ -399,7 +399,7 @@ public class GridCoverageReaders {
     /**
      * Create a TileManager from the given input.
      */
-    public static TileManager buildTileManager(Object input, int tileSize, File tileFolder) throws IOException{
+    public static TileManager buildTileManager(final Object input, final int tileSize, final File tileFolder) throws IOException{
         return buildTileManager(input, null, tileSize, tileFolder);
     }
 
@@ -411,7 +411,7 @@ public class GridCoverageReaders {
      * @param tileSize : wanted tiles size
      * @param tileFolder : where to store created tiles
      */
-    public static TileManager buildTileManager(Object input, AffineTransform gridtoCRS, int tileSize, File tileFolder) throws IOException{
+    public static TileManager buildTileManager(final Object input, final AffineTransform gridtoCRS, final int tileSize, final File tileFolder) throws IOException{
         final MosaicBuilder builder = new MosaicBuilder();
         builder.setTileSize(new Dimension(tileSize,tileSize));
         builder.setGridToCRS(gridtoCRS);
@@ -430,7 +430,7 @@ public class GridCoverageReaders {
      * Get or create a temp folder to store the mosaic. the folder is based on the
      * file name, so tiles can be find again if the file name hasn't change.
      */
-    private static File getTempFolder(File input,int tileSize) {
+    private static File getTempFolder(final File input,final int tileSize) {
         return getTempFolder(input.getName(), tileSize);
     }
 
@@ -438,7 +438,7 @@ public class GridCoverageReaders {
      * Get or create a temp folder to store the mosaic. the folder is based on the
      * file name, so tiles can be find again if the file name hasn't change.
      */
-    private static File getTempFolder(URL input,int tileSize) {
+    private static File getTempFolder(final URL input,final int tileSize) {
         return getTempFolder(input.getFile(), tileSize);
     }
 
@@ -446,7 +446,7 @@ public class GridCoverageReaders {
      * Get or create a temp folder to store the mosaic. the folder is based on the
      * file name, so tiles can be find again if the file name hasn't change.
      */
-    private static File getTempFolder(String pathName,int tileSize) {
+    private static File getTempFolder(String pathName,final int tileSize) {
 
         final int lastSlash = pathName.lastIndexOf(File.separator);
 

@@ -38,7 +38,7 @@ public abstract class JRRendererMapper implements JRMapper<JRRenderable,MapConte
 
     private MapContext candidate;
 
-    protected JRRendererMapper(JRMapperFactory<JRRenderable,MapContext> factory){
+    protected JRRendererMapper(final JRMapperFactory<JRRenderable,MapContext> factory){
         this.factory = factory;
     }
 
@@ -54,7 +54,7 @@ public abstract class JRRendererMapper implements JRMapper<JRRenderable,MapConte
      * {@inheritDoc }
      */
     @Override
-    public JRRenderable getValue(Collection renderedValues) {
+    public JRRenderable getValue(final Collection renderedValues) {
         return create(candidate,renderedValues);
     }
 

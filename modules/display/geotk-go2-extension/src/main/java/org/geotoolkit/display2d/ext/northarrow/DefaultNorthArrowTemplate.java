@@ -43,7 +43,7 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
     private final Dimension size;
     private Image buffer = null;
 
-    public DefaultNorthArrowTemplate(BackgroundTemplate background,URL file, Dimension size){
+    public DefaultNorthArrowTemplate(final BackgroundTemplate background,final URL file, Dimension size){
 
         if(size == null) size = new Dimension(100,100);
 
@@ -90,7 +90,7 @@ public class DefaultNorthArrowTemplate implements NorthArrowTemplate{
      * {@inheritDoc }
      */
     @Override
-    public void renderImage(Graphics2D g, Point2D center) {
+    public void renderImage(final Graphics2D g, final Point2D center) {
         try {
             DynamicSymbolFactoryFinder.renderImage(svgFile.toURI(),"svg",(float)size.height,g,center,null);
         } catch (Exception ex) {

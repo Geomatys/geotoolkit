@@ -95,7 +95,7 @@ public class DCPTypeType {
 
     }
 
-    public DCPTypeType(HTTP http) {
+    public DCPTypeType(final HTTP http) {
         this.http = http;
     }
 
@@ -106,7 +106,7 @@ public class DCPTypeType {
         return http;
     }
 
-    public void updateURL(String url) {
+    public void updateURL(final String url) {
         if (http != null) {
             http.updateURL(url);
         }
@@ -168,7 +168,7 @@ public class DCPTypeType {
 
         }
 
-        public HTTP(Get get, Post post) {
+        public HTTP(final Get get, final Post post) {
             this.getOrPost = new ArrayList<Object>();
             if (get != null) {
                 this.getOrPost.add(get);
@@ -189,7 +189,7 @@ public class DCPTypeType {
             return this.getOrPost;
         }
 
-        public void updateURL(String url) {
+        public void updateURL(final String url) {
             if (this.getOrPost != null) {
                 for (Object prot : getOrPost) {
                     if (prot instanceof Get) {
@@ -236,7 +236,7 @@ public class DCPTypeType {
 
             }
 
-            public Get(OnlineResourceType or) {
+            public Get(final OnlineResourceType or) {
                 this.onlineResource = or;
             }
 
@@ -278,7 +278,7 @@ public class DCPTypeType {
 
             }
 
-            public Post(OnlineResourceType or) {
+            public Post(final OnlineResourceType or) {
                 this.onlineResource = or;
             }
 

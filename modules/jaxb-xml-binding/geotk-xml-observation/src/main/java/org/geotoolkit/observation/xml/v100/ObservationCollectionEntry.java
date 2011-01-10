@@ -53,7 +53,7 @@ public class ObservationCollectionEntry extends AbstractFeatureEntry implements 
     }
     
     
-    public ObservationCollectionEntry(String title) {
+    public ObservationCollectionEntry(final String title) {
         super(null, null, null);
         member = new ArrayList<ObservationPropertyType>();
         member.add(new ObservationPropertyType(title));
@@ -62,7 +62,7 @@ public class ObservationCollectionEntry extends AbstractFeatureEntry implements 
     /**
      * Add a new Observation to the collection. 
      */
-    public void add(ObservationEntry observation) {
+    public void add(final ObservationEntry observation) {
         if (observation != null) {
             this.member.add(new ObservationPropertyType(observation));
         }

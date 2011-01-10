@@ -75,7 +75,7 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
      /**
       * Build a new Binary logic operator 
       */
-     public BinaryLogicOpType(Object... operators) {
+     public BinaryLogicOpType(final Object... operators) {
          this.comparisonOps = new ArrayList<JAXBElement<? extends ComparisonOpsType>>();
          this.logicOps      = new ArrayList<JAXBElement<? extends LogicOpsType>>();
          this.spatialOps    = new ArrayList<JAXBElement<? extends SpatialOpsType>>();
@@ -148,11 +148,11 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         return result;
     }
 
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -163,11 +163,11 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         return comparisonOps;
     }
 
-    public void setComparisonOps(List<JAXBElement<? extends ComparisonOpsType>> comparisonOps) {
+    public void setComparisonOps(final List<JAXBElement<? extends ComparisonOpsType>> comparisonOps) {
         this.comparisonOps = comparisonOps;
     }
     
-    public void setComparisonOps(ComparisonOpsType comparisonOp) {
+    public void setComparisonOps(final ComparisonOpsType comparisonOp) {
         if (this.comparisonOps == null) {
             this.comparisonOps = new ArrayList<JAXBElement<? extends ComparisonOpsType>>();
         }
@@ -181,11 +181,11 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         return spatialOps;
     }
 
-    public void setSpatialOps(List<JAXBElement<? extends SpatialOpsType>> spatialOps) {
+    public void setSpatialOps(final List<JAXBElement<? extends SpatialOpsType>> spatialOps) {
         this.spatialOps = spatialOps;
     }
     
-    public void setSPatialOps(SpatialOpsType spatialOp) {
+    public void setSPatialOps(final SpatialOpsType spatialOp) {
         if (this.spatialOps == null) {
             this.spatialOps = new ArrayList<JAXBElement<? extends SpatialOpsType>>();
         }
@@ -199,11 +199,11 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
         return logicOps;
     }
 
-    public void setLogicOps(List<JAXBElement<? extends LogicOpsType>> logicOps) {
+    public void setLogicOps(final List<JAXBElement<? extends LogicOpsType>> logicOps) {
         this.logicOps = logicOps;
     }
     
-    public void setLogicOps(LogicOpsType logicOp) {
+    public void setLogicOps(final LogicOpsType logicOp) {
         if (this.logicOps == null) {
             this.logicOps = new ArrayList<JAXBElement<? extends LogicOpsType>>();
         }

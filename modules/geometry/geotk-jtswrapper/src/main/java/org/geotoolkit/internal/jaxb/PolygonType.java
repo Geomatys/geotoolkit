@@ -50,7 +50,7 @@ public class PolygonType {
 
     }
 
-    public PolygonType(JTSPolygon poly) {
+    public PolygonType(final JTSPolygon poly) {
         if (poly != null && poly.getBoundary() != null) {
             this.coordinateReferenceSystem = poly.getBoundary().getCoordinateReferenceSystem();
             this.exterior                  = poly.getBoundary().getExterior();
@@ -68,7 +68,7 @@ public class PolygonType {
     /**
      * @param exterior the exterior to set
      */
-    public void setExterior(Ring exterior) {
+    public void setExterior(final Ring exterior) {
         this.exterior = exterior;
     }
 
@@ -82,7 +82,7 @@ public class PolygonType {
     /**
      * @param interior the interior to set
      */
-    public void setInterior(List<Ring> interior) {
+    public void setInterior(final List<Ring> interior) {
         this.interior = interior;
     }
 
@@ -96,7 +96,7 @@ public class PolygonType {
     /**
      * @param coordinateReferenceSystem the coordinateReferenceSystem to set
      */
-    public void setCoordinateReferenceSystem(CoordinateReferenceSystem coordinateReferenceSystem) {
+    public void setCoordinateReferenceSystem(final CoordinateReferenceSystem coordinateReferenceSystem) {
         this.coordinateReferenceSystem = coordinateReferenceSystem;
     }
 

@@ -79,7 +79,7 @@ class DefaultSessionDiff{
         }
     }
 
-    public void add(Delta alt){
+    public void add(final Delta alt){
         writeLock.lock();
         try{
             deltas.add(alt);
@@ -89,7 +89,7 @@ class DefaultSessionDiff{
         }
     }
 
-    public void commit(DataStore store) throws DataStoreException{
+    public void commit(final DataStore store) throws DataStoreException{
         writeLock.lock();
         try{
             for(final Delta alt : deltas){

@@ -76,7 +76,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         initComponents();
     }
 
-    public void setDBParameters(Map<String, Serializable> dBConnectionParameters) {
+    public void setDBParameters(final Map<String, Serializable> dBConnectionParameters) {
         this.dbParameters = dBConnectionParameters;
     }
 
@@ -94,7 +94,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         
     }
 
-    private void processRailWay(DataStore store, Session session) throws DataStoreException{
+    private void processRailWay(final DataStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("RailWay");
@@ -146,7 +146,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processNatural(DataStore store, Session session) throws DataStoreException{
+    private void processNatural(final DataStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Natural");
@@ -198,7 +198,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processBuilding(DataStore store, Session session) throws DataStoreException{
+    private void processBuilding(final DataStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Building");
@@ -250,7 +250,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processLanduse(DataStore store, Session session) throws DataStoreException{
+    private void processLanduse(final DataStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Landuse");
@@ -302,7 +302,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processLeisure(DataStore store, Session session) throws DataStoreException{
+    private void processLeisure(final DataStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Leisure");
@@ -354,7 +354,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processWaterWay(DataStore store, Session session) throws DataStoreException{
+    private void processWaterWay(final DataStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Waterway");
@@ -406,7 +406,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         store.addFeatures(targetType.getName(), mapped);
     }
 
-    private void processHighWay(DataStore store, Session session) throws DataStoreException{
+    private void processHighWay(final DataStore store, final Session session) throws DataStoreException{
         //create the new schema-------------------------------------------------
         final FeatureTypeBuilder sftb = new FeatureTypeBuilder();
         sftb.setName("Highway");
@@ -619,7 +619,7 @@ public class JOSMExtractTypePane extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiCreateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiCreateActionPerformed
+    private void guiCreateActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiCreateActionPerformed
 
         new Thread(){
             @Override

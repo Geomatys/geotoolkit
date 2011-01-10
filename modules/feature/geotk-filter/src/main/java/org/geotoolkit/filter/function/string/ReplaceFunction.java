@@ -23,12 +23,12 @@ import org.opengis.filter.expression.Expression;
 
 public class ReplaceFunction extends AbstractFunction {
 
-    public ReplaceFunction(Expression expr1, Expression expr2, Expression expr3, Expression expr4) {
+    public ReplaceFunction(final Expression expr1, final Expression expr2, final Expression expr3, final Expression expr4) {
         super(StringFunctionFactory.REPLACE, new Expression[]{expr1,expr2,expr3,expr4}, null);
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         String arg0;
         String arg1;
         String arg2;

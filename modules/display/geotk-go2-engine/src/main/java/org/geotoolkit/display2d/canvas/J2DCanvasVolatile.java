@@ -62,11 +62,11 @@ public class J2DCanvasVolatile extends J2DCanvas{
 
     private final Area dirtyArea = new Area();
     
-    public J2DCanvasVolatile(CoordinateReferenceSystem crs, Dimension dim){
+    public J2DCanvasVolatile(final CoordinateReferenceSystem crs, final Dimension dim){
         this(crs,dim,null);
     }
     
-    public J2DCanvasVolatile(CoordinateReferenceSystem crs, Dimension dim, Hints hints){
+    public J2DCanvasVolatile(final CoordinateReferenceSystem crs, final Dimension dim, final Hints hints){
         super(crs,hints);
         thread = new DrawingThread();
         thread.start();
@@ -93,7 +93,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
      * Resize the volatile image, this will set to null the buffer.
      * A new one will be created when repaint is called.
      */
-    public synchronized void resize(Dimension dim){
+    public synchronized void resize(final Dimension dim){
         if(this.dim == null){
             //first time we affect the size
             this.dim = dim;
@@ -232,7 +232,7 @@ public class J2DCanvasVolatile extends J2DCanvas{
     }
 
     @Override
-    public synchronized void repaint(Shape displayArea) {
+    public synchronized void repaint(final Shape displayArea) {
         this.dirtyArea.add(new Area(displayArea));
         mustupdate = true;
         thread.wake();
@@ -286,12 +286,12 @@ public class J2DCanvasVolatile extends J2DCanvas{
 
         private Envelope wishedEnvelope = null;
 
-        public DelayedController(J2DCanvasVolatile canvas){
+        public DelayedController(final J2DCanvasVolatile canvas){
             super(canvas);
         }
 
         @Override
-        public void setVisibleArea(Envelope env) throws NoninvertibleTransformException, TransformException {
+        public void setVisibleArea(final Envelope env) throws NoninvertibleTransformException, TransformException {
             if(dim == null){
                 //we don't know our size yet, store the information for later
                 wishedEnvelope = env;

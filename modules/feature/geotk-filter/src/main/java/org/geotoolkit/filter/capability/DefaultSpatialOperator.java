@@ -33,7 +33,7 @@ public class DefaultSpatialOperator extends DefaultOperator implements SpatialOp
 
     private final List<GeometryOperand> operands;
 
-    public DefaultSpatialOperator(String name, GeometryOperand[] operands) {
+    public DefaultSpatialOperator(final String name, final GeometryOperand[] operands) {
         super(name);
         
         if(operands == null || operands.length == 0){
@@ -56,7 +56,7 @@ public class DefaultSpatialOperator extends DefaultOperator implements SpatialOp
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

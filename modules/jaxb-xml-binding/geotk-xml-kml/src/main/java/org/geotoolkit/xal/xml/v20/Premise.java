@@ -303,7 +303,7 @@ public class Premise {
      *     {@link Premise.PremiseLocation }
      *     
      */
-    public void setPremiseLocation(Premise.PremiseLocation value) {
+    public void setPremiseLocation(final Premise.PremiseLocation value) {
         this.premiseLocation = value;
     }
 
@@ -356,7 +356,7 @@ public class Premise {
      *     {@link Premise.PremiseNumberRange }
      *     
      */
-    public void setPremiseNumberRange(Premise.PremiseNumberRange value) {
+    public void setPremiseNumberRange(final Premise.PremiseNumberRange value) {
         this.premiseNumberRange = value;
     }
 
@@ -496,7 +496,7 @@ public class Premise {
      *     {@link FirmType }
      *     
      */
-    public void setFirm(FirmType value) {
+    public void setFirm(final FirmType value) {
         this.firm = value;
     }
 
@@ -520,7 +520,7 @@ public class Premise {
      *     {@link MailStopType }
      *     
      */
-    public void setMailStop(MailStopType value) {
+    public void setMailStop(final MailStopType value) {
         this.mailStop = value;
     }
 
@@ -544,7 +544,7 @@ public class Premise {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -568,7 +568,7 @@ public class Premise {
      *     {@link Premise }
      *     
      */
-    public void setPremise(Premise value) {
+    public void setPremise(final Premise value) {
         this.premise = value;
     }
 
@@ -621,7 +621,7 @@ public class Premise {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -645,7 +645,7 @@ public class Premise {
      *     {@link String }
      *     
      */
-    public void setPremiseDependency(String value) {
+    public void setPremiseDependency(final String value) {
         this.premiseDependency = value;
     }
 
@@ -669,7 +669,7 @@ public class Premise {
      *     {@link String }
      *     
      */
-    public void setPremiseDependencyType(String value) {
+    public void setPremiseDependencyType(final String value) {
         this.premiseDependencyType = value;
     }
 
@@ -693,7 +693,7 @@ public class Premise {
      *     {@link String }
      *     
      */
-    public void setPremiseThoroughfareConnector(String value) {
+    public void setPremiseThoroughfareConnector(final String value) {
         this.premiseThoroughfareConnector = value;
     }
 
@@ -767,7 +767,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -791,7 +791,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -882,7 +882,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -906,7 +906,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -930,7 +930,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setTypeOccurrence(String value) {
+        public void setTypeOccurrence(final String value) {
             this.typeOccurrence = value;
         }
 
@@ -954,7 +954,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -1097,7 +1097,7 @@ public class Premise {
          *     {@link Premise.PremiseNumberRange.PremiseNumberRangeFrom }
          *     
          */
-        public void setPremiseNumberRangeFrom(Premise.PremiseNumberRange.PremiseNumberRangeFrom value) {
+        public void setPremiseNumberRangeFrom(final Premise.PremiseNumberRange.PremiseNumberRangeFrom value) {
             this.premiseNumberRangeFrom = value;
         }
 
@@ -1121,7 +1121,7 @@ public class Premise {
          *     {@link Premise.PremiseNumberRange.PremiseNumberRangeTo }
          *     
          */
-        public void setPremiseNumberRangeTo(Premise.PremiseNumberRange.PremiseNumberRangeTo value) {
+        public void setPremiseNumberRangeTo(final Premise.PremiseNumberRange.PremiseNumberRangeTo value) {
             this.premiseNumberRangeTo = value;
         }
 
@@ -1145,7 +1145,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setRangeType(String value) {
+        public void setRangeType(final String value) {
             this.rangeType = value;
         }
 
@@ -1169,7 +1169,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setIndicator(String value) {
+        public void setIndicator(final String value) {
             this.indicator = value;
         }
 
@@ -1193,7 +1193,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setSeparator(String value) {
+        public void setSeparator(final String value) {
             this.separator = value;
         }
 
@@ -1217,7 +1217,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -1241,7 +1241,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setIndicatorOccurence(String value) {
+        public void setIndicatorOccurence(final String value) {
             this.indicatorOccurence = value;
         }
 
@@ -1265,7 +1265,7 @@ public class Premise {
          *     {@link String }
          *     
          */
-        public void setNumberRangeOccurence(String value) {
+        public void setNumberRangeOccurence(final String value) {
             this.numberRangeOccurence = value;
         }
 

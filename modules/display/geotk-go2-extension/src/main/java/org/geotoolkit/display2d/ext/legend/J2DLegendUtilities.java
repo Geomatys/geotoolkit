@@ -257,7 +257,7 @@ public class J2DLegendUtilities {
     }
 
 
-    public static Dimension estimate(Graphics2D g, MapContext context, LegendTemplate template, boolean considerBackground){
+    public static Dimension estimate(final Graphics2D g, final MapContext context, final LegendTemplate template, final boolean considerBackground){
         final Dimension dim = new Dimension(0, 0);
         if(context == null) return dim;
 
@@ -355,7 +355,7 @@ public class J2DLegendUtilities {
         return dim;
     }
 
-    private static void checkMinimumSize(Dimension dim){
+    private static void checkMinimumSize(final Dimension dim){
         if(dim.width==0){
             dim.width = 1;
         }

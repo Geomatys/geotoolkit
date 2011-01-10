@@ -80,8 +80,8 @@ public class ContactType implements AbstractContact {
     /**
      * Build a new Contact.
      */
-    public ContactType(TelephoneType phone, AddressType address, OnlineResourceType onlineResource,
-            String hoursOfService, String contactInstructions) {
+    public ContactType(final TelephoneType phone, final AddressType address, final OnlineResourceType onlineResource,
+            final String hoursOfService, final String contactInstructions) {
         this.address             = address;
         this.contactInstructions = contactInstructions;
         this.hoursOfService      = hoursOfService;

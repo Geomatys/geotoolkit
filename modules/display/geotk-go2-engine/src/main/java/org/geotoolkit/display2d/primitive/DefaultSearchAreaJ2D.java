@@ -37,7 +37,7 @@ public class DefaultSearchAreaJ2D extends DefaultSearchArea implements SearchAre
     private final Shape objectiveShape;
     private final Shape displayShape;
 
-    public DefaultSearchAreaJ2D(SearchArea search) {
+    public DefaultSearchAreaJ2D(final SearchArea search) {
         super(search);
         this.objectiveGeometryJTS   = null;
         this.displayGeometryJTS     = null;
@@ -46,10 +46,10 @@ public class DefaultSearchAreaJ2D extends DefaultSearchArea implements SearchAre
     }
 
     public DefaultSearchAreaJ2D(
-            Geometry objectiveGeometryISO, Geometry displayGeometryISO,
-            com.vividsolutions.jts.geom.Geometry objectiveGeometryJTS,
-            com.vividsolutions.jts.geom.Geometry displayGeometryJTS,
-            Shape objectiveShape, Shape displayShape) {
+            final Geometry objectiveGeometryISO, final Geometry displayGeometryISO,
+            final com.vividsolutions.jts.geom.Geometry objectiveGeometryJTS,
+            final com.vividsolutions.jts.geom.Geometry displayGeometryJTS,
+            final Shape objectiveShape, final Shape displayShape) {
         super(objectiveGeometryISO,displayGeometryISO);
         this.objectiveGeometryJTS   = objectiveGeometryJTS;
         this.displayGeometryJTS     = displayGeometryJTS;

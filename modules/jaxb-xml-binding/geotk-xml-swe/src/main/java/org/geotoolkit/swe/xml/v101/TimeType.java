@@ -54,7 +54,7 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
         
     }
 
-    public TimeType(AbstractTime time) {
+    public TimeType(final AbstractTime time) {
         super(time);
         if (time != null) {
            if (time.getUom() != null) {
@@ -74,7 +74,7 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
     /**
      * Build a new TimeType
      */
-    public TimeType(String definition, String uomCode, String uomHref) {
+    public TimeType(final String definition, final String uomCode, final String uomHref) {
         super(null, definition, null);
         if (uomCode != null || uomHref != null) {
             this.uom = new UomPropertyType(uomCode, uomHref);
@@ -84,7 +84,7 @@ public class TimeType extends AbstractDataComponentEntry implements AbstractTime
     /**
      * Build a new TimeType
      */
-    public TimeType(String definition) {
+    public TimeType(final String definition) {
         super(null, definition, null);
     }
     

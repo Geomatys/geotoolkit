@@ -78,7 +78,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
      * Build a new response to a getRecordById request.
      * one of the two list mustn't be null
      */
-    public GetRecordByIdResponseType(List<? extends AbstractRecordType> abstractRecords, List<? extends Object> others) {
+    public GetRecordByIdResponseType(final List<? extends AbstractRecordType> abstractRecords, final List<? extends Object> others) {
         if (abstractRecords != null && others != null) {
             if (abstractRecords.size() > 0 && others.size() > 0) {
                 throw new IllegalArgumentException("only one of abstractRecords or others must be fill");
@@ -132,7 +132,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }

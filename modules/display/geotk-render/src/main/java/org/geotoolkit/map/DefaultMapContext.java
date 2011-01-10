@@ -55,7 +55,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     private CoordinateReferenceSystem crs = null;
     private Envelope area = null;
 
-    public DefaultMapContext(CoordinateReferenceSystem crs) {
+    public DefaultMapContext(final CoordinateReferenceSystem crs) {
         if(crs == null){
             throw new NullPointerException("CRS can't be null");
         }
@@ -197,7 +197,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
      * {@inheritDoc }
      */
     @Override
-    public void addContextListener(ContextListener listener){
+    public void addContextListener(final ContextListener listener){
         listeners.add(ContextListener.class, listener);
         addItemListener(listener);
     }
@@ -206,12 +206,12 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
      * {@inheritDoc }
      */
     @Override
-    public void removeContextListener(ContextListener listener){
+    public void removeContextListener(final ContextListener listener){
         listeners.remove(ContextListener.class, listener);
         removeItemListener(listener);
     }
 
-    protected void fireLayerChange(int type, MapLayer layer, NumberRange<Integer> range, EventObject orig) {
+    protected void fireLayerChange(final int type, final MapLayer layer, final NumberRange<Integer> range, final EventObject orig) {
 
         //update the tree
         final List<MapLayer> list = Collections.singletonList(layer);
@@ -233,7 +233,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
 
     }
 
-    private void updateItemAdd(MapLayer layer, int index){
+    private void updateItemAdd(final MapLayer layer, final int index){
         if(index==0){
             items.add(0, layer);
         }else{
@@ -244,11 +244,11 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
         }
     }
 
-    private void updateItemRemove(int index){
+    private void updateItemRemove(final int index){
         findAndRemoveForLayerNumber(this, index, new AtomicInteger(-1));
     }
 
-    private MapItem findParentForLayerNumber(MapItem root, int wishedNumber, AtomicInteger inc){
+    private MapItem findParentForLayerNumber(final MapItem root, final int wishedNumber, final AtomicInteger inc){
 
         for(MapItem item : root.items()){
             if(item instanceof MapLayer){
@@ -265,7 +265,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
         return null;
     }
 
-    private boolean findAndRemoveForLayerNumber(MapItem root, int wishedNumber, AtomicInteger inc){
+    private boolean findAndRemoveForLayerNumber(final MapItem root, final int wishedNumber, final AtomicInteger inc){
 
         for(MapItem item : root.items()){
             if(item instanceof MapLayer){
@@ -292,7 +292,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
      * In case item is a MapLayer we register it using the layer listener.
      */
     @Override
-    protected void registerListenerSource(MapItem item) {
+    protected void registerListenerSource(final MapItem item) {
         if(item instanceof MapLayer){
             layerListener.registerSource((MapLayer) item);
         }else{
@@ -304,7 +304,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
      * In case item is a MapLayer we register it using the layer listener.
      */
     @Override
-    protected void unregisterListenerSource(MapItem item) {
+    protected void unregisterListenerSource(final MapItem item) {
         if(item instanceof MapLayer){
             layerListener.unregisterSource((MapLayer) item);
         }else{
@@ -313,7 +313,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent event) {
+    public void propertyChange(final PropertyChangeEvent event) {
         super.propertyChange(event);
         if(event.getSource() instanceof MapLayer){
             final int number = layers.indexOf((MapLayer)event.getSource());
@@ -322,7 +322,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     }
 
     @Override
-    public void styleChange(MapLayer source, EventObject event) {
+    public void styleChange(final MapLayer source, final EventObject event) {
         final int number = layers.indexOf(source);
         fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, source, NumberRange.create(number,number),event);
     }
@@ -332,18 +332,18 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     //--------------------------------------------------------------------------
 
     @Override
-    protected void fireItemChange(int type, Collection<? extends MapItem> item, NumberRange<Integer> range) {
+    protected void fireItemChange(final int type, final Collection<? extends MapItem> item, final NumberRange<Integer> range) {
         super.fireItemChange(type, item, range);
         layers.clearCache();
     }
 
     @Override
-    protected void fireItemChange(int type, MapItem item, NumberRange<Integer> range, EventObject orig) {
+    protected void fireItemChange(final int type, final MapItem item, final NumberRange<Integer> range, final EventObject orig) {
         super.fireItemChange(type, item, range, orig);
         layers.clearCache();
     }
 
-    private List<MapLayer> createLayerList(MapItem item, List<MapLayer> buffer){
+    private List<MapLayer> createLayerList(final MapItem item, final List<MapLayer> buffer){
         if(item instanceof MapLayer){
             buffer.add((MapLayer) item);
         }else{
@@ -374,24 +374,24 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
         }
 
         @Override
-        public MapLayer get(int index) {
+        public MapLayer get(final int index) {
             return getCache()[index];
         }
 
         @Override
-        public MapLayer set(int index, MapLayer element) {
+        public MapLayer set(final int index, final MapLayer element) {
             final MapLayer old = remove(index);
             add(index,element);
             return old;
         }
 
         @Override
-        public void add(int index, MapLayer element) {
+        public void add(final int index, final MapLayer element) {
             fireLayerChange(CollectionChangeEvent.ITEM_ADDED, element, NumberRange.create(index, index), null);
         }
 
         @Override
-        public MapLayer remove(int index) {
+        public MapLayer remove(final int index) {
             final MapLayer[] array = getCache();
             fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, array[index], NumberRange.create(index, index), null);
             final MapLayer removed = array[index];

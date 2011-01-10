@@ -63,7 +63,7 @@ public enum InterpolationMethod {
     NONE("none");
     private final String value;
 
-    InterpolationMethod(String v) {
+    InterpolationMethod(final String v) {
         value = v;
     }
 
@@ -71,7 +71,7 @@ public enum InterpolationMethod {
         return value;
     }
 
-    public static InterpolationMethod fromValue(String v) {
+    public static InterpolationMethod fromValue(final String v) {
         if (v!= null) {
             for (InterpolationMethod c: InterpolationMethod.values()) {
                 if (c.value.equals(v)) {

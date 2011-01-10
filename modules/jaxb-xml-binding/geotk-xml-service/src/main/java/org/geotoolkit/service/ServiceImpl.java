@@ -55,7 +55,7 @@ public class ServiceImpl implements Service {
     /**
      * Clone an interface
      */
-    public ServiceImpl(Service service) {
+    public ServiceImpl(final Service service) {
       this.specification = service.getSpecification();
       this.theSVPort     = service.getTheSVPort();
     }
@@ -72,11 +72,11 @@ public class ServiceImpl implements Service {
         return this.specification;
     }
     
-    public void setSpecification(Collection<PlatformSpecificServiceSpecification> specification) {
+    public void setSpecification(final Collection<PlatformSpecificServiceSpecification> specification) {
          this.specification = specification;
     }
     
-    public void setSpecification(PlatformSpecificServiceSpecification specification) {
+    public void setSpecification(final PlatformSpecificServiceSpecification specification) {
         if (this.specification == null) {
             this.specification = new ArrayList<PlatformSpecificServiceSpecification>();
         }
@@ -95,11 +95,11 @@ public class ServiceImpl implements Service {
         return this.theSVPort;
     }
     
-    public void setTheSVPort(Collection<Port> theSVPort) {
+    public void setTheSVPort(final Collection<Port> theSVPort) {
          this.theSVPort = theSVPort;
     }
     
-    public void setTheSVPort(Port theSVPort) {
+    public void setTheSVPort(final Port theSVPort) {
         if (this.theSVPort == null) {
             this.theSVPort = new ArrayList<Port>();
         }

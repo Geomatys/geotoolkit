@@ -94,7 +94,7 @@ public class InputDescriptionType
      *     {@link SupportedComplexDataInputType }
      *     
      */
-    public void setComplexData(SupportedComplexDataInputType value) {
+    public void setComplexData(final SupportedComplexDataInputType value) {
         this.complexData = value;
     }
 
@@ -118,7 +118,7 @@ public class InputDescriptionType
      *     {@link LiteralInputType }
      *     
      */
-    public void setLiteralData(LiteralInputType value) {
+    public void setLiteralData(final LiteralInputType value) {
         this.literalData = value;
     }
 
@@ -142,7 +142,7 @@ public class InputDescriptionType
      *     {@link SupportedCRSsType }
      *     
      */
-    public void setBoundingBoxData(SupportedCRSsType value) {
+    public void setBoundingBoxData(final SupportedCRSsType value) {
         this.boundingBoxData = value;
     }
 
@@ -166,7 +166,7 @@ public class InputDescriptionType
      *     {@link BigInteger }
      *     
      */
-    public void setMinOccurs(BigInteger value) {
+    public void setMinOccurs(final BigInteger value) {
         this.minOccurs = value;
     }
 
@@ -190,7 +190,7 @@ public class InputDescriptionType
      *     {@link BigInteger }
      *     
      */
-    public void setMaxOccurs(BigInteger value) {
+    public void setMaxOccurs(final BigInteger value) {
         this.maxOccurs = value;
     }
 

@@ -79,7 +79,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
 
     }
 
-    public DataBlockDefinitionPropertyType(DataBlockDefinitionProperty db) {
+    public DataBlockDefinitionPropertyType(final DataBlockDefinitionProperty db) {
         if (db != null) {
             this.actuate = db.getActuate();
             this.arcrole = db.getArcrole();
@@ -115,7 +115,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
      *     {@link DataBlockDefinitionType }
      *     
      */
-    public void setDataBlockDefinition(DataBlockDefinitionType value) {
+    public void setDataBlockDefinition(final DataBlockDefinitionType value) {
         this.dataBlockDefinition = value;
     }
 
@@ -139,7 +139,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -163,7 +163,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -187,7 +187,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -211,7 +211,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -235,7 +235,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -259,7 +259,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -283,7 +283,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -307,7 +307,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

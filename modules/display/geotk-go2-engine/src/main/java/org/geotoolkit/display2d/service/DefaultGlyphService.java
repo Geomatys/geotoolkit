@@ -45,7 +45,7 @@ public class DefaultGlyphService {
 
     private DefaultGlyphService(){}
 
-    public static BufferedImage create(final Style style, final Dimension dim, MapLayer layer) {
+    public static BufferedImage create(final Style style, final Dimension dim, final MapLayer layer) {
         if (dim == null || style == null) {
             throw new NullPointerException("Style and dimension can not be null");
         }
@@ -63,7 +63,7 @@ public class DefaultGlyphService {
         return buffer;
     }
 
-    public static BufferedImage create(final FeatureTypeStyle style, final Dimension dim, MapLayer layer) {
+    public static BufferedImage create(final FeatureTypeStyle style, final Dimension dim, final MapLayer layer) {
         if (dim == null || style == null) {
             throw new NullPointerException("Style and dimension can not be null");
         }
@@ -81,7 +81,7 @@ public class DefaultGlyphService {
         return buffer;
     }
 
-    public static BufferedImage create(final Rule style, Dimension dim, MapLayer layer) {
+    public static BufferedImage create(final Rule style, Dimension dim, final MapLayer layer) {
         if (style == null) {
             throw new NullPointerException("Style can not be null");
         }
@@ -116,7 +116,7 @@ public class DefaultGlyphService {
         return buffer;
     }
 
-    public static BufferedImage create(final Symbolizer style, Dimension dim, MapLayer layer) {
+    public static BufferedImage create(final Symbolizer style, Dimension dim, final MapLayer layer) {
         if (style == null) {
             throw new NullPointerException("Style can not be null");
         }
@@ -139,25 +139,25 @@ public class DefaultGlyphService {
         return buffer;
     }
 
-    public static void render(final Style style, final Rectangle2D rectangle, final Graphics2D target, MapLayer layer) {
+    public static void render(final Style style, final Rectangle2D rectangle, final Graphics2D target, final MapLayer layer) {
         for(final FeatureTypeStyle fts : style.featureTypeStyles()){
             render(fts,rectangle,target,layer);
         }
     }
 
-    public static void render(final FeatureTypeStyle fts, final Rectangle2D rectangle, final Graphics2D target, MapLayer layer) {
+    public static void render(final FeatureTypeStyle fts, final Rectangle2D rectangle, final Graphics2D target, final MapLayer layer) {
         for(final Rule rule : fts.rules()){
             render(rule,rectangle,target,layer);
         }
     }
 
-    public static void render(final Rule rule, final Rectangle2D rectangle, final Graphics2D target, MapLayer layer) {
+    public static void render(final Rule rule, final Rectangle2D rectangle, final Graphics2D target, final MapLayer layer) {
         for(final Symbolizer symbol : rule.symbolizers()){
             render(symbol,rectangle,target,layer);
         }
     }
 
-    public static void render(final Symbolizer symbol, final Rectangle2D rectangle, Graphics2D target, MapLayer layer) {
+    public static void render(final Symbolizer symbol, final Rectangle2D rectangle, Graphics2D target, final MapLayer layer) {
         target = (Graphics2D) target.create();
         target.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -169,7 +169,7 @@ public class DefaultGlyphService {
         }
     }
 
-    public static Dimension glyphPreferredSize(Style style, Dimension dim, MapLayer layer){
+    public static Dimension glyphPreferredSize(final Style style, Dimension dim, final MapLayer layer){
 
         for(FeatureTypeStyle symbol : style.featureTypeStyles()){
             dim = glyphPreferredSize(symbol, dim, layer);
@@ -179,7 +179,7 @@ public class DefaultGlyphService {
         return dim;
     }
 
-    public static Dimension glyphPreferredSize(FeatureTypeStyle style, Dimension dim, MapLayer layer){        
+    public static Dimension glyphPreferredSize(final FeatureTypeStyle style, Dimension dim, final MapLayer layer){        
 
         for(Rule symbol : style.rules()){
             dim = glyphPreferredSize(symbol, dim, layer);
@@ -189,7 +189,7 @@ public class DefaultGlyphService {
         return dim;
     }
 
-    public static Dimension glyphPreferredSize(Rule style, Dimension dim, MapLayer layer){
+    public static Dimension glyphPreferredSize(final Rule style, Dimension dim, final MapLayer layer){
 
         for(Symbolizer symbol : style.symbolizers()){
             dim = glyphPreferredSize(symbol, dim, layer);
@@ -199,7 +199,7 @@ public class DefaultGlyphService {
         return dim;
     }
 
-    public static Dimension glyphPreferredSize(Symbolizer style, Dimension dim, MapLayer layer){
+    public static Dimension glyphPreferredSize(final Symbolizer style, Dimension dim, final MapLayer layer){
         final SymbolizerRendererService renderer = GO2Utilities.findRenderer(style.getClass());
 
         if(renderer != null){

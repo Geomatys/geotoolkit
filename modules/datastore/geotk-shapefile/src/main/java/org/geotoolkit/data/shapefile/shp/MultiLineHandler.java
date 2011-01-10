@@ -39,7 +39,7 @@ import org.geotoolkit.storage.DataStoreException;
 public class MultiLineHandler extends AbstractShapeHandler {
 
     /** Create a MultiLineHandler for ShapeType.ARC */
-    public MultiLineHandler(boolean read3D) {
+    public MultiLineHandler(final boolean read3D) {
         super(ShapeType.ARC,read3D);
     }
 
@@ -50,7 +50,7 @@ public class MultiLineHandler extends AbstractShapeHandler {
      * @param type The ShapeType to use.
      * @throws DataStoreException If the ShapeType is not correct (see constructor).
      */
-    public MultiLineHandler(ShapeType type,boolean read3D) throws DataStoreException {
+    public MultiLineHandler(final ShapeType type,final boolean read3D) throws DataStoreException {
         super(type,read3D);
         if ((type != ShapeType.ARC) && (type != ShapeType.ARCM) && (type != ShapeType.ARCZ)) {
             throw new DataStoreException("MultiLineHandler constructor - expected type to be 3, 13 or 23");
@@ -91,14 +91,14 @@ public class MultiLineHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public Object estimated(double minX, double maxX, double minY, double maxY) {
+    public Object estimated(final double minX, final double maxX, final double minY, final double maxY) {
         final double[] array = new double[]{minX,minY,maxX,maxY};
         return GEOMETRY_FACTORY.createMultiLineString(new LineString[] {
                GEOMETRY_FACTORY.createLineString(new ShapeCoordinateSequence2D(array,2))});
     }
 
     @Override
-    public Object read(ByteBuffer buffer, ShapeType type) {
+    public Object read(final ByteBuffer buffer, final ShapeType type) {
 
         if (type == ShapeType.NULL) {
             return createNull();
@@ -273,7 +273,7 @@ public class MultiLineHandler extends AbstractShapeHandler {
 //    }
 
     @Override
-    public void write(ByteBuffer buffer, Object geometry) {
+    public void write(final ByteBuffer buffer, final Object geometry) {
         final MultiLineString multi = (MultiLineString) geometry;
 
         final Envelope box = multi.getEnvelopeInternal();

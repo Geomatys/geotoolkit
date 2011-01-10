@@ -84,7 +84,7 @@ public class OperationAdapter extends XmlAdapter<OperationAdapter, Operation> {
      * @return A java object which represents the metadata value.
      */
     @Override
-    public Operation unmarshal(OperationAdapter value) throws Exception {
+    public Operation unmarshal(final OperationAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class OperationAdapter extends XmlAdapter<OperationAdapter, Operation> {
      * @return The adapter for this Operation.
      */
     @Override
-    public OperationAdapter marshal(Operation value) throws Exception {
+    public OperationAdapter marshal(final Operation value) throws Exception {
         return new OperationAdapter(value);
     }
 

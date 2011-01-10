@@ -114,7 +114,7 @@ public class GeometryParser {
      * @param positionFactory A <code>PositionFactory</code> created with the same crs and precision as above
      * @param aggregateFactory A <Code>AggregateFactory</code> created with the same crs and precision as above
      */
-    public GeometryParser(GeometryFactory geometryFactory, PrimitiveFactory primitiveFactory, PositionFactory positionFactory, AggregateFactory aggregateFactory) {
+    public GeometryParser(final GeometryFactory geometryFactory, final PrimitiveFactory primitiveFactory, final PositionFactory positionFactory, final AggregateFactory aggregateFactory) {
         this.geometryFactory = geometryFactory;
         this.primitiveFactory = primitiveFactory;
         this.positionFactory = positionFactory;
@@ -126,7 +126,7 @@ public class GeometryParser {
      * Should be called prior to use.
      * @param factory
      */
-    public void setFactory(GeometryFactory factory){
+    public void setFactory(final GeometryFactory factory){
         this.geometryFactory = factory;
     }
 
@@ -136,7 +136,7 @@ public class GeometryParser {
      * Should be called prior to use.
      * @param factory
      */
-    public void setFactory(PrimitiveFactory factory){
+    public void setFactory(final PrimitiveFactory factory){
         this.primitiveFactory = factory;
     }
     /**
@@ -145,7 +145,7 @@ public class GeometryParser {
      * Should be called prior to use.
      * @param factory
      */
-    public void setFactory(PositionFactory factory){
+    public void setFactory(final PositionFactory factory){
         this.positionFactory = factory;
     }
     
@@ -156,7 +156,7 @@ public class GeometryParser {
      * @param text A string containing the well known text to be parsed.
      * @return Geometry indicated by text (as created with current factories)
      */
-    public Geometry parse(String text) throws ParseException {
+    public Geometry parse(final String text) throws ParseException {
         return read(new StringReader(text));
     }
 
@@ -169,7 +169,7 @@ public class GeometryParser {
      * @return a <code>Geometry</code> read from <code>reader</code>
      * @throws ParseException if a parsing problem occurs
      */
-    public Geometry read(Reader reader) throws ParseException {
+    public Geometry read(final Reader reader) throws ParseException {
         StreamTokenizer tokenizer = new StreamTokenizer(reader);
         setUpTokenizer(tokenizer);
 
@@ -185,7 +185,7 @@ public class GeometryParser {
      *
      * @param tokenizer A <code>StreamTokenizer</code>
      */
-    private static void setUpTokenizer(StreamTokenizer tokenizer) {
+    private static void setUpTokenizer(final StreamTokenizer tokenizer) {
         final int char128 = 128;
         final int skip32 = 32;
         final int char255 = 255;
@@ -215,7 +215,7 @@ public class GeometryParser {
      *                        token was encountered
      * @throws IOException    if an I/O error occurs
      */
-    private Geometry readGeometryTaggedText(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private Geometry readGeometryTaggedText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         final String type = getNextWord(tokenizer);
         if (type.equals("POINT")) {
             return readPointText(tokenizer);
@@ -247,7 +247,7 @@ public class GeometryParser {
      * @throws IOException
      * @throws ParseException
      */
-    private List<Position> getCoordinates(StreamTokenizer tokenizer)
+    private List<Position> getCoordinates(final StreamTokenizer tokenizer)
             throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
         List<Position> coordinates = new ArrayList<Position>();
@@ -270,7 +270,7 @@ public class GeometryParser {
      * @throws IOException
      * @throws ParseException
      */
-    private DirectPosition getPreciseCoordinate(StreamTokenizer tokenizer)
+    private DirectPosition getPreciseCoordinate(final StreamTokenizer tokenizer)
             throws IOException, ParseException {
         double[] coords = new double[2];
         coords[0] = getNextNumber(tokenizer);
@@ -282,7 +282,7 @@ public class GeometryParser {
         return positionFactory.createDirectPosition(coords);
     }
 
-    private boolean isNumberNext(StreamTokenizer tokenizer) throws IOException {
+    private boolean isNumberNext(final StreamTokenizer tokenizer) throws IOException {
         int type = tokenizer.nextToken();
         tokenizer.pushBack();
         return type == StreamTokenizer.TT_WORD;
@@ -298,7 +298,7 @@ public class GeometryParser {
      * @throws ParseException if the next token is not a valid number
      * @throws IOException    if an I/O error occurs
      */
-    private double getNextNumber(StreamTokenizer tokenizer) throws IOException,
+    private double getNextNumber(final StreamTokenizer tokenizer) throws IOException,
             ParseException {
         int type = tokenizer.nextToken();
         switch (type) {
@@ -325,7 +325,7 @@ public class GeometryParser {
      * @throws ParseException if the next token is not EMPTY or L_PAREN
      * @throws IOException    if an I/O error occurs
      */
-    private String getNextEmptyOrOpener(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private String getNextEmptyOrOpener(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextWord = getNextWord(tokenizer);
         if (nextWord.equals(EMPTY) || nextWord.equals(L_PAREN)) {
             return nextWord;
@@ -343,7 +343,7 @@ public class GeometryParser {
      * @throws ParseException if the next token is not R_PAREN or COMMA
      * @throws IOException    if an I/O error occurs
      */
-    private String getNextCloserOrComma(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private String getNextCloserOrComma(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextWord = getNextWord(tokenizer);
         if (nextWord.equals(COMMA) || nextWord.equals(R_PAREN)) {
             return nextWord;
@@ -361,7 +361,7 @@ public class GeometryParser {
      * @throws ParseException if the next token is not R_PAREN
      * @throws IOException    if an I/O error occurs
      */
-    private String getNextCloser(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private String getNextCloser(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextWord = getNextWord(tokenizer);
         if (nextWord.equals(R_PAREN)) {
             return nextWord;
@@ -379,7 +379,7 @@ public class GeometryParser {
      * @throws ParseException if the next token is not a word
      * @throws IOException    if an I/O error occurs
      */
-    private String getNextWord(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private String getNextWord(final StreamTokenizer tokenizer) throws IOException, ParseException {
         int type = tokenizer.nextToken();
         String value;
         switch (type) {
@@ -413,7 +413,7 @@ public class GeometryParser {
      * @param expected a description of what was expected
      * @throws ParseException
      */
-    private void parseError(String expected, StreamTokenizer tokenizer)
+    private void parseError(final String expected, final StreamTokenizer tokenizer)
             throws ParseException {
         String tokenStr = tokenString(tokenizer);
         throw new ParseException("Expected " + expected + " but found " + tokenStr, 0);
@@ -424,7 +424,7 @@ public class GeometryParser {
      *
      * @return a description of the current token
      */
-    private String tokenString(StreamTokenizer tokenizer) {
+    private String tokenString(final StreamTokenizer tokenizer) {
         switch (tokenizer.ttype) {
             case StreamTokenizer.TT_NUMBER:
                 return "<NUMBER>";
@@ -449,7 +449,7 @@ public class GeometryParser {
      * @throws IOException    if an I/O error occurs
      * @throws ParseException if an unexpected token was encountered
      */
-    private Point readPointText(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private Point readPointText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
         if (nextToken.equals(EMPTY)) {
             return primitiveFactory.createPoint(new double[2]);
@@ -469,7 +469,7 @@ public class GeometryParser {
      * @throws IOException    if an I/O error occurs
      * @throws ParseException if an unexpected token was encountered
      */
-    private Curve readLineStringText(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private Curve readLineStringText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         final List<Position> coordList = getCoordinates(tokenizer);
         final LineString lineString = geometryFactory.createLineString(coordList);
         final List<CurveSegment> curveSegmentList = Collections.singletonList((CurveSegment)lineString);
@@ -488,7 +488,7 @@ public class GeometryParser {
      *                        do not form a closed linestring, or if an unexpected token was
      *                        encountered
      */
-    private Curve readLinearRingText(StreamTokenizer tokenizer)
+    private Curve readLinearRingText(final StreamTokenizer tokenizer)
             throws IOException, ParseException {
         List<Position> coordList = getCoordinates(tokenizer);
         LineString lineString = geometryFactory.createLineString(coordList);
@@ -504,7 +504,7 @@ public class GeometryParser {
      * @return <code>Point</code>s created using this <code>WKTReader</code>
      *         s <code>GeometryFactory</code>
      */
-    private List toPoints(List coordinates) {
+    private List toPoints(final List coordinates) {
         List<Position> points = new ArrayList<Position>();
         for (int i=0,n=coordinates.size(); i<n; i++) {
             points.add(positionFactory.createPosition((Point)coordinates.get(i)));
@@ -523,7 +523,7 @@ public class GeometryParser {
      *                        token was encountered.
      * @throws IOException    if an I/O error occurs
      */
-    private Surface readPolygonText(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private Surface readPolygonText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);
         if (nextToken.equals(EMPTY)) {
             return null;
@@ -558,7 +558,7 @@ public class GeometryParser {
      *                        token was encountered.
      * @throws IOException    if an I/O error occurs
      */
-    private MultiPrimitive readMultiPolygonText(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private MultiPrimitive readMultiPolygonText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);        
         if (nextToken.equals(EMPTY)) {
         	return null;
@@ -590,7 +590,7 @@ public class GeometryParser {
      *                        token was encountered.
      * @throws IOException    if an I/O error occurs
      */
-    private MultiPrimitive readMultiPointText(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private MultiPrimitive readMultiPointText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);        
         if (nextToken.equals(EMPTY)) {
         	return null;
@@ -620,7 +620,7 @@ public class GeometryParser {
      * @throws ParseException 
      * @throws IOException    if an I/O error occurs
      */
-    private MultiPrimitive readGeometryCollectionText(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private MultiPrimitive readGeometryCollectionText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);        
         if (nextToken.equals(EMPTY)) {
         	return null;
@@ -650,7 +650,7 @@ public class GeometryParser {
      * @throws ParseException 
      * @throws IOException    if an I/O error occurs
      */
-    private MultiPrimitive readMultiLineStringText(StreamTokenizer tokenizer) throws IOException, ParseException {
+    private MultiPrimitive readMultiLineStringText(final StreamTokenizer tokenizer) throws IOException, ParseException {
         String nextToken = getNextEmptyOrOpener(tokenizer);        
         if (nextToken.equals(EMPTY)) {
         	return null;

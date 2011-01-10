@@ -94,9 +94,9 @@ public class CoverageDescriptionType extends DescriptionType {
     /**
      * build a light coverage description.
      */
-    public CoverageDescriptionType(List<LanguageStringType> title,  List<LanguageStringType> _abstract,
-            List<KeywordsType> keywords, String identifier, CoverageDomainType domain, 
-            RangeType range, List<String> supportedCRS, List<String> supportedFormat) {
+    public CoverageDescriptionType(final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
+            final List<KeywordsType> keywords, final String identifier, final CoverageDomainType domain, 
+            final RangeType range, final List<String> supportedCRS, final List<String> supportedFormat) {
         super(title, _abstract, keywords);
         this.domain          = domain;
         this.identifier      = identifier;
@@ -108,9 +108,9 @@ public class CoverageDescriptionType extends DescriptionType {
     /**
      * build a full coverage description.
      */
-    public CoverageDescriptionType(List<LanguageStringType> title,  List<LanguageStringType> _abstract,
-            List<KeywordsType> keywords, String identifier, CoverageDomainType domain, List<MetadataType> metadata,
-            RangeType range, List<String> supportedCRS, List<String> supportedFormat) {
+    public CoverageDescriptionType(final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
+            final List<KeywordsType> keywords, final String identifier, final CoverageDomainType domain, final List<MetadataType> metadata,
+            final RangeType range, final List<String> supportedCRS, final List<String> supportedFormat) {
         super(title, _abstract, keywords);
         this.domain          = domain;
         this.identifier      = identifier;

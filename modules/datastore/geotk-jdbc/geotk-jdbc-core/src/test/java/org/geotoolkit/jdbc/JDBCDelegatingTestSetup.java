@@ -25,7 +25,7 @@ public class JDBCDelegatingTestSetup extends JDBCTestSetup {
 
     JDBCTestSetup delegate;
     
-    protected JDBCDelegatingTestSetup( JDBCTestSetup delegate ) {
+    protected JDBCDelegatingTestSetup( final JDBCTestSetup delegate ) {
         this.delegate = delegate;
     }
 
@@ -47,7 +47,7 @@ public class JDBCDelegatingTestSetup extends JDBCTestSetup {
     }
 
     @Override
-    protected void initializeDataSource(BasicDataSource ds, Properties db) {
+    protected void initializeDataSource(final BasicDataSource ds, final Properties db) {
         delegate.initializeDataSource(ds, db);
     }
 
@@ -57,17 +57,17 @@ public class JDBCDelegatingTestSetup extends JDBCTestSetup {
     }
     
     @Override
-    protected void setUpDataStore(JDBCDataStore dataStore) {
+    protected void setUpDataStore(final JDBCDataStore dataStore) {
         delegate.setUpDataStore(dataStore);
     }
 
     @Override
-    protected String typeName(String raw) {
+    protected String typeName(final String raw) {
         return delegate.typeName(raw);
     }
     
     @Override
-    protected String attributeName(String raw) {
+    protected String attributeName(final String raw) {
         return delegate.attributeName(raw);
     }
     

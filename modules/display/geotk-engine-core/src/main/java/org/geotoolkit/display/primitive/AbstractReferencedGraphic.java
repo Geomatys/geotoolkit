@@ -108,7 +108,7 @@ public abstract class AbstractReferencedGraphic extends AbstractGraphic implemen
      * </p>
      */
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(final PropertyChangeEvent evt) {
         super.propertyChange(evt);
         
         if(evt.getPropertyName().equals(AbstractReferencedCanvas2D.OBJECTIVE_CRS_PROPERTY)){

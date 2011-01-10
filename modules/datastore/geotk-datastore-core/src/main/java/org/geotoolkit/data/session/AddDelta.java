@@ -61,7 +61,7 @@ class AddDelta extends AbstractDelta{
      * a datastore which may be slow or changing with time.
      * this features from the given collection will be copied.
      */
-    AddDelta(Session session, Name typeName, Collection<Feature> features){
+    AddDelta(final Session session, final Name typeName, final Collection<Feature> features){
         super(session);
         if(typeName == null){
             throw new NullPointerException("Type name can not be null.");
@@ -107,7 +107,7 @@ class AddDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public Query modify(Query query) {
+    public Query modify(final Query query) {
         //add doesnt modify a query
         return query;
     }
@@ -116,7 +116,7 @@ class AddDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator modify(Query query, FeatureIterator reader) throws DataStoreException {
+    public FeatureIterator modify(final Query query, final FeatureIterator reader) throws DataStoreException {
         if(!query.getTypeName().equals(type)) return reader;
 
         final FeatureIterator affected = features.subCollection(query).iterator();
@@ -132,7 +132,7 @@ class AddDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public long modify(Query query, long count) throws DataStoreException{
+    public long modify(final Query query, final long count) throws DataStoreException{
         if(!query.getTypeName().equals(type)) return count;
 
         final int affected = features.subCollection(query).size();
@@ -144,7 +144,7 @@ class AddDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public Envelope modify(Query query, Envelope env) throws DataStoreException {
+    public Envelope modify(final Query query, final Envelope env) throws DataStoreException {
         if(!query.getTypeName().equals(type)) return env;
 
         final Envelope affected = features.subCollection(query).getEnvelope();
@@ -158,7 +158,7 @@ class AddDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public void commit(DataStore store) throws DataStoreException {
+    public void commit(final DataStore store) throws DataStoreException {
         store.addFeatures(type, features);
         features.clear();
     }

@@ -49,7 +49,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
      *
      * @param serverURL The server url.
      */
-    protected AbstractGetChangeSets(final String serverURL, String subpath){
+    protected AbstractGetChangeSets(final String serverURL, final String subpath){
         super(serverURL, subpath);
     }
 
@@ -57,7 +57,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
      * {@inheritDoc }
      */
     @Override
-    public void setEnvelope(Envelope env) {
+    public void setEnvelope(final Envelope env) {
         this.envelope = env;
     }
 
@@ -81,7 +81,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
      * {@inheritDoc }
      */
     @Override
-    public void setUserId(long id) {
+    public void setUserId(final long id) {
         this.userId = id;
     }
 
@@ -97,7 +97,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
      * {@inheritDoc }
      */
     @Override
-    public void setUserName(String name) {
+    public void setUserName(final String name) {
         this.userName = name;
     }
 
@@ -113,7 +113,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
      * {@inheritDoc }
      */
     @Override
-    public void setTimeRange(DateRange range) {
+    public void setTimeRange(final DateRange range) {
         this.dateRange = range;
     }
 
@@ -129,7 +129,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
      * {@inheritDoc }
      */
     @Override
-    public void setOnlyOpenChangeSets(boolean open) {
+    public void setOnlyOpenChangeSets(final boolean open) {
         this.onlyOpen = open;
     }
 
@@ -145,7 +145,7 @@ public abstract class AbstractGetChangeSets extends AbstractRequest implements G
      * {@inheritDoc }
      */
     @Override
-    public void setOnlyClosedChangeSets(boolean closed) {
+    public void setOnlyClosedChangeSets(final boolean closed) {
         this.onlyClosed = closed;
     }
 

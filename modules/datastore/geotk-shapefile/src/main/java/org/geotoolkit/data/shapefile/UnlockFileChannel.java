@@ -42,8 +42,8 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
     private final boolean write;
     private boolean closed;
 
-    public UnlockFileChannel(FileChannel channel, ShpFiles shapefileFiles,
-            URL url, Object holder, boolean write) {
+    public UnlockFileChannel(final FileChannel channel, final ShpFiles shapefileFiles,
+            final URL url, final Object holder, final boolean write) {
         this.wrapped = channel;
         this.shapefileFiles = shapefileFiles;
         this.url = url;
@@ -56,7 +56,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public void force(boolean metaData) throws IOException {
+    public void force(final boolean metaData) throws IOException {
         wrapped.force(metaData);
     }
 
@@ -64,7 +64,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public FileLock lock(long position, long size, boolean shared)
+    public FileLock lock(final long position, final long size, final boolean shared)
             throws IOException {
         return wrapped.lock(position, size, shared);
     }
@@ -73,7 +73,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public MappedByteBuffer map(MapMode mode, long position, long size)
+    public MappedByteBuffer map(final MapMode mode, final long position, final long size)
             throws IOException {
         return wrapped.map(mode, position, size);
     }
@@ -90,7 +90,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public FileChannel position(long newPosition) throws IOException {
+    public FileChannel position(final long newPosition) throws IOException {
         return wrapped.position(newPosition);
     }
 
@@ -98,7 +98,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public int read(ByteBuffer dst, long position) throws IOException {
+    public int read(final ByteBuffer dst, final long position) throws IOException {
         return wrapped.read(dst, position);
     }
 
@@ -106,7 +106,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public int read(ByteBuffer dst) throws IOException {
+    public int read(final ByteBuffer dst) throws IOException {
         return wrapped.read(dst);
     }
 
@@ -114,7 +114,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public long read(ByteBuffer[] dsts, int offset, int length)
+    public long read(final ByteBuffer[] dsts, final int offset, final int length)
             throws IOException {
         return wrapped.read(dsts, offset, length);
     }
@@ -131,7 +131,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public long transferFrom(ReadableByteChannel src, long position, long count)
+    public long transferFrom(final ReadableByteChannel src, final long position, final long count)
             throws IOException {
         return wrapped.transferFrom(src, position, count);
     }
@@ -140,7 +140,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public long transferTo(long position, long count, WritableByteChannel target)
+    public long transferTo(final long position, final long count, final WritableByteChannel target)
             throws IOException {
         return wrapped.transferTo(position, count, target);
     }
@@ -149,7 +149,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public FileChannel truncate(long size) throws IOException {
+    public FileChannel truncate(final long size) throws IOException {
         return wrapped.truncate(size);
     }
 
@@ -157,7 +157,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public FileLock tryLock(long position, long size, boolean shared)
+    public FileLock tryLock(final long position, final long size, final boolean shared)
             throws IOException {
         return wrapped.tryLock(position, size, shared);
     }
@@ -166,7 +166,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public int write(ByteBuffer src, long position) throws IOException {
+    public int write(final ByteBuffer src, final long position) throws IOException {
         return wrapped.write(src, position);
     }
 
@@ -174,7 +174,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public int write(ByteBuffer src) throws IOException {
+    public int write(final ByteBuffer src) throws IOException {
         return wrapped.write(src);
     }
 
@@ -182,7 +182,7 @@ public class UnlockFileChannel extends FileChannel implements ReadableByteChanne
      * {@inheritDoc }
      */
     @Override
-    public long write(ByteBuffer[] srcs, int offset, int length)
+    public long write(final ByteBuffer[] srcs, final int offset, final int length)
             throws IOException {
         return wrapped.write(srcs, offset, length);
     }

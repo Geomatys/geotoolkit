@@ -50,7 +50,7 @@ public class AbstractDataComponentEntry extends AbstractGMLEntry implements Abst
      */
     AbstractDataComponentEntry() {}
 
-    public AbstractDataComponentEntry(AbstractDataComponent component) {
+    public AbstractDataComponentEntry(final AbstractDataComponent component) {
         super(component);
         if (component != null) {
             if (component.getDefinition() instanceof String) {
@@ -62,7 +62,7 @@ public class AbstractDataComponentEntry extends AbstractGMLEntry implements Abst
         }
     }
 
-    public AbstractDataComponentEntry(String definition) {
+    public AbstractDataComponentEntry(final String definition) {
         if (definition != null) {
             this.definition = URI.create(definition);
         }
@@ -71,7 +71,7 @@ public class AbstractDataComponentEntry extends AbstractGMLEntry implements Abst
     /**
      * a simple constructor used by the sub classes to initialize l'Entry.
      */
-    public AbstractDataComponentEntry(String id, String definition, Boolean fixed) {
+    public AbstractDataComponentEntry(final String id, final String definition, final Boolean fixed) {
         super(id);
         if (definition != null) {
             this.definition = URI.create(definition);
@@ -109,7 +109,7 @@ public class AbstractDataComponentEntry extends AbstractGMLEntry implements Abst
     /**
      * @param definition the definition to set
      */
-    public void setDefinition(String definition) {
+    public void setDefinition(final String definition) {
         this.definition = URI.create(definition);
     }
     

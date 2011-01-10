@@ -52,7 +52,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
      * {@inheritDoc }
      */
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiFill.setLayer(layer);
         guiHalo.setLayer(layer);
@@ -91,7 +91,7 @@ public class JTextSymbolizerPane extends StyleElementEditor<TextSymbolizer> {
      * {@inheritDoc }
      */
     @Override
-    public void parse(TextSymbolizer symbol) {
+    public void parse(final TextSymbolizer symbol) {
         if (symbol != null) {
             guiFill.parse(symbol.getFill());
             guiLabel.parse(symbol.getLabel());

@@ -59,12 +59,12 @@ public class SerialChainFilter extends Filter {
 	
     private int[] actionType;
 
-    public SerialChainFilter(List<Filter> chain) {
+    public SerialChainFilter(final List<Filter> chain) {
         this.chain      = chain;
         this.actionType = new int[]{DEFAULT};
     }
 
-    public SerialChainFilter(List<Filter> chain, int[] actionType) {
+    public SerialChainFilter(final List<Filter> chain, final int[] actionType) {
         this.chain      = chain;
         this.actionType = actionType.clone();
     }
@@ -73,7 +73,7 @@ public class SerialChainFilter extends Filter {
      * @see org.apache.lucene.search.Filter#bits(org.apache.lucene.index.IndexReader)
      */
     @Override
-    public  DocIdSet getDocIdSet(IndexReader reader) throws CorruptIndexException, IOException {
+    public  DocIdSet getDocIdSet(final IndexReader reader) throws CorruptIndexException, IOException {
 
         final int chainSize  = chain.size();
         final int actionSize = actionType.length;
@@ -190,7 +190,7 @@ public class SerialChainFilter extends Filter {
      * @see org.apache.lucene.search.RangeFilter#equals
      */
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) return true;
         if (!(o instanceof SerialChainFilter)) return false;
         final SerialChainFilter other = (SerialChainFilter) o;

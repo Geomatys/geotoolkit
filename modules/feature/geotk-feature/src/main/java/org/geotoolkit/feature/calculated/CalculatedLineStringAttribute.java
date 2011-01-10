@@ -53,12 +53,12 @@ public class CalculatedLineStringAttribute extends DefaultGeometryAttribute {
      * @param desc : the descriptor of this attribute
      * @param path : a path of names to the property that holds Point geometries.
      */
-    public CalculatedLineStringAttribute(GeometryDescriptor desc, Name ... path) {
+    public CalculatedLineStringAttribute(final GeometryDescriptor desc, final Name ... path) {
         super(null, desc, null);
         this.path = path;
     }
     
-    public void setRelated(ComplexAttribute relatedFeature) {
+    public void setRelated(final ComplexAttribute relatedFeature) {
         this.related = relatedFeature;
     }
 
@@ -73,7 +73,7 @@ public class CalculatedLineStringAttribute extends DefaultGeometryAttribute {
         return GF.createLineString(coords.toArray(new Coordinate[coords.size()]));
     }
 
-    private void explore(ComplexAttribute att, int depth, List<Coordinate> coords){
+    private void explore(final ComplexAttribute att, final int depth, final List<Coordinate> coords){
         if(depth == path.length-1){
             //we are on the field that hold the geometry points
             for (final Property prop : att.getProperties(path[depth])) {

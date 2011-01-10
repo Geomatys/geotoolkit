@@ -232,7 +232,7 @@ public final class JTSArray extends PointArray implements RandomAccess {
      * Ins�re les donn�es (<var>x</var>,<var>y</var>) du tableau <code>toMerge</code> sp�cifi�.
      */
     @Override
-    public PointArray insertAt(int index, float[] toMerge, int lower, int upper, boolean reverse) {
+    public PointArray insertAt(final int index, final float[] toMerge, final int lower, final int upper, final boolean reverse) {
         throw new UnsupportedOperationException();
     }
     

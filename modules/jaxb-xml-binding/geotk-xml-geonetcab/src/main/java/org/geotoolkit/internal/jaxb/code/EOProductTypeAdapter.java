@@ -58,7 +58,7 @@ public final class EOProductTypeAdapter extends CodeListAdapter<EOProductTypeAda
      * {@inheritDoc}
      */
     @Override
-    protected EOProductTypeAdapter wrap(CodeListProxy proxy) {
+    protected EOProductTypeAdapter wrap(final CodeListProxy proxy) {
         return new EOProductTypeAdapter(proxy);
     }
 

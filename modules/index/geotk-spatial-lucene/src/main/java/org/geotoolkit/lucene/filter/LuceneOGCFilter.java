@@ -71,7 +71,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
      * {@inheritDoc }
      */
     @Override
-    public DocIdSet getDocIdSet(IndexReader reader) throws IOException {
+    public DocIdSet getDocIdSet(final IndexReader reader) throws IOException {
 
         DocIdBitSet set = new DocIdBitSet(new BitSet(reader.maxDoc()));
 
@@ -138,7 +138,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
         }
 
         @Override
-        public int advance(int i) throws IOException {
+        public int advance(final int i) throws IOException {
             boolean skip =  termDocs.skipTo(i);
             if (!skip)
                 return -1;
@@ -148,7 +148,7 @@ public class LuceneOGCFilter extends org.apache.lucene.search.Filter{
 
     }
 
-    public static LuceneOGCFilter wrap(Filter filter){
+    public static LuceneOGCFilter wrap(final Filter filter){
         return new LuceneOGCFilter(filter);
     }
 

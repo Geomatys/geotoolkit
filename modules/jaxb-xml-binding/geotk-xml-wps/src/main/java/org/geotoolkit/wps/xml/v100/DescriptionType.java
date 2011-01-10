@@ -97,7 +97,7 @@ public class DescriptionType {
      *     {@link CodeType }
      *     
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 
@@ -121,7 +121,7 @@ public class DescriptionType {
      *     {@link LanguageStringType }
      *     
      */
-    public void setTitle(LanguageStringType value) {
+    public void setTitle(final LanguageStringType value) {
         this.title = value;
     }
 
@@ -145,7 +145,7 @@ public class DescriptionType {
      *     {@link LanguageStringType }
      *     
      */
-    public void setAbstract(LanguageStringType value) {
+    public void setAbstract(final LanguageStringType value) {
         this._abstract = value;
     }
 

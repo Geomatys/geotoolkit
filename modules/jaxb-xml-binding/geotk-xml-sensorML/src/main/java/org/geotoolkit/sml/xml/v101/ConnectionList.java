@@ -57,11 +57,11 @@ public class ConnectionList implements AbstractConnectionList {
     public ConnectionList() {
     }
 
-    public ConnectionList(List<Connection> connection) {
+    public ConnectionList(final List<Connection> connection) {
         this.connection = connection;
     }
 
-    public ConnectionList(AbstractConnectionList connectionList) {
+    public ConnectionList(final AbstractConnectionList connectionList) {
         if (connectionList != null)  {
             this.connection = new ArrayList<Connection>();
             for (AbstractConnection c : connectionList.getConnection()) {

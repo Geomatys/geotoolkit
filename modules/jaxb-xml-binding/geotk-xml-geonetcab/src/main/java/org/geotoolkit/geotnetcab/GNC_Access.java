@@ -79,7 +79,7 @@ public class GNC_Access implements org.opengis.metadata.geonetcab.GNC_Access{
      *     {@link String }
      *     
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -99,11 +99,11 @@ public class GNC_Access implements org.opengis.metadata.geonetcab.GNC_Access{
         return this.detailAccessConstraints;
     }
 
-    public void setDetailAccessConstraints(List<GNC_AccessConstraints> detailAccessConstraints) {
+    public void setDetailAccessConstraints(final List<GNC_AccessConstraints> detailAccessConstraints) {
         this.detailAccessConstraints = detailAccessConstraints;
     }
 
-    public void setDetailAccessConstraints(GNC_AccessConstraints detailAccessConstraints) {
+    public void setDetailAccessConstraints(final GNC_AccessConstraints detailAccessConstraints) {
         if (this.detailAccessConstraints == null) {
             this.detailAccessConstraints = new ArrayList<GNC_AccessConstraints>();
         }
@@ -111,7 +111,7 @@ public class GNC_Access implements org.opengis.metadata.geonetcab.GNC_Access{
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

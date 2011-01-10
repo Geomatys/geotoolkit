@@ -128,7 +128,7 @@ public class LayerType
      *     {@link DimensionListType }
      *     
      */
-    public void setDimensionList(DimensionListType value) {
+    public void setDimensionList(final DimensionListType value) {
         this.dimensionList = value;
     }
 
@@ -152,7 +152,7 @@ public class LayerType
      *     {@link String }
      *     
      */
-    public void setResponseCRS(String value) {
+    public void setResponseCRS(final String value) {
         this.responseCRS = value;
     }
 
@@ -176,7 +176,7 @@ public class LayerType
      *     {@link ParameterListType }
      *     
      */
-    public void setParameterList(ParameterListType value) {
+    public void setParameterList(final ParameterListType value) {
         this.parameterList = value;
     }
 
@@ -200,7 +200,7 @@ public class LayerType
      *     {@link String }
      *     
      */
-    public void setDepth(String value) {
+    public void setDepth(final String value) {
         this.depth = value;
     }
 
@@ -224,7 +224,7 @@ public class LayerType
      *     {@link String }
      *     
      */
-    public void setResx(String value) {
+    public void setResx(final String value) {
         this.resx = value;
     }
 
@@ -248,7 +248,7 @@ public class LayerType
      *     {@link String }
      *     
      */
-    public void setResy(String value) {
+    public void setResy(final String value) {
         this.resy = value;
     }
 
@@ -272,7 +272,7 @@ public class LayerType
      *     {@link String }
      *     
      */
-    public void setResz(String value) {
+    public void setResz(final String value) {
         this.resz = value;
     }
 
@@ -296,7 +296,7 @@ public class LayerType
      *     {@link BigInteger }
      *     
      */
-    public void setMaxFeatures(BigInteger value) {
+    public void setMaxFeatures(final BigInteger value) {
         this.maxFeatures = value;
     }
 
@@ -320,7 +320,7 @@ public class LayerType
      *     {@link FilterType }
      *     
      */
-    public void setFilter(FilterType value) {
+    public void setFilter(final FilterType value) {
         this.filter = value;
     }
 
@@ -344,7 +344,7 @@ public class LayerType
      *     {@link AbstractFeatureCollectionType }
      *     
      */
-    public void setInlineGeometry(AbstractFeatureCollectionType value) {
+    public void setInlineGeometry(final AbstractFeatureCollectionType value) {
         this.inlineGeometry = value;
     }
 
@@ -397,7 +397,7 @@ public class LayerType
      *     {@link ExtensionType }
      *     
      */
-    public void setExtension(ExtensionType value) {
+    public void setExtension(final ExtensionType value) {
         this.extension = value;
     }
 
@@ -425,7 +425,7 @@ public class LayerType
      *     {@link Boolean }
      *     
      */
-    public void setQueryable(Boolean value) {
+    public void setQueryable(final Boolean value) {
         this.queryable = value;
     }
 

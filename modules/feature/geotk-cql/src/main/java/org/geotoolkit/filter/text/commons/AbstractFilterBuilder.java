@@ -861,7 +861,7 @@ public abstract class AbstractFilterBuilder {
      * @param token
      * @return Literal
      */
-    public Literal buildEnvelop(IToken token) {
+    public Literal buildEnvelop(final IToken token) {
         final String source = scanExpression(token);
 
         final String ENVELOPE_TYPE = "ENVELOPE";

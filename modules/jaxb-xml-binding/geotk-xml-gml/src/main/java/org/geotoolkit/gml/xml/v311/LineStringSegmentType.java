@@ -88,8 +88,8 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
 
     }
 
-    public LineStringSegmentType(Integer numDerivativesAtStart, Integer numDerivativesAtEnd, Integer numDerivativeInterior,
-            CurveInterpolationType interpolation, List<DirectPosition> positions) {
+    public LineStringSegmentType(final Integer numDerivativesAtStart, final Integer numDerivativesAtEnd, final Integer numDerivativeInterior,
+            final CurveInterpolationType interpolation, final List<DirectPosition> positions) {
         super(numDerivativesAtStart, numDerivativesAtEnd, numDerivativeInterior);
         this.interpolation = interpolation;
         for (DirectPosition currentPos : positions) {
@@ -128,11 +128,11 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
         return this.pos;
     }
 
-    public void setPos(List<DirectPositionType> pos) {
+    public void setPos(final List<DirectPositionType> pos) {
         this.pos = pos;
     }
 
-    public void setPos(DirectPositionType pos) {
+    public void setPos(final DirectPositionType pos) {
         if (this.pos == null) {
             this.pos = new ArrayList<DirectPositionType>();
         }
@@ -159,7 +159,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
      *     {@link DirectPositionListType }
      *     
      */
-    public void setPosList(DirectPositionListType value) {
+    public void setPosList(final DirectPositionListType value) {
         this.posList = value;
     }
 
@@ -183,7 +183,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
      *     {@link CoordinatesType }
      *     
      */
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 
@@ -210,7 +210,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
      *     {@link CurveInterpolationType }
      *     
      */
-    public void setInterpolation(CurveInterpolationType value) {
+    public void setInterpolation(final CurveInterpolationType value) {
         this.interpolation = value;
     }
 
@@ -253,7 +253,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
         return hash;
     }
 
-    private boolean JAXBElementEquals(JAXBElement a, JAXBElement b) {
+    private boolean JAXBElementEquals(final JAXBElement a, final JAXBElement b) {
         if (a  != null && b != null) {
             return Utilities.equals(a.getValue(), b.getValue());
         } else if (a == null && b == null) {

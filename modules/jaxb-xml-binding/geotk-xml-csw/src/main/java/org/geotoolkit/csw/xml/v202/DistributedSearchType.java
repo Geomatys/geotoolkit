@@ -66,7 +66,7 @@ public class DistributedSearchType implements DistributedSearch {
     /**
      * Build a new DIstributed search
      */
-    public DistributedSearchType(Integer hopCount){
+    public DistributedSearchType(final Integer hopCount){
         this.hopCount = hopCount;
     }
     

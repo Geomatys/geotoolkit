@@ -51,7 +51,7 @@ public class DataStoreJoinFeatureCollection extends AbstractFeatureCollection<Fe
     private final Query query;
     private FeatureType type = null;
 
-    public DataStoreJoinFeatureCollection(String id, Query query){
+    public DataStoreJoinFeatureCollection(final String id, final Query query){
         super(id,query.getSource());
         this.query = query;
 
@@ -95,14 +95,14 @@ public class DataStoreJoinFeatureCollection extends AbstractFeatureCollection<Fe
     }
 
     @Override
-    public FeatureCollection<Feature> subCollection(Query query) throws DataStoreException {
+    public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
         final Query combine = QueryUtilities.subQuery(this.query, query);
         //the result should be an absolute query too.
         return QueryUtilities.evaluate("sub-"+getID(), combine);
     }
 
     @Override
-    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
         try {
             return session.getFeatureIterator(query);
         } catch (DataStoreException ex) {
@@ -111,7 +111,7 @@ public class DataStoreJoinFeatureCollection extends AbstractFeatureCollection<Fe
     }
 
     @Override
-    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
         if(isWritable()){
             throw new UnsupportedOperationException("Not supported yet.");
         }else{
@@ -120,7 +120,7 @@ public class DataStoreJoinFeatureCollection extends AbstractFeatureCollection<Fe
     }
 
     @Override
-    public void remove(Filter filter) throws DataStoreException {
+    public void remove(final Filter filter) throws DataStoreException {
         if(isWritable()){
             throw new UnsupportedOperationException("Not supported yet.");
         }else{

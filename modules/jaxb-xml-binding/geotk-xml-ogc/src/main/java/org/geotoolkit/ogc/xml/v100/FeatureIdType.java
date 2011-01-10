@@ -59,7 +59,7 @@ public class FeatureIdType {
      * Sets the value of the fid property.
      * 
      */
-    public void setFid(String value) {
+    public void setFid(final String value) {
         this.fid = value;
     }
 

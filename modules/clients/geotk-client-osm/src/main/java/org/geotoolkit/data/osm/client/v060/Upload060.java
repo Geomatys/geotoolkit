@@ -26,7 +26,7 @@ import org.geotoolkit.data.osm.client.AbstractUpload;
  */
 public class Upload060 extends AbstractUpload{
 
-    public Upload060(String serverURL){
+    public Upload060(final String serverURL){
         super(serverURL,"");
     }
 

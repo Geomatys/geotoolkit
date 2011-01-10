@@ -61,7 +61,7 @@ public class IncrementalDelaunayTriangulator
 	 * @param subdiv
 	 *          a subdivision in which to build the TIN
 	 */
-	public IncrementalDelaunayTriangulator(QuadEdgeSubdivision subdiv) {
+	public IncrementalDelaunayTriangulator(final QuadEdgeSubdivision subdiv) {
 		this.subdiv = subdiv;
 		isUsingTolerance = subdiv.getTolerance() > 0.0;
 		
@@ -77,7 +77,7 @@ public class IncrementalDelaunayTriangulator
 	 * 
    * @throws LocateFailureException if the location algorithm fails to converge in a reasonable number of iterations
 	 */
-	public void insertSites(Collection vertices) {
+	public void insertSites(final Collection vertices) {
 		for (Iterator i = vertices.iterator(); i.hasNext();) {
 			Vertex v = (Vertex) i.next();
 			insertSite(v);
@@ -92,7 +92,7 @@ public class IncrementalDelaunayTriangulator
 	 * 
 	 * @return a quadedge containing the inserted vertex
 	 */
-	public QuadEdge insertSite(Vertex v) {
+	public QuadEdge insertSite(final Vertex v) {
 
 		/**
 		 * This code is based on Guibas and Stolfi (1985), with minor modifications

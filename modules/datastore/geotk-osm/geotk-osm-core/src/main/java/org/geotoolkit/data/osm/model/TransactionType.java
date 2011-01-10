@@ -30,7 +30,7 @@ public enum TransactionType {
     DELETE("delete");
 
     private final String tagName;
-    private TransactionType(String tagName) {
+    private TransactionType(final String tagName) {
         this.tagName = tagName;
     }
 

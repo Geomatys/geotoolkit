@@ -55,7 +55,7 @@ public class XMLBlockType extends AbstractEncodingEntry implements XmlBlock{
 
     }
 
-    public XMLBlockType(XmlBlock xm) {
+    public XMLBlockType(final XmlBlock xm) {
         super(xm);
         if (xm != null) {
             this.xmlElement = xm.getXmlElement();
@@ -72,7 +72,7 @@ public class XMLBlockType extends AbstractEncodingEntry implements XmlBlock{
     /**
      * Sets the value of the xmlElement property.
      */
-    public void setXmlElement(QName value) {
+    public void setXmlElement(final QName value) {
         this.xmlElement = value;
     }
 

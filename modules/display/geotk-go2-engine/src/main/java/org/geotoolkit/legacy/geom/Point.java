@@ -76,7 +76,7 @@ public class Point extends Geometry {
      * @param ct The coordinate transformation to be applied to the coordinates
      *        (which are supposed to be unprojected)
      */
-    public Point(Coordinate coord, CoordinateOperation ct) {
+    public Point(final Coordinate coord, final CoordinateOperation ct) {
         this.coord = coord;
         this.ct = ct;
     }
@@ -88,7 +88,7 @@ public class Point extends Geometry {
      * @param coord The point coordinates
      * @param cs The source coordinate system.
      */
-    public Point(Coordinate coord, CoordinateReferenceSystem cs) {
+    public Point(final Coordinate coord, final CoordinateReferenceSystem cs) {
         this.coord = coord;
         this.ct = getIdentityTransform(getCoordinateReferenceSystem2D(cs));
     }
@@ -104,7 +104,7 @@ public class Point extends Geometry {
      *         1.0 since no compression is operated
      */
     @Override
-    public float compress(CompressionLevel level) {
+    public float compress(final CompressionLevel level) {
         return 1.0f;
     }
 
@@ -183,7 +183,7 @@ public class Point extends Geometry {
      * Emtpy method, provided for compatibility with base class.
      */
     @Override
-    public void setResolution(double resolution) throws TransformException, 
+    public void setResolution(final double resolution) throws TransformException, 
                                                         UnmodifiableGeometryException
     {
         // nothing to do...
@@ -391,7 +391,7 @@ public class Point extends Geometry {
          * @see Rectangle2D#createIntersection
          */
         @Override
-        public Rectangle2D createIntersection(Rectangle2D r) {
+        public Rectangle2D createIntersection(final Rectangle2D r) {
             if (r.contains(Point.this.getX(), Point.this.getY())) {
                 return this;
             } else {
@@ -400,7 +400,7 @@ public class Point extends Geometry {
         }
 
         @Override
-        public Rectangle2D createUnion(Rectangle2D r) {
+        public Rectangle2D createUnion(final Rectangle2D r) {
             float x = Point.this.getX();
             float y = Point.this.getY();
             double x1 = Math.min(x, r.getMinX());
@@ -434,7 +434,7 @@ public class Point extends Geometry {
         }
 
         @Override
-        public int outcode(double x, double y) {
+        public int outcode(final double x, final double y) {
             int result = 0;
 
             if (x < Point.this.getX()) {
@@ -453,7 +453,7 @@ public class Point extends Geometry {
         }
 
         @Override
-        public void setRect(double x, double y, double w, double h) {
+        public void setRect(final double x, final double y, final double w, final double h) {
             throw new UnsupportedOperationException("Unmodifiable rectangle");
         }
 
@@ -470,12 +470,12 @@ public class Point extends Geometry {
     private class PointPathIterator implements PathIterator {
         private AffineTransform at;
 
-        public PointPathIterator(AffineTransform at) {
+        public PointPathIterator(final AffineTransform at) {
             this.at = at;
         }
 
         @Override
-        public int currentSegment(double[] coords) {
+        public int currentSegment(final double[] coords) {
             coords[0] = getX();
             coords[1] = getY();
             at.transform(coords, 0, coords, 0, 1);
@@ -484,7 +484,7 @@ public class Point extends Geometry {
         }
 
         @Override
-        public int currentSegment(float[] coords) {
+        public int currentSegment(final float[] coords) {
             coords[0] = getX();
             coords[1] = getY();
             at.transform(coords, 0, coords, 0, 1);

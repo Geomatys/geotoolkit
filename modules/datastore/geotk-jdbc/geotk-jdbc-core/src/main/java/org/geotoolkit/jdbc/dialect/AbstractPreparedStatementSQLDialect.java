@@ -43,7 +43,7 @@ public abstract class AbstractPreparedStatementSQLDialect extends AbstractSQLDia
 
     protected static final char CHAR_INTEROGATION = '?';
 
-    protected AbstractPreparedStatementSQLDialect(JDBCDataStore dataStore) {
+    protected AbstractPreparedStatementSQLDialect(final JDBCDataStore dataStore) {
         super(dataStore);
     }
     

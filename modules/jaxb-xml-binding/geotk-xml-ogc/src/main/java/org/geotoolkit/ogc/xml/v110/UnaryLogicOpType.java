@@ -82,7 +82,7 @@ public class UnaryLogicOpType extends LogicOpsType {
      /**
       * Build a new Binary logic operator 
       */
-     public UnaryLogicOpType(Object obj) {
+     public UnaryLogicOpType(final Object obj) {
          
          // comparison operator
          if (obj instanceof ComparisonOpsType) {
@@ -111,14 +111,14 @@ public class UnaryLogicOpType extends LogicOpsType {
     /**
      * Sets the value of the comparisonOps property.
      */
-    public void setComparisonOps(JAXBElement<? extends ComparisonOpsType> comparisonOps) {
+    public void setComparisonOps(final JAXBElement<? extends ComparisonOpsType> comparisonOps) {
         this.comparisonOps = comparisonOps;
     }
     
     /**
      * Sets the value of the comparisonOps property.
      */
-    public void setComparisonOps(ComparisonOpsType comparisonOps) {
+    public void setComparisonOps(final ComparisonOpsType comparisonOps) {
         this.comparisonOps = FilterType.createComparisonOps(comparisonOps);
     }
     
@@ -132,14 +132,14 @@ public class UnaryLogicOpType extends LogicOpsType {
     /**
      * Sets the value of the spatialOps property.
      */
-    public void setSpatialOps(JAXBElement<? extends SpatialOpsType> spatialOps) {
+    public void setSpatialOps(final JAXBElement<? extends SpatialOpsType> spatialOps) {
         this.spatialOps = spatialOps;
     }
     
     /**
      * Sets the value of the spatialOps property.
      */
-    public void setSpatialOps(SpatialOpsType spatialOps) {
+    public void setSpatialOps(final SpatialOpsType spatialOps) {
         this.spatialOps = FilterType.createSpatialOps(spatialOps);
     }
 
@@ -154,14 +154,14 @@ public class UnaryLogicOpType extends LogicOpsType {
         /**
      * Sets the value of the logicOps property.
      */
-    public void setLogicOps(JAXBElement<? extends LogicOpsType> logicOps) {
+    public void setLogicOps(final JAXBElement<? extends LogicOpsType> logicOps) {
         this.logicOps = logicOps;
     }
     
     /**
      * Sets the value of the logicOps property.
      */
-    public void setLogicOps(LogicOpsType logicOps) {
+    public void setLogicOps(final LogicOpsType logicOps) {
         this.logicOps = FilterType.createLogicOps(logicOps);
     }
     
@@ -242,11 +242,11 @@ public class UnaryLogicOpType extends LogicOpsType {
         return s.toString();
     }
 
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

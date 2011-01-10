@@ -75,7 +75,7 @@ public class TransactionResponseType implements WFSResponse {
 
     }
 
-    public TransactionResponseType(TransactionSummaryType transactionSummary, TransactionResultsType transactionResults, InsertResultsType insertResults, String version) {
+    public TransactionResponseType(final TransactionSummaryType transactionSummary, final TransactionResultsType transactionResults, final InsertResultsType insertResults, final String version) {
         this.transactionSummary = transactionSummary;
         this.transactionResults = transactionResults;
         this.insertResults      = insertResults;
@@ -102,7 +102,7 @@ public class TransactionResponseType implements WFSResponse {
      *     {@link TransactionSummaryType }
      *     
      */
-    public void setTransactionSummary(TransactionSummaryType value) {
+    public void setTransactionSummary(final TransactionSummaryType value) {
         this.transactionSummary = value;
     }
 
@@ -126,7 +126,7 @@ public class TransactionResponseType implements WFSResponse {
      *     {@link TransactionResultsType }
      *     
      */
-    public void setTransactionResults(TransactionResultsType value) {
+    public void setTransactionResults(final TransactionResultsType value) {
         this.transactionResults = value;
     }
 
@@ -150,7 +150,7 @@ public class TransactionResponseType implements WFSResponse {
      *     {@link InsertResultsType }
      *     
      */
-    public void setInsertResults(InsertResultsType value) {
+    public void setInsertResults(final InsertResultsType value) {
         this.insertResults = value;
     }
 
@@ -178,7 +178,7 @@ public class TransactionResponseType implements WFSResponse {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

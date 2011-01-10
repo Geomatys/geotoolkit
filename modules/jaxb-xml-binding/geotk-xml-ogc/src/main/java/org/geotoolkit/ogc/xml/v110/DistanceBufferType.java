@@ -88,28 +88,28 @@ public class DistanceBufferType extends SpatialOpsType {
         
     }
 
-    public void setAbstractGeometry(JAXBElement<? extends AbstractGeometryType> abstractGeometry) {
+    public void setAbstractGeometry(final JAXBElement<? extends AbstractGeometryType> abstractGeometry) {
         this.abstractGeometry = abstractGeometry;
     }
 
-    public void setDistance(DistanceType distance) {
+    public void setDistance(final DistanceType distance) {
         this.distance = distance;
     }
 
-    public void setPropertyName(PropertyNameType propertyName) {
+    public void setPropertyName(final PropertyNameType propertyName) {
         this.propertyName = propertyName;
     }
 
     /**
      * build a new Distance buffer
      */
-    public DistanceBufferType(String propertyName, AbstractGeometryType geometry, double distance, String unit) {
+    public DistanceBufferType(final String propertyName, final AbstractGeometryType geometry, final double distance, final String unit) {
         this.propertyName     = new PropertyNameType(propertyName);
         this.distance         = new DistanceType(distance, unit);
         this.abstractGeometry = getCorrectJaxbElement(geometry);
     }
 
-    private JAXBElement<? extends AbstractGeometryType> getCorrectJaxbElement(Object geometry) {
+    private JAXBElement<? extends AbstractGeometryType> getCorrectJaxbElement(final Object geometry) {
         if (geometry instanceof PointType) {
             return factory.createPoint((PointType)geometry);
         } else if (geometry instanceof OrientableSurfaceType) {
@@ -211,12 +211,12 @@ public class DistanceBufferType extends SpatialOpsType {
     }
 
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 }

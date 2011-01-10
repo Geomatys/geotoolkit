@@ -113,7 +113,7 @@ public class MeasurementEntry extends ObservationEntry implements Measurement {
      * On y rajoute un samplingTime et un id temporaire.
      */
     @Override
-    public MeasurementEntry getTemporaryTemplate(String temporaryName, AbstractTimeGeometricPrimitiveType time) {
+    public MeasurementEntry getTemporaryTemplate(final String temporaryName, AbstractTimeGeometricPrimitiveType time) {
         if (time == null) {
             TimePositionType begin = new  TimePositionType("1900-01-01T00:00:00");
             time = new TimePeriodType(begin);

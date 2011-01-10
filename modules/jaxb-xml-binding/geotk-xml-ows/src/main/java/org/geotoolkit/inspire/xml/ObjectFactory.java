@@ -95,7 +95,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.inspire.org", name = "MultiligualCapabilities")
-    public JAXBElement<InspireCapabilitiesType> createMultiligualCapabilities(InspireCapabilitiesType value) {
+    public JAXBElement<InspireCapabilitiesType> createMultiligualCapabilities(final InspireCapabilitiesType value) {
         return new JAXBElement<InspireCapabilitiesType>(_MultiligualCapabilities_QNAME, InspireCapabilitiesType.class, null, value);
     }
 

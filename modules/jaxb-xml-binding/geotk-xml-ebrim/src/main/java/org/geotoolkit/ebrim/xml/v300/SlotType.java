@@ -73,14 +73,14 @@ public class SlotType {
     /**
      * Gets the value of the valueList property.
      */
-    public void setValueList(JAXBElement<? extends ValueListType> valueList) {
+    public void setValueList(final JAXBElement<? extends ValueListType> valueList) {
         this.valueList = valueList;
     }
 
     /**
      * Sets the value of the valueList property.
      */
-    public void setValueList(ValueListType value) {
+    public void setValueList(final ValueListType value) {
         this.valueList = factory.createValueList(value);
     }
 
@@ -94,7 +94,7 @@ public class SlotType {
     /**
      * Sets the value of the name property.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -108,7 +108,7 @@ public class SlotType {
     /**
      * Sets the value of the slotType property.
      */
-    public void setSlotType(String value) {
+    public void setSlotType(final String value) {
         this.slotType = value;
     }
     

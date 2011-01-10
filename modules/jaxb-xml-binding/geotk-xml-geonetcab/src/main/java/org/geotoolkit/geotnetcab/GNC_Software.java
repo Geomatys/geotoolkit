@@ -98,7 +98,7 @@ public class GNC_Software extends GNC_Product implements org.opengis.metadata.ge
      *     {@link GNCSoftwareTypeCodePropertyType }
      *     
      */
-    public void setTypeOf(GNC_SoftwareTypeCode value) {
+    public void setTypeOf(final GNC_SoftwareTypeCode value) {
         this.typeOf = value;
     }
 

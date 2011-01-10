@@ -27,7 +27,7 @@ public class DefaultQueryCapabilities implements QueryCapabilities{
 
     private final boolean crossQuery;
 
-    public DefaultQueryCapabilities(boolean crossQuery) {
+    public DefaultQueryCapabilities(final boolean crossQuery) {
         this.crossQuery = crossQuery;
     }
 

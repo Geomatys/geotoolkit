@@ -57,7 +57,7 @@ public class AbstractRingPropertyType {
 
     AbstractRingPropertyType() {}
 
-    public AbstractRingPropertyType(AbstractRingType ring) {
+    public AbstractRingPropertyType(final AbstractRingType ring) {
         if (ring != null) {
             ObjectFactory factory = new ObjectFactory();
             if (ring instanceof RingType) {
@@ -94,7 +94,7 @@ public class AbstractRingPropertyType {
      *     {@link JAXBElement }{@code <}{@link LinearRingType }{@code >}
      *     
      */
-    public void setJbAbstractRing(JAXBElement<? extends AbstractRingType> value) {
+    public void setJbAbstractRing(final JAXBElement<? extends AbstractRingType> value) {
         this.abstractRing = ((JAXBElement<? extends AbstractRingType> ) value);
     }
 

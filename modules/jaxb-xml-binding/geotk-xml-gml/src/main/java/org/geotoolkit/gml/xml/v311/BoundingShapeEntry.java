@@ -72,7 +72,7 @@ public class BoundingShapeEntry {
 
     BoundingShapeEntry() {}
 
-    public BoundingShapeEntry(EnvelopeEntry envelope) {
+    public BoundingShapeEntry(final EnvelopeEntry envelope) {
         this.envelope = envelope;
         if (envelope == null) {
             this._null = new ArrayList<String>();
@@ -81,7 +81,7 @@ public class BoundingShapeEntry {
 
     }
 
-    public BoundingShapeEntry(String nul) {
+    public BoundingShapeEntry(final String nul) {
         this._null = new ArrayList<String>();
         this._null.add(nul);
     }
@@ -96,7 +96,7 @@ public class BoundingShapeEntry {
     /**
      * Sets the value of the envelope property.   
      */
-    public void setEnvelope(EnvelopeEntry value) {
+    public void setEnvelope(final EnvelopeEntry value) {
         this.envelope = value;
     }
 

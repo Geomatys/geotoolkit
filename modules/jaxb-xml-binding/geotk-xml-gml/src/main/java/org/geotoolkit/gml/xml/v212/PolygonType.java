@@ -81,7 +81,7 @@ public class PolygonType extends AbstractGeometryType {
      *     {@link LinearRingMemberType }
      *     
      */
-    public void setOuterBoundaryIs(LinearRingMemberType value) {
+    public void setOuterBoundaryIs(final LinearRingMemberType value) {
         this.outerBoundaryIs = value;
     }
 

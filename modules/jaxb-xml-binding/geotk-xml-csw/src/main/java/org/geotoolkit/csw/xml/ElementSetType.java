@@ -49,7 +49,7 @@ public enum ElementSetType {
     FULL("full");
     private final String value;
 
-    ElementSetType(String v) {
+    ElementSetType(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum ElementSetType {
         return value;
     }
 
-    public static ElementSetType fromValue(String v) {
+    public static ElementSetType fromValue(final String v) {
         for (ElementSetType c: ElementSetType.values()) {
             if (c.value.equals(v)) {
                 return c;

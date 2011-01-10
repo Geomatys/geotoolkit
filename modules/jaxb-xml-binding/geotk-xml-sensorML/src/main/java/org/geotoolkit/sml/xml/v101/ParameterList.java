@@ -69,7 +69,7 @@ public class ParameterList implements AbstractParameterList {
     public ParameterList() {
     }
 
-    public ParameterList(AbstractParameterList paramList) {
+    public ParameterList(final AbstractParameterList paramList) {
         if (paramList != null) {
             this.id = paramList.getId();
             if (paramList.getParameter() != null) {
@@ -81,7 +81,7 @@ public class ParameterList implements AbstractParameterList {
         }
     }
 
-    public ParameterList(List<DataComponentPropertyType> parameter) {
+    public ParameterList(final List<DataComponentPropertyType> parameter) {
         this.parameter = parameter;
     }
 
@@ -115,7 +115,7 @@ public class ParameterList implements AbstractParameterList {
      *     {@link String }
      *
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

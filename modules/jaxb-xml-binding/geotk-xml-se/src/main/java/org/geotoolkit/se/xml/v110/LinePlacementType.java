@@ -91,7 +91,7 @@ public class LinePlacementType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setPerpendicularOffset(ParameterValueType value) {
+    public void setPerpendicularOffset(final ParameterValueType value) {
         this.perpendicularOffset = value;
     }
 
@@ -115,7 +115,7 @@ public class LinePlacementType {
      *     {@link Boolean }
      *     
      */
-    public void setIsRepeated(Boolean value) {
+    public void setIsRepeated(final Boolean value) {
         this.isRepeated = value;
     }
 
@@ -139,7 +139,7 @@ public class LinePlacementType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setInitialGap(ParameterValueType value) {
+    public void setInitialGap(final ParameterValueType value) {
         this.initialGap = value;
     }
 
@@ -163,7 +163,7 @@ public class LinePlacementType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setGap(ParameterValueType value) {
+    public void setGap(final ParameterValueType value) {
         this.gap = value;
     }
 
@@ -187,7 +187,7 @@ public class LinePlacementType {
      *     {@link Boolean }
      *     
      */
-    public void setIsAligned(Boolean value) {
+    public void setIsAligned(final Boolean value) {
         this.isAligned = value;
     }
 
@@ -211,7 +211,7 @@ public class LinePlacementType {
      *     {@link Boolean }
      *     
      */
-    public void setGeneralizeLine(Boolean value) {
+    public void setGeneralizeLine(final Boolean value) {
         this.generalizeLine = value;
     }
 

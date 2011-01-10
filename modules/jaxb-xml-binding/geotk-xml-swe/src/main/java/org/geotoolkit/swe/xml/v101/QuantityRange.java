@@ -85,7 +85,7 @@ public class QuantityRange extends AbstractDataComponentEntry implements Abstrac
 
     }
 
-    public QuantityRange(AbstractQuantityRange q) {
+    public QuantityRange(final AbstractQuantityRange q) {
         super(q);
         if (q != null) {
             this.axisID         = q.getAxisID();
@@ -106,7 +106,7 @@ public class QuantityRange extends AbstractDataComponentEntry implements Abstrac
         }
     }
 
-    public QuantityRange(UomPropertyType uom, List<Double> value) {
+    public QuantityRange(final UomPropertyType uom, final List<Double> value) {
         this.uom   = uom;
         this.value = value;
     }
@@ -123,7 +123,7 @@ public class QuantityRange extends AbstractDataComponentEntry implements Abstrac
         return this.quality;
     }
 
-    public void setQuality(QualityPropertyType quality) {
+    public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
                 this.quality = new ArrayList<QualityPropertyType>();
@@ -132,7 +132,7 @@ public class QuantityRange extends AbstractDataComponentEntry implements Abstrac
         }
     }
 
-    public void setQuality(List<QualityPropertyType> quality) {
+    public void setQuality(final List<QualityPropertyType> quality) {
         this.quality = quality;
     }
 
@@ -148,7 +148,7 @@ public class QuantityRange extends AbstractDataComponentEntry implements Abstrac
     /**
      * Sets the value of the uom property.
      */
-    public void setUom(UomPropertyType value) {
+    public void setUom(final UomPropertyType value) {
         this.uom = value;
     }
 
@@ -174,7 +174,7 @@ public class QuantityRange extends AbstractDataComponentEntry implements Abstrac
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -188,7 +188,7 @@ public class QuantityRange extends AbstractDataComponentEntry implements Abstrac
 
     /**
      */
-    public void setAxisID(String value) {
+    public void setAxisID(final String value) {
         this.axisID = value;
     }
 

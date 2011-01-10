@@ -70,7 +70,7 @@ public enum SurfaceInterpolationType {
     TRIANGULATED_SPLINE("triangulatedSpline");
     private final String value;
 
-    SurfaceInterpolationType(String v) {
+    SurfaceInterpolationType(final String v) {
         value = v;
     }
 
@@ -78,7 +78,7 @@ public enum SurfaceInterpolationType {
         return value;
     }
 
-    public static SurfaceInterpolationType fromValue(String v) {
+    public static SurfaceInterpolationType fromValue(final String v) {
         for (SurfaceInterpolationType c: SurfaceInterpolationType.values()) {
             if (c.value.equals(v)) {
                 return c;

@@ -77,7 +77,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
     /**
      * build a new Property is Between
      */
-    public PropertyIsBetweenType(ExpressionType expression, LowerBoundaryType lowerBoundary, UpperBoundaryType upperBoundary) {
+    public PropertyIsBetweenType(final ExpressionType expression, final LowerBoundaryType lowerBoundary, final UpperBoundaryType upperBoundary) {
         this.expression    = FACTORY.createExpression(expression);
         this.lowerBoundary = lowerBoundary;
         this.upperBoundary = upperBoundary;
@@ -86,7 +86,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
     /**
      * build a new Property is Between
      */
-    public PropertyIsBetweenType(JAXBElement<?> expression, LowerBoundaryType lowerBoundary, UpperBoundaryType upperBoundary) {
+    public PropertyIsBetweenType(final JAXBElement<?> expression, final LowerBoundaryType lowerBoundary, final UpperBoundaryType upperBoundary) {
         this.expression    = expression;
         this.lowerBoundary = lowerBoundary;
         this.upperBoundary = upperBoundary;
@@ -154,7 +154,7 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
      *     {@link JAXBElement }{@code <}{@link StringPositionType }{@code >}
      *
      */
-    public void setExpression(JAXBElement<?> value) {
+    public void setExpression(final JAXBElement<?> value) {
         this.expression = value;
     }
 
@@ -210,11 +210,11 @@ public class PropertyIsBetweenType extends ComparisonOpsType implements Property
         return upperBoundary;
     }
 
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 

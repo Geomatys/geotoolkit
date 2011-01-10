@@ -43,11 +43,11 @@ public class CollectionChangeEvent<T> extends EventObject{
     private final Collection<T> items;
     private final EventObject subEvent;
     
-    public CollectionChangeEvent(Object source, T item, int type, NumberRange range, EventObject event){
+    public CollectionChangeEvent(final Object source, final T item, final int type, final NumberRange range, final EventObject event){
         this(source, Collections.singleton(item), type, range, event);
     }
     
-    public CollectionChangeEvent(Object source, Collection<? extends T> items, int type, NumberRange range, EventObject event){
+    public CollectionChangeEvent(final Object source, final Collection<? extends T> items, final int type, final NumberRange range, final EventObject event){
         super(source);
         if(type < 1 || type > 3) throw new IllegalArgumentException("invalide type");
         this.range = range;

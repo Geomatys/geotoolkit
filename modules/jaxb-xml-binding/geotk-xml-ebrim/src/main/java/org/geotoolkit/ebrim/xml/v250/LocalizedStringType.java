@@ -75,7 +75,7 @@ public class LocalizedStringType implements LocalizedString {
     /**
      * Sets the value of the lang property.
      */
-    public void setLang(String value) {
+    public void setLang(final String value) {
         this.lang = value;
     }
 
@@ -93,7 +93,7 @@ public class LocalizedStringType implements LocalizedString {
     /**
      * Sets the value of the charset property.
      */
-    public void setCharset(String value) {
+    public void setCharset(final String value) {
         this.charset = value;
     }
 
@@ -107,7 +107,7 @@ public class LocalizedStringType implements LocalizedString {
     /**
      * Sets the value of the value property.
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 

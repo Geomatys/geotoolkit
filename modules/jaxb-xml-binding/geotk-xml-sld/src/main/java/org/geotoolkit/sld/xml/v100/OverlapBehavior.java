@@ -85,7 +85,7 @@ public class OverlapBehavior {
      *     {@link LATESTONTOP }
      *     
      */
-    public void setLATESTONTOP(LATESTONTOP value) {
+    public void setLATESTONTOP(final LATESTONTOP value) {
         this.latestontop = value;
     }
 
@@ -109,7 +109,7 @@ public class OverlapBehavior {
      *     {@link EARLIESTONTOP }
      *     
      */
-    public void setEARLIESTONTOP(EARLIESTONTOP value) {
+    public void setEARLIESTONTOP(final EARLIESTONTOP value) {
         this.earliestontop = value;
     }
 
@@ -133,7 +133,7 @@ public class OverlapBehavior {
      *     {@link AVERAGE }
      *     
      */
-    public void setAVERAGE(AVERAGE value) {
+    public void setAVERAGE(final AVERAGE value) {
         this.average = value;
     }
 
@@ -157,7 +157,7 @@ public class OverlapBehavior {
      *     {@link RANDOM }
      *     
      */
-    public void setRANDOM(RANDOM value) {
+    public void setRANDOM(final RANDOM value) {
         this.random = value;
     }
 

@@ -148,7 +148,7 @@ public class SMLDataStore extends AbstractDataStore {
 
     private final QueryCapabilities capabilities = new DefaultQueryCapabilities(false);
     
-    public SMLDataStore(ManageableDataSource source) {
+    public SMLDataStore(final ManageableDataSource source) {
         super(null);
         this.source = source;
         initTypes();
@@ -247,7 +247,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureReader<FeatureType, Feature> getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader<FeatureType, Feature> getFeatureReader(final Query query) throws DataStoreException {
         final FeatureType ft = getFeatureType(query.getTypeName()); //raise an error if type does not exist.
 
         try {
@@ -278,7 +278,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName);
         return types.get(typeName);
     }
@@ -299,7 +299,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -307,7 +307,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -315,7 +315,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Not Supported.");
     }
 
@@ -323,7 +323,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -331,7 +331,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -339,7 +339,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -347,7 +347,7 @@ public class SMLDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         throw new DataStoreException("Not supported.");
     }
 
@@ -370,7 +370,7 @@ public class SMLDataStore extends AbstractDataStore {
         private final PreparedStatement stmtContactName;
         private final ResultSet result;
 
-        public SMLFeatureReader(FeatureType type) throws SQLException{
+        public SMLFeatureReader(final FeatureType type) throws SQLException{
             this.type = type;
             final PreparedStatement st = cnx.prepareStatement(SQL_MDW_VERSION);
             final ResultSet rs         = st.executeQuery();
@@ -463,7 +463,7 @@ public class SMLDataStore extends AbstractDataStore {
 
         }
 
-        private Feature readFeature(int formID, Name typeName) throws SQLException{
+        private Feature readFeature(final int formID, final Name typeName) throws SQLException{
             final Collection<Property> props = new ArrayList<Property>();
 
             /*

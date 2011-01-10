@@ -49,7 +49,7 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v100.StyledLayerDescriptor visit(StyledLayerDescriptor sld, Object data) {
+    public org.geotoolkit.sld.xml.v100.StyledLayerDescriptor visit(final StyledLayerDescriptor sld, final Object data) {
         final org.geotoolkit.sld.xml.v100.StyledLayerDescriptor versionned = sld_factory.createStyledLayerDescriptor();
         versionned.setName(sld.getName());
 //        versionned.setVersion(sld.getVersion());
@@ -74,12 +74,12 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public Object visit(SLDLibrary library, Object data) {
+    public Object visit(final SLDLibrary library, final Object data) {
         throw new UnsupportedOperationException("SLD v1.0.0 doesnt have a xml tag to store SLD libraries.");
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v100.NamedLayer visit(NamedLayer layer, Object data) {
+    public org.geotoolkit.sld.xml.v100.NamedLayer visit(final NamedLayer layer, final Object data) {
         final org.geotoolkit.sld.xml.v100.NamedLayer named = sld_factory.createNamedLayer();
         named.setName(layer.getName());
         named.setLayerFeatureConstraints( visit(layer.getConstraints(),null) );
@@ -98,7 +98,7 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v100.UserLayer visit(UserLayer layer, Object data) {
+    public org.geotoolkit.sld.xml.v100.UserLayer visit(final UserLayer layer, final Object data) {
         final org.geotoolkit.sld.xml.v100.UserLayer user = sld_factory.createUserLayer();
         user.setName(layer.getName());
         
@@ -125,19 +125,19 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v100.NamedStyle visit(NamedStyle style, Object data) {
+    public org.geotoolkit.sld.xml.v100.NamedStyle visit(final NamedStyle style, final Object data) {
         final org.geotoolkit.sld.xml.v100.NamedStyle named = sld_factory.createNamedStyle();
         named.setName(style.getName());
         return named;
     }
 
     @Override
-    public Object visit(LayerCoverageConstraints constraints, Object data) {
+    public Object visit(final LayerCoverageConstraints constraints, final Object data) {
         throw new UnsupportedOperationException("SLD v1.0.0 doesnt have a xml tag to store coverage constraints.");
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v100.LayerFeatureConstraints visit(LayerFeatureConstraints constraints, Object data) {
+    public org.geotoolkit.sld.xml.v100.LayerFeatureConstraints visit(final LayerFeatureConstraints constraints, final Object data) {
         final org.geotoolkit.sld.xml.v100.LayerFeatureConstraints cons = sld_factory.createLayerFeatureConstraints();
         
         for(final FeatureTypeConstraint fc : constraints.constraints() ){
@@ -148,12 +148,12 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v110.CoverageConstraint visit(CoverageConstraint constraint, Object data) {
+    public org.geotoolkit.sld.xml.v110.CoverageConstraint visit(final CoverageConstraint constraint, final Object data) {
         throw new UnsupportedOperationException("SLD v1.0.0 doesnt have a xml tag to store coverage constraints.");
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v100.FeatureTypeConstraint visit(FeatureTypeConstraint constraint, Object data) {
+    public org.geotoolkit.sld.xml.v100.FeatureTypeConstraint visit(final FeatureTypeConstraint constraint, final Object data) {
         final org.geotoolkit.sld.xml.v100.FeatureTypeConstraint ftc = sld_factory.createFeatureTypeConstraint();
         
         ftc.setFeatureTypeName( visitName(constraint.getFeatureTypeName()).getLocalPart() );
@@ -167,12 +167,12 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public Object visit(CoverageExtent extent, Object data) {
+    public Object visit(final CoverageExtent extent, final Object data) {
         throw new UnsupportedOperationException("SLD v1.0.0 doesnt have a xml tag to store coverage extent.");
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v100.Extent visit(Extent extent, Object data) {
+    public org.geotoolkit.sld.xml.v100.Extent visit(final Extent extent, final Object data) {
         final org.geotoolkit.sld.xml.v100.Extent ext = sld_factory.createExtent();
         ext.setName(extent.getName());
         ext.setValue(extent.getValue());
@@ -180,12 +180,12 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public Object visit(RangeAxis axi, Object data) {
+    public Object visit(final RangeAxis axi, final Object data) {
         throw new UnsupportedOperationException("SLD v1.0.0 doesnt have a xml tag to store range axis");
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v100.RemoteOWS visit(RemoteOWS ows, Object data) {
+    public org.geotoolkit.sld.xml.v100.RemoteOWS visit(final RemoteOWS ows, final Object data) {
         final org.geotoolkit.sld.xml.v100.RemoteOWS remote = sld_factory.createRemoteOWS();
         remote.setService(ows.getService());
         remote.setOnlineResource( visit(ows.getOnlineResource(), null) );
@@ -193,7 +193,7 @@ public class GTtoSLD100Transformer extends GTtoSE100Transformer implements SLDVi
     }
 
     @Override
-    public org.geotoolkit.sld.xml.v110.InlineFeature visit(InlineFeature inline, Object data) {
+    public org.geotoolkit.sld.xml.v110.InlineFeature visit(final InlineFeature inline, final Object data) {
         //TODO handle this when GML will be ready
         return null;
     }

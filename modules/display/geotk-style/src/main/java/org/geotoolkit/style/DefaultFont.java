@@ -54,7 +54,7 @@ public class DefaultFont implements Font{
      * defaults are “normal” and “bold”
      * @param size : if null or Expression.NIL will be replaced by default value.
      */
-    public DefaultFont(List<Expression> family, Expression style, Expression weight, Expression size){
+    public DefaultFont(final List<Expression> family, final Expression style, final Expression weight, final Expression size){
         
         this.style = (style == null || style == NIL) ? DEFAULT_FONT_STYLE : style;
         this.weight = (weight == null || weight == NIL) ? DEFAULT_FONT_WEIGHT : weight;
@@ -105,7 +105,7 @@ public class DefaultFont implements Font{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -113,7 +113,7 @@ public class DefaultFont implements Font{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

@@ -83,7 +83,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
         return crs;
     }
 
-     public void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
          this.crs = crs;
      }
      
@@ -113,7 +113,7 @@ public class DefaultFeatureType extends DefaultComplexType implements FeatureTyp
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }

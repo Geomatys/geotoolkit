@@ -122,7 +122,7 @@ public class StaxStreamReaderTest {
     }
     
 
-    public static void validate(Person person){
+    public static void validate(final Person person){
         assertNotNull(person);
         assertEquals(person.name, "Jean-Pierre");
         assertEquals(person.age, 13.5, 0.000000001);

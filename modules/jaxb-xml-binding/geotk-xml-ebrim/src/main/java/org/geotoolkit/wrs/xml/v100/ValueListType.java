@@ -68,7 +68,7 @@ public class ValueListType extends org.geotoolkit.ebrim.xml.v300.ValueListType {
     /**
      * Sets the value of the anyValue property.
      */
-    public void setAnyValue(AnyValueType anyValue) {
+    public void setAnyValue(final AnyValueType anyValue) {
         if (this.anyValue == null) {
             this.anyValue = new ArrayList<AnyValueType>();
         }
@@ -78,7 +78,7 @@ public class ValueListType extends org.geotoolkit.ebrim.xml.v300.ValueListType {
     /**
      * Sets the value of the anyValue property.
      */
-    public void setAnyValue(List<AnyValueType> anyValue) {
+    public void setAnyValue(final List<AnyValueType> anyValue) {
         this.anyValue = anyValue;
     }
 

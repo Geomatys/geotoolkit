@@ -28,7 +28,7 @@ public class DocumentIDResolver extends IDResolver {
     referenceables.clear();
   }
 
-  public void bind(String id, Object obj) {
+  public void bind(final String id, final Object obj) {
     if (obj instanceof Referenceable) 
       referenceables.put(id, (Referenceable)obj);
     else

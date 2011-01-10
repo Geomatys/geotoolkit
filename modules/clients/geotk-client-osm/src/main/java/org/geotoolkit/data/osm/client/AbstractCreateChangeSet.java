@@ -42,12 +42,12 @@ public abstract class AbstractCreateChangeSet extends AbstractRequest implements
 
     protected ChangeSet cs = null;
 
-    public AbstractCreateChangeSet(String serverURL, String subPath){
+    public AbstractCreateChangeSet(final String serverURL, final String subPath){
         super(serverURL, subPath);
     }
 
     @Override
-    public void setChangeSet(ChangeSet cs) {
+    public void setChangeSet(final ChangeSet cs) {
         this.cs = cs;
     }
 

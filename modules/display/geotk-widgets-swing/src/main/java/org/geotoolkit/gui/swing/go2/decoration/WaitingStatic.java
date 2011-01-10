@@ -116,7 +116,7 @@ public class WaitingStatic extends JPanel{
     }
 
     @Override
-    public void setVisible(boolean aFlag) {
+    public void setVisible(final boolean aFlag) {
         super.setVisible(aFlag);
     }
             
@@ -126,12 +126,12 @@ public class WaitingStatic extends JPanel{
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
         paintWaiting(g);
     }
     
-    public void setMap(JMap2D map){
+    public void setMap(final JMap2D map){
         this.map = map;
     }
     

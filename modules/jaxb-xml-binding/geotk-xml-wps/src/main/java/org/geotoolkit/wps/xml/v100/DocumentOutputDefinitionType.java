@@ -86,7 +86,7 @@ public class DocumentOutputDefinitionType
      *     {@link LanguageStringType }
      *     
      */
-    public void setTitle(LanguageStringType value) {
+    public void setTitle(final LanguageStringType value) {
         this.title = value;
     }
 
@@ -110,7 +110,7 @@ public class DocumentOutputDefinitionType
      *     {@link LanguageStringType }
      *     
      */
-    public void setAbstract(LanguageStringType value) {
+    public void setAbstract(final LanguageStringType value) {
         this._abstract = value;
     }
 
@@ -138,7 +138,7 @@ public class DocumentOutputDefinitionType
      *     {@link Boolean }
      *     
      */
-    public void setAsReference(Boolean value) {
+    public void setAsReference(final Boolean value) {
         this.asReference = value;
     }
 

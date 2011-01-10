@@ -26,7 +26,7 @@ import org.geotoolkit.data.osm.client.AbstractCreateChangeSet;
  */
 public class CreateChangeSet060 extends AbstractCreateChangeSet{
 
-    public CreateChangeSet060(String serverURL){
+    public CreateChangeSet060(final String serverURL){
         super(serverURL,"api/0.6/changeset/create");
     }
 

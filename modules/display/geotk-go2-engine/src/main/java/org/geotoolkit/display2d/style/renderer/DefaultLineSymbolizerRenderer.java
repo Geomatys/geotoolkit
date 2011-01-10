@@ -59,7 +59,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     private final CachedStroke cachedStroke;
 
-    public DefaultLineSymbolizerRenderer(CachedLineSymbolizer symbol, RenderingContext2D context){
+    public DefaultLineSymbolizerRenderer(final CachedLineSymbolizer symbol, final RenderingContext2D context){
         super(symbol,context);
         cachedStroke = symbol.getCachedStroke();
     }
@@ -82,7 +82,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
+    public void portray(final ProjectedFeature projectedFeature) throws PortrayalException{
         final Feature feature = projectedFeature.getFeature();
         final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
@@ -99,7 +99,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public void portray(Iterator<ProjectedFeature> graphics) throws PortrayalException {
+    public void portray(final Iterator<ProjectedFeature> graphics) throws PortrayalException {
 
         if(dispGeom){
             renderingContext.switchToDisplayCRS();
@@ -190,7 +190,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     }
 
-    private void portray(ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
+    private void portray(final ProjectedGeometry projectedGeometry, final Feature feature) throws PortrayalException{
 
         final Shape j2dShape;
 
@@ -274,7 +274,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(final ProjectedFeature projectedFeature, SearchAreaJ2D search, VisitFilter filter) {
+    public boolean hit(final ProjectedFeature projectedFeature, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
@@ -365,7 +365,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedCoverage graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         return false;
     }
     

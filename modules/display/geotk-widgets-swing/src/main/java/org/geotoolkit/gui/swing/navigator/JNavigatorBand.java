@@ -37,7 +37,7 @@ public abstract class JNavigatorBand extends JComponent {
         return model;
     }
 
-    public void setModel(NavigatorModel model) {
+    public void setModel(final NavigatorModel model) {
         this.model = model;
     }
 

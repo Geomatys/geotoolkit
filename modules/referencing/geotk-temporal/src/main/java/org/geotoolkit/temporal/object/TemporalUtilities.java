@@ -530,7 +530,7 @@ public final class TemporalUtilities {
      * @param duration to evaluate
      * @return the nearest Unit of a Duration.
      */
-    public static Unit getUnitFromDuration(Duration duration) {
+    public static Unit getUnitFromDuration(final Duration duration) {
         if (duration == null) {
             return null;
         }
@@ -582,7 +582,7 @@ public final class TemporalUtilities {
      * @throws ParseException if String is not valid.
      * @throws NullPointerException if String is null.
      */
-    public static Date parseDate(String date) throws ParseException, NullPointerException{
+    public static Date parseDate(final String date) throws ParseException, NullPointerException{
 
         if(date.endsWith("BC")){
             throw new ParseException("Date is marked as Before Christ, not possible to parse it", date.length());
@@ -716,7 +716,7 @@ public final class TemporalUtilities {
      * parsing fails.
      * @return result of the parsed string or today's date or null if neverNull is false.
      */
-    public static Date parseDateSafe(String date, boolean neverNull){
+    public static Date parseDateSafe(final String date, final boolean neverNull){
         if(date != null){
             try {
                 return parseDate(date);
@@ -727,7 +727,7 @@ public final class TemporalUtilities {
         return (neverNull) ? new Date() : null;
     }
 
-    private static int parseInt(String candidate) throws ParseException{
+    private static int parseInt(final String candidate) throws ParseException{
         try{
             return Integer.parseInt(candidate);
         }catch(NumberFormatException ex){

@@ -48,7 +48,7 @@ public class GetStyles extends AbstractOperation {
 
     }
 
-    public GetStyles(List<String> formats, DCPType... dcpList) {
+    public GetStyles(final List<String> formats, final DCPType... dcpList) {
         if (formats != null) {
             this.format = new ArrayList<Format>();
             for (String f : formats) {
@@ -82,7 +82,7 @@ public class GetStyles extends AbstractOperation {
         return this.dcpType;
     }
 
-    public void updateURL(String url) {
+    public void updateURL(final String url) {
         for (DCPType dcp : dcpType) {
             final HTTP http = dcp.getHTTP();
             if (http != null) {

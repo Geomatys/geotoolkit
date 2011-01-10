@@ -70,7 +70,7 @@ public class SupportedComplexDataInputType
      *     {@link BigInteger }
      *     
      */
-    public void setMaximumMegabytes(BigInteger value) {
+    public void setMaximumMegabytes(final BigInteger value) {
         this.maximumMegabytes = value;
     }
 

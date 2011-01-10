@@ -99,7 +99,7 @@ public abstract class AbstractColorStyleType
      *     {@link String }
      *     
      */
-    public void setColor(byte[] value) {
+    public void setColor(final byte[] value) {
         this.color = ((byte[]) value);
     }
 
@@ -123,7 +123,7 @@ public abstract class AbstractColorStyleType
      *     {@link ColorModeEnumType }
      *     
      */
-    public void setColorMode(ColorModeEnumType value) {
+    public void setColorMode(final ColorModeEnumType value) {
         this.colorMode = value;
     }
 

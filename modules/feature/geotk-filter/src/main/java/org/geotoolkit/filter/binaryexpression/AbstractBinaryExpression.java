@@ -36,7 +36,7 @@ public abstract class AbstractBinaryExpression<E extends Expression,F extends Ex
     protected final E left;
     protected final F right;
 
-    protected AbstractBinaryExpression(E left, F right){
+    protected AbstractBinaryExpression(final E left, final F right){
         if(left == null || right == null){
             throw new NullPointerException("Expresions can not be null");
         }

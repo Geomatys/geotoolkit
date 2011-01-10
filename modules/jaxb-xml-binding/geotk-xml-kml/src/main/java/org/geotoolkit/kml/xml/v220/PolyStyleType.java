@@ -87,7 +87,7 @@ public class PolyStyleType extends AbstractColorStyleType {
      *     {@link Boolean }
      *     
      */
-    public void setFill(Boolean value) {
+    public void setFill(final Boolean value) {
         this.fill = value;
     }
 
@@ -111,7 +111,7 @@ public class PolyStyleType extends AbstractColorStyleType {
      *     {@link Boolean }
      *     
      */
-    public void setOutline(Boolean value) {
+    public void setOutline(final Boolean value) {
         this.outline = value;
     }
 

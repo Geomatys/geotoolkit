@@ -21,7 +21,7 @@ import java.sql.SQLException;
 
 public abstract class JDBCNoPrimaryKeyTestSetup extends JDBCDelegatingTestSetup {
 
-    protected JDBCNoPrimaryKeyTestSetup(JDBCTestSetup delegate) {
+    protected JDBCNoPrimaryKeyTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
     }
 

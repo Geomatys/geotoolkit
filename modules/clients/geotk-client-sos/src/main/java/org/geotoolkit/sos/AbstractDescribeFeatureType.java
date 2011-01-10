@@ -60,7 +60,7 @@ public abstract class AbstractDescribeFeatureType extends AbstractSOSRequest imp
     }
 
     @Override
-    public void setFeatureId(String featureId) {
+    public void setFeatureId(final String featureId) {
         this.featureId = featureId;
     }
 

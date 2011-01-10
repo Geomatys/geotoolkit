@@ -83,7 +83,7 @@ public class DegreesType {
      * Integer number of degrees in a degree-minute-second or degree-minute angular value, without indication of direction.
      * 
      */
-    public void setValue(int value) {
+    public void setValue(final int value) {
         this.value = value;
     }
 
@@ -107,7 +107,7 @@ public class DegreesType {
      *     {@link String }
      *     
      */
-    public void setDirection(String value) {
+    public void setDirection(final String value) {
         this.direction = value;
     }
 

@@ -125,7 +125,7 @@ public class JSimpleStylePanel extends JTabbedPane implements PropertyPane {
     }
 
     @Override
-    public void setTarget(Object layer) {
+    public void setTarget(final Object layer) {
         
         if(layer instanceof MapLayer){
             this.layer = (MapLayer) layer;

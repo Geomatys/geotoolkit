@@ -32,7 +32,7 @@ public class DefaultFunctionName implements FunctionName{
     private final List<String> argNames;
     private final int size;
 
-    public DefaultFunctionName(String name, List<String> argNames, int size) {
+    public DefaultFunctionName(final String name, final List<String> argNames, final int size) {
         this.name = name;
         this.argNames = argNames;
         this.size = size;
@@ -66,7 +66,7 @@ public class DefaultFunctionName implements FunctionName{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

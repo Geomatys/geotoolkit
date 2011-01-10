@@ -55,7 +55,7 @@ public class JAnalizePanel extends javax.swing.JPanel {
     private final IntervalStyleBuilder analyze;
 
     /** Creates new form JAnalizePanel */
-    public JAnalizePanel(IntervalStyleBuilder analyze) {
+    public JAnalizePanel(final IntervalStyleBuilder analyze) {
         this.analyze = analyze;
         initComponents();
 
@@ -123,7 +123,7 @@ public class JAnalizePanel extends javax.swing.JPanel {
 
 
 
-    public JFreeChart getChart(int nbDivision){
+    public JFreeChart getChart(final int nbDivision){
         XYSeries series = new XYSeries( "Data" ) ;
 
         double before = analyze.getMinimum();
@@ -442,17 +442,17 @@ public class JAnalizePanel extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiMethodActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiMethodActionPerformed
+    private void guiMethodActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiMethodActionPerformed
         analyze.setMethod((METHOD) guiMethod.getSelectedItem());
         refresh();
     }//GEN-LAST:event_guiMethodActionPerformed
 
-    private void guiClassesStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_guiClassesStateChanged
+    private void guiClassesStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_guiClassesStateChanged
         analyze.setNbClasses((Integer)guiClasses.getModel().getValue());
         refresh();
     }//GEN-LAST:event_guiClassesStateChanged
 
-    private void guiDivisionStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_guiDivisionStateChanged
+    private void guiDivisionStateChanged(final javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_guiDivisionStateChanged
         guiChart.removeAll();
         guiChart.add(new ChartPanel(getChart((Integer)guiDivision.getModel().getValue())));
         guiChart.revalidate();
@@ -494,7 +494,7 @@ public class JAnalizePanel extends javax.swing.JPanel {
     private class MethodRenderer extends DefaultListCellRenderer{
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
             MethodRenderer.this.setText(" ");

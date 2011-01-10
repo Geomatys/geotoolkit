@@ -107,7 +107,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
     /**
      * Create a Default Abstract renderer with no particular hints.
      */
-    protected AbstractContainer(C canvas){
+    protected AbstractContainer(final C canvas){
         this.canvas = canvas;
         canvas.addPropertyChangeListener(new PropertyChangeListener(){
 
@@ -374,7 +374,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
      * {@inheritDoc}
      */
     @Override
-    public void addContainerListener(ContainerListener listener) {
+    public void addContainerListener(final ContainerListener listener) {
         ContainerListeners.add(ContainerListener.class, listener);
     }
 
@@ -382,7 +382,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
      * {@inheritDoc}
      */
     @Override
-    public void removeContainerListener(ContainerListener listener) {
+    public void removeContainerListener(final ContainerListener listener) {
         ContainerListeners.remove(ContainerListener.class, listener);
     }
     
@@ -391,7 +391,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
      * 
      * @param event : RendererEvent event to propagate.
      */
-    protected final void fireGraphicAdded(ContainerEvent event){
+    protected final void fireGraphicAdded(final ContainerEvent event){
         final ContainerListener[] listeners = ContainerListeners.getListeners(ContainerListener.class);
         for(final ContainerListener listener : listeners){
             listener.graphicsAdded(event);
@@ -403,7 +403,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
      * 
      * @param event : RendererEvent event to propagate.
      */
-    protected final void fireGraphicRemoved(ContainerEvent event){
+    protected final void fireGraphicRemoved(final ContainerEvent event){
         final ContainerListener[] listeners = ContainerListeners.getListeners(ContainerListener.class);
         for(final ContainerListener listener : listeners){
             listener.graphicsRemoved(event);
@@ -415,7 +415,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
      * 
      * @param event : RendererEvent event to propagate.
      */
-    protected final void fireGraphicChanged(ContainerEvent event){
+    protected final void fireGraphicChanged(final ContainerEvent event){
         final ContainerListener[] listeners = ContainerListeners.getListeners(ContainerListener.class);
         for(final ContainerListener listener : listeners){
             listener.graphicsChanged(event);
@@ -427,7 +427,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
      *
      * @param event : RendererEvent event to propagate.
      */
-    protected final void fireGraphicDisplayChanged(ContainerEvent event){
+    protected final void fireGraphicDisplayChanged(final ContainerEvent event){
         final ContainerListener[] listeners = ContainerListeners.getListeners(ContainerListener.class);
         for(final ContainerListener listener : listeners){
             listener.graphicsDisplayChanged(event);
@@ -436,7 +436,7 @@ public abstract class AbstractContainer<C extends AbstractCanvas, G extends Grap
              
     //-------------------canvas events------------------------------------------
 
-    protected void propertyChange(PropertyChangeEvent evt) {
+    protected void propertyChange(final PropertyChangeEvent evt) {
         if(evt.getPropertyName().equals(AbstractReferencedCanvas2D.OBJECTIVE_CRS_PROPERTY)){
             try {
                 updateObjectiveCRS((CoordinateReferenceSystem) evt.getNewValue());

@@ -84,7 +84,7 @@ public class CylinderType
      *     {@link CurveInterpolationType }
      *     
      */
-    public void setHorizontalCurveType(CurveInterpolationType value) {
+    public void setHorizontalCurveType(final CurveInterpolationType value) {
         this.horizontalCurveType = value;
     }
 
@@ -112,7 +112,7 @@ public class CylinderType
      *     {@link CurveInterpolationType }
      *     
      */
-    public void setVerticalCurveType(CurveInterpolationType value) {
+    public void setVerticalCurveType(final CurveInterpolationType value) {
         this.verticalCurveType = value;
     }
 

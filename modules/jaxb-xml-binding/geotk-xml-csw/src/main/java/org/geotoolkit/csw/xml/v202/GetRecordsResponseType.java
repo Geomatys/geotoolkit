@@ -85,7 +85,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
     /**
      * Build a new response to a getRecords request
      */
-    public GetRecordsResponseType(String requestId, long time, String version, SearchResultsType searchResults) {
+    public GetRecordsResponseType(final String requestId, final long time, final String version, final SearchResultsType searchResults) {
         this.requestId     = requestId;
         this.searchStatus  = new RequestStatusType(time);
         this.version       = version;
@@ -121,11 +121,11 @@ public class GetRecordsResponseType implements GetRecordsResponse {
         return version;
     }
     
-    public void setRequestId(String value) {
+    public void setRequestId(final String value) {
         this.requestId = value;
     }
 
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
     
@@ -145,7 +145,7 @@ public class GetRecordsResponseType implements GetRecordsResponse {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }

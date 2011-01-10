@@ -49,15 +49,15 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
     private Geometry                                displayGeometryISO = null;
     private final AbstractJTSGeometryJ2D            displayShape;
 
-    public StatefullProjectedGeometry(StatefullContextParams params, Class GeometryClazz,
-            com.vividsolutions.jts.geom.Geometry geom){
+    public StatefullProjectedGeometry(final StatefullContextParams params, final Class GeometryClazz,
+            final com.vividsolutions.jts.geom.Geometry geom){
         this.params = params;
         this.objectiveGeometryJTS = geom;
         this.displayShape = JTSGeometryJ2D.best(GeometryClazz,params.objectiveToDisplay);
         this.displayShape.setGeometry(objectiveGeometryJTS);
     }
 
-    public StatefullProjectedGeometry(StatefullProjectedGeometry copy){
+    public StatefullProjectedGeometry(final StatefullProjectedGeometry copy){
         this.params = copy.params;
         this.objectiveGeometryJTS = copy.objectiveGeometryJTS;
         this.objectiveGeometryISO = copy.objectiveGeometryISO;
@@ -67,7 +67,7 @@ public class StatefullProjectedGeometry implements ProjectedGeometry {
         this.displayShape = copy.displayShape.clone();
     }
 
-    public void setObjectiveGeometry(com.vividsolutions.jts.geom.Geometry geom){
+    public void setObjectiveGeometry(final com.vividsolutions.jts.geom.Geometry geom){
         clearObjectiveCache();
         this.objectiveGeometryJTS = geom;
         this.displayShape.setGeometry(objectiveGeometryJTS);

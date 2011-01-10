@@ -30,7 +30,7 @@ public abstract class AbstractPropertyReader implements PropertyReader {
 
     protected final PropertyDescriptor[] metaData;
 
-    protected AbstractPropertyReader(PropertyDescriptor[] metaData) {
+    protected AbstractPropertyReader(final PropertyDescriptor[] metaData) {
         this.metaData = metaData;
     }
 
@@ -46,7 +46,7 @@ public abstract class AbstractPropertyReader implements PropertyReader {
      * {@inheritDoc }
      */
     @Override
-    public final PropertyDescriptor getPropertyDescriptor(int position) {
+    public final PropertyDescriptor getPropertyDescriptor(final int position) {
         return metaData[position];
     }
 

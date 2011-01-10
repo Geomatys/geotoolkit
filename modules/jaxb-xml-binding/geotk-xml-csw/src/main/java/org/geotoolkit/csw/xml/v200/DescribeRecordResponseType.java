@@ -68,7 +68,7 @@ public class DescribeRecordResponseType implements DescribeRecordResponse {
     /**
      * Build a new response to a describeRecord request.
      */
-    public DescribeRecordResponseType(SchemaComponentType... schemaCompo) {
+    public DescribeRecordResponseType(final SchemaComponentType... schemaCompo) {
         schemaComponent = new ArrayList<SchemaComponentType>();
         for (SchemaComponentType sc: schemaCompo) {
             schemaComponent.add(sc);
@@ -78,7 +78,7 @@ public class DescribeRecordResponseType implements DescribeRecordResponse {
     /**
      * Build a new response to a describeRecord request.
      */
-    public DescribeRecordResponseType(List<SchemaComponentType> schemaComponent) {
+    public DescribeRecordResponseType(final List<SchemaComponentType> schemaComponent) {
         this.schemaComponent = schemaComponent;
     }
     

@@ -263,7 +263,7 @@ public abstract class DataTestCase extends TestCase {
      * Creates a line from the specified (<var>x</var>,<var>y</var>) coordinates.
      * The coordinates are stored in a flat array.
      */
-    public LineString line(int[] xy) {
+    public LineString line(final int[] xy) {
         Coordinate[] coords = new Coordinate[xy.length / 2];
 
         for (int i = 0; i < xy.length; i += 2) {
@@ -276,7 +276,7 @@ public abstract class DataTestCase extends TestCase {
     /**
      * Creates a multiline from the specified (<var>x</var>,<var>y</var>) coordinates.
      */
-    public MultiLineString lines(int[][] xy) {
+    public MultiLineString lines(final int[][] xy) {
         LineString[] lines = new LineString[xy.length];
 
         for (int i = 0; i < xy.length; i++) {
@@ -290,7 +290,7 @@ public abstract class DataTestCase extends TestCase {
      * Creates a polygon from the specified (<var>x</var>,<var>y</var>) coordinates.
      * The coordinates are stored in a flat array.
      */
-    public Polygon polygon(int[] xy) {
+    public Polygon polygon(final int[] xy) {
         LinearRing shell = ring(xy);
         return gf.createPolygon(shell, null);
     }
@@ -299,7 +299,7 @@ public abstract class DataTestCase extends TestCase {
      * Creates a line from the specified (<var>x</var>,<var>y</var>) coordinates and
      * an arbitrary amount of holes.
      */
-    public Polygon polygon(int[] xy, int[][] holes) {
+    public Polygon polygon(final int[] xy, final int[][] holes) {
         if (holes == null || holes.length == 0) {
             return polygon(xy);
         }
@@ -317,7 +317,7 @@ public abstract class DataTestCase extends TestCase {
      * Creates a ring from the specified (<var>x</var>,<var>y</var>) coordinates.
      * The coordinates are stored in a flat array.
      */
-    public LinearRing ring(int[] xy) {
+    public LinearRing ring(final int[] xy) {
         Coordinate[] coords = new Coordinate[xy.length / 2];
 
         for (int i = 0; i < xy.length; i += 2) {
@@ -330,7 +330,7 @@ public abstract class DataTestCase extends TestCase {
     /**
      * Compares two geometries for equality.
      */
-    protected void assertEquals(Geometry expected, Geometry actual) {
+    protected void assertEquals(final Geometry expected, final Geometry actual) {
         if (expected == actual) {
             return;
         }
@@ -342,7 +342,7 @@ public abstract class DataTestCase extends TestCase {
     /**
      * Compares two geometries for equality.
      */
-    protected void assertEquals(String message, Geometry expected, Geometry actual) {
+    protected void assertEquals(final String message, final Geometry expected, final Geometry actual) {
         if (expected == actual) {
             return;
         }

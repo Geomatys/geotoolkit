@@ -79,7 +79,7 @@ public class Fill {
      *     {@link GraphicFill }
      *     
      */
-    public void setGraphicFill(GraphicFill value) {
+    public void setGraphicFill(final GraphicFill value) {
         this.graphicFill = value;
     }
 

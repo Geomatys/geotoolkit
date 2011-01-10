@@ -36,7 +36,7 @@ public class FallbackFunction implements Function {
 	private Literal fallback;
 	private String name;
 	
-	public FallbackFunction( String name, List<Expression> parameters, Literal fallback ){
+	public FallbackFunction( final String name, final List<Expression> parameters, final Literal fallback ){
 		this.name = name;
 		this.parameters = parameters;
 		this.fallback = fallback;
@@ -49,15 +49,15 @@ public class FallbackFunction implements Function {
 		return Collections.unmodifiableList( parameters );
 	}
 
-	public Object accept(ExpressionVisitor visitor, Object extraData) {
+	public Object accept(final ExpressionVisitor visitor, final Object extraData) {
 		return visitor.visit( this, extraData );
 	}
 
-	public Object evaluate(Object object) {
+	public Object evaluate(final Object object) {
 		return fallback.evaluate(object);
 	}
 
-	public <T> T evaluate(Object object, Class<T> context) {
+	public <T> T evaluate(final Object object, final Class<T> context) {
 		return fallback.evaluate(object,context);
 	}	
 	public Literal getFallbackValue() {

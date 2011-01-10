@@ -67,7 +67,7 @@ public class ArithmeticOperatorsType implements ArithmeticOperators {
     /**
      * Build a new Arithmetic Operators
      */
-    public ArithmeticOperatorsType(boolean simple, Functions functions) {
+    public ArithmeticOperatorsType(final boolean simple, final Functions functions) {
         if (simple) {
             this.simpleArithmetic = new SimpleArithmetic();
         }

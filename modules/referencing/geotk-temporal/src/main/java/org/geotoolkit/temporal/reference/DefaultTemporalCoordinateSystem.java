@@ -47,17 +47,17 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
      */
     private InternationalString interval;
 
-    public DefaultTemporalCoordinateSystem(ReferenceIdentifier name, Extent domainOfValidity, Date origin, InternationalString interval) {
+    public DefaultTemporalCoordinateSystem(final ReferenceIdentifier name, final Extent domainOfValidity, final Date origin, final InternationalString interval) {
         super(name, domainOfValidity);
         this.origin = origin;
         this.interval = interval;
     }
 
-    public void setOrigin(Date origin) {
+    public void setOrigin(final Date origin) {
         this.origin = origin;
     }
 
-    public void setInterval(InternationalString interval) {
+    public void setInterval(final InternationalString interval) {
         this.interval = interval;
     }
 
@@ -77,7 +77,7 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
      * @return Date
      */
     @Override
-    public Date transformCoord(TemporalCoordinate c_value) {
+    public Date transformCoord(final TemporalCoordinate c_value) {
         Date response;
 
         DefaultTemporalCoordinate value = (DefaultTemporalCoordinate) c_value;
@@ -124,7 +124,7 @@ public class DefaultTemporalCoordinateSystem extends DefaultTemporalReferenceSys
      * @return TemporalCoordinate
      */
     @Override
-    public TemporalCoordinate transformDateTime(Date dateTime) {
+    public TemporalCoordinate transformDateTime(final Date dateTime) {
         final String intervalStr = interval.toString();
         Number coordinateValue = Math.abs(dateTime.getTime() - origin.getTime());
         final float val = coordinateValue.floatValue();

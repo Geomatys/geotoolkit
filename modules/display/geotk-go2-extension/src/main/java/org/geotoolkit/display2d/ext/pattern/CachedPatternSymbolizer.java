@@ -55,12 +55,12 @@ import org.opengis.style.Symbolizer;
  */
 public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>{
 
-    public CachedPatternSymbolizer(PatternSymbolizer symbol,
-            SymbolizerRendererService<PatternSymbolizer,? extends CachedSymbolizer<PatternSymbolizer>> renderer){
+    public CachedPatternSymbolizer(final PatternSymbolizer symbol,
+            final SymbolizerRendererService<PatternSymbolizer,? extends CachedSymbolizer<PatternSymbolizer>> renderer){
         super(symbol,renderer);
     }
 
-    public Map<SimpleFeature,List<CachedSymbolizer>> getMasks(GridCoverage2D coverage) throws IOException, TransformException{
+    public Map<SimpleFeature,List<CachedSymbolizer>> getMasks(final GridCoverage2D coverage) throws IOException, TransformException{
         final Map<SimpleFeature,List<CachedSymbolizer>> features = new LinkedHashMap<SimpleFeature, List<CachedSymbolizer>>();
         final Map<NumberRange,List<CachedSymbolizer>> styles = new LinkedHashMap<NumberRange, List<CachedSymbolizer>>();
         final Map<Expression, List<Symbolizer>> categorizes = styleElement.getRanges();
@@ -145,7 +145,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
         return features;
     }
 
-    private static List<CachedSymbolizer> getCached(List<Symbolizer> symbols){
+    private static List<CachedSymbolizer> getCached(final List<Symbolizer> symbols){
         final List<CachedSymbolizer> cached = new ArrayList<CachedSymbolizer>();
 
         if(symbols != null){
@@ -158,7 +158,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
     }
 
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         return 0;
     }
 
@@ -167,7 +167,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
     }
 
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return false;
     }
 

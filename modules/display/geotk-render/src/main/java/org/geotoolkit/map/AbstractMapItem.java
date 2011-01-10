@@ -77,7 +77,7 @@ public abstract class AbstractMapItem implements MapItem {
      * This method is thread safe.
      */
     @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         final String oldName;
         synchronized (this) {
             oldName = this.name;
@@ -103,7 +103,7 @@ public abstract class AbstractMapItem implements MapItem {
      * @param desc : Description can't be null
      */
     @Override
-    public void setDescription(Description desc){
+    public void setDescription(final Description desc){
         if (desc == null) {
             throw new NullPointerException("description can't be null");
         }
@@ -135,7 +135,7 @@ public abstract class AbstractMapItem implements MapItem {
      * @param visible : New value of property visible.
      */
     @Override
-    public void setVisible(boolean visible) {
+    public void setVisible(final boolean visible) {
         final boolean oldVisible;
         synchronized (this) {
             oldVisible = this.visible;
@@ -151,7 +151,7 @@ public abstract class AbstractMapItem implements MapItem {
      * {@inheritDoc }
      */
     @Override
-    public void setUserPropertie(String key,Object value){
+    public void setUserPropertie(final String key,final Object value){
         parameters.put(key, value);
     }
 
@@ -159,7 +159,7 @@ public abstract class AbstractMapItem implements MapItem {
      * {@inheritDoc }
      */
     @Override
-    public Object getUserPropertie(String key){
+    public Object getUserPropertie(final String key){
         return parameters.get(key);
     }
     
@@ -171,7 +171,7 @@ public abstract class AbstractMapItem implements MapItem {
      * {@inheritDoc }
      */
     @Override
-    public void addItemListener(ItemListener listener){
+    public void addItemListener(final ItemListener listener){
         listeners.add(ItemListener.class, listener);
     }
 
@@ -179,11 +179,11 @@ public abstract class AbstractMapItem implements MapItem {
      * {@inheritDoc }
      */
     @Override
-    public void removeItemListener(ItemListener listener){
+    public void removeItemListener(final ItemListener listener){
         listeners.remove(ItemListener.class, listener);
     }
 
-    protected void fireItemChange(int type, MapItem item, NumberRange<Integer> range, EventObject orig) {
+    protected void fireItemChange(final int type, final MapItem item, final NumberRange<Integer> range, final EventObject orig) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MapItem> event = new CollectionChangeEvent<MapItem>(this, item, type, range, orig);
@@ -195,7 +195,7 @@ public abstract class AbstractMapItem implements MapItem {
 
     }
 
-    protected void fireItemChange(int type, Collection<? extends MapItem> item, NumberRange<Integer> range){
+    protected void fireItemChange(final int type, final Collection<? extends MapItem> item, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MapItem> event = new CollectionChangeEvent<MapItem>(this,item,type,range, null);
@@ -207,7 +207,7 @@ public abstract class AbstractMapItem implements MapItem {
 
     }
 
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
+    protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
         
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);

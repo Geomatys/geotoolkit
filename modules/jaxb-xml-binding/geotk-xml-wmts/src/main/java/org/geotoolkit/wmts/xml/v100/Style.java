@@ -68,7 +68,7 @@ public class Style extends DescriptionType {
 
     }
 
-    public Style(CodeType identifier, List<LegendURL> legendURL) {
+    public Style(final CodeType identifier, final List<LegendURL> legendURL) {
         this.identifier = identifier;
         this.legendURL  = legendURL;
     }
@@ -93,7 +93,7 @@ public class Style extends DescriptionType {
      *     {@link CodeType }
      *     
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 
@@ -127,7 +127,7 @@ public class Style extends DescriptionType {
      *     {@link Boolean }
      *     
      */
-    public void setIsDefault(Boolean value) {
+    public void setIsDefault(final Boolean value) {
         this.isDefault = value;
     }
 

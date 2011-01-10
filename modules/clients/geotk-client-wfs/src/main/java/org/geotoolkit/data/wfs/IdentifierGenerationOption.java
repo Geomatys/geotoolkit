@@ -40,7 +40,7 @@ public enum IdentifierGenerationOption {
 
     private final String value;
 
-    IdentifierGenerationOption(String v) {
+    IdentifierGenerationOption(final String v) {
         value = v;
     }
 
@@ -48,7 +48,7 @@ public enum IdentifierGenerationOption {
         return value;
     }
 
-    public static IdentifierGenerationOption fromValue(String v) {
+    public static IdentifierGenerationOption fromValue(final String v) {
         for (IdentifierGenerationOption c: IdentifierGenerationOption.values()) {
             if (c.value.equals(v)) {
                 return c;

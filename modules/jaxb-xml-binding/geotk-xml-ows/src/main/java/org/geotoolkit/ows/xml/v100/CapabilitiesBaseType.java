@@ -81,7 +81,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     /**
      *Build the base of a Capabilities document.
      */
-    public CapabilitiesBaseType(String version) {
+    public CapabilitiesBaseType(final String version) {
         this.version = version;
     }
 
@@ -94,8 +94,8 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     /**
      * Build the base of a Capabilities document.
      */
-    public CapabilitiesBaseType(ServiceIdentification serviceIdentification, ServiceProvider serviceProvider,
-            OperationsMetadata operationsMetadata, String version, String updateSequence) {
+    public CapabilitiesBaseType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence) {
         this.operationsMetadata    = operationsMetadata;
         this.serviceIdentification = serviceIdentification;
         this.serviceProvider       = serviceProvider;
@@ -111,7 +111,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         return serviceIdentification;
     }
     
-    public void setServiceIdentification(ServiceIdentification serviceIdentification) {
+    public void setServiceIdentification(final ServiceIdentification serviceIdentification) {
         this.serviceIdentification = serviceIdentification;
     }
 
@@ -123,7 +123,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         return serviceProvider;
     }
     
-    public void setServiceProvider(ServiceProvider serviceProvider) {
+    public void setServiceProvider(final ServiceProvider serviceProvider) {
         this.serviceProvider = serviceProvider;
     }
 
@@ -134,7 +134,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         return operationsMetadata;
     }
 
-    public void setOperationsMetadata(OperationsMetadata operationsMetadata) {
+    public void setOperationsMetadata(final OperationsMetadata operationsMetadata) {
         this.operationsMetadata = operationsMetadata;
     }
 

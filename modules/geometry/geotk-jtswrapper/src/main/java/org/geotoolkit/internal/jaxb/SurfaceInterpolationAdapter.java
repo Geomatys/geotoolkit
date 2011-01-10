@@ -11,12 +11,12 @@ import org.opengis.geometry.primitive.SurfaceInterpolation;
 public class SurfaceInterpolationAdapter  extends XmlAdapter<String, SurfaceInterpolation>{
 
     @Override
-    public SurfaceInterpolation unmarshal(String v) throws Exception {
+    public SurfaceInterpolation unmarshal(final String v) throws Exception {
         return SurfaceInterpolation.valueOf(v);
     }
 
     @Override
-    public String marshal(SurfaceInterpolation v) throws Exception {
+    public String marshal(final SurfaceInterpolation v) throws Exception {
         if (v != null)
             return v.identifier();
         return null;

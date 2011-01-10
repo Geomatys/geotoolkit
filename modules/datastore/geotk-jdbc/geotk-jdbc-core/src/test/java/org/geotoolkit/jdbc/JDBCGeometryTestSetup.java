@@ -32,7 +32,7 @@ import com.vividsolutions.jts.geom.Polygon;
 
 public abstract class JDBCGeometryTestSetup extends JDBCDelegatingTestSetup {
 
-    protected JDBCGeometryTestSetup(JDBCTestSetup delegate) {
+    protected JDBCGeometryTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
 
     }

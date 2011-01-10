@@ -346,7 +346,7 @@ public class PortrayalServiceTest {
 
 
 
-    private void testRendering(MapLayer layer) throws TransformException, PortrayalException{
+    private void testRendering(final MapLayer layer) throws TransformException, PortrayalException{
         final StopOnErrorMonitor monitor = new StopOnErrorMonitor();
 
         final MapContext context = MapBuilder.createContext(DefaultGeographicCRS.WGS84);

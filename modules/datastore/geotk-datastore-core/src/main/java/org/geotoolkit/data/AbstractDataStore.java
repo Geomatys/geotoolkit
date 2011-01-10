@@ -109,7 +109,7 @@ public abstract class AbstractDataStore implements DataStore{
      * {@inheritDoc }
      */
     @Override
-    public Session createSession(boolean async) {
+    public Session createSession(final boolean async) {
         return new DefaultSession(this, async);
     }
 
@@ -133,7 +133,7 @@ public abstract class AbstractDataStore implements DataStore{
      * {@inheritDoc }
      */
     @Override
-    public FeatureType getFeatureType(String typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final String typeName) throws DataStoreException {
         for(final Name n : getNames()){
             if(n.getLocalPart().equals(typeName)){
                 return getFeatureType(n);
@@ -149,7 +149,7 @@ public abstract class AbstractDataStore implements DataStore{
      * succeed.
      */
     @Override
-    public boolean isWritable(Name typeName) throws DataStoreException {
+    public boolean isWritable(final Name typeName) throws DataStoreException {
         //while raise an error if type doesnt exist
         getFeatureType(typeName);
 
@@ -193,7 +193,7 @@ public abstract class AbstractDataStore implements DataStore{
         return DataUtilities.calculateEnvelope(reader);
     }
 
-    private static Query addSeparateFeatureHint(Query query){
+    private static Query addSeparateFeatureHint(final Query query){
         //hints never null on a query
         Hints hints = query.getHints();
         hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
@@ -207,7 +207,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @see  #updateFeatures(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */
     @Override
-    public void updateFeatures(Name groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final PropertyDescriptor desc, final Object value) throws DataStoreException {
         updateFeatures(groupName, filter, Collections.singletonMap(desc, value));
     }
 
@@ -217,7 +217,7 @@ public abstract class AbstractDataStore implements DataStore{
      * Generic implementation, will aquiere a featurewriter and iterate to the end of the writer.
      */
     @Override
-    public FeatureWriter getFeatureWriterAppend(Name typeName) throws DataStoreException {
+    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
         final FeatureWriter writer = getFeatureWriter(typeName,Filter.INCLUDE);
 
         while (writer.hasNext()) {
@@ -245,7 +245,7 @@ public abstract class AbstractDataStore implements DataStore{
      * {@inheritDoc }
      */
     @Override
-    public void addStorageListener(StorageListener listener) {
+    public void addStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.add(listener);
         }
@@ -255,7 +255,7 @@ public abstract class AbstractDataStore implements DataStore{
      * {@inheritDoc }
      */
     @Override
-    public void removeStorageListener(StorageListener listener) {
+    public void removeStorageListener(final StorageListener listener) {
         synchronized (listeners) {
             listeners.remove(listener);
         }
@@ -267,7 +267,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @param name added schema name
      * @param type added feature type
      */
-    protected void fireSchemaAdded(Name name, FeatureType type){
+    protected void fireSchemaAdded(final Name name, final FeatureType type){
         sendEvent(StorageManagementEvent.createAddEvent(this, name, type));
     }
 
@@ -278,7 +278,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @param oldType featuretype before change
      * @param newType featuretype after change
      */
-    protected void fireSchemaUpdated(Name name, FeatureType oldType, FeatureType newType){
+    protected void fireSchemaUpdated(final Name name, final FeatureType oldType, final FeatureType newType){
         sendEvent(StorageManagementEvent.createUpdateEvent(this, name, oldType, newType));
     }
 
@@ -288,7 +288,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @param name deleted schema name
      * @param type feature type of the deleted schema
      */
-    protected void fireSchemaDeleted(Name name, FeatureType type){
+    protected void fireSchemaDeleted(final Name name, final FeatureType type){
         sendEvent(StorageManagementEvent.createDeleteEvent(this, name, type));
     }
 
@@ -298,7 +298,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @param name of the schema where features where added.
      * @param ids modified feature ids
      */
-    protected void fireFeaturesAdded(Name name, Id ids){
+    protected void fireFeaturesAdded(final Name name, final Id ids){
         sendEvent(StorageContentEvent.createAddEvent(this, name, ids));
     }
 
@@ -308,7 +308,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @param name of the schema where features where updated.
      * @param ids modified feature ids
      */
-    protected void fireFeaturesUpdated(Name name, Id ids){
+    protected void fireFeaturesUpdated(final Name name, final Id ids){
         sendEvent(StorageContentEvent.createUpdateEvent(this, name, ids));
     }
 
@@ -318,7 +318,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @param name of the schema where features where deleted
      * @param ids modified feature ids
      */
-    protected void fireFeaturesDeleted(Name name, Id ids){
+    protected void fireFeaturesDeleted(final Name name, final Id ids){
         sendEvent(StorageContentEvent.createDeleteEvent(this, name, ids));
     }
 
@@ -326,7 +326,7 @@ public abstract class AbstractDataStore implements DataStore{
      * Forward a schema event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(StorageManagementEvent event){
+    protected void sendEvent(final StorageManagementEvent event){
         final StorageListener[] lst;
         synchronized (listeners) {
             lst = listeners.toArray(new StorageListener[listeners.size()]);
@@ -340,7 +340,7 @@ public abstract class AbstractDataStore implements DataStore{
      * Forward a features event to all listeners.
      * @param event , event to send to listeners.
      */
-    protected void sendEvent(StorageContentEvent event){
+    protected void sendEvent(final StorageContentEvent event){
         final StorageListener[] lst;
         synchronized (listeners) {
             lst = listeners.toArray(new StorageListener[listeners.size()]);
@@ -361,7 +361,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @param candidate Name to test.
      * @throws DataStoreException if name do not exist.
      */
-    protected void typeCheck(Name candidate) throws DataStoreException{
+    protected void typeCheck(final Name candidate) throws DataStoreException{
 
         final Collection<Name> names = getNames();
         if(!names.contains(candidate)){
@@ -394,7 +394,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @return FeatureReader Reader wrapping the given reader with all query parameters
      * @throws IOException
      */
-    protected FeatureReader handleRemaining(FeatureReader reader, Query remainingParameters) throws DataStoreException{
+    protected FeatureReader handleRemaining(FeatureReader reader, final Query remainingParameters) throws DataStoreException{
 
         final Integer start = remainingParameters.getStartIndex();
         final Integer max = remainingParameters.getMaxFeatures();
@@ -523,7 +523,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @return list of ids of the features added.
      * @throws DataStoreException
      */
-    protected List<FeatureId> handleAddWithFeatureWriter(Name groupName, Collection<? extends Feature> newFeatures)
+    protected List<FeatureId> handleAddWithFeatureWriter(final Name groupName, final Collection<? extends Feature> newFeatures)
             throws DataStoreException{
         try{
             return DataUtilities.write(getFeatureWriterAppend(groupName), newFeatures);
@@ -541,8 +541,8 @@ public abstract class AbstractDataStore implements DataStore{
      * @param values
      * @throws DataStoreException
      */
-    protected void handleUpdateWithFeatureWriter(Name groupName, Filter filter,
-            Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    protected void handleUpdateWithFeatureWriter(final Name groupName, final Filter filter,
+            final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
 
         final FeatureWriter writer = getFeatureWriter(groupName,filter);
 
@@ -569,7 +569,7 @@ public abstract class AbstractDataStore implements DataStore{
      * @param filter
      * @throws DataStoreException
      */
-    protected void handleRemoveWithFeatureWriter(Name groupName, Filter filter) throws DataStoreException {
+    protected void handleRemoveWithFeatureWriter(final Name groupName, final Filter filter) throws DataStoreException {
         final FeatureWriter writer = getFeatureWriter(groupName,filter);
 
         try{
@@ -592,16 +592,16 @@ public abstract class AbstractDataStore implements DataStore{
      * @param filter
      * @throws DataStoreException
      */
-    protected FeatureWriter handleWriter(Name groupName, Filter filter) throws DataStoreException {
+    protected FeatureWriter handleWriter(final Name groupName, final Filter filter) throws DataStoreException {
         return GenericFeatureWriter.wrap(this, groupName, filter);
     }
 
-    protected FeatureWriter handleWriterAppend(Name groupName) throws DataStoreException {
+    protected FeatureWriter handleWriterAppend(final Name groupName) throws DataStoreException {
         return GenericFeatureWriter.wrapAppend(this, groupName);
     }
 
 
-    public static Name ensureGMLNS(String namespace, String local){
+    public static Name ensureGMLNS(final String namespace, final String local){
         if(local.equals(GML_NAME)){
             return new DefaultName(GML_NAMESPACE, GML_NAME);
         }else if(local.equals(GML_DESCRIPTION)){
@@ -611,7 +611,7 @@ public abstract class AbstractDataStore implements DataStore{
         }
     }
 
-    public static FeatureType ensureGMLNS(FeatureType type){
+    public static FeatureType ensureGMLNS(final FeatureType type){
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         ftb.setName(type.getName());

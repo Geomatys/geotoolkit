@@ -37,7 +37,7 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      * @param point The point
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public JTSPointIterator(Point point,AffineTransform trs) {
+    public JTSPointIterator(final Point point,final AffineTransform trs) {
         super(point,trs);
     }
 
@@ -74,7 +74,7 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         coords[0] = geometry.getX();
         coords[1] = geometry.getY();
         transform.transform(coords, 0, coords, 0, 1);
@@ -85,7 +85,7 @@ public final class JTSPointIterator extends JTSGeometryIterator<Point> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(float[] coords) {
+    public int currentSegment(final float[] coords) {
         coords[0] = (float)geometry.getX();
         coords[1] = (float)geometry.getY();
         transform.transform(coords, 0, coords, 0, 1);

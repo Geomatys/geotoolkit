@@ -72,8 +72,8 @@ public class UserDefinedSymbolization {
     /**
      * Build a new User Defined Symbolization.
      */
-    public UserDefinedSymbolization(Integer supportSLD, Integer userLayer, Integer userStyle,
-            Integer remoteWFS, Integer inlineFeature, Integer remoteWCS) {
+    public UserDefinedSymbolization(final Integer supportSLD, final Integer userLayer, final Integer userStyle,
+            final Integer remoteWFS, final Integer inlineFeature, final Integer remoteWCS) {
         this.inlineFeature = inlineFeature;
         this.supportSLD    = supportSLD;
         this.userLayer     = userLayer;

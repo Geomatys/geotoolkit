@@ -80,7 +80,7 @@ public class DisplayObject {
     /**
      * Creates a new instance of display object with a set of hints.
      */
-    protected DisplayObject(Hints hints) {
+    protected DisplayObject(final Hints hints) {
         this.propertyListeners = new PropertyChangeSupport(this);
         this.vetoableListeners = new VetoableChangeSupport(this);
         this.hints = new Hints(hints);
@@ -129,14 +129,14 @@ public class DisplayObject {
      *
      * @see #setRenderingHint(java.awt.RenderingHints.Key, java.lang.Object)
      */
-    public void setRenderingHint(RenderingHints.Key key, Object value) {
+    public void setRenderingHint(final RenderingHints.Key key, final Object value) {
         hints.put(key, value);
     }
 
     /**
      * Reset Hints and use the given ones.
      */
-    public void setRenderingHints(Hints hints){
+    public void setRenderingHints(final Hints hints){
         this.hints.clear();
         this.hints.add(hints);
     }

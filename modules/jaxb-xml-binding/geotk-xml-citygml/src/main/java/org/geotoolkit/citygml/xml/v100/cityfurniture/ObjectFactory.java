@@ -63,7 +63,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/cityfurniture/1.0", name = "CityFurniture", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
-    public JAXBElement<CityFurnitureType> createCityFurniture(CityFurnitureType value) {
+    public JAXBElement<CityFurnitureType> createCityFurniture(final CityFurnitureType value) {
         return new JAXBElement<CityFurnitureType>(_CityFurniture_QNAME, CityFurnitureType.class, null, value);
     }
 
@@ -72,7 +72,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/cityfurniture/1.0", name = "_GenericApplicationPropertyOfCityFurniture")
-    public JAXBElement<Object> createGenericApplicationPropertyOfCityFurniture(Object value) {
+    public JAXBElement<Object> createGenericApplicationPropertyOfCityFurniture(final Object value) {
         return new JAXBElement<Object>(_GenericApplicationPropertyOfCityFurniture_QNAME, Object.class, null, value);
     }
 

@@ -53,7 +53,7 @@ public abstract class AbstractEditionDelegate extends MouseNavigatonListener imp
     protected final DefaultEditionHandler handler;
     private JMap2D map;
 
-    protected AbstractEditionDelegate(DefaultEditionHandler handler){
+    protected AbstractEditionDelegate(final DefaultEditionHandler handler){
         super(null);
         if(handler == null){
             throw new NullPointerException("Handler should not be null");
@@ -63,7 +63,7 @@ public abstract class AbstractEditionDelegate extends MouseNavigatonListener imp
     }
 
     @Override
-    public final void setMap(JMap2D map) {
+    public final void setMap(final JMap2D map) {
         super.setMap(map);
         this.map = map;
     }
@@ -77,54 +77,54 @@ public abstract class AbstractEditionDelegate extends MouseNavigatonListener imp
 
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
         super.mouseClicked(e);
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
         super.mousePressed(e);
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         super.mouseReleased(e);
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(final MouseEvent e) {
         super.mouseEntered(e);
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(final MouseEvent e) {
         super.mouseExited(e);
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
         super.mouseDragged(e);
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(final MouseEvent e) {
         super.mouseMoved(e);
     }
 
     @Override
-    public void keyTyped(KeyEvent e) {
+    public void keyTyped(final KeyEvent e) {
     }
 
     @Override
-    public void keyPressed(KeyEvent e) {
+    public void keyPressed(final KeyEvent e) {
     }
 
     @Override
-    public void keyReleased(KeyEvent e) {
+    public void keyReleased(final KeyEvent e) {
     }
 
     @Override
-    public void mouseWheelMoved(MouseWheelEvent e) {
+    public void mouseWheelMoved(final MouseWheelEvent e) {
         super.mouseWheelMoved(e);
     }
     

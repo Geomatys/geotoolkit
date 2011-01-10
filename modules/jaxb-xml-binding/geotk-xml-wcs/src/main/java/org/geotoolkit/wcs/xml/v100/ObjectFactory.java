@@ -474,7 +474,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "interval")
-    public JAXBElement<IntervalType> createInterval(IntervalType value) {
+    public JAXBElement<IntervalType> createInterval(final IntervalType value) {
         return new JAXBElement<IntervalType>(_Interval_QNAME, IntervalType.class, null, value);
     }
     
@@ -483,7 +483,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "singleValue")
-    public JAXBElement<TypedLiteralType> createSingleValue(TypedLiteralType value) {
+    public JAXBElement<TypedLiteralType> createSingleValue(final TypedLiteralType value) {
         return new JAXBElement<TypedLiteralType>(_SingleValue_QNAME, TypedLiteralType.class, null, value);
     }
     
@@ -492,7 +492,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "temporalSubset")
-    public JAXBElement<TimeSequenceType> createTemporalSubset(TimeSequenceType value) {
+    public JAXBElement<TimeSequenceType> createTemporalSubset(final TimeSequenceType value) {
         return new JAXBElement<TimeSequenceType>(_TemporalSubset_QNAME, TimeSequenceType.class, null, value);
     }
     
@@ -501,7 +501,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "spatialSubset")
-    public JAXBElement<SpatialSubsetType> createSpatialSubset(SpatialSubsetType value) {
+    public JAXBElement<SpatialSubsetType> createSpatialSubset(final SpatialSubsetType value) {
         return new JAXBElement<SpatialSubsetType>(_SpatialSubset_QNAME, SpatialSubsetType.class, null, value);
     }
     
@@ -510,7 +510,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "positionName", scope = ResponsiblePartyType.class)
-    public JAXBElement<String> createResponsiblePartyTypePositionName(String value) {
+    public JAXBElement<String> createResponsiblePartyTypePositionName(final String value) {
         return new JAXBElement<String>(_ResponsiblePartyTypePositionName_QNAME, String.class, ResponsiblePartyType.class, value);
     }
     
@@ -519,7 +519,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "contactInfo", scope = ResponsiblePartyType.class)
-    public JAXBElement<ContactType> createResponsiblePartyTypeContactInfo(ContactType value) {
+    public JAXBElement<ContactType> createResponsiblePartyTypeContactInfo(final ContactType value) {
         return new JAXBElement<ContactType>(_ResponsiblePartyTypeContactInfo_QNAME, ContactType.class, ResponsiblePartyType.class, value);
     }
 
@@ -528,7 +528,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "organisationName", scope = ResponsiblePartyType.class)
-    public JAXBElement<String> createResponsiblePartyTypeOrganisationName(String value) {
+    public JAXBElement<String> createResponsiblePartyTypeOrganisationName(final String value) {
         return new JAXBElement<String>(_ResponsiblePartyTypeOrganisationName_QNAME, String.class, ResponsiblePartyType.class, value);
     }
     
@@ -537,7 +537,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "individualName", scope = ResponsiblePartyType.class)
-    public JAXBElement<String> createResponsiblePartyTypeIndividualName(String value) {
+    public JAXBElement<String> createResponsiblePartyTypeIndividualName(final String value) {
         return new JAXBElement<String>(_ResponsiblePartyTypeIndividualName_QNAME, String.class, ResponsiblePartyType.class, value);
     }
     
@@ -546,7 +546,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "supportedInterpolations")
-    public JAXBElement<SupportedInterpolationsType> createSupportedInterpolations(SupportedInterpolationsType value) {
+    public JAXBElement<SupportedInterpolationsType> createSupportedInterpolations(final SupportedInterpolationsType value) {
         return new JAXBElement<SupportedInterpolationsType>(_SupportedInterpolations_QNAME, SupportedInterpolationsType.class, null, value);
     }
 
@@ -556,7 +556,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "supportedFormats")
-    public JAXBElement<SupportedFormatsType> createSupportedFormats(SupportedFormatsType value) {
+    public JAXBElement<SupportedFormatsType> createSupportedFormats(final SupportedFormatsType value) {
         return new JAXBElement<SupportedFormatsType>(_SupportedFormats_QNAME, SupportedFormatsType.class, null, value);
     }
     
@@ -565,7 +565,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "supportedCRSs")
-    public JAXBElement<SupportedCRSsType> createSupportedCRSs(SupportedCRSsType value) {
+    public JAXBElement<SupportedCRSsType> createSupportedCRSs(final SupportedCRSsType value) {
         return new JAXBElement<SupportedCRSsType>(_SupportedCRSs_QNAME, SupportedCRSsType.class, null, value);
     }
     
@@ -574,7 +574,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "RangeSet", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<RangeSetType> createRangeSet(RangeSetType value) {
+    public JAXBElement<RangeSetType> createRangeSet(final RangeSetType value) {
         return new JAXBElement<RangeSetType>(_RangeSet_QNAME, RangeSetType.class, null, value);
     }
     
@@ -583,7 +583,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "spatialDomain")
-    public JAXBElement<SpatialDomainType> createSpatialDomain(SpatialDomainType value) {
+    public JAXBElement<SpatialDomainType> createSpatialDomain(final SpatialDomainType value) {
         return new JAXBElement<SpatialDomainType>(_SpatialDomain_QNAME, SpatialDomainType.class, null, value);
     }
     
@@ -592,7 +592,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "CoverageOffering", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<CoverageOfferingType> createCoverageOffering(CoverageOfferingType value) {
+    public JAXBElement<CoverageOfferingType> createCoverageOffering(final CoverageOfferingType value) {
         return new JAXBElement<CoverageOfferingType>(_CoverageOffering_QNAME, CoverageOfferingType.class, null, value);
     }
     
@@ -601,7 +601,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "domainSet")
-    public JAXBElement<DomainSetType> createDomainSet(DomainSetType value) {
+    public JAXBElement<DomainSetType> createDomainSet(final DomainSetType value) {
         return new JAXBElement<DomainSetType>(_DomainSet_QNAME, DomainSetType.class, null, value);
     }
     
@@ -610,7 +610,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "metadataLink", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "metaDataProperty")
-    public JAXBElement<MetadataLinkType> createMetadataLink(MetadataLinkType value) {
+    public JAXBElement<MetadataLinkType> createMetadataLink(final MetadataLinkType value) {
         return new JAXBElement<MetadataLinkType>(_MetadataLink_QNAME, MetadataLinkType.class, null, value);
     }
 
@@ -619,7 +619,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "description")
-    public JAXBElement<String> createDescription(String value) {
+    public JAXBElement<String> createDescription(final String value) {
         return new JAXBElement<String>(_Description_QNAME, String.class, null, value);
     }
     
@@ -628,7 +628,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "label")
-    public JAXBElement<String> createLabel(String value) {
+    public JAXBElement<String> createLabel(final String value) {
         return new JAXBElement<String>(_Label_QNAME, String.class, null, value);
     }
 
@@ -637,7 +637,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "TimeSequence")
-    public JAXBElement<TimeSequenceType> createTimeSequence(TimeSequenceType value) {
+    public JAXBElement<TimeSequenceType> createTimeSequence(final TimeSequenceType value) {
         return new JAXBElement<TimeSequenceType>(_TimeSequence_QNAME, TimeSequenceType.class, null, value);
     }
 
@@ -646,7 +646,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "timePeriod")
-    public JAXBElement<TimePeriodType> createTimePeriod(TimePeriodType value) {
+    public JAXBElement<TimePeriodType> createTimePeriod(final TimePeriodType value) {
         return new JAXBElement<TimePeriodType>(_TimePeriod_QNAME, TimePeriodType.class, null, value);
     }
 
@@ -655,7 +655,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "WCS_Capabilities")
-    public JAXBElement<WCSCapabilitiesType> createWCSCapabilities(WCSCapabilitiesType value) {
+    public JAXBElement<WCSCapabilitiesType> createWCSCapabilities(final WCSCapabilitiesType value) {
         return new JAXBElement<WCSCapabilitiesType>(_WCSCapabilities_QNAME, WCSCapabilitiesType.class, null, value);
     }
 
@@ -664,7 +664,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "lonLatEnvelope")
-    public JAXBElement<LonLatEnvelopeType> createLonLatEnvelope(LonLatEnvelopeType value) {
+    public JAXBElement<LonLatEnvelopeType> createLonLatEnvelope(final LonLatEnvelopeType value) {
         return new JAXBElement<LonLatEnvelopeType>(_LonLatEnvelope_QNAME, LonLatEnvelopeType.class, null, value);
     }
 
@@ -673,7 +673,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "CoverageOfferingBrief", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<CoverageOfferingBriefType> createCoverageOfferingBrief(CoverageOfferingBriefType value) {
+    public JAXBElement<CoverageOfferingBriefType> createCoverageOfferingBrief(final CoverageOfferingBriefType value) {
         return new JAXBElement<CoverageOfferingBriefType>(_CoverageOfferingBrief_QNAME, CoverageOfferingBriefType.class, null, value);
     }
 
@@ -682,7 +682,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "name")
-    public JAXBElement<String> createName(String value) {
+    public JAXBElement<String> createName(final String value) {
         return new JAXBElement<String>(_Name_QNAME, String.class, null, value);
     }
 
@@ -691,7 +691,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "Capability")
-    public JAXBElement<WCSCapabilityType> createCapability(WCSCapabilityType value) {
+    public JAXBElement<WCSCapabilityType> createCapability(final WCSCapabilityType value) {
         return new JAXBElement<WCSCapabilityType>(_Capability_QNAME, WCSCapabilityType.class, null, value);
     }
 
@@ -700,7 +700,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "Service", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<ServiceType> createService(ServiceType value) {
+    public JAXBElement<ServiceType> createService(final ServiceType value) {
         return new JAXBElement<ServiceType>(_Service_QNAME, ServiceType.class, null, value);
     }
 
@@ -709,7 +709,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "label", scope = AbstractDescriptionType.class)
-    public JAXBElement<String> createAbstractDescriptionTypeLabel(String value) {
+    public JAXBElement<String> createAbstractDescriptionTypeLabel(final String value) {
         return new JAXBElement<String>(_AbstractDescriptionTypeLabel_QNAME, String.class, AbstractDescriptionType.class, value);
     }
     
@@ -718,7 +718,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "GridBaseCRS")
-    public JAXBElement<String> createGridBaseCRS(String value) {
+    public JAXBElement<String> createGridBaseCRS(final String value) {
         return new JAXBElement<String>(_GridBaseCRS_QNAME, String.class, null, value);
     }
 
@@ -736,7 +736,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "GridCS", defaultValue = "urn:ogc:def:cs:OGC:0.0:Grid2dSquareCS")
-    public JAXBElement<String> createGridCS(String value) {
+    public JAXBElement<String> createGridCS(final String value) {
         return new JAXBElement<String>(_GridCS_QNAME, String.class, null, value);
     }
 
@@ -745,7 +745,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "GridOffsets")
-    public JAXBElement<List<Double>> createGridOffsets(List<Double> value) {
+    public JAXBElement<List<Double>> createGridOffsets(final List<Double> value) {
         return new JAXBElement<List<Double>>(_GridOffsets_QNAME, ((Class) List.class), null, ((List<Double> ) value));
     }
 
@@ -754,7 +754,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "GridType", defaultValue = "urn:ogc:def:method:WCS:1.1:2dSimpleGrid")
-    public JAXBElement<String> createGridType(String value) {
+    public JAXBElement<String> createGridType(final String value) {
         return new JAXBElement<String>(_GridType_QNAME, String.class, null, value);
     }
 
@@ -763,7 +763,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "temporalDomain")
-    public JAXBElement<TimeSequenceType> createTemporalDomain(TimeSequenceType value) {
+    public JAXBElement<TimeSequenceType> createTemporalDomain(final TimeSequenceType value) {
         return new JAXBElement<TimeSequenceType>(_TemporalDomain_QNAME, TimeSequenceType.class, null, value);
     }
 
@@ -772,7 +772,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "Coverage", substitutionHeadNamespace = "http://www.opengis.net/ows/1.1", substitutionHeadName = "ReferenceGroup")
-    public JAXBElement<ReferenceGroupType> createCoverage(ReferenceGroupType value) {
+    public JAXBElement<ReferenceGroupType> createCoverage(final ReferenceGroupType value) {
         return new JAXBElement<ReferenceGroupType>(_Coverage_QNAME, ReferenceGroupType.class, null, value);
     }
 
@@ -781,7 +781,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "Identifier")
-    public JAXBElement<String> createIdentifier(String value) {
+    public JAXBElement<String> createIdentifier(final String value) {
         return new JAXBElement<String>(_Identifier_QNAME, String.class, null, value);
     }
 
@@ -790,7 +790,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wcs", name = "GridOrigin", defaultValue = "0 0")
-    public JAXBElement<List<Double>> createGridOrigin(List<Double> value) {
+    public JAXBElement<List<Double>> createGridOrigin(final List<Double> value) {
         return new JAXBElement<List<Double>>(_GridOrigin_QNAME, ((Class) List.class), null, ((List<Double> ) value));
     }
 

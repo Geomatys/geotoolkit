@@ -57,7 +57,7 @@ public class MultiplexedStreamFormatType extends AbstractEncodingType implements
 
     }
 
-    public MultiplexedStreamFormatType(MultiplexedStreamFormat ms) {
+    public MultiplexedStreamFormatType(final MultiplexedStreamFormat ms) {
         if (ms != null) {
             this.type = ms.getType();
             this.version = ms.getVersion();
@@ -84,7 +84,7 @@ public class MultiplexedStreamFormatType extends AbstractEncodingType implements
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -108,7 +108,7 @@ public class MultiplexedStreamFormatType extends AbstractEncodingType implements
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

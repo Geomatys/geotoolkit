@@ -60,7 +60,7 @@ public class OSMJavaDB {
     private final PreparedStatement sqlSelectWay;
     private final PreparedStatement sqlSelectRelation;
 
-    public OSMJavaDB(String name) throws SQLException {
+    public OSMJavaDB(final String name) throws SQLException {
         final String folder = getTempFolder(name);
         FileUtilities.deleteDirectory(new File(folder));
 
@@ -109,22 +109,22 @@ public class OSMJavaDB {
         cnx.createStatement().execute("ALTER TABLE relation ADD PRIMARY KEY (id)");
     }
 
-    public void append(Node node) throws SQLException, IOException{
+    public void append(final Node node) throws SQLException, IOException{
         if(node == null) return;
         append(node,sqlAddNode);
     }
 
-    public void append(Way way) throws SQLException, IOException{
+    public void append(final Way way) throws SQLException, IOException{
         if(way == null) return;
         append(way,sqlAddWay);
     }
 
-    public void append(Relation relation) throws SQLException, IOException{
+    public void append(final Relation relation) throws SQLException, IOException{
         if(relation == null) return;
         append(relation,sqlAddRelation);
     }
 
-    private static void append(IdentifiedElement object, PreparedStatement stmt) throws IOException, SQLException{
+    private static void append(final IdentifiedElement object, final PreparedStatement stmt) throws IOException, SQLException{
         final ByteArrayOutputStream output = new ByteArrayOutputStream();
         final ObjectOutputStream oout = new ObjectOutputStream(output);
         oout.writeObject(object);
@@ -142,7 +142,7 @@ public class OSMJavaDB {
         return new ResultsetIterator(set);
     }
 
-    public Node getNode(long id){
+    public Node getNode(final long id){
         throw new IllegalStateException("not yet");
     }
 
@@ -150,7 +150,7 @@ public class OSMJavaDB {
         throw new IllegalStateException("not yet");
     }
 
-    public Way getWay(long id){
+    public Way getWay(final long id){
         throw new IllegalStateException("not yet");
     }
 
@@ -158,7 +158,7 @@ public class OSMJavaDB {
         throw new IllegalStateException("not yet");
     }
 
-    public Relation getRelation(long id){
+    public Relation getRelation(final long id){
         throw new IllegalStateException("not yet");
     }
 
@@ -202,7 +202,7 @@ public class OSMJavaDB {
         private final ResultSet rs;
         private Object ser = null;
 
-        public ResultsetIterator(ResultSet rs) {
+        public ResultsetIterator(final ResultSet rs) {
             this.rs = rs;
         }
 

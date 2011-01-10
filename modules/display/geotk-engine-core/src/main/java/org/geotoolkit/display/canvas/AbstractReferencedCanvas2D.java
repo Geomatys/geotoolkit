@@ -92,7 +92,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
     private DerivedCRS displayCRS = null;
 
 
-    protected AbstractReferencedCanvas2D(CoordinateReferenceSystem crs, Hints hints){
+    protected AbstractReferencedCanvas2D(final CoordinateReferenceSystem crs, final Hints hints){
         super(hints);
         try {
             setObjectiveCRS(crs);
@@ -109,12 +109,12 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
 
     public abstract Image getSnapShot();
 
-    protected void setDisplayBounds(Rectangle2D rect){
+    protected void setDisplayBounds(final Rectangle2D rect){
         displayBounds.setRect(rect);
     }
 
     @Override
-    public final synchronized void setObjectiveCRS(CoordinateReferenceSystem objective) throws TransformException {
+    public final synchronized void setObjectiveCRS(final CoordinateReferenceSystem objective) throws TransformException {
         if(objective == null){
             throw new NullArgumentException("Objective CRS can not be null.");
         }
@@ -213,11 +213,11 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
      * Change a range in the canvas envelope.
      * Can be used to temporal or elevatio range of the map.
      */
-    final void setRange(int ordinate, double min, double max){
+    final void setRange(final int ordinate, final double min, final double max){
         envelope.setRange(ordinate, min, max);
     }
 
-    final void setAutoRepaint(boolean autoRepaint) {
+    final void setAutoRepaint(final boolean autoRepaint) {
         this.autoRepaint = autoRepaint;
     }
 
@@ -225,7 +225,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
         return autoRepaint;
     }
 
-    final void setAxisProportions(double prop) {
+    final void setAxisProportions(final double prop) {
         this.proportion = prop;
     }
 
@@ -233,7 +233,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
         return proportion;
     }
 
-    final void applyTransform(AffineTransform change){
+    final void applyTransform(final AffineTransform change){
         if (!change.isIdentity()) {
             final AffineTransform2D old = getObjectiveToDisplay();
 
@@ -266,7 +266,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
      *        downwards.
      */
     final void resetTransform(final Rectangle2D preferredArea, final boolean yAxisUpward,
-                         boolean preserveRotation) throws NoninvertibleTransformException{
+                         final boolean preserveRotation) throws NoninvertibleTransformException{
 
         final Rectangle canvasBounds = getDisplayBounds().getBounds();
 
@@ -345,7 +345,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
      * @return Change to apply to the affine transform {@link #zoom}.
      * @throws IllegalArgumentException if {@code source} is empty.
      */
-    private AffineTransform setVisibleArea(Rectangle2D source, Rectangle2D dest)
+    private AffineTransform setVisibleArea(final Rectangle2D source, Rectangle2D dest)
                                            throws IllegalArgumentException,NoninvertibleTransformException{
         /*
          * Verifies the validity of the source rectangle. An invalid rectangle will be rejected.

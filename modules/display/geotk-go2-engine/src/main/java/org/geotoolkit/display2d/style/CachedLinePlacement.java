@@ -34,11 +34,11 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
     private float initial = Float.NaN;
     private float offset = Float.NaN;
 
-    private CachedLinePlacement(LinePlacement placement){
+    private CachedLinePlacement(final LinePlacement placement){
         super(placement);
     }
 
-    public float getGap(Feature feature){
+    public float getGap(final Feature feature){
         evaluate();
         
         if(Float.isNaN(gap)){
@@ -50,7 +50,7 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
         }
     }
 
-    public float getInitialGap(Feature feature){
+    public float getInitialGap(final Feature feature){
         evaluate();
         
         if(Float.isNaN(initial)){
@@ -62,7 +62,7 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
         }
     }
 
-    public float getOffset(Feature feature){
+    public float getOffset(final Feature feature){
         evaluate();
         
         if(Float.isNaN(offset)){
@@ -127,13 +127,13 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
     }
 
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         evaluate();
         //placement doesnt know if it's visible or not whit those informations, always true.
         return true;
     }
 
-    public static CachedLinePlacement cache(LinePlacement placement){
+    public static CachedLinePlacement cache(final LinePlacement placement){
         return new CachedLinePlacement(placement);
     }
 

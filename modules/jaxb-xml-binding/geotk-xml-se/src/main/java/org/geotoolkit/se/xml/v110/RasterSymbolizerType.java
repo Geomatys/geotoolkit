@@ -101,7 +101,7 @@ public class RasterSymbolizerType
      *     {@link GeometryType }
      *     
      */
-    public void setGeometry(GeometryType value) {
+    public void setGeometry(final GeometryType value) {
         this.geometry = value;
     }
 
@@ -125,7 +125,7 @@ public class RasterSymbolizerType
      *     {@link ParameterValueType }
      *     
      */
-    public void setOpacity(ParameterValueType value) {
+    public void setOpacity(final ParameterValueType value) {
         this.opacity = value;
     }
 
@@ -149,7 +149,7 @@ public class RasterSymbolizerType
      *     {@link ChannelSelectionType }
      *     
      */
-    public void setChannelSelection(ChannelSelectionType value) {
+    public void setChannelSelection(final ChannelSelectionType value) {
         this.channelSelection = value;
     }
 
@@ -173,7 +173,7 @@ public class RasterSymbolizerType
      *     {@link String }
      *     
      */
-    public void setOverlapBehavior(String value) {
+    public void setOverlapBehavior(final String value) {
         this.overlapBehavior = value;
     }
 
@@ -197,7 +197,7 @@ public class RasterSymbolizerType
      *     {@link ColorMapType }
      *     
      */
-    public void setColorMap(ColorMapType value) {
+    public void setColorMap(final ColorMapType value) {
         this.colorMap = value;
     }
 
@@ -221,7 +221,7 @@ public class RasterSymbolizerType
      *     {@link ContrastEnhancementType }
      *     
      */
-    public void setContrastEnhancement(ContrastEnhancementType value) {
+    public void setContrastEnhancement(final ContrastEnhancementType value) {
         this.contrastEnhancement = value;
     }
 
@@ -245,7 +245,7 @@ public class RasterSymbolizerType
      *     {@link ShadedReliefType }
      *     
      */
-    public void setShadedRelief(ShadedReliefType value) {
+    public void setShadedRelief(final ShadedReliefType value) {
         this.shadedRelief = value;
     }
 
@@ -269,7 +269,7 @@ public class RasterSymbolizerType
      *     {@link ImageOutlineType }
      *     
      */
-    public void setImageOutline(ImageOutlineType value) {
+    public void setImageOutline(final ImageOutlineType value) {
         this.imageOutline = value;
     }
 

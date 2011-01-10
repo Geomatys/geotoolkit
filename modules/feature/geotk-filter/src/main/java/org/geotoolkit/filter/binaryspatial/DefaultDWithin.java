@@ -43,7 +43,7 @@ public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Exp
     private final Unit unit;
     private final String strUnit;
 
-    public DefaultDWithin(Expression left, Expression right, double distance, String unit) {
+    public DefaultDWithin(final Expression left, final Expression right, final double distance, final String unit) {
         super(left,right);
         this.distance = distance;
         this.strUnit = unit;
@@ -70,7 +70,7 @@ public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Exp
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         final Geometry leftGeom = left.evaluate(object, Geometry.class);
         final Geometry rightGeom = right.evaluate(object, Geometry.class);
 
@@ -107,7 +107,7 @@ public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Exp
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -126,7 +126,7 @@ public class DefaultDWithin extends AbstractBinarySpatialOperator<Expression,Exp
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

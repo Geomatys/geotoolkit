@@ -74,17 +74,17 @@ public abstract class AbstractGetFeatureOfInterest extends AbstractSOSRequest im
     }
 
     @Override
-    public void setEventTime(EventTime eventTime) {
+    public void setEventTime(final EventTime eventTime) {
         this.eventTime = eventTime;
     }
 
     @Override
-    public void setFeatureOfInterestId(String featureOfInterestId) {
+    public void setFeatureOfInterestId(final String featureOfInterestId) {
         this.featureOfInterestId = featureOfInterestId;
     }
 
     @Override
-    public void setLocation(Location location) {
+    public void setLocation(final Location location) {
         this.location = location;
     }
 

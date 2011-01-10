@@ -48,7 +48,7 @@ public class DefaultFeature extends AbstractFeature<Collection<Property>> {
      * @param type Type of feature to be created
      * @param id Feature ID
      */
-    public static DefaultFeature create(Collection<Property> properties, FeatureType type, FeatureId id) {
+    public static DefaultFeature create(final Collection<Property> properties, final FeatureType type, final FeatureId id) {
         return new DefaultFeature(
                 properties,
                 new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),
@@ -62,7 +62,7 @@ public class DefaultFeature extends AbstractFeature<Collection<Property>> {
      * @param desc Nested descriptor
      * @param id Feature ID
      */
-    public DefaultFeature(Collection<? extends Property> properties, AttributeDescriptor desc, FeatureId id) {
+    public DefaultFeature(final Collection<? extends Property> properties, final AttributeDescriptor desc, final FeatureId id) {
         super(desc, id);
         value = new ArrayList<Property>(properties);
     }

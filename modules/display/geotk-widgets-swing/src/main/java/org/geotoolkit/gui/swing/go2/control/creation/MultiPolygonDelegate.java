@@ -86,7 +86,7 @@ public class MultiPolygonDelegate extends AbstractEditionDelegate {
     private boolean justCreated = false;
 
 
-    public MultiPolygonDelegate(DefaultEditionHandler handler) {
+    public MultiPolygonDelegate(final DefaultEditionHandler handler) {
         super(handler);
     }
 
@@ -249,7 +249,7 @@ public class MultiPolygonDelegate extends AbstractEditionDelegate {
         reset();
     }
 
-    private void setCurrentFeature(SimpleFeature feature){
+    private void setCurrentFeature(final SimpleFeature feature){
         this.feature = feature;
         if(feature != null){
             this.geometry = (MultiPolygon) handler.getHelper().toObjectiveCRS(feature);
@@ -261,7 +261,7 @@ public class MultiPolygonDelegate extends AbstractEditionDelegate {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
 
         final int button = e.getButton();
 
@@ -501,7 +501,7 @@ public class MultiPolygonDelegate extends AbstractEditionDelegate {
     int lastY = 0;
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
         pressed = e.getButton();
         lastX = e.getX();
         lastY = e.getY();
@@ -541,7 +541,7 @@ public class MultiPolygonDelegate extends AbstractEditionDelegate {
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
 
         switch(currentAction){
             case GEOM_MOVE:
@@ -591,7 +591,7 @@ public class MultiPolygonDelegate extends AbstractEditionDelegate {
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
 
         switch(currentAction){
             case GEOM_MOVE:
@@ -640,7 +640,7 @@ public class MultiPolygonDelegate extends AbstractEditionDelegate {
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(final MouseEvent e) {
         switch(currentAction){
             case SUB_ADD :
             case GEOM_ADD :

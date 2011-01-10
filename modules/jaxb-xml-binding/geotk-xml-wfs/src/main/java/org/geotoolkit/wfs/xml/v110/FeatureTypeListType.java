@@ -66,7 +66,7 @@ public class FeatureTypeListType {
 
     }
 
-    public FeatureTypeListType(OperationsType operations, List<FeatureTypeType> featureType) {
+    public FeatureTypeListType(final OperationsType operations, final List<FeatureTypeType> featureType) {
         this.featureType = featureType;
         this.operations  = operations;
     }
@@ -91,7 +91,7 @@ public class FeatureTypeListType {
      *     {@link OperationsType }
      *     
      */
-    public void setOperations(OperationsType value) {
+    public void setOperations(final OperationsType value) {
         this.operations = value;
     }
 
@@ -105,7 +105,7 @@ public class FeatureTypeListType {
         return this.featureType;
     }
 
-    public void setFeatureType(List<FeatureTypeType> featureType) {
+    public void setFeatureType(final List<FeatureTypeType> featureType) {
         this.featureType = featureType;
     }
 

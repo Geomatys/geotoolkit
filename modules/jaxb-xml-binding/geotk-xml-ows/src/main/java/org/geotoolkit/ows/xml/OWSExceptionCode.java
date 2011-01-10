@@ -152,7 +152,7 @@ public class OWSExceptionCode extends CodeList<OWSExceptionCode> {
      * Returns the exception code that matches the given string, or returns a
      * new one if none match it.
      */
-    public static OWSExceptionCode valueOf(String code) {
+    public static OWSExceptionCode valueOf(final String code) {
         return valueOf(OWSExceptionCode.class, code);
     }
 }

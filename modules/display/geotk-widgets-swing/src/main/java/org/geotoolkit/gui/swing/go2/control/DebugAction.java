@@ -48,7 +48,7 @@ public class DebugAction extends AbstractAction {
     private JMap2D map = null;
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null) {
             for (MapDecoration dec : map.getDecorations()) {
                 if (dec.equals(deco)) {
@@ -64,7 +64,7 @@ public class DebugAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         if (map == this.map) {
             return;
         }
@@ -96,7 +96,7 @@ public class DebugAction extends AbstractAction {
         }
 
         @Override
-        public void setMap2D(JMap2D map) {
+        public void setMap2D(final JMap2D map) {
             super.setMap2D(map);
 
             if (map != null) {
@@ -113,14 +113,14 @@ public class DebugAction extends AbstractAction {
         }
 
         @Override
-        public void contextPaint(RenderingContext2D context) {
+        public void contextPaint(final RenderingContext2D context) {
             final StringBuilder sb = new StringBuilder("<html><body bgcolor=\"white\"><code>");
             toHTML(context.toString(),sb);
             sb.append("</code></body></html>");
             jta.setText(sb.toString());
         }
 
-        private static void toHTML(String text, StringBuilder sb){
+        private static void toHTML(final String text, final StringBuilder sb){
             String[] parts = text.split("\n");
             for(String str : parts){
 

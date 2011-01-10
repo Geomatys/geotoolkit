@@ -140,38 +140,38 @@ public class IoComponentPropertyType implements IoComponent {
 
     }
 
-    public IoComponentPropertyType(String name, ObservableProperty observableProperty) {
+    public IoComponentPropertyType(final String name, final ObservableProperty observableProperty) {
         this.name = name;
         this.observableProperty = observableProperty;
     }
 
-    public IoComponentPropertyType(String name, QuantityType quantity) {
+    public IoComponentPropertyType(final String name, final QuantityType quantity) {
         this.name = name;
         this.quantity = quantity;
     }
 
-    public IoComponentPropertyType(String name, SimpleDataRecordType abstractDataRecord) {
+    public IoComponentPropertyType(final String name, final SimpleDataRecordType abstractDataRecord) {
         this.name = name;
         this.abstractDataRecord = factory.createSimpleDataRecord(abstractDataRecord);
     }
 
-    public IoComponentPropertyType(ObservableProperty observableProperty) {
+    public IoComponentPropertyType(final ObservableProperty observableProperty) {
         this.observableProperty = observableProperty;
     }
 
-    public IoComponentPropertyType(QuantityType quantity) {
+    public IoComponentPropertyType(final QuantityType quantity) {
         this.quantity = quantity;
     }
 
-    public IoComponentPropertyType(SimpleDataRecordType abstractDataRecord) {
+    public IoComponentPropertyType(final SimpleDataRecordType abstractDataRecord) {
         this.abstractDataRecord = factory.createSimpleDataRecord(abstractDataRecord);
     }
 
-    public IoComponentPropertyType(DataRecordType abstractDataRecord) {
+    public IoComponentPropertyType(final DataRecordType abstractDataRecord) {
         this.abstractDataRecord = factory.createDataRecord(abstractDataRecord);
     }
 
-    public IoComponentPropertyType(String name, JAXBElement<? extends AbstractDataRecordType> abstractDataRecord) {
+    public IoComponentPropertyType(final String name, final JAXBElement<? extends AbstractDataRecordType> abstractDataRecord) {
         this.name = name;
         this.abstractDataRecord = abstractDataRecord;
     }
@@ -254,7 +254,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the count property.
      */
-    public void setCount(Count value) {
+    public void setCount(final Count value) {
         this.count = value;
     }
 
@@ -268,7 +268,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the quantity property.
      */
-    public void setQuantity(QuantityType value) {
+    public void setQuantity(final QuantityType value) {
         this.quantity = value;
     }
 
@@ -282,7 +282,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the time property.
      */
-    public void setTime(TimeType value) {
+    public void setTime(final TimeType value) {
         this.time = value;
     }
 
@@ -296,7 +296,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the boolean property.
      */
-    public void setBoolean(BooleanType value) {
+    public void setBoolean(final BooleanType value) {
         this._boolean = value;
     }
 
@@ -310,7 +310,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the category property.
      */
-    public void setCategory(Category value) {
+    public void setCategory(final Category value) {
         this.category = value;
     }
 
@@ -324,7 +324,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the text property.
      */
-    public void setText(Text value) {
+    public void setText(final Text value) {
         this.text = value;
     }
 
@@ -338,7 +338,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the quantityRange property.
      */
-    public void setQuantityRange(QuantityRange value) {
+    public void setQuantityRange(final QuantityRange value) {
         this.quantityRange = value;
     }
 
@@ -352,7 +352,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the countRange property.
      */
-    public void setCountRange(CountRange value) {
+    public void setCountRange(final CountRange value) {
         this.countRange = value;
     }
 
@@ -366,7 +366,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the timeRange property.
      */
-    public void setTimeRange(TimeRange value) {
+    public void setTimeRange(final TimeRange value) {
         this.timeRange = value;
     }
 
@@ -387,7 +387,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the abstractDataRecord property.
      */
-    public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordType> value) {
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
     }
 
@@ -408,7 +408,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the abstractDataArray property.
      */
-    public void setAbstractDataArray(JAXBElement<? extends AbstractDataArrayType> value) {
+    public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayType> value) {
         this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);
     }
 
@@ -422,7 +422,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the observableProperty property.
      */
-    public void setObservableProperty(ObservableProperty value) {
+    public void setObservableProperty(final ObservableProperty value) {
         this.observableProperty = value;
     }
 
@@ -436,7 +436,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the name property.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -460,7 +460,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -474,7 +474,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -488,7 +488,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -501,7 +501,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -515,7 +515,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -529,7 +529,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -543,7 +543,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -557,7 +557,7 @@ public class IoComponentPropertyType implements IoComponent {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

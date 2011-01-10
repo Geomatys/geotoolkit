@@ -310,19 +310,19 @@ public class TreeMapContextTest {
         }
 
         @Override
-        public void layerChange(CollectionChangeEvent<MapLayer> event) {
+        public void layerChange(final CollectionChangeEvent<MapLayer> event) {
             lastEvent = event;
             layerChangecount++;
         }
 
         @Override
-        public void itemChange(CollectionChangeEvent<MapItem> event) {
+        public void itemChange(final CollectionChangeEvent<MapItem> event) {
             lastEvent = event;
             itemChangecount++;
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent event) {
+        public void propertyChange(final PropertyChangeEvent event) {
             lastEvent = event;
             propertyChangecount++;
         }

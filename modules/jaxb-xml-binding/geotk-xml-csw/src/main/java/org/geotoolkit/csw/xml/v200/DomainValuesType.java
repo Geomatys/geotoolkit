@@ -96,7 +96,7 @@ public class DomainValuesType implements DomainValues {
      * One of parameterName or propertyName must be null.
      *
      */
-    public DomainValuesType(String parameterName, String propertyName, ListOfValuesType listOfValues, QName type) {
+    public DomainValuesType(final String parameterName, final String propertyName, final ListOfValuesType listOfValues, final QName type) {
 
         if (propertyName != null && parameterName != null) {
             throw new IllegalArgumentException("One of propertyName or parameterName must be null");
@@ -114,7 +114,7 @@ public class DomainValuesType implements DomainValues {
      * One of parameterName or propertyName must be null.
      *
      */
-    public DomainValuesType(String parameterName, String propertyName, List<String> listOfValues, QName type) {
+    public DomainValuesType(final String parameterName, final String propertyName, final List<String> listOfValues, final QName type) {
 
         if (propertyName != null && parameterName != null) {
             throw new IllegalArgumentException("One of propertyName or parameterName must be null");
@@ -139,7 +139,7 @@ public class DomainValuesType implements DomainValues {
      * Sets the value of the propertyName property.
      * 
      */
-    public void setPropertyName(String value) {
+    public void setPropertyName(final String value) {
         this.propertyName = value;
     }
 
@@ -154,7 +154,7 @@ public class DomainValuesType implements DomainValues {
      * Sets the value of the parameterName property.
      * 
      */
-    public void setParameterName(String value) {
+    public void setParameterName(final String value) {
         this.parameterName = value;
     }
 
@@ -170,7 +170,7 @@ public class DomainValuesType implements DomainValues {
      * Sets the value of the listOfValues property.
      * 
      */
-    public void setListOfValues(ListOfValuesType value) {
+    public void setListOfValues(final ListOfValuesType value) {
         this.listOfValues = value;
     }
 
@@ -186,7 +186,7 @@ public class DomainValuesType implements DomainValues {
      * Sets the value of the conceptualScheme property.
      * 
      */
-    public void setConceptualScheme(ConceptualSchemeType value) {
+    public void setConceptualScheme(final ConceptualSchemeType value) {
         this.conceptualScheme = value;
     }
 
@@ -202,7 +202,7 @@ public class DomainValuesType implements DomainValues {
      * Sets the value of the rangeOfValues property.
      * 
      */
-    public void setRangeOfValues(RangeOfValuesType value) {
+    public void setRangeOfValues(final RangeOfValuesType value) {
         this.rangeOfValues = value;
     }
 
@@ -218,7 +218,7 @@ public class DomainValuesType implements DomainValues {
      * Sets the value of the type property.
      * 
      */
-    public void setType(QName value) {
+    public void setType(final QName value) {
         this.type = value;
     }
 
@@ -234,7 +234,7 @@ public class DomainValuesType implements DomainValues {
      * Sets the value of the uom property.
      * 
      */
-    public void setUom(String value) {
+    public void setUom(final String value) {
         this.uom = value;
     }
 

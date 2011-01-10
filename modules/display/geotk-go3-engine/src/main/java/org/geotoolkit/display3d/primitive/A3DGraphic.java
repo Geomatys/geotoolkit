@@ -30,7 +30,7 @@ public abstract class A3DGraphic extends Node implements Graphic{
     protected final A3DCanvas canvas;
     protected boolean visible = true;
 
-    protected A3DGraphic(A3DCanvas canvas){
+    protected A3DGraphic(final A3DCanvas canvas){
         this.canvas = canvas;
     }
 
@@ -40,7 +40,7 @@ public abstract class A3DGraphic extends Node implements Graphic{
     }
 
     @Override
-    public void setVisible(boolean visible) {
+    public void setVisible(final boolean visible) {
         this.visible = visible;
     }
 

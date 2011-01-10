@@ -98,7 +98,7 @@ public class LinearRingType extends AbstractGeometryType {
      *     {@link Boolean }
      *     
      */
-    public void setExtrude(Boolean value) {
+    public void setExtrude(final Boolean value) {
         this.extrude = value;
     }
 
@@ -122,7 +122,7 @@ public class LinearRingType extends AbstractGeometryType {
      *     {@link Boolean }
      *     
      */
-    public void setTessellate(Boolean value) {
+    public void setTessellate(final Boolean value) {
         this.tessellate = value;
     }
 
@@ -148,7 +148,7 @@ public class LinearRingType extends AbstractGeometryType {
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
      *     
      */
-    public void setAltitudeModeGroup(JAXBElement<?> value) {
+    public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
     }
 

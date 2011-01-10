@@ -58,7 +58,7 @@ public class CategoryPropertyType implements AbstractCategoryProperty {
 
     }
 
-    public CategoryPropertyType(AbstractCategoryProperty cat) {
+    public CategoryPropertyType(final AbstractCategoryProperty cat) {
         if (cat != null && cat.getCategory() != null) {
             this.category = new Category(cat.getCategory());
         }
@@ -84,7 +84,7 @@ public class CategoryPropertyType implements AbstractCategoryProperty {
      *     {@link Category }
      *     
      */
-    public void setCategory(Category value) {
+    public void setCategory(final Category value) {
         this.category = value;
     }
 

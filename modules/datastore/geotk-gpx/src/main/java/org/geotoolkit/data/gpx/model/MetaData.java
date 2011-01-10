@@ -45,8 +45,8 @@ public class MetaData {
     private final String keywords;
     private final Envelope bounds;
 
-    public MetaData(String name, String description, Person person, CopyRight copyRight,
-            List<URI> links, Date time, String keywords, Envelope bounds) {
+    public MetaData(final String name, final String description, final Person person, final CopyRight copyRight,
+            final List<URI> links, final Date time, final String keywords, final Envelope bounds) {
         this.name = name;
         this.description = description;
         this.person = person;
@@ -165,7 +165,7 @@ public class MetaData {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

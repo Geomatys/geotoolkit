@@ -49,7 +49,7 @@ public enum IdentifierGenerationOptionType {
     GENERATE_NEW("GenerateNew");
     private final String value;
 
-    IdentifierGenerationOptionType(String v) {
+    IdentifierGenerationOptionType(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum IdentifierGenerationOptionType {
         return value;
     }
 
-    public static IdentifierGenerationOptionType fromValue(String v) {
+    public static IdentifierGenerationOptionType fromValue(final String v) {
         for (IdentifierGenerationOptionType c: IdentifierGenerationOptionType.values()) {
             if (c.value.equals(v)) {
                 return c;

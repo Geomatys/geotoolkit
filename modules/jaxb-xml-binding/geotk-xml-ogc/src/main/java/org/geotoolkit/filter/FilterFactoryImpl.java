@@ -152,43 +152,43 @@ public class FilterFactoryImpl implements FilterFactory2 {
     
     private static final DateFormat DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd");
     
-    public FeatureId featureId(String id) {
+    public FeatureId featureId(final String id) {
         return new FeatureIdType(id);
     }
 
-    public GmlObjectId gmlObjectId(String id) {
+    public GmlObjectId gmlObjectId(final String id) {
         return new GmlObjectIdType(id);
     }
 
-    public And and(Filter f, Filter g) {
+    public And and(final Filter f, final Filter g) {
         return new AndType(f, g);
     }
 
-    public And and(List<Filter> f) {
+    public And and(final List<Filter> f) {
         return new AndType(f);
     }
 
-    public Or or(Filter f, Filter g) {
+    public Or or(final Filter f, final Filter g) {
         return new OrType(f, g);
     }
 
-    public Or or(List<Filter> f) {
+    public Or or(final List<Filter> f) {
         return new OrType(f);
     }
 
-    public Not not(Filter f) {
+    public Not not(final Filter f) {
         return new NotType(f);
     }
 
-    public Id id(Set<? extends Identifier> ids) {
+    public Id id(final Set<? extends Identifier> ids) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public PropertyName property(String name) {
+    public PropertyName property(final String name) {
         return new PropertyNameType(name);
     }
 
-    public PropertyIsBetween between(Expression expr, Expression lower, Expression upper) {
+    public PropertyIsBetween between(final Expression expr, Expression lower, Expression upper) {
         if (lower instanceof LiteralType) {
             lower = new LowerBoundaryType((LiteralType)lower);
         }
@@ -207,88 +207,88 @@ public class FilterFactoryImpl implements FilterFactory2 {
         }
     }
 
-    public PropertyIsEqualTo equals(Expression expr1, Expression expr2) {
+    public PropertyIsEqualTo equals(final Expression expr1, final Expression expr2) {
         return new PropertyIsEqualToType((LiteralType) expr2, (PropertyNameType) expr1, null);
     }
 
-    public PropertyIsEqualTo equal(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsEqualTo equal(final Expression expr1, final Expression expr2, final boolean matchCase) {
         return new PropertyIsEqualToType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
     }
 
-    public PropertyIsNotEqualTo notEqual(Expression expr1, Expression expr2) {
+    public PropertyIsNotEqualTo notEqual(final Expression expr1, final Expression expr2) {
         return new PropertyIsNotEqualToType((LiteralType) expr2, (PropertyNameType) expr1, null);
     }
 
-    public PropertyIsNotEqualTo notEqual(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsNotEqualTo notEqual(final Expression expr1, final Expression expr2, final boolean matchCase) {
         return new PropertyIsNotEqualToType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
     }
 
-    public PropertyIsGreaterThan greater(Expression expr1, Expression expr2) {
+    public PropertyIsGreaterThan greater(final Expression expr1, final Expression expr2) {
         return new PropertyIsGreaterThanType((LiteralType) expr2, (PropertyNameType) expr1, null);
     }
 
-    public PropertyIsGreaterThan greater(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsGreaterThan greater(final Expression expr1, final Expression expr2, final boolean matchCase) {
         return new PropertyIsGreaterThanType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
     }
 
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(Expression expr1, Expression expr2) {
+    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(final Expression expr1, final Expression expr2) {
         return new PropertyIsGreaterThanOrEqualToType((LiteralType) expr2, (PropertyNameType) expr1, null);
     }
 
-    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsGreaterThanOrEqualTo greaterOrEqual(final Expression expr1, final Expression expr2, final boolean matchCase) {
         return new PropertyIsGreaterThanOrEqualToType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
     }
 
-    public PropertyIsLessThan less(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsLessThan less(final Expression expr1, final Expression expr2, final boolean matchCase) {
         return new PropertyIsLessThanType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
     }
 
-    public PropertyIsLessThan less(Expression expr1, Expression expr2) {
+    public PropertyIsLessThan less(final Expression expr1, final Expression expr2) {
         return new PropertyIsLessThanType((LiteralType) expr2, (PropertyNameType) expr1, null);
     }
 
-    public PropertyIsLessThanOrEqualTo lessOrEqual(Expression expr1, Expression expr2, boolean matchCase) {
+    public PropertyIsLessThanOrEqualTo lessOrEqual(final Expression expr1, final Expression expr2, final boolean matchCase) {
         return new PropertyIsLessThanOrEqualToType((LiteralType) expr2, (PropertyNameType) expr1, matchCase);
     }
 
-    public PropertyIsLessThanOrEqualTo lessOrEqual(Expression expr1, Expression expr2) {
+    public PropertyIsLessThanOrEqualTo lessOrEqual(final Expression expr1, final Expression expr2) {
         return new PropertyIsLessThanOrEqualToType((LiteralType) expr2, (PropertyNameType) expr1, null);
     }
 
-    public PropertyIsLike like(Expression expr, String pattern) {
+    public PropertyIsLike like(final Expression expr, final String pattern) {
         return like(expr, pattern, "*", "?", "\\");
     }
 
-    public PropertyIsLike like(Expression expr, String pattern, boolean isMatchingCase) {
+    public PropertyIsLike like(final Expression expr, final String pattern, final boolean isMatchingCase) {
         return like(expr, pattern, "*", "?", "\\", isMatchingCase);
     }
 
-    public PropertyIsLike like(Expression expr, String pattern, String wildcard, String singleChar, String escape) {
+    public PropertyIsLike like(final Expression expr, String pattern, final String wildcard, final String singleChar, final String escape) {
         //SQLBuilder add a white space at then end of the pattern we remove it
         if (pattern != null && pattern.lastIndexOf(' ') == pattern.length() -1)
             pattern = pattern.substring(0, pattern.length() -1);
         return new PropertyIsLikeType(expr, pattern, wildcard, singleChar, escape);
     }
 
-    public PropertyIsLike like(Expression expr, String pattern, String wildcard, String singleChar, String escape, boolean isMatchingCase) {
+    public PropertyIsLike like(final Expression expr, String pattern, final String wildcard, final String singleChar, final String escape, final boolean isMatchingCase) {
         //SQLBuilder add a white space at then end of the pattern we remove it
         if (pattern != null && pattern.lastIndexOf(' ') == pattern.length() -1)
             pattern = pattern.substring(0, pattern.length() -1);
         return new PropertyIsLikeType(expr, pattern, wildcard, singleChar, escape, isMatchingCase);
     }
 
-    public PropertyIsNull isNull(Expression expr) {
+    public PropertyIsNull isNull(final Expression expr) {
         return new PropertyIsNullType((PropertyNameType)expr);
     }
 
-    public BBOX bbox(String propertyName, double minx, double miny, double maxx, double maxy, String srs) {
+    public BBOX bbox(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, String srs) {
         if (srs == null || srs.equals("")) {
             srs = "EPSG:4326";
         }
         return new BBOXType(propertyName, minx, miny, maxx, maxy, srs);
     }
     
-    public BBOX bbox(Expression geometry, double minx, double miny, double maxx, double maxy, String srs) {
+    public BBOX bbox(final Expression geometry, final double minx, final double miny, final double maxx, final double maxy, String srs) {
         String propertyName = "";
         if (geometry instanceof PropertyNameType) {
             propertyName = ((PropertyNameType)geometry).getPropertyName();
@@ -301,7 +301,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new BBOXType(propertyName, minx, miny, maxx, maxy, srs);
     }
 
-    public BBOX bbox(Expression geometry, BoundingBox bounds) {
+    public BBOX bbox(final Expression geometry, final BoundingBox bounds) {
         String propertyName = "";
         String CRSName      = "";
         if (geometry instanceof PropertyNameType) {
@@ -315,12 +315,12 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new BBOXType(propertyName, bounds.getMinX(), bounds.getMinY(), bounds.getMaxX(), bounds.getMaxY(), CRSName);
     }
 
-    public Beyond beyond(String propertyName, Geometry geometry, double distance, String units) {
+    public Beyond beyond(final String propertyName, final Geometry geometry, final double distance, final String units) {
        
         return new BeyondType(propertyName, (AbstractGeometryType) geometry, distance, units);
     }
 
-    public Beyond beyond(Expression geometry1, Expression geometry2, double distance, String units) {
+    public Beyond beyond(final Expression geometry1, final Expression geometry2, final double distance, String units) {
         String propertyName = "";
         if (geometry1 instanceof PropertyNameType) {
             propertyName = ((PropertyNameType)geometry1).getPropertyName();
@@ -342,11 +342,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new BeyondType(propertyName, (AbstractGeometryType) geom, distance, units);
     }
     
-    public DWithin dwithin(String propertyName, Geometry geometry, double distance, String units) {
+    public DWithin dwithin(final String propertyName, final Geometry geometry, final double distance, final String units) {
         return new DWithinType(propertyName, (AbstractGeometryType) geometry, distance, units);
     }
 
-    public DWithin dwithin(Expression geometry1, Expression geometry2, double distance, String units) {
+    public DWithin dwithin(final Expression geometry1, final Expression geometry2, final double distance, String units) {
         String propertyName = "";
         
         // we get the propertyName
@@ -369,11 +369,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new DWithinType(propertyName, (AbstractGeometryType) geom, distance, units);
     }
     
-    public Contains contains(String propertyName, Geometry geometry) {
+    public Contains contains(final String propertyName, final Geometry geometry) {
         return new ContainsType(propertyName, (AbstractGeometryType) geometry);
     }
 
-    public Contains contains(Expression geometry1, Expression geometry2) {
+    public Contains contains(final Expression geometry1, final Expression geometry2) {
         // we get the propertyName
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
@@ -391,11 +391,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new ContainsType(propertyName, geom);
     }
     
-    public Crosses crosses(String propertyName, Geometry geometry) {
+    public Crosses crosses(final String propertyName, final Geometry geometry) {
         return new CrossesType(propertyName, (AbstractGeometryType) geometry);
     }
 
-    public Crosses crosses(Expression geometry1, Expression geometry2) {
+    public Crosses crosses(final Expression geometry1, final Expression geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
@@ -413,11 +413,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new CrossesType(propertyName, geom);
     }
     
-    public Disjoint disjoint(String propertyName, Geometry geometry) {
+    public Disjoint disjoint(final String propertyName, final Geometry geometry) {
         return new DisjointType(propertyName, (AbstractGeometryType) geometry);
     }
 
-    public Disjoint disjoint(Expression geometry1, Expression geometry2) {
+    public Disjoint disjoint(final Expression geometry1, final Expression geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
@@ -436,11 +436,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
     
     
     
-    public Equals equals(String propertyName, Geometry geometry) {
+    public Equals equals(final String propertyName, final Geometry geometry) {
         return new EqualsType(propertyName, (AbstractGeometryType) geometry);
     }
 
-    public Equals equal(Expression geometry1, Expression geometry2) {
+    public Equals equal(final Expression geometry1, final Expression geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
@@ -458,11 +458,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new EqualsType(propertyName, geom);
     }
 
-    public Intersects intersects(String propertyName, Geometry geometry) {
+    public Intersects intersects(final String propertyName, final Geometry geometry) {
         return new IntersectsType(propertyName, (AbstractGeometryType) geometry);
     }
 
-    public Intersects intersects(Expression geometry1, Expression geometry2) {
+    public Intersects intersects(final Expression geometry1, final Expression geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
@@ -479,11 +479,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new IntersectsType(propertyName, geom);
     }
     
-    public Overlaps overlaps(String propertyName, Geometry geometry) {
+    public Overlaps overlaps(final String propertyName, final Geometry geometry) {
         return new OverlapsType(propertyName, (AbstractGeometryType) geometry);
     }
 
-    public Overlaps overlaps(Expression geometry1, Expression geometry2) {
+    public Overlaps overlaps(final Expression geometry1, final Expression geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
@@ -501,11 +501,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new OverlapsType(propertyName, geom);
     }
     
-    public Touches touches(String propertyName, Geometry geometry) {
+    public Touches touches(final String propertyName, final Geometry geometry) {
         return new TouchesType(propertyName, (AbstractGeometryType) geometry);
     }
 
-    public Touches touches(Expression propertyName1, Expression geometry2) {
+    public Touches touches(final Expression propertyName1, final Expression geometry2) {
         PropertyNameType propertyName = null;
         if (propertyName1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)propertyName1;
@@ -524,11 +524,11 @@ public class FilterFactoryImpl implements FilterFactory2 {
         
     }
     
-    public Within within(String propertyName, Geometry geometry) {
+    public Within within(final String propertyName, final Geometry geometry) {
        return new WithinType(propertyName, (AbstractGeometryType) geometry);
     }
     
-    public Within within(Expression geometry1, Expression geometry2) {
+    public Within within(final Expression geometry1, final Expression geometry2) {
         PropertyNameType propertyName = null;
         if (geometry1 instanceof PropertyNameType) {
             propertyName = (PropertyNameType)geometry1;
@@ -547,35 +547,35 @@ public class FilterFactoryImpl implements FilterFactory2 {
     }
 
 
-    public Add add(Expression expr1, Expression expr2) {
+    public Add add(final Expression expr1, final Expression expr2) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Divide divide(Expression expr1, Expression expr2) {
+    public Divide divide(final Expression expr1, final Expression expr2) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Multiply multiply(Expression expr1, Expression expr2) {
+    public Multiply multiply(final Expression expr1, final Expression expr2) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Subtract subtract(Expression expr1, Expression expr2) {
+    public Subtract subtract(final Expression expr1, final Expression expr2) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Function function(String name, Expression[] args) {
+    public Function function(final String name, final Expression[] args) {
         return new FunctionType(name, args);
     }
 
-    public Function function(String name, Expression arg1) {
+    public Function function(final String name, final Expression arg1) {
         return new FunctionType(name, arg1);
     }
 
-    public Function function(String name, Expression arg1, Expression arg2) {
+    public Function function(final String name, final Expression arg1, final Expression arg2) {
         return new FunctionType(name, arg1, arg2);
     }
 
-    public Function function(String name, Expression arg1, Expression arg2, Expression arg3) {
+    public Function function(final String name, final Expression arg1, final Expression arg2, final Expression arg3) {
          return new FunctionType(name, arg1, arg2, arg3);
     }
 
@@ -589,88 +589,88 @@ public class FilterFactoryImpl implements FilterFactory2 {
         return new LiteralType(obj);
     }
 
-    public Literal literal(byte b) {
+    public Literal literal(final byte b) {
         return new LiteralType(b);
     }
 
-    public Literal literal(short s) {
+    public Literal literal(final short s) {
         return new LiteralType(s);
     }
 
-    public Literal literal(int i) {
+    public Literal literal(final int i) {
         return new LiteralType(i);
     }
 
-    public Literal literal(long l) {
+    public Literal literal(final long l) {
         return new LiteralType(l);
     }
 
-    public Literal literal(float f) {
+    public Literal literal(final float f) {
         return new LiteralType(f);
     }
 
-    public Literal literal(double d) {
+    public Literal literal(final double d) {
         return new LiteralType(d);
     }
 
-    public Literal literal(char c) {
+    public Literal literal(final char c) {
         return new LiteralType(c);
     }
 
-    public Literal literal(boolean b) {
+    public Literal literal(final boolean b) {
         return new LiteralType(b);
     }
 
-    public SortBy sort(String propertyName, SortOrder order) {
+    public SortBy sort(final String propertyName, final SortOrder order) {
         return new SortPropertyType(propertyName, order);
     }
 
-    public Operator operator(String name) {
+    public Operator operator(final String name) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public SpatialOperator spatialOperator(String name, GeometryOperand[] geometryOperands) {
+    public SpatialOperator spatialOperator(final String name, final GeometryOperand[] geometryOperands) {
         return new SpatialOperatorType(name, geometryOperands);
     }
 
-    public FunctionName functionName(String name, int nargs) {
+    public FunctionName functionName(final String name, final int nargs) {
         return new FunctionNameType(name, nargs);
     }
 
-    public Functions functions(FunctionName[] functionNames) {
+    public Functions functions(final FunctionName[] functionNames) {
        
         return new FunctionNamesType(Arrays.asList((FunctionNameType[])functionNames));
     }
 
-    public SpatialOperators spatialOperators(SpatialOperator[] spatialOperators) {
+    public SpatialOperators spatialOperators(final SpatialOperator[] spatialOperators) {
        return new SpatialOperatorsType( spatialOperators );
     }
 
-    public ComparisonOperators comparisonOperators(Operator[] comparisonOperators) {
+    public ComparisonOperators comparisonOperators(final Operator[] comparisonOperators) {
         return new ComparisonOperatorsType(comparisonOperators);
     }
 
-    public ArithmeticOperators arithmeticOperators(boolean simple, Functions functions) {
+    public ArithmeticOperators arithmeticOperators(final boolean simple, final Functions functions) {
          return new ArithmeticOperatorsType(simple, functions);
     }
 
-    public ScalarCapabilities scalarCapabilities(ComparisonOperators comparison, ArithmeticOperators arithmetic, boolean logical) {
+    public ScalarCapabilities scalarCapabilities(final ComparisonOperators comparison, final ArithmeticOperators arithmetic, final boolean logical) {
         return new ScalarCapabilitiesType(comparison, arithmetic, logical);
     }
 
-    public SpatialCapabilities spatialCapabilities(GeometryOperand[] geometryOperands, SpatialOperators spatial) {
+    public SpatialCapabilities spatialCapabilities(final GeometryOperand[] geometryOperands, final SpatialOperators spatial) {
         return new SpatialCapabilitiesType(geometryOperands, spatial);
     }
 
-    public IdCapabilities idCapabilities(boolean eid, boolean fid) {
+    public IdCapabilities idCapabilities(final boolean eid, final boolean fid) {
         return new IdCapabilitiesType(eid, fid);
     }
 
-    public FilterCapabilities capabilities(String version, ScalarCapabilities scalar, SpatialCapabilities spatial, IdCapabilities id) {
+    public FilterCapabilities capabilities(final String version, final ScalarCapabilities scalar, final SpatialCapabilities spatial, final IdCapabilities id) {
         return new org.geotoolkit.ogc.xml.v110.FilterCapabilities(scalar, spatial, id);
     }
 
-    public PropertyName property(Name name) {
+    public PropertyName property(final Name name) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
     
@@ -679,7 +679,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
      * @param geom
      * @return
      */
-    public Object GeometryToGML(Object geom) {
+    public Object GeometryToGML(final Object geom) {
         Object result = null;
         if (geom instanceof Polygon) {
             Polygon p          = (Polygon) geom;

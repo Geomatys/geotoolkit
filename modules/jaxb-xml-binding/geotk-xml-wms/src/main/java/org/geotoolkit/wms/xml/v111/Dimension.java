@@ -70,7 +70,7 @@ public class Dimension extends AbstractDimension {
       * @param units    The unit of the value (example:ISO8601 for time).
       * @param _default The default value if its not specified.
       */
-    public Dimension(final String name, final String units, final String _default, String value) {
+    public Dimension(final String name, final String units, final String _default, final String value) {
         
         this.name           = name;
         this._default       = _default;
@@ -107,7 +107,7 @@ public class Dimension extends AbstractDimension {
      * Sets the value of the value property.
      * 
     */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -145,7 +145,7 @@ public class Dimension extends AbstractDimension {
      * Sets the value of the Default property.
      * 
      */
-    public void setDefault(String _default) {
+    public void setDefault(final String _default) {
         this._default = _default;
     }
     

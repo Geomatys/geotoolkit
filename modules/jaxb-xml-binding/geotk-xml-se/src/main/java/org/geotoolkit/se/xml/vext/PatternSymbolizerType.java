@@ -90,7 +90,7 @@ public class PatternSymbolizerType extends SymbolizerType {
      *     {@link ChannelSelectionType }
      *     
      */
-    public void setChannel(ParameterValueType value) {
+    public void setChannel(final ParameterValueType value) {
         this.channel = value;
     }
 
@@ -114,7 +114,7 @@ public class PatternSymbolizerType extends SymbolizerType {
      *     {@link ThreshholdsBelongToType }
      *
      */
-    public void setThreshholdsBelongTo(ThreshholdsBelongToType value) {
+    public void setThreshholdsBelongTo(final ThreshholdsBelongToType value) {
         this.threshholdsBelongTo = value;
     }
 

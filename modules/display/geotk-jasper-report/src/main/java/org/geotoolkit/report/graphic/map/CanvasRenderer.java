@@ -63,7 +63,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
 
     private Graphics2D g2d = null;
     
-    public CanvasRenderer(MapContext context){
+    public CanvasRenderer(final MapContext context){
         super(context.getCoordinateReferenceSystem(),null);
     }
     
@@ -101,7 +101,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
      * {@inheritDoc }
      */
     @Override
-    public void repaint(Shape area) {
+    public void repaint(final Shape area) {
         monitor.renderingStarted();
         fireRenderingStateChanged(RenderingState.RENDERING);
 
@@ -180,7 +180,7 @@ public class CanvasRenderer extends J2DCanvas implements JRRenderable{
      * {@inheritDoc }
      */
     @Override
-    public void render(Graphics2D g, Rectangle2D rect) throws JRException {
+    public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
         double rotation = getController().getRotation();
 
         final Rectangle2D dim = new Rectangle2D.Double(0, 0, rect.getWidth(), rect.getHeight());

@@ -58,14 +58,14 @@ public class InternationalStringType implements EbrimInternationalString {
 
     }
 
-    public InternationalStringType(LocalizedStringType ls) {
+    public InternationalStringType(final LocalizedStringType ls) {
         this.localizedString  = new ArrayList<LocalizedStringType>();
         if (ls != null) {
             this.localizedString.add(ls);
         }
     }
 
-    public InternationalStringType(List<LocalizedStringType> ls) {
+    public InternationalStringType(final List<LocalizedStringType> ls) {
         this.localizedString  = ls;
     }
 
@@ -84,7 +84,7 @@ public class InternationalStringType implements EbrimInternationalString {
      * 
      * @param localizedString
      */
-    public void setLocalizedString(List<LocalizedStringType> localizedString) {
+    public void setLocalizedString(final List<LocalizedStringType> localizedString) {
         this.localizedString = localizedString;
     }
     
@@ -93,7 +93,7 @@ public class InternationalStringType implements EbrimInternationalString {
      * 
      * @param localizedString
      */
-    public void setLocalizedString(LocalizedStringType localizedString) {
+    public void setLocalizedString(final LocalizedStringType localizedString) {
         if (this.localizedString == null) {
             this.localizedString = new ArrayList<LocalizedStringType>();
         }

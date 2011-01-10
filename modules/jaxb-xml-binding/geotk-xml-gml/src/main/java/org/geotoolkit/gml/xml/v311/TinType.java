@@ -163,7 +163,7 @@ public class TinType
      *     {@link LengthType }
      *     
      */
-    public void setMaxLength(LengthType value) {
+    public void setMaxLength(final LengthType value) {
         this.maxLength = value;
     }
 
@@ -187,7 +187,7 @@ public class TinType
      *     {@link TinType.ControlPoint }
      *     
      */
-    public void setControlPoint(TinType.ControlPoint value) {
+    public void setControlPoint(final TinType.ControlPoint value) {
         this.controlPoint = value;
     }
 
@@ -246,7 +246,7 @@ public class TinType
          *     {@link DirectPositionListType }
          *     
          */
-        public void setPosList(DirectPositionListType value) {
+        public void setPosList(final DirectPositionListType value) {
             this.posList = value;
         }
 

@@ -119,7 +119,7 @@ public class OperationMetadataAdapter extends XmlAdapter<OperationMetadataAdapte
      * @return A java object which represents the metadata value.
      */
     @Override
-    public OperationMetadata unmarshal(OperationMetadataAdapter value) throws Exception {
+    public OperationMetadata unmarshal(final OperationMetadataAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -134,7 +134,7 @@ public class OperationMetadataAdapter extends XmlAdapter<OperationMetadataAdapte
      * @return The adapter for this OperationMetadata.
      */
     @Override
-    public OperationMetadataAdapter marshal(OperationMetadata value) throws Exception {
+    public OperationMetadataAdapter marshal(final OperationMetadata value) throws Exception {
         return new OperationMetadataAdapter(value);
     }
 

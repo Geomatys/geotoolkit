@@ -68,7 +68,7 @@ public class SpatialQuery {
      *
      * @param query  A well-formed Lucene query.
      */
-    public SpatialQuery(String query) {
+    public SpatialQuery(final String query) {
         this(query,null,SerialChainFilter.AND,null);
     }
     
@@ -81,7 +81,7 @@ public class SpatialQuery {
      * @throws org.opengis.util.FactoryException
      * @throws org.opengis.referencing.operation.TransformException
      */
-    public SpatialQuery(LuceneOGCFilter spatialFilter) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
+    public SpatialQuery(final LuceneOGCFilter spatialFilter) throws NoSuchAuthorityCodeException, FactoryException, TransformException {
         this("",spatialFilter,SerialChainFilter.AND);
     }
     
@@ -92,12 +92,12 @@ public class SpatialQuery {
      * @param filter A lucene filter (spatial, serialChain, ...)
      * @param logicalOperator The logical operator to apply between the query and the spatialFilter.
      */
-    public SpatialQuery(String query, Filter filter, int logicalOperator) {
+    public SpatialQuery(final String query, final Filter filter, final int logicalOperator) {
         this(query,filter,logicalOperator,null);
     }
     
 
-    private SpatialQuery(String query, Filter filter, int logicalOperator, List<SpatialQuery> sub){
+    private SpatialQuery(final String query, final Filter filter, final int logicalOperator, final List<SpatialQuery> sub){
         this.query           = new StringBuilder(query);
         this.spatialFilter   = filter;
         this.logicalOperator = logicalOperator;
@@ -144,7 +144,7 @@ public class SpatialQuery {
      * 
      * @param sort
      */
-    public void setSort(Sort sort) {
+    public void setSort(final Sort sort) {
         this.sort = sort;
         for (SpatialQuery sub: getSubQueries()) {
             sub.setSort(sort);
@@ -163,7 +163,7 @@ public class SpatialQuery {
      * 
      * @param subQueries a list of spatial queries.
      */
-    public void setSubQueries(List<SpatialQuery> subQueries) {
+    public void setSubQueries(final List<SpatialQuery> subQueries) {
         this.subQueries.clear();
         this.subQueries.addAll(subQueries);
     }
@@ -173,14 +173,14 @@ public class SpatialQuery {
      *
      * @param sq a spatial query.
      */
-    public void addSubQuery(SpatialQuery sq) {
+    public void addSubQuery(final SpatialQuery sq) {
         subQueries.add(sq);
     }
     
     /**
      * Set the lucene query associated with the filter. 
      */
-    public void setQuery(String query) {
+    public void setQuery(final String query) {
         this.query.delete(0, this.query.length()-1);
         this.query.append(query);
     }
@@ -190,7 +190,7 @@ public class SpatialQuery {
      * 
      * @param s a piece of lucene query.
      */
-    public void appendToQuery(String s) {
+    public void appendToQuery(final String s) {
         query.append(s);
     }
     

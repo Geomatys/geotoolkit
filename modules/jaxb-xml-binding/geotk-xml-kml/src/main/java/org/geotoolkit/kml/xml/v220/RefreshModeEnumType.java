@@ -49,7 +49,7 @@ public enum RefreshModeEnumType {
     ON_EXPIRE("onExpire");
     private final String value;
 
-    RefreshModeEnumType(String v) {
+    RefreshModeEnumType(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum RefreshModeEnumType {
         return value;
     }
 
-    public static RefreshModeEnumType fromValue(String v) {
+    public static RefreshModeEnumType fromValue(final String v) {
         for (RefreshModeEnumType c: RefreshModeEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

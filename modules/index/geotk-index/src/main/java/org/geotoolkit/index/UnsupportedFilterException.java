@@ -38,7 +38,7 @@ public class UnsupportedFilterException extends Exception {
      * 
      * @param message
      */
-    public UnsupportedFilterException(String message) {
+    public UnsupportedFilterException(final String message) {
         super(message);
     }
 
@@ -48,7 +48,7 @@ public class UnsupportedFilterException extends Exception {
      * @param message
      * @param cause
      */
-    public UnsupportedFilterException(String message, Throwable cause) {
+    public UnsupportedFilterException(final String message, final Throwable cause) {
         super(message, cause);
     }
 
@@ -57,7 +57,7 @@ public class UnsupportedFilterException extends Exception {
      * 
      * @param cause
      */
-    public UnsupportedFilterException(Throwable cause) {
+    public UnsupportedFilterException(final Throwable cause) {
         super(cause);
     }
 }

@@ -47,7 +47,7 @@ public class PolyhedralSurfaceType {
 
     }
 
-    public PolyhedralSurfaceType(JTSPolyhedralSurface poly) {
+    public PolyhedralSurfaceType(final JTSPolyhedralSurface poly) {
         this.coordinateReferenceSystem = poly.getCoordinateReferenceSystem();
         this.patchList = new PolygonPatchesListType(poly.getPatches());
 
@@ -67,7 +67,7 @@ public class PolyhedralSurfaceType {
     /**
      * @param patches the patches to set
      */
-    public void setPatches(List<JTSPolygon> patches) {
+    public void setPatches(final List<JTSPolygon> patches) {
         this.patchList.setPolygonPatches(patches);
     }
 
@@ -81,7 +81,7 @@ public class PolyhedralSurfaceType {
     /**
      * @param coordinateReferenceSystem the coordinateReferenceSystem to set
      */
-    public void setCoordinateReferenceSystem(CoordinateReferenceSystem coordinateReferenceSystem) {
+    public void setCoordinateReferenceSystem(final CoordinateReferenceSystem coordinateReferenceSystem) {
         this.coordinateReferenceSystem = coordinateReferenceSystem;
     }
 

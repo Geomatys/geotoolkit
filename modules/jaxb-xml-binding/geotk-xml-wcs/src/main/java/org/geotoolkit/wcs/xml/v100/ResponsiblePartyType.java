@@ -88,7 +88,7 @@ public class ResponsiblePartyType {
     /**
      * Build a new Responsible Party
      */
-    public ResponsiblePartyType(String individualName, String positionName, String organisationName, ContactType contactInfo) {
+    public ResponsiblePartyType(final String individualName, final String positionName, final String organisationName, final ContactType contactInfo) {
          content = new ArrayList<JAXBElement<?>>();
          content.add(factory.createResponsiblePartyTypeIndividualName(individualName));
          content.add(factory.createResponsiblePartyTypePositionName(positionName));

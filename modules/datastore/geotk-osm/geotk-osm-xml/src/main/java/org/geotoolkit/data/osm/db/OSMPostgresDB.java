@@ -66,7 +66,7 @@ public class OSMPostgresDB {
 
     private Savepoint savePoint = null;
 
-    public OSMPostgresDB(String host, String database,String username, String password) throws SQLException, ClassNotFoundException {
+    public OSMPostgresDB(final String host, final String database,final String username, final String password) throws SQLException, ClassNotFoundException {
         Class.forName("org.postgresql.Driver");
         cnx = DriverManager.getConnection("jdbc:postgresql://"+host+"/"+database,username,password);
         cnx.setAutoCommit(false);
@@ -278,7 +278,7 @@ public class OSMPostgresDB {
         stmt.close();
     }
 
-    public void insertNode(Node node) throws SQLException{
+    public void insertNode(final Node node) throws SQLException{
     }
 
     /**
@@ -288,7 +288,7 @@ public class OSMPostgresDB {
      * @return int array : first one is the inserted number of nodes, second is tags number
      * @throws SQLException
      */
-    public int[] insertNode(List<Node> nodes) throws SQLException{
+    public int[] insertNode(final List<Node> nodes) throws SQLException{
         final int wantedSize = nodes.size();
 
         if(wantedSize == 0) return new int[]{0,0};
@@ -316,7 +316,7 @@ public class OSMPostgresDB {
         return new int[]{wantedSize, nbTag, nbUser};
     }
 
-    public int insertNodeTag(List<Tag> map, long entityId) throws SQLException{
+    public int insertNodeTag(final List<Tag> map, final long entityId) throws SQLException{
         final int wantedSize = map.size();
 
         if(wantedSize == 0) return 0;
@@ -335,7 +335,7 @@ public class OSMPostgresDB {
     }
 
 
-    public int[] insertWay(List<Way> ways) throws SQLException{
+    public int[] insertWay(final List<Way> ways) throws SQLException{
         final int wantedSize = ways.size();
 
         if(wantedSize == 0) return new int[]{0,0,0};
@@ -363,7 +363,7 @@ public class OSMPostgresDB {
         return new int[]{wantedSize, nbTag, nbMember,nbUser};
     }
 
-    public int insertWayTag(List<Tag> map, long entityId) throws SQLException{
+    public int insertWayTag(final List<Tag> map, final long entityId) throws SQLException{
         final int wantedSize = map.size();
 
         if(wantedSize == 0) return 0;
@@ -381,7 +381,7 @@ public class OSMPostgresDB {
         return wantedSize;
     }
 
-    public int insertWayMember(List<Long> members, long wayId) throws SQLException{
+    public int insertWayMember(final List<Long> members, final long wayId) throws SQLException{
         final int wantedSize = members.size();
 
         if(wantedSize == 0) return 0;
@@ -399,7 +399,7 @@ public class OSMPostgresDB {
         return wantedSize;
     }
 
-    public int[] insertRelation(List<Relation> relations) throws SQLException{
+    public int[] insertRelation(final List<Relation> relations) throws SQLException{
         final int wantedSize = relations.size();
 
         if(wantedSize == 0) return new int[]{0,0,0};
@@ -427,7 +427,7 @@ public class OSMPostgresDB {
         return new int[]{wantedSize,nbTag,nbMember,nbUser};
     }
 
-    public int insertRelationTag(List<Tag> map, long entityId) throws SQLException{
+    public int insertRelationTag(final List<Tag> map, final long entityId) throws SQLException{
         final int wantedSize = map.size();
 
         if(wantedSize == 0) return 0;
@@ -445,7 +445,7 @@ public class OSMPostgresDB {
         return wantedSize;
     }
 
-    public int insertRelationMember(List<Member> members, long relationId) throws SQLException{
+    public int insertRelationMember(final List<Member> members, final long relationId) throws SQLException{
         final int wantedSize = members.size();
 
         if(wantedSize == 0) return 0;
@@ -467,7 +467,7 @@ public class OSMPostgresDB {
         return wantedSize;
     }
 
-    private int insertUser(User user) throws SQLException{
+    private int insertUser(final User user) throws SQLException{
         if(usersAdded.contains(user.getId())) return 0;
 
         final PreparedStatement stmt = userInsert.get(1);
@@ -523,12 +523,12 @@ public class OSMPostgresDB {
 
         private final int type;
 
-        private Statements(int type){
+        private Statements(final int type){
             super(20);
             this.type = type;
         }
 
-        public PreparedStatement get(int nb) throws SQLException {
+        public PreparedStatement get(final int nb) throws SQLException {
             PreparedStatement stmt = get((Integer)nb);
 
             if(stmt == null){

@@ -109,7 +109,7 @@ public class Attribute extends Annotated {
      *     {@link LocalSimpleType }
      *     
      */
-    public void setSimpleType(LocalSimpleType value) {
+    public void setSimpleType(final LocalSimpleType value) {
         this.simpleType = value;
     }
 
@@ -133,7 +133,7 @@ public class Attribute extends Annotated {
      *     {@link QName }
      *     
      */
-    public void setType(QName value) {
+    public void setType(final QName value) {
         this.type = value;
     }
 
@@ -161,7 +161,7 @@ public class Attribute extends Annotated {
      *     {@link String }
      *     
      */
-    public void setUse(String value) {
+    public void setUse(final String value) {
         this.use = value;
     }
 
@@ -185,7 +185,7 @@ public class Attribute extends Annotated {
      *     {@link String }
      *     
      */
-    public void setDefault(String value) {
+    public void setDefault(final String value) {
         this._default = value;
     }
 
@@ -209,7 +209,7 @@ public class Attribute extends Annotated {
      *     {@link String }
      *     
      */
-    public void setFixed(String value) {
+    public void setFixed(final String value) {
         this.fixed = value;
     }
 
@@ -233,7 +233,7 @@ public class Attribute extends Annotated {
      *     {@link FormChoice }
      *     
      */
-    public void setForm(FormChoice value) {
+    public void setForm(final FormChoice value) {
         this.form = value;
     }
 
@@ -257,7 +257,7 @@ public class Attribute extends Annotated {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -281,7 +281,7 @@ public class Attribute extends Annotated {
      *     {@link QName }
      *     
      */
-    public void setRef(QName value) {
+    public void setRef(final QName value) {
         this.ref = value;
     }
 

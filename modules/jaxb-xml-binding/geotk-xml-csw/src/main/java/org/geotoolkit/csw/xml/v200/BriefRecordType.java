@@ -74,7 +74,7 @@ public class BriefRecordType extends AbstractRecordType {
      * Sets the value of the identifier property.
      * 
      */
-    public void setIdentifier(SimpleLiteral identifier) {
+    public void setIdentifier(final SimpleLiteral identifier) {
         this.identifier = identifier;
     }
 
@@ -90,7 +90,7 @@ public class BriefRecordType extends AbstractRecordType {
      * Sets the value of the type property.
      * 
      */
-    public void setType(SimpleLiteral value) {
+    public void setType(final SimpleLiteral value) {
         this.type = value;
     }
 

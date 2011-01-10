@@ -66,14 +66,14 @@ public class RequestMethodType extends OnlineResourceType {
     /**
      * Build a new Request method.
      */
-    public RequestMethodType(String href){
+    public RequestMethodType(final String href){
         super(href);
     }
 
     /**
      * Build a new Request method.
      */
-    public RequestMethodType(List<DomainType> constraint){
+    public RequestMethodType(final List<DomainType> constraint){
         this.constraint = constraint;
     }
     

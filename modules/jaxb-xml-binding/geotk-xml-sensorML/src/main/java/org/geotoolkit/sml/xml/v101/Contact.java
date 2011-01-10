@@ -89,11 +89,11 @@ public class Contact implements AbstractContact {
 
     }
 
-    public Contact(ResponsibleParty responsibleParty) {
+    public Contact(final ResponsibleParty responsibleParty) {
         this.responsibleParty = responsibleParty;
     }
     
-    public Contact(AbstractContact contact) {
+    public Contact(final AbstractContact contact) {
         if (contact != null) {
             this.actuate = contact.getActuate();
             this.arcrole = contact.getArcrole();
@@ -115,7 +115,7 @@ public class Contact implements AbstractContact {
         }
     }
 
-    public Contact(String role, ResponsibleParty responsibleParty) {
+    public Contact(final String role, final ResponsibleParty responsibleParty) {
         this.role             = role;
         this.responsibleParty = responsibleParty;
     }
@@ -140,7 +140,7 @@ public class Contact implements AbstractContact {
      *     {@link Person }
      *     
      */
-    public void setPerson(Person value) {
+    public void setPerson(final Person value) {
         this.person = value;
     }
 
@@ -164,7 +164,7 @@ public class Contact implements AbstractContact {
      *     {@link ResponsibleParty }
      *     
      */
-    public void setResponsibleParty(ResponsibleParty value) {
+    public void setResponsibleParty(final ResponsibleParty value) {
         this.responsibleParty = value;
     }
 
@@ -188,7 +188,7 @@ public class Contact implements AbstractContact {
      *     {@link ContactList }
      *     
      */
-    public void setContactList(ContactList value) {
+    public void setContactList(final ContactList value) {
         this.contactList = value;
     }
 
@@ -212,7 +212,7 @@ public class Contact implements AbstractContact {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -237,7 +237,7 @@ public class Contact implements AbstractContact {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -261,7 +261,7 @@ public class Contact implements AbstractContact {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -285,7 +285,7 @@ public class Contact implements AbstractContact {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -309,7 +309,7 @@ public class Contact implements AbstractContact {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -333,7 +333,7 @@ public class Contact implements AbstractContact {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -357,7 +357,7 @@ public class Contact implements AbstractContact {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -381,7 +381,7 @@ public class Contact implements AbstractContact {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

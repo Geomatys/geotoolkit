@@ -58,7 +58,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
     
 
 
-    protected CachedGraphic(C graphic){
+    protected CachedGraphic(final C graphic){
         super(graphic);
         this.cachedAnchor = CachedAnchorPoint.cache(graphic.getAnchorPoint());
         this.cachedDisplacement = CachedDisplacement.cache(graphic.getDisplacement());
@@ -290,7 +290,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
      * 
      * @return BufferedImage for a feature 
      */
-    public BufferedImage getImage(Feature feature, final float coeff, RenderingHints hints) {
+    public BufferedImage getImage(final Feature feature, final float coeff, final RenderingHints hints) {
         evaluate();
         
         
@@ -384,21 +384,21 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
     /**
      * return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(Feature feature, float[] buffer){
+    public float[] getDisplacement(final Feature feature, final float[] buffer){
         return cachedDisplacement.getValues(feature, buffer);
     }
     
     /**
      * return an Array of 2 floats.
      */
-    public float[] getAnchor(Feature feature, float[] buffer){
+    public float[] getAnchor(final Feature feature, final float[] buffer){
         return cachedAnchor.getValues(feature, buffer);
     }
     
     /**
      * @return margin of this style for the given feature
      */
-    public float getMargin(Feature feature,float coeff) {
+    public float getMargin(final Feature feature,final float coeff) {
         evaluate();
 
         final boolean noFeature = (feature == null);
@@ -499,7 +499,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         evaluate();
         
         
@@ -553,7 +553,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         }
     }
 
-    public static CachedGraphic cache(Graphic graphic){
+    public static CachedGraphic cache(final Graphic graphic){
         return new CachedGraphic(graphic);
     }
 

@@ -84,7 +84,7 @@ public class DomainType implements AbstractDomain {
     /**
      * Build a new Domain with the specified list of values.
      */
-    public DomainType(String name, List<String> value) {
+    public DomainType(final String name, final List<String> value) {
         this.name  = name;
         this.value = value;
     }
@@ -106,7 +106,7 @@ public class DomainType implements AbstractDomain {
         return value;
     }
     
-    public void setValue(List<String> value) {
+    public void setValue(final List<String> value) {
         this.value = value;
     }
     

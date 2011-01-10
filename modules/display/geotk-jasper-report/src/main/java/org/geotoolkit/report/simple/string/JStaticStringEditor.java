@@ -29,7 +29,7 @@ public class JStaticStringEditor extends javax.swing.JPanel {
     private final StaticStringMapper mapper;
 
     /** Creates new form JStaticStringEditor */
-    public JStaticStringEditor(StaticStringMapper mapper) {
+    public JStaticStringEditor(final StaticStringMapper mapper) {
         initComponents();
         this.mapper = mapper;
 
@@ -79,7 +79,7 @@ public class JStaticStringEditor extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiTextKeyTyped(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_guiTextKeyTyped
+    private void guiTextKeyTyped(final java.awt.event.KeyEvent evt) {//GEN-FIRST:event_guiTextKeyTyped
 
         mapper.setValue(guiText.getText());
 

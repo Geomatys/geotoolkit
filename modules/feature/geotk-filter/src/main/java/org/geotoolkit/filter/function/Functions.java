@@ -72,7 +72,7 @@ public class Functions {
      * @param parameters : parameters of the function
      * @return Function or null if no factory are able to create this function
      */
-    public static Function function(String name, Literal fallback, Expression ... parameters){
+    public static Function function(final String name, final Literal fallback, final Expression ... parameters){
         final FunctionFactory ff = MAPPING.get(name);
         if(ff != null){
             return ff.createFunction(name,fallback, parameters);

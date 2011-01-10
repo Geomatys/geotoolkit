@@ -42,16 +42,16 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
         initComponents();
     }
 
-    public void setModel(double value, double min, double max, double step){
+    public void setModel(final double value, final double min, final double max, final double step){
         guiNumber.setModel(new SpinnerNumberModel(value, min, max, step));
     }
     
-    public void setModel(int value, int min, int max, int step){
+    public void setModel(final int value, final int min, final int max, final int step){
         guiNumber.setModel(new SpinnerNumberModel(value, min, max, step));
     }
     
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         super.setLayer(layer);
         guiSpecial.setLayer(layer);
     }
@@ -99,13 +99,13 @@ public class JNumberExpressionPane extends StyleElementEditor<Expression>{
         );
     }// </editor-fold>//GEN-END:initComponents
 
-private void guiSpecialPropertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
+private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
     if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)) {
         parse(guiSpecial.get());
     }
 }//GEN-LAST:event_guiSpecialPropertyChange
 
-private void guiNumberStateChanged(ChangeEvent evt) {//GEN-FIRST:event_guiNumberStateChanged
+private void guiNumberStateChanged(final ChangeEvent evt) {//GEN-FIRST:event_guiNumberStateChanged
     parse(  getFilterFactory().literal( ((SpinnerNumberModel)guiNumber.getModel()).getNumber() ));
 }//GEN-LAST:event_guiNumberStateChanged
 
@@ -116,7 +116,7 @@ private void guiNumberStateChanged(ChangeEvent evt) {//GEN-FIRST:event_guiNumber
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void parse(Expression target) {
+    public void parse(final Expression target) {
         if(target != null){
             if(isStatic(target)){
                 final Number value = target.evaluate(null, Number.class);

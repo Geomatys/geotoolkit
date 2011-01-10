@@ -66,7 +66,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
     /**
      * Creates a new instance of ShapefileReadWriteTest
      */
-    public ShapefileQuadTreeReadWriteTest( String name ) throws IOException {
+    public ShapefileQuadTreeReadWriteTest( final String name ) throws IOException {
         super(name);
     }
 
@@ -90,7 +90,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         }
     }
 
-    public void fail( String message, Throwable cause ) throws Throwable {
+    public void fail( final String message, final Throwable cause ) throws Throwable {
         Throwable fail = new AssertionFailedError(message);
         fail.initCause(cause);
         throw fail;
@@ -110,7 +110,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
          doubleWrite(type, one, getTempFile(), maker, true);
     }
 
-    private DataStore createDataStore( ShapefileDataStoreFactory fac, URL url, boolean memoryMapped )
+    private DataStore createDataStore( final ShapefileDataStoreFactory fac, final URL url, final boolean memoryMapped )
             throws IOException, DataStoreException {
         Map params = new HashMap();
         params.put(ShapefileDataStoreFactory.URLP.getName().toString(), url);
@@ -119,8 +119,8 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         return createDataStore;
     }
 
-    private void doubleWrite( SimpleFeatureType type, FeatureCollection<SimpleFeature> one, File tmp,
-            ShapefileDataStoreFactory maker, boolean memorymapped ) throws IOException,
+    private void doubleWrite( final SimpleFeatureType type, final FeatureCollection<SimpleFeature> one, final File tmp,
+            final ShapefileDataStoreFactory maker, final boolean memorymapped ) throws IOException,
             MalformedURLException,
             DataStoreException {
         DataStore s;
@@ -137,7 +137,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         assertEquals(one.size() * 2, s.getCount(QueryBuilder.all(s.getNames().iterator().next())));
     }
 
-    void test( String f ) throws Exception {
+    void test( final String f ) throws Exception {
 //        ShapeTestData.url(f)
 //        File file = copyShapefiles(f); // Work on File rather than URL from
 //        // JAR.
@@ -151,8 +151,8 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         test(type, one, getTempFile(), maker, true);
     }
 
-    private void test( SimpleFeatureType type, FeatureCollection<SimpleFeature> one, File tmp,
-            ShapefileDataStoreFactory maker, boolean memorymapped ) throws IOException,
+    private void test( final SimpleFeatureType type, final FeatureCollection<SimpleFeature> one, final File tmp,
+            final ShapefileDataStoreFactory maker, final boolean memorymapped ) throws IOException,
             MalformedURLException, Exception {
         DataStore s;
         s = createDataStore(maker, tmp.toURL(), memorymapped);
@@ -177,7 +177,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         two.containsAll(one);
     }
 
-    static void compare( FeatureIterator<SimpleFeature> fs1, FeatureIterator<SimpleFeature> fs2 ) throws Exception {
+    static void compare( final FeatureIterator<SimpleFeature> fs1, final FeatureIterator<SimpleFeature> fs2 ) throws Exception {
         try {
             while( fs1.hasNext() ) {
                 SimpleFeature f1 = fs1.next();
@@ -192,7 +192,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         }
     }
 
-    static void compare( SimpleFeature f1, SimpleFeature f2 ) throws Exception {
+    static void compare( final SimpleFeature f1, final SimpleFeature f2 ) throws Exception {
         if (f1.getAttributeCount() != f2.getAttributeCount()) {
             throw new Exception("Unequal number of attributes");
         }
@@ -257,7 +257,7 @@ public class ShapefileQuadTreeReadWriteTest extends AbstractTestCaseSupport {
         assertTrue(result.equals(bounds));
     }
 
-    public static final void main( String[] args ) throws Exception {
+    public static final void main( final String[] args ) throws Exception {
         junit.textui.TestRunner.run(suite(ShapefileQuadTreeReadWriteTest.class));
     }
 }

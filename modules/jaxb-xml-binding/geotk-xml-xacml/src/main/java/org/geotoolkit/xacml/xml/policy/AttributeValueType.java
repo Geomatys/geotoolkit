@@ -88,7 +88,7 @@ public class AttributeValueType {
    /**
     * Sets the value of the dataType property.
     */
-   public void setDataType(String value) {
+   public void setDataType(final String value) {
       this.dataType = value;
    }
 

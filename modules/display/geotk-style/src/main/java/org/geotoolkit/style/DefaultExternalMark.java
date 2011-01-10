@@ -45,7 +45,7 @@ public class DefaultExternalMark implements ExternalMark{
      * @param format : can not be null
      * @param index : can be null
      */
-    public DefaultExternalMark(OnlineResource online, String format, int index){
+    public DefaultExternalMark(final OnlineResource online, final String format, final int index){
         if( online == null || format == null ){
             throw new IllegalArgumentException("Online resource and format can not be null");
         }
@@ -64,7 +64,7 @@ public class DefaultExternalMark implements ExternalMark{
      * @param format : can not be null
      * @param index : can be null
      */
-    DefaultExternalMark(Icon icon){
+    DefaultExternalMark(final Icon icon){
         if( icon == null){
             throw new IllegalArgumentException("Icon can not be null");
         }
@@ -111,7 +111,7 @@ public class DefaultExternalMark implements ExternalMark{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -119,7 +119,7 @@ public class DefaultExternalMark implements ExternalMark{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

@@ -63,14 +63,14 @@ public class CoordinateSequenceMathTransformer implements CoordinateSequenceTran
     /**
      * Constructs a default coordinate sequence transformer.
      */
-    public CoordinateSequenceMathTransformer(MathTransform transform) {
+    public CoordinateSequenceMathTransformer(final MathTransform transform) {
         this(null,transform);
     }
 
     /**
      * Constructs a coordinate sequence transformer with the given CoordinateSequenceFactory.
      */
-    public CoordinateSequenceMathTransformer(CoordinateSequenceFactory csf, MathTransform transform) {
+    public CoordinateSequenceMathTransformer(final CoordinateSequenceFactory csf, final MathTransform transform) {
         if(csf == null){
             this.csf = DEFAULT_CS_FACTORY;
         }else{
@@ -79,7 +79,7 @@ public class CoordinateSequenceMathTransformer implements CoordinateSequenceTran
         this.transform =transform;
     }
 
-    public void setTransform(MathTransform transform) {
+    public void setTransform(final MathTransform transform) {
         this.transform = transform;
     }
 
@@ -91,7 +91,7 @@ public class CoordinateSequenceMathTransformer implements CoordinateSequenceTran
      * {@inheritDoc}
      */
     @Override
-    public CoordinateSequence transform(final CoordinateSequence sequence, int minpoints)
+    public CoordinateSequence transform(final CoordinateSequence sequence, final int minpoints)
             throws TransformException {
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();

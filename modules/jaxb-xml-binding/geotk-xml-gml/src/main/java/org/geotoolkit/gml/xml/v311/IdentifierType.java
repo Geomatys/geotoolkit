@@ -55,7 +55,7 @@ public class IdentifierType {
      * Sets the value of the name property.
      * 
      */
-    public void setName(JAXBElement<CodeType> value) {
+    public void setName(final JAXBElement<CodeType> value) {
         this.name = ((JAXBElement<CodeType> ) value);
     }
 
@@ -71,7 +71,7 @@ public class IdentifierType {
      * Sets the value of the version property.
      * 
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -87,7 +87,7 @@ public class IdentifierType {
      * Sets the value of the remarks property.
      * 
      */
-    public void setRemarks(StringOrRefType value) {
+    public void setRemarks(final StringOrRefType value) {
         this.remarks = value;
     }
 

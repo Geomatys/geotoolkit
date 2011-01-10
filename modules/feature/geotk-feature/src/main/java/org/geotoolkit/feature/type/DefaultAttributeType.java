@@ -78,7 +78,7 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
      * @throws IllegalArgumentException
      *             if parsing is attempted and is unsuccessful.
      */
-    public Object parse(Object value) throws IllegalArgumentException {
+    public Object parse(final Object value) throws IllegalArgumentException {
         //do nothing, sublcasses should override
         return value;
     }
@@ -105,7 +105,7 @@ public class DefaultAttributeType<T extends AttributeType> extends DefaultProper
      * @return whether other is equal to this attribute Type.
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (this == other) {
             return true;
         }

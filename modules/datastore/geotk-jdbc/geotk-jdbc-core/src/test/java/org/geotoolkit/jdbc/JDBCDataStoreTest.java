@@ -181,7 +181,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         w.close();
     }
 
-    void assertEqualsLax( SimpleFeatureType e, SimpleFeatureType a ) {
+    void assertEqualsLax( final SimpleFeatureType e, final SimpleFeatureType a ) {
         if ( e.equals( a ) ) {
             return;  
         }

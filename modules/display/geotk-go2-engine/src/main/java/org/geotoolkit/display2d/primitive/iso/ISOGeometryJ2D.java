@@ -66,7 +66,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      *
      * @param geom - the wrapped geometry
      */
-    public ISOGeometryJ2D(Geometry geom) {
+    public ISOGeometryJ2D(final Geometry geom) {
         this.geometry = geom;
     }
 
@@ -76,7 +76,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      *
      * @param g
      */
-    public void setGeometry(Geometry g) {
+    public void setGeometry(final Geometry g) {
         this.geometry = g;
         this.iterator = null;
     }
@@ -92,7 +92,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * {@inheritDoc }
      */
     @Override
-    public boolean contains(Rectangle2D r) {
+    public boolean contains(final Rectangle2D r) {
         Geometry rect = createRectangle(
                 r.getMinX(),
                 r.getMinY(),
@@ -105,7 +105,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * {@inheritDoc }
      */
     @Override
-    public boolean contains(Point2D p) {
+    public boolean contains(final Point2D p) {
         return geometry.contains(new DirectPosition2D(p));
     }
 
@@ -113,7 +113,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * {@inheritDoc }
      */
     @Override
-    public boolean contains(double x, double y) {
+    public boolean contains(final double x, final double y) {
         return geometry.contains(new DirectPosition2D(x,y));
     }
 
@@ -121,7 +121,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * {@inheritDoc }
      */
     @Override
-    public boolean contains(double x, double y, double w, double h) {
+    public boolean contains(final double x, final double y, final double w, final double h) {
         Geometry rect = createRectangle(x, y, w, h);
         return geometry.contains(rect);
     }
@@ -156,7 +156,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * {@inheritDoc }
      */
     @Override
-    public PathIterator getPathIterator(AffineTransform at) {
+    public PathIterator getPathIterator(final AffineTransform at) {
 
         if(iterator == null){
 //            if (this.geometry.isEmpty()) {
@@ -182,7 +182,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * {@inheritDoc }
      */
     @Override
-    public PathIterator getPathIterator(AffineTransform at, double flatness) {
+    public PathIterator getPathIterator(final AffineTransform at, final double flatness) {
         return getPathIterator(at);
     }
 
@@ -190,7 +190,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * {@inheritDoc }
      */
     @Override
-    public boolean intersects(Rectangle2D r) {
+    public boolean intersects(final Rectangle2D r) {
         Geometry rect = createRectangle(
                 r.getMinX(),
                 r.getMinY(),
@@ -203,7 +203,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * {@inheritDoc }
      */
     @Override
-    public boolean intersects(double x, double y, double w, double h) {
+    public boolean intersects(final double x, final double y, final double w, final double h) {
         Geometry rect = createRectangle(x, y, w, h);
         return geometry.intersects(rect);
     }
@@ -218,7 +218,7 @@ public class ISOGeometryJ2D implements Shape, Cloneable {
      * @param h height
      * @return a rectangle with the specified position and size
      */
-    private Geometry createRectangle(double x, double y, double w, double h) {
+    private Geometry createRectangle(final double x, final double y, final double w, final double h) {
         final GeometryFactory gf = new JTSGeometryFactory(geometry.getCoordinateReferenceSystem());
         final PrimitiveFactory pf = new JTSPrimitiveFactory(geometry.getCoordinateReferenceSystem());
 

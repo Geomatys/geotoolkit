@@ -78,7 +78,7 @@ public class SolidArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link SolidType }{@code >}
      *
      */
-    public void setJbAbstractSolid(List<JAXBElement<? extends AbstractSolidType>> abstractSolid) {
+    public void setJbAbstractSolid(final List<JAXBElement<? extends AbstractSolidType>> abstractSolid) {
         this.abstractSolid = abstractSolid;
     }
 
@@ -107,7 +107,7 @@ public class SolidArrayPropertyType {
      * {@link JAXBElement }{@code <}{@link SolidType }{@code >}
      *
      */
-    public void setAbstractSolid(List<? extends AbstractSolidType> abstractSolid) {
+    public void setAbstractSolid(final List<? extends AbstractSolidType> abstractSolid) {
         if (abstractSolid != null) {
             if (this.abstractSolid == null) {
                this.abstractSolid = new ArrayList<JAXBElement<? extends AbstractSolidType>>();

@@ -36,11 +36,11 @@ public class MemoryPageStore extends PageStore {
     private LockManager lockManager = new LockManager();
     private Node root = null;
 
-    public MemoryPageStore(DataDefinition def) throws TreeException {
+    public MemoryPageStore(final DataDefinition def) throws TreeException {
         this(def, DEF_MAX, DEF_MIN, DEF_SPLIT);
     }
 
-    public MemoryPageStore(DataDefinition def, int max, int min, short split)
+    public MemoryPageStore(final DataDefinition def, final int max, final int min, final short split)
             throws TreeException {
         super(def, max, min, split);
 
@@ -60,7 +60,7 @@ public class MemoryPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public void setRoot(Node node) throws TreeException {
+    public void setRoot(final Node node) throws TreeException {
         this.root = node;
         this.root.setParent(null);
     }
@@ -69,7 +69,7 @@ public class MemoryPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public Node getEmptyNode(boolean isLeaf) {
+    public Node getEmptyNode(final boolean isLeaf) {
         MemoryNode ret = new MemoryNode(this.maxNodeEntries);
         ret.setLeaf(isLeaf);
 
@@ -80,7 +80,7 @@ public class MemoryPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public Node getNode(Entry parentEntry, Node parent) throws TreeException {
+    public Node getNode(final Entry parentEntry, final Node parent) throws TreeException {
         Node ret = (Node) parentEntry.getData();
         ret.setParent(parent);
 
@@ -91,7 +91,7 @@ public class MemoryPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public Entry createEntryPointingNode(Node node) {
+    public Entry createEntryPointingNode(final Node node) {
         return new Entry(node.getBounds(), node);
     }
 
@@ -99,7 +99,7 @@ public class MemoryPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public void free(Node node) {
+    public void free(final Node node) {
         // Does nothing
     }
 

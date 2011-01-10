@@ -68,96 +68,96 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
 
     private final FeatureType ft;
 
-    public IsValidSpatialFilterVisitor(FeatureType ft) {
+    public IsValidSpatialFilterVisitor(final FeatureType ft) {
         this.ft = ft;
     }
 
     @Override
-    public Object visitNullFilter(Object o) {
+    public Object visitNullFilter(final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(ExcludeFilter ef, Object o) {
+    public Object visit(final ExcludeFilter ef, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(IncludeFilter i, Object o) {
+    public Object visit(final IncludeFilter i, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(And and, Object o) {
+    public Object visit(final And and, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(Id id, Object o) {
+    public Object visit(final Id id, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(Not not, Object o) {
+    public Object visit(final Not not, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(Or or, Object o) {
+    public Object visit(final Or or, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyIsBetween pib, Object o) {
+    public Object visit(final PropertyIsBetween pib, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyIsEqualTo piet, Object o) {
+    public Object visit(final PropertyIsEqualTo piet, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyIsNotEqualTo pinet, Object o) {
+    public Object visit(final PropertyIsNotEqualTo pinet, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyIsGreaterThan pigt, Object o) {
+    public Object visit(final PropertyIsGreaterThan pigt, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyIsGreaterThanOrEqualTo pgt, Object o) {
+    public Object visit(final PropertyIsGreaterThanOrEqualTo pgt, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyIsLessThan pilt, Object o) {
+    public Object visit(final PropertyIsLessThan pilt, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyIsLessThanOrEqualTo plt, Object o) {
+    public Object visit(final PropertyIsLessThanOrEqualTo plt, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyIsLike pil, Object o) {
+    public Object visit(final PropertyIsLike pil, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyIsNull pin, Object o) {
+    public Object visit(final PropertyIsNull pin, final Object o) {
         return true;
     }
 
-    private Name getNameFromString(String fullName) {
+    private Name getNameFromString(final String fullName) {
         return DefaultName.valueOf(fullName);
     }
 
     @Override
-    public Object visit(BBOX bbox, Object o) {
+    public Object visit(final BBOX bbox, final Object o) {
         if (bbox.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) bbox.getExpression1();
             //for the bbox filter the propertyName can be empty
@@ -171,7 +171,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(Beyond beyond, Object o) {
+    public Object visit(final Beyond beyond, final Object o) {
         if (beyond.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) beyond.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -182,7 +182,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(Contains cntns, Object o) {
+    public Object visit(final Contains cntns, final Object o) {
         if (cntns.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) cntns.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -193,7 +193,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(Crosses crs, Object o) {
+    public Object visit(final Crosses crs, final Object o) {
         if (crs.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) crs.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -204,7 +204,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(Disjoint dsjnt, Object o) {
+    public Object visit(final Disjoint dsjnt, final Object o) {
         if (dsjnt.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) dsjnt.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -215,7 +215,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(DWithin dw, Object o) {
+    public Object visit(final DWithin dw, final Object o) {
         if (dw.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) dw.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -226,7 +226,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(Equals equals, Object o) {
+    public Object visit(final Equals equals, final Object o) {
         if (equals.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) equals.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -237,7 +237,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(Intersects i, Object o) {
+    public Object visit(final Intersects i, final Object o) {
         if (i.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) i.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -248,7 +248,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(Overlaps ovrlps, Object o) {
+    public Object visit(final Overlaps ovrlps, final Object o) {
         if (ovrlps.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) ovrlps.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -259,7 +259,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(Touches tchs, Object o) {
+    public Object visit(final Touches tchs, final Object o) {
         if (tchs.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) tchs.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -270,7 +270,7 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(Within within, Object o) {
+    public Object visit(final Within within, final Object o) {
         if (within.getExpression1() instanceof PropertyName) {
             PropertyName pt = (PropertyName) within.getExpression1();
             Name name = getNameFromString(pt.getPropertyName());
@@ -281,42 +281,42 @@ public class IsValidSpatialFilterVisitor implements FilterVisitor,ExpressionVisi
     }
 
     @Override
-    public Object visit(NilExpression ne, Object o) {
+    public Object visit(final NilExpression ne, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(Add add, Object o) {
+    public Object visit(final Add add, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(Divide divide, Object o) {
+    public Object visit(final Divide divide, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(Function fnctn, Object o) {
+    public Object visit(final Function fnctn, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(Literal ltrl, Object o) {
+    public Object visit(final Literal ltrl, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(Multiply mltpl, Object o) {
+    public Object visit(final Multiply mltpl, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(PropertyName pn, Object o) {
+    public Object visit(final PropertyName pn, final Object o) {
         return true;
     }
 
     @Override
-    public Object visit(Subtract sbtrct, Object o) {
+    public Object visit(final Subtract sbtrct, final Object o) {
         return true;
     }
 

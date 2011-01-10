@@ -81,7 +81,7 @@ public class OutputDescriptionType
      *     {@link SupportedComplexDataType }
      *     
      */
-    public void setComplexOutput(SupportedComplexDataType value) {
+    public void setComplexOutput(final SupportedComplexDataType value) {
         this.complexOutput = value;
     }
 
@@ -105,7 +105,7 @@ public class OutputDescriptionType
      *     {@link LiteralOutputType }
      *     
      */
-    public void setLiteralOutput(LiteralOutputType value) {
+    public void setLiteralOutput(final LiteralOutputType value) {
         this.literalOutput = value;
     }
 
@@ -129,7 +129,7 @@ public class OutputDescriptionType
      *     {@link SupportedCRSsType }
      *     
      */
-    public void setBoundingBoxOutput(SupportedCRSsType value) {
+    public void setBoundingBoxOutput(final SupportedCRSsType value) {
         this.boundingBoxOutput = value;
     }
 

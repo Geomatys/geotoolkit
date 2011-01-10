@@ -56,7 +56,7 @@ public class ServiceTypeAdapter extends XmlAdapter<ServiceTypeImpl, ServiceType>
      * @return A java object which represents the serviceType value.
      */
     @Override
-    public ServiceType unmarshal(ServiceTypeImpl value) throws Exception {
+    public ServiceType unmarshal(final ServiceTypeImpl value) throws Exception {
         return value;
     }
 
@@ -68,7 +68,7 @@ public class ServiceTypeAdapter extends XmlAdapter<ServiceTypeImpl, ServiceType>
      * @return The adapter for this interface.
      */
     @Override
-    public ServiceTypeImpl marshal(ServiceType value) throws Exception {
+    public ServiceTypeImpl marshal(final ServiceType value) throws Exception {
         return (ServiceTypeImpl) value;
     }
 

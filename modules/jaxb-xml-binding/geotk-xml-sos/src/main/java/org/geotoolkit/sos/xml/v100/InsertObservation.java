@@ -72,7 +72,7 @@ public class InsertObservation extends RequestBaseType {
      * @param version the version of the SOS interfaces.
      * @param observation The observation to insert in the database.
      */
-    public InsertObservation(String version, String assignedSensorId, ObservationEntry observation) {
+    public InsertObservation(final String version, final String assignedSensorId, final ObservationEntry observation) {
         super(version);
         this.assignedSensorId = assignedSensorId;
         this.observation = observation;

@@ -42,7 +42,7 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
     protected String lockId = null;
     protected ReleaseAction release = null;
 
-    protected AbstractTransactionRequest(String serverURL, String version){
+    protected AbstractTransactionRequest(final String serverURL, final String version){
         super(serverURL);
         this.version = version;
     }
@@ -59,7 +59,7 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
      * {@inheritDoc }
      */
     @Override
-    public void setLockId(String value) {
+    public void setLockId(final String value) {
         this.lockId = value;
     }
 
@@ -83,7 +83,7 @@ public class AbstractTransactionRequest extends AbstractRequest implements Trans
      * {@inheritDoc }
      */
     @Override
-    public void setReleaseAction(ReleaseAction value) {
+    public void setReleaseAction(final ReleaseAction value) {
         this.release = value;
     }
 

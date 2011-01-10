@@ -58,7 +58,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * @param name
      * @param domainOfValidity
      */
-    public DefaultCalendar(ReferenceIdentifier name, Extent domainOfValidity) {
+    public DefaultCalendar(final ReferenceIdentifier name, final Extent domainOfValidity) {
         super(name, domainOfValidity);
     }
 
@@ -69,7 +69,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * @return JulianDate
      */
     @Override
-    public JulianDate dateTrans(CalendarDate calDate, ClockTime time) {
+    public JulianDate dateTrans(final CalendarDate calDate, final ClockTime time) {
         JulianDate response;
         if (calDate != null && time != null) {
             DateAndTime dateAndTime = new DefaultDateAndTime(this, calDate.getIndeterminatePosition(), calDate.getCalendarEraName(), calDate.getCalendarDate(), time.getClockTime());
@@ -147,7 +147,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * @param dateAndTime
      * @return JulianDate
      */
-    public JulianDate dateTrans(DateAndTime dateAndTime) {
+    public JulianDate dateTrans(final DateAndTime dateAndTime) {
         JulianDate response;
         GregorianCalendar gc = new GregorianCalendar(-4713, 1, 1);
         gc.set(GregorianCalendar.ERA, GregorianCalendar.BC);
@@ -217,7 +217,7 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
      * @return CalendarDate
      */
     @Override
-    public CalendarDate julTrans(JulianDate jdt) {
+    public CalendarDate julTrans(final JulianDate jdt) {
         if (jdt == null)
             return null;
         
@@ -262,11 +262,11 @@ public class DefaultCalendar extends DefaultTemporalReferenceSystem implements C
         return timeBasis;
     }
 
-    public void setBasis(Collection<CalendarEra> basis) {
+    public void setBasis(final Collection<CalendarEra> basis) {
         this.basis = basis;
     }
 
-    public void setClock(Clock clock) {
+    public void setClock(final Clock clock) {
         this.timeBasis = clock;
     }
 

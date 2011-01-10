@@ -60,7 +60,7 @@ public class CoverageDescriptions implements DescribeCoverageResponse {
     CoverageDescriptions() {
     }
     
-    public CoverageDescriptions(List<CoverageDescriptionType> coverageDescription) {
+    public CoverageDescriptions(final List<CoverageDescriptionType> coverageDescription) {
         this.coverageDescription = coverageDescription;
     }
     

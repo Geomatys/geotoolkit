@@ -26,7 +26,7 @@ import org.geotoolkit.data.osm.client.AbstractUpdateChangeSet;
  */
 public class UpdateChangeSet060 extends AbstractUpdateChangeSet{
 
-    public UpdateChangeSet060(String serverURL){
+    public UpdateChangeSet060(final String serverURL){
         super(serverURL,"");
     }
 

@@ -154,7 +154,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -236,7 +236,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         return sb.toString();
     }
 
-    private static String toString(PropertyDescriptor property){
+    private static String toString(final PropertyDescriptor property){
         final StringBuilder builder = new StringBuilder();
 
         builder.append(DefaultName.toJCRExtendedForm(property.getName()));
@@ -294,7 +294,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         return builder.toString();
     }
 
-    private static String toStringTree(Collection<PropertyDescriptor> objects){
+    private static String toStringTree(final Collection<PropertyDescriptor> objects){
         final StringBuilder sb = new StringBuilder();
 
         final int size = objects.size();

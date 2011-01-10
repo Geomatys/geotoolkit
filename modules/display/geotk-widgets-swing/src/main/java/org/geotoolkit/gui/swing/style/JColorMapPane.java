@@ -46,7 +46,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap>{
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
     }
 
@@ -56,7 +56,7 @@ public class JColorMapPane extends StyleElementEditor<ColorMap>{
     }
     
     @Override
-    public void parse(ColorMap map) {
+    public void parse(final ColorMap map) {
         this.colorMap = map;
         if (map != null) {
 //            guiType.setValue(map.getType());            

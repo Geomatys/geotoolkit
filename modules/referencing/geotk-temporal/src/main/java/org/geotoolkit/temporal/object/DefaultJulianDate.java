@@ -37,7 +37,7 @@ public class DefaultJulianDate extends DefaultTemporalCoordinate implements Juli
      * @param indeterminatePosition
      * @param coordinateValue
      */
-    public DefaultJulianDate(TemporalReferenceSystem frame, IndeterminateValue indeterminatePosition, Number coordinateValue) {
+    public DefaultJulianDate(final TemporalReferenceSystem frame, final IndeterminateValue indeterminatePosition, final Number coordinateValue) {
         super(frame, indeterminatePosition, coordinateValue);
     }
 }

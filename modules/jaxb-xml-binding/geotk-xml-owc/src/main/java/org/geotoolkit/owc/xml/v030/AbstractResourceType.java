@@ -150,7 +150,7 @@ public abstract class AbstractResourceType
      *     {@link URLType }
      *     
      */
-    public void setDataURL(URLType value) {
+    public void setDataURL(final URLType value) {
         this.dataURL = value;
     }
 
@@ -174,7 +174,7 @@ public abstract class AbstractResourceType
      *     {@link URLType }
      *     
      */
-    public void setMetadataURL(URLType value) {
+    public void setMetadataURL(final URLType value) {
         this.metadataURL = value;
     }
 
@@ -198,7 +198,7 @@ public abstract class AbstractResourceType
      *     {@link Double }
      *     
      */
-    public void setMinScaleDenominator(Double value) {
+    public void setMinScaleDenominator(final Double value) {
         this.minScaleDenominator = value;
     }
 
@@ -222,7 +222,7 @@ public abstract class AbstractResourceType
      *     {@link Double }
      *     
      */
-    public void setMaxScaleDenominator(Double value) {
+    public void setMaxScaleDenominator(final Double value) {
         this.maxScaleDenominator = value;
     }
 
@@ -246,7 +246,7 @@ public abstract class AbstractResourceType
      *     {@link StyleListType }
      *     
      */
-    public void setStyleList(StyleListType value) {
+    public void setStyleList(final StyleListType value) {
         this.styleList = value;
     }
 
@@ -270,7 +270,7 @@ public abstract class AbstractResourceType
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -294,7 +294,7 @@ public abstract class AbstractResourceType
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -318,7 +318,7 @@ public abstract class AbstractResourceType
      *     {@link String }
      *     
      */
-    public void setGroup(String value) {
+    public void setGroup(final String value) {
         this.group = value;
     }
 
@@ -346,7 +346,7 @@ public abstract class AbstractResourceType
      *     {@link Boolean }
      *     
      */
-    public void setHidden(Boolean value) {
+    public void setHidden(final Boolean value) {
         this.hidden = value;
     }
 
@@ -374,7 +374,7 @@ public abstract class AbstractResourceType
      *     {@link BigDecimal }
      *     
      */
-    public void setOpacity(BigDecimal value) {
+    public void setOpacity(final BigDecimal value) {
         this.opacity = value;
     }
 

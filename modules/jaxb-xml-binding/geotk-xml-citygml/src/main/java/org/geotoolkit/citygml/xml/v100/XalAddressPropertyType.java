@@ -74,7 +74,7 @@ public class XalAddressPropertyType {
      *     {@link AddressDetails }
      *     
      */
-    public void setAddressDetails(AddressDetails value) {
+    public void setAddressDetails(final AddressDetails value) {
         this.addressDetails = value;
     }
 

@@ -75,7 +75,7 @@ public class EmptyRenderable implements JRRenderable{
      * {@inheritDoc }
      */
     @Override
-    public void render(Graphics2D g, Rectangle2D rect) throws JRException {
+    public void render(final Graphics2D g, final Rectangle2D rect) throws JRException {
         //do nothing
     }
 

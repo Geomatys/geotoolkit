@@ -29,7 +29,7 @@ class SimpleId implements Identifier{
 
     private final Object id;
 
-    public SimpleId(Object id){
+    public SimpleId(final Object id){
         this.id = id;
     }
 
@@ -39,7 +39,7 @@ class SimpleId implements Identifier{
     }
 
     @Override
-    public boolean matches(Object object) {
+    public boolean matches(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

@@ -23,7 +23,7 @@ import org.opengis.filter.expression.Expression;
 
 public class InFunction extends AbstractFunction {
 
-    public InFunction(Expression ... exprs) {
+    public InFunction(final Expression ... exprs) {
         super(OtherFunctionFactory.IN, exprs, null);
     }
 

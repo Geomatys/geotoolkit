@@ -94,7 +94,7 @@ public class ComponentPropertyType implements ComponentProperty {
 
     }
 
-    public ComponentPropertyType(ComponentProperty cp) {
+    public ComponentPropertyType(final ComponentProperty cp) {
         if (cp != null) {
             this.actuate       = cp.getActuate();
             this.arcrole       = cp.getArcrole();
@@ -127,16 +127,16 @@ public class ComponentPropertyType implements ComponentProperty {
         }
     }
 
-    public ComponentPropertyType(String href) {
+    public ComponentPropertyType(final String href) {
         this.href = href;
     }
 
-    public ComponentPropertyType(String name, JAXBElement<? extends AbstractProcessType> process) {
+    public ComponentPropertyType(final String name, final JAXBElement<? extends AbstractProcessType> process) {
         this.name    = name;
         this.process = process;
     }
 
-    public ComponentPropertyType(String name, String role, String href) {
+    public ComponentPropertyType(final String name, final String role, final String href) {
         this.name    = name;
         this.href    = href;
         this.role    = role;
@@ -180,7 +180,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link JAXBElement }{@code <}{@link ComponentType }{@code >}
      *
      */
-    public void setProcess(JAXBElement<? extends AbstractProcessType> value) {
+    public void setProcess(final JAXBElement<? extends AbstractProcessType> value) {
         this.process = ((JAXBElement<? extends AbstractProcessType>) value);
     }
 
@@ -204,7 +204,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link String }
      *
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -228,7 +228,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link String }
      *
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -252,7 +252,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link String }
      *
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -276,7 +276,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link String }
      *
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -300,7 +300,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link String }
      *
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -324,7 +324,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link String }
      *
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -348,7 +348,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link String }
      *
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -372,7 +372,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link String }
      *
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -396,7 +396,7 @@ public class ComponentPropertyType implements ComponentProperty {
      *     {@link String }
      *
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

@@ -25,7 +25,7 @@ import org.geotoolkit.data.wfs.AbstractTransactionRequest;
  */
 public class Transaction110 extends AbstractTransactionRequest{
 
-    public Transaction110(String serverURL){
+    public Transaction110(final String serverURL){
         super(serverURL,"1.1.0");
     }
 

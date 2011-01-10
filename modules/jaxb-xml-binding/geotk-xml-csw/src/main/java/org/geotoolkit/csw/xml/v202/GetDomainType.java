@@ -82,7 +82,7 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
      * @param version
      * @param propertyName
      */
-    public GetDomainType(String service, String version, String propertyName, String parameterName) {
+    public GetDomainType(final String service, final String version, final String propertyName, final String parameterName) {
         super(service, version);
         if (propertyName != null && parameterName != null) {
             throw new IllegalArgumentException("One of propertyName or parameterName must be null");
@@ -98,7 +98,7 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
         return propertyName;
     }
 
-    public void setPropertyName(String propertyName) {
+    public void setPropertyName(final String propertyName) {
         this.propertyName = propertyName;
     }
 
@@ -109,7 +109,7 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
         return parameterName;
     }
 
-    public void setParameterName(String parameterName) {
+    public void setParameterName(final String parameterName) {
         this.parameterName = parameterName;
     }
 
@@ -117,7 +117,7 @@ public class GetDomainType extends RequestBaseType implements GetDomain {
         return "application/xml";
     }
 
-    public void setOutputFormat(String value) {}
+    public void setOutputFormat(final String value) {}
 
     /**
      * Verify if this entry is identical to the specified object.

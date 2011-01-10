@@ -73,7 +73,7 @@ public class OperationType extends AbstractOperation {
     /**
      * Build a new Contact person primary object.
      */
-    public OperationType(final List<String> format, DCPType... dcpTypes) {
+    public OperationType(final List<String> format, final DCPType... dcpTypes) {
         this.format  = format;
         for (final DCPType element : dcpTypes) {
             this.dcpType.add(element);
@@ -94,7 +94,7 @@ public class OperationType extends AbstractOperation {
         return Collections.unmodifiableList(dcpType);
     }
 
-    public void updateURL(String url) {
+    public void updateURL(final String url) {
         for (DCPType dcp : dcpType) {
             final HTTP http = dcp.getHTTP();
             if (http != null) {

@@ -59,21 +59,21 @@ public class IndexedFidReader implements FeatureIDReader {
      */
     private long bufferStart = Long.MIN_VALUE;
 
-    public IndexedFidReader(ShpFiles shpFiles) throws IOException {
+    public IndexedFidReader(final ShpFiles shpFiles) throws IOException {
         init( shpFiles, shpFiles.getReadChannel(FIX, this) );
     }
 
-    public IndexedFidReader(ShpFiles shpFiles, RecordNumberTracker reader)
+    public IndexedFidReader(final ShpFiles shpFiles, final RecordNumberTracker reader)
             throws IOException {
         this(shpFiles);
         this.reader = reader;
     }
 
-    public IndexedFidReader( ShpFiles shpFiles, ReadableByteChannel in ) throws IOException {
+    public IndexedFidReader( final ShpFiles shpFiles, final ReadableByteChannel in ) throws IOException {
         init(shpFiles, in);
     }
 
-    private void init( ShpFiles shpFiles, ReadableByteChannel in ) throws IOException {
+    private void init( final ShpFiles shpFiles, final ReadableByteChannel in ) throws IOException {
         this.typeName = shpFiles.getTypeName() + ".";
         this.readChannel = in;
         getHeader(shpFiles);
@@ -82,7 +82,7 @@ public class IndexedFidReader implements FeatureIDReader {
         buffer.position(buffer.limit());
     }
 
-    private void getHeader(ShpFiles shpFiles) throws IOException {
+    private void getHeader(final ShpFiles shpFiles) throws IOException {
         final ByteBuffer buffer = ByteBuffer.allocate(IndexedFidWriter.HEADER_SIZE);
         ShapefileReader.fill(buffer, readChannel);
 
@@ -147,7 +147,7 @@ public class IndexedFidReader implements FeatureIDReader {
      * @throws IllegalArgumentException
      *                 DOCUMENT ME!
      */
-    public long findFid(String fid) throws IOException {
+    public long findFid(final String fid) throws IOException {
         try {
             final long desired;
             if(fid.startsWith(typeName)){
@@ -193,7 +193,7 @@ public class IndexedFidReader implements FeatureIDReader {
      * 
      * @throws IOException
      */
-    long search(long desired, long minRec, long maxRec, long predictedRec)
+    long search(final long desired, final long minRec, final long maxRec, final long predictedRec)
             throws IOException {
         if (minRec == maxRec) {
             return -1;
@@ -233,7 +233,7 @@ public class IndexedFidReader implements FeatureIDReader {
         }
     }
 
-    public void goTo(long recno) throws IOException {
+    public void goTo(final long recno) throws IOException {
         assert recno<count;
         if (readChannel instanceof FileChannel) {
             long newPosition = IndexedFidWriter.HEADER_SIZE

@@ -113,7 +113,7 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
     private static final class GenericMaxFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericMaxFeatureIterator<F,R> implements FeatureReader<T,F>{
 
-        private GenericMaxFeatureReader(R reader,int limit){
+        private GenericMaxFeatureReader(final R reader,final int limit){
             super(reader,limit);
         }
         
@@ -134,7 +134,7 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
     private static final class GenericMaxFeatureWriter<T extends FeatureType, F extends Feature, R extends FeatureWriter<T,F>>
             extends GenericMaxFeatureIterator<F,R> implements FeatureWriter<T,F>{
 
-        private GenericMaxFeatureWriter(R writer,int limit){
+        private GenericMaxFeatureWriter(final R writer,final int limit){
             super(writer,limit);
         }
 
@@ -152,21 +152,21 @@ public class GenericMaxFeatureIterator<F extends Feature, R extends FeatureItera
     /**
      * Wrap a FeatureReader with a max limit.
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, int limit){
+    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final int limit){
         return new GenericMaxFeatureIterator(reader, limit);
     }
 
     /**
      * Wrap a FeatureReader with a max limit.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(FeatureReader<T,F> reader, int limit){
+    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(final FeatureReader<T,F> reader, final int limit){
         return new GenericMaxFeatureReader(reader, limit);
     }
 
     /**
      * Wrap a FeatureWriter with a max limit.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(FeatureWriter<T,F> writer, int limit){
+    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(final FeatureWriter<T,F> writer, final int limit){
         return new GenericMaxFeatureWriter(writer, limit);
     }
 

@@ -81,7 +81,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Collection<String> visit( NilExpression expression, Object data ) {
+    public Collection<String> visit( final NilExpression expression, final Object data ) {
         if(data instanceof Collection) return (Collection<String>)data;
         return Collections.emptyList();
     }
@@ -91,7 +91,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Collection<String> visit( Add expression, Object data ) {
+    public Collection<String> visit( final Add expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -105,7 +105,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Collection<String> visit( Divide expression, Object data ) {
+    public Collection<String> visit( final Divide expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -119,7 +119,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Collection<String> visit( Function expression, Object data ) {
+    public Collection<String> visit( final Function expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -137,7 +137,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Collection<String> visit( Literal expression, Object data ) {
+    public Collection<String> visit( final Literal expression, final Object data ) {
         if(data instanceof Collection) return (Collection<String>)data;
         return Collections.emptyList();
     }
@@ -147,7 +147,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Collection<String> visit( Multiply expression, Object data ) {
+    public Collection<String> visit( final Multiply expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -161,7 +161,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Collection<String> visit( PropertyName expression, Object data ) {
+    public Collection<String> visit( final PropertyName expression, final Object data ) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -177,7 +177,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Collection<String> visit( Subtract expression, Object data ) {
+    public Collection<String> visit( final Subtract expression, final Object data ) {
     	final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -191,7 +191,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visitNullFilter(Object data) {
+    public Object visitNullFilter(final Object data) {
         if(data instanceof Collection) return (Collection<String>)data;
         return Collections.emptyList();
     }
@@ -201,7 +201,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(ExcludeFilter filter, Object data) {
+    public Object visit(final ExcludeFilter filter, final Object data) {
         if(data instanceof Collection) return (Collection<String>)data;
         return Collections.emptyList();
     }
@@ -211,7 +211,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(IncludeFilter filter, Object data) {
+    public Object visit(final IncludeFilter filter, final Object data) {
         if(data instanceof Collection) return (Collection<String>)data;
         return Collections.emptyList();
     }
@@ -221,7 +221,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(And filter, Object data) {
+    public Object visit(final And filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -236,7 +236,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Id filter, Object data) {
+    public Object visit(final Id filter, final Object data) {
         if(data instanceof Collection) return (Collection<String>)data;
         return Collections.emptyList();
     }
@@ -246,7 +246,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Not filter, Object data) {
+    public Object visit(final Not filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -260,7 +260,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Or filter, Object data) {
+    public Object visit(final Or filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -275,7 +275,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(PropertyIsBetween filter, Object data) {
+    public Object visit(final PropertyIsBetween filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -290,7 +290,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(PropertyIsEqualTo filter, Object data) {
+    public Object visit(final PropertyIsEqualTo filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -304,7 +304,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(PropertyIsNotEqualTo filter, Object data) {
+    public Object visit(final PropertyIsNotEqualTo filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -318,7 +318,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(PropertyIsGreaterThan filter, Object data) {
+    public Object visit(final PropertyIsGreaterThan filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -332,7 +332,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(PropertyIsGreaterThanOrEqualTo filter, Object data) {
+    public Object visit(final PropertyIsGreaterThanOrEqualTo filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -346,7 +346,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(PropertyIsLessThan filter, Object data) {
+    public Object visit(final PropertyIsLessThan filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -360,7 +360,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(PropertyIsLessThanOrEqualTo filter, Object data) {
+    public Object visit(final PropertyIsLessThanOrEqualTo filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -374,7 +374,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(PropertyIsLike filter, Object data) {
+    public Object visit(final PropertyIsLike filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -387,7 +387,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(PropertyIsNull filter, Object data) {
+    public Object visit(final PropertyIsNull filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -400,7 +400,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(BBOX filter, Object data) {
+    public Object visit(final BBOX filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -414,7 +414,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Beyond filter, Object data) {
+    public Object visit(final Beyond filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -428,7 +428,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Contains filter, Object data) {
+    public Object visit(final Contains filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -442,7 +442,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Crosses filter, Object data) {
+    public Object visit(final Crosses filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -456,7 +456,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Disjoint filter, Object data) {
+    public Object visit(final Disjoint filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -470,7 +470,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(DWithin filter, Object data) {
+    public Object visit(final DWithin filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -484,7 +484,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Equals filter, Object data) {
+    public Object visit(final Equals filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -498,7 +498,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Intersects filter, Object data) {
+    public Object visit(final Intersects filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -512,7 +512,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Overlaps filter, Object data) {
+    public Object visit(final Overlaps filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -526,7 +526,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Touches filter, Object data) {
+    public Object visit(final Touches filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();
@@ -540,7 +540,7 @@ public class ListingPropertyVisitor implements FilterVisitor,ExpressionVisitor {
      * @param data if is a Collection, this collection will be filled and returned.
      */
     @Override
-    public Object visit(Within filter, Object data) {
+    public Object visit(final Within filter, final Object data) {
         final Collection<String> names;
         if(data instanceof Collection) names = (Collection<String>) data;
         else names = new HashSet<String>();

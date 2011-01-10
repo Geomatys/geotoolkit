@@ -19,7 +19,7 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
     private static final Cache<CoordinateReferenceSystem, String> cachedIdentifier = new Cache<CoordinateReferenceSystem, String>();
 
     @Override
-    public CoordinateReferenceSystem unmarshal(String v) throws Exception {
+    public CoordinateReferenceSystem unmarshal(final String v) throws Exception {
         if (v != null) {
             return CRS.decode(v);
         }
@@ -27,11 +27,11 @@ public class CoordinateReferenceSystemAdapter  extends XmlAdapter<String, Coordi
     }
 
     @Override
-    public String marshal(CoordinateReferenceSystem v) throws Exception {
+    public String marshal(final CoordinateReferenceSystem v) throws Exception {
         return getSrsName(v);
     }
 
-    public static String getSrsName(CoordinateReferenceSystem crs) {
+    public static String getSrsName(final CoordinateReferenceSystem crs) {
         String srsName = null;
         if (crs != null) {
             try {

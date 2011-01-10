@@ -33,7 +33,7 @@ public class ShxWriter {
     private final FileChannel channel;
     private final ByteBuffer buffer;
 
-    public ShxWriter(FileChannel channel){
+    public ShxWriter(final FileChannel channel){
         if(channel == null){
             throw new NullPointerException("FileChannel can not be null.");
         }
@@ -74,8 +74,8 @@ public class ShxWriter {
      *
      * @see org.geotoolkit.data.shapefile.shp.ShapefileHeader
      */
-    public void writeHeader(ShapeType type, int length, double minX, double minY,
-            double maxX, double maxY) throws IOException{
+    public void writeHeader(final ShapeType type, final int length, final double minX, final double minY,
+            final double maxX, final double maxY) throws IOException{
         ShapefileHeader.write(buffer, type, length, minX, minY, maxX, maxY);
         drain();
     }
@@ -86,7 +86,7 @@ public class ShxWriter {
      * @param length : first value to write corresponf the the feature length
      * @throws IOException
      */
-    public void writeRecord(int offset, int length) throws IOException{
+    public void writeRecord(final int offset, final int length) throws IOException{
         buffer.putInt(offset);
         buffer.putInt(length);
         drain();

@@ -102,7 +102,7 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      *     {@link AnyOrReferenceType }
      *     
      */
-    public void setOperator(AnyOrReferenceType value) {
+    public void setOperator(final AnyOrReferenceType value) {
         this.operator = value;
     }
 
@@ -126,7 +126,7 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      *     {@link ReferenceEntry }
      *     
      */
-    public void setElevationDatum(ReferenceEntry value) {
+    public void setElevationDatum(final ReferenceEntry value) {
         this.elevationDatum = value;
     }
 
@@ -174,7 +174,7 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      *     {@link MeasureType }
      *     
      */
-    public void setElevationAccuracy(MeasureType value) {
+    public void setElevationAccuracy(final MeasureType value) {
         this.elevationAccuracy = value;
     }
 
@@ -198,7 +198,7 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      *     {@link ReferenceEntry }
      *     
      */
-    public void setGeodeticDatum(ReferenceEntry value) {
+    public void setGeodeticDatum(final ReferenceEntry value) {
         this.geodeticDatum = value;
     }
 
@@ -246,7 +246,7 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      *     {@link MeasureType }
      *     
      */
-    public void setPositionAccuracy(MeasureType value) {
+    public void setPositionAccuracy(final MeasureType value) {
         this.positionAccuracy = value;
     }
 
@@ -270,7 +270,7 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      *     {@link ReferenceEntry }
      *     
      */
-    public void setProjection(ReferenceEntry value) {
+    public void setProjection(final ReferenceEntry value) {
         this.projection = value;
     }
 
@@ -294,7 +294,7 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      *     {@link TimePrimitivePropertyType }
      *     
      */
-    public void setSurveyTime(TimePrimitivePropertyType value) {
+    public void setSurveyTime(final TimePrimitivePropertyType value) {
         this.surveyTime = value;
     }
 

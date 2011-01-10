@@ -35,7 +35,7 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
     private final CachedDisplacement cachedDisplacement;
     private float rotation = Float.NaN;
     
-    private CachedPointPlacement(PointPlacement placement){
+    private CachedPointPlacement(final PointPlacement placement){
         super(placement);
         this.cachedAnchor = CachedAnchorPoint.cache(placement.getAnchorPoint());
         this.cachedDisplacement = CachedDisplacement.cache(placement.getDisplacement());
@@ -44,18 +44,18 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
     /**
      * return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(Feature feature, float[] buffer){
+    public float[] getDisplacement(final Feature feature, final float[] buffer){
         return cachedDisplacement.getValues(feature, buffer);
     }
 
     /**
      * return an Array of 2 floats.
      */
-    public float[] getAnchor(Feature feature, float[] buffer){
+    public float[] getAnchor(final Feature feature, final float[] buffer){
         return cachedAnchor.getValues(feature, buffer);
     }
     
-    public float getRotation(Feature feature){
+    public float getRotation(final Feature feature){
         evaluate();
         
         if(Float.isNaN(rotation)){
@@ -98,13 +98,13 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
     }
 
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         evaluate();
         //placement doesnt know if it's visible or not whit those informations, always true.
         return true;
     }
 
-    public static CachedPointPlacement cache(PointPlacement placement){
+    public static CachedPointPlacement cache(final PointPlacement placement){
         return new CachedPointPlacement(placement);
     }
 

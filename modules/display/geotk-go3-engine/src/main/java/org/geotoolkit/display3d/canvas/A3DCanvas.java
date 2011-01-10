@@ -70,7 +70,7 @@ public class A3DCanvas extends ReferencedCanvas{
     private final JScrollPane swingPane;
     private final LwjglAwtCanvas canvas;
 
-    public A3DCanvas(CoordinateReferenceSystem objectiveCRS, Hints hints) throws LWJGLException{
+    public A3DCanvas(final CoordinateReferenceSystem objectiveCRS, final Hints hints) throws LWJGLException{
         super(objectiveCRS,hints);
         canvas = initContext();
         controller = new A3DController(this, logicalLayer);
@@ -106,7 +106,7 @@ public class A3DCanvas extends ReferencedCanvas{
     }
 
     @Override
-    public synchronized void setObjectiveCRS(CoordinateReferenceSystem crs) throws TransformException {
+    public synchronized void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException {
         throw new TransformException("You are not allowed to change CRS after creation on 3D canvas");
     }
 

@@ -79,7 +79,7 @@ public class UpdateElementType {
 
     }
 
-    public UpdateElementType(List<PropertyType> property, FilterType filter, QName typeName, String srsName) {
+    public UpdateElementType(final List<PropertyType> property, final FilterType filter, final QName typeName, final String srsName) {
         this.property = property;
         this.filter   = filter;
         this.typeName = typeName;
@@ -132,7 +132,7 @@ public class UpdateElementType {
      *     {@link FilterType }
      *     
      */
-    public void setFilter(FilterType value) {
+    public void setFilter(final FilterType value) {
         this.filter = value;
     }
 
@@ -156,7 +156,7 @@ public class UpdateElementType {
      *     {@link String }
      *     
      */
-    public void setHandle(String value) {
+    public void setHandle(final String value) {
         this.handle = value;
     }
 
@@ -180,7 +180,7 @@ public class UpdateElementType {
      *     {@link QName }
      *     
      */
-    public void setTypeName(QName value) {
+    public void setTypeName(final QName value) {
         this.typeName = value;
     }
 
@@ -204,7 +204,7 @@ public class UpdateElementType {
      *     {@link String }
      *     
      */
-    public void setInputFormat(String value) {
+    public void setInputFormat(final String value) {
         this.inputFormat = value;
     }
 
@@ -228,7 +228,7 @@ public class UpdateElementType {
      *     {@link String }
      *     
      */
-    public void setSrsName(String value) {
+    public void setSrsName(final String value) {
         this.srsName = value;
     }
 
@@ -260,7 +260,7 @@ public class UpdateElementType {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }

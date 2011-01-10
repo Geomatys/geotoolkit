@@ -71,7 +71,7 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
     /**
      * Clone a new data array.
      */
-    public DataArrayEntry(DataArray array) {
+    public DataArrayEntry(final DataArray array) {
         super(array);
         if (array != null) {
             if (array.getPropertyElementType() != null) {
@@ -88,8 +88,8 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
     /**
      * Build a new data array.
      */
-    public DataArrayEntry(String id, int count, AbstractDataRecordEntry elementType,
-            AbstractEncodingEntry encoding, String values) {
+    public DataArrayEntry(final String id, final int count, final AbstractDataRecordEntry elementType,
+            final AbstractEncodingEntry encoding, final String values) {
         super(id, count);
         this.elementType = new DataComponentPropertyType(elementType, id);
         this.encoding    = new AbstractEncodingPropertyType(encoding);
@@ -111,7 +111,7 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
         return elementType;
     }
 
-    public void setPropertyElementType(DataComponentPropertyType elementType){
+    public void setPropertyElementType(final DataComponentPropertyType elementType){
         this.elementType = elementType;
     }
 
@@ -129,7 +129,7 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
         return encoding;
     }
     
-    public void setPropertyEncoding(AbstractEncodingPropertyType encoding) {
+    public void setPropertyEncoding(final AbstractEncodingPropertyType encoding) {
         this.encoding = encoding;
     }
 
@@ -143,11 +143,11 @@ public class DataArrayEntry extends AbstractDataArrayEntry implements DataArray 
     /**
      * Sets the value of the values property.
      */
-    public void setValues(String values) {
+    public void setValues(final String values) {
         this.values = values;
     }
 
-    public void updateArray(String values, int nbValues) {
+    public void updateArray(final String values, final int nbValues) {
         this.values = values;
         this.setElementCount(nbValues);
     }

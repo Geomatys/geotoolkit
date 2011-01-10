@@ -71,7 +71,7 @@ public class TelephoneType implements AbstractTelephone {
     /**
      * Build a new telephone object.
      */
-    public TelephoneType(List<String> voice, List<String> facsimile){
+    public TelephoneType(final List<String> voice, final List<String> facsimile){
         this.facsimile = facsimile;
         this.voice     = voice;
     }
@@ -79,7 +79,7 @@ public class TelephoneType implements AbstractTelephone {
      /**
      * Build a single new telephone object.
      */
-    public TelephoneType(String voice, String facsimile){
+    public TelephoneType(final String voice, final String facsimile){
         this.facsimile = new ArrayList<String>();
         this.facsimile.add(facsimile);
         this.voice     = new ArrayList<String>();

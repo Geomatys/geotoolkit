@@ -53,7 +53,7 @@ public class Search1D extends Table1D {
      * @throws ExtrapolationException si une extrapolation non-permise a eu lieu.
      */
     @Override
-    public final double interpolate(double xi) throws ExtrapolationException {
+    public final double interpolate(final double xi) throws ExtrapolationException {
         if (locate(xi)) {
             return interpolate(xi, false);
         } else {
@@ -74,7 +74,7 @@ public class Search1D extends Table1D {
      * @throws ExtrapolationException si une extrapolation non-permise a eu lieu.
      */
     @Override
-    public final double interpolateAt(int index) throws ExtrapolationException {
+    public final double interpolateAt(final int index) throws ExtrapolationException {
         locateAt(index);
         return interpolate(x[index], false);
     }
@@ -124,7 +124,7 @@ public class Search1D extends Table1D {
      *
      * @see #interpolateNaN(double,double)
      */
-    public final double[] interpolateNaN(double dxStart, double dxStop, double yi[]) {
+    public final double[] interpolateNaN(final double dxStart, final double dxStop, double yi[]) {
         boolean toCreate;
         if (yi == null) {
             toCreate = true;
@@ -239,7 +239,7 @@ public class Search1D extends Table1D {
      * @see #interpolateNaN(double, double, double[])
      * @see #interpolateInPlaceNaN(double, double)
      */
-    public double[] interpolateNaN(double dxStart, double dxStop) {
+    public double[] interpolateNaN(final double dxStart, final double dxStop) {
         return interpolateNaN(dxStart, dxStop, null);
     }
 
@@ -273,7 +273,7 @@ public class Search1D extends Table1D {
      * @param dxStop	Plage maximal des <var>x</var> couvert par les données manquantes pour qu'elles puissent être interpolées.
      * @return			Le tableau des <var>y</var>.
      */
-    public final double[] interpolateInPlaceNaN(double dxStart, double dxStop) {
+    public final double[] interpolateInPlaceNaN(final double dxStart, final double dxStop) {
         return interpolateNaN(dxStart, dxStop, y);
     }
 
@@ -305,7 +305,7 @@ public class Search1D extends Table1D {
      *						index que ceux de la dernière interpolation.
      * @return				Valeur <var>y</var> interpolée.
      */
-    protected double interpolate(double xi, boolean reuseIndex) throws ExtrapolationException {
+    protected double interpolate(final double xi, final boolean reuseIndex) throws ExtrapolationException {
         if (ignoreYNaN && !reuseIndex) {
             try {
                 validateIndex(y);
@@ -341,7 +341,7 @@ public class Search1D extends Table1D {
      *          parce qu'il n'y a pas suffisament de données valides dans les vecteurs <var>X</var>
      *          et <var>Y</var>.
      */
-    public final boolean locate(double xi, int index[]) {
+    public final boolean locate(final double xi, final int index[]) {
         if (locate(xi)) {
             copyIndexInto(index);
             if (ignoreYNaN) {
@@ -399,7 +399,7 @@ public class Search1D extends Table1D {
      * @see #khi
      * @see #copyIndexInto(int[]);
      */
-    private final boolean locate(double xi) {
+    private final boolean locate(final double xi) {
         klo = 0;
         khi = x.length - 1;
         while (klo <= khi) {
@@ -570,7 +570,7 @@ public class Search1D extends Table1D {
      * @throws ExtrapolationException si les index tombent en dehors des limites du vecteur des <var>x</var>.
      * @see #validateIndex(float[])
      */
-    private final void locateAt(int index) throws ExtrapolationException {
+    private final void locateAt(final int index) throws ExtrapolationException {
         klo = khi = index;
         final int length = x.length;
         do {
@@ -630,7 +630,7 @@ public class Search1D extends Table1D {
      * @see #locate(double)
      * @see #validateIndex(int[], double[])
      */
-    protected final void copyIndexInto(int index[]) {
+    protected final void copyIndexInto(final int index[]) {
         final int xlength = x.length;
         int center = index.length;
         if (center >= 2) {
@@ -752,7 +752,7 @@ public class Search1D extends Table1D {
      * @see #locate(double)
      * @see #copyIndexInto(int[])
      */
-    protected final boolean validateIndex(int index[], double y[]) {
+    protected final boolean validateIndex(final int index[], final double y[]) {
         boolean hasChanged = false;
         final int xlength = x.length;
         int center = index.length >> 1;
@@ -849,7 +849,7 @@ public class Search1D extends Table1D {
      * @see #locateAt(int)
      * @see #locate(double)
      */
-    protected final boolean validateIndex(double y[]) throws ExtrapolationException {
+    protected final boolean validateIndex(final double y[]) throws ExtrapolationException {
         boolean hasChanged = false;
         if (Double.isNaN(y[khi])) {
             hasChanged = true;
@@ -903,7 +903,7 @@ public class Search1D extends Table1D {
      * @param upper index de la dernière donnée de la plage.
      * @return intervalle <var>dx</var> entre ces deux index.
      */
-    private double getInterval(int lower, int upper) {
+    private double getInterval(final int lower, final int upper) {
         int k0, k1;
         /*
          *	Repère les index pointant vers les données à utiliser pour le calcul

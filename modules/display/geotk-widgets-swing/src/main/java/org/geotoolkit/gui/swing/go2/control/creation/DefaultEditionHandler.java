@@ -154,7 +154,7 @@ public class DefaultEditionHandler implements CanvasHandler {
     private JMap2D map;
     private AbstractEditionDelegate delegate = null;
 
-    public DefaultEditionHandler(JMap2D map) {
+    public DefaultEditionHandler(final JMap2D map) {
         this.map = map;
 
         guiLayers.setRenderer(new LayerListRenderer());
@@ -199,7 +199,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         guiRollBack.setEnabled(changes);
     }
 
-    public void setMap(JMap2D map){
+    public void setMap(final JMap2D map){
         this.map = map;
 
         guiLayers.setEnabled(false);
@@ -243,7 +243,7 @@ public class DefaultEditionHandler implements CanvasHandler {
      * {@inheritDoc }
      */
     @Override
-    public void install(Component component) {
+    public void install(final Component component) {
         //install decoration and listener
         gestureProxy.install(component);
         map.addDecoration(0,deco);
@@ -253,7 +253,7 @@ public class DefaultEditionHandler implements CanvasHandler {
      * {@inheritDoc }
      */
     @Override
-    public void uninstall(Component component) {
+    public void uninstall(final Component component) {
         gestureProxy.uninstall(component);
         map.removeDecoration(deco);
     }
@@ -291,7 +291,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         deco.revalidate();
     }
 
-    private void setDelegate(AbstractEditionDelegate delegate){
+    private void setDelegate(final AbstractEditionDelegate delegate){
         this.delegate = delegate;
         gestureProxy.delegate = this.delegate;
 
@@ -309,14 +309,14 @@ public class DefaultEditionHandler implements CanvasHandler {
 
         private Object delegate;
 
-        public void install(Component component){
+        public void install(final Component component){
             component.addMouseListener(this);
             component.addMouseMotionListener(this);
             component.addMouseWheelListener(this);
             component.addKeyListener(this);
         }
 
-        public void uninstall(Component component){
+        public void uninstall(final Component component){
             component.removeMouseListener(this);
             component.removeMouseMotionListener(this);
             component.removeMouseWheelListener(this);
@@ -324,7 +324,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseClicked(MouseEvent arg0) {
+        public void mouseClicked(final MouseEvent arg0) {
             if(delegate != null && delegate instanceof MouseInputListener){
                 final MouseInputListener candidate = (MouseInputListener) delegate;
                 candidate.mouseClicked(arg0);
@@ -335,7 +335,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mousePressed(MouseEvent arg0) {
+        public void mousePressed(final MouseEvent arg0) {
             if(delegate != null && delegate instanceof MouseInputListener){
                 final MouseInputListener candidate = (MouseInputListener) delegate;
                 candidate.mousePressed(arg0);
@@ -346,7 +346,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseReleased(MouseEvent arg0) {
+        public void mouseReleased(final MouseEvent arg0) {
             if(delegate != null && delegate instanceof MouseInputListener){
                 final MouseInputListener candidate = (MouseInputListener) delegate;
                 candidate.mouseReleased(arg0);
@@ -357,7 +357,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseEntered(MouseEvent arg0) {
+        public void mouseEntered(final MouseEvent arg0) {
             map.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
             if(delegate != null && delegate instanceof MouseInputListener){
                 final MouseInputListener candidate = (MouseInputListener) delegate;
@@ -366,7 +366,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseExited(MouseEvent arg0) {
+        public void mouseExited(final MouseEvent arg0) {
             if(delegate != null && delegate instanceof MouseInputListener){
                 final MouseInputListener candidate = (MouseInputListener) delegate;
                 candidate.mouseExited(arg0);
@@ -374,7 +374,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseDragged(MouseEvent arg0) {
+        public void mouseDragged(final MouseEvent arg0) {
             if(delegate != null && delegate instanceof MouseInputListener){
                 final MouseInputListener candidate = (MouseInputListener) delegate;
                 candidate.mouseDragged(arg0);
@@ -382,7 +382,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseMoved(MouseEvent arg0) {
+        public void mouseMoved(final MouseEvent arg0) {
             if(delegate != null && delegate instanceof MouseInputListener){
                 final MouseInputListener candidate = (MouseInputListener) delegate;
                 candidate.mouseMoved(arg0);
@@ -390,7 +390,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void keyTyped(KeyEvent arg0) {
+        public void keyTyped(final KeyEvent arg0) {
             if(delegate != null && delegate instanceof KeyListener){
                 final KeyListener candidate = (KeyListener) delegate;
                 candidate.keyTyped(arg0);
@@ -398,7 +398,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void keyPressed(KeyEvent arg0) {
+        public void keyPressed(final KeyEvent arg0) {
             if(delegate != null && delegate instanceof KeyListener){
                 final KeyListener candidate = (KeyListener) delegate;
                 candidate.keyPressed(arg0);
@@ -406,7 +406,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void keyReleased(KeyEvent arg0) {
+        public void keyReleased(final KeyEvent arg0) {
             if(delegate != null && delegate instanceof KeyListener){
                 final KeyListener candidate = (KeyListener) delegate;
                 candidate.keyReleased(arg0);
@@ -414,7 +414,7 @@ public class DefaultEditionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseWheelMoved(MouseWheelEvent arg0) {
+        public void mouseWheelMoved(final MouseWheelEvent arg0) {
             if(delegate != null && delegate instanceof MouseWheelListener){
                 final MouseWheelListener candidate = (MouseWheelListener) delegate;
                 candidate.mouseWheelMoved(arg0);

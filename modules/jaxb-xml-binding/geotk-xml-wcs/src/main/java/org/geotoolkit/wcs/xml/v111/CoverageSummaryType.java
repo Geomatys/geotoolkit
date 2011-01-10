@@ -90,7 +90,7 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
     /**
      * An light constructor.
      */
-    public CoverageSummaryType(List<LanguageStringType> title, List<LanguageStringType> _abstract) {
+    public CoverageSummaryType(final List<LanguageStringType> title, final List<LanguageStringType> _abstract) {
         super(title, _abstract, null);
     }
     
@@ -98,8 +98,8 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
     /**
      * An full constructor.
      */
-    public CoverageSummaryType(List<LanguageStringType> title,  List<LanguageStringType> _abstract,
-            List<KeywordsType> keywords, List<JAXBElement<?>> rest) {
+    public CoverageSummaryType(final List<LanguageStringType> title,  final List<LanguageStringType> _abstract,
+            final List<KeywordsType> keywords, final List<JAXBElement<?>> rest) {
         super(title, _abstract, keywords);
         this.rest = rest;
     }
@@ -113,7 +113,7 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
         return null;
     }
 
-    public void setMetadata(MetadataType metadata) {
+    public void setMetadata(final MetadataType metadata) {
         // first we remove the old one
         for (int i = 0; i < rest.size(); i++) {
             JAXBElement<?> jb  = rest.get(i);
@@ -140,7 +140,7 @@ public class CoverageSummaryType extends DescriptionType implements CoverageInfo
     /**
      * Add a new Element to the list
      */
-    public void addRest(JAXBElement<?> element) {
+    public void addRest(final JAXBElement<?> element) {
         this.rest.add(element);
     }
 

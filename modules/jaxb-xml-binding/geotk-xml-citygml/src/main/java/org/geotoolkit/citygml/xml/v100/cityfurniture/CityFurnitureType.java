@@ -123,7 +123,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link String }
      *     
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
@@ -176,7 +176,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setLod1Geometry(GeometryPropertyType value) {
+    public void setLod1Geometry(final GeometryPropertyType value) {
         this.lod1Geometry = value;
     }
 
@@ -200,7 +200,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setLod2Geometry(GeometryPropertyType value) {
+    public void setLod2Geometry(final GeometryPropertyType value) {
         this.lod2Geometry = value;
     }
 
@@ -224,7 +224,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setLod3Geometry(GeometryPropertyType value) {
+    public void setLod3Geometry(final GeometryPropertyType value) {
         this.lod3Geometry = value;
     }
 
@@ -248,7 +248,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setLod4Geometry(GeometryPropertyType value) {
+    public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;
     }
 
@@ -272,7 +272,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link MultiCurvePropertyType }
      *     
      */
-    public void setLod1TerrainIntersection(MultiCurvePropertyType value) {
+    public void setLod1TerrainIntersection(final MultiCurvePropertyType value) {
         this.lod1TerrainIntersection = value;
     }
 
@@ -296,7 +296,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link MultiCurvePropertyType }
      *     
      */
-    public void setLod2TerrainIntersection(MultiCurvePropertyType value) {
+    public void setLod2TerrainIntersection(final MultiCurvePropertyType value) {
         this.lod2TerrainIntersection = value;
     }
 
@@ -320,7 +320,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link MultiCurvePropertyType }
      *     
      */
-    public void setLod3TerrainIntersection(MultiCurvePropertyType value) {
+    public void setLod3TerrainIntersection(final MultiCurvePropertyType value) {
         this.lod3TerrainIntersection = value;
     }
 
@@ -344,7 +344,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link MultiCurvePropertyType }
      *     
      */
-    public void setLod4TerrainIntersection(MultiCurvePropertyType value) {
+    public void setLod4TerrainIntersection(final MultiCurvePropertyType value) {
         this.lod4TerrainIntersection = value;
     }
 
@@ -368,7 +368,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link ImplicitRepresentationPropertyType }
      *     
      */
-    public void setLod1ImplicitRepresentation(ImplicitRepresentationPropertyType value) {
+    public void setLod1ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod1ImplicitRepresentation = value;
     }
 
@@ -392,7 +392,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link ImplicitRepresentationPropertyType }
      *     
      */
-    public void setLod2ImplicitRepresentation(ImplicitRepresentationPropertyType value) {
+    public void setLod2ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod2ImplicitRepresentation = value;
     }
 
@@ -416,7 +416,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link ImplicitRepresentationPropertyType }
      *     
      */
-    public void setLod3ImplicitRepresentation(ImplicitRepresentationPropertyType value) {
+    public void setLod3ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod3ImplicitRepresentation = value;
     }
 
@@ -440,7 +440,7 @@ public class CityFurnitureType extends AbstractCityObjectType {
      *     {@link ImplicitRepresentationPropertyType }
      *     
      */
-    public void setLod4ImplicitRepresentation(ImplicitRepresentationPropertyType value) {
+    public void setLod4ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod4ImplicitRepresentation = value;
     }
 

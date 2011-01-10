@@ -77,7 +77,7 @@ public class Contents {
     /**
      * Build a new Contents
      */
-    public Contents(ObservationOfferingList observationOfferingList) {
+    public Contents(final ObservationOfferingList observationOfferingList) {
         this.observationOfferingList = observationOfferingList;
     }
     
@@ -155,7 +155,7 @@ public class Contents {
         /**
          * Build a new Observation offering list.
          */
-        public ObservationOfferingList(List<ObservationOfferingEntry> observationOffering){
+        public ObservationOfferingList(final List<ObservationOfferingEntry> observationOffering){
             this.observationOffering = observationOffering;
         }
         

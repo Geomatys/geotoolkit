@@ -51,7 +51,7 @@ public class ContextTitleMapperFactory implements JRMapperFactory<String,MapCont
      * {@inheritDoc }
      */
     @Override
-    public Image getIcon(int type) {
+    public Image getIcon(final int type) {
         return ICON.getImage();
     }
 

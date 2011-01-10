@@ -59,7 +59,7 @@ public class PolicySetCombinerParametersType extends CombinerParametersType {
     * Sets the value of the policySetIdRef property.
     * 
     */
-   public void setPolicySetIdRef(String value) {
+   public void setPolicySetIdRef(final String value) {
       this.policySetIdRef = value;
    }
 

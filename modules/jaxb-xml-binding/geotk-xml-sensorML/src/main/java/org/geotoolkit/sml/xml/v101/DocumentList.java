@@ -89,7 +89,7 @@ public class DocumentList implements AbstractDocumentList {
 
     }
 
-    public DocumentList(AbstractDocumentList dl) {
+    public DocumentList(final AbstractDocumentList dl) {
         if (dl != null) {
             this.description = dl.getDescription();
             this.id          = dl.getId();
@@ -122,7 +122,7 @@ public class DocumentList implements AbstractDocumentList {
      *     {@link StringOrRefType }
      *     
      */
-    public void setDescription(StringOrRefType value) {
+    public void setDescription(final StringOrRefType value) {
         this.description = value;
     }
 
@@ -175,7 +175,7 @@ public class DocumentList implements AbstractDocumentList {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -238,7 +238,7 @@ public class DocumentList implements AbstractDocumentList {
 
         }
 
-        public Member(AbstractDocumentListMember m) {
+        public Member(final AbstractDocumentListMember m) {
             if (m != null) {
                 this.actuate = m.getActuate();
                 this.arcrole = m.getArcrole();
@@ -275,7 +275,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link Document }
          *     
          */
-        public void setDocument(Document value) {
+        public void setDocument(final Document value) {
             this.document = value;
         }
 
@@ -299,7 +299,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link String }
          *     
          */
-        public void setName(String value) {
+        public void setName(final String value) {
             this.name = value;
         }
 
@@ -323,7 +323,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link String }
          *     
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -347,7 +347,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -371,7 +371,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link String }
          *     
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -395,7 +395,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link String }
          *     
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -419,7 +419,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link String }
          *     
          */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -443,7 +443,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link String }
          *     
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -467,7 +467,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link String }
          *     
          */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -491,7 +491,7 @@ public class DocumentList implements AbstractDocumentList {
          *     {@link String }
          *     
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 

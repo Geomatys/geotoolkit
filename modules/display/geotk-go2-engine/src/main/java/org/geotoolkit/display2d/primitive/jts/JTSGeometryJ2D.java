@@ -42,7 +42,7 @@ public class JTSGeometryJ2D extends AbstractJTSGeometryJ2D<Geometry> {
 
     protected JTSGeometryIterator<? extends Geometry> iterator = null;
 
-    public JTSGeometryJ2D(Geometry geom) {
+    public JTSGeometryJ2D(final Geometry geom) {
         super(geom);
     }
 
@@ -51,7 +51,7 @@ public class JTSGeometryJ2D extends AbstractJTSGeometryJ2D<Geometry> {
      *
      * @param geom - the wrapped geometry
      */
-    public JTSGeometryJ2D(Geometry geom, AffineTransform trs) {
+    public JTSGeometryJ2D(final Geometry geom, final AffineTransform trs) {
         super(geom, trs);
     }
 
@@ -62,7 +62,7 @@ public class JTSGeometryJ2D extends AbstractJTSGeometryJ2D<Geometry> {
      * @param g
      */
     @Override
-    public void setGeometry(Geometry g) {
+    public void setGeometry(final Geometry g) {
         super.setGeometry(g);
 
         //change iterator only if necessary
@@ -89,7 +89,7 @@ public class JTSGeometryJ2D extends AbstractJTSGeometryJ2D<Geometry> {
      * {@inheritDoc }
      */
     @Override
-    public PathIterator getPathIterator(AffineTransform at) {
+    public PathIterator getPathIterator(final AffineTransform at) {
 
         final AffineTransform concat;
         if(at == null){
@@ -123,7 +123,7 @@ public class JTSGeometryJ2D extends AbstractJTSGeometryJ2D<Geometry> {
         return new JTSGeometryJ2D(this.geometry,this.transform);
     }
 
-    public static AbstractJTSGeometryJ2D best(Class clazz, AffineTransform trs){
+    public static AbstractJTSGeometryJ2D best(final Class clazz, final AffineTransform trs){
         if(Point.class.isAssignableFrom(clazz)){
             return new JTSGeometryJ2D(null,trs);
         }else if(MultiPoint.class.isAssignableFrom(clazz)){

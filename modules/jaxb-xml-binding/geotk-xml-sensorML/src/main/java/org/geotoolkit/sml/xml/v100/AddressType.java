@@ -70,8 +70,8 @@ public class AddressType implements AbstractAddress {
     public AddressType() {
     }
 
-    public AddressType(String deliveryPoint, String city, String administrativeArea, String postalCode, String country,
-            String electronicMailAddress) {
+    public AddressType(final String deliveryPoint, final String city, final String administrativeArea, final String postalCode, final String country,
+            final String electronicMailAddress) {
         this.administrativeArea = administrativeArea;
         this.city = city;
         this.country = country;
@@ -84,7 +84,7 @@ public class AddressType implements AbstractAddress {
 
     }
 
-     public AddressType(AbstractAddress ad) {
+     public AddressType(final AbstractAddress ad) {
         if (ad != null) {
             this.administrativeArea    = ad.getAdministrativeArea();
             this.city                  = ad.getCity();
@@ -110,7 +110,7 @@ public class AddressType implements AbstractAddress {
      * Gets the value of the deliveryPoint property.
      *
      */
-    public void setDeliveryPoint(String deliveryPoint) {
+    public void setDeliveryPoint(final String deliveryPoint) {
         if (this.deliveryPoint == null) {
             this.deliveryPoint = new ArrayList<String>();
         }
@@ -121,7 +121,7 @@ public class AddressType implements AbstractAddress {
      * Gets the value of the deliveryPoint property.
      *
      */
-    public void setDeliveryPoint(List<String> deliveryPoint) {
+    public void setDeliveryPoint(final List<String> deliveryPoint) {
         this.deliveryPoint = deliveryPoint;
     }
     /**
@@ -135,7 +135,7 @@ public class AddressType implements AbstractAddress {
     /**
      * Sets the value of the city property.
      */
-    public void setCity(String value) {
+    public void setCity(final String value) {
         this.city = value;
     }
 
@@ -150,7 +150,7 @@ public class AddressType implements AbstractAddress {
      * Sets the value of the administrativeArea property.
      *
      */
-    public void setAdministrativeArea(String value) {
+    public void setAdministrativeArea(final String value) {
         this.administrativeArea = value;
     }
 
@@ -164,7 +164,7 @@ public class AddressType implements AbstractAddress {
     /**
      * Sets the value of the postalCode property.
      */
-    public void setPostalCode(String value) {
+    public void setPostalCode(final String value) {
         this.postalCode = value;
     }
 
@@ -178,7 +178,7 @@ public class AddressType implements AbstractAddress {
     /**
      * Sets the value of the country property.
      */
-    public void setCountry(String value) {
+    public void setCountry(final String value) {
         this.country = value;
     }
 
@@ -192,7 +192,7 @@ public class AddressType implements AbstractAddress {
     /**
      * Sets the value of the electronicMailAddress property.
      */
-    public void setElectronicMailAddress(String value) {
+    public void setElectronicMailAddress(final String value) {
         this.electronicMailAddress = value;
     }
 

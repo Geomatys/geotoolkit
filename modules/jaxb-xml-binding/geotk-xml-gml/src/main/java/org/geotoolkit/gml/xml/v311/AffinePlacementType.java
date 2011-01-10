@@ -115,7 +115,7 @@ public class AffinePlacementType {
      *     {@link DirectPositionType }
      *     
      */
-    public void setLocation(DirectPositionType value) {
+    public void setLocation(final DirectPositionType value) {
         this.location = value;
     }
 
@@ -168,7 +168,7 @@ public class AffinePlacementType {
      *     {@link Integer }
      *     
      */
-    public void setInDimension(Integer value) {
+    public void setInDimension(final Integer value) {
         this.inDimension = value;
     }
 
@@ -192,7 +192,7 @@ public class AffinePlacementType {
      *     {@link Integer }
      *     
      */
-    public void setOutDimension(Integer value) {
+    public void setOutDimension(final Integer value) {
         this.outDimension = value;
     }
 

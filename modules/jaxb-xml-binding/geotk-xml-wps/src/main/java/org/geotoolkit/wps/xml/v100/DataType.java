@@ -82,7 +82,7 @@ public class DataType {
      *     {@link ComplexDataType }
      *     
      */
-    public void setComplexData(ComplexDataType value) {
+    public void setComplexData(final ComplexDataType value) {
         this.complexData = value;
     }
 
@@ -106,7 +106,7 @@ public class DataType {
      *     {@link LiteralDataType }
      *     
      */
-    public void setLiteralData(LiteralDataType value) {
+    public void setLiteralData(final LiteralDataType value) {
         this.literalData = value;
     }
 
@@ -130,7 +130,7 @@ public class DataType {
      *     {@link BoundingBoxType }
      *     
      */
-    public void setBoundingBoxData(BoundingBoxType value) {
+    public void setBoundingBoxData(final BoundingBoxType value) {
         this.boundingBoxData = value;
     }
 

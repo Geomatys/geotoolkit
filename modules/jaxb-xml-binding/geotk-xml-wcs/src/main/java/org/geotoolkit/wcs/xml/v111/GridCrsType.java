@@ -111,8 +111,8 @@ public class GridCrsType {
     /**
      * Build a new grid crs type
      */
-    public GridCrsType(CodeType srsName, String gridBaseCRS, String gridType, List<Double> gridOrigin,
-            List<Double> gridOffsets, String gridCS, String id) {
+    public GridCrsType(final CodeType srsName, final String gridBaseCRS, final String gridType, final List<Double> gridOrigin,
+            final List<Double> gridOffsets, final String gridCS, final String id) {
         this.gridBaseCRS = gridBaseCRS;
         this.gridCS      = gridCS;
         this.gridOffsets = gridOffsets;
@@ -122,7 +122,7 @@ public class GridCrsType {
         this.gridOrigin  = gridOrigin;
     }
 
-    public GridCrsType(RectifiedGrid grid) {
+    public GridCrsType(final RectifiedGrid grid) {
         if (grid != null) {
             if (grid.getOrigin() != null) {
                 this.gridOrigin = new ArrayList<Double>();
@@ -167,7 +167,7 @@ public class GridCrsType {
         return gridBaseCRS;
     }
 
-    public void setGridBaseCRS(String gridBaseCRS) {
+    public void setGridBaseCRS(final String gridBaseCRS) {
         this.gridBaseCRS = gridBaseCRS;
     }
 

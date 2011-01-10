@@ -41,7 +41,7 @@ public class DefaultDisplacement implements Displacement{
      * @param dispX : if null or Expression.NIL will be replaced by default value.
      * @param dispY : if null or Expression.NIL will be replaced by default value.
      */
-    public DefaultDisplacement(Expression dispX, Expression dispY){
+    public DefaultDisplacement(final Expression dispX, final Expression dispY){
         this.dispX = (dispX == null || dispX == NIL) ? DEFAULT_DISPLACEMENT_X : dispX;
         this.dispY = (dispY == null || dispY == NIL) ? DEFAULT_DISPLACEMENT_Y : dispY;
     }
@@ -66,7 +66,7 @@ public class DefaultDisplacement implements Displacement{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -74,7 +74,7 @@ public class DefaultDisplacement implements Displacement{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

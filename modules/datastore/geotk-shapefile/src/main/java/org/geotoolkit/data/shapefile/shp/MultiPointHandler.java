@@ -38,11 +38,11 @@ import org.geotoolkit.storage.DataStoreException;
 public class MultiPointHandler extends AbstractShapeHandler {
     
     /** Creates new MultiPointHandler */
-    public MultiPointHandler(boolean read3D) {
+    public MultiPointHandler(final boolean read3D) {
         super(ShapeType.POINT,read3D);
     }
 
-    public MultiPointHandler(ShapeType type, boolean read3D) throws DataStoreException {
+    public MultiPointHandler(final ShapeType type, final boolean read3D) throws DataStoreException {
         super(type,read3D);
         if ((type != ShapeType.MULTIPOINT) && (type != ShapeType.MULTIPOINTM)
                 && (type != ShapeType.MULTIPOINTZ)) {
@@ -68,7 +68,7 @@ public class MultiPointHandler extends AbstractShapeHandler {
      *         a shapefile
      */
     @Override
-    public int getLength(Object geometry) {
+    public int getLength(final Object geometry) {
         final MultiPoint mp = (MultiPoint) geometry;
 
         final int numGeom = mp.getNumGeometries();
@@ -99,13 +99,13 @@ public class MultiPointHandler extends AbstractShapeHandler {
     }
 
     @Override
-    public Object estimated(double minX, double maxX, double minY, double maxY) {
+    public Object estimated(final double minX, final double maxX, final double minY, final double maxY) {
         final Coordinate coord = new Coordinate((minX + maxX) / 2, (minY + maxY) / 2);
         return GEOMETRY_FACTORY.createMultiPoint(new Coordinate[] {coord});
     }
     
     @Override
-    public Object read(ByteBuffer buffer, ShapeType type) {
+    public Object read(final ByteBuffer buffer, final ShapeType type) {
         if (type == ShapeType.NULL) {
             return createNull();
         }
@@ -164,7 +164,7 @@ public class MultiPointHandler extends AbstractShapeHandler {
 //    }
 
     @Override
-    public void write(ByteBuffer buffer, Object geometry) {
+    public void write(final ByteBuffer buffer, final Object geometry) {
         MultiPoint mp = (MultiPoint) geometry;
 
         Envelope box = mp.getEnvelopeInternal();

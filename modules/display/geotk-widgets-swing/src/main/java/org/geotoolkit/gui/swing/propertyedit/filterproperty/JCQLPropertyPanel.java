@@ -38,7 +38,7 @@ public class JCQLPropertyPanel extends JCQLFilterPanel implements PropertyPane{
     }
     
     @Override
-    public void setTarget(Object target) {
+    public void setTarget(final Object target) {
         if (target instanceof FeatureMapLayer) {
             layer = (FeatureMapLayer) target;
             parse();

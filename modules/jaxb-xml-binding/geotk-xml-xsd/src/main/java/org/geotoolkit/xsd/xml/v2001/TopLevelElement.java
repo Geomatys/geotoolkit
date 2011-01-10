@@ -56,15 +56,15 @@ public class TopLevelElement extends Element {
 
     }
 
-    public TopLevelElement(String name, QName type) {
+    public TopLevelElement(final String name, final QName type) {
         super(name, type);
     }
 
-    public TopLevelElement(String name, QName type, Integer minOccurs, String maxOccurs) {
+    public TopLevelElement(final String name, final QName type, final Integer minOccurs, final String maxOccurs) {
         super(name, type, minOccurs, maxOccurs);
     }
 
-    public TopLevelElement(String name, QName type, Integer minOccurs, String maxOccurs, boolean nillable) {
+    public TopLevelElement(final String name, final QName type, final Integer minOccurs, final String maxOccurs, final boolean nillable) {
         super(name, type, minOccurs, maxOccurs);
         setNillable(nillable);
     }

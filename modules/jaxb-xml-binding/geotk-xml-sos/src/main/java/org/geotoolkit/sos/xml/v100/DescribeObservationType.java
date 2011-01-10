@@ -61,11 +61,11 @@ public class DescribeObservationType extends RequestBaseType {
      */
      DescribeObservationType(){}
 
-    public DescribeObservationType(String observedProperty) {
+    public DescribeObservationType(final String observedProperty) {
         this.observedProperty = observedProperty;
     }
 
-    public DescribeObservationType(String version, String observedProperty) {
+    public DescribeObservationType(final String version, final String observedProperty) {
         super(version);
         this.observedProperty = observedProperty;
     }

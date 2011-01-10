@@ -73,14 +73,14 @@ public class BooleanType extends AbstractDataComponentType implements AbstractBo
 
     }
 
-    public BooleanType(URI definition) {
+    public BooleanType(final URI definition) {
         super(definition);
     }
 
     /**
      * Build a new TimeType
      */
-    public BooleanType(AbstractBoolean bool) {
+    public BooleanType(final AbstractBoolean bool) {
         super(bool);
         if (bool != null) {
             this.value  = bool.isValue();
@@ -99,7 +99,7 @@ public class BooleanType extends AbstractDataComponentType implements AbstractBo
     /**
      * Sets the value of the quality property.
      */
-    public void setQuality(QualityPropertyType value) {
+    public void setQuality(final QualityPropertyType value) {
         this.quality = value;
     }
 
@@ -113,7 +113,7 @@ public class BooleanType extends AbstractDataComponentType implements AbstractBo
     /**
      * Sets the value of the value property.
      */
-    public void setValue(java.lang.Boolean value) {
+    public void setValue(final java.lang.Boolean value) {
         this.value = value;
     }
 
@@ -127,7 +127,7 @@ public class BooleanType extends AbstractDataComponentType implements AbstractBo
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -141,7 +141,7 @@ public class BooleanType extends AbstractDataComponentType implements AbstractBo
     /**
      * Sets the value of the axisID property.
      */
-    public void setAxisID(String value) {
+    public void setAxisID(final String value) {
         this.axisID = value;
     }
 

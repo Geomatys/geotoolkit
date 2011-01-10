@@ -53,8 +53,8 @@ public class DefaultLinePlacement implements LinePlacement{
      * @param aligned, default is false
      * @param generalize, defualt is false
      */
-    public DefaultLinePlacement(Expression offset, Expression initial, Expression gap,
-            boolean repeated, boolean aligned, boolean generalize){
+    public DefaultLinePlacement(final Expression offset, final Expression initial, final Expression gap,
+            final boolean repeated, final boolean aligned, final boolean generalize){
         
         this.offset = (offset == null || offset == NIL) ? DEFAULT_LINEPLACEMENT_OFFSET : offset;
         this.initial  = (initial == null || initial == NIL) ? DEFAULT_LINEPLACEMENT_INITIAL_GAP : initial;
@@ -116,7 +116,7 @@ public class DefaultLinePlacement implements LinePlacement{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -124,7 +124,7 @@ public class DefaultLinePlacement implements LinePlacement{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

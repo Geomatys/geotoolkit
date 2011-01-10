@@ -46,7 +46,7 @@ public enum StyleStateEnumType {
     HIGHLIGHT("highlight");
     private final String value;
 
-    StyleStateEnumType(String v) {
+    StyleStateEnumType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum StyleStateEnumType {
         return value;
     }
 
-    public static StyleStateEnumType fromValue(String v) {
+    public static StyleStateEnumType fromValue(final String v) {
         for (StyleStateEnumType c: StyleStateEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

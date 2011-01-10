@@ -138,7 +138,7 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (this == other) {
             return true;
         }

@@ -78,7 +78,7 @@ public abstract class AbstractGeometryTest extends TestCase{
         PRIMITIVE_FACTORY = new JTSPrimitiveFactory(crs);
     }
 
-    protected DirectPosition createDirectPosition(double x, double y) {
+    protected DirectPosition createDirectPosition(final double x, final double y) {
         double[] coords = new double[2];
         coords[0] = x;
         coords[1] = y;
@@ -126,7 +126,7 @@ public abstract class AbstractGeometryTest extends TestCase{
      * @param exterior
      * @return <tt>SurfaceBoundary</tt>
      */
-    protected SurfaceBoundary createSurfaceBoundary(Curve exterior) {
+    protected SurfaceBoundary createSurfaceBoundary(final Curve exterior) {
         final Ring exteriorRing = createRing(exterior);
         List interiorRingList = Collections.EMPTY_LIST;
         SurfaceBoundary surfaceBoundary = null;

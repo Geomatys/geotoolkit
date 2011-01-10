@@ -79,8 +79,8 @@ public class GetObservationById extends RequestBaseType {
     /**
      * Build a new full GetObservationById request
      */
-    public GetObservationById(String version, String observationId, String responseFormat,
-                              QName resultModel, ResponseModeType responseMode, String srsName)
+    public GetObservationById(final String version, final String observationId, final String responseFormat,
+                              final QName resultModel, final ResponseModeType responseMode, final String srsName)
     {
         super(version);
         this.observationId = observationId;

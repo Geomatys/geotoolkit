@@ -89,7 +89,7 @@ public class AliasType
      *     {@link String }
      *     
      */
-    public void setTargetHref(String value) {
+    public void setTargetHref(final String value) {
         this.targetHref = value;
     }
 
@@ -113,7 +113,7 @@ public class AliasType
      *     {@link String }
      *     
      */
-    public void setSourceHref(String value) {
+    public void setSourceHref(final String value) {
         this.sourceHref = value;
     }
 

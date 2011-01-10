@@ -70,7 +70,7 @@ public class VectorType extends AbstractVectorType implements Vector {
 
     }
 
-    public VectorType(Vector v) {
+    public VectorType(final Vector v) {
         super(v);
         if (v != null && v.getCoordinate() != null) {
             this.coordinate = new ArrayList<CoordinateType>();
@@ -80,17 +80,17 @@ public class VectorType extends AbstractVectorType implements Vector {
         }
     }
     
-    public VectorType(URI referenceFrame, URI localFrame, List<CoordinateType> coordinate) {
+    public VectorType(final URI referenceFrame, final URI localFrame, final List<CoordinateType> coordinate) {
         super(referenceFrame, localFrame);
         this.coordinate = coordinate;
     }
 
-    public VectorType(URI definition, List<CoordinateType> coordinate) {
+    public VectorType(final URI definition, final List<CoordinateType> coordinate) {
         super(definition);
         this.coordinate = coordinate;
     }
 
-    public VectorType(List<CoordinateType> coordinate) {
+    public VectorType(final List<CoordinateType> coordinate) {
         this.coordinate = coordinate;
     }
 
@@ -107,14 +107,14 @@ public class VectorType extends AbstractVectorType implements Vector {
     /**
      * Gets the value of the coordinate property.
      */
-    public void setCoordinate(List<CoordinateType> coordinate) {
+    public void setCoordinate(final List<CoordinateType> coordinate) {
         this.coordinate = coordinate;
     }
 
     /**
      * Gets the value of the coordinate property.
      */
-    public void setCoordinate(CoordinateType coordinate) {
+    public void setCoordinate(final CoordinateType coordinate) {
         if (this.coordinate == null) {
             this.coordinate = new ArrayList<CoordinateType>();
         }
@@ -124,7 +124,7 @@ public class VectorType extends AbstractVectorType implements Vector {
     /**
      * Gets the value of the coordinate property.
      */
-    public void setCoordinate(QuantityType coordinate) {
+    public void setCoordinate(final QuantityType coordinate) {
         if (this.coordinate == null) {
             this.coordinate = new ArrayList<CoordinateType>();
         }
@@ -134,7 +134,7 @@ public class VectorType extends AbstractVectorType implements Vector {
     /**
      * Gets the value of the coordinate property.
      */
-    public void setCoordinate(Count coordinate) {
+    public void setCoordinate(final Count coordinate) {
         if (this.coordinate == null) {
             this.coordinate = new ArrayList<CoordinateType>();
         }
@@ -144,7 +144,7 @@ public class VectorType extends AbstractVectorType implements Vector {
     /**
      * Gets the value of the coordinate property.
      */
-    public void setCoordinate(TimeType coordinate) {
+    public void setCoordinate(final TimeType coordinate) {
         if (this.coordinate == null) {
             this.coordinate = new ArrayList<CoordinateType>();
         }

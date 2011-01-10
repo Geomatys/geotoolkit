@@ -93,7 +93,7 @@ public class LocationType
      *     {@link Double }
      *     
      */
-    public void setLongitude(Double value) {
+    public void setLongitude(final Double value) {
         this.longitude = value;
     }
 
@@ -117,7 +117,7 @@ public class LocationType
      *     {@link Double }
      *     
      */
-    public void setLatitude(Double value) {
+    public void setLatitude(final Double value) {
         this.latitude = value;
     }
 
@@ -141,7 +141,7 @@ public class LocationType
      *     {@link Double }
      *     
      */
-    public void setAltitude(Double value) {
+    public void setAltitude(final Double value) {
         this.altitude = value;
     }
 

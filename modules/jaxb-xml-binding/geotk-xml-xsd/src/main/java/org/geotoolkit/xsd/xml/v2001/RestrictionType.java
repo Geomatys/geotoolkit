@@ -124,7 +124,7 @@ public class RestrictionType
      *     {@link GroupRef }
      *     
      */
-    public void setGroup(GroupRef value) {
+    public void setGroup(final GroupRef value) {
         this.group = value;
     }
 
@@ -148,7 +148,7 @@ public class RestrictionType
      *     {@link All }
      *     
      */
-    public void setAll(All value) {
+    public void setAll(final All value) {
         this.all = value;
     }
 
@@ -172,7 +172,7 @@ public class RestrictionType
      *     {@link ExplicitGroup }
      *     
      */
-    public void setChoice(ExplicitGroup value) {
+    public void setChoice(final ExplicitGroup value) {
         this.choice = value;
     }
 
@@ -196,7 +196,7 @@ public class RestrictionType
      *     {@link ExplicitGroup }
      *     
      */
-    public void setSequence(ExplicitGroup value) {
+    public void setSequence(final ExplicitGroup value) {
         this.sequence = value;
     }
 
@@ -220,7 +220,7 @@ public class RestrictionType
      *     {@link LocalSimpleType }
      *     
      */
-    public void setSimpleType(LocalSimpleType value) {
+    public void setSimpleType(final LocalSimpleType value) {
         this.simpleType = value;
     }
 
@@ -314,7 +314,7 @@ public class RestrictionType
      *     {@link Wildcard }
      *     
      */
-    public void setAnyAttribute(Wildcard value) {
+    public void setAnyAttribute(final Wildcard value) {
         this.anyAttribute = value;
     }
 
@@ -338,7 +338,7 @@ public class RestrictionType
      *     {@link QName }
      *     
      */
-    public void setBase(QName value) {
+    public void setBase(final QName value) {
         this.base = value;
     }
 

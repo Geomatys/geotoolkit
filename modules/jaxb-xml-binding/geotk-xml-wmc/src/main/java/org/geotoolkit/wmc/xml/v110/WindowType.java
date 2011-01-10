@@ -71,7 +71,7 @@ public class WindowType {
      *     {@link BigInteger }
      *     
      */
-    public void setHeight(BigInteger value) {
+    public void setHeight(final BigInteger value) {
         this.height = value;
     }
 
@@ -95,7 +95,7 @@ public class WindowType {
      *     {@link BigInteger }
      *     
      */
-    public void setWidth(BigInteger value) {
+    public void setWidth(final BigInteger value) {
         this.width = value;
     }
 

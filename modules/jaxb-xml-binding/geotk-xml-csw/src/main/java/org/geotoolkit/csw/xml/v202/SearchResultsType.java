@@ -154,7 +154,7 @@ public class SearchResultsType implements SearchResults {
     /**
      * build a new search results (HITS MODE).
      */
-    public SearchResultsType(String resultSetId, ElementSetType elementSet, int numberOfResultMatched, int nextRecord) {
+    public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched, final int nextRecord) {
         this.resultSetId            = resultSetId;
         this.elementSet             = elementSet;
         this.numberOfRecordsMatched = numberOfResultMatched;
@@ -167,8 +167,8 @@ public class SearchResultsType implements SearchResults {
      * build a new search results. (RESULTS mode - OGCCORE mode).
      * 
      */
-    public SearchResultsType(String resultSetId, ElementSetType elementSet, int numberOfResultMatched,
-            List<AbstractRecordType> records, Integer numberOfRecordsReturned, int nextRecord) {
+    public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
+            final List<AbstractRecordType> records, final Integer numberOfRecordsReturned, final int nextRecord) {
         this.resultSetId             = resultSetId;
         this.elementSet              = elementSet;
         this.numberOfRecordsMatched  = numberOfResultMatched;
@@ -201,8 +201,8 @@ public class SearchResultsType implements SearchResults {
      * build a new search results. (RESULTS mode - ISO19139 mode).
      * 
      */
-    public SearchResultsType(String resultSetId, ElementSetType elementSet, int numberOfResultMatched,
-            Integer numberOfRecordsReturned, List<Object> records, int nextRecord) {
+    public SearchResultsType(final String resultSetId, final ElementSetType elementSet, final int numberOfResultMatched,
+            final Integer numberOfRecordsReturned, final List<Object> records, final int nextRecord) {
         this.resultSetId             = resultSetId;
         this.elementSet              = elementSet;
         this.numberOfRecordsMatched  = numberOfResultMatched;
@@ -285,27 +285,27 @@ public class SearchResultsType implements SearchResults {
         return expires;
     }
     
-    public void setResultSetId(String value) {
+    public void setResultSetId(final String value) {
         this.resultSetId = value;
     }
 
-    public void setRecordSchema(String value) {
+    public void setRecordSchema(final String value) {
         this.recordSchema = value;
     }
 
-    public void setNumberOfRecordsMatched(int value) {
+    public void setNumberOfRecordsMatched(final int value) {
         this.numberOfRecordsMatched = value;
     }
 
-    public void setNumberOfRecordsReturned(int value) {
+    public void setNumberOfRecordsReturned(final int value) {
         this.numberOfRecordsReturned = value;
     }
 
-    public void setNextRecord(int value) {
+    public void setNextRecord(final int value) {
         this.nextRecord = value;
     }
 
-    public void setExpires(XMLGregorianCalendar value) {
+    public void setExpires(final XMLGregorianCalendar value) {
         this.expires = value;
     }
     
@@ -337,7 +337,7 @@ public class SearchResultsType implements SearchResults {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }

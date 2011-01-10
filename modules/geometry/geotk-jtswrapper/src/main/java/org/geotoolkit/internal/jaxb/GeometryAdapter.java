@@ -71,7 +71,7 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
 
     }
 
-    public GeometryAdapter(Geometry geom) {
+    public GeometryAdapter(final Geometry geom) {
         if (geom instanceof JTSPoint) {
             this.point = FACTORY.createJTSPoint((JTSPoint) geom);
         } else if (geom instanceof JTSCurve) {
@@ -105,7 +105,7 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
 
 
     @Override
-    public Geometry unmarshal(GeometryAdapter v) throws Exception {
+    public Geometry unmarshal(final GeometryAdapter v) throws Exception {
         if (v != null && v.point != null) {
             return (Geometry) v.point.getValue();
 
@@ -158,7 +158,7 @@ public class GeometryAdapter<T> extends XmlAdapter<GeometryAdapter, Geometry> {
     }
 
     @Override
-    public GeometryAdapter marshal(Geometry v) throws Exception {
+    public GeometryAdapter marshal(final Geometry v) throws Exception {
         return new GeometryAdapter(v);
     }
 

@@ -25,7 +25,7 @@ import java.sql.SQLException;
  */
 public abstract class JDBCGeometrylessTestSetup extends JDBCDelegatingTestSetup {
 
-    protected JDBCGeometrylessTestSetup(JDBCTestSetup delegate) {
+    protected JDBCGeometrylessTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
     }
     

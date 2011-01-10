@@ -39,7 +39,7 @@ public class OfferingResponseModeEntry implements Entry {
     /**
      * Cree une nouveau lien entre une procedure et un offering. 
      */
-    public OfferingResponseModeEntry(String idOffering, ResponseModeType mode) {
+    public OfferingResponseModeEntry(final String idOffering, final ResponseModeType mode) {
         this.idOffering = idOffering;
         this.mode  = mode;
     }

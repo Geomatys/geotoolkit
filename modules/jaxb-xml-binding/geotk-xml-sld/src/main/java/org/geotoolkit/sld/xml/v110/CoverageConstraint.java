@@ -77,7 +77,7 @@ public class CoverageConstraint {
      *     {@link String }
      *     
      */
-    public void setCoverageName(String value) {
+    public void setCoverageName(final String value) {
         this.coverageName = value;
     }
 
@@ -101,7 +101,7 @@ public class CoverageConstraint {
      *     {@link CoverageExtent }
      *     
      */
-    public void setCoverageExtent(CoverageExtent value) {
+    public void setCoverageExtent(final CoverageExtent value) {
         this.coverageExtent = value;
     }
 

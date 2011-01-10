@@ -53,7 +53,7 @@ public class User extends AbstractComplexAttribute<Collection<Property>,Identifi
      * @param id The userId associated with the user name.
      * @param userName The name of the user that this object represents.
      */
-    private User(int id, String userName) {
+    private User(final int id, final String userName) {
         super(OSMModelConstants.ATT_USER, new SimpleId(id));
         if (userName == null) {
             throw new NullPointerException("The user name cannot be null.");
@@ -82,7 +82,7 @@ public class User extends AbstractComplexAttribute<Collection<Property>,Identifi
         return name;
     }
 
-    public static User create(int userId, String userName){
+    public static User create(final int userId, String userName){
         if(userId <=0){
             return NONE;
         }
@@ -107,7 +107,7 @@ public class User extends AbstractComplexAttribute<Collection<Property>,Identifi
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

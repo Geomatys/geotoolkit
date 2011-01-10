@@ -59,7 +59,7 @@ public class ISOEmptyIterator extends ISOGeometryIterator<Geometry> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         return 0;
     }
 }

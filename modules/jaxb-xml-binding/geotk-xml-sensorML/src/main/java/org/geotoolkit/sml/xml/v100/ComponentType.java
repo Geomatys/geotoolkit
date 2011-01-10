@@ -53,7 +53,7 @@ public class ComponentType extends AbstractComponentType implements Component {
 
     }
 
-    public ComponentType(Component cp) {
+    public ComponentType(final Component cp) {
         super(cp);
         if (cp != null && cp.getMethod() != null) {
             this.method = new MethodPropertyType(cp.getMethod());
@@ -70,7 +70,7 @@ public class ComponentType extends AbstractComponentType implements Component {
     /**
      * @param method the method to set
      */
-    public void setMethod(MethodPropertyType method) {
+    public void setMethod(final MethodPropertyType method) {
         this.method = method;
     }
 

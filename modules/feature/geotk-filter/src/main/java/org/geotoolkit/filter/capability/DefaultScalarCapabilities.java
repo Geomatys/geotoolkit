@@ -33,7 +33,7 @@ public class DefaultScalarCapabilities implements ScalarCapabilities {
     private final ComparisonOperators comparisons;
     private final ArithmeticOperators arithmetics;
 
-    public DefaultScalarCapabilities(boolean logical, ComparisonOperators comparisons, ArithmeticOperators arithmetics) {
+    public DefaultScalarCapabilities(final boolean logical, final ComparisonOperators comparisons, final ArithmeticOperators arithmetics) {
         this.logical = logical;
         this.comparisons = comparisons;
         this.arithmetics = arithmetics;
@@ -67,7 +67,7 @@ public class DefaultScalarCapabilities implements ScalarCapabilities {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

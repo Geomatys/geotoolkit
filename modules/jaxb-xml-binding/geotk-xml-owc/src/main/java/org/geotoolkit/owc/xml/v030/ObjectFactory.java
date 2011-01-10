@@ -191,7 +191,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows-context", name = "ResourceList")
-    public JAXBElement<ResourceListType> createResourceList(ResourceListType value) {
+    public JAXBElement<ResourceListType> createResourceList(final ResourceListType value) {
         return new JAXBElement<ResourceListType>(_ResourceList_QNAME, ResourceListType.class, null, value);
     }
 
@@ -200,7 +200,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/ows-context", name = "OWSContext")
-    public JAXBElement<OWSContextType> createOWSContext(OWSContextType value) {
+    public JAXBElement<OWSContextType> createOWSContext(final OWSContextType value) {
         return new JAXBElement<OWSContextType>(_OWSContext_QNAME, OWSContextType.class, null, value);
     }
 

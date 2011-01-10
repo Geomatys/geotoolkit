@@ -80,7 +80,7 @@ public abstract class AbstractDataArrayType extends AbstractDataComponentType im
     /**
      * Clone a new Abstract Data array.
      */
-    public AbstractDataArrayType(AbstractDataArray array) {
+    public AbstractDataArrayType(final AbstractDataArray array) {
         super(array);
         if (array != null) {
             this.elementCount = new ElementCount(array.getElementCount());
@@ -97,7 +97,7 @@ public abstract class AbstractDataArrayType extends AbstractDataComponentType im
     /**
      * Sets the value of the elementCount property.
      */
-    public void setElementCount(ElementCount value) {
+    public void setElementCount(final ElementCount value) {
         this.elementCount = value;
     }
 

@@ -65,7 +65,7 @@ public class AvailableKeys {
     /**
      * Build a new Available Keys
      */
-    public AvailableKeys(String... keys) {
+    public AvailableKeys(final String... keys) {
         for (final String element : keys) {
             key.add(element);
         }

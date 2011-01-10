@@ -46,7 +46,7 @@ public class ZoomOutAction extends AbstractAction {
     public ZoomOutAction() {
         this(false);
     }
-    public ZoomOutAction(boolean big) {
+    public ZoomOutAction(final boolean big) {
         super("",(big)? ICON_ZOOM_OUT_24 : ICON_ZOOM_OUT_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_out"));
     }
@@ -55,7 +55,7 @@ public class ZoomOutAction extends AbstractAction {
      * {@inheritDoc }
      */
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
             try {
                 map.getCanvas().getController().scale(0.5d);
@@ -69,7 +69,7 @@ public class ZoomOutAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

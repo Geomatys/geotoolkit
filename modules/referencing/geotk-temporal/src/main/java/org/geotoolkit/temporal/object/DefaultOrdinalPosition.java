@@ -37,7 +37,7 @@ public class DefaultOrdinalPosition extends DefaultTemporalPosition implements O
      */
     private OrdinalEra ordinalPosition;
 
-    public DefaultOrdinalPosition(TemporalReferenceSystem frame, IndeterminateValue indeterminatePosition, OrdinalEra ordinalPosition) {
+    public DefaultOrdinalPosition(final TemporalReferenceSystem frame, final IndeterminateValue indeterminatePosition, final OrdinalEra ordinalPosition) {
         super(frame, indeterminatePosition);
         this.ordinalPosition = ordinalPosition;
     }
@@ -52,7 +52,7 @@ public class DefaultOrdinalPosition extends DefaultTemporalPosition implements O
         return ordinalPosition;
     }
 
-    public void setOrdinalPosition(OrdinalEra ordinalPosition) {
+    public void setOrdinalPosition(final OrdinalEra ordinalPosition) {
         this.ordinalPosition = ordinalPosition;
     }
 

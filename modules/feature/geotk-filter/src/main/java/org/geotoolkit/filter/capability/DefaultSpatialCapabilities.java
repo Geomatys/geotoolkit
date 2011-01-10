@@ -35,7 +35,7 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities{
     private final List<GeometryOperand> operands;
     private final SpatialOperators operators;
 
-    public DefaultSpatialCapabilities(GeometryOperand[] operands, SpatialOperators operators) {
+    public DefaultSpatialCapabilities(final GeometryOperand[] operands, final SpatialOperators operators) {
         if(operands == null || operands.length == 0){
             throw new IllegalArgumentException("Operands must not be null or empty");
         }
@@ -67,7 +67,7 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

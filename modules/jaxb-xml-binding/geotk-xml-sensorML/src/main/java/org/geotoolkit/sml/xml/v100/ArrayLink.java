@@ -110,7 +110,7 @@ public class ArrayLink implements AbstractArrayLink {
 
     }
 
-    public ArrayLink(AbstractArrayLink link) {
+    public ArrayLink(final AbstractArrayLink link) {
         if (link != null) {
             if (link.getSourceArray() != null) {
                 this.sourceArray = new LinkRef(link.getSourceArray().getRef());
@@ -146,7 +146,7 @@ public class ArrayLink implements AbstractArrayLink {
     /**
      * Sets the value of the sourceArray property.
      */
-    public void setSourceArray(LinkRef value) {
+    public void setSourceArray(final LinkRef value) {
         this.sourceArray = value;
     }
 
@@ -170,7 +170,7 @@ public class ArrayLink implements AbstractArrayLink {
     /**
      * Sets the value of the destinationArray property.
      */
-    public void setDestinationArray(LinkRef value) {
+    public void setDestinationArray(final LinkRef value) {
         this.destinationArray = value;
     }
 
@@ -185,7 +185,7 @@ public class ArrayLink implements AbstractArrayLink {
      * Sets the value of the sourceIndex property.
      * 
      */
-    public void setSourceIndex(LinkRef value) {
+    public void setSourceIndex(final LinkRef value) {
         this.sourceIndex = value;
     }
 

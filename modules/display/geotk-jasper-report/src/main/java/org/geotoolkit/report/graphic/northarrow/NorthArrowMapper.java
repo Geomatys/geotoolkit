@@ -38,7 +38,7 @@ import org.opengis.display.canvas.Canvas;
 @Deprecated
 public class NorthArrowMapper extends JRRendererMapper{
 
-    NorthArrowMapper(JRMapperFactory<JRRenderable,MapContext> factory){
+    NorthArrowMapper(final JRMapperFactory<JRRenderable,MapContext> factory){
         super(factory);
     }
 
@@ -46,7 +46,7 @@ public class NorthArrowMapper extends JRRendererMapper{
      * {@inheritDoc }
      */
     @Override
-    public JRRenderable create(MapContext candidate, Collection<Object> renderedValues) {
+    public JRRenderable create(final MapContext candidate, final Collection<Object> renderedValues) {
         for(final Object renderedValue : renderedValues){
             if(renderedValue instanceof Canvas){
                 Canvas canvas = (Canvas) renderedValue;

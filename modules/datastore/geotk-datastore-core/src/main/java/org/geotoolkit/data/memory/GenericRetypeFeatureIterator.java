@@ -202,7 +202,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
 
         protected final T mask;
 
-        private GenericSeparateRetypeFeatureReader(R reader, T mask){
+        private GenericSeparateRetypeFeatureReader(final R reader, final T mask){
             super(reader);
             this.mask = mask;
             types = typeAttributes(reader.getFeatureType(), mask);
@@ -252,7 +252,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
          */
         protected final T mask;
 
-        private GenericReuseRetypeFeatureReader(R reader, T mask){
+        private GenericReuseRetypeFeatureReader(final R reader, final T mask){
             super(reader);
             this.mask = mask;
             types = typeIndexes((SimpleFeatureType)reader.getFeatureType(), (SimpleFeatureType)mask);
@@ -288,7 +288,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      * Wrap a FeatureReader with a new featuretype.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
-            FeatureReader<T,F> reader, FeatureType mask, Hints hints){
+            final FeatureReader<T,F> reader, final FeatureType mask, final Hints hints){
         if(mask.equals(reader.getFeatureType())){
             //same type mapping, no need to wrap it
             return reader;

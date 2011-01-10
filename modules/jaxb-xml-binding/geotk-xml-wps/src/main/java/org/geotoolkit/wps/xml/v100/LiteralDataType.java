@@ -82,7 +82,7 @@ public class LiteralDataType {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -106,7 +106,7 @@ public class LiteralDataType {
      *     {@link String }
      *     
      */
-    public void setDataType(String value) {
+    public void setDataType(final String value) {
         this.dataType = value;
     }
 
@@ -130,7 +130,7 @@ public class LiteralDataType {
      *     {@link String }
      *     
      */
-    public void setUom(String value) {
+    public void setUom(final String value) {
         this.uom = value;
     }
 

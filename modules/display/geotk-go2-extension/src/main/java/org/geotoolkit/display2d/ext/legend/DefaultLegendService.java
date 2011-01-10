@@ -48,7 +48,7 @@ public class DefaultLegendService {
      * @return buffered image
      * @throws PortrayalException
      */
-    public static BufferedImage portray(LegendTemplate template, MapContext context, Dimension dim)
+    public static BufferedImage portray(final LegendTemplate template, final MapContext context, Dimension dim)
             throws PortrayalException{
         if(dim == null){
             dim = legendPreferredSize(template, context);
@@ -71,7 +71,7 @@ public class DefaultLegendService {
      * @return buffered image
      * @throws PortrayalException
      */
-    public static void portray(LegendTemplate template, MapContext context, Dimension dim, OutputDef outputDef)
+    public static void portray(final LegendTemplate template, final MapContext context, final Dimension dim, final OutputDef outputDef)
             throws PortrayalException{
         final BufferedImage image = portray(template,context,dim);
 
@@ -93,7 +93,7 @@ public class DefaultLegendService {
      * @param context : map context
      * @return Dimension : legend preferred size
      */
-    public static Dimension legendPreferredSize(LegendTemplate template, MapContext context){
+    public static Dimension legendPreferredSize(final LegendTemplate template, final MapContext context){
         final BufferedImage img = new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
         return J2DLegendUtilities.estimate(img.createGraphics(), context, template, true);
     }

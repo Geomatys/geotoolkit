@@ -51,7 +51,7 @@ public class CoupledResourceImpl implements CoupledResource {
     /**
      * Clone an coupled resource.
      */
-    public CoupledResourceImpl(CoupledResource resource) {
+    public CoupledResourceImpl(final CoupledResource resource) {
         this.identifier    = resource.getIdentifier();
         this.operationName = resource.getOperationName();
         this.scopedName    = resource.getScopedName();
@@ -70,7 +70,7 @@ public class CoupledResourceImpl implements CoupledResource {
      * Sets the value of the operationName property.
      * 
     */
-    public void setOperationName(String value) {
+    public void setOperationName(final String value) {
         this.operationName = value;
     }
 
@@ -87,7 +87,7 @@ public class CoupledResourceImpl implements CoupledResource {
      * Sets the value of the identifier property.
      * 
      */
-    public void setIdentifier(String value) {
+    public void setIdentifier(final String value) {
         this.identifier = value;
     }
 
@@ -104,7 +104,7 @@ public class CoupledResourceImpl implements CoupledResource {
      * Sets the value of the scopedName property.
      * 
     */
-    public void setScopedName(ScopedName value) {
+    public void setScopedName(final ScopedName value) {
         this.scopedName = value;
     }
 

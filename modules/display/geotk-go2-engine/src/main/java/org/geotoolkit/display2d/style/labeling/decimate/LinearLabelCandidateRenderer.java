@@ -41,13 +41,13 @@ public class LinearLabelCandidateRenderer implements LabelCandidateRenderer<Line
     private final RenderingContext2D context;
     private final Graphics2D g2;
 
-    public LinearLabelCandidateRenderer(RenderingContext2D context) {
+    public LinearLabelCandidateRenderer(final RenderingContext2D context) {
         this.context = context;
         g2 = context.getGraphics();
     }
 
     @Override
-    public Candidate generateCandidat(LinearLabelDescriptor descriptor) {
+    public Candidate generateCandidat(final LinearLabelDescriptor descriptor) {
         try {
             return new LinearCandidate(descriptor,descriptor.getGeometry().getDisplayShape());
         } catch (TransformException ex) {
@@ -58,7 +58,7 @@ public class LinearLabelCandidateRenderer implements LabelCandidateRenderer<Line
     }
 
     @Override
-    public void render(Candidate candidate) {
+    public void render(final Candidate candidate) {
         if(!(candidate instanceof LinearCandidate)) return;
 
         LinearCandidate linearCandidate = (LinearCandidate) candidate;

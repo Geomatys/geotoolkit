@@ -80,14 +80,14 @@ public class RequestStatusType implements RequestStatus {
     /**
      * Build a new request statuc with the specified XML gregorian calendar.
      */
-    public RequestStatusType(XMLGregorianCalendar timestamp) {
+    public RequestStatusType(final XMLGregorianCalendar timestamp) {
         this.timestamp = timestamp;
     }
     
     /**
      * Build a new request statuc with the specified .
      */
-    public RequestStatusType(long time) {
+    public RequestStatusType(final long time) {
         Date d = new Date(time);
         GregorianCalendar cal = new  GregorianCalendar();
         cal.setTime(d);
@@ -110,7 +110,7 @@ public class RequestStatusType implements RequestStatus {
      * Sets the timestamp property with a XMLGregorianCalendar value.
      * @param value
      */
-    public void setTimestamp(XMLGregorianCalendar value) {
+    public void setTimestamp(final XMLGregorianCalendar value) {
         this.timestamp = value;
     }
     
@@ -123,7 +123,7 @@ public class RequestStatusType implements RequestStatus {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this) {
             return true;
         }

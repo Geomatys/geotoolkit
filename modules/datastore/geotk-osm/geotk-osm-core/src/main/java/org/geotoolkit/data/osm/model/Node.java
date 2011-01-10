@@ -49,9 +49,9 @@ public class Node extends IdentifiedElement{
     private final double lat;
     private final double lon;
 
-    public Node(double lat, double lon,
-            long id, int version, int changeset, User user,
-            long timestamp, Map<String,String> tags) {
+    public Node(final double lat, final double lon,
+            final long id, final int version, final int changeset, final User user,
+            final long timestamp, final Map<String,String> tags) {
         super(OSMModelConstants.DESC_NODE,id,version,changeset,user,timestamp,tags);
         this.lat = lat;
         this.lon = lon;
@@ -119,7 +119,7 @@ public class Node extends IdentifiedElement{
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -76,7 +76,7 @@ public class RuleType {
    /**
     * Sets the value of the description property.
     */
-   public void setDescription(String value) {
+   public void setDescription(final String value) {
       this.description = value;
    }
 
@@ -90,7 +90,7 @@ public class RuleType {
    /**
     * Sets the value of the target property.
     */
-   public void setTarget(TargetType value) {
+   public void setTarget(final TargetType value) {
       this.target = value;
    }
 
@@ -104,7 +104,7 @@ public class RuleType {
    /**
     * Sets the value of the condition property.
     */
-   public void setCondition(ConditionType value) {
+   public void setCondition(final ConditionType value) {
       this.condition = value;
    }
 
@@ -118,7 +118,7 @@ public class RuleType {
    /**
     * Sets the value of the ruleId property.
     */
-   public void setRuleId(String value) {
+   public void setRuleId(final String value) {
       this.ruleId = value;
    }
 
@@ -132,7 +132,7 @@ public class RuleType {
    /**
     * Sets the value of the effect property.
     */
-   public void setEffect(EffectType value) {
+   public void setEffect(final EffectType value) {
       this.effect = value;
    }
 

@@ -43,7 +43,7 @@ public class RangeSet {
     /**
      * Build a new RangeSet.
      */
-    public RangeSet(RangeSetType rangeSet){
+    public RangeSet(final RangeSetType rangeSet){
         this.rangeSet = rangeSet;
     }
     

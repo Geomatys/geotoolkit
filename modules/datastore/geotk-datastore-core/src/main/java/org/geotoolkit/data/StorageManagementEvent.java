@@ -40,7 +40,7 @@ public class StorageManagementEvent extends EventObject{
     private final FeatureType oldType;
     private final FeatureType newType;
 
-    private StorageManagementEvent(Object source, Type type, Name name, FeatureType oldtype, FeatureType newtype){
+    private StorageManagementEvent(final Object source, final Type type, final Name name, final FeatureType oldtype, final FeatureType newtype){
         super(source);
 
         if(type == null){
@@ -95,19 +95,19 @@ public class StorageManagementEvent extends EventObject{
         return oldType;
     }
 
-    public static StorageManagementEvent createAddEvent(Object source, Name name, FeatureType type){
+    public static StorageManagementEvent createAddEvent(final Object source, final Name name, final FeatureType type){
         return new StorageManagementEvent(source, Type.ADD, name, null, type);
     }
 
-    public static StorageManagementEvent createUpdateEvent(Object source, Name name, FeatureType oldType, FeatureType newType){
+    public static StorageManagementEvent createUpdateEvent(final Object source, final Name name, final FeatureType oldType, final FeatureType newType){
         return new StorageManagementEvent(source, Type.UPDATE, name, oldType, newType);
     }
 
-    public static StorageManagementEvent createDeleteEvent(Object source, Name name, FeatureType type){
+    public static StorageManagementEvent createDeleteEvent(final Object source, final Name name, final FeatureType type){
         return new StorageManagementEvent(source, Type.DELETE, name, type, null);
     }
 
-    public static StorageManagementEvent resetSource(Object source, StorageManagementEvent event){
+    public static StorageManagementEvent resetSource(final Object source, final StorageManagementEvent event){
         return new StorageManagementEvent(source, event.type, event.name, event.oldType, event.newType);
     }
 

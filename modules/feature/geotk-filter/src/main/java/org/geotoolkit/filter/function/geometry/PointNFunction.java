@@ -28,7 +28,7 @@ public class PointNFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         Geometry arg0;
         int arg1;
 

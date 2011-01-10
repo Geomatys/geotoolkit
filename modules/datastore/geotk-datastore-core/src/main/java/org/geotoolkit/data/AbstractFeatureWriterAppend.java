@@ -29,7 +29,7 @@ public abstract class AbstractFeatureWriterAppend<T extends FeatureType, F exten
 
     protected final T type;
 
-    public AbstractFeatureWriterAppend(T type){
+    public AbstractFeatureWriterAppend(final T type){
         if(type == null){
             throw new NullPointerException("Type can not be null.");
         }

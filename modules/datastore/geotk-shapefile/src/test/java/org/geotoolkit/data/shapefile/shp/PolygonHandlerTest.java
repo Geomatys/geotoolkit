@@ -36,11 +36,11 @@ import java.util.List;
  */
 public class PolygonHandlerTest extends AbstractTestCaseSupport {
 
-    public PolygonHandlerTest(String testName) throws IOException {
+    public PolygonHandlerTest(final String testName) throws IOException {
         super(testName);
     }
 
-    public static void main(java.lang.String[] args) {
+    public static void main(final java.lang.String[] args) {
         junit.textui.TestRunner.run(suite(PolygonHandlerTest.class));
     }
 
@@ -89,7 +89,7 @@ public class PolygonHandlerTest extends AbstractTestCaseSupport {
 
     }
 
-    public static Geometry rectangle(PrecisionModel pm, int SRID) {
+    public static Geometry rectangle(final PrecisionModel pm, final int SRID) {
         Coordinate[] coords = new Coordinate[5];
         for (int i = 0; i < coords.length; i++) {
             coords[i] = new Coordinate();
@@ -97,8 +97,8 @@ public class PolygonHandlerTest extends AbstractTestCaseSupport {
         return new GeometryFactory().createLinearRing(coords);
     }
 
-    public static Geometry copyTo(double x, double y, double w, double h,
-            Geometry g) {
+    public static Geometry copyTo(final double x, final double y, final double w, final double h,
+            final Geometry g) {
         if (g.getNumPoints() != 5)
             throw new IllegalArgumentException("Geometry must have 5 points");
         if (!LinearRing.class.isAssignableFrom(g.getClass()))

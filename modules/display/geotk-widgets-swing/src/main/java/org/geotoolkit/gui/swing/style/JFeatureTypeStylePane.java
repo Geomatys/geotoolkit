@@ -226,7 +226,7 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jtf_titleActionPerformed(ActionEvent evt) {//GEN-FIRST:event_jtf_titleActionPerformed
+    private void jtf_titleActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_jtf_titleActionPerformed
 //        fts.setTitle(guiTitle.getText());
 }//GEN-LAST:event_jtf_titleActionPerformed
     
@@ -251,7 +251,7 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
     }
 
@@ -261,7 +261,7 @@ public class JFeatureTypeStylePane extends StyleElementEditor<MutableFeatureType
     }
 
     @Override
-    public void parse(MutableFeatureTypeStyle target) {
+    public void parse(final MutableFeatureTypeStyle target) {
         this.fts = target;
         if(fts != null){
             jtf_name.setText(fts.getName());

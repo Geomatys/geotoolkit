@@ -43,7 +43,7 @@ final class GeometryCollectionBuilder extends GeometryBuilder {
     }
 
     @Override
-    public Geometry build(int jjtgeometryliteral) throws CQLException {
+    public Geometry build(final int jjtgeometryliteral) throws CQLException {
         final List<Geometry> geometryList = popGeometryLiteral(jjtgeometryliteral);
         final Geometry[] geometries = geometryList.toArray(new Geometry[geometryList.size()]) ;
         final GeometryCollection geometryCollection= getGeometryFactory().createGeometryCollection(geometries);

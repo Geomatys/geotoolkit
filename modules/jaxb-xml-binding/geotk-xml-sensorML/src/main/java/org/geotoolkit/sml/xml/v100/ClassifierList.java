@@ -78,12 +78,12 @@ public class ClassifierList implements AbstractClassifierList {
     public ClassifierList() {
     }
 
-    public ClassifierList(String id, List<Classifier> classifier) {
+    public ClassifierList(final String id, final List<Classifier> classifier) {
         this.classifier = classifier;
         this.id = id;
     }
 
-    public ClassifierList(AbstractClassifierList classList) {
+    public ClassifierList(final AbstractClassifierList classList) {
         if (classList != null) {
             this.id = classList.getId();
             if (classList.getClassifier() != null) {
@@ -110,7 +110,7 @@ public class ClassifierList implements AbstractClassifierList {
      * Gets the value of the classifier property.
      *
      */
-    public void setClassifier(Classifier classifier) {
+    public void setClassifier(final Classifier classifier) {
         if (this.classifier == null) {
             this.classifier = new ArrayList<Classifier>();
         }
@@ -121,7 +121,7 @@ public class ClassifierList implements AbstractClassifierList {
      * Gets the value of the classifier property.
      *
      */
-    public void setClassifier(Term classifier) {
+    public void setClassifier(final Term classifier) {
         if (this.classifier == null) {
             this.classifier = new ArrayList<Classifier>();
         }
@@ -132,7 +132,7 @@ public class ClassifierList implements AbstractClassifierList {
      * Gets the value of the classifier property.
      *
      */
-    public void setClassifier(List<Classifier> classifier) {
+    public void setClassifier(final List<Classifier> classifier) {
         this.classifier = classifier;
     }
     
@@ -146,7 +146,7 @@ public class ClassifierList implements AbstractClassifierList {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

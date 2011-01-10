@@ -51,7 +51,7 @@ public class TopLevelComplexType extends ComplexType {
         super();
     }
 
-    public TopLevelComplexType(String name, ComplexContent complexContent) {
+    public TopLevelComplexType(final String name, final ComplexContent complexContent) {
         super(name, complexContent);
     }
 

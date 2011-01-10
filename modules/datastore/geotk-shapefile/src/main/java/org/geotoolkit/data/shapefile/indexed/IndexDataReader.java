@@ -34,17 +34,17 @@ public class IndexDataReader implements DataReader<IndexDataReader.ShpData> {
 
     private final ShxReader indexfile;
 
-    public IndexDataReader(ShxReader indexFile){
+    public IndexDataReader(final ShxReader indexFile){
         this.indexfile = indexFile;
     }
 
     @Override
-    public ShpData read(int recno) throws IOException {
+    public ShpData read(final int recno) throws IOException {
         return new ShpData(recno+1, (long)indexfile.getOffsetInBytes(recno));
     }
 
     @Override
-    public void read(int[] ids, Data[] buffer, int size) throws IOException {
+    public void read(final int[] ids, final Data[] buffer, final int size) throws IOException {
         for(int i=0;i<size;i++){
             final int recno = ids[i];
             buffer[i] = new ShpData(recno+1, (long)indexfile.getOffsetInBytes(recno));
@@ -61,7 +61,7 @@ public class IndexDataReader implements DataReader<IndexDataReader.ShpData> {
         public final int v1;
         public final long v2;
 
-        public ShpData(int v1, long v2){
+        public ShpData(final int v1, final long v2){
             this.v1 = v1;
             this.v2 = v2;
         }
@@ -72,7 +72,7 @@ public class IndexDataReader implements DataReader<IndexDataReader.ShpData> {
         }
 
         @Override
-        public Data addValue(Object val) throws TreeException {
+        public Data addValue(final Object val) throws TreeException {
             throw new UnsupportedOperationException("Not supported in shapefile quad tree data.");
         }
 
@@ -87,7 +87,7 @@ public class IndexDataReader implements DataReader<IndexDataReader.ShpData> {
         }
 
         @Override
-        public Object getValue(int i) {
+        public Object getValue(final int i) {
             if(i==0){
                 return Integer.valueOf(v1);
             }else{

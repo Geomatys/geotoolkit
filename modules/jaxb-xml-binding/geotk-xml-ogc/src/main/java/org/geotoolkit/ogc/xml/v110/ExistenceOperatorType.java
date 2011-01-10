@@ -44,7 +44,7 @@ public enum ExistenceOperatorType {
     PROPERTY_DOES_NOT_EXIST("PropertyDoesNotExist");
     private final String value;
 
-    ExistenceOperatorType(String v) {
+    ExistenceOperatorType(final String v) {
         value = v;
     }
 
@@ -52,7 +52,7 @@ public enum ExistenceOperatorType {
         return value;
     }
 
-    public static ExistenceOperatorType fromValue(String v) {
+    public static ExistenceOperatorType fromValue(final String v) {
         for (ExistenceOperatorType c: ExistenceOperatorType.values()) {
             if (c.value.equals(v)) {
                 return c;

@@ -98,7 +98,7 @@ public class BuildingFurnitureType
      *     {@link String }
      *     
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
@@ -180,7 +180,7 @@ public class BuildingFurnitureType
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setLod4Geometry(GeometryPropertyType value) {
+    public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;
     }
 
@@ -204,7 +204,7 @@ public class BuildingFurnitureType
      *     {@link ImplicitRepresentationPropertyType }
      *     
      */
-    public void setLod4ImplicitRepresentation(ImplicitRepresentationPropertyType value) {
+    public void setLod4ImplicitRepresentation(final ImplicitRepresentationPropertyType value) {
         this.lod4ImplicitRepresentation = value;
     }
 

@@ -38,7 +38,7 @@ public class DefaultPathWalker implements PathWalker{
     private float angle = Float.NaN;
     private boolean finished = false;
 
-    public DefaultPathWalker(PathIterator iterator) {
+    public DefaultPathWalker(final PathIterator iterator) {
         this.pathIterator = iterator;
 
         //get the first segment
@@ -135,7 +135,7 @@ public class DefaultPathWalker implements PathWalker{
     }
 
     @Override
-    public Point2D getPosition(Point2D pt) {
+    public Point2D getPosition(final Point2D pt) {
         final double perc = 1d - remaining / segmentLenght;
         final double tlX = (segmentEndX - segmentStartX) * perc + segmentStartX;
         final double tlY = (segmentEndY - segmentStartY) * perc + segmentStartY;
@@ -156,13 +156,13 @@ public class DefaultPathWalker implements PathWalker{
         return angle;
     }
 
-    private static float distance(float x1, float y1, float x2, float y2) {
+    private static float distance(final float x1, final float y1, final float x2, final float y2) {
         float dx = x1 - x2;
         float dy = y1 - y2;
         return (float) Math.sqrt(dx * dx + dy * dy);
     }
 
-    private static float angle(float x1, float y1, float x2, float y2) {
+    private static float angle(final float x1, final float y1, final float x2, final float y2) {
         float dx = x1 - x2;
         float dy = y1 - y2;
         return (float) Math.atan2(dy, dx);

@@ -52,7 +52,7 @@ public enum TypeDerivationControl {
     UNION(DerivationControl.UNION);
     private final DerivationControl value;
 
-    TypeDerivationControl(DerivationControl v) {
+    TypeDerivationControl(final DerivationControl v) {
         value = v;
     }
 
@@ -60,7 +60,7 @@ public enum TypeDerivationControl {
         return value;
     }
 
-    public static TypeDerivationControl fromValue(DerivationControl v) {
+    public static TypeDerivationControl fromValue(final DerivationControl v) {
         for (TypeDerivationControl c: TypeDerivationControl.values()) {
             if (c.value.equals(v)) {
                 return c;

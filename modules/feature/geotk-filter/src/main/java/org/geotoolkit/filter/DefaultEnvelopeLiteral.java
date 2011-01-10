@@ -37,11 +37,11 @@ public class DefaultEnvelopeLiteral extends DefaultLiteral<Geometry> {
 
     private static final GeometryFactory GF = new GeometryFactory();
 
-    public DefaultEnvelopeLiteral(Envelope value) {
+    public DefaultEnvelopeLiteral(final Envelope value) {
         super(toGeometry(value));
     }
 
-    private static Geometry toGeometry(Envelope env){
+    private static Geometry toGeometry(final Envelope env){
         final double minx = env.getMinimum(0);
         final double miny = env.getMinimum(1);
         final double maxx = env.getMaximum(0);

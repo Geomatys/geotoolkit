@@ -63,7 +63,7 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
 
     }
 
-    public EnvelopeType(AbstractEnvelope env) {
+    public EnvelopeType(final AbstractEnvelope env) {
         super(env);
         if (env != null) {
             if (env.getTime() != null) {
@@ -88,7 +88,7 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
     /**
      * Sets the value of the time property.
      */
-    public void setTime(TimeRangePropertyType value) {
+    public void setTime(final TimeRangePropertyType value) {
         this.time = value;
     }
 
@@ -102,7 +102,7 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
     /**
      * Sets the value of the lowerCorner property.
      */
-    public void setLowerCorner(VectorPropertyType value) {
+    public void setLowerCorner(final VectorPropertyType value) {
         this.lowerCorner = value;
     }
 
@@ -116,7 +116,7 @@ public class EnvelopeType extends AbstractVectorType implements AbstractEnvelope
     /**
      * Sets the value of the upperCorner property.
      */
-    public void setUpperCorner(VectorPropertyType value) {
+    public void setUpperCorner(final VectorPropertyType value) {
         this.upperCorner = value;
     }
 

@@ -22,12 +22,12 @@ public class PolygonPropertyAdapter extends XmlAdapter<PolygonPropertyAdapter, J
 
     }
 
-    public PolygonPropertyAdapter(PolygonType polygon) {
+    public PolygonPropertyAdapter(final PolygonType polygon) {
         this.polygon = polygon;
     }
 
     @Override
-    public JTSPolygon unmarshal(PolygonPropertyAdapter v) throws Exception {
+    public JTSPolygon unmarshal(final PolygonPropertyAdapter v) throws Exception {
         if (v != null && v.polygon != null) {
             return new JTSPolygon(v.polygon.getSurfaceBoundary());
         }
@@ -35,7 +35,7 @@ public class PolygonPropertyAdapter extends XmlAdapter<PolygonPropertyAdapter, J
     }
 
     @Override
-    public PolygonPropertyAdapter marshal(JTSPolygon v) throws Exception {
+    public PolygonPropertyAdapter marshal(final JTSPolygon v) throws Exception {
         return new PolygonPropertyAdapter(new PolygonType(v));
     }
 }

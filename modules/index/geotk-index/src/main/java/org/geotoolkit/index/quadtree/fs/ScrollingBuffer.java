@@ -39,7 +39,7 @@ public class ScrollingBuffer {
     /** the initial position of the buffer in the channel */
     private long bufferStart;
 
-    public ScrollingBuffer(FileChannel channel, ByteOrder order)
+    public ScrollingBuffer(final FileChannel channel, final ByteOrder order)
             throws IOException {
         this.channel = channel;
         this.order = order;
@@ -66,7 +66,7 @@ public class ScrollingBuffer {
         return original.getDouble();
     }
 
-    public void getIntArray(int[] array) throws IOException {
+    public void getIntArray(final int[] array) throws IOException {
         final int size = array.length * 4;
         if (original.remaining() < size) {
             refillBuffer(size);
@@ -85,7 +85,7 @@ public class ScrollingBuffer {
      * @param requiredSize
      * @throws IOException
      */
-    void refillBuffer(int requiredSize) throws IOException {
+    void refillBuffer(final int requiredSize) throws IOException {
         // compute the actual position up to we have read something
         final long currentPosition = bufferStart + original.position();
         // if the buffer is not big enough enlarge it
@@ -100,7 +100,7 @@ public class ScrollingBuffer {
         readBuffer(currentPosition);
     }
 
-    private void readBuffer(long currentPosition) throws IOException {
+    private void readBuffer(final long currentPosition) throws IOException {
         channel.position(currentPosition);
         original.clear();
         channel.read(original);
@@ -114,7 +114,7 @@ public class ScrollingBuffer {
      * @param newPosition
      * @throws IOException
      */
-    public void goTo(long newPosition) throws IOException {
+    public void goTo(final long newPosition) throws IOException {
         // if the new position is already in the buffer, just move the
         // buffer position
         // otherwise we have to reload it

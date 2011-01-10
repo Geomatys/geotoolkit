@@ -37,7 +37,7 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
     private final SpatialCapabilities spatial;
     private final ScalarCapabilities scalar;
 
-    public DefaultFilterCapabilities(String version, IdCapabilities id, SpatialCapabilities spatial, ScalarCapabilities scalar) {
+    public DefaultFilterCapabilities(final String version, final IdCapabilities id, final SpatialCapabilities spatial, final ScalarCapabilities scalar) {
         this.version = version;
         this.id = id;
         this.spatial = spatial;
@@ -88,7 +88,7 @@ public class DefaultFilterCapabilities implements FilterCapabilities {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

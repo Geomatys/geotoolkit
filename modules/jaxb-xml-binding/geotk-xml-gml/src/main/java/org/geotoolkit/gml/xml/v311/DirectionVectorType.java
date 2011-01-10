@@ -79,7 +79,7 @@ public class DirectionVectorType {
      *     {@link VectorType }
      *     
      */
-    public void setVector(VectorType value) {
+    public void setVector(final VectorType value) {
         this.vector = value;
     }
 
@@ -103,7 +103,7 @@ public class DirectionVectorType {
      *     {@link AngleType }
      *     
      */
-    public void setHorizontalAngle(AngleType value) {
+    public void setHorizontalAngle(final AngleType value) {
         this.horizontalAngle = value;
     }
 
@@ -127,7 +127,7 @@ public class DirectionVectorType {
      *     {@link AngleType }
      *     
      */
-    public void setVerticalAngle(AngleType value) {
+    public void setVerticalAngle(final AngleType value) {
         this.verticalAngle = value;
     }
 

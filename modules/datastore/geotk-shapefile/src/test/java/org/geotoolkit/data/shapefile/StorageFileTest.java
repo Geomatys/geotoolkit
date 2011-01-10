@@ -58,7 +58,7 @@ public class StorageFileTest extends TestCase {
         assertCorrectData(files1, type, writtenToStorageFile);
     }
 
-    private void writeData(StorageFile storage, String writtenToStorageFile)
+    private void writeData(final StorageFile storage, final String writtenToStorageFile)
             throws IOException {
         File file = storage.getFile();
         file.deleteOnExit();
@@ -70,8 +70,8 @@ public class StorageFileTest extends TestCase {
         writer.close();
     }
 
-    private void assertCorrectData(ShpFiles files1, ShpFileType type,
-            String writtenToStorageFile) throws IOException {
+    private void assertCorrectData(final ShpFiles files1, final ShpFileType type,
+            final String writtenToStorageFile) throws IOException {
         ReadableByteChannel channel = files1.getReadChannel(type, this);
         try {
             ByteBuffer buffer = ByteBuffer.allocate(20);

@@ -71,7 +71,7 @@ public class ComponentList implements AbstractComponentList {
 
     }
 
-    public ComponentList(AbstractComponentList component) {
+    public ComponentList(final AbstractComponentList component) {
         if (component != null) {
             this.component = new ArrayList<ComponentPropertyType>();
             for (ComponentProperty cp :component.getComponent()) {
@@ -80,7 +80,7 @@ public class ComponentList implements AbstractComponentList {
         }
     }
 
-    public ComponentList(List<ComponentPropertyType> component) {
+    public ComponentList(final List<ComponentPropertyType> component) {
         this.component = component;
     }
 
@@ -99,7 +99,7 @@ public class ComponentList implements AbstractComponentList {
      * Gets the value of the component property.
      *
      */
-    public void setComponent(List<ComponentPropertyType> component) {
+    public void setComponent(final List<ComponentPropertyType> component) {
         this.component = component;
     }
 
@@ -107,7 +107,7 @@ public class ComponentList implements AbstractComponentList {
      * Gets the value of the component property.
      *
      */
-    public void setComponent(ComponentPropertyType component) {
+    public void setComponent(final ComponentPropertyType component) {
         if (component != null) {
             if (this.component == null) {
                 this.component = new ArrayList<ComponentPropertyType>();
@@ -120,7 +120,7 @@ public class ComponentList implements AbstractComponentList {
      * Gets the value of the component property.
      *
      */
-    public void setComponent(ComponentType component) {
+    public void setComponent(final ComponentType component) {
         if (component != null) {
             if (this.component == null) {
                 this.component = new ArrayList<ComponentPropertyType>();

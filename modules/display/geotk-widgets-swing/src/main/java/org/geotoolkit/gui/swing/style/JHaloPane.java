@@ -48,7 +48,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         guiFill.setLayer(layer);
         guiRadius.setLayer(layer);
@@ -60,7 +60,7 @@ public class JHaloPane extends StyleElementEditor<Halo> {
     }
 
     @Override
-    public void parse(Halo halo) {
+    public void parse(final Halo halo) {
         if (halo != null) {
             guiFill.parse(halo.getFill());
             guiRadius.parse(halo.getRadius());

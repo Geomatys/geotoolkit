@@ -77,7 +77,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
     /**
      * build a new BBox with an envelope.
      */
-    public BBOXType(String propertyName, double minx, double miny, double maxx, double maxy, String srs) {
+    public BBOXType(final String propertyName, final double minx, final double miny, final double maxx, final double maxy, final String srs) {
         this.propertyName = propertyName;
         DirectPositionType lower = new DirectPositionType(minx, miny);
         DirectPositionType upper = new DirectPositionType(maxx, maxy);
@@ -191,11 +191,11 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 }

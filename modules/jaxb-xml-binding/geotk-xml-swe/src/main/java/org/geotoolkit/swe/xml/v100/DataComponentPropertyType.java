@@ -149,68 +149,68 @@ public class DataComponentPropertyType implements DataComponentProperty {
 
     }
 
-    public DataComponentPropertyType(String name, String role, TimeRange timeRange) {
+    public DataComponentPropertyType(final String name, final String role, final TimeRange timeRange) {
         this.name      = name;
         this.role      = role;
         this.timeRange = timeRange;
     }
 
-    public DataComponentPropertyType(TimeRange timeRange) {
+    public DataComponentPropertyType(final TimeRange timeRange) {
         this.timeRange = timeRange;
     }
 
-    public DataComponentPropertyType(String name, String role, TimeType time) {
+    public DataComponentPropertyType(final String name, final String role, final TimeType time) {
         this.name      = name;
         this.role      = role;
         this.time      = time;
     }
 
-    public DataComponentPropertyType(TimeType time) {
+    public DataComponentPropertyType(final TimeType time) {
         this.time      = time;
     }
 
-    public DataComponentPropertyType(String name, String role, QuantityType quantity) {
+    public DataComponentPropertyType(final String name, final String role, final QuantityType quantity) {
         this.name      = name;
         this.role      = role;
         this.quantity  = quantity;
     }
 
-    public DataComponentPropertyType(QuantityType quantity) {
+    public DataComponentPropertyType(final QuantityType quantity) {
         this.quantity  = quantity;
     }
 
-    public DataComponentPropertyType(String name, String role, BooleanType bool) {
+    public DataComponentPropertyType(final String name, final String role, final BooleanType bool) {
         this.name      = name;
         this.role      = role;
         this._boolean  = bool;
     }
 
-    public DataComponentPropertyType(BooleanType bool) {
+    public DataComponentPropertyType(final BooleanType bool) {
         this._boolean  = bool;
     }
 
-    public DataComponentPropertyType(String name, String role, JAXBElement<? extends AbstractDataRecordType> dataRecord) {
+    public DataComponentPropertyType(final String name, final String role, final JAXBElement<? extends AbstractDataRecordType> dataRecord) {
         this.name      = name;
         this.role      = role;
         this.abstractDataRecord = dataRecord;
     }
 
-    public DataComponentPropertyType(DataRecordType dataRecord) {
+    public DataComponentPropertyType(final DataRecordType dataRecord) {
         ObjectFactory factory = new ObjectFactory();
         this.abstractDataRecord = factory.createDataRecord(dataRecord);
     }
     
-    public DataComponentPropertyType(String name, String role, QuantityRange quantityRange) {
+    public DataComponentPropertyType(final String name, final String role, final QuantityRange quantityRange) {
         this.name      = name;
         this.role      = role;
         this.quantityRange = quantityRange;
     }
 
-    public DataComponentPropertyType(QuantityRange quantityRange) {
+    public DataComponentPropertyType(final QuantityRange quantityRange) {
         this.quantityRange = quantityRange;
     }
 
-    public DataComponentPropertyType(DataComponentProperty d) {
+    public DataComponentPropertyType(final DataComponentProperty d) {
         if (d != null){
             this.actuate = d.getActuate();
             if (d.getBoolean() != null) {
@@ -303,7 +303,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         }
     }
 
-    public DataComponentPropertyType(AbstractDataComponent d) {
+    public DataComponentPropertyType(final AbstractDataComponent d) {
         if (d != null){
             if (d instanceof AbstractBoolean) {
                 this._boolean = new BooleanType((AbstractBoolean)d);
@@ -443,7 +443,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the count property.
      */
-    public void setCount(Count value) {
+    public void setCount(final Count value) {
         this.count = value;
     }
 
@@ -457,7 +457,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the quantity property.
      */
-    public void setQuantity(QuantityType value) {
+    public void setQuantity(final QuantityType value) {
         this.quantity = value;
     }
 
@@ -471,7 +471,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the time property.
      */
-    public void setTime(TimeType value) {
+    public void setTime(final TimeType value) {
         this.time = value;
     }
 
@@ -485,7 +485,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the boolean property.
      */
-    public void setBoolean(BooleanType value) {
+    public void setBoolean(final BooleanType value) {
         this._boolean = value;
     }
 
@@ -499,7 +499,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the category property.
      */
-    public void setCategory(Category value) {
+    public void setCategory(final Category value) {
         this.category = value;
     }
 
@@ -513,7 +513,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the text property.
      */
-    public void setText(Text value) {
+    public void setText(final Text value) {
         this.text = value;
     }
 
@@ -527,7 +527,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the quantityRange property.
      */
-    public void setQuantityRange(QuantityRange value) {
+    public void setQuantityRange(final QuantityRange value) {
         this.quantityRange = value;
     }
 
@@ -541,7 +541,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the countRange property.
      */
-    public void setCountRange(CountRange value) {
+    public void setCountRange(final CountRange value) {
         this.countRange = value;
     }
 
@@ -555,7 +555,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the timeRange property.
      */
-    public void setTimeRange(TimeRange value) {
+    public void setTimeRange(final TimeRange value) {
         this.timeRange = value;
     }
 
@@ -604,7 +604,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
      *     {@link JAXBElement }{@code <}{@link VectorType }{@code >}
      *     
      */
-    public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordType> value) {
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
     }
 
@@ -634,7 +634,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
      *     {@link JAXBElement }{@code <}{@link SquareMatrixType }{@code >}
      *     
      */
-    public void setAbstractDataArray(JAXBElement<? extends AbstractDataArrayType> value) {
+    public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayType> value) {
         this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);
     }
 
@@ -655,7 +655,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the name property.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -669,7 +669,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -683,7 +683,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -697,7 +697,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -711,7 +711,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -725,7 +725,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -739,7 +739,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -753,7 +753,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -767,7 +767,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

@@ -81,7 +81,7 @@ public class OrientableCurveType
      *     {@link CurvePropertyType }
      *     
      */
-    public void setBaseCurve(CurvePropertyType value) {
+    public void setBaseCurve(final CurvePropertyType value) {
         this.baseCurve = value;
     }
 
@@ -109,7 +109,7 @@ public class OrientableCurveType
      *     {@link String }
      *     
      */
-    public void setOrientation(String value) {
+    public void setOrientation(final String value) {
         this.orientation = value;
     }
 

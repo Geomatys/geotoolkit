@@ -35,11 +35,11 @@ public class MessageBundle {
     /**
      * Get the local string for the given key.
      */
-    public static String getString(String key){
+    public static String getString(final String key){
         return BUNDLE.getString(key);
     }
 
-    public static InternationalString getI18NString(String key){
+    public static InternationalString getI18NString(final String key){
         return new ResourceInternationalString(PATH, key);
     }
 

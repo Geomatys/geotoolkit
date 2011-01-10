@@ -466,7 +466,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "minInclusive")
-    public JAXBElement<Facet> createMinInclusive(Facet value) {
+    public JAXBElement<Facet> createMinInclusive(final Facet value) {
         return new JAXBElement<Facet>(_MinInclusive_QNAME, Facet.class, null, value);
     }
 
@@ -475,7 +475,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "maxLength")
-    public JAXBElement<NumFacet> createMaxLength(NumFacet value) {
+    public JAXBElement<NumFacet> createMaxLength(final NumFacet value) {
         return new JAXBElement<NumFacet>(_MaxLength_QNAME, NumFacet.class, null, value);
     }
 
@@ -484,7 +484,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "sequence")
-    public JAXBElement<ExplicitGroup> createSequence(ExplicitGroup value) {
+    public JAXBElement<ExplicitGroup> createSequence(final ExplicitGroup value) {
         return new JAXBElement<ExplicitGroup>(_Sequence_QNAME, ExplicitGroup.class, null, value);
     }
 
@@ -493,7 +493,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "minLength")
-    public JAXBElement<NumFacet> createMinLength(NumFacet value) {
+    public JAXBElement<NumFacet> createMinLength(final NumFacet value) {
         return new JAXBElement<NumFacet>(_MinLength_QNAME, NumFacet.class, null, value);
     }
 
@@ -502,7 +502,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "group")
-    public JAXBElement<NamedGroup> createGroup(NamedGroup value) {
+    public JAXBElement<NamedGroup> createGroup(final NamedGroup value) {
         return new JAXBElement<NamedGroup>(_Group_QNAME, NamedGroup.class, null, value);
     }
 
@@ -511,7 +511,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "attributeGroup")
-    public JAXBElement<NamedAttributeGroup> createAttributeGroup(NamedAttributeGroup value) {
+    public JAXBElement<NamedAttributeGroup> createAttributeGroup(final NamedAttributeGroup value) {
         return new JAXBElement<NamedAttributeGroup>(_AttributeGroup_QNAME, NamedAttributeGroup.class, null, value);
     }
 
@@ -520,7 +520,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "key")
-    public JAXBElement<Keybase> createKey(Keybase value) {
+    public JAXBElement<Keybase> createKey(final Keybase value) {
         return new JAXBElement<Keybase>(_Key_QNAME, Keybase.class, null, value);
     }
 
@@ -529,7 +529,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "all")
-    public JAXBElement<All> createAll(All value) {
+    public JAXBElement<All> createAll(final All value) {
         return new JAXBElement<All>(_All_QNAME, All.class, null, value);
     }
 
@@ -538,7 +538,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "length")
-    public JAXBElement<NumFacet> createLength(NumFacet value) {
+    public JAXBElement<NumFacet> createLength(final NumFacet value) {
         return new JAXBElement<NumFacet>(_Length_QNAME, NumFacet.class, null, value);
     }
 
@@ -547,7 +547,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "simpleType")
-    public JAXBElement<TopLevelSimpleType> createSimpleType(TopLevelSimpleType value) {
+    public JAXBElement<TopLevelSimpleType> createSimpleType(final TopLevelSimpleType value) {
         return new JAXBElement<TopLevelSimpleType>(_SimpleType_QNAME, TopLevelSimpleType.class, null, value);
     }
 
@@ -556,7 +556,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "enumeration")
-    public JAXBElement<NoFixedFacet> createEnumeration(NoFixedFacet value) {
+    public JAXBElement<NoFixedFacet> createEnumeration(final NoFixedFacet value) {
         return new JAXBElement<NoFixedFacet>(_Enumeration_QNAME, NoFixedFacet.class, null, value);
     }
 
@@ -565,7 +565,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "choice")
-    public JAXBElement<ExplicitGroup> createChoice(ExplicitGroup value) {
+    public JAXBElement<ExplicitGroup> createChoice(final ExplicitGroup value) {
         return new JAXBElement<ExplicitGroup>(_Choice_QNAME, ExplicitGroup.class, null, value);
     }
 
@@ -574,7 +574,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "fractionDigits")
-    public JAXBElement<NumFacet> createFractionDigits(NumFacet value) {
+    public JAXBElement<NumFacet> createFractionDigits(final NumFacet value) {
         return new JAXBElement<NumFacet>(_FractionDigits_QNAME, NumFacet.class, null, value);
     }
 
@@ -583,7 +583,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "minExclusive")
-    public JAXBElement<Facet> createMinExclusive(Facet value) {
+    public JAXBElement<Facet> createMinExclusive(final Facet value) {
         return new JAXBElement<Facet>(_MinExclusive_QNAME, Facet.class, null, value);
     }
 
@@ -592,7 +592,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "maxExclusive")
-    public JAXBElement<Facet> createMaxExclusive(Facet value) {
+    public JAXBElement<Facet> createMaxExclusive(final Facet value) {
         return new JAXBElement<Facet>(_MaxExclusive_QNAME, Facet.class, null, value);
     }
 
@@ -601,7 +601,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "element")
-    public JAXBElement<TopLevelElement> createElement(TopLevelElement value) {
+    public JAXBElement<TopLevelElement> createElement(final TopLevelElement value) {
         return new JAXBElement<TopLevelElement>(_Element_QNAME, TopLevelElement.class, null, value);
     }
 
@@ -610,7 +610,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "unique")
-    public JAXBElement<Keybase> createUnique(Keybase value) {
+    public JAXBElement<Keybase> createUnique(final Keybase value) {
         return new JAXBElement<Keybase>(_Unique_QNAME, Keybase.class, null, value);
     }
 
@@ -619,7 +619,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "complexType")
-    public JAXBElement<TopLevelComplexType> createComplexType(TopLevelComplexType value) {
+    public JAXBElement<TopLevelComplexType> createComplexType(final TopLevelComplexType value) {
         return new JAXBElement<TopLevelComplexType>(_ComplexType_QNAME, TopLevelComplexType.class, null, value);
     }
 
@@ -628,7 +628,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "maxInclusive")
-    public JAXBElement<Facet> createMaxInclusive(Facet value) {
+    public JAXBElement<Facet> createMaxInclusive(final Facet value) {
         return new JAXBElement<Facet>(_MaxInclusive_QNAME, Facet.class, null, value);
     }
 
@@ -637,7 +637,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "attribute")
-    public JAXBElement<TopLevelAttribute> createAttribute(TopLevelAttribute value) {
+    public JAXBElement<TopLevelAttribute> createAttribute(final TopLevelAttribute value) {
         return new JAXBElement<TopLevelAttribute>(_Attribute_QNAME, TopLevelAttribute.class, null, value);
     }
 
@@ -646,7 +646,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "anyAttribute")
-    public JAXBElement<Wildcard> createAnyAttribute(Wildcard value) {
+    public JAXBElement<Wildcard> createAnyAttribute(final Wildcard value) {
         return new JAXBElement<Wildcard>(_AnyAttribute_QNAME, Wildcard.class, null, value);
     }
 
@@ -655,7 +655,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "element", scope = Group.class)
-    public JAXBElement<LocalElement> createGroupElement(LocalElement value) {
+    public JAXBElement<LocalElement> createGroupElement(final LocalElement value) {
         return new JAXBElement<LocalElement>(_Element_QNAME, LocalElement.class, Group.class, value);
     }
 
@@ -664,7 +664,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.w3.org/2001/XMLSchema", name = "group", scope = Group.class)
-    public JAXBElement<GroupRef> createGroupGroup(GroupRef value) {
+    public JAXBElement<GroupRef> createGroupGroup(final GroupRef value) {
         return new JAXBElement<GroupRef>(_Group_QNAME, GroupRef.class, Group.class, value);
     }
 

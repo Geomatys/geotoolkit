@@ -258,7 +258,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         this.gml_factory = new ObjectFactory();
     }
 
-    public JAXBElement<?> extract(Expression exp){
+    public JAXBElement<?> extract(final Expression exp){
         JAXBElement<?> jax = null;
         
         if(exp instanceof Function){
@@ -395,11 +395,11 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform a Feature name in a QName.
      */
-    public QName visitName(Name name){
+    public QName visitName(final Name name){
         return new QName(name.getNamespaceURI(), name.getLocalPart());
     }
         
-    public JAXBElement<?> visitFilter(Filter filter){
+    public JAXBElement<?> visitFilter(final Filter filter){
                         
         if(filter.equals(Filter.INCLUDE)){
             return null;
@@ -755,7 +755,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         
     }
 
-    public List<JAXBElement<AbstractIdType>> visitFilter(Id filter){
+    public List<JAXBElement<AbstractIdType>> visitFilter(final Id filter){
 
         final List<JAXBElement<AbstractIdType>> lst = new ArrayList<JAXBElement<AbstractIdType>>();
 
@@ -769,7 +769,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         return lst;
     }
 
-    public FilterType visit(Filter filter) {
+    public FilterType visit(final Filter filter) {
         final FilterType ft = ogc_factory.createFilterType();
 
         if(filter instanceof Id){
@@ -798,7 +798,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform a Unit to the corresponding SLD string.
      */
-    public String visitUOM(Unit<Length> uom) {
+    public String visitUOM(final Unit<Length> uom) {
         if(uom == null) return null;
         
         if(uom.equals(SI.METRE)){
@@ -814,7 +814,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT Style in Jaxb UserStyle
      */
     @Override
-    public org.geotoolkit.sld.xml.v110.UserStyle visit(Style style, Object data) {
+    public org.geotoolkit.sld.xml.v110.UserStyle visit(final Style style, final Object data) {
         final org.geotoolkit.sld.xml.v110.UserStyle userStyle = sld_factory_v110.createUserStyle();
         userStyle.setName(style.getName());
         userStyle.setDescription(visit(style.getDescription(), null));
@@ -831,7 +831,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT FTS in Jaxb FeatureTypeStyle or CoveragaStyle or OnlineResource.
      */
     @Override
-    public Object visit(FeatureTypeStyle fts, Object data) {
+    public Object visit(final FeatureTypeStyle fts, final Object data) {
         if(fts.getOnlineResource() != null){
             //we store only the online resource
             return visit(fts.getOnlineResource(), null);
@@ -949,7 +949,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT rule in jaxb rule or OnlineResource
      */
     @Override
-    public Object visit(Rule rule, Object data) {
+    public Object visit(final Rule rule, final Object data) {
         if(rule.getOnlineResource() != null){
             //we store only the online resource
             return visit(rule.getOnlineResource(), null);
@@ -998,7 +998,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT point symbol in jaxb point symbol.
      */
     @Override
-    public JAXBElement<PointSymbolizerType> visit(PointSymbolizer point, Object data) {
+    public JAXBElement<PointSymbolizerType> visit(final PointSymbolizer point, final Object data) {
         final PointSymbolizerType pst = se_factory.createPointSymbolizerType();
         pst.setName( point.getName() );
         pst.setDescription( visit(point.getDescription(),null) );
@@ -1015,7 +1015,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT line symbol in jaxb line symbol.
      */
     @Override
-    public JAXBElement<LineSymbolizerType> visit(LineSymbolizer line, Object data) {
+    public JAXBElement<LineSymbolizerType> visit(final LineSymbolizer line, final Object data) {
         final LineSymbolizerType lst = se_factory.createLineSymbolizerType();
         lst.setName( line.getName() );
         lst.setDescription( visit(line.getDescription(),null) );
@@ -1033,7 +1033,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT polygon symbol in a jaxb version.
      */
     @Override
-    public JAXBElement<PolygonSymbolizerType> visit(PolygonSymbolizer polygon, Object data) {
+    public JAXBElement<PolygonSymbolizerType> visit(final PolygonSymbolizer polygon, final Object data) {
         final PolygonSymbolizerType pst = se_factory.createPolygonSymbolizerType();
         pst.setName( polygon.getName() );
         pst.setDescription( visit(polygon.getDescription(),null) );
@@ -1061,7 +1061,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT text symbol in jaxb symbol.
      */
     @Override
-    public JAXBElement<TextSymbolizerType> visit(TextSymbolizer text, Object data) {
+    public JAXBElement<TextSymbolizerType> visit(final TextSymbolizer text, final Object data) {
         final TextSymbolizerType tst = se_factory.createTextSymbolizerType();
         tst.setName( text.getName() );
         tst.setDescription( visit(text.getDescription(),null) );
@@ -1093,7 +1093,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT raster symbolizer in jaxb raster symbolizer.
      */
     @Override
-    public JAXBElement<RasterSymbolizerType> visit(RasterSymbolizer raster, Object data) {
+    public JAXBElement<RasterSymbolizerType> visit(final RasterSymbolizer raster, final Object data) {
         final RasterSymbolizerType tst = se_factory.createRasterSymbolizerType();
         tst.setName( raster.getName() );
         tst.setDescription( visit(raster.getDescription(),null) );
@@ -1141,7 +1141,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform a GT raster symbolizer in jaxb raster symbolizer.
      */
-    public JAXBElement<PatternSymbolizerType> visit(PatternSymbolizer pattern, Object data) {
+    public JAXBElement<PatternSymbolizerType> visit(final PatternSymbolizer pattern, final Object data) {
         final PatternSymbolizerType tst = se_factory.createPatternSymbolizerType();
         tst.setName( pattern.getName() );
         tst.setDescription( visit(pattern.getDescription(),null) );
@@ -1165,7 +1165,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         return se_factory.createPatternSymbolizer(tst);
     }
 
-    public JAXBElement<RangeType> visitRange(Expression thredhold, List<Symbolizer> symbols){
+    public JAXBElement<RangeType> visitRange(final Expression thredhold, final List<Symbolizer> symbols){
         final RangeType type = se_factory.createRangeType();
 
         if(thredhold != null){
@@ -1195,7 +1195,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     }
 
     @Override
-    public Object visit(ExtensionSymbolizer ext, Object data){
+    public Object visit(final ExtensionSymbolizer ext, final Object data){
         return null;
     }
 
@@ -1203,7 +1203,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * transform a GT description in jaxb description.
      */
     @Override
-    public DescriptionType visit(Description description, Object data) {
+    public DescriptionType visit(final Description description, final Object data) {
         final DescriptionType dt = se_factory.createDescriptionType();
         if(description != null){
             if(description.getTitle() != null)    dt.setTitle(description.getTitle().toString());
@@ -1216,7 +1216,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT displacement in jaxb displacement.
      */
     @Override
-    public DisplacementType visit(Displacement displacement, Object data) {
+    public DisplacementType visit(final Displacement displacement, final Object data) {
         final DisplacementType disp = se_factory.createDisplacementType();
         disp.setDisplacementX( visitExpression(displacement.getDisplacementX()) );
         disp.setDisplacementY( visitExpression(displacement.getDisplacementY()) );
@@ -1227,7 +1227,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT fill in jaxb fill.
      */
     @Override
-    public FillType visit(Fill fill, Object data) {
+    public FillType visit(final Fill fill, final Object data) {
         final FillType ft = se_factory.createFillType();
         
         if(fill.getGraphicFill() != null){
@@ -1245,7 +1245,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT Font in jaxb font.
      */
     @Override
-    public FontType visit(Font font, Object data) {
+    public FontType visit(final Font font, final Object data) {
         final FontType ft = se_factory.createFontType();
         
         final List<SvgParameterType> svgs = ft.getSvgParameter();
@@ -1264,7 +1264,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT stroke in jaxb stroke.
      */
     @Override
-    public StrokeType visit(Stroke stroke, Object data) {
+    public StrokeType visit(final Stroke stroke, final Object data) {
         final StrokeType st = se_factory.createStrokeType();
         
         if(stroke.getGraphicFill() != null){
@@ -1291,7 +1291,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * transform a GT graphic in jaxb graphic
      */
     @Override
-    public GraphicType visit(Graphic graphic, Object data) {
+    public GraphicType visit(final Graphic graphic, final Object data) {
         final GraphicType gt = se_factory.createGraphicType();
         gt.setAnchorPoint( visit(graphic.getAnchorPoint(),null) );
         for(final GraphicalSymbol gs : graphic.graphicalSymbols()){
@@ -1318,7 +1318,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT graphic fill in jaxb graphic fill.
      */
     @Override
-    public GraphicFillType visit(GraphicFill graphicFill, Object data) {
+    public GraphicFillType visit(final GraphicFill graphicFill, final Object data) {
         final GraphicFillType gft = se_factory.createGraphicFillType();
         gft.setGraphic( visit((Graphic)graphicFill,null) );
         return gft;
@@ -1328,7 +1328,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT graphic stroke in jaxb graphic stroke.
      */
     @Override
-    public GraphicStrokeType visit(GraphicStroke graphicStroke, Object data) {
+    public GraphicStrokeType visit(final GraphicStroke graphicStroke, final Object data) {
         final GraphicStrokeType gst = se_factory.createGraphicStrokeType();
         gst.setGraphic( visit((Graphic)graphicStroke,null) );
         gst.setGap( visitExpression(graphicStroke.getGap()) );
@@ -1337,7 +1337,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     }
 
     @Override
-    public MarkType visit(Mark mark, Object data) {
+    public MarkType visit(final Mark mark, final Object data) {
         final MarkType mt = se_factory.createMarkType();
         mt.setFill( visit(mark.getFill(),null) );
         mt.setStroke( visit(mark.getStroke(),null) );
@@ -1361,12 +1361,12 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Not usable for SLD, See visit(Mark) method.
      */
     @Override
-    public Object visit(ExternalMark externalMark, Object data) {
+    public Object visit(final ExternalMark externalMark, final Object data) {
         return null;
     }
 
     @Override
-    public ExternalGraphicType visit(ExternalGraphic externalGraphic, Object data) {
+    public ExternalGraphicType visit(final ExternalGraphic externalGraphic, final Object data) {
         final ExternalGraphicType egt = se_factory.createExternalGraphicType();
         egt.setFormat(externalGraphic.getFormat());
         
@@ -1392,7 +1392,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * transform a GT point placement in jaxb point placement.
      */
     @Override
-    public PointPlacementType visit(PointPlacement pointPlacement, Object data) {
+    public PointPlacementType visit(final PointPlacement pointPlacement, final Object data) {
         final PointPlacementType ppt = se_factory.createPointPlacementType();
         ppt.setAnchorPoint( visit(pointPlacement.getAnchorPoint(), null) );
         ppt.setDisplacement( visit(pointPlacement.getDisplacement(), null) );
@@ -1404,7 +1404,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * transform a GT anchor point in jaxb anchor point.
      */
     @Override
-    public AnchorPointType visit(AnchorPoint anchorPoint, Object data) {
+    public AnchorPointType visit(final AnchorPoint anchorPoint, final Object data) {
         final AnchorPointType apt = se_factory.createAnchorPointType();
         apt.setAnchorPointX( visitExpression(anchorPoint.getAnchorPointX()) );
         apt.setAnchorPointY( visitExpression(anchorPoint.getAnchorPointY()) );
@@ -1415,7 +1415,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * transform a GT lineplacement in jaxb line placement.
      */
     @Override
-    public LinePlacementType visit(LinePlacement linePlacement, Object data) {
+    public LinePlacementType visit(final LinePlacement linePlacement, final Object data) {
         final LinePlacementType lpt = se_factory.createLinePlacementType();
         lpt.setGap( visitExpression(linePlacement.getGap()) );
         lpt.setGeneralizeLine( linePlacement.isGeneralizeLine() );
@@ -1430,7 +1430,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT label placement in jaxb label placement.
      * @return
      */
-    public LabelPlacementType visit(LabelPlacement labelPlacement, Object data) {
+    public LabelPlacementType visit(final LabelPlacement labelPlacement, final Object data) {
         final LabelPlacementType lpt = se_factory.createLabelPlacementType();
         if(labelPlacement instanceof LinePlacement){
             final LinePlacement lp = (LinePlacement) labelPlacement;
@@ -1446,7 +1446,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT graphicLegend in jaxb graphic legend
      */
     @Override
-    public LegendGraphicType visit(GraphicLegend graphicLegend, Object data) {
+    public LegendGraphicType visit(final GraphicLegend graphicLegend, final Object data) {
         final LegendGraphicType lgt = se_factory.createLegendGraphicType();
         lgt.setGraphic( visit((Graphic)graphicLegend,null) );
         return lgt;
@@ -1455,7 +1455,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * Transform a GT onlineResource in jaxb online resource.
      */
-    public org.geotoolkit.se.xml.v110.OnlineResourceType visit(OnlineResource onlineResource, Object data) {
+    public org.geotoolkit.se.xml.v110.OnlineResourceType visit(final OnlineResource onlineResource, final Object data) {
         final OnlineResourceType ort = se_factory.createOnlineResourceType();
         ort.setHref(onlineResource.getLinkage().toString());
         return ort;
@@ -1465,7 +1465,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * transform a GT halo in a jaxb halo.
      */
     @Override
-    public HaloType visit(Halo halo, Object data) {
+    public HaloType visit(final Halo halo, final Object data) {
         final HaloType ht = se_factory.createHaloType();
         ht.setFill( visit(halo.getFill(),null) );
         ht.setRadius( visitExpression(halo.getRadius()) );
@@ -1473,7 +1473,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     }
 
     @Override
-    public ColorMapType visit(ColorMap colorMap, Object data) {
+    public ColorMapType visit(final ColorMap colorMap, final Object data) {
 //TODO Fix that when better undestanding raster functions.
         final org.geotoolkit.se.xml.v110.ColorMapType cmt = se_factory.createColorMapType();
         
@@ -1487,7 +1487,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         return cmt;
     }
     
-    public CategorizeType visit(Categorize categorize){
+    public CategorizeType visit(final Categorize categorize){
         final CategorizeType type = se_factory.createCategorizeType();
         type.setFallbackValue(categorize.getFallbackValue().getValue().toString());
         type.setLookupValue(visitExpression(categorize.getLookupValue()));
@@ -1514,7 +1514,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         return type;
     }
     
-    public InterpolateType visit(Interpolate interpolate){
+    public InterpolateType visit(final Interpolate interpolate){
         final InterpolateType type = se_factory.createInterpolateType();
         type.setFallbackValue(interpolate.getFallbackValue().getValue().toString());
         type.setLookupValue(visitExpression(interpolate.getLookupValue()));
@@ -1547,7 +1547,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     }
     
     @Override
-    public ColorReplacementType visit(ColorReplacement colorReplacement, Object data) {
+    public ColorReplacementType visit(final ColorReplacement colorReplacement, final Object data) {
         final ColorReplacementType crt = se_factory.createColorReplacementType();
         final Function fct = colorReplacement.getRecoding();
 
@@ -1572,7 +1572,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
         return crt;
     }
 
-    public RecolorType visit(RecolorFunction fct){
+    public RecolorType visit(final RecolorFunction fct){
         RecolorType rt = new RecolorType();
 
         for(ColorItem item : fct.getColorItems()){
@@ -1592,7 +1592,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT constrast enchancement in jaxb constrast enchancement
      */
     @Override
-    public ContrastEnhancementType visit(ContrastEnhancement contrastEnhancement, Object data) {
+    public ContrastEnhancementType visit(final ContrastEnhancement contrastEnhancement, final Object data) {
         final ContrastEnhancementType cet = se_factory.createContrastEnhancementType();
         cet.setGammaValue(contrastEnhancement.getGammaValue().evaluate(null, Double.class));
         
@@ -1610,7 +1610,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT channel selection in jaxb channel selection.
      */
     @Override
-    public ChannelSelectionType visit(ChannelSelection channelSelection, Object data) {
+    public ChannelSelectionType visit(final ChannelSelection channelSelection, final Object data) {
         final ChannelSelectionType cst = se_factory.createChannelSelectionType();
         
         if(channelSelection.getRGBChannels() != null){
@@ -1629,7 +1629,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
     /**
      * transform a GT overlap in xml string representation.
      */
-    public String visit(OverlapBehavior overlapBehavior, Object data) {
+    public String visit(final OverlapBehavior overlapBehavior, final Object data) {
         switch(overlapBehavior){
             case AVERAGE : return SEJAXBStatics.OVERLAP_AVERAGE;
             case EARLIEST_ON_TOP : return SEJAXBStatics.OVERLAP_EARLIEST_ON_TOP;
@@ -1643,7 +1643,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * transform a GT channel type in jaxb channel type.
      */
     @Override
-    public org.geotoolkit.se.xml.v110.SelectedChannelType visit(SelectedChannelType selectChannelType, Object data) {
+    public org.geotoolkit.se.xml.v110.SelectedChannelType visit(final SelectedChannelType selectChannelType, final Object data) {
         final org.geotoolkit.se.xml.v110.SelectedChannelType sct = se_factory.createSelectedChannelType();
         sct.setContrastEnhancement( visit(selectChannelType.getContrastEnhancement(), null) );
         sct.setSourceChannelName( selectChannelType.getChannelName() );
@@ -1654,7 +1654,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
      * Transform a GT shaded relief in jaxb shaded relief.
      */
     @Override
-    public ShadedReliefType visit(ShadedRelief shadedRelief, Object data) {
+    public ShadedReliefType visit(final ShadedRelief shadedRelief, final Object data) {
         final ShadedReliefType srt = se_factory.createShadedReliefType();
         srt.setBrightnessOnly(shadedRelief.isBrightnessOnly());
         srt.setReliefFactor(shadedRelief.getReliefFactor().evaluate(null, Double.class));

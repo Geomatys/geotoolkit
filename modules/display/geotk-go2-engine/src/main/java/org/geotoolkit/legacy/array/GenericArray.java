@@ -318,7 +318,7 @@ public class GenericArray extends PointArray implements RandomAccess {
      * Ins�re les donn�es (<var>x</var>,<var>y</var>) du tableau <code>toMerge</code> sp�cifi�.
      */
     @Override
-    public PointArray insertAt(int index, float[] toMerge, int lower, int upper, boolean reverse) {
+    public PointArray insertAt(final int index, final float[] toMerge, final int lower, final int upper, final boolean reverse) {
         throw new UnsupportedOperationException();
     }
     
@@ -523,7 +523,7 @@ public class GenericArray extends PointArray implements RandomAccess {
         protected abstract int binarySearch(double value);
 
         /** Search a value. This method should be invoked only if {@link #isSorted} is true. */
-        public final int search(double value) {
+        public final int search(final double value) {
             if (value<minimum) return 0;
             if (value>maximum) return length();
             final int index = binarySearch(value);
@@ -546,11 +546,11 @@ public class GenericArray extends PointArray implements RandomAccess {
         public int     type        ()         {return 2;}
         public int     sizeof      ()         {return 64;}
         public int     length      ()         {return array.length;}
-        public double  getAsDouble (int i)    {return        array[i];}
-        public float   getAsFloat  (int i)    {return (float)array[i];}
-        public int     getAsInteger(int i)    {return (int)  array[i];}
-        public boolean isNaN       (int i)    {return java.lang.Double.isNaN(array[i]);}
-        protected int  binarySearch(double v) {return Arrays.binarySearch(array, v);}
+        public double  getAsDouble (final int i)    {return        array[i];}
+        public float   getAsFloat  (final int i)    {return (float)array[i];}
+        public int     getAsInteger(final int i)    {return (int)  array[i];}
+        public boolean isNaN       (final int i)    {return java.lang.Double.isNaN(array[i]);}
+        protected int  binarySearch(final double v) {return Arrays.binarySearch(array, v);}
     }
 
     /** Vector for the <code>float</code> type. */
@@ -568,11 +568,11 @@ public class GenericArray extends PointArray implements RandomAccess {
         public int     type        ()         {return 1;}
         public int     sizeof      ()         {return 32;}
         public int     length      ()         {return array.length;}
-        public double  getAsDouble (int i)    {return array[i];}
-        public float   getAsFloat  (int i)    {return array[i];}
-        public int     getAsInteger(int i)    {return (int)array[i];}
-        public boolean isNaN       (int i)    {return java.lang.Float.isNaN(array[i]);}
-        protected int  binarySearch(double v) {return Arrays.binarySearch(array, (float)v);}
+        public double  getAsDouble (final int i)    {return array[i];}
+        public float   getAsFloat  (final int i)    {return array[i];}
+        public int     getAsInteger(final int i)    {return (int)array[i];}
+        public boolean isNaN       (final int i)    {return java.lang.Float.isNaN(array[i]);}
+        protected int  binarySearch(final double v) {return Arrays.binarySearch(array, (float)v);}
     }
 
     /** Vector for the <code>long</code> type. */
@@ -590,10 +590,10 @@ public class GenericArray extends PointArray implements RandomAccess {
         public int    type        ()         {return 2;}
         public int    sizeof      ()         {return 64;}
         public int    length      ()         {return array.length;}
-        public double getAsDouble (int i)    {return array[i];}
-        public float  getAsFloat  (int i)    {return array[i];}
-        public int    getAsInteger(int i)    {return (int)array[i];}
-        protected int binarySearch(double v) {return Arrays.binarySearch(array, (long)Math.floor(v));}
+        public double getAsDouble (final int i)    {return array[i];}
+        public float  getAsFloat  (final int i)    {return array[i];}
+        public int    getAsInteger(final int i)    {return (int)array[i];}
+        protected int binarySearch(final double v) {return Arrays.binarySearch(array, (long)Math.floor(v));}
     }
 
     /** Vector for the <code>int</code> type. */
@@ -610,10 +610,10 @@ public class GenericArray extends PointArray implements RandomAccess {
         }
         public int    sizeof      ()         {return 32;}
         public int    length      ()         {return array.length;}
-        public double getAsDouble (int i)    {return array[i];}
-        public float  getAsFloat  (int i)    {return array[i];}
-        public int    getAsInteger(int i)    {return array[i];}
-        protected int binarySearch(double v) {return Arrays.binarySearch(array, (int)Math.floor(v));}
+        public double getAsDouble (final int i)    {return array[i];}
+        public float  getAsFloat  (final int i)    {return array[i];}
+        public int    getAsInteger(final int i)    {return array[i];}
+        protected int binarySearch(final double v) {return Arrays.binarySearch(array, (int)Math.floor(v));}
     }
 
     /** Vector for the <code>short</code> type. */
@@ -630,10 +630,10 @@ public class GenericArray extends PointArray implements RandomAccess {
         }
         public int    sizeof      ()         {return 16;}
         public int    length      ()         {return array.length;}
-        public double getAsDouble (int i)    {return array[i];}
-        public float  getAsFloat  (int i)    {return array[i];}
-        public int    getAsInteger(int i)    {return array[i];}
-        protected int binarySearch(double v) {return Arrays.binarySearch(array, (short)Math.floor(v));}
+        public double getAsDouble (final int i)    {return array[i];}
+        public float  getAsFloat  (final int i)    {return array[i];}
+        public int    getAsInteger(final int i)    {return array[i];}
+        protected int binarySearch(final double v) {return Arrays.binarySearch(array, (short)Math.floor(v));}
     }
 
     /** Vector for the <code>byte</code> type. */
@@ -650,10 +650,10 @@ public class GenericArray extends PointArray implements RandomAccess {
         }
         public int    sizeof      ()         {return 8;}
         public int    length      ()         {return array.length;}
-        public double getAsDouble (int i)    {return array[i];}
-        public float  getAsFloat  (int i)    {return array[i];}
-        public int    getAsInteger(int i)    {return array[i];}
-        protected int binarySearch(double v) {return Arrays.binarySearch(array, (byte)Math.floor(v));}
+        public double getAsDouble (final int i)    {return array[i];}
+        public float  getAsFloat  (final int i)    {return array[i];}
+        public int    getAsInteger(final int i)    {return array[i];}
+        protected int binarySearch(final double v) {return Arrays.binarySearch(array, (byte)Math.floor(v));}
     }
 
     /** Vector for the <code>char</code> type. */
@@ -670,10 +670,10 @@ public class GenericArray extends PointArray implements RandomAccess {
         }
         public int    sizeof      ()         {return 16;}
         public int    length      ()         {return array.length;}
-        public double getAsDouble (int i)    {return array[i];}
-        public float  getAsFloat  (int i)    {return array[i];}
-        public int    getAsInteger(int i)    {return array[i];}
-        protected int binarySearch(double v) {return Arrays.binarySearch(array, (char)Math.floor(v));}
+        public double getAsDouble (final int i)    {return array[i];}
+        public float  getAsFloat  (final int i)    {return array[i];}
+        public int    getAsInteger(final int i)    {return array[i];}
+        protected int binarySearch(final double v) {return Arrays.binarySearch(array, (char)Math.floor(v));}
     }
 
     /** Vector for the <code>boolean</code> type. */
@@ -687,9 +687,9 @@ public class GenericArray extends PointArray implements RandomAccess {
         }
         public int    sizeof      ()         {return 1;}
         public int    length      ()         {return array.length;}
-        public double getAsDouble (int i)    {return array[i] ? 0 : 1;}
-        public float  getAsFloat  (int i)    {return array[i] ? 0 : 1;}
-        public int    getAsInteger(int i)    {return array[i] ? 0 : 1;}
-        protected int binarySearch(double v) {throw new UnsupportedOperationException();}
+        public double getAsDouble (final int i)    {return array[i] ? 0 : 1;}
+        public float  getAsFloat  (final int i)    {return array[i] ? 0 : 1;}
+        public int    getAsInteger(final int i)    {return array[i] ? 0 : 1;}
+        protected int binarySearch(final double v) {throw new UnsupportedOperationException();}
     }
 }

@@ -51,7 +51,7 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
 
 
     @Override
-    public void setPaintingIconVisible(boolean b) {
+    public void setPaintingIconVisible(final boolean b) {
         revalidate();
         repaint();
     }
@@ -67,7 +67,7 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     }
 
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         this.map = map;
     }
 
@@ -82,7 +82,7 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     }
 
     @Override
-    public void displayMessage(final String text, int time, LEVEL level) {
+    public void displayMessage(final String text, final int time, final LEVEL level) {
 
         messages.put(text, level);
 
@@ -106,7 +106,7 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     }
 
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(final Graphics g) {
         super.paintComponent(g);
 //        Graphics2D g2 = (Graphics2D) g;
 //
@@ -169,7 +169,7 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     }
 
     @Override
-    public void displayLowLevelMessages(boolean display) {
+    public void displayLowLevelMessages(final boolean display) {
         lowlevel = display;
         repaint();
     }

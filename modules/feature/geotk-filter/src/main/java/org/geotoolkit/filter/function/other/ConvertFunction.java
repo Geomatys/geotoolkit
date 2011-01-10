@@ -28,7 +28,7 @@ public class ConvertFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         try {
             Object arg = parameters.get(0).evaluate(feature);
             Class target = parameters.get(1).evaluate(feature, Class.class);

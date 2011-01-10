@@ -74,7 +74,7 @@ public enum CompassPointEnumeration {
         return name();
     }
 
-    public static CompassPointEnumeration fromValue(String v) {
+    public static CompassPointEnumeration fromValue(final String v) {
         return valueOf(v);
     }
 

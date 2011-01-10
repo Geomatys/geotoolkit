@@ -68,7 +68,7 @@ public class SupportedInterpolationsType {
     /**
      * Build a new List of supported interpolation.
      */
-    public SupportedInterpolationsType(InterpolationMethod _default, List<InterpolationMethod> interpolationMethod){
+    public SupportedInterpolationsType(final InterpolationMethod _default, final List<InterpolationMethod> interpolationMethod){
         this._default            = _default;
         this.interpolationMethod = interpolationMethod;
     }

@@ -92,7 +92,7 @@ public class QueryType extends AbstractQueryType {
     /**
      * Build a new Query
      */
-    public QueryType(List<QName> typeNames, ElementSetNameType elementSetName, QueryConstraintType constraint) {
+    public QueryType(final List<QName> typeNames, final ElementSetNameType elementSetName, final QueryConstraintType constraint) {
         
         this.typeNames      = typeNames;
         this.elementSetName = elementSetName; 
@@ -105,7 +105,7 @@ public class QueryType extends AbstractQueryType {
      * @param elementName
      * @param constraint
      */
-    public QueryType(List<QName> typeNames, List<QName> elementName, QueryConstraintType constraint) {
+    public QueryType(final List<QName> typeNames, final List<QName> elementName, final QueryConstraintType constraint) {
         
         this.typeNames      = typeNames;
         this.elementName    = elementName; 
@@ -124,7 +124,7 @@ public class QueryType extends AbstractQueryType {
      * Sets the value of the elementSetName property.
      * 
      */
-    public void setElementSetName(ElementSetNameType value) {
+    public void setElementSetName(final ElementSetNameType value) {
         this.elementSetName = value;
     }
 
@@ -150,7 +150,7 @@ public class QueryType extends AbstractQueryType {
     /**
      * Sets the value of the constraint property.
      */
-    public void setConstraint(QueryConstraintType value) {
+    public void setConstraint(final QueryConstraintType value) {
         this.constraint = value;
     }
 
@@ -164,7 +164,7 @@ public class QueryType extends AbstractQueryType {
         return this.typeNames;
     }
     
-    public void setTypeNames(List<QName> typeNames) {
+    public void setTypeNames(final List<QName> typeNames) {
         this.typeNames = typeNames;
     }
     

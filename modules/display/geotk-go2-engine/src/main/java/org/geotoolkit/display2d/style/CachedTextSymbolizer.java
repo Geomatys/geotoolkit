@@ -52,8 +52,8 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     
     private String label = null;
 
-    public CachedTextSymbolizer(TextSymbolizer symbolizer,
-            SymbolizerRendererService<TextSymbolizer,? extends CachedSymbolizer<TextSymbolizer>> renderer){
+    public CachedTextSymbolizer(final TextSymbolizer symbolizer,
+            final SymbolizerRendererService<TextSymbolizer,? extends CachedSymbolizer<TextSymbolizer>> renderer){
         super(symbolizer,renderer);
         
         final org.opengis.style.Font font = styleElement.getFont();
@@ -88,7 +88,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         
     }
 
-    public Paint getFontPaint(Feature feature, int x, int y, float coeff, RenderingHints hints){
+    public Paint getFontPaint(final Feature feature, final int x, final int y, final float coeff, final RenderingHints hints){
         Paint paint;
                 
         if(cachedFill != null){
@@ -100,7 +100,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         return paint;
     }
     
-    public Composite getFontComposite(Feature feature){
+    public Composite getFontComposite(final Feature feature){
         Composite composite;
                 
         if(cachedFill != null){
@@ -112,11 +112,11 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         return composite;
     }
     
-    public Font getJ2dFont(Feature feature, float coeff){
+    public Font getJ2dFont(final Feature feature, final float coeff){
         return cachedFont.getJ2dFont(feature, coeff);
     }
     
-    public String getLabel(Feature feature){
+    public String getLabel(final Feature feature){
         return GO2Utilities.evaluate(styleElement.getLabel(),feature,String.class, "Label");
     }
         
@@ -159,7 +159,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     }
 
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(final Feature feature, final float coeff) {
         if(feature == null){
             return Float.NaN;
         }else{
@@ -168,7 +168,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     }
 
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(final Feature feature) {
         return true;
     }
 

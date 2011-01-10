@@ -67,7 +67,7 @@ public class RegisterSensorResponse implements SOSResponse {
      *
      * @param assignedSensorId The id of the sensor whitch have been inserted previously. 
      */
-     public RegisterSensorResponse (String assignedSensorId) {
+     public RegisterSensorResponse (final String assignedSensorId) {
          this.assignedSensorId = assignedSensorId;
      }
      

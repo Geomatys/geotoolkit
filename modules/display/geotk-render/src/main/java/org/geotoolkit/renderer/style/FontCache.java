@@ -65,7 +65,7 @@ public class FontCache {
         return defaultInstance;
     }
 
-    public synchronized Font getFont(String requestedFont) {
+    public synchronized Font getFont(final String requestedFont) {
         // make sure we load the known font families once
         if (fontFamilies == null) {
             final GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
@@ -116,7 +116,7 @@ public class FontCache {
      * @param fontUrl
      * @return
      */
-    Font loadFromUrl(String fontUrl) {
+    Font loadFromUrl(final String fontUrl) {
         // may be its a file or url
         InputStream is = null;
 

@@ -230,7 +230,7 @@ public final class Clipper {
      *                This polyline will never be modified.
      * @return <code>result</code>, or a new polyline if <code>result</code> was null.
      */
-    private Polyline attach(Polyline result, Polyline subpoly) {
+    private Polyline attach(Polyline result, final Polyline subpoly) {
         if (subpoly != null) {
             try {
                 if (result == null) {

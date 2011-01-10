@@ -66,15 +66,15 @@ public class GeometricComplexType extends AbstractGeometryType {
         return this.element;
     }
 
-    public Object evaluate(Object arg0) {
+    public Object evaluate(final Object arg0) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public <T> T evaluate(Object arg0, Class<T> arg1) {
+    public <T> T evaluate(final Object arg0, final Class<T> arg1) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(ExpressionVisitor arg0, Object arg1) {
+    public Object accept(final ExpressionVisitor arg0, final Object arg1) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

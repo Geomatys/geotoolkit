@@ -20,7 +20,7 @@ public class PosListType {
     public PosListType() {
     }
 
-    public PosListType(List<Double> value) {
+    public PosListType(final List<Double> value) {
         this.value = value;
     }
 
@@ -34,7 +34,7 @@ public class PosListType {
     /**
      * @param value the value to set
      */
-    public void setValue(List<Double> value) {
+    public void setValue(final List<Double> value) {
         this.value = value;
     }
 }

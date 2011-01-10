@@ -45,9 +45,9 @@ public class Relation extends IdentifiedElement{
 
     private final List<Member> members;
 
-    public Relation(List<Member> members,
-            long id, int version, int changeset, User user,
-            long timestamp, Map<String,String> tags) {
+    public Relation(final List<Member> members,
+            final long id, final int version, final int changeset, final User user,
+            final long timestamp, final Map<String,String> tags) {
         super(OSMModelConstants.DESC_RELATION,id,version,changeset,user,timestamp,tags);
 
         if(members == null || members.isEmpty()){
@@ -113,7 +113,7 @@ public class Relation extends IdentifiedElement{
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

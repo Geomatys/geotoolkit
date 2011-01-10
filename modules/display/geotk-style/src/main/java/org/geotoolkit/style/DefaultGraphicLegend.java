@@ -46,8 +46,8 @@ public class DefaultGraphicLegend extends DefaultGraphic implements GraphicLegen
      * @param anchor : if null will be replaced by default value.
      * @param disp : if null will be replaced by default value.
      */
-    public DefaultGraphicLegend(List<GraphicalSymbol> symbols, Expression opacity, Expression size,
-            Expression rotation, AnchorPoint anchor, Displacement disp){
+    public DefaultGraphicLegend(final List<GraphicalSymbol> symbols, final Expression opacity, final Expression size,
+            final Expression rotation, final AnchorPoint anchor, final Displacement disp){
         super(symbols,opacity,size,rotation,anchor,disp);
     }
 
@@ -55,7 +55,7 @@ public class DefaultGraphicLegend extends DefaultGraphic implements GraphicLegen
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -63,7 +63,7 @@ public class DefaultGraphicLegend extends DefaultGraphic implements GraphicLegen
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

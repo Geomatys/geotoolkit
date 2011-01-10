@@ -54,10 +54,10 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
 
     private String currentFid;
 
-    public IndexedShapefileFeatureWriter(String typeName, ShpFiles shpFiles,
-            IndexedShapefileAttributeReader attsReader,
-             FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, IndexedShapefileDataStore datastore,
-             Charset charset)
+    public IndexedShapefileFeatureWriter(final String typeName, final ShpFiles shpFiles,
+            final IndexedShapefileAttributeReader attsReader,
+             final FeatureReader<SimpleFeatureType, SimpleFeature> featureReader, final IndexedShapefileDataStore datastore,
+             final Charset charset)
             throws DataStoreException,IOException {
         super(typeName, shpFiles, attsReader, featureReader, charset);
         this.indexedShapefileDataStore = datastore;
@@ -157,7 +157,7 @@ class IndexedShapefileFeatureWriter extends ShapefileFeatureWriter{
         }
     }
     
-    private void deleteFile(ShpFileType shpFileType) {
+    private void deleteFile(final ShpFileType shpFileType) {
         URL url = shpFiles.acquireWrite(shpFileType, this);
         try {
             File toDelete = IOUtilities.toFile(url, ENCODING);

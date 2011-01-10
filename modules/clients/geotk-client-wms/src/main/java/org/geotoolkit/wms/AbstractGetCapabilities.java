@@ -62,7 +62,7 @@ public abstract class AbstractGetCapabilities extends AbstractRequest implements
      * {@inheritDoc }
      */
     @Override
-    public void setUpdateSequence(String sequence) {
+    public void setUpdateSequence(final String sequence) {
         this.updateSequence = sequence;
     }
 

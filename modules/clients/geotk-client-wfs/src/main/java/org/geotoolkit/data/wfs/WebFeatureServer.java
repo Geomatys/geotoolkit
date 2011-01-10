@@ -51,7 +51,7 @@ public class WebFeatureServer implements Server{
     private final URL serverURL;
     private WFSCapabilitiesType capabilities;
 
-    public WebFeatureServer(URL serverURL, String version) {
+    public WebFeatureServer(final URL serverURL, final String version) {
         if(version.equals("1.1.0")){
             this.version = WFSVersion.v110;
         }else{

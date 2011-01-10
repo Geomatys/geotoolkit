@@ -227,7 +227,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
 
     public void initParameters(final AffineTransform2D objToDisp, final CanvasMonitor monitor,
             final Shape paintingDisplayShape, final Shape paintingObjectiveShape,
-            final Shape canvasDisplayShape, final Shape canvasObjectiveShape, double dpi){
+            final Shape canvasDisplayShape, final Shape canvasObjectiveShape, final double dpi){
         this.canvasObjectiveBBox= canvas.getController().getVisibleEnvelope();
         this.objectiveCRS       = canvasObjectiveBBox.getCoordinateReferenceSystem();
         this.objectiveCRS2D     = canvas.getObjectiveCRS2D();
@@ -542,7 +542,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * {@inheritDoc }
      */
     @Override
-    public double[] getResolution(CoordinateReferenceSystem crs) {
+    public double[] getResolution(final CoordinateReferenceSystem crs) {
         if(CRS.equalsIgnoreMetadata(objectiveCRS, crs)){
             return getResolution();
         }else{
@@ -576,7 +576,7 @@ public final class DefaultRenderingContext2D implements RenderingContext2D{
      * a dpi under 90 with raise the resolution level while
      * a bigger spi will lower the resolution level.
      */
-    private double[] adjustResolutionWithDPI(double[] res){
+    private double[] adjustResolutionWithDPI(final double[] res){
         res[0] = (90/dpi) * res[0];
         res[1] = (90/dpi) * res[1];
         return res;

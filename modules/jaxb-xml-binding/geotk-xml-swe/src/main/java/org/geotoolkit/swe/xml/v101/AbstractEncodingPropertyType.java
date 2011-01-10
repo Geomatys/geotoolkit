@@ -84,7 +84,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         
     }
 
-    public AbstractEncodingPropertyType(AbstractEncodingProperty enc) {
+    public AbstractEncodingPropertyType(final AbstractEncodingProperty enc) {
         if (enc != null) {
             this.actuate = enc.getActuate();
             this.arcrole = enc.getArcrole();
@@ -110,7 +110,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         }
     }
 
-    public AbstractEncodingPropertyType(AbstractEncoding enc) {
+    public AbstractEncodingPropertyType(final AbstractEncoding enc) {
         if (enc != null) {
 
             if (enc instanceof AbstractBinaryBlock) {
@@ -132,7 +132,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Build a new Abstract encoding Property.
      */
-    public AbstractEncodingPropertyType(AbstractEncodingEntry encoding) {
+    public AbstractEncodingPropertyType(final AbstractEncodingEntry encoding) {
         
         if (encoding instanceof TextBlockEntry) {
             this.encoding = sweFactory.createTextBlock((TextBlockEntry)encoding);
@@ -152,7 +152,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * clone Abstract encoding Property.
      */
-    public AbstractEncodingPropertyType(AbstractEncodingPropertyType clone) {
+    public AbstractEncodingPropertyType(final AbstractEncodingPropertyType clone) {
         
         this.actuate        = clone.actuate;
         this.arcrole        = clone.arcrole;

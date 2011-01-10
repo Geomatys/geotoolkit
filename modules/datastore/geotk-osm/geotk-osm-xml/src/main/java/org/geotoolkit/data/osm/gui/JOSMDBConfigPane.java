@@ -221,7 +221,7 @@ public class JOSMDBConfigPane extends javax.swing.JPanel {
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiChooserActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiChooserActionPerformed
+    private void guiChooserActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiChooserActionPerformed
 
         final JFileChooser chooser = new JFileChooser();
         chooser.setFileSelectionMode(JFileChooser.FILES_ONLY);

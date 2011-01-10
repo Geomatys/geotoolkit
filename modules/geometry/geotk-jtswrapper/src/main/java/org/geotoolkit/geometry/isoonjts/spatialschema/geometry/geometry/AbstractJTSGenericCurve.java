@@ -28,7 +28,7 @@ public abstract class AbstractJTSGenericCurve extends AbstractJTSGeometry implem
 
     }
 
-    public AbstractJTSGenericCurve(CoordinateReferenceSystem crs) {
+    public AbstractJTSGenericCurve(final CoordinateReferenceSystem crs) {
         super(crs);
     }
 }

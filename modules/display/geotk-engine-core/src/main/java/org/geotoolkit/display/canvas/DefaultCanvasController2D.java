@@ -61,7 +61,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
 
     protected final AbstractReferencedCanvas2D canvas;
 
-    public DefaultCanvasController2D(AbstractReferencedCanvas2D canvas){
+    public DefaultCanvasController2D(final AbstractReferencedCanvas2D canvas){
         this.canvas = canvas;
     }
 
@@ -71,7 +71,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setAutoRepaint(boolean auto) {
+    public void setAutoRepaint(final boolean auto) {
         canvas.setAutoRepaint(auto);
     }
 
@@ -81,7 +81,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setCenter(DirectPosition center) {
+    public void setCenter(final DirectPosition center) {
         try {
             final DirectPosition oldCenter = getCenter();
             final double diffX = center.getOrdinate(0) - oldCenter.getOrdinate(0);
@@ -93,7 +93,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setObjectiveCRS(CoordinateReferenceSystem crs) throws TransformException {
+    public void setObjectiveCRS(final CoordinateReferenceSystem crs) throws TransformException {
        canvas.setObjectiveCRS(crs);
     }
 
@@ -127,7 +127,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setAxisProportions(double prop) {
+    public void setAxisProportions(final double prop) {
         canvas.setAxisProportions(prop);
     }
 
@@ -142,12 +142,12 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void rotate(double r) throws NoninvertibleTransformException {
+    public void rotate(final double r) throws NoninvertibleTransformException {
         rotate(r, getDisplayCenter());
     }
 
     @Override
-    public void rotate(double r, Point2D center) throws NoninvertibleTransformException {
+    public void rotate(final double r, final Point2D center) throws NoninvertibleTransformException {
         final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
         final AffineTransform change = objToDisp.createInverse();
 
@@ -165,12 +165,12 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void scale(double s) throws NoninvertibleTransformException {
+    public void scale(final double s) throws NoninvertibleTransformException {
         scale(s, getDisplayCenter());
     }
 
     @Override
-    public void scale(double s, Point2D center) throws NoninvertibleTransformException {
+    public void scale(final double s, final Point2D center) throws NoninvertibleTransformException {
         final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
         final AffineTransform change = objToDisp.createInverse();
 
@@ -188,7 +188,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void translateDisplay(double x, double y) throws NoninvertibleTransformException {
+    public void translateDisplay(final double x, final double y) throws NoninvertibleTransformException {
         final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
         final AffineTransform change = objToDisp.createInverse();
         change.translate(x, y);
@@ -198,7 +198,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void translateObjective(double x, double y) throws NoninvertibleTransformException {
+    public void translateObjective(final double x, final double y) throws NoninvertibleTransformException {
         final Point2D dispCenter = getDisplayCenter();
         final DirectPosition center = getCenter();
         Point2D objCenter = new Point2D.Double(center.getOrdinate(0) + x, center.getOrdinate(1) + y);
@@ -207,12 +207,12 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void transform(AffineTransform change) {
+    public void transform(final AffineTransform change) {
         canvas.applyTransform(change);
     }
 
     @Override
-    public void transformPixels(AffineTransform change) {        
+    public void transformPixels(final AffineTransform change) {        
         if (!change.isIdentity()) {
             final AffineTransform2D objToDisp = canvas.getObjectiveToDisplay();
             final AffineTransform logical;
@@ -229,7 +229,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setRotation(double r) throws NoninvertibleTransformException {
+    public void setRotation(final double r) throws NoninvertibleTransformException {
         double rotation = getRotation();
         rotate(rotation - r);
     }
@@ -240,7 +240,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setScale(double newScale) throws NoninvertibleTransformException {
+    public void setScale(final double newScale) throws NoninvertibleTransformException {
         final double oldScale = XAffineTransform.getScale(canvas.getObjectiveToDisplay());
         scale(newScale / oldScale);
     }
@@ -251,7 +251,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setDisplayVisibleArea(Rectangle2D dipsEnv) {
+    public void setDisplayVisibleArea(final Rectangle2D dipsEnv) {
         try {
             Shape shp = canvas.getObjectiveToDisplay().createInverse().createTransformedShape(dipsEnv);
             setVisibleArea(shp.getBounds2D());
@@ -298,12 +298,12 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setVisibleArea(Rectangle2D logicalBounds) throws IllegalArgumentException, NoninvertibleTransformException {
+    public void setVisibleArea(final Rectangle2D logicalBounds) throws IllegalArgumentException, NoninvertibleTransformException {
         canvas.resetTransform(logicalBounds, true,true);
     }
 
     @Override
-    public void setGeographicScale(double scale) throws TransformException {
+    public void setGeographicScale(final double scale) throws TransformException {
         double currentScale = getGeographicScale();
         double factor = currentScale / scale;
         try {
@@ -392,7 +392,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setTemporalRange(Date startDate, Date endDate) throws TransformException {
+    public void setTemporalRange(final Date startDate, final Date endDate) throws TransformException {
         int index = getTemporalAxisIndex();
         if(index < 0){
             //no temporal axis, add one
@@ -421,7 +421,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
     @Override
-    public void setElevationRange(Double min, Double max, Unit<Length> unit) throws TransformException {
+    public void setElevationRange(final Double min, final Double max, final Unit<Length> unit) throws TransformException {
         int index = getElevationAxisIndex();
         if(index < 0){
             //no elevation axis, add one
@@ -487,7 +487,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         return -1;
     }
 
-    private CoordinateReferenceSystem appendCRS(CoordinateReferenceSystem crs, CoordinateReferenceSystem toAdd){
+    private CoordinateReferenceSystem appendCRS(final CoordinateReferenceSystem crs, final CoordinateReferenceSystem toAdd){
         if(crs instanceof CompoundCRS){
             final CompoundCRS orig = (CompoundCRS) crs;
             final List<CoordinateReferenceSystem> lst = new ArrayList<CoordinateReferenceSystem>(orig.getComponents());
@@ -500,7 +500,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     }
 
 
-    private static Date toDate(double d){
+    private static Date toDate(final double d){
         if(Double.isNaN(d)){
             return null;
         }else{

@@ -30,7 +30,7 @@ public class DefaultIdCapabilities implements IdCapabilities{
     private final boolean eid;
     private final boolean fid;
 
-    public DefaultIdCapabilities(boolean eid, boolean fid) {
+    public DefaultIdCapabilities(final boolean eid, final boolean fid) {
         this.eid = eid;
         this.fid = fid;
     }
@@ -55,7 +55,7 @@ public class DefaultIdCapabilities implements IdCapabilities{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

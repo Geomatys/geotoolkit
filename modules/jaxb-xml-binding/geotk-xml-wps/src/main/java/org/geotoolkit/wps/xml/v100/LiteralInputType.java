@@ -87,7 +87,7 @@ public class LiteralInputType
      *     {@link AllowedValues }
      *     
      */
-    public void setAllowedValues(AllowedValues value) {
+    public void setAllowedValues(final AllowedValues value) {
         this.allowedValues = value;
     }
 
@@ -111,7 +111,7 @@ public class LiteralInputType
      *     {@link AnyValue }
      *     
      */
-    public void setAnyValue(AnyValue value) {
+    public void setAnyValue(final AnyValue value) {
         this.anyValue = value;
     }
 
@@ -135,7 +135,7 @@ public class LiteralInputType
      *     {@link ValuesReferenceType }
      *     
      */
-    public void setValuesReference(ValuesReferenceType value) {
+    public void setValuesReference(final ValuesReferenceType value) {
         this.valuesReference = value;
     }
 
@@ -159,7 +159,7 @@ public class LiteralInputType
      *     {@link String }
      *     
      */
-    public void setDefaultValue(String value) {
+    public void setDefaultValue(final String value) {
         this.defaultValue = value;
     }
 

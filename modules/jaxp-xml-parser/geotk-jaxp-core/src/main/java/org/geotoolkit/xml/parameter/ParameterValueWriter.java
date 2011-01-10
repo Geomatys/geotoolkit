@@ -38,7 +38,7 @@ public class ParameterValueWriter extends StaxStreamWriter {
      *
      * @param generalParameterValue
      */
-    public void write(GeneralParameterValue generalParameterValue) throws XMLStreamException {
+    public void write(final GeneralParameterValue generalParameterValue) throws XMLStreamException {
         writer.writeStartDocument("UTF-8", "1.0");
         writer.setDefaultNamespace(URI_PARAMETER);
         this.writeGeneralParameterValue(generalParameterValue);
@@ -53,7 +53,7 @@ public class ParameterValueWriter extends StaxStreamWriter {
      * @throws XMLStreamException
      */
     private void writeGeneralParameterValue(
-            GeneralParameterValue generalParameterValue)
+            final GeneralParameterValue generalParameterValue)
             throws XMLStreamException {
 
         writer.writeStartElement(URI_PARAMETER,
@@ -73,7 +73,7 @@ public class ParameterValueWriter extends StaxStreamWriter {
      * @param parameter
      * @throws XMLStreamException
      */
-    private void writeParameterValue(ParameterValue parameter)
+    private void writeParameterValue(final ParameterValue parameter)
             throws XMLStreamException {
         final Object value = parameter.getValue();
         if(value != null){
@@ -87,7 +87,7 @@ public class ParameterValueWriter extends StaxStreamWriter {
      * @param parameterGroup
      * @throws XMLStreamException
      */
-    private void writeParameterValueGroup(ParameterValueGroup parameterGroup)
+    private void writeParameterValueGroup(final ParameterValueGroup parameterGroup)
             throws XMLStreamException {
         for (GeneralParameterValue value : parameterGroup.values()) {
             this.writeGeneralParameterValue(value);

@@ -44,13 +44,13 @@ public class DoubleNavigatorModel implements NavigatorModel{
     }
 
     @Override
-    public double getGraphicValueAt(double d) {
+    public double getGraphicValueAt(final double d) {
         final Point2D pt = dimToGraphic.transform(new Point2D.Double(d, 0), null);
         return pt.getX();
     }
 
     @Override
-    public double getDimensionValueAt(double candidate) {
+    public double getDimensionValueAt(final double candidate) {
         Point2D pt = null;
         try {
             pt = dimToGraphic.inverseTransform(new Point2D.Double(candidate, 0), null);
@@ -67,7 +67,7 @@ public class DoubleNavigatorModel implements NavigatorModel{
     }
 
     @Override
-    public void scale(double factor, double position) {
+    public void scale(final double factor, double position) {
         position = getDimensionValueAt(position);
         final AffineTransform newtrs = new AffineTransform(dimToGraphic);
 
@@ -78,13 +78,13 @@ public class DoubleNavigatorModel implements NavigatorModel{
     }
 
     @Override
-    public void translate(double tr) {
+    public void translate(final double tr) {
         final AffineTransform newtrs = new AffineTransform(dimToGraphic);
         newtrs.translate(tr, 0);
         setTransform(newtrs);
     }
 
-    protected void setTransform(AffineTransform trs){
+    protected void setTransform(final AffineTransform trs){
         if(!dimToGraphic.equals(trs)){
             AffineTransform old = new AffineTransform(dimToGraphic);
             dimToGraphic.setTransform(trs);
@@ -92,7 +92,7 @@ public class DoubleNavigatorModel implements NavigatorModel{
         }
     }
 
-    protected void fireTransformChange(AffineTransform oldtrs, AffineTransform newtrs){
+    protected void fireTransformChange(final AffineTransform oldtrs, final AffineTransform newtrs){
         final PropertyChangeEvent event = new PropertyChangeEvent(this, TRANSFORM_PROPERTY, oldtrs, newtrs);
         for(final PropertyChangeListener lst : propertyListeners.getPropertyChangeListeners()){
             lst.propertyChange(event);
@@ -103,7 +103,7 @@ public class DoubleNavigatorModel implements NavigatorModel{
      * {@inheritDoc }
      */
     @Override
-    public void addPropertyChangeListener(PropertyChangeListener listener) {
+    public void addPropertyChangeListener(final PropertyChangeListener listener) {
         propertyListeners.addPropertyChangeListener(listener);
     }
 
@@ -111,7 +111,7 @@ public class DoubleNavigatorModel implements NavigatorModel{
      * {@inheritDoc }
      */
     @Override
-    public void addPropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    public void addPropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
         propertyListeners.addPropertyChangeListener(propertyName, listener);
     }
 
@@ -119,7 +119,7 @@ public class DoubleNavigatorModel implements NavigatorModel{
      * {@inheritDoc }
      */
     @Override
-    public void removePropertyChangeListener(PropertyChangeListener listener) {
+    public void removePropertyChangeListener(final PropertyChangeListener listener) {
         propertyListeners.removePropertyChangeListener(listener);
     }
 
@@ -127,7 +127,7 @@ public class DoubleNavigatorModel implements NavigatorModel{
      * {@inheritDoc }
      */
     @Override
-    public void removePropertyChangeListener(String propertyName, PropertyChangeListener listener) {
+    public void removePropertyChangeListener(final String propertyName, final PropertyChangeListener listener) {
         propertyListeners.removePropertyChangeListener(propertyName, listener);
     }
 

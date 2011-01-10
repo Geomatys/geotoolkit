@@ -777,7 +777,7 @@ public abstract class RenderedMarks extends AbstractGraphicJ2D {
     }
     
     @Override
-    public void propertyChange(PropertyChangeEvent prop) {
+    public void propertyChange(final PropertyChangeEvent prop) {
 //        super.zoomChanged(change);
         
         if(prop.getPropertyName().equals(ReferencedCanvas2D.OBJECTIVE_TO_DISPLAY_PROPERTY)){

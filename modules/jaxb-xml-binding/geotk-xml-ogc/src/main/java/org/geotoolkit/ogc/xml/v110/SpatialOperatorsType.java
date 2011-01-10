@@ -92,7 +92,7 @@ public class SpatialOperatorsType implements SpatialOperators {
         return result;
     }
 
-    public SpatialOperator getOperator(String name) {
+    public SpatialOperator getOperator(final String name) {
         if ( name == null || spatialOperator == null) {
             return null;
         }        

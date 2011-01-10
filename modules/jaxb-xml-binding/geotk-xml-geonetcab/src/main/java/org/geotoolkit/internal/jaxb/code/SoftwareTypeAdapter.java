@@ -58,7 +58,7 @@ public final class SoftwareTypeAdapter extends CodeListAdapter<SoftwareTypeAdapt
      * {@inheritDoc}
      */
     @Override
-    protected SoftwareTypeAdapter wrap(CodeListProxy proxy) {
+    protected SoftwareTypeAdapter wrap(final CodeListProxy proxy) {
         return new SoftwareTypeAdapter(proxy);
     }
 

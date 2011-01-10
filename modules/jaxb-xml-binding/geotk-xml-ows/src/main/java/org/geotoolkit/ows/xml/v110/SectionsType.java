@@ -89,14 +89,14 @@ public class SectionsType implements Sections {
     /**
      * Build a new list of Section.
      */
-    public SectionsType(List<String> section){
+    public SectionsType(final List<String> section){
         this.section = section;
     }
 
      /**
      * Build a new list of Section.
      */
-    public SectionsType(String section){
+    public SectionsType(final String section){
         this.section = Arrays.asList(section);
     }
     /**
@@ -115,7 +115,7 @@ public class SectionsType implements Sections {
      * @param sectionName The name of the searched section.
      * @return true if the Section contains the specified section.
      */
-    public boolean containsSection(String sectionName) {
+    public boolean containsSection(final String sectionName) {
         if (section != null) {
             return section.contains(sectionName);
         }
@@ -127,14 +127,14 @@ public class SectionsType implements Sections {
      * 
      * @param section a new section.
      */
-    public void add(String section) {
+    public void add(final String section) {
         this.section.add(section);
     }
     
     /**
      * Return a List of all the existing sections. 
      */
-    public static List<String> getExistingSections(String v) {
+    public static List<String> getExistingSections(final String v) {
         if (v.equals("1.0.0"))
             return Collections.unmodifiableList(existingSections100);
         else if (v.equals("1.1.1"))

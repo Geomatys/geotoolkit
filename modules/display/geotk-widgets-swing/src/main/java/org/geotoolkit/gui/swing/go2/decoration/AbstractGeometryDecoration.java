@@ -64,13 +64,13 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         setOpaque(false);
     }
 
-    protected double[] toDisplay(Coordinate coord){
+    protected double[] toDisplay(final Coordinate coord){
         double[] coords = new double[]{coord.x,coord.y};
         objToDisp.transform(coords, 0, coords, 0, 1);
         return coords;
     }
 
-    public void setGeometries(Collection<? extends Geometry> geoms){
+    public void setGeometries(final Collection<? extends Geometry> geoms){
         geometries.clear();
 
         if(geoms != null){
@@ -92,7 +92,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
     }
 
     @Override
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         this.map = map;
 
         if(map != null && map.getCanvas() instanceof J2DCanvas){
@@ -114,7 +114,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
 
         //enable anti-aliasing

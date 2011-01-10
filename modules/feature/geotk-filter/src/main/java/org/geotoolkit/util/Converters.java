@@ -34,13 +34,13 @@ public final class Converters {
 
     private Converters(){}
 
-    public static <T> T convert(Object candidate, Class<T> target) {
+    public static <T> T convert(final Object candidate, final Class<T> target) {
         if(candidate == null) return null;
         if(target == null) return (T) candidate;
         return (T) convert(candidate, (Class) candidate.getClass(), target);
     }
 
-    private static <S,T> T convert(S candidate, Class<S> source, Class<T> target) {
+    private static <S,T> T convert(final S candidate, final Class<S> source, final Class<T> target) {
 
         // handle case of source being an instance of target up front
         if (target.isAssignableFrom(source) ) {

@@ -30,7 +30,7 @@ import org.opengis.filter.expression.Expression;
  */
 public class DefaultPropertyIsGreaterThan extends AbstractBinaryComparisonOperator<Expression,Expression> implements PropertyIsGreaterThan{
 
-    public DefaultPropertyIsGreaterThan(Expression left, Expression right, boolean match) {
+    public DefaultPropertyIsGreaterThan(final Expression left, final Expression right, final boolean match) {
         super(left,right,match);
     }
 
@@ -38,7 +38,7 @@ public class DefaultPropertyIsGreaterThan extends AbstractBinaryComparisonOperat
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         final Integer v = compare(object);
         return (v == null) ? false : (v > 0) ;
     }
@@ -47,7 +47,7 @@ public class DefaultPropertyIsGreaterThan extends AbstractBinaryComparisonOperat
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -66,7 +66,7 @@ public class DefaultPropertyIsGreaterThan extends AbstractBinaryComparisonOperat
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

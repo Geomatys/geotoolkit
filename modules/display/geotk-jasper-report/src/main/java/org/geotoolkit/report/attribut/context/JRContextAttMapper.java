@@ -35,7 +35,7 @@ public abstract class JRContextAttMapper implements JRMapper<String,MapContext> 
 
     private MapContext candidate;
 
-    protected JRContextAttMapper(JRMapperFactory<String,MapContext> factory){
+    protected JRContextAttMapper(final JRMapperFactory<String,MapContext> factory){
         this.factory = factory;
     }
 
@@ -51,7 +51,7 @@ public abstract class JRContextAttMapper implements JRMapper<String,MapContext> 
      * {@inheritDoc }
      */
     @Override
-    public String getValue(Collection renderedValues) {
+    public String getValue(final Collection renderedValues) {
         return create(candidate,renderedValues);
     }
 

@@ -49,11 +49,11 @@ public interface RuleListener extends PropertyChangeListener{
 
         private final Collection<MutableRule> sources = new ArrayList<MutableRule>(1);
 
-        public Weak(RuleListener ref) {
+        public Weak(final RuleListener ref) {
             this(null,ref);
         }
 
-        public Weak(MutableRule source, RuleListener ref) {
+        public Weak(final MutableRule source, final RuleListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
@@ -61,7 +61,7 @@ public interface RuleListener extends PropertyChangeListener{
         /**
          * Register this listener on the given source.
          */
-        public synchronized void registerSource(MutableRule source){
+        public synchronized void registerSource(final MutableRule source){
             if(source != null){
                 //register in the new source
                 source.addListener(this);
@@ -72,7 +72,7 @@ public interface RuleListener extends PropertyChangeListener{
         /**
          * Unregister this listener on the given source.
          */
-        public synchronized void unregisterSource(MutableRule source){
+        public synchronized void unregisterSource(final MutableRule source){
             sources.remove(source);
             source.removeListener(this);
         }
@@ -86,7 +86,7 @@ public interface RuleListener extends PropertyChangeListener{
         }
 
         @Override
-        public void symbolizerChange(CollectionChangeEvent<Symbolizer> event) {
+        public void symbolizerChange(final CollectionChangeEvent<Symbolizer> event) {
             final RuleListener listener = get();
             if (listener != null) {
                 listener.symbolizerChange(event);
@@ -95,7 +95,7 @@ public interface RuleListener extends PropertyChangeListener{
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             final RuleListener listener = get();
             if (listener != null) {
                 listener.propertyChange(evt);

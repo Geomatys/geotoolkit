@@ -33,7 +33,7 @@ public class BackgroundUtilities {
     private BackgroundUtilities() {
     }
 
-    public static void paint(Graphics2D g, Rectangle area, BackgroundTemplate template){
+    public static void paint(final Graphics2D g, final Rectangle area, final BackgroundTemplate template){
 
         int correction = 0;
 

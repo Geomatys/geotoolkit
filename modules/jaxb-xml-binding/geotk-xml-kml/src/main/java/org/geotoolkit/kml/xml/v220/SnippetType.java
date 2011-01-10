@@ -72,7 +72,7 @@ public class SnippetType {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -100,7 +100,7 @@ public class SnippetType {
      *     {@link Integer }
      *     
      */
-    public void setMaxLines(Integer value) {
+    public void setMaxLines(final Integer value) {
         this.maxLines = value;
     }
 

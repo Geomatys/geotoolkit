@@ -66,7 +66,7 @@ public class DefaultAssociationType extends DefaultPropertyType<AssociationType>
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object other) {
+    public boolean equals(final Object other) {
         if (!(other instanceof DefaultAssociationType)) {
             return false;
         }

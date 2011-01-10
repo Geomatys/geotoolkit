@@ -63,7 +63,7 @@ public class FunctionsType {
      * Sets the value of the functionNames property.
      * 
      */
-    public void setFunctionNames(FunctionNamesType value) {
+    public void setFunctionNames(final FunctionNamesType value) {
         this.functionNames = value;
     }
 

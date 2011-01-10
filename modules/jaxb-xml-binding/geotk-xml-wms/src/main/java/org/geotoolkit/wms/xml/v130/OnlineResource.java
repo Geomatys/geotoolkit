@@ -84,7 +84,7 @@ public class OnlineResource extends AbstractOnlineResource {
      * Build a full OnlineResource object.
      */
     public OnlineResource(final String type, final String href, final String role,
-            final String arcrole, final String title, final String show, String actuate) {
+            final String arcrole, final String title, final String show, final String actuate) {
         this.actuate = actuate;
         this.arcrole = arcrole;
         this.href = href;
@@ -118,7 +118,7 @@ public class OnlineResource extends AbstractOnlineResource {
      * Gets the value of the href property.
      * 
      */
-    public void setHref(String href) {
+    public void setHref(final String href) {
         this.href = href;
     }
 

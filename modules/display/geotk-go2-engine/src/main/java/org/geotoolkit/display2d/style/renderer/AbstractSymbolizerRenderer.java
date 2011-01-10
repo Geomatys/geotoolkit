@@ -56,7 +56,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     protected final boolean dispGeom;
     protected final String geomPropertyName;
 
-    public AbstractSymbolizerRenderer(C symbol, RenderingContext2D context){
+    public AbstractSymbolizerRenderer(final C symbol, final RenderingContext2D context){
         this.symbol = symbol;
         this.renderingContext = context;
         this.g2d = renderingContext.getGraphics();
@@ -71,7 +71,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     }
 
     @Override
-    public void portray(Iterator<ProjectedFeature> graphics) throws PortrayalException {
+    public void portray(final Iterator<ProjectedFeature> graphics) throws PortrayalException {
         while(graphics.hasNext()){
             if(monitor.stopRequested()) return;
             portray(graphics.next());
@@ -88,7 +88,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
      * @param bounds : reference envelope
      * @return resolution changed if necessary
      */
-    protected static double[] checkResolution(double[] resolution, Envelope bounds) {
+    protected static double[] checkResolution(final double[] resolution, final Envelope bounds) {
         double span0 = bounds.getSpan(0);
         double span1 = bounds.getSpan(1);
 

@@ -1689,7 +1689,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "UnitDefinition", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<UnitDefinitionType> createUnitDefinition(UnitDefinitionType value) {
+    public JAXBElement<UnitDefinitionType> createUnitDefinition(final UnitDefinitionType value) {
         return new JAXBElement<UnitDefinitionType>(_UnitDefinition_QNAME, UnitDefinitionType.class, null, value);
     }
 
@@ -1698,7 +1698,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "outerBoundaryIs", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "exterior")
-    public JAXBElement<AbstractRingPropertyType> createOuterBoundaryIs(AbstractRingPropertyType value) {
+    public JAXBElement<AbstractRingPropertyType> createOuterBoundaryIs(final AbstractRingPropertyType value) {
         return new JAXBElement<AbstractRingPropertyType>(_OuterBoundaryIs_QNAME, AbstractRingPropertyType.class, null, value);
     }
 
@@ -1707,7 +1707,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiLineString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
-    public JAXBElement<MultiLineStringType> createMultiLineString(MultiLineStringType value) {
+    public JAXBElement<MultiLineStringType> createMultiLineString(final MultiLineStringType value) {
         return new JAXBElement<MultiLineStringType>(_MultiLineString_QNAME, MultiLineStringType.class, null, value);
     }
 
@@ -1716,7 +1716,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_GeometricAggregate", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
-    public JAXBElement<AbstractGeometricAggregateType> createGeometricAggregate(AbstractGeometricAggregateType value) {
+    public JAXBElement<AbstractGeometricAggregateType> createGeometricAggregate(final AbstractGeometricAggregateType value) {
         return new JAXBElement<AbstractGeometricAggregateType>(_GeometricAggregate_QNAME, AbstractGeometricAggregateType.class, null, value);
     }
 
@@ -1725,7 +1725,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "BSpline", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
-    public JAXBElement<BSplineType> createBSpline(BSplineType value) {
+    public JAXBElement<BSplineType> createBSpline(final BSplineType value) {
         return new JAXBElement<BSplineType>(_BSpline_QNAME, BSplineType.class, null, value);
     }
 
@@ -1734,7 +1734,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "validTime")
-    public JAXBElement<TimePrimitivePropertyType> createValidTime(TimePrimitivePropertyType value) {
+    public JAXBElement<TimePrimitivePropertyType> createValidTime(final TimePrimitivePropertyType value) {
         return new JAXBElement<TimePrimitivePropertyType>(_ValidTime_QNAME, TimePrimitivePropertyType.class, null, value);
     }
 
@@ -1743,7 +1743,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "solidProperty")
-    public JAXBElement<SolidPropertyType> createSolidProperty(SolidPropertyType value) {
+    public JAXBElement<SolidPropertyType> createSolidProperty(final SolidPropertyType value) {
         return new JAXBElement<SolidPropertyType>(_SolidProperty_QNAME, SolidPropertyType.class, null, value);
     }
 
@@ -1752,7 +1752,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TriangulatedSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Surface")
-    public JAXBElement<TriangulatedSurfaceType> createTriangulatedSurface(TriangulatedSurfaceType value) {
+    public JAXBElement<TriangulatedSurfaceType> createTriangulatedSurface(final TriangulatedSurfaceType value) {
         return new JAXBElement<TriangulatedSurfaceType>(_TriangulatedSurface_QNAME, TriangulatedSurfaceType.class, null, value);
     }
 
@@ -1761,7 +1761,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LinearRing", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractRing")
-    public JAXBElement<LinearRingType> createLinearRing(LinearRingType value) {
+    public JAXBElement<LinearRingType> createLinearRing(final LinearRingType value) {
         return new JAXBElement<LinearRingType>(_LinearRing_QNAME, LinearRingType.class, null, value);
     }
 
@@ -1770,7 +1770,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LineStringSegment", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
-    public JAXBElement<LineStringSegmentType> createLineStringSegment(LineStringSegmentType value) {
+    public JAXBElement<LineStringSegmentType> createLineStringSegment(final LineStringSegmentType value) {
         return new JAXBElement<LineStringSegmentType>(_LineStringSegment_QNAME, LineStringSegmentType.class, null, value);
     }
 
@@ -1779,7 +1779,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "DefinitionCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<DictionaryType> createDefinitionCollection(DictionaryType value) {
+    public JAXBElement<DictionaryType> createDefinitionCollection(final DictionaryType value) {
         return new JAXBElement<DictionaryType>(_DefinitionCollection_QNAME, DictionaryType.class, null, value);
     }
 
@@ -1788,7 +1788,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "innerBoundaryIs", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "interior")
-    public JAXBElement<AbstractRingPropertyType> createInnerBoundaryIs(AbstractRingPropertyType value) {
+    public JAXBElement<AbstractRingPropertyType> createInnerBoundaryIs(final AbstractRingPropertyType value) {
         return new JAXBElement<AbstractRingPropertyType>(_InnerBoundaryIs_QNAME, AbstractRingPropertyType.class, null, value);
     }
 
@@ -1797,7 +1797,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimePrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeObject")
-    public JAXBElement<AbstractTimePrimitiveType> createAbstractTimePrimitive(AbstractTimePrimitiveType value) {
+    public JAXBElement<AbstractTimePrimitiveType> createAbstractTimePrimitive(final AbstractTimePrimitiveType value) {
         return new JAXBElement<AbstractTimePrimitiveType>(AbstractTimePrimitive_QNAME, AbstractTimePrimitiveType.class, null, value);
     }
 
@@ -1806,7 +1806,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_reference")
-    public JAXBElement<ReferenceEntry> createReference(ReferenceEntry value) {
+    public JAXBElement<ReferenceEntry> createReference(final ReferenceEntry value) {
         return new JAXBElement<ReferenceEntry>(_Reference_QNAME, ReferenceEntry.class, null, value);
     }
 
@@ -1815,7 +1815,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiSolidProperty")
-    public JAXBElement<MultiSolidPropertyType> createMultiSolidProperty(MultiSolidPropertyType value) {
+    public JAXBElement<MultiSolidPropertyType> createMultiSolidProperty(final MultiSolidPropertyType value) {
         return new JAXBElement<MultiSolidPropertyType>(_MultiSolidProperty_QNAME, MultiSolidPropertyType.class, null, value);
     }
 
@@ -1824,7 +1824,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_GriddedSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_ParametricCurveSurface")
-    public JAXBElement<AbstractGriddedSurfaceType> createGriddedSurface(AbstractGriddedSurfaceType value) {
+    public JAXBElement<AbstractGriddedSurfaceType> createGriddedSurface(final AbstractGriddedSurfaceType value) {
         return new JAXBElement<AbstractGriddedSurfaceType>(_GriddedSurface_QNAME, AbstractGriddedSurfaceType.class, null, value);
     }
 
@@ -1833,7 +1833,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "solidMembers")
-    public JAXBElement<SolidArrayPropertyType> createSolidMembers(SolidArrayPropertyType value) {
+    public JAXBElement<SolidArrayPropertyType> createSolidMembers(final SolidArrayPropertyType value) {
         return new JAXBElement<SolidArrayPropertyType>(_SolidMembers_QNAME, SolidArrayPropertyType.class, null, value);
     }
 
@@ -1842,7 +1842,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "unitOfMeasure")
-    public JAXBElement<UnitOfMeasureType> createUnitOfMeasure(UnitOfMeasureType value) {
+    public JAXBElement<UnitOfMeasureType> createUnitOfMeasure(final UnitOfMeasureType value) {
         return new JAXBElement<UnitOfMeasureType>(_UnitOfMeasure_QNAME, UnitOfMeasureType.class, null, value);
     }
 
@@ -1851,7 +1851,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Circle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Arc")
-    public JAXBElement<CircleType> createCircle(CircleType value) {
+    public JAXBElement<CircleType> createCircle(final CircleType value) {
         return new JAXBElement<CircleType>(_Circle_QNAME, CircleType.class, null, value);
     }
 
@@ -1860,7 +1860,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "curveProperty")
-    public JAXBElement<CurvePropertyType> createCurveProperty(CurvePropertyType value) {
+    public JAXBElement<CurvePropertyType> createCurveProperty(final CurvePropertyType value) {
         return new JAXBElement<CurvePropertyType>(_CurveProperty_QNAME, CurvePropertyType.class, null, value);
     }
 
@@ -1869,7 +1869,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ConventionalUnit", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "UnitDefinition")
-    public JAXBElement<ConventionalUnitType> createConventionalUnit(ConventionalUnitType value) {
+    public JAXBElement<ConventionalUnitType> createConventionalUnit(final ConventionalUnitType value) {
         return new JAXBElement<ConventionalUnitType>(_ConventionalUnit_QNAME, ConventionalUnitType.class, null, value);
     }
 
@@ -1878,7 +1878,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "description")
-    public JAXBElement<StringOrRefType> createDescription(StringOrRefType value) {
+    public JAXBElement<StringOrRefType> createDescription(final StringOrRefType value) {
         return new JAXBElement<StringOrRefType>(_Description_QNAME, StringOrRefType.class, null, value);
     }
 
@@ -1887,7 +1887,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "surfaceMembers")
-    public JAXBElement<SurfaceArrayPropertyType> createSurfaceMembers(SurfaceArrayPropertyType value) {
+    public JAXBElement<SurfaceArrayPropertyType> createSurfaceMembers(final SurfaceArrayPropertyType value) {
         return new JAXBElement<SurfaceArrayPropertyType>(_SurfaceMembers_QNAME, SurfaceArrayPropertyType.class, null, value);
     }
 
@@ -1896,7 +1896,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "PolygonPatch", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
-    public JAXBElement<PolygonPatchType> createPolygonPatch(PolygonPatchType value) {
+    public JAXBElement<PolygonPatchType> createPolygonPatch(final PolygonPatchType value) {
         return new JAXBElement<PolygonPatchType>(_PolygonPatch_QNAME, PolygonPatchType.class, null, value);
     }
 
@@ -1905,7 +1905,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractSolid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometricPrimitive")
-    public JAXBElement<AbstractSolidType> createAbstractSolid(AbstractSolidType value) {
+    public JAXBElement<AbstractSolidType> createAbstractSolid(final AbstractSolidType value) {
         return new JAXBElement<AbstractSolidType>(_AbstractSolid_QNAME, AbstractSolidType.class, null, value);
     }
 
@@ -1914,7 +1914,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AffinePlacement")
-    public JAXBElement<AffinePlacementType> createAffinePlacement(AffinePlacementType value) {
+    public JAXBElement<AffinePlacementType> createAffinePlacement(final AffinePlacementType value) {
         return new JAXBElement<AffinePlacementType>(_AffinePlacement_QNAME, AffinePlacementType.class, null, value);
     }
 
@@ -1923,7 +1923,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcByCenterPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
-    public JAXBElement<ArcByCenterPointType> createArcByCenterPoint(ArcByCenterPointType value) {
+    public JAXBElement<ArcByCenterPointType> createArcByCenterPoint(final ArcByCenterPointType value) {
         return new JAXBElement<ArcByCenterPointType>(_ArcByCenterPoint_QNAME, ArcByCenterPointType.class, null, value);
     }
 
@@ -1932,7 +1932,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "posList")
-    public JAXBElement<DirectPositionListType> createPosList(DirectPositionListType value) {
+    public JAXBElement<DirectPositionListType> createPosList(final DirectPositionListType value) {
         return new JAXBElement<DirectPositionListType>(_PosList_QNAME, DirectPositionListType.class, null, value);
     }
 
@@ -1941,7 +1941,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "metaDataProperty")
-    public JAXBElement<MetaDataPropertyType> createMetaDataProperty(MetaDataPropertyType value) {
+    public JAXBElement<MetaDataPropertyType> createMetaDataProperty(final MetaDataPropertyType value) {
         return new JAXBElement<MetaDataPropertyType>(_MetaDataProperty_QNAME, MetaDataPropertyType.class, null, value);
     }
 
@@ -1950,7 +1950,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "timeInterval")
-    public JAXBElement<TimeIntervalLengthType> createTimeInterval(TimeIntervalLengthType value) {
+    public JAXBElement<TimeIntervalLengthType> createTimeInterval(final TimeIntervalLengthType value) {
         return new JAXBElement<TimeIntervalLengthType>(_TimeInterval_QNAME, TimeIntervalLengthType.class, null, value);
     }
 
@@ -1959,7 +1959,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "surfaceProperty")
-    public JAXBElement<SurfacePropertyType> createSurfaceProperty(SurfacePropertyType value) {
+    public JAXBElement<SurfacePropertyType> createSurfaceProperty(final SurfacePropertyType value) {
         return new JAXBElement<SurfacePropertyType>(_SurfaceProperty_QNAME, SurfacePropertyType.class, null, value);
     }
 
@@ -1968,7 +1968,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiSolid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
-    public JAXBElement<MultiSolidType> createMultiSolid(MultiSolidType value) {
+    public JAXBElement<MultiSolidType> createMultiSolid(final MultiSolidType value) {
         return new JAXBElement<MultiSolidType>(_MultiSolid_QNAME, MultiSolidType.class, null, value);
     }
 
@@ -1977,7 +1977,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "OrientableCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurve")
-    public JAXBElement<OrientableCurveType> createOrientableCurve(OrientableCurveType value) {
+    public JAXBElement<OrientableCurveType> createOrientableCurve(final OrientableCurveType value) {
         return new JAXBElement<OrientableCurveType>(_OrientableCurve_QNAME, OrientableCurveType.class, null, value);
     }
 
@@ -1986,7 +1986,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiPosition")
-    public JAXBElement<MultiPointPropertyType> createMultiPosition(MultiPointPropertyType value) {
+    public JAXBElement<MultiPointPropertyType> createMultiPosition(final MultiPointPropertyType value) {
         return new JAXBElement<MultiPointPropertyType>(_MultiPosition_QNAME, MultiPointPropertyType.class, null, value);
     }
 
@@ -1995,7 +1995,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "surfaceMember")
-    public JAXBElement<SurfacePropertyType> createSurfaceMember(SurfacePropertyType value) {
+    public JAXBElement<SurfacePropertyType> createSurfaceMember(final SurfacePropertyType value) {
         return new JAXBElement<SurfacePropertyType>(_SurfaceMember_QNAME, SurfacePropertyType.class, null, value);
     }
 
@@ -2004,7 +2004,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "definitionRef")
-    public JAXBElement<ReferenceEntry> createDefinitionRef(ReferenceEntry value) {
+    public JAXBElement<ReferenceEntry> createDefinitionRef(final ReferenceEntry value) {
         return new JAXBElement<ReferenceEntry>(_DefinitionRef_QNAME, ReferenceEntry.class, null, value);
     }
 
@@ -2013,7 +2013,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiPolygon", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
-    public JAXBElement<MultiPolygonType> createMultiPolygon(MultiPolygonType value) {
+    public JAXBElement<MultiPolygonType> createMultiPolygon(final MultiPolygonType value) {
         return new JAXBElement<MultiPolygonType>(_MultiPolygon_QNAME, MultiPolygonType.class, null, value);
     }
 
@@ -2022,7 +2022,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Solid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSolid")
-    public JAXBElement<SolidType> createSolid(SolidType value) {
+    public JAXBElement<SolidType> createSolid(final SolidType value) {
         return new JAXBElement<SolidType>(_Solid_QNAME, SolidType.class, null, value);
     }
 
@@ -2031,7 +2031,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "measure")
-    public JAXBElement<MeasureType> createMeasure(MeasureType value) {
+    public JAXBElement<MeasureType> createMeasure(final MeasureType value) {
         return new JAXBElement<MeasureType>(_Measure_QNAME, MeasureType.class, null, value);
     }
 
@@ -2040,7 +2040,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "polygonMember")
-    public JAXBElement<PolygonPropertyType> createPolygonMember(PolygonPropertyType value) {
+    public JAXBElement<PolygonPropertyType> createPolygonMember(final PolygonPropertyType value) {
         return new JAXBElement<PolygonPropertyType>(_PolygonMember_QNAME, PolygonPropertyType.class, null, value);
     }
 
@@ -2049,7 +2049,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
-    public JAXBElement<MultiGeometryType> createMultiGeometry(MultiGeometryType value) {
+    public JAXBElement<MultiGeometryType> createMultiGeometry(final MultiGeometryType value) {
         return new JAXBElement<MultiGeometryType>(_MultiGeometry_QNAME, MultiGeometryType.class, null, value);
     }
 
@@ -2058,7 +2058,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "members")
-    public JAXBElement<ArrayAssociationType> createMembers(ArrayAssociationType value) {
+    public JAXBElement<ArrayAssociationType> createMembers(final ArrayAssociationType value) {
         return new JAXBElement<ArrayAssociationType>(_Members_QNAME, ArrayAssociationType.class, null, value);
     }
 
@@ -2067,7 +2067,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_association")
-    public JAXBElement<AssociationType> createAssociation(AssociationType value) {
+    public JAXBElement<AssociationType> createAssociation(final AssociationType value) {
         return new JAXBElement<AssociationType>(_Association_QNAME, AssociationType.class, null, value);
     }
 
@@ -2076,7 +2076,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCurveProperty")
-    public JAXBElement<MultiCurvePropertyType> createMultiCurveProperty(MultiCurvePropertyType value) {
+    public JAXBElement<MultiCurvePropertyType> createMultiCurveProperty(final MultiCurvePropertyType value) {
         return new JAXBElement<MultiCurvePropertyType>(_MultiCurveProperty_QNAME, MultiCurvePropertyType.class, null, value);
     }
 
@@ -2085,7 +2085,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "polygonPatches", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "patches")
-    public JAXBElement<PolygonPatchArrayPropertyType> createPolygonPatches(PolygonPatchArrayPropertyType value) {
+    public JAXBElement<PolygonPatchArrayPropertyType> createPolygonPatches(final PolygonPatchArrayPropertyType value) {
         return new JAXBElement<PolygonPatchArrayPropertyType>(_PolygonPatches_QNAME, PolygonPatchArrayPropertyType.class, null, value);
     }
 
@@ -2094,7 +2094,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "PolyhedralSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Surface")
-    public JAXBElement<PolyhedralSurfaceType> createPolyhedralSurface(PolyhedralSurfaceType value) {
+    public JAXBElement<PolyhedralSurfaceType> createPolyhedralSurface(final PolyhedralSurfaceType value) {
         return new JAXBElement<PolyhedralSurfaceType>(_PolyhedralSurface_QNAME, PolyhedralSurfaceType.class, null, value);
     }
 
@@ -2103,7 +2103,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "name")
-    public JAXBElement<CodeType> createName(CodeType value) {
+    public JAXBElement<CodeType> createName(final CodeType value) {
         return new JAXBElement<CodeType>(_Name_QNAME, CodeType.class, null, value);
     }
 
@@ -2112,7 +2112,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TimePeriod", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeGeometricPrimitive")
-    public JAXBElement<TimePeriodType> createTimePeriod(TimePeriodType value) {
+    public JAXBElement<TimePeriodType> createTimePeriod(final TimePeriodType value) {
         return new JAXBElement<TimePeriodType>(_TimePeriod_QNAME, TimePeriodType.class, null, value);
     }
 
@@ -2121,7 +2121,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometricPrimitive")
-    public JAXBElement<AbstractCurveType> createAbstractCurve(AbstractCurveType value) {
+    public JAXBElement<AbstractCurveType> createAbstractCurve(final AbstractCurveType value) {
         return new JAXBElement<AbstractCurveType>(_AbstractCurve_QNAME, AbstractCurveType.class, null, value);
     }
 
@@ -2130,7 +2130,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "roughConversionToPreferredUnit")
-    public JAXBElement<ConversionToPreferredUnitType> createRoughConversionToPreferredUnit(ConversionToPreferredUnitType value) {
+    public JAXBElement<ConversionToPreferredUnitType> createRoughConversionToPreferredUnit(final ConversionToPreferredUnitType value) {
         return new JAXBElement<ConversionToPreferredUnitType>(_RoughConversionToPreferredUnit_QNAME, ConversionToPreferredUnitType.class, null, value);
     }
 
@@ -2139,7 +2139,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Clothoid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
-    public JAXBElement<ClothoidType> createClothoid(ClothoidType value) {
+    public JAXBElement<ClothoidType> createClothoid(final ClothoidType value) {
         return new JAXBElement<ClothoidType>(_Clothoid_QNAME, ClothoidType.class, null, value);
     }
 
@@ -2148,7 +2148,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractGeometricPrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
-    public JAXBElement<AbstractGeometricPrimitiveType> createAbstractGeometricPrimitive(AbstractGeometricPrimitiveType value) {
+    public JAXBElement<AbstractGeometricPrimitiveType> createAbstractGeometricPrimitive(final AbstractGeometricPrimitiveType value) {
         return new JAXBElement<AbstractGeometricPrimitiveType>(_AbstractGeometricPrimitive_QNAME, AbstractGeometricPrimitiveType.class, null, value);
     }
 
@@ -2157,7 +2157,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Null")
-    public JAXBElement<List<String>> createNull(List<String> value) {
+    public JAXBElement<List<String>> createNull(final List<String> value) {
         return new JAXBElement<List<String>>(_Null_QNAME, ((Class) List.class), null, ((List<String> ) value));
     }
 
@@ -2166,7 +2166,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointProperty")
-    public JAXBElement<PointPropertyType> createPointProperty(PointPropertyType value) {
+    public JAXBElement<PointPropertyType> createPointProperty(final PointPropertyType value) {
         return new JAXBElement<PointPropertyType>(_PointProperty_QNAME, PointPropertyType.class, null, value);
     }
 
@@ -2175,7 +2175,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "geometryMember")
-    public JAXBElement<GeometryPropertyType> createGeometryMember(GeometryPropertyType value) {
+    public JAXBElement<GeometryPropertyType> createGeometryMember(final GeometryPropertyType value) {
         return new JAXBElement<GeometryPropertyType>(_GeometryMember_QNAME, GeometryPropertyType.class, null, value);
     }
 
@@ -2184,7 +2184,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiEdgeOf")
-    public JAXBElement<MultiCurvePropertyType> createMultiEdgeOf(MultiCurvePropertyType value) {
+    public JAXBElement<MultiCurvePropertyType> createMultiEdgeOf(final MultiCurvePropertyType value) {
         return new JAXBElement<MultiCurvePropertyType>(_MultiEdgeOf_QNAME, MultiCurvePropertyType.class, null, value);
     }
 
@@ -2193,7 +2193,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Curve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurve")
-    public JAXBElement<CurveType> createCurve(CurveType value) {
+    public JAXBElement<CurveType> createCurve(final CurveType value) {
         return new JAXBElement<CurveType>(_Curve_QNAME, CurveType.class, null, value);
     }
 
@@ -2202,7 +2202,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "curveMembers")
-    public JAXBElement<CurveArrayPropertyType> createCurveMembers(CurveArrayPropertyType value) {
+    public JAXBElement<CurveArrayPropertyType> createCurveMembers(final CurveArrayPropertyType value) {
         return new JAXBElement<CurveArrayPropertyType>(_CurveMembers_QNAME, CurveArrayPropertyType.class, null, value);
     }
 
@@ -2211,7 +2211,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "lineStringMember")
-    public JAXBElement<LineStringPropertyType> createLineStringMember(LineStringPropertyType value) {
+    public JAXBElement<LineStringPropertyType> createLineStringMember(final LineStringPropertyType value) {
         return new JAXBElement<LineStringPropertyType>(_LineStringMember_QNAME, LineStringPropertyType.class, null, value);
     }
 
@@ -2220,7 +2220,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Array", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<ArrayType> createArray(ArrayType value) {
+    public JAXBElement<ArrayType> createArray(final ArrayType value) {
         return new JAXBElement<ArrayType>(_Array_QNAME, ArrayType.class, null, value);
     }
 
@@ -2229,7 +2229,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pos")
-    public JAXBElement<DirectPositionType> createPos(DirectPositionType value) {
+    public JAXBElement<DirectPositionType> createPos(final DirectPositionType value) {
         return new JAXBElement<DirectPositionType>(_Pos_QNAME, DirectPositionType.class, null, value);
     }
 
@@ -2238,7 +2238,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Arc", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "ArcString")
-    public JAXBElement<ArcType> createArc(ArcType value) {
+    public JAXBElement<ArcType> createArc(final ArcType value) {
         return new JAXBElement<ArcType>(_Arc_QNAME, ArcType.class, null, value);
     }
 
@@ -2247,7 +2247,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "exterior")
-    public JAXBElement<AbstractRingPropertyType> createExterior(AbstractRingPropertyType value) {
+    public JAXBElement<AbstractRingPropertyType> createExterior(final AbstractRingPropertyType value) {
         return new JAXBElement<AbstractRingPropertyType>(_Exterior_QNAME, AbstractRingPropertyType.class, null, value);
     }
 
@@ -2256,7 +2256,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "GenericMetaData", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_MetaData")
-    public JAXBElement<GenericMetaDataType> createGenericMetaData(GenericMetaDataType value) {
+    public JAXBElement<GenericMetaDataType> createGenericMetaData(final GenericMetaDataType value) {
         return new JAXBElement<GenericMetaDataType>(_GenericMetaData_QNAME, GenericMetaDataType.class, null, value);
     }
 
@@ -2265,7 +2265,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Surface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurface")
-    public JAXBElement<SurfaceType> createSurface(SurfaceType value) {
+    public JAXBElement<SurfaceType> createSurface(final SurfaceType value) {
         return new JAXBElement<SurfaceType>(_Surface_QNAME, SurfaceType.class, null, value);
     }
 
@@ -2274,7 +2274,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Point", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometricPrimitive")
-    public JAXBElement<PointType> createPoint(PointType value) {
+    public JAXBElement<PointType> createPoint(final PointType value) {
         return new JAXBElement<PointType>(_Point_QNAME, PointType.class, null, value);
     }
 
@@ -2283,7 +2283,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coord")
-    public JAXBElement<CoordType> createCoord(CoordType value) {
+    public JAXBElement<CoordType> createCoord(final CoordType value) {
         return new JAXBElement<CoordType>(_Coord_QNAME, CoordType.class, null, value);
     }
 
@@ -2292,7 +2292,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCoverage")
-    public JAXBElement<MultiSurfacePropertyType> createMultiCoverage(MultiSurfacePropertyType value) {
+    public JAXBElement<MultiSurfacePropertyType> createMultiCoverage(final MultiSurfacePropertyType value) {
         return new JAXBElement<MultiSurfacePropertyType>(_MultiCoverage_QNAME, MultiSurfacePropertyType.class, null, value);
     }
 
@@ -2301,7 +2301,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "polygonProperty")
-    public JAXBElement<PolygonPropertyType> createPolygonProperty(PolygonPropertyType value) {
+    public JAXBElement<PolygonPropertyType> createPolygonProperty(final PolygonPropertyType value) {
         return new JAXBElement<PolygonPropertyType>(_PolygonProperty_QNAME, PolygonPropertyType.class, null, value);
     }
 
@@ -2310,7 +2310,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
-    public JAXBElement<MultiSurfaceType> createMultiSurface(MultiSurfaceType value) {
+    public JAXBElement<MultiSurfaceType> createMultiSurface(final MultiSurfaceType value) {
         return new JAXBElement<MultiSurfaceType>(_MultiSurface_QNAME, MultiSurfaceType.class, null, value);
     }
 
@@ -2319,7 +2319,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "angle")
-    public JAXBElement<MeasureType> createAngle(MeasureType value) {
+    public JAXBElement<MeasureType> createAngle(final MeasureType value) {
         return new JAXBElement<MeasureType>(_Angle_QNAME, MeasureType.class, null, value);
     }
 
@@ -2328,7 +2328,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "solidMember")
-    public JAXBElement<SolidPropertyType> createSolidMember(SolidPropertyType value) {
+    public JAXBElement<SolidPropertyType> createSolidMember(final SolidPropertyType value) {
         return new JAXBElement<SolidPropertyType>(_SolidMember_QNAME, SolidPropertyType.class, null, value);
     }
 
@@ -2337,7 +2337,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Geodesic", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "GeodesicString")
-    public JAXBElement<GeodesicType> createGeodesic(GeodesicType value) {
+    public JAXBElement<GeodesicType> createGeodesic(final GeodesicType value) {
         return new JAXBElement<GeodesicType>(_Geodesic_QNAME, GeodesicType.class, null, value);
     }
 
@@ -2346,7 +2346,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "OrientableSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurface")
-    public JAXBElement<OrientableSurfaceType> createOrientableSurface(OrientableSurfaceType value) {
+    public JAXBElement<OrientableSurfaceType> createOrientableSurface(final OrientableSurfaceType value) {
         return new JAXBElement<OrientableSurfaceType>(_OrientableSurface_QNAME, OrientableSurfaceType.class, null, value);
     }
 
@@ -2355,7 +2355,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "member")
-    public JAXBElement<AssociationType> createMember(AssociationType value) {
+    public JAXBElement<AssociationType> createMember(final AssociationType value) {
         return new JAXBElement<AssociationType>(_Member_QNAME, AssociationType.class, null, value);
     }
 
@@ -2364,7 +2364,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "curveMember")
-    public JAXBElement<CurvePropertyType> createCurveMember(CurvePropertyType value) {
+    public JAXBElement<CurvePropertyType> createCurveMember(final CurvePropertyType value) {
         return new JAXBElement<CurvePropertyType>(_CurveMember_QNAME, CurvePropertyType.class, null, value);
     }
 
@@ -2373,7 +2373,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "decimalMinutes")
-    public JAXBElement<BigDecimal> createDecimalMinutes(BigDecimal value) {
+    public JAXBElement<BigDecimal> createDecimalMinutes(final BigDecimal value) {
         return new JAXBElement<BigDecimal>(_DecimalMinutes_QNAME, BigDecimal.class, null, value);
     }
 
@@ -2382,7 +2382,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Tin", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "TriangulatedSurface")
-    public JAXBElement<TinType> createTin(TinType value) {
+    public JAXBElement<TinType> createTin(final TinType value) {
         return new JAXBElement<TinType>(_Tin_QNAME, TinType.class, null, value);
     }
 
@@ -2391,7 +2391,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Rectangle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
-    public JAXBElement<RectangleType> createRectangle(RectangleType value) {
+    public JAXBElement<RectangleType> createRectangle(final RectangleType value) {
         return new JAXBElement<RectangleType>(_Rectangle_QNAME, RectangleType.class, null, value);
     }
 
@@ -2400,7 +2400,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "derivationUnitTerm")
-    public JAXBElement<DerivationUnitTermType> createDerivationUnitTerm(DerivationUnitTermType value) {
+    public JAXBElement<DerivationUnitTermType> createDerivationUnitTerm(final DerivationUnitTermType value) {
         return new JAXBElement<DerivationUnitTermType>(_DerivationUnitTerm_QNAME, DerivationUnitTermType.class, null, value);
     }
 
@@ -2409,7 +2409,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Polygon", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurface")
-    public JAXBElement<PolygonType> createPolygon(PolygonType value) {
+    public JAXBElement<PolygonType> createPolygon(final PolygonType value) {
         return new JAXBElement<PolygonType>(_Polygon_QNAME, PolygonType.class, null, value);
     }
 
@@ -2418,7 +2418,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "DefinitionProxy", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<DefinitionProxyType> createDefinitionProxy(DefinitionProxyType value) {
+    public JAXBElement<DefinitionProxyType> createDefinitionProxy(final DefinitionProxyType value) {
         return new JAXBElement<DefinitionProxyType>(_DefinitionProxy_QNAME, DefinitionProxyType.class, null, value);
     }
 
@@ -2427,7 +2427,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "seconds")
-    public JAXBElement<BigDecimal> createSeconds(BigDecimal value) {
+    public JAXBElement<BigDecimal> createSeconds(final BigDecimal value) {
         return new JAXBElement<BigDecimal>(_Seconds_QNAME, BigDecimal.class, null, value);
     }
 
@@ -2436,7 +2436,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CubicSpline", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
-    public JAXBElement<CubicSplineType> createCubicSpline(CubicSplineType value) {
+    public JAXBElement<CubicSplineType> createCubicSpline(final CubicSplineType value) {
         return new JAXBElement<CubicSplineType>(_CubicSpline_QNAME, CubicSplineType.class, null, value);
     }
 
@@ -2445,7 +2445,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "centerLineOf")
-    public JAXBElement<CurvePropertyType> createCenterLineOf(CurvePropertyType value) {
+    public JAXBElement<CurvePropertyType> createCenterLineOf(final CurvePropertyType value) {
         return new JAXBElement<CurvePropertyType>(_CenterLineOf_QNAME, CurvePropertyType.class, null, value);
     }
 
@@ -2454,7 +2454,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Ring", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractRing")
-    public JAXBElement<RingType> createRing(RingType value) {
+    public JAXBElement<RingType> createRing(final RingType value) {
         return new JAXBElement<RingType>(_Ring_QNAME, RingType.class, null, value);
     }
 
@@ -2463,7 +2463,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "catalogSymbol")
-    public JAXBElement<CodeType> createCatalogSymbol(CodeType value) {
+    public JAXBElement<CodeType> createCatalogSymbol(final CodeType value) {
         return new JAXBElement<CodeType>(_CatalogSymbol_QNAME, CodeType.class, null, value);
     }
 
@@ -2472,7 +2472,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "extentOf")
-    public JAXBElement<SurfacePropertyType> createExtentOf(SurfacePropertyType value) {
+    public JAXBElement<SurfacePropertyType> createExtentOf(final SurfacePropertyType value) {
         return new JAXBElement<SurfacePropertyType>(_ExtentOf_QNAME, SurfacePropertyType.class, null, value);
     }
 
@@ -2481,7 +2481,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "DerivedUnit", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "UnitDefinition")
-    public JAXBElement<DerivedUnitType> createDerivedUnit(DerivedUnitType value) {
+    public JAXBElement<DerivedUnitType> createDerivedUnit(final DerivedUnitType value) {
         return new JAXBElement<DerivedUnitType>(_DerivedUnit_QNAME, DerivedUnitType.class, null, value);
     }
 
@@ -2490,7 +2490,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
-    public JAXBElement<ArcStringType> createArcString(ArcStringType value) {
+    public JAXBElement<ArcStringType> createArcString(final ArcStringType value) {
         return new JAXBElement<ArcStringType>(_ArcString_QNAME, ArcStringType.class, null, value);
     }
 
@@ -2499,7 +2499,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractSurfacePatch")
-    public JAXBElement<AbstractSurfacePatchType> createAbstractSurfacePatch(AbstractSurfacePatchType value) {
+    public JAXBElement<AbstractSurfacePatchType> createAbstractSurfacePatch(final AbstractSurfacePatchType value) {
         return new JAXBElement<AbstractSurfacePatchType>(AbstractSurfacePatch_QNAME, AbstractSurfacePatchType.class, null, value);
     }
 
@@ -2508,7 +2508,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiExtentOf")
-    public JAXBElement<MultiSurfacePropertyType> createMultiExtentOf(MultiSurfacePropertyType value) {
+    public JAXBElement<MultiSurfacePropertyType> createMultiExtentOf(final MultiSurfacePropertyType value) {
         return new JAXBElement<MultiSurfacePropertyType>(_MultiExtentOf_QNAME, MultiSurfacePropertyType.class, null, value);
     }
 
@@ -2517,7 +2517,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiGeometryProperty")
-    public JAXBElement<MultiGeometryPropertyType> createMultiGeometryProperty(MultiGeometryPropertyType value) {
+    public JAXBElement<MultiGeometryPropertyType> createMultiGeometryProperty(final MultiGeometryPropertyType value) {
         return new JAXBElement<MultiGeometryPropertyType>(_MultiGeometryProperty_QNAME, MultiGeometryPropertyType.class, null, value);
     }
 
@@ -2526,7 +2526,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCenterOf")
-    public JAXBElement<MultiPointPropertyType> createMultiCenterOf(MultiPointPropertyType value) {
+    public JAXBElement<MultiPointPropertyType> createMultiCenterOf(final MultiPointPropertyType value) {
         return new JAXBElement<MultiPointPropertyType>(_MultiCenterOf_QNAME, MultiPointPropertyType.class, null, value);
     }
 
@@ -2535,7 +2535,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "boundedBy")
-    public JAXBElement<BoundingShapeEntry> createBoundedBy(BoundingShapeEntry value) {
+    public JAXBElement<BoundingShapeEntry> createBoundedBy(final BoundingShapeEntry value) {
         return new JAXBElement<BoundingShapeEntry>(_BoundedBy_QNAME, BoundingShapeEntry.class, null, value);
     }
 
@@ -2544,7 +2544,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCurveSegment")
-    public JAXBElement<AbstractCurveSegmentType> createAbstractCurveSegment(AbstractCurveSegmentType value) {
+    public JAXBElement<AbstractCurveSegmentType> createAbstractCurveSegment(final AbstractCurveSegmentType value) {
         return new JAXBElement<AbstractCurveSegmentType>(AbstractCurveSegment_QNAME, AbstractCurveSegmentType.class, null, value);
     }
 
@@ -2553,7 +2553,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "FeatureCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<FeatureCollectionType> createFeatureCollection(FeatureCollectionType value) {
+    public JAXBElement<FeatureCollectionType> createFeatureCollection(final FeatureCollectionType value) {
         return new JAXBElement<FeatureCollectionType>(_FeatureCollection_QNAME, FeatureCollectionType.class, null, value);
     }
 
@@ -2562,7 +2562,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "interior")
-    public JAXBElement<AbstractRingPropertyType> createInterior(AbstractRingPropertyType value) {
+    public JAXBElement<AbstractRingPropertyType> createInterior(final AbstractRingPropertyType value) {
         return new JAXBElement<AbstractRingPropertyType>(_Interior_QNAME, AbstractRingPropertyType.class, null, value);
     }
 
@@ -2571,7 +2571,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "location")
-    public JAXBElement<LocationPropertyType> createLocation(LocationPropertyType value) {
+    public JAXBElement<LocationPropertyType> createLocation(final LocationPropertyType value) {
         return new JAXBElement<LocationPropertyType>(_Location_QNAME, LocationPropertyType.class, null, value);
     }
 
@@ -2580,7 +2580,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CircleByCenterPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "ArcByCenterPoint")
-    public JAXBElement<CircleByCenterPointType> createCircleByCenterPoint(CircleByCenterPointType value) {
+    public JAXBElement<CircleByCenterPointType> createCircleByCenterPoint(final CircleByCenterPointType value) {
         return new JAXBElement<CircleByCenterPointType>(_CircleByCenterPoint_QNAME, CircleByCenterPointType.class, null, value);
     }
 
@@ -2589,7 +2589,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Sphere", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GriddedSurface")
-    public JAXBElement<SphereType> createSphere(SphereType value) {
+    public JAXBElement<SphereType> createSphere(final SphereType value) {
         return new JAXBElement<SphereType>(_Sphere_QNAME, SphereType.class, null, value);
     }
 
@@ -2598,7 +2598,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "solidArrayProperty")
-    public JAXBElement<SolidArrayPropertyType> createSolidArrayProperty(SolidArrayPropertyType value) {
+    public JAXBElement<SolidArrayPropertyType> createSolidArrayProperty(final SolidArrayPropertyType value) {
         return new JAXBElement<SolidArrayPropertyType>(_SolidArrayProperty_QNAME, SolidArrayPropertyType.class, null, value);
     }
 
@@ -2607,7 +2607,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointMembers")
-    public JAXBElement<PointArrayPropertyType> createPointMembers(PointArrayPropertyType value) {
+    public JAXBElement<PointArrayPropertyType> createPointMembers(final PointArrayPropertyType value) {
         return new JAXBElement<PointArrayPropertyType>(_PointMembers_QNAME, PointArrayPropertyType.class, null, value);
     }
 
@@ -2616,7 +2616,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "degrees")
-    public JAXBElement<DegreesType> createDegrees(DegreesType value) {
+    public JAXBElement<DegreesType> createDegrees(final DegreesType value) {
         return new JAXBElement<DegreesType>(_Degrees_QNAME, DegreesType.class, null, value);
     }
 
@@ -2625,7 +2625,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "minutes")
-    public JAXBElement<Integer> createMinutes(Integer value) {
+    public JAXBElement<Integer> createMinutes(final Integer value) {
         return new JAXBElement<Integer>(_Minutes_QNAME, Integer.class, null, value);
     }
 
@@ -2634,7 +2634,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_MetaData", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractObject")
-    public JAXBElement<AbstractMetaDataType> createMetaData(AbstractMetaDataType value) {
+    public JAXBElement<AbstractMetaDataType> createMetaData(final AbstractMetaDataType value) {
         return new JAXBElement<AbstractMetaDataType>(_MetaData_QNAME, AbstractMetaDataType.class, null, value);
     }
 
@@ -2643,7 +2643,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "priorityLocation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "location")
-    public JAXBElement<PriorityLocationPropertyType> createPriorityLocation(PriorityLocationPropertyType value) {
+    public JAXBElement<PriorityLocationPropertyType> createPriorityLocation(final PriorityLocationPropertyType value) {
         return new JAXBElement<PriorityLocationPropertyType>(_PriorityLocation_QNAME, PriorityLocationPropertyType.class, null, value);
     }
 
@@ -2652,7 +2652,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_strictAssociation")
-    public JAXBElement<AssociationType> createStrictAssociation(AssociationType value) {
+    public JAXBElement<AssociationType> createStrictAssociation(final AssociationType value) {
         return new JAXBElement<AssociationType>(_StrictAssociation_QNAME, AssociationType.class, null, value);
     }
 
@@ -2661,7 +2661,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "EnvelopeWithTimePeriod", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Envelope")
-    public JAXBElement<EnvelopeWithTimePeriodType> createEnvelopeWithTimePeriod(EnvelopeWithTimePeriodType value) {
+    public JAXBElement<EnvelopeWithTimePeriodType> createEnvelopeWithTimePeriod(final EnvelopeWithTimePeriodType value) {
         return new JAXBElement<EnvelopeWithTimePeriodType>(_EnvelopeWithTimePeriod_QNAME, EnvelopeWithTimePeriodType.class, null, value);
     }
 
@@ -2670,7 +2670,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcByBulge", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "ArcStringByBulge")
-    public JAXBElement<ArcByBulgeType> createArcByBulge(ArcByBulgeType value) {
+    public JAXBElement<ArcByBulgeType> createArcByBulge(final ArcByBulgeType value) {
         return new JAXBElement<ArcByBulgeType>(_ArcByBulge_QNAME, ArcByBulgeType.class, null, value);
     }
 
@@ -2679,7 +2679,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "curveArrayProperty")
-    public JAXBElement<CurveArrayPropertyType> createCurveArrayProperty(CurveArrayPropertyType value) {
+    public JAXBElement<CurveArrayPropertyType> createCurveArrayProperty(final CurveArrayPropertyType value) {
         return new JAXBElement<CurveArrayPropertyType>(_CurveArrayProperty_QNAME, CurveArrayPropertyType.class, null, value);
     }
 
@@ -2688,7 +2688,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "duration")
-    public JAXBElement<Duration> createDuration(Duration value) {
+    public JAXBElement<Duration> createDuration(final Duration value) {
         return new JAXBElement<Duration>(_Duration_QNAME, Duration.class, null, value);
     }
 
@@ -2697,7 +2697,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimeObject", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<AbstractTimeObjectType> createAbstractTimeObject(AbstractTimeObjectType value) {
+    public JAXBElement<AbstractTimeObjectType> createAbstractTimeObject(final AbstractTimeObjectType value) {
         return new JAXBElement<AbstractTimeObjectType>(AbstractTimeObject_QNAME, AbstractTimeObjectType.class, null, value);
     }
 
@@ -2706,7 +2706,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointRep")
-    public JAXBElement<PointPropertyType> createPointRep(PointPropertyType value) {
+    public JAXBElement<PointPropertyType> createPointRep(final PointPropertyType value) {
         return new JAXBElement<PointPropertyType>(_PointRep_QNAME, PointPropertyType.class, null, value);
     }
 
@@ -2715,7 +2715,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "centerOf")
-    public JAXBElement<PointPropertyType> createCenterOf(PointPropertyType value) {
+    public JAXBElement<PointPropertyType> createCenterOf(final PointPropertyType value) {
         return new JAXBElement<PointPropertyType>(_CenterOf_QNAME, PointPropertyType.class, null, value);
     }
 
@@ -2724,7 +2724,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointArrayProperty")
-    public JAXBElement<PointArrayPropertyType> createPointArrayProperty(PointArrayPropertyType value) {
+    public JAXBElement<PointArrayPropertyType> createPointArrayProperty(final PointArrayPropertyType value) {
         return new JAXBElement<PointArrayPropertyType>(_PointArrayProperty_QNAME, PointArrayPropertyType.class, null, value);
     }
 
@@ -2733,7 +2733,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractFeatureCollection", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<AbstractFeatureCollectionType> createAbstractFeatureCollection(AbstractFeatureCollectionType value) {
+    public JAXBElement<AbstractFeatureCollectionType> createAbstractFeatureCollection(final AbstractFeatureCollectionType value) {
         return new JAXBElement<AbstractFeatureCollectionType>(_AbstractFeatureCollection_QNAME, AbstractFeatureCollectionType.class, null, value);
     }
 
@@ -2742,7 +2742,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "dmsAngle")
-    public JAXBElement<DMSAngleType> createDmsAngle(DMSAngleType value) {
+    public JAXBElement<DMSAngleType> createDmsAngle(final DMSAngleType value) {
         return new JAXBElement<DMSAngleType>(_DmsAngle_QNAME, DMSAngleType.class, null, value);
     }
 
@@ -2751,7 +2751,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Bag", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<BagType> createBag(BagType value) {
+    public JAXBElement<BagType> createBag(final BagType value) {
         return new JAXBElement<BagType>(_Bag_QNAME, BagType.class, null, value);
     }
 
@@ -2760,7 +2760,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "OffsetCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
-    public JAXBElement<OffsetCurveType> createOffsetCurve(OffsetCurveType value) {
+    public JAXBElement<OffsetCurveType> createOffsetCurve(final OffsetCurveType value) {
         return new JAXBElement<OffsetCurveType>(_OffsetCurve_QNAME, OffsetCurveType.class, null, value);
     }
 
@@ -2769,7 +2769,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "conversionToPreferredUnit")
-    public JAXBElement<ConversionToPreferredUnitType> createConversionToPreferredUnit(ConversionToPreferredUnitType value) {
+    public JAXBElement<ConversionToPreferredUnitType> createConversionToPreferredUnit(final ConversionToPreferredUnitType value) {
         return new JAXBElement<ConversionToPreferredUnitType>(_ConversionToPreferredUnit_QNAME, ConversionToPreferredUnitType.class, null, value);
     }
 
@@ -2778,7 +2778,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coordinates")
-    public JAXBElement<CoordinatesType> createCoordinates(CoordinatesType value) {
+    public JAXBElement<CoordinatesType> createCoordinates(final CoordinatesType value) {
         return new JAXBElement<CoordinatesType>(_Coordinates_QNAME, CoordinatesType.class, null, value);
     }
 
@@ -2787,7 +2787,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
-    public JAXBElement<MultiCurveType> createMultiCurve(MultiCurveType value) {
+    public JAXBElement<MultiCurveType> createMultiCurve(final MultiCurveType value) {
         return new JAXBElement<MultiCurveType>(_MultiCurve_QNAME, MultiCurveType.class, null, value);
     }
 
@@ -2796,7 +2796,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MultiPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GeometricAggregate")
-    public JAXBElement<MultiPointType> createMultiPoint(MultiPointType value) {
+    public JAXBElement<MultiPointType> createMultiPoint(final MultiPointType value) {
         return new JAXBElement<MultiPointType>(_MultiPoint_QNAME, MultiPointType.class, null, value);
     }
 
@@ -2805,7 +2805,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "vector")
-    public JAXBElement<VectorType> createVector(VectorType value) {
+    public JAXBElement<VectorType> createVector(final VectorType value) {
         return new JAXBElement<VectorType>(_Vector_QNAME, VectorType.class, null, value);
     }
 
@@ -2814,7 +2814,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "edgeOf")
-    public JAXBElement<CurvePropertyType> createEdgeOf(CurvePropertyType value) {
+    public JAXBElement<CurvePropertyType> createEdgeOf(final CurvePropertyType value) {
         return new JAXBElement<CurvePropertyType>(_EdgeOf_QNAME, CurvePropertyType.class, null, value);
     }
 
@@ -2823,7 +2823,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiCenterLineOf")
-    public JAXBElement<MultiCurvePropertyType> createMultiCenterLineOf(MultiCurvePropertyType value) {
+    public JAXBElement<MultiCurvePropertyType> createMultiCenterLineOf(final MultiCurvePropertyType value) {
         return new JAXBElement<MultiCurvePropertyType>(_MultiCenterLineOf_QNAME, MultiCurvePropertyType.class, null, value);
     }
 
@@ -2832,7 +2832,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "geometryMembers")
-    public JAXBElement<GeometryArrayPropertyType> createGeometryMembers(GeometryArrayPropertyType value) {
+    public JAXBElement<GeometryArrayPropertyType> createGeometryMembers(final GeometryArrayPropertyType value) {
         return new JAXBElement<GeometryArrayPropertyType>(_GeometryMembers_QNAME, GeometryArrayPropertyType.class, null, value);
     }
 
@@ -2841,7 +2841,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LocationKeyWord")
-    public JAXBElement<CodeType> createLocationKeyWord(CodeType value) {
+    public JAXBElement<CodeType> createLocationKeyWord(final CodeType value) {
         return new JAXBElement<CodeType>(_LocationKeyWord_QNAME, CodeType.class, null, value);
     }
 
@@ -2850,7 +2850,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "dictionaryEntry")
-    public JAXBElement<DictionaryEntryType> createDictionaryEntry(DictionaryEntryType value) {
+    public JAXBElement<DictionaryEntryType> createDictionaryEntry(final DictionaryEntryType value) {
         return new JAXBElement<DictionaryEntryType>(_DictionaryEntry_QNAME, DictionaryEntryType.class, null, value);
     }
 
@@ -2859,7 +2859,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "indirectEntry")
-    public JAXBElement<IndirectEntryType> createIndirectEntry(IndirectEntryType value) {
+    public JAXBElement<IndirectEntryType> createIndirectEntry(final IndirectEntryType value) {
         return new JAXBElement<IndirectEntryType>(_IndirectEntry_QNAME, IndirectEntryType.class, null, value);
     }
 
@@ -2868,7 +2868,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Bezier", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "BSpline")
-    public JAXBElement<BezierType> createBezier(BezierType value) {
+    public JAXBElement<BezierType> createBezier(final BezierType value) {
         return new JAXBElement<BezierType>(_Bezier_QNAME, BezierType.class, null, value);
     }
 
@@ -2877,7 +2877,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiPointProperty")
-    public JAXBElement<MultiPointPropertyType> createMultiPointProperty(MultiPointPropertyType value) {
+    public JAXBElement<MultiPointPropertyType> createMultiPointProperty(final MultiPointPropertyType value) {
         return new JAXBElement<MultiPointPropertyType>(_MultiPointProperty_QNAME, MultiPointPropertyType.class, null, value);
     }
 
@@ -2886,7 +2886,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "patches")
-    public JAXBElement<SurfacePatchArrayPropertyType> createPatches(SurfacePatchArrayPropertyType value) {
+    public JAXBElement<SurfacePatchArrayPropertyType> createPatches(final SurfacePatchArrayPropertyType value) {
         return new JAXBElement<SurfacePatchArrayPropertyType>(_Patches_QNAME, SurfacePatchArrayPropertyType.class, null, value);
     }
 
@@ -2895,7 +2895,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ArcStringByBulge", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
-    public JAXBElement<ArcStringByBulgeType> createArcStringByBulge(ArcStringByBulgeType value) {
+    public JAXBElement<ArcStringByBulgeType> createArcStringByBulge(final ArcStringByBulgeType value) {
         return new JAXBElement<ArcStringByBulgeType>(_ArcStringByBulge_QNAME, ArcStringByBulgeType.class, null, value);
     }
 
@@ -2904,7 +2904,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractFeature", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<AbstractFeatureEntry> createAbstractFeature(AbstractFeatureEntry value) {
+    public JAXBElement<AbstractFeatureEntry> createAbstractFeature(final AbstractFeatureEntry value) {
         return new JAXBElement<AbstractFeatureEntry>(_AbstractFeature_QNAME, AbstractFeatureEntry.class, null, value);
     }
 
@@ -2913,7 +2913,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiLocation")
-    public JAXBElement<MultiPointPropertyType> createMultiLocation(MultiPointPropertyType value) {
+    public JAXBElement<MultiPointPropertyType> createMultiLocation(final MultiPointPropertyType value) {
         return new JAXBElement<MultiPointPropertyType>(_MultiLocation_QNAME, MultiPointPropertyType.class, null, value);
     }
 
@@ -2922,7 +2922,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "featureProperty")
-    public JAXBElement<FeaturePropertyType> createFeatureProperty(FeaturePropertyType value) {
+    public JAXBElement<FeaturePropertyType> createFeatureProperty(final FeaturePropertyType value) {
         return new JAXBElement<FeaturePropertyType>(_FeatureProperty_QNAME, FeaturePropertyType.class, null, value);
     }
 
@@ -2931,7 +2931,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "lineStringProperty")
-    public JAXBElement<LineStringPropertyType> createLineStringProperty(LineStringPropertyType value) {
+    public JAXBElement<LineStringPropertyType> createLineStringProperty(final LineStringPropertyType value) {
         return new JAXBElement<LineStringPropertyType>(_LineStringProperty_QNAME, LineStringPropertyType.class, null, value);
     }
 
@@ -2940,7 +2940,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "trianglePatches", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "patches")
-    public JAXBElement<TrianglePatchArrayPropertyType> createTrianglePatches(TrianglePatchArrayPropertyType value) {
+    public JAXBElement<TrianglePatchArrayPropertyType> createTrianglePatches(final TrianglePatchArrayPropertyType value) {
         return new JAXBElement<TrianglePatchArrayPropertyType>(_TrianglePatches_QNAME, TrianglePatchArrayPropertyType.class, null, value);
     }
 
@@ -2949,7 +2949,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractRing", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
-    public JAXBElement<AbstractRingType> createAbstractRing(AbstractRingType value) {
+    public JAXBElement<AbstractRingType> createAbstractRing(final AbstractRingType value) {
         return new JAXBElement<AbstractRingType>(_AbstractRing_QNAME, AbstractRingType.class, null, value);
     }
 
@@ -2958,7 +2958,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "timePosition")
-    public JAXBElement<TimePositionType> createTimePosition(TimePositionType value) {
+    public JAXBElement<TimePositionType> createTimePosition(final TimePositionType value) {
         return new JAXBElement<TimePositionType>(_TimePosition_QNAME, TimePositionType.class, null, value);
     }
 
@@ -2967,7 +2967,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "multiSurfaceProperty")
-    public JAXBElement<MultiSurfacePropertyType> createMultiSurfaceProperty(MultiSurfacePropertyType value) {
+    public JAXBElement<MultiSurfacePropertyType> createMultiSurfaceProperty(final MultiSurfacePropertyType value) {
         return new JAXBElement<MultiSurfacePropertyType>(_MultiSurfaceProperty_QNAME, MultiSurfacePropertyType.class, null, value);
     }
 
@@ -2976,7 +2976,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "definitionMember", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "dictionaryEntry")
-    public JAXBElement<DictionaryEntryType> createDefinitionMember(DictionaryEntryType value) {
+    public JAXBElement<DictionaryEntryType> createDefinitionMember(final DictionaryEntryType value) {
         return new JAXBElement<DictionaryEntryType>(_DefinitionMember_QNAME, DictionaryEntryType.class, null, value);
     }
 
@@ -2985,7 +2985,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "surfaceArrayProperty")
-    public JAXBElement<SurfaceArrayPropertyType> createSurfaceArrayProperty(SurfaceArrayPropertyType value) {
+    public JAXBElement<SurfaceArrayPropertyType> createSurfaceArrayProperty(final SurfaceArrayPropertyType value) {
         return new JAXBElement<SurfaceArrayPropertyType>(_SurfaceArrayProperty_QNAME, SurfaceArrayPropertyType.class, null, value);
     }
 
@@ -2994,7 +2994,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Triangle", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
-    public JAXBElement<TriangleType> createTriangle(TriangleType value) {
+    public JAXBElement<TriangleType> createTriangle(final TriangleType value) {
         return new JAXBElement<TriangleType>(_Triangle_QNAME, TriangleType.class, null, value);
     }
 
@@ -3003,7 +3003,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Cone", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GriddedSurface")
-    public JAXBElement<ConeType> createCone(ConeType value) {
+    public JAXBElement<ConeType> createCone(final ConeType value) {
         return new JAXBElement<ConeType>(_Cone_QNAME, ConeType.class, null, value);
     }
 
@@ -3012,7 +3012,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "quantityType")
-    public JAXBElement<StringOrRefType> createQuantityType(StringOrRefType value) {
+    public JAXBElement<StringOrRefType> createQuantityType(final StringOrRefType value) {
         return new JAXBElement<StringOrRefType>(_QuantityType_QNAME, StringOrRefType.class, null, value);
     }
 
@@ -3021,7 +3021,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "featureMember")
-    public JAXBElement<FeaturePropertyType> createFeatureMember(FeaturePropertyType value) {
+    public JAXBElement<FeaturePropertyType> createFeatureMember(final FeaturePropertyType value) {
         return new JAXBElement<FeaturePropertyType>(_FeatureMember_QNAME, FeaturePropertyType.class, null, value);
     }
 
@@ -3030,7 +3030,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LineString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurve")
-    public JAXBElement<LineStringType> createLineString(LineStringType value) {
+    public JAXBElement<LineStringType> createLineString(final LineStringType value) {
         return new JAXBElement<LineStringType>(_LineString_QNAME, LineStringType.class, null, value);
     }
 
@@ -3039,7 +3039,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "BaseUnit", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "UnitDefinition")
-    public JAXBElement<BaseUnitType> createBaseUnit(BaseUnitType value) {
+    public JAXBElement<BaseUnitType> createBaseUnit(final BaseUnitType value) {
         return new JAXBElement<BaseUnitType>(_BaseUnit_QNAME, BaseUnitType.class, null, value);
     }
 
@@ -3048,7 +3048,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "LocationString")
-    public JAXBElement<StringOrRefType> createLocationString(StringOrRefType value) {
+    public JAXBElement<StringOrRefType> createLocationString(final StringOrRefType value) {
         return new JAXBElement<StringOrRefType>(_LocationString_QNAME, StringOrRefType.class, null, value);
     }
 
@@ -3057,7 +3057,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Envelope")
-    public JAXBElement<EnvelopeEntry> createEnvelope(EnvelopeEntry value) {
+    public JAXBElement<EnvelopeEntry> createEnvelope(final EnvelopeEntry value) {
         return new JAXBElement<EnvelopeEntry>(_Envelope_QNAME, EnvelopeEntry.class, null, value);
     }
 
@@ -3066,7 +3066,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometricPrimitive")
-    public JAXBElement<AbstractSurfaceType> createAbstractSurface(AbstractSurfaceType value) {
+    public JAXBElement<AbstractSurfaceType> createAbstractSurface(final AbstractSurfaceType value) {
         return new JAXBElement<AbstractSurfaceType>(_AbstractSurface_QNAME, AbstractSurfaceType.class, null, value);
     }
 
@@ -3075,7 +3075,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Definition", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<DefinitionType> createDefinition(DefinitionType value) {
+    public JAXBElement<DefinitionType> createDefinition(final DefinitionType value) {
         return new JAXBElement<DefinitionType>(_Definition_QNAME, DefinitionType.class, null, value);
     }
 
@@ -3084,7 +3084,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "featureMembers")
-    public JAXBElement<FeatureArrayPropertyType> createFeatureMembers(FeatureArrayPropertyType value) {
+    public JAXBElement<FeatureArrayPropertyType> createFeatureMembers(final FeatureArrayPropertyType value) {
         return new JAXBElement<FeatureArrayPropertyType>(_FeatureMembers_QNAME, FeatureArrayPropertyType.class, null, value);
     }
 
@@ -3093,7 +3093,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "GeodesicString", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurveSegment")
-    public JAXBElement<GeodesicStringType> createGeodesicString(GeodesicStringType value) {
+    public JAXBElement<GeodesicStringType> createGeodesicString(final GeodesicStringType value) {
         return new JAXBElement<GeodesicStringType>(_GeodesicString_QNAME, GeodesicStringType.class, null, value);
     }
 
@@ -3102,7 +3102,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "baseSurface")
-    public JAXBElement<SurfacePropertyType> createBaseSurface(SurfacePropertyType value) {
+    public JAXBElement<SurfacePropertyType> createBaseSurface(final SurfacePropertyType value) {
         return new JAXBElement<SurfacePropertyType>(_BaseSurface_QNAME, SurfacePropertyType.class, null, value);
     }
 
@@ -3111,7 +3111,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pointMember")
-    public JAXBElement<PointPropertyType> createPointMember(PointPropertyType value) {
+    public JAXBElement<PointPropertyType> createPointMember(final PointPropertyType value) {
         return new JAXBElement<PointPropertyType>(_PointMember_QNAME, PointPropertyType.class, null, value);
     }
 
@@ -3120,7 +3120,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimeGeometricPrimitive", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimePrimitive")
-    public JAXBElement<AbstractTimeGeometricPrimitiveType> createAbstractTimeGeometricPrimitive(AbstractTimeGeometricPrimitiveType value) {
+    public JAXBElement<AbstractTimeGeometricPrimitiveType> createAbstractTimeGeometricPrimitive(final AbstractTimeGeometricPrimitiveType value) {
         return new JAXBElement<AbstractTimeGeometricPrimitiveType>(AbstractTimeGeometricPrimitive_QNAME, AbstractTimeGeometricPrimitiveType.class, null, value);
     }
 
@@ -3129,7 +3129,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Cylinder", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "_GriddedSurface")
-    public JAXBElement<CylinderType> createCylinder(CylinderType value) {
+    public JAXBElement<CylinderType> createCylinder(final CylinderType value) {
         return new JAXBElement<CylinderType>(_Cylinder_QNAME, CylinderType.class, null, value);
     }
 
@@ -3138,7 +3138,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "position")
-    public JAXBElement<PointPropertyType> createPosition(PointPropertyType value) {
+    public JAXBElement<PointPropertyType> createPosition(final PointPropertyType value) {
         return new JAXBElement<PointPropertyType>(_Position_QNAME, PointPropertyType.class, null, value);
     }
 
@@ -3147,7 +3147,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "segments")
-    public JAXBElement<CurveSegmentArrayPropertyType> createSegments(CurveSegmentArrayPropertyType value) {
+    public JAXBElement<CurveSegmentArrayPropertyType> createSegments(final CurveSegmentArrayPropertyType value) {
         return new JAXBElement<CurveSegmentArrayPropertyType>(_Segments_QNAME, CurveSegmentArrayPropertyType.class, null, value);
     }
 
@@ -3156,7 +3156,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_ParametricCurveSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurfacePatch")
-    public JAXBElement<AbstractParametricCurveSurfaceType> createParametricCurveSurface(AbstractParametricCurveSurfaceType value) {
+    public JAXBElement<AbstractParametricCurveSurfaceType> createParametricCurveSurface(final AbstractParametricCurveSurfaceType value) {
         return new JAXBElement<AbstractParametricCurveSurfaceType>(_ParametricCurveSurface_QNAME, AbstractParametricCurveSurfaceType.class, null, value);
     }
 
@@ -3165,7 +3165,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_TimeComplex", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeObject")
-    public JAXBElement<AbstractTimeComplexType> createTimeComplex(AbstractTimeComplexType value) {
+    public JAXBElement<AbstractTimeComplexType> createTimeComplex(final AbstractTimeComplexType value) {
         return new JAXBElement<AbstractTimeComplexType>(_TimeComplex_QNAME, AbstractTimeComplexType.class, null, value);
     }
 
@@ -3174,7 +3174,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Dictionary", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<DictionaryType> createDictionary(DictionaryType value) {
+    public JAXBElement<DictionaryType> createDictionary(final DictionaryType value) {
         return new JAXBElement<DictionaryType>(_Dictionary_QNAME, DictionaryType.class, null, value);
     }
 
@@ -3183,7 +3183,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "baseCurve")
-    public JAXBElement<CurvePropertyType> createBaseCurve(CurvePropertyType value) {
+    public JAXBElement<CurvePropertyType> createBaseCurve(final CurvePropertyType value) {
         return new JAXBElement<CurvePropertyType>(_BaseCurve_QNAME, CurvePropertyType.class, null, value);
     }
 
@@ -3192,7 +3192,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TimeInstant", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeGeometricPrimitive")
-    public JAXBElement<TimeInstantType> createTimeInstant(TimeInstantType value) {
+    public JAXBElement<TimeInstantType> createTimeInstant(final TimeInstantType value) {
         return new JAXBElement<TimeInstantType>(_TimeInstant_QNAME, TimeInstantType.class, null, value);
     }
 
@@ -3201,7 +3201,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCoordinateOperation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<AbstractCoordinateOperationType> createAbstractCoordinateOperation(AbstractCoordinateOperationType value) {
+    public JAXBElement<AbstractCoordinateOperationType> createAbstractCoordinateOperation(final AbstractCoordinateOperationType value) {
         return new JAXBElement<AbstractCoordinateOperationType>(_CoordinateOperation_QNAME, AbstractCoordinateOperationType.class, null, value);
     }
 
@@ -3210,7 +3210,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCoordinateSystem", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<AbstractCoordinateSystemType> createAbstractCoordinateSystem(AbstractCoordinateSystemType value) {
+    public JAXBElement<AbstractCoordinateSystemType> createAbstractCoordinateSystem(final AbstractCoordinateSystemType value) {
         return new JAXBElement<AbstractCoordinateSystemType>(AbstractCoordinateSystem_QNAME, AbstractCoordinateSystemType.class, null, value);
     }
 
@@ -3219,7 +3219,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "imageDatumRef")
-    public JAXBElement<ImageDatumRefType> createImageDatumRef(ImageDatumRefType value) {
+    public JAXBElement<ImageDatumRefType> createImageDatumRef(final ImageDatumRefType value) {
         return new JAXBElement<ImageDatumRefType>(_ImageDatumRef_QNAME, ImageDatumRefType.class, null, value);
     }
 
@@ -3228,7 +3228,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ImageDatum", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractDatum")
-    public JAXBElement<ImageDatumType> createImageDatum(ImageDatumType value) {
+    public JAXBElement<ImageDatumType> createImageDatum(final ImageDatumType value) {
         return new JAXBElement<ImageDatumType>(_ImageDatum_QNAME, ImageDatumType.class, null, value);
     }
 
@@ -3237,7 +3237,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesImageDatum")
-    public JAXBElement<ImageDatumRefType> createUsesImageDatum(ImageDatumRefType value) {
+    public JAXBElement<ImageDatumRefType> createUsesImageDatum(final ImageDatumRefType value) {
         return new JAXBElement<ImageDatumRefType>(_UsesImageDatum_QNAME, ImageDatumRefType.class, null, value);
     }
 
@@ -3246,7 +3246,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractDatum", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<AbstractDatumType> createDatum(AbstractDatumType value) {
+    public JAXBElement<AbstractDatumType> createDatum(final AbstractDatumType value) {
         return new JAXBElement<AbstractDatumType>(_Datum_QNAME, AbstractDatumType.class, null, value);
     }
 
@@ -3255,7 +3255,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractpositionalAccuracy")
-    public JAXBElement<AbstractPositionalAccuracyType> createPositionalAccuracy(AbstractPositionalAccuracyType value) {
+    public JAXBElement<AbstractPositionalAccuracyType> createPositionalAccuracy(final AbstractPositionalAccuracyType value) {
         return new JAXBElement<AbstractPositionalAccuracyType>(_PositionalAccuracy_QNAME, AbstractPositionalAccuracyType.class, null, value);
     }
 
@@ -3264,7 +3264,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractReferenceSystem", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<AbstractReferenceSystemType> createReferenceSystem(AbstractReferenceSystemType value) {
+    public JAXBElement<AbstractReferenceSystemType> createReferenceSystem(final AbstractReferenceSystemType value) {
         return new JAXBElement<AbstractReferenceSystemType>(_ReferenceSystem_QNAME, AbstractReferenceSystemType.class, null, value);
     }
 
@@ -3273,7 +3273,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractSingleOperation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateOperation")
-    public JAXBElement<AbstractCoordinateOperationType> createSingleOperation(AbstractCoordinateOperationType value) {
+    public JAXBElement<AbstractCoordinateOperationType> createSingleOperation(final AbstractCoordinateOperationType value) {
         return new JAXBElement<AbstractCoordinateOperationType>(_SingleOperation_QNAME, AbstractCoordinateOperationType.class, null, value);
     }
 
@@ -3282,7 +3282,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractOperation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSingleOperation")
-    public JAXBElement<AbstractCoordinateOperationType> createOperation(AbstractCoordinateOperationType value) {
+    public JAXBElement<AbstractCoordinateOperationType> createOperation(final AbstractCoordinateOperationType value) {
         return new JAXBElement<AbstractCoordinateOperationType>(_Operation_QNAME, AbstractCoordinateOperationType.class, null, value);
     }
 
@@ -3291,7 +3291,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCRS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractReferenceSystem")
-    public JAXBElement<AbstractReferenceSystemType> createCRS(AbstractReferenceSystemType value) {
+    public JAXBElement<AbstractReferenceSystemType> createCRS(final AbstractReferenceSystemType value) {
         return new JAXBElement<AbstractReferenceSystemType>(_CRS_QNAME, AbstractReferenceSystemType.class, null, value);
     }
 
@@ -3300,7 +3300,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractTimeSlice", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<AbstractTimeSliceType> createTimeSlice(AbstractTimeSliceType value) {
+    public JAXBElement<AbstractTimeSliceType> createTimeSlice(final AbstractTimeSliceType value) {
         return new JAXBElement<AbstractTimeSliceType>(_TimeSlice_QNAME, AbstractTimeSliceType.class, null, value);
     }
 
@@ -3309,7 +3309,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "sourceCRS")
-    public JAXBElement<CRSRefType> createSourceCRS(CRSRefType value) {
+    public JAXBElement<CRSRefType> createSourceCRS(final CRSRefType value) {
         return new JAXBElement<CRSRefType>(_SourceCRS_QNAME, CRSRefType.class, null, value);
     }
 
@@ -3318,7 +3318,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "targetCRS")
-    public JAXBElement<CRSRefType> createTargetCRS(CRSRefType value) {
+    public JAXBElement<CRSRefType> createTargetCRS(final CRSRefType value) {
         return new JAXBElement<CRSRefType>(_TargetCRS_QNAME, CRSRefType.class, null, value);
     }
 
@@ -3327,7 +3327,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "cartesianCSRef")
-    public JAXBElement<CartesianCSRefType> createCartesianCSRef(CartesianCSRefType value) {
+    public JAXBElement<CartesianCSRefType> createCartesianCSRef(final CartesianCSRefType value) {
         return new JAXBElement<CartesianCSRefType>(_CartesianCSRef_QNAME, CartesianCSRefType.class, null, value);
     }
 
@@ -3336,7 +3336,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesCartesianCS")
-    public JAXBElement<CartesianCSRefType> createUsesCartesianCS(CartesianCSRefType value) {
+    public JAXBElement<CartesianCSRefType> createUsesCartesianCS(final CartesianCSRefType value) {
         return new JAXBElement<CartesianCSRefType>(_UsesCartesianCS_QNAME, CartesianCSRefType.class, null, value);
     }
 
@@ -3345,7 +3345,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CompositeCurve", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCurve")
-    public JAXBElement<CompositeCurveType> createCompositeCurve(CompositeCurveType value) {
+    public JAXBElement<CompositeCurveType> createCompositeCurve(final CompositeCurveType value) {
         return new JAXBElement<CompositeCurveType>(_CompositeCurve_QNAME, CompositeCurveType.class, null, value);
     }
 
@@ -3354,7 +3354,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CompositeSolid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSolid")
-    public JAXBElement<CompositeSolidType> createCompositeSolid(CompositeSolidType value) {
+    public JAXBElement<CompositeSolidType> createCompositeSolid(final CompositeSolidType value) {
         return new JAXBElement<CompositeSolidType>(_CompositeSolid_QNAME, CompositeSolidType.class, null, value);
     }
 
@@ -3363,7 +3363,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CompositeSurface", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractSurface")
-    public JAXBElement<CompositeSurfaceType> createCompositeSurface(CompositeSurfaceType value) {
+    public JAXBElement<CompositeSurfaceType> createCompositeSurface(final CompositeSurfaceType value) {
         return new JAXBElement<CompositeSurfaceType>(_CompositeSurface_QNAME, CompositeSurfaceType.class, null, value);
     }
 
@@ -3372,7 +3372,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coordinateSystemAxisRef")
-    public JAXBElement<CoordinateSystemAxisRefType> createCoordinateSystemAxisRef(CoordinateSystemAxisRefType value) {
+    public JAXBElement<CoordinateSystemAxisRefType> createCoordinateSystemAxisRef(final CoordinateSystemAxisRefType value) {
         return new JAXBElement<CoordinateSystemAxisRefType>(_CoordinateSystemAxisRef_QNAME, CoordinateSystemAxisRefType.class, null, value);
     }
 
@@ -3381,7 +3381,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CoordinateSystemAxis", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<CoordinateSystemAxisType> createCoordinateSystemAxis(CoordinateSystemAxisType value) {
+    public JAXBElement<CoordinateSystemAxisType> createCoordinateSystemAxis(final CoordinateSystemAxisType value) {
         return new JAXBElement<CoordinateSystemAxisType>(_CoordinateSystemAxis_QNAME, CoordinateSystemAxisType.class, null, value);
     }
 
@@ -3390,7 +3390,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesAxis")
-    public JAXBElement<CoordinateSystemAxisRefType> createUsesAxis(CoordinateSystemAxisRefType value) {
+    public JAXBElement<CoordinateSystemAxisRefType> createUsesAxis(final CoordinateSystemAxisRefType value) {
         return new JAXBElement<CoordinateSystemAxisRefType>(_UsesAxis_QNAME, CoordinateSystemAxisRefType.class, null, value);
     }
 
@@ -3399,7 +3399,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coordinateSystemRef")
-    public JAXBElement<CoordinateSystemRefType> createCoordinateSystemRef(CoordinateSystemRefType value) {
+    public JAXBElement<CoordinateSystemRefType> createCoordinateSystemRef(final CoordinateSystemRefType value) {
         return new JAXBElement<CoordinateSystemRefType>(_CoordinateSystemRef_QNAME, CoordinateSystemRefType.class, null, value);
     }
 
@@ -3408,7 +3408,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesCS")
-    public JAXBElement<CoordinateSystemRefType> createUsesCS(CoordinateSystemRefType value) {
+    public JAXBElement<CoordinateSystemRefType> createUsesCS(final CoordinateSystemRefType value) {
         return new JAXBElement<CoordinateSystemRefType>(_UsesCS_QNAME, CoordinateSystemRefType.class, null, value);
     }
 
@@ -3417,7 +3417,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "direction")
-    public JAXBElement<DirectionPropertyType> createDirection(DirectionPropertyType value) {
+    public JAXBElement<DirectionPropertyType> createDirection(final DirectionPropertyType value) {
         return new JAXBElement<DirectionPropertyType>(_Direction_QNAME, DirectionPropertyType.class, null, value);
     }
 
@@ -3426,7 +3426,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "DirectionVector")
-    public JAXBElement<DirectionVectorType> createDirectionVector(DirectionVectorType value) {
+    public JAXBElement<DirectionVectorType> createDirectionVector(final DirectionVectorType value) {
         return new JAXBElement<DirectionVectorType>(_DirectionVector_QNAME, DirectionVectorType.class, null, value);
     }
 
@@ -3435,7 +3435,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ImageCRS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateReferenceSystem")
-    public JAXBElement<ImageCRSType> createImageCRS(ImageCRSType value) {
+    public JAXBElement<ImageCRSType> createImageCRS(final ImageCRSType value) {
         return new JAXBElement<ImageCRSType>(_ImageCRS_QNAME, ImageCRSType.class, null, value);
     }
 
@@ -3444,7 +3444,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "EngineeringCRS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateReferenceSystem")
-    public JAXBElement<EngineeringCRSType> createEngineeringCRS(EngineeringCRSType value) {
+    public JAXBElement<EngineeringCRSType> createEngineeringCRS(final EngineeringCRSType value) {
         return new JAXBElement<EngineeringCRSType>(_EngineeringCRS_QNAME, EngineeringCRSType.class, null, value);
     }
 
@@ -3453,7 +3453,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "EngineeringDatum", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractDatum")
-    public JAXBElement<EngineeringDatumType> createEngineeringDatum(EngineeringDatumType value) {
+    public JAXBElement<EngineeringDatumType> createEngineeringDatum(final EngineeringDatumType value) {
         return new JAXBElement<EngineeringDatumType>(_EngineeringDatum_QNAME, EngineeringDatumType.class, null, value);
     }
 
@@ -3462,7 +3462,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "engineeringDatumRef")
-    public JAXBElement<EngineeringDatumRefType> createEngineeringDatumRef(EngineeringDatumRefType value) {
+    public JAXBElement<EngineeringDatumRefType> createEngineeringDatumRef(final EngineeringDatumRefType value) {
         return new JAXBElement<EngineeringDatumRefType>(_EngineeringDatumRef_QNAME, EngineeringDatumRefType.class, null, value);
     }
 
@@ -3471,7 +3471,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesEngineeringDatum")
-    public JAXBElement<EngineeringDatumRefType> createUsesEngineeringDatum(EngineeringDatumRefType value) {
+    public JAXBElement<EngineeringDatumRefType> createUsesEngineeringDatum(final EngineeringDatumRefType value) {
         return new JAXBElement<EngineeringDatumRefType>(_UsesEngineeringDatum_QNAME, EngineeringDatumRefType.class, null, value);
     }
 
@@ -3480,7 +3480,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "validArea")
-    public JAXBElement<ExtentType> createValidArea(ExtentType value) {
+    public JAXBElement<ExtentType> createValidArea(final ExtentType value) {
         return new JAXBElement<ExtentType>(_ValidArea_QNAME, ExtentType.class, null, value);
     }
 
@@ -3489,7 +3489,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "CountExtent")
-    public JAXBElement<List<String>> createCountExtent(List<String> value) {
+    public JAXBElement<List<String>> createCountExtent(final List<String> value) {
         return new JAXBElement<List<String>>(_CountExtent_QNAME, ((Class) List.class), null, ((List<String> ) value));
     }
 
@@ -3498,7 +3498,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "GeometricComplex", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
-    public JAXBElement<GeometricComplexType> createGeometricComplex(GeometricComplexType value) {
+    public JAXBElement<GeometricComplexType> createGeometricComplex(final GeometricComplexType value) {
         return new JAXBElement<GeometricComplexType>(_GeometricComplex_QNAME, GeometricComplexType.class, null, value);
     }
 
@@ -3507,7 +3507,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Grid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGeometry")
-    public JAXBElement<GridType> createGrid(GridType value) {
+    public JAXBElement<GridType> createGrid(final GridType value) {
         return new JAXBElement<GridType>(_Grid_QNAME, GridType.class, null, value);
     }
 
@@ -3516,7 +3516,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "history")
-    public JAXBElement<HistoryPropertyType> createHistory(HistoryPropertyType value) {
+    public JAXBElement<HistoryPropertyType> createHistory(final HistoryPropertyType value) {
         return new JAXBElement<HistoryPropertyType>(_History_QNAME, HistoryPropertyType.class, null, value);
     }
 
@@ -3525,7 +3525,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "datumID")
-    public JAXBElement<IdentifierType> createDatumID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createDatumID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_DatumID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3534,7 +3534,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ellipsoidID")
-    public JAXBElement<IdentifierType> createEllipsoidID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createEllipsoidID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_EllipsoidID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3543,7 +3543,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "axisID")
-    public JAXBElement<IdentifierType> createAxisID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createAxisID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_AxisID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3552,7 +3552,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "meridianID")
-    public JAXBElement<IdentifierType> createMeridianID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createMeridianID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_MeridianID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3561,7 +3561,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "methodID")
-    public JAXBElement<IdentifierType> createMethodID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createMethodID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_MethodID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3570,7 +3570,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "coordinateOperationID")
-    public JAXBElement<IdentifierType> createCoordinateOperationID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createCoordinateOperationID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_CoordinateOperationID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3579,7 +3579,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "csID")
-    public JAXBElement<IdentifierType> createCsID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createCsID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_CsID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3588,7 +3588,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "parameterID")
-    public JAXBElement<IdentifierType> createParameterID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createParameterID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_ParameterID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3597,7 +3597,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "srsID")
-    public JAXBElement<IdentifierType> createSrsID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createSrsID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_SrsID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3606,7 +3606,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "groupID")
-    public JAXBElement<IdentifierType> createGroupID(IdentifierType value) {
+    public JAXBElement<IdentifierType> createGroupID(final IdentifierType value) {
         return new JAXBElement<IdentifierType>(_GroupID_QNAME, IdentifierType.class, null, value);
     }
 
@@ -3615,7 +3615,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "MovingObjectStatus", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractTimeSlice")
-    public JAXBElement<MovingObjectStatusType> createMovingObjectStatus(MovingObjectStatusType value) {
+    public JAXBElement<MovingObjectStatusType> createMovingObjectStatus(final MovingObjectStatusType value) {
         return new JAXBElement<MovingObjectStatusType>(_MovingObjectStatus_QNAME, MovingObjectStatusType.class, null, value);
     }
 
@@ -3624,7 +3624,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesObliqueCartesianCS")
-    public JAXBElement<ObliqueCartesianCSRefType> createUsesObliqueCartesianCS(ObliqueCartesianCSRefType value) {
+    public JAXBElement<ObliqueCartesianCSRefType> createUsesObliqueCartesianCS(final ObliqueCartesianCSRefType value) {
         return new JAXBElement<ObliqueCartesianCSRefType>(_UsesObliqueCartesianCS_QNAME, ObliqueCartesianCSRefType.class, null, value);
     }
 
@@ -3633,7 +3633,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "ObliqueCartesianCS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateSystem")
-    public JAXBElement<ObliqueCartesianCSType> createObliqueCartesianCS(ObliqueCartesianCSType value) {
+    public JAXBElement<ObliqueCartesianCSType> createObliqueCartesianCS(final ObliqueCartesianCSType value) {
         return new JAXBElement<ObliqueCartesianCSType>(_ObliqueCartesianCS_QNAME, ObliqueCartesianCSType.class, null, value);
     }
 
@@ -3642,7 +3642,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "obliqueCartesianCSRef")
-    public JAXBElement<ObliqueCartesianCSRefType> createObliqueCartesianCSRef(ObliqueCartesianCSRefType value) {
+    public JAXBElement<ObliqueCartesianCSRefType> createObliqueCartesianCSRef(final ObliqueCartesianCSRefType value) {
         return new JAXBElement<ObliqueCartesianCSRefType>(_ObliqueCartesianCSRef_QNAME, ObliqueCartesianCSRefType.class, null, value);
     }
 
@@ -3651,7 +3651,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "pixelInCell")
-    public JAXBElement<PixelInCellType> createPixelInCell(PixelInCellType value) {
+    public JAXBElement<PixelInCellType> createPixelInCell(final PixelInCellType value) {
         return new JAXBElement<PixelInCellType>(_PixelInCell_QNAME, PixelInCellType.class, null, value);
     }
 
@@ -3660,7 +3660,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "QuantityExtent")
-    public JAXBElement<QuantityExtentType> createQuantityExtent(QuantityExtentType value) {
+    public JAXBElement<QuantityExtentType> createQuantityExtent(final QuantityExtentType value) {
         return new JAXBElement<QuantityExtentType>(_QuantityExtent_QNAME, QuantityExtentType.class, null, value);
     }
 
@@ -3669,7 +3669,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "QuantityList")
-    public JAXBElement<MeasureOrNullListType> createQuantityList(MeasureOrNullListType value) {
+    public JAXBElement<MeasureOrNullListType> createQuantityList(final MeasureOrNullListType value) {
         return new JAXBElement<MeasureOrNullListType>(_QuantityList_QNAME, MeasureOrNullListType.class, null, value);
     }
 
@@ -3678,7 +3678,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Quantity")
-    public JAXBElement<MeasureType> createQuantity(MeasureType value) {
+    public JAXBElement<MeasureType> createQuantity(final MeasureType value) {
         return new JAXBElement<MeasureType>(_Quantity_QNAME, MeasureType.class, null, value);
     }
 
@@ -3687,7 +3687,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "RectifiedGrid", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Grid")
-    public JAXBElement<RectifiedGridType> createRectifiedGrid(RectifiedGridType value) {
+    public JAXBElement<RectifiedGridType> createRectifiedGrid(final RectifiedGridType value) {
         return new JAXBElement<RectifiedGridType>(_RectifiedGrid_QNAME, RectifiedGridType.class, null, value);
     }
 
@@ -3696,7 +3696,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TemporalDatum", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractDatum")
-    public JAXBElement<TemporalDatumType> createTemporalDatum(TemporalDatumType value) {
+    public JAXBElement<TemporalDatumType> createTemporalDatum(final TemporalDatumType value) {
         return new JAXBElement<TemporalDatumType>(_TemporalDatum_QNAME, TemporalDatumType.class, null, value);
     }
 
@@ -3705,7 +3705,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesTemporalDatum")
-    public JAXBElement<TemporalDatumRefType> createUsesTemporalDatum(TemporalDatumRefType value) {
+    public JAXBElement<TemporalDatumRefType> createUsesTemporalDatum(final TemporalDatumRefType value) {
         return new JAXBElement<TemporalDatumRefType>(_UsesTemporalDatum_QNAME, TemporalDatumRefType.class, null, value);
     }
 
@@ -3714,7 +3714,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "temporalDatumRef")
-    public JAXBElement<TemporalDatumRefType> createTemporalDatumRef(TemporalDatumRefType value) {
+    public JAXBElement<TemporalDatumRefType> createTemporalDatumRef(final TemporalDatumRefType value) {
         return new JAXBElement<TemporalDatumRefType>(_TemporalDatumRef_QNAME, TemporalDatumRefType.class, null, value);
     }
 
@@ -3723,7 +3723,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TemporalCS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateSystem")
-    public JAXBElement<TemporalCSType> createTemporalCS(TemporalCSType value) {
+    public JAXBElement<TemporalCSType> createTemporalCS(final TemporalCSType value) {
         return new JAXBElement<TemporalCSType>(_TemporalCS_QNAME, TemporalCSType.class, null, value);
     }
 
@@ -3732,7 +3732,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "usesTemporalCS")
-    public JAXBElement<TemporalCSRefType> createUsesTemporalCS(TemporalCSRefType value) {
+    public JAXBElement<TemporalCSRefType> createUsesTemporalCS(final TemporalCSRefType value) {
         return new JAXBElement<TemporalCSRefType>(_UsesTemporalCS_QNAME, TemporalCSRefType.class, null, value);
     }
 
@@ -3741,7 +3741,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "temporalCSRef")
-    public JAXBElement<TemporalCSRefType> createTemporalCSRef(TemporalCSRefType value) {
+    public JAXBElement<TemporalCSRefType> createTemporalCSRef(final TemporalCSRefType value) {
         return new JAXBElement<TemporalCSRefType>(_TemporalCSRef_QNAME, TemporalCSRefType.class, null, value);
     }
 
@@ -3750,7 +3750,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "TemporalCRS", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCoordinateReferenceSystem")
-    public JAXBElement<TemporalCRSType> createTemporalCRS(TemporalCRSType value) {
+    public JAXBElement<TemporalCRSType> createTemporalCRS(final TemporalCRSType value) {
         return new JAXBElement<TemporalCRSType>(_TemporalCRS_QNAME, TemporalCRSType.class, null, value);
     }
 
@@ -3759,7 +3759,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "temporalExtent")
-    public JAXBElement<TimePeriodType> createTemporalExtent(TimePeriodType value) {
+    public JAXBElement<TimePeriodType> createTemporalExtent(final TimePeriodType value) {
         return new JAXBElement<TimePeriodType>(_TemporalExtent_QNAME, TimePeriodType.class, null, value);
     }
 
@@ -3768,7 +3768,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "track", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "history")
-    public JAXBElement<TrackType> createTrack(TrackType value) {
+    public JAXBElement<TrackType> createTrack(final TrackType value) {
         return new JAXBElement<TrackType>(_Track_QNAME, TrackType.class, null, value);
     }
 
@@ -3779,7 +3779,7 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractCoordinateReferenceSystem", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractCRS")
-    public JAXBElement<AbstractReferenceSystemType> createCoordinateReferenceSystem(AbstractReferenceSystemType value) {
+    public JAXBElement<AbstractReferenceSystemType> createCoordinateReferenceSystem(final AbstractReferenceSystemType value) {
         return new JAXBElement<AbstractReferenceSystemType>(_CoordinateReferenceSystem_QNAME, AbstractReferenceSystemType.class, null, value);
     }
 }

@@ -58,7 +58,7 @@ public abstract class AbstractRestrictedProcessType extends AbstractProcessType 
 
     }
 
-    public AbstractRestrictedProcessType(AbstractRestrictedProcess rp) {
+    public AbstractRestrictedProcessType(final AbstractRestrictedProcess rp) {
         super(rp);
     }
 }

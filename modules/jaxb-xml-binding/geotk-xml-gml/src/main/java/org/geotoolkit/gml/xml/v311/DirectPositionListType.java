@@ -92,7 +92,7 @@ public class DirectPositionListType {
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
      */
-    public void setValue(List<Double> value) {
+    public void setValue(final List<Double> value) {
         this.value = value;
     }
 
@@ -103,7 +103,7 @@ public class DirectPositionListType {
      * Objects of the following type(s) are allowed in the list
      * {@link Double }
      */
-    public void setValue(Double value) {
+    public void setValue(final Double value) {
         if (this.value == null) {
             this.value = new ArrayList<Double>();
         }
@@ -130,7 +130,7 @@ public class DirectPositionListType {
      *     {@link Integer }
      *     
      */
-    public void setCount(Integer value) {
+    public void setCount(final Integer value) {
         this.count = value;
     }
 
@@ -154,7 +154,7 @@ public class DirectPositionListType {
      *     {@link String }
      *     
      */
-    public void setSrsName(String value) {
+    public void setSrsName(final String value) {
         this.srsName = value;
     }
 
@@ -178,7 +178,7 @@ public class DirectPositionListType {
      *     {@link Integer }
      *     
      */
-    public void setSrsDimension(Integer value) {
+    public void setSrsDimension(final Integer value) {
         this.srsDimension = value;
     }
 

@@ -71,13 +71,13 @@ public class Term implements AbstractTerm {
 
     }
 
-    public Term(String value, URI definition) {
+    public Term(final String value, final URI definition) {
         this.codeSpace  = null;
         this.definition = definition;
         this.value      = value;
     }
 
-    public Term(AbstractTerm term) {
+    public Term(final AbstractTerm term) {
         if (term != null) {
             this.value      = term.getValue();
             this.definition = term.getDefinition();
@@ -87,7 +87,7 @@ public class Term implements AbstractTerm {
         }
     }
     
-    public Term(CodeSpacePropertyType codeSpace, String value, URI definition) {
+    public Term(final CodeSpacePropertyType codeSpace, final String value, final URI definition) {
         this.codeSpace  = codeSpace;
         this.definition = definition;
         this.value      = value;
@@ -103,7 +103,7 @@ public class Term implements AbstractTerm {
     /**
      * Sets the value of the codeSpace property.
      */
-    public void setCodeSpace(CodeSpacePropertyType value) {
+    public void setCodeSpace(final CodeSpacePropertyType value) {
         this.codeSpace = value;
     }
 
@@ -117,7 +117,7 @@ public class Term implements AbstractTerm {
     /**
      * Sets the value of the value property.
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -131,7 +131,7 @@ public class Term implements AbstractTerm {
     /**
      * Sets the value of the definition property.
      */
-    public void setDefinition(URI value) {
+    public void setDefinition(final URI value) {
         this.definition = value;
     }
 

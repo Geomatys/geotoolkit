@@ -71,7 +71,7 @@ public class DescribeLayerResponseType implements WMSResponse {
      * @param version the version of sld specification.
      * @param layerDescriptions a list of layer description.
      */
-    public DescribeLayerResponseType(String version, LayerDescriptionType... layerDescriptions) {
+    public DescribeLayerResponseType(final String version, final LayerDescriptionType... layerDescriptions) {
         this.version = version;
         for (final LayerDescriptionType element : layerDescriptions) {
             this.layerDescription.add(element);
@@ -84,7 +84,7 @@ public class DescribeLayerResponseType implements WMSResponse {
      * @param version the version of sld specification.
      * @param layerDescriptions a list of layer description.
      */
-    public DescribeLayerResponseType(String version, List<LayerDescriptionType> layerDescriptions) {
+    public DescribeLayerResponseType(final String version, final List<LayerDescriptionType> layerDescriptions) {
         this.version          = version;
         this.layerDescription = layerDescriptions;
     }

@@ -65,7 +65,7 @@ public class ListOfValuesType implements ListOfValues {
      /**
       * Build a new List of values
       */
-     public ListOfValuesType(List<String> values){
+     public ListOfValuesType(final List<String> values){
          value = values;
      }
 

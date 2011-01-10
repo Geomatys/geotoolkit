@@ -46,7 +46,7 @@ public enum FormChoice {
     UNQUALIFIED("unqualified");
     private final String value;
 
-    FormChoice(String v) {
+    FormChoice(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum FormChoice {
         return value;
     }
 
-    public static FormChoice fromValue(String v) {
+    public static FormChoice fromValue(final String v) {
         for (FormChoice c: FormChoice.values()) {
             if (c.value.equals(v)) {
                 return c;

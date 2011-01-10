@@ -76,7 +76,7 @@ public class OSMXMLReader extends StaxStreamReader{
     private long moveToId = -1;
 
     @Override
-    public void setInput(Object input) throws IOException, XMLStreamException {
+    public void setInput(final Object input) throws IOException, XMLStreamException {
         super.setInput(input);
 
         //search for the bound tag to generate the envelope
@@ -117,7 +117,7 @@ public class OSMXMLReader extends StaxStreamReader{
      * 
      * @param id : identifier to move to
      */
-    public void moveTo(Long id) throws XMLStreamException{
+    public void moveTo(final Long id) throws XMLStreamException{
         moveToId = id;
         read();
         //we have reached the wanted item, reset the search id
@@ -196,7 +196,7 @@ public class OSMXMLReader extends StaxStreamReader{
 
     }
 
-    private Long toDateLong(String str){
+    private Long toDateLong(final String str){
         return dateParser.parseToMillis(str);
     }
 
@@ -416,7 +416,7 @@ public class OSMXMLReader extends StaxStreamReader{
         throw new XMLStreamException("Error in xml file, chageset tag without end.");
     }
 
-    private Transaction parseTransaction(TransactionType tt) throws XMLStreamException {
+    private Transaction parseTransaction(final TransactionType tt) throws XMLStreamException {
         transaction.clear();
 
         final String version = reader.getAttributeValue(null, ATT_VERSION);
@@ -541,7 +541,7 @@ public class OSMXMLReader extends StaxStreamReader{
     }
 
 
-    private void parseTag(Map<String,String> tags) throws XMLStreamException{
+    private void parseTag(final Map<String,String> tags) throws XMLStreamException{
         final String key = reader.getAttributeValue(null, ATT_TAG_KEY);
         final String value = reader.getAttributeValue(null, ATT_TAG_VALUE);
 

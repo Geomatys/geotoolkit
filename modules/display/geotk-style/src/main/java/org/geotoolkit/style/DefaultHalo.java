@@ -42,7 +42,7 @@ public class DefaultHalo implements Halo{
      * @param fill : if null will be replaced by default value.
      * @param radius : if null or Expression.NIL will be replaced by default value.
      */
-    public DefaultHalo(Fill fill, Expression radius){
+    public DefaultHalo(final Fill fill, final Expression radius){
         this.fill = (fill == null) ? DEFAULT_HALO_FILL : fill;
         this.radius = (radius == null || radius == NIL) ? DEFAULT_HALO_RADIUS : radius;
     }
@@ -67,7 +67,7 @@ public class DefaultHalo implements Halo{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -75,7 +75,7 @@ public class DefaultHalo implements Halo{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

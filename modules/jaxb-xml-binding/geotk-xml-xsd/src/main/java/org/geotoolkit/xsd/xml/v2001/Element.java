@@ -132,12 +132,12 @@ public abstract class Element extends Annotated {
 
     }
 
-    public Element(String name, QName type) {
+    public Element(final String name, final QName type) {
         this.name = name;
         this.type = type;
     }
 
-    public Element(String name, QName type, Integer minOccurs, String maxOccurs) {
+    public Element(final String name, final QName type, final Integer minOccurs, final String maxOccurs) {
         this.name      = name;
         this.type      = type;
         this.minOccurs = minOccurs;
@@ -164,7 +164,7 @@ public abstract class Element extends Annotated {
      *     {@link LocalSimpleType }
      *     
      */
-    public void setSimpleType(LocalSimpleType value) {
+    public void setSimpleType(final LocalSimpleType value) {
         this.simpleType = value;
     }
 
@@ -188,7 +188,7 @@ public abstract class Element extends Annotated {
      *     {@link LocalComplexType }
      *     
      */
-    public void setComplexType(LocalComplexType value) {
+    public void setComplexType(final LocalComplexType value) {
         this.complexType = value;
     }
 
@@ -243,7 +243,7 @@ public abstract class Element extends Annotated {
      *     {@link QName }
      *     
      */
-    public void setType(QName value) {
+    public void setType(final QName value) {
         this.type = value;
     }
 
@@ -267,7 +267,7 @@ public abstract class Element extends Annotated {
      *     {@link QName }
      *     
      */
-    public void setSubstitutionGroup(QName value) {
+    public void setSubstitutionGroup(final QName value) {
         this.substitutionGroup = value;
     }
 
@@ -291,7 +291,7 @@ public abstract class Element extends Annotated {
      *     {@link String }
      *     
      */
-    public void setDefault(String value) {
+    public void setDefault(final String value) {
         this._default = value;
     }
 
@@ -315,7 +315,7 @@ public abstract class Element extends Annotated {
      *     {@link String }
      *     
      */
-    public void setFixed(String value) {
+    public void setFixed(final String value) {
         this.fixed = value;
     }
 
@@ -343,7 +343,7 @@ public abstract class Element extends Annotated {
      *     {@link Boolean }
      *     
      */
-    public void setNillable(Boolean value) {
+    public void setNillable(final Boolean value) {
         this.nillable = value;
     }
 
@@ -371,7 +371,7 @@ public abstract class Element extends Annotated {
      *     {@link Boolean }
      *     
      */
-    public void setAbstract(Boolean value) {
+    public void setAbstract(final Boolean value) {
         this._abstract = value;
     }
 
@@ -453,7 +453,7 @@ public abstract class Element extends Annotated {
      *     {@link FormChoice }
      *     
      */
-    public void setForm(FormChoice value) {
+    public void setForm(final FormChoice value) {
         this.form = value;
     }
 
@@ -481,7 +481,7 @@ public abstract class Element extends Annotated {
      *     {@link BigInteger }
      *     
      */
-    public void setMinOccurs(Integer value) {
+    public void setMinOccurs(final Integer value) {
         this.minOccurs = value;
     }
 
@@ -509,7 +509,7 @@ public abstract class Element extends Annotated {
      *     {@link String }
      *     
      */
-    public void setMaxOccurs(String value) {
+    public void setMaxOccurs(final String value) {
         this.maxOccurs = value;
     }
 
@@ -533,7 +533,7 @@ public abstract class Element extends Annotated {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -557,7 +557,7 @@ public abstract class Element extends Annotated {
      *     {@link QName }
      *     
      */
-    public void setRef(QName value) {
+    public void setRef(final QName value) {
         this.ref = value;
     }
 

@@ -80,14 +80,14 @@ public class ApplicationModuleType extends RegistryPackageType {
     /**
      * Sets the value of the abstractQuery property.
      */
-    public void setAbstractQuery(List<AbstractQueryType> abstractQuery) {
+    public void setAbstractQuery(final List<AbstractQueryType> abstractQuery) {
         this.abstractQuery = abstractQuery;
     }
     
     /**
      * Sets the value of the abstractQuery property.
      */
-    public void setAbstractQuery(AbstractQueryType abstractQuery) {
+    public void setAbstractQuery(final AbstractQueryType abstractQuery) {
         if (this.abstractQuery == null) {
             this.abstractQuery = new ArrayList<AbstractQueryType>();
         }

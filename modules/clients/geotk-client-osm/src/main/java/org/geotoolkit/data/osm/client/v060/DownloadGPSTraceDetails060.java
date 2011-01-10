@@ -27,7 +27,7 @@ import org.geotoolkit.data.osm.client.AbstractDownloadGPSTraceDetails;
  */
 public class DownloadGPSTraceDetails060 extends AbstractDownloadGPSTraceDetails{
 
-    public DownloadGPSTraceDetails060(String serverURL){
+    public DownloadGPSTraceDetails060(final String serverURL){
         super(serverURL,"");
     }
 

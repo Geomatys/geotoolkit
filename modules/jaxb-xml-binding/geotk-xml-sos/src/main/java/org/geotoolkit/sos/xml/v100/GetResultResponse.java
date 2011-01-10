@@ -74,7 +74,7 @@ public class GetResultResponse implements SOSResponse {
      /**
      * Build a new Response to a getResult request.
      */
-     public GetResultResponse(GetResultResponse.Result result){
+     public GetResultResponse(final GetResultResponse.Result result){
          this.result = result;
      }
      
@@ -143,7 +143,7 @@ public class GetResultResponse implements SOSResponse {
         /**
          * Build a new Result
          */
-        public Result(String value, String rs){
+        public Result(final String value, final String rs){
             this.rs    = rs;
             this.value = value;
         }

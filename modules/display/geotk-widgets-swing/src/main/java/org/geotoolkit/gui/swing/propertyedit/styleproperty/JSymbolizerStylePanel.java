@@ -79,7 +79,7 @@ public class JSymbolizerStylePanel extends JPanel implements PropertyPane {
     }
 
     @Override
-    public void setTarget(Object layer) {
+    public void setTarget(final Object layer) {
 
         if (layer instanceof MapLayer) {
             this.layer = (MapLayer) layer;
@@ -98,7 +98,7 @@ public class JSymbolizerStylePanel extends JPanel implements PropertyPane {
         return "";
     }
 
-    public void setSymbolizer(Symbolizer symbol){
+    public void setSymbolizer(final Symbolizer symbol){
         removeAll();
 
         if (symbol instanceof PolygonSymbolizer) {

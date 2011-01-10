@@ -32,7 +32,7 @@ public class DefaultPropertyIsNull implements PropertyIsNull,Serializable {
 
     private final Expression exp;
 
-    public DefaultPropertyIsNull(Expression exp) {
+    public DefaultPropertyIsNull(final Expression exp) {
         if(exp == null){
             throw new NullPointerException("Expression can not be null");
         }
@@ -51,7 +51,7 @@ public class DefaultPropertyIsNull implements PropertyIsNull,Serializable {
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         Object obj = exp.evaluate(object);
         return obj == null;
     }
@@ -60,7 +60,7 @@ public class DefaultPropertyIsNull implements PropertyIsNull,Serializable {
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -76,7 +76,7 @@ public class DefaultPropertyIsNull implements PropertyIsNull,Serializable {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

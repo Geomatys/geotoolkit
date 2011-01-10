@@ -44,7 +44,7 @@ public class CachedFill extends Cache<Fill>{
     private Paint cachedPaint = null;
     private CachedGraphic cachedGraphic = null;
 
-    private CachedFill(Fill fill){
+    private CachedFill(final Fill fill){
         super(fill);
     }
 
@@ -159,7 +159,7 @@ public class CachedFill extends Cache<Fill>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(Feature feature){
+    public boolean isVisible(final Feature feature){
         evaluate();
         
         
@@ -201,7 +201,7 @@ public class CachedFill extends Cache<Fill>{
     /**
      * @return Java2D composite for this feature
      */
-    public AlphaComposite getJ2DComposite(Feature feature){
+    public AlphaComposite getJ2DComposite(final Feature feature){
         evaluate();
 
         if(cachedComposite == null){
@@ -218,7 +218,7 @@ public class CachedFill extends Cache<Fill>{
      * 
      * @return Java2D paint for this feature
      */
-    public Paint getJ2DPaint(Feature feature, int x, int y, float coeff, RenderingHints hints){
+    public Paint getJ2DPaint(final Feature feature, final int x, final int y, final float coeff, final RenderingHints hints){
         evaluate();
 
         if(cachedPaint == null){
@@ -243,7 +243,7 @@ public class CachedFill extends Cache<Fill>{
         return cachedPaint;
     }
 
-    public static CachedFill cache(Fill fill){
+    public static CachedFill cache(final Fill fill){
         return new CachedFill(fill);
     }
 

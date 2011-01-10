@@ -99,7 +99,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
 
     }
 
-    public BlockEncodingPropertyType(BlockEncodingProperty be) {
+    public BlockEncodingPropertyType(final BlockEncodingProperty be) {
         if (be != null) {
             this.actuate      = be.getActuate();
             this.arcrole      = be.getArcrole();
@@ -124,7 +124,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
         }
     }
 
-    public BlockEncodingPropertyType(AbstractEncodingProperty be) {
+    public BlockEncodingPropertyType(final AbstractEncodingProperty be) {
         if (be != null) {
             this.actuate      = be.getActuate();
             this.arcrole      = be.getArcrole();
@@ -183,7 +183,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the standardFormat property.
      */
-    public void setStandardFormat(StandardFormat value) {
+    public void setStandardFormat(final StandardFormat value) {
         this.standardFormat = value;
     }
 
@@ -197,7 +197,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the binaryBlock property.
      */
-    public void setBinaryBlock(BinaryBlock value) {
+    public void setBinaryBlock(final BinaryBlock value) {
         this.binaryBlock = value;
     }
 
@@ -211,7 +211,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the textBlock property.
      */
-    public void setTextBlock(TextBlock value) {
+    public void setTextBlock(final TextBlock value) {
         this.textBlock = value;
     }
 
@@ -225,7 +225,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the xmlBlock property.
      */
-    public void setXMLBlock(XMLBlockType value) {
+    public void setXMLBlock(final XMLBlockType value) {
         this.xmlBlock = value;
     }
 
@@ -241,7 +241,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
      * 
      * @param value
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -255,7 +255,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -269,7 +269,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -284,7 +284,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -298,7 +298,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -312,7 +312,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -326,7 +326,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -340,7 +340,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty, Abstrac
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

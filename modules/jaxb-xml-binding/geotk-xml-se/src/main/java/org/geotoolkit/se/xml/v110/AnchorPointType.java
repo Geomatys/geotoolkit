@@ -75,7 +75,7 @@ public class AnchorPointType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setAnchorPointX(ParameterValueType value) {
+    public void setAnchorPointX(final ParameterValueType value) {
         this.anchorPointX = value;
     }
 
@@ -99,7 +99,7 @@ public class AnchorPointType {
      *     {@link ParameterValueType }
      *     
      */
-    public void setAnchorPointY(ParameterValueType value) {
+    public void setAnchorPointY(final ParameterValueType value) {
         this.anchorPointY = value;
     }
 

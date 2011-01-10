@@ -26,7 +26,7 @@ import org.geotoolkit.data.osm.client.AbstractGetCapabilities;
  */
 public class GetCapabilities060 extends AbstractGetCapabilities{
 
-    public GetCapabilities060(String serverURL){
+    public GetCapabilities060(final String serverURL){
         super(serverURL);
     }
 

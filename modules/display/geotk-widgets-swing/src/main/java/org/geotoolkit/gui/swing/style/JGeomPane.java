@@ -38,7 +38,7 @@ public class JGeomPane extends javax.swing.JPanel {
         initComponents();
     }
     
-    public void setLayer(MapLayer layer){                
+    public void setLayer(final MapLayer layer){                
         guiBox.setLayer(layer);        
         lbl.setEnabled( layer != null );              
     }
@@ -51,7 +51,7 @@ public class JGeomPane extends javax.swing.JPanel {
         return guiBox.getGeom();
     }
     
-    public void setGeom(String name){
+    public void setGeom(final String name){
         guiBox.setGeom(name);
     }    
     

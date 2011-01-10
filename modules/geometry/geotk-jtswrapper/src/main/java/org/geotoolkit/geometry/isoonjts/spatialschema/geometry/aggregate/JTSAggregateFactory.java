@@ -43,7 +43,7 @@ public class JTSAggregateFactory extends Factory implements AggregateFactory {
         this( DefaultGeographicCRS.WGS84);
     }
 
-    public JTSAggregateFactory( CoordinateReferenceSystem crs ) {
+    public JTSAggregateFactory( final CoordinateReferenceSystem crs ) {
         this.crs = crs;
     }
 
@@ -51,7 +51,7 @@ public class JTSAggregateFactory extends Factory implements AggregateFactory {
      * {@inheritDoc }
      */
     @Override
-    public MultiCurve createMultiCurve( Set arg0 ) {
+    public MultiCurve createMultiCurve( final Set arg0 ) {
         throw new UnsupportedOperationException("MultiCurve not implemented");
     }
 
@@ -59,7 +59,7 @@ public class JTSAggregateFactory extends Factory implements AggregateFactory {
      * {@inheritDoc }
      */
     @Override
-    public MultiPoint createMultiPoint( Set arg0 ) {
+    public MultiPoint createMultiPoint( final Set arg0 ) {
         return new JTSMultiPoint( crs );
     }
 
@@ -67,7 +67,7 @@ public class JTSAggregateFactory extends Factory implements AggregateFactory {
      * {@inheritDoc }
      */
     @Override
-    public MultiPrimitive createMultiPrimitive( Set arg0 ) {
+    public MultiPrimitive createMultiPrimitive( final Set arg0 ) {
         throw new UnsupportedOperationException("MultiPrimitive not implemented");
     }
 
@@ -75,7 +75,7 @@ public class JTSAggregateFactory extends Factory implements AggregateFactory {
      * {@inheritDoc }
      */
     @Override
-    public MultiSurface createMultiSurface( Set arg0 ) {
+    public MultiSurface createMultiSurface( final Set arg0 ) {
         throw new UnsupportedOperationException("MultiSurface not implemented");
     }
 

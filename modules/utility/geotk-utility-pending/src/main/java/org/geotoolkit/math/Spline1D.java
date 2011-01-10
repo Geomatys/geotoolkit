@@ -72,7 +72,7 @@ public class Spline1D extends Search1D {
      * @param yp1 valeur de la dérivée première au premier point.
      * @param ypn valeur de la dérivée première au dernier point.
      */
-    public Spline1D(double yp1, double ypn) {
+    public Spline1D(final double yp1, final double ypn) {
         this.yp1 = yp1;
         this.ypn = ypn;
     }
@@ -106,7 +106,7 @@ public class Spline1D extends Search1D {
      * @return				Valeur <var>y</var> interpolée.
      */
     @Override
-    protected double interpolate(double xi, boolean reUseIndex) throws ExtrapolationException {
+    protected double interpolate(final double xi, final boolean reUseIndex) throws ExtrapolationException {
         if (ignoreYNaN && !reUseIndex) {
             validateIndex(sentry);
         }
@@ -242,7 +242,7 @@ public class Spline1D extends Search1D {
      * @return			Le tableau des <var>y</var>.
      */
     @Override
-    public double[] interpolateNaN(double dxStart, double dxStop) {
+    public double[] interpolateNaN(final double dxStart, final double dxStop) {
         return interpolateNaN(dxStart, dxStop, y);
     }
 }

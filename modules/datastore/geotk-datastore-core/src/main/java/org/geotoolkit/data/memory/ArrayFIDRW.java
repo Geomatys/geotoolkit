@@ -37,7 +37,7 @@ class ArrayFIDRW implements FeatureIDReader{
     private final AtomicLong inc;
     private final Iterator<String> iteKeys;
 
-    ArrayFIDRW(Map<String,Object[]> features, String base, AtomicLong inc) {
+    ArrayFIDRW(final Map<String,Object[]> features, final String base, final AtomicLong inc) {
         this.base = base;
         this.inc = inc;
         this.iteKeys = features.keySet().iterator();

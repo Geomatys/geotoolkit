@@ -118,7 +118,7 @@ public class ProcessBriefType
      *     {@link WSDL }
      *     
      */
-    public void setWSDL(WSDL value) {
+    public void setWSDL(final WSDL value) {
         this.wsdl = value;
     }
 
@@ -142,7 +142,7 @@ public class ProcessBriefType
      *     {@link String }
      *     
      */
-    public void setProcessVersion(String value) {
+    public void setProcessVersion(final String value) {
         this.processVersion = value;
     }
 

@@ -31,7 +31,7 @@ public class DefaultArithmeticOperators implements ArithmeticOperators {
     private final boolean simple;
     private final Functions functions;
 
-    public DefaultArithmeticOperators(boolean simple, Functions functions) {
+    public DefaultArithmeticOperators(final boolean simple, final Functions functions) {
         if(functions == null){
             throw new NullPointerException("Functions can not be null");
         }
@@ -59,7 +59,7 @@ public class DefaultArithmeticOperators implements ArithmeticOperators {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -128,7 +128,7 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
     private static final class GenericFilterFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericFilterFeatureIterator<F,R> implements FeatureReader<T,F>{
 
-        private GenericFilterFeatureReader(R reader, Filter filter){
+        private GenericFilterFeatureReader(final R reader, final Filter filter){
             super(reader,filter);
         }
         
@@ -149,7 +149,7 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
     private static final class GenericFilterFeatureWriter<T extends FeatureType, F extends Feature, R extends FeatureWriter<T,F>>
             extends GenericFilterFeatureIterator<F,R> implements FeatureWriter<T,F>{
 
-        private GenericFilterFeatureWriter(R writer, Filter filter){
+        private GenericFilterFeatureWriter(final R writer, final Filter filter){
             super(writer,filter);
         }
 
@@ -167,21 +167,21 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
     /**
      * Wrap a FeatureIterator with a filter.
      */
-    public static <F extends Feature> FeatureIterator<F> wrap(FeatureIterator<F> reader, Filter filter){
+    public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final Filter filter){
         return new GenericFilterFeatureIterator(reader, filter);
     }
 
     /**
      * Wrap a FeatureReader with a filter.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(FeatureReader<T,F> reader, Filter filter){
+    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(final FeatureReader<T,F> reader, final Filter filter){
         return new GenericFilterFeatureReader(reader, filter);
     }
 
     /**
      * Wrap a FeatureWriter with a filter.
      */
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(FeatureWriter<T,F> writer, Filter filter){
+    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(final FeatureWriter<T,F> writer, final Filter filter){
         return new GenericFilterFeatureWriter(writer, filter);
     }
 

@@ -59,7 +59,7 @@ public class CurveSegmentArrayPropertyType {
 
     public CurveSegmentArrayPropertyType() {}
 
-    public CurveSegmentArrayPropertyType(List<? extends AbstractCurveSegmentType> segments) {
+    public CurveSegmentArrayPropertyType(final List<? extends AbstractCurveSegmentType> segments) {
         if (segments != null) {
             ObjectFactory factory = new ObjectFactory();
             abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
@@ -99,11 +99,11 @@ public class CurveSegmentArrayPropertyType {
         return this.abstractCurveSegment;
     }
 
-    public void setJbAbstractCurveSegment(List<JAXBElement<? extends AbstractCurveSegmentType>> abstractCurveSegment) {
+    public void setJbAbstractCurveSegment(final List<JAXBElement<? extends AbstractCurveSegmentType>> abstractCurveSegment) {
         this.abstractCurveSegment = abstractCurveSegment;
     }
 
-    public void setAbstractCurveSegment(AbstractCurveSegmentType abstractCurveSegment) {
+    public void setAbstractCurveSegment(final AbstractCurveSegmentType abstractCurveSegment) {
         if (this.abstractCurveSegment == null) {
             this.abstractCurveSegment = new ArrayList<JAXBElement<? extends AbstractCurveSegmentType>>();
         }

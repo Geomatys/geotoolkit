@@ -44,8 +44,8 @@ public class ShapefileHeader {
     private final double minY;
     private final double maxY;
 
-    public ShapefileHeader(int fileLenght, int version, 
-            ShapeType shapeType, double minX, double maxX, double minY, double maxY){
+    public ShapefileHeader(final int fileLenght, final int version, 
+            final ShapeType shapeType, final double minX, final double maxX, final double minY, final double maxY){
         this.fileLength = fileLenght;
         this.version = version;
         this.shapeType = shapeType;
@@ -94,7 +94,7 @@ public class ShapefileHeader {
         return sb.toString();
     }
 
-    private static void checkMagic(int fileCode, final boolean strict) throws IOException {
+    private static void checkMagic(final int fileCode, final boolean strict) throws IOException {
         if (fileCode != MAGIC) {
             final String message = "Wrong magic number, expected " + MAGIC + ", got " + fileCode;
             if (!strict) {
@@ -105,7 +105,7 @@ public class ShapefileHeader {
         }
     }
 
-    private static void checkVersion(int version,final boolean strict) throws IOException {
+    private static void checkVersion(final int version,final boolean strict) throws IOException {
         if (version != VERSION) {
             final String message = "Wrong version, expected " + MAGIC + ", got " + version;
             if (!strict) {
@@ -125,7 +125,7 @@ public class ShapefileHeader {
      * @return
      * @throws IOException
      */
-    public static ShapefileHeader read(ByteBuffer buffer, boolean strict) throws IOException {
+    public static ShapefileHeader read(final ByteBuffer buffer, final boolean strict) throws IOException {
 
         buffer.order(ByteOrder.BIG_ENDIAN);
         final int fileCode = buffer.getInt();
@@ -157,8 +157,8 @@ public class ShapefileHeader {
     /**
      * Write header in the given ByteBuffer.
      */
-    public static void write(ByteBuffer buffer, ShapeType type,
-            int length, double minX, double minY, double maxX, double maxY)
+    public static void write(final ByteBuffer buffer, final ShapeType type,
+            final int length, final double minX, final double minY, final double maxX, final double maxY)
             throws IOException {
         buffer.order(ByteOrder.BIG_ENDIAN);
 
@@ -189,7 +189,7 @@ public class ShapefileHeader {
         }
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         final FileChannel channel = new FileInputStream(new File(args[0])).getChannel();
         System.out.println(ShapefileReader.readHeader(channel, true));
         channel.close();

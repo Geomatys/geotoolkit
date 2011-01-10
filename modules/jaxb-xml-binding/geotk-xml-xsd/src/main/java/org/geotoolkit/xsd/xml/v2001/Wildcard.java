@@ -106,7 +106,7 @@ public class Wildcard
      *     {@link String }
      *     
      */
-    public void setProcessContents(String value) {
+    public void setProcessContents(final String value) {
         this.processContents = value;
     }
 

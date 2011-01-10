@@ -58,11 +58,11 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
 
     }
 
-    public SimpleDataRecordType(List<AnyScalarPropertyType> field) {
+    public SimpleDataRecordType(final List<AnyScalarPropertyType> field) {
         this.field = field;
     }
 
-    public SimpleDataRecordType(SimpleDataRecord record) {
+    public SimpleDataRecordType(final SimpleDataRecord record) {
         super(record);
         if (record != null && record.getField() != null) {
             this.field = new ArrayList<AnyScalarPropertyType>();
@@ -84,11 +84,11 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
         return this.field;
     }
 
-    public void setField(List<AnyScalarPropertyType> field) {
+    public void setField(final List<AnyScalarPropertyType> field) {
         this.field = field;
     }
 
-    public void setField(AnyScalarPropertyType field) {
+    public void setField(final AnyScalarPropertyType field) {
         if (this.field == null) {
             this.field = new ArrayList<AnyScalarPropertyType>();
         }

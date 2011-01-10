@@ -59,7 +59,7 @@ public class InterpolationMethodBaseType extends CodeType {
     /**
      * Build a simple interpolation method
      */
-    public InterpolationMethodBaseType(String value){
+    public InterpolationMethodBaseType(final String value){
         super(value);
     }
 

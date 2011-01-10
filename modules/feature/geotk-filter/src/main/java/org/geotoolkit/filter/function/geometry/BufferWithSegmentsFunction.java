@@ -23,12 +23,12 @@ import org.opengis.filter.expression.Expression;
 
 public class BufferWithSegmentsFunction extends AbstractFunction {
 
-    public BufferWithSegmentsFunction(Expression expr1, Expression expr2, Expression expr3) {
+    public BufferWithSegmentsFunction(final Expression expr1, final Expression expr2, final Expression expr3) {
         super(GeometryFunctionFactory.BUFFER_WITH_SEGMENTS, new Expression[] {expr1, expr2, expr3}, null);
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         Geometry arg0;
         double arg1;
         int arg2;

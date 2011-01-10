@@ -32,14 +32,14 @@ public class ShpDBF {
 
     private ShpDBF(){}
 
-    public static DbaseFileReader reader(ShpFiles files, boolean memoryMapped, Charset set) throws IOException{
+    public static DbaseFileReader reader(final ShpFiles files, final boolean memoryMapped, final Charset set) throws IOException{
         final ShpDBF wrap = new ShpDBF();
         final ReadableByteChannel rbc = files.getReadChannel(ShpFileType.DBF, wrap);
         final DbaseFileReader reader = new DbaseFileReader(rbc, memoryMapped, set);
         return reader;
     }
 
-    public static IndexedDbaseFileReader indexed(ShpFiles files, boolean memoryMapped, Charset set) throws IOException{
+    public static IndexedDbaseFileReader indexed(final ShpFiles files, final boolean memoryMapped, final Charset set) throws IOException{
         final ShpDBF wrap = new ShpDBF();
         final ReadableByteChannel rbc = files.getReadChannel(ShpFileType.DBF, wrap);
         final IndexedDbaseFileReader reader = new IndexedDbaseFileReader(rbc, memoryMapped, set);

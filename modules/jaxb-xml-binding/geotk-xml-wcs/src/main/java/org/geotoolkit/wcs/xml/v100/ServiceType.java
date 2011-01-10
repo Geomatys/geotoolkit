@@ -81,9 +81,9 @@ public class ServiceType extends AbstractDescriptionType {
     /**
      * Build a new Service Type, without version specified.
      */
-    public ServiceType(List<MetadataLinkType> metadataLink, String name, String label, String description,
-            Keywords keywords, ResponsiblePartyType responsibleParty, CodeListType fees, CodeListType accessConstraints,
-            String updateSequence)
+    public ServiceType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description,
+            final Keywords keywords, final ResponsiblePartyType responsibleParty, final CodeListType fees, final CodeListType accessConstraints,
+            final String updateSequence)
     {
         this(metadataLink, name, label, description, null, keywords, responsibleParty, fees, accessConstraints, updateSequence);
     }
@@ -91,9 +91,9 @@ public class ServiceType extends AbstractDescriptionType {
     /**
      * Build a new Service Type
      */
-    public ServiceType(List<MetadataLinkType> metadataLink, String name, String label, String description, String version,
-            Keywords keywords, ResponsiblePartyType responsibleParty, CodeListType fees, CodeListType accessConstraints,
-            String updateSequence)
+    public ServiceType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description, final String version,
+            final Keywords keywords, final ResponsiblePartyType responsibleParty, final CodeListType fees, final CodeListType accessConstraints,
+            final String updateSequence)
     {
         super(metadataLink, name, label, description);
         this.version           = version;
@@ -152,7 +152,7 @@ public class ServiceType extends AbstractDescriptionType {
         return accessConstraints;
     }
 
-    public void setVersion(String version) {
+    public void setVersion(final String version) {
         this.version = version;
     }
 }

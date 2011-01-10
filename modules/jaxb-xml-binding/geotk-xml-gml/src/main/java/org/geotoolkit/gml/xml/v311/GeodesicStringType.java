@@ -97,7 +97,7 @@ public class GeodesicStringType
      *     {@link DirectPositionListType }
      *     
      */
-    public void setPosList(DirectPositionListType value) {
+    public void setPosList(final DirectPositionListType value) {
         this.posList = value;
     }
 
@@ -155,7 +155,7 @@ public class GeodesicStringType
      *     {@link CurveInterpolationType }
      *     
      */
-    public void setInterpolation(CurveInterpolationType value) {
+    public void setInterpolation(final CurveInterpolationType value) {
         this.interpolation = value;
     }
 

@@ -91,8 +91,8 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
      * @param outputFormat The desired MIME type of the response
      * @param schemaLanguage sefault value is http://www.w3.org/XML/Schema
      */
-    public DescribeRecordType(String service, String version, List<QName> typeName,
-            String outputFormat, String schemaLanguage) {
+    public DescribeRecordType(final String service, final String version, final List<QName> typeName,
+            final String outputFormat, final String schemaLanguage) {
         super(service, version);
         this.outputFormat   = outputFormat;
         this.schemaLanguage = schemaLanguage;
@@ -112,7 +112,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         return typeName;
     }
 
-    public void setTypeName(List<QName> typeName) {
+    public void setTypeName(final List<QName> typeName) {
         this.typeName = typeName;
     }
 
@@ -126,7 +126,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
     /**
      * Gets the value of the outputFormat property.
      */
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
 
@@ -141,7 +141,7 @@ public class DescribeRecordType extends RequestBaseType implements DescribeRecor
         }
     }
 
-    public void setSchemaLanguage(String schemaLanguage) {
+    public void setSchemaLanguage(final String schemaLanguage) {
         this.schemaLanguage = schemaLanguage;
     }
 

@@ -40,7 +40,7 @@ public abstract class AbstractProcessFactory implements ProcessFactory {
     }
 
     @Override
-    public final ProcessDescriptor getDescriptor(String name) throws IllegalArgumentException{
+    public final ProcessDescriptor getDescriptor(final String name) throws IllegalArgumentException{
         final ProcessDescriptor desc = descriptors.get(name);
         if(desc == null){
             throw new IllegalArgumentException("No process descriptor for name : "+ name);
@@ -62,7 +62,7 @@ public abstract class AbstractProcessFactory implements ProcessFactory {
     }
 
     @Override
-    public final Process create(String name) throws IllegalArgumentException {
+    public final Process create(final String name) throws IllegalArgumentException {
         return getDescriptor(name).createProcess();
     }
 

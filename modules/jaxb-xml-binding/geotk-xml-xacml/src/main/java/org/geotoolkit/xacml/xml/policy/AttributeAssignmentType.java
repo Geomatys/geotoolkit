@@ -60,7 +60,7 @@ public class AttributeAssignmentType extends AttributeValueType {
     * Sets the value of the attributeId property.
     * 
     */
-   public void setAttributeId(String value) {
+   public void setAttributeId(final String value) {
       this.attributeId = value;
    }
 

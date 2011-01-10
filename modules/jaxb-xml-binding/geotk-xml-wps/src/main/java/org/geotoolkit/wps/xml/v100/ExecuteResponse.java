@@ -113,7 +113,7 @@ public class ExecuteResponse
      *     {@link ProcessBriefType }
      *     
      */
-    public void setProcess(ProcessBriefType value) {
+    public void setProcess(final ProcessBriefType value) {
         this.process = value;
     }
 
@@ -137,7 +137,7 @@ public class ExecuteResponse
      *     {@link StatusType }
      *     
      */
-    public void setStatus(StatusType value) {
+    public void setStatus(final StatusType value) {
         this.status = value;
     }
 
@@ -161,7 +161,7 @@ public class ExecuteResponse
      *     {@link DataInputsType }
      *     
      */
-    public void setDataInputs(DataInputsType value) {
+    public void setDataInputs(final DataInputsType value) {
         this.dataInputs = value;
     }
 
@@ -185,7 +185,7 @@ public class ExecuteResponse
      *     {@link OutputDefinitionsType }
      *     
      */
-    public void setOutputDefinitions(OutputDefinitionsType value) {
+    public void setOutputDefinitions(final OutputDefinitionsType value) {
         this.outputDefinitions = value;
     }
 
@@ -209,7 +209,7 @@ public class ExecuteResponse
      *     {@link ExecuteResponse.ProcessOutputs }
      *     
      */
-    public void setProcessOutputs(ExecuteResponse.ProcessOutputs value) {
+    public void setProcessOutputs(final ExecuteResponse.ProcessOutputs value) {
         this.processOutputs = value;
     }
 
@@ -233,7 +233,7 @@ public class ExecuteResponse
      *     {@link String }
      *     
      */
-    public void setServiceInstance(String value) {
+    public void setServiceInstance(final String value) {
         this.serviceInstance = value;
     }
 
@@ -257,7 +257,7 @@ public class ExecuteResponse
      *     {@link String }
      *     
      */
-    public void setStatusLocation(String value) {
+    public void setStatusLocation(final String value) {
         this.statusLocation = value;
     }
 

@@ -91,7 +91,7 @@ public class FunctionType extends ExpressionType implements Function {
     /**
      * Build a new Function  TODO
      */
-     public FunctionType(String name, Expression... expression) {
+     public FunctionType(final String name, final Expression... expression) {
          this.expression = new ArrayList<JAXBElement<?>>();
          StringBuilder report = new StringBuilder();
          for (Expression e:expression)  {
@@ -103,7 +103,7 @@ public class FunctionType extends ExpressionType implements Function {
      /**
      * Build a new Function  TODO
      */
-     public FunctionType(Functions functions) {
+     public FunctionType(final Functions functions) {
          this.expression = new ArrayList<JAXBElement<?>>();
          
          throw new UnsupportedOperationException("Operation Not supported yet");
@@ -129,7 +129,7 @@ public class FunctionType extends ExpressionType implements Function {
     /**
      * Sets the value of the name property.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -137,15 +137,15 @@ public class FunctionType extends ExpressionType implements Function {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

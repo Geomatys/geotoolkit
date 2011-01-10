@@ -101,7 +101,7 @@ public class RasterSymbolizer
      *     {@link Geometry }
      *     
      */
-    public void setGeometry(Geometry value) {
+    public void setGeometry(final Geometry value) {
         this.geometry = value;
     }
 
@@ -125,7 +125,7 @@ public class RasterSymbolizer
      *     {@link ParameterValueType }
      *     
      */
-    public void setOpacity(ParameterValueType value) {
+    public void setOpacity(final ParameterValueType value) {
         this.opacity = value;
     }
 
@@ -149,7 +149,7 @@ public class RasterSymbolizer
      *     {@link ChannelSelection }
      *     
      */
-    public void setChannelSelection(ChannelSelection value) {
+    public void setChannelSelection(final ChannelSelection value) {
         this.channelSelection = value;
     }
 
@@ -173,7 +173,7 @@ public class RasterSymbolizer
      *     {@link OverlapBehavior }
      *     
      */
-    public void setOverlapBehavior(OverlapBehavior value) {
+    public void setOverlapBehavior(final OverlapBehavior value) {
         this.overlapBehavior = value;
     }
 
@@ -197,7 +197,7 @@ public class RasterSymbolizer
      *     {@link ColorMap }
      *     
      */
-    public void setColorMap(ColorMap value) {
+    public void setColorMap(final ColorMap value) {
         this.colorMap = value;
     }
 
@@ -221,7 +221,7 @@ public class RasterSymbolizer
      *     {@link ContrastEnhancement }
      *     
      */
-    public void setContrastEnhancement(ContrastEnhancement value) {
+    public void setContrastEnhancement(final ContrastEnhancement value) {
         this.contrastEnhancement = value;
     }
 
@@ -245,7 +245,7 @@ public class RasterSymbolizer
      *     {@link ShadedRelief }
      *     
      */
-    public void setShadedRelief(ShadedRelief value) {
+    public void setShadedRelief(final ShadedRelief value) {
         this.shadedRelief = value;
     }
 
@@ -269,7 +269,7 @@ public class RasterSymbolizer
      *     {@link ImageOutline }
      *     
      */
-    public void setImageOutline(ImageOutline value) {
+    public void setImageOutline(final ImageOutline value) {
         this.imageOutline = value;
     }
 

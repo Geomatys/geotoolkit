@@ -80,7 +80,7 @@ public class Vec2Type {
      *     {@link Double }
      *     
      */
-    public void setX(Double value) {
+    public void setX(final Double value) {
         this.x = value;
     }
 
@@ -108,7 +108,7 @@ public class Vec2Type {
      *     {@link Double }
      *     
      */
-    public void setY(Double value) {
+    public void setY(final Double value) {
         this.y = value;
     }
 
@@ -136,7 +136,7 @@ public class Vec2Type {
      *     {@link UnitsEnumType }
      *     
      */
-    public void setXunits(UnitsEnumType value) {
+    public void setXunits(final UnitsEnumType value) {
         this.xunits = value;
     }
 
@@ -164,7 +164,7 @@ public class Vec2Type {
      *     {@link UnitsEnumType }
      *     
      */
-    public void setYunits(UnitsEnumType value) {
+    public void setYunits(final UnitsEnumType value) {
         this.yunits = value;
     }
 

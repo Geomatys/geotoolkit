@@ -41,7 +41,7 @@ public class CRSAction extends AbstractAction {
     private JMap2D map = null;
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
             JCRSChooser chooser = new JCRSChooser(null, true);
             chooser.setCRS(map.getCanvas().getObjectiveCRS());
@@ -61,7 +61,7 @@ public class CRSAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

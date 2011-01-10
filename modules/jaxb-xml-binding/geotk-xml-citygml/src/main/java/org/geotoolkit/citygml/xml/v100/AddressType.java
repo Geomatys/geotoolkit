@@ -88,7 +88,7 @@ public class AddressType extends AbstractFeatureEntry {
      *     {@link XalAddressPropertyType }
      *     
      */
-    public void setXalAddress(XalAddressPropertyType value) {
+    public void setXalAddress(final XalAddressPropertyType value) {
         this.xalAddress = value;
     }
 
@@ -112,7 +112,7 @@ public class AddressType extends AbstractFeatureEntry {
      *     {@link MultiPointPropertyType }
      *     
      */
-    public void setMultiPoint(MultiPointPropertyType value) {
+    public void setMultiPoint(final MultiPointPropertyType value) {
         this.multiPoint = value;
     }
 

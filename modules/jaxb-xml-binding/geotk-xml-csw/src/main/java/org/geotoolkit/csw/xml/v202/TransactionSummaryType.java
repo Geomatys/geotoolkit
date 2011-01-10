@@ -81,7 +81,7 @@ public class TransactionSummaryType {
     /**
      * Build a new Transation summary.
      */
-    public TransactionSummaryType(int totalInserted, int totalUpdated, int totalDeleted, String requestId) {
+    public TransactionSummaryType(final int totalInserted, final int totalUpdated, final int totalDeleted, final String requestId) {
         this.requestId     = requestId;
         this.totalDeleted  = totalDeleted;
         this.totalInserted = totalInserted;

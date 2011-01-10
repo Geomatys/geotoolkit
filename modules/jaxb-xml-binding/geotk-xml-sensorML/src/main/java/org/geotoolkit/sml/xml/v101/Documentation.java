@@ -85,7 +85,7 @@ public class Documentation implements AbstractDocumentation {
 
     }
 
-    public Documentation(AbstractDocumentation doc) {
+    public Documentation(final AbstractDocumentation doc) {
         if (doc != null) {
             this.actuate      = doc.getActuate();
             this.arcrole      = doc.getArcrole();
@@ -105,11 +105,11 @@ public class Documentation implements AbstractDocumentation {
 
     }
 
-    public Documentation(Document document) {
+    public Documentation(final Document document) {
         this.document = document;
     }
 
-    public Documentation(DocumentList documentList) {
+    public Documentation(final DocumentList documentList) {
         this.documentList = documentList;
     }
 
@@ -134,7 +134,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link Document }
      *     
      */
-    public void setDocument(Document value) {
+    public void setDocument(final Document value) {
         this.document = value;
     }
 
@@ -158,7 +158,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link DocumentList }
      *     
      */
-    public void setDocumentList(DocumentList value) {
+    public void setDocumentList(final DocumentList value) {
         this.documentList = value;
     }
 
@@ -182,7 +182,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -206,7 +206,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -230,7 +230,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -254,7 +254,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -278,7 +278,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -302,7 +302,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -326,7 +326,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -350,7 +350,7 @@ public class Documentation implements AbstractDocumentation {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

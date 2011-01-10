@@ -59,7 +59,7 @@ public class JConfigBar extends JToolBar {
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JConfigBar(JMap2D pane) {
+    public JConfigBar(final JMap2D pane) {
         setMap(pane);
         init();
     }
@@ -70,7 +70,7 @@ public class JConfigBar extends JToolBar {
     }
 
 
-    private JButton buildButton(ImageIcon img,Action action, String tooltip) {
+    private JButton buildButton(final ImageIcon img,final Action action, final String tooltip) {
         JButton but = new JButton(action);
         but.setIcon(img);
         but.setBorder(new EmptyBorder(largeur, largeur, largeur, largeur));
@@ -87,7 +87,7 @@ public class JConfigBar extends JToolBar {
      * set the related Map2D
      * @param map2d : related Map2D
      */
-    public void setMap(JMap2D map2d) {
+    public void setMap(final JMap2D map2d) {
         map = map2d;
         ACTION_CONFIG.setMap(map);
         ACTION_DEBUG.setMap(map);

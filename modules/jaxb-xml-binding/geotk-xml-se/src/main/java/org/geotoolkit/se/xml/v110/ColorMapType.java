@@ -75,7 +75,7 @@ public class ColorMapType {
      *     {@link CategorizeType }
      *     
      */
-    public void setCategorize(CategorizeType value) {
+    public void setCategorize(final CategorizeType value) {
         this.categorize = value;
     }
 
@@ -99,7 +99,7 @@ public class ColorMapType {
      *     {@link InterpolateType }
      *     
      */
-    public void setInterpolate(InterpolateType value) {
+    public void setInterpolate(final InterpolateType value) {
         this.interpolate = value;
     }
 

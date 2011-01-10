@@ -80,7 +80,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
         
     }
     
-    public Count(AbstractCount q) {
+    public Count(final AbstractCount q) {
         super(q);
         if (q != null) {
             this.axisID         = q.getAxisID();
@@ -112,7 +112,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     /**
      * Sets the value of the constraint property.
      */
-    public void setConstraint(AllowedValuesPropertyType value) {
+    public void setConstraint(final AllowedValuesPropertyType value) {
         this.constraint = value;
     }
 
@@ -127,7 +127,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
         return this.quality;
     }
 
-    public void setQuality(QualityPropertyType quality) {
+    public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
                 this.quality = new ArrayList<QualityPropertyType>();
@@ -136,7 +136,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
         }
     }
 
-    public void setQuality(List<QualityPropertyType> quality) {
+    public void setQuality(final List<QualityPropertyType> quality) {
         this.quality = quality;
     }
 
@@ -151,7 +151,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     /**
      * Sets the value of the value property.
      */
-    public void setValue(Integer value) {
+    public void setValue(final Integer value) {
         this.value = value;
     }
 
@@ -167,7 +167,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
      * Sets the value of the referenceFrame property.
      * 
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -181,7 +181,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
     /**
      * Sets the value of the axisID property.
      */
-    public void setAxisID(String value) {
+    public void setAxisID(final String value) {
         this.axisID = value;
     }
 

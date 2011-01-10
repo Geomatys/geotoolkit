@@ -56,7 +56,7 @@ public class JConfigDialog extends javax.swing.JDialog {
     private CoordinateReferenceSystem crs = DefaultGeographicCRS.WGS84;
 
     /** Creates new form JConfigDialog */
-    public JConfigDialog(java.awt.Frame parent,JMap2D map) {
+    public JConfigDialog(final java.awt.Frame parent,final JMap2D map) {
         super(parent, true);
         this.map = map;
         initComponents();
@@ -260,7 +260,7 @@ public class JConfigDialog extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiNorthActivateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiNorthActivateActionPerformed
+    private void guiNorthActivateActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiNorthActivateActionPerformed
         if(guiNorthActivate.isSelected()){
             if(getNorthDecoration() == null)map.addDecoration(new JNorthArrowDecoration());
         }else{
@@ -268,7 +268,7 @@ public class JConfigDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_guiNorthActivateActionPerformed
 
-    private void guiScaleActivateActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiScaleActivateActionPerformed
+    private void guiScaleActivateActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiScaleActivateActionPerformed
         if(guiScaleActivate.isSelected()){
             if(getScaleDecoration() == null)map.addDecoration(new JScaleBarDecoration());
         }else{
@@ -276,7 +276,7 @@ public class JConfigDialog extends javax.swing.JDialog {
         }
     }//GEN-LAST:event_guiScaleActivateActionPerformed
 
-    private void guiUnitItemStateChanged(java.awt.event.ItemEvent evt) {//GEN-FIRST:event_guiUnitItemStateChanged
+    private void guiUnitItemStateChanged(final java.awt.event.ItemEvent evt) {//GEN-FIRST:event_guiUnitItemStateChanged
         JScaleBarDecoration deco = getScaleDecoration();
         if(deco != null){
             deco.setUnit((Unit) guiUnit.getSelectedItem());
@@ -284,7 +284,7 @@ public class JConfigDialog extends javax.swing.JDialog {
 
     }//GEN-LAST:event_guiUnitItemStateChanged
 
-    private void colorApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorApplyActionPerformed
+    private void colorApplyActionPerformed(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_colorApplyActionPerformed
 
         BackgroundPainter deco = new SolidColorPainter(guiColor.getColor());
 
@@ -319,7 +319,7 @@ public class JConfigDialog extends javax.swing.JDialog {
 
     }//GEN-LAST:event_colorApplyActionPerformed
 
-    private void choose(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_choose
+    private void choose(final java.awt.event.ActionEvent evt) {//GEN-FIRST:event_choose
         JCRSChooser chooser = new JCRSChooser(null, true);
         chooser.setCRS(map.getCanvas().getObjectiveCRS());
         ACTION act = chooser.showDialog();

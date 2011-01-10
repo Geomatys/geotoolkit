@@ -65,7 +65,7 @@ public abstract class AbstractReferenceSystemBaseType extends DefinitionType {
     /**
      * super constructor to access to Entry constructor
      */
-    public AbstractReferenceSystemBaseType(final String id, final String name, final String description, String srsName)  {
+    public AbstractReferenceSystemBaseType(final String id, final String name, final String description, final String srsName)  {
         super(id, name, description);
         this.srsName = srsName;
     }
@@ -80,7 +80,7 @@ public abstract class AbstractReferenceSystemBaseType extends DefinitionType {
     /**
      * @param srsName the srsName to set
      */
-    public void setSrsName(String srsName) {
+    public void setSrsName(final String srsName) {
         this.srsName = srsName;
     }
 

@@ -83,7 +83,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
      * Sets the value of the inputs property.
      * 
     */
-    public void setInputs(InputsPropertyType value) {
+    public void setInputs(final InputsPropertyType value) {
         this.inputs = value;
     }
 
@@ -99,7 +99,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
      * Sets the value of the outputs property.
      * 
      */
-    public void setOutputs(OutputsPropertyType value) {
+    public void setOutputs(final OutputsPropertyType value) {
         this.outputs = value;
     }
 
@@ -115,7 +115,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
      * Sets the value of the parameters property.
      * 
      */
-    public void setParameters(ParametersPropertyType value) {
+    public void setParameters(final ParametersPropertyType value) {
         this.parameters = value;
     }
 
@@ -131,7 +131,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
      * Sets the value of the method property.
      * 
      */
-    public void setMethod(MethodPropertyType value) {
+    public void setMethod(final MethodPropertyType value) {
         this.method = value;
     }
 
@@ -146,7 +146,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
     /**
      * Sets the value of the components property.
      */
-    public void setComponents(ComponentsPropertyType value) {
+    public void setComponents(final ComponentsPropertyType value) {
         this.components = value;
     }
 
@@ -162,7 +162,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
      * Sets the value of the dataSources property.
      * 
      */
-    public void setDataSources(DataSourcesPropertyType value) {
+    public void setDataSources(final DataSourcesPropertyType value) {
         this.dataSources = value;
     }
 
@@ -178,7 +178,7 @@ public abstract class AbstractDerivableProcessType extends AbstractProcessType {
      * Sets the value of the connections property.
      * 
      */
-    public void setConnections(ConnectionsPropertyType value) {
+    public void setConnections(final ConnectionsPropertyType value) {
         this.connections = value;
     }
 

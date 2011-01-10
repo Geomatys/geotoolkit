@@ -77,7 +77,7 @@ public class DataBlockDefinitionType implements DataBlockDefinition {
      */
     DataBlockDefinitionType() {}
 
-    public DataBlockDefinitionType(DataBlockDefinition db) {
+    public DataBlockDefinitionType(final DataBlockDefinition db) {
         if (db != null) {
             this.id = db.getId();
             if (db.getEncoding() != null) {
@@ -103,7 +103,7 @@ public class DataBlockDefinitionType implements DataBlockDefinition {
     /**
      * Sets the value of the components property.
      */
-    public void setComponents(DataComponentPropertyType value) {
+    public void setComponents(final DataComponentPropertyType value) {
         this.components = value;
     }
 
@@ -117,7 +117,7 @@ public class DataBlockDefinitionType implements DataBlockDefinition {
     /**
      * Sets the value of the encoding property.
      */
-    public void setEncoding(BlockEncodingPropertyType value) {
+    public void setEncoding(final BlockEncodingPropertyType value) {
         this.encoding = value;
     }
 
@@ -131,7 +131,7 @@ public class DataBlockDefinitionType implements DataBlockDefinition {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

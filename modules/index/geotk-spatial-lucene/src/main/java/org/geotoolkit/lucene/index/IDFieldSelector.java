@@ -33,7 +33,7 @@ public final class IDFieldSelector implements FieldSelector {
      * @return FieldSelectorResult.LOAD only if the fieldName is "id".
      */
     @Override
-    public FieldSelectorResult accept(String fieldName) {
+    public FieldSelectorResult accept(final String fieldName) {
         if (fieldName != null) {
             if (fieldName.equals("id")) {
                 return FieldSelectorResult.LOAD_AND_BREAK;

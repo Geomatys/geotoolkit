@@ -58,7 +58,7 @@ public class TimePropertyType implements AbstractTimeProperty {
 
     }
 
-    public TimePropertyType(AbstractTimeProperty tp) {
+    public TimePropertyType(final AbstractTimeProperty tp) {
         if (tp != null && tp.getTime() != null) {
             this.time = new TimeType(tp.getTime());
         }
@@ -73,7 +73,7 @@ public class TimePropertyType implements AbstractTimeProperty {
     /**
      * Sets the value of the time property.
      */
-    public void setTime(TimeType value) {
+    public void setTime(final TimeType value) {
         this.time = value;
     }
 

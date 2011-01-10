@@ -64,7 +64,7 @@ public class DeleteElementType {
 
     }
 
-    public DeleteElementType(FilterType filter, String handle, QName typeName) {
+    public DeleteElementType(final FilterType filter, final String handle, final QName typeName) {
         this.filter   = filter;
         this.handle   = handle;
         this.typeName = typeName;
@@ -102,7 +102,7 @@ public class DeleteElementType {
      *     {@link FilterType }
      *     
      */
-    public void setFilter(FilterType value) {
+    public void setFilter(final FilterType value) {
         this.filter = value;
     }
 
@@ -126,7 +126,7 @@ public class DeleteElementType {
      *     {@link String }
      *     
      */
-    public void setHandle(String value) {
+    public void setHandle(final String value) {
         this.handle = value;
     }
 
@@ -150,7 +150,7 @@ public class DeleteElementType {
      *     {@link QName }
      *     
      */
-    public void setTypeName(QName value) {
+    public void setTypeName(final QName value) {
         this.typeName = value;
     }
 

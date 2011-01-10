@@ -53,11 +53,11 @@ public final class QueryBuilder {
     public QueryBuilder(){
     }
 
-    public QueryBuilder(Query query){
+    public QueryBuilder(final Query query){
         copy(query);
     }
 
-    public QueryBuilder(Name name){
+    public QueryBuilder(final Name name){
         setTypeName(name);
     }
 
@@ -73,7 +73,7 @@ public final class QueryBuilder {
         hints = null;
     }
 
-    public void copy(Query query){
+    public void copy(final Query query){
         this.crs = query.getCoordinateSystemReproject();
         this.resolution = (query.getResolution()==null)?null:query.getResolution().clone();
         this.filter = query.getFilter();
@@ -90,12 +90,12 @@ public final class QueryBuilder {
         return typeName;
     }
 
-    public void setTypeName(Name typeName) {
+    public void setTypeName(final Name typeName) {
         this.typeName = typeName;
         this.source = null;
     }
 
-    public void setSource(Source source){
+    public void setSource(final Source source){
         this.source = source;
         this.typeName = null;
     }
@@ -112,7 +112,7 @@ public final class QueryBuilder {
         return filter;
     }
 
-    public void setFilter(Filter filter) {
+    public void setFilter(final Filter filter) {
         this.filter = filter;
     }
 
@@ -120,7 +120,7 @@ public final class QueryBuilder {
         return properties;
     }
 
-    public void setProperties(String[] properties) {
+    public void setProperties(final String[] properties) {
         if(properties == null){
             this.properties = null;
         }else{
@@ -131,7 +131,7 @@ public final class QueryBuilder {
         }
     }
 
-    public void setProperties(Name[] properties) {
+    public void setProperties(final Name[] properties) {
         this.properties = properties;
     }
 
@@ -139,7 +139,7 @@ public final class QueryBuilder {
         return sortBy;
     }
 
-    public void setSortBy(SortBy[] sortBy) {
+    public void setSortBy(final SortBy[] sortBy) {
         this.sortBy = sortBy;
     }
 
@@ -147,7 +147,7 @@ public final class QueryBuilder {
         return startIndex;
     }
 
-    public void setStartIndex(int startIndex) {
+    public void setStartIndex(final int startIndex) {
         this.startIndex = startIndex;
     }
 
@@ -155,7 +155,7 @@ public final class QueryBuilder {
         return maxFeatures;
     }
 
-    public void setMaxFeatures(Integer maxFeatures) {
+    public void setMaxFeatures(final Integer maxFeatures) {
         this.maxFeatures = maxFeatures;
     }
 
@@ -163,11 +163,11 @@ public final class QueryBuilder {
         return crs;
     }
 
-    public void setCRS(CoordinateReferenceSystem crs) {
+    public void setCRS(final CoordinateReferenceSystem crs) {
         this.crs = crs;
     }
 
-    public void setResolution(double[] resolution) {
+    public void setResolution(final double[] resolution) {
         this.resolution = resolution;
     }
 
@@ -179,7 +179,7 @@ public final class QueryBuilder {
         return hints;
     }
 
-    public void setHints(Hints hints) {
+    public void setHints(final Hints hints) {
         this.hints = hints;
     }
 
@@ -192,7 +192,7 @@ public final class QueryBuilder {
     /**
      * Verify that we don't have several selectors with the same name.
      */
-    private static void checkSource(Source s, Set<String> selectors){
+    private static void checkSource(final Source s, Set<String> selectors){
         if(selectors == null){
             selectors = new HashSet<String>();
         }
@@ -222,7 +222,7 @@ public final class QueryBuilder {
      * @param filter
      * @return Immutable query
      */
-    public static Query filtered(Name name, Filter filter){
+    public static Query filtered(final Name name, final Filter filter){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setFilter(filter);
@@ -236,7 +236,7 @@ public final class QueryBuilder {
      * @param filter
      * @return Immutable query
      */
-    public static Query sorted(Name name, SortBy ... sorts){
+    public static Query sorted(final Name name, final SortBy ... sorts){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setSortBy(sorts);
@@ -248,7 +248,7 @@ public final class QueryBuilder {
      * query should retrieve all properties, with no maxFeatures, no
      * filtering, and the default featureType.
      */
-    public static Query all(Name name){
+    public static Query all(final Name name){
         return new DefaultQuery(new DefaultSelector(null, name, "s1"));
     }
 
@@ -257,7 +257,7 @@ public final class QueryBuilder {
      * query should retrieve all properties, with no maxFeatures, no
      * filtering, and the default featureType.
      */
-    public static Query all(Source source){
+    public static Query all(final Source source){
         return new DefaultQuery(source);
     }
 
@@ -266,7 +266,7 @@ public final class QueryBuilder {
      * This query should retrive no properties, with no maxFeatures, no
      * filtering, and the a featureType with no attribtues.
      */
-    public static Query fids(Name name){
+    public static Query fids(final Name name){
         return new DefaultQuery(new DefaultSelector(null, name, "s1"), NO_PROPERTIES);
     }
 
@@ -277,7 +277,7 @@ public final class QueryBuilder {
      * @param filter
      * @return Immutable query
      */
-    public static Query reprojected(Name name, CoordinateReferenceSystem crs){
+    public static Query reprojected(final Name name, final CoordinateReferenceSystem crs){
         final QueryBuilder builder = new QueryBuilder();
         builder.setTypeName(name);
         builder.setCRS(crs);

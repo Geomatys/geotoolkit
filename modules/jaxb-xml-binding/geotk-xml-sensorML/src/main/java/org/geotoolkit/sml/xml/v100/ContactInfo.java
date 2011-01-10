@@ -98,12 +98,12 @@ public class ContactInfo implements AbstractContactInfo {
 
     }
 
-    public ContactInfo(PhoneType phone, AddressType address) {
+    public ContactInfo(final PhoneType phone, final AddressType address) {
         this.address = address;
         this.phone   = phone;
     }
 
-    public ContactInfo(AbstractContactInfo ci) {
+    public ContactInfo(final AbstractContactInfo ci) {
         if (ci != null) {
             if (ci.getAddress() != null) {
                 this.address = new AddressType(ci.getAddress());
@@ -132,7 +132,7 @@ public class ContactInfo implements AbstractContactInfo {
     /**
      * Sets the value of the phone property.
      */
-    public void setPhone(PhoneType value) {
+    public void setPhone(final PhoneType value) {
         this.phone = value;
     }
 
@@ -147,7 +147,7 @@ public class ContactInfo implements AbstractContactInfo {
      * Sets the value of the address property.
      *     
      */
-    public void setAddress(AddressType value) {
+    public void setAddress(final AddressType value) {
         this.address = value;
     }
 
@@ -161,14 +161,14 @@ public class ContactInfo implements AbstractContactInfo {
         return this.onlineResource;
     }
 
-    public void setOnlineResource(OnlineResource or) {
+    public void setOnlineResource(final OnlineResource or) {
         if (onlineResource == null) {
             onlineResource = new ArrayList<OnlineResource>();
         }
         this.onlineResource.add(or);
     }
 
-    public void setOnlineResource(List<OnlineResource> or) {
+    public void setOnlineResource(final List<OnlineResource> or) {
         this.onlineResource = or;
     }
 
@@ -182,7 +182,7 @@ public class ContactInfo implements AbstractContactInfo {
     /**
      * Sets the value of the hoursOfService property.
      */
-    public void setHoursOfService(String value) {
+    public void setHoursOfService(final String value) {
         this.hoursOfService = value;
     }
 
@@ -198,7 +198,7 @@ public class ContactInfo implements AbstractContactInfo {
      * Sets the value of the contactInstructions property.
      * 
      */
-    public void setContactInstructions(String value) {
+    public void setContactInstructions(final String value) {
         this.contactInstructions = value;
     }
 

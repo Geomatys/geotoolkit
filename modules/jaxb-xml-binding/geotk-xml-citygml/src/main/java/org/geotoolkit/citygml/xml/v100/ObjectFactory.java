@@ -136,7 +136,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_GenericApplicationPropertyOfSite")
-    public JAXBElement<Object> createGenericApplicationPropertyOfSite(Object value) {
+    public JAXBElement<Object> createGenericApplicationPropertyOfSite(final Object value) {
         return new JAXBElement<Object>(_GenericApplicationPropertyOfSite_QNAME, Object.class, null, value);
     }
 
@@ -145,7 +145,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "cityObjectMember", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "featureMember")
-    public JAXBElement<FeaturePropertyType> createCityObjectMember(FeaturePropertyType value) {
+    public JAXBElement<FeaturePropertyType> createCityObjectMember(final FeaturePropertyType value) {
         return new JAXBElement<FeaturePropertyType>(_CityObjectMember_QNAME, FeaturePropertyType.class, null, value);
     }
 
@@ -154,7 +154,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_Site", substitutionHeadNamespace = "http://www.opengis.net/citygml/1.0", substitutionHeadName = "_CityObject")
-    public JAXBElement<AbstractSiteType> createSite(AbstractSiteType value) {
+    public JAXBElement<AbstractSiteType> createSite(final AbstractSiteType value) {
         return new JAXBElement<AbstractSiteType>(_Site_QNAME, AbstractSiteType.class, null, value);
     }
 
@@ -163,7 +163,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_GenericApplicationPropertyOfAddress")
-    public JAXBElement<Object> createGenericApplicationPropertyOfAddress(Object value) {
+    public JAXBElement<Object> createGenericApplicationPropertyOfAddress(final Object value) {
         return new JAXBElement<Object>(_GenericApplicationPropertyOfAddress_QNAME, Object.class, null, value);
     }
 
@@ -172,7 +172,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "CityModel", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeatureCollection")
-    public JAXBElement<CityModelType> createCityModel(CityModelType value) {
+    public JAXBElement<CityModelType> createCityModel(final CityModelType value) {
         return new JAXBElement<CityModelType>(_CityModel_QNAME, CityModelType.class, null, value);
     }
 
@@ -181,7 +181,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "ImplicitGeometry", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<ImplicitGeometryType> createImplicitGeometry(ImplicitGeometryType value) {
+    public JAXBElement<ImplicitGeometryType> createImplicitGeometry(final ImplicitGeometryType value) {
         return new JAXBElement<ImplicitGeometryType>(_ImplicitGeometry_QNAME, ImplicitGeometryType.class, null, value);
     }
 
@@ -190,7 +190,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_CityObject", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<AbstractCityObjectType> createCityObject(AbstractCityObjectType value) {
+    public JAXBElement<AbstractCityObjectType> createCityObject(final AbstractCityObjectType value) {
         return new JAXBElement<AbstractCityObjectType>(_CityObject_QNAME, AbstractCityObjectType.class, null, value);
     }
 
@@ -199,7 +199,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_GenericApplicationPropertyOfCityObject")
-    public JAXBElement<Object> createGenericApplicationPropertyOfCityObject(Object value) {
+    public JAXBElement<Object> createGenericApplicationPropertyOfCityObject(final Object value) {
         return new JAXBElement<Object>(_GenericApplicationPropertyOfCityObject_QNAME, Object.class, null, value);
     }
 
@@ -208,7 +208,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "Address", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<AddressType> createAddress(AddressType value) {
+    public JAXBElement<AddressType> createAddress(final AddressType value) {
         return new JAXBElement<AddressType>(_Address_QNAME, AddressType.class, null, value);
     }
 
@@ -217,7 +217,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/citygml/1.0", name = "_GenericApplicationPropertyOfCityModel")
-    public JAXBElement<Object> createGenericApplicationPropertyOfCityModel(Object value) {
+    public JAXBElement<Object> createGenericApplicationPropertyOfCityModel(final Object value) {
         return new JAXBElement<Object>(_GenericApplicationPropertyOfCityModel_QNAME, Object.class, null, value);
     }
 

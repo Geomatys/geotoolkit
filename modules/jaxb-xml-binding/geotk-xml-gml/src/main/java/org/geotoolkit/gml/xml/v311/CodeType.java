@@ -69,7 +69,7 @@ public class CodeType {
     /**
      * build a full CodeType.
      */
-    public CodeType(String value, String codeSpace) {
+    public CodeType(final String value, final String codeSpace) {
         this.codeSpace = codeSpace;
         this.value     = value;
     }
@@ -77,7 +77,7 @@ public class CodeType {
     /**
      * build a CodeType with no codespace.
      */
-    public CodeType(String value) {
+    public CodeType(final String value) {
         this.value     = value;
     }
 
@@ -101,7 +101,7 @@ public class CodeType {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -125,7 +125,7 @@ public class CodeType {
      *     {@link String }
      *     
      */
-    public void setCodeSpace(String value) {
+    public void setCodeSpace(final String value) {
         this.codeSpace = value;
     }
 

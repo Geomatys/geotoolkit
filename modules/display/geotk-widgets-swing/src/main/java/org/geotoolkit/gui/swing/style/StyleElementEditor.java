@@ -48,7 +48,7 @@ public abstract class StyleElementEditor<T> extends JPanel {
      * the layer is used to fill the possible attribut in the expression editor
      * @param layer
      */
-    public void setLayer(MapLayer layer){}
+    public void setLayer(final MapLayer layer){}
     
     /**
      * Layer used for expression edition in the style element
@@ -100,7 +100,7 @@ public abstract class StyleElementEditor<T> extends JPanel {
     /**
      * Will popup a small dialog with this style editor.
      */
-    public T show(MapLayer layer, T target){
+    public T show(final MapLayer layer, final T target){
         setLayer(layer);
         parse(target);
 

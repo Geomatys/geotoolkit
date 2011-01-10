@@ -40,7 +40,7 @@ public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
 
     private final SymbolizerRendererService<T,? extends CachedSymbolizer<T>> renderer;
 
-    public CachedSymbolizer(T styleElement, SymbolizerRendererService<T,? extends CachedSymbolizer<T>> renderer){
+    public CachedSymbolizer(final T styleElement, final SymbolizerRendererService<T,? extends CachedSymbolizer<T>> renderer){
         super(styleElement);
         this.renderer =  renderer;
     }
@@ -61,7 +61,7 @@ public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
      * @return max width of this symbol with the given feature
      *     can be NaN if and only if the given feature is null.
      */
-    public final float getMargin(Feature feature, RenderingContext2D ctx){
+    public final float getMargin(final Feature feature, final RenderingContext2D ctx){
         return getMargin(feature, ctx.getUnitCoefficient(this.styleElement.getUnitOfMeasure()));
     }
 

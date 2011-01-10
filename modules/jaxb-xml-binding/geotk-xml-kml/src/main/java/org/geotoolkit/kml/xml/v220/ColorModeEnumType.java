@@ -46,7 +46,7 @@ public enum ColorModeEnumType {
     RANDOM("random");
     private final String value;
 
-    ColorModeEnumType(String v) {
+    ColorModeEnumType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum ColorModeEnumType {
         return value;
     }
 
-    public static ColorModeEnumType fromValue(String v) {
+    public static ColorModeEnumType fromValue(final String v) {
         for (ColorModeEnumType c: ColorModeEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

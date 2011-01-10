@@ -96,7 +96,7 @@ public class GetFeatureInfo implements RequestBase {
      *     {@link GetTile }
      *     
      */
-    public void setGetTile(GetTile value) {
+    public void setGetTile(final GetTile value) {
         this.getTile = value;
     }
 
@@ -120,7 +120,7 @@ public class GetFeatureInfo implements RequestBase {
      *     {@link Integer }
      *     
      */
-    public void setJ(Integer value) {
+    public void setJ(final Integer value) {
         this.j = value;
     }
 
@@ -144,7 +144,7 @@ public class GetFeatureInfo implements RequestBase {
      *     {@link Integer }
      *     
      */
-    public void setI(Integer value) {
+    public void setI(final Integer value) {
         this.i = value;
     }
 
@@ -168,7 +168,7 @@ public class GetFeatureInfo implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setInfoFormat(String value) {
+    public void setInfoFormat(final String value) {
         this.infoFormat = value;
     }
 
@@ -193,7 +193,7 @@ public class GetFeatureInfo implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -221,7 +221,7 @@ public class GetFeatureInfo implements RequestBase {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

@@ -57,7 +57,7 @@ public class DataRecordType extends AbstractDataRecordEntry implements DataRecor
 
     }
 
-    public DataRecordType(DataRecord dr) {
+    public DataRecordType(final DataRecord dr) {
         super(dr);
         if (dr != null && dr.getField() != null) {
             this.field = new ArrayList<DataComponentPropertyType>();
@@ -68,7 +68,7 @@ public class DataRecordType extends AbstractDataRecordEntry implements DataRecor
 
     }
 
-    public DataRecordType(String definition, List<DataComponentPropertyType> field) {
+    public DataRecordType(final String definition, final List<DataComponentPropertyType> field) {
         super(definition);
         this.field = field;
     }

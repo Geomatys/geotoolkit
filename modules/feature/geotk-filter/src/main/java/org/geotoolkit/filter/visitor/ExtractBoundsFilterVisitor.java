@@ -85,7 +85,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
      * @param data
      * @return ReferencedEnvelope
      */
-    private JTSEnvelope2D bbox( Object data ) {
+    private JTSEnvelope2D bbox( final Object data ) {
         if( data == null ){
             return null;
         }
@@ -102,12 +102,12 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     }
 
     @Override
-    public Object visit( ExcludeFilter filter, Object data ) {
+    public Object visit( final ExcludeFilter filter, final Object data ) {
         return null;
     }
 
     @Override
-    public Object visit( IncludeFilter filter, Object data ) {
+    public Object visit( final IncludeFilter filter, final Object data ) {
         if( data == null ) return null;
         JTSEnvelope2D bbox = bbox( data );
         
@@ -119,7 +119,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     }
 
     @Override
-    public Object visit( BBOX filter, Object data ) {
+    public Object visit( final BBOX filter, final Object data ) {
         if( data == null ) return null;
         JTSEnvelope2D bbox = bbox( data );
                 
@@ -137,7 +137,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
      * @return ReferencedEnvelope updated to reflect literal
      */
     @Override
-    public Object visit( Literal expression, Object data ) {        
+    public Object visit( final Literal expression, final Object data ) {        
         if( data == null ) return null;
         JTSEnvelope2D bbox = bbox( data );
 
@@ -155,57 +155,49 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     }
 
     @Override
-    public Object visit( Beyond filter, Object data ) {
+    public Object visit( final Beyond filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
         return data;
     }
 
     @Override
-    public Object visit( Contains filter, Object data ) {
+    public Object visit( final Contains filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
         return data;
     }
 
     @Override
-    public Object visit( Crosses filter, Object data ) {
+    public Object visit( final Crosses filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
         return data;
     }
 
     @Override
-    public Object visit( Disjoint filter, Object data ) {
+    public Object visit( final Disjoint filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
         return data;
     }
 
     @Override
-    public Object visit( DWithin filter, Object data ) {
+    public Object visit( final DWithin filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
         return data;
     }
 
     @Override
-    public Object visit( Equals filter, Object data ) {
+    public Object visit( final Equals filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
         return data;
     }
 
     @Override
-    public Object visit( Intersects filter, Object data ) {
-        data = filter.getExpression1().accept(this, data);
-        data = filter.getExpression2().accept(this, data);
-
-        return data;
-    }
-
-    @Override
-    public Object visit( Overlaps filter, Object data ) {
+    public Object visit( final Intersects filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
 
@@ -213,7 +205,7 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     }
 
     @Override
-    public Object visit( Touches filter, Object data ) {
+    public Object visit( final Overlaps filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
 
@@ -221,7 +213,15 @@ public class ExtractBoundsFilterVisitor extends NullFilterVisitor {
     }
 
     @Override
-    public Object visit( Within filter, Object data ) {
+    public Object visit( final Touches filter, Object data ) {
+        data = filter.getExpression1().accept(this, data);
+        data = filter.getExpression2().accept(this, data);
+
+        return data;
+    }
+
+    @Override
+    public Object visit( final Within filter, Object data ) {
         data = filter.getExpression1().accept(this, data);
         data = filter.getExpression2().accept(this, data);
         

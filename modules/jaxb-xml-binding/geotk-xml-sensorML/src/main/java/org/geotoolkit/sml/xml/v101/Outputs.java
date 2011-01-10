@@ -94,15 +94,15 @@ public class Outputs implements AbstractOutputs {
 
     }
 
-    public Outputs(List<IoComponentPropertyType> outputList) {
+    public Outputs(final List<IoComponentPropertyType> outputList) {
         this.outputList = new OutputList(outputList);
     }
 
-    public Outputs(OutputList outputList) {
+    public Outputs(final OutputList outputList) {
         this.outputList = outputList;
     }
 
-    public Outputs(AbstractOutputs outputs) {
+    public Outputs(final AbstractOutputs outputs) {
         if (outputs != null) {
             if (outputs.getOutputList() != null) {
                 this.outputList    = new OutputList(outputs.getOutputList());
@@ -139,7 +139,7 @@ public class Outputs implements AbstractOutputs {
      *     {@link Outputs.OutputList }
      *     
      */
-    public void setOutputList(OutputList value) {
+    public void setOutputList(final OutputList value) {
         this.outputList = value;
     }
 
@@ -163,7 +163,7 @@ public class Outputs implements AbstractOutputs {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -187,7 +187,7 @@ public class Outputs implements AbstractOutputs {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -211,7 +211,7 @@ public class Outputs implements AbstractOutputs {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -235,7 +235,7 @@ public class Outputs implements AbstractOutputs {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -259,7 +259,7 @@ public class Outputs implements AbstractOutputs {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -283,7 +283,7 @@ public class Outputs implements AbstractOutputs {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -307,7 +307,7 @@ public class Outputs implements AbstractOutputs {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -331,7 +331,7 @@ public class Outputs implements AbstractOutputs {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

@@ -67,7 +67,7 @@ public class FunctionNamesType implements Functions {
     /**
      *Build a new Function names
      */
-    public FunctionNamesType(List<FunctionNameType> functionNames) {
+    public FunctionNamesType(final List<FunctionNameType> functionNames) {
         this.functionNames = functionNames;
     }
     
@@ -82,7 +82,7 @@ public class FunctionNamesType implements Functions {
         return result;
     }
 
-    public FunctionName getFunctionName(String name) {
+    public FunctionName getFunctionName(final String name) {
        if (functionNames == null) {
             functionNames = new ArrayList<FunctionNameType>();
        }

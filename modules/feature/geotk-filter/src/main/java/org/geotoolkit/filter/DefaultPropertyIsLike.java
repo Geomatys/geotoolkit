@@ -92,7 +92,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
      * @param pattern
      *
      */
-    public static String convertToSQL92(char escape, char multi, char single, String pattern)
+    public static String convertToSQL92(final char escape, final char multi, final char single, final String pattern)
             throws IllegalArgumentException {
         if ((escape == '\'') || (multi == '\'') || (single == '\'')) {
             throw new IllegalArgumentException("do not use single quote (') as special char!");
@@ -236,8 +236,8 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
         return match;
     }
 
-    public DefaultPropertyIsLike(Expression expr, String pattern, String wildcardMulti,
-            String wildcardSingle, String escape, boolean matchCase) {
+    public DefaultPropertyIsLike(final Expression expr, final String pattern, final String wildcardMulti,
+            final String wildcardSingle, final String escape, final boolean matchCase) {
         if(expr == null) throw new NullPointerException("Expression can not be null");
 
         this.attribute = expr;
@@ -259,7 +259,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
     }
 
     @Override
-    public boolean evaluate(Object feature) {
+    public boolean evaluate(final Object feature) {
         //Checks to ensure that the attribute has been set
         if (attribute == null) {
             return false;
@@ -342,7 +342,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
     }
 
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -359,7 +359,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

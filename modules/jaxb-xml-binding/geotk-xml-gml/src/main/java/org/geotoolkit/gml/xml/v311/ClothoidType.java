@@ -112,7 +112,7 @@ public class ClothoidType
      *     {@link ClothoidType.RefLocation }
      *     
      */
-    public void setRefLocation(ClothoidType.RefLocation value) {
+    public void setRefLocation(final ClothoidType.RefLocation value) {
         this.refLocation = value;
     }
 
@@ -136,7 +136,7 @@ public class ClothoidType
      *     {@link BigDecimal }
      *     
      */
-    public void setScaleFactor(BigDecimal value) {
+    public void setScaleFactor(final BigDecimal value) {
         this.scaleFactor = value;
     }
 
@@ -152,7 +152,7 @@ public class ClothoidType
      * Sets the value of the startParameter property.
      * 
      */
-    public void setStartParameter(double value) {
+    public void setStartParameter(final double value) {
         this.startParameter = value;
     }
 
@@ -168,7 +168,7 @@ public class ClothoidType
      * Sets the value of the endParameter property.
      * 
      */
-    public void setEndParameter(double value) {
+    public void setEndParameter(final double value) {
         this.endParameter = value;
     }
 
@@ -225,7 +225,7 @@ public class ClothoidType
          *     {@link AffinePlacementType }
          *     
          */
-        public void setAffinePlacement(AffinePlacementType value) {
+        public void setAffinePlacement(final AffinePlacementType value) {
             this.affinePlacement = value;
         }
 

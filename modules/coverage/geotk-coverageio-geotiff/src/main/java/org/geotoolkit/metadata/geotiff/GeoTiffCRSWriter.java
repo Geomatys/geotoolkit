@@ -79,7 +79,7 @@ final class GeoTiffCRSWriter {
     /**
      * Fill the Geotiff CRS metadatas with the given CRS.
      */
-    public void fillCRSMetaDatas(GeoTiffMetaDataStack stack,
+    public void fillCRSMetaDatas(final GeoTiffMetaDataStack stack,
             final CoordinateReferenceSystem crs) throws IOException, FactoryException {
 
         if(crs == null){
@@ -632,7 +632,7 @@ final class GeoTiffCRSWriter {
         return null;
     }
 
-    private static double value(ParameterValueGroup parameters, ParameterDescriptor desc){
+    private static double value(final ParameterValueGroup parameters, final ParameterDescriptor desc){
         return parameters.parameter(desc.getName().getCode()).doubleValue();
     }
 

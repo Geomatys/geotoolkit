@@ -48,7 +48,7 @@ public abstract class AbstractSymbolizer implements Symbolizer{
      * @param name : can be null
      * @param desc : if null will be replaced by default description.
      */
-    protected AbstractSymbolizer(Unit uom, String geom, String name, Description desc){
+    protected AbstractSymbolizer(final Unit uom, final String geom, final String name, final Description desc){
         this.uom = (uom == null) ? DEFAULT_UOM : uom ;
         this.geom = geom;
         this.name = name;

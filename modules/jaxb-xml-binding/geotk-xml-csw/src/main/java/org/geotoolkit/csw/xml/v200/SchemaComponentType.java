@@ -102,7 +102,7 @@ public class SchemaComponentType implements SchemaComponent {
      * Sets the value of the targetNamespace property.
      * 
      */
-    public void setTargetNamespace(String value) {
+    public void setTargetNamespace(final String value) {
         this.targetNamespace = value;
     }
 
@@ -118,7 +118,7 @@ public class SchemaComponentType implements SchemaComponent {
      * Sets the value of the parentSchema property.
      * 
      */
-    public void setParentSchema(String value) {
+    public void setParentSchema(final String value) {
         this.parentSchema = value;
     }
 
@@ -134,7 +134,7 @@ public class SchemaComponentType implements SchemaComponent {
      * Sets the value of the schemaLanguage property.
      * 
      */
-    public void setSchemaLanguage(String value) {
+    public void setSchemaLanguage(final String value) {
         this.schemaLanguage = value;
     }
 

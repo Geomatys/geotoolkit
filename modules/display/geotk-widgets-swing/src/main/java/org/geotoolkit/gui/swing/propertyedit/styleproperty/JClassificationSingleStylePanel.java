@@ -290,7 +290,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         );
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiAddOneActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiAddOneActionPerformed
+    private void guiAddOneActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiAddOneActionPerformed
         String val = JOptionPane.showInputDialog(MessageBundle.getString("value")+" :");
         Rule r = builder.createRule((PropertyName) guiProperty.getSelectedItem(), val);
 
@@ -299,13 +299,13 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         guiTable.repaint();
     }//GEN-LAST:event_guiAddOneActionPerformed
 
-    private void guiRemoveAllActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiRemoveAllActionPerformed
+    private void guiRemoveAllActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiRemoveAllActionPerformed
         model.rules.clear();
         guiTable.revalidate();
         guiTable.repaint();
     }//GEN-LAST:event_guiRemoveAllActionPerformed
 
-    private void guiGenerateActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
+    private void guiGenerateActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
 
         builder.setPalette((RandomPalette) guiPalette.getSelectedItem());
         builder.setOther(guiOther.isSelected());
@@ -317,13 +317,13 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
 
     }//GEN-LAST:event_guiGenerateActionPerformed
 
-    private void guiModelActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
+    private void guiModelActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiModelActionPerformed
         builder.setTemplate( JPropertyDialog.showSymbolizerDialog(builder.getTemplate(), true, layer) );
         updateModelGlyph();
     }//GEN-LAST:event_guiModelActionPerformed
 
     @Override
-    public void setTarget(Object layer) {
+    public void setTarget(final Object layer) {
         if(layer instanceof FeatureMapLayer){
             this.layer = (FeatureMapLayer) layer;
             parse();
@@ -389,7 +389,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
 
     private class PropertyRenderer extends DefaultListCellRenderer{
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
             if(value instanceof PropertyName){
                 setText(((PropertyName)value).getPropertyName());
@@ -403,7 +403,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         private RandomPalette palette = null;
 
         @Override
-        public Component getListCellRendererComponent(JList list, Object value, int index, boolean isSelected, boolean cellHasFocus) {
+        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
             super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
 
             PaletteRenderer.this.setText(" Random ");
@@ -415,7 +415,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         }
 
         @Override
-        protected void paintComponent(Graphics g) {
+        protected void paintComponent(final Graphics g) {
             super.paintComponent(g);
 
             if(palette != null){
@@ -432,7 +432,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     private class DeleteRenderer extends DefaultTableCellRenderer{
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
             DeleteRenderer.this.setIcon(IconBundle.getIcon("16_delete"));
             return DeleteRenderer.this;
@@ -469,7 +469,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
             this.value = value;
             return button;
         }
@@ -479,7 +479,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     private class RulePropertyRenderer extends DefaultTableCellRenderer{
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             RulePropertyRenderer.this.setText("");
@@ -520,7 +520,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
             if(value instanceof MutableRule){
                 this.value = (MutableRule) value;
 
@@ -549,7 +549,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     private class RuleNameRenderer extends DefaultTableCellRenderer{
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             RuleNameRenderer.this.setText("");
@@ -578,7 +578,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
             if(value instanceof MutableRule){
                 this.value = (MutableRule) value;
 
@@ -597,7 +597,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
     private class RuleStyleRenderer extends DefaultTableCellRenderer{
 
         @Override
-        public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+        public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
             super.getTableCellRendererComponent(table, value, isSelected, hasFocus, row, column);
 
             RuleStyleRenderer.this.setText("");
@@ -643,7 +643,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         }
 
         @Override
-        public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+        public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
             if(value instanceof MutableRule){
                 this.value = (MutableRule) value;
                 BufferedImage img = new BufferedImage(30, 20, BufferedImage.TYPE_INT_ARGB);
@@ -672,17 +672,17 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         }
 
         @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
+        public boolean isCellEditable(final int rowIndex, final int columnIndex) {
             return true;
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
+        public Object getValueAt(final int rowIndex, final int columnIndex) {
             return rules.get(rowIndex);
         }
 
         @Override
-        public String getColumnName(int columnIndex) {
+        public String getColumnName(final int columnIndex) {
             switch(columnIndex){
                 case 0: return "";
                 case 1: return MessageBundle.getString("value");
@@ -694,7 +694,7 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         }
 
         @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
 
             MutableRule rule = (MutableRule) rules.get(rowIndex);
 

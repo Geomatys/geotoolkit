@@ -53,8 +53,8 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
      * @param minutes
      * @param seconds
      */
-    public DefaultPeriodDuration(InternationalString years, InternationalString months, InternationalString weeks, InternationalString days,
-            InternationalString hours, InternationalString minutes, InternationalString seconds) {
+    public DefaultPeriodDuration(final InternationalString years, final InternationalString months, final InternationalString weeks, final InternationalString days,
+            final InternationalString hours, final InternationalString minutes, final InternationalString seconds) {
         this.years = years;
         this.months = months;
         this.weeks = weeks;
@@ -205,27 +205,27 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         return seconds;
     }
 
-    public void setYears(InternationalString years) {
+    public void setYears(final InternationalString years) {
         this.years = years;
     }
 
-    public void setMonths(InternationalString months) {
+    public void setMonths(final InternationalString months) {
         this.months = months;
     }
 
-    public void setDays(InternationalString days) {
+    public void setDays(final InternationalString days) {
         this.days = days;
     }
 
-    public void setHours(InternationalString hours) {
+    public void setHours(final InternationalString hours) {
         this.hours = hours;
     }
 
-    public void setMinutes(InternationalString minutes) {
+    public void setMinutes(final InternationalString minutes) {
         this.minutes = minutes;
     }
 
-    public void setSeconds(InternationalString seconds) {
+    public void setSeconds(final InternationalString seconds) {
         this.seconds = seconds;
     }
 
@@ -233,7 +233,7 @@ public class DefaultPeriodDuration extends DefaultDuration implements PeriodDura
         return weeks;
     }
 
-    public void setWeek(InternationalString week) {
+    public void setWeek(final InternationalString week) {
         this.weeks = week;
     }
 

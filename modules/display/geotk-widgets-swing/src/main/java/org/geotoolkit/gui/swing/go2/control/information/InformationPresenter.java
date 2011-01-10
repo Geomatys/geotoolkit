@@ -49,7 +49,7 @@ public class InformationPresenter {
      * @param candidate , object to display
      * @return JComponent or null if no component appropriate.
      */
-    public JComponent createComponent(Object graphic, RenderingContext2D context, SearchAreaJ2D area){
+    public JComponent createComponent(final Object graphic, final RenderingContext2D context, final SearchAreaJ2D area){
 
         if(graphic instanceof ProjectedCoverage){
             return createComponent((ProjectedCoverage)graphic, context, area);
@@ -69,7 +69,7 @@ public class InformationPresenter {
         return null;
     }
 
-    private JComponent createComponent(ProjectedCoverage coverage, RenderingContext2D context, SearchAreaJ2D area){
+    private JComponent createComponent(final ProjectedCoverage coverage, final RenderingContext2D context, final SearchAreaJ2D area){
         final List<Entry<GridSampleDimension,Object>> results = Bridge.readCoverageValues(coverage, context, area);
 
         final StringBuilder builder = new StringBuilder();
@@ -102,13 +102,13 @@ public class InformationPresenter {
     }
 
 
-    protected List<Entry<GridSampleDimension,Object>> visit(ProjectedCoverage projectedCoverage, RenderingContext2D context, SearchAreaJ2D queryArea) {
+    protected List<Entry<GridSampleDimension,Object>> visit(final ProjectedCoverage projectedCoverage, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
         return Bridge.readCoverageValues(projectedCoverage, context, queryArea);
     }
 
     private abstract static class Bridge extends AbstractGraphicVisitor{
-        public static List<Entry<GridSampleDimension,Object>> readCoverageValues(ProjectedCoverage projectedCoverage,
-                            RenderingContext2D context, SearchAreaJ2D queryArea){
+        public static List<Entry<GridSampleDimension,Object>> readCoverageValues(final ProjectedCoverage projectedCoverage,
+                            final RenderingContext2D context, final SearchAreaJ2D queryArea){
             return getCoverageValues(projectedCoverage, context, queryArea);
         }
     }

@@ -81,7 +81,7 @@ public class SimpleIllegalAttributeException extends IllegalAttributeException {
      *
      * @param message Reason for the exception being thrown
      */
-    public SimpleIllegalAttributeException(String message) {
+    public SimpleIllegalAttributeException(final String message) {
         super(NULL_ATTRIBUTE_DESCRIPTOR,null,message);
     }
 
@@ -91,7 +91,7 @@ public class SimpleIllegalAttributeException extends IllegalAttributeException {
      * @param expected the expected AttributeType.
      * @param invalid the attribute that does not validate against expected.
      */
-    public SimpleIllegalAttributeException(AttributeDescriptor expected, Object invalid) {
+    public SimpleIllegalAttributeException(final AttributeDescriptor expected, final Object invalid) {
         super(expected, invalid );
     }
 
@@ -103,7 +103,7 @@ public class SimpleIllegalAttributeException extends IllegalAttributeException {
      * @param invalid the attribute that does not validate against expected.
      * @param cause the root cause of the error.
      */
-    public SimpleIllegalAttributeException(AttributeDescriptor expected, Object invalid, Throwable cause) {
+    public SimpleIllegalAttributeException(final AttributeDescriptor expected, final Object invalid, final Throwable cause) {
         super( expected, invalid, cause );
     }
     

@@ -31,11 +31,11 @@ import org.opengis.filter.FilterVisitor;
  */
 public class DefaultAnd extends AbstractBinaryLogicOperator implements And {
 
-    public DefaultAnd(List<Filter> filters) {
+    public DefaultAnd(final List<Filter> filters) {
         super(filters);
     }
 
-    public DefaultAnd(Filter filter1, Filter filter2){
+    public DefaultAnd(final Filter filter1, final Filter filter2){
         super(filter1,filter2);
     }
 
@@ -43,7 +43,7 @@ public class DefaultAnd extends AbstractBinaryLogicOperator implements And {
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         for (Filter filter : filterArray) {
             if(!filter.evaluate(object)) {
                 return false;
@@ -56,7 +56,7 @@ public class DefaultAnd extends AbstractBinaryLogicOperator implements And {
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -74,7 +74,7 @@ public class DefaultAnd extends AbstractBinaryLogicOperator implements And {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -40,7 +40,7 @@ class ArrayPropertyRW extends AbstractPropertyReader{
     private final Iterator<Entry<String,Object[]>> ite;
     private Entry<String,Object[]> current = null;
 
-    ArrayPropertyRW(PropertyDescriptor[] desc, Map<String,Object[]> features) {
+    ArrayPropertyRW(final PropertyDescriptor[] desc, final Map<String,Object[]> features) {
         super(desc);
         ite = features.entrySet().iterator();
     }
@@ -65,19 +65,19 @@ class ArrayPropertyRW extends AbstractPropertyReader{
     }
 
     @Override
-    public Object read(int index) throws IOException, ArrayIndexOutOfBoundsException {
+    public Object read(final int index) throws IOException, ArrayIndexOutOfBoundsException {
         return current.getValue()[index];
     }
 
     @Override
-    public void read(Object[] buffer) throws IOException {
+    public void read(final Object[] buffer) throws IOException {
         final Object[] vals = current.getValue();
         for(int i=0,n=getPropertyCount(); i<n; i++){
             buffer[i] = vals[i];
         }
     }
 
-    public void setValue(int index, Object value){
+    public void setValue(final int index, final Object value){
         current.getValue()[index] = Converters.convert(
                 value, metaData[index].getType().getBinding());
     }

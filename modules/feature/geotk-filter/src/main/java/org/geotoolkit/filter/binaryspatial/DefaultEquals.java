@@ -36,7 +36,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultEquals extends AbstractBinarySpatialOperator<Expression,Expression> implements Equals {
 
-    public DefaultEquals(Expression left, Expression right) {
+    public DefaultEquals(final Expression left, final Expression right) {
         super(left,right);
     }
 
@@ -44,7 +44,7 @@ public class DefaultEquals extends AbstractBinarySpatialOperator<Expression,Expr
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         Geometry leftGeom = left.evaluate(object, Geometry.class);
         Geometry rightGeom = right.evaluate(object, Geometry.class);
 
@@ -72,7 +72,7 @@ public class DefaultEquals extends AbstractBinarySpatialOperator<Expression,Expr
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -90,7 +90,7 @@ public class DefaultEquals extends AbstractBinarySpatialOperator<Expression,Expr
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

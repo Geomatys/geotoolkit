@@ -68,18 +68,18 @@ public class RegistryObjectListType {
         return this.identifiable;
     }
     
-    public void setIdentifiable(List<JAXBElement<? extends IdentifiableType>> identifiable) {
+    public void setIdentifiable(final List<JAXBElement<? extends IdentifiableType>> identifiable) {
         this.identifiable = identifiable;
     }
     
-    public void setIdentifiable(IdentifiableType identifiable) {
+    public void setIdentifiable(final IdentifiableType identifiable) {
         if (this.identifiable == null) {
             this.identifiable = new ArrayList<JAXBElement<? extends IdentifiableType>>();
         }
         this.identifiable.add(createIdentifiable(identifiable));
     }
     
-    private JAXBElement<? extends IdentifiableType> createIdentifiable(IdentifiableType id) {
+    private JAXBElement<? extends IdentifiableType> createIdentifiable(final IdentifiableType id) {
         if (id instanceof ObjectRefType) {
             return FACTORY.createObjectRef((ObjectRefType)id);
         

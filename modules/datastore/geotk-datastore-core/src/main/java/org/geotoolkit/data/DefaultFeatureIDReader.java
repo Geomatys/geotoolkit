@@ -39,14 +39,14 @@ public class DefaultFeatureIDReader implements FeatureIDReader{
      *
      * @param type the featuretype
      */
-    public DefaultFeatureIDReader(FeatureType type){
+    public DefaultFeatureIDReader(final FeatureType type){
         this(type.getName().getLocalPart());
     }
 
     /**
      * @param base string use as start element of the generated ids
      */
-    public DefaultFeatureIDReader(String base){
+    public DefaultFeatureIDReader(final String base){
         if(base == null) throw new NullPointerException("Base string can not ben ull.");
         this.base = base + ".";
     }

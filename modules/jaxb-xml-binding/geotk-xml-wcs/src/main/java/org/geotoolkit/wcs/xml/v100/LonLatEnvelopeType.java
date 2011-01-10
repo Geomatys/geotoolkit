@@ -63,7 +63,7 @@ public class LonLatEnvelopeType extends LonLatEnvelopeBaseType {
         
     }
     
-    public LonLatEnvelopeType(List<DirectPositionType> pos, String srsName){
+    public LonLatEnvelopeType(final List<DirectPositionType> pos, final String srsName){
         super (pos, srsName);
     }
     

@@ -103,7 +103,7 @@ public class StyleType extends AbstractStyleSelectorType {
      *     {@link IconStyleType }
      *     
      */
-    public void setIconStyle(IconStyleType value) {
+    public void setIconStyle(final IconStyleType value) {
         this.iconStyle = value;
     }
 
@@ -127,7 +127,7 @@ public class StyleType extends AbstractStyleSelectorType {
      *     {@link LabelStyleType }
      *     
      */
-    public void setLabelStyle(LabelStyleType value) {
+    public void setLabelStyle(final LabelStyleType value) {
         this.labelStyle = value;
     }
 
@@ -151,7 +151,7 @@ public class StyleType extends AbstractStyleSelectorType {
      *     {@link LineStyleType }
      *     
      */
-    public void setLineStyle(LineStyleType value) {
+    public void setLineStyle(final LineStyleType value) {
         this.lineStyle = value;
     }
 
@@ -175,7 +175,7 @@ public class StyleType extends AbstractStyleSelectorType {
      *     {@link PolyStyleType }
      *     
      */
-    public void setPolyStyle(PolyStyleType value) {
+    public void setPolyStyle(final PolyStyleType value) {
         this.polyStyle = value;
     }
 
@@ -199,7 +199,7 @@ public class StyleType extends AbstractStyleSelectorType {
      *     {@link BalloonStyleType }
      *     
      */
-    public void setBalloonStyle(BalloonStyleType value) {
+    public void setBalloonStyle(final BalloonStyleType value) {
         this.balloonStyle = value;
     }
 
@@ -223,7 +223,7 @@ public class StyleType extends AbstractStyleSelectorType {
      *     {@link ListStyleType }
      *     
      */
-    public void setListStyle(ListStyleType value) {
+    public void setListStyle(final ListStyleType value) {
         this.listStyle = value;
     }
 

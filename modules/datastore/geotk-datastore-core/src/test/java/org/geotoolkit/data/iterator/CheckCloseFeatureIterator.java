@@ -33,7 +33,7 @@ public class CheckCloseFeatureIterator implements FeatureIterator<Feature>, Feat
     private final FeatureIterator ite;
     private boolean isClosed = false;
 
-    public CheckCloseFeatureIterator(FeatureIterator ite){
+    public CheckCloseFeatureIterator(final FeatureIterator ite){
         if(ite == null){
             throw new NullPointerException("Iterator can not be null.");
         }

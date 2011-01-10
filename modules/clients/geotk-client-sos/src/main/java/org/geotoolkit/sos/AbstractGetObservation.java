@@ -118,52 +118,52 @@ public abstract class AbstractGetObservation extends AbstractSOSRequest implemen
     }
 
     @Override
-    public void setEventTimes(EventTime... eventTimes) {
+    public void setEventTimes(final EventTime... eventTimes) {
         this.eventTimes = eventTimes;
     }
 
     @Override
-    public void setFeatureOfInterest(GetObservation.FeatureOfInterest featureOfInterest) {
+    public void setFeatureOfInterest(final GetObservation.FeatureOfInterest featureOfInterest) {
         this.featureOfInterest = featureOfInterest;
     }
 
     @Override
-    public void setObservedProperties(String... observedProperties) {
+    public void setObservedProperties(final String... observedProperties) {
         this.observedProperties = observedProperties;
     }
 
     @Override
-    public void setOffering(String offering) {
+    public void setOffering(final String offering) {
         this.offering = offering;
     }
 
     @Override
-    public void setProcedures(String... procedures) {
+    public void setProcedures(final String... procedures) {
         this.procedures = procedures;
     }
 
     @Override
-    public void setResponseFormat(String responseFormat) {
+    public void setResponseFormat(final String responseFormat) {
         this.responseFormat = responseFormat;
     }
 
     @Override
-    public void setResponseMode(ResponseModeType responseMode) {
+    public void setResponseMode(final ResponseModeType responseMode) {
         this.responseMode = responseMode;
     }
 
     @Override
-    public void setResult(GetObservation.Result result) {
+    public void setResult(final GetObservation.Result result) {
         this.result = result;
     }
 
     @Override
-    public void setResultModel(QName resultModel) {
+    public void setResultModel(final QName resultModel) {
         this.resultModel = resultModel;
     }
 
     @Override
-    public void setSrsName(String srsName) {
+    public void setSrsName(final String srsName) {
         this.srsName = srsName;
     }
 

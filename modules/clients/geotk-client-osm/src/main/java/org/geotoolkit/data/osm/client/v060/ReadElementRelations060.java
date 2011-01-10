@@ -29,7 +29,7 @@ import org.geotoolkit.data.osm.model.Way;
  */
 public class ReadElementRelations060 extends AbstractReadElementRelations{
 
-    public ReadElementRelations060(String serveruURL){
+    public ReadElementRelations060(final String serveruURL){
         super(serveruURL,"/api/0.6/");
     }
 

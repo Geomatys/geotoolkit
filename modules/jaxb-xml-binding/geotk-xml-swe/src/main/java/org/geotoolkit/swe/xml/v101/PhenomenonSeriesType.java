@@ -76,7 +76,7 @@ public class PhenomenonSeriesType extends CompoundPhenomenonEntry {
     /**
      * Sets the value of the base property.
      */
-    public void setBase(PhenomenonPropertyType value) {
+    public void setBase(final PhenomenonPropertyType value) {
         this.base = value;
     }
 

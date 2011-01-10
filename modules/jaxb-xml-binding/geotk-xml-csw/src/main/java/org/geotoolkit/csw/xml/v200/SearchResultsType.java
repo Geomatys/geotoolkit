@@ -143,7 +143,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the resultSetId property.
      * 
     */
-    public void setResultSetId(String value) {
+    public void setResultSetId(final String value) {
         this.resultSetId = value;
     }
 
@@ -159,7 +159,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the elementSet property.
      * 
      */
-    public void setElementSet(ElementSetType value) {
+    public void setElementSet(final ElementSetType value) {
         this.elementSet = value;
     }
 
@@ -175,7 +175,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the recordSchema property.
      * 
      */
-    public void setRecordSchema(String value) {
+    public void setRecordSchema(final String value) {
         this.recordSchema = value;
     }
 
@@ -191,7 +191,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the numberOfRecordsMatched property.
      * 
      */
-    public void setNumberOfRecordsMatched(int value) {
+    public void setNumberOfRecordsMatched(final int value) {
         this.numberOfRecordsMatched = value;
     }
 
@@ -207,7 +207,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the numberOfRecordsReturned property.
      * 
      */
-    public void setNumberOfRecordsReturned(int value) {
+    public void setNumberOfRecordsReturned(final int value) {
         this.numberOfRecordsReturned = value;
     }
 
@@ -223,7 +223,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the nextRecord property.
      * 
      */
-    public void setNextRecord(int value) {
+    public void setNextRecord(final int value) {
         this.nextRecord = value;
     }
 
@@ -239,7 +239,7 @@ public class SearchResultsType implements SearchResults {
      * Sets the value of the expires property.
      * 
      */
-    public void setExpires(XMLGregorianCalendar value) {
+    public void setExpires(final XMLGregorianCalendar value) {
         this.expires = value;
     }
 

@@ -59,11 +59,11 @@ public class LocalElement extends Element {
 
     }
 
-    public LocalElement(String name, QName type) {
+    public LocalElement(final String name, final QName type) {
         super(name, type);
     }
 
-    public LocalElement(String name, QName type, Integer minOccurs, String maxOccurs) {
+    public LocalElement(final String name, final QName type, final Integer minOccurs, final String maxOccurs) {
         super(name, type, minOccurs, maxOccurs);
     }
 

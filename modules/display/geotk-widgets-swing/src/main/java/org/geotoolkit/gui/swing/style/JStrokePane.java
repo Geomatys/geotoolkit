@@ -66,7 +66,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         this.layer = layer;
         GuiStrokeWidth.setLayer(layer);
         GuiStrokeColor.setLayer(layer);
@@ -81,7 +81,7 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
     }
 
     @Override
-    public void parse(Stroke stroke) {
+    public void parse(final Stroke stroke) {
 
         this.stroke = stroke;
 
@@ -349,25 +349,25 @@ public class JStrokePane extends StyleElementEditor<Stroke> {
 
     }// </editor-fold>//GEN-END:initComponents
 
-    private void butStrokeActionPerformed(ActionEvent evt) {//GEN-FIRST:event_butStrokeActionPerformed
+    private void butStrokeActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butStrokeActionPerformed
         if(graphicStroke == null){
             showGraphicStrokeDialog();
         }
 }//GEN-LAST:event_butStrokeActionPerformed
 
-    private void butFillActionPerformed(ActionEvent evt) {//GEN-FIRST:event_butFillActionPerformed
+    private void butFillActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_butFillActionPerformed
         if(graphicFill == null){
             showGraphicFillDialog();
         }
     }//GEN-LAST:event_butFillActionPerformed
 
-private void guiGraphicFillActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiGraphicFillActionPerformed
+private void guiGraphicFillActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiGraphicFillActionPerformed
     if(graphicFill == null){
         showGraphicFillDialog();
     }
 }//GEN-LAST:event_guiGraphicFillActionPerformed
 
-private void guiGraphicStrokeActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiGraphicStrokeActionPerformed
+private void guiGraphicStrokeActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiGraphicStrokeActionPerformed
     if(graphicStroke == null){
         showGraphicStrokeDialog();
     }

@@ -45,36 +45,36 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
      * Returns the standard glyph size : 30x24
      */
     @Override
-    public Rectangle2D glyphPreferredSize(C symbol, MapLayer layer) {
+    public Rectangle2D glyphPreferredSize(final C symbol, final MapLayer layer) {
         return new Rectangle2D.Double(0, 0, 30, 24);
     }
 
     @Override
-    public void portray(ProjectedFeature graphic, C symbol, RenderingContext2D context) throws PortrayalException {
+    public void portray(final ProjectedFeature graphic, final C symbol, final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         renderer.portray(graphic);
     }
 
     @Override
-    public void portray(Iterator<ProjectedFeature> graphics, C symbol, RenderingContext2D context) throws PortrayalException {
+    public void portray(final Iterator<ProjectedFeature> graphics, final C symbol, final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         renderer.portray(graphics);
     }
 
     @Override
-    public void portray(ProjectedCoverage graphic, C symbol, RenderingContext2D context) throws PortrayalException {
+    public void portray(final ProjectedCoverage graphic, final C symbol, final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         renderer.portray(graphic);
     }
 
     @Override
-    public boolean hit(ProjectedFeature graphic, C symbol, RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedFeature graphic, final C symbol, final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter) {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         return renderer.hit(graphic, mask, filter);
     }
 
     @Override
-    public boolean hit(ProjectedCoverage graphic, C symbol, RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedCoverage graphic, final C symbol, final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter) {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         return renderer.hit(graphic, mask, filter);
     }

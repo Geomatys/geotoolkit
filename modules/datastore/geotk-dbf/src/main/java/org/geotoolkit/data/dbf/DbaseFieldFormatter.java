@@ -38,7 +38,7 @@ public class DbaseFieldFormatter {
     private static final int MAXCHARS = 255;
     private Charset charset;
 
-    public DbaseFieldFormatter(Charset charset) {
+    public DbaseFieldFormatter(final Charset charset) {
         // Avoid grouping on number format
         numFormat.setGroupingUsed(false);
 
@@ -54,7 +54,7 @@ public class DbaseFieldFormatter {
         emptyString = sb.toString();
     }
 
-    public String getFieldString(int size, String s) {
+    public String getFieldString(final int size, final String s) {
         try {
             buffer.replace(0, size, emptyString);
             buffer.setLength(size);
@@ -90,7 +90,7 @@ public class DbaseFieldFormatter {
         }
     }
 
-    public String getFieldString(Date d) {
+    public String getFieldString(final Date d) {
 
         if (d != null) {
             buffer.delete(0, buffer.length());
@@ -130,7 +130,7 @@ public class DbaseFieldFormatter {
         return buffer.toString();
     }
 
-    public String getFieldString(int size, int decimalPlaces, Number n) {
+    public String getFieldString(final int size, final int decimalPlaces, final Number n) {
         buffer.delete(0, buffer.length());
 
         if (n != null) {

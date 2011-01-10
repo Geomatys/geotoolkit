@@ -59,7 +59,7 @@ public class DefaultCalendarEra implements CalendarEra {
      */
     private Collection<Calendar> datingSystem;
 
-    public DefaultCalendarEra(InternationalString name, InternationalString referenceEvent, CalendarDate referenceDate, JulianDate julianReference, Period epochOfUse) {
+    public DefaultCalendarEra(final InternationalString name, final InternationalString referenceEvent, final CalendarDate referenceDate, final JulianDate julianReference, final Period epochOfUse) {
         this.name = name;
         this.referenceDate = referenceDate;
         this.referenceEvent = referenceEvent;
@@ -87,23 +87,23 @@ public class DefaultCalendarEra implements CalendarEra {
         return epochOfUse;
     }
 
-    public void setName(InternationalString name) {
+    public void setName(final InternationalString name) {
         this.name = name;
     }
 
-    public void setReferenceEvent(InternationalString referenceEvent) {
+    public void setReferenceEvent(final InternationalString referenceEvent) {
         this.referenceEvent = referenceEvent;
     }
 
-    public void setReferenceDate(CalendarDate referenceDate) {
+    public void setReferenceDate(final CalendarDate referenceDate) {
         this.referenceDate = referenceDate;
     }
 
-    public void setJulianReference(JulianDate julianReference) {
+    public void setJulianReference(final JulianDate julianReference) {
         this.julianReference = julianReference;
     }
 
-    public void setEpochOfUse(Period epochOfUse) {
+    public void setEpochOfUse(final Period epochOfUse) {
         this.epochOfUse = epochOfUse;
     }
 

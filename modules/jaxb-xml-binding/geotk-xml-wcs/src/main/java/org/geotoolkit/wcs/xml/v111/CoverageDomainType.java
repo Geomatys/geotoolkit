@@ -66,7 +66,7 @@ public class CoverageDomainType {
     /**
      * build a new coverage domain.
      */
-    public CoverageDomainType(SpatialDomainType spatialDomain, TimeSequenceType temporalDomain) {
+    public CoverageDomainType(final SpatialDomainType spatialDomain, final TimeSequenceType temporalDomain) {
         this.spatialDomain  = spatialDomain;
         this.temporalDomain = temporalDomain;
     }

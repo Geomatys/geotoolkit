@@ -71,7 +71,7 @@ public class TargetType {
    /**
     * Sets the value of the subjects property.
     */
-   public void setSubjects(SubjectsType value) {
+   public void setSubjects(final SubjectsType value) {
       this.subjects = value;
    }
 
@@ -86,7 +86,7 @@ public class TargetType {
    /**
     * Sets the value of the resources property.
     */
-   public void setResources(ResourcesType value) {
+   public void setResources(final ResourcesType value) {
       this.resources = value;
    }
 
@@ -100,7 +100,7 @@ public class TargetType {
    /**
     * Sets the value of the actions property.
     */
-   public void setActions(ActionsType value) {
+   public void setActions(final ActionsType value) {
       this.actions = value;
    }
 
@@ -114,7 +114,7 @@ public class TargetType {
    /**
     * Sets the value of the environments property.
     */
-   public void setEnvironments(EnvironmentsType value) {
+   public void setEnvironments(final EnvironmentsType value) {
       this.environments = value;
    }
 

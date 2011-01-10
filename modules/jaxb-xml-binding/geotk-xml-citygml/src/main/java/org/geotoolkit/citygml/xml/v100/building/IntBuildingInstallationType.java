@@ -94,7 +94,7 @@ public class IntBuildingInstallationType extends AbstractCityObjectType {
      *     {@link String }
      *     
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
@@ -138,7 +138,7 @@ public class IntBuildingInstallationType extends AbstractCityObjectType {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setLod4Geometry(GeometryPropertyType value) {
+    public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;
     }
 

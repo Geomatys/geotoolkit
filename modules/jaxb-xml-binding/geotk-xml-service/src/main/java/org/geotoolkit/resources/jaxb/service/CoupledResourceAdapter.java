@@ -84,7 +84,7 @@ public class CoupledResourceAdapter extends XmlAdapter<CoupledResourceAdapter, C
      * @return A java object which represents the metadata value.
      */
     @Override
-    public CoupledResource unmarshal(CoupledResourceAdapter value) throws Exception {
+    public CoupledResource unmarshal(final CoupledResourceAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -99,7 +99,7 @@ public class CoupledResourceAdapter extends XmlAdapter<CoupledResourceAdapter, C
      * @return The adapter for this CoupledResource.
      */
     @Override
-    public CoupledResourceAdapter marshal(CoupledResource value) throws Exception {
+    public CoupledResourceAdapter marshal(final CoupledResource value) throws Exception {
         return new CoupledResourceAdapter(value);
     }
 

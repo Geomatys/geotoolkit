@@ -78,7 +78,7 @@ public class GNC_OrganisationEntitie extends GNC_Resource implements org.opengis
      *     {@link GNCOrganisationTypeCodePropertyType }
      *     
      */
-    public void setTypeOfOrganisation(GNC_OrganisationTypeCode value) {
+    public void setTypeOfOrganisation(final GNC_OrganisationTypeCode value) {
         this.typeOfOrganisation = value;
     }
 

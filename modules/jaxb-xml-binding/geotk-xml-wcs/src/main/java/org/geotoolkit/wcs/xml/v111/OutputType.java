@@ -70,7 +70,7 @@ public class OutputType {
     /**
      * Build a new Output for a getCoevrage request.
      */
-    public OutputType(GridCrsType gridCRS, String format){
+    public OutputType(final GridCrsType gridCRS, final String format){
         this.store   = false;
         this.gridCRS = gridCRS;
         this.format  = format;

@@ -91,7 +91,7 @@ public class ScaleType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setX(Double value) {
+    public void setX(final Double value) {
         this.x = value;
     }
 
@@ -115,7 +115,7 @@ public class ScaleType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setY(Double value) {
+    public void setY(final Double value) {
         this.y = value;
     }
 
@@ -139,7 +139,7 @@ public class ScaleType extends AbstractObjectType {
      *     {@link Double }
      *     
      */
-    public void setZ(Double value) {
+    public void setZ(final Double value) {
         this.z = value;
     }
 

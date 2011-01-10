@@ -72,7 +72,7 @@ public class GeometryType {
      *     {@link PropertyNameType }
      *     
      */
-    public void setPropertyName(PropertyNameType value) {
+    public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
     }
 

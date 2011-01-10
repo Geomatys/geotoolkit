@@ -65,7 +65,7 @@ public class FilterToCQLTest extends TestCase {
     public void testOR() throws Exception {
         cqlTest( "(ATTR1 > 10 OR ATTR2 < 2)" );
     }
-    protected void cqlTest( String cql ) throws Exception {
+    protected void cqlTest( final String cql ) throws Exception {
         Filter filter = CQL.toFilter(cql);
         assertNotNull( cql + " parse", filter );
 
@@ -85,14 +85,14 @@ public class FilterToCQLTest extends TestCase {
     */
     static class CQLTest2 extends Assert implements Test {
         String cql;
-        CQLTest2( String cql ){
+        CQLTest2( final String cql ){
             this.cql = cql;
         }
         public int countTestCases() {
             return 1;
         }
 
-        public void run(TestResult result) {
+        public void run(final TestResult result) {
             result.startTest( (junit.framework.Test) this );
             try {
                 Filter filter = CQL.toFilter( cql );

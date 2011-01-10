@@ -52,7 +52,7 @@ public class MokSymbolizer extends AbstractSymbolizer implements ExtensionSymbol
     }
 
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 

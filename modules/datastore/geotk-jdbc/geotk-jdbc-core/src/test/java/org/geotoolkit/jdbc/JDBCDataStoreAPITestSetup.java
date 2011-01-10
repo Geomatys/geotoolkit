@@ -28,7 +28,7 @@ import java.sql.SQLException;
  */
 public abstract class JDBCDataStoreAPITestSetup extends JDBCDelegatingTestSetup {
    
-    protected JDBCDataStoreAPITestSetup(JDBCTestSetup delegate) {
+    protected JDBCDataStoreAPITestSetup(final JDBCTestSetup delegate) {
         super( delegate );
     }
     

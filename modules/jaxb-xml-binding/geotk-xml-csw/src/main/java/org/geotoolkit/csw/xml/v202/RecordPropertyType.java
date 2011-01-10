@@ -63,7 +63,7 @@ public class RecordPropertyType {
 
     }
 
-    public RecordPropertyType(String name, Object value) {
+    public RecordPropertyType(final String name, final Object value) {
         this.name  = name;
         this.value = value;
     }

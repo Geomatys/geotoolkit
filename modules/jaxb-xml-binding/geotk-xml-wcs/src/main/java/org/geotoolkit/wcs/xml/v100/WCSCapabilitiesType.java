@@ -86,8 +86,8 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * build a full new Capabilities document version 1.0.0.
      */
-    public WCSCapabilitiesType(ServiceType service, WCSCapabilityType capability, 
-            ContentMetadata contentMetadata, String updateSequence) {
+    public WCSCapabilitiesType(final ServiceType service, final WCSCapabilityType capability, 
+            final ContentMetadata contentMetadata, final String updateSequence) {
         this.service         = service;
         this.capability      = capability;
         this.contentMetadata = contentMetadata;
@@ -98,7 +98,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * build a new Capabilities document version 1.0.0 with only the section "service".
      */
-    public WCSCapabilitiesType(ServiceType service) {
+    public WCSCapabilitiesType(final ServiceType service) {
         this.service = service;
         this.version = "1.0.0";
     }
@@ -106,7 +106,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * build a new Capabilities document version 1.0.0 with only the section "Capability".
      */
-    public WCSCapabilitiesType(WCSCapabilityType capability) {
+    public WCSCapabilitiesType(final WCSCapabilityType capability) {
         this.capability = capability;
         this.version    = "1.0.0";
     }
@@ -114,7 +114,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * build a new Capabilities document version 1.0.0 with only the section "ContentMetadata".
      */
-    public WCSCapabilitiesType(ContentMetadata contentMetadata) {
+    public WCSCapabilitiesType(final ContentMetadata contentMetadata) {
         this.contentMetadata = contentMetadata;
         this.version         = "1.0.0";
     }
@@ -127,7 +127,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
         return service;
     }
     
-    public void setService(ServiceType service) {
+    public void setService(final ServiceType service) {
         this.service = service; 
     }
     /**
@@ -148,7 +148,7 @@ public class WCSCapabilitiesType implements GetCapabilitiesResponse {
     /**
      * Sets the value of the contentMetadata property.
      */
-    public void setContentMetadata(ContentMetadata value) {
+    public void setContentMetadata(final ContentMetadata value) {
         this.contentMetadata = value;
     }
 

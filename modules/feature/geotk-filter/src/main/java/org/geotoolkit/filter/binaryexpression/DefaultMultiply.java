@@ -30,7 +30,7 @@ import org.opengis.filter.expression.Multiply;
  */
 public class DefaultMultiply extends AbstractBinaryExpression<Expression,Expression> implements Multiply{
 
-    public DefaultMultiply(Expression left, Expression right) {
+    public DefaultMultiply(final Expression left, final Expression right) {
         super(left,right);
     }
 
@@ -38,7 +38,7 @@ public class DefaultMultiply extends AbstractBinaryExpression<Expression,Express
      * {@inheritDoc }
      */
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         final Double val1 = left.evaluate(object, Double.class);
         final Double val2 = right.evaluate(object, Double.class);
 
@@ -53,7 +53,7 @@ public class DefaultMultiply extends AbstractBinaryExpression<Expression,Express
      * {@inheritDoc }
      */
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -71,7 +71,7 @@ public class DefaultMultiply extends AbstractBinaryExpression<Expression,Express
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

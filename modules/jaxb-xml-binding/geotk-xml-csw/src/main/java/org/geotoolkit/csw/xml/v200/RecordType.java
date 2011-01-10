@@ -74,10 +74,10 @@ public class RecordType extends DCMIRecordType implements Record {
     /**
      * Build a new Record TODO add contributor, source , spatial, right, relation
      */
-    public RecordType(SimpleLiteral identifier, SimpleLiteral title, SimpleLiteral type, 
-            List<SimpleLiteral> subject, SimpleLiteral format, SimpleLiteral modified, SimpleLiteral _abstract,
-            BoundingBoxType bbox, SimpleLiteral creator, SimpleLiteral distributor, SimpleLiteral language, 
-            SimpleLiteral spatial,SimpleLiteral references) {
+    public RecordType(final SimpleLiteral identifier, final SimpleLiteral title, final SimpleLiteral type, 
+            final List<SimpleLiteral> subject, final SimpleLiteral format, final SimpleLiteral modified, final SimpleLiteral _abstract,
+            final BoundingBoxType bbox, final SimpleLiteral creator, final SimpleLiteral distributor, final SimpleLiteral language, 
+            final SimpleLiteral spatial,final SimpleLiteral references) {
         
         super(identifier, title,type, subject, format, modified, _abstract, creator, distributor, language, spatial, references);
         
@@ -101,11 +101,11 @@ public class RecordType extends DCMIRecordType implements Record {
      * Sets the value of the boundingBox property.
      * 
      */
-    public void setBoundingBox(JAXBElement<? extends BoundingBoxType> value) {
+    public void setBoundingBox(final JAXBElement<? extends BoundingBoxType> value) {
         this.boundingBox = ((JAXBElement<? extends BoundingBoxType> ) value);
     }
 
-    public void setBoundingBox(BoundingBoxType bbox) {
+    public void setBoundingBox(final BoundingBoxType bbox) {
         if (bbox instanceof WGS84BoundingBoxType) {
             this.boundingBox = owsFactory.createWGS84BoundingBox((WGS84BoundingBoxType)bbox);
         } else {

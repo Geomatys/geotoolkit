@@ -80,11 +80,11 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
 
     }
 
-    public TimeRange(List<String> value) {
+    public TimeRange(final List<String> value) {
         this.value = value;
     }
 
-    public TimeRange(AbstractTimeRange q) {
+    public TimeRange(final AbstractTimeRange q) {
         super(q);
         if (q != null) {
            /* if (q.getConstraint() != null) {
@@ -113,7 +113,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Sets the value of the uom property.
      */
-    public void setUom(UomPropertyType value) {
+    public void setUom(final UomPropertyType value) {
         this.uom = value;
     }
 
@@ -127,7 +127,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Sets the value of the constraint property.
      */
-    public void setConstraint(AllowedTimesPropertyType value) {
+    public void setConstraint(final AllowedTimesPropertyType value) {
         this.constraint = value;
     }
 
@@ -141,7 +141,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Sets the value of the quality property.
      */
-    public void setQuality(QualityPropertyType value) {
+    public void setQuality(final QualityPropertyType value) {
         this.quality = value;
     }
 
@@ -158,14 +158,14 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Gets the value of the value property.
      */
-    public void setValue(List<String> value) {
+    public void setValue(final List<String> value) {
         this.value = value;
     }
 
     /**
      * Gets the value of the value property.
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         if (this.value == null) {
             this.value = new ArrayList<String>();
         }
@@ -182,7 +182,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Sets the value of the referenceTime property.
      */
-    public void setReferenceTime(String value) {
+    public void setReferenceTime(final String value) {
         this.referenceTime = value;
     }
 
@@ -196,7 +196,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(String value) {
+    public void setReferenceFrame(final String value) {
         this.referenceFrame = value;
     }
 
@@ -210,7 +210,7 @@ public class TimeRange extends AbstractDataComponentType implements AbstractTime
     /**
      * Sets the value of the localFrame property.
      */
-    public void setLocalFrame(String value) {
+    public void setLocalFrame(final String value) {
         this.localFrame = value;
     }
 

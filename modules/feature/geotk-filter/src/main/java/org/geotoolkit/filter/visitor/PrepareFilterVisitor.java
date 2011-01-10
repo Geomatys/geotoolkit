@@ -30,7 +30,7 @@ public class PrepareFilterVisitor extends SimplifyingFilterVisitor{
 
     private final Class clazz;
 
-    public PrepareFilterVisitor(Class clazz){
+    public PrepareFilterVisitor(final Class clazz){
         this.clazz = clazz;
     }
 

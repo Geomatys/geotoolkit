@@ -64,7 +64,7 @@ public class InsertResultsType {
 
     }
 
-    public InsertResultsType(List<InsertedFeatureType> feature) {
+    public InsertResultsType(final List<InsertedFeatureType> feature) {
         this.feature = feature;
     }
 

@@ -31,7 +31,7 @@ public class GetCapabilities130 extends AbstractGetCapabilities {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetCapabilities130(String serverURL){
+    public GetCapabilities130(final String serverURL){
         super(serverURL, "1.3.0");
     }
 

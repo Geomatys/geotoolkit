@@ -88,7 +88,7 @@ public class SupportedUOMsType {
      *     {@link SupportedUOMsType.Default }
      *     
      */
-    public void setDefault(SupportedUOMsType.Default value) {
+    public void setDefault(final SupportedUOMsType.Default value) {
         this._default = value;
     }
 
@@ -112,7 +112,7 @@ public class SupportedUOMsType {
      *     {@link UOMsType }
      *     
      */
-    public void setSupported(UOMsType value) {
+    public void setSupported(final UOMsType value) {
         this.supported = value;
     }
 
@@ -165,7 +165,7 @@ public class SupportedUOMsType {
          *     {@link DomainMetadataType }
          *     
          */
-        public void setUOM(DomainMetadataType value) {
+        public void setUOM(final DomainMetadataType value) {
             this.uom = value;
         }
 

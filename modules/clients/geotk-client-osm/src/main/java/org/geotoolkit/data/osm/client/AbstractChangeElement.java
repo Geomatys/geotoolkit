@@ -40,7 +40,7 @@ public abstract class AbstractChangeElement extends AbstractRequest implements C
     protected final Type type;
     protected IdentifiedElement element = null;
 
-    public AbstractChangeElement(String serverURL, String subPath, Type type){
+    public AbstractChangeElement(final String serverURL, final String subPath, final Type type){
         super(serverURL, subPath);
         this.type = type;
     }
@@ -56,7 +56,7 @@ public abstract class AbstractChangeElement extends AbstractRequest implements C
     }
 
     @Override
-    public void setElement(IdentifiedElement element) {
+    public void setElement(final IdentifiedElement element) {
         this.element = element;
     }
 

@@ -191,7 +191,7 @@ public class FeatureTypeUtilities {
     /**
      * Remove properties that are used for generating the primary key.
      */
-    public static FeatureType excludePrimaryKeyFields(FeatureType ft) throws SchemaException{
+    public static FeatureType excludePrimaryKeyFields(final FeatureType ft) throws SchemaException{
         final List<Name> pkeys = new ArrayList<Name>();
         for(PropertyDescriptor desc : ft.getDescriptors()){
             if(!isPartOfPrimaryKey(desc)) pkeys.add(desc.getName());
@@ -722,7 +722,7 @@ public class FeatureTypeUtilities {
      * @throws SchemaException
      */
     public static FeatureType transform(final FeatureType schema, final CoordinateReferenceSystem crs,
-            boolean forceOnlyMissing) throws SchemaException{
+            final boolean forceOnlyMissing) throws SchemaException{
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName(schema.getName());
         ftb.setAbstract(schema.isAbstract());
@@ -1214,7 +1214,7 @@ public class FeatureTypeUtilities {
     }
 
     public static SimpleFeature template(final SimpleFeatureType featureType, final String featureID,
-            Object[] atts) throws IllegalAttributeException {
+            final Object[] atts) throws IllegalAttributeException {
         return SimpleFeatureBuilder.build(featureType, defaultValues(featureType, atts), featureID);
     }
 
@@ -1223,7 +1223,7 @@ public class FeatureTypeUtilities {
      * @param desc PropertyDescriptor
      * @return true if the descriptor is part of the primary key.
      */
-    public static boolean isPartOfPrimaryKey(PropertyDescriptor desc){
+    public static boolean isPartOfPrimaryKey(final PropertyDescriptor desc){
         Map params = desc.getUserData();
         if(params == null){
             return false;

@@ -99,7 +99,7 @@ public class BuildingInstallationType extends AbstractCityObjectType {
      *     {@link String }
      *     
      */
-    public void setClazz(String value) {
+    public void setClazz(final String value) {
         this.clazz = value;
     }
 
@@ -181,7 +181,7 @@ public class BuildingInstallationType extends AbstractCityObjectType {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setLod2Geometry(GeometryPropertyType value) {
+    public void setLod2Geometry(final GeometryPropertyType value) {
         this.lod2Geometry = value;
     }
 
@@ -205,7 +205,7 @@ public class BuildingInstallationType extends AbstractCityObjectType {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setLod3Geometry(GeometryPropertyType value) {
+    public void setLod3Geometry(final GeometryPropertyType value) {
         this.lod3Geometry = value;
     }
 
@@ -229,7 +229,7 @@ public class BuildingInstallationType extends AbstractCityObjectType {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setLod4Geometry(GeometryPropertyType value) {
+    public void setLod4Geometry(final GeometryPropertyType value) {
         this.lod4Geometry = value;
     }
 

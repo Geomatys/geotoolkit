@@ -102,7 +102,7 @@ public final class XMLUtilities {
         this.sldFactory = new DefaultSLDFactory();
     }
 
-    public XMLUtilities(FilterFactory2 filterFactory, MutableStyleFactory styleFactory, MutableSLDFactory sldFactory) {
+    public XMLUtilities(final FilterFactory2 filterFactory, final MutableStyleFactory styleFactory, final MutableSLDFactory sldFactory) {
         this.filterFactory = filterFactory;
         this.styleFactory = styleFactory;
         this.sldFactory = sldFactory;
@@ -130,7 +130,7 @@ public final class XMLUtilities {
         return transformerGTv110;
     }
 
-    public SLD110toGTTransformer getTransformer110(Map<String, String> namespaceMapping){
+    public SLD110toGTTransformer getTransformer110(final Map<String, String> namespaceMapping){
         if (transformerGTv110 == null) {
             transformerGTv110 = new SLD110toGTTransformer(filterFactory, styleFactory, sldFactory, namespaceMapping);
         }
@@ -261,7 +261,7 @@ public final class XMLUtilities {
      * @param isformatted
      * @throws javax.xml.bind.JAXBException
      */
-    private void marshallV100(final Object target, final Object jaxElement, boolean isformatted) throws JAXBException {
+    private void marshallV100(final Object target, final Object jaxElement, final boolean isformatted) throws JAXBException {
         final Marshaller marshaller = getJaxbContext100().acquireMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, isformatted);
         try {
@@ -364,7 +364,7 @@ public final class XMLUtilities {
      * @throws javax.xml.bind.JAXBException
      */
     public void writeSLD(final Object target, final StyledLayerDescriptor sld, 
-            final Specification.StyledLayerDescriptor version, boolean isformatted) throws JAXBException{
+            final Specification.StyledLayerDescriptor version, final boolean isformatted) throws JAXBException{
         if(target == null || sld == null || version == null) throw new NullPointerException("Source, SLD and version can not be null");
         
         final Object jax;

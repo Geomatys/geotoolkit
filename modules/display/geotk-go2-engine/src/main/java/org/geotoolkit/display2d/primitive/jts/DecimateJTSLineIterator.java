@@ -49,7 +49,7 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
      * @param ls The line string the iterator will use
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public DecimateJTSLineIterator(LineString ls, AffineTransform trs, double[] resolution) {
+    public DecimateJTSLineIterator(final LineString ls, final AffineTransform trs, final double[] resolution) {
         super(ls,trs);
         coordinates = ls.getCoordinateSequence();
         coordinateCount = coordinates.size();
@@ -125,7 +125,7 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         if (currentIndex == 0) {
             transform.transform(currentCoord, 0, coords, 0, 1);
             return SEG_MOVETO;
@@ -141,7 +141,7 @@ public final class DecimateJTSLineIterator extends JTSGeometryIterator<LineStrin
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(float[] coords) {
+    public int currentSegment(final float[] coords) {
         if (currentIndex == 0) {
             transform.transform(currentCoord, 0, coords, 0, 1);
             return SEG_MOVETO;

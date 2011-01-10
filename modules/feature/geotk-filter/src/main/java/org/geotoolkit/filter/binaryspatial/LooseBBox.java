@@ -42,7 +42,7 @@ import org.opengis.util.FactoryException;
  */
 public class LooseBBox extends DefaultBBox{
 
-    public LooseBBox(PropertyName property, DefaultLiteral<BoundingBox> bbox) {
+    public LooseBBox(final PropertyName property, final DefaultLiteral<BoundingBox> bbox) {
         super(property,bbox);
     }
 
@@ -50,7 +50,7 @@ public class LooseBBox extends DefaultBBox{
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         Geometry candidate;
         if (object instanceof Feature && left.getPropertyName().isEmpty()) {
             candidate = (Geometry) ((Feature)object).getDefaultGeometryProperty().getValue();

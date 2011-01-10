@@ -68,7 +68,7 @@ public class SortPropertyType implements SortBy {
     /**
      * build a new SOrt property object.
      */
-    public SortPropertyType(String propertyName, SortOrder sortOrder) {
+    public SortPropertyType(final String propertyName, final SortOrder sortOrder) {
         this.propertyName = new PropertyNameType(propertyName);
         if (sortOrder != null && sortOrder.equals(SortOrder.ASCENDING))
             this.sortOrder = SortOrderType.ASC;
@@ -79,7 +79,7 @@ public class SortPropertyType implements SortBy {
     /**
      * build a new SOrt property object.
      */
-    public SortPropertyType(String propertyName, SortOrderType sortOrder) {
+    public SortPropertyType(final String propertyName, final SortOrderType sortOrder) {
         this.propertyName = new PropertyNameType(propertyName);
         this.sortOrder    = sortOrder;
     }

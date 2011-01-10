@@ -81,11 +81,11 @@ public class GNC_UseRestrictions implements org.opengis.metadata.geonetcab.GNC_U
         return this.extentOfRestrictions;
     }
 
-    public void setExtentOfRestrictions(List<GeographicDescription> extentOfRestrictions) {
+    public void setExtentOfRestrictions(final List<GeographicDescription> extentOfRestrictions) {
         this.extentOfRestrictions = extentOfRestrictions;
     }
 
-    public void setExtentOfRestrictions(GeographicDescription extentOfRestrictions) {
+    public void setExtentOfRestrictions(final GeographicDescription extentOfRestrictions) {
         if (this.extentOfRestrictions == null) {
             this.extentOfRestrictions = new ArrayList<GeographicDescription>();
         }
@@ -113,7 +113,7 @@ public class GNC_UseRestrictions implements org.opengis.metadata.geonetcab.GNC_U
      *     {@link Boolean }
      *     
      */
-    public void setGeographicRestrictions(Boolean value) {
+    public void setGeographicRestrictions(final Boolean value) {
         this.geographicRestrictions = value;
     }
 
@@ -138,12 +138,12 @@ public class GNC_UseRestrictions implements org.opengis.metadata.geonetcab.GNC_U
      *     {@link String }
      *     
      */
-    public void setOtherConstraints(String value) {
+    public void setOtherConstraints(final String value) {
         this.otherConstraints = value;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
         }

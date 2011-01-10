@@ -73,7 +73,7 @@ public class MeasureType {
 
     }
 
-    public MeasureType(double value, String uom) {
+    public MeasureType(final double value, final String uom) {
         this.uom   = uom;
         this.value = value;
     }
@@ -90,7 +90,7 @@ public class MeasureType {
      * Sets the value of the value property.
      * 
      */
-    public void setValue(double value) {
+    public void setValue(final double value) {
         this.value = value;
     }
 
@@ -114,7 +114,7 @@ public class MeasureType {
      *     {@link String }
      *     
      */
-    public void setUom(String value) {
+    public void setUom(final String value) {
         this.uom = value;
     }
 

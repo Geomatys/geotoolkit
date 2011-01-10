@@ -85,7 +85,7 @@ public class SchemaComponentType implements SchemaComponent {
     /**
      * Build a new Schema Component.
      */
-    public SchemaComponentType(String targetNamespace, String schemaLanguage, Object xsd) {
+    public SchemaComponentType(final String targetNamespace, final String schemaLanguage, final Object xsd) {
         this.targetNamespace = targetNamespace;
         this.schemaLanguage  = schemaLanguage; 
         this.content         = new ArrayList<Object>();

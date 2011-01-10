@@ -90,7 +90,7 @@ public class MissingAttributeDetailType {
     * Sets the value of the attributeId property.
     * 
     */
-   public void setAttributeId(String value) {
+   public void setAttributeId(final String value) {
       this.attributeId = value;
    }
 
@@ -106,7 +106,7 @@ public class MissingAttributeDetailType {
     * Sets the value of the dataType property.
     * 
     */
-   public void setDataType(String value) {
+   public void setDataType(final String value) {
       this.dataType = value;
    }
 
@@ -122,7 +122,7 @@ public class MissingAttributeDetailType {
     * Sets the value of the issuer property.
     * 
     */
-   public void setIssuer(String value) {
+   public void setIssuer(final String value) {
       this.issuer = value;
    }
 

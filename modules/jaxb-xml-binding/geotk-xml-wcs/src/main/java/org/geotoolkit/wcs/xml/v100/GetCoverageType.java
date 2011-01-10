@@ -110,9 +110,9 @@ public class GetCoverageType implements GetCoverage {
     /**
      * Build a new GetCoverage request (1.0.0)
      */
-    public GetCoverageType(String sourceCoverage, DomainSubsetType domainSubset,
-            RangeSubsetType rangeSubset, String interpolationMethod,
-            OutputType output) {
+    public GetCoverageType(final String sourceCoverage, final DomainSubsetType domainSubset,
+            final RangeSubsetType rangeSubset, final String interpolationMethod,
+            final OutputType output) {
         
         this.domainSubset        = domainSubset;
         this.interpolationMethod = interpolationMethod;

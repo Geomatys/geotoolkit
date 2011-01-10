@@ -65,7 +65,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
      * @param iterator FeatureReader to limit
      * @param transformer the transformer to use on each geometry
      */
-    protected GenericTransformFeatureIterator(final R iterator, GeometryTransformer transformer) {
+    protected GenericTransformFeatureIterator(final R iterator, final GeometryTransformer transformer) {
         this.iterator = iterator;
         this.transformer = transformer;
     }
@@ -107,7 +107,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
     protected static final class GenericTransformFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericTransformFeatureIterator<F,R> implements FeatureReader<T,F>{
 
-        private GenericTransformFeatureReader(R reader, GeometryTransformer transformer) {
+        private GenericTransformFeatureReader(final R reader, final GeometryTransformer transformer) {
             super(reader, transformer);            
         }
 
@@ -171,7 +171,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
         private final List<Property> properties = new ArrayList<Property>();
         private final AbstractFeature feature;
 
-        private GenericReuseTransformFeatureReader(R reader, GeometryTransformer transformer) {
+        private GenericReuseTransformFeatureReader(final R reader, final GeometryTransformer transformer) {
             super(reader, transformer);
 
             final FeatureType ft = reader.getFeatureType();
@@ -225,7 +225,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
      * Wrap a FeatureReader with a reprojection.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
-            FeatureReader<T, F> reader, GeometryTransformer transformer, Hints hints) {
+            final FeatureReader<T, F> reader, final GeometryTransformer transformer, final Hints hints) {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
 

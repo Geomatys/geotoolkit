@@ -70,11 +70,11 @@ public class MultiLineStringType extends AbstractGeometricAggregateType {
         return this.lineStringMember;
     }
 
-    public void setLineStringMember(List<LineStringPropertyType> lineStringMember) {
+    public void setLineStringMember(final List<LineStringPropertyType> lineStringMember) {
         this.lineStringMember = lineStringMember;
     }
 
-    public void setLineStringMember(LineStringPropertyType lineStringMember) {
+    public void setLineStringMember(final LineStringPropertyType lineStringMember) {
         if (lineStringMember != null) {
             if (this.lineStringMember == null) {
                 this.lineStringMember = new ArrayList<LineStringPropertyType>();
@@ -84,17 +84,17 @@ public class MultiLineStringType extends AbstractGeometricAggregateType {
     }
 
     @Override
-    public Object evaluate(Object object) {
+    public Object evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public <T> T evaluate(Object object, Class<T> context) {
+    public <T> T evaluate(final Object object, final Class<T> context) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(ExpressionVisitor visitor, Object extraData) {
+    public Object accept(final ExpressionVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

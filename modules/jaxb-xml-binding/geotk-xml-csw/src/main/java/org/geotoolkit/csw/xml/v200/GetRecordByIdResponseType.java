@@ -76,7 +76,7 @@ public class GetRecordByIdResponseType implements GetRecordByIdResponse {
      * Sets the value of the abstractRecord property.
      * 
      */
-    public void setAbstractRecord(JAXBElement<? extends AbstractRecordType> value) {
+    public void setAbstractRecord(final JAXBElement<? extends AbstractRecordType> value) {
         this.abstractRecord = ((JAXBElement<? extends AbstractRecordType> ) value);
     }
 

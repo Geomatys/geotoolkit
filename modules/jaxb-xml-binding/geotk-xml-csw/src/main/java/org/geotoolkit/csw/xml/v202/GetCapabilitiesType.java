@@ -63,7 +63,7 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
      *
      * @param service MUST be CSW.
      */
-    public GetCapabilitiesType(String service) {
+    public GetCapabilitiesType(final String service) {
         super(service);
     }
 
@@ -77,8 +77,8 @@ public class GetCapabilitiesType extends org.geotoolkit.ows.xml.v100.GetCapabili
      * @param updateSequence not used yet.
      * @param service MUST be CSW.
      */
-    public GetCapabilitiesType(AcceptVersionsType acceptVersions, SectionsType sections,
-            AcceptFormatsType acceptFormats, String updateSequence, String service) {
+    public GetCapabilitiesType(final AcceptVersionsType acceptVersions, final SectionsType sections,
+            final AcceptFormatsType acceptFormats, final String updateSequence, final String service) {
         super(acceptVersions, sections, acceptFormats, updateSequence, service);
     }
 }

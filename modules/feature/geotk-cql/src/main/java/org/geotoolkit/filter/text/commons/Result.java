@@ -33,14 +33,14 @@ public final class Result {
     private Object built = null;
     private IToken token = null;
 
-    public Result(Object built, IToken token, int nodeType) {
+    public Result(final Object built, final IToken token, final int nodeType) {
         this.built = built;
         this.token = token;
         this.nodeType = nodeType;
     }
 
-    public Result(Object built2, org.geotoolkit.filter.text.generated.parsers.Token token2,
-            int type) {
+    public Result(final Object built2, final org.geotoolkit.filter.text.generated.parsers.Token token2,
+            final int type) {
     }
 
     @Override

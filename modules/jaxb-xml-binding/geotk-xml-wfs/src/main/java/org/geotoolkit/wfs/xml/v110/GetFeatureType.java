@@ -89,8 +89,8 @@ public class GetFeatureType extends BaseRequestType {
 
     }
 
-    public GetFeatureType(String service, String version, String handle, Integer maxFeatures,
-            List<QueryType> query, ResultTypeType resultType, String outputformat) {
+    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
+            final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
         super(service, version, handle);
         this.maxFeatures  = maxFeatures;
         this.query        = query;
@@ -98,8 +98,8 @@ public class GetFeatureType extends BaseRequestType {
         this.outputFormat = outputformat;
     }
 
-    public GetFeatureType(String service, String version, String handle, Integer maxFeatures,
-            String featureId, List<QueryType> query, ResultTypeType resultType, String outputformat) {
+    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
+            final String featureId, final List<QueryType> query, final ResultTypeType resultType, final String outputformat) {
         super(service, version, handle);
         this.maxFeatures  = maxFeatures;
         this.featureId    = featureId;
@@ -108,8 +108,8 @@ public class GetFeatureType extends BaseRequestType {
         this.query        = query;
     }
 
-    public GetFeatureType(String service, String version, String handle, Integer maxFeatures,
-            List<QueryType> query, ResultTypeType resultType, String outputformat, String trXlinkDepth, Integer trXlinkExpiry) {
+    public GetFeatureType(final String service, final String version, final String handle, final Integer maxFeatures,
+            final List<QueryType> query, final ResultTypeType resultType, final String outputformat, final String trXlinkDepth, final Integer trXlinkExpiry) {
         super(service, version, handle);
         this.maxFeatures  = maxFeatures;
         this.query        = query;
@@ -153,7 +153,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link ResultTypeType }
      *     
      */
-    public void setResultType(ResultTypeType value) {
+    public void setResultType(final ResultTypeType value) {
         this.resultType = value;
     }
 
@@ -181,7 +181,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setOutputFormat(String value) {
+    public void setOutputFormat(final String value) {
         this.outputFormat = value;
     }
 
@@ -205,7 +205,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link Integer }
      *     
      */
-    public void setMaxFeatures(Integer value) {
+    public void setMaxFeatures(final Integer value) {
         this.maxFeatures = value;
     }
 
@@ -229,7 +229,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setTraverseXlinkDepth(String value) {
+    public void setTraverseXlinkDepth(final String value) {
         this.traverseXlinkDepth = value;
     }
 
@@ -253,7 +253,7 @@ public class GetFeatureType extends BaseRequestType {
      *     {@link Integer }
      *     
      */
-    public void setTraverseXlinkExpiry(Integer value) {
+    public void setTraverseXlinkExpiry(final Integer value) {
         this.traverseXlinkExpiry = value;
     }
 
@@ -267,7 +267,7 @@ public class GetFeatureType extends BaseRequestType {
     /**
      * @param featureId the featureId to set
      */
-    public void setFeatureId(String featureId) {
+    public void setFeatureId(final String featureId) {
         this.featureId = featureId;
     }
 

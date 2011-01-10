@@ -75,7 +75,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     /**
      * Clone a FeatureAttribute
      */
-    public FeatureAttributeImpl(FeatureAttribute feature) {
+    public FeatureAttributeImpl(final FeatureAttribute feature) {
         super(feature);
         if (feature != null) {
             this.code        = feature.getCode();
@@ -87,8 +87,8 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     /**
      * Build a new Feature Attribute
      */
-    public FeatureAttributeImpl(String id, LocalName memberName, String definition, Multiplicity cardinality, FeatureType featureType, 
-            List<Constraint> constrainedBy, String code, List<ListedValue> listedValue, TypeName valueType) {
+    public FeatureAttributeImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality, final FeatureType featureType, 
+            final List<Constraint> constrainedBy, final String code, final List<ListedValue> listedValue, final TypeName valueType) {
         super(id, memberName, definition, cardinality, featureType, constrainedBy, null);
         this.code        = code;
         this.listedValue = listedValue;
@@ -105,7 +105,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
      * Sets the value of the code property.
      * 
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 
@@ -137,14 +137,14 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
      /**
      * Gets the value of the listedValue property.
      */
-    public void setListedValue(List<ListedValue> listedValue) {
+    public void setListedValue(final List<ListedValue> listedValue) {
         this.listedValue = listedValue;
     }
     
     /**
      * Gets the value of the listedValue property.
      */
-    public void setListedValue(ListedValue listedValue) {
+    public void setListedValue(final ListedValue listedValue) {
         if (this.listedValue == null) {
             this.listedValue = new ArrayList<ListedValue>();
         }
@@ -162,7 +162,7 @@ public class FeatureAttributeImpl extends PropertyTypeImpl implements FeatureAtt
     /**
      * Sets the value of the valueType property.
      */
-    public void setValueType(TypeName value) {
+    public void setValueType(final TypeName value) {
         this.valueType = value;
     }
     

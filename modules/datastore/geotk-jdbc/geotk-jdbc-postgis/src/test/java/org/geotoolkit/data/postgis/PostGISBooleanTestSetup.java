@@ -22,7 +22,7 @@ import org.geotoolkit.jdbc.JDBCTestSetup;
 
 public class PostGISBooleanTestSetup extends JDBCBooleanTestSetup {
 
-    public PostGISBooleanTestSetup(JDBCTestSetup delegate) {
+    public PostGISBooleanTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
     }
 

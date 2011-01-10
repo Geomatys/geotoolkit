@@ -85,7 +85,7 @@ public class Stroke {
      *     {@link GraphicFill }
      *     
      */
-    public void setGraphicFill(GraphicFill value) {
+    public void setGraphicFill(final GraphicFill value) {
         this.graphicFill = value;
     }
 
@@ -109,7 +109,7 @@ public class Stroke {
      *     {@link GraphicStroke }
      *     
      */
-    public void setGraphicStroke(GraphicStroke value) {
+    public void setGraphicStroke(final GraphicStroke value) {
         this.graphicStroke = value;
     }
 

@@ -106,17 +106,17 @@ public class Position implements AbstractPosition {
 
     }
 
-    public Position(String name, String href) {
+    public Position(final String name, final String href) {
         this.href = href;
         this.name = name;
     }
 
-    public Position(String name, PositionType position) {
+    public Position(final String name, final PositionType position) {
         this.name = name;
         this.position = position;
     }
 
-    public Position(AbstractPosition pos) {
+    public Position(final AbstractPosition pos) {
         if (pos != null) {
             this.actuate = pos.getActuate();
             this.arcrole = pos.getArcrole();
@@ -172,7 +172,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the process property.
      */
-    public void setProcess(JAXBElement<? extends AbstractProcessType> value) {
+    public void setProcess(final JAXBElement<? extends AbstractProcessType> value) {
         this.process = ((JAXBElement<? extends AbstractProcessType> ) value);
     }
 
@@ -186,7 +186,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the position property.
      */
-    public void setPosition(PositionType value) {
+    public void setPosition(final PositionType value) {
         this.position = value;
     }
 
@@ -200,7 +200,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the vector property.
      */
-    public void setVector(VectorType value) {
+    public void setVector(final VectorType value) {
         this.vector = value;
     }
 
@@ -214,7 +214,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the name property.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -238,7 +238,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -252,7 +252,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -266,7 +266,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -280,7 +280,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -294,7 +294,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -309,7 +309,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -323,7 +323,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -337,7 +337,7 @@ public class Position implements AbstractPosition {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 

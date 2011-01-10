@@ -41,7 +41,7 @@ public class Tag extends AbstractComplexAttribute<Collection<Property>,Identifie
     private final String k;
     private final String v;
 
-    public Tag(String key, String value) {
+    public Tag(final String key, final String value) {
         super(OSMModelConstants.ATT_TAG,new SimpleId(key));
         this.k = key;
         this.v = value;
@@ -79,7 +79,7 @@ public class Tag extends AbstractComplexAttribute<Collection<Property>,Identifie
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

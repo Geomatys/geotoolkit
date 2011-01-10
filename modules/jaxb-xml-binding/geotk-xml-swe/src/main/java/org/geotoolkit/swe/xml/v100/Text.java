@@ -56,7 +56,7 @@ public class Text extends AbstractDataComponentType implements AbstractText {
 
     }
 
-    public Text(AbstractText tx) {
+    public Text(final AbstractText tx) {
         super(tx);
         if (tx != null) {
             this.value = tx.getValue();
@@ -73,7 +73,7 @@ public class Text extends AbstractDataComponentType implements AbstractText {
     /**
      * Sets the value of the value property.
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 

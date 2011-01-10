@@ -30,7 +30,7 @@ public class JFeaturePanelAction extends JMenuItem{
 
     public JFeaturePanelAction(){}
 
-    public JFeaturePanelAction(Action action){
+    public JFeaturePanelAction(final Action action){
         super(action);
     }
 
@@ -38,7 +38,7 @@ public class JFeaturePanelAction extends JMenuItem{
         return panel;
     }
 
-    public void setFeaturePanel(LayerFeaturePropertyPanel panel){
+    public void setFeaturePanel(final LayerFeaturePropertyPanel panel){
         this.panel = panel;
     }
 

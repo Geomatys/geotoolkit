@@ -86,7 +86,7 @@ public class DataType
      *     {@link String }
      *     
      */
-    public void setDisplayName(String value) {
+    public void setDisplayName(final String value) {
         this.displayName = value;
     }
 
@@ -110,7 +110,7 @@ public class DataType
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -163,7 +163,7 @@ public class DataType
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

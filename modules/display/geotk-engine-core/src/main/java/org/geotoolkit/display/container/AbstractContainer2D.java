@@ -70,7 +70,7 @@ public abstract class AbstractContainer2D extends AbstractContainer{
     /**
      * Create a Default Abstract 2D renderer.
      */
-    protected AbstractContainer2D(AbstractReferencedCanvas2D canvas){
+    protected AbstractContainer2D(final AbstractReferencedCanvas2D canvas){
         super(canvas);
     }
 

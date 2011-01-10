@@ -97,7 +97,7 @@ public class GMLObjectTypeType {
      *     {@link QName }
      *     
      */
-    public void setName(QName value) {
+    public void setName(final QName value) {
         this.name = value;
     }
 
@@ -121,7 +121,7 @@ public class GMLObjectTypeType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -145,7 +145,7 @@ public class GMLObjectTypeType {
      *     {@link String }
      *     
      */
-    public void setAbstract(String value) {
+    public void setAbstract(final String value) {
         this._abstract = value;
     }
 
@@ -180,7 +180,7 @@ public class GMLObjectTypeType {
      *     {@link OutputFormatListType }
      *     
      */
-    public void setOutputFormats(OutputFormatListType value) {
+    public void setOutputFormats(final OutputFormatListType value) {
         this.outputFormats = value;
     }
 

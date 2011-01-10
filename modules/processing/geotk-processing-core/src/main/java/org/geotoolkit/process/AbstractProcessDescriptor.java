@@ -36,13 +36,13 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
     private final ParameterDescriptorGroup inputDesc;
     private final ParameterDescriptorGroup outputdesc;
 
-    public AbstractProcessDescriptor(String name, Identification factoryId, InternationalString abs,
-            ParameterDescriptorGroup inputDesc, ParameterDescriptorGroup outputdesc) {
+    public AbstractProcessDescriptor(final String name, final Identification factoryId, final InternationalString abs,
+            final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
         this(new DerivateIdentifier(name, factoryId),abs,inputDesc,outputdesc);
     }
 
-    public AbstractProcessDescriptor(Identifier id, InternationalString abs,
-            ParameterDescriptorGroup inputDesc, ParameterDescriptorGroup outputdesc) {
+    public AbstractProcessDescriptor(final Identifier id, final InternationalString abs,
+            final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
         this.id = id;
         this.abs = abs;
         this.inputDesc = inputDesc;
@@ -89,7 +89,7 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
         private final String code;
         private final Identification factoryId;
 
-        public DerivateIdentifier(String code, Identification factoryId) {
+        public DerivateIdentifier(final String code, final Identification factoryId) {
             this.code = code;
             this.factoryId = factoryId;
         }

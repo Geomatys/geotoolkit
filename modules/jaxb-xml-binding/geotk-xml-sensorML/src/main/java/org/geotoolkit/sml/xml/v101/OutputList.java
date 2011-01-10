@@ -68,11 +68,11 @@ public class OutputList implements AbstractOutputList {
     public OutputList() {
     }
 
-    public OutputList(List<IoComponentPropertyType> output) {
+    public OutputList(final List<IoComponentPropertyType> output) {
         this.output = output;
     }
 
-    public OutputList(AbstractOutputList outputList) {
+    public OutputList(final AbstractOutputList outputList) {
         if (outputList != null) {
             if (outputList.getOutput() != null) {
                 this.output = new ArrayList<IoComponentPropertyType>();
@@ -114,7 +114,7 @@ public class OutputList implements AbstractOutputList {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

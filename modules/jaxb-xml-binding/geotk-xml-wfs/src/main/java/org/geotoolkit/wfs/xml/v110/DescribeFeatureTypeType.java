@@ -75,7 +75,7 @@ public class DescribeFeatureTypeType extends BaseRequestType {
 
     }
 
-    public DescribeFeatureTypeType(String service, String version, String handle, List<QName> typeName, String outputFormat) {
+    public DescribeFeatureTypeType(final String service, final String version, final String handle, final List<QName> typeName, final String outputFormat) {
         super(service, version, handle);
         this.outputFormat = outputFormat;
         this.typeName     = typeName;
@@ -115,7 +115,7 @@ public class DescribeFeatureTypeType extends BaseRequestType {
      *     {@link String }
      *     
      */
-    public void setOutputFormat(String value) {
+    public void setOutputFormat(final String value) {
         this.outputFormat = value;
     }
 

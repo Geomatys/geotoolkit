@@ -44,7 +44,7 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         super.setLayer(layer);
         guiSpecial.setLayer(layer);
     }
@@ -94,13 +94,13 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
 
     }// </editor-fold>//GEN-END:initComponents
 
-    private void guiSpecialPropertyChange(PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
+    private void guiSpecialPropertyChange(final PropertyChangeEvent evt) {//GEN-FIRST:event_guiSpecialPropertyChange
         if(evt.getPropertyName().equals(JSpecialExpressionButton.EXPRESSION_PROPERTY)) {
             parse(guiSpecial.get());
         }
     }//GEN-LAST:event_guiSpecialPropertyChange
 
-    private void guiTextActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiTextActionPerformed
+    private void guiTextActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiTextActionPerformed
         parse( getFilterFactory().literal( guiText.getText()) );
     }//GEN-LAST:event_guiTextActionPerformed
 
@@ -111,7 +111,7 @@ public class JTextExpressionPane extends StyleElementEditor<Expression>{
     // End of variables declaration//GEN-END:variables
 
     @Override
-    public void parse(Expression target) {
+    public void parse(final Expression target) {
         if(target != null){
             if(isStatic(target)){
                 guiSpecial.parse(null);

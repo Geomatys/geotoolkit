@@ -60,7 +60,7 @@ public class JTSSurface extends AbstractJTSGeometry implements Surface {
         this(null);
     }
 
-    public JTSSurface(CoordinateReferenceSystem crs) {
+    public JTSSurface(final CoordinateReferenceSystem crs) {
         super(crs);
         patches = new ArrayList();
     }
@@ -86,7 +86,7 @@ public class JTSSurface extends AbstractJTSGeometry implements Surface {
      * {@inheritDoc }
      */
     @Override
-    public double [] getUpNormal(DirectPosition point) {
+    public double [] getUpNormal(final DirectPosition point) {
         return new double [] { 0, 0, 1 };
     }
 

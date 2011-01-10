@@ -82,7 +82,7 @@ public class LiteralOutputType {
      *     {@link DomainMetadataType }
      *     
      */
-    public void setDataType(DomainMetadataType value) {
+    public void setDataType(final DomainMetadataType value) {
         this.dataType = value;
     }
 
@@ -106,7 +106,7 @@ public class LiteralOutputType {
      *     {@link SupportedUOMsType }
      *     
      */
-    public void setUOMs(SupportedUOMsType value) {
+    public void setUOMs(final SupportedUOMsType value) {
         this.uoMs = value;
     }
 

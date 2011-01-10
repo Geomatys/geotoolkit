@@ -45,13 +45,13 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
      * @param ls The line string the iterator will use
      * @param trs The affine transform applied to coordinates during iteration
      */
-    public JTSLineIterator(LineString ls, AffineTransform trs) {
+    public JTSLineIterator(final LineString ls, final AffineTransform trs) {
         super(ls,trs);
         setGeometry(ls);
     }
 
     @Override
-    public void setGeometry(LineString geom) {
+    public void setGeometry(final LineString geom) {
         super.setGeometry(geom);
         if(geom != null){
             coordinates = geom.getCoordinateSequence();
@@ -107,7 +107,7 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(double[] coords) {
+    public int currentSegment(final double[] coords) {
         if (currentCoord == 0) {
             coords[0] = (double) coordinates.getX(0);
             coords[1] = (double) coordinates.getY(0);
@@ -127,7 +127,7 @@ public final class JTSLineIterator extends JTSGeometryIterator<LineString> {
      * {@inheritDoc }
      */
     @Override
-    public int currentSegment(float[] coords) {
+    public int currentSegment(final float[] coords) {
         if (currentCoord == 0) {
             coords[0] = (float) coordinates.getX(0);
             coords[1] = (float) coordinates.getY(0);

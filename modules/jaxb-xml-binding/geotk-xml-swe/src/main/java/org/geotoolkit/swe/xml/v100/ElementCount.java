@@ -67,7 +67,7 @@ public class ElementCount implements AbstractElementCount {
     }
 
 
-    public ElementCount(AbstractElementCount value) {
+    public ElementCount(final AbstractElementCount value) {
         if (value != null) {
             if (value.getCount() != null) {
                 this.count = new Count(value.getCount());
@@ -86,7 +86,7 @@ public class ElementCount implements AbstractElementCount {
     /**
      * Sets the value of the count property.
      */
-    public void setCount(Count value) {
+    public void setCount(final Count value) {
         this.count = value;
     }
 
@@ -100,7 +100,7 @@ public class ElementCount implements AbstractElementCount {
     /**
      * Sets the value of the ref property.
      */
-    public void setRef(Object value) {
+    public void setRef(final Object value) {
         this.ref = value;
     }
 

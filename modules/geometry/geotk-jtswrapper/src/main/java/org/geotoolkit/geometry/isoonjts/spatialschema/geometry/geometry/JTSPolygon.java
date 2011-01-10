@@ -53,12 +53,12 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
         this(null, null);
     }
     
-    public JTSPolygon(SurfaceBoundary boundary) {
+    public JTSPolygon(final SurfaceBoundary boundary) {
         // We only support planar polygons
         this(boundary, null);
     }
 
-    public JTSPolygon(SurfaceBoundary boundary, List spanningSurface) {
+    public JTSPolygon(final SurfaceBoundary boundary, final List spanningSurface) {
         super(SurfaceInterpolation.PLANAR, boundary);
         this.spanningSurface = spanningSurface;
     }
@@ -120,7 +120,7 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this)
             return true;
 

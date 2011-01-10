@@ -144,7 +144,7 @@ public class CubicSplineType
      *     {@link DirectPositionListType }
      *     
      */
-    public void setPosList(DirectPositionListType value) {
+    public void setPosList(final DirectPositionListType value) {
         this.posList = value;
     }
 
@@ -168,7 +168,7 @@ public class CubicSplineType
      *     {@link CoordinatesType }
      *     
      */
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 
@@ -192,7 +192,7 @@ public class CubicSplineType
      *     {@link VectorType }
      *     
      */
-    public void setVectorAtStart(VectorType value) {
+    public void setVectorAtStart(final VectorType value) {
         this.vectorAtStart = value;
     }
 
@@ -216,7 +216,7 @@ public class CubicSplineType
      *     {@link VectorType }
      *     
      */
-    public void setVectorAtEnd(VectorType value) {
+    public void setVectorAtEnd(final VectorType value) {
         this.vectorAtEnd = value;
     }
 
@@ -244,7 +244,7 @@ public class CubicSplineType
      *     {@link CurveInterpolationType }
      *     
      */
-    public void setInterpolation(CurveInterpolationType value) {
+    public void setInterpolation(final CurveInterpolationType value) {
         this.interpolation = value;
     }
 
@@ -272,7 +272,7 @@ public class CubicSplineType
      *     {@link Integer }
      *     
      */
-    public void setDegree(Integer value) {
+    public void setDegree(final Integer value) {
         this.degree = value;
     }
 

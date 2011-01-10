@@ -54,7 +54,7 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
      */
     public SimpleDataRecordEntry() {}
 
-    public SimpleDataRecordEntry(SimpleDataRecord record) {
+    public SimpleDataRecordEntry(final SimpleDataRecord record) {
         super(record);
         if (record != null && record.getField() != null) {
             this.field = new ArrayList<AnyScalarPropertyType>();
@@ -77,7 +77,7 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
         }
     }
 
-     public SimpleDataRecordEntry(List<AnyScalarPropertyType> field) {
+     public SimpleDataRecordEntry(final List<AnyScalarPropertyType> field) {
         this.field = field;
     }
 
@@ -93,13 +93,13 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
     }
 
 
-    public void addField(AnyScalarPropertyType field) {
+    public void addField(final AnyScalarPropertyType field) {
         if (field != null) {
             this.field.add(field);
         }
     }
 
-    public void addOrderedField(AnyScalarPropertyType field, int delta) {
+    public void addOrderedField(final AnyScalarPropertyType field, final int delta) {
         if (field != null) {
             if (this.field.isEmpty()) {
                 this.field.add(field);
@@ -124,7 +124,7 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
     /**
      * {@inheritDoc}
      */
-    public boolean containsField(String fieldName) {
+    public boolean containsField(final String fieldName) {
         if (field != null) {
             for (AnyScalarPropertyType f : field) {
                 if (f.getName().equals(fieldName)) {
@@ -138,7 +138,7 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
     /**
      * {@inheritDoc}
      */
-    public void setField(Collection<AnyScalarPropertyType> field) {
+    public void setField(final Collection<AnyScalarPropertyType> field) {
         if (field != null) {
             this.field = new ArrayList<AnyScalarPropertyType>(field);
         } else {
@@ -156,7 +156,7 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
     /**
      * set the block identifier containing this data record.
      */
-    public void setBlockId(String blockId) {
+    public void setBlockId(final String blockId) {
         this.blockId = blockId;
     }
 
@@ -211,7 +211,7 @@ public class SimpleDataRecordEntry extends AbstractDataRecordEntry implements Si
     /**
      * Ajoute la description des composants du dataBlock definition.
      */
-    private void appendTo(final StringBuilder buffer, String margin, final String lineSeparator) {
+    private void appendTo(final StringBuilder buffer, final String margin, final String lineSeparator) {
         int fieldSize = 0;
         if (field != null) {
             fieldSize = field.size();

@@ -24,7 +24,7 @@ import java.io.File;
 import java.io.IOException;
 
 public abstract class FIDTestCase extends AbstractTestCaseSupport {
-    protected FIDTestCase( String name ) throws IOException {
+    protected FIDTestCase( final String name ) throws IOException {
         super(name);
     }
 

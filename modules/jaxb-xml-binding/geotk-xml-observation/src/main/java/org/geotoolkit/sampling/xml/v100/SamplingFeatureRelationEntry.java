@@ -43,7 +43,7 @@ public class SamplingFeatureRelationEntry implements SamplingFeatureRelation {
     
     /**
      */
-    public SamplingFeatureRelationEntry(String name, SamplingFeatureEntry target) {
+    public SamplingFeatureRelationEntry(final String name, final SamplingFeatureEntry target) {
         this.name = name;
         //this.role   = role;
         this.target = target;
@@ -71,7 +71,7 @@ public class SamplingFeatureRelationEntry implements SamplingFeatureRelation {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

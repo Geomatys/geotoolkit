@@ -54,7 +54,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPolygonSymbolizer>{
 
-    public DefaultPolygonSymbolizerRenderer(CachedPolygonSymbolizer symbol, RenderingContext2D context){
+    public DefaultPolygonSymbolizerRenderer(final CachedPolygonSymbolizer symbol, final RenderingContext2D context){
         super(symbol,context);
     }
 
@@ -62,7 +62,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * {@inheritDoc }
      */
     @Override
-    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
+    public void portray(final ProjectedFeature projectedFeature) throws PortrayalException{
 
         final Feature feature = projectedFeature.getFeature();
 
@@ -92,7 +92,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         portray(projectedGeometry, null);
     }
 
-    private void portray(ProjectedGeometry projectedGeometry, Feature feature) throws PortrayalException{
+    private void portray(final ProjectedGeometry projectedGeometry, final Feature feature) throws PortrayalException{
 
         final float offset = symbol.getOffset(feature, coeff);
         final Shape shape;
@@ -288,7 +288,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedCoverage graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         return false;
     }
 
@@ -296,8 +296,8 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * Recalculate objective geometry with the given offset,
      * for polygon this act like a buffer
      */
-    private static Shape bufferObjectiveGeometry(RenderingContext2D context, ProjectedGeometry projectedFeature,
-            Unit symbolUnit, float offset) throws TransformException{
+    private static Shape bufferObjectiveGeometry(final RenderingContext2D context, final ProjectedGeometry projectedFeature,
+            final Unit symbolUnit, final float offset) throws TransformException{
         final Shape shape;
 
         //TODO use symbol unit to adjust offset
@@ -312,8 +312,8 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * Recalculate display geometry with the given offset,
      * for polygon this act like a buffer
      */
-    private static  Shape bufferDisplayGeometry(RenderingContext2D context, ProjectedGeometry projectedFeature,
-            float offset) throws TransformException{
+    private static  Shape bufferDisplayGeometry(final RenderingContext2D context, final ProjectedGeometry projectedFeature,
+            final float offset) throws TransformException{
         final Shape shape;
 
         Geometry geom = projectedFeature.getDisplayGeometry();

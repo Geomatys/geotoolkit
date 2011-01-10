@@ -92,7 +92,7 @@ public class RegistryEntryType extends RegistryObjectType {
     /**
      * Sets the value of the expiration property.
      */
-    public void setExpiration(XMLGregorianCalendar value) {
+    public void setExpiration(final XMLGregorianCalendar value) {
         this.expiration = value;
     }
 
@@ -110,7 +110,7 @@ public class RegistryEntryType extends RegistryObjectType {
     /**
      * Sets the value of the majorVersion property.
      */
-    public void setMajorVersion(Integer value) {
+    public void setMajorVersion(final Integer value) {
         this.majorVersion = value;
     }
 
@@ -128,7 +128,7 @@ public class RegistryEntryType extends RegistryObjectType {
     /**
      * Sets the value of the minorVersion property.
      */
-    public void setMinorVersion(Integer value) {
+    public void setMinorVersion(final Integer value) {
         this.minorVersion = value;
     }
 
@@ -142,7 +142,7 @@ public class RegistryEntryType extends RegistryObjectType {
     /**
      * Sets the value of the stability property.
      */
-    public void setStability(String value) {
+    public void setStability(final String value) {
         this.stability = value;
     }
 
@@ -156,7 +156,7 @@ public class RegistryEntryType extends RegistryObjectType {
     /**
      * Sets the value of the userVersion property.
      */
-    public void setUserVersion(String value) {
+    public void setUserVersion(final String value) {
         this.userVersion = value;
     }
 

@@ -48,11 +48,11 @@ public interface ContextListener extends ItemListener {
 
         private final Collection<MapContext> sources = new ArrayList<MapContext>(1);
 
-        public Weak(ContextListener ref) {
+        public Weak(final ContextListener ref) {
             this(null,ref);
         }
 
-        public Weak(MapContext source, ContextListener ref) {
+        public Weak(final MapContext source, final ContextListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
@@ -60,7 +60,7 @@ public interface ContextListener extends ItemListener {
         /**
          * Register this listener on the given source.
          */
-        public synchronized void registerSource(MapContext source){
+        public synchronized void registerSource(final MapContext source){
             if(source != null){
                 //register in the new source
                 source.addContextListener(this);
@@ -71,7 +71,7 @@ public interface ContextListener extends ItemListener {
         /**
          * Unregister this listener on the given source.
          */
-        public synchronized void unregisterSource(MapContext source){
+        public synchronized void unregisterSource(final MapContext source){
             sources.remove(source);
             source.removeContextListener(this);
         }
@@ -85,7 +85,7 @@ public interface ContextListener extends ItemListener {
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             final ContextListener listener = get();
             if (listener != null) {
                 listener.propertyChange(evt);
@@ -94,7 +94,7 @@ public interface ContextListener extends ItemListener {
         }
 
         @Override
-        public void layerChange(CollectionChangeEvent<MapLayer> event) {
+        public void layerChange(final CollectionChangeEvent<MapLayer> event) {
             final ContextListener listener = get();
             if (listener != null) {
                 listener.layerChange(event);
@@ -103,7 +103,7 @@ public interface ContextListener extends ItemListener {
         }
 
         @Override
-        public void itemChange(CollectionChangeEvent<MapItem> event) {
+        public void itemChange(final CollectionChangeEvent<MapItem> event) {
             final ContextListener listener = get();
             if (listener != null) {
                 listener.itemChange(event);

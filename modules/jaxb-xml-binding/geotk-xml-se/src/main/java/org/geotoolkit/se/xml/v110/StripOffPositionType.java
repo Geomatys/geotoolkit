@@ -49,7 +49,7 @@ public enum StripOffPositionType {
     BOTH("both");
     private final String value;
 
-    StripOffPositionType(String v) {
+    StripOffPositionType(final String v) {
         value = v;
     }
 
@@ -57,7 +57,7 @@ public enum StripOffPositionType {
         return value;
     }
 
-    public static StripOffPositionType fromValue(String v) {
+    public static StripOffPositionType fromValue(final String v) {
         for (StripOffPositionType c: StripOffPositionType.values()) {
             if (c.value.equals(v)) {
                 return c;

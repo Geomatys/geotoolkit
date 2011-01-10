@@ -44,7 +44,7 @@ import org.xml.sax.InputSource;
  */
  public class WMSBindingUtilities {
 
-     public static AbstractWMSCapabilities unmarshall(Object source, WMSVersion version) throws JAXBException{
+     public static AbstractWMSCapabilities unmarshall(final Object source, final WMSVersion version) throws JAXBException{
          
          Unmarshaller unMarshaller   = null;
          MarshallerPool selectedPool = WMSMarshallerPool.getInstance();

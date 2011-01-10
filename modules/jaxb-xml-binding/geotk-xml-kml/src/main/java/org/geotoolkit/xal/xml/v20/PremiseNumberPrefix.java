@@ -90,7 +90,7 @@ public class PremiseNumberPrefix {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -114,7 +114,7 @@ public class PremiseNumberPrefix {
      *     {@link String }
      *     
      */
-    public void setNumberPrefixSeparator(String value) {
+    public void setNumberPrefixSeparator(final String value) {
         this.numberPrefixSeparator = value;
     }
 
@@ -138,7 +138,7 @@ public class PremiseNumberPrefix {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -162,7 +162,7 @@ public class PremiseNumberPrefix {
      *     {@link String }
      *     
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 

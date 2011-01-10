@@ -49,11 +49,11 @@ public class DefaultJMXClient {
      * @throws MalformedURLException
      * @throws IOException
      */
-    public DefaultJMXClient(String jmxURL, String user, String password) throws MalformedURLException, IOException {
+    public DefaultJMXClient(final String jmxURL, final String user, final String password) throws MalformedURLException, IOException {
         this(new JMXServiceURL(jmxURL),user,password);
     }
 
-    public DefaultJMXClient(JMXServiceURL jmxURL, String user, String password) throws IOException {
+    public DefaultJMXClient(final JMXServiceURL jmxURL, final String user, final String password) throws IOException {
         final Map<String,Object> env = new HashMap<String, Object>();
         final String[] credentials = new String[]{user, password};
         env.put(JMXConnector.CREDENTIALS, credentials);
@@ -79,7 +79,7 @@ public class DefaultJMXClient {
      * @return T MBean proxy instance
      * @throws MalformedObjectNameException
      */
-    public <T> T getMBean(String name, Class<T> beanClass) throws MalformedObjectNameException{
+    public <T> T getMBean(final String name, final Class<T> beanClass) throws MalformedObjectNameException{
         final ObjectName mbeanName = new ObjectName(name);
         final T mbeanProxy = JMX.newMBeanProxy(mbsc, mbeanName, beanClass, true);
         return mbeanProxy;

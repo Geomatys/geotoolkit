@@ -35,7 +35,7 @@ public class JTSMultiLineStringJ2D extends AbstractJTSGeometryJ2D<MultiLineStrin
 
     private final JTSMultiLineIterator iterator;
 
-    public JTSMultiLineStringJ2D(MultiLineString geom) {
+    public JTSMultiLineStringJ2D(final MultiLineString geom) {
         super(geom);
         iterator = new JTSMultiLineIterator(geom,null);
     }
@@ -45,7 +45,7 @@ public class JTSMultiLineStringJ2D extends AbstractJTSGeometryJ2D<MultiLineStrin
      *
      * @param geom - the wrapped geometry
      */
-    public JTSMultiLineStringJ2D(MultiLineString geom, AffineTransform trs) {
+    public JTSMultiLineStringJ2D(final MultiLineString geom, final AffineTransform trs) {
         super(geom, trs);
         iterator = new JTSMultiLineIterator(geom,trs);
     }
@@ -54,7 +54,7 @@ public class JTSMultiLineStringJ2D extends AbstractJTSGeometryJ2D<MultiLineStrin
      * {@inheritDoc }
      */
     @Override
-    public void setGeometry(MultiLineString g) {
+    public void setGeometry(final MultiLineString g) {
         super.setGeometry(g);
         iterator.setGeometry(g);
     }
@@ -68,7 +68,7 @@ public class JTSMultiLineStringJ2D extends AbstractJTSGeometryJ2D<MultiLineStrin
      * {@inheritDoc }
      */
     @Override
-    public PathIterator getPathIterator(AffineTransform at) {
+    public PathIterator getPathIterator(final AffineTransform at) {
 
         final AffineTransform concat;
         if(at == null){

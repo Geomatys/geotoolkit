@@ -71,7 +71,7 @@ public class BaseSymbolizerType {
      *     {@link OnlineResourceType }
      *     
      */
-    public void setOnlineResource(OnlineResourceType value) {
+    public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
     }
 

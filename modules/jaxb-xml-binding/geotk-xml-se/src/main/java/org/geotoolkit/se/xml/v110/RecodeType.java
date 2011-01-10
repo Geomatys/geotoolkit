@@ -79,7 +79,7 @@ public class RecodeType
      *     {@link ParameterValueType }
      *     
      */
-    public void setLookupValue(ParameterValueType value) {
+    public void setLookupValue(final ParameterValueType value) {
         this.lookupValue = value;
     }
 

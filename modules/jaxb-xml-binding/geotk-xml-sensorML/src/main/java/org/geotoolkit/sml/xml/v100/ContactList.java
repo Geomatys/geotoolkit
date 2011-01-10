@@ -85,17 +85,17 @@ public class ContactList implements AbstractContactList {
 
     }
 
-    public ContactList(ResponsibleParty resp) {
+    public ContactList(final ResponsibleParty resp) {
         this.member = new ArrayList<Member>();
         this.member.add(new Member(resp));
     }
 
-    public ContactList(Person person) {
+    public ContactList(final Person person) {
         this.member = new ArrayList<Member>();
         this.member.add(new Member(person));
     }
 
-    public ContactList(AbstractContactList cl) {
+    public ContactList(final AbstractContactList cl) {
         if (cl != null) {
             this.id = cl.getId();
             this.description = cl.getDescription();
@@ -117,7 +117,7 @@ public class ContactList implements AbstractContactList {
     /**
      * Sets the value of the description property.
      */
-    public void setDescription(StringOrRefType value) {
+    public void setDescription(final StringOrRefType value) {
         this.description = value;
     }
 
@@ -141,7 +141,7 @@ public class ContactList implements AbstractContactList {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 
@@ -221,15 +221,15 @@ public class ContactList implements AbstractContactList {
 
         }
 
-        public Member(Person person) {
+        public Member(final Person person) {
             this.person = person;
         }
 
-        public Member(ResponsibleParty responsibleParty) {
+        public Member(final ResponsibleParty responsibleParty) {
             this.responsibleParty = responsibleParty;
         }
 
-        public Member(AbstractContactListMember member) {
+        public Member(final AbstractContactListMember member) {
             if (member != null) {
                 this.actuate = member.getActuate();
                 this.arcrole = member.getArcrole();
@@ -258,7 +258,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the person property.
          */
-        public void setPerson(Person value) {
+        public void setPerson(final Person value) {
             this.person = value;
         }
 
@@ -272,7 +272,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the responsibleParty property.
          */
-        public void setResponsibleParty(ResponsibleParty value) {
+        public void setResponsibleParty(final ResponsibleParty value) {
             this.responsibleParty = value;
         }
 
@@ -297,7 +297,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the remoteSchema property.
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -311,7 +311,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the actuate property.
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 
@@ -325,7 +325,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the arcrole property.
          */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -339,7 +339,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the href property.
          */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -353,7 +353,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the role property.
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -367,7 +367,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the show property.
          */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -381,7 +381,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the title property.
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -395,7 +395,7 @@ public class ContactList implements AbstractContactList {
         /**
          * Sets the value of the type property.
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 

@@ -106,7 +106,7 @@ public class ImplicitGeometryType extends AbstractGMLEntry {
      *     {@link String }
      *     
      */
-    public void setMimeType(String value) {
+    public void setMimeType(final String value) {
         this.mimeType = value;
     }
 
@@ -140,7 +140,7 @@ public class ImplicitGeometryType extends AbstractGMLEntry {
      *     {@link String }
      *     
      */
-    public void setLibraryObject(String value) {
+    public void setLibraryObject(final String value) {
         this.libraryObject = value;
     }
 
@@ -164,7 +164,7 @@ public class ImplicitGeometryType extends AbstractGMLEntry {
      *     {@link GeometryPropertyType }
      *     
      */
-    public void setRelativeGMLGeometry(GeometryPropertyType value) {
+    public void setRelativeGMLGeometry(final GeometryPropertyType value) {
         this.relativeGMLGeometry = value;
     }
 
@@ -188,7 +188,7 @@ public class ImplicitGeometryType extends AbstractGMLEntry {
      *     {@link PointPropertyType }
      *     
      */
-    public void setReferencePoint(PointPropertyType value) {
+    public void setReferencePoint(final PointPropertyType value) {
         this.referencePoint = value;
     }
 

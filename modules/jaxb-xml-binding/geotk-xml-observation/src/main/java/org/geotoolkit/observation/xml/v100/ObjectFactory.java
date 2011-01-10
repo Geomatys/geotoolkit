@@ -69,7 +69,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "Observation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<ObservationEntry> createObservation(ObservationEntry value) {
+    public JAXBElement<ObservationEntry> createObservation(final ObservationEntry value) {
         return new JAXBElement<ObservationEntry>(_Observation_QNAME, ObservationEntry.class, null, value);
     }
 
@@ -78,7 +78,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "Measurement", substitutionHeadNamespace = "http://www.opengis.net/om/1.0", substitutionHeadName = "Observation")
-    public JAXBElement<MeasurementEntry> createMeasurement(MeasurementEntry value) {
+    public JAXBElement<MeasurementEntry> createMeasurement(final MeasurementEntry value) {
         return new JAXBElement<MeasurementEntry>(_Measurement_QNAME, MeasurementEntry.class, null, value);
     }
 
@@ -87,7 +87,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "result")
-    public JAXBElement<Object> createResult(Object value) {
+    public JAXBElement<Object> createResult(final Object value) {
         return new JAXBElement<Object>(_Result_QNAME, Object.class, null, value);
     }
 }

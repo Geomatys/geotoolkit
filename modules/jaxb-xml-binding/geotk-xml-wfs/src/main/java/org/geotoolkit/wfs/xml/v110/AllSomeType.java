@@ -46,7 +46,7 @@ public enum AllSomeType {
         return name();
     }
 
-    public static AllSomeType fromValue(String v) {
+    public static AllSomeType fromValue(final String v) {
         return valueOf(v);
     }
 

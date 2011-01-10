@@ -40,7 +40,7 @@ public class WKBUtils {
      * @param geom : geometry to write
      * @return byte array
      */
-    public static byte[] toWKBwithSRID(Geometry geom){
+    public static byte[] toWKBwithSRID(final Geometry geom){
         final byte[] wkb = new WKBWriter(2).write(geom);
         final int srid = geom.getSRID();
         final byte[] crs = SRIDGenerator.toBytes(srid, Version.V1);

@@ -83,7 +83,7 @@ public class LineStyleType extends AbstractColorStyleType {
      *     {@link Double }
      *     
      */
-    public void setWidth(Double value) {
+    public void setWidth(final Double value) {
         this.width = value;
     }
 

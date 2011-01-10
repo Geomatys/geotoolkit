@@ -77,7 +77,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * Sets the value of the propertyName property.
      * 
      */
-    public void setPropertyName(PropertyNameType value) {
+    public void setPropertyName(final PropertyNameType value) {
         this.propertyName = value;
     }
 
@@ -93,7 +93,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * Sets the value of the literal property.
      * 
     */
-    public void setLiteral(LiteralType value) {
+    public void setLiteral(final LiteralType value) {
         this.literal = value;
     }
 
@@ -109,7 +109,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * Sets the value of the escape property.
      * 
      */
-    public void setEscape(String value) {
+    public void setEscape(final String value) {
         this.escape = value;
     }
 
@@ -125,7 +125,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * Sets the value of the singleChar property.
      * 
      */
-    public void setSingleChar(String value) {
+    public void setSingleChar(final String value) {
         this.singleChar = value;
     }
 
@@ -141,7 +141,7 @@ public class PropertyIsLikeType extends ComparisonOpsType {
      * Sets the value of the wildCard property.
      * 
      */
-    public void setWildCard(String value) {
+    public void setWildCard(final String value) {
         this.wildCard = value;
     }
 

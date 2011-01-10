@@ -86,7 +86,7 @@ public class FeatureInfoResponse {
      *     {@link AbstractFeatureCollectionType }
      *     
      */
-    public void setAbstractFeatureCollection(AbstractFeatureCollectionType value) {
+    public void setAbstractFeatureCollection(final AbstractFeatureCollectionType value) {
         this.abstractFeatureCollection = value;
     }
 
@@ -109,7 +109,7 @@ public class FeatureInfoResponse {
      *     {@link TextPayload }
      *     
      */
-    public void setTextPayload(TextPayload value) {
+    public void setTextPayload(final TextPayload value) {
         this.textPayload = value;
     }
 
@@ -134,7 +134,7 @@ public class FeatureInfoResponse {
      *     {@link BinaryPayload }
      *     
      */
-    public void setBinaryPayload(BinaryPayload value) {
+    public void setBinaryPayload(final BinaryPayload value) {
         this.binaryPayload = value;
     }
 
@@ -158,7 +158,7 @@ public class FeatureInfoResponse {
      *     {@link Object }
      *     
      */
-    public void setAnyContent(Object value) {
+    public void setAnyContent(final Object value) {
         this.anyContent = value;
     }
 

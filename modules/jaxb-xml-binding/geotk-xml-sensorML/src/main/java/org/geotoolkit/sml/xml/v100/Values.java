@@ -61,7 +61,7 @@ public class Values implements AbstractValues {
 
     }
 
-    public Values(AbstractValues v) {
+    public Values(final AbstractValues v) {
         if (v != null) {
             this.any             = v.getAny();
             this.otherAttributes = v.getOtherAttributes();

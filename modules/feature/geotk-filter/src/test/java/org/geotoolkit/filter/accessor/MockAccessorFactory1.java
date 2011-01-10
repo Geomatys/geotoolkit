@@ -27,7 +27,7 @@ import org.geotoolkit.factory.Hints;
 public final class MockAccessorFactory1 implements PropertyAccessorFactory{
 
     @Override
-    public PropertyAccessor createPropertyAccessor(Class type, String xpath, Class target, Hints hints) {        
+    public PropertyAccessor createPropertyAccessor(final Class type, final String xpath, final Class target, final Hints hints) {        
         return null;
     }
 

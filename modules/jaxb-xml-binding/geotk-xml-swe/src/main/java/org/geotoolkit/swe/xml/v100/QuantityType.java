@@ -82,7 +82,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
 
     }
 
-    public QuantityType(Quantity q) {
+    public QuantityType(final Quantity q) {
         super(q);
         if (q != null) {
             this.axisID = q.getAxisID();
@@ -103,13 +103,13 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
         }
     }
     
-    public QuantityType(URI definition, UomPropertyType uom, Double value) {
+    public QuantityType(final URI definition, final UomPropertyType uom, final Double value) {
         super(definition);
         this.uom   = uom;
         this.value = value;
     }
 
-    public QuantityType(String axisID, URI definition, UomPropertyType uom, Double value) {
+    public QuantityType(final String axisID, final URI definition, final UomPropertyType uom, final Double value) {
         super(definition);
         this.axisID = axisID;
         this.uom    = uom;
@@ -127,7 +127,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Sets the value of the uom property.
      */
-    public void setUom(UomPropertyType value) {
+    public void setUom(final UomPropertyType value) {
         this.uom = value;
     }
 
@@ -141,7 +141,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Sets the value of the constraint property.
      */
-    public void setConstraint(AllowedValuesPropertyType value) {
+    public void setConstraint(final AllowedValuesPropertyType value) {
         this.constraint = value;
     }
 
@@ -155,7 +155,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
         return this.quality;
     }
 
-    public void setQuality(QualityPropertyType quality) {
+    public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
                 this.quality = new ArrayList<QualityPropertyType>();
@@ -164,7 +164,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
         }
     }
 
-    public void setQuality(List<QualityPropertyType> quality) {
+    public void setQuality(final List<QualityPropertyType> quality) {
         this.quality = quality;
     }
 
@@ -178,7 +178,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Sets the value of the value property.
      */
-    public void setValue(Double value) {
+    public void setValue(final Double value) {
         this.value = value;
     }
 
@@ -192,7 +192,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(URI value) {
+    public void setReferenceFrame(final URI value) {
         this.referenceFrame = value;
     }
 
@@ -206,7 +206,7 @@ public class QuantityType extends AbstractDataComponentType implements Quantity 
     /**
      * Sets the value of the axisID property.
      */
-    public void setAxisID(String value) {
+    public void setAxisID(final String value) {
         this.axisID = value;
     }
 

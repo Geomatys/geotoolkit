@@ -62,7 +62,7 @@ public class JSpecialExpressionButton extends JButton{
         });
     }
     
-    public void setLayer(MapLayer layer){
+    public void setLayer(final MapLayer layer){
         this.layer = layer;
     }
     
@@ -70,7 +70,7 @@ public class JSpecialExpressionButton extends JButton{
         return layer;
     }
     
-    public void parse(Expression exp){
+    public void parse(final Expression exp){
         this.exp = exp;
         setIcon( (exp == null) ? ICON_EXP_NO : ICON_EXP_YES);
     }

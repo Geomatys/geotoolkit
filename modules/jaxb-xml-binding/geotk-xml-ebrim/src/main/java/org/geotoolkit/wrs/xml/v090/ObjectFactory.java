@@ -88,7 +88,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs", name = "Geometry", substitutionHeadNamespace = "http://www.opengis.net/cat/wrs", substitutionHeadName = "WRSExtrinsicObject")
-    public JAXBElement<GeometryType> createGeometry(GeometryType value) {
+    public JAXBElement<GeometryType> createGeometry(final GeometryType value) {
         return new JAXBElement<GeometryType>(_Geometry_QNAME, GeometryType.class, null, value);
     }
 
@@ -97,7 +97,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs", name = "ApplicationModule", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5", substitutionHeadName = "RegistryPackage")
-    public JAXBElement<ApplicationModuleType> createApplicationModule(ApplicationModuleType value) {
+    public JAXBElement<ApplicationModuleType> createApplicationModule(final ApplicationModuleType value) {
         return new JAXBElement<ApplicationModuleType>(_ApplicationModule_QNAME, ApplicationModuleType.class, null, value);
     }
 
@@ -106,7 +106,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs", name = "WRSExtrinsicObject", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5", substitutionHeadName = "ExtrinsicObject")
-    public JAXBElement<WRSExtrinsicObjectType> createWRSExtrinsicObject(WRSExtrinsicObjectType value) {
+    public JAXBElement<WRSExtrinsicObjectType> createWRSExtrinsicObject(final WRSExtrinsicObjectType value) {
         return new JAXBElement<WRSExtrinsicObjectType>(_WRSExtrinsicObject_QNAME, WRSExtrinsicObjectType.class, null, value);
     }
 

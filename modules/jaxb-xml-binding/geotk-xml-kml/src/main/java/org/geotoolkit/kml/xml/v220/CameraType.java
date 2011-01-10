@@ -111,7 +111,7 @@ public class CameraType
      *     {@link Double }
      *     
      */
-    public void setLongitude(Double value) {
+    public void setLongitude(final Double value) {
         this.longitude = value;
     }
 
@@ -135,7 +135,7 @@ public class CameraType
      *     {@link Double }
      *     
      */
-    public void setLatitude(Double value) {
+    public void setLatitude(final Double value) {
         this.latitude = value;
     }
 
@@ -159,7 +159,7 @@ public class CameraType
      *     {@link Double }
      *     
      */
-    public void setAltitude(Double value) {
+    public void setAltitude(final Double value) {
         this.altitude = value;
     }
 
@@ -183,7 +183,7 @@ public class CameraType
      *     {@link Double }
      *     
      */
-    public void setHeading(Double value) {
+    public void setHeading(final Double value) {
         this.heading = value;
     }
 
@@ -207,7 +207,7 @@ public class CameraType
      *     {@link Double }
      *     
      */
-    public void setTilt(Double value) {
+    public void setTilt(final Double value) {
         this.tilt = value;
     }
 
@@ -231,7 +231,7 @@ public class CameraType
      *     {@link Double }
      *     
      */
-    public void setRoll(Double value) {
+    public void setRoll(final Double value) {
         this.roll = value;
     }
 
@@ -257,7 +257,7 @@ public class CameraType
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
      *     
      */
-    public void setAltitudeModeGroup(JAXBElement<?> value) {
+    public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
     }
 

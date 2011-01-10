@@ -201,7 +201,7 @@ public final class BuildResultStack {
         }
     }
 
-    public void push(Result item) {
+    public void push(final Result item) {
         stack.push(item);
     }
 

@@ -70,7 +70,7 @@ public class Connection implements AbstractConnection {
 
     }
 
-    public Connection(AbstractConnection connection) {
+    public Connection(final AbstractConnection connection) {
         if (connection != null) {
             this.name      = connection.getName();
             if (connection.getLink() != null) {
@@ -82,12 +82,12 @@ public class Connection implements AbstractConnection {
         }
     }
 
-    public Connection(String name, Link link) {
+    public Connection(final String name, final Link link) {
         this.name = name;
         this.link = link;
     }
 
-    public Connection(String name, ArrayLink arraylink) {
+    public Connection(final String name, final ArrayLink arraylink) {
         this.name      = name;
         this.arrayLink = arraylink;
     }
@@ -113,7 +113,7 @@ public class Connection implements AbstractConnection {
      *     {@link Link }
      *     
      */
-    public void setLink(Link value) {
+    public void setLink(final Link value) {
         this.link = value;
     }
 
@@ -138,7 +138,7 @@ public class Connection implements AbstractConnection {
      *     {@link ArrayLink }
      *     
      */
-    public void setArrayLink(ArrayLink value) {
+    public void setArrayLink(final ArrayLink value) {
         this.arrayLink = value;
     }
 
@@ -162,7 +162,7 @@ public class Connection implements AbstractConnection {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

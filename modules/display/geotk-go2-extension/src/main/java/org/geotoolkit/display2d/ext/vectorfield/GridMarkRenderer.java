@@ -37,7 +37,7 @@ import org.geotoolkit.display2d.style.renderer.AbstractCoverageSymbolizerRendere
  */
 public class GridMarkRenderer extends AbstractCoverageSymbolizerRenderer<CachedVectorFieldSymbolizer>{
 
-    public GridMarkRenderer(CachedVectorFieldSymbolizer symbol, RenderingContext2D context){
+    public GridMarkRenderer(final CachedVectorFieldSymbolizer symbol, final RenderingContext2D context){
         super(symbol,context);
     }
 

@@ -93,7 +93,7 @@ public abstract class AbstractGeometryType {
      *     {@link String }
      *     
      */
-    public void setGid(String value) {
+    public void setGid(final String value) {
         this.gid = value;
     }
 
@@ -117,7 +117,7 @@ public abstract class AbstractGeometryType {
      *     {@link String }
      *     
      */
-    public void setSrsName(String value) {
+    public void setSrsName(final String value) {
         this.srsName = value;
     }
 

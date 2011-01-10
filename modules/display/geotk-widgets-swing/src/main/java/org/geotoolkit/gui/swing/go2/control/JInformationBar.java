@@ -47,11 +47,11 @@ public class JInformationBar extends JToolBar implements MapControlBar{
      * Creates a new instance of JMap2DControlBar
      * @param pane : related Map2D or null
      */
-    public JInformationBar(JMap2D pane) {
+    public JInformationBar(final JMap2D pane) {
         this(pane,false);
     }
 
-    public JInformationBar(JMap2D pane,boolean bigIcons) {
+    public JInformationBar(final JMap2D pane,final boolean bigIcons) {
 
         actionLenght = new MesureLenghtAction(bigIcons);
         actionArea = new MesureAreaAction(bigIcons);
@@ -67,7 +67,7 @@ public class JInformationBar extends JToolBar implements MapControlBar{
      * set the related Map2D
      * @param map2d : related Map2D
      */
-    public void setMap(JMap2D map2d) {
+    public void setMap(final JMap2D map2d) {
         map = map2d;
         actionLenght.setMap(map);
         actionArea.setMap(map);

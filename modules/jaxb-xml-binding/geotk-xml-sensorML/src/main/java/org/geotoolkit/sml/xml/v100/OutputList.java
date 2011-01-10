@@ -69,11 +69,11 @@ public class OutputList implements AbstractOutputList {
     public OutputList() {
     }
 
-    public OutputList(List<IoComponentPropertyType> output) {
+    public OutputList(final List<IoComponentPropertyType> output) {
         this.output = output;
     }
 
-    public OutputList(AbstractOutputList outputList) {
+    public OutputList(final AbstractOutputList outputList) {
         this.output = (List<IoComponentPropertyType>) outputList.getOutput();
         this.id    = outputList.getId();
     }
@@ -92,14 +92,14 @@ public class OutputList implements AbstractOutputList {
     /**
      * Gets the value of the output property.
      */
-    public void setOutput(List<IoComponentPropertyType> output) {
+    public void setOutput(final List<IoComponentPropertyType> output) {
         this.output = output;
     }
 
     /**
      * Gets the value of the output property.
      */
-    public void setOutput(IoComponentPropertyType output) {
+    public void setOutput(final IoComponentPropertyType output) {
         if (this.output == null) {
             this.output = new ArrayList<IoComponentPropertyType>();
         }
@@ -109,7 +109,7 @@ public class OutputList implements AbstractOutputList {
     /**
      * Gets the value of the output property.
      */
-    public void setOutput(ObservableProperty output) {
+    public void setOutput(final ObservableProperty output) {
         if (this.output == null) {
             this.output = new ArrayList<IoComponentPropertyType>();
         }
@@ -119,7 +119,7 @@ public class OutputList implements AbstractOutputList {
     /**
      * Gets the value of the output property.
      */
-    public void setOutput(QuantityType output) {
+    public void setOutput(final QuantityType output) {
         if (this.output == null) {
             this.output = new ArrayList<IoComponentPropertyType>();
         }
@@ -129,7 +129,7 @@ public class OutputList implements AbstractOutputList {
     /**
      * Gets the value of the output property.
      */
-    public void setOutput(DataRecordType output) {
+    public void setOutput(final DataRecordType output) {
         if (this.output == null) {
             this.output = new ArrayList<IoComponentPropertyType>();
         }
@@ -148,7 +148,7 @@ public class OutputList implements AbstractOutputList {
      * Sets the value of the id property.
      */
     @Override
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

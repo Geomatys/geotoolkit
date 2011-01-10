@@ -77,7 +77,7 @@ public class FillType {
      *     {@link GraphicFillType }
      *     
      */
-    public void setGraphicFill(GraphicFillType value) {
+    public void setGraphicFill(final GraphicFillType value) {
         this.graphicFill = value;
     }
 

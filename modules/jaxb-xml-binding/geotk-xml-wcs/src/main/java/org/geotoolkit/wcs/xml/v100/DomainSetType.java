@@ -75,7 +75,7 @@ public class DomainSetType {
     /**
      * Empty constructor used by JAXB.
      */
-    public DomainSetType(SpatialDomainType spatialDomain, TimeSequenceType temporalDomain) {
+    public DomainSetType(final SpatialDomainType spatialDomain, final TimeSequenceType temporalDomain) {
         ObjectFactory factory = new ObjectFactory();
         content = new ArrayList<JAXBElement<?>>();
         if (spatialDomain != null)

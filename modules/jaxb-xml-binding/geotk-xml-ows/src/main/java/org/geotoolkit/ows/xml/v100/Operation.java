@@ -83,8 +83,8 @@ public class Operation implements AbstractOperation {
     /**
      * Build a new Operation.
      */
-    public Operation(List<DCP> dcp, List<DomainType> parameter, List<DomainType> constraint,
-            List<MetadataType> metadata, String name){
+    public Operation(final List<DCP> dcp, final List<DomainType> parameter, final List<DomainType> constraint,
+            final List<MetadataType> metadata, final String name){
         this.constraint = constraint;
         this.dcp        = dcp;
         this.metadata   = metadata;
@@ -118,7 +118,7 @@ public class Operation implements AbstractOperation {
      * Get a parameter from the specified parameter name
      */
     @Override
-    public DomainType getParameter(String name) {
+    public DomainType getParameter(final String name) {
         if (parameter == null) {
             return null;
         } else {
@@ -134,7 +134,7 @@ public class Operation implements AbstractOperation {
      * Get a parameter from the specified parameter name
      */
     @Override
-    public DomainType getParameterIgnoreCase(String name) {
+    public DomainType getParameterIgnoreCase(final String name) {
         if (parameter == null) {
             return null;
         } else {
@@ -158,7 +158,7 @@ public class Operation implements AbstractOperation {
     }
 
     @Override
-    public DomainType getConstraint(String name) {
+    public DomainType getConstraint(final String name) {
         if (constraint != null) {
             for (DomainType d : constraint) {
                 if (d.getName().equals(name))
@@ -173,7 +173,7 @@ public class Operation implements AbstractOperation {
     }
 
     @Override
-    public DomainType getConstraintIgnoreCase(String name) {
+    public DomainType getConstraintIgnoreCase(final String name) {
         if (constraint != null) {
             for (DomainType d : constraint) {
                 if (d.getName().equalsIgnoreCase(name))

@@ -107,7 +107,7 @@ public class ModelType extends AbstractGeometryType {
      *     {@link JAXBElement }{@code <}{@link AltitudeModeEnumType }{@code >}
      *     
      */
-    public void setAltitudeModeGroup(JAXBElement<?> value) {
+    public void setAltitudeModeGroup(final JAXBElement<?> value) {
         this.altitudeModeGroup = ((JAXBElement<?> ) value);
     }
 
@@ -131,7 +131,7 @@ public class ModelType extends AbstractGeometryType {
      *     {@link LocationType }
      *     
      */
-    public void setLocation(LocationType value) {
+    public void setLocation(final LocationType value) {
         this.location = value;
     }
 
@@ -155,7 +155,7 @@ public class ModelType extends AbstractGeometryType {
      *     {@link OrientationType }
      *     
      */
-    public void setOrientation(OrientationType value) {
+    public void setOrientation(final OrientationType value) {
         this.orientation = value;
     }
 
@@ -179,7 +179,7 @@ public class ModelType extends AbstractGeometryType {
      *     {@link ScaleType }
      *     
      */
-    public void setScale(ScaleType value) {
+    public void setScale(final ScaleType value) {
         this.scale = value;
     }
 
@@ -203,7 +203,7 @@ public class ModelType extends AbstractGeometryType {
      *     {@link LinkType }
      *     
      */
-    public void setLink(LinkType value) {
+    public void setLink(final LinkType value) {
         this.link = value;
     }
 
@@ -227,7 +227,7 @@ public class ModelType extends AbstractGeometryType {
      *     {@link ResourceMapType }
      *     
      */
-    public void setResourceMap(ResourceMapType value) {
+    public void setResourceMap(final ResourceMapType value) {
         this.resourceMap = value;
     }
 

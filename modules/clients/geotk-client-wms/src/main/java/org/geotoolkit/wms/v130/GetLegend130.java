@@ -31,7 +31,7 @@ public class GetLegend130 extends AbstractGetLegend {
      *
      * @param serverURL The url of the webservice.
      */
-    public GetLegend130(String serverURL){
+    public GetLegend130(final String serverURL){
         super(serverURL,"1.3.0");
     }
 

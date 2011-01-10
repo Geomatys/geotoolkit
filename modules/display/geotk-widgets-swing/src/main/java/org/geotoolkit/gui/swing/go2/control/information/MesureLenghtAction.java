@@ -42,13 +42,13 @@ public class MesureLenghtAction extends AbstractAction {
         this(false);
     }
 
-    public MesureLenghtAction(boolean big){
+    public MesureLenghtAction(final boolean big){
         super("",(big)?ICON_LENGHT_24 :ICON_LENGHT_16);
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_measure_lenght"));
     }
 
     @Override
-    public void actionPerformed(ActionEvent arg0) {
+    public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
             map.setHandler(new LenghtHandler(map));
         }
@@ -58,7 +58,7 @@ public class MesureLenghtAction extends AbstractAction {
         return map;
     }
 
-    public void setMap(JMap2D map) {
+    public void setMap(final JMap2D map) {
         this.map = map;
         setEnabled(map != null);
     }

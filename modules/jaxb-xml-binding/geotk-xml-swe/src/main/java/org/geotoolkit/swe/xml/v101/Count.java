@@ -84,7 +84,7 @@ public class Count extends AbstractDataComponentEntry implements AbstractCount {
     /**
      * Clone a new Count.
      */
-    public Count(Count value) {
+    public Count(final Count value) {
         this.value          = value.value;
         this.axisID         = value.axisID;
         this.constraint     = value.constraint;
@@ -92,7 +92,7 @@ public class Count extends AbstractDataComponentEntry implements AbstractCount {
         this.referenceFrame = value.referenceFrame;
     }
 
-    public Count(AbstractCount q) {
+    public Count(final AbstractCount q) {
         super(q);
         if (q != null) {
             this.axisID         = q.getAxisID();
@@ -115,7 +115,7 @@ public class Count extends AbstractDataComponentEntry implements AbstractCount {
     /**
      * Build a new Count with only the value.
      */
-    public Count(int value) {
+    public Count(final int value) {
         this.value = value;
     }
 
@@ -130,7 +130,7 @@ public class Count extends AbstractDataComponentEntry implements AbstractCount {
         return this.quality;
     }
 
-    public void setQuality(QualityPropertyType quality) {
+    public void setQuality(final QualityPropertyType quality) {
         if (quality != null) {
             if (this.quality == null) {
                 this.quality = new ArrayList<QualityPropertyType>();
@@ -139,7 +139,7 @@ public class Count extends AbstractDataComponentEntry implements AbstractCount {
         }
     }
 
-    public void setQuality(List<QualityPropertyType> quality) {
+    public void setQuality(final List<QualityPropertyType> quality) {
         this.quality = quality;
     }
 

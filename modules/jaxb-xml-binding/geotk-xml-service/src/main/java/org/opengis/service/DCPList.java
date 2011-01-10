@@ -101,7 +101,7 @@ public class DCPList extends CodeList<DCPList> {
      * Returns the DCPList that matches the given string, or returns a
      * new one if none match it.
      */
-    public static DCPList valueOf(String code) {
+    public static DCPList valueOf(final String code) {
         return valueOf(DCPList.class, code);
     }
 }

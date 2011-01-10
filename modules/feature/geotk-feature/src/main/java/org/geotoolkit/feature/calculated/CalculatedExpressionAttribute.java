@@ -40,12 +40,12 @@ public class CalculatedExpressionAttribute extends DefaultAttribute<Object, Attr
      * @param desc : the descriptor of this attribute
      * @param exp : the expression to evaluate.
      */
-    public CalculatedExpressionAttribute(AttributeDescriptor desc, Expression exp) {
+    public CalculatedExpressionAttribute(final AttributeDescriptor desc, final Expression exp) {
         super(null, desc, null);
         this.exp = exp;
     }
     
-    public void setRelated(ComplexAttribute relatedFeature) {
+    public void setRelated(final ComplexAttribute relatedFeature) {
         this.related = relatedFeature;
     }
 

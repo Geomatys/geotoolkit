@@ -44,7 +44,7 @@ public enum RequestServiceType {
         return name();
     }
 
-    public static RequestServiceType fromValue(String v) {
+    public static RequestServiceType fromValue(final String v) {
         return valueOf(v);
     }
 

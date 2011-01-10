@@ -82,7 +82,7 @@ public abstract class AbstractTimeSliceType extends AbstractGMLEntry {
      *     {@link TimePrimitivePropertyType }
      *     
      */
-    public void setValidTime(TimePrimitivePropertyType value) {
+    public void setValidTime(final TimePrimitivePropertyType value) {
         this.validTime = value;
     }
 
@@ -106,7 +106,7 @@ public abstract class AbstractTimeSliceType extends AbstractGMLEntry {
      *     {@link StringOrRefType }
      *     
      */
-    public void setDataSource(StringOrRefType value) {
+    public void setDataSource(final StringOrRefType value) {
         this.dataSource = value;
     }
 

@@ -76,8 +76,8 @@ public class ResponsiblePartySubsetType implements AbstractResponsiblePartySubse
     /**
      *Build a new Responsible party subset.
      */
-    public ResponsiblePartySubsetType(String individualName, String positionName, ContactType contactInfo,
-            CodeType role){
+    public ResponsiblePartySubsetType(final String individualName, final String positionName, final ContactType contactInfo,
+            final CodeType role){
         this.contactInfo    = contactInfo;
         this.individualName = individualName;
         this.positionName   = positionName;

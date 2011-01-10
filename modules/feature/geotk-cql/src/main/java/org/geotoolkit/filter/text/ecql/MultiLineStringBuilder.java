@@ -46,7 +46,7 @@ final class MultiLineStringBuilder extends GeometryBuilder {
      * in the result stack.
      */
     @Override
-    public Geometry build(int linestringtextNode) throws CQLException {
+    public Geometry build(final int linestringtextNode) throws CQLException {
         final List<Geometry> lineList = popGeometry(linestringtextNode);
         final LineString[] lineStrings = lineList.toArray(new LineString[lineList.size()]) ;
         return getGeometryFactory().createMultiLineString(lineStrings);

@@ -37,7 +37,7 @@ import org.opengis.display.canvas.Canvas;
 @Deprecated
 public class LegendMapper extends JRRendererMapper{
 
-    LegendMapper(JRMapperFactory<JRRenderable,MapContext> factory){
+    LegendMapper(final JRMapperFactory<JRRenderable,MapContext> factory){
         super(factory);
     }
 
@@ -45,7 +45,7 @@ public class LegendMapper extends JRRendererMapper{
      * {@inheritDoc }
      */
     @Override
-    public JRRenderable create(MapContext candidate, Collection<Object> renderedValues) {
+    public JRRenderable create(final MapContext candidate, final Collection<Object> renderedValues) {
         for(final Object renderedValue : renderedValues){
             if(renderedValue instanceof Canvas){
                 Canvas canvas = (Canvas) renderedValue;

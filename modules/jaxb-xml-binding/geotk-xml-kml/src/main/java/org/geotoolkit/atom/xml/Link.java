@@ -89,7 +89,7 @@ public class Link {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -113,7 +113,7 @@ public class Link {
      *     {@link String }
      *     
      */
-    public void setRel(String value) {
+    public void setRel(final String value) {
         this.rel = value;
     }
 
@@ -137,7 +137,7 @@ public class Link {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -161,7 +161,7 @@ public class Link {
      *     {@link String }
      *     
      */
-    public void setHreflang(String value) {
+    public void setHreflang(final String value) {
         this.hreflang = value;
     }
 
@@ -185,7 +185,7 @@ public class Link {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -209,7 +209,7 @@ public class Link {
      *     {@link String }
      *     
      */
-    public void setLength(String value) {
+    public void setLength(final String value) {
         this.length = value;
     }
 

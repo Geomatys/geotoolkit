@@ -78,7 +78,7 @@ public class Facet extends Annotated {
      *     {@link String }
      *     
      */
-    public void setValue(String value) {
+    public void setValue(final String value) {
         this.value = value;
     }
 
@@ -106,7 +106,7 @@ public class Facet extends Annotated {
      *     {@link Boolean }
      *     
      */
-    public void setFixed(Boolean value) {
+    public void setFixed(final Boolean value) {
         this.fixed = value;
     }
 

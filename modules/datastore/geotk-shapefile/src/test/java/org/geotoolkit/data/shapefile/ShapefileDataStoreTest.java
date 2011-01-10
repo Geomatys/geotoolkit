@@ -82,11 +82,11 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
     static final String CHINESE = "shapes/chinese_poly.shp";
     static final FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(null);
 
-    public ShapefileDataStoreTest(String testName) throws IOException {
+    public ShapefileDataStoreTest(final String testName) throws IOException {
         super(testName);
     }
 
-    protected FeatureCollection<SimpleFeature> loadFeatures(String resource, Query query)
+    protected FeatureCollection<SimpleFeature> loadFeatures(final String resource, Query query)
             throws Exception {
         assertNotNull(query);
 
@@ -107,7 +107,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         return s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
     }
 
-    protected FeatureCollection<SimpleFeature> loadFeatures(String resource, Charset charset, Query q) throws Exception {
+    protected FeatureCollection<SimpleFeature> loadFeatures(final String resource, final Charset charset, final Query q) throws Exception {
 
         URL url = ShapeTestData.url(resource);
         ShapefileDataStore s = new ShapefileDataStore(url, false, charset);
@@ -120,7 +120,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
 
     }
 
-    protected FeatureCollection<SimpleFeature> loadFeatures(ShapefileDataStore s)
+    protected FeatureCollection<SimpleFeature> loadFeatures(final ShapefileDataStore s)
             throws Exception {
         return s.createSession(true).getFeatureCollection(QueryBuilder.all(s.getName()));
     }
@@ -664,14 +664,14 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         return build.buildSimpleFeatureType();
     }
 
-    private void make3D(Geometry g) {
+    private void make3D(final Geometry g) {
         Coordinate[] c = g.getCoordinates();
         for (int i = 0, ii = c.length; i < ii; i++) {
             c[i].z = 42 + i;
         }
     }
 
-    private void writeFeatures(ShapefileDataStore s, Collection<SimpleFeature> fc)
+    private void writeFeatures(final ShapefileDataStore s, final Collection<SimpleFeature> fc)
             throws Exception {
 
         final SimpleFeatureType sft = fc.iterator().next().getFeatureType();
@@ -689,7 +689,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         fw.close();
     }
 
-    private void runWriteReadTest(Geometry geom, boolean d3) throws Exception {
+    private void runWriteReadTest(final Geometry geom, final boolean d3) throws Exception {
         // make features
 
         FeatureTypeBuilder ftb = new FeatureTypeBuilder();
@@ -748,7 +748,7 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
         tmpFile.delete();
     }
 
-    private ShapefileDataStore createDataStore(File f) throws Exception {
+    private ShapefileDataStore createDataStore(final File f) throws Exception {
         Collection<SimpleFeature> fc = createFeatureCollection();
         ShapefileDataStore sds = new ShapefileDataStore(f.toURL());
         writeFeatures(sds, fc);
@@ -767,14 +767,14 @@ public class ShapefileDataStoreTest extends AbstractTestCaseSupport {
      * @param c
      * @return
      */
-    static public String charToHex(char c) {
+    static public String charToHex(final char c) {
         // Returns hex String representation of char c
         byte hi = (byte) (c >>> 8);
         byte lo = (byte) (c & 0xff);
         return byteToHex(hi) + byteToHex(lo);
     }
 
-    static public String byteToHex(byte b) {
+    static public String byteToHex(final byte b) {
         // Returns hex String representation of byte b
         char[] hexDigit = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9',
                 'a', 'b', 'c', 'd', 'e', 'f' };

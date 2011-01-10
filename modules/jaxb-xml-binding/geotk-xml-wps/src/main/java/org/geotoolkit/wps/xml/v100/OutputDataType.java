@@ -78,7 +78,7 @@ public class OutputDataType
      *     {@link OutputReferenceType }
      *     
      */
-    public void setReference(OutputReferenceType value) {
+    public void setReference(final OutputReferenceType value) {
         this.reference = value;
     }
 
@@ -102,7 +102,7 @@ public class OutputDataType
      *     {@link DataType }
      *     
      */
-    public void setData(DataType value) {
+    public void setData(final DataType value) {
         this.data = value;
     }
 

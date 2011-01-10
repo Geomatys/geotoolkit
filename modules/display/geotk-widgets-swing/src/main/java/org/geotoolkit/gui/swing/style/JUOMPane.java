@@ -44,7 +44,7 @@ public class JUOMPane extends StyleElementEditor<Unit<Length>>{
     }
 
     @Override
-    public void parse(Unit<Length> target) {
+    public void parse(final Unit<Length> target) {
         if(SI.METRE.equals(target)){
             jcb_uom.setSelectedIndex(1);
         }else if(NonSI.FOOT.equals(target)){

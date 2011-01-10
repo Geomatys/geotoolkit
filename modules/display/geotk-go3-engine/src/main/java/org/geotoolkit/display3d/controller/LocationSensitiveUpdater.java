@@ -41,14 +41,14 @@ public class LocationSensitiveUpdater extends Thread{
     private final Vector3 lastestPosition;
     private final Vector3 currentPosition;
 
-    public LocationSensitiveUpdater(A3DContainer container) {
+    public LocationSensitiveUpdater(final A3DContainer container) {
         sensitives = Collections.synchronizedSortedMap(new TreeMap<Double, Object[]>());
         lastestPosition = new Vector3();
         currentPosition = new Vector3();
         this.container = container;
     }
 
-    public void put(LocationSensitiveGraphic graphic, double tolerance){
+    public void put(final LocationSensitiveGraphic graphic, final double tolerance){
         Object[] combination = sensitives.get(tolerance);
         if(combination == null){
             List<LocationSensitiveGraphic> graphics = new ArrayList<LocationSensitiveGraphic>();
@@ -62,7 +62,7 @@ public class LocationSensitiveUpdater extends Thread{
         }
     }
 
-    void updateCameraLocation(ReadOnlyVector3 position){
+    void updateCameraLocation(final ReadOnlyVector3 position){
         synchronized(lastestPosition){
             this.lastestPosition.set(position);
         }

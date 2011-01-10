@@ -75,7 +75,7 @@ public class ColorReplacementType {
      *     {@link RecodeType }
      *     
      */
-    public void setRecode(RecodeType value) {
+    public void setRecode(final RecodeType value) {
         this.recode = value;
     }
 
@@ -101,7 +101,7 @@ public class ColorReplacementType {
      *     {@link RecodeType }
      *
      */
-    public void setRecolor(RecolorType value) {
+    public void setRecolor(final RecolorType value) {
         this.recolor = value;
     }
 

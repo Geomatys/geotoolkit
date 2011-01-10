@@ -107,7 +107,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     /**
      * Clone a FeatureCatalogue
      */
-    public FeatureCatalogueImpl(FeatureCatalogue feature) {
+    public FeatureCatalogueImpl(final FeatureCatalogue feature) {
         if (feature != null) {
             this.featureType        = feature.getFeatureType();
             this.definitionSource   = feature.getDefinitionSource();
@@ -125,9 +125,9 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     /**
      * Build a new FeatureCatalogue
      */
-    public FeatureCatalogueImpl(String id, String name, List<String> scope, ResponsibleParty producer, Date versionDate,
-            String versionNumber, List<FeatureType> types, List<DefinitionSource> definitionSource, List<String> fieldOfApplication,
-            String functionalLanguage) {
+    public FeatureCatalogueImpl(final String id, final String name, final List<String> scope, final ResponsibleParty producer, final Date versionDate,
+            final String versionNumber, final List<FeatureType> types, final List<DefinitionSource> definitionSource, final List<String> fieldOfApplication,
+            final String functionalLanguage) {
         this.id                 = id;
         this.name               = name;
         this.featureType        = types;
@@ -161,7 +161,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
      * Sets the value of the name property.
      * 
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -176,14 +176,14 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
         return this.scope;
     }
     
-    public void setScope(String scope) {
+    public void setScope(final String scope) {
         if (this.scope == null) {
             this.scope = new ArrayList<String>();
         }
         this.scope.add(scope);
     }
     
-    public void setScope(List<String> scope) {
+    public void setScope(final List<String> scope) {
         this.scope = scope;
     }
     
@@ -198,14 +198,14 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
         return this.fieldOfApplication;
     }
     
-    public void setFieldOfApplication(String fieldOfApplication) {
+    public void setFieldOfApplication(final String fieldOfApplication) {
         if (this.fieldOfApplication == null) {
             this.fieldOfApplication = new ArrayList<String>();
         }
         this.fieldOfApplication.add(fieldOfApplication);
     }
     
-    public void setFieldOfApplication(List<String> fieldOfApplication) {
+    public void setFieldOfApplication(final List<String> fieldOfApplication) {
         this.fieldOfApplication = fieldOfApplication;
     }
 
@@ -221,7 +221,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
      * Sets the value of the versionNumber property.
      * 
      */
-    public void setVersionNumber(String value) {
+    public void setVersionNumber(final String value) {
         this.versionNumber = value;
     }
 
@@ -237,7 +237,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
      * Sets the value of the versionDate property.
      *     
      */
-    public void setVersionDate(Date value) {
+    public void setVersionDate(final Date value) {
         this.versionDate = value;
     }
 
@@ -253,7 +253,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     /**
      * Sets the value of the producer property.
      */
-    public void setProducer(ResponsibleParty value) {
+    public void setProducer(final ResponsibleParty value) {
         this.producer = value;
     }
 
@@ -267,7 +267,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     /**
      * Sets the value of the functionalLanguage property.
      */
-    public void setFunctionalLanguage(String value) {
+    public void setFunctionalLanguage(final String value) {
         this.functionalLanguage = value;
     }
 
@@ -282,7 +282,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     }
     
     
-    public void setFeatureType(FeatureType featureType) {
+    public void setFeatureType(final FeatureType featureType) {
         if (this.featureType == null) {
             this.featureType = new ArrayList<FeatureType>();
         }
@@ -290,7 +290,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     }
     
     
-    public void setFeatureType(List<FeatureType> featureType) {
+    public void setFeatureType(final List<FeatureType> featureType) {
         this.featureType = featureType;
     }
 
@@ -304,18 +304,18 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
         return this.definitionSource;
     }
     
-    public void setDefinitionSource(DefinitionSource definitionSource) {
+    public void setDefinitionSource(final DefinitionSource definitionSource) {
         if (this.definitionSource == null) {
             this.definitionSource = new ArrayList<DefinitionSource>();
         }
         this.definitionSource.add(definitionSource);
     }
     
-    public void setDefinitionSource(List<DefinitionSource> definitionSource) {
+    public void setDefinitionSource(final List<DefinitionSource> definitionSource) {
         this.definitionSource = definitionSource;
     }
     
-    public void setReference(boolean isReference) {
+    public void setReference(final boolean isReference) {
         this.isReference = isReference;
     }
     
@@ -330,7 +330,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
     }
     
     
-    private void beforeMarshal(Marshaller marshaller) {
+    private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
             beforeMarshal(new HashMap<String, Referenceable>());
         }
@@ -445,7 +445,7 @@ public class FeatureCatalogueImpl implements  FeatureCatalogue, Referenceable {
         return hash;
     }
 
-    public void setId(String id) {
+    public void setId(final String id) {
         this.id = id;
     }
 }

@@ -57,11 +57,11 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
 
     //simple feature------------------------------------------------------------
 
-    protected AbstractSimpleFeature(SimpleFeatureType type, FeatureId id){
+    protected AbstractSimpleFeature(final SimpleFeatureType type, final FeatureId id){
         this(new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),id);
     }
 
-    protected AbstractSimpleFeature(AttributeDescriptor desc, FeatureId id){
+    protected AbstractSimpleFeature(final AttributeDescriptor desc, final FeatureId id){
         super(desc,id);
     }
 
@@ -81,14 +81,14 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public void setAttributes(List<Object> values) {
+    public void setAttributes(final List<Object> values) {
         for (int i=0,n=values.size(); i<n; i++) {
             setAttribute(i, values.get(i));
         }
     }
 
     @Override
-    public void setAttributes(Object[] values) {
+    public void setAttributes(final Object[] values) {
 
         final List<Property> properties = getProperties();
         final boolean validating = isValidating();
@@ -108,7 +108,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public void setAttribute(String name, Object value) {
+    public void setAttribute(final String name, final Object value) {
         final Integer idx = getIndex().get(name);
         if (idx == null) {
             throw new SimpleIllegalAttributeException("Unknown attribute " + name);
@@ -117,7 +117,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public void setAttribute(Name name, Object value) {
+    public void setAttribute(final Name name, final Object value) {
         final Integer idx = getIndex().get(name);
         if (idx == null) {
             throw new SimpleIllegalAttributeException("Unknown attribute " + name);
@@ -126,7 +126,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public void setAttribute(int index, Object value) throws IndexOutOfBoundsException {
+    public void setAttribute(final int index, final Object value) throws IndexOutOfBoundsException {
         final Property prop = getProperties().get(index);
 
         // if necessary, validation too
@@ -153,7 +153,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public Object getAttribute(Name name) {
+    public Object getAttribute(final Name name) {
         final Integer idx = getIndex().get(name);
         if (idx != null) {
             return getAttribute(idx);
@@ -163,7 +163,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public Object getAttribute(String name) {
+    public Object getAttribute(final String name) {
         final Integer idx = getIndex().get(name);
         if (idx != null) {
             return getAttribute(idx);
@@ -173,7 +173,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
     
     @Override
-    public Object getAttribute(int idx) throws IndexOutOfBoundsException {
+    public Object getAttribute(final int idx) throws IndexOutOfBoundsException {
         return getProperties().get(idx).getValue();
     }
 
@@ -199,7 +199,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public void setDefaultGeometry(Object geometry) {
+    public void setDefaultGeometry(final Object geometry) {
         final Integer geometryIndex = getIndex().get(null);
         if (geometryIndex != null) {
             setAttribute(geometryIndex, geometry);
@@ -230,7 +230,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public void setDefaultGeometryProperty(GeometryAttribute geometryAttribute) {
+    public void setDefaultGeometryProperty(final GeometryAttribute geometryAttribute) {
         if (geometryAttribute != null) {
             setDefaultGeometry(geometryAttribute.getValue());
         } else {
@@ -239,7 +239,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public Collection<Property> getProperties(Name name) {
+    public Collection<Property> getProperties(final Name name) {
         final Integer idx = getIndex().get(name);
         if (idx != null) {
             final Property prop = getProperties().get(idx);
@@ -252,7 +252,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public Property getProperty(Name name) {
+    public Property getProperty(final Name name) {
         final Integer idx = getIndex().get(name);
         if (idx == null) {
             return null;
@@ -262,7 +262,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public Collection<Property> getProperties(String name) {
+    public Collection<Property> getProperties(final String name) {
         final Integer idx = getIndex().get(name);
         if (idx != null) {
             final Property prop = getProperties().get(idx);
@@ -275,7 +275,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public Property getProperty(String name) {
+    public Property getProperty(final String name) {
         final Integer idx = getIndex().get(name);
         if (idx == null) {
             return null;
@@ -301,7 +301,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public void setValue(Object newValue) {
+    public void setValue(final Object newValue) {
         setValue((Collection<Property>) newValue);
     }
 

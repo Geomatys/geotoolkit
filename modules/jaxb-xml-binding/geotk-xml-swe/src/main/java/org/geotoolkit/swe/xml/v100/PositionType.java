@@ -77,45 +77,45 @@ public class PositionType extends AbstractVectorType implements Position {
 
     }
 
-    public PositionType(URI referenceFrame, URI localFrame,VectorPropertyType location) {
+    public PositionType(final URI referenceFrame, final URI localFrame,final VectorPropertyType location) {
         super(referenceFrame, localFrame);
         this.location    = location;
     }
 
 
-    public PositionType(URI referenceFrame, URI localFrame,VectorPropertyType location,
-            VectorOrSquareMatrixPropertyType orientation) {
+    public PositionType(final URI referenceFrame, final URI localFrame,final VectorPropertyType location,
+            final VectorOrSquareMatrixPropertyType orientation) {
         super(referenceFrame, localFrame);
         this.location    = location;
         this.orientation = orientation;
     }
 
-    public PositionType(URI referenceFrame, URI localFrame, VectorType location) {
+    public PositionType(final URI referenceFrame, final URI localFrame, final VectorType location) {
         super(referenceFrame, localFrame);
         this.location    = new VectorPropertyType(location);
     }
 
 
-    public PositionType(URI referenceFrame, URI localFrame, VectorType location,
-            VectorType orientation) {
+    public PositionType(final URI referenceFrame, final URI localFrame, final VectorType location,
+            final VectorType orientation) {
         super(referenceFrame, localFrame);
         this.location    = new VectorPropertyType(location);
         this.orientation = new VectorOrSquareMatrixPropertyType(orientation);
     }
 
-    public PositionType(URI referenceFrame, URI localFrame, VectorType location,
-            SquareMatrixType orientation) {
+    public PositionType(final URI referenceFrame, final URI localFrame, final VectorType location,
+            final SquareMatrixType orientation) {
         super(referenceFrame, localFrame);
         this.location    = new VectorPropertyType(location);
         this.orientation = new VectorOrSquareMatrixPropertyType(orientation);
     }
     
-    public PositionType(VectorPropertyType location, VectorOrSquareMatrixPropertyType orientation) {
+    public PositionType(final VectorPropertyType location, final VectorOrSquareMatrixPropertyType orientation) {
         this.location    = location;
         this.orientation = orientation;
     }
 
-    public PositionType(Position pos) {
+    public PositionType(final Position pos) {
         super(pos);
         if (pos != null) {
             if (pos.getAcceleration() != null) {
@@ -166,7 +166,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link TimePropertyType }
      *     
      */
-    public void setTime(TimePropertyType value) {
+    public void setTime(final TimePropertyType value) {
         this.time = value;
     }
 
@@ -191,7 +191,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorPropertyType }
      *     
      */
-    public void setLocation(VectorPropertyType value) {
+    public void setLocation(final VectorPropertyType value) {
         this.location = value;
     }
 
@@ -216,7 +216,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorOrSquareMatrixPropertyType }
      *     
      */
-    public void setOrientation(VectorOrSquareMatrixPropertyType value) {
+    public void setOrientation(final VectorOrSquareMatrixPropertyType value) {
         this.orientation = value;
     }
 
@@ -241,7 +241,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorPropertyType }
      *     
      */
-    public void setVelocity(VectorPropertyType value) {
+    public void setVelocity(final VectorPropertyType value) {
         this.velocity = value;
     }
 
@@ -266,7 +266,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorOrSquareMatrixPropertyType }
      *     
      */
-    public void setAngularVelocity(VectorOrSquareMatrixPropertyType value) {
+    public void setAngularVelocity(final VectorOrSquareMatrixPropertyType value) {
         this.angularVelocity = value;
     }
 
@@ -291,7 +291,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorPropertyType }
      *     
      */
-    public void setAcceleration(VectorPropertyType value) {
+    public void setAcceleration(final VectorPropertyType value) {
         this.acceleration = value;
     }
 
@@ -316,7 +316,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorOrSquareMatrixPropertyType }
      *     
      */
-    public void setAngularAcceleration(VectorOrSquareMatrixPropertyType value) {
+    public void setAngularAcceleration(final VectorOrSquareMatrixPropertyType value) {
         this.angularAcceleration = value;
     }
 
@@ -341,7 +341,7 @@ public class PositionType extends AbstractVectorType implements Position {
      *     {@link VectorOrSquareMatrixPropertyType }
      *     
      */
-    public void setState(VectorOrSquareMatrixPropertyType value) {
+    public void setState(final VectorOrSquareMatrixPropertyType value) {
         this.state = value;
     }
 

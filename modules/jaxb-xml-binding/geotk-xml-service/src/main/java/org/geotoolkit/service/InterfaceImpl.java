@@ -56,7 +56,7 @@ public class InterfaceImpl implements Interface {
     /**
      * Clone an interface
      */
-    public InterfaceImpl(Interface interfac) {
+    public InterfaceImpl(final Interface interfac) {
         this.operation = interfac.getOperation();
         this.theSVPort = interfac.getTheSVPort();
         this.typeName  = interfac.getTypeName();
@@ -74,7 +74,7 @@ public class InterfaceImpl implements Interface {
      * Sets the value of the typeName property.
      * 
     */
-    public void setTypeName(TypeName value) {
+    public void setTypeName(final TypeName value) {
         this.typeName = value;
     }
 
@@ -90,11 +90,11 @@ public class InterfaceImpl implements Interface {
         return this.theSVPort;
     }
     
-    public void setTheSVPort(Collection<Port> theSVPort) {
+    public void setTheSVPort(final Collection<Port> theSVPort) {
          this.theSVPort = theSVPort;
      }
     
-    public void setTheSVPort(Port theSVPort) {
+    public void setTheSVPort(final Port theSVPort) {
         if (this.theSVPort == null) {
             this.theSVPort = new ArrayList<Port>();
         } 
@@ -113,7 +113,7 @@ public class InterfaceImpl implements Interface {
     /**
      * Sets the value of the operation property.
      */
-    public void setOperation(Operation value) {
+    public void setOperation(final Operation value) {
         this.operation = value;
     }
 

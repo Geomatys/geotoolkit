@@ -162,7 +162,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -186,7 +186,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link Boolean }
      *     
      */
-    public void setVisibility(Boolean value) {
+    public void setVisibility(final Boolean value) {
         this.visibility = value;
     }
 
@@ -210,7 +210,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link Boolean }
      *     
      */
-    public void setOpen(Boolean value) {
+    public void setOpen(final Boolean value) {
         this.open = value;
     }
 
@@ -234,7 +234,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link AtomPersonConstruct }
      *     
      */
-    public void setAuthor(AtomPersonConstruct value) {
+    public void setAuthor(final AtomPersonConstruct value) {
         this.author = value;
     }
 
@@ -258,7 +258,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link Link }
      *     
      */
-    public void setLink(Link value) {
+    public void setLink(final Link value) {
         this.link = value;
     }
 
@@ -282,7 +282,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setAddress(String value) {
+    public void setAddress(final String value) {
         this.address = value;
     }
 
@@ -306,7 +306,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link AddressDetails }
      *     
      */
-    public void setAddressDetails(AddressDetails value) {
+    public void setAddressDetails(final AddressDetails value) {
         this.addressDetails = value;
     }
 
@@ -330,7 +330,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setPhoneNumber(String value) {
+    public void setPhoneNumber(final String value) {
         this.phoneNumber = value;
     }
 
@@ -354,7 +354,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link SnippetType }
      *     
      */
-    public void setSnippet(SnippetType value) {
+    public void setSnippet(final SnippetType value) {
         this.snippet = value;
     }
 
@@ -378,7 +378,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setSnippetDenominator(String value) {
+    public void setSnippetDenominator(final String value) {
         this.snippetDenominator = value;
     }
 
@@ -402,7 +402,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setDescription(String value) {
+    public void setDescription(final String value) {
         this.description = value;
     }
 
@@ -430,7 +430,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link JAXBElement }{@code <}{@link AbstractViewType }{@code >}
      *     
      */
-    public void setAbstractViewGroup(JAXBElement<? extends AbstractViewType> value) {
+    public void setAbstractViewGroup(final JAXBElement<? extends AbstractViewType> value) {
         this.abstractViewGroup = ((JAXBElement<? extends AbstractViewType> ) value);
     }
 
@@ -458,7 +458,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link JAXBElement }{@code <}{@link AbstractTimePrimitiveType }{@code >}
      *     
      */
-    public void setAbstractTimePrimitiveGroup(JAXBElement<? extends AbstractTimePrimitiveType> value) {
+    public void setAbstractTimePrimitiveGroup(final JAXBElement<? extends AbstractTimePrimitiveType> value) {
         this.abstractTimePrimitiveGroup = ((JAXBElement<? extends AbstractTimePrimitiveType> ) value);
     }
 
@@ -482,7 +482,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link String }
      *     
      */
-    public void setStyleUrl(String value) {
+    public void setStyleUrl(final String value) {
         this.styleUrl = value;
     }
 
@@ -537,7 +537,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link RegionType }
      *     
      */
-    public void setRegion(RegionType value) {
+    public void setRegion(final RegionType value) {
         this.region = value;
     }
 
@@ -561,7 +561,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link MetadataType }
      *     
      */
-    public void setMetadata(MetadataType value) {
+    public void setMetadata(final MetadataType value) {
         this.metadata = value;
     }
 
@@ -585,7 +585,7 @@ public abstract class AbstractFeatureType extends AbstractObjectType {
      *     {@link ExtendedDataType }
      *     
      */
-    public void setExtendedData(ExtendedDataType value) {
+    public void setExtendedData(final ExtendedDataType value) {
         this.extendedData = value;
     }
 

@@ -1203,7 +1203,7 @@ public class GeometryCollection extends Geometry implements Comparable {
      *        {@linkplain #getCoordinateSystem coordinate system} (linear or angular units).
      */
     @Override
-    public synchronized void setRenderingResolution(float resolution) {
+    public synchronized void setRenderingResolution(final float resolution) {
         for (int i=count; --i>=0;) {
             geometries[i].setRenderingResolution(resolution);
         }
@@ -1470,7 +1470,7 @@ public class GeometryCollection extends Geometry implements Comparable {
          * <code>geometries.length</code>. This method should be invoked with increasing
          * value of <code>from</code> only (values in random order are not supported).
          */
-        private int next(int from) {
+        private int next(final int from) {
             while (from < geometries.length) {
                 Geometry polygon = geometries[from];
                 if (polygon != null) {

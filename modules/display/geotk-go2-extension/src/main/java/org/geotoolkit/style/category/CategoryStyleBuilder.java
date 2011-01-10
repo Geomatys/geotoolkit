@@ -92,7 +92,7 @@ public class CategoryStyleBuilder extends Factory {
         this(null,null);
     }
 
-    public CategoryStyleBuilder(MutableStyleFactory styleFactory, FilterFactory filterFactory){
+    public CategoryStyleBuilder(final MutableStyleFactory styleFactory, final FilterFactory filterFactory){
         if(styleFactory == null){
              sf = (MutableStyleFactory) FactoryFinder.getStyleFactory(new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
         }else{
@@ -107,7 +107,7 @@ public class CategoryStyleBuilder extends Factory {
 
     }
 
-    public void analyze(FeatureMapLayer layer){
+    public void analyze(final FeatureMapLayer layer){
         this.layer = layer;
         rules.clear();
 
@@ -218,7 +218,7 @@ public class CategoryStyleBuilder extends Factory {
         return template;
     }
 
-    public void setTemplate(Symbolizer template) {
+    public void setTemplate(final Symbolizer template) {
         this.template = template;
     }
 
@@ -226,7 +226,7 @@ public class CategoryStyleBuilder extends Factory {
         return palette;
     }
 
-    public void setPalette(RandomPalette palette) {
+    public void setPalette(final RandomPalette palette) {
         this.palette = palette;
     }
 
@@ -238,7 +238,7 @@ public class CategoryStyleBuilder extends Factory {
         return properties;
     }
 
-    public void setCurrentProperty(PropertyName currentProperty) {
+    public void setCurrentProperty(final PropertyName currentProperty) {
         this.currentProperty = currentProperty;
     }
 
@@ -250,7 +250,7 @@ public class CategoryStyleBuilder extends Factory {
         return other;
     }
 
-    public void setOther(boolean other) {
+    public void setOther(final boolean other) {
         this.other = other;
     }
 
@@ -306,7 +306,7 @@ public class CategoryStyleBuilder extends Factory {
     /**
      * Derivate a symbolizer with a new color.
      */
-    public Symbolizer derivateSymbolizer(Symbolizer symbol, Color color){
+    public Symbolizer derivateSymbolizer(final Symbolizer symbol, final Color color){
 
         if(symbol instanceof PolygonSymbolizer){
             PolygonSymbolizer ps = (PolygonSymbolizer)symbol;
@@ -337,7 +337,7 @@ public class CategoryStyleBuilder extends Factory {
 
     }
 
-    public Rule createRule(PropertyName property, Object obj){
+    public Rule createRule(final PropertyName property, final Object obj){
         MutableRule r = sf.rule(createSymbolizer());
         r.setFilter(ff.equals(property, ff.literal(obj)));
         r.setDescription(sf.description(obj.toString(), obj.toString()));

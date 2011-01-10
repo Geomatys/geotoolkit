@@ -49,7 +49,7 @@ public class FeatureFlatTest extends TestCase {
 
     TestSuite suite = null;
 
-    public FeatureFlatTest(String testName) {
+    public FeatureFlatTest(final String testName) {
         super(testName);
     }
 
@@ -194,7 +194,7 @@ public class FeatureFlatTest extends TestCase {
         String s = f.toString();
     }
 
-    static AttributeDescriptor newAtt(String name, Class c) {
+    static AttributeDescriptor newAtt(final String name, final Class c) {
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder ab = new AttributeTypeBuilder();
         ab.setBinding(c);
@@ -203,7 +203,7 @@ public class FeatureFlatTest extends TestCase {
         return adb.buildDescriptor();
     }
 
-    static AttributeDescriptor newAtt(String name, Class c, boolean nillable) {
+    static AttributeDescriptor newAtt(final String name, final Class c, final boolean nillable) {
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
         final AttributeTypeBuilder ab = new AttributeTypeBuilder();
         ab.setBinding( c );

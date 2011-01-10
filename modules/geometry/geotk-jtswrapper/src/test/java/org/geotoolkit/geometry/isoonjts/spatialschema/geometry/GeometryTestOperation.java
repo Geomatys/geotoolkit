@@ -46,7 +46,7 @@ public class GeometryTestOperation {
      * @param arg3      third argument
      * @param expectedResult the passing result of the operation
      */
-    public GeometryTestOperation(String operation, String arg1, String arg2, String arg3, Object expectedResult) {
+    public GeometryTestOperation(final String operation, final String arg1, final String arg2, final String arg3, final Object expectedResult) {
         this.operation = operation;
         this.arg1 = arg1;
         this.arg2 = arg2;
@@ -73,7 +73,7 @@ public class GeometryTestOperation {
         operationMap.put("union", new UnionOp());
     }
 
-    private Geometry setGeomArg(String s, Geometry a, Geometry b) {
+    private Geometry setGeomArg(final String s, final Geometry a, final Geometry b) {
         if (s.equalsIgnoreCase("a")) {
             return a;
         } else if (s.equalsIgnoreCase("b")) {
@@ -89,7 +89,7 @@ public class GeometryTestOperation {
      * @param b argument object b
      * @return
      */
-    public boolean run(Geometry a, Geometry b) {
+    public boolean run(final Geometry a, final Geometry b) {
         boolean result = false;
         OperationHandler operationHandler = (OperationHandler) operationMap.get(operation);
         result = operationHandler.doOperation(a, b);
@@ -100,11 +100,11 @@ public class GeometryTestOperation {
      * The interface used for operation handlers
      */
     private abstract class OperationHandler {
-        boolean doOperation(Geometry a, Geometry b) {
+        boolean doOperation(final Geometry a, final Geometry b) {
             return false;
         }
 
-        protected boolean compareTransfiniteSetResult(TransfiniteSet result) {
+        protected boolean compareTransfiniteSetResult(final TransfiniteSet result) {
         	if (expectedResult == null && result == null) {
         		return true;
         	}
@@ -116,7 +116,7 @@ public class GeometryTestOperation {
             }
         }
         
-    	protected boolean compareDirectPositionResult(DirectPosition result) {
+    	protected boolean compareDirectPositionResult(final DirectPosition result) {
             if (expectedResult instanceof DirectPosition) {
             	DirectPosition expect = (DirectPosition)expectedResult;
                 return result.equals(expect);
@@ -131,7 +131,7 @@ public class GeometryTestOperation {
      * Class defining a null operation
      */
     private class NoOp extends OperationHandler {
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             return false;
         }
     }
@@ -146,7 +146,7 @@ public class GeometryTestOperation {
          * @param b Geometry Object
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Boolean expected = (Boolean)expectedResult;
             Geometry geom1 = setGeomArg(arg1, a, b);
             Geometry geom2 = setGeomArg(arg2, a, b);
@@ -165,7 +165,7 @@ public class GeometryTestOperation {
          * @param b Geometry Object
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Boolean expected = (Boolean)expectedResult;
             Geometry geom1 = setGeomArg(arg1, a, b);
             Geometry geom2 = setGeomArg(arg2, a, b);
@@ -184,7 +184,7 @@ public class GeometryTestOperation {
          * @param b Geometry Object (not used)
          * @return a boolean indicating whether object A is simple
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Boolean expected = (Boolean)expectedResult;
             Geometry geom1 = setGeomArg(arg1, a, b);
             Boolean result = Boolean.valueOf( geom1.isSimple() );
@@ -204,7 +204,7 @@ public class GeometryTestOperation {
          * @param b Geometry Object
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Geometry geom1 = setGeomArg(arg1, a, b);
             Geometry geom2 = setGeomArg(arg2, a, b);
             TransfiniteSet result = geom1.intersection(geom2);
@@ -222,7 +222,7 @@ public class GeometryTestOperation {
          * @param b Geometry Object (not used)
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Geometry geom1 = setGeomArg(arg1, a, b);
             TransfiniteSet result = geom1.getBoundary();
             return compareTransfiniteSetResult(result);
@@ -239,7 +239,7 @@ public class GeometryTestOperation {
          * @param b Geometry Object (not used)
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Geometry geom1 = setGeomArg(arg1, a, b);
             DirectPosition result = geom1.getCentroid();
             return compareDirectPositionResult(result);
@@ -256,7 +256,7 @@ public class GeometryTestOperation {
          * @param b Geometry Object (not used)
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Geometry geom1 = setGeomArg(arg1, a, b);
             DirectPosition result = geom1.getRepresentativePoint();
             return compareDirectPositionResult(result);
@@ -275,7 +275,7 @@ public class GeometryTestOperation {
          * @param b Geometry Object (not used)
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Geometry geom1 = setGeomArg(arg1, a, b);
             TransfiniteSet result = geom1.getConvexHull();
             return compareTransfiniteSetResult(result);
@@ -292,7 +292,7 @@ public class GeometryTestOperation {
          * @param b Geometry object
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Geometry geom1 = setGeomArg(arg1, a, b);
             Geometry geom2 = setGeomArg(arg2, a, b);
             TransfiniteSet result = geom1.difference(geom2);
@@ -310,7 +310,7 @@ public class GeometryTestOperation {
          * @param b Geometry object
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Geometry geom1 = setGeomArg(arg1, a, b);
             Geometry geom2 = setGeomArg(arg2, a, b);
             TransfiniteSet result = geom1.symmetricDifference(geom2);
@@ -328,7 +328,7 @@ public class GeometryTestOperation {
          * @param b Geometry object
          * @return a boolean indicating whether the result matched the expectation
          */
-        public boolean doOperation(Geometry a, Geometry b) {
+        public boolean doOperation(final Geometry a, final Geometry b) {
             Geometry geom1 = setGeomArg(arg1, a, b);
             Geometry geom2 = setGeomArg(arg2, a, b);
             TransfiniteSet result = geom1.union(geom2);

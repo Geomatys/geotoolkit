@@ -67,11 +67,11 @@ public class InputList implements AbstractInputList {
     public InputList() {
     }
 
-    public InputList(List<IoComponentPropertyType> input) {
+    public InputList(final List<IoComponentPropertyType> input) {
         this.input = input;
     }
 
-    public InputList(AbstractInputList inputList) {
+    public InputList(final AbstractInputList inputList) {
         this.input = (List<IoComponentPropertyType>) inputList.getInput();
         this.id    = inputList.getId();
     }
@@ -89,14 +89,14 @@ public class InputList implements AbstractInputList {
     /**
      * Gets the value of the input property.
      */
-    public void setInput(List<IoComponentPropertyType> input) {
+    public void setInput(final List<IoComponentPropertyType> input) {
         this.input = input;
     }
 
     /**
      * Gets the value of the input property.
      */
-    public void setInput(IoComponentPropertyType input) {
+    public void setInput(final IoComponentPropertyType input) {
         if (this.input == null) {
             this.input = new ArrayList<IoComponentPropertyType>();
         }
@@ -106,7 +106,7 @@ public class InputList implements AbstractInputList {
     /**
      * Gets the value of the input property.
      */
-    public void setInput(ObservableProperty input) {
+    public void setInput(final ObservableProperty input) {
         if (this.input == null) {
             this.input = new ArrayList<IoComponentPropertyType>();
         }
@@ -123,7 +123,7 @@ public class InputList implements AbstractInputList {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

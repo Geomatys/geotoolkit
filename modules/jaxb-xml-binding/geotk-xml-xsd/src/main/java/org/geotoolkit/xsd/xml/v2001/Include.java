@@ -71,7 +71,7 @@ public class Include extends Annotated {
      *     {@link String }
      *     
      */
-    public void setSchemaLocation(String value) {
+    public void setSchemaLocation(final String value) {
         this.schemaLocation = value;
     }
 

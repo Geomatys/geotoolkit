@@ -68,7 +68,7 @@ public class LenghtHandler implements CanvasHandler {
     private final LenghtDecoration deco = new LenghtDecoration();
     private final JMap2D map;
 
-    public LenghtHandler(JMap2D map) {
+    public LenghtHandler(final JMap2D map) {
         this.map = map;
         mouseInputListener = new MouseListen();
     }
@@ -77,7 +77,7 @@ public class LenghtHandler implements CanvasHandler {
      * {@inheritDoc }
      */
     @Override
-    public void install(Component component) {
+    public void install(final Component component) {
         mouseInputListener.install(component);
         map.addDecoration(0,deco);
     }
@@ -86,7 +86,7 @@ public class LenghtHandler implements CanvasHandler {
      * {@inheritDoc }
      */
     @Override
-    public void uninstall(Component component) {
+    public void uninstall(final Component component) {
         mouseInputListener.uninstall(component);
         map.removeDecoration(deco);
     }
@@ -118,7 +118,7 @@ public class LenghtHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mouseClicked(final MouseEvent e) {
             super.mouseClicked(e);
 
             final int mousebutton = e.getButton();
@@ -144,7 +144,7 @@ public class LenghtHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {
+        public void mouseEntered(final MouseEvent e) {
             map.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         }
 

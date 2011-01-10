@@ -22,7 +22,7 @@ import org.geotoolkit.jdbc.JDBCTestSetup;
 
 public class PostgisGeometrylessTestSetup extends JDBCGeometrylessTestSetup {
 
-    public PostgisGeometrylessTestSetup(JDBCTestSetup delegate) {
+    public PostgisGeometrylessTestSetup(final JDBCTestSetup delegate) {
         super(delegate);
     }
 

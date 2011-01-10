@@ -54,11 +54,11 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
         this(null, null);
     }
 
-    public JTSCompositeCurve(CompositeCurve parent) {
+    public JTSCompositeCurve(final CompositeCurve parent) {
         this(parent, parent.getCoordinateReferenceSystem());
     }
 
-    public JTSCompositeCurve(CompositeCurve parent, CoordinateReferenceSystem crs) {
+    public JTSCompositeCurve(final CompositeCurve parent, final CoordinateReferenceSystem crs) {
         super(crs);
         this.parent = parent;
     }
@@ -167,7 +167,7 @@ public class JTSCompositeCurve extends AbstractJTSComposite implements Composite
     }
 
     @Override
-    public boolean equals(Object object) {
+    public boolean equals(final Object object) {
         if (object == this)
             return true;
         if (object instanceof JTSCompositeCurve && super.equals(object)) {

@@ -62,7 +62,7 @@ public class ProcessChainType extends AbstractPureProcessType implements Abstrac
 
     }
 
-    public ProcessChainType(AbstractProcessChain pc) {
+    public ProcessChainType(final AbstractProcessChain pc) {
         super(pc);
         if (pc != null) {
             if (pc.getComponents() != null) {
@@ -94,7 +94,7 @@ public class ProcessChainType extends AbstractPureProcessType implements Abstrac
      *     {@link Components }
      *     
      */
-    public void setComponents(Components value) {
+    public void setComponents(final Components value) {
         this.components = value;
     }
 
@@ -118,7 +118,7 @@ public class ProcessChainType extends AbstractPureProcessType implements Abstrac
      *     {@link Connections }
      *     
      */
-    public void setConnections(Connections value) {
+    public void setConnections(final Connections value) {
         this.connections = value;
     }
 

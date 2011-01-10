@@ -30,7 +30,7 @@ public class PrjFileTest extends AbstractTestCaseSupport {
     static final String TEST_FILE = "wkt/cntbnd01.prj";
 
 
-    public PrjFileTest(String testName) throws IOException {
+    public PrjFileTest(final String testName) throws IOException {
         super(testName);
     }
 

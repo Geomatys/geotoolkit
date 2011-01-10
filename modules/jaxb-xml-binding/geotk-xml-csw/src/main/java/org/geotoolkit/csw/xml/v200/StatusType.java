@@ -55,7 +55,7 @@ public enum StatusType {
     PROCESSING("processing");
     private final String value;
 
-    StatusType(String v) {
+    StatusType(final String v) {
         value = v;
     }
 
@@ -63,7 +63,7 @@ public enum StatusType {
         return value;
     }
 
-    public static StatusType fromValue(String v) {
+    public static StatusType fromValue(final String v) {
         for (StatusType c: StatusType.values()) {
             if (c.value.equals(v)) {
                 return c;

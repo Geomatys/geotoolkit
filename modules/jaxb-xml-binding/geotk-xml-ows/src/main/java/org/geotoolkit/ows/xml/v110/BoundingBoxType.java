@@ -96,7 +96,7 @@ public class BoundingBoxType {
      * @param minx
      * @param miny
      */
-    public BoundingBoxType(String crs, double minx, double miny, double maxx, double maxy){
+    public BoundingBoxType(final String crs, final double minx, final double miny, final double maxx, final double maxy){
         this.dimensions = 2;
         this.lowerCorner.add(minx);
         this.lowerCorner.add(miny);
@@ -105,7 +105,7 @@ public class BoundingBoxType {
         this.crs = crs;
     }
 
-    public BoundingBoxType(Envelope envelope) {
+    public BoundingBoxType(final Envelope envelope) {
         if (envelope != null) {
             for (Double d : envelope.getLowerCorner().getCoordinate()) {
                 this.lowerCorner.add(d);

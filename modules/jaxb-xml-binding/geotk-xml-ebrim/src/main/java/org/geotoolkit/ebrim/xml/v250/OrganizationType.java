@@ -87,7 +87,7 @@ public class OrganizationType extends RegistryObjectType {
     /**
      * Sets the value of the address property.
      */
-    public void setAddress(PostalAddressType value) {
+    public void setAddress(final PostalAddressType value) {
         this.address = value;
     }
 
@@ -104,7 +104,7 @@ public class OrganizationType extends RegistryObjectType {
     /**
      * Sets the value of the telephoneNumber property.
      */
-    public void setTelephoneNumber(TelephoneNumberType number) {
+    public void setTelephoneNumber(final TelephoneNumberType number) {
         if (telephoneNumber == null) {
             telephoneNumber = new ArrayList<TelephoneNumberType>();
         }
@@ -114,7 +114,7 @@ public class OrganizationType extends RegistryObjectType {
     /**
      * Sets the value of the telephoneNumber property.
      */
-    public void setTelephoneNumber(List<TelephoneNumberType> number) {
+    public void setTelephoneNumber(final List<TelephoneNumberType> number) {
         this.telephoneNumber = number;
     }
 
@@ -131,7 +131,7 @@ public class OrganizationType extends RegistryObjectType {
     /**
      * Sets the value of the emailAddress property.
      */
-    public void setEmailAddress(EmailAddressType email) {
+    public void setEmailAddress(final EmailAddressType email) {
         if (emailAddress == null) {
             emailAddress = new ArrayList<EmailAddressType>();
         }
@@ -141,7 +141,7 @@ public class OrganizationType extends RegistryObjectType {
     /**
      * Sets the value of the emailAddress property.
      */
-    public void setEmailAddress(List<EmailAddressType> emails) {
+    public void setEmailAddress(final List<EmailAddressType> emails) {
         this.emailAddress = emails;
     }
 
@@ -155,7 +155,7 @@ public class OrganizationType extends RegistryObjectType {
     /**
      * Sets the value of the parent property.
      */
-    public void setParent(String value) {
+    public void setParent(final String value) {
         this.parent = value;
     }
 
@@ -169,7 +169,7 @@ public class OrganizationType extends RegistryObjectType {
     /**
      * Sets the value of the primaryContact property.
      */
-    public void setPrimaryContact(String value) {
+    public void setPrimaryContact(final String value) {
         this.primaryContact = value;
     }
 

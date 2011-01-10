@@ -42,12 +42,12 @@ public class DirectPositionAdapter extends XmlAdapter<DirectPositionType, Positi
      * @return A code list which represents the metadata value.
      */
     @Override
-    public Position unmarshal(DirectPositionType v) throws Exception {
+    public Position unmarshal(final DirectPositionType v) throws Exception {
         return new GeneralDirectPosition(v);
     }
 
     @Override
-    public DirectPositionType marshal(Position v) throws Exception {
+    public DirectPositionType marshal(final Position v) throws Exception {
         return new DirectPositionType(v);
     }
 

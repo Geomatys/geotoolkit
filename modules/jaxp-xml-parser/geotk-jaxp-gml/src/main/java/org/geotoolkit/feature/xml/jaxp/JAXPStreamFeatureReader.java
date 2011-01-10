@@ -88,13 +88,13 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     protected List<FeatureType> featureTypes;
     protected final Unmarshaller unmarshaller;
 
-    public JAXPStreamFeatureReader(FeatureType featureType) throws JAXBException {
+    public JAXPStreamFeatureReader(final FeatureType featureType) throws JAXBException {
         this.featureTypes = Arrays.asList(featureType);
         this.unmarshaller = marshallpool.acquireUnmarshaller();
 
     }
 
-    public JAXPStreamFeatureReader(List<FeatureType> featureTypes) throws JAXBException {
+    public JAXPStreamFeatureReader(final List<FeatureType> featureTypes) throws JAXBException {
         this.featureTypes = featureTypes;
         this.unmarshaller = marshallpool.acquireUnmarshaller();
     }
@@ -103,7 +103,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      * {@inheritDoc }
      */
     @Override
-    public void setFeatureType(FeatureType featureType) {
+    public void setFeatureType(final FeatureType featureType) {
         this.featureTypes = Arrays.asList(featureType);
     }
 
@@ -113,7 +113,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     }
 
     @Override
-    public Object read(Object xml) throws IOException, XMLStreamException  {
+    public Object read(final Object xml) throws IOException, XMLStreamException  {
         setInput(xml);
         return read();
     }
@@ -156,7 +156,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return null;
     }
 
-    private Object readFeatureCollection(String id) throws XMLStreamException {
+    private Object readFeatureCollection(final String id) throws XMLStreamException {
         FeatureCollection collection = null;
         while (reader.hasNext()) {
             int event = reader.next();
@@ -212,7 +212,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
         return collection;
     }
 
-    private Feature readFeature(String id, FeatureType featureType) throws XMLStreamException {
+    private Feature readFeature(final String id, final FeatureType featureType) throws XMLStreamException {
         final Map<Name,Property> properties = new LinkedHashMap<Name, Property>();
 
         while (reader.hasNext()) {
@@ -365,7 +365,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
     }
 
     @Override
-    public Map<String, String> extractNamespace(String xml) {
+    public Map<String, String> extractNamespace(final String xml) {
         try {
             final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
             XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
@@ -395,7 +395,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      * @return An envelope of the collection bounds.
      * @throws XMLStreamException
      */
-    private JTSEnvelope2D readBounds(String srsName) throws XMLStreamException {
+    private JTSEnvelope2D readBounds(final String srsName) throws XMLStreamException {
        JTSEnvelope2D bounds = null;
        while (reader.hasNext()) {
             int event = reader.next();

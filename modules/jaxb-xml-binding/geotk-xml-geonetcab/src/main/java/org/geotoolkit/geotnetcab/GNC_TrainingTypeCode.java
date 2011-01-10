@@ -86,7 +86,7 @@ public class GNC_TrainingTypeCode extends CodeList<GNC_TrainingTypeCode>  {
      * Returns the GNC_TrainingTypeCode that matches the given string, or returns a
      * new one if none match it.
      */
-    public static GNC_TrainingTypeCode valueOf(String code) {
+    public static GNC_TrainingTypeCode valueOf(final String code) {
         return valueOf(GNC_TrainingTypeCode.class, code);
     }
 }

@@ -76,7 +76,7 @@ public final class GeoTiffMetaDataUtils {
     /**
      * Returns the attribut value or null if attribut does not exist.
      */
-    static String getAttributeValue(Node candidate, String attributName){
+    static String getAttributeValue(final Node candidate, final String attributName){
         final NamedNodeMap attributs = candidate.getAttributes();
         if(attributs != null){
             final Node attribut = attributs.getNamedItem(attributName);
@@ -182,21 +182,21 @@ public final class GeoTiffMetaDataUtils {
     /**
      * Create a dom Node, a special IIOMetadataNode.
      */
-    static Element createNode(String name){
+    static Element createNode(final String name){
         return new IIOMetadataNode(name);
     }
 
     /**
      * Create a TiffField node with id and name from the TIFFTag description.
      */
-    static Node createTiffField(TIFFTag tag){
+    static Node createTiffField(final TIFFTag tag){
         return createTiffField(tag.getNumber(),tag.getName());
     }
     
     /**
      * Create a Tiffield node.
      */
-    static Node createTiffField(final int number, String name){
+    static Node createTiffField(final int number, final String name){
         final Element ele = createNode(TAG_GEOTIFF_FIELD);
         ele.setAttribute(ATT_NUMBER, Integer.toString(number));
         ele.setAttribute(ATT_NAME, name);
@@ -255,7 +255,7 @@ public final class GeoTiffMetaDataUtils {
     /**
      * Create a TIFFdoubles node.
      */
-    static Node createTiffDoubles(double ... doubles) {
+    static Node createTiffDoubles(final double ... doubles) {
         final Element ele = createNode(TAG_GEOTIFF_DOUBLES);
         for(final double d : doubles){
             ele.appendChild(createTiffDouble(d));
@@ -266,7 +266,7 @@ public final class GeoTiffMetaDataUtils {
     /**
      * Create a TIFFdoubles node.
      */
-    static Node createTiffDoubles(Collection<Double> doubles) {
+    static Node createTiffDoubles(final Collection<Double> doubles) {
         final Element ele = createNode(TAG_GEOTIFF_DOUBLES);
         for(final double d : doubles){
             ele.appendChild(createTiffDouble(d));

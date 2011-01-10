@@ -49,7 +49,7 @@ class TypeEditor implements TableCellEditor{
      * {@inheritDoc }
      */
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {        
+    public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {        
         box.setSelectedItem(value);
         return box;
     }
@@ -66,7 +66,7 @@ class TypeEditor implements TableCellEditor{
      * {@inheritDoc }
      */
     @Override
-    public boolean isCellEditable(EventObject anEvent) {
+    public boolean isCellEditable(final EventObject anEvent) {
         return true;
     }
 
@@ -74,7 +74,7 @@ class TypeEditor implements TableCellEditor{
      * {@inheritDoc }
      */
     @Override
-    public boolean shouldSelectCell(EventObject anEvent) {
+    public boolean shouldSelectCell(final EventObject anEvent) {
         return true;
     }
 
@@ -108,7 +108,7 @@ class TypeEditor implements TableCellEditor{
      * {@inheritDoc }
      */
     @Override
-    public void addCellEditorListener(CellEditorListener l) {
+    public void addCellEditorListener(final CellEditorListener l) {
         listeners.add(CellEditorListener.class, l);
     }
 
@@ -116,7 +116,7 @@ class TypeEditor implements TableCellEditor{
      * {@inheritDoc }
      */
     @Override
-    public void removeCellEditorListener(CellEditorListener l) {
+    public void removeCellEditorListener(final CellEditorListener l) {
         listeners.remove(CellEditorListener.class, l);
     }
 

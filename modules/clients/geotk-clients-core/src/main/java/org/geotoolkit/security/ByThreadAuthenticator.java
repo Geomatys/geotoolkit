@@ -58,7 +58,7 @@ public class ByThreadAuthenticator extends Authenticator{
      * @param user : this thread current login
      * @param password : this thread current password
      */
-    public static void setCurrentThreadAuthentication(String user, char[] password){
+    public static void setCurrentThreadAuthentication(final String user, final char[] password){
         LOCALS.set(new PasswordAuthentication(user, password));
     }
 

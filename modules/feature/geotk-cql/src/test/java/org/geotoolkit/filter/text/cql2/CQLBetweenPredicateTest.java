@@ -98,7 +98,7 @@ public class CQLBetweenPredicateTest {
      * @param samplePredicate
      * @throws Exception
      */
-    protected void testBetweenPredicate(final String samplePredicate, Filter expected) throws Exception{
+    protected void testBetweenPredicate(final String samplePredicate, final Filter expected) throws Exception{
 
         Filter actual = CompilerUtil.parseFilter(this.language, samplePredicate);
 

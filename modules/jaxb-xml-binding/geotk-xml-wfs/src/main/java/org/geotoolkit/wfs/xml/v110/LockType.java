@@ -71,7 +71,7 @@ public class LockType {
 
     }
 
-    public LockType(FilterType filter, String handle, QName typeName) {
+    public LockType(final FilterType filter, final String handle, final QName typeName) {
         this.filter   = filter;
         this.handle   = handle;
         this.typeName = typeName;
@@ -97,7 +97,7 @@ public class LockType {
      *     {@link FilterType }
      *     
      */
-    public void setFilter(FilterType value) {
+    public void setFilter(final FilterType value) {
         this.filter = value;
     }
 
@@ -121,7 +121,7 @@ public class LockType {
      *     {@link String }
      *     
      */
-    public void setHandle(String value) {
+    public void setHandle(final String value) {
         this.handle = value;
     }
 
@@ -145,7 +145,7 @@ public class LockType {
      *     {@link QName }
      *     
      */
-    public void setTypeName(QName value) {
+    public void setTypeName(final QName value) {
         this.typeName = value;
     }
 

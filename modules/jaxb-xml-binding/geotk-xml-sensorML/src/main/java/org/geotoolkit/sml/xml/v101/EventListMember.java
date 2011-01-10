@@ -84,7 +84,7 @@ public class EventListMember implements AbstractEventListMember {
     public EventListMember() {
     }
 
-    public EventListMember(AbstractEventListMember m) {
+    public EventListMember(final AbstractEventListMember m) {
         if (m != null) {
             this.actuate = m.getActuate();
             this.arcrole = m.getArcrole();
@@ -121,7 +121,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link Event }
      *
      */
-    public void setEvent(Event value) {
+    public void setEvent(final Event value) {
         this.event = value;
     }
 
@@ -145,7 +145,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link String }
      *
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -169,7 +169,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link String }
      *
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -193,7 +193,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link String }
      *
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -217,7 +217,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link String }
      *
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -241,7 +241,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link String }
      *
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -265,7 +265,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link String }
      *
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -289,7 +289,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link String }
      *
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -313,7 +313,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link String }
      *
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -337,7 +337,7 @@ public class EventListMember implements AbstractEventListMember {
      *     {@link String }
      *
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

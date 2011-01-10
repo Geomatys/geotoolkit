@@ -32,7 +32,7 @@ public class DefaultFeatureId implements FeatureId,Serializable {
 
     private final String id;
 
-    public DefaultFeatureId(String id) {
+    public DefaultFeatureId(final String id) {
         if (id == null) {
             throw new NullPointerException("Feature id can not be null");
         }
@@ -51,7 +51,7 @@ public class DefaultFeatureId implements FeatureId,Serializable {
      * {@inheritDoc }
      */
     @Override
-    public boolean matches(Object object) {
+    public boolean matches(final Object object) {
         if (object instanceof Attribute) {
             final Identifier identifier = ((Attribute)object).getIdentifier();
             return identifier != null && id.equals(identifier.getID());
@@ -71,7 +71,7 @@ public class DefaultFeatureId implements FeatureId,Serializable {
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

@@ -78,9 +78,9 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     /**
      * Build a new Service identification (full version).
      */
-    public ServiceIdentification(String title, String _abstract,
-            List<KeywordsType> keywords, CodeType serviceType, List<String> serviceTypeVersion, 
-            String fees, List<String> accessConstraints){
+    public ServiceIdentification(final String title, final String _abstract,
+            final List<KeywordsType> keywords, final CodeType serviceType, final List<String> serviceTypeVersion, 
+            final String fees, final List<String> accessConstraints){
         super(title, _abstract, keywords);
         this.accessConstraints  = accessConstraints;
         this.fees               = fees;
@@ -91,8 +91,8 @@ public class ServiceIdentification extends DescriptionType implements AbstractSe
     /**
      * Build a new Service identification (light version).
      */
-    public ServiceIdentification(String title, String _abstract,
-            KeywordsType keywords, CodeType serviceType, List<String> serviceTypeVersion, String fees, String accessConstraints){
+    public ServiceIdentification(final String title, final String _abstract,
+            final KeywordsType keywords, final CodeType serviceType, final List<String> serviceTypeVersion, final String fees, final String accessConstraints){
         super(title, _abstract, keywords);
         this.accessConstraints  = new ArrayList<String>();
         this.accessConstraints.add(accessConstraints);

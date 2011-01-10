@@ -38,7 +38,7 @@ public class DefaultCSBuilder implements CSBuilder {
      * {@inheritDoc }
      */
     @Override
-    public void start(int size, int dimensions) {
+    public void start(final int size, final int dimensions) {
         coordinateArray = new Coordinate[size];
         for (int i = 0; i < size; i++) {
             coordinateArray[i] = new Coordinate();
@@ -59,7 +59,7 @@ public class DefaultCSBuilder implements CSBuilder {
      * {@inheritDoc }
      */
     @Override
-    public void setOrdinate(double value, int ordinateIndex, int coordinateIndex) {
+    public void setOrdinate(final double value, final int ordinateIndex, final int coordinateIndex) {
         Coordinate c = coordinateArray[coordinateIndex];
         switch (ordinateIndex) {
             case 0:
@@ -78,7 +78,7 @@ public class DefaultCSBuilder implements CSBuilder {
      * {@inheritDoc }
      */
     @Override
-    public double getOrdinate(int ordinateIndex, int coordinateIndex) {
+    public double getOrdinate(final int ordinateIndex, final int coordinateIndex) {
         Coordinate c = coordinateArray[coordinateIndex];
         switch (ordinateIndex) {
             case 0:
@@ -120,7 +120,7 @@ public class DefaultCSBuilder implements CSBuilder {
      * {@inheritDoc }
      */
     @Override
-    public void setOrdinate(CoordinateSequence sequence, double value, int ordinateIndex, int coordinateIndex) {
+    public void setOrdinate(final CoordinateSequence sequence, final double value, final int ordinateIndex, final int coordinateIndex) {
         Coordinate c = sequence.getCoordinate(coordinateIndex);
         switch (ordinateIndex) {
             case 0:

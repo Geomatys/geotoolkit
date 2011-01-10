@@ -68,7 +68,7 @@ public class FileSystemPageStore extends PageStore {
      * 
      * @throws TreeException
      */
-    public FileSystemPageStore(File file) throws TreeException {
+    public FileSystemPageStore(final File file) throws TreeException {
         super();
 
         if (file.isDirectory()) {
@@ -95,7 +95,7 @@ public class FileSystemPageStore extends PageStore {
      * 
      * @throws TreeException
      */
-    public FileSystemPageStore(File file, DataDefinition def)
+    public FileSystemPageStore(final File file, final DataDefinition def)
             throws TreeException {
         this(file, def, DEF_MAX, DEF_MIN, DEF_SPLIT, -1);
     }
@@ -111,7 +111,7 @@ public class FileSystemPageStore extends PageStore {
      * 
      * @throws TreeException
      */
-    public FileSystemPageStore(File file, DataDefinition def, int cacheSize)
+    public FileSystemPageStore(final File file, final DataDefinition def, final int cacheSize)
             throws TreeException {
         this(file, def, DEF_MAX, DEF_MIN, DEF_SPLIT, cacheSize);
     }
@@ -130,8 +130,8 @@ public class FileSystemPageStore extends PageStore {
      * 
      * @throws TreeException
      */
-    public FileSystemPageStore(File file, DataDefinition def,
-            int maxNodeEntries, int minNodeEntries, short splitAlg)
+    public FileSystemPageStore(final File file, final DataDefinition def,
+            final int maxNodeEntries, final int minNodeEntries, final short splitAlg)
             throws TreeException {
         this(file, def, maxNodeEntries, minNodeEntries, splitAlg, -1);
     }
@@ -152,9 +152,9 @@ public class FileSystemPageStore extends PageStore {
      * 
      * @throws TreeException
      */
-    public FileSystemPageStore(File file, DataDefinition def,
-            int maxNodeEntries, int minNodeEntries, short splitAlg,
-            int cacheSize) throws TreeException {
+    public FileSystemPageStore(final File file, final DataDefinition def,
+            final int maxNodeEntries, final int minNodeEntries, final short splitAlg,
+            final int cacheSize) throws TreeException {
         super(def, maxNodeEntries, minNodeEntries, splitAlg);
 
         if (file.exists() && (file.length() != 0)) {
@@ -191,7 +191,7 @@ public class FileSystemPageStore extends PageStore {
      * @throws IOException
      * @throws TreeException
      */
-    private void init(File file) throws IOException, TreeException {
+    private void init(final File file) throws IOException, TreeException {
         this.raFile = new RandomAccessFile(file, "rw");
         this.channel = raFile.getChannel();
 
@@ -386,7 +386,7 @@ public class FileSystemPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public void setRoot(Node node) throws TreeException {
+    public void setRoot(final Node node) throws TreeException {
         try {
             FileSystemNode n = (FileSystemNode) node;
             n.setParent(null);
@@ -414,7 +414,7 @@ public class FileSystemPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public Node getEmptyNode(boolean isLeaf) {
+    public Node getEmptyNode(final boolean isLeaf) {
         FileSystemNode node = new FileSystemNode(params);
         node.setLeaf(isLeaf);
 
@@ -425,7 +425,7 @@ public class FileSystemPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public Node getNode(Entry parentEntry, Node parent) throws TreeException {
+    public Node getNode(final Entry parentEntry, final Node parent) throws TreeException {
         Node node = null;
         long offset = ((Long) parentEntry.getData()).longValue();
 
@@ -443,7 +443,7 @@ public class FileSystemPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public Entry createEntryPointingNode(Node node) {
+    public Entry createEntryPointingNode(final Node node) {
         FileSystemNode fn = (FileSystemNode) node;
 
         return new Entry(new Envelope(fn.getBounds()), new Long(fn.getOffset()));
@@ -453,7 +453,7 @@ public class FileSystemPageStore extends PageStore {
      * {@inheritDoc }
      */
     @Override
-    public void free(Node node) {
+    public void free(final Node node) {
         try {
             FileSystemNode fn = (FileSystemNode) node;
             fn.free();
@@ -523,7 +523,7 @@ public class FileSystemPageStore extends PageStore {
      * @param b
      *                true or false
      */
-    public void setForceChannel(boolean b) {
+    public void setForceChannel(final boolean b) {
         this.params.setForceChannel(b);
     }
 

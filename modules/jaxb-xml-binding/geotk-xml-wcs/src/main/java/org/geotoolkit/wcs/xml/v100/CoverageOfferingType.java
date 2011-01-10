@@ -71,9 +71,9 @@ public class CoverageOfferingType extends CoverageOfferingBriefType {
     /**
      * build a new CoverageOffering type used in describeCoverage response.
      */
-    public CoverageOfferingType(List<MetadataLinkType> metadataLink, String name, String label, String description,
-            LonLatEnvelopeType lonLatEnvelope, Keywords keywords, DomainSetType domainSet, RangeSet rangeSet,
-            SupportedCRSsType supportedCRSs, SupportedFormatsType supportedFormats, SupportedInterpolationsType supportedInterpolations){
+    public CoverageOfferingType(final List<MetadataLinkType> metadataLink, final String name, final String label, final String description,
+            final LonLatEnvelopeType lonLatEnvelope, final Keywords keywords, final DomainSetType domainSet, final RangeSet rangeSet,
+            final SupportedCRSsType supportedCRSs, final SupportedFormatsType supportedFormats, final SupportedInterpolationsType supportedInterpolations){
         super(metadataLink, name, label, description, lonLatEnvelope, keywords);
         this.domainSet               = domainSet;
         this.rangeSet                = rangeSet;

@@ -37,7 +37,7 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
     private final Expression lower;
     private final Expression upper;
 
-    public DefaultPropertyIsBetween(Expression candidate, Expression lower, Expression upper) {
+    public DefaultPropertyIsBetween(final Expression candidate, final Expression lower, final Expression upper) {
         if(candidate == null || lower == null || upper == null){
             throw new NullPointerException("Expressions can not be null");
         }
@@ -75,7 +75,7 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object feature) {
+    public boolean evaluate(final Object feature) {
         Object value = candidate.evaluate(feature);
         if (value == null) {
             return false;
@@ -109,7 +109,7 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -117,7 +117,7 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }

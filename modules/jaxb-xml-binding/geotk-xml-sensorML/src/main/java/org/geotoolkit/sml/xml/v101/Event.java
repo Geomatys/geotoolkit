@@ -98,7 +98,7 @@ public class Event implements AbstractEvent {
 
     }
 
-    public Event(AbstractEvent event) {
+    public Event(final AbstractEvent event) {
         if (event != null) {
             if (event.getClassification() != null) {
                 this.classification = new ArrayList<Classification>();
@@ -163,7 +163,7 @@ public class Event implements AbstractEvent {
      *     {@link String }
      *     
      */
-    public void setDate(String value) {
+    public void setDate(final String value) {
         this.date = value;
     }
 
@@ -187,7 +187,7 @@ public class Event implements AbstractEvent {
      *     {@link StringOrRefType }
      *     
      */
-    public void setDescription(StringOrRefType value) {
+    public void setDescription(final StringOrRefType value) {
         this.description = value;
     }
 
@@ -206,7 +206,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the keywords property.
      *
      */
-    public void setKeywords(List<Keywords> keywords) {
+    public void setKeywords(final List<Keywords> keywords) {
         this.keywords = keywords;
     }
 
@@ -214,7 +214,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the keywords property.
      *
      */
-    public void setKeywords(Keywords keywords) {
+    public void setKeywords(final Keywords keywords) {
         if (keywords != null) {
             if (this.keywords == null) {
                 this.keywords = new ArrayList<Keywords>();
@@ -238,7 +238,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the keywords property.
      *
      */
-    public void setIdentification(List<Identification> identification) {
+    public void setIdentification(final List<Identification> identification) {
         this.identification = identification;
     }
 
@@ -246,7 +246,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the keywords property.
      *
      */
-    public void setIdentification(Identification identification) {
+    public void setIdentification(final Identification identification) {
         if (identification != null) {
             if (this.identification == null) {
                 this.identification = new ArrayList<Identification>();
@@ -259,7 +259,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the keywords property.
      *
      */
-    public void setIdentification(IdentifierList identification) {
+    public void setIdentification(final IdentifierList identification) {
         if (identification != null) {
             if (this.identification == null) {
                 this.identification = new ArrayList<Identification>();
@@ -283,7 +283,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the keywords property.
      *
      */
-    public void setClassification(List<Classification> classification) {
+    public void setClassification(final List<Classification> classification) {
        this.classification = classification;
     }
 
@@ -291,7 +291,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the keywords property.
      *
      */
-    public void setClassification(Classification classification) {
+    public void setClassification(final Classification classification) {
         if (classification != null) {
             if (this.classification == null) {
                 this.classification = new ArrayList<Classification>();
@@ -304,7 +304,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the keywords property.
      *
      */
-    public void setClassification(ClassifierList classification) {
+    public void setClassification(final ClassifierList classification) {
         if (classification != null) {
             if (this.classification == null) {
                 this.classification = new ArrayList<Classification>();
@@ -327,7 +327,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the contact property.
      *
      */
-    public void setContact(Contact contact) {
+    public void setContact(final Contact contact) {
         if (contact != null) {
             if (this.contact == null) {
                 this.contact = new ArrayList<Contact>();
@@ -340,7 +340,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the contact property.
      *
      */
-    public void setContact(ResponsibleParty contact) {
+    public void setContact(final ResponsibleParty contact) {
         if (contact != null) {
             if (this.contact == null) {
                 this.contact = new ArrayList<Contact>();
@@ -353,7 +353,7 @@ public class Event implements AbstractEvent {
      * sets the value of the contact property.
      *
      */
-    public void setContact(List<Contact> contact) {
+    public void setContact(final List<Contact> contact) {
         this.contact = contact;
     }
     
@@ -371,7 +371,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the contact property.
      *
      */
-    public void setDocumentation(Documentation documentation) {
+    public void setDocumentation(final Documentation documentation) {
         if (documentation != null) {
             if (this.documentation == null) {
                 this.documentation = new ArrayList<Documentation>();
@@ -384,7 +384,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the contact property.
      *
      */
-    public void setDocumentation(Document documentation) {
+    public void setDocumentation(final Document documentation) {
         if (documentation != null) {
             if (this.documentation == null) {
                 this.documentation = new ArrayList<Documentation>();
@@ -397,7 +397,7 @@ public class Event implements AbstractEvent {
      * sets the value of the contact property.
      *
      */
-    public void setDocumentation(List<Documentation> documentation) {
+    public void setDocumentation(final List<Documentation> documentation) {
         this.documentation = documentation;
     }
     
@@ -415,7 +415,7 @@ public class Event implements AbstractEvent {
      * Sets the value of the contact property.
      *
      */
-    public void setProperty(DataComponentPropertyType property) {
+    public void setProperty(final DataComponentPropertyType property) {
         if (property != null) {
             if (this.property == null) {
                 this.property = new ArrayList<DataComponentPropertyType>();
@@ -428,7 +428,7 @@ public class Event implements AbstractEvent {
      * sets the value of the contact property.
      *
      */
-    public void setProperty(List<DataComponentPropertyType> property) {
+    public void setProperty(final List<DataComponentPropertyType> property) {
         this.property = property;
     }
 
@@ -452,7 +452,7 @@ public class Event implements AbstractEvent {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

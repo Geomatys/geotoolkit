@@ -38,14 +38,14 @@ public class OverlapsType extends BinarySpatialOpType implements Overlaps {
     /**
      * Build a new Overlaps Type
      */
-    public OverlapsType(String propertyName, AbstractGeometryType geometry) {
+    public OverlapsType(final String propertyName, final AbstractGeometryType geometry) {
         super(propertyName, geometry);
     }
     
     /**
      * Build a new Overlaps Type
      */
-    public OverlapsType(PropertyNameType propertyName, Object geometry) {
+    public OverlapsType(final PropertyNameType propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
 }

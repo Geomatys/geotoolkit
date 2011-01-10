@@ -81,7 +81,7 @@ public class TrimType
      *     {@link ParameterValueType }
      *     
      */
-    public void setStringValue(ParameterValueType value) {
+    public void setStringValue(final ParameterValueType value) {
         this.stringValue = value;
     }
 
@@ -105,7 +105,7 @@ public class TrimType
      *     {@link StripOffPositionType }
      *     
      */
-    public void setStripOffPosition(StripOffPositionType value) {
+    public void setStripOffPosition(final StripOffPositionType value) {
         this.stripOffPosition = value;
     }
 
@@ -129,7 +129,7 @@ public class TrimType
      *     {@link String }
      *     
      */
-    public void setStripOffChar(String value) {
+    public void setStripOffChar(final String value) {
         this.stripOffChar = value;
     }
 

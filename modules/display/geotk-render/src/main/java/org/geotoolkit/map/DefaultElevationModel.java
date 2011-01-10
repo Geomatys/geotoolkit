@@ -39,7 +39,7 @@ final class DefaultElevationModel implements ElevationModel{
     private final Expression scale;
 
 
-    DefaultElevationModel(GridCoverageReader coverage, Expression offset, Expression scale){
+    DefaultElevationModel(final GridCoverageReader coverage, final Expression offset, final Expression scale){
         this.coverage = coverage;
         this.offset = offset;
         this.scale = scale;
@@ -50,7 +50,7 @@ final class DefaultElevationModel implements ElevationModel{
      * {@inheritDoc }
      */
     @Override
-    public double getModelHeight(DirectPosition position, Unit<Length> lenght) {
+    public double getModelHeight(final DirectPosition position, final Unit<Length> lenght) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 

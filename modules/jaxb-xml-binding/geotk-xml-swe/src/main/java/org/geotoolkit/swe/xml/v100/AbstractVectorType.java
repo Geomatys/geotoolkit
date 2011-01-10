@@ -67,7 +67,7 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
 
     }
 
-    public AbstractVectorType(AbstractVector av) {
+    public AbstractVectorType(final AbstractVector av) {
         super(av);
         if (av != null) {
             this.localFrame = av.getLocalFrame();
@@ -75,11 +75,11 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
         }
     }
     
-    public AbstractVectorType(URI definition) {
+    public AbstractVectorType(final URI definition) {
         super(definition);
     }
 
-    public AbstractVectorType(URI referenceFrame, URI localFrame) {
+    public AbstractVectorType(final URI referenceFrame, final URI localFrame) {
         this.localFrame = localFrame;
         this.referenceFrame = referenceFrame;
     }
@@ -94,7 +94,7 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
     /**
      * Sets the value of the referenceFrame property.
      */
-    public void setReferenceFrame(URI value) {
+    public void setReferenceFrame(final URI value) {
         this.referenceFrame = value;
     }
 
@@ -108,7 +108,7 @@ public abstract class AbstractVectorType extends AbstractDataRecordType implemen
     /**
      * Sets the value of the localFrame property.
      */
-    public void setLocalFrame(URI value) {
+    public void setLocalFrame(final URI value) {
         this.localFrame = value;
     }
 

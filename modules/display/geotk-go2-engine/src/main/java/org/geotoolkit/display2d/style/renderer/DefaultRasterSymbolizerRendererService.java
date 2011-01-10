@@ -56,7 +56,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
      * {@inheritDoc }
      */
     @Override
-    public CachedRasterSymbolizer createCachedSymbolizer(RasterSymbolizer symbol) {
+    public CachedRasterSymbolizer createCachedSymbolizer(final RasterSymbolizer symbol) {
         return new CachedRasterSymbolizer(symbol,this);
     }
 
@@ -64,7 +64,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
      * {@inheritDoc }
      */
     @Override
-    public SymbolizerRenderer createRenderer(CachedRasterSymbolizer symbol, RenderingContext2D context) {
+    public SymbolizerRenderer createRenderer(final CachedRasterSymbolizer symbol, final RenderingContext2D context) {
         return new DefaultRasterSymbolizerRenderer(symbol, context);
     }
 
@@ -72,7 +72,7 @@ public class DefaultRasterSymbolizerRendererService extends AbstractSymbolizerRe
      * {@inheritDoc }
      */
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rectangle, CachedRasterSymbolizer symbol, MapLayer layer) {
+    public void glyph(final Graphics2D g, final Rectangle2D rectangle, final CachedRasterSymbolizer symbol, final MapLayer layer) {
 
         final float[] fractions = new float[3];
         final Color[] colors = new Color[3];

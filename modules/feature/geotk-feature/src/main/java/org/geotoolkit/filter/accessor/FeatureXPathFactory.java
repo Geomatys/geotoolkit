@@ -43,15 +43,15 @@ final class FeatureXPathFactory extends DefaultXPathFactory{
     static final FeatureXPathFactory INSTANCE = new FeatureXPathFactory();
 
     @Override
-    public Step createNameStep(int axis, String prefix, String localName) throws JaxenException {
+    public Step createNameStep(final int axis, final String prefix, final String localName) throws JaxenException {
         final IterableAxis iter = getIterableAxis( axis );
         return new FeatureNameStep( iter, prefix,localName, createPredicateSet() );
     }
 
     private static final class FeatureNameStep extends DefaultNameStep{
 
-        private FeatureNameStep(IterableAxis axis, String prefix,
-                                String localName, PredicateSet predicateSet){
+        private FeatureNameStep(final IterableAxis axis, final String prefix,
+                                final String localName, final PredicateSet predicateSet){
             super(axis,prefix,localName,predicateSet);
         }
 
@@ -60,7 +60,7 @@ final class FeatureXPathFactory extends DefaultXPathFactory{
             return (prefix != null && prefix.length() > 0);
         }
 
-        private boolean hasNamespace(String uri) {
+        private boolean hasNamespace(final String uri) {
             return (uri != null && uri.length() > 0);
         }
 
@@ -73,7 +73,7 @@ final class FeatureXPathFactory extends DefaultXPathFactory{
          * @throws JaxenException
          */
         @Override
-        public boolean matches(Object node, ContextSupport contextSupport) throws JaxenException {
+        public boolean matches(final Object node, final ContextSupport contextSupport) throws JaxenException {
 
             final Navigator nav = contextSupport.getNavigator();
 
@@ -132,7 +132,7 @@ final class FeatureXPathFactory extends DefaultXPathFactory{
         }
 
         @Override
-        protected boolean matchesNamespaceURIs(String uri1, String uri2) {
+        protected boolean matchesNamespaceURIs(final String uri1, final String uri2) {
             if(uri1 == null){
                 return true;
             }

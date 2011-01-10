@@ -33,7 +33,7 @@ public class OutputDef {
     private String compressionType = null;
 
 
-    public OutputDef(String mime, Object output) {
+    public OutputDef(final String mime, final Object output) {
         if(output == null){
             throw new NullPointerException("Output must not be null");
         }
@@ -44,7 +44,7 @@ public class OutputDef {
         this.mime = mime;
     }
 
-    public OutputDef(String mime, Object output, Float compression) {
+    public OutputDef(final String mime, final Object output, final Float compression) {
         if(output == null){
             throw new NullPointerException("Output must not be null");
         }
@@ -60,7 +60,7 @@ public class OutputDef {
         return output;
     }
 
-    public void setOutput(Object output) {
+    public void setOutput(final Object output) {
 
         if(output == null){
             throw new NullPointerException("Output must not be null");
@@ -73,7 +73,7 @@ public class OutputDef {
         return mime;
     }
 
-    public void setMime(String mime) {
+    public void setMime(final String mime) {
 
         if(mime == null){
             throw new NullPointerException("Mime type must not be null");
@@ -82,7 +82,7 @@ public class OutputDef {
         this.mime = mime;
     }
 
-    public void setCompression(Float compression) {
+    public void setCompression(final Float compression) {
 
         if(compression != null){
             if( compression <0 || compression>1.001){
@@ -101,11 +101,11 @@ public class OutputDef {
         return compressionType;
     }
 
-    public void setCompressionType(String compressionType) {
+    public void setCompressionType(final String compressionType) {
         this.compressionType = compressionType;
     }
 
-    public void setProgressive(Boolean progressive) {
+    public void setProgressive(final Boolean progressive) {
         this.progressive = progressive;
     }
 

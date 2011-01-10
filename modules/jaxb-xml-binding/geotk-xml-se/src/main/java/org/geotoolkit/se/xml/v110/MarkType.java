@@ -102,7 +102,7 @@ public class MarkType {
      *     {@link String }
      *     
      */
-    public void setWellKnownName(String value) {
+    public void setWellKnownName(final String value) {
         this.wellKnownName = value;
     }
 
@@ -126,7 +126,7 @@ public class MarkType {
      *     {@link OnlineResourceType }
      *     
      */
-    public void setOnlineResource(OnlineResourceType value) {
+    public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
     }
 
@@ -150,7 +150,7 @@ public class MarkType {
      *     {@link InlineContentType }
      *     
      */
-    public void setInlineContent(InlineContentType value) {
+    public void setInlineContent(final InlineContentType value) {
         this.inlineContent = value;
     }
 
@@ -174,7 +174,7 @@ public class MarkType {
      *     {@link String }
      *     
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 
@@ -198,7 +198,7 @@ public class MarkType {
      *     {@link BigInteger }
      *     
      */
-    public void setMarkIndex(BigInteger value) {
+    public void setMarkIndex(final BigInteger value) {
         this.markIndex = value;
     }
 
@@ -222,7 +222,7 @@ public class MarkType {
      *     {@link FillType }
      *     
      */
-    public void setFill(FillType value) {
+    public void setFill(final FillType value) {
         this.fill = value;
     }
 
@@ -246,7 +246,7 @@ public class MarkType {
      *     {@link StrokeType }
      *     
      */
-    public void setStroke(StrokeType value) {
+    public void setStroke(final StrokeType value) {
         this.stroke = value;
     }
 

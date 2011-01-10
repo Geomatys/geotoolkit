@@ -30,7 +30,7 @@ public abstract class AbstractDownloadGPSTraceDetails extends AbstractRequest im
 
     protected int id = -1;
 
-    public AbstractDownloadGPSTraceDetails(String serverURL, String subPath){
+    public AbstractDownloadGPSTraceDetails(final String serverURL, final String subPath){
         super(serverURL, subPath);
     }
 
@@ -40,7 +40,7 @@ public abstract class AbstractDownloadGPSTraceDetails extends AbstractRequest im
     }
 
     @Override
-    public void setTraceID(int id) {
+    public void setTraceID(final int id) {
         this.id = id;
     }
     

@@ -135,12 +135,12 @@ public class VisitorTest {
         public List<FeatureId> features = new ArrayList<FeatureId>();
 
         @Override
-        public void visit(ProjectedFeature feature, RenderingContext2D context, SearchAreaJ2D queryArea) {
+        public void visit(final ProjectedFeature feature, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
             features.add(feature.getFeatureId());
         }
 
         @Override
-        public void visit(ProjectedCoverage coverage, RenderingContext2D context, SearchAreaJ2D queryArea) {
+        public void visit(final ProjectedCoverage coverage, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
             throw new IllegalStateException("Should not have raised this kind of visit event.");
         }
     }

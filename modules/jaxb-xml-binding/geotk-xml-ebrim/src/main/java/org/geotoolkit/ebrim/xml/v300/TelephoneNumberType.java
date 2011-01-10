@@ -71,7 +71,7 @@ public class TelephoneNumberType {
     /**
      * Sets the value of the areaCode property.
      */
-    public void setAreaCode(String value) {
+    public void setAreaCode(final String value) {
         this.areaCode = value;
     }
 
@@ -85,7 +85,7 @@ public class TelephoneNumberType {
     /**
      * Sets the value of the countryCode property.
      */
-    public void setCountryCode(String value) {
+    public void setCountryCode(final String value) {
         this.countryCode = value;
     }
 
@@ -99,7 +99,7 @@ public class TelephoneNumberType {
     /**
      * Sets the value of the extension property.
      */
-    public void setExtension(String value) {
+    public void setExtension(final String value) {
         this.extension = value;
     }
 
@@ -113,7 +113,7 @@ public class TelephoneNumberType {
     /**
      * Sets the value of the number property.
      */
-    public void setNumber(String value) {
+    public void setNumber(final String value) {
         this.number = value;
     }
 
@@ -127,7 +127,7 @@ public class TelephoneNumberType {
     /**
      * Sets the value of the phoneType property.
      */
-    public void setPhoneType(String value) {
+    public void setPhoneType(final String value) {
         this.phoneType = value;
     }
 

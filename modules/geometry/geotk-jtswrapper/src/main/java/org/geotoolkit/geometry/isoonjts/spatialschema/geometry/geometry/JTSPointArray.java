@@ -67,10 +67,10 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
         this(null);
     }
 
-    public JTSPointArray(CoordinateReferenceSystem crs) {
+    public JTSPointArray(final CoordinateReferenceSystem crs) {
         this( null, crs );
     }
-    public JTSPointArray(JTSGeometry parent,CoordinateReferenceSystem crs) {
+    public JTSPointArray(final JTSGeometry parent,final CoordinateReferenceSystem crs) {
         super( parent );
         this.crs = crs;
     }
@@ -136,7 +136,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      *          to this array, or should we left the decision to the implementor?
      */
     @Override
-    public Position get(int column) throws IndexOutOfBoundsException {
+    public Position get(final int column) throws IndexOutOfBoundsException {
         return new GeneralDirectPosition((DirectPosition)super.get(column));
     }
 
@@ -154,7 +154,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      * @see #get(int)
      */
     @Override
-    public DirectPosition getDirectPosition(int column, DirectPosition dest) throws IndexOutOfBoundsException {
+    public DirectPosition getDirectPosition(final int column, DirectPosition dest) throws IndexOutOfBoundsException {
         DirectPosition position = (DirectPosition) get(column);
         if (dest == null) {
             if (position.getCoordinateReferenceSystem() != null) {
@@ -183,7 +183,7 @@ public class JTSPointArray extends NotifyingArrayList<Position> implements Point
      * @see List#set
      */
     @Override
-    public void setDirectPosition(int column, DirectPosition position) throws IndexOutOfBoundsException {
+    public void setDirectPosition(final int column, final DirectPosition position) throws IndexOutOfBoundsException {
         DirectPosition thisPosition = (DirectPosition) get(column);
         DirectPosition otherPosition = position.getDirectPosition();
         for (int i = 0; i < thisPosition.getDimension(); i++) {

@@ -62,7 +62,7 @@ public class QuadEdgeTriangle {
      * @param pt the point to test
      * @return true if the point is contained in the triangle
      */
-    public static boolean contains(Vertex[] tri, Coordinate pt) {
+    public static boolean contains(final Vertex[] tri, final Coordinate pt) {
         Coordinate[] ring = new Coordinate[]{
             tri[0].getCoordinate(),
             tri[1].getCoordinate(),
@@ -78,7 +78,7 @@ public class QuadEdgeTriangle {
      * @param pt the point to test
      * @return true if the point is contained in the triangle
      */
-    public static boolean contains(QuadEdge[] tri, Coordinate pt) {
+    public static boolean contains(final QuadEdge[] tri, final Coordinate pt) {
         Coordinate[] ring = new Coordinate[]{
             tri[0].orig().getCoordinate(),
             tri[1].orig().getCoordinate(),
@@ -87,7 +87,7 @@ public class QuadEdgeTriangle {
         return CGAlgorithms.isPointInRing(pt, ring);
     }
 
-    public static Geometry toPolygon(Vertex[] v) {
+    public static Geometry toPolygon(final Vertex[] v) {
         Coordinate[] ringPts = new Coordinate[]{
             v[0].getCoordinate(),
             v[1].getCoordinate(),
@@ -99,7 +99,7 @@ public class QuadEdgeTriangle {
         return tri;
     }
 
-    public static Geometry toPolygon(QuadEdge[] e) {
+    public static Geometry toPolygon(final QuadEdge[] e) {
         Coordinate[] ringPts = new Coordinate[]{
             e[0].orig().getCoordinate(),
             e[1].orig().getCoordinate(),
@@ -123,7 +123,7 @@ public class QuadEdgeTriangle {
 
     private QuadEdge[] edge;
 
-    public QuadEdgeTriangle(QuadEdge[] edge) {
+    public QuadEdgeTriangle(final QuadEdge[] edge) {
         this.edge = (QuadEdge[]) edge.clone();
     }
 
@@ -139,11 +139,11 @@ public class QuadEdgeTriangle {
         return edge;
     }
 
-    public QuadEdge getEdge(int i) {
+    public QuadEdge getEdge(final int i) {
         return edge[i];
     }
 
-    public Vertex getVertex(int i) {
+    public Vertex getVertex(final int i) {
         return edge[i].orig();
     }
 
@@ -160,7 +160,7 @@ public class QuadEdgeTriangle {
         return vert;
     }
 
-    public Coordinate getCoordinate(int i) {
+    public Coordinate getCoordinate(final int i) {
         return edge[i].orig().getCoordinate();
     }
 
@@ -171,7 +171,7 @@ public class QuadEdgeTriangle {
      * @return the index of the edge in this triangle
      * @return -1 if the edge is not an edge of this triangle
      */
-    public int getEdgeIndex(QuadEdge e) {
+    public int getEdgeIndex(final QuadEdge e) {
         for (int i = 0; i < 3; i++) {
             if (edge[i] == e)
                 return i;
@@ -186,7 +186,7 @@ public class QuadEdgeTriangle {
      * @return the index of the edge starting at the vertex
      * @return -1 if the vertex is not in the triangle
      */
-    public int getEdgeIndex(Vertex v) {
+    public int getEdgeIndex(final Vertex v) {
         for (int i = 0; i < 3; i++) {
             if (edge[i].orig() == v)
                 return i;
@@ -194,7 +194,7 @@ public class QuadEdgeTriangle {
         return -1;
     }
 
-    public void getEdgeSegment(int i, LineSegment seg) {
+    public void getEdgeSegment(final int i, final LineSegment seg) {
         seg.p0 = edge[i].orig().getCoordinate();
         int nexti = (i + 1) % 3;
         seg.p1 = edge[nexti].orig().getCoordinate();
@@ -209,12 +209,12 @@ public class QuadEdgeTriangle {
         return pts;
     }
 
-    public boolean contains(Coordinate pt) {
+    public boolean contains(final Coordinate pt) {
         Coordinate[] ring = getCoordinates();
         return CGAlgorithms.isPointInRing(pt, ring);
     }
 
-    public Geometry getGeometry(GeometryFactory fact) {
+    public Geometry getGeometry(final GeometryFactory fact) {
         LinearRing ring = fact.createLinearRing(getCoordinates());
         Polygon tri = fact.createPolygon(ring, null);
         return tri;
@@ -237,19 +237,19 @@ public class QuadEdgeTriangle {
         return false;
     }
 
-    public boolean isBorder(int i) {
+    public boolean isBorder(final int i) {
         return getAdjacentTriangleAcrossEdge(i) == null;
     }
 
-    public QuadEdgeTriangle getAdjacentTriangleAcrossEdge(int edgeIndex) {
+    public QuadEdgeTriangle getAdjacentTriangleAcrossEdge(final int edgeIndex) {
         return (QuadEdgeTriangle) getEdge(edgeIndex).sym().getData();
     }
 
-    public int getAdjacentTriangleEdgeIndex(int i) {
+    public int getAdjacentTriangleEdgeIndex(final int i) {
         return getAdjacentTriangleAcrossEdge(i).getEdgeIndex(getEdge(i).sym());
     }
 
-    public List getTrianglesAdjacentToVertex(int vertexIndex) {
+    public List getTrianglesAdjacentToVertex(final int vertexIndex) {
         // Assert: isVertex
         List adjTris = new ArrayList();
 

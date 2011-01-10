@@ -80,7 +80,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
     }
 
-    public ConditionalValueType(AbstractConditionalValue cv) {
+    public ConditionalValueType(final AbstractConditionalValue cv) {
         super(cv);
         if (cv != null && cv.getData() != null) {
             this.data = new Data(cv.getData());
@@ -97,7 +97,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
     /**
      * Sets the value of the data property.
      */
-    public void setData(ConditionalValueType.Data value) {
+    public void setData(final ConditionalValueType.Data value) {
         this.data = value;
     }
 
@@ -183,7 +183,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
 
         }
 
-        public Data(AbstractData d) {
+        public Data(final AbstractData d) {
             if (d != null){
                 this.actuate = d.getActuate();
                 if (d.getBoolean() != null) {
@@ -277,7 +277,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the count property.
          */
-        public void setCount(Count value) {
+        public void setCount(final Count value) {
             this.count = value;
         }
 
@@ -292,7 +292,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
          * Sets the value of the quantity property.
          * 
          */
-        public void setQuantity(QuantityType value) {
+        public void setQuantity(final QuantityType value) {
             this.quantity = value;
         }
 
@@ -307,7 +307,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
          * Sets the value of the time property.
          * 
          */
-        public void setTime(TimeType value) {
+        public void setTime(final TimeType value) {
             this.time = value;
         }
 
@@ -322,7 +322,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the boolean property.
          */
-        public void setBoolean(BooleanType value) {
+        public void setBoolean(final BooleanType value) {
             this._boolean = value;
         }
 
@@ -336,7 +336,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the category property.
          */
-        public void setCategory(Category value) {
+        public void setCategory(final Category value) {
             this.category = value;
         }
 
@@ -350,7 +350,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the text property.
          */
-        public void setText(Text value) {
+        public void setText(final Text value) {
             this.text = value;
         }
 
@@ -364,7 +364,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the quantityRange property.
          */
-        public void setQuantityRange(QuantityRange value) {
+        public void setQuantityRange(final QuantityRange value) {
             this.quantityRange = value;
         }
 
@@ -378,7 +378,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the countRange property.
          */
-        public void setCountRange(CountRange value) {
+        public void setCountRange(final CountRange value) {
             this.countRange = value;
         }
 
@@ -392,7 +392,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the timeRange property.
          */
-        public void setTimeRange(TimeRange value) {
+        public void setTimeRange(final TimeRange value) {
             this.timeRange = value;
         }
 
@@ -414,7 +414,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the abstractDataRecord property.
          */
-        public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordEntry> value) {
+        public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordEntry> value) {
             this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordEntry> ) value);
         }
 
@@ -435,7 +435,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the abstractDataArray property.
         */
-        public void setAbstractDataArray(JAXBElement<? extends AbstractDataArrayEntry> value) {
+        public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayEntry> value) {
             this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayEntry> ) value);
         }
 
@@ -449,7 +449,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the remoteSchema property.
          */
-        public void setRemoteSchema(String value) {
+        public void setRemoteSchema(final String value) {
             this.remoteSchema = value;
         }
 
@@ -463,7 +463,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the type property.
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -477,7 +477,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the href property.
         */
-        public void setHref(String value) {
+        public void setHref(final String value) {
             this.href = value;
         }
 
@@ -491,7 +491,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the role property.
          */
-        public void setRole(String value) {
+        public void setRole(final String value) {
             this.role = value;
         }
 
@@ -505,7 +505,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the arcrole property.
          */
-        public void setArcrole(String value) {
+        public void setArcrole(final String value) {
             this.arcrole = value;
         }
 
@@ -520,7 +520,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the title property.
          */
-        public void setTitle(String value) {
+        public void setTitle(final String value) {
             this.title = value;
         }
 
@@ -534,7 +534,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the show property.
         */
-        public void setShow(String value) {
+        public void setShow(final String value) {
             this.show = value;
         }
 
@@ -548,7 +548,7 @@ public class ConditionalValueType extends AbstractConditionalType implements Abs
         /**
          * Sets the value of the actuate property.
          */
-        public void setActuate(String value) {
+        public void setActuate(final String value) {
             this.actuate = value;
         }
 

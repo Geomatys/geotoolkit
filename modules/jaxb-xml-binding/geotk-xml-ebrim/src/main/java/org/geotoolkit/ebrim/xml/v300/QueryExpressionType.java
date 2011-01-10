@@ -72,7 +72,7 @@ public class QueryExpressionType {
      /**
      * Sets the value of the content property.
     */
-    public void setContent(Object content) {
+    public void setContent(final Object content) {
         if (this.content == null) {
             this.content = new ArrayList<Object>();
         }
@@ -82,7 +82,7 @@ public class QueryExpressionType {
     /**
      * Gets the value of the content property.
     */
-    public void setContent(List<Object> content) {
+    public void setContent(final List<Object> content) {
         this.content = content;
     }
 
@@ -96,7 +96,7 @@ public class QueryExpressionType {
     /**
      * Sets the value of the queryLanguage property.
      */
-    public void setQueryLanguage(String value) {
+    public void setQueryLanguage(final String value) {
         this.queryLanguage = value;
     }
 

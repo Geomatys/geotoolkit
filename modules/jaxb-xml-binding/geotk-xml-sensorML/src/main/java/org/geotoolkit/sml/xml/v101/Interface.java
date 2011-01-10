@@ -89,7 +89,7 @@ public class Interface implements AbstractInterface {
 
     }
 
-    public Interface(AbstractInterface in) {
+    public Interface(final AbstractInterface in) {
         if (in != null) {
             this.actuate = in.getActuate();
             this.arcrole = in.getArcrole();
@@ -106,7 +106,7 @@ public class Interface implements AbstractInterface {
         }
     }
 
-    public Interface(String name, InterfaceDefinition definition) {
+    public Interface(final String name, final InterfaceDefinition definition) {
         this.name = name;
         this.interfaceDefinition = definition;
     }
@@ -131,7 +131,7 @@ public class Interface implements AbstractInterface {
      *     {@link InterfaceDefinition }
      *     
      */
-    public void setInterfaceDefinition(InterfaceDefinition value) {
+    public void setInterfaceDefinition(final InterfaceDefinition value) {
         this.interfaceDefinition = value;
     }
 
@@ -155,7 +155,7 @@ public class Interface implements AbstractInterface {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -179,7 +179,7 @@ public class Interface implements AbstractInterface {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -203,7 +203,7 @@ public class Interface implements AbstractInterface {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -227,7 +227,7 @@ public class Interface implements AbstractInterface {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -251,7 +251,7 @@ public class Interface implements AbstractInterface {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -275,7 +275,7 @@ public class Interface implements AbstractInterface {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -299,7 +299,7 @@ public class Interface implements AbstractInterface {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -323,7 +323,7 @@ public class Interface implements AbstractInterface {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -347,7 +347,7 @@ public class Interface implements AbstractInterface {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

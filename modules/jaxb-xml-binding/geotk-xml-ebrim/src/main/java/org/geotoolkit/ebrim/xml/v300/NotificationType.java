@@ -70,7 +70,7 @@ public class NotificationType extends RegistryObjectType {
      * Sets the value of the registryObjectList property.
      * 
      */
-    public void setRegistryObjectList(RegistryObjectListType value) {
+    public void setRegistryObjectList(final RegistryObjectListType value) {
         this.registryObjectList = value;
     }
 
@@ -84,7 +84,7 @@ public class NotificationType extends RegistryObjectType {
     /**
      * Sets the value of the subscription property.
      */
-    public void setSubscription(String value) {
+    public void setSubscription(final String value) {
         this.subscription = value;
     }
 

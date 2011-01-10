@@ -78,7 +78,7 @@ public class JMarkTable extends StyleElementEditor<List<GraphicalSymbol>> {
     }
 
     @Override
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         editor.setLayer(layer);
         this.layer = layer;
     }
@@ -89,7 +89,7 @@ public class JMarkTable extends StyleElementEditor<List<GraphicalSymbol>> {
     }
 
     @Override
-    public void parse(List<GraphicalSymbol> graphics) {
+    public void parse(final List<GraphicalSymbol> graphics) {
         model.setGraphics(graphics);
     }
 
@@ -188,7 +188,7 @@ public class JMarkTable extends StyleElementEditor<List<GraphicalSymbol>> {
             .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 158, Short.MAX_VALUE)
         );
     }// </editor-fold>//GEN-END:initComponents
-    private void guiUpActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiUpActionPerformed
+    private void guiUpActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiUpActionPerformed
         int index = tabGraphics.getSelectionModel().getMinSelectionIndex();
 
         if (index >= 0) {
@@ -197,7 +197,7 @@ public class JMarkTable extends StyleElementEditor<List<GraphicalSymbol>> {
         }
 }//GEN-LAST:event_guiUpActionPerformed
 
-    private void guiDownActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiDownActionPerformed
+    private void guiDownActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiDownActionPerformed
         int index = tabGraphics.getSelectionModel().getMinSelectionIndex();
 
         if (index >= 0) {
@@ -206,11 +206,11 @@ public class JMarkTable extends StyleElementEditor<List<GraphicalSymbol>> {
         }
 }//GEN-LAST:event_guiDownActionPerformed
 
-    private void guiNewActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiNewActionPerformed
+    private void guiNewActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiNewActionPerformed
         model.newGraphical();
 }//GEN-LAST:event_guiNewActionPerformed
 
-    private void guiDeleteActionPerformed(ActionEvent evt) {//GEN-FIRST:event_guiDeleteActionPerformed
+    private void guiDeleteActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiDeleteActionPerformed
         int index = tabGraphics.getSelectionModel().getMinSelectionIndex();
 
         if (index >= 0) {
@@ -232,7 +232,7 @@ class GraphicalModel extends AbstractTableModel {
 
     private final List<GraphicalSymbol> graphics = new ArrayList<GraphicalSymbol>();
 
-    GraphicalModel(List<GraphicalSymbol> graphs) {
+    GraphicalModel(final List<GraphicalSymbol> graphs) {
         if(graphs != null) this.graphics.addAll(graphs);
     }
 
@@ -244,12 +244,12 @@ class GraphicalModel extends AbstractTableModel {
         fireTableRowsInserted(last, last);
     }
 
-    public void deleteGraphical(int index) {
+    public void deleteGraphical(final int index) {
         graphics.remove(index);
         fireTableRowsDeleted(index, index);
     }
 
-    public void moveUp(GraphicalSymbol m) {
+    public void moveUp(final GraphicalSymbol m) {
         int index = graphics.indexOf(m);
         if (index != 0) {
             graphics.remove(m);
@@ -258,7 +258,7 @@ class GraphicalModel extends AbstractTableModel {
         }
     }
 
-    public void moveDown(GraphicalSymbol m) {
+    public void moveDown(final GraphicalSymbol m) {
         int index = graphics.indexOf(m);
         if (index != graphics.size() - 1) {
             graphics.remove(m);
@@ -267,7 +267,7 @@ class GraphicalModel extends AbstractTableModel {
         }
     }
 
-    public void setGraphics(List<GraphicalSymbol> marks) {
+    public void setGraphics(final List<GraphicalSymbol> marks) {
         this.graphics.clear();
         this.graphics.addAll(marks);
         fireTableDataChanged();
@@ -288,17 +288,17 @@ class GraphicalModel extends AbstractTableModel {
     }
 
     @Override
-    public boolean isCellEditable(int rowIndex, int columnIndex) {
+    public boolean isCellEditable(final int rowIndex, final int columnIndex) {
         return true;
     }
 
     @Override
-    public Class<?> getColumnClass(int columnIndex) {
+    public Class<?> getColumnClass(final int columnIndex) {
         return Mark.class;
     }
 
     @Override
-    public Object getValueAt(int rowIndex, int columnIndex) {
+    public Object getValueAt(final int rowIndex, final int columnIndex) {
         return graphics.get(rowIndex);
     }
 }
@@ -308,7 +308,7 @@ class GraphicRenderer extends DefaultTableCellRenderer {
     private String text = "";
 
     @Override
-    public Component getTableCellRendererComponent(JTable table, Object value, boolean isSelected, boolean hasFocus, int row, int column) {
+    public Component getTableCellRendererComponent(final JTable table, final Object value, final boolean isSelected, final boolean hasFocus, final int row, final int column) {
 
         JLabel lbl = (JLabel) super.getTableCellRendererComponent(table, text, isSelected, hasFocus, row, column);
 
@@ -361,7 +361,7 @@ class GraphicEditor extends AbstractCellEditor implements TableCellEditor {//imp
         });
     }
 
-    public void setLayer(MapLayer layer) {
+    public void setLayer(final MapLayer layer) {
         editpane.setLayer(layer);
         this.layer = layer;
     }
@@ -380,7 +380,7 @@ class GraphicEditor extends AbstractCellEditor implements TableCellEditor {//imp
 //    }
     
     @Override
-    public Component getTableCellEditorComponent(JTable table, Object value, boolean isSelected, int row, int column) {
+    public Component getTableCellEditorComponent(final JTable table, final Object value, final boolean isSelected, final int row, final int column) {
 
         if (value != null && value instanceof Mark) {
             mark = (Mark) value;

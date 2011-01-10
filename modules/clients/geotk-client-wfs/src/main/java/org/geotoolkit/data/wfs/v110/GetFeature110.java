@@ -27,7 +27,7 @@ import org.geotoolkit.data.wfs.AbstractGetFeature;
  */
 public class GetFeature110 extends AbstractGetFeature{
 
-    public GetFeature110(String serverURL){
+    public GetFeature110(final String serverURL){
         super(serverURL,"1.1.0");
     }
     

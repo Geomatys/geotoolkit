@@ -32,7 +32,7 @@ class ShpFilesLocker {
     boolean upgraded;
     private Trace trace;
 
-    public ShpFilesLocker( URL url, Object reader, boolean write) {
+    public ShpFilesLocker( final URL url, final Object reader, final boolean write) {
         this.url = url;
         this.holder = reader;
         this.write = write;
@@ -65,7 +65,7 @@ class ShpFilesLocker {
      * Verifies that the url and requestor are the same as the url and the reader or writer of this
      * class. assertions are used so this will do nothing if assertions are not enabled.
      */
-    public void compare(URL url2, Object requestor) {
+    public void compare(final URL url2, final Object requestor) {
         URL url = this.url;
 //        assert (url2 == url) : "Expected: " + url + " but got: " + url2;
 //        assert (reader == null || requestor == reader) : "Expected the requestor and the reader to be the same object: "
@@ -89,7 +89,7 @@ class ShpFilesLocker {
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -114,7 +114,7 @@ class ShpFilesLocker {
 
         private static final long serialVersionUID = 1L;
 
-        public Trace( String message ) {
+        public Trace( final String message ) {
             super(message);
         }
     }

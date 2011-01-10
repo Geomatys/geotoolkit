@@ -33,7 +33,7 @@ public class MemoryPageStoreTest extends TestCase {
      * 
      * @param arg0
      */
-    public MemoryPageStoreTest(String arg0) {
+    public MemoryPageStoreTest(final String arg0) {
         super(arg0);
     }
 

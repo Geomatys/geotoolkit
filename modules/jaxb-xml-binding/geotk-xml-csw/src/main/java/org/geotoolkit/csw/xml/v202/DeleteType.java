@@ -74,7 +74,7 @@ public class DeleteType {
 
     }
 
-    public DeleteType(String typeName, QueryConstraintType constraint) {
+    public DeleteType(final String typeName, final QueryConstraintType constraint) {
         this.typeName   = typeName;
         this.constraint = constraint;
     }
@@ -86,7 +86,7 @@ public class DeleteType {
         return constraint;
     }
 
-    public void setConstraint(QueryConstraintType constraint) {
+    public void setConstraint(final QueryConstraintType constraint) {
         this.constraint = constraint;
     }
 
@@ -97,7 +97,7 @@ public class DeleteType {
         return typeName;
     }
 
-    public void setTypeName(String typeName) {
+    public void setTypeName(final String typeName) {
         this.typeName = typeName;
     }
 
@@ -109,7 +109,7 @@ public class DeleteType {
         return handle;
     }
 
-    public void setHandle(String handle) {
+    public void setHandle(final String handle) {
         this.handle = handle;
     }
 

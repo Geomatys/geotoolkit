@@ -78,7 +78,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
      * @param service the name of the service (fixed to "CSW")
      * @param version the version of the service
      */
-    protected RequestBaseType(String service, String version) {
+    protected RequestBaseType(final String service, final String version) {
         this.service = service;
         this.version = version;
     }
@@ -100,7 +100,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
      * Sets the value of the service property.
      * 
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -120,7 +120,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
      * Sets the value of the version property.
      * 
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 

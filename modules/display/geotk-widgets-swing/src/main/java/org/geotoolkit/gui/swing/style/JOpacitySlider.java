@@ -67,7 +67,7 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
     }
 
     @Override
-    protected void paintComponent(Graphics g) {
+    protected void paintComponent(final Graphics g) {
         super.paintComponent(g);
         
         final Graphics2D g2 = (Graphics2D) g;
@@ -106,21 +106,21 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
         return opacity;
     }
 
-    public void setOpacity(double opacity) {
+    public void setOpacity(final double opacity) {
         this.opacity = opacity;
         repaint();
     }
 
-    public void addActionListener(ActionListener listener){
+    public void addActionListener(final ActionListener listener){
         listeners.add(listener);
     }
 
-    public void removeActionListener(ActionListener listener){
+    public void removeActionListener(final ActionListener listener){
         listeners.remove(listener);
     }
 
     @Override
-    public void mouseDragged(MouseEvent e) {
+    public void mouseDragged(final MouseEvent e) {
         double x = e.getX();
         x -= HORIZONTAL_MARGIN/2d;
         double ratio = x / (getWidth()-HORIZONTAL_MARGIN) ;
@@ -130,21 +130,21 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
     }
 
     @Override
-    public void mouseMoved(MouseEvent e) {
+    public void mouseMoved(final MouseEvent e) {
     }
 
     @Override
-    public void mouseClicked(MouseEvent e) {
+    public void mouseClicked(final MouseEvent e) {
         mouseReleased(e);
     }
 
     @Override
-    public void mousePressed(MouseEvent e) {
+    public void mousePressed(final MouseEvent e) {
         mouseDragged(e);
     }
 
     @Override
-    public void mouseReleased(MouseEvent e) {
+    public void mouseReleased(final MouseEvent e) {
         mouseDragged(e);
         
         final ActionEvent event = new ActionEvent(this, -1, "opacity");
@@ -154,11 +154,11 @@ public class JOpacitySlider extends JComponent implements MouseInputListener{
     }
 
     @Override
-    public void mouseEntered(MouseEvent e) {
+    public void mouseEntered(final MouseEvent e) {
     }
 
     @Override
-    public void mouseExited(MouseEvent e) {
+    public void mouseExited(final MouseEvent e) {
     }
 
 }

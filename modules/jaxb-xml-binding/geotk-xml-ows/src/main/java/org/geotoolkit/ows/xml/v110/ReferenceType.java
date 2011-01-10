@@ -84,7 +84,7 @@ public class ReferenceType extends AbstractReferenceBaseType {
      * Sets the value of the identifier property.
      * 
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 
@@ -110,7 +110,7 @@ public class ReferenceType extends AbstractReferenceBaseType {
      * Sets the value of the format property.
      * 
      */
-    public void setFormat(String value) {
+    public void setFormat(final String value) {
         this.format = value;
     }
 

@@ -67,14 +67,14 @@ public class AcceptFormatsType implements AcceptFormats {
     /**
      * Build a new Accepted format.
      */
-    public AcceptFormatsType(List<String> outputFormat) {
+    public AcceptFormatsType(final List<String> outputFormat) {
         this.outputFormat = outputFormat;
     }
     
     /**
      * Build a new Accepted format.
      */
-    public AcceptFormatsType(String... outputFormat) {
+    public AcceptFormatsType(final String... outputFormat) {
         this.outputFormat = new ArrayList<String>();
         for (String element: outputFormat) {
             if (element != null)
@@ -98,7 +98,7 @@ public class AcceptFormatsType implements AcceptFormats {
      * 
      * @param format a new Accepted format.
      */
-    public void add(String format) {
+    public void add(final String format) {
         outputFormat.add(format);
     }
     

@@ -167,15 +167,15 @@ public class DefaultSelectionHandler implements CanvasHandler {
         return withinArea;
     }
 
-    public void setGeographicArea(boolean geographicArea) {
+    public void setGeographicArea(final boolean geographicArea) {
         this.geographicArea = geographicArea;
     }
 
-    public void setSquareArea(boolean squareArea) {
+    public void setSquareArea(final boolean squareArea) {
         this.squareArea = squareArea;
     }
 
-    public void setWithinArea(boolean withinArea) {
+    public void setWithinArea(final boolean withinArea) {
         this.withinArea = withinArea;
     }
 
@@ -183,11 +183,11 @@ public class DefaultSelectionHandler implements CanvasHandler {
         return map2D;
     }
 
-    public void setMap(JMap2D map2D) {
+    public void setMap(final JMap2D map2D) {
         this.map2D = map2D;
     }
 
-    private Id combine(Id original, Set<? extends Identifier> ids){
+    private Id combine(final Id original, final Set<? extends Identifier> ids){
         final Id f;
 
         if(key == KeyEvent.VK_CONTROL){
@@ -213,7 +213,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         return f;
     }
 
-    private void doSelection(List<Point> points, int key) {
+    private void doSelection(final List<Point> points, final int key) {
         this.key = key;
 
         if (points.size() > 2) {
@@ -302,7 +302,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
     }
 
     @Override
-    public void install(Component component) {
+    public void install(final Component component) {
         map2D.addDecoration(selectionPane);
         component.addMouseListener(mouseInputListener);
         component.addMouseMotionListener(mouseInputListener);
@@ -310,7 +310,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
     }
 
     @Override
-    public void uninstall(Component component) {
+    public void uninstall(final Component component) {
         map2D.removeDecoration(selectionPane);
         component.removeMouseListener(mouseInputListener);
         component.removeMouseMotionListener(mouseInputListener);
@@ -327,7 +327,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         private int startY = 0;
 
         @Override
-        public void mouseClicked(MouseEvent e) {
+        public void mouseClicked(final MouseEvent e) {
             final Point point = e.getPoint();
             points.clear();
             points.add(new Point(point.x-1, point.y-1));
@@ -339,7 +339,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mousePressed(MouseEvent e) {
+        public void mousePressed(final MouseEvent e) {
             lastValid = e.getPoint();
             points.clear();
             if(squareArea){
@@ -351,7 +351,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseReleased(MouseEvent e) {
+        public void mouseReleased(final MouseEvent e) {
             final Point lastPoint = e.getPoint();
             if(squareArea){
                 points.clear();
@@ -368,17 +368,17 @@ public class DefaultSelectionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseEntered(MouseEvent e) {
+        public void mouseEntered(final MouseEvent e) {
             map2D.getComponent().setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
             map2D.getComponent().requestFocus();
         }
 
         @Override
-        public void mouseExited(MouseEvent e) {
+        public void mouseExited(final MouseEvent e) {
         }
 
         @Override
-        public void mouseDragged(MouseEvent e) {
+        public void mouseDragged(final MouseEvent e) {
             Point eventPoint = e.getPoint();
             if(squareArea){
                 points.clear();
@@ -398,20 +398,20 @@ public class DefaultSelectionHandler implements CanvasHandler {
         }
 
         @Override
-        public void mouseMoved(MouseEvent e) {
+        public void mouseMoved(final MouseEvent e) {
         }
 
         @Override
-        public void keyTyped(KeyEvent arg0) {
+        public void keyTyped(final KeyEvent arg0) {
         }
 
         @Override
-        public void keyPressed(KeyEvent arg0) {
+        public void keyPressed(final KeyEvent arg0) {
             key = arg0.getKeyCode();
         }
 
         @Override
-        public void keyReleased(KeyEvent arg0) {
+        public void keyReleased(final KeyEvent arg0) {
             key = -1;
         }
     }

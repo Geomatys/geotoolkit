@@ -42,7 +42,7 @@ public class EditionDecoration extends JComponent implements MapDecoration{
     public EditionDecoration(){}
         
     
-    public void setCoord(int sx, int sy, int ex, int ey, boolean draw){
+    public void setCoord(final int sx, final int sy, final int ex, final int ey, final boolean draw){
         startx = sx;
         starty = sy;
         endx = ex;
@@ -51,20 +51,20 @@ public class EditionDecoration extends JComponent implements MapDecoration{
         repaint();
     }
     
-    public void setEnd(int x, int y){
+    public void setEnd(final int x, final int y){
         endx = x;
         endy = y;
         repaint();
     }
     
-    public void setDraw(boolean b){
+    public void setDraw(final boolean b){
         this.draw = b;
         repaint();
     }
     
     
     @Override
-    public void paintComponent(Graphics g) {
+    public void paintComponent(final Graphics g) {
         if(draw && (startx != endx || starty != endy)){
                         
             g.setColor(color);
@@ -83,7 +83,7 @@ public class EditionDecoration extends JComponent implements MapDecoration{
         return this;
     }
     
-    public void setMap2D(JMap2D map) {
+    public void setMap2D(final JMap2D map) {
         
     }
 

@@ -59,7 +59,7 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
     private CoordinateReferenceSystem responseCRS = null;
     private String time = null;
 
-    protected AbstractGetCoverage(String serverURL, String version){
+    protected AbstractGetCoverage(final String serverURL, final String version){
         super(serverURL);
         this.version = version;
     }
@@ -120,57 +120,57 @@ public abstract class AbstractGetCoverage extends AbstractRequest implements Get
     }
 
     @Override
-    public void setCoverage(String coverage) {
+    public void setCoverage(final String coverage) {
         this.coverage = coverage;
     }
 
     @Override
-    public void setDepth(Integer depth) {
+    public void setDepth(final Integer depth) {
         this.depth = depth;
     }
 
     @Override
-    public void setDimension(Dimension dimension) {
+    public void setDimension(final Dimension dimension) {
         this.dimension = dimension;
     }
 
     @Override
-    public void setEnvelope(Envelope envelope) {
+    public void setEnvelope(final Envelope envelope) {
         this.envelope = envelope;
     }
 
     @Override
-    public void setExceptions(String exceptions) {
+    public void setExceptions(final String exceptions) {
         this.exceptions = exceptions;
     }
 
     @Override
-    public void setFormat(String format) {
+    public void setFormat(final String format) {
         this.format = format;
     }
 
     @Override
-    public void setResX(Double resX) {
+    public void setResX(final Double resX) {
         this.resX = resX;
     }
 
     @Override
-    public void setResY(Double resY) {
+    public void setResY(final Double resY) {
         this.resY = resY;
     }
 
     @Override
-    public void setResZ(Double resZ) {
+    public void setResZ(final Double resZ) {
         this.resZ = resZ;
     }
 
     @Override
-    public void setResponseCRS(CoordinateReferenceSystem responseCRS) {
+    public void setResponseCRS(final CoordinateReferenceSystem responseCRS) {
         this.responseCRS = responseCRS;
     }
 
     @Override
-    public void setTime(String time) {
+    public void setTime(final String time) {
         this.time = time;
     }
 

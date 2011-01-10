@@ -749,7 +749,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "relaxNG", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0", substitutionHeadName = "ruleLanguage")
-    public JAXBElement<RelaxNG> createRelaxNG(RelaxNG value) {
+    public JAXBElement<RelaxNG> createRelaxNG(final RelaxNG value) {
         return new JAXBElement<RelaxNG>(_RelaxNG_QNAME, RelaxNG.class, null, value);
     }
 
@@ -758,7 +758,7 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "schematron", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0", substitutionHeadName = "ruleLanguage")
-    public JAXBElement<Schematron> createSchematron(Schematron value) {
+    public JAXBElement<Schematron> createSchematron(final Schematron value) {
         return new JAXBElement<Schematron>(_Schematron_QNAME, Schematron.class, null, value);
     }
 
@@ -767,7 +767,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "AbstractProcess")
-    public JAXBElement<AbstractProcessType> createProcess(AbstractProcessType value) {
+    public JAXBElement<AbstractProcessType> createProcess(final AbstractProcessType value) {
         return new JAXBElement<AbstractProcessType>(_Process_QNAME, AbstractProcessType.class, null, value);
     }
 
@@ -776,7 +776,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "ruleLanguage")
-    public JAXBElement<RuleLanguageType> createRuleLanguage(RuleLanguageType value) {
+    public JAXBElement<RuleLanguageType> createRuleLanguage(final RuleLanguageType value) {
         return new JAXBElement<RuleLanguageType>(_RuleLanguage_QNAME, RuleLanguageType.class, null, value);
     }
 
@@ -794,7 +794,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "ComponentArray", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0", substitutionHeadName = "AbstractProcess")
-    public JAXBElement<ComponentArrayType> createComponentArray(ComponentArrayType value) {
+    public JAXBElement<ComponentArrayType> createComponentArray(final ComponentArrayType value) {
         return new JAXBElement<ComponentArrayType>(_ComponentArray_QNAME, ComponentArrayType.class, null, value);
     }
 
@@ -803,7 +803,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "ProcessModel", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0", substitutionHeadName = "AbstractProcess")
-    public JAXBElement<ProcessModelType> createProcessModel(ProcessModelType value) {
+    public JAXBElement<ProcessModelType> createProcessModel(final ProcessModelType value) {
         return new JAXBElement<ProcessModelType>(_ProcessModel_QNAME, ProcessModelType.class, null, value);
     }
 
@@ -812,7 +812,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "method")
-    public JAXBElement<MethodPropertyType> createMethod(MethodPropertyType value) {
+    public JAXBElement<MethodPropertyType> createMethod(final MethodPropertyType value) {
         return new JAXBElement<MethodPropertyType>(_Method_QNAME, MethodPropertyType.class, null, value);
     }
 
@@ -821,7 +821,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "ProcessChain", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0", substitutionHeadName = "AbstractProcess")
-    public JAXBElement<ProcessChainType> createProcessChain(ProcessChainType value) {
+    public JAXBElement<ProcessChainType> createProcessChain(final ProcessChainType value) {
         return new JAXBElement<ProcessChainType>(_ProcessChain_QNAME, ProcessChainType.class, null, value);
     }
 
@@ -830,7 +830,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "System", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0", substitutionHeadName = "AbstractProcess")
-    public JAXBElement<SystemType> createSystem(SystemType value) {
+    public JAXBElement<SystemType> createSystem(final SystemType value) {
         return new JAXBElement<SystemType>(_System_QNAME, SystemType.class, null, value);
     }
 
@@ -839,7 +839,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "DataSource", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0", substitutionHeadName = "AbstractProcess")
-    public JAXBElement<DataSourceType> createDataSource(DataSourceType value) {
+    public JAXBElement<DataSourceType> createDataSource(final DataSourceType value) {
         return new JAXBElement<DataSourceType>(_DataSource_QNAME, DataSourceType.class, null, value);
     }
 
@@ -848,7 +848,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "Component", substitutionHeadNamespace = "http://www.opengis.net/sensorML/1.0", substitutionHeadName = "AbstractProcess")
-    public JAXBElement<ComponentType> createComponent(ComponentType value) {
+    public JAXBElement<ComponentType> createComponent(final ComponentType value) {
         return new JAXBElement<ComponentType>(_Component_QNAME, ComponentType.class, null, value);
     }
 
@@ -858,7 +858,7 @@ public class ObjectFactory {
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sensorML/1.0", name = "keyword", scope = KeywordList.class)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
-    public JAXBElement<String> createKeywordsKeywordListKeyword(String value) {
+    public JAXBElement<String> createKeywordsKeywordListKeyword(final String value) {
         return new JAXBElement<String>(_KeywordsKeywordListKeyword_QNAME, String.class, KeywordList.class, value);
     }
 

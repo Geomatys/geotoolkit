@@ -42,7 +42,7 @@ public abstract class AbstractExpandChangeSet extends AbstractRequest implements
     protected int id = -1;
     protected Envelope env = null;
 
-    public AbstractExpandChangeSet(String serverURL, String subPath){
+    public AbstractExpandChangeSet(final String serverURL, final String subPath){
         super(serverURL, subPath);
     }
 
@@ -52,7 +52,7 @@ public abstract class AbstractExpandChangeSet extends AbstractRequest implements
     }
 
     @Override
-    public void setChangeSetID(int id) {
+    public void setChangeSetID(final int id) {
         this.id = id;
     }
 
@@ -62,7 +62,7 @@ public abstract class AbstractExpandChangeSet extends AbstractRequest implements
     }
 
     @Override
-    public void setEnvelope(Envelope env) {
+    public void setEnvelope(final Envelope env) {
         this.env = env;
     }
 

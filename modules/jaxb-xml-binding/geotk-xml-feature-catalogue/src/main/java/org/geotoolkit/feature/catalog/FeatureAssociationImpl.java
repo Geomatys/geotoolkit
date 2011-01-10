@@ -67,7 +67,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
     /**
      * Clone a FeatureAssociation
      */
-    public FeatureAssociationImpl(FeatureAssociation feature) {
+    public FeatureAssociationImpl(final FeatureAssociation feature) {
         super(feature);
         if (feature != null) {
             this.role = feature.getRole();
@@ -78,8 +78,8 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
     /**
      * Build a new FeatureAssociation
      */
-    public FeatureAssociationImpl(LocalName typeName, String definition, String code, Boolean isAbstract, List<LocalName> aliases,
-            FeatureCatalogue catalogue, List<PropertyType> carrierOfCharacteristics, List<AssociationRole> roleName) {
+    public FeatureAssociationImpl(final LocalName typeName, final String definition, final String code, final Boolean isAbstract, final List<LocalName> aliases,
+            final FeatureCatalogue catalogue, final List<PropertyType> carrierOfCharacteristics, final List<AssociationRole> roleName) {
        super(typeName, definition, code, isAbstract, aliases, catalogue, carrierOfCharacteristics);
        this.role = roleName; 
        this.setId("fassoc-" + code);
@@ -95,11 +95,11 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
         return this.role;
     }
     
-    public void setRole(List<AssociationRole> role) {
+    public void setRole(final List<AssociationRole> role) {
          this.role = role;
     }
     
-    public void setRole(AssociationRole role) {
+    public void setRole(final AssociationRole role) {
         if (this.role == null) {
             this.role = new ArrayList<AssociationRole>();
         }
@@ -117,7 +117,7 @@ public class FeatureAssociationImpl extends FeatureTypeImpl implements FeatureAs
      * We must create reference mark in the xml.
      * @param marshaller
      */
-    private void beforeMarshal(Marshaller marshaller) {
+    private void beforeMarshal(final Marshaller marshaller) {
         if (rootElement) {
             beforeMarshal(new HashMap<String, Referenceable>());
         }

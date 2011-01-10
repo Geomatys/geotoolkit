@@ -64,7 +64,7 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
 
     }
 
-    public AbstractPureProcessType(AbstractPureProcess pp) {
+    public AbstractPureProcessType(final AbstractPureProcess pp) {
         super(pp);
         if (pp != null) {
             if (pp.getInputs() != null) {
@@ -89,7 +89,7 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
     /**
      * Sets the value of the inputs property.
      */
-    public void setInputs(Inputs value) {
+    public void setInputs(final Inputs value) {
         this.inputs = value;
     }
 
@@ -105,7 +105,7 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
      * Sets the value of the outputs property.
      * 
      */
-    public void setOutputs(Outputs value) {
+    public void setOutputs(final Outputs value) {
         this.outputs = value;
     }
 
@@ -119,14 +119,14 @@ public abstract class AbstractPureProcessType extends AbstractRestrictedProcessT
     /**
      * Sets the value of the parameters property.
      */
-    public void setParameters(Parameters value) {
+    public void setParameters(final Parameters value) {
         this.parameters = value;
     }
 
     /**
      * @param parameters the parameters to set
      */
-    public void setParameters(ParameterList parameters) {
+    public void setParameters(final ParameterList parameters) {
         this.parameters = new Parameters(parameters);
     }
 

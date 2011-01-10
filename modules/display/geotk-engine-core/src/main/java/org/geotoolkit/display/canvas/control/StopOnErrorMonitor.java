@@ -39,7 +39,7 @@ public class StopOnErrorMonitor extends FailOnErrorMonitor {
     }
 
     @Override
-    public void exceptionOccured(Exception ex, Level level) {
+    public void exceptionOccured(final Exception ex, final Level level) {
         lastError = ex;
         //request stop rendering
         stopRendering();

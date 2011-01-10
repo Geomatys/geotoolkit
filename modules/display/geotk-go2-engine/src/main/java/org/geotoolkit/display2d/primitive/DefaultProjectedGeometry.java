@@ -48,11 +48,11 @@ public class DefaultProjectedGeometry implements ProjectedGeometry {
     private boolean isDisplayCalculated = false;
     
 
-    public DefaultProjectedGeometry(Geometry objGeom){
+    public DefaultProjectedGeometry(final Geometry objGeom){
         this.objectiveGeometry = objGeom;
     }
 
-    public void setObjToDisplay(MathTransform trs){
+    public void setObjToDisplay(final MathTransform trs){
         ((CoordinateSequenceMathTransformer)objToDisplayTransformer.getCSTransformer()).setTransform(trs);
         displayGeometry = null;
         isObjectiveCalculated = false;

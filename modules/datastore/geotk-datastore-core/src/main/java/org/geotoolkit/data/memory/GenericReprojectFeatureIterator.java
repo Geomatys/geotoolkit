@@ -75,7 +75,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * @param iterator FeatureReader to limit
      * @param maxFeatures maximum number of feature
      */
-    private GenericReprojectFeatureIterator(final R iterator, CoordinateReferenceSystem targetCRS)
+    private GenericReprojectFeatureIterator(final R iterator, final CoordinateReferenceSystem targetCRS)
                             throws FactoryException, SchemaException {
         super(iterator,findTransformer(iterator, targetCRS));
 
@@ -95,8 +95,8 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         iterator.remove();
     }
 
-    private static GeometryTransformer findTransformer(FeatureReader reader,
-            CoordinateReferenceSystem targetCRS) throws FactoryException{
+    private static GeometryTransformer findTransformer(final FeatureReader reader,
+            final CoordinateReferenceSystem targetCRS) throws FactoryException{
         if (targetCRS == null) {
             throw new NullPointerException("CRS can not be null.");
         }
@@ -134,7 +134,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
     private static final class GenericReprojectFeatureReader<T extends FeatureType, F extends Feature, R extends FeatureReader<T,F>>
             extends GenericReprojectFeatureIterator<F,R>{
 
-        private GenericReprojectFeatureReader(R reader, CoordinateReferenceSystem targetCRS) throws FactoryException, SchemaException{
+        private GenericReprojectFeatureReader(final R reader, final CoordinateReferenceSystem targetCRS) throws FactoryException, SchemaException{
             super(reader,targetCRS);
         }
 
@@ -215,7 +215,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         private final List<Property> properties = new ArrayList<Property>();
         private final AbstractFeature feature;
 
-        private GenericReuseReprojectFeatureReader(R reader, CoordinateReferenceSystem targetCRS)
+        private GenericReuseReprojectFeatureReader(final R reader, final CoordinateReferenceSystem targetCRS)
                                             throws FactoryException, SchemaException{
             super(reader, targetCRS);
 
@@ -297,7 +297,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
      * Wrap a FeatureReader with a reprojection.
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T, F> wrap(
-            FeatureReader<T, F> reader, CoordinateReferenceSystem crs, Hints hints) throws FactoryException, SchemaException {
+            final FeatureReader<T, F> reader, final CoordinateReferenceSystem crs, final Hints hints) throws FactoryException, SchemaException {
         final GeometryDescriptor desc = reader.getFeatureType().getGeometryDescriptor();
         if (desc != null) {
 

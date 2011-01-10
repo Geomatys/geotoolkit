@@ -85,48 +85,48 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
 
     private final FilterCapabilities capabilities;
 
-    public IsSupportedFilterVisitor( FilterCapabilities capabilities ){
+    public IsSupportedFilterVisitor( final FilterCapabilities capabilities ){
         this.capabilities = capabilities;
     }
 
     /** INCLUDE and EXCLUDE are never supported */
     @Override
-    public Object visit( ExcludeFilter filter, Object extraData ) {
+    public Object visit( final ExcludeFilter filter, final Object extraData ) {
         return false;
     }
     /** INCLUDE and EXCLUDE are never supported */
     @Override
-    public Object visit( IncludeFilter filter, Object extraData ) {
+    public Object visit( final IncludeFilter filter, final Object extraData ) {
         return false;
     }
 
     @Override
-    public Object visit( And filter, Object extraData ) {
+    public Object visit( final And filter, final Object extraData ) {
         return capabilities.getScalarCapabilities() != null &&
                capabilities.getScalarCapabilities().hasLogicalOperators();
     }
 
     @Override
-    public Object visit( Id filter, Object extraData ) {
+    public Object visit( final Id filter, final Object extraData ) {
         return capabilities.getIdCapabilities() != null &&
                ( capabilities.getIdCapabilities().hasFID() ||
                  capabilities.getIdCapabilities().hasEID() );
     }
 
     @Override
-    public Object visit( Not filter, Object extraData ) {
+    public Object visit( final Not filter, final Object extraData ) {
         return capabilities.getScalarCapabilities() != null &&
         capabilities.getScalarCapabilities().hasLogicalOperators();
     }
 
     @Override
-    public Object visit( Or filter, Object extraData ) {
+    public Object visit( final Or filter, final Object extraData ) {
         return capabilities.getScalarCapabilities() != null &&
         capabilities.getScalarCapabilities().hasLogicalOperators();
     }
 
     @Override
-    public Object visit( PropertyIsBetween filter, Object extraData ) {
+    public Object visit( final PropertyIsBetween filter, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -137,7 +137,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( PropertyIsEqualTo filter, Object extraData ) {
+    public Object visit( final PropertyIsEqualTo filter, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -148,7 +148,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( PropertyIsNotEqualTo filter, Object extraData ) {
+    public Object visit( final PropertyIsNotEqualTo filter, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -159,7 +159,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( PropertyIsGreaterThan filter, Object extraData ) {
+    public Object visit( final PropertyIsGreaterThan filter, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -170,7 +170,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( PropertyIsGreaterThanOrEqualTo filter, Object extraData ) {
+    public Object visit( final PropertyIsGreaterThanOrEqualTo filter, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -181,7 +181,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( PropertyIsLessThan filter, Object extraData ) {
+    public Object visit( final PropertyIsLessThan filter, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -192,7 +192,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( PropertyIsLessThanOrEqualTo filter, Object extraData ) {
+    public Object visit( final PropertyIsLessThanOrEqualTo filter, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -203,7 +203,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( PropertyIsLike filter, Object extraData ) {
+    public Object visit( final PropertyIsLike filter, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -214,7 +214,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( PropertyIsNull filter, Object extraData ) {
+    public Object visit( final PropertyIsNull filter, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -225,7 +225,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( BBOX filter, Object extraData ) {
+    public Object visit( final BBOX filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -236,7 +236,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Beyond filter, Object extraData ) {
+    public Object visit( final Beyond filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -247,7 +247,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Contains filter, Object extraData ) {
+    public Object visit( final Contains filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -258,7 +258,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Crosses filter, Object extraData ) {
+    public Object visit( final Crosses filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -269,7 +269,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Disjoint filter, Object extraData ) {
+    public Object visit( final Disjoint filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -280,7 +280,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( DWithin filter, Object extraData ) {
+    public Object visit( final DWithin filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -291,7 +291,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Equals filter, Object extraData ) {
+    public Object visit( final Equals filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -302,7 +302,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Intersects filter, Object extraData ) {
+    public Object visit( final Intersects filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -313,7 +313,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Overlaps filter, Object extraData ) {
+    public Object visit( final Overlaps filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -324,7 +324,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Touches filter, Object extraData ) {
+    public Object visit( final Touches filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -335,7 +335,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Within filter, Object extraData ) {
+    public Object visit( final Within filter, final Object extraData ) {
         final SpatialCapabilities spatial = capabilities.getSpatialCapabilities();
         if( spatial == null ) return false;
 
@@ -346,7 +346,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visitNullFilter( Object extraData ) {
+    public Object visitNullFilter( final Object extraData ) {
         return false;
     }
 
@@ -355,12 +355,12 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     //
     /** NilExpression is a placeholder and is never supported */
     @Override
-    public Object visit( NilExpression expression, Object extraData ) {
+    public Object visit( final NilExpression expression, final Object extraData ) {
         return false;
     }
 
     @Override
-    public Object visit( Add expression, Object extraData ) {
+    public Object visit( final Add expression, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -371,7 +371,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Divide expression, Object extraData ) {
+    public Object visit( final Divide expression, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -382,7 +382,7 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Function function, Object extraData ) {
+    public Object visit( final Function function, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -399,12 +399,12 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
     }
 
     @Override
-    public Object visit( Literal expression, Object extraData ) {
+    public Object visit( final Literal expression, final Object extraData ) {
         return true;
     }
 
     @Override
-    public Object visit( Multiply expression, Object extraData ) {
+    public Object visit( final Multiply expression, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 
@@ -419,12 +419,12 @@ public class IsSupportedFilterVisitor implements FilterVisitor, ExpressionVisito
      * FeatureType.
      */
     @Override
-    public Object visit( PropertyName expression, Object extraData ) {
+    public Object visit( final PropertyName expression, final Object extraData ) {
         return true;
     }
 
     @Override
-    public Object visit( Subtract expression, Object extraData ) {
+    public Object visit( final Subtract expression, final Object extraData ) {
         final ScalarCapabilities scalar = capabilities.getScalarCapabilities();
         if( scalar == null ) return false;
 

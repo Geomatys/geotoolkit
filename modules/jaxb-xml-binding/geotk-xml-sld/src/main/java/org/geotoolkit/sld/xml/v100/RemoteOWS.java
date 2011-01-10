@@ -77,7 +77,7 @@ public class RemoteOWS {
      *     {@link String }
      *     
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -101,7 +101,7 @@ public class RemoteOWS {
      *     {@link OnlineResource }
      *     
      */
-    public void setOnlineResource(OnlineResource value) {
+    public void setOnlineResource(final OnlineResource value) {
         this.onlineResource = value;
     }
 

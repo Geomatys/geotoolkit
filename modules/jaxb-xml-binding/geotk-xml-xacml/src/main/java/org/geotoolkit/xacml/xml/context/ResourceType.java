@@ -67,7 +67,7 @@ public class ResourceType {
     * Sets the value of the resourceContent property.
     * 
     */
-   public void setResourceContent(ResourceContentType value) {
+   public void setResourceContent(final ResourceContentType value) {
       this.resourceContent = value;
    }
 

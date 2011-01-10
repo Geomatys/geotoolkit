@@ -39,7 +39,7 @@ public final class DimapConstants {
 
         private final java.nio.ByteOrder bo;
 
-        private ByteOrder(java.nio.ByteOrder bo){
+        private ByteOrder(final java.nio.ByteOrder bo){
             this.bo = bo;
         }
 
@@ -65,7 +65,7 @@ public final class DimapConstants {
 
         private final NumberSet n;
 
-        private DataType(NumberSet n){
+        private DataType(final NumberSet n){
             this.n = n;
         }
 

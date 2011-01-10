@@ -96,21 +96,21 @@ public class JCRSList extends JComponent{
         
     }
     
-    public void addListSelectionListener(ListSelectionListener lst){
+    public void addListSelectionListener(final ListSelectionListener lst){
         liste.getSelectionModel().addListSelectionListener(lst);
     }
     
-    public void removeListSelectionListener(ListSelectionListener lst){
+    public void removeListSelectionListener(final ListSelectionListener lst){
         liste.getSelectionModel().removeListSelectionListener(lst);
     }
     
     
-    public void setCRS(CoordinateReferenceSystem crs){
+    public void setCRS(final CoordinateReferenceSystem crs){
         selectedCRS = crs;       
     }
             
     
-    public void searchCRS(String searchword){
+    public void searchCRS(final String searchword){
         filter(searchword);
     }
     

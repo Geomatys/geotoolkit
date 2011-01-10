@@ -33,7 +33,7 @@ public class IdCollectorFilterVisitor extends DefaultFilterVisitor {
 
     private final boolean collectStrings;
     
-    private IdCollectorFilterVisitor(boolean collectStringIds){
+    private IdCollectorFilterVisitor(final boolean collectStringIds){
         collectStrings = collectStringIds;
     }
 
@@ -41,7 +41,7 @@ public class IdCollectorFilterVisitor extends DefaultFilterVisitor {
      * {@inheritDoc }
      */
     @Override
-    public Object visit(Id filter, Object data) {
+    public Object visit(final Id filter, final Object data) {
         final Set set = (Set) data;
         set.addAll( (collectStrings) ? filter.getIDs() : filter.getIdentifiers());
         return set;

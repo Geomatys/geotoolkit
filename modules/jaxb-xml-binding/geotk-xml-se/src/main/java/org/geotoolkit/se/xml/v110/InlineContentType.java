@@ -116,7 +116,7 @@ public class InlineContentType {
      *     {@link String }
      *     
      */
-    public void setEncoding(String value) {
+    public void setEncoding(final String value) {
         this.encoding = value;
     }
 

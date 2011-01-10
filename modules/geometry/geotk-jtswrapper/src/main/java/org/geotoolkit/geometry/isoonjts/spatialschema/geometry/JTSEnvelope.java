@@ -80,7 +80,7 @@ public class JTSEnvelope implements Envelope {
      * {@inheritDoc }
      */
     @Override
-    public final double getMinimum(int dimension) {
+    public final double getMinimum(final int dimension) {
         return lowerCorner.getOrdinate(dimension);
     }
 
@@ -88,7 +88,7 @@ public class JTSEnvelope implements Envelope {
      * {@inheritDoc }
      */
     @Override
-    public final double getMaximum(int dimension) {
+    public final double getMaximum(final int dimension) {
         return upperCorner.getOrdinate(dimension);
     }
 
@@ -97,7 +97,7 @@ public class JTSEnvelope implements Envelope {
      * {@inheritDoc }
      */
     @Override
-    public final double getMedian(int dimension) {
+    public final double getMedian(final int dimension) {
         return 0.5 * (upperCorner.getOrdinate(dimension) + lowerCorner.getOrdinate(dimension));
     }
 
@@ -105,7 +105,7 @@ public class JTSEnvelope implements Envelope {
      * {@inheritDoc }
      */
     @Override
-    public final double getSpan(int dimension) {
+    public final double getSpan(final int dimension) {
         return upperCorner.getOrdinate(dimension) - lowerCorner.getOrdinate(dimension);
     }
 

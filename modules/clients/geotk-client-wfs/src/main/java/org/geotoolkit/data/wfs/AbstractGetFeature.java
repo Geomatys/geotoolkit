@@ -64,7 +64,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     private Name[] propertyNames = null;
     private String outputFormat  = null;
 
-    protected AbstractGetFeature(String serverURL, String version){
+    protected AbstractGetFeature(final String serverURL, final String version){
         super(serverURL);
         this.version = version;
     }
@@ -81,7 +81,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public void setTypeName(QName type) {
+    public void setTypeName(final QName type) {
         this.typeName = type;
     }
 
@@ -97,7 +97,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public void setFilter(Filter filter){
+    public void setFilter(final Filter filter){
         this.filter = filter;
     }
 
@@ -113,7 +113,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public void setMaxFeatures(Integer max){
+    public void setMaxFeatures(final Integer max){
         maxFeatures = max;
     }
 
@@ -129,7 +129,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
      * {@inheritDoc }
      */
     @Override
-    public void setPropertyNames(Name[] properties) {
+    public void setPropertyNames(final Name[] properties) {
         this.propertyNames = properties;
     }
 
@@ -143,7 +143,7 @@ public abstract class AbstractGetFeature extends AbstractRequest implements GetF
     /**
      * {@inheritDoc }
      */
-    public void setOutputFormat(String outputFormat) {
+    public void setOutputFormat(final String outputFormat) {
         this.outputFormat = outputFormat;
     }
     

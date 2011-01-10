@@ -59,7 +59,7 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      * @param collection : the data source for this layer
      * @param style : the style used to represent this layer
      */
-    DefaultFeatureMapLayer(FeatureCollection<? extends Feature> collection, MutableStyle style) {
+    DefaultFeatureMapLayer(final FeatureCollection<? extends Feature> collection, final MutableStyle style) {
         super(style);
         if (collection == null) {
             throw new NullPointerException("FeatureSource and Style can not be null");
@@ -73,7 +73,7 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
     }
 
     @Override
-    public void setSelectionFilter(Id filter){
+    public void setSelectionFilter(final Id filter){
 
         final Filter oldfilter;
         synchronized (this) {
@@ -170,7 +170,7 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
     }
 
     @Override
-    public void setHeight(Expression height) {
+    public void setHeight(final Expression height) {
         this.elevationRange = null;
         this.height = height;
     }
@@ -185,7 +185,7 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
     }
 
     @Override
-    public void setElevationRange(Expression from, Expression to) {
+    public void setElevationRange(final Expression from, final Expression to) {
         height = null;
         final Expression[] old = elevationRange;
         elevationRange = new Expression[]{from,to};
@@ -202,7 +202,7 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
     }
 
     @Override
-    public void setTemporalRange(Expression from, Expression to) {
+    public void setTemporalRange(final Expression from, final Expression to) {
         temporalRange = new Expression[]{from,to};
     }
     

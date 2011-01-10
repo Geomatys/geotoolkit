@@ -72,7 +72,7 @@ public class DomainSubsetType implements DomainSubset  {
      /**
       * Build a new Domain Subset.
       */
-     public DomainSubsetType(TimeSequenceType temporal, BoundingBoxType boundingBox){
+     public DomainSubsetType(final TimeSequenceType temporal, final BoundingBoxType boundingBox){
          this.temporalSubset = temporal;
          org.geotoolkit.ows.xml.v110.ObjectFactory facto = new org.geotoolkit.ows.xml.v110.ObjectFactory();
          this.boundingBox = facto.createBoundingBox(boundingBox);

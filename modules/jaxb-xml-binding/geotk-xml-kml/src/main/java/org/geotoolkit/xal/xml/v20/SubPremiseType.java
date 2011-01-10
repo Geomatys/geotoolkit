@@ -265,7 +265,7 @@ public class SubPremiseType {
      *     {@link SubPremiseType.SubPremiseLocation }
      *     
      */
-    public void setSubPremiseLocation(SubPremiseType.SubPremiseLocation value) {
+    public void setSubPremiseLocation(final SubPremiseType.SubPremiseLocation value) {
         this.subPremiseLocation = value;
     }
 
@@ -405,7 +405,7 @@ public class SubPremiseType {
      *     {@link FirmType }
      *     
      */
-    public void setFirm(FirmType value) {
+    public void setFirm(final FirmType value) {
         this.firm = value;
     }
 
@@ -429,7 +429,7 @@ public class SubPremiseType {
      *     {@link MailStopType }
      *     
      */
-    public void setMailStop(MailStopType value) {
+    public void setMailStop(final MailStopType value) {
         this.mailStop = value;
     }
 
@@ -453,7 +453,7 @@ public class SubPremiseType {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -477,7 +477,7 @@ public class SubPremiseType {
      *     {@link SubPremiseType }
      *     
      */
-    public void setSubPremise(SubPremiseType value) {
+    public void setSubPremise(final SubPremiseType value) {
         this.subPremise = value;
     }
 
@@ -530,7 +530,7 @@ public class SubPremiseType {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -602,7 +602,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -626,7 +626,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -699,7 +699,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -723,7 +723,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -747,7 +747,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setTypeOccurrence(String value) {
+        public void setTypeOccurrence(final String value) {
             this.typeOccurrence = value;
         }
 
@@ -771,7 +771,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -881,7 +881,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -905,7 +905,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setIndicator(String value) {
+        public void setIndicator(final String value) {
             this.indicator = value;
         }
 
@@ -929,7 +929,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setIndicatorOccurrence(String value) {
+        public void setIndicatorOccurrence(final String value) {
             this.indicatorOccurrence = value;
         }
 
@@ -953,7 +953,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setNumberTypeOccurrence(String value) {
+        public void setNumberTypeOccurrence(final String value) {
             this.numberTypeOccurrence = value;
         }
 
@@ -977,7 +977,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setPremiseNumberSeparator(String value) {
+        public void setPremiseNumberSeparator(final String value) {
             this.premiseNumberSeparator = value;
         }
 
@@ -1001,7 +1001,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -1025,7 +1025,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -1109,7 +1109,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -1133,7 +1133,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setNumberPrefixSeparator(String value) {
+        public void setNumberPrefixSeparator(final String value) {
             this.numberPrefixSeparator = value;
         }
 
@@ -1157,7 +1157,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -1181,7 +1181,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 
@@ -1265,7 +1265,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -1289,7 +1289,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setNumberSuffixSeparator(String value) {
+        public void setNumberSuffixSeparator(final String value) {
             this.numberSuffixSeparator = value;
         }
 
@@ -1313,7 +1313,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -1337,7 +1337,7 @@ public class SubPremiseType {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 

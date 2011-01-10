@@ -50,7 +50,7 @@ public final class JRMappingUtils {
     }
 
     @Deprecated
-    public static List<JRMapperFactory> getFactories(Class type){
+    public static List<JRMapperFactory> getFactories(final Class type){
         final List<JRMapperFactory> factories = new ArrayList<JRMapperFactory>();
 
         for(final JRMapperFactory factory : FACTORIES){

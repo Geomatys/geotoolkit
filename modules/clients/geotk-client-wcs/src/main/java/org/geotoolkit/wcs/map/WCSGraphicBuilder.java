@@ -65,7 +65,7 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     private WCSGraphicBuilder(){};
 
     @Override
-    public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
+    public Collection<GraphicJ2D> createGraphics(final MapLayer layer, final Canvas canvas) {
         if(layer instanceof WCSMapLayer && canvas instanceof J2DCanvas){
             return Collections.singleton((GraphicJ2D)
                     new WCSGraphic((J2DCanvas)canvas, (WCSMapLayer)layer));
@@ -80,7 +80,7 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     }
 
     @Override
-    public Image getLegend(MapLayer layer) throws PortrayalException {
+    public Image getLegend(final MapLayer layer) throws PortrayalException {
         //no legend in WCS specification
         return new BufferedImage(1, 1, BufferedImage.TYPE_INT_ARGB);
     }
@@ -89,13 +89,13 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
         private final WCSMapLayer layer;
 
-        private WCSGraphic(J2DCanvas canvas, WCSMapLayer layer){
+        private WCSGraphic(final J2DCanvas canvas, final WCSMapLayer layer){
             super(canvas,canvas.getObjectiveCRS2D());
             this.layer = layer;
         }
 
         @Override
-        public void paint(RenderingContext2D context2D) {
+        public void paint(final RenderingContext2D context2D) {
             final CanvasMonitor monitor = context2D.getMonitor();
 
 
@@ -137,7 +137,7 @@ final class WCSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         }
 
         @Override
-        public List<Graphic> getGraphicAt(RenderingContext context, SearchArea mask, VisitFilter filter, List<Graphic> graphics) {
+        public List<Graphic> getGraphicAt(final RenderingContext context, final SearchArea mask, final VisitFilter filter, final List<Graphic> graphics) {
             return graphics;
         }
 

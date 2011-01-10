@@ -139,7 +139,7 @@ public final class DecorationXMLParser {
     }
 
     // Reading -----------------------------------------------------------------
-    public static PortrayalExtension read(File configFile)
+    public static PortrayalExtension read(final File configFile)
             throws ParserConfigurationException, SAXException, IOException {
 
         if (!configFile.exists()) {
@@ -153,7 +153,7 @@ public final class DecorationXMLParser {
         return read(document.getDocumentElement());
     }
 
-    public static PortrayalExtension read(Node root)
+    public static PortrayalExtension read(final Node root)
             throws ParserConfigurationException, SAXException, IOException {
 
         final NodeList nodes = ((Element) root).getElementsByTagName(TAG_DECORATION);
@@ -369,7 +369,7 @@ public final class DecorationXMLParser {
         return null;
     }
 
-    private static int parseInteger(String str, int fallback) {
+    private static int parseInteger(final String str, final int fallback) {
         if (str == null) {
             return fallback;
         }
@@ -382,7 +382,7 @@ public final class DecorationXMLParser {
         }
     }
 
-    private static boolean parseBoolean(String str, boolean fallback) {
+    private static boolean parseBoolean(final String str, final boolean fallback) {
         if (str == null) {
             return fallback;
         }
@@ -395,7 +395,7 @@ public final class DecorationXMLParser {
         }
     }
 
-    private static float parseFloat(String str, int fallback) {
+    private static float parseFloat(final String str, final int fallback) {
         if (str == null) {
             return fallback;
         }
@@ -408,11 +408,11 @@ public final class DecorationXMLParser {
         }
     }
 
-    private static Font parseFont(String strFont) {
+    private static Font parseFont(final String strFont) {
         return Font.decode(strFont);
     }
 
-    private static Insets parseInsets(String str, Insets fallback) {
+    private static Insets parseInsets(final String str, final Insets fallback) {
         if (str == null) {
             return fallback;
         }
@@ -431,7 +431,7 @@ public final class DecorationXMLParser {
 
     }
 
-    private static Color parseColor(String strColor, String strOpacity, Color fallback) {
+    private static Color parseColor(final String strColor, final String strOpacity, final Color fallback) {
         if (strColor == null) {
             return fallback;
         }
@@ -454,7 +454,7 @@ public final class DecorationXMLParser {
         return color;
     }
 
-    private static int parsePosition(String str, int fallback) {
+    private static int parsePosition(final String str, final int fallback) {
         if (POSTION_CENTER.equalsIgnoreCase(str)) {
             return SwingConstants.CENTER;
         } else if (POSTION_EAST.equalsIgnoreCase(str)) {
@@ -478,7 +478,7 @@ public final class DecorationXMLParser {
         }
     }
 
-    private static URL parseURL(String url, URL fallback) {
+    private static URL parseURL(final String url, final URL fallback) {
         if (url == null) {
             return fallback;
         }
@@ -491,7 +491,7 @@ public final class DecorationXMLParser {
         }
     }
 
-    private static Stroke parseStroke(String strWidth, String strDashes) {
+    private static Stroke parseStroke(final String strWidth, final String strDashes) {
 
         final int width = parseInteger(strWidth, 1);
 
@@ -511,7 +511,7 @@ public final class DecorationXMLParser {
     }
 
     // Writing -----------------------------------------------------------------
-    public static void write(File file, DecorationExtension extension) throws ParserConfigurationException {
+    public static void write(final File file, final DecorationExtension extension) throws ParserConfigurationException {
         final DocumentBuilderFactory fabrique = DocumentBuilderFactory.newInstance();
         final DocumentBuilder constructeur = fabrique.newDocumentBuilder();
         final Document document = constructeur.newDocument();
@@ -520,7 +520,7 @@ public final class DecorationXMLParser {
         write(racine, document, extension);
     }
 
-    public static void write(Element node, Document document,DecorationExtension extension) {
+    public static void write(final Element node, final Document document,final DecorationExtension extension) {
         Element el;
 
         for (final Map<String, Object> params : extension.getParameters()) {
@@ -782,7 +782,7 @@ public final class DecorationXMLParser {
 
     }
 
-    private static Element encode(Document doc, BackgroundTemplate template){
+    private static Element encode(final Document doc, final BackgroundTemplate template){
         if(template == null) return null;
 
         final Element bg = doc.createElement(TAG_BACKGROUND);
@@ -843,7 +843,7 @@ public final class DecorationXMLParser {
     }
 
 
-    private static String encode(float dashes[]){
+    private static String encode(final float dashes[]){
         StringBuilder sb = new StringBuilder();
 
         for(int i=0;i<dashes.length;i++){
@@ -856,7 +856,7 @@ public final class DecorationXMLParser {
         return sb.toString();
     }
 
-    private static String encode(Color color){
+    private static String encode(final Color color){
         String redCode = Integer.toHexString(color.getRed());
         String greenCode = Integer.toHexString(color.getGreen());
         String blueCode = Integer.toHexString(color.getBlue());
@@ -878,7 +878,7 @@ public final class DecorationXMLParser {
         return colorCode;
     }
 
-    private static String encode(Insets insets){
+    private static String encode(final Insets insets){
         final StringBuilder sb = new StringBuilder();
 
         sb.append(insets.top).append(',').append(insets.left).append(',').append(insets.bottom).append(',').append(insets.right);
@@ -886,7 +886,7 @@ public final class DecorationXMLParser {
         return sb.toString();
     }
 
-    private static String encodePosition(int position){
+    private static String encodePosition(final int position){
 
         switch(position){
             case SwingConstants.CENTER : return POSTION_CENTER;
@@ -912,7 +912,7 @@ public final class DecorationXMLParser {
         }
 
         @Override
-        public void completeCanvas(J2DCanvas canvas) throws PortrayalException {
+        public void completeCanvas(final J2DCanvas canvas) throws PortrayalException {
 
             for (final Map<String, Object> params : decorations) {
 

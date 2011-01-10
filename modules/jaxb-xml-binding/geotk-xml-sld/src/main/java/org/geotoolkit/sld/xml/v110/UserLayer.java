@@ -104,7 +104,7 @@ public class UserLayer {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -128,7 +128,7 @@ public class UserLayer {
      *     {@link DescriptionType }
      *     
      */
-    public void setDescription(DescriptionType value) {
+    public void setDescription(final DescriptionType value) {
         this.description = value;
     }
 
@@ -152,7 +152,7 @@ public class UserLayer {
      *     {@link RemoteOWS }
      *     
      */
-    public void setRemoteOWS(RemoteOWS value) {
+    public void setRemoteOWS(final RemoteOWS value) {
         this.remoteOWS = value;
     }
 
@@ -176,7 +176,7 @@ public class UserLayer {
      *     {@link InlineFeature }
      *     
      */
-    public void setInlineFeature(InlineFeature value) {
+    public void setInlineFeature(final InlineFeature value) {
         this.inlineFeature = value;
     }
 
@@ -200,7 +200,7 @@ public class UserLayer {
      *     {@link LayerFeatureConstraints }
      *     
      */
-    public void setLayerFeatureConstraints(LayerFeatureConstraints value) {
+    public void setLayerFeatureConstraints(final LayerFeatureConstraints value) {
         this.layerFeatureConstraints = value;
     }
 
@@ -224,7 +224,7 @@ public class UserLayer {
      *     {@link LayerCoverageConstraints }
      *     
      */
-    public void setLayerCoverageConstraints(LayerCoverageConstraints value) {
+    public void setLayerCoverageConstraints(final LayerCoverageConstraints value) {
         this.layerCoverageConstraints = value;
     }
 

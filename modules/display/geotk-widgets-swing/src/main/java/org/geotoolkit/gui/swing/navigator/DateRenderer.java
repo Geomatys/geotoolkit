@@ -66,7 +66,7 @@ public class DateRenderer implements NavigatorRenderer{
     }
 
     @Override
-    public void render(JNavigator nav, Graphics2D g2, Rectangle area) {
+    public void render(final JNavigator nav, final Graphics2D g2, final Rectangle area) {
         this.model = nav.getModel();
         g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
@@ -90,7 +90,7 @@ public class DateRenderer implements NavigatorRenderer{
 
     }
 
-    private void paintYears(Graphics2D g2, int height, int width, int limit1, int limit2) {
+    private void paintYears(final Graphics2D g2, final int height, final int width, final int limit1, final int limit2) {
         
         g2.setColor(Clast);
         g2.fillRect(0, limit2, width, height - limit2);
@@ -146,7 +146,7 @@ public class DateRenderer implements NavigatorRenderer{
 
     }
 
-    private void paintMonths(Graphics2D g2, int height, int width, int limit1, int limit2) {
+    private void paintMonths(final Graphics2D g2, final int height, final int width, final int limit1, final int limit2) {
         
         g2.setColor(Ccenter);
         g2.fillRect(0, limit1, width, limit2 - limit1);
@@ -200,7 +200,7 @@ public class DateRenderer implements NavigatorRenderer{
         }
     }
 
-    private void paintDays(Graphics2D g2, int height, int width, int limit1, int limit2) {
+    private void paintDays(final Graphics2D g2, final int height, final int width, final int limit1, final int limit2) {
         
         g2.setColor(Ctop);
         g2.fillRect(0, 0, width, limit1);
@@ -254,7 +254,7 @@ public class DateRenderer implements NavigatorRenderer{
         
     }
 
-    private void paintString(Graphics2D g2, String txt, Color color, int x, int y) {
+    private void paintString(final Graphics2D g2, final String txt, final Color color, final int x, final int y) {
         g2.setColor(color.darker().darker());
         g2.drawString(txt, x + 1, y + 1);
         g2.setColor(color.brighter());

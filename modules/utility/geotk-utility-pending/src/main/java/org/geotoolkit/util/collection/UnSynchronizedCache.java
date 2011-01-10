@@ -33,13 +33,13 @@ public class UnSynchronizedCache<K extends Object,V extends Object> extends Link
 
     private final int maxElements;
 
-    public UnSynchronizedCache(int maxElement) {
+    public UnSynchronizedCache(final int maxElement) {
         super();
         this.maxElements = maxElement;
     }
 
     @Override
-    protected boolean removeEldestEntry(Entry<K, V> entry) {
+    protected boolean removeEldestEntry(final Entry<K, V> entry) {
         return size() > maxElements;
     }
 

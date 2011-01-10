@@ -72,7 +72,7 @@ public class AllowedValues {
     /**
      *  Build an allowed value.
      */
-    public AllowedValues(List<Object> valueOrRange){
+    public AllowedValues(final List<Object> valueOrRange){
         
         this.valueOrRange = valueOrRange;
         
@@ -81,7 +81,7 @@ public class AllowedValues {
     /**
      *  Build an allowed value with the specified list of value.
      */
-    public AllowedValues(Collection<String> values){
+    public AllowedValues(final Collection<String> values){
         
         this.valueOrRange = new ArrayList<Object>();
         for (String value: values){
@@ -94,7 +94,7 @@ public class AllowedValues {
     /**
      *  Build an allowed value with the specified range
      */
-    public AllowedValues(RangeType range){
+    public AllowedValues(final RangeType range){
         
         valueOrRange = new ArrayList<Object>();
         valueOrRange.add(range);

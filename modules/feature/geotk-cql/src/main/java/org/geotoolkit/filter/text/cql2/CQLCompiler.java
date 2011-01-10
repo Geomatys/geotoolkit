@@ -179,11 +179,11 @@ public class CQLCompiler extends CQLParser implements ICompiler{
     }
 
     @Override
-    public final void jjtreeOpenNodeScope(Node n) {
+    public final void jjtreeOpenNodeScope(final Node n) {
     }
 
     @Override
-    public final void jjtreeCloseNodeScope(Node n) throws ParseException {
+    public final void jjtreeCloseNodeScope(final Node n) throws ParseException {
         try {
             final Object built = build(n);
             final IToken tokenAdapter = TokenAdapter.newAdapterFor(token);
@@ -203,7 +203,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
      * @return Filter or Expression
      * @throws CQLException
      */
-    private Object build(Node cqlNode) throws CQLException {
+    private Object build(final Node cqlNode) throws CQLException {
         switch (cqlNode.getType()) {
             // Literals
             // note, these should never throw because the parser grammar
@@ -413,7 +413,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
         return null;
     }
 
-    private BinaryExpression buildBinaryExpression(int nodeType) throws CQLException {
+    private BinaryExpression buildBinaryExpression(final int nodeType) throws CQLException {
 
         BinaryExpression expr = null;
 
@@ -445,7 +445,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
         return expr;
     }
 
-    private Filter buildLogicFilter(int nodeType) throws CQLException {
+    private Filter buildLogicFilter(final int nodeType) throws CQLException {
         try {
 
             final Filter logicFilter;
@@ -523,7 +523,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
         return filter;
     }
 
-    private BBOX buildBBox(int nodeType) throws CQLException {
+    private BBOX buildBBox(final int nodeType) throws CQLException {
         if (nodeType == JJTROUTINEINVOCATION_GEOOP_BBOX_SRS_NODE) {
             return this.builder.buildBBoxWithCRS();
         } else {
@@ -710,7 +710,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
      * @return BinaryComparisonOperator
      * @throws CQLException
      */
-    private BinaryComparisonOperator buildBinaryComparasionOperator(int filterType)
+    private BinaryComparisonOperator buildBinaryComparasionOperator(final int filterType)
             throws CQLException
     {
 
@@ -740,7 +740,7 @@ public class CQLCompiler extends CQLParser implements ICompiler{
      * @param args
      * @throws ParseException
      */
-    public static void main(String args[]) throws ParseException {
+    public static void main(final String args[]) throws ParseException {
 
         System.out.println("Expecting a predicate (q - quit).");
         while (true) {

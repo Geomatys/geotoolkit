@@ -206,7 +206,7 @@ public class Locality {
      *     {@link PostBox }
      *     
      */
-    public void setPostBox(PostBox value) {
+    public void setPostBox(final PostBox value) {
         this.postBox = value;
     }
 
@@ -230,7 +230,7 @@ public class Locality {
      *     {@link LargeMailUserType }
      *     
      */
-    public void setLargeMailUser(LargeMailUserType value) {
+    public void setLargeMailUser(final LargeMailUserType value) {
         this.largeMailUser = value;
     }
 
@@ -254,7 +254,7 @@ public class Locality {
      *     {@link PostOffice }
      *     
      */
-    public void setPostOffice(PostOffice value) {
+    public void setPostOffice(final PostOffice value) {
         this.postOffice = value;
     }
 
@@ -278,7 +278,7 @@ public class Locality {
      *     {@link PostalRouteType }
      *     
      */
-    public void setPostalRoute(PostalRouteType value) {
+    public void setPostalRoute(final PostalRouteType value) {
         this.postalRoute = value;
     }
 
@@ -302,7 +302,7 @@ public class Locality {
      *     {@link Thoroughfare }
      *     
      */
-    public void setThoroughfare(Thoroughfare value) {
+    public void setThoroughfare(final Thoroughfare value) {
         this.thoroughfare = value;
     }
 
@@ -326,7 +326,7 @@ public class Locality {
      *     {@link Premise }
      *     
      */
-    public void setPremise(Premise value) {
+    public void setPremise(final Premise value) {
         this.premise = value;
     }
 
@@ -350,7 +350,7 @@ public class Locality {
      *     {@link DependentLocalityType }
      *     
      */
-    public void setDependentLocality(DependentLocalityType value) {
+    public void setDependentLocality(final DependentLocalityType value) {
         this.dependentLocality = value;
     }
 
@@ -374,7 +374,7 @@ public class Locality {
      *     {@link PostalCode }
      *     
      */
-    public void setPostalCode(PostalCode value) {
+    public void setPostalCode(final PostalCode value) {
         this.postalCode = value;
     }
 
@@ -427,7 +427,7 @@ public class Locality {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -451,7 +451,7 @@ public class Locality {
      *     {@link String }
      *     
      */
-    public void setUsageType(String value) {
+    public void setUsageType(final String value) {
         this.usageType = value;
     }
 
@@ -475,7 +475,7 @@ public class Locality {
      *     {@link String }
      *     
      */
-    public void setIndicator(String value) {
+    public void setIndicator(final String value) {
         this.indicator = value;
     }
 
@@ -553,7 +553,7 @@ public class Locality {
          *     {@link String }
          *     
          */
-        public void setContent(String value) {
+        public void setContent(final String value) {
             this.content = value;
         }
 
@@ -577,7 +577,7 @@ public class Locality {
          *     {@link String }
          *     
          */
-        public void setType(String value) {
+        public void setType(final String value) {
             this.type = value;
         }
 
@@ -601,7 +601,7 @@ public class Locality {
          *     {@link String }
          *     
          */
-        public void setCode(String value) {
+        public void setCode(final String value) {
             this.code = value;
         }
 

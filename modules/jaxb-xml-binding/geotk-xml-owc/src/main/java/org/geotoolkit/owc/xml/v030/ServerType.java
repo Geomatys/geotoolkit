@@ -115,7 +115,7 @@ public class ServerType {
      *     {@link Boolean }
      *     
      */
-    public void setDefault(Boolean value) {
+    public void setDefault(final Boolean value) {
         this._default = value;
     }
 
@@ -139,7 +139,7 @@ public class ServerType {
      *     {@link ServiceType }
      *     
      */
-    public void setService(ServiceType value) {
+    public void setService(final ServiceType value) {
         this.service = value;
     }
 
@@ -163,7 +163,7 @@ public class ServerType {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -187,7 +187,7 @@ public class ServerType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 

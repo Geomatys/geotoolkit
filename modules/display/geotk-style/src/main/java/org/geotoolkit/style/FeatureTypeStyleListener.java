@@ -60,11 +60,11 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
 
         private final Collection<MutableFeatureTypeStyle> sources = new ArrayList<MutableFeatureTypeStyle>(1);
 
-        public Weak(FeatureTypeStyleListener ref) {
+        public Weak(final FeatureTypeStyleListener ref) {
             this(null,ref);
         }
 
-        public Weak(MutableFeatureTypeStyle source, FeatureTypeStyleListener ref) {
+        public Weak(final MutableFeatureTypeStyle source, final FeatureTypeStyleListener ref) {
             super(ref, ReferenceQueueConsumer.DEFAULT.queue);
             registerSource(source);
         }
@@ -72,7 +72,7 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
         /**
          * Register this listener on the given source.
          */
-        public synchronized void registerSource(MutableFeatureTypeStyle source){
+        public synchronized void registerSource(final MutableFeatureTypeStyle source){
             if(source != null){
                 //register in the new source
                 source.addListener(this);
@@ -83,7 +83,7 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
         /**
          * Unregister this listener on the given source.
          */
-        public synchronized void unregisterSource(MutableFeatureTypeStyle source){
+        public synchronized void unregisterSource(final MutableFeatureTypeStyle source){
             sources.remove(source);
             source.removeListener(this);
         }
@@ -97,7 +97,7 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
         }
 
         @Override
-        public void ruleChange(CollectionChangeEvent<MutableRule> event) {
+        public void ruleChange(final CollectionChangeEvent<MutableRule> event) {
             final FeatureTypeStyleListener listener = get();
             if (listener != null) {
                 listener.ruleChange(event);
@@ -106,7 +106,7 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
         }
 
         @Override
-        public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
+        public void featureTypeNameChange(final CollectionChangeEvent<Name> event) {
             final FeatureTypeStyleListener listener = get();
             if (listener != null) {
                 listener.featureTypeNameChange(event);
@@ -115,7 +115,7 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
         }
 
         @Override
-        public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {
+        public void semanticTypeChange(final CollectionChangeEvent<SemanticType> event) {
             final FeatureTypeStyleListener listener = get();
             if (listener != null) {
                 listener.semanticTypeChange(event);
@@ -124,7 +124,7 @@ public interface FeatureTypeStyleListener extends PropertyChangeListener{
         }
 
         @Override
-        public void propertyChange(PropertyChangeEvent evt) {
+        public void propertyChange(final PropertyChangeEvent evt) {
             final FeatureTypeStyleListener listener = get();
             if (listener != null) {
                 listener.propertyChange(evt);

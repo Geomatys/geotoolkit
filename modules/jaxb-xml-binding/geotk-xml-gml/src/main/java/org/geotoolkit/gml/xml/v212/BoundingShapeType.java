@@ -81,7 +81,7 @@ public class BoundingShapeType {
      *     {@link BoxType }
      *     
      */
-    public void setBox(BoxType value) {
+    public void setBox(final BoxType value) {
         this.box = value;
     }
 
@@ -105,7 +105,7 @@ public class BoundingShapeType {
      *     {@link NullType }
      *     
      */
-    public void setNull(NullType value) {
+    public void setNull(final NullType value) {
         this._null = value;
     }
 

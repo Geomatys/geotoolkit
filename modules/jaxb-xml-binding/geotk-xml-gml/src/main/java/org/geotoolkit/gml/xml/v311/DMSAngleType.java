@@ -87,7 +87,7 @@ public class DMSAngleType {
      *     {@link DegreesType }
      *     
      */
-    public void setDegrees(DegreesType value) {
+    public void setDegrees(final DegreesType value) {
         this.degrees = value;
     }
 
@@ -111,7 +111,7 @@ public class DMSAngleType {
      *     {@link BigDecimal }
      *     
      */
-    public void setDecimalMinutes(BigDecimal value) {
+    public void setDecimalMinutes(final BigDecimal value) {
         this.decimalMinutes = value;
     }
 
@@ -135,7 +135,7 @@ public class DMSAngleType {
      *     {@link Integer }
      *     
      */
-    public void setMinutes(Integer value) {
+    public void setMinutes(final Integer value) {
         this.minutes = value;
     }
 
@@ -159,7 +159,7 @@ public class DMSAngleType {
      *     {@link BigDecimal }
      *     
      */
-    public void setSeconds(BigDecimal value) {
+    public void setSeconds(final BigDecimal value) {
         this.seconds = value;
     }
 

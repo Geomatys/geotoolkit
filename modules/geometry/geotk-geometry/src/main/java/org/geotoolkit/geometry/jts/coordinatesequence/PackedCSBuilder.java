@@ -58,7 +58,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          * {@inheritDoc }
          */
         @Override
-        public void start(int size, int dimensions) {
+        public void start(final int size, final int dimensions) {
             ordinates = new double[size * dimensions];
             this.size = size;
             this.dimensions = dimensions;
@@ -80,8 +80,8 @@ public abstract class PackedCSBuilder implements CSBuilder {
          * {@inheritDoc }
          */
         @Override
-        public void setOrdinate(double value, int ordinateIndex,
-                int coordinateIndex) {
+        public void setOrdinate(final double value, final int ordinateIndex,
+                final int coordinateIndex) {
             ordinates[coordinateIndex * dimensions + ordinateIndex] = value;
         }
 
@@ -89,7 +89,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          * {@inheritDoc }
          */
         @Override
-        public double getOrdinate(int ordinateIndex, int coordinateIndex) {
+        public double getOrdinate(final int ordinateIndex, final int coordinateIndex) {
             return ordinates[coordinateIndex * dimensions + ordinateIndex];
         }
 
@@ -97,7 +97,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          * {@inheritDoc }
          */
         @Override
-        public void setOrdinate(CoordinateSequence sequence, double value, int ordinateIndex, int coordinateIndex) {
+        public void setOrdinate(final CoordinateSequence sequence, final double value, final int ordinateIndex, final int coordinateIndex) {
             PackedCoordinateSequence pcs = (PackedCoordinateSequence) sequence;
             pcs.setOrdinate(coordinateIndex, ordinateIndex, value);
         }
@@ -112,7 +112,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          * {@inheritDoc }
          */
         @Override
-        public void start(int size, int dimensions) {
+        public void start(final int size, final int dimensions) {
             ordinates = new float[size * dimensions];
             this.size = size;
             this.dimensions = dimensions;
@@ -134,8 +134,8 @@ public abstract class PackedCSBuilder implements CSBuilder {
          * {@inheritDoc }
          */
         @Override
-        public void setOrdinate(double value, int ordinateIndex,
-                int coordinateIndex) {
+        public void setOrdinate(final double value, final int ordinateIndex,
+                final int coordinateIndex) {
             ordinates[coordinateIndex * dimensions + ordinateIndex] = (float) value;
         }
 
@@ -143,7 +143,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          * {@inheritDoc }
          */
         @Override
-        public void setOrdinate(CoordinateSequence sequence, double value, int ordinateIndex, int coordinateIndex) {
+        public void setOrdinate(final CoordinateSequence sequence, final double value, final int ordinateIndex, final int coordinateIndex) {
             PackedCoordinateSequence pcs = (PackedCoordinateSequence) sequence;
             pcs.setOrdinate(coordinateIndex, ordinateIndex, value);
         }
@@ -152,7 +152,7 @@ public abstract class PackedCSBuilder implements CSBuilder {
          * {@inheritDoc }
          */
         @Override
-        public double getOrdinate(int ordinateIndex, int coordinateIndex) {
+        public double getOrdinate(final int ordinateIndex, final int coordinateIndex) {
             return ordinates[coordinateIndex * dimensions + ordinateIndex];
         }
     }

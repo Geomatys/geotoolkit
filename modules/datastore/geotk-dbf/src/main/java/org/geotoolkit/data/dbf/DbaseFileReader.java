@@ -64,7 +64,7 @@ public class DbaseFileReader {
     public static final Charset DEFAULT_STRING_CHARSET = Charset.forName("ISO-8859-1");
 
     public final class Row {
-        public Object read(int column) throws IOException {
+        public Object read(final int column) throws IOException {
             final int offset = getOffset(column);
             return fieldReaders[column].read(charBuffer, offset);
         }
@@ -106,7 +106,7 @@ public class DbaseFileReader {
      * @throws IOException If an error occurs while initializing.
      */
 
-    public DbaseFileReader(ReadableByteChannel dbfChannel, boolean useMemoryMappedBuffer, Charset charset) throws IOException {
+    public DbaseFileReader(final ReadableByteChannel dbfChannel, final boolean useMemoryMappedBuffer, Charset charset) throws IOException {
         this.channel = dbfChannel;
 
         if(charset == null) charset = DEFAULT_STRING_CHARSET;
@@ -156,7 +156,7 @@ public class DbaseFileReader {
         row = new Row();
     }
 
-    protected void fill(ByteBuffer buffer, ReadableByteChannel channel)
+    protected void fill(final ByteBuffer buffer, final ReadableByteChannel channel)
             throws IOException {
         int r = buffer.remaining();
         // channel reads return -1 when EOF or other error
@@ -183,7 +183,7 @@ public class DbaseFileReader {
         }
     }
 
-    private int getOffset(int column) {
+    private int getOffset(final int column) {
         int offset = 0;
         for (int i = 0, ii = column; i < ii; i++) {
             offset += fieldReaders[i].fieldLength;
@@ -271,7 +271,7 @@ public class DbaseFileReader {
      * @throws IOException If an error occurs.
      * @return The same array passed in.
      */
-    public Object[] readEntry(Object[] entry, final int offset)
+    public Object[] readEntry(final Object[] entry, final int offset)
             throws IOException {
         if (entry.length - offset < fieldReaders.length) {
             throw new ArrayIndexOutOfBoundsException();
@@ -297,7 +297,7 @@ public class DbaseFileReader {
      *                 If an error occurs.
      * @return The value of the field
      */
-    public Object readField(int fieldNum)
+    public Object readField(final int fieldNum)
             throws IOException {
         // retrieve the record length
         int fieldOffset = 0;
@@ -310,7 +310,7 @@ public class DbaseFileReader {
     /**
      * Transfer, by bytes, the next record to the writer.
      */
-    public void transferTo(DbaseFileWriter writer) throws IOException {
+    public void transferTo(final DbaseFileWriter writer) throws IOException {
         bufferCheck();
         buffer.limit(buffer.position() + header.getRecordLength());
         writer.channel.write(buffer);
@@ -357,11 +357,11 @@ public class DbaseFileReader {
      *                 If an error occurs.
      * @return The same array passed in.
      */
-    public Object[] readEntry(Object[] entry) throws IOException {
+    public Object[] readEntry(final Object[] entry) throws IOException {
         return readEntry(entry, 0);
     }
 
-    public static void main(String[] args) throws Exception {
+    public static void main(final String[] args) throws Exception {
         DbaseFileReader reader = new DbaseFileReader(new RandomAccessFile(new File(args[0]),"r").getChannel(),
                 false, Charset.forName("ISO-8859-1"));
         System.out.println(reader.getHeader());

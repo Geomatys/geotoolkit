@@ -85,7 +85,7 @@ public class OffsetCurveType
      *     {@link CurvePropertyType }
      *     
      */
-    public void setOffsetBase(CurvePropertyType value) {
+    public void setOffsetBase(final CurvePropertyType value) {
         this.offsetBase = value;
     }
 
@@ -109,7 +109,7 @@ public class OffsetCurveType
      *     {@link LengthType }
      *     
      */
-    public void setDistance(LengthType value) {
+    public void setDistance(final LengthType value) {
         this.distance = value;
     }
 
@@ -133,7 +133,7 @@ public class OffsetCurveType
      *     {@link VectorType }
      *     
      */
-    public void setRefDirection(VectorType value) {
+    public void setRefDirection(final VectorType value) {
         this.refDirection = value;
     }
 

@@ -87,7 +87,7 @@ public class RegistryType extends RegistryEntryType {
     /**
      * Sets the value of the operator property.
      */
-    public void setOperator(String value) {
+    public void setOperator(final String value) {
         this.operator = value;
     }
 
@@ -101,7 +101,7 @@ public class RegistryType extends RegistryEntryType {
     /**
      * Sets the value of the specificationVersion property.
      */
-    public void setSpecificationVersion(String value) {
+    public void setSpecificationVersion(final String value) {
         this.specificationVersion = value;
     }
 
@@ -115,7 +115,7 @@ public class RegistryType extends RegistryEntryType {
     /**
      * Sets the value of the replicationSyncLatency property.
      */
-    public void setReplicationSyncLatency(Duration value) {
+    public void setReplicationSyncLatency(final Duration value) {
         this.replicationSyncLatency = value;
     }
 
@@ -129,7 +129,7 @@ public class RegistryType extends RegistryEntryType {
     /**
      * Sets the value of the catalogingLatency property.
      */
-    public void setCatalogingLatency(Duration value) {
+    public void setCatalogingLatency(final Duration value) {
         this.catalogingLatency = value;
     }
 
@@ -147,7 +147,7 @@ public class RegistryType extends RegistryEntryType {
     /**
      * Sets the value of the sqlQuerySupported property.
      */
-    public void setSqlQuerySupported(Boolean value) {
+    public void setSqlQuerySupported(final Boolean value) {
         this.sqlQuerySupported = value;
     }
 
@@ -165,7 +165,7 @@ public class RegistryType extends RegistryEntryType {
     /**
      * Sets the value of the eventNotificationSupported property.
      */
-    public void setEventNotificationSupported(Boolean value) {
+    public void setEventNotificationSupported(final Boolean value) {
         this.eventNotificationSupported = value;
     }
 
@@ -183,7 +183,7 @@ public class RegistryType extends RegistryEntryType {
     /**
      * Sets the value of the objectReplicationSupported property.
      */
-    public void setObjectReplicationSupported(Boolean value) {
+    public void setObjectReplicationSupported(final Boolean value) {
         this.objectReplicationSupported = value;
     }
 
@@ -201,7 +201,7 @@ public class RegistryType extends RegistryEntryType {
     /**
      * Sets the value of the objectRelocationSupported property.
      */
-    public void setObjectRelocationSupported(Boolean value) {
+    public void setObjectRelocationSupported(final Boolean value) {
         this.objectRelocationSupported = value;
     }
 

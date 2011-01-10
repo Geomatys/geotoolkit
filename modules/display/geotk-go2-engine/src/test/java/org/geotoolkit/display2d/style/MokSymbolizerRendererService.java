@@ -43,22 +43,22 @@ public class MokSymbolizerRendererService extends AbstractSymbolizerRendererServ
     }
 
     @Override
-    public CachedMokSymbolizer createCachedSymbolizer(MokSymbolizer symbol) {
+    public CachedMokSymbolizer createCachedSymbolizer(final MokSymbolizer symbol) {
         return new CachedMokSymbolizer(symbol, this);
     }
 
     @Override
-    public SymbolizerRenderer createRenderer(CachedMokSymbolizer symbol, RenderingContext2D context) {
+    public SymbolizerRenderer createRenderer(final CachedMokSymbolizer symbol, final RenderingContext2D context) {
         return new MokSymbolizerRenderer(symbol, context);
     }
 
     @Override
-    public Rectangle2D glyphPreferredSize(CachedMokSymbolizer symbol, MapLayer layer) {
+    public Rectangle2D glyphPreferredSize(final CachedMokSymbolizer symbol, final MapLayer layer) {
         return null;
     }
 
     @Override
-    public void glyph(Graphics2D g, Rectangle2D rect, CachedMokSymbolizer symbol, MapLayer layer) {
+    public void glyph(final Graphics2D g, final Rectangle2D rect, final CachedMokSymbolizer symbol, final MapLayer layer) {
     }
 
 }

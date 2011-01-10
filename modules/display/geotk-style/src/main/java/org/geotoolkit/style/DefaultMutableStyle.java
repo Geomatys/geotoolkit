@@ -116,7 +116,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
     }
 
     @Override
-    public void setDefaultSpecification(Symbolizer symbol){
+    public void setDefaultSpecification(final Symbolizer symbol){
         
         final Symbolizer oldSymbolizer;
         synchronized (this) {
@@ -143,7 +143,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
      * This method is thread safe.
      */
     @Override
-    public void setName(String name) {
+    public void setName(final String name) {
         final String oldName;
         synchronized (this) {
             oldName = this.name;
@@ -169,7 +169,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
      * @param desc : Description can't be null
      */
     @Override
-    public void setDescription(Description desc){
+    public void setDescription(final Description desc){
         if (desc == null) {
             throw new NullPointerException("description can't be null");
         }
@@ -199,7 +199,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
      * This method is thread safe.
      */
     @Override
-    public void setDefault(boolean isDefault){
+    public void setDefault(final boolean isDefault){
         final boolean oldIsDefault;
         synchronized (this) {
             oldIsDefault = this.isDefault;
@@ -215,7 +215,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -243,7 +243,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
     
-    protected void firePropertyChange(String propertyName, Object oldValue, Object newValue){
+    protected void firePropertyChange(final String propertyName, final Object oldValue, final Object newValue){
         //TODO make fire property change thread safe, preserve fire order
         
         final PropertyChangeEvent event = new PropertyChangeEvent(this,propertyName,oldValue,newValue);
@@ -255,7 +255,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
         
     }
     
-    protected void fireFeatureTypeStyleChange(int type, MutableFeatureTypeStyle fts, NumberRange<Integer> range) {
+    protected void fireFeatureTypeStyleChange(final int type, final MutableFeatureTypeStyle fts, final NumberRange<Integer> range) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableFeatureTypeStyle> event = new CollectionChangeEvent<MutableFeatureTypeStyle>(this, fts, type, range, null);
@@ -267,7 +267,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
 
     }
     
-    protected void fireFeatureTypeStyleChange(int type, MutableFeatureTypeStyle fts, NumberRange<Integer> range, EventObject subEvent) {
+    protected void fireFeatureTypeStyleChange(final int type, final MutableFeatureTypeStyle fts, final NumberRange<Integer> range, final EventObject subEvent) {
         //TODO make fire property change thread safe, preserve fire order
 
         final CollectionChangeEvent<MutableFeatureTypeStyle> event = new CollectionChangeEvent<MutableFeatureTypeStyle>(this, fts, type, range,subEvent);
@@ -279,7 +279,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
 
     }
     
-    protected void fireFeatureTypeStyleChange(int type, Collection<? extends MutableFeatureTypeStyle> fts, NumberRange<Integer> range){
+    protected void fireFeatureTypeStyleChange(final int type, final Collection<? extends MutableFeatureTypeStyle> fts, final NumberRange<Integer> range){
         //TODO make fire property change thread safe, preserve fire order
         
         final CollectionChangeEvent<MutableFeatureTypeStyle> event = new CollectionChangeEvent<MutableFeatureTypeStyle>(this,fts,type,range, null);
@@ -296,28 +296,28 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
     //--------------------------------------------------------------------------
 
     @Override
-    public void propertyChange(PropertyChangeEvent event) {
+    public void propertyChange(final PropertyChangeEvent event) {
         final int index = fts.indexOf(event.getSource());
         fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED,
                 (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
     }
 
     @Override
-    public void ruleChange(CollectionChangeEvent<MutableRule> event) {
+    public void ruleChange(final CollectionChangeEvent<MutableRule> event) {
         final int index = fts.indexOf(event.getSource());
         fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED,
                 (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
     }
 
     @Override
-    public void featureTypeNameChange(CollectionChangeEvent<Name> event) {
+    public void featureTypeNameChange(final CollectionChangeEvent<Name> event) {
         final int index = fts.indexOf(event.getSource());
         fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED,
                 (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
     }
 
     @Override
-    public void semanticTypeChange(CollectionChangeEvent<SemanticType> event) {
+    public void semanticTypeChange(final CollectionChangeEvent<SemanticType> event) {
         final int index = fts.indexOf(event.getSource());
         fireFeatureTypeStyleChange(CollectionChangeEvent.ITEM_CHANGED,
                 (MutableFeatureTypeStyle)event.getSource(), NumberRange.create(index, index), event);
@@ -328,7 +328,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
      * {@inheritDoc }
      */
     @Override
-    public void addListener(StyleListener listener){
+    public void addListener(final StyleListener listener){
         addListener((PropertyChangeListener)listener);
     }
 
@@ -336,7 +336,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
      * {@inheritDoc }
      */
     @Override
-    public void addListener(PropertyChangeListener listener){
+    public void addListener(final PropertyChangeListener listener){
         listeners.add(PropertyChangeListener.class, listener);
         if(listener instanceof StyleListener){
             listeners.add(StyleListener.class, (StyleListener)listener);
@@ -347,7 +347,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
      * {@inheritDoc }
      */
     @Override
-    public void removeListener(PropertyChangeListener listener){
+    public void removeListener(final PropertyChangeListener listener){
         listeners.remove(PropertyChangeListener.class, listener);
         if(listener instanceof StyleListener){
             listeners.remove(StyleListener.class, (StyleListener)listener);

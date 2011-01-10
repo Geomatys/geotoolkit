@@ -48,7 +48,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedPointSymbolizer>{
 
-    public DefaultPointSymbolizerRenderer(CachedPointSymbolizer symbol, RenderingContext2D context){
+    public DefaultPointSymbolizerRenderer(final CachedPointSymbolizer symbol, final RenderingContext2D context){
         super(symbol,context);
     }
 
@@ -56,7 +56,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
      * {@inheritDoc }
      */
     @Override
-    public void portray(ProjectedFeature projectedFeature) throws PortrayalException{
+    public void portray(final ProjectedFeature projectedFeature) throws PortrayalException{
 
         final Feature feature = projectedFeature.getFeature();
 
@@ -134,7 +134,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
     }
 
     @Override
-    public void portray(Iterator<ProjectedFeature> graphics) throws PortrayalException {
+    public void portray(final Iterator<ProjectedFeature> graphics) throws PortrayalException {
 
         g2d.setComposite(GO2Utilities.ALPHA_COMPOSITE_1F);
 
@@ -338,7 +338,7 @@ public class DefaultPointSymbolizerRenderer extends AbstractSymbolizerRenderer<C
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(ProjectedCoverage graphic, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(final ProjectedCoverage graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         return false;
     }
 

@@ -28,11 +28,11 @@ import org.geotoolkit.index.rtree.memory.MemoryPageStoreTest;
  * @module pending
  */
 public class IndexSuite extends TestCase {
-    public IndexSuite(String testName) {
+    public IndexSuite(final String testName) {
         super(testName);
     }
 
-    public static void main(java.lang.String[] args) {
+    public static void main(final java.lang.String[] args) {
         junit.textui.TestRunner.run(suite());
     }
 

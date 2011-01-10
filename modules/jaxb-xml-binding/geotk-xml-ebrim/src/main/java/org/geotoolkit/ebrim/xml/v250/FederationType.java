@@ -72,7 +72,7 @@ public class FederationType extends RegistryEntryType {
     /**
      * Sets the value of the members property.
      */
-    public void setMembers(ObjectRefListType value) {
+    public void setMembers(final ObjectRefListType value) {
         this.members = value;
     }
 
@@ -86,7 +86,7 @@ public class FederationType extends RegistryEntryType {
     /**
      * Sets the value of the replicationSyncLatency property.
      */
-    public void setReplicationSyncLatency(Duration value) {
+    public void setReplicationSyncLatency(final Duration value) {
         this.replicationSyncLatency = value;
     }
 

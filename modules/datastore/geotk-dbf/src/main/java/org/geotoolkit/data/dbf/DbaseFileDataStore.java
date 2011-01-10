@@ -70,7 +70,7 @@ public class DbaseFileDataStore extends AbstractDataStore{
 
     private SimpleFeatureType featureType;
 
-    public DbaseFileDataStore(File f, String namespace, String name){
+    public DbaseFileDataStore(final File f, final String namespace, final String name){
         super(namespace);
         this.file = f;
         this.name = name;
@@ -135,13 +135,13 @@ public class DbaseFileDataStore extends AbstractDataStore{
     }
 
     @Override
-    public FeatureType getFeatureType(Name typeName) throws DataStoreException {
+    public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
         typeCheck(typeName); //raise error is type doesnt exist
         return featureType;
     }
 
     @Override
-    public FeatureReader getFeatureReader(Query query) throws DataStoreException {
+    public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
         typeCheck(query.getTypeName()); //raise error is type doesnt exist
 
         final Hints hints = query.getHints();
@@ -157,22 +157,22 @@ public class DbaseFileDataStore extends AbstractDataStore{
     ////////////////////////////////////////////////////////////////////////////
 
     @Override
-    public FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException {
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
         throw new DataStoreException("Writing not supported");
     }
 
     @Override
-    public void createSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void createSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema creation not supported");
     }
 
     @Override
-    public void deleteSchema(Name typeName) throws DataStoreException {
+    public void deleteSchema(final Name typeName) throws DataStoreException {
         throw new DataStoreException("Schema deletion not supported");
     }
 
     @Override
-    public void updateSchema(Name typeName, FeatureType featureType) throws DataStoreException {
+    public void updateSchema(final Name typeName, final FeatureType featureType) throws DataStoreException {
         throw new DataStoreException("Schema update not supported");
     }
 
@@ -182,17 +182,17 @@ public class DbaseFileDataStore extends AbstractDataStore{
     }
 
     @Override
-    public List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException {
+    public List<FeatureId> addFeatures(final Name groupName, final Collection<? extends Feature> newFeatures) throws DataStoreException {
         return handleAddWithFeatureWriter(groupName, newFeatures);
     }
 
     @Override
-    public void updateFeatures(Name groupName, Filter filter, Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
+    public void updateFeatures(final Name groupName, final Filter filter, final Map<? extends PropertyDescriptor, ? extends Object> values) throws DataStoreException {
         handleUpdateWithFeatureWriter(groupName, filter, values);
     }
 
     @Override
-    public void removeFeatures(Name groupName, Filter filter) throws DataStoreException {
+    public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
         handleRemoveWithFeatureWriter(groupName, filter);
     }
 
@@ -205,7 +205,7 @@ public class DbaseFileDataStore extends AbstractDataStore{
         protected SimpleFeature current = null;
         protected int inc = 0;
 
-        private DBFFeatureReader(boolean reuseFeature) throws DataStoreException{
+        private DBFFeatureReader(final boolean reuseFeature) throws DataStoreException{
             RWLock.readLock().lock();
             sfb = new SimpleFeatureBuilder(featureType);
             if(reuseFeature){

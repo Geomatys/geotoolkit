@@ -82,7 +82,7 @@ public class CoordinateSystemRefType {
 
     }
 
-    public CoordinateSystemRefType(String href) {
+    public CoordinateSystemRefType(final String href) {
         this.href = href;
     }
 
@@ -98,7 +98,7 @@ public class CoordinateSystemRefType {
      * Sets the value of the coordinateSystem property.
      * 
      */
-    public void setCoordinateSystem(JAXBElement<? extends AbstractCoordinateSystemType> value) {
+    public void setCoordinateSystem(final JAXBElement<? extends AbstractCoordinateSystemType> value) {
         this.coordinateSystem = ((JAXBElement<? extends AbstractCoordinateSystemType> ) value);
     }
 
@@ -114,7 +114,7 @@ public class CoordinateSystemRefType {
      * Sets the value of the remoteSchema property.
      * 
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -134,7 +134,7 @@ public class CoordinateSystemRefType {
      * Sets the value of the type property.
      * 
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -150,7 +150,7 @@ public class CoordinateSystemRefType {
      * Sets the value of the href property.
      * 
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -166,7 +166,7 @@ public class CoordinateSystemRefType {
      * Sets the value of the role property.
      * 
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -182,7 +182,7 @@ public class CoordinateSystemRefType {
      * Sets the value of the arcrole property.
      * 
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -198,7 +198,7 @@ public class CoordinateSystemRefType {
      * Sets the value of the title property.
      * 
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -214,7 +214,7 @@ public class CoordinateSystemRefType {
      * Sets the value of the show property.
      * 
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -230,7 +230,7 @@ public class CoordinateSystemRefType {
      * Sets the value of the actuate property.
      * 
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

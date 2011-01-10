@@ -52,7 +52,7 @@ public enum ListItemTypeEnumType {
     CHECK_OFF_ONLY("checkOffOnly");
     private final String value;
 
-    ListItemTypeEnumType(String v) {
+    ListItemTypeEnumType(final String v) {
         value = v;
     }
 
@@ -60,7 +60,7 @@ public enum ListItemTypeEnumType {
         return value;
     }
 
-    public static ListItemTypeEnumType fromValue(String v) {
+    public static ListItemTypeEnumType fromValue(final String v) {
         for (ListItemTypeEnumType c: ListItemTypeEnumType.values()) {
             if (c.value.equals(v)) {
                 return c;

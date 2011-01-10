@@ -108,7 +108,7 @@ public class Appinfo {
      *     {@link String }
      *     
      */
-    public void setSource(String value) {
+    public void setSource(final String value) {
         this.source = value;
     }
 

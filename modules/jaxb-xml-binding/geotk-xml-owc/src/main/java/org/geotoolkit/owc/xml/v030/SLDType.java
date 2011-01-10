@@ -95,7 +95,7 @@ public class SLDType {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -119,7 +119,7 @@ public class SLDType {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -143,7 +143,7 @@ public class SLDType {
      *     {@link URLType }
      *     
      */
-    public void setLegendURL(URLType value) {
+    public void setLegendURL(final URLType value) {
         this.legendURL = value;
     }
 
@@ -167,7 +167,7 @@ public class SLDType {
      *     {@link OnlineResourceType }
      *     
      */
-    public void setOnlineResource(OnlineResourceType value) {
+    public void setOnlineResource(final OnlineResourceType value) {
         this.onlineResource = value;
     }
 
@@ -191,7 +191,7 @@ public class SLDType {
      *     {@link StyledLayerDescriptor }
      *     
      */
-    public void setStyledLayerDescriptor(StyledLayerDescriptor value) {
+    public void setStyledLayerDescriptor(final StyledLayerDescriptor value) {
         this.styledLayerDescriptor = value;
     }
 
@@ -215,7 +215,7 @@ public class SLDType {
      *     {@link FeatureTypeStyle }
      *     
      */
-    public void setFeatureTypeStyle(FeatureTypeStyle value) {
+    public void setFeatureTypeStyle(final FeatureTypeStyle value) {
         this.featureTypeStyle = value;
     }
 

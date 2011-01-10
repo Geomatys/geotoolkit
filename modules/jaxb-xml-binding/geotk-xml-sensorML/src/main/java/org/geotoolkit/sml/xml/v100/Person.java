@@ -94,7 +94,7 @@ public class Person implements AbstractPerson {
 
     }
 
-    public Person(AbstractPerson person) {
+    public Person(final AbstractPerson person) {
         if (person != null) {
             this.affiliation = person.getAffiliation();
             this.email       = person.getEmail();
@@ -116,7 +116,7 @@ public class Person implements AbstractPerson {
     /**
      * Sets the value of the surname property.
      */
-    public void setSurname(String value) {
+    public void setSurname(final String value) {
         this.surname = value;
     }
 
@@ -130,7 +130,7 @@ public class Person implements AbstractPerson {
     /**
      * Sets the value of the name property.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -144,7 +144,7 @@ public class Person implements AbstractPerson {
     /**
      * Sets the value of the userID property.
      */
-    public void setUserID(String value) {
+    public void setUserID(final String value) {
         this.userID = value;
     }
 
@@ -158,7 +158,7 @@ public class Person implements AbstractPerson {
     /**
      * Sets the value of the affiliation property.
      */
-    public void setAffiliation(String value) {
+    public void setAffiliation(final String value) {
         this.affiliation = value;
     }
 
@@ -172,7 +172,7 @@ public class Person implements AbstractPerson {
     /**
      * Sets the value of the phoneNumber property.
      */
-    public void setPhoneNumber(String value) {
+    public void setPhoneNumber(final String value) {
         this.phoneNumber = value;
     }
 
@@ -186,7 +186,7 @@ public class Person implements AbstractPerson {
     /**
      * Sets the value of the email property.
      */
-    public void setEmail(String value) {
+    public void setEmail(final String value) {
         this.email = value;
     }
 
@@ -200,7 +200,7 @@ public class Person implements AbstractPerson {
     /**
      * Sets the value of the id property.
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 

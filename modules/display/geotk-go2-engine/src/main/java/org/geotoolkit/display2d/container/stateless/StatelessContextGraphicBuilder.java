@@ -36,7 +36,7 @@ public class StatelessContextGraphicBuilder implements ContextGraphicBuilder{
      * {@inheritDoc }
      */
     @Override
-    public Collection<? extends GraphicJ2D> createGraphics(J2DCanvas canvas, MapContext context) {
+    public Collection<? extends GraphicJ2D> createGraphics(final J2DCanvas canvas, final MapContext context) {
         return Collections.singleton(new StatelessMapItemJ2D(canvas, context));
     }
 

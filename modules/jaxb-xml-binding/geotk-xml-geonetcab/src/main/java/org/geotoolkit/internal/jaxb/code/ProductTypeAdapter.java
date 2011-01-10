@@ -58,7 +58,7 @@ public final class ProductTypeAdapter extends CodeListAdapter<ProductTypeAdapter
      * {@inheritDoc}
      */
     @Override
-    protected ProductTypeAdapter wrap(CodeListProxy proxy) {
+    protected ProductTypeAdapter wrap(final CodeListProxy proxy) {
         return new ProductTypeAdapter(proxy);
     }
 

@@ -81,7 +81,7 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
 
         private final T type;
 
-        private GenericEmptyFeatureReader(T type){
+        private GenericEmptyFeatureReader(final T type){
             this.type = type;
         }
         
@@ -104,7 +104,7 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
 
         private final T type;
 
-        private GenericEmptyFeatureWriter(T type){
+        private GenericEmptyFeatureWriter(final T type){
             this.type = type;
         }
 
@@ -123,7 +123,7 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
      * Create an empty FeatureReader of the given type.
      * @param type FeatureType can be null
      */
-    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> createReader(T type){
+    public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> createReader(final T type){
         return new GenericEmptyFeatureReader<T,F>(type);
     }
 
@@ -131,7 +131,7 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
      * Create an empty FeatureWriter of the given type.
      * @param type FeatureType can be null
      */
-    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> createWriter(T type){
+    public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> createWriter(final T type){
         return new GenericEmptyFeatureWriter<T,F>(type);
     }
 

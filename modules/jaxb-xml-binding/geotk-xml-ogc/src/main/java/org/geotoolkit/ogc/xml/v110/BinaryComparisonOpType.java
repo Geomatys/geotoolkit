@@ -79,7 +79,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
     /**
      * Build a new Binary comparison operator
      */
-    public BinaryComparisonOpType(List<JAXBElement<?>> expression, Boolean matchCase) {
+    public BinaryComparisonOpType(final List<JAXBElement<?>> expression, final Boolean matchCase) {
         this.expression = expression;
         this.matchCase = matchCase;
     }
@@ -87,7 +87,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
     /**
      * Build a new Binary comparison operator
      */
-    public BinaryComparisonOpType(LiteralType literal, PropertyNameType propertyName, Boolean matchCase) {
+    public BinaryComparisonOpType(final LiteralType literal, final PropertyNameType propertyName, final Boolean matchCase) {
         if (this.expression == null) {
             this.expression = new ArrayList<JAXBElement<?>>();
         }
@@ -168,17 +168,17 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
     /**
      * sets the value of the matchCase property.
      */
-    public void setMatchCase(Boolean matchCase) {
+    public void setMatchCase(final Boolean matchCase) {
         this.matchCase = matchCase;
     }
 
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -213,7 +213,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
         return null;
     }
 
-    public void setLiteral(LiteralType literal) {
+    public void setLiteral(final LiteralType literal) {
         this.expression.add(FACTORY.createLiteral(literal));
     }
 
@@ -226,7 +226,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
         return null;
     }
 
-    public void setExpressionType(ExpressionType expression) {
+    public void setExpressionType(final ExpressionType expression) {
         this.expression.add(FACTORY.createExpression(expression));
     }
 
@@ -250,7 +250,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
         return null;
     }
 
-    public void setPropertyName(String propertyName) {
+    public void setPropertyName(final String propertyName) {
         expression.add(FACTORY.createPropertyName(new PropertyNameType(propertyName)));
     }
 

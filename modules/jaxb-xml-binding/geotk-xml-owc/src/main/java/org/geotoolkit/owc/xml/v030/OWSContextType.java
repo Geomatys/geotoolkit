@@ -84,7 +84,7 @@ public class OWSContextType {
      *     {@link GeneralType }
      *     
      */
-    public void setGeneral(GeneralType value) {
+    public void setGeneral(final GeneralType value) {
         this.general = value;
     }
 
@@ -108,7 +108,7 @@ public class OWSContextType {
      *     {@link ResourceListType }
      *     
      */
-    public void setResourceList(ResourceListType value) {
+    public void setResourceList(final ResourceListType value) {
         this.resourceList = value;
     }
 
@@ -136,7 +136,7 @@ public class OWSContextType {
      *     {@link String }
      *     
      */
-    public void setVersion(String value) {
+    public void setVersion(final String value) {
         this.version = value;
     }
 
@@ -160,7 +160,7 @@ public class OWSContextType {
      *     {@link String }
      *     
      */
-    public void setId(String value) {
+    public void setId(final String value) {
         this.id = value;
     }
 }

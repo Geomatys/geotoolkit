@@ -50,11 +50,11 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
 
     private MathTransform transform = null;
 
-    public InPlaceCoordinateSequenceTransformer(MathTransform transform){
+    public InPlaceCoordinateSequenceTransformer(final MathTransform transform){
 
     }
 
-    public void setTransform(MathTransform transform) {
+    public void setTransform(final MathTransform transform) {
         this.transform = transform;
     }
 
@@ -66,7 +66,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
      * {@inheritDoc }
      */
     @Override
-    public CoordinateSequence transform( CoordinateSequence cs, int minpoints) throws TransformException {
+    public CoordinateSequence transform( final CoordinateSequence cs, final int minpoints) throws TransformException {
         if( cs instanceof PackedCoordinateSequence ){
             return transformInternal( (PackedCoordinateSequence) cs, transform);
         }
@@ -74,7 +74,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
     }
 
     FlyWeightDirectPosition start=new FlyWeightDirectPosition(2);
-    private CoordinateSequence transformInternal( PackedCoordinateSequence sequence, MathTransform transform ) 
+    private CoordinateSequence transformInternal( final PackedCoordinateSequence sequence, final MathTransform transform ) 
     throws TransformException{
         
         start.setSequence(sequence);   
@@ -98,21 +98,21 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
          * Construct <code>InPlaceCoordinateSequenceTransformer.FlyWeightDirectPosition</code>.
          *
          */
-        public FlyWeightDirectPosition(int dim) {
+        public FlyWeightDirectPosition(final int dim) {
             dimension=dim;
         }
         
         /**
          * @param offset The offset to set.
          */
-        public void setOffset( int offset ) {
+        public void setOffset( final int offset ) {
             this.offset = offset;
         }
         
         /**
          * @param sequence The sequence to set.
          */
-        public void setSequence( PackedCoordinateSequence sequence ) {
+        public void setSequence( final PackedCoordinateSequence sequence ) {
             this.sequence = sequence;
         }
         
@@ -144,7 +144,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
          * {@inheritDoc }
          */
         @Override
-        public double getOrdinate( int arg0 ) throws IndexOutOfBoundsException {
+        public double getOrdinate( final int arg0 ) throws IndexOutOfBoundsException {
             return sequence.getOrdinate(offset, arg0);
         }
 
@@ -152,7 +152,7 @@ public class InPlaceCoordinateSequenceTransformer implements CoordinateSequenceT
          * {@inheritDoc }
          */
         @Override
-        public void setOrdinate( int arg0, double arg1 ) throws IndexOutOfBoundsException {
+        public void setOrdinate( final int arg0, final double arg1 ) throws IndexOutOfBoundsException {
             sequence.setOrdinate(offset, arg0, arg1);
         }
 

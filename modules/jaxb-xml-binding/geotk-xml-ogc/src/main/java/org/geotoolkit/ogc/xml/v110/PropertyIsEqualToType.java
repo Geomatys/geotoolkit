@@ -40,7 +40,7 @@ public class PropertyIsEqualToType extends BinaryComparisonOpType implements Pro
     /**
      * Build a new Binary comparison operator
      */
-    public PropertyIsEqualToType(LiteralType literal, PropertyNameType propertyName, Boolean matchCase) {
+    public PropertyIsEqualToType(final LiteralType literal, final PropertyNameType propertyName, final Boolean matchCase) {
         super(literal, propertyName, matchCase);
     }
 

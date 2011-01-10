@@ -46,7 +46,7 @@ public abstract class DefaultTemporalGeometricPrimitive extends DefaultTemporalP
      * @return Duration between this geometry and the given one.
      */
     @Override
-    public Duration distance(TemporalGeometricPrimitive other) {
+    public Duration distance(final TemporalGeometricPrimitive other) {
         Duration response = null;
         long diff = 0L;
 

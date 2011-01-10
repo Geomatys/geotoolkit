@@ -99,7 +99,7 @@ public class PhotoOverlayType extends AbstractOverlayType {
      *     {@link Double }
      *     
      */
-    public void setRotation(Double value) {
+    public void setRotation(final Double value) {
         this.rotation = value;
     }
 
@@ -123,7 +123,7 @@ public class PhotoOverlayType extends AbstractOverlayType {
      *     {@link ViewVolumeType }
      *     
      */
-    public void setViewVolume(ViewVolumeType value) {
+    public void setViewVolume(final ViewVolumeType value) {
         this.viewVolume = value;
     }
 
@@ -147,7 +147,7 @@ public class PhotoOverlayType extends AbstractOverlayType {
      *     {@link ImagePyramidType }
      *     
      */
-    public void setImagePyramid(ImagePyramidType value) {
+    public void setImagePyramid(final ImagePyramidType value) {
         this.imagePyramid = value;
     }
 
@@ -171,7 +171,7 @@ public class PhotoOverlayType extends AbstractOverlayType {
      *     {@link PointType }
      *     
      */
-    public void setPoint(PointType value) {
+    public void setPoint(final PointType value) {
         this.point = value;
     }
 
@@ -195,7 +195,7 @@ public class PhotoOverlayType extends AbstractOverlayType {
      *     {@link ShapeEnumType }
      *     
      */
-    public void setShape(ShapeEnumType value) {
+    public void setShape(final ShapeEnumType value) {
         this.shape = value;
     }
 

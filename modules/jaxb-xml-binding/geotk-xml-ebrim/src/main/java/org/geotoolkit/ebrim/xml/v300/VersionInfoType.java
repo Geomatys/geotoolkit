@@ -64,7 +64,7 @@ public class VersionInfoType {
     /**
      * Sets the value of the versionName property.
      */
-    public void setVersionName(String value) {
+    public void setVersionName(final String value) {
         this.versionName = value;
     }
 
@@ -78,7 +78,7 @@ public class VersionInfoType {
     /**
      * Sets the value of the comment property.
      */
-    public void setComment(String value) {
+    public void setComment(final String value) {
         this.comment = value;
     }
 

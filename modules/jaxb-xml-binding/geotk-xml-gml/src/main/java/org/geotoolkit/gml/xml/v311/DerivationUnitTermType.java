@@ -69,7 +69,7 @@ public class DerivationUnitTermType extends UnitOfMeasureType {
      *     {@link Integer }
      *     
      */
-    public void setExponent(Integer value) {
+    public void setExponent(final Integer value) {
         this.exponent = value;
     }
 

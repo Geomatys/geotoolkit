@@ -88,7 +88,7 @@ public class SupportedCRSsType {
      *     {@link SupportedCRSsType.Default }
      *     
      */
-    public void setDefault(SupportedCRSsType.Default value) {
+    public void setDefault(final SupportedCRSsType.Default value) {
         this._default = value;
     }
 
@@ -112,7 +112,7 @@ public class SupportedCRSsType {
      *     {@link CRSsType }
      *     
      */
-    public void setSupported(CRSsType value) {
+    public void setSupported(final CRSsType value) {
         this.supported = value;
     }
 
@@ -166,7 +166,7 @@ public class SupportedCRSsType {
          *     {@link String }
          *     
          */
-        public void setCRS(String value) {
+        public void setCRS(final String value) {
             this.crs = value;
         }
 

@@ -82,7 +82,7 @@ public class DescriptionType implements AbstractDescription {
      /**
      * Build a new description
      */
-     public DescriptionType(String title, String _abstract,  List<KeywordsType> keywords) {
+     public DescriptionType(final String title, final String _abstract,  final List<KeywordsType> keywords) {
          this._abstract = _abstract;
          this.title     = title;
          this.keywords  = keywords;
@@ -91,7 +91,7 @@ public class DescriptionType implements AbstractDescription {
       /**
      * Build a new description
      */
-     public DescriptionType(String title, String _abstract,  KeywordsType keywords) {
+     public DescriptionType(final String title, final String _abstract,  final KeywordsType keywords) {
          this._abstract = _abstract;
          this.title     = title;
          this.keywords  = new ArrayList<KeywordsType>();
@@ -105,7 +105,7 @@ public class DescriptionType implements AbstractDescription {
         return title;
     }
     
-    public void setTitle(String title) {
+    public void setTitle(final String title) {
         this.title = title;
     }
 
@@ -120,7 +120,7 @@ public class DescriptionType implements AbstractDescription {
         return _abstract;
     }
 
-    public void setAbstract(String _abstract) {
+    public void setAbstract(final String _abstract) {
         this._abstract = _abstract;
     }
 

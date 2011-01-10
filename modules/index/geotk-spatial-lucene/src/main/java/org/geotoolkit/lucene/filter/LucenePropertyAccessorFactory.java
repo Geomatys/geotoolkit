@@ -45,7 +45,7 @@ public class LucenePropertyAccessorFactory implements PropertyAccessorFactory{
      * {@inheritDoc }
      */
     @Override
-    public PropertyAccessor createPropertyAccessor(Class type, String xpath, Class target, Hints hints) {
+    public PropertyAccessor createPropertyAccessor(final Class type, final String xpath, final Class target, final Hints hints) {
 
         if (!Document.class.isAssignableFrom(type)) {
             return null; // we only work with lucene document

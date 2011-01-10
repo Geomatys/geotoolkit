@@ -36,7 +36,7 @@ public class JTSBearing implements Bearing {
     
     private final double[] direction;
     
-    public JTSBearing(double[] angles, double[] direction) {
+    public JTSBearing(final double[] angles, final double[] direction) {
         this.angles = angles;
         this.direction = direction;
     }

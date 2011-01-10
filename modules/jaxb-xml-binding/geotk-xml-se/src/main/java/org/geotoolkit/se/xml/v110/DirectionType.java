@@ -46,7 +46,7 @@ public enum DirectionType {
     TO_LOWER("toLower");
     private final String value;
 
-    DirectionType(String v) {
+    DirectionType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum DirectionType {
         return value;
     }
 
-    public static DirectionType fromValue(String v) {
+    public static DirectionType fromValue(final String v) {
         for (DirectionType c: DirectionType.values()) {
             if (c.value.equals(v)) {
                 return c;

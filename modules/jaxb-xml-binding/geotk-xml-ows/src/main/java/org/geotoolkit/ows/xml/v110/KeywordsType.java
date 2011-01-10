@@ -70,7 +70,7 @@ public class KeywordsType implements AbstractKeywords {
     /**
      * Build a new list of keywords.
      */
-    public KeywordsType(List<String> keyword){
+    public KeywordsType(final List<String> keyword){
         this.keyword = new ArrayList<LanguageStringType>();
         if (keyword != null) {
             for (String k : keyword){
@@ -82,7 +82,7 @@ public class KeywordsType implements AbstractKeywords {
     /**
      * Build a new list of keywords.
      */
-    public KeywordsType(List<LanguageStringType> keyword, CodeType type){
+    public KeywordsType(final List<LanguageStringType> keyword, final CodeType type){
         this.keyword = keyword;
         this.type    = type;
     }
@@ -91,7 +91,7 @@ public class KeywordsType implements AbstractKeywords {
      * Build a simple list of keywords without type.
      * all the element of the list are in the parameters. 
      */
-    public KeywordsType(LanguageStringType... keywords){
+    public KeywordsType(final LanguageStringType... keywords){
         this.keyword = new ArrayList<LanguageStringType>();
         for (LanguageStringType element: keywords){
             keyword.add(element);
@@ -127,7 +127,7 @@ public class KeywordsType implements AbstractKeywords {
         return type;
     }
 
-    public void setType(CodeType code) {
+    public void setType(final CodeType code) {
         this.type = code;
     }
     

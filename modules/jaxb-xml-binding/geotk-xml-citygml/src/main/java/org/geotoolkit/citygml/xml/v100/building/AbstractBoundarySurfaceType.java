@@ -103,7 +103,7 @@ public abstract class AbstractBoundarySurfaceType extends AbstractCityObjectType
      *     {@link MultiSurfacePropertyType }
      *     
      */
-    public void setLod2MultiSurface(MultiSurfacePropertyType value) {
+    public void setLod2MultiSurface(final MultiSurfacePropertyType value) {
         this.lod2MultiSurface = value;
     }
 
@@ -127,7 +127,7 @@ public abstract class AbstractBoundarySurfaceType extends AbstractCityObjectType
      *     {@link MultiSurfacePropertyType }
      *     
      */
-    public void setLod3MultiSurface(MultiSurfacePropertyType value) {
+    public void setLod3MultiSurface(final MultiSurfacePropertyType value) {
         this.lod3MultiSurface = value;
     }
 
@@ -151,7 +151,7 @@ public abstract class AbstractBoundarySurfaceType extends AbstractCityObjectType
      *     {@link MultiSurfacePropertyType }
      *     
      */
-    public void setLod4MultiSurface(MultiSurfacePropertyType value) {
+    public void setLod4MultiSurface(final MultiSurfacePropertyType value) {
         this.lod4MultiSurface = value;
     }
 

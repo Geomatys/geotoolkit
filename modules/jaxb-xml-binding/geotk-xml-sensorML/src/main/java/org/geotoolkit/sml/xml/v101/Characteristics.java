@@ -96,12 +96,12 @@ public class Characteristics implements AbstractCharacteristics {
 
     }
 
-    public Characteristics(DataRecordType dataRecord) {
+    public Characteristics(final DataRecordType dataRecord) {
         org.geotoolkit.swe.xml.v101.ObjectFactory facto = new org.geotoolkit.swe.xml.v101.ObjectFactory();
         this.abstractDataRecord = facto.createDataRecord(dataRecord);
     }
     
-    public Characteristics(AbstractCharacteristics capa) {
+    public Characteristics(final AbstractCharacteristics capa) {
         if (capa != null) {
             if (capa.getDataRecord() != null) {
                 AbstractDataRecord record = capa.getDataRecord();
@@ -171,7 +171,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public void setAbstractDataRecord(JAXBElement<? extends AbstractDataRecordEntry> value) {
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordEntry> value) {
         this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordEntry> ) value);
     }
 
@@ -195,7 +195,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link String }
      *     
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 
@@ -219,7 +219,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link String }
      *     
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -243,7 +243,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -267,7 +267,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link String }
      *     
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -291,7 +291,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link String }
      *     
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -315,7 +315,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link String }
      *     
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -339,7 +339,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link String }
      *     
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -363,7 +363,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link String }
      *     
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -387,7 +387,7 @@ public class Characteristics implements AbstractCharacteristics {
      *     {@link String }
      *     
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 

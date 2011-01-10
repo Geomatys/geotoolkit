@@ -36,14 +36,14 @@ public class EqualsType extends BinarySpatialOpType implements Equals {
     /**
      * Build a new Equals (spatial) Type
      */
-    public EqualsType(String propertyName, AbstractGeometryType geometry) {
+    public EqualsType(final String propertyName, final AbstractGeometryType geometry) {
         super(propertyName, geometry);
     }
     
     /**
      * Build a new Equals (spatial) Type
      */
-    public EqualsType(PropertyNameType propertyName, Object geometry) {
+    public EqualsType(final PropertyNameType propertyName, final Object geometry) {
         super(propertyName, geometry);
     }
 

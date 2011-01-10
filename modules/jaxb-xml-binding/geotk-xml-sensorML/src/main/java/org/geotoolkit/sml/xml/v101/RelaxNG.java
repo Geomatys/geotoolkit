@@ -56,7 +56,7 @@ public class RelaxNG extends RuleLanguageType implements AbstractRelaxNG {
 
     }
 
-    public RelaxNG(AbstractRelaxNG rn) {
+    public RelaxNG(final AbstractRelaxNG rn) {
         if (rn != null && rn.getAny() != null) {
             this.any = rn.getAny();
         }
@@ -84,7 +84,7 @@ public class RelaxNG extends RuleLanguageType implements AbstractRelaxNG {
      *     {@link Object }
      *     
      */
-    public void setAny(Object value) {
+    public void setAny(final Object value) {
         this.any = value;
     }
 

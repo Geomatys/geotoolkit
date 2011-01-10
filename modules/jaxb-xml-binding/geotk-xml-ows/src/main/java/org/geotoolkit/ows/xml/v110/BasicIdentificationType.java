@@ -76,7 +76,7 @@ public class BasicIdentificationType extends DescriptionType {
     /**
      * Sets the value of the identifier property.
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 

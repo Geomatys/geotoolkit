@@ -22,7 +22,7 @@ import org.geotoolkit.jdbc.JDBCTestSetup;
 
 public class PostgisDataStoreAPITestSetup extends JDBCDataStoreAPITestSetup {
 
-    public PostgisDataStoreAPITestSetup(JDBCTestSetup delegate) {
+    public PostgisDataStoreAPITestSetup(final JDBCTestSetup delegate) {
         super(delegate);
     }
 

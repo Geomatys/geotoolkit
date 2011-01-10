@@ -35,7 +35,7 @@ public class DWithinType extends DistanceBufferType implements DWithin {
     /**
      * Build a new DWithin Filter
      */
-    public DWithinType(String propertyName, AbstractGeometryType geometry, double distance, String unit) {
+    public DWithinType(final String propertyName, final AbstractGeometryType geometry, final double distance, final String unit) {
         super(propertyName, geometry, distance, unit);
     }
 

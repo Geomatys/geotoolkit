@@ -35,7 +35,7 @@ public class DefaultColorReplacement implements ColorReplacement{
      *
      * @param recode : can not be null.
      */
-    public DefaultColorReplacement(Function recode){
+    public DefaultColorReplacement(final Function recode){
         if(recode == null){
             throw new NullPointerException("A color replacement must define a function");
         }
@@ -54,7 +54,7 @@ public class DefaultColorReplacement implements ColorReplacement{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -62,7 +62,7 @@ public class DefaultColorReplacement implements ColorReplacement{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

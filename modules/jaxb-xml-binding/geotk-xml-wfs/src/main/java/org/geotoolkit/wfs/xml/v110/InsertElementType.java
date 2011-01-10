@@ -77,12 +77,12 @@ public class InsertElementType {
 
     }
 
-    public InsertElementType(Object feature) {
+    public InsertElementType(final Object feature) {
          this.feature = new ArrayList<Object>();
          this.feature.add(feature);
     }
 
-    public InsertElementType(List<Object> feature) {
+    public InsertElementType(final List<Object> feature) {
          this.feature = feature;
     }
 
@@ -120,7 +120,7 @@ public class InsertElementType {
      *     {@link IdentifierGenerationOptionType }
      *     
      */
-    public void setIdgen(IdentifierGenerationOptionType value) {
+    public void setIdgen(final IdentifierGenerationOptionType value) {
         this.idgen = value;
     }
 
@@ -144,7 +144,7 @@ public class InsertElementType {
      *     {@link String }
      *     
      */
-    public void setHandle(String value) {
+    public void setHandle(final String value) {
         this.handle = value;
     }
 
@@ -172,7 +172,7 @@ public class InsertElementType {
      *     {@link String }
      *     
      */
-    public void setInputFormat(String value) {
+    public void setInputFormat(final String value) {
         this.inputFormat = value;
     }
 
@@ -196,7 +196,7 @@ public class InsertElementType {
      *     {@link String }
      *     
      */
-    public void setSrsName(String value) {
+    public void setSrsName(final String value) {
         this.srsName = value;
     }
 

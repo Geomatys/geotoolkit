@@ -27,7 +27,7 @@ import org.geotoolkit.data.wfs.AbstractDescribeFeatureType;
  */
 public class DescribeFeatureType110 extends AbstractDescribeFeatureType{
 
-    public DescribeFeatureType110(String serverURL){
+    public DescribeFeatureType110(final String serverURL){
         super(serverURL,"1.1.0");
     }
 }

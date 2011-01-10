@@ -63,7 +63,7 @@ public class FederationType extends RegistryObjectType {
     /**
      * Sets the value of the replicationSyncLatency property.
      */
-    public void setReplicationSyncLatency(Duration value) {
+    public void setReplicationSyncLatency(final Duration value) {
         this.replicationSyncLatency = value;
     }
 

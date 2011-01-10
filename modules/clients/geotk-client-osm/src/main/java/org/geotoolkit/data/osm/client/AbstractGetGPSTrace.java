@@ -41,7 +41,7 @@ public abstract class AbstractGetGPSTrace extends AbstractRequest implements Get
      *
      * @param serverURL The server url.
      */
-    protected AbstractGetGPSTrace(final String serverURL, String subpath){
+    protected AbstractGetGPSTrace(final String serverURL, final String subpath){
         super(serverURL, subpath);
     }
 
@@ -49,7 +49,7 @@ public abstract class AbstractGetGPSTrace extends AbstractRequest implements Get
      * {@inheritDoc }
      */
     @Override
-    public void setEnvelope(Envelope env) {
+    public void setEnvelope(final Envelope env) {
         this.envelope = env;
     }
 
@@ -65,7 +65,7 @@ public abstract class AbstractGetGPSTrace extends AbstractRequest implements Get
      * {@inheritDoc }
      */
     @Override
-    public void setPage(int page) {
+    public void setPage(final int page) {
         this.page = page;
     }
 

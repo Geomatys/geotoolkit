@@ -78,16 +78,16 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener{
     // item listener------------------------------------------------------------
     //--------------------------------------------------------------------------
 
-    protected void registerListenerSource(MapItem item){
+    protected void registerListenerSource(final MapItem item){
         itemListener.registerSource(item);
     }
 
-    protected void unregisterListenerSource(MapItem item){
+    protected void unregisterListenerSource(final MapItem item){
         itemListener.unregisterSource(item);
     }
 
     @Override
-    public void itemChange(CollectionChangeEvent<MapItem> evt) {
+    public void itemChange(final CollectionChangeEvent<MapItem> evt) {
         final MapItem source = (MapItem) evt.getSource();
         final int index = items.indexOf(source);
         fireItemChange(CollectionChangeEvent.ITEM_CHANGED,source,
@@ -95,7 +95,7 @@ class DefaultMapItem extends AbstractMapItem implements ItemListener{
     }
 
     @Override
-    public void propertyChange(PropertyChangeEvent evt) {
+    public void propertyChange(final PropertyChangeEvent evt) {
         final MapItem source = (MapItem) evt.getSource();
         final int index = items.indexOf(source);
         fireItemChange(CollectionChangeEvent.ITEM_CHANGED,source,

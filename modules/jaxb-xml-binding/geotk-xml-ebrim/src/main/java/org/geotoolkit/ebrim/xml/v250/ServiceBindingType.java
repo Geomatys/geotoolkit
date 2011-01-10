@@ -82,7 +82,7 @@ public class ServiceBindingType extends RegistryObjectType {
     /**
      * Sets the value of the specificationLink property.
      */
-    public void setSpecificationLink(SpecificationLinkType specification) {
+    public void setSpecificationLink(final SpecificationLinkType specification) {
         if (this.specificationLink == null) {
             this.specificationLink = new ArrayList<SpecificationLinkType>();
         }
@@ -92,7 +92,7 @@ public class ServiceBindingType extends RegistryObjectType {
     /**
      * Sets the value of the specificationLink property.
      */
-    public void setSpecificationLink(List<SpecificationLinkType> specification) {
+    public void setSpecificationLink(final List<SpecificationLinkType> specification) {
         this.specificationLink = specification;
     }
 
@@ -106,7 +106,7 @@ public class ServiceBindingType extends RegistryObjectType {
     /**
      * Sets the value of the service property.
      */
-    public void setService(String value) {
+    public void setService(final String value) {
         this.service = value;
     }
 
@@ -120,7 +120,7 @@ public class ServiceBindingType extends RegistryObjectType {
     /**
      * Sets the value of the accessURI property.
      */
-    public void setAccessURI(String value) {
+    public void setAccessURI(final String value) {
         this.accessURI = value;
     }
 
@@ -134,7 +134,7 @@ public class ServiceBindingType extends RegistryObjectType {
     /**
      * Sets the value of the targetBinding property.
      */
-    public void setTargetBinding(String value) {
+    public void setTargetBinding(final String value) {
         this.targetBinding = value;
     }
 

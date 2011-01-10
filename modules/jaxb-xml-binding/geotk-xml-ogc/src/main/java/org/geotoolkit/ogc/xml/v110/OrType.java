@@ -40,7 +40,7 @@ public class OrType extends  BinaryLogicOpType implements Or  {
      /**
       * Build a new Binary logic operator 
       */
-     public OrType(Object... operators) {
+     public OrType(final Object... operators) {
          super(operators);
          
      }

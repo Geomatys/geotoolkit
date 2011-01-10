@@ -84,7 +84,7 @@ public class ExtentType {
      * Sets the value of the description property.
      * 
     */
-    public void setDescription(StringOrRefType value) {
+    public void setDescription(final StringOrRefType value) {
         this.description = value;
     }
 

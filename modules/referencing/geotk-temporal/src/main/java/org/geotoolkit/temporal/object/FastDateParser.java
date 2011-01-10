@@ -70,7 +70,7 @@ public class FastDateParser {
         calendar.set(Calendar.MILLISECOND, 0);
     }
 
-    private void parse(String date) {
+    private void parse(final String date) {
 
         //start and end index of the current block.
         final TimeZone[] bufferTZ = new TimeZone[1];
@@ -189,7 +189,7 @@ public class FastDateParser {
      * First object is the time zone, second is start index of the 
      * time zone or the end of the string.
      */
-    private int searchTimeZone(String date, int index2, TimeZone[] buffer){
+    private int searchTimeZone(final String date, final int index2, final TimeZone[] buffer){
         int index1;
 
         if((index1 = date.indexOf('Z', index2)) > 0){ //search a Z, GMT+0
@@ -214,17 +214,17 @@ public class FastDateParser {
      * @return the calendar used by this parser : this calendar
      * will be reused if another parser call is done.
      */
-    public Calendar getCalendar(String str) {
+    public Calendar getCalendar(final String str) {
         parse(str);
         return calendar;
     }
 
-    public Date parseToDate(String str) {
+    public Date parseToDate(final String str) {
         parse(str);
         return calendar.getTime();
     }
 
-    public long parseToMillis(String str) {
+    public long parseToMillis(final String str) {
         parse(str);
         return calendar.getTimeInMillis();
     }

@@ -115,7 +115,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
      * @param schemaLocation The main xsd schema location for all the returned xml.
      * @return
      */
-    public static Map<String, String> getProperties(String rootNamespace) {
+    public static Map<String, String> getProperties(final String rootNamespace) {
         final Map<String, String> properties = new HashMap<String, String>();
         properties.put(ROOT_NAMESPACE_KEY, rootNamespace);
         return properties;
@@ -131,7 +131,7 @@ public class AnchoredMarshallerPool extends MarshallerPool {
     }
 
     @Override
-    public void addAnchor(String text, URI uri) {
+    public void addAnchor(final String text, final URI uri) {
         super.addAnchor(text, uri);
     }
 }

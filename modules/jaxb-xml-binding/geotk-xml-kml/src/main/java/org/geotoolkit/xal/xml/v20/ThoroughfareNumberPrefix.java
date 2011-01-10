@@ -92,7 +92,7 @@ public class ThoroughfareNumberPrefix {
      *     {@link String }
      *     
      */
-    public void setContent(String value) {
+    public void setContent(final String value) {
         this.content = value;
     }
 
@@ -116,7 +116,7 @@ public class ThoroughfareNumberPrefix {
      *     {@link String }
      *     
      */
-    public void setNumberPrefixSeparator(String value) {
+    public void setNumberPrefixSeparator(final String value) {
         this.numberPrefixSeparator = value;
     }
 
@@ -140,7 +140,7 @@ public class ThoroughfareNumberPrefix {
      *     {@link String }
      *     
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
@@ -164,7 +164,7 @@ public class ThoroughfareNumberPrefix {
      *     {@link String }
      *     
      */
-    public void setCode(String value) {
+    public void setCode(final String value) {
         this.code = value;
     }
 

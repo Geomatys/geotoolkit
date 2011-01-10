@@ -46,7 +46,7 @@ public enum MethodType {
     COLOR("color");
     private final String value;
 
-    MethodType(String v) {
+    MethodType(final String v) {
         value = v;
     }
 
@@ -54,7 +54,7 @@ public enum MethodType {
         return value;
     }
 
-    public static MethodType fromValue(String v) {
+    public static MethodType fromValue(final String v) {
         for (MethodType c: MethodType.values()) {
             if (c.value.equals(v)) {
                 return c;

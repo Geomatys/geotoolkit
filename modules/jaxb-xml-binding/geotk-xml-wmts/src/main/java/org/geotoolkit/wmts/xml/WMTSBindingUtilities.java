@@ -43,7 +43,7 @@ import org.xml.sax.InputSource;
  */
  public class WMTSBindingUtilities {
 
-     public static Capabilities unmarshall(Object source, WMTSVersion version) throws JAXBException{
+     public static Capabilities unmarshall(final Object source, final WMTSVersion version) throws JAXBException{
          
          Unmarshaller unMarshaller   = null;
          try {

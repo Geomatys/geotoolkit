@@ -53,7 +53,7 @@ final class GenericIterator extends PointIterator {
     /**
      * Construit un it�rateur qui balaiera la plage sp�cifi�e d'un tableau de donn�es.
      */
-    public GenericIterator(GenericArray.Vector x, GenericArray.Vector y, int lower, int upper) {
+    public GenericIterator(final GenericArray.Vector x, final GenericArray.Vector y, final int lower, final int upper) {
         this.x     = x;
         this.y     = y;
         this.index = lower;

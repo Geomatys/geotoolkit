@@ -86,7 +86,7 @@ public class GNC_Training extends GNC_Product implements org.opengis.metadata.ge
      *     {@link GNCTrainingDurationCodePropertyType }
      *     
      */
-    public void setDuration(GNC_TrainingDurationCode value) {
+    public void setDuration(final GNC_TrainingDurationCode value) {
         this.duration = value;
     }
 
@@ -110,7 +110,7 @@ public class GNC_Training extends GNC_Product implements org.opengis.metadata.ge
      *     {@link GNCTrainingTypeCodePropertyType }
      *     
      */
-    public void setTypeOfTraining(GNC_TrainingTypeCode value) {
+    public void setTypeOfTraining(final GNC_TrainingTypeCode value) {
         this.typeOfTraining = value;
     }
 

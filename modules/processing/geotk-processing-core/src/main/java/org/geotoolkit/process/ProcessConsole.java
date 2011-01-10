@@ -154,7 +154,7 @@ public final class ProcessConsole {
     /**
      * Print list of available parameters in the descriptor.
      */
-    private static void printDescriptor(ParameterDescriptorGroup params, boolean input){
+    private static void printDescriptor(final ParameterDescriptorGroup params, final boolean input){
         if(params == null){
             return;
         }
@@ -225,7 +225,7 @@ public final class ProcessConsole {
     /**
      * Parse, convert and set parameter values from the command line arguments.
      */
-    private static ParameterValueGroup parseParameters(String[] args, final ParameterDescriptorGroup desc) 
+    private static ParameterValueGroup parseParameters(final String[] args, final ParameterDescriptorGroup desc) 
             throws NonconvertibleObjectException, IllegalArgumentException{
         final ParameterValueGroup group = desc.createValue();
 
@@ -269,7 +269,7 @@ public final class ProcessConsole {
      * Convert a List of string values in the appropriate Class.
      * Possibly an Array or a single value.
      */
-    private static <T> Object toValue(List<String> values, Class<T> binding) throws NonconvertibleObjectException{
+    private static <T> Object toValue(final List<String> values, final Class<T> binding) throws NonconvertibleObjectException{
         final int size = values.size();
 
         final ObjectConverter<String,T> converter = ConverterRegistry.system().converter(String.class, binding);
@@ -310,7 +310,7 @@ public final class ProcessConsole {
      * Print in the console the given objects.
      * X364 object are automaticly removed if the console does not handle them.
      */
-    private static void print(Object ... texts){
+    private static void print(final Object ... texts){
         final String text;
         if(texts.length == 1){
             text = String.valueOf(texts[0]);

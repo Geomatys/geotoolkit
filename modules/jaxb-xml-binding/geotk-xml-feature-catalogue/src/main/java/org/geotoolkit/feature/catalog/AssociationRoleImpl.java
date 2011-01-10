@@ -79,9 +79,9 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
     /**
      * Clone a AssociationRole
      */
-    public AssociationRoleImpl(String id, LocalName memberName, String definition, Multiplicity cardinality, 
-            FeatureType featureType, List<Constraint> constrainedBy, DefinitionReference definitionReference,
-            RoleType type, Boolean isOrdered, Boolean isNavigable, FeatureAssociation relation, FeatureType rolePlayer) {
+    public AssociationRoleImpl(final String id, final LocalName memberName, final String definition, final Multiplicity cardinality, 
+            final FeatureType featureType, final List<Constraint> constrainedBy, final DefinitionReference definitionReference,
+            final RoleType type, final Boolean isOrdered, final Boolean isNavigable, final FeatureAssociation relation, final FeatureType rolePlayer) {
         super(id, memberName, definition, cardinality, featureType, constrainedBy, definitionReference);
         this.isNavigable = isNavigable;
         this.isOrdered   = isOrdered;
@@ -93,7 +93,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      /**
      * Build a new AssociationRole
      */
-    public AssociationRoleImpl(AssociationRole feature) {
+    public AssociationRoleImpl(final AssociationRole feature) {
         super(feature);
         if (feature != null) {
             this.isNavigable = feature.getIsNavigable();
@@ -116,7 +116,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      * Sets the value of the type property.
      * 
      */
-    public void setType(RoleType value) {
+    public void setType(final RoleType value) {
         this.type = value;
     }
 
@@ -132,7 +132,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      * Sets the value of the isOrdered property.
      * 
      */
-    public void setIsOrdered(Boolean value) {
+    public void setIsOrdered(final Boolean value) {
         this.isOrdered = value;
     }
 
@@ -147,7 +147,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
     /**
      * Sets the value of the isNavigable property.
      */
-    public void setIsNavigable(Boolean value) {
+    public void setIsNavigable(final Boolean value) {
         this.isNavigable = value;
     }
 
@@ -162,7 +162,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
     /**
      * Sets the value of the relation property.
      */
-    public void setRelation(FeatureAssociation value) {
+    public void setRelation(final FeatureAssociation value) {
         this.relation = value;
     }
 
@@ -178,7 +178,7 @@ public class AssociationRoleImpl extends PropertyTypeImpl implements Association
      * Sets the value of the rolePlayer property.
      * 
      */
-    public void setValueType(FeatureType value) {
+    public void setValueType(final FeatureType value) {
         this.valueType = value;
     }
     

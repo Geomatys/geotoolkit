@@ -79,8 +79,8 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
     /**
      * Build the base of a Capabilities document.
      */
-    public CapabilitiesBaseType(ServiceIdentification serviceIdentification, ServiceProvider serviceProvider,
-            OperationsMetadata operationsMetadata, String version, String updateSequence) {
+    public CapabilitiesBaseType(final ServiceIdentification serviceIdentification, final ServiceProvider serviceProvider,
+            final OperationsMetadata operationsMetadata, final String version, final String updateSequence) {
         this.operationsMetadata    = operationsMetadata;
         this.serviceIdentification = serviceIdentification;
         this.serviceProvider       = serviceProvider;
@@ -96,7 +96,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         return serviceIdentification;
     }
     
-    public void setServiceIdentification(ServiceIdentification SI) {
+    public void setServiceIdentification(final ServiceIdentification SI) {
         serviceIdentification = SI;
     }
             
@@ -109,7 +109,7 @@ public class CapabilitiesBaseType implements AbstractCapabilitiesBase {
         return serviceProvider;
     }
     
-    public void setServiceProvider(ServiceProvider SP) {
+    public void setServiceProvider(final ServiceProvider SP) {
         serviceProvider = SP;
     }
 

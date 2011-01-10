@@ -84,20 +84,20 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
     /**
      * Build a new Record TODO add contributor, source , spatial, right, relation
      */
-    public RecordType(SimpleLiteral identifier, 
-                      SimpleLiteral title, 
-                      SimpleLiteral type, 
-                      List<SimpleLiteral> subject, 
-                      SimpleLiteral format, 
-                      SimpleLiteral modified,
-                      SimpleLiteral date,
-                      SimpleLiteral _abstract,
-                      List<BoundingBoxType> bboxes, 
-                      SimpleLiteral creator, 
-                      SimpleLiteral distributor, 
-                      SimpleLiteral language, 
-                      SimpleLiteral spatial,
-                      SimpleLiteral references) {
+    public RecordType(final SimpleLiteral identifier, 
+                      final SimpleLiteral title, 
+                      final SimpleLiteral type, 
+                      final List<SimpleLiteral> subject, 
+                      final SimpleLiteral format, 
+                      final SimpleLiteral modified,
+                      final SimpleLiteral date,
+                      final SimpleLiteral _abstract,
+                      final List<BoundingBoxType> bboxes, 
+                      final SimpleLiteral creator, 
+                      final SimpleLiteral distributor, 
+                      final SimpleLiteral language, 
+                      final SimpleLiteral spatial,
+                      final SimpleLiteral references) {
         
         super(identifier, title,type, subject, format, modified, date, _abstract, creator, distributor, language, spatial, references);
         
@@ -116,20 +116,20 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
     /**
      * Build a new Record TODO add contributor, source , spatial, right, relation
      */
-    public RecordType(SimpleLiteral identifier, 
-                      SimpleLiteral title, 
-                      SimpleLiteral type, 
-                      List<SimpleLiteral> subject, 
-                      List<SimpleLiteral> formats, 
-                      SimpleLiteral modified,
-                      SimpleLiteral date,
-                      List<SimpleLiteral> _abstract,
-                      List<BoundingBoxType> bboxes, 
-                      List<SimpleLiteral> creator, 
-                      SimpleLiteral distributor, 
-                      SimpleLiteral language, 
-                      SimpleLiteral spatial,
-                      SimpleLiteral references) {
+    public RecordType(final SimpleLiteral identifier, 
+                      final SimpleLiteral title, 
+                      final SimpleLiteral type, 
+                      final List<SimpleLiteral> subject, 
+                      final List<SimpleLiteral> formats, 
+                      final SimpleLiteral modified,
+                      final SimpleLiteral date,
+                      final List<SimpleLiteral> _abstract,
+                      final List<BoundingBoxType> bboxes, 
+                      final List<SimpleLiteral> creator, 
+                      final SimpleLiteral distributor, 
+                      final SimpleLiteral language, 
+                      final SimpleLiteral spatial,
+                      final SimpleLiteral references) {
         
         super(identifier, title,type, subject, formats, modified, date, _abstract, creator, distributor, language, spatial, references, null);
 
@@ -165,7 +165,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         return boundingBox;
     }
     
-    public void setBoundingBox(BoundingBoxType bbox) {
+    public void setBoundingBox(final BoundingBoxType bbox) {
         if (boundingBox == null) {
             this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
         }
@@ -176,7 +176,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
     }
 
-    public void setSimpleBoundingBox(List<BoundingBoxType> bbox) {
+    public void setSimpleBoundingBox(final List<BoundingBoxType> bbox) {
         if (boundingBox == null) {
             this.boundingBox = new ArrayList<JAXBElement<? extends BoundingBoxType>>();
         }
@@ -191,7 +191,7 @@ public class RecordType extends DCMIRecordType implements Record, Settable {
         }
     }
     
-    public void setBoundingBox(List<JAXBElement<? extends BoundingBoxType>> bboxes) {
+    public void setBoundingBox(final List<JAXBElement<? extends BoundingBoxType>> bboxes) {
         this.boundingBox = bboxes;
     }
     

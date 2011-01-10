@@ -57,7 +57,7 @@ public class DocumentType extends OnlineResourceType {
 
     }
 
-    public DocumentType(String href, String language) {
+    public DocumentType(final String href, final String language) {
         super(href);
         this.language = language;
     }
@@ -72,7 +72,7 @@ public class DocumentType extends OnlineResourceType {
     /**
      * Sets the value of the language property.
      */
-    public void setLanguage(String value) {
+    public void setLanguage(final String value) {
         this.language = value;
     }
 

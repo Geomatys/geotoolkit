@@ -62,12 +62,12 @@ public class Identifier implements AbstractIdentifier {
     public Identifier() {
     }
 
-    public Identifier(String name, Term term) {
+    public Identifier(final String name, final Term term) {
         this.name = name;
         this.term = term;
     }
 
-    public Identifier(AbstractIdentifier id) {
+    public Identifier(final AbstractIdentifier id) {
         if (id != null) {
             this.name = id.getName();
             this.term = new Term(id.getTerm());
@@ -84,7 +84,7 @@ public class Identifier implements AbstractIdentifier {
     /**
      * Sets the value of the term property.
      */
-    public void setTerm(Term value) {
+    public void setTerm(final Term value) {
         this.term = value;
     }
 
@@ -98,7 +98,7 @@ public class Identifier implements AbstractIdentifier {
     /**
      * Sets the value of the name property.
      */
-    public void setName(String value) {
+    public void setName(final String value) {
         this.name = value;
     }
 

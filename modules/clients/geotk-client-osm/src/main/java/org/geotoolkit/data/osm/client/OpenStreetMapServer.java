@@ -67,11 +67,11 @@ public class OpenStreetMapServer implements Server{
     private final OSMVersion version;
     private final URL serverURL;
 
-    public OpenStreetMapServer(URL serverURL, String version){
+    public OpenStreetMapServer(final URL serverURL, final String version){
         this(serverURL, OSMVersion.getVersion(version));
     }
 
-    public OpenStreetMapServer(URL url, OSMVersion version){
+    public OpenStreetMapServer(final URL url, final OSMVersion version){
         this.serverURL = url;
         this.version = version;
     }

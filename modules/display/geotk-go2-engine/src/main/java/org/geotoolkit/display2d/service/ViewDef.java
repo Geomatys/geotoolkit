@@ -42,21 +42,21 @@ public class ViewDef {
     public ViewDef() {
     }
 
-    public ViewDef(Envelope env) {
+    public ViewDef(final Envelope env) {
         this(env,0);
     }
 
-    public ViewDef(Envelope env, double azimuth) {
+    public ViewDef(final Envelope env, final double azimuth) {
         this(env,azimuth,null);
     }
 
-    public ViewDef(Envelope env, double azimuth, CanvasMonitor monitor) {
+    public ViewDef(final Envelope env, final double azimuth, final CanvasMonitor monitor) {
         setEnvelope(env);
         setAzimuth(azimuth);
         setMonitor(monitor);
     }
 
-    public void setEnvelope(Envelope envelope) {
+    public void setEnvelope(final Envelope envelope) {
         this.envelope = envelope;
     }
 
@@ -64,7 +64,7 @@ public class ViewDef {
         return envelope;
     }
 
-    public void setAzimuth(double azimuth) {
+    public void setAzimuth(final double azimuth) {
         this.azimuth = azimuth;
     }
 
@@ -72,7 +72,7 @@ public class ViewDef {
         return azimuth;
     }
 
-    public void setMonitor(CanvasMonitor monitor) {
+    public void setMonitor(final CanvasMonitor monitor) {
         this.monitor = monitor;
     }
 

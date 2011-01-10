@@ -449,7 +449,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public void encodePrimaryKey(Class binding, String sqlType, final StringBuilder sql) {
+    public void encodePrimaryKey(final Class binding, final String sqlType, final StringBuilder sql) {
         sql.append( " INTEGER PRIMARY KEY" );
     }
 

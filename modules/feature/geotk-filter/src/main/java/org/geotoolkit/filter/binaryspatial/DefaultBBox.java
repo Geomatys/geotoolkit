@@ -61,7 +61,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
     protected final CoordinateReferenceSystem crs;
     protected final int srid;
 
-    public DefaultBBox(PropertyName property, DefaultLiteral<BoundingBox> bbox) {
+    public DefaultBBox(final PropertyName property, final DefaultLiteral<BoundingBox> bbox) {
         super(nonNullPropertyName(property),bbox);
         boundingGeometry = toGeometry(bbox.getValue());
         boundingEnv = boundingGeometry.getGeometry().getEnvelopeInternal();
@@ -80,7 +80,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         return boundingGeometry;
     }
 
-    private static PropertyName nonNullPropertyName(PropertyName proper) {
+    private static PropertyName nonNullPropertyName(final PropertyName proper) {
         if (proper == null)
             return new DefaultPropertyName("");
         return proper;
@@ -138,7 +138,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      * {@inheritDoc }
      */
     @Override
-    public boolean evaluate(Object object) {
+    public boolean evaluate(final Object object) {
         Geometry candidate;
         if (object instanceof Feature && left.getPropertyName().isEmpty()) {
             candidate = (Geometry) ((Feature)object).getDefaultGeometryProperty().getValue();
@@ -190,7 +190,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      * {@inheritDoc }
      */
     @Override
-    public Object accept(FilterVisitor visitor, Object extraData) {
+    public Object accept(final FilterVisitor visitor, final Object extraData) {
         return visitor.visit(this, extraData);
     }
 
@@ -208,7 +208,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (obj == null) {
             return false;
         }
@@ -241,7 +241,7 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
      * @param env
      * @return Geometry
      */
-    private static PreparedGeometry toGeometry(Envelope env){
+    private static PreparedGeometry toGeometry(final Envelope env){
         final Coordinate[] coords = new Coordinate[5];
         coords[0] = new Coordinate(env.getMinimum(0), env.getMinimum(1));
         coords[1] = new Coordinate(env.getMinimum(0), env.getMaximum(1));

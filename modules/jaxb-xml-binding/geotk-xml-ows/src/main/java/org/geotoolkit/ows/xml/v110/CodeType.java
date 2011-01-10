@@ -67,7 +67,7 @@ public class CodeType implements AbstractCodeType {
     /**
      * Build a new code.
      */
-    public CodeType(String value, String codespace) {
+    public CodeType(final String value, final String codespace) {
         this.codeSpace = codespace;
         this.value     = value;
     }
@@ -75,7 +75,7 @@ public class CodeType implements AbstractCodeType {
     /**
      * Build a new code without codespace.
      */
-    public CodeType(String value) {
+    public CodeType(final String value) {
         this.value     = value;
     }
     

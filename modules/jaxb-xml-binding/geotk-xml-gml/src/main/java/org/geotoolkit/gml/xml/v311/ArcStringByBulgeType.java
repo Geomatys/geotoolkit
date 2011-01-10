@@ -144,7 +144,7 @@ public class ArcStringByBulgeType extends AbstractCurveSegmentType {
      *     {@link DirectPositionListType }
      *     
      */
-    public void setPosList(DirectPositionListType value) {
+    public void setPosList(final DirectPositionListType value) {
         this.posList = value;
     }
 
@@ -168,7 +168,7 @@ public class ArcStringByBulgeType extends AbstractCurveSegmentType {
      *     {@link CoordinatesType }
      *     
      */
-    public void setCoordinates(CoordinatesType value) {
+    public void setCoordinates(final CoordinatesType value) {
         this.coordinates = value;
     }
 
@@ -254,7 +254,7 @@ public class ArcStringByBulgeType extends AbstractCurveSegmentType {
      *     {@link CurveInterpolationType }
      *     
      */
-    public void setInterpolation(CurveInterpolationType value) {
+    public void setInterpolation(final CurveInterpolationType value) {
         this.interpolation = value;
     }
 
@@ -278,7 +278,7 @@ public class ArcStringByBulgeType extends AbstractCurveSegmentType {
      *     {@link Integer }
      *     
      */
-    public void setNumArc(Integer value) {
+    public void setNumArc(final Integer value) {
         this.numArc = value;
     }
 

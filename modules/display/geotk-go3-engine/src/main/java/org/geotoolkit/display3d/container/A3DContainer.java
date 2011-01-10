@@ -81,7 +81,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     private ContextNode contextNode = null;
     private MapContext context = null;
 
-    public A3DContainer(A3DCanvas canvas) {
+    public A3DContainer(final A3DCanvas canvas) {
         this.canvas = canvas;
 
         // Zbuffer -------------------------------------------------------------
@@ -185,7 +185,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     private double scaling = 1f;
 
 
-    public ReadOnlyVector3 correctLocation(Vector3 vect){
+    public ReadOnlyVector3 correctLocation(final Vector3 vect){
         Vector3 corrected = new Vector3(vect);
         corrected.setX(corrected.getX()/scaling +translateX);
         corrected.setZ(corrected.getZ()/scaling +translateY);
@@ -196,7 +196,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         return context;
     }
 
-    public void setContext(MapContext context, boolean loadAll) {
+    public void setContext(final MapContext context, final boolean loadAll) {
         this.context = context;
 
         if(contextNode != null){
@@ -216,7 +216,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
         scene.attachChild(contextNode);
     }
 
-    public void setScaling(double scaling) {
+    public void setScaling(final double scaling) {
         this.scaling = scaling;
     }
 
@@ -261,12 +261,12 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     }
 
     @Override
-    public void addContainerListener(ContainerListener arg0) {
+    public void addContainerListener(final ContainerListener arg0) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
     @Override
-    public void removeContainerListener(ContainerListener arg0) {
+    public void removeContainerListener(final ContainerListener arg0) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -274,7 +274,7 @@ public final class A3DContainer implements Scene, GraphicsContainer<A3DGraphic> 
     public void dispose() {
     }
 
-    public void update(Camera camera, double tpf, boolean b) {
+    public void update(final Camera camera, final double tpf, final boolean b) {
         if(scene.getScale().getX() != scaling){
             scene.setScale(scaling);
         }

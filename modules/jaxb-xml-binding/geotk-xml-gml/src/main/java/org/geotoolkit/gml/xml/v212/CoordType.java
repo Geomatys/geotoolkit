@@ -84,7 +84,7 @@ public class CoordType {
      *     {@link BigDecimal }
      *     
      */
-    public void setX(BigDecimal value) {
+    public void setX(final BigDecimal value) {
         this.x = value;
     }
 
@@ -108,7 +108,7 @@ public class CoordType {
      *     {@link BigDecimal }
      *     
      */
-    public void setY(BigDecimal value) {
+    public void setY(final BigDecimal value) {
         this.y = value;
     }
 
@@ -132,7 +132,7 @@ public class CoordType {
      *     {@link BigDecimal }
      *     
      */
-    public void setZ(BigDecimal value) {
+    public void setZ(final BigDecimal value) {
         this.z = value;
     }
 

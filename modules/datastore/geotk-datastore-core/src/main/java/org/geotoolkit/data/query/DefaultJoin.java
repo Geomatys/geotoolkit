@@ -34,7 +34,7 @@ public final class DefaultJoin implements Join{
     private final JoinType type;
     private final PropertyIsEqualTo condition;
 
-    public DefaultJoin(Source left, Source right, JoinType type, PropertyIsEqualTo condition){
+    public DefaultJoin(final Source left, final Source right, final JoinType type, final PropertyIsEqualTo condition){
         if(left == null) {
             throw new NullPointerException("Join left source must not be null.");
         }

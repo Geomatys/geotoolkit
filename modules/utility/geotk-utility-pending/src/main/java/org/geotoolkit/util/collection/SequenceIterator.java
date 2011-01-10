@@ -31,7 +31,7 @@ public class SequenceIterator<F extends Object> implements CloseableIterator<F> 
     private int currentIndex = 0;
     private Iterator<F> active = null;
 
-    public SequenceIterator(Iterator<F> ... wrapped) {
+    public SequenceIterator(final Iterator<F> ... wrapped) {
         if (wrapped == null || wrapped.length == 0 || wrapped[0] == null) {
             throw new IllegalArgumentException("Iterators can not be empty or null");
         }

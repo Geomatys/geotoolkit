@@ -99,7 +99,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "RecordId", substitutionHeadNamespace = "http://www.opengis.net/ogc", substitutionHeadName = "_Id")
-    public JAXBElement<RecordIdType> createRecordId(RecordIdType value) {
+    public JAXBElement<RecordIdType> createRecordId(final RecordIdType value) {
         return new JAXBElement<RecordIdType>(_RecordId_QNAME, RecordIdType.class, null, value);
     }
 
@@ -108,7 +108,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "Capabilities")
-    public JAXBElement<Capabilities> createCapabilities(Capabilities value) {
+    public JAXBElement<Capabilities> createCapabilities(final Capabilities value) {
         return new JAXBElement<Capabilities>(_Capabilities_QNAME, Capabilities.class, null, value);
     }
 
@@ -117,7 +117,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "ExtrinsicObject", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "ExtrinsicObject")
-    public JAXBElement<ExtrinsicObjectType> createExtrinsicObject(ExtrinsicObjectType value) {
+    public JAXBElement<ExtrinsicObjectType> createExtrinsicObject(final ExtrinsicObjectType value) {
         return new JAXBElement<ExtrinsicObjectType>(_ExtrinsicObject_QNAME, ExtrinsicObjectType.class, null, value);
     }
 
@@ -126,7 +126,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "AnyValue")
-    public JAXBElement<AnyValueType> createAnyValue(AnyValueType value) {
+    public JAXBElement<AnyValueType> createAnyValue(final AnyValueType value) {
         return new JAXBElement<AnyValueType>(_AnyValue_QNAME, AnyValueType.class, null, value);
     }
 
@@ -135,7 +135,7 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/cat/wrs/1.0", name = "ValueList", substitutionHeadNamespace = "urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", substitutionHeadName = "ValueList")
-    public JAXBElement<ValueListType> createValueList(ValueListType value) {
+    public JAXBElement<ValueListType> createValueList(final ValueListType value) {
         return new JAXBElement<ValueListType>(_ValueList_QNAME, ValueListType.class, null, value);
     }
 

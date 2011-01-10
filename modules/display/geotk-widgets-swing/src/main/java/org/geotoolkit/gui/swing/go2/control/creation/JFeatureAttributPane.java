@@ -49,7 +49,7 @@ public class JFeatureAttributPane<T extends SimpleFeature> extends javax.swing.J
     private final T feature;
 
     /** Creates new form JFeatureAttributPane */
-    public JFeatureAttributPane(T feature) {
+    public JFeatureAttributPane(final T feature) {
         this.feature = feature;
         initComponents();
 
@@ -117,7 +117,7 @@ public class JFeatureAttributPane<T extends SimpleFeature> extends javax.swing.J
         return feature;
     }
 
-    public static <S extends SimpleFeature> S configure(S feature){
+    public static <S extends SimpleFeature> S configure(final S feature){
 
         final JDialog dialog = new JDialog();
         dialog.setModal(true);
@@ -153,7 +153,7 @@ public class JFeatureAttributPane<T extends SimpleFeature> extends javax.swing.J
          * @param tab
          * @param layer
          */
-        public FeatureSourceModel(List<SimpleFeature> layers) {
+        public FeatureSourceModel(final List<SimpleFeature> layers) {
             super();
             this.features = layers;
             init();
@@ -179,13 +179,13 @@ public class JFeatureAttributPane<T extends SimpleFeature> extends javax.swing.J
         }
 
         @Override
-        public Class getColumnClass(int column) {
+        public Class getColumnClass(final int column) {
             if(column == 0) return String.class;
             return columns.get(column-1).getType().getBinding();
         }
 
         @Override
-        public String getColumnName(int column) {
+        public String getColumnName(final int column) {
             if(column == 0) return "id";
             return columns.get(column-1).getName().toString();
         }
@@ -200,22 +200,22 @@ public class JFeatureAttributPane<T extends SimpleFeature> extends javax.swing.J
         }
 
         @Override
-        public boolean isCellEditable(int rowIndex, int columnIndex) {
+        public boolean isCellEditable(final int rowIndex, final int columnIndex) {
             return columnIndex != 0;
         }
 
-        public Feature getFeatureAt(int rowIndex){
+        public Feature getFeatureAt(final int rowIndex){
             return features.get(rowIndex);
         }
 
         @Override
-        public Object getValueAt(int rowIndex, int columnIndex) {
+        public Object getValueAt(final int rowIndex, final int columnIndex) {
             if(columnIndex == 0) return "-";
             return features.get(rowIndex).getAttribute(columns.get(columnIndex-1).getLocalName());
         }
 
         @Override
-        public void setValueAt(Object aValue, int rowIndex, int columnIndex) {
+        public void setValueAt(final Object aValue, final int rowIndex, final int columnIndex) {
             if(columnIndex == 0) return;
             features.get(rowIndex).setAttribute(columns.get(columnIndex-1).getLocalName(), aValue);
         }

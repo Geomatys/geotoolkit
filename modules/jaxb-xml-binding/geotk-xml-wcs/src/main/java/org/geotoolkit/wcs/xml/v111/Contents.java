@@ -82,8 +82,8 @@ public class Contents implements Content{
     /**
      * Build the contents party of a Capabilities document.
      */
-    public Contents(List<CoverageSummaryType> coverageSummary,  List<String> supportedCRS,
-            List<String> supportedFormat, List<OnlineResourceType> otherSource) {
+    public Contents(final List<CoverageSummaryType> coverageSummary,  final List<String> supportedCRS,
+            final List<String> supportedFormat, final List<OnlineResourceType> otherSource) {
         this.coverageSummary = coverageSummary;
         this.otherSource     = otherSource;
         this.supportedCRS    = supportedCRS;

@@ -26,7 +26,7 @@ public enum OSMVersion {
 
     private final String code;
 
-    OSMVersion(String code){
+    OSMVersion(final String code){
         this.code = code;
     }
 

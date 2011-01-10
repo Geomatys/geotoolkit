@@ -95,7 +95,7 @@ public class QueryType {
 
     }
 
-    public QueryType(FilterType filter, List<QName> typeName, String featureVersion) {
+    public QueryType(final FilterType filter, final List<QName> typeName, final String featureVersion) {
         this.featureVersion = featureVersion;
         this.filter         = filter;
         this.typeName       = typeName;
@@ -140,7 +140,7 @@ public class QueryType {
      *     {@link FilterType }
      *     
      */
-    public void setFilter(FilterType value) {
+    public void setFilter(final FilterType value) {
         this.filter = value;
     }
 
@@ -168,7 +168,7 @@ public class QueryType {
      *     {@link SortByType }
      *     
      */
-    public void setSortBy(SortByType value) {
+    public void setSortBy(final SortByType value) {
         this.sortBy = value;
     }
 
@@ -192,7 +192,7 @@ public class QueryType {
      *     {@link String }
      *     
      */
-    public void setHandle(String value) {
+    public void setHandle(final String value) {
         this.handle = value;
     }
 
@@ -226,7 +226,7 @@ public class QueryType {
      *     {@link String }
      *     
      */
-    public void setFeatureVersion(String value) {
+    public void setFeatureVersion(final String value) {
         this.featureVersion = value;
     }
 
@@ -250,7 +250,7 @@ public class QueryType {
      *     {@link String }
      *     
      */
-    public void setSrsName(String value) {
+    public void setSrsName(final String value) {
         this.srsName = value;
     }
 

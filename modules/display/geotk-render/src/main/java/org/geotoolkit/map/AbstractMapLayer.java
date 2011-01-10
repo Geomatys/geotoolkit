@@ -57,7 +57,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
     /**
      * Constructor that can used by subclass only.
      */
-    protected AbstractMapLayer(MutableStyle style){
+    protected AbstractMapLayer(final MutableStyle style){
         if (style == null){
             throw new NullPointerException("Style can not be null");
         }
@@ -95,7 +95,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
      * @param style : New value of property style.
      */
     @Override
-    public void setStyle(MutableStyle style) {
+    public void setStyle(final MutableStyle style) {
         if (style == null) {
             throw new NullArgumentException("Style can not be null");
         }
@@ -122,7 +122,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
     }
 
     @Override
-    public void setSelectionStyle(MutableStyle style){
+    public void setSelectionStyle(final MutableStyle style){
 
         final MutableStyle oldStyle;
         synchronized (this) {
@@ -147,7 +147,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
      * {@inheritDoc }
      */
     @Override
-    public void setOpacity(double opacity){
+    public void setOpacity(final double opacity){
         final double oldOpacity;
         synchronized (this) {
             oldOpacity = this.opacity;
@@ -175,7 +175,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
      * @param selectable : New value of property selectable.
      */
     @Override
-    public void setSelectable(boolean selectable) {
+    public void setSelectable(final boolean selectable) {
         final boolean oldSelectable;
         synchronized (this) {
             oldSelectable = this.selectable;
@@ -199,7 +199,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
      * {@inheritDoc }
      */
     @Override
-    public void setElevationModel(ElevationModel model){
+    public void setElevationModel(final ElevationModel model){
         final ElevationModel oldElevation;
         synchronized (this) {
             oldElevation = this.elevation;
@@ -230,7 +230,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
      * @return graphicBuilder<? extends type> or null
      */
     @Override
-    public <T extends Graphic> GraphicBuilder<? extends T> getGraphicBuilder( Class<T> type ){
+    public <T extends Graphic> GraphicBuilder<? extends T> getGraphicBuilder( final Class<T> type ){
         
         for(GraphicBuilder builder : builders){
             if(type.isAssignableFrom(builder.getGraphicType())){
@@ -245,7 +245,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
     // listeners management ----------------------------------------------------
     //--------------------------------------------------------------------------
         
-    protected void fireStyleChange(EventObject event){
+    protected void fireStyleChange(final EventObject event){
         //TODO make fire property change thread safe, preserve fire order
         
         final LayerListener[] lists = listeners.getListeners(LayerListener.class);
@@ -260,12 +260,12 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
     //--------------------------------------------------------------------------
 
     @Override
-    public void propertyChange(PropertyChangeEvent event) {
+    public void propertyChange(final PropertyChangeEvent event) {
         fireStyleChange(event);
     }
 
     @Override
-    public void featureTypeStyleChange(CollectionChangeEvent<MutableFeatureTypeStyle> event) {
+    public void featureTypeStyleChange(final CollectionChangeEvent<MutableFeatureTypeStyle> event) {
         fireStyleChange(event);
     }
 
@@ -273,7 +273,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
      * {@inheritDoc }
      */
     @Override
-    public void addLayerListener(LayerListener listener){
+    public void addLayerListener(final LayerListener listener){
         synchronized(listeners){
             listeners.add(LayerListener.class, listener);
             addItemListener(listener);
@@ -284,7 +284,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
      * {@inheritDoc }
      */
     @Override
-    public void removeLayerListener(LayerListener listener){
+    public void removeLayerListener(final LayerListener listener){
         synchronized(listeners){
             listeners.remove(LayerListener.class, listener);
             removeItemListener(listener);

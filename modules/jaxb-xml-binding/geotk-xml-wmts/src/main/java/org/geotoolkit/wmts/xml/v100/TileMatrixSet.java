@@ -83,12 +83,12 @@ public class TileMatrixSet extends DescriptionType {
 
     }
 
-    public TileMatrixSet(CodeType identifier, String supportedCRS) {
+    public TileMatrixSet(final CodeType identifier, final String supportedCRS) {
         this.identifier = identifier;
         this.supportedCRS = supportedCRS;
     }
 
-    public TileMatrixSet(CodeType identifier, String supportedCRS, JAXBElement<? extends BoundingBoxType> bbox, String wellKnownScaleSet) {
+    public TileMatrixSet(final CodeType identifier, final String supportedCRS, final JAXBElement<? extends BoundingBoxType> bbox, final String wellKnownScaleSet) {
         this.identifier        = identifier;
         this.supportedCRS      = supportedCRS;
         this.boundingBox       = bbox;
@@ -115,7 +115,7 @@ public class TileMatrixSet extends DescriptionType {
      *     {@link CodeType }
      *     
      */
-    public void setIdentifier(CodeType value) {
+    public void setIdentifier(final CodeType value) {
         this.identifier = value;
     }
 
@@ -141,7 +141,7 @@ public class TileMatrixSet extends DescriptionType {
      *     {@link JAXBElement }{@code <}{@link BoundingBoxType }{@code >}
      *     
      */
-    public void setBoundingBox(JAXBElement<? extends BoundingBoxType> value) {
+    public void setBoundingBox(final JAXBElement<? extends BoundingBoxType> value) {
         this.boundingBox = ((JAXBElement<? extends BoundingBoxType> ) value);
     }
 
@@ -165,7 +165,7 @@ public class TileMatrixSet extends DescriptionType {
      *     {@link String }
      *     
      */
-    public void setSupportedCRS(String value) {
+    public void setSupportedCRS(final String value) {
         this.supportedCRS = value;
     }
 
@@ -189,7 +189,7 @@ public class TileMatrixSet extends DescriptionType {
      *     {@link String }
      *     
      */
-    public void setWellKnownScaleSet(String value) {
+    public void setWellKnownScaleSet(final String value) {
         this.wellKnownScaleSet = value;
     }
 
@@ -203,11 +203,11 @@ public class TileMatrixSet extends DescriptionType {
         return this.tileMatrix;
     }
 
-    public void setTileMatrix(List<TileMatrix> tm) {
+    public void setTileMatrix(final List<TileMatrix> tm) {
         this.tileMatrix = tm;
 }
 
-    public TileMatrix getTileMatrixByName(String name) {
+    public TileMatrix getTileMatrixByName(final String name) {
         if (tileMatrix == null) {
             tileMatrix = new ArrayList<TileMatrix>();
         }

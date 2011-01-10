@@ -86,7 +86,7 @@ public class FeatureAttributeAdapter extends XmlAdapter<FeatureAttributeAdapter,
      * @return A java object which represents the metadata value.
      */
     @Override
-    public FeatureAttribute unmarshal(FeatureAttributeAdapter value) throws Exception {
+    public FeatureAttribute unmarshal(final FeatureAttributeAdapter value) throws Exception {
         if (value == null) {
             return null;
         }
@@ -101,7 +101,7 @@ public class FeatureAttributeAdapter extends XmlAdapter<FeatureAttributeAdapter,
      * @return The adapter for this FeatureOperation.
      */
     @Override
-    public FeatureAttributeAdapter marshal(FeatureAttribute value) throws Exception {
+    public FeatureAttributeAdapter marshal(final FeatureAttribute value) throws Exception {
         return new FeatureAttributeAdapter(value);
     }
 

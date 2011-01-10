@@ -28,7 +28,7 @@ public class MaxFunction extends AbstractFunction {
     }
 
     @Override
-    public Object evaluate(Object feature) {
+    public Object evaluate(final Object feature) {
         final Number number1 = parameters.get(0).evaluate(feature, Number.class);
         if (number1 == null) {
             throw new IllegalArgumentException(

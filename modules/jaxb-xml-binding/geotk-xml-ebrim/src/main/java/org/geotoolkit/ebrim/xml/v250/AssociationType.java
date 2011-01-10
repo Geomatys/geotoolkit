@@ -86,7 +86,7 @@ public class AssociationType extends RegistryObjectType {
     /**
      * Sets the value of the associationType property.
      */
-    public void setAssociationType(String value) {
+    public void setAssociationType(final String value) {
         this.associationType = value;
     }
 
@@ -100,7 +100,7 @@ public class AssociationType extends RegistryObjectType {
     /**
      * Sets the value of the sourceObject property.
      */
-    public void setSourceObject(String value) {
+    public void setSourceObject(final String value) {
         this.sourceObject = value;
     }
 
@@ -114,7 +114,7 @@ public class AssociationType extends RegistryObjectType {
     /**
      * Sets the value of the targetObject property.
      */
-    public void setTargetObject(String value) {
+    public void setTargetObject(final String value) {
         this.targetObject = value;
     }
 
@@ -128,7 +128,7 @@ public class AssociationType extends RegistryObjectType {
     /**
      * Sets the value of the isConfirmedBySourceOwner property.
      */
-    public void setIsConfirmedBySourceOwner(Boolean value) {
+    public void setIsConfirmedBySourceOwner(final Boolean value) {
         this.isConfirmedBySourceOwner = value;
     }
 
@@ -142,7 +142,7 @@ public class AssociationType extends RegistryObjectType {
     /**
      * Sets the value of the isConfirmedByTargetOwner property.
      */
-    public void setIsConfirmedByTargetOwner(Boolean value) {
+    public void setIsConfirmedByTargetOwner(final Boolean value) {
         this.isConfirmedByTargetOwner = value;
     }
 

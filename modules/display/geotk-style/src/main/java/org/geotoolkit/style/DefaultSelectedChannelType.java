@@ -40,7 +40,7 @@ public class DefaultSelectedChannelType implements SelectedChannelType{
      * @param name : can not be null
      * @param enchance : if null will be replaced by default description.
      */
-    public DefaultSelectedChannelType(String name, ContrastEnhancement enhance){
+    public DefaultSelectedChannelType(final String name, final ContrastEnhancement enhance){
         if(name == null){
             throw new NullPointerException("Name can not be null");
         }
@@ -68,7 +68,7 @@ public class DefaultSelectedChannelType implements SelectedChannelType{
      * {@inheritDoc }
      */
     @Override
-    public Object accept(StyleVisitor visitor, Object extraData) {
+    public Object accept(final StyleVisitor visitor, final Object extraData) {
         return visitor.visit(this,extraData);
     }
 
@@ -76,7 +76,7 @@ public class DefaultSelectedChannelType implements SelectedChannelType{
      * {@inheritDoc }
      */
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
 
         if(this == obj){
             return true;

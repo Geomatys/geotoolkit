@@ -56,7 +56,7 @@ public class SwingVolatileGeoComponent extends JComponent{
 
     };
 
-    public SwingVolatileGeoComponent(CoordinateReferenceSystem crs){
+    public SwingVolatileGeoComponent(final CoordinateReferenceSystem crs){
 
         final Timer timer = new Timer(100, new ActionListener() {
 

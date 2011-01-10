@@ -85,15 +85,15 @@ public class Documentation implements AbstractDocumentation {
 
     }
 
-    public Documentation(Document document) {
+    public Documentation(final Document document) {
         this.document = document;
     }
 
-    public Documentation(DocumentList documentList) {
+    public Documentation(final DocumentList documentList) {
         this.documentList = documentList;
     }
 
-    public Documentation(AbstractDocumentation doc) {
+    public Documentation(final AbstractDocumentation doc) {
         if (doc != null) {
             this.actuate      = doc.getActuate();
             this.arcrole      = doc.getArcrole();
@@ -124,7 +124,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the document property.
      */
-    public void setDocument(Document value) {
+    public void setDocument(final Document value) {
         this.document = value;
     }
 
@@ -138,7 +138,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the documentList property.
      */
-    public void setDocumentList(DocumentList value) {
+    public void setDocumentList(final DocumentList value) {
         this.documentList = value;
     }
 
@@ -162,7 +162,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the remoteSchema property.
      */
-    public void setRemoteSchema(String value) {
+    public void setRemoteSchema(final String value) {
         this.remoteSchema = value;
     }
 
@@ -176,7 +176,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the actuate property.
      */
-    public void setActuate(String value) {
+    public void setActuate(final String value) {
         this.actuate = value;
     }
 
@@ -190,7 +190,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the arcrole property.
      */
-    public void setArcrole(String value) {
+    public void setArcrole(final String value) {
         this.arcrole = value;
     }
 
@@ -204,7 +204,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the href property.
      */
-    public void setHref(String value) {
+    public void setHref(final String value) {
         this.href = value;
     }
 
@@ -218,7 +218,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the role property.
      */
-    public void setRole(String value) {
+    public void setRole(final String value) {
         this.role = value;
     }
 
@@ -233,7 +233,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the show property.
      */
-    public void setShow(String value) {
+    public void setShow(final String value) {
         this.show = value;
     }
 
@@ -247,7 +247,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the title property.
      */
-    public void setTitle(String value) {
+    public void setTitle(final String value) {
         this.title = value;
     }
 
@@ -261,7 +261,7 @@ public class Documentation implements AbstractDocumentation {
     /**
      * Sets the value of the type property.
      */
-    public void setType(String value) {
+    public void setType(final String value) {
         this.type = value;
     }
 
