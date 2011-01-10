@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2010-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -31,6 +31,7 @@ import org.opengis.metadata.Identifier;
 import java.util.Iterator;
 import javax.measure.unit.Unit;
 import org.geotoolkit.io.X364;
+import org.geotoolkit.lang.Setup;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.ObjectConverter;
@@ -54,6 +55,8 @@ public final class ProcessConsole {
     private static final boolean X364_SUPPORTED = X364.isSupported();
 
     public static void main(String[] args) {
+
+        Setup.initialize(null);
 
         if(args.length < 1){
             globalHelp();
@@ -119,6 +122,8 @@ public final class ProcessConsole {
             final ParameterValueGroup result = process.getOutput();
             System.out.println(result);
         }
+
+        Setup.shutdown();
     }
 
     /**
