@@ -24,6 +24,9 @@ Coverage I/O
 
   * <<<org.geotoolkit.image.io.plugin>>>
 
+  This module provides also a collection of
+  {{{../../../apidocs/org/geotoolkit/image/io/doc-files/palettes.html}predefined color palettes}}.
+
 
 * Overview
 
@@ -39,18 +42,9 @@ Coverage I/O
   information, the class will use the <<<GridCoverageFactory>>> in the coverage module to instantiate
   the <<<GridCoverage2D>>>.
 
-  Unfortunately, we have not yet arrived at a design sufficiently powerful and flexible to handle
-  the creation of <<<GridCoverage>>> instances from all the different kinds of data a user can have.
-  Therefore, it is the programmer using the Geotk library who must create a system to generate a new
-  <<<GridCoverage>>> for each data file type they need to access. It is up to that programmer, based
-  on the knowledge of the data format and the data contents of the files their applications use, to
-  extract any generalization which they can get to avoid having to write a new class for every file.
-
   Some work has been done in GeoAPI and Geotk to start to create a more general framework. For example,
   the class that builds a <<<GridCoverage>>> is generally called a <<<GridCoverageReader>>> since it is
-  based on an <<<ImageReader>>>. Unfortunately, this is work in progress and the API will probably change
-  once we start work to finalize the standard way to acces grid data. Programmers today should ignore all
-  that work and build their own.
+  based on an <<<ImageReader>>>.
 
 
 * Create an ImageReader
@@ -77,4 +71,4 @@ Coverage I/O
   the required information. Because sometimes the information can be obtained from the file, it seems
   reasonable to place this query at the level of the image reader; however, that implies designing the
   exchange of this information through the <<<IIOMetadata>>> structure. Alternatively, the programmer
-  could obtaine the required information in the next step.
+  could obtain the required information in the next step.

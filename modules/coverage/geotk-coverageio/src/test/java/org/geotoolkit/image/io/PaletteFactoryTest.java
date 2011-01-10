@@ -18,8 +18,12 @@
 package org.geotoolkit.image.io;
 
 import java.util.Set;
+import java.io.File;
 import java.io.IOException;
+import java.awt.Dimension;
+import java.awt.image.RenderedImage;
 import java.awt.image.IndexColorModel;
+import javax.imageio.ImageIO;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -29,7 +33,7 @@ import static org.junit.Assert.*;
  * Tests {@link PaletteFactory} and a bit of {@link Palette}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.05
+ * @version 3.17
  *
  * @since 2.4
  */
@@ -134,5 +138,29 @@ public final class PaletteFactoryTest {
         assertEquals("R", 255, icm.getRed  (99));
         assertEquals("G", 005, icm.getGreen(99));
         assertEquals("B", 000, icm.getBlue (99));
+    }
+
+    /**
+     * Tests the {@link #getImage} method for all palette and eventually writes the palette to disk,
+     * in order to update the content of the {@code org/geotoolkit/image/io/doc-files} directory.
+     * The main purpose of this test is actually to update the javadoc. The image are written only
+     * if the {@code "geotk-palettes"} directory exists in the user home directory.
+     *
+     * @throws IOException If an error occurred while reading the palette or writing the images.
+     *
+     * @since 3.17
+     */
+    @Test
+    public void testImage() throws IOException {
+        final Dimension size = new Dimension(256, 35); // Dimension used in the javadoc.
+        final File directory = new File(System.getProperty("user.dir", "."), "geotk-palettes");
+        final boolean canWrite = directory.isDirectory();
+        final PaletteFactory factory = PaletteFactory.getDefault();
+        for (final String name : factory.getAvailableNames()) {
+            final RenderedImage palette = factory.getPalette(name, 256).getImage(size);
+            if (canWrite) {
+                ImageIO.write(palette, "png", new File(directory, name + ".png"));
+            }
+        }
     }
 }

@@ -1,12 +1,23 @@
-# List of .pal files.
+#
+# List of *.pal files.
+#
 
 bell
+blue
+blue-beige-red
 blue-red
+brown-inverse
+cyan-blue
 dem
 grayscale
+green-inverse
+green-beige-red
+green-yellow-red
 rainbow
 rainbow-c
 rainbow-t
+red-inverse
 red-blue
 SeaWiFS
 white-cyan-red
+yellow-green-blue

@@ -63,20 +63,29 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * If an image needs 256 colors, then all needed colors will be interpolated from blue to red, with
  * blue at index 0 and red at index 255.
  * <p>
- * The {@linkplain #getDefault() default instance} provides the following color palettes:
+ * The {@linkplain #getDefault() default instance} provides the following color palettes. More
+ * details about those palettes are provided in <a href="doc-files/palettes.html">this page</a>.
  * <p>
  *  <blockquote><table border="1" cellpadding="0" cellspacing="0">
- *  <tr bgcolor="lightblue"><th>Name</th>                             <th>Overview</th>                                 <th>Typical usage</th></tr>
- *    <tr><td><code>&nbsp;&nbsp;grayscale&nbsp;&nbsp;</code></td>     <td><img src="doc-files/grayscale.png"></td>      <td>&nbsp;&nbsp;</td></tr>
- *    <tr><td><code>&nbsp;&nbsp;red-blue&nbsp;&nbsp;</code></td>      <td><img src="doc-files/red-blue.png"></td>       <td>&nbsp;&nbsp;</td></tr>
- *    <tr><td><code>&nbsp;&nbsp;blue-red&nbsp;&nbsp;</code></td>      <td><img src="doc-files/blue-red.png"></td>       <td>&nbsp;&nbsp;</td></tr>
- *    <tr><td><code>&nbsp;&nbsp;white-cyan-red&nbsp;&nbsp;</code></td><td><img src="doc-files/white-cyan-red.png"></td> <td>&nbsp;&nbsp;</td></tr>
- *    <tr><td><code>&nbsp;&nbsp;bell&nbsp;&nbsp;</code></td>          <td><img src="doc-files/bell.png"></td>           <td>&nbsp;&nbsp;</td></tr>
- *    <tr><td><code>&nbsp;&nbsp;rainbow&nbsp;&nbsp;</code></td>       <td><img src="doc-files/rainbow.png"></td>        <td>&nbsp;&nbsp;</td></tr>
- *    <tr><td><code>&nbsp;&nbsp;rainbow-t&nbsp;&nbsp;</code></td>     <td><img src="doc-files/rainbow-t.png"></td>      <td>&nbsp;&nbsp;Sea Surface Temperature (IFREMER)</td></tr>
- *    <tr><td><code>&nbsp;&nbsp;rainbow-c&nbsp;&nbsp;</code></td>     <td><img src="doc-files/rainbow-c.png"></td>      <td>&nbsp;&nbsp;Chlorophyll-a concentration (Nasa)</td></tr>
- *    <tr><td><code>&nbsp;&nbsp;SeaWiFS&nbsp;&nbsp;</code></td>       <td><img src="doc-files/SeaWiFS.png"></td>        <td>&nbsp;&nbsp;Chlorophyll-a concentration (SeaWiFS)</td></tr>
- *    <tr><td><code>&nbsp;&nbsp;dem&nbsp;&nbsp;</code></td>           <td><img src="doc-files/dem.png"></td>            <td>&nbsp;&nbsp;Digital Elevation Model</td></tr>
+ *    <tr><td><img width="128" height="24" alt="palette" title="grayscale"         src="doc-files/grayscale.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="green-yellow-red"  src="doc-files/green-yellow-red.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="white-cyan-red"    src="doc-files/white-cyan-red.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="dem"               src="doc-files/dem.png"></td></tr>
+ *    <tr><td><img width="128" height="24" alt="palette" title="blue"              src="doc-files/blue.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="green-beige-red"   src="doc-files/green-beige-red.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="bell"              src="doc-files/bell.png"></td></tr>
+ *    <tr><td><img width="128" height="24" alt="palette" title="cyan-blue"         src="doc-files/cyan-blue.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="blue-beige-red"    src="doc-files/blue-beige-red.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="rainbow"           src="doc-files/rainbow.png"></td></tr>
+ *    <tr><td><img width="128" height="24" alt="palette" title="green-inverse"     src="doc-files/green-inverse.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="blue-red"          src="doc-files/blue-red.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="rainbow-t"         src="doc-files/rainbow-t.png"></td></tr>
+ *    <tr><td><img width="128" height="24" alt="palette" title="brown-inverse"     src="doc-files/brown-inverse.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="red-blue"          src="doc-files/red-blue.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="rainbow-c"         src="doc-files/rainbow-c.png"></td></tr>
+ *    <tr><td><img width="128" height="24" alt="palette" title="red-inverse"       src="doc-files/red-inverse.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="yellow-green-blue" src="doc-files/yellow-green-blue.png"></td>
+ *        <td><img width="128" height="24" alt="palette" title="SeaWiFS"           src="doc-files/SeaWiFS.png"></td></tr>
  *  </table></blockquote>
  *
  * {@section Adding custom palettes}
@@ -107,7 +116,7 @@ import org.geotoolkit.resources.IndexedResourceBundle;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.17
  *
  * @since 1.2
  * @module
