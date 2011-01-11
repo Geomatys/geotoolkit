@@ -793,7 +793,8 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
             NetcdfAxis latitude = null, longitude = null;
             for (int i=getDimension(); --i>=0;) {
                 final NetcdfAxis axis = getAxis(i);
-                switch (axis.delegate().getAxisType()) {
+                final AxisType type = axis.delegate().getAxisType();
+                if (type != null) switch (type) {
                     case Lat: latitude  = axis; break;
                     case Lon: longitude = axis; break;
                 }

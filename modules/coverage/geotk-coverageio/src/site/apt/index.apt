@@ -14,15 +14,15 @@ Coverage I/O
 
   The main packages are listed below.
 
-  * <<<org.geotoolkit.image.io>>>
+    * <<<org.geotoolkit.image.io>>>
 
-  * <<<org.geotoolkit.image.io.metadata>>>
+    * <<<org.geotoolkit.image.io.metadata>>>
 
-  * <<<org.geotoolkit.image.io.mosaic>>>
+    * <<<org.geotoolkit.image.io.mosaic>>>
 
-  * <<<org.geotoolkit.image.io.stream>>>
+    * <<<org.geotoolkit.image.io.stream>>>
 
-  * <<<org.geotoolkit.image.io.plugin>>>
+    * <<<org.geotoolkit.image.io.plugin>>>
 
   This module provides also a collection of
   {{{../../../apidocs/org/geotoolkit/image/io/doc-files/palettes.html}predefined color palettes}}.
