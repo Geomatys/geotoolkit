@@ -28,6 +28,8 @@ import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
+import org.geotoolkit.util.Version;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -58,6 +60,7 @@ public final class ConformanceTest extends ReferencingTestBase {
     @Test
     public void testEPSG() throws FactoryException {
         assumeTrue(isEpsgFactoryAvailable());
+        assumeTrue(isEpsgDatabaseUpToDate());
         run(Citations.EPSG, AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory("EPSG", null));
     }
 

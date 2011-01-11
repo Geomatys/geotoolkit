@@ -615,7 +615,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         /*
          * ED50 (4230)  -->  WGS 84 (4326)  using
          * Geocentric translations (9603).
-         * Accuracy = 999
+         * Accuracy = 2.5
          */
         final CoordinateOperation      operation1 = factory.createCoordinateOperation("1087");
         final CoordinateReferenceSystem sourceCRS = operation1.getSourceCRS();
@@ -627,7 +627,10 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         assertTrue   (operation1 instanceof Transformation);
         assertNotSame(sourceCRS, targetCRS);
         assertFalse  (operation1.getMathTransform().isIdentity());
-        assertEquals (2.5, AbstractCoordinateOperation.getAccuracy(operation1), 1E-6);
+        if (isEpsgDatabaseUpToDate()) {
+            // EPSG databases before version 7.6 declared a precision of 999.
+            assertEquals(2.5, AbstractCoordinateOperation.getAccuracy(operation1), 1E-6);
+        }
         /*
          * ED50 (4230)  -->  WGS 84 (4326)  using
          * Position Vector 7-param. transformation (9606).

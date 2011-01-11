@@ -21,6 +21,7 @@ import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.operation.MathTransform;
 
+import org.geotoolkit.util.Version;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
@@ -37,7 +38,7 @@ import static org.junit.Assert.*;
  * Geotk-specific API (otherwise they would be defined in the {@code geotk-test} module).
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.16 (derived from 3.00)
  */
@@ -65,6 +66,20 @@ public final class ReferencingCommons extends Commons {
         }
         assertTrue(factory instanceof ThreadedEpsgFactory);
         return true;
+    }
+
+    /**
+     * Returns {@code true} if the version number of the EPSG database is at least
+     * {@value #EPSG_VERSION}.  If the version number is unknown, then this method
+     * will conservatively returns {@code true} if order to execute the test suite.
+     *
+     * @return Whatever the EPSG database is up to date.
+     *
+     * @since 3.17
+     */
+    public static boolean isEpsgDatabaseUpToDate() {
+        final Version version = CRS.getVersion("EPSG");
+        return (version == null) || version.compareTo(new Version(EPSG_VERSION)) >= 0;
     }
 
     /**

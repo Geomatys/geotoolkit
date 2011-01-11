@@ -39,6 +39,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.util.FactoryException;
 
+import org.geotoolkit.util.Version;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.sql.DefaultDataSource;
@@ -286,14 +287,12 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
     /**
      * Tests {@link CRS#lookupIdentifier} in the URN namespace.
      * Also test the HTTP namespace by opportunity.
-     * <p>
-     * <strong>THIS TEST ASSUMES THAT THE EPSG DATABASE VERSION {@value #EPSG_VERSION} IS USED</strong>.
-     * If this is not the case, please update the {@link #EPSG_VERSION} field.
      *
      * @throws FactoryException Should not happen.
      */
     @Test
     public void testLookupIdentifierWithURN() throws FactoryException {
+        final Version version = CRS.getVersion("EPSG");
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
         assertEquals("http://www.opengis.net/gml/srs/epsg.xml#4326",
                 CRS.lookupIdentifier(Citations.HTTP_OGC, crs, false));
@@ -301,7 +300,7 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
                 " is used. It should be the case if the embedded database is used (geotk-epsg)." +
                 " If that module is upgrated with a newer version of the EPSG database, please" +
                 " update this test.",
-                "urn:ogc:def:crs:epsg:" + EPSG_VERSION + ":4326",
+                "urn:ogc:def:crs:epsg:" + (version != null ? version : EPSG_VERSION) + ":4326",
                 CRS.lookupIdentifier(Citations.URN_OGC, crs, false));
     }
 
