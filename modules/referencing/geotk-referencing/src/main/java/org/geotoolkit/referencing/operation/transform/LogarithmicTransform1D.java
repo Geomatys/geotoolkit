@@ -54,8 +54,8 @@ import static java.lang.Double.doubleToLongBits;
  *   <li>{@link org.geotoolkit.referencing.operation.provider.Logarithmic}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.17
  *
  * @see ExponentialTransform1D
  * @see LinearTransform1D
@@ -64,7 +64,7 @@ import static java.lang.Double.doubleToLongBits;
  * @module
  */
 @Immutable
-public class LogarithmicTransform1D extends AbstractMathTransform implements MathTransform1D, Serializable {
+public class LogarithmicTransform1D extends AbstractMathTransform1D implements Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -87,7 +87,10 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
 
     /**
      * The offset to add to the logarithm.
+     *
+     * @deprecated A future Geotk version may move this field in a concatenated affine transform.
      */
+    @Deprecated
     public final double offset;
 
     /**
@@ -99,7 +102,7 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
 
     /**
      * Constructs a new logarithmic transform which is the
-     * inverse of the supplied exponentional transform.
+     * inverse of the supplied exponential transform.
      */
     private LogarithmicTransform1D(final ExponentialTransform1D inverse) {
         this.base    = inverse.base;
@@ -124,7 +127,7 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
 
     /**
      * Constructs a new logarithmic transform which is the
-     * inverse of the supplied exponentional transform.
+     * inverse of the supplied exponential transform.
      */
     static LogarithmicTransform1D create(final ExponentialTransform1D inverse) {
         if (Math.abs(inverse.base - 10) < EPS) {
@@ -134,7 +137,20 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
     }
 
     /**
-     * Constructs a new logarithmic transform.
+     * Constructs a new logarithmic transform without offset.
+     *
+     * @param base The base of the logarithm (typically 10).
+     * @return The math transform.
+     *
+     * @since 3.17
+     */
+    public static MathTransform1D create(final double base) {
+        return create(base, 0);
+    }
+
+    /**
+     * Constructs a new logarithmic transform which include the given offset after the
+     * logarithm.
      *
      * @param base    The base of the logarithm (typically 10).
      * @param offset  The offset to add to the logarithm.
@@ -171,22 +187,6 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
     }
 
     /**
-     * Gets the dimension of input points, which is 1.
-     */
-    @Override
-    public int getSourceDimensions() {
-        return 1;
-    }
-
-    /**
-     * Gets the dimension of output points, which is 1.
-     */
-    @Override
-    public int getTargetDimensions() {
-        return 1;
-    }
-
-    /**
      * Creates the inverse transform of this object.
      */
     @Override
@@ -206,35 +206,48 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
     }
 
     /**
+     * Returns the logarithm of the given value in the base given to this transform constructor.
+     * This method is similar to {@link #transform(double)} except that the offset is not added.
+     *
+     * @param  value The value for which to compute the log.
+     * @return The log of the given value in the base used by this transform.
+     *
+     * @since 3.17
+     */
+    public double log(final double value) {
+        return Math.log(value) / lnBase;
+    }
+
+    /**
      * Transforms the specified value.
      */
     @Override
     public double transform(final double value) {
-        return Math.log(value)/lnBase + offset;
+        return Math.log(value) / lnBase + offset;
     }
 
     /**
      * Transforms a single coordinate in a list of ordinal values.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff,  double[] dstPts, int dstOff) {
-        dstPts[dstOff] = Math.log(srcPts[srcOff])/lnBase + offset;
+    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
+        dstPts[dstOff] = Math.log(srcPts[srcOff]) / lnBase + offset;
     }
 
     /**
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
+    public void transform(final double[] srcPts, int srcOff, final double[] dstPts, int dstOff, int numPts) {
         if (srcPts!=dstPts || srcOff>=dstOff) {
             while (--numPts >= 0) {
-                dstPts[dstOff++] = Math.log(srcPts[srcOff++])/lnBase + offset;
+                dstPts[dstOff++] = Math.log(srcPts[srcOff++]) / lnBase + offset;
             }
         } else {
             srcOff += numPts;
             dstOff += numPts;
             while (--numPts >= 0) {
-                dstPts[--dstOff] = Math.log(srcPts[srcOff++])/lnBase + offset;
+                dstPts[--dstOff] = Math.log(srcPts[--srcOff]) / lnBase + offset;
             }
         }
     }
@@ -243,16 +256,16 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(float[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
+    public void transform(final float[] srcPts, int srcOff, final float[] dstPts, int dstOff, int numPts) {
         if (srcPts!=dstPts || srcOff>=dstOff) {
             while (--numPts >= 0) {
-                dstPts[dstOff++] = (float) (Math.log(srcPts[srcOff++])/lnBase + offset);
+                dstPts[dstOff++] = (float) (Math.log(srcPts[srcOff++]) / lnBase + offset);
             }
         } else {
             srcOff += numPts;
             dstOff += numPts;
             while (--numPts >= 0) {
-                dstPts[--dstOff] = (float) (Math.log(srcPts[srcOff++])/lnBase + offset);
+                dstPts[--dstOff] = (float) (Math.log(srcPts[--srcOff]) / lnBase + offset);
             }
         }
     }
@@ -261,9 +274,9 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(double[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
+    public void transform(final double[] srcPts, int srcOff, final float[] dstPts, int dstOff, int numPts) {
         while (--numPts >= 0) {
-            dstPts[dstOff++] = (float) (Math.log(srcPts[srcOff++])/lnBase + offset);
+            dstPts[dstOff++] = (float) (Math.log(srcPts[srcOff++]) / lnBase + offset);
         }
     }
 
@@ -271,9 +284,9 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
+    public void transform(final float[] srcPts, int srcOff, final double[] dstPts, int dstOff, int numPts) {
         while (--numPts >= 0) {
-            dstPts[dstOff++] = Math.log(srcPts[srcOff++])/lnBase + offset;
+            dstPts[dstOff++] = Math.log(srcPts[srcOff++]) / lnBase + offset;
         }
     }
 
@@ -284,7 +297,7 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
         /** For cross-version compatibility. */
         private static final long serialVersionUID = -5435804027536647558L;
 
-        /** Constructs the inverse of the supplied exponentional transform. */
+        /** Constructs the inverse of the supplied exponential transform. */
         Base10(final ExponentialTransform1D inverse) {
             super(inverse);
         }
@@ -296,19 +309,25 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
 
         /** {@inheritDoc} */
         @Override
+        public double log(final double value) {
+            return Math.log10(value);
+        }
+
+        /** {@inheritDoc} */
+        @Override
         public double transform(final double value) {
             return Math.log10(value) + offset;
         }
 
         /** {@inheritDoc} */
         @Override
-        protected void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff) {
+        protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
             dstPts[dstOff] = Math.log10(srcPts[srcOff]) + offset;
         }
 
         /** {@inheritDoc} */
         @Override
-        public void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
+        public void transform(final double[] srcPts, int srcOff, final double[] dstPts, int dstOff, int numPts) {
             if (srcPts!=dstPts || srcOff>=dstOff) {
                 while (--numPts >= 0) {
                     dstPts[dstOff++] = Math.log10(srcPts[srcOff++]) + offset;
@@ -324,7 +343,7 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
 
         /** {@inheritDoc} */
         @Override
-        public void transform(float[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
+        public void transform(final float[] srcPts, int srcOff, final float[] dstPts, int dstOff, int numPts) {
             if (srcPts!=dstPts || srcOff>=dstOff) {
                 while (--numPts >= 0) {
                     dstPts[dstOff++] = (float) (Math.log10(srcPts[srcOff++]) + offset);
@@ -340,7 +359,7 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
 
         /** {@inheritDoc} */
         @Override
-        public void transform(double[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
+        public void transform(final double[] srcPts, int srcOff, final float[] dstPts, int dstOff, int numPts) {
             while (--numPts >= 0) {
                 dstPts[dstOff++] = (float) (Math.log10(srcPts[srcOff++]) + offset);
             }
@@ -348,7 +367,7 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
 
         /** {@inheritDoc} */
         @Override
-        public void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
+        public void transform(final float[] srcPts, int srcOff, final double[] dstPts, int dstOff, int numPts) {
             while (--numPts >= 0) {
                 dstPts[dstOff++] = Math.log10(srcPts[srcOff++]) + offset;
             }
@@ -368,12 +387,12 @@ public class LogarithmicTransform1D extends AbstractMathTransform implements Mat
      *         transform is available.
      */
     @Override
-    MathTransform concatenate(final MathTransform other, final boolean applyOtherFirst) {
+    final MathTransform concatenate(final MathTransform other, final boolean applyOtherFirst) {
         if (other instanceof LinearTransform) {
             final LinearTransform1D linear = (LinearTransform1D) other;
             if (applyOtherFirst) {
-                if (linear.offset==0 && linear.scale>0) {
-                    return create(base, Math.log(linear.scale)/lnBase+offset);
+                if (linear.offset == 0 && linear.scale > 0) {
+                    return create(base, Math.log(linear.scale) / lnBase + offset);
                 }
             } else {
                 final double newBase = Math.pow(base, 1/linear.scale);

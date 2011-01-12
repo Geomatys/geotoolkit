@@ -64,9 +64,7 @@ import static java.lang.Double.doubleToRawLongBits;
  * @module
  */
 @Immutable
-public class LinearTransform1D extends AbstractMathTransform
-        implements MathTransform1D, LinearTransform, Serializable
-{
+public class LinearTransform1D extends AbstractMathTransform1D implements LinearTransform, Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -143,22 +141,6 @@ public class LinearTransform1D extends AbstractMathTransform
     }
 
     /**
-     * Gets the dimension of input points, which is 1.
-     */
-    @Override
-    public int getSourceDimensions() {
-        return 1;
-    }
-
-    /**
-     * Gets the dimension of output points, which is 1.
-     */
-    @Override
-    public int getTargetDimensions() {
-        return 1;
-    }
-
-    /**
      * Returns this transform as an affine transform matrix.
      */
     @Override
@@ -180,7 +162,7 @@ public class LinearTransform1D extends AbstractMathTransform
                 inverse.inverse = this;
                 this.inverse = inverse;
             } else {
-                inverse = (MathTransform1D) super.inverse();
+                inverse = super.inverse();
             }
         }
         return inverse;

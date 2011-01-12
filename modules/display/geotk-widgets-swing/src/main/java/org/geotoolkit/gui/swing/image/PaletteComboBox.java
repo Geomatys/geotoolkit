@@ -54,7 +54,7 @@ import org.geotoolkit.internal.coverage.ColorPalette;
  * by invoking the {@link #useAsTableCellEditor(TableColumn)} method.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.13
  * @module

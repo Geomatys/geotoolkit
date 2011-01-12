@@ -30,6 +30,7 @@ import org.geotoolkit.coverage.Category;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.operation.transform.ExponentialTransform1D;
+import org.geotoolkit.referencing.operation.transform.LogarithmicTransform1D;
 
 
 /**
@@ -90,6 +91,7 @@ public final class TransferFunction {
      */
     public TransferFunction(final Category category, final Locale locale) {
         this.locale = locale; // Must be before the call to any 'check' method.
+        type = TransferFunctionType.LINEAR;
         final NumberRange<?> range = category.getRange();
         minimum = (int) Math.round(range.getMinimum(true));
         maximum = (int) Math.round(range.getMaximum(true));
@@ -97,17 +99,25 @@ public final class TransferFunction {
         if (function != null) {
             isQuantitative = true;
             isGeophysics = function.isIdentity();
-            if (function instanceof ConcatenatedTransform) {
-                final ConcatenatedTransform ctr = (ConcatenatedTransform) function;
-                function = checkType(ctr.transform1, MathTransform1D.class);
-                final ExponentialTransform1D tr = checkType(ctr.transform2, ExponentialTransform1D.class);
-                if (tr != null) {
-                    checkParameter("base",  tr.base,  10);
-                    checkParameter("scale", tr.scale,  1);
+            if (!(function instanceof LinearTransform)) {
+                /*
+                 * Maybe the function is exponential? Try to concatenate a
+                 * logarithmic transform and check if the result is linear.
+                 */
+                MathTransform1D candidate = ConcatenatedTransform.create(function, LogarithmicTransform1D.create(10));
+                if (candidate instanceof LinearTransform) {
+                    function = candidate;
                     type = TransferFunctionType.EXPONENTIAL;
+                } else {
+                    /*
+                     * Maybe the function is logarithmic?
+                     */
+                    candidate = ConcatenatedTransform.create(ExponentialTransform1D.create(10), function);
+                    if (candidate instanceof LinearTransform) {
+                        function = candidate;
+                        type = TransferFunctionType.LOGARITHMIC;
+                    }
                 }
-            } else {
-                type = TransferFunctionType.LINEAR;
             }
             final LinearTransform linear = checkType(function, LinearTransform.class);
             if (linear != null) {

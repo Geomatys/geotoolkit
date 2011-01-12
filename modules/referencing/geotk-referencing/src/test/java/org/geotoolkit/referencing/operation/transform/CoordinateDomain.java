@@ -27,7 +27,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
  * for their domain.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.17
  *
  * @since 3.00
  */
@@ -231,7 +231,15 @@ public enum CoordinateDomain {
             }
             return random.nextDouble() * (2*range) - range;
         }
-    };
+    },
+
+    /**
+     * Gaussian numbers: can be positives or negatives, mostly close to zero but some
+     * numbers can be arbitrarily large.
+     *
+     * @since 3.17
+     */
+    GAUSSIAN;
 
     /**
      * Generates random input coordinates.

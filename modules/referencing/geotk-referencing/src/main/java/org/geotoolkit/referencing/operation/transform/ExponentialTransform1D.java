@@ -33,16 +33,11 @@ import static java.lang.Double.doubleToLongBits;
 
 
 /**
- * A one dimensional exponentional transform. Input values <var>x</var> are converted into
+ * A one dimensional exponential transform. Input values <var>x</var> are converted into
  * output values <var>y</var> using the following equation:
  *
- * <blockquote><var>y</var> &nbsp;=&nbsp; {@linkplain #scale} &times;
+ * <blockquote><var>y</var> &nbsp;=&nbsp; {@linkplain #scale} &middot;
  * {@linkplain #base}<sup><var>x</var></sup></blockquote>
- *
- * This equation may be written in other form:
- *
- * <blockquote>{@linkplain #base}<sup><var>a</var> + <var>b</var>&times;<var>x</var></sup> &nbsp;=&nbsp;
- * {@linkplain #base}<sup><var>a</var></sup>&times;({@linkplain #base}<sup><var>b</var></sup>)<sup><var>x</var></sup></blockquote>
  *
  * See any of the following providers for a list of programmatic parameters:
  * <p>
@@ -50,8 +45,23 @@ import static java.lang.Double.doubleToLongBits;
  *   <li>{@link org.geotoolkit.referencing.operation.provider.Exponential}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * {@note If a linear transform is applied before this exponential transform,
+ *        then the equation can be rewritten as:
+ *
+ * <blockquote><code>scale</code> &middot; <code>base</code><sup><var>a</var> + <var>b</var>&middot;<var>x</var></sup>
+ * &nbsp;=&nbsp; <code>scale</code> &middot; <code>base</code><sup><var>a</var></sup> &middot;
+ * (<code>base</code><sup><var>b</var></sup>)<sup><var>x</var></sup></blockquote>
+ * 
+ * It is possible to find back the coefficients of the original linear transform by pre-concatening
+ * a logarithmic transform before the exponential one, as below. If that concatenation succeed, the
+ * result should be a <code>LinearTransform1D</code> instance:
+ * 
+ * <pre>LinearTransform1D linear = (LinearTransform1D) ConcatenatedTransform.create(exponentialTransform,
+ *         LogarithmicTransform1D.create(base, -Math.log(scale) / Math.log(base)));</pre>
+ * }
+ *
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.17
  *
  * @see LogarithmicTransform1D
  * @see LinearTransform1D
@@ -60,7 +70,7 @@ import static java.lang.Double.doubleToLongBits;
  * @module
  */
 @Immutable
-public class ExponentialTransform1D extends AbstractMathTransform implements MathTransform1D, Serializable {
+public class ExponentialTransform1D extends AbstractMathTransform1D implements Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -78,7 +88,10 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
 
     /**
      * The scale value to be multiplied.
+     *
+     * @deprecated A future Geotk version may move this field in a concatenated affine transform.
      */
+    @Deprecated
     public final double scale;
 
     /**
@@ -89,7 +102,7 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
     private MathTransform1D inverse;
 
     /**
-     * Constructs a new exponentional transform which is the
+     * Constructs a new exponential transform which is the
      * inverse of the supplied logarithmic transform.
      */
     ExponentialTransform1D(final LogarithmicTransform1D inverse) {
@@ -100,7 +113,7 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
     }
 
     /**
-     * Constructs a new exponentional transform. This constructor is provided for subclasses only.
+     * Constructs a new exponential transform. This constructor is provided for subclasses only.
      * Instances should be created using the {@linkplain #create factory method}, which
      * may returns optimized implementations for some particular argument values.
      *
@@ -114,7 +127,20 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
     }
 
     /**
-     * Constructs a new exponentional transform.
+     * Constructs a new exponential transform with no scale.
+     *
+     * @param base The base to be raised to a power.
+     * @return The math transform.
+     *
+     * @since 3.17
+     */
+    public static MathTransform1D create(final double base) {
+        return create(base, 1);
+    }
+
+    /**
+     * Constructs a new exponential transform which include the given scale factor applied
+     * after the exponentiation.
      *
      * @param base   The base to be raised to a power.
      * @param scale  The scale value to be multiplied.
@@ -151,22 +177,6 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
     }
 
     /**
-     * Gets the dimension of input points, which is 1.
-     */
-    @Override
-    public int getSourceDimensions() {
-        return 1;
-    }
-
-    /**
-     * Gets the dimension of output points, which is 1.
-     */
-    @Override
-    public int getTargetDimensions() {
-        return 1;
-    }
-
-    /**
      * Creates the inverse transform of this object.
      */
     @Override
@@ -197,7 +207,7 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
      * Transforms a single coordinate in a list of ordinal values.
      */
     @Override
-    protected void transform(double[] srcPts, int srcOff,  double[] dstPts, int dstOff) {
+    protected void transform(final double[] srcPts, final int srcOff, final double[] dstPts, final int dstOff) {
         dstPts[dstOff] = scale * Math.pow(base, srcPts[srcOff]);
     }
 
@@ -205,7 +215,7 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(double[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
+    public void transform(final double[] srcPts, int srcOff, final double[] dstPts, int dstOff, int numPts) {
         if (srcPts!=dstPts || srcOff>=dstOff) {
             while (--numPts >= 0) {
                 dstPts[dstOff++] = scale * Math.pow(base, srcPts[srcOff++]);
@@ -223,7 +233,7 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(float[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
+    public void transform(final float[] srcPts, int srcOff, final float[] dstPts, int dstOff, int numPts) {
         if (srcPts!=dstPts || srcOff>=dstOff) {
             while (--numPts >= 0) {
                 dstPts[dstOff++] = (float) (scale * Math.pow(base, srcPts[srcOff++]));
@@ -241,7 +251,7 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(double[] srcPts, int srcOff, float[] dstPts, int dstOff, int numPts) {
+    public void transform(final double[] srcPts, int srcOff, final float[] dstPts, int dstOff, int numPts) {
         while (--numPts >= 0) {
             dstPts[dstOff++] = (float) (scale * Math.pow(base, srcPts[srcOff++]));
         }
@@ -251,7 +261,7 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
      * Transforms many coordinates in a list of ordinal values.
      */
     @Override
-    public void transform(float[] srcPts, int srcOff, double[] dstPts, int dstOff, int numPts) {
+    public void transform(final float[] srcPts, int srcOff, final double[] dstPts, int dstOff, int numPts) {
         while (--numPts >= 0) {
             dstPts[dstOff++] = scale * Math.pow(base, srcPts[srcOff++]);
         }
@@ -270,7 +280,7 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
      *         transform is available.
      */
     @Override
-    MathTransform concatenate(final MathTransform other, final boolean applyOtherFirst) {
+    final MathTransform concatenate(final MathTransform other, final boolean applyOtherFirst) {
         if (other instanceof LinearTransform) {
             final LinearTransform1D linear = (LinearTransform1D) other;
             if (applyOtherFirst) {
@@ -281,7 +291,7 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
                 }
             } else {
                 if (linear.offset == 0) {
-                    return create(base, scale*linear.scale);
+                    return create(base, scale * linear.scale);
                 }
             }
         } else if (other instanceof LogarithmicTransform1D) {
@@ -301,21 +311,24 @@ public class ExponentialTransform1D extends AbstractMathTransform implements Mat
      * @return The combined math transform, or {@code null} if no optimized combined
      *         transform is available.
      */
-    MathTransform concatenateLog(final LogarithmicTransform1D other, final boolean applyOtherFirst) {
+    final MathTransform concatenateLog(final LogarithmicTransform1D other, final boolean applyOtherFirst) {
         if (applyOtherFirst) {
-            final double newScale = scale*Math.pow(base, other.offset);
-            final double newPower = lnBase/other.lnBase;
-            if (!Double.isNaN(newScale)) {
-                if (newPower == 1) {
-                    return LinearTransform1D.create(newScale, 0);
-                }
-                // TODO: Needs a transform here with the following equation:
-                //
-                //       y(x)  =  newScale * Math.pow(x, newPower);
+            return ConcatenatedTransform.create(
+                    PowerTransform1D.create(lnBase / other.lnBase),
+                    LinearTransform1D.create(scale * Math.pow(base, other.offset), 0));
+        } else {
+            final double newScale = lnBase / other.lnBase;
+            final double newOffset;
+            if (scale > 0) {
+                newOffset = other.log(scale) + other.offset;
+            } else {
+                // Maybe the Math.log(...) argument will become
+                // positive if we rewrite the equation that way...
+                newOffset = other.log(scale * other.offset * other.lnBase);
             }
-        } else if (scale > 0) {
-            return LinearTransform1D.create(lnBase/other.lnBase,
-                                   Math.log(scale)/other.lnBase + other.offset);
+            if (!Double.isNaN(newOffset)) {
+                return LinearTransform1D.create(newScale, newOffset);
+            }
         }
         return null;
     }

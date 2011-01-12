@@ -243,12 +243,12 @@ public class CategoryRecord implements Cloneable, Serializable {
                 switch (functionType) {
                     case LOGARITHMIC: {
                         sampleToGeophysics = ConcatenatedTransform.create(
-                                LogarithmicTransform1D.create(10, 0), sampleToGeophysics);
+                                LogarithmicTransform1D.create(10), sampleToGeophysics);
                         break;
                     }
                     case EXPONENTIAL: {
                         sampleToGeophysics = ConcatenatedTransform.create(
-                                sampleToGeophysics, ExponentialTransform1D.create(10, 1));
+                                sampleToGeophysics, ExponentialTransform1D.create(10));
                         break;
                     }
                 }

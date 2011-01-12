@@ -102,7 +102,7 @@ public enum SampleCoverage {
                 new Category("Chl-a",   null,              create(  1, 254),
                         ConcatenatedTransform.create(
                         LinearTransform1D.create(0.015, -1.985),
-                        ExponentialTransform1D.create(10, 1)))
+                        ExponentialTransform1D.create(10)))
         }, MetricPrefix.MILLI(GRAM).divide(CUBIC_METRE))),
 
     /**

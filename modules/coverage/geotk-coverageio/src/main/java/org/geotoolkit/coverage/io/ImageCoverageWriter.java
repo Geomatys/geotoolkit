@@ -252,7 +252,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
                                     messageKey = Errors.Keys.UNKNOWN_TYPE_$1;
                                     argument = output.getClass();
                                 }
-                                throw new IOException(Errors.getResources(locale).getString(messageKey, argument));
+                                throw new CoverageStoreException(Errors.getResources(locale).getString(messageKey, argument));
                             }
                         }
                     }
