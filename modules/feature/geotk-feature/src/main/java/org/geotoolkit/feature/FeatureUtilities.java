@@ -276,23 +276,31 @@ public class FeatureUtilities {
         throw new SimpleIllegalAttributeException("Do not know how to deep copy " + type.getName());
     }
 
-    public static Feature copy(final Feature feature){
-        if(feature instanceof SimpleFeature){
-            return SimpleFeatureBuilder.copy((SimpleFeature) feature);
-        }
-
-        final Collection<Property> properties = feature.getProperties();
-        final Collection<Property> copies = new ArrayList<Property>();
-        for(Property prop : properties){
-            copies.add(copy(prop));
-        }
-        return FF.createFeature(copies, feature.getDescriptor(), feature.getIdentifier().getID());
-    }
-
-    public static Property copy(final Property property){
+    public static <T extends Property> T copy(final T property){
 
         final Property copy;
-        if(property instanceof GeometryAttribute){
+        if(property instanceof SimpleFeature){
+            copy = SimpleFeatureBuilder.copy( (SimpleFeature)property );
+            
+        }else if(property instanceof ComplexAttribute){
+            final ComplexAttribute ga = (ComplexAttribute) property;
+            final Identifier id = ga.getIdentifier();
+            final String strId = (id == null) ? null : id.getID().toString();
+            final AttributeDescriptor desc = ga.getDescriptor();
+            
+            final Collection<Property> properties = ga.getProperties();
+            final Collection<Property> copies = new ArrayList<Property>();
+            for(final Property prop : properties){
+                copies.add(copy(prop));
+            }
+            
+            if(ga instanceof Feature){
+                copy = FF.createFeature(copies, desc, strId);
+            }else{
+                copy = FF.createComplexAttribute(copies, desc, strId);
+            }
+            
+        }else if (property instanceof GeometryAttribute) {
             final GeometryAttribute ga = (GeometryAttribute) property;
             final Identifier id = ga.getIdentifier();
             if(id != null){
@@ -305,21 +313,15 @@ public class FeatureUtilities {
         }else if(property instanceof Attribute){
             final Attribute ga = (Attribute) property;
             final Identifier id = ga.getIdentifier();
-            if(id != null){
-                 copy = FF.createAttribute(property.getValue(), ga.getDescriptor(),
-                    ga.getIdentifier().getID().toString());
-            }else{
-                 copy = FF.createAttribute(property.getValue(), ga.getDescriptor(), null);
-            }
-           
-        }else if(property instanceof ComplexAttribute){
-            throw new IllegalArgumentException("Not yet supported : "+ property.getClass());
+            final String strId = (id == null) ? null : id.getID().toString();
+            copy = FF.createAttribute(property.getValue(), ga.getDescriptor(),strId);
         }else{
             throw new IllegalArgumentException("Unexpected type : "+ property.getClass());
         }
 
-        //must copy user data
-        return copy;
+        //copy user data
+        copy.getUserData().putAll(property.getUserData());
+        return (T)copy;
     }
 
     public static SimpleFeature defaultFeature(final SimpleFeatureType type, final String id){

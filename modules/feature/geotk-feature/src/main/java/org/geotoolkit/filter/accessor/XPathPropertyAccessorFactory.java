@@ -24,6 +24,8 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.logging.LoggedFormat;
+import org.geotoolkit.util.logging.Logging;
 
 import org.jaxen.JaxenException;
 import org.opengis.feature.ComplexAttribute;
@@ -117,7 +119,15 @@ public final class XPathPropertyAccessorFactory implements PropertyAccessorFacto
 
         @Override
         public void set(final Object object, final String xpath, final Object value, final Class target) throws IllegalArgumentException {
-            throw new UnsupportedOperationException("Not supported.");
+            final Object obj = get(object,xpath,Property.class);
+
+            if(obj instanceof Property){
+                final Property prop = (Property)obj;
+                prop.setValue(value);
+            }else{
+                throw new IllegalArgumentException("Can not set value for xpath : " + xpath);
+            }
+
         }
 
     }

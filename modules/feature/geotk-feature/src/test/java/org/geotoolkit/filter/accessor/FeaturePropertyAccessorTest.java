@@ -20,6 +20,7 @@ package org.geotoolkit.filter.accessor;
 import org.opengis.feature.simple.SimpleFeatureType;
 import java.util.Iterator;
 import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -129,48 +130,70 @@ public class FeaturePropertyAccessorTest {
 
     }
 
-
     @Test
     public void testComplexFeatureAccessor() {
         PropertyAccessor accessor;
+        String xpath;
+
+        final Feature candidate = FeatureUtilities.copy(CX_FEATURE);
+        System.out.println(candidate);
 
         // flat attribut test //////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(Feature.class, "attString", null);
+        xpath = "attString";
+        accessor = Accessors.getAccessor(Feature.class, xpath, null);
         assertNotNull(accessor);
-        Object val = accessor.get(CX_FEATURE, "attString", null);
+        Object val = accessor.get(candidate, xpath, null);
         assertEquals("toto1", val);
+        //test setting
+        accessor.set(candidate, xpath, "bigJohn", null);
+        val = accessor.get(candidate, xpath, null);
+        assertEquals("bigJohn", val);
+        accessor.set(candidate, xpath, "toto1", null);
 
         // flat attribut test //////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(Feature.class, "{http://test.com}attString", null);
+        xpath = "{http://test.com}attString";
+        accessor = Accessors.getAccessor(Feature.class, xpath, null);
         assertNotNull(accessor);
-        val = accessor.get(CX_FEATURE, "attString", null);
+        val = accessor.get(candidate, xpath, null);
         assertEquals("toto1", val);
+        //test setting
+        accessor.set(candidate, xpath, "Alex", null);
+        val = accessor.get(candidate, xpath, null);
+        assertEquals("Alex", val);
+        accessor.set(candidate, xpath, "toto1", null);
 
         // flat attribut test //////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(Feature.class, "/{http://test.com}attString", null);
+        xpath = "/{http://test2.com}attString";
+        accessor = Accessors.getAccessor(Feature.class, xpath, null);
         assertNotNull(accessor);
-        val = accessor.get(CX_FEATURE, "/{http://test.com}attString", null);
-        assertEquals("toto1", val);
-
-        // flat attribut test //////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(Feature.class, "//{http://test.com}attString", null);
-        assertNotNull(accessor);
-        val = accessor.get(CX_FEATURE, "//{http://test.com}attString", null);
-        assertEquals("toto1", val);
+        val = accessor.get(candidate, xpath, null);
+        assertEquals("toto3", val);
+        //test setting
+        accessor.set(candidate, xpath, "Alex", null);
+        val = accessor.get(candidate, xpath, null);
+        assertEquals("Alex", val);
+        accessor.set(candidate, xpath, "toto3", null);
 
 
         // sub path attribut ///////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(Feature.class, "/{http://test.com}attCpx/{http://test.com}attString", null);
+        xpath = "/{http://test.com}attCpx/{http://test.com}attString";
+        accessor = Accessors.getAccessor(Feature.class, xpath, null);
         assertNotNull(accessor);
-        val = accessor.get(CX_FEATURE, "/{http://test.com}attCpx/{http://test.com}attString", null);
+        val = accessor.get(candidate, xpath, null);
         assertEquals("toto19", val);
+        //test setting
+        accessor.set(candidate, xpath, "Franck", null);
+        val = accessor.get(candidate, xpath, null);
+        assertEquals("Franck", val);
+        accessor.set(candidate, xpath, "toto19", null);
 
         // sub path attribut ///////////////////////////////////////////////////
-        accessor = Accessors.getAccessor(Feature.class, "/{http://test.com}attCpx[{http://test2.com}attString='marcel2']", null);
+        xpath = "/{http://test.com}attCpx[{http://test2.com}attString='marcel2']";
+        accessor = Accessors.getAccessor(Feature.class, xpath, null);
         assertNotNull(accessor);
-        val = accessor.get(CX_FEATURE, "/{http://test.com}attCpx[{http://test2.com}attString='marcel2']", Property.class);
+        val = accessor.get(candidate, xpath, Property.class);
 
-        final Iterator<Property> ite = CX_FEATURE.getProperties("attCpx").iterator();
+        final Iterator<Property> ite = candidate.getProperties("attCpx").iterator();
         ite.next();
         assertEquals(ite.next(), val);
         
@@ -214,7 +237,5 @@ public class FeaturePropertyAccessorTest {
         assertEquals(type.getDescriptor("{http://test.com}attString"), val);
 
     }
-
-
 
 }
