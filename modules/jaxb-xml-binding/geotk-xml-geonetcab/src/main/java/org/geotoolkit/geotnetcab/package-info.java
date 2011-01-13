@@ -57,6 +57,7 @@
     @XmlJavaTypeAdapter(UserDefinedMetadataAdapter.class),
     @XmlJavaTypeAdapter(UsersRestrictionsAdapter.class),
     @XmlJavaTypeAdapter(URIAdapter.class),
+    @XmlJavaTypeAdapter(DateAdapter.class),
 
     // Primitive type handling
     @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
@@ -75,4 +76,5 @@ import org.geotoolkit.internal.jaxb.geonetcab.*;
 import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
+import org.geotoolkit.internal.jaxb.uom.DateAdapter;
 

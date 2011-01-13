@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 
@@ -57,6 +58,10 @@ public class GNC_OrganisationEntitie extends GNC_Resource implements org.opengis
     @XmlElement(required = true)
     private GNC_OrganisationTypeCode typeOfOrganisation;
 
+    @XmlTransient
+    private String href;
+    
+
     /**
      * Gets the value of the typeOfOrganisation property.
      * 
@@ -80,6 +85,21 @@ public class GNC_OrganisationEntitie extends GNC_Resource implements org.opengis
      */
     public void setTypeOfOrganisation(final GNC_OrganisationTypeCode value) {
         this.typeOfOrganisation = value;
+    }
+
+    /**
+     * @return the href
+     */
+    @Override
+    public String getHref() {
+        return href;
+    }
+
+    /**
+     * @param href the href to set
+     */
+    public void setHref(String href) {
+        this.href = href;
     }
 
 }

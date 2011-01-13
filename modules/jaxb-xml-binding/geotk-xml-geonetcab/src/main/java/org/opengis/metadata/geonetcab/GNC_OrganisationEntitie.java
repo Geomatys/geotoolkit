@@ -28,4 +28,6 @@ public interface GNC_OrganisationEntitie extends GNC_Resource {
 
     GNC_OrganisationTypeCode getTypeOfOrganisation();
 
+    String getHref();
+
 }
