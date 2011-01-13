@@ -136,7 +136,6 @@ public class FeaturePropertyAccessorTest {
         String xpath;
 
         final Feature candidate = FeatureUtilities.copy(CX_FEATURE);
-        System.out.println(candidate);
 
         // flat attribut test //////////////////////////////////////////////////
         xpath = "attString";
