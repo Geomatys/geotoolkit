@@ -86,7 +86,7 @@ public final class Main extends JFrame implements ActionListener {
         final Wizards resources = Wizards.getResources(getLocale());
         setTitle(resources.getString(Wizards.Keys.GEOTK_WIZARDS));
         setMenuBar(resources);
-        setDefaultCloseOperation(EXIT_ON_CLOSE);
+        setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         setSize(1000, 600);
         setLocationRelativeTo(null);
     }

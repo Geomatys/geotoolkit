@@ -80,7 +80,7 @@ import org.jdesktop.swingx.JXBusyLabel;
  * selected file on the right side.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.17
  *
  * @see CoverageTableModel
  *
@@ -504,7 +504,10 @@ public class CoverageList extends JComponent {
             final JButton ok     = new JButton(resources.getString(Vocabulary.Keys.OK));
             final JButton cancel = new JButton(resources.getString(Vocabulary.Keys.CANCEL));
             final JPanel buttons = new JPanel(new GridLayout(1, 2, 6, 0));
-            addController.initVariableChooser(ok, cancel);
+            ok    .addActionListener(addController);
+            cancel.addActionListener(addController);
+            ok    .setActionCommand(NewGridCoverageDetails.SELECT_VARIABLES);
+            cancel.setActionCommand(NewGridCoverageDetails.CANCEL);
             buttons.add(ok);
             buttons.add(cancel);
             buttons.setOpaque(false);

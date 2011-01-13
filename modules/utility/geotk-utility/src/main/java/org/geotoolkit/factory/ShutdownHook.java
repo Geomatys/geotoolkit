@@ -99,10 +99,7 @@ final class ShutdownHook extends Thread {
          * runnning that may invoke Threads.executor(boolean). It is actually hard to ensure that,
          * but a search on Threads.SHUTDOWN_HOOKS and Threads.executor(boolean,boolean) is helpful.
          */
-        if (!Threads.shutdown()) {
-            // We can't use java.util.logging at this point since we are shutting down.
-            System.err.println("NOTE: Some background threads didn't completed.");
-        }
+        Threads.shutdown();
         /*
          * Delete the temporary file after there is presumably no running service.
          */

@@ -44,20 +44,20 @@ import static java.lang.Double.doubleToLongBits;
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.operation.provider.Exponential}</li>
  * </ul>
- *
- * {@note If a linear transform is applied before this exponential transform,
- *        then the equation can be rewritten as:
+ * <p>
+ * <b>Tip:</b> If a linear transform is applied before this exponential transform,
+ * then the equation can be rewritten as:
  *
  * <blockquote><code>scale</code> &middot; <code>base</code><sup><var>a</var> + <var>b</var>&middot;<var>x</var></sup>
  * &nbsp;=&nbsp; <code>scale</code> &middot; <code>base</code><sup><var>a</var></sup> &middot;
  * (<code>base</code><sup><var>b</var></sup>)<sup><var>x</var></sup></blockquote>
  * 
- * It is possible to find back the coefficients of the original linear transform by pre-concatening
- * a logarithmic transform before the exponential one, as below. If that concatenation succeed, the
- * result should be a <code>LinearTransform1D</code> instance:
- * 
- * <pre>LinearTransform1D linear = (LinearTransform1D) ConcatenatedTransform.create(exponentialTransform,
- *         LogarithmicTransform1D.create(base, -Math.log(scale) / Math.log(base)));</pre>
+ * It is possible to find back the coefficients of the original linear transform by
+ * pre-concatenating a logarithmic transform before the exponential one, as below:
+ *
+ * {@preformat java
+ *   LinearTransform1D linear = (LinearTransform1D) ConcatenatedTransform.create(exponentialTransform,
+ *           LogarithmicTransform1D.create(base, -Math.log(scale) / Math.log(base)));
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)

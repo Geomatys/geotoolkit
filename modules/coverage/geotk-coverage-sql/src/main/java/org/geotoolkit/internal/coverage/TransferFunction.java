@@ -91,7 +91,6 @@ public final class TransferFunction {
      */
     public TransferFunction(final Category category, final Locale locale) {
         this.locale = locale; // Must be before the call to any 'check' method.
-        type = TransferFunctionType.LINEAR;
         final NumberRange<?> range = category.getRange();
         minimum = (int) Math.round(range.getMinimum(true));
         maximum = (int) Math.round(range.getMaximum(true));
@@ -99,7 +98,9 @@ public final class TransferFunction {
         if (function != null) {
             isQuantitative = true;
             isGeophysics = function.isIdentity();
-            if (!(function instanceof LinearTransform)) {
+            if (function instanceof LinearTransform) {
+                type = TransferFunctionType.LINEAR;
+            } else {
                 /*
                  * Maybe the function is exponential? Try to concatenate a
                  * logarithmic transform and check if the result is linear.

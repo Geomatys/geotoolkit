@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Static;
  * arrays and do not copy anything if the given array already has the requested length.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.11
+ * @version 3.17
  *
  * @see Arrays
  *
@@ -1160,10 +1160,38 @@ public final class XArrays {
     }
 
     /**
-     * Returns {@code true} if the specified array contains the specified value. This method
-     * should be used only for very small arrays, or for searches to be performed only once,
-     * because it performs a linear search. If more than one search need to be done on the
-     * same array, consider using {@link java.util.HashSet} instead.
+     * Returns {@code true} if the specified array contains the specified reference.
+     * The comparisons are performed using the {@code ==} operator.
+     * <p>
+     * This method should be used only for very small arrays, or for searches to be performed
+     * only once, because it performs a linear search. If more than one search need to be done
+     * on the same array, consider using {@link java.util.IdentityHashMap} instead.
+     *
+     * @param  array The array to search in. May be {@code null} and may contains null elements.
+     * @param  value The value to search. May be {@code null}.
+     * @return {@code true} if the array is non-null and contains the value (which may be null),
+     *         or {@code false} otherwise.
+     *
+     * @since 3.17
+     */
+    public static boolean containsIdentity(final Object[] array, final Object value) {
+        if (array != null) {
+            for (final Object element : array) {
+                if (element == value) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns {@code true} if the specified array contains the specified value.
+     * The comparisons are performed using the {@link Object#equals(Object)} method.
+     * <p>
+     * This method should be used only for very small arrays, or for searches to be performed
+     * only once, because it performs a linear search. If more than one search need to be done
+     * on the same array, consider using {@link java.util.HashSet} instead.
      *
      * @param  array The array to search in. May be {@code null} and may contains null elements.
      * @param  value The value to search. May be {@code null}.

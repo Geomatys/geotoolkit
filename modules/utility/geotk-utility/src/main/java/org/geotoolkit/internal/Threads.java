@@ -189,17 +189,14 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
 
     /**
      * Shutdowns the executors and wait for the non-daemon threads to complete.
-     * This method should be invoked only when we thing that no more tasks are
+     * This method should be invoked only when we think that no more tasks are
      * going to be submitted to the executor (it is actually hard to ensure that).
-     *
-     * @return {@code true} if the pending tasks have been completed, or {@code false}
-     *         if this method returned before every tasks were completed.
      *
      * @see org.geotoolkit.factory.ShutdownHook#run()
      *
      * @since 3.06
      */
-    public static synchronized boolean shutdown() {
+    public static synchronized void shutdown() {
         final ExecutorService[] executors = EXECUTORS;
         if (executors != null) {
             for (final ExecutorService executor : executors) {
@@ -210,14 +207,15 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
             try {
                 for (final ExecutorService executor : executors) {
                     if (executor != null && !executor.awaitTermination(8, TimeUnit.SECONDS)) {
-                        return false;
+                        // We can't use java.util.logging at this point since we are shutting down.
+                        System.err.println("NOTE: Some background threads didn't completed.");
+                        return;
                     }
                 }
             } catch (InterruptedException e) {
                 // Too late for logging since we are in process of shuting down.
-                return false;
+                System.err.println(e);
             }
         }
-        return true;
     }
 }

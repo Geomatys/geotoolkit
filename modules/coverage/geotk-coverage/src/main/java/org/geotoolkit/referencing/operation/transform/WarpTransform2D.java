@@ -75,7 +75,7 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
  * @module
  */
 @Immutable
-public class WarpTransform2D extends AbstractMathTransform implements MathTransform2D, Serializable {
+public class WarpTransform2D extends AbstractMathTransform2D implements Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -342,22 +342,6 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
     }
 
     /**
-     * Returns the dimension of input points.
-     */
-    @Override
-    public int getSourceDimensions() {
-        return 2;
-    }
-
-    /**
-     * Returns the dimension of output points.
-     */
-    @Override
-    public int getTargetDimensions() {
-        return 2;
-    }
-
-    /**
      * Tests if this transform is the identity transform.
      */
     @Override
@@ -523,7 +507,7 @@ public class WarpTransform2D extends AbstractMathTransform implements MathTransf
         if (inverse != null) {
             return inverse;
         } else {
-            return (MathTransform2D) super.inverse();
+            return super.inverse();
         }
     }
 

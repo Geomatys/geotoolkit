@@ -54,6 +54,7 @@ import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.coverage.GridSampleDimension;
@@ -64,26 +65,30 @@ import org.geotoolkit.coverage.sql.NewGridCoverageReference;
 import org.geotoolkit.coverage.sql.CoverageDatabaseController;
 import org.geotoolkit.gui.swing.WindowCreator;
 import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
+import org.geotoolkit.internal.swing.ComponentDisposer;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
 
 /**
  * A form showing details about a {@link NewGridCoverageReference}.
  * Users can verify and modify those information before they are written in the database.
+ * <p>
+ * An instance of this class is created by {@link CoverageList} when first needed,
+ * and reused for all images to be inserted from the same {@code CoverageList}.
+ * New images are declared by invoking {@link #coverageAdding}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.12
  * @module
  */
 @SuppressWarnings("serial")
-final class NewGridCoverageDetails extends WindowCreator implements CoverageDatabaseController {
+final class NewGridCoverageDetails extends WindowCreator implements CoverageDatabaseController, ActionListener, Disposable {
     /**
-     * Action commands.
+     * Action commands recognized by {@link #actionPerformed(ActionEvent)}.
      */
-    private static final String SELECT_FORMAT="SELECT_FORMAT",
-            SELECT_VARIABLES="SELECT_VARIABLES", OK="OK", CANCEL="CANCEL";
+    static final String SELECT_FORMAT="SELECT_FORMAT", SELECT_VARIABLES="SELECT_VARIABLES", OK="OK", CANCEL="CANCEL";
 
     /**
      * The {@link CoverageList} that created this panel.
@@ -96,7 +101,8 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     private final JTextField filename;
 
     /**
-     * The format (editable).
+     * The format (editable). Contains many {@link String} elements for each existing format
+     * names, and a single {@link InternationalString} element for the "New format" choice.
      */
     private final JComboBox format;
 
@@ -230,10 +236,10 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         add(new JScrollPane(container), BorderLayout.CENTER);
         add(centered, BorderLayout.SOUTH);
 
-        final Listeners listeners = new Listeners();
-        format      .addActionListener(listeners);
-        okButton    .addActionListener(listeners);
-        cancelButton.addActionListener(listeners);
+        format      .addActionListener(this);
+        okButton    .addActionListener(this);
+        cancelButton.addActionListener(this);
+        addAncestorListener(ComponentDisposer.INSTANCE);
     }
 
     /**
@@ -252,58 +258,29 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     }
 
     /**
-     * Set the listeners of the "Ok" and "Cancel" buttons of the variable chooser.
-     * This method is invoked by {@link CoverageList#showFileChooser()} when first
-     * needed.
-     */
-    final void initVariableChooser(final JButton ok, final JButton cancel) {
-        for (final ActionListener listener : format.getActionListeners()) {
-            if (listener instanceof Listeners) {
-                final Listeners listeners = (Listeners) listener;
-                ok    .addActionListener(listeners);
-                cancel.addActionListener(listeners);
-                ok    .setActionCommand(SELECT_VARIABLES);
-                cancel.setActionCommand(CANCEL);
-                return;
-            }
-        }
-        throw new AssertionError();
-    }
-
-    /**
-     * Listener for various action handled by the enclosing class.
+     * Invoked when the "Ok" or "Cancel" button is pressed, or when a new format is selected,
+     * or when a new variable is selected.
      *
      * @todo switch(String) with Java 7.
      */
-    private final class Listeners implements ActionListener {
-        @Override public void actionPerformed(final ActionEvent event) {
-            final String action = event.getActionCommand();
-            if (SELECT_FORMAT.equals(action)) {
-                formatSelected();
-            } else if (SELECT_VARIABLES.equals(action)) {
-                NewGridCoverageDetails.this.actionPerformed(1);
-            } else if (OK.equals(action)) {
-                NewGridCoverageDetails.this.actionPerformed(2);
-            } if (CANCEL.equals(action)) {
-                NewGridCoverageDetails.this.actionPerformed(0);
-            }
+    @Override
+    public void actionPerformed(final ActionEvent event) {
+        final String action = event.getActionCommand();
+        if (SELECT_FORMAT.equals(action)) {
+            formatSelected();
+        } else if (SELECT_VARIABLES.equals(action)) {
+            variableSelectionChanged();
+        } else if (OK.equals(action)) {
+            confirm();
+        } if (CANCEL.equals(action)) {
+            dispose();
         }
-    }
-
-    /**
-     * Sets a reference to the new coverage in process of being added to the database.
-     * This method is invoked in the Swing thread by {@link #coverageAdding}, which is
-     * a callback method invoked when a new coverage has been found.
-     */
-    final void setReference(final NewGridCoverageReference newReference) {
-        reference = newReference;
-        defaultFormatName = newReference.format;
     }
 
     /**
      * Returns the name of the currently selected format.
      */
-    final String getSelectedFormat() {
+    private String getSelectedFormat() {
         final Object formatName = format.getSelectedItem();
         if (formatName instanceof InternationalString) {
             // InternationalString is used as a special value for "New format".
@@ -315,7 +292,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
 
     /**
      * Invoked when the user selected a format in the {@link JComboBox}, or when the format
-     * changed programmatically. If the format changed, get the {@link GridSampleDimension}s
+     * changed programmatically. If the format changed, gets the {@link GridSampleDimension}s
      * and updates the field with the new values.
      */
     private void formatSelected() {
@@ -444,8 +421,9 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
         final File file = newReference.getFile();
         SwingUtilities.invokeAndWait(new Runnable() {
             @Override public void run() {
-                setReference(newReference); // Must be set first.
-                selectedFormat = null; // Must be before the change of format choices.
+                reference         = newReference; // Must be set first.
+                defaultFormatName = newReference.format;
+                selectedFormat    = null; // Must be before the change of format choices.
                 try {
                     final String[] alternatives = newReference.getAlternativeFormats();
                     final DefaultComboBoxModel model = new DefaultComboBoxModel(alternatives);
@@ -489,62 +467,65 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
     }
 
     /**
-     * Invoked when the user pressed the "Ok" or "Cancel" button.
-     *
-     * @param action 0 if the user pressed the "Cancel" button,
-     *               1 if he confirmed the variable choice, or
-     *               2 if he confirmed the coverage insertion.
+     * Invoked when the user pressed the "Cancel" button or closed the window. When pressing
+     * the "Cancel" button, this method is invoked by the {@link #actionPerformed(ActionEvent)}
+     * method. When closing the window, this method is invoked by {@link ComponentDisposer}.
      */
-    private synchronized void actionPerformed(final int action) {
-        switch (action) {
-            case 0: { // Cancel
-                reference         = null;
-                defaultFormatName = null;
-                selectedVariables = null;
-                break;
-            }
-            case 1: { // Confirm variable selection
-                selectedVariables = owner.getSelectedVariables();
-                break;
-            }
-            case 2: { // Confirm coverage insertion
-                final NewGridCoverageReference reference = this.reference;
-                try {
-                    reference.format         = getSelectedFormat();
-                    reference.horizontalSRID = getSelectedCode(horizontalCRS);
-                    reference.verticalSRID   = getSelectedCode(verticalCRS);
-                    reference.sampleDimensions.clear();
-                    sampleDimensionEditor.commitEdit();
-                    final List<GridSampleDimension> bands = sampleDimensionEditor.getSampleDimensions();
-                    if (bands != null) {
-                        final boolean isGeophysics = this.isGeophysics.isSelected();
-                        for (int i=bands.size(); --i>=0;) {
-                            bands.set(i, bands.get(i).geophysics(isGeophysics));
-                        }
-                        reference.sampleDimensions.addAll(bands);
-                    }
-                } catch (NumberFormatException e) {
-                    // Do not weakup the sleeping thread.
-                    // User will need to make an other selection.
-                    return;
-                } catch (ParseException e) {
-                    return;
+    @Override
+    public synchronized void dispose() {
+        reference         = null;
+        defaultFormatName = null;
+        selectedVariables = null;
+        notifyAll(); // Weakup the sleeping 'coverageAdding' method.
+    }
+
+    /**
+     * Invoked when the user selected a new variable. This is relevant only for
+     * files containing different images for different variables.
+     */
+    private synchronized void variableSelectionChanged() {
+        selectedVariables = owner.getSelectedVariables();
+        notifyAll(); // Weakup the sleeping 'coverageAdding' method.
+    }
+
+    /**
+     * Invoked when the user pressed the "Ok" button.
+     */
+    private synchronized void confirm() {
+        final NewGridCoverageReference reference = this.reference;
+        try {
+            reference.format         = getSelectedFormat();
+            reference.horizontalSRID = getSelectedCode(horizontalCRS);
+            reference.verticalSRID   = getSelectedCode(verticalCRS);
+            reference.sampleDimensions.clear();
+            sampleDimensionEditor.commitEdit();
+            final List<GridSampleDimension> bands = sampleDimensionEditor.getSampleDimensions();
+            if (bands != null) {
+                final boolean isGeophysics = this.isGeophysics.isSelected();
+                for (int i=bands.size(); --i>=0;) {
+                    bands.set(i, bands.get(i).geophysics(isGeophysics));
                 }
-                /*
-                 * Perform some validity checks on user arguments.
-                 */
-                if (reference.horizontalSRID == 0) {
-                    incompleteForm(0);
-                    // Do no weakup the sleeping thread.
-                    return;
-                }
-                if (reference.verticalSRID == 0 && reference.verticalValues != null) {
-                    incompleteForm(1);
-                    // Do no weakup the sleeping thread.
-                    return;
-                }
-                break;
+                reference.sampleDimensions.addAll(bands);
             }
+        } catch (NumberFormatException e) {
+            // Do not weakup the sleeping thread.
+            // User will need to make an other selection.
+            return;
+        } catch (ParseException e) {
+            return;
+        }
+        /*
+         * Perform some validity checks on user arguments.
+         */
+        if (reference.horizontalSRID == 0) {
+            incompleteForm(0);
+            // Do no weakup the sleeping thread.
+            return;
+        }
+        if (reference.verticalSRID == 0 && reference.verticalValues != null) {
+            incompleteForm(1);
+            // Do no weakup the sleeping thread.
+            return;
         }
         notifyAll(); // Weakup the sleeping 'coverageAdding' method.
     }
