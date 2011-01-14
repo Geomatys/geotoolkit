@@ -214,7 +214,14 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
      * Can be used to temporal or elevatio range of the map.
      */
     final void setRange(final int ordinate, final double min, final double max){
+
+        if(min == envelope.getMinimum(ordinate) && max == envelope.getMaximum(ordinate)){
+            //nothing changed
+            return;
+        }
+
         envelope.setRange(ordinate, min, max);
+        repaintIfAuto();
     }
 
     final void setAutoRepaint(final boolean autoRepaint) {

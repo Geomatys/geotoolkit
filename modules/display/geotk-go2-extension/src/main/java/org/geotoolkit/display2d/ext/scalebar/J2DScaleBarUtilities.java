@@ -30,6 +30,8 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.text.FieldPosition;
 import java.util.Arrays;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.measure.converter.ConversionException;
 import javax.measure.converter.UnitConverter;
 import javax.measure.unit.NonSI;
@@ -81,12 +83,17 @@ public class J2DScaleBarUtilities {
      * @param template : scalebar template
      * @throws org.geotoolkit.display.exception.PortrayalException
      */
-    public static void paint(final CoordinateReferenceSystem objectiveCRS,
+    public static void paint(CoordinateReferenceSystem objectiveCRS,
                               final CoordinateReferenceSystem displayCRS,
                               final Point2D geoPosition,
                               final Graphics2D g2d,
                               final int x, final int y,
                               final ScaleBarTemplate template) throws PortrayalException{
+        try {
+            objectiveCRS = CRSUtilities.getCRS2D(objectiveCRS);
+        } catch (TransformException ex) {
+            throw new PortrayalException(ex);
+        }
 
         final Dimension estimation = estimate(g2d, template, false);
         final Dimension bounds = template.getSize();
