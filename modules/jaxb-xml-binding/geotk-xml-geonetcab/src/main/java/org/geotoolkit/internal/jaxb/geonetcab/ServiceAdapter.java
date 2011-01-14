@@ -18,6 +18,7 @@
 
 package org.geotoolkit.internal.jaxb.geonetcab;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import org.geotoolkit.geotnetcab.GNC_Service;
 import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
@@ -67,7 +68,10 @@ public class ServiceAdapter extends MetadataAdapter<ServiceAdapter, GNC_Service>
     @Override
     @XmlElement(name="GNC_Service", namespace="http://www.mdweb-project.org/files/xsd")
     public GNC_Service getElement() {
-        return metadata;
+        if (metadata.getHref() == null) {
+            return metadata;
+        }
+        return null;
     }
 
     /**
@@ -79,4 +83,33 @@ public class ServiceAdapter extends MetadataAdapter<ServiceAdapter, GNC_Service>
     public void setElement(final GNC_Service metadata) {
         this.metadata = metadata;
     }
+
+
+    /**
+     * Returns the {@link String} generated from the metadata value.
+     * This method is systematically called at marshalling time by JAXB.
+     *
+     * @return The metadata to be marshalled.
+     */
+    @XmlAttribute(name="href", namespace="http://www.w3.org/1999/xlink")
+    public String getReference() {
+        if (metadata.getHref() != null) {
+            return metadata.getHref();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value for the {@link String}. This method is systematically
+     * called at unmarshalling time by JAXB.
+     *
+     * @param metadata The unmarshalled metadata.
+     */
+    public void setReference(final String href) {
+        if (href != null) {
+            this.metadata = new GNC_Service();
+            this.metadata.setHref(href);
+        }
+    }
+ }
 }

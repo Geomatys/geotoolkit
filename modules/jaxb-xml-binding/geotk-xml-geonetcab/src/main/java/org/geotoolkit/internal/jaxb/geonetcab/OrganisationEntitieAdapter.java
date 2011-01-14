@@ -105,7 +105,9 @@ public class OrganisationEntitieAdapter extends MetadataAdapter<OrganisationEnti
      * @param metadata The unmarshalled metadata.
      */
     public void setReference(final String href) {
-        this.metadata = new GNC_OrganisationEntitie();
-        this.metadata.setHref(href);
+        if (href != null) {
+            this.metadata = new GNC_OrganisationEntitie();
+            this.metadata.setHref(href);
+        }
     }
 }

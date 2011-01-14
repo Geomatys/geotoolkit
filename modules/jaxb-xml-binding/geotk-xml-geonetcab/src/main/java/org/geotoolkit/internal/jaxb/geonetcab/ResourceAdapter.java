@@ -18,7 +18,7 @@
 
 package org.geotoolkit.internal.jaxb.geonetcab;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.geotoolkit.geotnetcab.GNC_Resource;
 import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
@@ -49,7 +49,7 @@ public class ResourceAdapter extends MetadataAdapter<ResourceAdapter, GNC_Resour
     }
 
     /**
-     * Returns the ContentInformation value wrapped by a {@code MD_ContentInformation} element.
+     * Returns the ContentInformation value wrapped by a {@code GNC_Resource} element.
      *
      * @param value The value to marshall.
      * @return The adapter which wraps the metadata value.
@@ -60,7 +60,7 @@ public class ResourceAdapter extends MetadataAdapter<ResourceAdapter, GNC_Resour
     }
 
     /**
-     * Returns the {@link AbstractContentInformation} generated from the metadata value.
+     * Returns the {@link GNC_Resource} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *
      * @return The metadata to be marshalled.
@@ -68,7 +68,10 @@ public class ResourceAdapter extends MetadataAdapter<ResourceAdapter, GNC_Resour
     @Override
     @XmlElementRef
     public GNC_Resource getElement() {
-        return metadata;
+        if (metadata.getHref() == null) {
+            return metadata;
+        }
+        return null;
     }
 
     /**
@@ -80,4 +83,32 @@ public class ResourceAdapter extends MetadataAdapter<ResourceAdapter, GNC_Resour
     public void setElement(final GNC_Resource metadata) {
         this.metadata = metadata;
     }
+
+    /**
+     * Returns the {@link String} generated from the metadata value.
+     * This method is systematically called at marshalling time by JAXB.
+     *
+     * @return The metadata to be marshalled.
+     */
+    @XmlAttribute(name="href", namespace="http://www.w3.org/1999/xlink")
+    public String getReference() {
+        if (metadata.getHref() != null) {
+            return metadata.getHref();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value for the {@link String}. This method is systematically
+     * called at unmarshalling time by JAXB.
+     *
+     * @param metadata The unmarshalled metadata.
+     */
+    public void setReference(final String href) {
+        if (href != null) {
+            this.metadata = new GNC_Resource();
+            this.metadata.setHref(href);
+        }
+    }
+ }
 }

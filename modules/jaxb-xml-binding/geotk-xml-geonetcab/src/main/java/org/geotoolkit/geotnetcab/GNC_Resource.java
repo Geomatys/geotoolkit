@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.opengis.metadata.citation.OnlineResource;
@@ -67,6 +68,9 @@ public class GNC_Resource extends DefaultDataIdentification implements org.openg
     private List<OnlineResource> onlineInformation;
     private List<GNC_Resource> reference;
 
+    @XmlTransient
+    private String href;
+    
     /**
      * Gets the value of the onlineInformation property.
      * 
@@ -129,4 +133,18 @@ public class GNC_Resource extends DefaultDataIdentification implements org.openg
         this.reference.add(reference);
     }
 
+    /**
+     * @return the href
+     */
+    @Override
+    public String getHref() {
+        return href;
+    }
+
+    /**
+     * @param href the href to set
+     */
+    public void setHref(String href) {
+        this.href = href;
+    }
 }

@@ -31,4 +31,6 @@ public interface GNC_Resource extends DataIdentification {
     List<OnlineResource> getOnlineInformation();
     
     List<? extends GNC_Resource> getReference();
+
+    String getHref();
 }
