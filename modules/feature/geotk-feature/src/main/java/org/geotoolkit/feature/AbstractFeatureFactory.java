@@ -37,6 +37,7 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -80,8 +81,11 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public Attribute createAttribute(final Object value, final AttributeDescriptor descriptor, final String id) {
+        final AttributeType attType = descriptor.getType();
         if(descriptor instanceof GeometryDescriptor){
             return createGeometryAttribute(value, (GeometryDescriptor) descriptor, id, null);
+        }else if(attType instanceof ComplexType){
+            return createComplexAttribute((Collection)value, (ComplexType)attType, id);
         }
 
         if(id != null && !id.isEmpty()){
@@ -110,6 +114,9 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
     @Override
     public ComplexAttribute createComplexAttribute(
             final Collection<Property> value, final AttributeDescriptor descriptor, final String id) {
+        if(descriptor.getType() instanceof FeatureType){
+            return createFeature(value, descriptor, id);
+        }
         if(id != null && !id.isEmpty()){
             return new DefaultComplexAttribute(value, descriptor, FF.gmlObjectId(id));
         }else{
@@ -122,6 +129,9 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public ComplexAttribute createComplexAttribute(final Collection<Property> value, final ComplexType type, final String id) {
+        if(type instanceof FeatureType){
+            return createFeature(value, (FeatureType)type, id);
+        }
         if(id != null && !id.isEmpty()){
             return DefaultComplexAttribute.create(value, type, FF.gmlObjectId(id));
         }else{

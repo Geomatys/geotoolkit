@@ -50,8 +50,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
@@ -129,21 +129,21 @@ public class GenericIteratorTest extends TestCase{
 
         collection = DataUtilities.collection("id", originalType);
 
-        SimpleFeature sf = SimpleFeatureBuilder.template(originalType, "");
+        SimpleFeature sf = FeatureUtilities.defaultFeature(originalType, "");
         sf.setAttribute("att_geom", GF.createPoint(new Coordinate(3, 0)));
         sf.setAttribute("att_string", "bbb");
         sf.setAttribute("att_double", 3d);
         collection.add(sf);
         id1 = name.getLocalPart()+"."+0;
 
-        sf = SimpleFeatureBuilder.template(originalType, "");
+        sf = FeatureUtilities.defaultFeature(originalType, "");
         sf.setAttribute("att_geom", GF.createPoint(new Coordinate(1, 0)));
         sf.setAttribute("att_string", "ccc");
         sf.setAttribute("att_double", 1d);
         collection.add(sf);
         id2 = name.getLocalPart()+"."+1;
 
-        sf = SimpleFeatureBuilder.template(originalType, "");
+        sf = FeatureUtilities.defaultFeature(originalType, "");
         sf.setAttribute("att_geom", GF.createPoint(new Coordinate(2, 0)));
         sf.setAttribute("att_string", "aaa");
         sf.setAttribute("att_double", 2d);
@@ -440,7 +440,7 @@ public class GenericIteratorTest extends TestCase{
                 });
 
         final FeatureCollection collection = DataUtilities.collection("id", type);
-        SimpleFeature sf = SimpleFeatureBuilder.template(type, "");
+        SimpleFeature sf = FeatureUtilities.defaultFeature(type, "");
         sf.setAttribute("att_geom", geom);
         collection.add(sf);
 

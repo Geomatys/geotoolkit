@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -415,72 +416,6 @@ public class SimpleFeatureBuilder {
     }
 
     /**
-     * Copy an existing feature (the values are reused so be careful with mutable values).
-     * <p>
-     * If multiple features need to be copied, this method should not be used
-     * and instead an instance should be instantiated directly.
-     * </p>
-     * <p>
-     * This method is a short-hand convenience which creates a builder instance
-     * and initializes it with the attributes from the specified feature.
-     * </p>
-     */
-    public static SimpleFeature copy(final SimpleFeature original) {
-        if (original == null) {
-            return null;
-        }
-
-        final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(original.getFeatureType());
-        builder.init(original); // this is a shallow copy
-        return builder.buildFeature(original.getID());
-    }
-
-    /**
-     * Deep copy an existing feature.
-     * <p>
-     * This method is scary, expensive and will result in a deep copy of
-     * Geometry which will be.
-     * </p>
-     * @param original Content
-     * @return copy
-     */
-    public static SimpleFeature deep(final SimpleFeature original) {
-        if (original == null) {
-            return null;
-        }
-
-        final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(original.getFeatureType());
-        try {
-            for (Property property : original.getProperties()) {
-                final Object value = property.getValue();
-                Object copy = value;
-                if (value instanceof Geometry) {
-                    Geometry geometry = (Geometry) value;
-                    copy = geometry.clone();
-                }
-                builder.set(property.getName(), copy);
-            }
-            return builder.buildFeature(original.getID());
-        } catch (Exception e) {
-            throw (IllegalAttributeException) new SimpleIllegalAttributeException("illegal attribute").initCause(e);
-        }
-    }
-
-    /**
-     * Builds a new feature whose attribute values are the default ones
-     * @param featureType
-     * @param featureId
-     * @return SimpleFeature
-     */
-    public static SimpleFeature template(final SimpleFeatureType featureType, final String featureId) {
-        final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
-        for (AttributeDescriptor ad : featureType.getAttributeDescriptors()) {
-            builder.add(ad.getDefaultValue());
-        }
-        return builder.buildFeature(featureId);
-    }
-
-    /**
      * Copies an existing feature, retyping it in the process.
      * <p> Be warned, this method will
      * create its own SimpleFeatureBuilder, which will trigger a scan of the SPI looking for
@@ -499,11 +434,7 @@ public class SimpleFeatureBuilder {
      */
     public static SimpleFeature retype(final SimpleFeature feature, final SimpleFeatureType featureType) {
         final SimpleFeatureBuilder builder = new SimpleFeatureBuilder(featureType);
-        for (AttributeDescriptor att : featureType.getAttributeDescriptors()) {
-            Object value = feature.getAttribute(att.getName());
-            builder.set(att.getName(), value);
-        }
-        return builder.buildFeature(feature.getID());
+        return retype(feature, builder);
     }
 
     /**

@@ -41,25 +41,29 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
-import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.AttributeType;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
+import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
 
 /**
@@ -70,14 +74,16 @@ import org.opengis.filter.identity.Identifier;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FeatureUtilities {
+public final class FeatureUtilities {
 
-    protected static final FeatureFactory FF = FactoryFinder
+    private static final Logger LOGGER = Logging.getLogger(FeatureUtilities.class);
+
+    private static final FeatureFactory FF = FactoryFinder
             .getFeatureFactory(new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     private static final GeometryFactory GF = new GeometryFactory();
 
-    protected FeatureUtilities(){}
+    private FeatureUtilities(){}
 
     /**
      * Returns a non-null default value for the class that is passed in.  This is a helper class an can't create a
@@ -169,18 +175,84 @@ public class FeatureUtilities {
         throw new IllegalArgumentException(type + " is not supported by this method");
     }
 
+    ////////////////////////////////////////////////////////////////////////////
+    // COPY OPERATIONS /////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    public static <T extends Property> T copy(final T property){
+        return copy(property,false,null);
+    }
+
+    public static <T extends Property> T copy(final T property, final String newId){
+        return copy(property,false,newId);
+    }
+
+    public static <T extends Property> T deepCopy(final T property){
+        return copy(property,true,null);
+    }
+
+    public static <T extends Property> T deepCopy(final T property, String newId){
+        return copy(property,true,null);
+    }
+
+    /**
+     *
+     * @param property : property to copy
+     * @param deep : duplicate property value.
+     * @param newId : replace current property id if newId is not null
+     * @return copy of the property
+     */
+    public static <T extends Property> T copy(final T property, final boolean deep, final String newId){
+
+        final Property copy;
+        if(property instanceof ComplexAttribute){
+            final ComplexAttribute ga = (ComplexAttribute) property;
+            final String strId;
+            if(newId == null){
+                final Identifier id = ga.getIdentifier();
+                strId = (id == null) ? null : id.getID().toString();
+            }else{
+                strId = newId;
+            }
+            final AttributeDescriptor desc = ga.getDescriptor();
+
+            final Collection<Property> properties = ga.getProperties();
+            final Collection<Property> copies = new ArrayList<Property>();
+            for(final Property prop : properties){
+                copies.add(copy(prop,deep,null));
+            }
+            copy = FF.createComplexAttribute(copies, desc, strId);
+
+        }else if(property instanceof Attribute){
+            final Attribute ga = (Attribute) property;
+            final String strId;
+            if(newId == null){
+                final Identifier id = ga.getIdentifier();
+                strId = (id == null) ? null : id.getID().toString();
+            }else{
+                strId = newId;
+            }
+
+            final Object value = (deep) ? duplicate(property.getValue()) : property.getValue();
+            copy = FF.createAttribute(value, ga.getDescriptor(),strId);
+        }else{
+            throw new IllegalArgumentException("Unexpected type : "+ property.getClass());
+        }
+
+        //copy user data
+        copy.getUserData().putAll(property.getUserData());
+        return (T)copy;
+    }
+
     public static Object duplicate(final Object src) {
-//JD: this method really needs to be replaced with somethign better
 
         if (src == null) {
             return null;
         }
 
-        //
         // The following are things I expect
         // Features will contain.
-        //
-        if (src instanceof String || src instanceof Integer || src instanceof Double || src instanceof Float || src instanceof Byte || src instanceof Boolean || src instanceof Short || src instanceof Long || src instanceof Character || src instanceof Number) {
+        if (src instanceof String || src instanceof Boolean || src instanceof Character || src instanceof Number) {
             return src;
         }
 
@@ -205,20 +277,12 @@ public class FeatureUtilities {
 
         if (src instanceof Geometry) {
             final Geometry geometry = (Geometry) src;
-
             return geometry.clone();
         }
 
-        if (src instanceof SimpleFeature) {
-            final SimpleFeature feature = (SimpleFeature) src;
-            return SimpleFeatureBuilder.copy(feature);
-        }
-
-        //
         // We are now into diminishing returns
         // I don't expect Features to contain these often
         // (eveything is still nice and recursive)
-        //
         final Class type = src.getClass();
 
         if (type.isArray() && type.getComponentType().isPrimitive()) {
@@ -267,93 +331,75 @@ public class FeatureUtilities {
             return src; // inmutable
         }
 
-
-        //
-        // I have lost hope and am returning the orgional reference
-        // Please extend this to support additional classes.
-        //
-        // And good luck getting Cloneable to work
-        throw new SimpleIllegalAttributeException("Do not know how to deep copy " + type.getName());
+        //can't find a solution to duplicate this object
+        LOGGER.log(Level.WARNING, "",new SimpleIllegalAttributeException(
+                "Do not know how to deep copy " + type.getName()));
+        return src;
     }
 
-    public static <T extends Property> T copy(final T property){
-        return (T)copy(property,null);
+    ////////////////////////////////////////////////////////////////////////////
+    // TEMPLATE OPERATIONS /////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    public static Property defaultProperty(final PropertyDescriptor desc){
+        return defaultProperty(desc, null);
     }
 
-    /**
-     *
-     * @param <T>
-     * @param property
-     * @param newId : replace current property id if newId is not null
-     * @return
-     */
-    public static <T extends Property> T copy(final T property, String newId){
+    public static Property defaultProperty(final PropertyDescriptor desc, final String id){
+        final PropertyType type = desc.getType();
 
-        final Property copy;
-        if(property instanceof ComplexAttribute){
-            final ComplexAttribute ga = (ComplexAttribute) property;
-            final String strId;
-            if(newId == null){
-                final Identifier id = ga.getIdentifier();
-                strId = (id == null) ? null : id.getID().toString();
-            }else{
-                strId = newId;
-            }
-            final AttributeDescriptor desc = ga.getDescriptor();
+        if(type instanceof ComplexType){
+            final AttributeDescriptor attDesc = (AttributeDescriptor) desc;
+            final ComplexType ct = (ComplexType) type;
 
-            final Collection<Property> properties = ga.getProperties();
-            final Collection<Property> copies = new ArrayList<Property>();
-            for(final Property prop : properties){
-                copies.add(copy(prop));
+            final Collection<Property> props = new ArrayList<Property>();
+            for(final PropertyDescriptor subDesc : ct.getDescriptors()){
+                for(int i=0,n=subDesc.getMinOccurs();i<n;i++){
+                    final Property prop = defaultProperty(subDesc);
+                    if(prop != null){
+                        props.add(prop);
+                    }
+                }
             }
+            return FF.createComplexAttribute(props, attDesc, id);
 
-            if(ga instanceof Feature){
-                copy = FF.createFeature(copies, desc, strId);
-            }else{
-                copy = FF.createComplexAttribute(copies, desc, strId);
-            }
+        }else if(type instanceof AttributeType){
+            final AttributeDescriptor attDesc = (AttributeDescriptor) desc;
+            final Object value = defaultPropertyValue(desc);
+            return FF.createAttribute(value, attDesc, id);
 
-        }else if (property instanceof GeometryAttribute) {
-            final GeometryAttribute ga = (GeometryAttribute) property;
-            final String strId;
-            if(newId == null){
-                final Identifier id = ga.getIdentifier();
-                strId = (id == null) ? null : id.getID().toString();
-            }else{
-                strId = newId;
-            }
-            copy = FF.createGeometryAttribute(property.getValue(), ga.getDescriptor(), strId, null);
-
-        }else if(property instanceof Attribute){
-            final Attribute ga = (Attribute) property;
-            final String strId;
-            if(newId == null){
-                final Identifier id = ga.getIdentifier();
-                strId = (id == null) ? null : id.getID().toString();
-            }else{
-                strId = newId;
-            }
-            copy = FF.createAttribute(property.getValue(), ga.getDescriptor(),strId);
-        }else{
-            throw new IllegalArgumentException("Unexpected type : "+ property.getClass());
+        }else if(type instanceof AssociationType){
+            //can not create a default value for this
+            return null;
         }
 
-        //copy user data
-        copy.getUserData().putAll(property.getUserData());
-        return (T)copy;
+        throw new IllegalArgumentException("Unhandled type : " + type);
     }
 
+    public static Property defaultProperty(final ComplexType type){
+        return defaultProperty(type, null);
+    }
+
+    public static Property defaultProperty(final ComplexType type, final String id){
+
+        final Collection<Property> props = new ArrayList<Property>();
+        for(final PropertyDescriptor subDesc : type.getDescriptors()){
+            for(int i=0,n=subDesc.getMinOccurs();i<n;i++){
+                final Property prop = defaultProperty(subDesc);
+                if(prop != null){
+                    props.add(prop);
+                }
+            }
+        }
+        return FF.createComplexAttribute(props, type, id);
+    }
 
     public static SimpleFeature defaultFeature(final SimpleFeatureType type, final String id){
-        return (SimpleFeature)defaultFeature((FeatureType)type, id);
+        return (SimpleFeature)defaultProperty(type, id);
     }
 
     public static Feature defaultFeature(final FeatureType type, final String id){
-        final List<Property> properties = new ArrayList<Property>();
-        for(PropertyDescriptor desc : type.getDescriptors()){
-            properties.add(defaultProperty(desc));
-        }
-        return FF.createFeature(properties, type, id);
+        return (SimpleFeature)defaultProperty(type, id);
     }
 
     /**
@@ -369,7 +415,7 @@ public class FeatureUtilities {
      * @throws IllegalAttributeException If value cannot be constructed for
      *         attribtueType
      */
-    public static Object defaultValue(final PropertyDescriptor attributeType)
+    public static Object defaultPropertyValue(final PropertyDescriptor attributeType)
             throws IllegalAttributeException {
 
         if(attributeType instanceof AttributeDescriptor){
@@ -382,18 +428,6 @@ public class FeatureUtilities {
             return value;
         }else{
             return null;
-        }
-    }
-
-    public static Property defaultProperty(final PropertyDescriptor desc){
-        final Object value = defaultValue(desc);
-        if(desc instanceof GeometryDescriptor){
-            return FF.createGeometryAttribute(value, (GeometryDescriptor)desc, null, null);
-        }else if(desc instanceof AttributeDescriptor){
-            return FF.createAttribute(value, (AttributeDescriptor)desc, null);
-        }else{
-            //todo not the correct way to do it
-            return new DefaultProperty(value, desc);
         }
     }
 

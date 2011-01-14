@@ -16,14 +16,6 @@
  */
 package org.geotoolkit.feature.simple;
 
-import junit.framework.TestCase;
-
-import org.geotoolkit.factory.FactoryFinder;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
-import org.opengis.filter.FilterFactory;
-import org.opengis.filter.PropertyIsEqualTo;
-
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -37,6 +29,8 @@ import java.util.Map;
 import java.util.Set;
 import junit.framework.Test;
 import junit.framework.TestSuite;
+
+import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DataTestCase;
@@ -45,7 +39,12 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.simple.SimpleFeature;
+import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.filter.FilterFactory;
+import org.opengis.filter.PropertyIsEqualTo;
 
 public class SimpleFeatureBuilderTest extends DataTestCase {
 
@@ -268,7 +267,7 @@ public class SimpleFeatureBuilderTest extends DataTestCase {
 
     public void testCopyFeature() throws Exception {
         SimpleFeature feature = lakeFeatures[0];
-        assertDuplicate("feature", feature, SimpleFeatureBuilder.copy(feature));
+        assertDuplicate("feature", feature, FeatureUtilities.copy(feature));
     }
 
     public void testDeepCopy() throws Exception {

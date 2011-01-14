@@ -174,7 +174,7 @@ public class FeatureFlatTest extends TestCase {
 
     public void testClone() {
         SimpleFeature f = SampleFeatureFixtures.createFeature();
-        SimpleFeature c = SimpleFeatureBuilder.copy( f );
+        SimpleFeature c = FeatureUtilities.copy( f );
         for (int i = 0, ii = c.getAttributeCount(); i < ii; i++) {
             assertEquals(c.getAttribute(i), f.getAttribute(i));
         }
@@ -184,7 +184,7 @@ public class FeatureFlatTest extends TestCase {
         SimpleFeatureType type = SampleFeatureFixtures.createTestType();
         Object[] attributes = SampleFeatureFixtures.createAttributes();
         SimpleFeature feature = SimpleFeatureBuilder.build(type, attributes, "fid");
-        SimpleFeature clone = SimpleFeatureBuilder.deep(feature);
+        SimpleFeature clone = FeatureUtilities.deepCopy(feature);
         assertTrue("Clone was not equal", feature.equals(clone));
     }
 

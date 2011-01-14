@@ -23,12 +23,11 @@ import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 
@@ -92,7 +91,7 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
         if(iterator.hasNext()){
             F candidate = iterator.next();
             if(filter.evaluate(candidate)){
-                candidate = (F) SimpleFeatureBuilder.copy((SimpleFeature) candidate);
+                candidate = (F) FeatureUtilities.copy(candidate);
                 //must modify this feature
                 for(final Entry<PropertyDescriptor,Object> entry : values.entrySet()){
                     final Property prop = candidate.getProperty(entry.getKey().getName());

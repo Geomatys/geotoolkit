@@ -769,7 +769,7 @@ public class FeatureTypeUtilities {
      */
     public static SimpleFeature transform(SimpleFeature feature, final SimpleFeatureType schema, final MathTransform transform)
             throws MismatchedDimensionException, TransformException, SimpleIllegalAttributeException{
-        feature = SimpleFeatureBuilder.copy(feature);
+        feature = FeatureUtilities.copy(feature);
 
         final GeometryDescriptor geomType = schema.getGeometryDescriptor();
         Geometry geom = (Geometry) feature.getAttribute(geomType.getLocalName());
@@ -1250,7 +1250,7 @@ public class FeatureTypeUtilities {
         final SimpleFeatureType origional = feature.getFeatureType();
 
         if (featureType.equals(origional)) {
-            return SimpleFeatureBuilder.copy(feature);
+            return FeatureUtilities.copy(feature);
         }
 
         final String id = feature.getID();

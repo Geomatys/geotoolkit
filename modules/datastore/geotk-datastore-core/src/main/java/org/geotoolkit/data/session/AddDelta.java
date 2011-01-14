@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2011, Open Source Geospatial Foundation (OSGeo)
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -30,12 +30,11 @@ import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -86,8 +85,8 @@ class AddDelta extends AbstractDelta{
         final Iterator<? extends Feature> ite = features.iterator();
         try{
             while(ite.hasNext()){
-                SimpleFeature sf = (SimpleFeature) ite.next();
-                sf = SimpleFeatureBuilder.deep(sf);
+                Feature sf = ite.next();
+                sf = FeatureUtilities.deepCopy(sf);
                 this.features.add(sf);
             }
         }finally{

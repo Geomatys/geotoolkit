@@ -24,7 +24,7 @@ import java.util.List;
 
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
-import org.geotoolkit.util.collection.NotifiedCheckedList;
+import org.geotoolkit.util.collection.NotifiedCopyOnWriteArrayList;
 
 /**
  * Sample map item. not a layer or a mapcontext.
@@ -34,7 +34,7 @@ import org.geotoolkit.util.collection.NotifiedCheckedList;
  */
 class DefaultMapItem extends AbstractMapItem implements ItemListener{
 
-    protected final List<MapItem> items = new NotifiedCheckedList<MapItem>(MapItem.class) {
+    protected final List<MapItem> items = new NotifiedCopyOnWriteArrayList<MapItem>() {
 
         @Override
         protected void notifyAdd(MapItem item, int index) {
