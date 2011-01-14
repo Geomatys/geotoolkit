@@ -130,4 +130,15 @@ public class GNC_Training extends GNC_Product implements org.opengis.metadata.ge
         return this.trainingOn;
     }
 
+    public void setTrainingOn(List<GNC_Software> trainingOn) {
+        this.trainingOn = trainingOn;
+    }
+
+    public void setTrainingOn(GNC_Software trainingOn) {
+        if (this.trainingOn == null) {
+            this.trainingOn = new ArrayList<GNC_Software>();
+        }
+        this.trainingOn.add(trainingOn);
+    }
+
 }
