@@ -28,12 +28,10 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -81,10 +79,10 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
         remove = false;
         if(hasNext()){
             currentFeature = reader.next();
-            modified = (F) SimpleFeatureBuilder.deep((SimpleFeature) currentFeature);
+            modified = (F) FeatureUtilities.copy(currentFeature);
         }else{
             currentFeature = null;
-            modified = (F) SimpleFeatureBuilder.template((SimpleFeatureType) type, "no-id");
+            modified = (F) FeatureUtilities.defaultFeature(type, "");
         }
 
         return modified;
@@ -113,6 +111,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
     @Override
     public void remove() {
         remove = true;
+        write();
     }
 
     /**
@@ -121,11 +120,16 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
     @Override
     public void write() throws DataStoreRuntimeException {
         if(currentFeature != null){
+            final Filter filter = FF.id(Collections.singleton(currentFeature.getIdentifier()));
             if(remove){
                 //it's a remove operation
+                try {
+                    store.removeFeatures(typeName, filter);
+                } catch (DataStoreException ex) {
+                    throw new DataStoreRuntimeException(ex);
+                }
             }else{
                 //it's a modify operation
-                final Filter filter = FF.id(Collections.singleton(currentFeature.getIdentifier()));
                 final Map<PropertyDescriptor,Object> values = new HashMap<PropertyDescriptor, Object>();
 
                 for(PropertyDescriptor desc : type.getDescriptors()){
@@ -155,6 +159,7 @@ public class GenericFeatureWriter<T extends FeatureType, F extends Feature> impl
                 } catch (DataStoreException ex) {
                     throw new DataStoreRuntimeException(ex);
                 }
+                modified = null;
             }
         }
 

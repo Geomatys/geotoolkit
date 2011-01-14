@@ -277,43 +277,62 @@ public class FeatureUtilities {
     }
 
     public static <T extends Property> T copy(final T property){
+        return (T)copy(property,null);
+    }
+
+    /**
+     *
+     * @param <T>
+     * @param property
+     * @param newId : replace current property id if newId is not null
+     * @return
+     */
+    public static <T extends Property> T copy(final T property, String newId){
 
         final Property copy;
-        if(property instanceof SimpleFeature){
-            copy = SimpleFeatureBuilder.copy( (SimpleFeature)property );
-            
-        }else if(property instanceof ComplexAttribute){
+        if(property instanceof ComplexAttribute){
             final ComplexAttribute ga = (ComplexAttribute) property;
-            final Identifier id = ga.getIdentifier();
-            final String strId = (id == null) ? null : id.getID().toString();
+            final String strId;
+            if(newId == null){
+                final Identifier id = ga.getIdentifier();
+                strId = (id == null) ? null : id.getID().toString();
+            }else{
+                strId = newId;
+            }
             final AttributeDescriptor desc = ga.getDescriptor();
-            
+
             final Collection<Property> properties = ga.getProperties();
             final Collection<Property> copies = new ArrayList<Property>();
             for(final Property prop : properties){
                 copies.add(copy(prop));
             }
-            
+
             if(ga instanceof Feature){
                 copy = FF.createFeature(copies, desc, strId);
             }else{
                 copy = FF.createComplexAttribute(copies, desc, strId);
             }
-            
+
         }else if (property instanceof GeometryAttribute) {
             final GeometryAttribute ga = (GeometryAttribute) property;
-            final Identifier id = ga.getIdentifier();
-            if(id != null){
-                 copy = FF.createGeometryAttribute(property.getValue(), ga.getDescriptor(),
-                    ga.getIdentifier().getID().toString(), null);
+            final String strId;
+            if(newId == null){
+                final Identifier id = ga.getIdentifier();
+                strId = (id == null) ? null : id.getID().toString();
             }else{
-                copy = FF.createGeometryAttribute(property.getValue(), ga.getDescriptor(), null, null);
+                strId = newId;
             }
-            
+            copy = FF.createGeometryAttribute(property.getValue(), ga.getDescriptor(), strId, null);
+
         }else if(property instanceof Attribute){
             final Attribute ga = (Attribute) property;
-            final Identifier id = ga.getIdentifier();
-            final String strId = (id == null) ? null : id.getID().toString();
+            final String strId;
+            if(newId == null){
+                final Identifier id = ga.getIdentifier();
+                strId = (id == null) ? null : id.getID().toString();
+            }else{
+                strId = newId;
+            }
             copy = FF.createAttribute(property.getValue(), ga.getDescriptor(),strId);
         }else{
             throw new IllegalArgumentException("Unexpected type : "+ property.getClass());
@@ -323,6 +342,7 @@ public class FeatureUtilities {
         copy.getUserData().putAll(property.getUserData());
         return (T)copy;
     }
+
 
     public static SimpleFeature defaultFeature(final SimpleFeatureType type, final String id){
         return (SimpleFeature)defaultFeature((FeatureType)type, id);

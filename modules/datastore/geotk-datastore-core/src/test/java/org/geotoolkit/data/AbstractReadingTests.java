@@ -497,8 +497,9 @@ public abstract class AbstractReadingTests{
             //peek only one on two ids
             boolean oneOnTwo = true;
             while(ite.hasNext()){
+                final Feature feature = ite.next();
                 if(oneOnTwo){
-                    ids.add(ite.next().getIdentifier());
+                    ids.add(feature.getIdentifier());
                 }
                 oneOnTwo = !oneOnTwo;
             }

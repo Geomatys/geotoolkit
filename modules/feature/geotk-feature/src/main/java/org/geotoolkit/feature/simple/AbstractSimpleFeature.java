@@ -296,23 +296,8 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     }
 
     @Override
-    public AttributeDescriptor getDescriptor() {
-        return null;
-    }
-
-    @Override
     public void setValue(final Object newValue) {
         setValue((Collection<Property>) newValue);
-    }
-
-    @Override
-    public Name getName() {
-        return null;
-    }
-
-    @Override
-    public boolean isNillable() {
-        return true;
     }
 
     @Override

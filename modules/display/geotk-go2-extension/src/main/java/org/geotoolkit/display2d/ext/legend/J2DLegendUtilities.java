@@ -332,7 +332,8 @@ public class J2DLegendUtilities {
                     }
 
                     final int totalWidth = glyphWidth + ((textLenght==0)? 0 : (GLYPH_SPACE+textLenght));
-                    final int totalHeight = (glyphHeight > ruleFontHeight) ? glyphHeight : ruleFontHeight;
+                    final int fh = (textLenght>0) ? ruleFontHeight : 0;
+                    final int totalHeight = (glyphHeight > fh) ? glyphHeight : fh;
 
                     dim.height += totalHeight;
                     if (dim.width < totalWidth) {
@@ -350,7 +351,7 @@ public class J2DLegendUtilities {
             dim.height += insets.bottom + insets.top;
         }
 
-        
+
         checkMinimumSize(dim);
         return dim;
     }

@@ -21,18 +21,17 @@ package org.geotoolkit.data.memory;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import junit.framework.TestCase;
-import org.geotoolkit.data.FeatureCollection;
 
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.query.Query;
@@ -45,9 +44,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.filter.sort.DefaultSortBy;
 import org.geotoolkit.referencing.CRS;
 
-import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.opengis.feature.Feature;
@@ -77,14 +74,6 @@ public class MemoryDatastoreTest extends TestCase{
 
     @AfterClass
     public static void tearDownClass() throws Exception {
-    }
-
-    @Before
-    public void setUp() {
-    }
-
-    @After
-    public void tearDown() {
     }
 
     @Test
