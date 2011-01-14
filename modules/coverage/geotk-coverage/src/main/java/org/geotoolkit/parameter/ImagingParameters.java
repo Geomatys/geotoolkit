@@ -337,7 +337,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
      */
     @Override
     public int hashCode() {
-        return super.hashCode()*37 + parameters.hashCode();
+        return Utilities.hash(parameters, super.hashCode());
     }
 
     /**

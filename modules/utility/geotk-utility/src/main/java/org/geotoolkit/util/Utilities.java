@@ -86,7 +86,7 @@ public final class Utilities {
      *
      * @see Boolean#equals(Object)
      */
-    public static boolean equals(boolean o1, boolean o2) {
+    public static boolean equals(final boolean o1, final boolean o2) {
         return o1 == o2;
     }
 
@@ -101,7 +101,7 @@ public final class Utilities {
      *
      * @see Character#equals(Object)
      */
-    public static boolean equals(char o1, char o2) {
+    public static boolean equals(final char o1, final char o2) {
         return o1 == o2;
     }
 
@@ -116,7 +116,7 @@ public final class Utilities {
      *
      * @see Byte#equals(Object)
      */
-    public static boolean equals(byte o1, byte o2) {
+    public static boolean equals(final byte o1, final byte o2) {
         return o1 == o2;
     }
 
@@ -131,7 +131,7 @@ public final class Utilities {
      *
      * @see Short#equals(Object)
      */
-    public static boolean equals(short o1, short o2) {
+    public static boolean equals(final short o1, final short o2) {
         return o1 == o2;
     }
 
@@ -146,7 +146,7 @@ public final class Utilities {
      *
      * @see Integer#equals(Object)
      */
-    public static boolean equals(int o1, int o2) {
+    public static boolean equals(final int o1, final int o2) {
         return o1 == o2;
     }
 
@@ -161,7 +161,7 @@ public final class Utilities {
      *
      * @see Long#equals(Object)
      */
-    public static boolean equals(long o1, long o2) {
+    public static boolean equals(final long o1, final long o2) {
         return o1 == o2;
     }
 
@@ -175,7 +175,7 @@ public final class Utilities {
      *
      * @see Float#equals(Object)
      */
-    public static boolean equals(float o1, float o2) {
+    public static boolean equals(final float o1, final float o2) {
         return Float.floatToIntBits(o1) == Float.floatToIntBits(o2);
     }
 
@@ -189,7 +189,7 @@ public final class Utilities {
      *
      * @see Double#equals(Object)
      */
-    public static boolean equals(double o1, double o2) {
+    public static boolean equals(final double o1, final double o2) {
         return Double.doubleToLongBits(o1) == Double.doubleToLongBits(o2);
     }
 
@@ -312,7 +312,7 @@ public final class Utilities {
      *               field, then any arbitrary value (preferably different for each class) is okay.
      * @return An updated hash code value.
      */
-    public static int hash(boolean value, int seed) {
+    public static int hash(final boolean value, final int seed) {
         // Use the same values than Boolean.hashCode()
         return seed * PRIME_NUMBER + (value ? 1231 : 1237);
     }
@@ -325,7 +325,7 @@ public final class Utilities {
      *               field, then any arbitrary value (preferably different for each class) is okay.
      * @return An updated hash code value.
      */
-    public static int hash(char value, int seed) {
+    public static int hash(final char value, final int seed) {
         return seed * PRIME_NUMBER + (int) value;
     }
 
@@ -339,7 +339,7 @@ public final class Utilities {
      *               field, then any arbitrary value (preferably different for each class) is okay.
      * @return An updated hash code value.
      */
-    public static int hash(int value, int seed) {
+    public static int hash(final int value, final int seed) {
         return seed * PRIME_NUMBER + value;
     }
 
@@ -353,7 +353,7 @@ public final class Utilities {
      *               field, then any arbitrary value (preferably different for each class) is okay.
      * @return An updated hash code value.
      */
-    public static int hash(long value, int seed) {
+    public static int hash(final long value, final int seed) {
         return seed * PRIME_NUMBER + (((int) value) ^ ((int) (value >>> 32)));
     }
 
@@ -365,7 +365,7 @@ public final class Utilities {
      *               field, then any arbitrary value (preferably different for each class) is okay.
      * @return An updated hash code value.
      */
-    public static int hash(float value, int seed) {
+    public static int hash(final float value, final int seed) {
         return seed * PRIME_NUMBER + Float.floatToIntBits(value);
     }
 
@@ -377,12 +377,12 @@ public final class Utilities {
      *               field, then any arbitrary value (preferably different for each class) is okay.
      * @return An updated hash code value.
      */
-    public static int hash(double value, int seed) {
+    public static int hash(final double value, final int seed) {
         return hash(Double.doubleToLongBits(value), seed);
     }
 
     /**
-     * Alters the given seed with the hash code value computed from the given value. The givan
+     * Alters the given seed with the hash code value computed from the given value. The given
      * object may be null. This method do <strong>not</strong> iterates recursively in array
      * elements. If array needs to be hashed, use one of {@link Arrays} method or
      * {@link #deepHashCode deepHashCode} instead.
@@ -400,7 +400,7 @@ public final class Utilities {
      * @return An updated hash code value.
      * @throws AssertionError If assertions are enabled and the given value is an array.
      */
-    public static int hash(Object value, int seed) throws AssertionError {
+    public static int hash(final Object value, int seed) throws AssertionError {
         seed *= PRIME_NUMBER;
         if (value != null) {
             assert !value.getClass().isArray() : value;

@@ -295,7 +295,7 @@ public class Version implements CharSequence, Comparable<Version>, Serializable 
             int index = 0;
             Comparable<?> component;
             while ((component = getComponent(index)) != null) {
-                code = code * 37 + component.hashCode();
+                code = code * 31 + component.hashCode();
                 index++;
             }
             hashCode = code;

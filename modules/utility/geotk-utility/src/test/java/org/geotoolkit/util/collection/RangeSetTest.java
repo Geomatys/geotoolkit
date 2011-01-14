@@ -19,15 +19,17 @@ package org.geotoolkit.util.collection;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Random;
 import org.geotoolkit.util.Range;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.RangeTest;
+import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.Performance;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 import static org.geotoolkit.test.Commons.*;
-import org.geotoolkit.test.Depend;
 
 
 /**
@@ -253,5 +255,33 @@ public final class RangeSetTest {
         ranges.add(18.0, 18.5);
         ranges.add(19.0, 20.0);
         assertNotSame(ranges, serialize(ranges));
+    }
+
+    /**
+     * Tests the performance of {@link RangeSet} implementation. This test is not executed
+     * in normal Geotk build. We run this test only when the {@link RangeSet} implementation
+     * changed, and we want to test the impact of that change on the performance.
+     *
+     * @throws InterruptedException If the test has been interrupted.
+     */
+    @Performance
+    public void testPerformance() throws InterruptedException {
+        final Random r = new Random(5638743);
+        for (int p=0; p<10; p++) {
+            final long start = System.nanoTime();
+            final RangeSet<Integer> set = new RangeSet<Integer>(Integer.class);
+            for (int i=0; i<100000; i++) {
+                final int lower = r.nextInt(1000000) - 500;
+                final int upper = lower + r.nextInt(100) + 1;
+                if (r.nextBoolean()) {
+                    set.add(lower, upper);
+                } else {
+                    set.remove(lower, upper);
+                }
+            }
+            final long end = System.nanoTime();
+            System.out.println((end - start) / 1E9 + "  " + set.size());
+            Thread.sleep(1000);
+        }
     }
 }

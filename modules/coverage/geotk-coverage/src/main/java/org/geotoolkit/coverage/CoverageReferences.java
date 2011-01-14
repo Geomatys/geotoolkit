@@ -151,7 +151,7 @@ public class CoverageReferences {
          * Compares the given object with this lookup key for equality. {@code Lookup} objects are
          * aimed to be compared to {@code Ref} objects only. Comparisons with other objects should
          * never happen, nevertheless we allow comparisons with other {@code Lookup} instances for
-         * symetry with {@link Ref#equals} implementation, which make us more compliant with the
+         * symmetry with {@link Ref#equals} implementation, which make us more compliant with the
          * {@link Object#equals} transitivity contract.
          * <p>
          * Note: We need to compare coverages for identity equality, not using

@@ -82,7 +82,7 @@ final class FactoryComparator {
 
     /**
      * For internal use only. This implementation assumes that {@code f1.equals(f2)}
-     * is symetric (i.e. equivalents to {@code f2.equals(f1)}).
+     * is symmetric (i.e. equivalents to {@code f2.equals(f1)}).
      */
     @Override
     public boolean equals(final Object object) {
@@ -95,9 +95,9 @@ final class FactoryComparator {
     }
 
     /**
-     * For internal use only. Must be compatible with the symetry assumption made in
+     * For internal use only. Must be compatible with the symmetry assumption made in
      * {@link #equals(Object)}: use a commutative operation (addition here) and do not
-     * multiply a term by some factor like the usual 37.
+     * multiply a term by some factor like the usual 31.
      */
     @Override
     public int hashCode() {

@@ -238,11 +238,7 @@ public class Polynom implements Serializable {
      */
     @Override
     public int hashCode() {
-        long code = c.length;
-        for (int i=c.length; --i>=0;) {
-            code = code*37 + Double.doubleToLongBits(c[i]);
-        }
-        return (int)code ^ (int)(code >>> 32);
+        return Arrays.hashCode(c) ^ (int) serialVersionUID;
     }
 
     /**

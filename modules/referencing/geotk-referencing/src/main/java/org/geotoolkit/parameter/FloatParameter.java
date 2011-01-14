@@ -29,6 +29,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.InvalidParameterTypeException;
 import org.opengis.parameter.InvalidParameterValueException;
 
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -360,8 +361,7 @@ public class FloatParameter extends AbstractParameter implements ParameterValue<
      */
     @Override
     public int hashCode() {
-        final long code = Double.doubleToLongBits(value);
-        return (int)code ^ (int)(code >>> 32) + super.hashCode()*37;
+        return Utilities.hash(value, super.hashCode());
     }
 
     /**

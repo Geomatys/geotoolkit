@@ -67,7 +67,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * {@code "GradientMagnitude"} operation. This normalization depends of the coverage's
  * {@linkplain GridCoverage2D#getGridGeometry grid geometry}.
  *
- * {@note When the masks are symetric (e.g. Sobel, Prewitt (or Smoothed), isotropic,
+ * {@note When the masks are symmetric (e.g. Sobel, Prewitt (or Smoothed), isotropic,
  * <i>etc.</i>), then the above-cited algorithm produces the same result than the
  * (<var>normalization factor</var>) &times; (<var>spatial factor</var>) published by:
  *
@@ -76,7 +76,7 @@ import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
  * observed in satellite data</u>" <i>in</i> Remote sensing environment, <b>33:17-33</b>.
  * </blockquote>
  *
- * However, for non-symetric masks (e.g. Kirsch), then a difference is found.}
+ * However, for non-symmetric masks (e.g. Kirsch), then a difference is found.}
  *
  * <P><b>Name:</b>&nbsp;{@code "GradientMagnitude"}<BR>
  *    <b>JAI operator:</b>&nbsp;<CODE>"{@linkplain GradientMagnitudeDescriptor GradientMagnitude}"</CODE><BR>
@@ -244,14 +244,14 @@ public class GradientMagnitude extends OperationJAI {
      * @param  mask2 The second kernel for which to compute a normalization factor.
      * @return The normalization factor that could be applied on both kernels.
      *
-     * @todo When the masks are symetric (e.g. Sobel, Prewitt (or Smoothed), isotropic, etc.),
+     * @todo When the masks are symmetric (e.g. Sobel, Prewitt (or Smoothed), isotropic, etc.),
      *       then this algorithm matches the "normalization factor" times "spatial factor"
      *       provided by
      *
      *       J.J. Simpson (1990), "On the accurate detection and enhancement of oceanic features
      *       observed in satellite data" in Remote sensing environment, 33:17-33.
      *
-     *       However, for non-symetric masks (e.g. Kirsch), then a difference is found.
+     *       However, for non-symmetric masks (e.g. Kirsch), then a difference is found.
      *       We should provides a way to disable normalization when the user did it himself
      *       according some other rules than the one used here.
      */

@@ -208,13 +208,13 @@ public class BursaWolfParameters extends FormattableObject implements Cloneable,
     @Override
     public int hashCode() {
         long code = serialVersionUID;
-        code = code*37 + doubleToLongBits(dx );
-        code = code*37 + doubleToLongBits(dy );
-        code = code*37 + doubleToLongBits(dz );
-        code = code*37 + doubleToLongBits(ex );
-        code = code*37 + doubleToLongBits(ey );
-        code = code*37 + doubleToLongBits(ez );
-        code = code*37 + doubleToLongBits(ppm);
+        code = code*31 + doubleToLongBits(dx );
+        code = code*31 + doubleToLongBits(dy );
+        code = code*31 + doubleToLongBits(dz );
+        code = code*31 + doubleToLongBits(ex );
+        code = code*31 + doubleToLongBits(ey );
+        code = code*31 + doubleToLongBits(ez );
+        code = code*31 + doubleToLongBits(ppm);
         return (int)(code >>> 32) ^ (int)code;
     }
 

@@ -214,7 +214,7 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
      *
      * @since 3.17
      */
-    public double log(final double value) {
+    double log(final double value) {
         return Math.log(value) / lnBase;
     }
 
@@ -309,7 +309,7 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
 
         /** {@inheritDoc} */
         @Override
-        public double log(final double value) {
+        double log(final double value) {
             return Math.log10(value);
         }
 

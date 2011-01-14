@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal;
 
+import java.util.Arrays;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -217,5 +218,38 @@ public final class Threads extends AtomicInteger implements ThreadFactory {
                 System.err.println(e);
             }
         }
+    }
+
+    /**
+     * Returns every threads that are not {@linkplain Thread#isDaemon() daemon}. This method is
+     * used only for debugging purpose in order to identify the threads which may be preventing
+     * an application to quit.
+     *
+     * @return All non-daemon threads found.
+     *
+     * @since 3.17
+     */
+    public static Thread[] getNonDaemonThreads() {
+        ThreadGroup root = Thread.currentThread().getThreadGroup();
+        for (ThreadGroup parent; (parent = root.getParent()) != null;) {
+            root = parent;
+        }
+        Thread[] threads;
+        int n = root.activeCount();
+        do {
+            threads = new Thread[n << 1];
+            n = root.enumerate(threads);
+        } while (n == threads.length);
+        /*
+         * Filter the threads, keeping only the non-daemon ones.
+         */
+        int nc = 0;
+        for (int i=0; i<n; i++) {
+            final Thread thread = threads[i];
+            if (!thread.isDaemon()) {
+                threads[nc++] = thread;
+            }
+        }
+        return Arrays.copyOf(threads, nc);
     }
 }

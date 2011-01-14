@@ -264,7 +264,7 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      *  <tr>
      *   <td>{@link Identifier#AUTHORITY_KEY AUTHORITY_KEY}</td>
      *   <td>{@linkplain Citations#JAI JAI} or {@linkplain Citations#GEOTOOLKIT Geotoolkit.org}
-     *       inferred from the vendor, extented with {@code "DocURL"}
+     *       inferred from the vendor, extended with {@code "DocURL"}
      *       {@linkplain OperationDescriptor#getResources resources} as
      *       {@linkplain ResponsibleParty#getContactInfo contact information}.</td></td>
      *  </tr>

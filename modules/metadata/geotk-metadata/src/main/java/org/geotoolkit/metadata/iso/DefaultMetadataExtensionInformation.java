@@ -121,7 +121,7 @@ public class DefaultMetadataExtensionInformation extends MetadataEntity
     /**
      * Sets information about a new metadata element.
      *
-     * @param newValues The new extented element information.
+     * @param newValues The new extended element information.
      */
     public synchronized void setExtendedElementInformation(
             final Collection<? extends ExtendedElementInformation> newValues) {

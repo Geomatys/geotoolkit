@@ -426,7 +426,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns the {@linkplain #hints hints} extented with all hints specified in dependencies.
+     * Returns the {@linkplain #hints hints} extended with all hints specified in dependencies.
      * If the same hint is defined in many factory, then the CRS factory hints have precedence
      * over the CS, datum or operation factories. And the hints defined in this class have
      * precedence over all other hints.

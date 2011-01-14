@@ -470,11 +470,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
      */
     @Override
     public int hashCode() {
-        int code = name.hashCode() + separator.hashCode();
-        if (parent != null) {
-            code = code*37 + parent.hashCode();
-        }
-        return code;
+        return Utilities.hash(parent, name.hashCode() + separator.hashCode());
     }
 
     /**

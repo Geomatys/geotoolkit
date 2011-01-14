@@ -1142,7 +1142,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
     public int hashCode() {
         int code = elementClass.hashCode();
         for (int i=length; (i -= 8) >= 0;) {
-            code = code*37 + Array.get(array, i).hashCode();
+            code = Utilities.hash(Array.get(array, i), code);
         }
         return code;
     }

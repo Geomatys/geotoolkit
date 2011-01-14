@@ -226,7 +226,7 @@ final class ColorModelFactory {
     @Override
     public int hashCode() {
         final int categoryCount = categories.length;
-        int code = 962745549 + (numBands*37 + visibleBand)*37 + categoryCount;
+        int code = 962745549 + (numBands*31 + visibleBand)*31 + categoryCount;
         for (int i=0; i<categoryCount; i++) {
             code += categories[i].hashCode();
             // Better be independent of categories order.

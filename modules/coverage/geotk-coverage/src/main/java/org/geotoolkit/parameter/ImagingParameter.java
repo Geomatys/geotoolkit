@@ -353,12 +353,7 @@ final class ImagingParameter<T> extends AbstractParameter implements ParameterVa
      */
     @Override
     public int hashCode() {
-        int code = super.hashCode()*37;
-        final Object value = getValue();
-        if (value != null) {
-            code += value.hashCode();
-        }
-        return code ^ (int)serialVersionUID;
+        return Utilities.hash(getValue(), super.hashCode()) ^ (int) serialVersionUID;
     }
 
     /**

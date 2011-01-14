@@ -1256,10 +1256,10 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
     public int hashCode() {
         int c = (int) serialVersionUID;
         if (decimalSeparator) c ^= 0xFF;
-        if (prefix  !=null)   c ^=         prefix.hashCode();
-        if (suffix0 !=null)   c  = c*37 + suffix0.hashCode();
-        if (suffix1 !=null)   c  = c*37 + suffix1.hashCode();
-        if (suffix2 !=null)   c  = c*37 + suffix2.hashCode();
+        c = Utilities.hash(prefix,
+            Utilities.hash(suffix0,
+            Utilities.hash(suffix1,
+            Utilities.hash(suffix2, c))));
         return c ^ (((((width0 << 8) ^ width1) << 8) ^ width2) << 8) ^ widthDecimal;
     }
 

@@ -170,7 +170,7 @@ public class DefaultRecordType implements RecordType, Serializable {
      * Looks up the provided attribute name and returns the associated type name. If the attribute
      * name is not defined in this record type, then this method returns {@code null}.
      * <p>
-     * This method is functionnaly equivalent to:
+     * This method is functionally equivalent to:
      *
      * {@preformat java
      *     getAttributeTypes().get(name).getTypeName();
