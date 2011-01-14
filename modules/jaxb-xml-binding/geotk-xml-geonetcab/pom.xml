@@ -21,7 +21,7 @@
   <artifactId>geotk-xml-geonetcab</artifactId>
   <packaging>jar</packaging>
   <name>Bindings for the Nature SDI ISO19139 schema extension</name>
-  <description>XML bindings for the Nature SDI ISO19139 schema extension schemas.</description>
+  <description>XML bindings for the GeonetCab ISO19139 schema extension schemas.</description>
 
 
 

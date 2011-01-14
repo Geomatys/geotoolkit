@@ -227,7 +227,9 @@ public class GNCXMLBindingTest {
                            "                    </ns8:isStillInProduction>" +'\n' +
                            "                    <ns8:userDefinedMetadata>" +'\n' +
                            "                        <ns8:GNC_UserDefinedMetadata>" +'\n' +
-                           "                            <ns8:dateStamp>1970-01-01T01:24:14.124+01:00</ns8:dateStamp>" +'\n' +
+                           "                            <ns8:dateStamp>" +'\n' +
+                           "                                <gco:Date>1970-01-01T01:24:14.124+01:00</gco:Date>" +'\n' +
+                           "                            </ns8:dateStamp>" +'\n' +
                            "                            <ns8:feedbackStatement>" +'\n' +
                            "                                <gco:CharacterString>stmt</gco:CharacterString>" +'\n' +
                            "                            </ns8:feedbackStatement>" +'\n' +
