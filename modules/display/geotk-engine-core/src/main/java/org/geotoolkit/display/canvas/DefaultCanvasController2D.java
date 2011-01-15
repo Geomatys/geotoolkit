@@ -394,7 +394,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     @Override
     public void setTemporalRange(final Date startDate, final Date endDate) throws TransformException {
         int index = getTemporalAxisIndex();
-        if(index < 0){
+        if(index < 0 && (startDate!=null || endDate!=null) ){
             //no temporal axis, add one
             CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
             crs = appendCRS(crs, DefaultTemporalCRS.JAVA);
@@ -403,7 +403,9 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
 
         if (index >= 0) {
-            canvas.setRange(index, startDate.getTime(), endDate.getTime());
+            canvas.setRange(index, 
+                    (startDate!=null)?startDate.getTime():Double.NEGATIVE_INFINITY,
+                    (endDate!=null)?endDate.getTime():Double.POSITIVE_INFINITY);
         }
     }
 
@@ -423,7 +425,7 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
     @Override
     public void setElevationRange(final Double min, final Double max, final Unit<Length> unit) throws TransformException {
         int index = getElevationAxisIndex();
-        if(index < 0){
+        if(index < 0 && (min!=null || max!=null)){
             //no elevation axis, add one
             CoordinateReferenceSystem crs = canvas.getObjectiveCRS();
             crs = appendCRS(crs, DefaultVerticalCRS.ELLIPSOIDAL_HEIGHT);
@@ -432,7 +434,9 @@ public class DefaultCanvasController2D extends AbstractCanvasController implemen
         }
 
         if (index >= 0) {
-            canvas.setRange(index, min, max);
+            canvas.setRange(index, 
+                    (min!=null)?min:Double.NEGATIVE_INFINITY,
+                    (max!=null)?max:Double.POSITIVE_INFINITY);
         }
     }
 

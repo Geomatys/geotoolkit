@@ -46,6 +46,12 @@ public interface ReferencedCanvas2D extends Canvas{
     public static final String OBJECTIVE_CRS_PROPERTY = "ObjectiveCRS";
 
     public static final String OBJECTIVE_TO_DISPLAY_PROPERTY = "ObjectiveToDisplay";
+    
+    /**
+     * The name of the {@linkplain PropertyChangeEvent property change event} fired when the
+     * {@linkplain AbstractCanvas#getEnvelope canvas envelope} changed.
+     */
+    public static final String ENVELOPE_PROPERTY = "envelope";
 
     @Override
     CanvasController2D getController();

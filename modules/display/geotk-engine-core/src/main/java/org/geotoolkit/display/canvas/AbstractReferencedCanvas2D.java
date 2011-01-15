@@ -196,8 +196,11 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
             getLogger().log(Level.SEVERE, "Failed to calculate canvas objective bounds", ex);
             return;
         }
+        final Envelope old = envelope.clone();
         envelope.setRange(0, canvasObjectiveBounds.getMinX(), canvasObjectiveBounds.getMaxX());
         envelope.setRange(1, canvasObjectiveBounds.getMinY(), canvasObjectiveBounds.getMaxY());
+        //fire event
+        propertyListeners.firePropertyChange(ENVELOPE_PROPERTY, old, envelope);
     }
 
     //only available in this package by the controller --------------------
@@ -220,7 +223,11 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
             return;
         }
 
+        final Envelope old = envelope.clone();
         envelope.setRange(ordinate, min, max);
+        //fire event
+        propertyListeners.firePropertyChange(ENVELOPE_PROPERTY, old, envelope);
+
         repaintIfAuto();
     }
 

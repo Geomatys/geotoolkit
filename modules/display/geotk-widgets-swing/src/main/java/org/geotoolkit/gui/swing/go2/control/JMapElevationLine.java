@@ -44,6 +44,7 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.geotoolkit.display.canvas.CanvasController2D;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.navigator.DoubleRenderer;
 import org.geotoolkit.gui.swing.navigator.JNavigator;
@@ -494,7 +495,7 @@ public class JMapElevationLine extends JNavigator implements PropertyChangeListe
 
     @Override
     public void propertyChange(final PropertyChangeEvent evt) {
-        if(evt.getPropertyName().equals(CanvasController2D.ELEVATION_PROPERTY)){
+        if(evt.getPropertyName().equals(ReferencedCanvas2D.ENVELOPE_PROPERTY)){
             Double[] range = map.getCanvas().getController().getElevationRange();
 
             if(range == null){
