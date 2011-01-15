@@ -56,12 +56,18 @@ public class GPXWriter100 extends StaxStreamWriter{
     protected final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 
     private final String creator;
+    protected final String namespace;
 
     public GPXWriter100(final String creator){
+        this(GPX_NAMESPACE_V10,creator);
+    }
+
+    protected  GPXWriter100(final String namespace,final String creator){
         if(creator == null){
             throw new NullArgumentException("Creator can not be null.");
         }
         this.creator = creator;
+        this.namespace = namespace;
     }
 
     protected String getVersion(){
@@ -70,18 +76,21 @@ public class GPXWriter100 extends StaxStreamWriter{
 
     public void writeStartDocument() throws XMLStreamException{
         writer.writeStartDocument("UTF-8", "1.0");
+        writer.flush();
     }
 
     public void writeEndDocument() throws XMLStreamException{
         writer.writeEndDocument();
+        writer.flush();
     }
 
     public void writeGPXTag() throws XMLStreamException{
-        writer.setDefaultNamespace(GPX_NAMESPACE);
-        writer.writeStartElement(GPX_NAMESPACE, TAG_GPX);
-        writer.writeAttribute(GPX_NAMESPACE, ATT_GPX_VERSION, getVersion());
-        writer.writeAttribute(GPX_NAMESPACE, ATT_GPX_CREATOR, creator);
-        writer.writeDefaultNamespace(GPX_NAMESPACE);
+        writer.setDefaultNamespace(namespace);
+        writer.writeStartElement(namespace, TAG_GPX);
+        writer.writeAttribute(ATT_GPX_VERSION, getVersion());
+        writer.writeAttribute(ATT_GPX_CREATOR, creator);
+        writer.writeDefaultNamespace(namespace);
+        writer.flush();
     }
 
     public void write(final MetaData metadata, final Collection<? extends Feature> wayPoints,
@@ -151,13 +160,13 @@ public class GPXWriter100 extends StaxStreamWriter{
     }
 
     public void write(final MetaData metadata) throws XMLStreamException{
-        writeSimpleTag(GPX_NAMESPACE, TAG_NAME, metadata.getName());
-        writeSimpleTag(GPX_NAMESPACE, TAG_DESC, metadata.getDescription());
+        writeSimpleTag(namespace, TAG_NAME, metadata.getName());
+        writeSimpleTag(namespace, TAG_DESC, metadata.getDescription());
 
         final Person person = metadata.getPerson();
         if(person != null){
-            writeSimpleTag(GPX_NAMESPACE, TAG_AUTHOR, person.getName());
-            writeSimpleTag(GPX_NAMESPACE, TAG_AUTHOR_EMAIL, person.getEmail());
+            writeSimpleTag(namespace, TAG_AUTHOR, person.getName());
+            writeSimpleTag(namespace, TAG_AUTHOR_EMAIL, person.getEmail());
         }
 
         //model is based on 1.1 so not all attributs can be written
@@ -166,26 +175,26 @@ public class GPXWriter100 extends StaxStreamWriter{
 
         final Date d = metadata.getTime();
         if(d != null){
-            writeSimpleTag(GPX_NAMESPACE, TAG_METADATA_TIME, sdf.format(d));
+            writeSimpleTag(namespace, TAG_METADATA_TIME, sdf.format(d));
         }
 
-        writeSimpleTag(GPX_NAMESPACE, TAG_METADATA_KEYWORDS, metadata.getKeywords());
+        writeSimpleTag(namespace, TAG_METADATA_KEYWORDS, metadata.getKeywords());
         writeBounds(metadata.getBounds());
-
+        writer.flush();
     }
 
     public void writeWayPoint(final Feature feature, final String tagName) throws XMLStreamException{
         if(feature == null) return;
 
-        writer.writeStartElement(GPX_NAMESPACE, tagName);
+        writer.writeStartElement(namespace, tagName);
 
         final Point pt = (Point) feature.getProperty(GPX_GEOMETRY).getValue();
-        writer.writeAttribute(GPX_NAMESPACE, ATT_WPT_LAT, Double.toString(pt.getY()));
-        writer.writeAttribute(GPX_NAMESPACE, ATT_WPT_LON, Double.toString(pt.getX()));
+        writer.writeAttribute(ATT_WPT_LAT, Double.toString(pt.getY()));
+        writer.writeAttribute(ATT_WPT_LON, Double.toString(pt.getX()));
 
         writeProperty(TAG_WPT_ELE,          feature.getProperty(TAG_WPT_ELE));
         writeProperty(TAG_WPT_TIME,         feature.getProperty(TAG_WPT_TIME));
-        writeProperty(TAG_WPT_MAGVAR,      feature.getProperty(TAG_WPT_MAGVAR));
+        writeProperty(TAG_WPT_MAGVAR,       feature.getProperty(TAG_WPT_MAGVAR));
         writeProperty(TAG_WPT_GEOIHEIGHT,   feature.getProperty(TAG_WPT_GEOIHEIGHT));
         writeProperty(TAG_NAME,             feature.getProperty(TAG_NAME));
         writeProperty(TAG_CMT,              feature.getProperty(TAG_CMT));
@@ -208,7 +217,7 @@ public class GPXWriter100 extends StaxStreamWriter{
     public void writeRoute(final Feature feature) throws XMLStreamException{
         if(feature == null) return;
 
-        writer.writeStartElement(GPX_NAMESPACE, TAG_RTE);
+        writer.writeStartElement(namespace, TAG_RTE);
 
         writeProperty(TAG_NAME,             feature.getProperty(TAG_NAME));
         writeProperty(TAG_CMT,              feature.getProperty(TAG_CMT));
@@ -228,7 +237,7 @@ public class GPXWriter100 extends StaxStreamWriter{
     public void writeTrack(final Feature feature) throws XMLStreamException{
         if(feature == null) return;
 
-        writer.writeStartElement(GPX_NAMESPACE, TAG_TRK);
+        writer.writeStartElement(namespace, TAG_TRK);
 
         writeProperty(TAG_NAME,             feature.getProperty(TAG_NAME));
         writeProperty(TAG_CMT,              feature.getProperty(TAG_CMT));
@@ -247,7 +256,7 @@ public class GPXWriter100 extends StaxStreamWriter{
 
     public void writeTrackSegment(final ComplexAttribute feature) throws XMLStreamException{
         if(feature == null) return;
-        writer.writeStartElement(GPX_NAMESPACE, TAG_TRK_SEG);
+        writer.writeStartElement(namespace, TAG_TRK_SEG);
 
         for(final Property prop : feature.getProperties(TAG_TRK_SEG_PT)){
             writeWayPoint((Feature) prop,TAG_TRK_SEG_PT);
@@ -278,20 +287,20 @@ public class GPXWriter100 extends StaxStreamWriter{
     public void writeLink(final URI uri) throws XMLStreamException{
         if(uri == null) return;
 
-        writer.writeStartElement(GPX_NAMESPACE, TAG_LINK);
-        writer.writeAttribute(GPX_NAMESPACE, ATT_LINK_HREF, uri.toASCIIString());
+        writer.writeStartElement(namespace, TAG_LINK);
+        writer.writeAttribute(ATT_LINK_HREF, uri.toASCIIString());
         writer.writeEndElement();
     }
 
     public void writeBounds(final Envelope env) throws XMLStreamException{
         if(env == null) return;
 
-        writer.writeStartElement(GPX_NAMESPACE, TAG_BOUNDS);
+        writer.writeStartElement(namespace, TAG_BOUNDS);
 
-        writer.writeAttribute(GPX_NAMESPACE, ATT_BOUNDS_MINLAT, Double.toString(env.getMinimum(1)));
-        writer.writeAttribute(GPX_NAMESPACE, ATT_BOUNDS_MINLON, Double.toString(env.getMinimum(0)));
-        writer.writeAttribute(GPX_NAMESPACE, ATT_BOUNDS_MAXLAT, Double.toString(env.getMaximum(1)));
-        writer.writeAttribute(GPX_NAMESPACE, ATT_BOUNDS_MAXLON, Double.toString(env.getMaximum(0)));
+        writer.writeAttribute(ATT_BOUNDS_MINLAT, Double.toString(env.getMinimum(1)));
+        writer.writeAttribute(ATT_BOUNDS_MINLON, Double.toString(env.getMinimum(0)));
+        writer.writeAttribute(ATT_BOUNDS_MAXLAT, Double.toString(env.getMaximum(1)));
+        writer.writeAttribute(ATT_BOUNDS_MAXLON, Double.toString(env.getMaximum(0)));
 
         writer.writeEndElement();
     }
@@ -304,7 +313,7 @@ public class GPXWriter100 extends StaxStreamWriter{
             val = sdf.format(val);
         }
 
-        writeSimpleTag(GPX_NAMESPACE, tagName, val);
+        writeSimpleTag(namespace, tagName, val);
     }
 
 }

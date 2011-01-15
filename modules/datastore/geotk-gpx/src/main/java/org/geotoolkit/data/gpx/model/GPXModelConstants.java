@@ -65,7 +65,9 @@ public final class GPXModelConstants {
             new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
 
     public static final CoordinateReferenceSystem GPX_CRS = DefaultGeographicCRS.WGS84;
-    public static final String GPX_NAMESPACE = "http://www.topografix.com/GPX/1/1";
+    public static final String GPX_NAMESPACE = "http://www.topografix.com";
+    public static final String GPX_NAMESPACE_V11 = "http://www.topografix.com/GPX/1/1";
+    public static final String GPX_NAMESPACE_V10 = "http://www.topografix.com/GPX/1/0";
     public static final String GPX_GEOMETRY = "geometry";
 
     public static final FeatureType TYPE_GPX_ENTITY;

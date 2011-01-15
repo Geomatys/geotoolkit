@@ -289,13 +289,15 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      */
     public static <T extends FeatureType, F extends Feature> FeatureReader<T,F> wrap(
             final FeatureReader<T,F> reader, final FeatureType mask, final Hints hints){
-        if(mask.equals(reader.getFeatureType())){
+        final FeatureType original = reader.getFeatureType();
+        if(mask.equals(original)){
             //same type mapping, no need to wrap it
             return reader;
         }
 
         final Boolean detached = (hints == null) ? null : (Boolean) hints.get(HintsPending.FEATURE_DETACHED);
-        if(detached == null || detached || !(reader.getFeatureType() instanceof SimpleFeatureType)){
+        if(detached == null || detached || !(original instanceof SimpleFeatureType)
+                || original.isAbstract() ){
             //default behavior, make separate features
             return new GenericSeparateRetypeFeatureReader(reader,mask);
         }else{

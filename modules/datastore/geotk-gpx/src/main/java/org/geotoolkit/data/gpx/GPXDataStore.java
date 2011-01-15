@@ -21,7 +21,6 @@ import org.geotoolkit.data.gpx.xml.GPXWriter100;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
@@ -41,13 +40,11 @@ import org.geotoolkit.data.gpx.xml.GPXReader;
 import org.geotoolkit.data.gpx.xml.GPXWriter110;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
-import org.geotoolkit.feature.DefaultFeature;
-import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -126,6 +123,13 @@ public class GPXDataStore extends AbstractDataStore{
             throw new DataStoreException("No featureType for name : " + typeName);
         }
     }
+
+    @Override
+    public boolean isWritable(Name typeName) throws DataStoreException {
+        typeCheck(typeName);
+        return file.canWrite() && getFeatureType(typeName) != TYPE_GPX_ENTITY;
+    }
+
 
     @Override
     public FeatureReader getFeatureReader(final Query query) throws DataStoreException {
@@ -236,7 +240,7 @@ public class GPXDataStore extends AbstractDataStore{
                 while(reader.hasNext()) {
                     current = reader.next();
 
-                    if(current.getType() == TYPE_GPX_ENTITY ||
+                    if(restriction == TYPE_GPX_ENTITY ||
                        current.getType() == restriction){
                         return; //type match
                     }
@@ -270,17 +274,21 @@ public class GPXDataStore extends AbstractDataStore{
 
     private class GPXFeatureWriter extends GPXFeatureReader implements FeatureWriter<FeatureType, Feature>{
 
+        private final FeatureType writeRestriction;
         private final GPXWriter100 writer;
         private final File writeFile;
+        private Feature next = null;
         private Feature edited = null;
         private Feature lastWritten = null;
 
         private GPXFeatureWriter(final FeatureType restriction) throws DataStoreException{
-            super(restriction);
+            super(TYPE_GPX_ENTITY);
 
             if(restriction == TYPE_GPX_ENTITY){
+                super.close(); //release read lock
                 throw new DataStoreException("Writer not allowed on GPX entity writer, choose a defined type.");
             }
+            this.writeRestriction = restriction;
 
             TempLock.writeLock().lock();
 
@@ -307,40 +315,70 @@ public class GPXDataStore extends AbstractDataStore{
         }
 
         @Override
+        public boolean hasNext() throws DataStoreRuntimeException {
+            findNext();
+            return next != null;
+        }
+
+        @Override
         public Feature next() throws DataStoreRuntimeException {
-            try{
-                write();
-                edited = super.next();
-            }catch(DataStoreRuntimeException ex){
+            write();
+
+            findNext();
+            if(next != null){
+                edited = next;
+                next = null;
+                return edited;
+            }else{
                 //we reach append mode
-                final Collection<Property> properties = new ArrayList<Property>();
-                if(restriction == TYPE_WAYPOINT){
-                    edited = DefaultFeature.create(properties, TYPE_WAYPOINT, new DefaultFeatureId(String.valueOf(-1)));
-                }else if(restriction == TYPE_ROUTE){
-                    edited = DefaultFeature.create(properties, TYPE_ROUTE, new DefaultFeatureId(String.valueOf(-1)));
-                }else if(restriction == TYPE_TRACK){
-                    edited = DefaultFeature.create(properties, TYPE_TRACK, new DefaultFeatureId(String.valueOf(-1)));
+                if(writeRestriction != TYPE_GPX_ENTITY){
+                    edited = FeatureUtilities.defaultFeature(writeRestriction, "-1");
                 }else{
-                    throw new DataStoreRuntimeException("Writer append not allowed on GPX entity writer, choose a defined type.");
+                    throw new DataStoreRuntimeException("Writer append not allowed "
+                            + "on GPX entity writer, choose a defined type.");
                 }
             }
+
             return edited;
+        }
+
+        private void findNext() {
+            if(next != null) return;
+            
+            while(next==null && super.hasNext()){
+                final Feature candidate = super.next();
+                
+                if(candidate.getType() == writeRestriction){
+                    next = candidate;
+                }else{
+                    //not the wished type, write it and continue
+                    //since all types are store in one file
+                    //we must ensure everything is copied
+                    write(candidate);
+                }
+            }
         }
 
         @Override
         public void write() throws DataStoreRuntimeException {
             if(edited == null || lastWritten == edited) return;
             lastWritten = edited;
-            
+            write(edited);
+        }
+
+        private void write(final Feature feature) throws DataStoreRuntimeException {
+            final FeatureType ft = feature.getType();
+
             try{
-                if(restriction == TYPE_WAYPOINT){
-                    writer.writeWayPoint(edited, GPXConstants.TAG_WPT);
-                }else if(restriction == TYPE_ROUTE){
-                    writer.writeRoute(edited);
-                }else if(restriction == TYPE_TRACK){
-                    writer.writeTrack(edited);
+                if(ft == TYPE_WAYPOINT){
+                    writer.writeWayPoint(feature, GPXConstants.TAG_WPT);
+                }else if(ft == TYPE_ROUTE){
+                    writer.writeRoute(feature);
+                }else if(ft == TYPE_TRACK){
+                    writer.writeTrack(feature);
                 }else{
-                    throw new DataStoreRuntimeException("Writer not allowed on GPX entity writer, choose a defined type.");
+                    throw new DataStoreRuntimeException("Writer not allowed on GPX "
+                            + "entity writer, choose a defined type." + ft.getName());
                 }
             }catch(XMLStreamException ex){
                 throw new DataStoreRuntimeException(ex);
@@ -350,6 +388,12 @@ public class GPXDataStore extends AbstractDataStore{
 
         @Override
         public void close() {
+
+            //write everything remaining if any
+            while(hasNext()){
+                next();
+            }
+            write();
 
             try {
                 writer.writeEndDocument();
@@ -365,14 +409,16 @@ public class GPXDataStore extends AbstractDataStore{
 
             //flip files
             RWLock.writeLock().lock();
-            file.delete();
-            writeFile.renameTo(file);
-            RWLock.writeLock().unlock();
+            try{
+                file.delete();
+                writeFile.renameTo(file);
+            }finally{
+                RWLock.writeLock().unlock();
+            }
 
             TempLock.writeLock().unlock();
         }
 
     }
-
 
 }

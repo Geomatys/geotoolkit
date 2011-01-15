@@ -62,6 +62,7 @@ public class GPXReader extends StaxStreamReader{
     private int routeInc = 0;
     private int trackInc = 0;
     private GPXVersion version = null;
+    private String baseNamespace = GPXModelConstants.GPX_NAMESPACE_V11;
 
     public GPXVersion getVersion() {
         return version;
@@ -80,7 +81,14 @@ public class GPXReader extends StaxStreamReader{
                 case START_ELEMENT:
                     final String typeName = reader.getLocalName();
                     if(TAG_GPX.equalsIgnoreCase(typeName)){
-                        final String str = reader.getAttributeValue(null, ATT_GPX_VERSION);
+
+                        String str = "1.1"; //consider 1.1 by default
+                        for(int i=0,n=reader.getAttributeCount(); i<n;i++){
+                            if(ATT_GPX_VERSION.equalsIgnoreCase(reader.getAttributeLocalName(i))){
+                                str = reader.getAttributeValue(i);
+                            }
+                        }
+                        
                         try{
                             this.version = GPXVersion.toVersion(str);
                         }catch(NumberFormatException ex){
@@ -88,9 +96,12 @@ public class GPXReader extends StaxStreamReader{
                         }
 
                         if(version == GPXVersion.v1_0_0){
+                            baseNamespace = GPXModelConstants.GPX_NAMESPACE_V10;
                             //we wont found a metadata tag, must read the tags here.
                             metadata = parseMetaData100();
                             break searchLoop;
+                        }else{
+                            baseNamespace = GPXModelConstants.GPX_NAMESPACE_V11;
                         }
 
                     }else if(TAG_METADATA.equalsIgnoreCase(typeName)){

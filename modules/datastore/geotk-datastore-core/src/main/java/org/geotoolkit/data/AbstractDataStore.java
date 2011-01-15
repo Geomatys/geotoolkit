@@ -153,13 +153,17 @@ public abstract class AbstractDataStore implements DataStore{
         //while raise an error if type doesnt exist
         getFeatureType(typeName);
 
+        FeatureWriter writer = null;
         try{
-            final FeatureWriter writer = getFeatureWriter(typeName, Filter.EXCLUDE);
-            writer.close();
+            writer = getFeatureWriter(typeName, Filter.EXCLUDE);
             return true;
         }catch(Exception ex){
             //catch anything, don't log it
             return false;
+        }finally{
+            if(writer != null){
+                writer.close();
+            }
         }
     }
 

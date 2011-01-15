@@ -39,7 +39,7 @@ import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
 public class GPXWriter110 extends GPXWriter100{
 
     public GPXWriter110(final String creator){
-        super(creator);
+        super(GPX_NAMESPACE_V11,creator);
     }
 
     @Override
@@ -49,9 +49,9 @@ public class GPXWriter110 extends GPXWriter100{
 
     @Override
     public void write(final MetaData metadata) throws XMLStreamException{
-        writer.writeStartElement(GPX_NAMESPACE, TAG_METADATA);
-        writeSimpleTag(GPX_NAMESPACE, TAG_NAME, metadata.getName());
-        writeSimpleTag(GPX_NAMESPACE, TAG_DESC, metadata.getDescription());
+        writer.writeStartElement(namespace, TAG_METADATA);
+        writeSimpleTag(namespace, TAG_NAME, metadata.getName());
+        writeSimpleTag(namespace, TAG_DESC, metadata.getDescription());
         writePerson(metadata.getPerson());
         writeCopyRight(metadata.getCopyRight());
         for(URI uri : metadata.getLinks()){
@@ -60,21 +60,22 @@ public class GPXWriter110 extends GPXWriter100{
 
         final Date d = metadata.getTime();
         if(d != null){
-            writeSimpleTag(GPX_NAMESPACE, TAG_METADATA_TIME, sdf.format(d));
+            writeSimpleTag(namespace, TAG_METADATA_TIME, sdf.format(d));
         }
 
-        writeSimpleTag(GPX_NAMESPACE, TAG_METADATA_KEYWORDS, metadata.getKeywords());
+        writeSimpleTag(namespace, TAG_METADATA_KEYWORDS, metadata.getKeywords());
         writeBounds(metadata.getBounds());
 
         writer.writeEndElement();
+        writer.flush();
     }
 
     public void writePerson(final Person person) throws XMLStreamException{
         if(person == null) return;
         
-        writer.writeStartElement(GPX_NAMESPACE, TAG_AUTHOR);
-        writeSimpleTag(GPX_NAMESPACE, TAG_NAME, person.getName());
-        writeSimpleTag(GPX_NAMESPACE, TAG_AUTHOR_EMAIL, person.getEmail());
+        writer.writeStartElement(namespace, TAG_AUTHOR);
+        writeSimpleTag(namespace, TAG_NAME, person.getName());
+        writeSimpleTag(namespace, TAG_AUTHOR_EMAIL, person.getEmail());
         writeLink(person.getLink());
         writer.writeEndElement();
     }
@@ -92,21 +93,21 @@ public class GPXWriter110 extends GPXWriter100{
     public void writeLink(final URI uri) throws XMLStreamException{
         if(uri == null) return;
 
-        writer.writeStartElement(GPX_NAMESPACE, TAG_LINK);
-        writer.writeAttribute(GPX_NAMESPACE, ATT_LINK_HREF, uri.toASCIIString());
+        writer.writeStartElement(namespace, TAG_LINK);
+        writer.writeAttribute(ATT_LINK_HREF, uri.toASCIIString());
         writer.writeEndElement();
     }
 
     public void writeCopyRight(final CopyRight copyRight) throws XMLStreamException{
         if(copyRight == null) return;
 
-        writer.writeStartElement(GPX_NAMESPACE, TAG_COPYRIGHT);
+        writer.writeStartElement(namespace, TAG_COPYRIGHT);
         final String author = copyRight.getAuthor();
         if(author != null){
-            writer.writeAttribute(GPX_NAMESPACE, ATT_COPYRIGHT_AUTHOR, author);
+            writer.writeAttribute(ATT_COPYRIGHT_AUTHOR, author);
         }
-        writeSimpleTag(GPX_NAMESPACE, TAG_COPYRIGHT_YEAR, copyRight.getYear());
-        writeSimpleTag(GPX_NAMESPACE, TAG_COPYRIGHT_LICENSE, copyRight.getLicense());
+        writeSimpleTag(namespace, TAG_COPYRIGHT_YEAR, copyRight.getYear());
+        writeSimpleTag(namespace, TAG_COPYRIGHT_LICENSE, copyRight.getLicense());
         writer.writeEndElement();
     }
 
