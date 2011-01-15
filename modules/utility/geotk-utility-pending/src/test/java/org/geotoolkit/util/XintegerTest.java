@@ -98,8 +98,8 @@ public class XintegerTest {
 
         before = System.currentTimeMillis();
         for(int i=0; i<nb; i++){
-            XInteger.parseIntSigned(str1, 0, 6);
-            XInteger.parseIntSigned(str1, 7, 13);
+            XInteger.parseIntSigned(str1, 0, 6);    //NOSONAR : takes to much time
+            XInteger.parseIntSigned(str1, 7, 13);   //NOSONAR : takes to much time
         }
         after = System.currentTimeMillis();
         long ixsComplete = (after-before);
@@ -107,8 +107,8 @@ public class XintegerTest {
 
         before = System.currentTimeMillis();
         for(int i=0; i<nb; i++){
-            XInteger.parseIntUnsigned(str1, 0, 6);
-            XInteger.parseIntUnsigned(str1, 7, 13);
+            XInteger.parseIntUnsigned(str1, 0, 6);  //NOSONAR : takes to much time
+            XInteger.parseIntUnsigned(str1, 7, 13); //NOSONAR : takes to much time
         }
         after = System.currentTimeMillis();
         long ixuComplete = (after-before);
@@ -146,12 +146,12 @@ public class XintegerTest {
 
         before = System.currentTimeMillis();
         for(int i=0; i<nb; i++){
-            XInteger.parseIntSigned(str2, 0, 6);
-            XInteger.parseIntSigned(str2, 7, 13);
-            XInteger.parseIntSigned(str2, 14, 20);
-            XInteger.parseIntSigned(str2, 21, 27);
-            XInteger.parseIntSigned(str2, 28, 34);
-            XInteger.parseIntSigned(str2, 35, 41);
+            XInteger.parseIntSigned(str2, 0, 6);    //NOSONAR : takes to much time
+            XInteger.parseIntSigned(str2, 7, 13);   //NOSONAR : takes to much time
+            XInteger.parseIntSigned(str2, 14, 20);  //NOSONAR : takes to much time
+            XInteger.parseIntSigned(str2, 21, 27);  //NOSONAR : takes to much time
+            XInteger.parseIntSigned(str2, 28, 34);  //NOSONAR : takes to much time
+            XInteger.parseIntSigned(str2, 35, 41);  //NOSONAR : takes to much time
         }
         after = System.currentTimeMillis();
         ixsComplete = (after-before);
@@ -159,12 +159,12 @@ public class XintegerTest {
 
         before = System.currentTimeMillis();
         for(int i=0; i<nb; i++){
-            XInteger.parseIntUnsigned(str2, 0, 6);
-            XInteger.parseIntUnsigned(str2, 7, 13);
-            XInteger.parseIntUnsigned(str2, 14, 20);
-            XInteger.parseIntUnsigned(str2, 21, 27);
-            XInteger.parseIntUnsigned(str2, 28, 34);
-            XInteger.parseIntUnsigned(str2, 35, 41);
+            XInteger.parseIntUnsigned(str2, 0, 6);      //NOSONAR : takes to much time
+            XInteger.parseIntUnsigned(str2, 7, 13);     //NOSONAR : takes to much time
+            XInteger.parseIntUnsigned(str2, 14, 20);    //NOSONAR : takes to much time
+            XInteger.parseIntUnsigned(str2, 21, 27);    //NOSONAR : takes to much time
+            XInteger.parseIntUnsigned(str2, 28, 34);    //NOSONAR : takes to much time
+            XInteger.parseIntUnsigned(str2, 35, 41);    //NOSONAR : takes to much time
         }
         after = System.currentTimeMillis();
         ixuComplete = (after-before);
