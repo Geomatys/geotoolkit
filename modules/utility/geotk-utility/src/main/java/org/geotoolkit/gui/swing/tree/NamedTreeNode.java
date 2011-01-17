@@ -26,11 +26,13 @@ import org.opengis.util.InternationalString;
  * Because the {@link javax.swing.JTree} component invokes the {@link #toString()} method for
  * populating the tree widget, this class is useful when the label to display is different than
  * the value of {@code userObject.toString()}.
- * <p>
+ *
+ * {@section Localization}
  * Every constructors in this class expect a name of type {@link CharSequence}. The names are
  * typically instances of {@link String}, but instances of {@link InternationalString} are
  * also accepted. In the later case, the {@link #toString()} method may return a localized
- * string depending on the return value of {@link #getLocale()}.
+ * string depending on the return value of the {@link #getLocale() getLocale()} method. By
+ * default, the later is the locale of the {@linkplain #getParent() parent} node.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.17
@@ -47,7 +49,7 @@ public class NamedTreeNode extends DefaultMutableTreeNode {
     /**
      * The node label to be returned by {@link #toString()}.
      */
-    private final CharSequence name;
+    private CharSequence name;
 
     /**
      * Creates a tree node that has no parent and no children, but which allows children.
@@ -98,10 +100,34 @@ public class NamedTreeNode extends DefaultMutableTreeNode {
     }
 
     /**
+     * Returns the name of this node as an instance of {@link String} or {@link InternationalString}.
+     *
+     * @return The name, or {@code null} if none.
+     *
+     * @since 3.17
+     */
+    public CharSequence getName() {
+        return name;
+    }
+
+    /**
+     * Sets the name of this node. While this method accepts null value (because Swing
+     * {@link javax.swing.tree.DefaultMutableTreeNode#toString()} is designed that way),
+     * it is highly recommended to set only non-null values.
+     *
+     * @param name The new name of this node.
+     *
+     * @since 3.17
+     */
+    public void setName(final CharSequence name) {
+        this.name = freeze(name);
+    }
+
+    /**
      * Returns the name given at construction time. If that name is an instance of
-     * {@link InternationalString} and the {@link #getLocale()} method returns a
-     * non-null value, then the {@link InternationalString#toString(Locale)} value
-     * is returned.
+     * {@link InternationalString} and the {@link #getLocale() getLocale()} method
+     * returns a non-null value, then the {@link InternationalString#toString(Locale)}
+     * value is returned.
      */
     @Override
     public String toString() {
