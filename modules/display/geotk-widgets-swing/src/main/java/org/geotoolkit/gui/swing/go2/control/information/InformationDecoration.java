@@ -149,6 +149,7 @@ public class InformationDecoration extends JLayeredPane implements MapDecoration
         this.presenter = presenter;
         this.selecteds = selecteds;
         this.context = context;
+        this.area = area;
 
         if(selecteds == null || where == null){
             frame.setVisible(false);

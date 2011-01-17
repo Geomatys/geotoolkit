@@ -132,15 +132,7 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
      */
     @Override
     public Rectangle getBounds() {
-        final Envelope env = geometry.getEnvelopeInternal();
-        final Point2D p1 = new Point2D.Double(env.getMinX(), env.getMinY());
-        transform.transform(p1, p1);
-        final Point2D p2 = new Point2D.Double(env.getMaxX(), env.getMaxY());
-        transform.transform(p2, p2);
-        return new Rectangle(
-                (int)p1.getX(), (int)p1.getY(),
-                (int)(p2.getX()-p1.getX()),
-                (int)(p2.getY()-p1.getY()));
+        return getBounds2D().getBounds();
     }
 
     /**
@@ -153,10 +145,10 @@ public abstract class AbstractJTSGeometryJ2D<T extends Geometry> implements Shap
         transform.transform(p1, p1);
         final Point2D p2 = new Point2D.Double(env.getMaxX(), env.getMaxY());
         transform.transform(p2, p2);
-        return new Rectangle2D.Double(
-                p1.getX(),p1.getY(),
-                p2.getX()-p1.getX(),
-                p2.getY()-p1.getY());
+
+        final Rectangle2D rect = new Rectangle2D.Double(p1.getX(), p1.getY(), 0, 0);
+        rect.add(p2);
+        return rect;
     }
 
     /**

@@ -79,6 +79,8 @@ public class StatefullCoverageLayerJ2D extends StatelessMapLayerJ2D<CoverageMapL
     }
 
     private synchronized void updateCache(final RenderingContext2D context){
+        params.objectiveCRS = context.getObjectiveCRS();
+        params.displayCRS = context.getDisplayCRS();
         params.context = context;
         boolean objectiveCleared = false;
 

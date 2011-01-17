@@ -21,6 +21,8 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -31,8 +33,10 @@ import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.ElevationModel;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
+import org.geotoolkit.referencing.CRS;
 
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  * Not thread safe. 
@@ -55,15 +59,11 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     }
 
     public void clearObjectiveCache(){
-        if(border != null){
-            border.clearObjectiveCache();
-        }
+        border = null;
     }
 
     public void clearDisplayCache(){
-        if(border != null){
-            border.clearDisplayCache();
-        }
+        border = null;
     }
 
     @Override
@@ -104,7 +104,14 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     @Override
     public ProjectedGeometry getEnvelopeGeometry() {
         if(border == null){
-            border = new StatefullProjectedGeometry(params, Polygon.class, createGeometry(layer.getBounds()));
+            Envelope env = layer.getBounds();
+            try {
+                env = CRS.transform(env, params.context.getObjectiveCRS2D());
+            } catch (TransformException ex) {
+                Logger.getLogger(StatefullProjectedCoverage.class.getName()).log(Level.SEVERE, null, ex);
+            }
+
+            border = new StatefullProjectedGeometry(params, Polygon.class, createGeometry(env));
         }
         return border;
     }

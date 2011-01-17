@@ -238,12 +238,7 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
             final DefaultRenderingContext2D searchContext = context2D;
             prepareContext(searchContext,null,null);
 
-            final AffineTransform dispToObj = new AffineTransform(searchContext.getObjectiveToDisplay());
-            try {
-                dispToObj.invert();
-            } catch (NoninvertibleTransformException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            }
+            final AffineTransform dispToObj = searchContext.getDisplayToObjective();
 
             final Shape objectiveShape = dispToObj.createTransformedShape(displayShape);
             final com.vividsolutions.jts.geom.Geometry displayGeometryJTS = GO2Utilities.toJTS(displayShape);
