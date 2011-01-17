@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.feature;
 
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Converters;
 
@@ -45,18 +44,9 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
      */
     protected I id;
 
-    /**
-     * Static constructor for the most commun use of Attribute classes type.
-     * @param content
-     * @param type
-     * @param id
-     * @return An attribute
-     */
-    public static DefaultAttribute<Object,AttributeDescriptor,Identifier> create(final Object content, final AttributeType type, final Identifier id){
-        return new DefaultAttribute<Object,AttributeDescriptor,Identifier>(
-                content,
-                new DefaultAttributeDescriptor(type, type.getName(), 1, 1, true, null),
-                id);
+    public DefaultAttribute(final V content, final D descriptor, final I id) {
+        super(content, descriptor);
+        this.id = id;
     }
 
     /**
@@ -71,8 +61,29 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
         this.id = id;
     }
 
-    public DefaultAttribute(final V content, final D descriptor, final I id) {
-        super(content, descriptor);
+    /**
+     * This contructor is only available for complex types,
+     * Complex objects are the only ones allowed to have a property type
+     * whitout descriptor since they may be top level object.
+     * A Descriptor is only necessary if the property is defined inside another
+     * type.
+     * @param type
+     */
+    protected DefaultAttribute(final V content, final AttributeType type, final I id){
+        super(content, type);
+        this.id = id;
+    }
+
+    /**
+     * This contructor is only available for complex types,
+     * Complex objects are the only ones allowed to have a property type
+     * whitout descriptor since they may be top level object.
+     * A Descriptor is only necessary if the property is defined inside another
+     * type.
+     * @param type
+     */
+    protected DefaultAttribute(final AttributeType type, final I id){
+        super(type);
         this.id = id;
     }
 
@@ -89,7 +100,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
      */
     @Override
     public AttributeType getType() {
-        return descriptor.getType();
+        return (AttributeType)super.getType();
     }
 
     /**
@@ -132,7 +143,7 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
             return false;
         }
 
-        DefaultAttribute att = (DefaultAttribute) obj;
+        final DefaultAttribute att = (DefaultAttribute) obj;
 
         return Utilities.equals(id, att.id);
     }
@@ -151,16 +162,9 @@ public class DefaultAttribute<V extends Object, D extends AttributeDescriptor, I
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append(":");
-        sb.append(descriptor.getName().getLocalPart());
-        if (!descriptor.getName().getLocalPart().equals(descriptor.getType().getName().getLocalPart()) ||
-                id != null) {
-            sb.append("<");
-            sb.append(descriptor.getType().getName().getLocalPart());
-            if (id != null) {
-                sb.append(" id=");
-                sb.append(id);
-            }
-            sb.append(">");
+        sb.append(getName());
+        if (id != null) {
+            sb.append("(id=").append(id).append(')');
         }
         sb.append("=");
         sb.append(value);

@@ -24,16 +24,13 @@ import java.util.Collection;
 import java.util.List;
 import java.util.logging.Level;
 
-import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.FeatureTypeUtilities;
-import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
@@ -45,7 +42,6 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -223,7 +219,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
             if(ft instanceof SimpleFeatureType){
                 feature = new DefaultSimpleFeature((SimpleFeatureType)schema, null, properties, false);
             }else{
-                feature = DefaultFeature.create(properties, schema, null);
+                feature = new DefaultFeature(properties, schema, null);
             }
 
         }

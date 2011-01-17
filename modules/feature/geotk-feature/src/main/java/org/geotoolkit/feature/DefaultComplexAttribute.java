@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -35,16 +35,15 @@ import org.opengis.filter.identity.Identifier;
  */
 public class DefaultComplexAttribute<I extends Identifier> extends AbstractComplexAttribute<Collection<Property>,I> {
 
-    public static DefaultComplexAttribute<Identifier> create(
-            final Collection<? extends Property> properties, final ComplexType type, final Identifier id) {
-        return new DefaultComplexAttribute(
-                properties,
-                new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),
-                id);
-    }
-
+    
     public DefaultComplexAttribute(final Collection<? extends Property> properties, final AttributeDescriptor descriptor, final I id) {
         super(descriptor, id );
+        value = new ArrayList<Property>();
+        value.addAll(properties);
+    }
+
+    public DefaultComplexAttribute(final Collection<? extends Property> properties, final ComplexType type, final I id) {
+        super(type,id);
         value = new ArrayList<Property>();
         value.addAll(properties);
     }

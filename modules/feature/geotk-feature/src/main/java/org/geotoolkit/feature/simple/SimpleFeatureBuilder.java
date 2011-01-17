@@ -17,28 +17,21 @@
  */
 package org.geotoolkit.feature.simple;
 
-import com.vividsolutions.jts.geom.Geometry;
-
 import java.rmi.server.UID;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.SimpleIllegalAttributeException;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.logging.Logging;
 
-import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.FeatureFactory;
-import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -133,16 +126,11 @@ import org.opengis.filter.identity.FeatureId;
  */
 public class SimpleFeatureBuilder {
 
-    /**
-     * logger
-     */
-    static final Logger LOGGER = Logging.getLogger("org.geotoolkit.feature");
     /** the feature type */
     private final SimpleFeatureType featureType;
     /** the feature factory */
     private final FeatureFactory factory;
     /** the values */
-    //List<Object> values;
     private Object[] values;
     /** pointer for next attribute */
     int next;

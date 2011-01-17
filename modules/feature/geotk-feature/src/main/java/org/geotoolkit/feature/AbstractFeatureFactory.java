@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -24,7 +25,6 @@ import java.util.List;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 
 import org.opengis.feature.Association;
 import org.opengis.feature.Attribute;
@@ -133,9 +133,9 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
             return createFeature(value, (FeatureType)type, id);
         }
         if(id != null && !id.isEmpty()){
-            return DefaultComplexAttribute.create(value, type, FF.gmlObjectId(id));
+            return new DefaultComplexAttribute(value, type, FF.gmlObjectId(id));
         }else{
-            return DefaultComplexAttribute.create(value, type, null);
+            return new DefaultComplexAttribute(value, type, null);
         }
     }
 
@@ -158,7 +158,11 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
      */
     @Override
     public Feature createFeature(final Collection<Property> value, final FeatureType type, final String id) {
-        return createFeature(value,new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),id);
+        if(type instanceof SimpleFeatureType){
+            final List<Property> properties = new ArrayList<Property>(value);
+            return new DefaultSimpleFeature((SimpleFeatureType)type, FF.featureId(id), properties, validating);
+        }
+        return new DefaultFeature(value, type, FF.featureId(id));
     }
 
     /**

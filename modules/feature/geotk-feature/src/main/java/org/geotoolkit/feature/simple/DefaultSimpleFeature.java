@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -25,7 +25,6 @@ import java.util.Map;
 
 import org.geotoolkit.feature.DefaultAttribute;
 import org.geotoolkit.feature.DefaultGeometryAttribute;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
 
 import org.opengis.feature.Property;
@@ -75,7 +74,24 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
     }
 
     public DefaultSimpleFeature(final SimpleFeatureType type, final FeatureId id, final List<Property> properties, final boolean validating){
-        this(new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),id,properties,validating);
+        super(type,id);
+
+        // in the most common case reuse the map cached in the feature type
+        if (type instanceof DefaultSimpleFeatureType) {
+            index = ((DefaultSimpleFeatureType) type).index;
+        } else {
+            // if we're not lucky, rebuild the index completely...
+            // TODO: create a separate cache for this case?
+            this.index = DefaultSimpleFeatureType.buildIndex((SimpleFeatureType) type);
+        }
+
+        this.value = properties;
+        this.validating = validating;
+
+        // if we're self validating, do validation right now
+        if (validating) {
+            validate();
+        }
     }
 
     public DefaultSimpleFeature(final AttributeDescriptor desc, final FeatureId id, final Object[] values, final boolean validating){
@@ -102,7 +118,6 @@ public final class DefaultSimpleFeature extends AbstractSimpleFeature {
             validate();
         }
     }
-
 
     @Override
     protected boolean isValidating() {

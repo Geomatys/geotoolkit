@@ -63,7 +63,15 @@ public class DefaultProperty<V extends Object, D extends PropertyDescriptor> imp
         this(null,descriptor);
     }
 
-    public DefaultProperty(final PropertyType type) {
+    /**
+     * This contructor is only available for complex types,
+     * Complex objects are the only ones allowed to have a property type
+     * whitout descriptor since they may be top level object.
+     * A Descriptor is only necessary if the property is defined inside another
+     * type.
+     * @param type
+     */
+    protected DefaultProperty(final PropertyType type) {
         this(null,type);
     }
 

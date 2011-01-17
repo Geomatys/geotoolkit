@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -32,15 +32,12 @@ import org.opengis.filter.identity.FeatureId;
 import org.opengis.geometry.BoundingBox;
 
 /**
- * Temptative implementation of Feature.
- * <p>
- * NOTE this is work in progress and at this time not really being used throughout the library.
- * </p>
+ * Abstract implementation of Feature.
+ *
  * @author jdeolive
  * @author jgarnett
  * @author Johann Sorel (Geomatys)
  *
- * TODO : Make this class thread safe or not ?
  * @module pending
  */
 public abstract class AbstractFeature<C extends Collection<Property>> extends AbstractComplexAttribute<C,FeatureId> implements Feature {
@@ -62,11 +59,21 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
     }
 
     /**
+     * Create a Feature with the following content.
+     *
+     * @param desc Nested type
+     * @param id Feature ID
+     */
+    public AbstractFeature(final FeatureType type, final FeatureId id) {
+        super(type, id);
+    }
+
+    /**
      * {@inheritDoc }
      */
     @Override
     public FeatureType getType() {
-        return (FeatureType) descriptor.getType();
+        return (FeatureType) super.getType();
     }
 
     public void setId(final FeatureId id) {
@@ -88,7 +95,7 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
 
         if(bounds == null){
             for (Iterator itr = getValue().iterator(); itr.hasNext();) {
-                Property property = (Property) itr.next();
+                final Property property = (Property) itr.next();
                 if (property instanceof GeometryAttribute) {
                     final GeometryAttribute ga = (GeometryAttribute) property;
                     if(bounds == null){
@@ -126,7 +133,7 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
 
                 if (geometryType != null) {
                     for (Iterator itr = getValue().iterator(); itr.hasNext();) {
-                        Property property = (Property) itr.next();
+                        final Property property = (Property) itr.next();
                         if (property instanceof GeometryAttribute) {
                             if (property.getType().equals(geometryType)) {
                                 defaultGeometry = (GeometryAttribute) property;
@@ -148,8 +155,8 @@ public abstract class AbstractFeature<C extends Collection<Property>> extends Ab
     //2- this.defaultGeometry = defaultGeometry means getValue() will  not contain the argument
     @Override
     public void setDefaultGeometryProperty(final GeometryAttribute defaultGeometry) {
-        if (!getValue().contains(defaultGeometry)) {
-            throw new IllegalArgumentException("specified attribute is not one of: " + getValue());
+        if (!getType().getDescriptors().contains(defaultGeometry.getDescriptor())) {
+            throw new IllegalArgumentException("specified attribute is not one of: " + getType());
         }
 
         synchronized (this) {

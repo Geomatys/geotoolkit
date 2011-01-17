@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,6 @@ import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureValidationUtilities;
 import org.geotoolkit.feature.SimpleIllegalAttributeException;
-import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.io.TableWriter;
 
 import org.opengis.feature.GeometryAttribute;
@@ -58,7 +57,7 @@ public abstract class AbstractSimpleFeature extends AbstractFeature<List<Propert
     //simple feature------------------------------------------------------------
 
     protected AbstractSimpleFeature(final SimpleFeatureType type, final FeatureId id){
-        this(new DefaultAttributeDescriptor( type, type.getName(), 1, 1, true, null),id);
+        super(type,id);
     }
 
     protected AbstractSimpleFeature(final AttributeDescriptor desc, final FeatureId id){

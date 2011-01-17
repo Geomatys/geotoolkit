@@ -93,7 +93,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * @module pending
  * @since 2.1.M3
  */
-public class FeatureTypeUtilities {
+public final class FeatureTypeUtilities {
 
     /** the default namespace for feature types */
     //public static final URI = GMLSchema.NAMESPACE;

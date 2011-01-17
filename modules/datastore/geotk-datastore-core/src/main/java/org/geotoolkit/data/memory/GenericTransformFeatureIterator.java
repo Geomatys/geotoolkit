@@ -178,7 +178,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
             if(ft instanceof SimpleFeatureType){
                 feature = new DefaultSimpleFeature((SimpleFeatureType)ft, null, properties, false);
             }else{
-                feature = DefaultFeature.create(properties, ft, null);
+                feature = new DefaultFeature(properties, ft, null);
             }
 
         }

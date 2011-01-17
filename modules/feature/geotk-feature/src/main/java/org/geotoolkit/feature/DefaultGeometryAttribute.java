@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,8 +19,6 @@ package org.geotoolkit.feature;
 
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.geometry.jts.JTSEnvelope2D;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -35,8 +34,11 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
+
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -77,7 +79,7 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
      */
     @Override
     public GeometryType getType() {
-        return descriptor.getType();
+        return (GeometryType)super.getType();
     }
 
     /**
@@ -151,9 +153,15 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
         //JD: since Geometry does not implement equals(Object) "properly",( ie
         // if you dont call equals(Geomtery) two geometries which are equal
         // will not be equal) we dont call super.equals()
-
         if (!Utilities.equals(descriptor, att.descriptor)) {
             return false;
+        }
+
+        if(descriptor==null){
+            //test type
+            if (!Utilities.equals(type, att.type)) {
+                return false;
+            }
         }
 
         if (!Utilities.equals(id, att.id)) {
@@ -222,12 +230,11 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append(":");
-        sb.append(getDescriptor().getName().getLocalPart());
-        final CoordinateReferenceSystem crs = getDescriptor().getType().getCoordinateReferenceSystem();
-        if (!getDescriptor().getName().getLocalPart().equals(getDescriptor().getType().getName().getLocalPart()) ||
-                id != null || crs != null) {
+        sb.append(getName());
+        final CoordinateReferenceSystem crs = getType().getCoordinateReferenceSystem();
+        if (id != null || crs != null) {
             sb.append("<");
-            sb.append(getDescriptor().getType().getName().getLocalPart());
+            sb.append(getType().getName().getLocalPart());
             if (id != null) {
                 sb.append(" id=");
                 sb.append(id);

@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2002-2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -46,7 +46,11 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         implements ComplexAttribute {
 
     protected AbstractComplexAttribute(final AttributeDescriptor descriptor, final I id) {
-        super( null , descriptor, id );
+        super( descriptor, id );
+    }
+
+    protected AbstractComplexAttribute(final ComplexType type, final I id) {
+        super( type, id );
     }
 
     /**
@@ -54,7 +58,7 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
      */
     @Override
     public ComplexType getType() {
-        return (ComplexType)descriptor.getType();
+        return (ComplexType)super.getType();
     }
 
     /**
@@ -206,7 +210,10 @@ public abstract class AbstractComplexAttribute<V extends Collection<Property>,I 
         }
 
         //write property name
-        tablewriter.write(DefaultName.toJCRExtendedForm(property.getName()));
+        final Name name = property.getName();
+        if(name != null){
+            tablewriter.write(DefaultName.toJCRExtendedForm(name));
+        }
         //write the index if one
         if(index != null){
             tablewriter.write('[');

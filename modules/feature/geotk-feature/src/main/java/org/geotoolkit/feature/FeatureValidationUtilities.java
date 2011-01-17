@@ -44,7 +44,7 @@ import org.opengis.filter.Filter;
  * @author Justin Deoliveira, The Open Planning Project
  * @module pending
  */
-public class FeatureValidationUtilities {
+public final class FeatureValidationUtilities {
 
     private FeatureValidationUtilities(){}
 

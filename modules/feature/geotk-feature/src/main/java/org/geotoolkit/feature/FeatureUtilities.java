@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Geomatys
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -43,9 +43,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.grid.GridCoverage;
@@ -214,14 +214,21 @@ public final class FeatureUtilities {
             }else{
                 strId = newId;
             }
-            final AttributeDescriptor desc = ga.getDescriptor();
+            
 
             final Collection<Property> properties = ga.getProperties();
             final Collection<Property> copies = new ArrayList<Property>();
             for(final Property prop : properties){
                 copies.add(copy(prop,deep,null));
             }
-            copy = FF.createComplexAttribute(copies, desc, strId);
+
+            final AttributeDescriptor desc = ga.getDescriptor();
+            if(desc != null){
+                copy = FF.createComplexAttribute(copies, desc, strId);
+            }else{
+                //no descriptor, use the type
+                copy = FF.createComplexAttribute(copies, ga.getType(), strId);
+            }
 
         }else if(property instanceof Attribute){
             final Attribute ga = (Attribute) property;
@@ -248,6 +255,10 @@ public final class FeatureUtilities {
 
         if (src == null) {
             return null;
+        }
+
+        if(src instanceof Property){
+            return copy((Property)src);
         }
 
         // The following are things I expect
