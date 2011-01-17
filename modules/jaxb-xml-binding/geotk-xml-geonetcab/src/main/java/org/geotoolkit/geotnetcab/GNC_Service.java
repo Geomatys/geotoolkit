@@ -77,6 +77,19 @@ public class GNC_Service extends GNC_MaterialResource implements org.opengis.met
         return this.typeOfService;
     }
 
+    public void setTypeOfService(List<GNC_ServicesTypeCode> typeOfService) {
+        this.typeOfService = typeOfService;
+    }
+
+    public void setTypeOfService(GNC_ServicesTypeCode typeOfService) {
+        if (typeOfService != null) {
+            if (this.typeOfService == null) {
+                this.typeOfService = new ArrayList<GNC_ServicesTypeCode>();
+            }
+            this.typeOfService.add(typeOfService);
+        }
+    }
+
     /**
      * Gets the value of the isBasedOn property.
      * 
@@ -93,4 +106,16 @@ public class GNC_Service extends GNC_MaterialResource implements org.opengis.met
         return this.isBasedOn;
     }
 
+    public void setIsBasedOn(List<GNC_Product> isBasedOn) {
+        this.isBasedOn = isBasedOn;
+    }
+
+    public void setIsBasedOn(GNC_Product isBasedOn) {
+        if (isBasedOn != null) {
+            if (this.isBasedOn == null) {
+                this.isBasedOn = new ArrayList<GNC_Product>();
+            }
+            this.isBasedOn.add(isBasedOn);
+        }
+    }
 }

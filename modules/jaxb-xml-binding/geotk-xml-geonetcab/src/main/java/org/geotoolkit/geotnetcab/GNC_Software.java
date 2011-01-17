@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GNC_Software_Type", propOrder = {
     "applicationField",
-    "typeOf"
+    "typeOfSoftware"
 })
 @XmlRootElement(name = "GNC_Software", namespace = "http://www.mdweb-project.org/files/xsd")
 public class GNC_Software extends GNC_Product implements org.opengis.metadata.geonetcab.GNC_Software {
@@ -61,7 +61,7 @@ public class GNC_Software extends GNC_Product implements org.opengis.metadata.ge
     @XmlElement(required = true)
     private List<GNC_ApplicationFieldCode> applicationField;
     @XmlElement(required = true)
-    private GNC_SoftwareTypeCode typeOf;
+    private GNC_SoftwareTypeCode typeOfSoftware;
 
     /**
      * Gets the value of the applicationField property.
@@ -78,6 +78,19 @@ public class GNC_Software extends GNC_Product implements org.opengis.metadata.ge
         return this.applicationField;
     }
 
+    public void setApplicationField(List<GNC_ApplicationFieldCode> applicationField) {
+        this.applicationField = applicationField;
+    }
+
+    public void setApplicationField(GNC_ApplicationFieldCode applicationField) {
+        if (applicationField != null) {
+            if (this.applicationField == null) {
+                this.applicationField = new ArrayList<GNC_ApplicationFieldCode>();
+            }
+            this.applicationField.add(applicationField);
+        }
+    }
+
     /**
      * Gets the value of the typeOf property.
      * 
@@ -86,8 +99,8 @@ public class GNC_Software extends GNC_Product implements org.opengis.metadata.ge
      *     {@link GNCSoftwareTypeCodePropertyType }
      *     
      */
-    public GNC_SoftwareTypeCode getTypeOf() {
-        return typeOf;
+    public GNC_SoftwareTypeCode getTypeOfSoftware() {
+        return typeOfSoftware;
     }
 
     /**
@@ -98,8 +111,8 @@ public class GNC_Software extends GNC_Product implements org.opengis.metadata.ge
      *     {@link GNCSoftwareTypeCodePropertyType }
      *     
      */
-    public void setTypeOf(final GNC_SoftwareTypeCode value) {
-        this.typeOf = value;
+    public void setTypeOfSoftware(final GNC_SoftwareTypeCode value) {
+        this.typeOfSoftware = value;
     }
 
 }

@@ -30,6 +30,6 @@ public interface GNC_Software extends GNC_Product {
 
     List<GNC_ApplicationFieldCode> getApplicationField();
     
-    GNC_SoftwareTypeCode getTypeOf();
+    GNC_SoftwareTypeCode getTypeOfSoftware();
 
 }
