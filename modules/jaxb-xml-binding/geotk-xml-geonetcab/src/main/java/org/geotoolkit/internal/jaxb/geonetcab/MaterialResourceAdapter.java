@@ -110,5 +110,4 @@ public class MaterialResourceAdapter extends MetadataAdapter<MaterialResourceAda
             this.metadata.setHref(href);
         }
     }
- }
 }

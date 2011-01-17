@@ -110,5 +110,4 @@ public class SoftwareAdapter extends MetadataAdapter<SoftwareAdapter, GNC_Softwa
             this.metadata.setHref(href);
         }
     }
- }
 }

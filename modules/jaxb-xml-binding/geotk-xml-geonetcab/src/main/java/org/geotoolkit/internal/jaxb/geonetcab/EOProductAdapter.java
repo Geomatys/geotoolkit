@@ -111,5 +111,4 @@ public class EOProductAdapter extends MetadataAdapter<EOProductAdapter, GNC_EOPr
             this.metadata.setHref(href);
         }
     }
- }
 }

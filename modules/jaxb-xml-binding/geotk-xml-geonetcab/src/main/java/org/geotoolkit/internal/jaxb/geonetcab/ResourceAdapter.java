@@ -110,5 +110,4 @@ public class ResourceAdapter extends MetadataAdapter<ResourceAdapter, GNC_Resour
             this.metadata.setHref(href);
         }
     }
- }
 }

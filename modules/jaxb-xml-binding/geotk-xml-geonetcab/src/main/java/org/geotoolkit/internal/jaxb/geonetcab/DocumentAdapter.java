@@ -110,5 +110,4 @@ public class DocumentAdapter extends MetadataAdapter<DocumentAdapter, GNC_Docume
             this.metadata.setHref(href);
         }
     }
- }
 }

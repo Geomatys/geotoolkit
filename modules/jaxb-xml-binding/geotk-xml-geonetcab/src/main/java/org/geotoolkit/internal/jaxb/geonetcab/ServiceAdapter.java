@@ -111,5 +111,4 @@ public class ServiceAdapter extends MetadataAdapter<ServiceAdapter, GNC_Service>
             this.metadata.setHref(href);
         }
     }
- }
 }

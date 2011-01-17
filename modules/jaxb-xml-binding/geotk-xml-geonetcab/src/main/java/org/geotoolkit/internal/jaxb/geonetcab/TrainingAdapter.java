@@ -110,5 +110,4 @@ public class TrainingAdapter extends MetadataAdapter<TrainingAdapter, GNC_Traini
             this.metadata.setHref(href);
         }
     }
- }
 }

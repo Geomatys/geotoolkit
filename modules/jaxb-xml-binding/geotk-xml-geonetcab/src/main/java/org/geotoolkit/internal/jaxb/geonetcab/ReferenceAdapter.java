@@ -110,5 +110,4 @@ public class ReferenceAdapter extends MetadataAdapter<ReferenceAdapter, GNC_Refe
             this.metadata.setHref(href);
         }
     }
- }
 }

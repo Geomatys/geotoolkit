@@ -111,5 +111,4 @@ public class ProductAdapter extends MetadataAdapter<ProductAdapter, GNC_Product>
             this.metadata.setHref(href);
         }
     }
- }
 }
