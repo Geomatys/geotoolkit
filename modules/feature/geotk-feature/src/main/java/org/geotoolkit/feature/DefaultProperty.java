@@ -22,10 +22,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.util.Utilities;
 
 import org.opengis.feature.Property;
-import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 
@@ -36,7 +34,7 @@ import org.opengis.feature.type.PropertyType;
  * @author Justin Deoliveira, The Open Planning Project
  * @module pending
  */
-public class DefaultProperty<V extends Object, D extends PropertyDescriptor> implements Property,Serializable {
+public class DefaultProperty<V extends Object, D extends PropertyDescriptor> extends AbstractProperty implements Property,Serializable {
 
     /**
      * descriptor of the property
@@ -124,30 +122,8 @@ public class DefaultProperty<V extends Object, D extends PropertyDescriptor> imp
      * {@inheritDoc }
      */
     @Override
-    public Name getName() {
-        if(descriptor != null){
-            return descriptor.getName();
-        }
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public PropertyType getType() {
         return type;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean isNillable() {
-        if(descriptor != null){
-            return descriptor.isNillable();
-        }
-        return false;
     }
 
     /**
@@ -161,55 +137,4 @@ public class DefaultProperty<V extends Object, D extends PropertyDescriptor> imp
         return userData;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof DefaultProperty)) {
-            return false;
-        }
-
-        DefaultProperty other = (DefaultProperty) obj;
-
-        if (!Utilities.equals(descriptor, other.descriptor)) {
-            return false;
-        }
-        if (!Utilities.equals(type, other.type)) {
-            return false;
-        }
-
-        if (!Utilities.deepEquals(value, other.value)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 5;
-        hash = 73 * hash + (this.descriptor != null ? this.descriptor.hashCode() : 0);
-        hash = 73 * hash + (this.type != null ? this.type.hashCode() : 0);
-        hash = 73 * hash + (this.value != null ? this.value.hashCode() : 0);
-        return hash;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String toString() {
-        final StringBuilder sb = new StringBuilder(getClass().getSimpleName()).append(":");
-        sb.append(getName());
-        sb.append("<");
-        sb.append(getType().getName().getLocalPart());
-        sb.append(">=");
-        sb.append(value);
-        return sb.toString();
-    }
 }

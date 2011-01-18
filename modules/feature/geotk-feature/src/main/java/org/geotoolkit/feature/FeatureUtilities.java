@@ -49,19 +49,24 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.feature.Association;
 import org.opengis.feature.Attribute;
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
 import org.opengis.feature.FeatureFactory;
+import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.IllegalAttributeException;
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AssociationDescriptor;
 import org.opengis.feature.type.AssociationType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.identity.Identifier;
@@ -387,11 +392,11 @@ public final class FeatureUtilities {
         throw new IllegalArgumentException("Unhandled type : " + type);
     }
 
-    public static Property defaultProperty(final ComplexType type){
+    public static ComplexAttribute defaultProperty(final ComplexType type){
         return defaultProperty(type, null);
     }
 
-    public static Property defaultProperty(final ComplexType type, final String id){
+    public static ComplexAttribute defaultProperty(final ComplexType type, final String id){
 
         final Collection<Property> props = new ArrayList<Property>();
         for(final PropertyDescriptor subDesc : type.getDescriptors()){
@@ -410,7 +415,7 @@ public final class FeatureUtilities {
     }
 
     public static Feature defaultFeature(final FeatureType type, final String id){
-        return (SimpleFeature)defaultProperty(type, id);
+        return (Feature)defaultProperty(type, id);
     }
 
     /**
@@ -440,6 +445,37 @@ public final class FeatureUtilities {
         }else{
             return null;
         }
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // ENCAPSULATION OPERATIONS ////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    /**
+     * Decorate a given property with a descriptor.
+     * This can be used by features who encapsulate other features as properties.
+     *
+     * @param property
+     * @param desc
+     * @return Property
+     */
+    public static Property wrapProperty(final Property property, final PropertyDescriptor desc){
+        if(property instanceof SimpleFeature){
+            return new WrapProperty.SimpleFeature((SimpleFeature)property, (AttributeDescriptor)desc);
+        }else if(property instanceof Feature){
+            return new WrapProperty.Feature((Feature)property, (AttributeDescriptor)desc);
+        }else if(property instanceof ComplexAttribute){
+            return new WrapProperty.ComplexAttribute((ComplexAttribute)property, (AttributeDescriptor)desc);
+        }else if(property instanceof GeometryAttribute){
+            return new WrapProperty.GeometryAttribute((GeometryAttribute)property, (GeometryDescriptor)desc);
+        }else if(property instanceof Attribute){
+            return new WrapProperty.Attribute((Attribute)property, (AttributeDescriptor)desc);
+        }else if(property instanceof Association){
+            return new WrapProperty.Association((Association)property, (AssociationDescriptor)desc);
+        }else{
+            return new WrapProperty.Property(property, desc);
+        }
+        
     }
 
 }
