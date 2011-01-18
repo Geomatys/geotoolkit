@@ -1,12 +1,23 @@
 /*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2007 - 2011, Johann Sorel
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
  */
 
 package org.geotoolkit.gui.swing.style;
 
 import javax.swing.tree.DefaultMutableTreeNode;
-import junit.framework.TestCase;
 
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
@@ -27,9 +38,10 @@ import static org.junit.Assert.*;
 
 /**
  *
- * @author sorel
+ * @author Johann Sorel
+ * @module pending
  */
-public class StyleModelTest extends TestCase{
+public class StyleModelTest {
 
     private static final MutableStyleFactory SF = new DefaultStyleFactory();
     private static double DELTA = 0d;
@@ -304,10 +316,6 @@ public class StyleModelTest extends TestCase{
         assertEquals(1, root.getChildAt(0).getChildAt(0).getChildCount() );
         assertEquals(symbol1, ((DefaultMutableTreeNode)root.getChildAt(0).getChildAt(0).getChildAt(0)).getUserObject() );
 
-
-
     }
-
-
 
 }

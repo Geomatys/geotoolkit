@@ -85,8 +85,8 @@
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-datastore-core</artifactId>
             <version>${project.version}</version>
+            <type>test-jar</type>
             <scope>test</scope>
-            <classifier>tests</classifier>
         </dependency>
         <dependency>
             <groupId>postgresql</groupId>
