@@ -3,6 +3,7 @@
  *    http://www.geotoolkit.org
  * 
  *    (C) 2003-2008, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2009-2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -120,11 +121,6 @@ public class FeatureFlatTest extends TestCase {
         tb.add(adb.buildDescriptor());
         
         SimpleFeatureType test = tb.buildSimpleFeatureType();
-//        try {
-//            SimpleFeatureBuilder.build(test, (Object[])null, null);
-//            fail("no error");
-//        } catch (IllegalAttributeException iae) {
-//        }
 
         try {
             SimpleFeatureBuilder.build(test, new Object[32],null);
@@ -229,63 +225,6 @@ public class FeatureFlatTest extends TestCase {
 
     }
 
-//    public void testAttributeAccess() throws Exception {
-//        // this ones kinda silly
-//    	SimpleFeature f = (SimpleFeature)SampleFeatureFixtures.createFeature();
-//        List atts = f.getAttributes();
-//        for (int i = 0, ii = atts.size(); i < ii; i++) {
-//            assertEquals(atts.get(i), f.getAttribute(i));
-//        }
-//        List attsAgain = f.getAttributes();
-//        assertTrue(atts != attsAgain);
-//        f.setAttributes(atts);
-//        attsAgain = f.getAttributes();
-//        assertTrue(atts != attsAgain);
-//        for (int i = 0, ii = atts.size(); i < ii; i++) {
-//            assertEquals(atts.get(i), f.getAttribute(i));
-//            assertEquals(attsAgain.get(i), f.getAttribute(i));
-//        }
-//        try {
-//            f.setAttribute(1244, "x");
-//            fail("not out of bounds");
-//        } catch (ArrayIndexOutOfBoundsException aioobe) {
-//
-//        }
-//        catch (IndexOutOfBoundsException ioobe) {
-//
-//        }
-//        try {
-//            f.setAttribute("1244", "x");
-//            fail("allowed bogus attribute setting");
-//        } catch (IllegalAttributeException iae) {
-//
-//        }
-//        try {
-//            f.setAttribute("testGeometry", "x");
-//            fail("allowed bogus attribute setting");
-//        } catch (IllegalAttributeException iae) {
-//
-//        } catch (RuntimeException rt) {
-//        }
-//    }
-
-    // IanS - this is no longer good, cause we deal with parsing
-//    public void testEnforceType() {
-//        
-//        Date d = new Date();
-//        
-//        Feature f = SampleFeatureFixtures.createFeature();
-//        for (int i = 0, ii = f.getNumberOfAttributes(); i < ii; i++) {
-//            try {
-//                f.setAttribute(i, d);
-//            } catch (IllegalAttributeException iae) {
-//                continue;
-//            }
-//            fail("No error thrown during illegal set");
-//        }
-//
-//    }
-
     public void testEquals() throws Exception {
         SimpleFeature f1 = SampleFeatureFixtures.createFeature();
         SimpleFeature f2 = SampleFeatureFixtures.createFeature();
@@ -301,34 +240,5 @@ public class FeatureFlatTest extends TestCase {
         
         assertTrue(!f1.equals(SimpleFeatureBuilder.build(type, new Object[1], null)));
     }
-
-    /*
-     * This is actually a test for FeatureTypeFlat, but there is no test for that
-     * written right now, so I'm just putting it here, as I just changed the
-     * getDefaultGeometry method, and it should have a unit test.  It tests 
-     * to make sure getDefaultGeometry returns null if there is no geometry,
-     * as we now allow 
-     */
-//    public void testDefaultGeometry() throws Exception {
-//        SimpleFeatureType testType = testFeature.getFeatureType();
-//        AttributeDescriptor geometry = testType.getAttribute("testGeometry");
-//        assertTrue(geometry == testType.getDefaultGeometry());
-//        assertTrue(((Geometry)testFeature.getDefaultGeometry()).getEnvelopeInternal().equals(testFeature.getBounds()));
-//
-//        FeatureTypeBuilder tb = new FeatureTypeBuilder();
-//        tb.setName( "different" );
-//        tb.add( "name", String.class );
-//        
-//        SimpleFeatureType another = tb.buildSimpleFeatureType();
-//        SimpleFeature f1 = SimpleFeatureBuilder.build(another, new Object[1], null);
-//            
-//        assertEquals(null, f1.getDefaultGeometry());
-//        try {
-//            f1.setDefaultGeometry(null);
-//            fail("allowed bogus default geometry set ");
-//        } catch (IllegalAttributeException iae) {
-//
-//        }
-//    }
 
 }

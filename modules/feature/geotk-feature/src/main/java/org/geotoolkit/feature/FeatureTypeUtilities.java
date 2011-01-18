@@ -90,6 +90,7 @@ import com.vividsolutions.jts.geom.Polygon;
  * </ul>
  *
  * @author Jody Garnett, Refractions Research
+ * @author Johann Sorel, Geomatys
  * @module pending
  * @since 2.1.M3
  */
@@ -513,7 +514,7 @@ public final class FeatureTypeUtilities {
      *
      * @throws SchemaException If typeSpect could not be interpreted
      */
-    static AttributeDescriptor createAttribute(final String namespace, final String typeSpec) throws SchemaException {
+    private static AttributeDescriptor createAttribute(final String namespace, final String typeSpec) throws SchemaException {
         final int split = typeSpec.indexOf(':');
 
         final String name;
@@ -624,7 +625,7 @@ public final class FeatureTypeUtilities {
         return buf.toString();
     }
 
-    static Class type(final String typeName) throws ClassNotFoundException {
+    private static Class type(final String typeName) throws ClassNotFoundException {
         if (TYPE_MAP.containsKey(typeName)) {
             return (Class) TYPE_MAP.get(typeName);
         }
@@ -632,7 +633,7 @@ public final class FeatureTypeUtilities {
         return Class.forName(typeName);
     }
 
-    static String typeMap(final Class type) {
+    private static String typeMap(final Class type) {
         if (TYPE_ENCODE.containsKey(type)) {
             return TYPE_ENCODE.get(type);
         }
