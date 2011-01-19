@@ -228,7 +228,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * Returns the ordered list of single coordinate reference systems for the specified CRS.
      * The specified CRS doesn't need to be a Geotk implementation.
      *
-     * @param  crs The coordinate reference system.
+     * @param  crs The coordinate reference system, or {@code null}.
      * @return The single coordinate reference systems, or an empty list if the
      *         given CRS is neither a {@link SingleCRS} or a {@link CompoundCRS}.
      */

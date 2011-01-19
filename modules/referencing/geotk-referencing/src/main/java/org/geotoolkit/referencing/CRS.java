@@ -44,6 +44,7 @@ import org.opengis.util.FactoryException;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Version;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
@@ -162,6 +163,19 @@ public final class CRS {
      * Do not allow instantiation of this class.
      */
     private CRS() {
+    }
+
+    /**
+     * Makes sure that an argument is non-null.
+     *
+     * @param  name   Argument name.
+     * @param  object User argument.
+     * @throws NullArgumentException if {@code object} is null.
+     */
+    private static void ensureNonNull(final String name, final Object object) throws NullArgumentException {
+        if (object == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+        }
     }
 
 
@@ -291,6 +305,7 @@ public final class CRS {
      * @since 2.4
      */
     public static Version getVersion(final String authority) throws FactoryRegistryException {
+        ensureNonNull("authority", authority);
         Object candidate = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, null);
         final Set<Factory> guard = new HashSet<Factory>();
         while (candidate instanceof Factory) {
@@ -353,6 +368,7 @@ public final class CRS {
      * @category factory
      */
     public static Set<String> getSupportedCodes(final String authority) {
+        ensureNonNull("authority", authority);
         return DefaultAuthorityFactory.getSupportedCodes(authority);
     }
 
@@ -429,6 +445,7 @@ public final class CRS {
     public static CoordinateReferenceSystem decode(final String code)
             throws NoSuchAuthorityCodeException, FactoryException
     {
+        ensureNonNull("code", code);
         return getAuthorityFactory(null).createCoordinateReferenceSystem(code);
     }
 
@@ -461,7 +478,7 @@ public final class CRS {
     public static CoordinateReferenceSystem decode(String code, final boolean longitudeFirst)
             throws NoSuchAuthorityCodeException, FactoryException
     {
-        code = code.trim();
+        ensureNonNull("code", code);
         return getAuthorityFactory(longitudeFirst).createCoordinateReferenceSystem(code);
     }
 
@@ -482,6 +499,7 @@ public final class CRS {
      * @category factory
      */
     public static CoordinateReferenceSystem parseWKT(final String wkt) throws FactoryException {
+        ensureNonNull("wkt", wkt);
         return getCRSFactory().createFromWKT(wkt);
     }
 
@@ -889,7 +907,7 @@ search:             if (DefaultCoordinateSystemAxis.isCompassDirection(axis.getD
      *     }
      * }
      *
-     * @param  crs        The compound CRS to compare with the given component CRS.
+     * @param  crs The compound CRS to compare with the given component CRS, or {@code null}.
      * @param  components The CRS which must be components of the returned CRS.
      * @return A CRS which contains the given components, or {@code null} if none.
      *
@@ -1179,6 +1197,9 @@ compare:    for (final SingleCRS component : actualComponents) {
     public static String lookupIdentifier(final IdentifiedObject object, final boolean fullScan)
             throws FactoryException
     {
+        if (object == null) {
+            return null;
+        }
         /*
          * We perform the search using the 'xyFactory' because our implementation of
          * IdentifiedObjectFinder should be able to inspect both the (x,y) and (y,x)
@@ -1222,6 +1243,10 @@ compare:    for (final SingleCRS component : actualComponents) {
                                           final boolean fullScan)
             throws FactoryException
     {
+        ensureNonNull("authority", authority);
+        if (crs == null) {
+            return null;
+        }
         ReferenceIdentifier id = AbstractIdentifiedObject.getIdentifier(crs, authority);
         if (id != null) {
             return id.getCode();
@@ -1415,6 +1440,8 @@ compare:    for (final SingleCRS component : actualComponents) {
             // Slight optimization in order to avoid the overhead of loading the full referencing engine.
             return IdentityTransform.create(sourceCRS.getCoordinateSystem().getDimension());
         }
+        ensureNonNull("sourceCRS", sourceCRS);
+        ensureNonNull("targetCRS", targetCRS);
         CoordinateOperationFactory operationFactory = getCoordinateOperationFactory(lenient);
         return operationFactory.createOperation(sourceCRS, targetCRS).getMathTransform();
     }
@@ -1489,6 +1516,7 @@ compare:    for (final SingleCRS component : actualComponents) {
     public static GeneralEnvelope transform(final MathTransform transform, final Envelope envelope)
             throws TransformException
     {
+        ensureNonNull("transform", transform);
         return transform(transform, envelope, null);
     }
 
@@ -1609,6 +1637,7 @@ compare:    for (final SingleCRS component : actualComponents) {
     public static GeneralEnvelope transform(final CoordinateOperation operation, Envelope envelope)
             throws TransformException
     {
+        ensureNonNull("operation", operation);
         if (envelope == null) {
             return null;
         }
@@ -1835,6 +1864,7 @@ compare:    for (final SingleCRS component : actualComponents) {
                                               Rectangle2D     destination)
             throws TransformException
     {
+        ensureNonNull("transform", transform);
         if (transform instanceof AffineTransform) {
             // Common case implemented in a more efficient way (less points to transform).
             return XAffineTransform.transform((AffineTransform) transform, envelope, destination);
@@ -1932,6 +1962,7 @@ compare:    for (final SingleCRS component : actualComponents) {
                                               Rectangle2D         destination)
             throws TransformException
     {
+        ensureNonNull("operation", operation);
         if (envelope == null) {
             return null;
         }
@@ -2056,6 +2087,7 @@ compare:    for (final SingleCRS component : actualComponents) {
     public static double[] deltaTransform(final MathTransform transform,
             final DirectPosition origin, final double... vector) throws TransformException
     {
+        ensureNonNull("transform", transform);
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();
         final double[] result = new double[targetDim];
@@ -2111,6 +2143,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @since 2.5
      */
     public static synchronized void reset(final String aspects) {
+        ensureNonNull("aspects", aspects);
         final StringTokenizer tokens = new StringTokenizer(aspects, ", \t\n\r\f");
         while (tokens.hasMoreTokens()) {
             final String aspect = tokens.nextToken().trim();
