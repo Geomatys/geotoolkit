@@ -17,7 +17,6 @@
 package org.geotoolkit.csw.xml.v202;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -217,11 +216,26 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the abstractRecord property.
      * (unModifiable)
      */
-    public List<JAXBElement<? extends AbstractRecordType>> getAbstractRecord() {
+    public List<JAXBElement<? extends AbstractRecordType>> getJbAbstractRecord() {
         if (abstractRecord == null) {
             abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>();
         }
-        return Collections.unmodifiableList(abstractRecord);
+        return abstractRecord;
+    }
+
+    /**
+     * Gets the value of the abstractRecord property.
+     *
+     */
+    public List<? extends AbstractRecordType> getAbstractRecord() {
+        if (abstractRecord == null) {
+            abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>();
+        }
+        final List<AbstractRecordType> result = new ArrayList<AbstractRecordType>();
+        for (JAXBElement<? extends AbstractRecordType> record : abstractRecord) {
+            result.add(record.getValue());
+        }
+        return result;
     }
 
     /**
@@ -232,7 +246,7 @@ public class SearchResultsType implements SearchResults {
         if (any == null) {
             any = new ArrayList<Object>();
         }
-        return Collections.unmodifiableList(any);
+        return any;
     }
 
     /**
@@ -326,11 +340,11 @@ public class SearchResultsType implements SearchResults {
             s.append("expires at: ").append(expires);
         }
         
-        if (abstractRecord != null && abstractRecord.size() != 0) {
+        if (abstractRecord != null && !abstractRecord.isEmpty()) {
             s.append("nb CSW records: ").append(abstractRecord.size());
             
         }
-        if (any != null && any.size() != 0) {
+        if (any != null && !any.isEmpty()) {
             s.append("nb Other records: ").append(any.size());
         }
         return s.toString();

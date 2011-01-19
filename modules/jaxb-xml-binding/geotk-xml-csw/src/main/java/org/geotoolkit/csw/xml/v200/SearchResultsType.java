@@ -17,7 +17,6 @@
 package org.geotoolkit.csw.xml.v200;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -28,7 +27,6 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.csw.xml.AbstractRecord;
 import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.SearchResults;
 
@@ -113,22 +111,36 @@ public class SearchResultsType implements SearchResults {
      * Gets the value of the abstractRecord property.
      * 
      */
-    public List<JAXBElement<? extends AbstractRecordType>> getAbstractRecord() {
+    public List<JAXBElement<? extends AbstractRecordType>> getJbAbstractRecord() {
         if (abstractRecord == null) {
             abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>();
         }
         return this.abstractRecord;
     }
+
+    /**
+     * Gets the value of the abstractRecord property.
+     *
+     */
+    public List<? extends AbstractRecordType> getAbstractRecord() {
+        if (abstractRecord == null) {
+            abstractRecord = new ArrayList<JAXBElement<? extends AbstractRecordType>>();
+        }
+        final List<AbstractRecordType> result = new ArrayList<AbstractRecordType>();
+        for (JAXBElement<? extends AbstractRecordType> record : abstractRecord) {
+            result.add(record.getValue());
+        }
+        return result;
+    }
     
     /**
      * Gets the value of the any property.
-     * (unModifiable)
      */
     public List<Object> getAny() {
         if (any == null) {
             any = new ArrayList<Object>();
         }
-        return Collections.unmodifiableList(any);
+        return any;
     }
 
     /**
@@ -260,11 +272,11 @@ public class SearchResultsType implements SearchResults {
             s.append("expires at: ").append(expires);
         }
         
-        if (abstractRecord != null && abstractRecord.size() != 0) {
+        if (abstractRecord != null && !abstractRecord.isEmpty()) {
             s.append("nb CSW records: ").append(abstractRecord.size());
             
         }
-        if (any != null && any.size() != 0) {
+        if (any != null && !any.isEmpty()) {
             s.append("nb Other records: ").append(any.size());
         }
         return s.toString();
