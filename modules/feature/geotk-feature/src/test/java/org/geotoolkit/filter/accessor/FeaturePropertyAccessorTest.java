@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.filter.accessor;
 
+import java.util.Collection;
 import org.opengis.feature.simple.SimpleFeatureType;
 import java.util.Iterator;
 import com.vividsolutions.jts.geom.Geometry;
@@ -195,6 +196,17 @@ public class FeaturePropertyAccessorTest {
         final Iterator<Property> ite = candidate.getProperties("attCpx").iterator();
         ite.next();
         assertEquals(ite.next(), val);
+
+        //accessing a collection of properties /////////////////////////////////
+        xpath = "attCpx";
+        accessor = Accessors.getAccessor(Feature.class, xpath, Collection.class);
+        assertNotNull(accessor);
+        val = accessor.get(candidate, xpath, Collection.class);
+
+        assertNotNull(val);
+        assertTrue(val instanceof Collection);
+        Collection col = (Collection) val;
+        assertEquals(2, col.size());
         
     }
 

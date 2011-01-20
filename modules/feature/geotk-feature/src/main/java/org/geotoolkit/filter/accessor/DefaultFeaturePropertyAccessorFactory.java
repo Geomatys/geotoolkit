@@ -17,16 +17,18 @@
  */
 package org.geotoolkit.filter.accessor;
 
+import java.util.Collection;
 import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.util.collection.Cache;
-
+import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Feature;
+
 import org.opengis.feature.Property;
 import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -68,7 +70,7 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
             return null;
         }
 
-        if (!Feature.class.isAssignableFrom(type) && !SimpleFeatureType.class.isAssignableFrom(type)) {
+        if (!ComplexAttribute.class.isAssignableFrom(type) && !ComplexType.class.isAssignableFrom(type)) {
             return null; // we only work with feature
         }
 
@@ -176,12 +178,12 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         @Override
         public boolean canHandle(final Class clazz, final String xpath, final Class target) {
             //we only work against feature, not feature type
-            return Feature.class.isAssignableFrom(clazz) && xpath.matches("@(\\w+:)?id");
+            return ComplexAttribute.class.isAssignableFrom(clazz) && xpath.matches("@(\\w+:)?id");
         }
 
         @Override
         public Object get(final Object object, final String xpath, final Class target) {
-            final Feature feature = (Feature) object;
+            final ComplexAttribute feature = (ComplexAttribute) object;
             return feature.getIdentifier().getID();
         }
 
@@ -237,25 +239,34 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         @Override
         public boolean canHandle(final Class clazz, String xpath, final Class target) {
             xpath = stripPrefix(xpath);
-            final Name name = DefaultName.valueOf(xpath);
 
-            return Feature.class.isAssignableFrom(clazz)
-                || FeatureType.class.isAssignableFrom(clazz);
+            return ComplexAttribute.class.isAssignableFrom(clazz)
+                || ComplexType.class.isAssignableFrom(clazz);
         }
 
         @Override
         public Object get(final Object object, String xpath, final Class target) {
             xpath = stripPrefix(xpath);
 
-            if (object instanceof Feature) {
-                final Property prop = ((Feature) object).getProperty(xpath);
+            if (object instanceof ComplexAttribute) {
+                if(target != null){
+                    if(Property.class.isAssignableFrom(target)){
+                        final Property prop = ((ComplexAttribute) object).getProperty(xpath);
+                        return prop;
+                    }else if(Collection.class.isAssignableFrom(target)){
+                        final Collection<Property> props = ((ComplexAttribute) object).getProperties(xpath);
+                        return props;
+                    }
+                }
+
+                final Property prop = ((ComplexAttribute) object).getProperty(xpath);
                 if(prop == null){
                     return null;
                 }else{
                     return prop.getValue();
                 }
-            }else if(object instanceof FeatureType) {
-                return ((FeatureType) object).getDescriptor(xpath);
+            }else if(object instanceof ComplexType) {
+                return ((ComplexType) object).getDescriptor(xpath);
             }
 
             return null;
@@ -271,8 +282,8 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
                 ((SimpleFeature) object).setAttribute(name, value);
             }
 
-            if (object instanceof Feature) {
-                ((Feature) object).getProperty(name).setValue(value);
+            if (object instanceof ComplexAttribute) {
+                ((ComplexAttribute) object).getProperty(name).setValue(value);
             }
 
             if (object instanceof FeatureType) {
@@ -297,8 +308,8 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
         @Override
         public boolean canHandle(final Class clazz, final String xpath, final Class target) {
 
-            return Feature.class.isAssignableFrom(clazz)
-                || FeatureType.class.isAssignableFrom(clazz);
+            return ComplexAttribute.class.isAssignableFrom(clazz)
+                || ComplexType.class.isAssignableFrom(clazz);
         }
 
         @Override
@@ -309,8 +320,8 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
                 ((SimpleFeature) object).getAttribute(index);
             }
 
-            if (object instanceof Feature) {
-                final Feature feature = (Feature)object;
+            if (object instanceof ComplexAttribute) {
+                final ComplexAttribute feature = (ComplexAttribute)object;
                 int i = 1;
                 for(Property prop : feature.getProperties()){
                     if(i == index){
@@ -320,8 +331,8 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
                 }
             }
 
-            if (object instanceof FeatureType) {
-                final FeatureType ft = (FeatureType)object;
+            if (object instanceof ComplexType) {
+                final ComplexType ft = (ComplexType)object;
                 int i = 1;
                 for(PropertyDescriptor prop : ft.getDescriptors()){
                     if(i == index){
@@ -343,8 +354,8 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
                 ((SimpleFeature) object).setAttribute(index, value);
             }
 
-            if (object instanceof Feature) {
-                final Feature feature = (Feature)object;
+            if (object instanceof ComplexAttribute) {
+                final ComplexAttribute feature = (ComplexAttribute)object;
                 int i = 0;
                 for(Property prop : feature.getProperties()){
                     if(i == index){
@@ -355,8 +366,8 @@ public final class DefaultFeaturePropertyAccessorFactory implements PropertyAcce
                 }
             }
 
-            if (object instanceof FeatureType) {
-                throw new IllegalArgumentException("Feature type is immutable");
+            if (object instanceof ComplexType) {
+                throw new IllegalArgumentException("Complex types are immutable");
             }
 
         }

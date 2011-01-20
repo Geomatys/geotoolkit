@@ -24,8 +24,6 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.logging.LoggedFormat;
-import org.geotoolkit.util.logging.Logging;
 
 import org.jaxen.JaxenException;
 import org.opengis.feature.ComplexAttribute;
