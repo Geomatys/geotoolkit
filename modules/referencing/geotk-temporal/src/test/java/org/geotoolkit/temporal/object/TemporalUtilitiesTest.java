@@ -20,6 +20,7 @@ package org.geotoolkit.temporal.object;
 import java.text.ParseException;
 import java.util.Calendar;
 import java.lang.annotation.Annotation;
+import java.util.Date;
 import java.util.TimeZone;
 import org.junit.Test;
 
@@ -304,6 +305,21 @@ public class TemporalUtilitiesTest implements Test{
         assertEquals("15ms", TemporalUtilities.durationToString(15));
         assertEquals("1s 25ms", TemporalUtilities.durationToString(1025));
         assertEquals("1min 35ms", TemporalUtilities.durationToString(60035));
+
+    }
+
+    @Test
+    public void iso8601Test(){
+
+        final Date date = new Date();
+        String str = TemporalUtilities.toISO8601(date);
+        assertNotNull(str);
+        assertFalse(str.isEmpty());
+
+        //should not raise an error
+        str = TemporalUtilities.toISO8601(null);
+        assertNotNull(str);
+        assertTrue(str.isEmpty());
 
     }
 

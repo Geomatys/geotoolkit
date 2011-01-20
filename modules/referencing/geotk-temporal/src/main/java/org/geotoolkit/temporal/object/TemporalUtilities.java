@@ -780,5 +780,21 @@ public final class TemporalUtilities {
         }
     }
 
+    /**
+     * Format date using pattern yyyy-MM-dd'T'HH:mm:ss
+     * 
+     * @param date : date to format
+     * @return ISO 8601 string or empty string if date is null
+     */
+    public static String toISO8601(final Date date){
+        if(date != null){
+            synchronized (sdf4){
+                return sdf4.format(date);
+            }
+        }
+        LOGGER.log(Level.INFO, "ISO 8601 format can not proceed because date is null.");
+        return "";
+    }
+
 }
 
