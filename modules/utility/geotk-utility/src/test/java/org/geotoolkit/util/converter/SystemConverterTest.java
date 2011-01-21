@@ -46,7 +46,7 @@ import static org.junit.Assert.*;
  * Tests a few conversions using the system converter.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.17
  *
  * @since 3.00
  */
@@ -158,11 +158,28 @@ public class SystemConverterTest {
     @Test
     public void testDateToTimestamp() throws NonconvertibleObjectException {
         final ConverterRegistry system = ConverterRegistry.system();
-        assertEquals(new Timestamp(2000), system.converter(Date.class, Timestamp.class).convert(new Date(2000)));
+        final Timestamp converted = system.converter(Date.class, Timestamp.class).convert(new Date(2000));
+        assertEquals(Timestamp.class, converted.getClass());
+        assertEquals(new Timestamp(2000), converted);
     }
 
     /**
-     * Tests the convertion of number and string objects to {@link Comparable} objects.
+     * Tests conversions from timestamps to SQL dates.
+     *
+     * @throws NonconvertibleObjectException Should not happen.
+     *
+     * @since 3.17
+     */
+    @Test
+    public void testTimestampToSqlDate() throws NonconvertibleObjectException {
+        final ConverterRegistry system = ConverterRegistry.system();
+        final java.sql.Date converted = system.converter(Timestamp.class, java.sql.Date.class).convert(new Timestamp(2000));
+        assertEquals(java.sql.Date.class, converted.getClass());
+        assertEquals(new java.sql.Date(2000), converted);
+    }
+
+    /**
+     * Tests the conversion of number and string objects to {@link Comparable} objects.
      * Actually this is a test of {@link IdentityConverter}.
      *
      * @throws NonconvertibleObjectException Should not happen.
@@ -178,7 +195,7 @@ public class SystemConverterTest {
     }
 
     /**
-     * Tests the convertion of miscellaneous objects to {@link Comparable} objects.
+     * Tests the conversion of miscellaneous objects to {@link Comparable} objects.
      * {@link URL} is not comparable and consequently implies a conversion to an other object.
      *
      * @throws NonconvertibleObjectException Should not happen.

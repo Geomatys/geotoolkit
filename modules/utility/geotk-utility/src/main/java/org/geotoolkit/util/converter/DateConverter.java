@@ -26,6 +26,10 @@ import org.geotoolkit.lang.Immutable;
 /**
  * Handles conversions from {@link java.util.Date} to various objects.
  *
+ * {@section String representation}
+ * There is currently no converter between {@link String} and {@link java.util.Date} because the
+ * date format is not yet defined (we are considering the ISO format for a future Geotk version).
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
  *
@@ -82,7 +86,41 @@ abstract class DateConverter<T> extends SimpleConverter<Date,T> implements Seria
     }
 
     /**
-     * Converter from dates to timestamp.
+     * Converter from dates to SQL dates.
+     *
+     * @author Martin Desruisseaux (Geomatys)
+     * @version 3.17
+     *
+     * @since 3.17
+     */
+    @Immutable
+    static final class SQL extends DateConverter<java.sql.Date> {
+        private static final long serialVersionUID = -3644605344718636345L;
+        public static final SQL INSTANCE = new SQL();
+        private SQL() {
+        }
+
+        @Override
+        public Class<java.sql.Date> getTargetClass() {
+            return java.sql.Date.class;
+        }
+
+        @Override
+        public java.sql.Date convert(final Date source) {
+            if (source == null) {
+                return null;
+            }
+            return new java.sql.Date(source.getTime());
+        }
+
+        /** Returns the singleton instance on deserialization. */
+        protected Object readResolve() throws ObjectStreamException {
+            return INSTANCE;
+        }
+    }
+
+    /**
+     * Converter from dates to timestamps.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.00

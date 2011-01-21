@@ -30,7 +30,11 @@
  *       for performing the conversions.</li>
  * </ul>
  * <p>
- * <b>Example:</b> Converting instances in a collection from type {@code S} to type {@code T},
+ * A system-wide set of conversions is pre-defined and available by the
+ * {@link org.geotoolkit.util.converter.ConverterRegistry#system()} method.
+ *
+ * {@section Example}
+ * The following code convert instances in a collection from type {@code S} to type {@code T},
  * where the types are unknown at compile-time. Note that the converter is obtained only once
  * before to be applied to every elements in the loop.
  *
@@ -47,7 +51,7 @@
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Justin Deoliveira (TOPP)
- * @version 3.04
+ * @version 3.17
  *
  * @since 2.5
  * @module

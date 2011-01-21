@@ -19,8 +19,10 @@ package org.geotoolkit.util.converter;
 
 import java.util.Map;
 import java.util.Set;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.ServiceLoader;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
@@ -42,12 +44,12 @@ import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
  *
  * {@section Note about conversions from interfaces}
  * {@code ConverterRegistry} is primarily designed for handling converters from classes to
- * other classes. Usage of interfaces are not prohibited (and actually sometime defined),
- * but their behavior are less clear than in the case of classes because of multi-inheritance
- * in interface hierarchy.
+ * other classes. Handling of interfaces are not prohibited (and actually sometime supported),
+ * but their behavior may be more ambiguous than in the case of classes because of
+ * multi-inheritance in interface hierarchy.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -62,6 +64,16 @@ public class ConverterRegistry {
      * <p>
      * If a temporary set of converters is desired, a new instance of {@code ConverterRegistry}
      * should be created explicitly instead.
+     *
+     * {@section Adding system-wide converters}
+     * Applications can add system-wide custom providers either by explicit call to the
+     * {@link #register(ObjectConverter)} method on the system converter, or by listing
+     * the fully qualified classnames of their {@link ObjectConverter} instances in the
+     * following file (see {@link ServiceLoader} for more info about services loading):
+     *
+     * {@preformat text
+     *     META-INF/services/org.geotoolkit.util.converter.ObjectConverter
+     * }
      *
      * @return The system-wide registry instance.
      */
@@ -108,6 +120,7 @@ public class ConverterRegistry {
             register(NumberConverter.Color              .INSTANCE);
             register(NumberConverter.String             .INSTANCE); // Last choice for NumberConverter.
             register(DateConverter  .Timestamp          .INSTANCE);
+            register(DateConverter  .SQL                .INSTANCE);
             register(DateConverter  .Long               .INSTANCE);
             register(LongConverter  .Date               .INSTANCE);
             register(FileConverter  .URI                .INSTANCE); // The preferred target for File.
@@ -125,6 +138,14 @@ public class ConverterRegistry {
              */
             register(CollectionConverter.List.INSTANCE);
             register(CollectionConverter.Set .INSTANCE);
+            /*
+             * Now add the custom converters, if any.
+             */
+            @SuppressWarnings("rawtypes")
+            final Iterator<ObjectConverter> it = ServiceLoader.load(ObjectConverter.class).iterator();
+            while (it.hasNext()) {
+                register(it.next());
+            }
         }
     }
 
@@ -352,7 +373,7 @@ public class ConverterRegistry {
      * Creates a new converter for the given source and target types, or {@code null} if none.
      * This method is invoked by <code>{@linkplain #converter converter}(source, target)</code>
      * when no registered converter were found for the given types. The default implementation
-     * returns {@code null} if all cases. Subclasses can coverride this method in order to
+     * returns {@code null} if all cases. Subclasses can override this method in order to
      * generate some converters dynamically.
      * <p>
      * Note that the source and target classes of the returned converter must match exactly
@@ -379,7 +400,7 @@ public class ConverterRegistry {
      *
      * {@section Example 1: comparing <code>File</code> with <code>URL</code>}
      * {@link java.io.File} implements the {@code Comparable} interface, while {@link java.net.URL}
-     * does not. Consequently the code below will return inconditionnaly {@code File} no matter the
+     * does not. Consequently the code below will return unconditionally {@code File} no matter the
      * order of {@code sources} arguments:
      *
      * {@preformat java

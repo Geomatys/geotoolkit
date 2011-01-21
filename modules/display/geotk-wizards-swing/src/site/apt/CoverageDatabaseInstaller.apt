@@ -25,7 +25,7 @@ java -jar geotk.jar
 
   * Ensure that a PostgreSQL server with PostGIS extension is running.
 
-  * Ensure that the directory which contain the PostGIS <<<lwpostgis.sql>>> and
+  * Ensure that the directory which contain the PostGIS <<<postgis.sql>>> and
     <<<spatial_ref_sys.sql>>> files is accessible from the computer running the
     wizard (a read-only access is sufficient), or copy those files in a local
     directory.
