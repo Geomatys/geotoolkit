@@ -163,7 +163,7 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
      * @return true if it founds the layer
      */
     private static boolean searchLayerByName(final List<AbstractLayer> stack, final Layer candidate, final String name){
-        if(candidate == null){
+        if(candidate == null || name == null){
             return false;
         }
 
