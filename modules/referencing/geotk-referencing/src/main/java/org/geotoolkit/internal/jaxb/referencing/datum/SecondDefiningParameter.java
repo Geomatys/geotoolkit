@@ -26,7 +26,6 @@ import org.opengis.referencing.datum.Ellipsoid;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.uom.Measure;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -79,7 +78,7 @@ public final class SecondDefiningParameter {
                 measure = new Measure(ellipsoid.getInverseFlattening(), Unit.ONE);
             } else {
                 measure = new Measure(ellipsoid.getSemiMinorAxis(), ellipsoid.getAxisUnit());
-                ensureLinearUnit();
+                Units.ensureLinear(measure.unit);
             }
         }
     }
@@ -91,18 +90,6 @@ public final class SecondDefiningParameter {
      */
     public boolean isIvfDefinitive() {
         return Unit.ONE.equals(measure.unit);
-    }
-
-    /**
-     * Ensure that the unit of measurement is a linear unit. Actually the main purpose
-     * of this method is to make sure that the unit is not {@link Unit#ONE}, in order
-     * to avoid confusion with the inverse of flattening value.
-     */
-    private void ensureLinearUnit() {
-        final Unit<?> unit = measure.unit;
-        if (unit != null && !Units.isLinear(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_LINEAR_UNIT_$1, unit));
-        }
     }
 
     /**
@@ -122,7 +109,7 @@ public final class SecondDefiningParameter {
      */
     public void setSemiMinorAxis(final Measure measure) {
         this.measure = measure;
-        ensureLinearUnit();
+        Units.ensureLinear(measure.unit);
     }
 
     /**

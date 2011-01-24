@@ -39,6 +39,7 @@ import org.opengis.referencing.datum.Ellipsoid;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.jaxb.referencing.datum.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.uom.Measure;
+import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -249,13 +250,12 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
                                final Unit<Length> unit)
     {
         super(properties);
-        this.unit = unit;
+        ensureNonNull("unit", unit);
+        this.unit              = Units.ensureLinear(unit);
         this.semiMajorAxis     = check("semiMajorAxis",     semiMajorAxis);
         this.semiMinorAxis     = check("semiMinorAxis",     semiMinorAxis);
         this.inverseFlattening = check("inverseFlattening", inverseFlattening);
         this.ivfDefinitive     = ivfDefinitive;
-        ensureNonNull("unit", unit);
-        ensureLinearUnit(unit);
     }
 
     /**

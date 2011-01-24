@@ -32,8 +32,6 @@ import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
-import javax.measure.unit.SI;
-import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
@@ -52,7 +50,6 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.DefaultInternationalString;
@@ -1146,45 +1143,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             case 0:  return null;
             case 1:  return Collections.singleton(array[0]);
             default: return Collections.unmodifiableSet(new LinkedHashSet<E>(Arrays.asList(array)));
-        }
-    }
-
-    /**
-     * Makes sure that the specified unit is a temporal one.
-     * This is a convenience method for subclass constructors.
-     *
-     * @param  unit Unit to check.
-     * @throws IllegalArgumentException if {@code unit} is not a temporal unit.
-     */
-    protected static void ensureTimeUnit(final Unit<?> unit) throws IllegalArgumentException {
-        if (!SI.SECOND.isCompatible(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_TEMPORAL_UNIT_$1, unit));
-        }
-    }
-
-    /**
-     * Makes sure that the specified unit is a linear one.
-     * This is a convenience method for subclass constructors.
-     *
-     * @param  unit Unit to check.
-     * @throws IllegalArgumentException if {@code unit} is not a linear unit.
-     */
-    protected static void ensureLinearUnit(final Unit<?> unit) throws IllegalArgumentException {
-        if (!Units.isLinear(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_LINEAR_UNIT_$1, unit));
-        }
-    }
-
-    /**
-     * Makes sure that the specified unit is an angular one.
-     * This is a convenience method for subclass constructors.
-     *
-     * @param  unit Unit to check.
-     * @throws IllegalArgumentException if {@code unit} is not an angular unit.
-     */
-    protected static void ensureAngularUnit(final Unit<?> unit) throws IllegalArgumentException {
-        if (!Units.isAngular(unit)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_ANGULAR_UNIT_$1, unit));
         }
     }
 }

@@ -28,7 +28,6 @@ import javax.measure.converter.UnitConverter;
 
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.measure.Units.MILLISECOND;
 
@@ -91,26 +90,12 @@ public class DateGraduation extends AbstractGraduation {
      * Constructs a graduation with the supplied time zone and unit.
      *
      * @param  timezone The timezone.
-     * @param  unit The unit. Must be compatible with
+     * @param  unit The unit, or {@code null} if unknown. Must be compatible with
      *         {@linkplain org.geotoolkit.measure.Units#MILLISECOND milliseconds}.
      */
     public DateGraduation(final TimeZone timezone, final Unit<Duration> unit) {
-        super(unit);
-        ensureTimeUnit(unit);
+        super(Units.ensureTemporal(unit));
         this.timezone = (TimeZone) timezone.clone();
-    }
-
-    /**
-     * Checks if the specified unit is a time unit.
-     *
-     * @param the unit to check.
-     * @throws IllegalArgumentException if the specified unit is not a time unit.
-     */
-    private static void ensureTimeUnit(final Unit<?> unit) throws IllegalArgumentException {
-        if (Units.isTemporal(unit)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_ARGUMENT_$2, "unit", unit));
-        }
     }
 
     /**
@@ -316,7 +301,7 @@ public class DateGraduation extends AbstractGraduation {
     }
 
     /**
-     * Changes the graduation's units. This method will automatically convert minimum and maximum
+     * Changes the graduation units. This method will automatically convert minimum and maximum
      * values from the old units to the new one.
      *
      * @param unit The new units, or {@code null} if unknown. If null, minimum and maximum values
@@ -325,7 +310,7 @@ public class DateGraduation extends AbstractGraduation {
      */
     @Override
     public void setUnit(final Unit<?> unit) throws IllegalArgumentException {
-        ensureTimeUnit(unit);
+        Units.ensureTemporal(unit);
         fromMillis = null;
         toMillis   = null;
         // Nothing to convert here. The conversions are performed

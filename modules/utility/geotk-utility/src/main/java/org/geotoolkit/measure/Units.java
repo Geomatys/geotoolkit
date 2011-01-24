@@ -26,6 +26,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
+import javax.measure.quantity.Length;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Dimensionless;
 import javax.measure.quantity.Quantity;
@@ -40,7 +41,7 @@ import org.geotoolkit.resources.Errors;
  * A set of units to use in addition of {@link SI} and {@link NonSI}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.09
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -59,7 +60,7 @@ public final class Units {
     }
 
     /**
-     * Unit for milliseconds. Usefull for conversion from and to {@link java.util.Date} objects.
+     * Unit for milliseconds. Useful for conversion from and to {@link java.util.Date} objects.
      */
     public static final Unit<Duration> MILLISECOND = SI.MetricPrefix.MILLI(SI.SECOND);
 
@@ -69,7 +70,7 @@ public final class Units {
      * <cite>sign - degrees - decimal point - minutes (two digits) - integer seconds (two digits) -
      * fraction of seconds (any precision)</cite>.
      * <p>
-     * This unit is non-linear and not pratical for computation. Consequently, it should be
+     * This unit is non-linear and not practical for computation. Consequently, it should be
      * avoid as much as possible. Unfortunately, this pseudo-unit is extensively used in the
      * EPSG database (code 9110).
      *
@@ -85,7 +86,7 @@ public final class Units {
      * <cite>signed degrees (integer) - arc-minutes (integer) - arc-seconds
      * (real, any precision)</cite>.
      * <p>
-     * This unit is non-linear and not pratical for computation. Consequently, it should be
+     * This unit is non-linear and not practical for computation. Consequently, it should be
      * avoid as much as possible. Unfortunately, this pseudo-unit is extensively used in the
      * EPSG database (code 9107).
      *
@@ -135,6 +136,8 @@ public final class Units {
      * @param unit The unit to check (may be {@code null}).
      * @return {@code true} if the given unit is non-null and temporal.
      *
+     * @see #ensureTemporal(Unit)
+     *
      * @since 3.00
      */
     public static boolean isTemporal(final Unit<?> unit) {
@@ -147,6 +150,8 @@ public final class Units {
      *
      * @param unit The unit to check (may be {@code null}).
      * @return {@code true} if the given unit is non-null and linear.
+     *
+     * @see #ensureLinear(Unit)
      *
      * @since 3.00
      */
@@ -165,6 +170,8 @@ public final class Units {
      * @param unit The unit to check (may be {@code null}).
      * @return {@code true} if the given unit is non-null and angular.
      *
+     * @see #ensureAngular(Unit)
+     *
      * @since 3.00
      */
     public static boolean isAngular(final Unit<?> unit) {
@@ -178,10 +185,92 @@ public final class Units {
      * @param unit The unit to check (may be {@code null}).
      * @return {@code true} if the given unit is non-null and a dimensionless scale.
      *
+     * @see #ensureScale(Unit)
+     *
      * @since 3.00
      */
     public static boolean isScale(final Unit<?> unit) {
         return (unit != null) && unit.toSI().equals(Unit.ONE);
+    }
+
+    /**
+     * Makes sure that the specified unit is a temporal one.
+     * If the given argument is {@code null}, then this method does nothing.
+     *
+     * @param  unit The unit to check, or {@code null} if none.
+     * @return The given {@code unit} argument, which may be null.
+     * @throws IllegalArgumentException if {@code unit} is not a temporal unit.
+     *
+     * @see #isTemporal(Unit)
+     *
+     * @since 3.17
+     */
+    @SuppressWarnings({"unchecked","rawtypes"})
+    public static Unit<Duration> ensureTemporal(final Unit<?> unit) throws IllegalArgumentException {
+        if (unit != null && !isTemporal(unit)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_TEMPORAL_UNIT_$1, unit));
+        }
+        return (Unit) unit;
+    }
+
+    /**
+     * Makes sure that the specified unit is a linear one.
+     * If the given argument is {@code null}, then this method does nothing.
+     *
+     * @param  unit The unit to check, or {@code null} if none.
+     * @return The given {@code unit} argument, which may be null.
+     * @throws IllegalArgumentException if {@code unit} is not a linear unit.
+     *
+     * @see #isLinear(Unit)
+     *
+     * @since 3.17
+     */
+    @SuppressWarnings({"unchecked","rawtypes"})
+    public static Unit<Length> ensureLinear(final Unit<?> unit) throws IllegalArgumentException {
+        if (unit != null && !isLinear(unit)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_LINEAR_UNIT_$1, unit));
+        }
+        return (Unit) unit;
+    }
+
+    /**
+     * Makes sure that the specified unit is an angular one.
+     * If the given argument is {@code null}, then this method does nothing.
+     *
+     * @param  unit The unit to check, or {@code null} if none.
+     * @return The given {@code unit} argument, which may be null.
+     * @throws IllegalArgumentException if {@code unit} is not an angular unit.
+     *
+     * @see #isAngular(Unit)
+     *
+     * @since 3.17
+     */
+    @SuppressWarnings({"unchecked","rawtypes"})
+    public static Unit<Angle> ensureAngular(final Unit<?> unit) throws IllegalArgumentException {
+        if (unit != null && !isAngular(unit)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_ANGULAR_UNIT_$1, unit));
+        }
+        return (Unit) unit;
+    }
+
+    /**
+     * Makes sure that the specified unit is a scale one.
+     * If the given argument is {@code null}, then this method does nothing.
+     *
+     * @param  unit The unit to check, or {@code null} if none.
+     * @return The given {@code unit} argument, which may be null.
+     * @throws IllegalArgumentException if {@code unit} is not a scale unit.
+     *
+     * @see #isScale(Unit)
+     *
+     * @since 3.17
+     */
+    @SuppressWarnings({"unchecked","rawtypes"})
+    public static Unit<Dimensionless> ensureScale(final Unit<?> unit) throws IllegalArgumentException {
+        if (unit != null && !isScale(unit)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.NON_SCALE_UNIT_$1, unit));
+        }
+        return (Unit) unit;
     }
 
     /**

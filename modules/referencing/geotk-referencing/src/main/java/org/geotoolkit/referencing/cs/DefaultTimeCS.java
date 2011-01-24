@@ -143,7 +143,7 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
      */
     public DefaultTimeCS(final String name, final CoordinateSystemAxis axis) {
         super(name, new CoordinateSystemAxis[] {axis});
-        ensureTimeUnit(getAxis(0).getUnit());
+        // Units are checked by super-class constructor.
     }
 
     /**
@@ -156,7 +156,7 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
      */
     public DefaultTimeCS(final Map<String,?> properties, final CoordinateSystemAxis axis) {
         super(properties, new CoordinateSystemAxis[] {axis});
-        ensureTimeUnit(getAxis(0).getUnit());
+        // Units are checked by super-class constructor.
     }
 
     /**

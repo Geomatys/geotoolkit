@@ -38,6 +38,9 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.measure.Units;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -146,9 +149,9 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
                                 final Unit<Angle> angularUnit)
     {
         super(properties);
+        ensureNonNull("angularUnit", angularUnit);
         this.greenwichLongitude = greenwichLongitude;
-        this.angularUnit        = angularUnit;
-        ensureAngularUnit(angularUnit);
+        this.angularUnit = Units.ensureAngular(angularUnit);
     }
 
     /**
