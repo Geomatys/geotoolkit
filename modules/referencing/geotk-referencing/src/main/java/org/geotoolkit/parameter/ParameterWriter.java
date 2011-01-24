@@ -125,7 +125,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
     /**
      * Creates a new formatter writing parameters to the {@linkplain System#console() console}
      * if there is one, or to the {@linkplain System#out default output stream} otherwise. If
-     * the output is the console and the {@linkplain X3.64} standard is enabled, than the
+     * the output is the console and the {@linkplain X364 X3.64} standard is enabled, then the
      * default value of {@link #isColorEnabled()} will be {@code true}.
      */
     public ParameterWriter() {

@@ -149,21 +149,25 @@ public final class Trees {
 
     /**
      * Returns a tree representation of the given object.
-     * This method processes the following cases especially:
+     * This method processes the following types especially:
      * <p>
      * <ul>
      *   <li>If the given object is an instance of {@link Node}, then this method delegates
      *       to {@link #xmlToSwing(Node)}.</li>
-     *   <li>If the given object is a value object (not an array, collection or map),
-     *       then this method returns a single {@link DefaultMutableTreeNode} which contain
-     *       the given object as {@linkplain TreeNode#getUserObject() user object}.</li>
+     *   <li>If the given object is an instance of {@link Collection}, {@link Map} or an array,
+     *       then a node is created with the name of the implemented collection interface (for
+     *       example {@code "List"} or {@code "Set"}) and each collection elements is added as
+     *       a child of the above-cited node.</li>
      *   <li>If the given object is an instance of {@link java.util.Map.Entry}, then this
-     *       method returns a {@link NamedTreeNode} which contain the entry key as the name,
-     *       and the entry value as {@linkplain TreeNode#getUserObject() user object}.</li>
-     *   <li>If the given object is an array, collection or a map, then a root element is created
-     *       with the name of the implemented collection interface, and each collection elements
-     *       are added recursively as children of the above-cited node.</li>
+     *       method returns a {@link NamedTreeNode} which contain the entry key as the
+     *       {@linkplain NamedTreeNode#getName() name} and the entry value as
+     *       {@linkplain TreeNode#getUserObject() user object}.</li>
+     *   <li>Otherwise this method returns a single {@link DefaultMutableTreeNode} which contain
+     *       the given object as {@linkplain TreeNode#getUserObject() user object}.</li>
      * </ul>
+     * <p>
+     * Together with {@link #toString(TreeNode)}, this method provides a convenient way to print
+     * the content of a XML document for debugging purpose.
      *
      * @param  object The array, collection or single object to format.
      * @return The given object as a Swing tree.
@@ -413,15 +417,16 @@ public final class Trees {
     }
 
     /**
-     * Construit une chaîne de caractères qui contiendra le
-     * noeud spécifié ainsi que tous les noeuds enfants.
+     * Appends to the given buffer the string representation of the given node and all
+     * its children.
      *
-     * @param model  Arborescence à écrire.
-     * @param node   Noeud de l'arborescence à écrire.
-     * @param buffer Buffer dans lequel écrire le noeud.
-     * @param level  Niveau d'indentation (à partir de 0).
-     * @param last   Indique si les niveaux précédents sont en train d'écrire leurs derniers items.
-     * @return       Le tableau {@code last}, qui peut éventuellement avoir été agrandit.
+     * @param model  The tree to format.
+     * @param node   The node of the tree to format.
+     * @param buffer Where to write the string representation.
+     * @param level  Indentation level. The first level is 0.
+     * @param last   {@code true} if the previous levels are writing the last node.
+     * @return       The {@code last} array, or a copy of that array if it was necessary
+     *               to increase its length.
      */
     private static boolean[] format(final TreeModel model, final Object node,
                                     final Appendable buffer, final int level, boolean[] last,

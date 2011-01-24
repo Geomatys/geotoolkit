@@ -214,8 +214,8 @@
  *   <li>From a set of {@code Tile} objects where each tile was given an affine transform
  *       at construction time, either directly or indirectly through a TFW file.</li>
  *   <li>From a {@code MosaicBuilder} in which the
- *       {@linkplain org.geotoolkit.image.io.mosaic.MosaicBuilder#setMosaicEnvelope mosaic envelope
- *       has been specified}.</li>
+ *       {@linkplain org.geotoolkit.image.io.mosaic.MosaicBuilder#setGridToCRS grid to CRS
+ *       transform has been specified}.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
