@@ -1012,7 +1012,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
         }
 
         /**
-         * Returns {@code true} inconditionnaly, because ASCII grid files don't require lines
+         * Returns {@code true} unconditionally, because ASCII grid files don't require lines
          * of same length. This method returns {@code true} even if there is no data at all,
          * because those data can be stored in a separated RAW file (this behavior is a Geotk
          * extension)

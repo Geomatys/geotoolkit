@@ -317,7 +317,7 @@ public class Query {
             final String table = column.table; // Because often requested.
             /*
              * Checks if the column exists in the table. This check is performed only if the column
-             * is optional. For mandatory columns, we will inconditionnaly insert the column in the
+             * is optional. For mandatory columns, we will unconditionally insert the column in the
              * SELECT clause and lets the SQL driver throws the appropriate exception later.
              */
             final boolean columnExists;
@@ -448,7 +448,7 @@ scan:       while (!tables.isEmpty()) {
                     }
                 }
                 // None of the remaining tables can be moved.
-                // Stop and copy inconditionnaly the remaining.
+                // Stop and copy unconditionally the remaining.
                 break;
             }
             ordered.putAll(tables);

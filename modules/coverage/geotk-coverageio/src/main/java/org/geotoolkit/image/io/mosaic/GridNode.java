@@ -263,7 +263,7 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
                     final long area = (long) candidate.width * (long) candidate.height;
                     if ((!gridded && cg) || (area < smallestArea)) {
                         // If the smallest node was not gridded while the candidate is gridded,
-                        // retains the candidate inconditionnaly. Otherwise retains only if smaller.
+                        // retains the candidate unconditionally. Otherwise retains only if smaller.
                         smallestArea = area;
                         smallest = candidate;
                         gridded = cg;

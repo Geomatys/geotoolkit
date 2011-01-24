@@ -186,7 +186,7 @@ public abstract class SampleMetadataFormat implements IIOMetadataFormat {
 
     /**
      * Returns {@code true} if the given element is allowed to appear.
-     * The default implementation returns inconditionnaly {@code true}.
+     * The default implementation returns unconditionally {@code true}.
      */
     @Override
     public boolean canNodeAppear(final String elementName, final ImageTypeSpecifier imageType) {

@@ -52,7 +52,7 @@ import static org.geotoolkit.util.Utilities.ensureNonNull;
  *        of the transform by direct access to the <code>AffineTransform</code> methods, but this is
  *        not an example that shoud be replicated.}
  *
- * <b>Example:</b> The {@link Arrow2D} class is inconditionnaly oriented toward 0° arithmetic.
+ * <b>Example:</b> The {@link Arrow2D} class is unconditionally oriented toward 0° arithmetic.
  * In order to draw a field of arrows in arbitrary directions, the code below can be used:
  *
  * {@preformat java

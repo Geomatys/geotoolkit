@@ -74,7 +74,7 @@ import org.geotoolkit.util.NullArgumentException;
 public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
     /**
      * The schema where the installer will create the tables in the JavaDB database.
-     * The value is {@value}. When the {@code geotk-epsg.jar} file is reacheable on
+     * The value is {@value}. When the {@code geotk-epsg.jar} file is reachable on
      * the classpath, the referencing module will look for this schema in order to
      * decide if it needs to install the EPSG database or not.
      *
@@ -90,7 +90,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
 
     /**
      * The directory which contain the EPSG scripts. If {@code null}, then the scripts
-     * will be read from the {@code geotk-epsg.jar} file. If this JAR is not reacheable,
+     * will be read from the {@code geotk-epsg.jar} file. If this JAR is not reachable,
      * then an exception will be thrown.
      */
     private File scriptsDirectory;
@@ -144,7 +144,7 @@ public class EpsgInstaller implements Callable<EpsgInstaller.Result> {
      * the latest version are used.
      * <p>
      * If this method is never invoked or if the given directory is {@code null}, then the
-     * scripts will be read from the {@code geotk-epsg.jar} file. If that JAR is not reacheable,
+     * scripts will be read from the {@code geotk-epsg.jar} file. If that JAR is not reachable,
      * then an exception will be thrown at {@link #call()} invocation time.
      *
      * @param directory The directory of the EPSG SQL scripts to execute, or {@code null}

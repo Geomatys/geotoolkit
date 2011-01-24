@@ -515,7 +515,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
                     image = null;
                 }
                 /*
-                 * Next iteration may try to allocate bigger images. We do that inconditionnaly,
+                 * Next iteration may try to allocate bigger images. We do that unconditionally,
                  * even if current image fits, because current image may be small due to memory
                  * constraint during a previous iteration.
                  */
@@ -1384,7 +1384,7 @@ search: for (final Tile tile : tiles) {
          */
         for (final Class<?> type : MosaicImageReader.Spi.INPUT_TYPES) {
             if (type.isInstance(input)) {
-                // Creates an instance of CachingReader inconditionnaly, even if the
+                // Creates an instance of CachingReader unconditionally, even if the
                 // map of temporary files is empty, because it may be filled later.
                 final ImageReader reader = new CachingReader(temporaryFiles);
                 reader.setInput(input);
@@ -1416,7 +1416,7 @@ search: for (final Tile tile : tiles) {
                 final ImageReader reader = readers.next();
                 reader.setInput(candidate);
                 // If there is any more advanced check to perform, we should do it here.
-                // For now we accept the reader inconditionnaly.
+                // For now we accept the reader unconditionally.
                 if (filter(reader)) {
                     return reader;
                 }

@@ -2543,7 +2543,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 /*
                  * Creates common properties. The 'version' and 'accuracy' are usually defined
                  * for transformations only. However, we check them for all kind of operations
-                 * (including conversions) and copy the information inconditionnaly if present.
+                 * (including conversions) and copy the information unconditionally if present.
                  *
                  * NOTE: This block must be executed last before object creations below, because
                  *       methods like createCoordinateReferenceSystem and createOperationMethod
@@ -3034,7 +3034,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
         }
         if (!isClosed && !shutdown) {
             /*
-             * The above code was run inconditionnaly as a safety, even if the connection
+             * The above code was run unconditionally as a safety, even if the connection
              * was already closed. However we will log a message only if we actually closed
              * the connection, otherwise the log records are a little bit misleading.
              */

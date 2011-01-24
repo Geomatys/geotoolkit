@@ -224,7 +224,7 @@ public class CoverageReferences {
                 // Need to fallback on the identity check below.
             }
             /*
-             * Do not inconditionnaly return 'false' here! The check for identity equality
+             * Do not unconditionally return 'false' here! The check for identity equality
              * is mandatory for proper disposal of references when the referenced Coverage
              * has been garbage-collected.
              */

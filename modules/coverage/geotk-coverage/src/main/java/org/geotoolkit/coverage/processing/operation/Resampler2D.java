@@ -456,7 +456,7 @@ final class Resampler2D extends GridCoverage2D {
             layout.setTileHeight(size.height);
         }
         /*
-         * Creates the border extender from the background values. We add it inconditionnaly as
+         * Creates the border extender from the background values. We add it unconditionally as
          * a matter of principle, but it will be ignored by all JAI operations except "Affine".
          * There is an exception for the case where the user didn't specified explicitly the
          * desired target grid envelope. NOT specifying border extender will allows "Affine"

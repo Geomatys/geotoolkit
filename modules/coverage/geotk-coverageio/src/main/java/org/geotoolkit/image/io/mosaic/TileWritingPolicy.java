@@ -33,7 +33,7 @@ package org.geotoolkit.image.io.mosaic;
  */
 public enum TileWritingPolicy {
     /**
-     * Overwrite existing tiles inconditionnaly.
+     * Overwrite existing tiles unconditionally.
      * This is the default behavior.
      */
     OVERWRITE(true, true),

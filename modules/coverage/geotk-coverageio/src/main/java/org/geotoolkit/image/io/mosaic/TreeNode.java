@@ -487,7 +487,7 @@ class TreeNode extends Rectangle implements Iterable<TreeNode>, org.geotoolkit.g
     }
 
     /**
-     * Copies inconditionnaly every tiles (including children) to the given list.
+     * Copies unconditionally every tiles (including children) to the given list.
      * This method invokes itself recursively down the tree.
      */
     private void copy(final Collection<Tile> tiles) {
@@ -611,7 +611,7 @@ class TreeNode extends Rectangle implements Iterable<TreeNode>, org.geotoolkit.g
 
     /**
      * Invoked in assertion for checking the validity of the whole tree. Checks in this method body
-     * are performed inconditionnaly though explicit {@code if ... throw new AssertionError(...)}
+     * are performed unconditionally though explicit {@code if ... throw new AssertionError(...)}
      * statements rather than {@code assert} statements because the whole methods is expected to be
      * invoked in an {@code assert} statement.
      *

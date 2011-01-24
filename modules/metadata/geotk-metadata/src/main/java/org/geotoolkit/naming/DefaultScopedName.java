@@ -168,7 +168,7 @@ public class DefaultScopedName extends AbstractName implements ScopedName {
         LocalName[] locals = new LocalName[index + parsedTail.size()];
         locals = parsedPath.toArray(locals);
         /*
-         * We have copied the LocalNames from the path inconditionnaly. Now we need to process the
+         * We have copied the LocalNames from the path unconditionally. Now we need to process the
          * LocalNames from the tail. If the tail scope follow the path scope, we can just copy the
          * names without further processing (easy case). Otherwise we need to create new instances.
          *

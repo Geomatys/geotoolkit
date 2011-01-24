@@ -75,7 +75,7 @@ final class ArrayVector extends Vector implements Serializable {
      * implementation returns {@code true} if {@code get(index)} returned {@code null}
      * or {@link Double#NaN}. However subclasses will typically provide more efficient
      * implementations. For example vectors of integer type return {@code false}
-     * inconditionnaly.
+     * unconditionally.
      *
      * @param  index The index in the [0&hellip;{@linkplain #size size}-1] range.
      * @return {@code true} if the value at the given index is {@code NaN}.

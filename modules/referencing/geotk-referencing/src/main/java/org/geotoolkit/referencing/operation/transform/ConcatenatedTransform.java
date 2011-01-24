@@ -679,7 +679,7 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
         /*
          * If the transfer dimension is not greater than the target dimension, then we
          * don't need to use an intermediate buffer. Note that this optimization is done
-         * inconditionnaly in ConcatenatedTransformDirect.
+         * unconditionally in ConcatenatedTransformDirect.
          */
         if (bufferDim <= targetDim) {
             transform1.transform(srcPts, srcOff, dstPts, dstOff, numPts);

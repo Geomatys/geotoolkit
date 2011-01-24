@@ -274,7 +274,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * If no database exists in the above-cited directory, then a new EPSG database will be
      * created by {@code ThreadedEpsgFactory} when first needed provided that the
      * <a href="http://www.geotoolkit.org/modules/referencing/geotk-epsg">geotk-epsg</a>
-     * module is reacheable on the classpath.
+     * module is reachable on the classpath.
      * <p>
      * Note that the directory may change in any Geotk version. More specifically, every
      * upgrade of the embedded EPSG database may cause a change of the default directory.
@@ -394,7 +394,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      *
      *   <li><p>Otherwise the {@linkplain #getDefaultURL() default URL} to the embedded database
      *       is used. If the database does not exist and the {@code geotk-epsg.jar} file is
-     *       reacheable on the classpath, then the EPSG database will be created when first
+     *       reachable on the classpath, then the EPSG database will be created when first
      *       needed.</p></li>
      * </ol>
      *
@@ -472,7 +472,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
      * <p>
      * If the default URL was used and no database exists at that URL, then a new database will
      * be created using the {@link EpsgInstaller} when first needed. This operation is possible
-     * only if the {@code geotk-epsg.jar} file is reacheable on the classpath, otherwise an
+     * only if the {@code geotk-epsg.jar} file is reachable on the classpath, otherwise an
      * exception will be thrown the first time the factory will be used.</p>
      * <p>
      * Subclasses should override this method if they can create a data source from other

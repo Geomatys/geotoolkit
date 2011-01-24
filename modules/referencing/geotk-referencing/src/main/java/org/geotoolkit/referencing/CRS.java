@@ -556,7 +556,7 @@ public final class CRS {
                         new double[] {bounds.getWestBoundLongitude(), bounds.getSouthBoundLatitude()},
                         new double[] {bounds.getEastBoundLongitude(), bounds.getNorthBoundLatitude()});
                 /*
-                 * We do not assign WGS84 inconditionnaly to the geographic bounding box, because
+                 * We do not assign WGS84 unconditionally to the geographic bounding box, because
                  * it is not defined to be on a particular datum; it is only approximative bounds.
                  * We try to get the GeographicCRS from the user-supplied CRS and fallback on WGS
                  * 84 only if we found none.
@@ -1158,7 +1158,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * authority factory using that identifier and compare it with the given object. If the
      * comparison fails, then this method returns {@code null}. Consequently this method may
      * returns {@code null} even if the given object declares explicitly its identifier. If
-     * the declared identifier is wanted inconditionnaly, use {@link #getDeclaredIdentifier
+     * the declared identifier is wanted unconditionally, use {@link #getDeclaredIdentifier
      * getDeclaredIdentifier(...)} instead.
      *
      * {@section Recommanded alternatives}

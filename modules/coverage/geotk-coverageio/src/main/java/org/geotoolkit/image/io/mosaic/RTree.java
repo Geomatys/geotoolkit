@@ -202,7 +202,7 @@ final class RTree implements Cloneable {
     /**
      * Returns every tiles that intersect the {@linkplain #regionOfInterest region of interest},
      * which must be set before this method is invoked. This method does not use any cache - the
-     * search is performed inconditionnaly.
+     * search is performed unconditionally.
      * <p>
      * On input, the following fields must be set:
      * <ul>

@@ -167,9 +167,9 @@ public class Collector extends AbstractMojo {
                         if (copy.exists()) {
                             /*
                              * Copies the dependency only if it was not already copied. Note that
-                             * the module's JAR was copied inconditionnaly above (because it may
+                             * the module's JAR was copied unconditionally above (because it may
                              * be the result of a new compilation). If a Geotoolkit JAR from the
-                             * dependencies list changed, it will be copied inconditionnaly when
+                             * dependencies list changed, it will be copied unconditionally when
                              * the module for this JAR will be processed by Maven.
                              */
                             continue;

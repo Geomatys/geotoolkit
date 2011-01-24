@@ -320,7 +320,7 @@ final class RenderedSampleDimension extends GridSampleDimension {
             } while (!iterator.nextBandDone());
         }
         /*
-         * Now, constructs the sample dimensions. We will inconditionnaly provides a "nodata"
+         * Now, constructs the sample dimensions. We will unconditionally provides a "nodata"
          * category for floating point images targeting unsigned integers, since we don't know
          * if the user plan to have NaN values. Even if the current image doesn't have NaN values,
          * it could have NaN later if the image uses a writable raster.

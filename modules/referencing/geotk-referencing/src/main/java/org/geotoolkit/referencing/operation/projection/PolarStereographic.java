@@ -171,7 +171,7 @@ public class PolarStereographic extends Stereographic {
             final boolean isVariantA, final Boolean forceSouthPole)
     {
         /*
-         * Sets inconditionnaly the latitude of origin to 90°N, because the South case will
+         * Sets unconditionally the latitude of origin to 90°N, because the South case will
          * be handle by reverting the sign of y through the (de)normalize affine transforms.
          */
         super(parameters, 90);

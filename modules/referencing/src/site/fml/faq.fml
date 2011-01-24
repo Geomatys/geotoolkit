@@ -119,7 +119,7 @@ CoordinateReferenceSystem crs = CRS.decode("AUTO:42001," + centralMeridian + ","
       <answer>
         <p>The Google projection is a Mercator projection that <em>pretends</em> to be defined on
         the WGS84 datum, but actually ignores the ellipsoid nature of that datum and uses the
-        simplier spherical formulas instead. In Geotk this behavior can be obtained for any
+        simpler spherical formulas instead. In Geotk this behavior can be obtained for any
         projections (not only the Mercator one used by Google) with explicit declarations of
         <code>"semi_major"</code> and <code>"semi_minor"</code> parameter values, like in the
         example below. Those parameters are usually inferred from the datum, but explicit
@@ -388,7 +388,6 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
         </ul>
       </answer>
     </faq>
-
     <faq id="projectionName">
       <question>
         I have correct axis order but my transformed coordinates are still wrong.
@@ -411,6 +410,28 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
         OGC 01-009 specification. In order to get the ESRI behavior with such projections, axis
         orientation must be explicitly specified in Geotk, for example with <code>AXIS</code>
         elements in Well Known Text (WKT) format.</p>
+      </answer>
+    </faq>
+    <faq id="slightDifferences">
+      <question>
+        I get slightly different results depending on the environment I’m running in.
+      </question>
+      <answer>
+        <p>The results of coordinates converted when running in a web application container (JBoss,
+        <i>etc.</i>) may be a few meters off compared to coordinates converted in an IDE (NetBeans,
+        Eclipse, <i>etc.</i>). The results depend on whatever an EPSG factory is available on the
+        classpath, <em>no matter how the CRS were created</em>, because the EPSG factory is not
+        only a CRS database. For some pairs of CRS, the EPSG factory specifies also explicitly the
+        coordinate operation to apply. In such case, the coordinate operation specified by EPSG has
+        precedence over the Burwa-Wolf parameters (the <code>TOWGS84</code> element in <cite>Well
+        Known Text</cite>).</p>
+
+        <p>A connection to the EPSG database may have been established for one environment (typically
+        the JEE one) and not the other (typically the IDE one) because only the former has JDBC driver.
+        The recommended way to uniformize the results is to add in the second environment (IDE) the
+        same JDBC driver than the first environment (JEE). It should be one of the following:
+        <cite>JavaDB</cite> (a.k.a. <cite>Derby</cite>), <cite>HSQL</cite> or <cite>PostgreSQL</cite>
+        (the later requires manual installation of EPSG database).</p>
       </answer>
     </faq>
     <faq id="toWGS84">

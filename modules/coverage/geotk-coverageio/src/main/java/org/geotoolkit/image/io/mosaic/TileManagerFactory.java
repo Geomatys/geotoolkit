@@ -292,7 +292,7 @@ public class TileManagerFactory extends Factory {
              * At least one tile have a pending "gridToCRS" transform (actually we should have
              * more than one - typically all of them - otherwise the RegionCalculator work will
              * be useless). Computes their region now. Note that we could execute this block
-             * inconditionnaly. The 'hasPendingGridToCRS' check we just for avoiding the cost
+             * unconditionally. The 'hasPendingGridToCRS' check we just for avoiding the cost
              * of creating RegionCalculator in the common case where it is not needed. So it is
              * not a big deal if 'hasPendingGridToCRS' conservatively returned 'true'.
              */

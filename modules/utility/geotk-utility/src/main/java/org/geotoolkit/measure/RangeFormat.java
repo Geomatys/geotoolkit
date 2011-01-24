@@ -352,7 +352,7 @@ public class RangeFormat extends Format {
         }
         /*
          * Special case for an empty range. This is typically formatted as "[]". The field
-         * position is inconditionnaly set to the empty substring inside the brackets.
+         * position is unconditionally set to the empty substring inside the brackets.
          */
         final Range<?> r = (Range<?>) range;
         final RangeSymbols s = symbols;

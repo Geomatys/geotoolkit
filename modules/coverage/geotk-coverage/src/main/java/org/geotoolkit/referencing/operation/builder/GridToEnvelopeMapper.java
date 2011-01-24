@@ -477,7 +477,7 @@ public class GridToEnvelopeMapper {
                     }
                 }
             } else {
-                // No coordinate system. Reverse the second axis inconditionnaly
+                // No coordinate system. Reverse the second axis unconditionally
                 // (except if there is not enough dimensions).
                 int length = 0;
                 if (gridEnvelope != null) {

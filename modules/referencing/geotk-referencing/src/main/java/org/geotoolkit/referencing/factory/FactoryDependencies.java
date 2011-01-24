@@ -227,7 +227,7 @@ public class FactoryDependencies {
      * like usual).
      *
      * @param abridged {@code true} for an abridged tree, or {@code false} for expanding
-     *        every branches inconditionnaly.
+     *        every branches unconditionally.
      *
      * @since 3.00
      */

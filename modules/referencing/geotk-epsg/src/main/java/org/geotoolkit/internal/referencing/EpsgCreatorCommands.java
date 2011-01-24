@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;
 public class EpsgCreatorCommands extends CommandLine {
     /**
      * The directory which contain the EPSG scripts. If omitted, the scripts embedded in
-     * the {@code geotk-epsg.jar} file will be used. If this JAR file is not reacheable
+     * the {@code geotk-epsg.jar} file will be used. If this JAR file is not reachable
      * on the classpath, then the command fails.
      */
     @Option

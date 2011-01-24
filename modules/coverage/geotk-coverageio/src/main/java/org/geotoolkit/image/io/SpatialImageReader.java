@@ -817,7 +817,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
                                 }
                                 final int unused = (int) Math.min(Math.round(unusedSpace), Integer.MAX_VALUE);
                                 collapsePadValues = collapseNoDataValues(isZeroValid, sorted, unused);
-                                // We invoked 'collapseNoDataValues' inconditionnaly even if
+                                // We invoked 'collapseNoDataValues' unconditionally even if
                                 // 'unused' is zero because the user may decide on the basis
                                 // of other criterions, like 'isZeroValid'.
                             }

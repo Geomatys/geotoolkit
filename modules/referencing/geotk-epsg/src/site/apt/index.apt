@@ -11,7 +11,7 @@ EPSG database
 
   This module is used only for creating a local copy of the database. It is <<not>> needed for
   using the EPSG database once created - the core referencing module alone is sufficient.
-  However having this module inconditionnaly in the classpath - in case the local database
+  However having this module unconditionally in the classpath - in case the local database
   needs to be created - doesn't hurt.
 
   While the primary purpose of this module is to create the local database when first needed,
