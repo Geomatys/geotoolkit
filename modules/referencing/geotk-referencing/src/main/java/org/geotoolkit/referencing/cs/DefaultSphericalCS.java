@@ -93,7 +93,7 @@ public class DefaultSphericalCS extends AbstractCS implements SphericalCS {
                               final CoordinateSystemAxis axis1,
                               final CoordinateSystemAxis axis2)
     {
-        super(name, new CoordinateSystemAxis[] {axis0, axis1, axis2});
+        super(name, axis0, axis1, axis2);
     }
 
     /**
@@ -126,7 +126,7 @@ public class DefaultSphericalCS extends AbstractCS implements SphericalCS {
                               final CoordinateSystemAxis axis1,
                               final CoordinateSystemAxis axis2)
     {
-        super(properties, new CoordinateSystemAxis[] {axis0, axis1, axis2});
+        super(properties, axis0, axis1, axis2);
     }
 
     /**

@@ -149,7 +149,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * @param name  The coordinate system name.
      * @param axis  The set of axis.
      */
-    public AbstractCS(final String name, final CoordinateSystemAxis[] axis) {
+    public AbstractCS(final String name, final CoordinateSystemAxis... axis) {
         this(Collections.singletonMap(NAME_KEY, name), axis);
     }
 
@@ -161,7 +161,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
      * @param properties   Set of properties. Should contains at least {@code "name"}.
      * @param axis         The set of axis.
      */
-    public AbstractCS(final Map<String,?> properties, final CoordinateSystemAxis[] axis) {
+    public AbstractCS(final Map<String,?> properties, final CoordinateSystemAxis... axis) {
         super(properties);
         ensureNonNull("axis", axis);
         this.axis = axis.clone();

@@ -84,7 +84,7 @@ public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {
                                 final CoordinateSystemAxis axis0,
                                 final CoordinateSystemAxis axis1)
     {
-        super(name, new CoordinateSystemAxis[] {axis0, axis1});
+        super(name, axis0, axis1);
     }
 
     /**
@@ -100,7 +100,7 @@ public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {
                                 final CoordinateSystemAxis axis1,
                                 final CoordinateSystemAxis axis2)
     {
-        super(name, new CoordinateSystemAxis[] {axis0, axis1, axis2});
+        super(name, axis0, axis1, axis2);
     }
 
     /**
@@ -116,7 +116,7 @@ public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {
                                 final CoordinateSystemAxis axis0,
                                 final CoordinateSystemAxis axis1)
     {
-        super(properties, new CoordinateSystemAxis[] {axis0, axis1});
+        super(properties, axis0, axis1);
     }
 
     /**
@@ -134,6 +134,6 @@ public class DefaultUserDefinedCS extends AbstractCS implements UserDefinedCS {
                                 final CoordinateSystemAxis axis1,
                                 final CoordinateSystemAxis axis2)
     {
-        super(properties, new CoordinateSystemAxis[] {axis0, axis1, axis2});
+        super(properties, axis0, axis1, axis2);
     }
 }

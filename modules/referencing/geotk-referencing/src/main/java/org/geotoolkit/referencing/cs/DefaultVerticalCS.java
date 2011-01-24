@@ -117,7 +117,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      * @since 2.5
      */
     public DefaultVerticalCS(final CoordinateSystemAxis axis) {
-        super(getProperties(axis), new CoordinateSystemAxis[] {axis});
+        super(getProperties(axis), axis);
     }
 
     /**
@@ -127,7 +127,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      * @param axis  The axis.
      */
     public DefaultVerticalCS(final String name, final CoordinateSystemAxis axis) {
-        super(name, new CoordinateSystemAxis[] {axis});
+        super(name, axis);
     }
 
     /**
@@ -138,7 +138,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      * @param axis       The axis.
      */
     public DefaultVerticalCS(final Map<String,?> properties, final CoordinateSystemAxis axis) {
-        super(properties, new CoordinateSystemAxis[] {axis});
+        super(properties, axis);
     }
 
     /**
