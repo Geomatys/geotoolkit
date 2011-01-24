@@ -25,7 +25,8 @@ import java.util.LinkedHashSet;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -69,7 +70,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     public CheckedHashSet(final Class<E> type) {
         super();
         this.type = type;
-        ensureNonNull();
+        ensureNonNull("type", type);
     }
 
     /**
@@ -83,16 +84,7 @@ public class CheckedHashSet<E> extends LinkedHashSet<E> implements CheckedCollec
     public CheckedHashSet(final Class<E> type, final int capacity) {
         super(capacity);
         this.type = type;
-        ensureNonNull();
-    }
-
-    /**
-     * Makes sure that {@link #type} is non-null.
-     */
-    private void ensureNonNull() {
-        if (type == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "type"));
-        }
+        ensureNonNull("type", type);
     }
 
     /**

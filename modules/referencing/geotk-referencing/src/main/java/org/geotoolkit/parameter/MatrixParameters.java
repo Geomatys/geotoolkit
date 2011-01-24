@@ -41,6 +41,8 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * The values for a group of {@linkplain MatrixParameterDescriptors matrix parameters}. This value

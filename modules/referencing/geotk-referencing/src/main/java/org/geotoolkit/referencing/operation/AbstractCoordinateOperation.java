@@ -49,6 +49,8 @@ import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.measure.Units;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Establishes an association between a source and a target

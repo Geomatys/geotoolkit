@@ -159,7 +159,7 @@ class NumberIterator implements TickIterator {
         AbstractGraduation.ensureFinite ("minimum",           minimum);
         AbstractGraduation.ensureFinite ("maximum",           maximum);
         AbstractGraduation.ensureFinite ("visualLength",      visualLength); // May be 0.
-        AbstractGraduation.ensureNonNull("visualTickSpacing", visualTickSpacing);
+        AbstractGraduation.ensureNonZero("visualTickSpacing", visualTickSpacing);
         this.visualLength      = visualLength;
         this.visualTickSpacing = visualTickSpacing;
         /*

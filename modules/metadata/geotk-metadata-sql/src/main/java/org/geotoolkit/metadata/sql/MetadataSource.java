@@ -43,13 +43,14 @@ import org.geotoolkit.internal.sql.StatementEntry;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.util.logging.Logging;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -203,15 +204,6 @@ public class MetadataSource {
         tables     = new HashMap<String, Set<String>>();
         cache      = new WeakValueHashMap<CacheKey,Object>();
         statements = new StatementPool<Object,StatementEntry>(source.statements);
-    }
-
-    /**
-     * Makes sure that an argument is non-null.
-     */
-    static void ensureNonNull(final String name, final Object object) {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ATTRIBUTE_$1, name));
-        }
     }
 
     /**

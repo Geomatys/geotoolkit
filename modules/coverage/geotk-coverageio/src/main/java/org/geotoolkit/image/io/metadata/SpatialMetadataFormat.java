@@ -71,7 +71,6 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.TypeValuePolicy;
@@ -80,6 +79,8 @@ import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.gui.swing.tree.TreeTableNode;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -372,19 +373,6 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      */
     protected SpatialMetadataFormat(final String rootName) {
         super(rootName, CHILD_POLICY_SOME);
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    private static void ensureNonNull(String name, Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

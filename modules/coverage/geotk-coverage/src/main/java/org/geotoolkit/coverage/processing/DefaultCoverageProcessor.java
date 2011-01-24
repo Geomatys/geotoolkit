@@ -48,6 +48,8 @@ import org.geotoolkit.internal.FactoryUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Default implementation of a {@linkplain Coverage} processor.
@@ -88,8 +90,8 @@ public class DefaultCoverageProcessor extends AbstractCoverageProcessor {
             }
         }
         final float mb = cache.getMemoryCapacity() / (1024f * 1024f);
-        LOGGER.config("Java Advanced Imaging: " + JAI.getBuildVersion() +
-                ", TileCache capacity=" + mb + " Mb");
+        LOGGER.log(Level.CONFIG, "Java Advanced Imaging: {0}, TileCache capacity={1} Mb",
+                new Object[] {JAI.getBuildVersion(), mb});
         /*
          * Verifies that the tile cache has some reasonable value. A lot of users seem to
          * misunderstand the memory setting in Java and set wrong values. If the user set

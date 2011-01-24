@@ -43,6 +43,8 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.lang.Immutable;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Defines the location and precise orientation in 3-dimensional space of a defined ellipsoid

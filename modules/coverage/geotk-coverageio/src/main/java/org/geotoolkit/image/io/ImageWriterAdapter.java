@@ -47,9 +47,9 @@ import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addSpatialFormat;
 
 
@@ -130,7 +130,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     protected ImageWriterAdapter(final Spi provider, final ImageWriter main) {
         super(provider);
         this.main = main;
-        Spi.ensureNonNull("main", main);
+        ensureNonNull("main", main);
         if (provider != null) {
             outputTypes  = provider.getMainTypes();
             acceptStream = provider.acceptStream;
@@ -726,19 +726,6 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
          */
         protected Spi(final String format) throws IllegalArgumentException {
             this(Formats.getWriterByFormatName(format, Spi.class));
-        }
-
-        /**
-         * Makes sure an argument is non-null.
-         *
-         * @param  name   Argument name.
-         * @param  object User argument.
-         * @throws NullArgumentException if {@code object} is null.
-         */
-        static void ensureNonNull(String name, Object object) throws NullArgumentException {
-            if (object == null) {
-                throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-            }
         }
 
         /**

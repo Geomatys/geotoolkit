@@ -32,13 +32,12 @@ import com.sun.media.jai.util.ImageUtil;
 import org.opengis.coverage.PaletteInterpretation;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.internal.image.ColorModels;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 
 import static java.awt.image.DataBuffer.TYPE_BYTE;
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -138,18 +137,6 @@ public class ImageInspector {
         if (base.commonHints!=null && !base.commonHints.isEmpty()) {
             commonHints = new RenderingHints(null);
             commonHints.add(base.commonHints);
-        }
-    }
-
-    /**
-     * Ensures that the given parameter is non-null.
-     *
-     * @param parameter The name of the parameter to be tested.
-     * @param value The parameter value.
-     */
-    static void ensureNonNull(final String parameter, final Object value) {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, parameter));
         }
     }
 

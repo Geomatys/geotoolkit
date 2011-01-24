@@ -31,6 +31,8 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.lang.Immutable;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A temporal datum defines the origin of a temporal coordinate reference system.

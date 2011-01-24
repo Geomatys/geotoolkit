@@ -31,6 +31,8 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A coordinate system made of two or more independent coordinate systems.

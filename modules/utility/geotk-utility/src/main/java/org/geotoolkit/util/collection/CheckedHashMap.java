@@ -24,7 +24,8 @@ import java.util.LinkedHashMap;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -80,15 +81,6 @@ public class CheckedHashMap<K,V> extends LinkedHashMap<K,V> implements Cloneable
         this.valueType = valueType;
         ensureNonNull("keyType",   keyType);
         ensureNonNull("valueType", valueType);
-    }
-
-    /**
-     * Ensures that the given argument is non-null.
-     */
-    private static void ensureNonNull(String name, Class<?> type) throws NullArgumentException {
-        if (type == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

@@ -40,6 +40,8 @@ import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.measure.Units;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Wraps a NetCDF {@link CoordinateAxis1D} as an implementation of GeoAPI interfaces.

@@ -19,9 +19,12 @@ package org.geotoolkit.util;
 
 import java.io.Serializable;
 import javax.measure.unit.Unit;
+
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -153,15 +156,6 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
                     final T maxValue, final boolean isMaxIncluded)
     {
         return new Range<T>(elementClass, minValue, isMinIncluded, maxValue, isMaxIncluded);
-    }
-
-    /**
-     * Ensures that the given argument is non-null.
-     */
-    static void ensureNonNull(final String name, final Object value) throws NullArgumentException {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

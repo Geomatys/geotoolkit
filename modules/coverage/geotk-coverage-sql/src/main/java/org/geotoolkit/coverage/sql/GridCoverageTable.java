@@ -40,6 +40,8 @@ import org.geotoolkit.internal.UnmodifiableArraySortedSet;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Connection to a table of grid coverages. This table builds references in the form of

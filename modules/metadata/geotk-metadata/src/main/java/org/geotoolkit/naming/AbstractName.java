@@ -34,8 +34,6 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.SimpleInternationalString;
 
 
@@ -92,19 +90,6 @@ public abstract class AbstractName implements GenericName, Serializable {
      * Creates a new instance of generic name.
      */
     protected AbstractName() {
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    static void ensureNonNull(String name, Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

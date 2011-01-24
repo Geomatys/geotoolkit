@@ -32,6 +32,8 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.Immutable;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Defines the origin of an image coordinate reference system. An image datum is used in a local

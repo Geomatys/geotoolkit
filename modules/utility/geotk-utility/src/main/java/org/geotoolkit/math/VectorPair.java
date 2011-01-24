@@ -23,7 +23,8 @@ import javax.vecmath.MismatchedSizeException;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -61,19 +62,6 @@ public class VectorPair implements Serializable {
     public VectorPair(final Vector X, final Vector Y) {
         ensureNonNull("X", this.X = X);
         ensureNonNull("Y", this.Y = Y);
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    private static void ensureNonNull(String name, Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

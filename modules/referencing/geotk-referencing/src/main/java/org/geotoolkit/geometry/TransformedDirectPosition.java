@@ -31,8 +31,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
-import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -299,21 +299,6 @@ public class TransformedDirectPosition extends GeneralDirectPosition {
             return inverseTransform(defaultCRS);
         } else {
             return new GeneralDirectPosition(this);
-        }
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    private static void ensureNonNull(final String name, final Object object)
-            throws NullArgumentException
-    {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
         }
     }
 }

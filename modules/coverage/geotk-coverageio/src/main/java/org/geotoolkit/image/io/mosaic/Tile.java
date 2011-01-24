@@ -44,7 +44,6 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
@@ -56,6 +55,7 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -511,15 +511,6 @@ public class Tile implements Comparable<Tile>, Serializable {
     static boolean ignore(final ImageWriterSpi provider) {
         ensureNonNull("provider", provider);
         return (provider instanceof ImageWriterAdapter.Spi);
-    }
-
-    /**
-     * Ensures that the given argument is non-null.
-     */
-    static void ensureNonNull(final String argument, final Object value) {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, argument));
-        }
     }
 
     /**

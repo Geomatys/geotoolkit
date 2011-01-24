@@ -32,6 +32,8 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A parameter value as a floating point (double precision) number.

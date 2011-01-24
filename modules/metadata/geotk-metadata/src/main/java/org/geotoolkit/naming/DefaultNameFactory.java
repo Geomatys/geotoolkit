@@ -37,7 +37,7 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.DefaultInternationalString;
-import static org.geotoolkit.naming.AbstractName.ensureNonNull;
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
 
 

@@ -50,9 +50,10 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.geometry.TransformedDirectPosition;
 import org.geotoolkit.internal.referencing.AxisDirections;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -654,21 +655,6 @@ public class CoordinateFormat extends Format {
     @Override
     public DirectPosition parseObject(final String source, final ParsePosition position) {
         throw new UnsupportedOperationException("DirectPosition parsing not yet implemented.");
-    }
-
-    /**
-     * Ensure that the given parameter is not null.
-     *
-     * @param  name  The name of the parameter being verified.
-     * @param  value The parameter value.
-     * @throws throws NullArgumentException if the given value is null.
-     */
-    private static void ensureNonNull(final String name, final Object value)
-            throws NullArgumentException
-    {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

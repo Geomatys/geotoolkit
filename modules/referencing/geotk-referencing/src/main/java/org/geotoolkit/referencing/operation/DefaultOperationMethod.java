@@ -48,6 +48,8 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Definition of an algorithm used to perform a coordinate operation. Most operation

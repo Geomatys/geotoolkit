@@ -34,6 +34,8 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.Immutable;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A textual description and/or a set of parameters identifying a particular reference level

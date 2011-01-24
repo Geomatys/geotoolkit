@@ -55,7 +55,6 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.internal.jaxb.text.StringConverter;
@@ -66,6 +65,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.xml.Namespaces;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -1145,40 +1146,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             case 0:  return null;
             case 1:  return Collections.singleton(array[0]);
             default: return Collections.unmodifiableSet(new LinkedHashSet<E>(Arrays.asList(array)));
-        }
-    }
-
-    /**
-     * Makes sure that an argument is non-null. This is a
-     * convenience method for subclass constructors.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    protected static void ensureNonNull(final String name, final Object object)
-            throws NullArgumentException
-    {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
-    }
-
-    /**
-     * Makes sure an array element is non-null. This is
-     * a convenience method for subclass constructors.
-     *
-     * @param  name  Argument name.
-     * @param  array User argument.
-     * @param  index Index of the element to check.
-     * @throws NullArgumentException if {@code array[i]} is null.
-     */
-    protected static void ensureNonNull(final String name, final Object[] array, final int index)
-            throws NullArgumentException
-    {
-        if (array[index] == null) {
-            throw new NullArgumentException(Errors.format(
-                    Errors.Keys.NULL_ARGUMENT_$1, name+'['+index+']'));
         }
     }
 

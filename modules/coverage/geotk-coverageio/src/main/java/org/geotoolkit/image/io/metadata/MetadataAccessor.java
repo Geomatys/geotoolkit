@@ -55,10 +55,11 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.IndexedResourceBundle;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -733,19 +734,6 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                     buffer.setLength(base);
                 }
             }
-        }
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    static void ensureNonNull(String name, Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
         }
     }
 

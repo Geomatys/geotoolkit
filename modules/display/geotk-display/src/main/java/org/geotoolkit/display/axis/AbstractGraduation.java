@@ -29,7 +29,8 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -49,7 +50,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     private static final long serialVersionUID = 5215728323932315112L;
 
     /**
-     * The axis's units, or {@code null} if unknown.
+     * The axis units, or {@code null} if unknown.
      */
     Unit<?> unit;
 
@@ -267,15 +268,6 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     }
 
     /**
-     * Ensures that the given parameter is not null.
-     */
-    static void ensureNonNull(final String name, final Object value) throws NullPointerException {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
-    }
-
-    /**
      * Vérifie que le nombre spécifié est non-nul. S'il
      * est 0, NaN ou infini, une exception sera lancée.
      *
@@ -283,7 +275,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
      * @param  n Nombre à vérifier.
      * @throws IllegalArgumentException Si <var>n</var> est NaN ou infini.
      */
-    static void ensureNonNull(final String name, final double n) throws IllegalArgumentException {
+    static void ensureNonZero(final String name, final double n) throws IllegalArgumentException {
         if (Double.isNaN(n) || Double.isInfinite(n) || n==0) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, name, n));

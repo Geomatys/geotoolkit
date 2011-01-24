@@ -40,6 +40,8 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * An operation working on a two-dimensional slice of a coverage. The current implementation

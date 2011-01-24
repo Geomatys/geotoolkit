@@ -26,13 +26,13 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.AnyConverter;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.gui.swing.tree.Trees;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -133,15 +133,6 @@ public class MetadataTreeTable implements Localized {
                 Logging.recoverableException(MetadataTreeNode.class, "getValue", exception);
             }
         };
-    }
-
-    /**
-     * Makes sure that an argument is non-null.
-     */
-    private static void ensureNonNull(final String name, final Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

@@ -33,6 +33,8 @@ import javax.imageio.spi.ImageReaderSpi;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A tile manager for the particular case of tile distributed on a regular grid.
@@ -100,7 +102,7 @@ final class GridTileManager extends TileManager {
      * @throws IllegalArgumentException if this class can not handle the given tiles.
      */
     protected GridTileManager(final Tile[] tiles) throws IOException, IllegalArgumentException {
-        Tile.ensureNonNull("tiles", tiles);
+        ensureNonNull("tiles", tiles);
         Tile[] modifiedOrder = tiles; // May be modified later.
         final Map<Dimension,OverviewLevel> levelsBySubsampling = new HashMap<Dimension,OverviewLevel>();
         for (int i=0; i<modifiedOrder.length; i++) {

@@ -46,6 +46,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Wraps a JAI's {@link ParameterList}. Any change to a {@linkplain #parameter parameter value}

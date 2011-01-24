@@ -49,6 +49,8 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Geometric figure that can be used to describe the approximate shape of the earth.

@@ -48,6 +48,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.lang.Immutable;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * An ordered sequence of two or more single coordinate operations. The sequence of operations is

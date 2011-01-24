@@ -26,6 +26,8 @@ import java.util.MissingResourceException;
 import org.geotoolkit.lang.Immutable;
 import org.opengis.util.InternationalString;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * An {@linkplain InternationalString international string} backed by a {@linkplain ResourceBundle
@@ -34,7 +36,7 @@ import org.opengis.util.InternationalString;
  * resource bundle (the one used when no resource was found in the client's language). The appropriate
  * resource bundle is loaded at runtime for the client's language by looking for a class or a
  * properties file with the right suffix, for example {@code "_en"} for English or {@code "_fr"}
- * for French. This mechanism is explained in J2SE's javadoc for the
+ * for French. This mechanism is explained in J2SE javadoc for the
  * {@link ResourceBundle#getBundle(String,Locale,ClassLoader) getBundle} static method.
  * <p>
  * <b>Example:</b> If a file named "{@code MyResources.properties}" exists in the package

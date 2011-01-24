@@ -32,6 +32,8 @@ import org.geotoolkit.util.Comparators;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A collection of {@link Tile} objects organized in a tree.
@@ -111,14 +113,14 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
      *
      * @param tiles The tiles. This array is not cloned and elements in this array may be
      *        reordered by this constructor. The public methods in {@link TileManagerFactory}
-     *        are reponsible for cloning the user-provided arrays if needed.
+     *        are responsible for cloning the user-provided arrays if needed.
      */
     protected TreeTileManager(final Tile[] tiles) {
         /*
          * Puts together the tiles that use the same input. For those that use
          * different input, we will order by image index first, then (y,x) order.
          */
-        Tile.ensureNonNull("tiles", tiles);
+        ensureNonNull("tiles", tiles);
         final Map<ReaderInputPair,List<Tile>> tilesByInput =
                 new LinkedHashMap<ReaderInputPair, List<Tile>>(tiles.length + tiles.length/4 + 1);
         providers = new FrequencySortedSet<ImageReaderSpi>(4, true);

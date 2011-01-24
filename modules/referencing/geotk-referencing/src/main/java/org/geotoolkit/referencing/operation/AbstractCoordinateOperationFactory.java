@@ -38,7 +38,6 @@ import org.opengis.referencing.operation.*;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
@@ -702,20 +701,5 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     {
         return Errors.format(Errors.Keys.NO_TRANSFORMATION_PATH_$2,
                 getClassName(source), getClassName(target));
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    protected static void ensureNonNull(final String name, final Object object)
-            throws NullArgumentException
-    {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 }

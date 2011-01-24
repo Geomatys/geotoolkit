@@ -43,6 +43,8 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * The definition of a parameter used by an operation method. For

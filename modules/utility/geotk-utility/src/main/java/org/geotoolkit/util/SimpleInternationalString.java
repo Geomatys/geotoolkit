@@ -26,6 +26,8 @@ import java.util.Locale;
 import org.geotoolkit.lang.Immutable;
 import org.opengis.util.InternationalString;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * An {@linkplain InternationalString international string} consisting of a single string

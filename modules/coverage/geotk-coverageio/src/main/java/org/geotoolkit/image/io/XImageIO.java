@@ -40,13 +40,14 @@ import java.awt.image.RenderedImage;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -148,19 +149,6 @@ public final class XImageIO {
      * Do not allow instantiation of this class.
      */
     private XImageIO() {
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    private static void ensureNonNull(String name, Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

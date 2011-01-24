@@ -52,6 +52,8 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * The set of coordinate system axes that spans a given coordinate space. A coordinate system (CS)

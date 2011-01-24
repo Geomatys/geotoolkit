@@ -46,6 +46,8 @@ import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A specialization of {@link Database} which specify the {@link CoordinateReferenceSystem}
@@ -207,7 +209,7 @@ public class SpatialDatabase extends Database {
             throws FactoryException
     {
         super(datasource, properties);
-        Table.ensureNonNull("spatialCRS", spatialCRS);
+        ensureNonNull("spatialCRS", spatialCRS);
         this.horizontalCRS = CRS.getHorizontalCRS(spatialCRS);
         this.verticalCRS   = CRS.getVerticalCRS(spatialCRS);
         this.temporalCRS   = DefaultTemporalCRS.wrap(temporalCRS);

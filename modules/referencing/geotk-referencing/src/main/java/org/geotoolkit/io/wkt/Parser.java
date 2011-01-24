@@ -21,8 +21,8 @@ import java.text.NumberFormat;
 import java.text.DecimalFormat;
 import java.text.ParsePosition;
 import java.text.ParseException;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -30,7 +30,7 @@ import org.geotoolkit.util.NullArgumentException;
  * Like the later, a parser is constructed with a given set of {@linkplain Symbols symbols}.
  * Parsers also need a set of factories to be used for instantiating the parsed objects.
  * <p>
- * In current version, parsers are usually not intented to be subclassed outside this package.
+ * In current version, parsers are usually not intended to be subclassed outside this package.
  * A few exceptions exist, for example {@link ReferencingParser#alterProperties} is one of the
  * few hooks provided for overriding.
  * <p>
@@ -72,18 +72,6 @@ public abstract class Parser {
      */
     Parser(final Symbols symbols) {
         setSymbols(symbols);
-    }
-
-    /**
-     * Ensures that the given value is non-null.
-     *
-     * @param name  The name to be used for formatting an error message, if needed.
-     * @param value The value to check for non-nullity.
-     */
-    static void ensureNonNull(final String name, final Object value) throws NullArgumentException {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

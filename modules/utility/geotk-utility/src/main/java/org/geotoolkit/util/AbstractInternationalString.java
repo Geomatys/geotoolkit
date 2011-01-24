@@ -25,7 +25,6 @@ import java.util.Formatter;
 import java.util.Formattable;
 import java.util.FormattableFlags;
 import org.opengis.util.InternationalString;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -64,19 +63,6 @@ public abstract class AbstractInternationalString implements InternationalString
      * Constructs an international string.
      */
     public AbstractInternationalString() {
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    static void ensureNonNull(String name, Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

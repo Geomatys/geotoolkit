@@ -34,6 +34,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html"><cite>Well

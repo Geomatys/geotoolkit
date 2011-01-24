@@ -21,6 +21,8 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 import static org.geotoolkit.util.converter.Classes.finestClass;
 import static org.geotoolkit.util.converter.Classes.widestClass;
 

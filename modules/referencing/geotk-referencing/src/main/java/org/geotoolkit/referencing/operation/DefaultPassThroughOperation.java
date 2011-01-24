@@ -33,6 +33,8 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A pass-through operation specifies that a subset of a coordinate tuple is subject to a specific

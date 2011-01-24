@@ -37,7 +37,6 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -48,6 +47,7 @@ import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;
 import static org.opengis.referencing.IdentifiedObject.REMARKS_KEY;
 
@@ -389,24 +389,6 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
             throw e;
         }
         ensureNonNull(CODE_KEY, code);
-    }
-
-    /**
-     * Makes sure an argument is non-null. This is method duplicates
-     * {@link AbstractIdentifiedObject#ensureNonNull(String, Object)}
-     * except for the more accurate stack trace. It is duplicated there
-     * in order to avoid a dependency to {@link AbstractIdentifiedObject}.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    private static void ensureNonNull(final String name, final Object object)
-            throws NullArgumentException
-    {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

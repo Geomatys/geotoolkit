@@ -44,6 +44,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A group of related parameter values. The same group can be repeated more than once in

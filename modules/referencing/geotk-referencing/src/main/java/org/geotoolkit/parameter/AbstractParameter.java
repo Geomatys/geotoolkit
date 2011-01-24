@@ -24,7 +24,6 @@ import java.util.Set;
 import java.io.Writer;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.StringWriter;
 import java.lang.reflect.Array;
 import javax.measure.unit.Unit;
 
@@ -42,8 +41,9 @@ import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -86,40 +86,6 @@ public abstract class AbstractParameter extends FormattableObject
     @Override
     public GeneralParameterDescriptor getDescriptor() {
         return descriptor;
-    }
-
-    /**
-     * Makes sure that an argument is non-null. This method was already defined in
-     * {@link org.geotoolkit.referencing.AbstractIdentifiedObject}, but is defined here again
-     * in order to get a more appropriate stack trace, and for access by class which do not
-     * inherit from {@link org.geotoolkit.referencing.AbstractIdentifiedObject}.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    static void ensureNonNull(final String name, final Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
-    }
-
-    /**
-     * Makes sure an array element is non-null. This is
-     * a convenience method for subclass constructors.
-     *
-     * @param  name  Argument name.
-     * @param  array The array to look at.
-     * @param  index Index of the element to check.
-     * @throws NullArgumentException if {@code array[i]} is null.
-     */
-    static void ensureNonNull(final String name, final Object[] array, final int index)
-            throws NullArgumentException
-    {
-        if (array[index] == null) {
-            throw new NullArgumentException(Errors.format(
-                    Errors.Keys.NULL_ARGUMENT_$1, name + '[' + index + ']'));
-        }
     }
 
     /**

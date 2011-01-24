@@ -24,14 +24,13 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
-
 import java.io.IOException;
 import java.io.ObjectInputStream;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -142,15 +141,6 @@ public final class TransformedShape extends AffineTransform implements Shape {
     private void initTransientFields() {
         point = new Point2D.Double();
         rectangle = new Rectangle2D.Double();
-    }
-
-    /**
-     * Ensures that the given argument value is not null.
-     */
-    private static void ensureNonNull(final String name, final Object value) {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

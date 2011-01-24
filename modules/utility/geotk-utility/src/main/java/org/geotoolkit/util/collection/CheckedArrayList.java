@@ -25,7 +25,8 @@ import java.util.Collections;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -69,7 +70,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedCollecti
     public CheckedArrayList(final Class<E> type) {
         super();
         this.type = type;
-        ensureNonNull();
+        ensureNonNull("type", type);
     }
 
     /**
@@ -83,7 +84,7 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedCollecti
     public CheckedArrayList(final Class<E> type, final int capacity) {
         super(capacity);
         this.type = type;
-        ensureNonNull();
+        ensureNonNull("type", type);
     }
 
     /**
@@ -94,15 +95,6 @@ public class CheckedArrayList<E> extends ArrayList<E> implements CheckedCollecti
     @Override
     public Class<E> getElementType() {
         return type;
-    }
-
-    /**
-     * Make sure that {@link #type} is non-null.
-     */
-    private void ensureNonNull() {
-        if (type == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "type"));
-        }
     }
 
     /**

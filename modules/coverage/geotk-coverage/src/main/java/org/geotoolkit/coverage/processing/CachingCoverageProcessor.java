@@ -34,6 +34,8 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.coverage.grid.RenderedCoverage;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A coverage processor that cache the result of operations. Given that {@linkplain GridCoverage

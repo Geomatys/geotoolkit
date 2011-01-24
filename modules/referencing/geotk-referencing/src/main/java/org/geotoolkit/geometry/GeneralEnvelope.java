@@ -51,6 +51,8 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A minimum bounding box or rectangle. Regardless of dimension, an {@code Envelope} can

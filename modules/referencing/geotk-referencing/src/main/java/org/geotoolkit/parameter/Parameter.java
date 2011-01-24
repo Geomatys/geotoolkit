@@ -42,6 +42,8 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A parameter value used by an operation method. Most CRS parameter values are numeric and can

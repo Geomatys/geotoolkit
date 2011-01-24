@@ -40,6 +40,8 @@ import org.geotoolkit.internal.sql.table.QueryType;
 import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.DuplicatedRecordException;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Connection to a table of series. This connection is used internally by the

@@ -38,6 +38,8 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
 import org.geotoolkit.xml.Namespaces;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Identifier within a {@linkplain DefaultNameSpace name space}.

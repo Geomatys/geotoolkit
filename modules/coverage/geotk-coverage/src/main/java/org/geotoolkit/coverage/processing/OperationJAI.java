@@ -72,6 +72,8 @@ import org.geotoolkit.util.AbstractInternationalString;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  *

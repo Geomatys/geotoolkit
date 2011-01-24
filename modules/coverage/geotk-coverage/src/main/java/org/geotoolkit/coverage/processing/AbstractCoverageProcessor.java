@@ -46,7 +46,6 @@ import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.grid.Interpolator2D;
 import org.geotoolkit.internal.image.ImageUtilities;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
@@ -240,21 +239,6 @@ public abstract class AbstractCoverageProcessor extends Factory implements GridC
             }
         }
         return Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED);
-    }
-
-    /**
-     * Makes sure that an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws IllegalArgumentException if {@code object} is null.
-     */
-    static void ensureNonNull(final String name, final Object object)
-            throws IllegalArgumentException
-    {
-        if (object == null) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

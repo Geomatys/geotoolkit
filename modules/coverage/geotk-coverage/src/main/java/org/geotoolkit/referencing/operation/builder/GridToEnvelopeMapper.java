@@ -39,9 +39,10 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -181,17 +182,6 @@ public class GridToEnvelopeMapper {
         }
         this.gridEnvelope = gridEnvelope;
         this.userEnvelope = userEnvelope;
-    }
-
-    /**
-     * Makes sure that an argument is non-null.
-     */
-    private static void ensureNonNull(final String name, final Object object)
-            throws NullArgumentException
-    {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

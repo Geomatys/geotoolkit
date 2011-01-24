@@ -45,6 +45,8 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * The definition of a group of related parameters used by an operation method.

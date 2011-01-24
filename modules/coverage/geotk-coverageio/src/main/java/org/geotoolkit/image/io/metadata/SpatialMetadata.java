@@ -58,6 +58,8 @@ import org.geotoolkit.measure.RangeFormat;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Spatial (usually geographic) informations encoded in an image. This class converts the
@@ -737,7 +739,7 @@ public class SpatialMetadata extends IIOMetadata implements WarningProducer {
      * @since 3.07
      */
     public void setWarningLevel(final Level level) {
-        MetadataAccessor.ensureNonNull("level", level);
+        ensureNonNull("level", level);
         warningLevel = level;
         if (instances   != null) MetadataProxy.setWarningLevel(instances.values(), level);
         if (lists       != null) MetadataProxy.setWarningLevel(lists    .values(), level);

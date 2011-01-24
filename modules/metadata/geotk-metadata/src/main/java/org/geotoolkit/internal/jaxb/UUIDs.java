@@ -27,7 +27,8 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.Disposable;
-import org.geotoolkit.util.NullArgumentException;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -82,19 +83,6 @@ public class UUIDs {
     }
 
     /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    private static void ensureNonNull(final Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "object"));
-        }
-    }
-
-    /**
      * Returns the object associated to the given UUID, or {@code null} if none.
      *
      * @param  uuid The UUID for which to look for an object.
@@ -131,7 +119,7 @@ public class UUIDs {
      *         or if the UUID is already associated to an other object.
      */
     public void setUUID(final Object object, final UUID uuid) throws IllegalArgumentException {
-        ensureNonNull(object);
+        ensureNonNull("object", object);
         final StrongRef check = new StrongRef(object);
         synchronized (this) {
             if (objectToUUID.containsKey(check)) {
@@ -159,7 +147,7 @@ public class UUIDs {
      * @return The UUID of the given object.
      */
     public UUID getOrCreateUUID(final Object object) {
-        ensureNonNull(object);
+        ensureNonNull("object", object);
         final StrongRef check = new StrongRef(object);
         synchronized (this) {
             UUID uuid = objectToUUID.get(check);

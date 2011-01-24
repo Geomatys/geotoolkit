@@ -24,6 +24,8 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Immutable representation of an {@linkplain Envelope envelope}. This class is final in order

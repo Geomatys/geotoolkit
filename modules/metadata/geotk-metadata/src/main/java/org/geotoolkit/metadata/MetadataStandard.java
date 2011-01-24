@@ -37,6 +37,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Enumeration of some metadata standards. A standard is defined by a set of Java interfaces
@@ -729,15 +731,6 @@ public final class MetadataStandard {
             return false;
         }
         return accessor.shallowEquals(metadata1, metadata2, skipNulls);
-    }
-
-    /**
-     * Ensures that the specified argument is non-null.
-     */
-    private static void ensureNonNull(String name, Object value) throws NullArgumentException {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

@@ -31,6 +31,8 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A two-dimensional envelope on top of {@link Rectangle2D}. This implementation is provided for
@@ -101,7 +103,7 @@ public class Envelope2D extends Rectangle2D.Double implements Envelope, Cloneabl
      * @since 3.11
      */
     public Envelope2D(final GeographicBoundingBox box) {
-        AbstractEnvelope.ensureNonNull("box", box);
+        ensureNonNull("box", box);
         crs    = DefaultGeographicCRS.WGS84;
         x      = box.getWestBoundLongitude();
         y      = box.getSouthBoundLatitude();

@@ -321,8 +321,8 @@ final class DateIterator implements TickIterator {
             rewind();
             return;
         }
-        AbstractGraduation.ensureNonNull("visualLength",      visualLength);
-        AbstractGraduation.ensureNonNull("visualTickSpacing", visualTickSpacing);
+        AbstractGraduation.ensureNonZero("visualLength",      visualLength);
+        AbstractGraduation.ensureNonZero("visualTickSpacing", visualTickSpacing);
         this.visualLength      = visualLength;
         this.visualTickSpacing = visualTickSpacing;
         this.formatValid       = false;

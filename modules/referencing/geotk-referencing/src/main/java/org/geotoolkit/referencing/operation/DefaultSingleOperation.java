@@ -46,6 +46,8 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.UnsupportedImplementationException;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A parameterized mathematical operation on coordinates that transforms or converts

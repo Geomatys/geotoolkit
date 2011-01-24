@@ -35,8 +35,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
-import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -215,20 +215,6 @@ public abstract class AbstractOperation implements Operation, Serializable {
             }
         }
         return AbstractCoverageProcessor.getInstance();
-    }
-
-    /**
-     * Makes sure that an argument is non-null. This is a convenience method for
-     * implementations in subclasses.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws IllegalArgumentException if {@code object} is null.
-     */
-    static void ensureNonNull(final String name, final Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

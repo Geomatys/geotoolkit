@@ -35,6 +35,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A category delimited by a range of sample values. A category may be either <em>qualitative</em>
@@ -912,20 +914,5 @@ public class Category implements Serializable {
             }
         }
         return buffer.append("])").toString();
-    }
-
-    /**
-     * Makes sure that an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws IllegalArgumentException if {@code object} is null.
-     */
-    static void ensureNonNull(final String name, final Object object)
-        throws IllegalArgumentException
-    {
-        if (object == null) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 }

@@ -48,6 +48,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Connection to a catalog database through JDBC (<cite>Java Database Connectivity</cite>).
@@ -306,7 +308,7 @@ public class Database implements Localized {
      * @param  properties The configuration properties, or {@code null} if none.
      */
     public Database(final DataSource datasource, final Properties properties) {
-        Table.ensureNonNull("datasource", datasource);
+        ensureNonNull("datasource", datasource);
         final String username, password, tz;
         this.properties = properties; // Must be set before to ask for properties.
         username = getProperty(ConfigurationKey.USER);

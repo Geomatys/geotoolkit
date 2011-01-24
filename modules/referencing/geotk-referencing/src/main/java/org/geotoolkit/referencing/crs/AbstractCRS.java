@@ -41,6 +41,8 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.NullReferencingObject;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * Abstract coordinate reference system, usually defined by a coordinate system and a datum.

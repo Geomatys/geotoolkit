@@ -44,6 +44,7 @@ import org.geotoolkit.internal.sql.StatementEntry;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 import static org.geotoolkit.metadata.KeyNamePolicy.UML_IDENTIFIER;
 import static org.geotoolkit.metadata.TypeValuePolicy.ELEMENT_TYPE;
 import static org.geotoolkit.metadata.TypeValuePolicy.DECLARING_INTERFACE;

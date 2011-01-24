@@ -25,11 +25,13 @@ import java.awt.image.BufferedImageOp;
 import java.awt.image.ComponentColorModel;
 import javax.imageio.ImageWriteParam;
 
+import org.opengis.coverage.PaletteInterpretation;
+
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.ImageWorker;
 import org.geotoolkit.internal.image.SimpleBufferedImageOp;
 
-import org.opengis.coverage.PaletteInterpretation;
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -107,7 +109,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
     }
 
     /**
-     * Returns whatever existings {@linkplain File files} should be skipped or overwritten.
+     * Returns whatever existing {@linkplain File files} should be skipped or overwritten.
      * The default value is {@link TileWritingPolicy#OVERWRITE OVERWRITE}.
      *
      * @return The policy to apply when writing tiles.
@@ -117,8 +119,8 @@ public class MosaicImageWriteParam extends ImageWriteParam {
     }
 
     /**
-     * Sets whatever existings {@linkplain File files} should be skipped. The default behavior
-     * is to {@linkplain TileWritingPolicy#OVERWRITE overwrite} every files inconditionnaly.
+     * Sets whatever existing {@linkplain File files} should be skipped. The default behavior
+     * is to {@linkplain TileWritingPolicy#OVERWRITE overwrite} every files unconditionally.
      * Settings the policy to {@link TileWritingPolicy#WRITE_NEWS_ONLY WRITE_NEWS_ONLY} may
      * speedup {@link MosaicImageWriter} when the process of writing tiles is started again
      * after a previous partial failure, by skipping the tiles that were successfully generated
@@ -127,7 +129,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      * @param policy The policy to apply when writing tiles.
      */
     public void setTileWritingPolicy(final TileWritingPolicy policy) {
-        Tile.ensureNonNull("policy", policy);
+        ensureNonNull("policy", policy);
         this.policy = policy;
     }
 
@@ -146,7 +148,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      * Sets the operation to apply on source tiles before to create the mosaic. If an operation
      * is given, then that operation will be applied on every source tiles and the result will
      * be saved as RAW images in temporary files. The temporary files will be removed when the
-     * mosaic creation is finihed.
+     * mosaic creation is finished.
      *
      * @param filter The operation to apply on source tiles, or {@code null} if none.
      *

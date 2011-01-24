@@ -26,12 +26,11 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.operation.Formula;
 
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Utilities;
-
 import org.geotoolkit.lang.Immutable;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -85,15 +84,6 @@ public class DefaultFormula implements Formula, Serializable {
         ensureNonNull("citation", citation);
         this.citation = citation;
         this.formula  = null;
-    }
-
-    /**
-     * Makes sure that an argument is non-null.
-     */
-    private static void ensureNonNull(final String name, final Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

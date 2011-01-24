@@ -29,9 +29,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
 
@@ -58,19 +56,6 @@ public abstract class NetcdfIdentifiedObject implements IdentifiedObject, Refere
      * Creates a new {@code NetcdfIdentifiedObject} instance.
      */
     protected NetcdfIdentifiedObject() {
-    }
-
-    /**
-     * Makes sure an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    static void ensureNonNull(String name, Object object) throws NullArgumentException {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

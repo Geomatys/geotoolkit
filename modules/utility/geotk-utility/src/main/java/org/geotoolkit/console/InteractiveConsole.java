@@ -26,10 +26,10 @@ import javax.vecmath.MismatchedSizeException;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.internal.StringUtilities;
 
 import static org.geotoolkit.io.X364.*;
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -178,7 +178,7 @@ public abstract class InteractiveConsole implements Runnable {
         lineSeparator   = System.getProperty("line.separator", "\n");
         numberFormat    = NumberFormat.getNumberInstance(locale);
         numberSeparator = getNumberSeparator(numberFormat);
-        ensureNonNull();
+        ensureValid();
     }
 
     /**
@@ -213,7 +213,7 @@ public abstract class InteractiveConsole implements Runnable {
         lineSeparator   = System.getProperty("line.separator", "\n");
         numberFormat    = NumberFormat.getNumberInstance(locale);
         numberSeparator = getNumberSeparator(numberFormat);
-        ensureNonNull();
+        ensureValid();
     }
 
     /**
@@ -230,28 +230,13 @@ public abstract class InteractiveConsole implements Runnable {
     /**
      * Ensures that the required fields are non-null.
      */
-    private void ensureNonNull() {
+    private void ensureValid() {
         if (console == null) {
             ensureNonNull("in",  in);
         }
         ensureNonNull("out", out);
         ensureNonNull("err", err);
         ensureNonNull("lineSeparator", lineSeparator);
-    }
-
-    /**
-     * Makes sure that an argument is non-null.
-     *
-     * @param  name   Argument name.
-     * @param  object User argument.
-     * @throws NullArgumentException if {@code object} is null.
-     */
-    private static void ensureNonNull(final String name, final Object object)
-            throws NullArgumentException
-    {
-        if (object == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

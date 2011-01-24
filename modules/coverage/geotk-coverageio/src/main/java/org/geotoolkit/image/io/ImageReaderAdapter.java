@@ -47,8 +47,9 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.XArrays;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -133,7 +134,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     protected ImageReaderAdapter(final Spi provider, final ImageReader main) {
         super(provider);
         this.main = main;
-        Spi.ensureNonNull("main", main);
+        ensureNonNull("main", main);
         if (provider != null) {
             inputTypes   = provider.getMainTypes();
             acceptStream = provider.acceptStream;
@@ -1081,19 +1082,6 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                 formatNames = XArrays.concatenate(formatNames, EXTRA_METADATA);
             }
             return formatNames;
-        }
-
-        /**
-         * Makes sure an argument is non-null.
-         *
-         * @param  name   Argument name.
-         * @param  object User argument.
-         * @throws NullArgumentException if {@code object} is null.
-         */
-        static void ensureNonNull(String name, Object object) throws NullArgumentException {
-            if (object == null) {
-                throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-            }
         }
 
         /**

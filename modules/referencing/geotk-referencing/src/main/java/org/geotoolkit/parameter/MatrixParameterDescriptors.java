@@ -39,6 +39,8 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A parameter group for {@linkplain Matrix matrix} elements. The amount of

@@ -31,6 +31,8 @@ import org.opengis.referencing.operation.OperationMethod;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 
+import static org.geotoolkit.util.Utilities.ensureNonNull;
+
 
 /**
  * A conversion used for the definition of a {@linkplain org.opengis.referencing.crs.GeneralDerivedCRS

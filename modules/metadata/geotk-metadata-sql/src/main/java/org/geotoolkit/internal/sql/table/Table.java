@@ -30,11 +30,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.IndexedResourceBundle;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
@@ -466,21 +467,6 @@ public abstract class Table implements Localized {
      */
     final void unexpectedException(final String method, final Throwable exception) {
         Logging.unexpectedException(getLogger(), getClass(), method, exception);
-    }
-
-    /**
-     * Ensures that the given argument is non-null. This is a convenience method for argument checks
-     * in constructors. This method does not take in account the table locale because the table is
-     * typically not fully constructed when this method is invoked.
-     *
-     * @param  name  The argument name.
-     * @param  value The argument value.
-     * @throws IllegalArgumentException if the given value is {@code null}.
-     */
-    protected static void ensureNonNull(final String name, final Object value) {
-        if (value == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
-        }
     }
 
     /**

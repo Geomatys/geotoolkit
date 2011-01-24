@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.io.Serializable;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -54,8 +55,8 @@ import org.geotoolkit.lang.Static;
  * class in order to reduce the risk of collision between "empty" instances of different classes.
  * {@linkplain java.io.Serializable} classes can use {@code (int) serialVersionUID} for example.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.17
  *
  * @since 1.2
  * @module
@@ -472,7 +473,7 @@ public final class Utilities {
      *       {@link Arrays#deepToString(Object[])} is invoked.</li>
      *   <li>Otherwise if the object is an array of primitive type, then the corresponding
      *       {@link Arrays#toString(double[]) Arrays.toString(...)} method is invoked.</li>
-     *   <li>Otherwise {@link String#valueOf(Object)} is invoked.<li>
+     *   <li>Otherwise {@link String#valueOf(Object)} is invoked.</li>
      * </ul>
      * <p>
      * This method should be invoked <strong>only</strong> if the object type is declared
@@ -511,5 +512,46 @@ public final class Utilities {
             return Arrays.toString((boolean[]) object);
         }
         return String.valueOf(object);
+    }
+
+    /**
+     * Makes sure that an argument is non-null. If the given {@code object} is null, then a
+     * {@link NullArgumentException} is thrown with a localized message containing the given name.
+     *
+     * @param  name The name of the argument to be checked. Used only in case an exception is thrown.
+     * @param  object The user argument to check against null value.
+     * @throws NullArgumentException if {@code object} is null.
+     *
+     * @since 3.17
+     */
+    public static void ensureNonNull(final String name, final Object object)
+            throws NullArgumentException
+    {
+        if (object == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+        }
+    }
+
+    /**
+     * Makes sure that an array element is non-null. If {@code array[index]} is null, then a
+     * {@link NullArgumentException} is thrown with a localized message containing the given name.
+     *
+     * @param  name The name of the argument to be checked. Used only in case an exception is thrown.
+     * @param  array The user argument to check against null element.
+     * @param  index Index of the element to check.
+     * @throws NullArgumentException if {@code array} or {@code array[index]} is null.
+     *
+     * @since 3.17
+     */
+    public static void ensureNonNull(final String name, final Object[] array, final int index)
+            throws NullArgumentException
+    {
+        if (array == null) {
+            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
+        }
+        if (array[index] == null) {
+            throw new NullArgumentException(Errors.format(
+                    Errors.Keys.NULL_ARGUMENT_$1, name + '[' + index + ']'));
+        }
     }
 }
