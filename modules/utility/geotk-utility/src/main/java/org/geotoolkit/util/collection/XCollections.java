@@ -17,9 +17,12 @@
  */
 package org.geotoolkit.util.collection;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Queue;
+import java.util.Set;
 import java.util.SortedSet;
 
 import org.geotoolkit.lang.Static;
@@ -30,7 +33,7 @@ import org.geotoolkit.lang.Static;
  * Java {@link Collections} utility class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.17
  *
  * @since 3.10 (derived from 3.00)
  * @module
@@ -88,5 +91,27 @@ public final class XCollections {
             elements++;
         }
         return elements + r;
+    }
+
+    /**
+     * Returns the specified array as an immutable set, or {@code null} if the array is null.
+     *
+     * @param  <E> The type of array elements.
+     * @param  array The array to copy in a set. May be {@code null}.
+     * @return A set containing the array elements, or {@code null} if the given array was null.
+     *
+     * @see Collections#unmodifiableSet(Set)
+     *
+     * @since 3.17
+     */
+    public static <E> Set<E> immutableSet(final E... array) {
+        if (array == null) {
+            return null;
+        }
+        switch (array.length) {
+            case 0:  return Collections.emptySet();
+            case 1:  return Collections.singleton(array[0]);
+            default: return Collections.unmodifiableSet(new LinkedHashSet<E>(Arrays.asList(array)));
+        }
     }
 }

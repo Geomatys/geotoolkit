@@ -22,7 +22,6 @@ package org.geotoolkit.referencing;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Comparator;
@@ -54,6 +53,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.internal.Citations;
+import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.internal.jaxb.text.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.ReferenceIdentifierAdapter;
 import org.geotoolkit.io.wkt.FormattableObject;
@@ -542,10 +542,10 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             this.name = (ReferenceIdentifier) (value = name);
 
             key = ALIAS_KEY;
-            this.alias = asSet((GenericName[]) (value = alias));
+            this.alias = CollectionUtilities.nonEmptySet((GenericName[]) (value = alias));
 
             key = IDENTIFIERS_KEY;
-            this.identifiers = asSet((ReferenceIdentifier[]) (value = identifiers));
+            this.identifiers = CollectionUtilities.nonEmptySet((ReferenceIdentifier[]) (value = identifiers));
 
             key = REMARKS_KEY;
             this.remarks = (InternationalString) (value = remarks);
@@ -1101,7 +1101,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      */
     private static <E extends Comparable<E>> int doCompare(final E c1, final E c2) {
         if (c1 == null) {
-            return (c2==null) ? 0 : -1;
+            return (c2 == null) ? 0 : -1;
         }
         if (c2 == null) {
             return +1;
@@ -1124,25 +1124,5 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     public int hashCode() {
         // Subclasses need to overrides this!!!!
         return (int)serialVersionUID ^ getClass().hashCode();
-    }
-
-    /**
-     * Returns the specified array as an immutable set, or {@code null} if the
-     * array is empty or null. This is a convenience method for sub-classes
-     * constructors.
-     *
-     * @param  <E> The type of array elements.
-     * @param  array The array to copy in a set. May be {@code null}.
-     * @return A set containing the array elements, or {@code null} if none or empty.
-     */
-    protected static <E> Set<E> asSet(final E[] array) {
-        if (array == null) {
-            return null;
-        }
-        switch (array.length) {
-            case 0:  return null;
-            case 1:  return Collections.singleton(array[0]);
-            default: return Collections.unmodifiableSet(new LinkedHashSet<E>(Arrays.asList(array)));
-        }
     }
 }

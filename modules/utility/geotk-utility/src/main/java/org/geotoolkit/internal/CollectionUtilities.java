@@ -20,13 +20,14 @@ package org.geotoolkit.internal;
 import java.util.*;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.collection.XCollections;
 
 
 /**
  * A set of utilities for {@link java.util.Collection}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -40,20 +41,18 @@ public final class CollectionUtilities {
     }
 
     /**
-     * Returns a copy of the given array as an unmodifiable set.
+     * Returns a copy of the given array as a non-empty immutable set.
+     * If the given array is empty, then this method returns {@code null}.
      *
      * @param  <T> The type of elements.
      * @param  elements The elements to copy in a set.
      * @return An unmodifiable set which contains all the given elements.
      *
-     * @todo Consider caching the set in a {@code WeakHashSet}, given that this method
-     *       is often invoked for set of code list, which are typically shared by many
-     *       callers.
-     *
-     * @since 3.05
+     * @since 3.17
      */
-    public static <T> Set<T> unmodifiableSet(final T[] elements) {
-        return Collections.unmodifiableSet(new LinkedHashSet<T>(Arrays.asList(elements)));
+    public static <T> Set<T> nonEmptySet(final T... elements) {
+        final Set<T> asSet = XCollections.immutableSet(elements);
+        return (asSet != null && asSet.isEmpty()) ? null : asSet;
     }
 
     /**

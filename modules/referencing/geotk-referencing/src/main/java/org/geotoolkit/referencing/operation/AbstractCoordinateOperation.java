@@ -47,6 +47,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.referencing.Semaphores;
+import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.measure.Units;
 
 import static org.geotoolkit.util.Utilities.ensureNonNull;
@@ -230,7 +231,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
                 ensureNonNull(COORDINATE_OPERATION_ACCURACY_KEY, positionalAccuracy, i);
             }
         }
-        this.coordinateOperationAccuracy = asSet(positionalAccuracy);
+        this.coordinateOperationAccuracy = CollectionUtilities.nonEmptySet(positionalAccuracy);
         this.sourceCRS = sourceCRS;
         this.targetCRS = targetCRS;
         this.transform = transform;

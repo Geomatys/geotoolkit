@@ -21,7 +21,7 @@ import javax.imageio.metadata.IIOMetadataFormat;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.internal.CollectionUtilities;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.metadata.ValueRestriction;
 
 
@@ -58,7 +58,7 @@ final class ValidValues extends ValueRestriction {
      * Creates a new {@code ValidValues} instance for the given enumeration.
      */
     ValidValues(final Object[] values) {
-        super(null, null, CollectionUtilities.unmodifiableSet(values));
+        super(null, null, XCollections.immutableSet(values));
     }
 
     /**
