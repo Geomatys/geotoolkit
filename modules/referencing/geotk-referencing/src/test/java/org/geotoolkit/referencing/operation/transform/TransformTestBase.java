@@ -62,7 +62,7 @@ import org.opengis.test.Validators;
  * the convenience methods defined in GeoAPI and adds a few {@code asserts} statements.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 2.0
  */
@@ -79,6 +79,15 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      * higher than the tolerance level for horizontal ordinate values.
      */
     protected double zTolerance = 1E-2;
+
+    /**
+     * An optional message to pre-concatenate to the error message if one of the {@code assert}
+     * methods fail. This field shall contain information about the test configuration that may
+     * be useful in determining the cause of a test failure.
+     *
+     * @since 3.17
+     */
+    protected String messageOnFailure;
 
     /**
      * The datum factory to use for testing.
@@ -210,6 +219,16 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
     }
 
     /**
+     * Complete the error message by pre-concatenating {@link #messageOnFailure}, if non-null.
+     */
+    private String complete(String message) {
+        if (messageOnFailure != null) {
+            message = (message != null) ? messageOnFailure + ' ' + message : messageOnFailure;
+        }
+        return message;
+    }
+
+    /**
      * Asserts that the current {@linkplain #transform transform} produces the given WKT.
      *
      * @param  expected The expected WKT.
@@ -220,13 +239,13 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      *       parsing in this method.
      */
     protected final String assertWktEquals(String expected) {
-        assertNotNull("Transform field must be assigned a value.", transform);
-        assertEquals("WKT comparison with tolerance not yet implemented.", 0.0, tolerance, 0.0);
+        assertNotNull(complete("Transform field must be assigned a value."), transform);
+        assertEquals(complete("WKT comparison with tolerance not yet implemented."), 0.0, tolerance, 0.0);
         expected = Commons.decodeQuotes(expected);
         final String actual = transform.toWKT();
         final String name = (transform instanceof AbstractMathTransform) ?
                 ((AbstractMathTransform) transform).getName() : null;
-        assertMultilinesEquals(name, expected, actual);
+        assertMultilinesEquals(complete(name), expected, actual);
         return actual;
     }
 
@@ -248,10 +267,10 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
     protected final void assertParameterEquals(final ParameterDescriptorGroup descriptor,
             final ParameterValueGroup values)
     {
-        assertInstanceOf("TransformTestCase.transform", AbstractMathTransform.class, transform);
+        assertInstanceOf(complete("TransformTestCase.transform"), AbstractMathTransform.class, transform);
         final Parameterized transform = (Parameterized) this.transform;
         if (descriptor != null) {
-            assertSame("ParameterDescriptor", descriptor, transform.getParameterDescriptors());
+            assertSame(complete("ParameterDescriptor"), descriptor, transform.getParameterDescriptors());
         }
         if (values != null) {
             assertSame(descriptor, values.getDescriptor());
@@ -275,8 +294,8 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         final DirectPosition2D source = new DirectPosition2D(x,y);
         final DirectPosition2D target = new DirectPosition2D();
         assertSame(target, transform.transform(source, target));
-        final String message = "Expected ("+ex+", "+ey+"), "+
-                "transformed=("+target.x+", "+target.y+")";
+        final String message = complete("Expected (" + ex + ", " + ey + "), " +
+                "transformed=(" + target.x + ", "+target.y + ')');
         assertEquals(message, ex, target.x, tolerance);
         assertEquals(message, ey, target.y, tolerance);
     }
@@ -299,8 +318,8 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         final GeneralDirectPosition source = new GeneralDirectPosition(x,y,z);
         final GeneralDirectPosition target = new GeneralDirectPosition(3);
         assertSame(target, transform.transform(source, target));
-        final String message = "Expected ("+ex+", "+ey+", "+ez+"), "+
-              "transformed=("+target.ordinates[0]+", "+target.ordinates[1]+", "+target.ordinates[2]+")";
+        final String message = complete("Expected (" + ex+", " + ey + ", " + ez + "), " +
+                "transformed=(" + target.ordinates[0] + ", " + target.ordinates[1] + ", " + target.ordinates[2] + ')');
         assertEquals(message, ex, target.ordinates[0], tolerance);
         assertEquals(message, ey, target.ordinates[1], tolerance);
         assertEquals(message, ez, target.ordinates[2], zTolerance);
@@ -324,8 +343,8 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         final GeneralDirectPosition source = new GeneralDirectPosition(x,y);
         final GeneralDirectPosition target = new GeneralDirectPosition(3);
         assertSame(target, transform.transform(source, target));
-        final String message = "Expected ("+ex+", "+ey+", "+ez+"), "+
-              "transformed=("+target.ordinates[0]+", "+target.ordinates[1]+", "+target.ordinates[2]+")";
+        final String message = complete("Expected (" + ex + ", " + ey + ", " + ez + "), " +
+              "transformed=(" + target.ordinates[0] + ", " + target.ordinates[1] + ", " + target.ordinates[2] + ')');
         assertEquals(message, ex, target.ordinates[0], tolerance);
         assertEquals(message, ey, target.ordinates[1], tolerance);
         assertEquals(message, ez, target.ordinates[2], zTolerance);
@@ -349,8 +368,8 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         final GeneralDirectPosition source = new GeneralDirectPosition(x,y,z);
         final GeneralDirectPosition target = new GeneralDirectPosition(2);
         assertSame(target, transform.transform(source, target));
-        final String message = "Expected ("+ex+", "+ey+"), "+
-              "transformed=("+target.ordinates[0]+", "+target.ordinates[1]+")";
+        final String message = complete("Expected (" + ex+", " + ey + "), " +
+              "transformed=(" + target.ordinates[0] + ", " + target.ordinates[1] + ')');
         assertEquals(message, ex, target.ordinates[0], tolerance);
         assertEquals(message, ey, target.ordinates[1], tolerance);
     }
@@ -372,8 +391,8 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         final GeneralDirectPosition source = new GeneralDirectPosition(x,y,z);
         final GeneralDirectPosition target = new GeneralDirectPosition(1);
         assertSame(target, transform.transform(source, target));
-        final String message = "Expected ("+ez+"), "+
-              "transformed=("+target.ordinates[0]+")";
+        final String message = complete("Expected (" + ez + "), " +
+              "transformed=(" + target.ordinates[0] + ')');
         assertEquals(message, ez, target.ordinates[0], zTolerance);
     }
 
@@ -398,8 +417,8 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         final GeneralDirectPosition source = new GeneralDirectPosition(x,y,z,t);
         final GeneralDirectPosition target = new GeneralDirectPosition(2);
         assertSame(target, transform.transform(source, target));
-        final String message = "Expected ("+ex+", "+ey+"), "+
-              "transformed=("+target.ordinates[0]+", "+target.ordinates[1]+")";
+        final String message = complete("Expected (" + ex + ", " + ey + "), " +
+              "transformed=(" + target.ordinates[0] + ", " + target.ordinates[1] + ')');
         assertEquals(message, ex, target.ordinates[0], tolerance);
         assertEquals(message, ey, target.ordinates[1], tolerance);
     }
@@ -425,12 +444,12 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
             final ParameterValue<?> a = actual  .parameter(name);
             if (unit != null) {
                 final double f = e.doubleValue(unit);
-                assertEquals(name, f, a.doubleValue(unit), tolerance(f));
+                assertEquals(complete(name), f, a.doubleValue(unit), tolerance(f));
             } else if (Classes.isFloat(descriptor.getValueClass())) {
                 final double f = e.doubleValue();
-                assertEquals(name, f, a.doubleValue(), tolerance(f));
+                assertEquals(complete(name), f, a.doubleValue(), tolerance(f));
             } else {
-                assertEquals(name, e.getValue(), a.getValue());
+                assertEquals(complete(name), e.getValue(), a.getValue());
             }
         }
     }
@@ -510,16 +529,16 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         P2.x = x + delta/2; P2.y = y;
         assertSame(P1, transform.transform(P1, P1));
         assertSame(P2, transform.transform(P2, P2));
-        assertEquals("scaleX", (P2.x - P1.x) / delta, matrix.getElement(0, 0), tolerance);
-        assertEquals("shearY", (P2.y - P1.y) / delta, matrix.getElement(1, 0), tolerance);
+        assertEquals(complete("scaleX"), (P2.x - P1.x) / delta, matrix.getElement(0, 0), tolerance);
+        assertEquals(complete("shearY"), (P2.y - P1.y) / delta, matrix.getElement(1, 0), tolerance);
 
         // Next, test the vertical component of the derivative.
         P1.x = x; P1.y = y - delta/2;
         P2.x = x; P2.y = y + delta/2;
         assertSame(P1, transform.transform(P1, P1));
         assertSame(P2, transform.transform(P2, P2));
-        assertEquals("shearX", (P2.x - P1.x) / delta, matrix.getElement(0, 1), tolerance);
-        assertEquals("scaleY", (P2.y - P1.y) / delta, matrix.getElement(1, 1), tolerance);
+        assertEquals(complete("shearX"), (P2.x - P1.x) / delta, matrix.getElement(0, 1), tolerance);
+        assertEquals(complete("scaleY"), (P2.y - P1.y) / delta, matrix.getElement(1, 1), tolerance);
     }
 
     /**
@@ -553,7 +572,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
             assertSame(T1, transform.transform(S1, T1));
             assertSame(T2, transform.transform(S2, T2));
             for (int j=0; j<targetDim; j++) {
-                assertEquals("derivative(" + j + ',' + i + ')',
+                assertEquals(complete("derivative(" + j + ',' + i + ')'),
                         (T2.getOrdinate(j) - T1.getOrdinate(j)) / delta, matrix.getElement(j, i), tolerance);
             }
         }
@@ -568,7 +587,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
      * @return Random coordinates in the given domain.
      */
     protected final double[] generateRandomCoordinates(final CoordinateDomain domain, final long randomSeed) {
-        assertNotNull("Transform field must be assigned a value.", transform);
+        assertNotNull(complete("Transform field must be assigned a value."), transform);
         final int dimension = transform.getSourceDimensions();
         final int numPts    = ORDINATE_COUNT / dimension;
         final double[] coordinates = domain.generateRandomInput(new Random(randomSeed), dimension, numPts);
@@ -627,12 +646,12 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
             verifyInverse(source);
         }
         for (int i=0; i<source.length; i++) {
-            assertEquals("Detected change in source coordinates.",
+            assertEquals(complete("Detected change in source coordinates."),
                     asFloats[i], (float) source[i], 0f); // Paranoiac check.
         }
         verifyConsistency(asFloats);
         for (int i=0; i<source.length; i++) {
-            assertEquals("Detected change in source coordinates.",
+            assertEquals(complete("Detected change in source coordinates."),
                     (float) source[i], asFloats[i], 0f); // Paranoiac check.
         }
     }

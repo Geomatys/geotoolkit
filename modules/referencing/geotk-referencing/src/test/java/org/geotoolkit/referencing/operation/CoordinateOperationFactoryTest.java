@@ -198,6 +198,15 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
     }
 
     /**
+     * Initialize the {@link #messageOnFailure} field.
+     */
+    @Before
+    public void initMessageOnFailure() {
+        messageOnFailure = "datumShiftMethod=" + getDatumShiftMethod() +
+                ", isEpsgFactoryAvailable=" + isEpsgFactoryAvailable() + '.';
+    }
+
+    /**
      * Make sure that a factory can be find in the presence of some global hints.
      *
      * @see <a href="http://jira.codehaus.org/browse/GEOT-1618">GEOT-1618</a>
