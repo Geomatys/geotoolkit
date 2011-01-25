@@ -96,7 +96,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      * Returns the identifier of the GCP collection.
      */
     @Override
-    @XmlElement(name = "collectionIdentification")
+    @XmlElement(name = "collectionIdentification", namespace = Namespaces.GMI)
     public synchronized Integer getCollectionIdentification() {
         return collectionIdentification;
     }
@@ -115,7 +115,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      * Returns the name of the GCP collection.
      */
     @Override
-    @XmlElement(name = "collectionName")
+    @XmlElement(name = "collectionName", namespace = Namespaces.GMI)
     public synchronized InternationalString getCollectionName() {
         return collectionName;
     }
@@ -134,7 +134,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      * Returns the coordinate system in which the ground control points are defined.
      */
     @Override
-    @XmlElement(name = "coordinateReferenceSystem")
+    @XmlElement(name = "coordinateReferenceSystem", namespace = Namespaces.GMI)
     public synchronized ReferenceSystem getCoordinateReferenceSystem() {
         return coordinateReferenceSystem;
     }
@@ -153,7 +153,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      * Returns the ground control point(s) used in the collection.
      */
     @Override
-    @XmlElement(name = "gcp")
+    @XmlElement(name = "gcp", namespace = Namespaces.GMI)
     public synchronized Collection<GCP> getGCPs() {
         return GCPs = nonNullCollection(GCPs, GCP.class);
     }

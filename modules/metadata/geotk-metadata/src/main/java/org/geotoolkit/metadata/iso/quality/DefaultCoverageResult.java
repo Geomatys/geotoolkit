@@ -52,7 +52,7 @@ import org.geotoolkit.xml.Namespaces;
     "resultFormat",
     "resultFile"
 })
-@XmlRootElement(name = "QE_CoverageResult")
+@XmlRootElement(name = "QE_CoverageResult", namespace = Namespaces.GMI)
 public class DefaultCoverageResult extends AbstractResult implements CoverageResult {
     /**
      * Serial number for inter-operability with different versions.

@@ -4,10 +4,10 @@
     <gco:CharacterString>Some process step.</gco:CharacterString>
   </gmd:description>
   <gmi:processingInformation>
-    <gmd:LE_Processing>
-      <gmd:procedureDescription>
+    <gmi:LE_Processing>
+      <gmi:procedureDescription>
         <gco:CharacterString>Some procedure.</gco:CharacterString>
-      </gmd:procedureDescription>
-    </gmd:LE_Processing>
+      </gmi:procedureDescription>
+    </gmi:LE_Processing>
   </gmi:processingInformation>
 </gmd:LI_ProcessStep>

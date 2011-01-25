@@ -37,7 +37,8 @@
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -53,11 +54,12 @@
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
     @XmlJavaTypeAdapter(CitationAdapter.class),
+    @XmlJavaTypeAdapter(ContentInformationAdapter.class),
     @XmlJavaTypeAdapter(DateAdapter.class),
     @XmlJavaTypeAdapter(ElementAdapter.class),
     @XmlJavaTypeAdapter(EvaluationMethodTypeAdapter.class),
     @XmlJavaTypeAdapter(ExtentAdapter.class),
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
+    @XmlJavaTypeAdapter(FormatAdapter.class),
     @XmlJavaTypeAdapter(IdentifierAdapter.class),
     @XmlJavaTypeAdapter(LineageAdapter.class),
     @XmlJavaTypeAdapter(RecordTypeAdapter.class),
@@ -65,7 +67,8 @@
     @XmlJavaTypeAdapter(ScopeAdapter.class),
     @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
     @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
-    @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
+    @XmlJavaTypeAdapter(SpatialRepresentationTypeAdapter.class),
+    @XmlJavaTypeAdapter(SpatialRepresentationAdapter.class),
     @XmlJavaTypeAdapter(UnitAdapter.class),
 
     // Primitive type handling
@@ -87,6 +90,7 @@ import org.geotoolkit.internal.jaxb.uom.DateAdapter;
 import org.geotoolkit.internal.jaxb.uom.UnitAdapter;
 import org.geotoolkit.internal.jaxb.code.EvaluationMethodTypeAdapter;
 import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
+import org.geotoolkit.internal.jaxb.code.SpatialRepresentationTypeAdapter;
 import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;

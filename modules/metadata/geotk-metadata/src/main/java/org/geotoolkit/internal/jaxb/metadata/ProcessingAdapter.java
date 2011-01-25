@@ -18,8 +18,9 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
 import org.opengis.metadata.lineage.Processing;
+import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -66,7 +67,7 @@ public final class ProcessingAdapter extends MetadataAdapter<ProcessingAdapter,P
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "LE_Processing")
+    @XmlElement(name = "LE_Processing", namespace = Namespaces.GMI)
     public DefaultProcessing getElement() {
         final Processing metadata = this.metadata;
         return (metadata instanceof DefaultProcessing) ?

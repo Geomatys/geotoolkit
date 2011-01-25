@@ -18,8 +18,9 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.metadata.iso.lineage.DefaultProcessStepReport;
 import org.opengis.metadata.lineage.ProcessStepReport;
+import org.geotoolkit.metadata.iso.lineage.DefaultProcessStepReport;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -66,7 +67,7 @@ public final class ProcessStepReportAdapter extends MetadataAdapter<ProcessStepR
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "LE_ProcessStepReport")
+    @XmlElement(name = "LE_ProcessStepReport", namespace = Namespaces.GMI)
     public DefaultProcessStepReport getElement() {
         final ProcessStepReport metadata = this.metadata;
         return (metadata instanceof DefaultProcessStepReport) ?

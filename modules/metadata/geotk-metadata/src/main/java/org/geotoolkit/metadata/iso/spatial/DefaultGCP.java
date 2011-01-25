@@ -106,7 +106,7 @@ public class DefaultGCP extends MetadataEntity implements GCP {
      * Get the accuracy of a ground control point.
      */
     @Override
-    @XmlElement(name = "accuracyReport")
+    @XmlElement(name = "accuracyReport", namespace = Namespaces.GMI)
     public synchronized Collection<Element> getAccuracyReports() {
         return xmlOptional(accuracyReports = nonNullCollection(accuracyReports, Element.class));
     }

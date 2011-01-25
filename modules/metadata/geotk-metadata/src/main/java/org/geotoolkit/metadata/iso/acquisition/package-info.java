@@ -54,6 +54,7 @@
     @XmlJavaTypeAdapter(EnvironmentalRecordAdapter.class),
     @XmlJavaTypeAdapter(EventAdapter.class),
     @XmlJavaTypeAdapter(ExtentAdapter.class),
+    @XmlJavaTypeAdapter(DateAdapter.class),
     @XmlJavaTypeAdapter(GeometryTypeAdapter.class),
     @XmlJavaTypeAdapter(IdentifierAdapter.class),
     @XmlJavaTypeAdapter(InstrumentAdapter.class),
@@ -87,3 +88,4 @@ import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
+import org.geotoolkit.internal.jaxb.uom.DateAdapter;

@@ -24,6 +24,7 @@ import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import org.opengis.metadata.quality.DataQuality;
@@ -48,6 +49,9 @@ import org.geotoolkit.xml.Namespaces;
     "qualityInfo"
 })
 @XmlRootElement(name = "MI_GeolocationInformation", namespace = Namespaces.GMI)
+@XmlSeeAlso({
+    DefaultGCPCollection.class
+})
 public class AbstractGeolocationInformation extends MetadataEntity implements GeolocationInformation {
     /**
      * Serial number for inter-operability with different versions.

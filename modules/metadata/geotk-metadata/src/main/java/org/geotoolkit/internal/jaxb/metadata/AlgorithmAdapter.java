@@ -18,8 +18,9 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.metadata.iso.lineage.DefaultAlgorithm;
 import org.opengis.metadata.lineage.Algorithm;
+import org.geotoolkit.metadata.iso.lineage.DefaultAlgorithm;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -27,7 +28,8 @@ import org.opengis.metadata.lineage.Algorithm;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.17
  *
  * @since 3.02
  * @module
@@ -66,7 +68,7 @@ public final class AlgorithmAdapter extends MetadataAdapter<AlgorithmAdapter,Alg
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "LE_Algorithm")
+    @XmlElement(name = "LE_Algorithm", namespace = Namespaces.GMI)
     public DefaultAlgorithm getElement() {
         final Algorithm metadata = this.metadata;
         return (metadata instanceof DefaultAlgorithm) ?

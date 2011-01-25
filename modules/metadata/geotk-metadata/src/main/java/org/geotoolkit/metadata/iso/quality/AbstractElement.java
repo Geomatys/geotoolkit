@@ -47,7 +47,8 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.04
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -69,7 +70,8 @@ import org.geotoolkit.resources.Errors;
     AbstractLogicalConsistency.class,
     AbstractPositionalAccuracy.class,
     AbstractThematicAccuracy.class,
-    AbstractTemporalAccuracy.class
+    AbstractTemporalAccuracy.class,
+    DefaultUsability.class
 })
 public class AbstractElement extends MetadataEntity implements Element {
     /**

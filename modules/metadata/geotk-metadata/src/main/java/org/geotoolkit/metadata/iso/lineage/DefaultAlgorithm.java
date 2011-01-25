@@ -38,7 +38,8 @@ import org.geotoolkit.xml.Namespaces;
  * readings.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -84,7 +85,7 @@ public class DefaultAlgorithm extends MetadataEntity implements Algorithm {
      * Returns the information identifying the algorithm and version or date.
      */
     @Override
-    @XmlElement(name = "citation")
+    @XmlElement(name = "citation", namespace = Namespaces.GMI)
     public synchronized Citation getCitation() {
         return citation;
     }
@@ -103,7 +104,7 @@ public class DefaultAlgorithm extends MetadataEntity implements Algorithm {
      * Returns the information describing the algorithm used to generate the data.
      */
     @Override
-    @XmlElement(name = "description")
+    @XmlElement(name = "description", namespace = Namespaces.GMI)
     public synchronized InternationalString getDescription() {
         return description;
     }

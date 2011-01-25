@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.metadata.content.PolarizationOrientation;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -27,7 +28,8 @@ import org.opengis.metadata.content.PolarizationOrientation;
  * of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.17
  *
  * @since 3.02
  * @module
@@ -75,7 +77,7 @@ public final class PolarizationOrientationAdapter extends CodeListAdapter<Polari
      * @return The value to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_PolarizationOrientationCode")
+    @XmlElement(name = "MI_PolarizationOrientationCode", namespace = Namespaces.GMI)
     public CodeListProxy getElement() {
         return proxy;
     }

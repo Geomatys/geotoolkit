@@ -36,7 +36,8 @@ import org.geotoolkit.xml.Namespaces;
  * Report of what occurred during the process step.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -88,7 +89,7 @@ public class DefaultProcessStepReport extends MetadataEntity implements ProcessS
      * Returns the name of the processing report.
      */
     @Override
-    @XmlElement(name = "name")
+    @XmlElement(name = "name", namespace = Namespaces.GMI)
     public synchronized InternationalString getName() {
         return name;
     }
@@ -108,7 +109,7 @@ public class DefaultProcessStepReport extends MetadataEntity implements ProcessS
      * {@code null} if unspecified.
      */
     @Override
-    @XmlElement(name = "description")
+    @XmlElement(name = "description", namespace = Namespaces.GMI)
     public synchronized InternationalString getDescription() {
         return description;
     }
@@ -128,7 +129,7 @@ public class DefaultProcessStepReport extends MetadataEntity implements ProcessS
      * unspecified.
      */
     @Override
-    @XmlElement(name = "fileType")
+    @XmlElement(name = "fileType", namespace = Namespaces.GMI)
     public synchronized InternationalString getFileType() {
         return fileType;
     }

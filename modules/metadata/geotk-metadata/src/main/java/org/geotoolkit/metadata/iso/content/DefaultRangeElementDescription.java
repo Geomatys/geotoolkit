@@ -91,7 +91,7 @@ public class DefaultRangeElementDescription extends MetadataEntity implements Ra
      * Returns the designation associated with a set of range elements.
      */
     @Override
-    @XmlElement(name = "name")
+    @XmlElement(name = "name", namespace = Namespaces.GMI)
     public synchronized InternationalString getName() {
         return name;
     }
@@ -110,7 +110,7 @@ public class DefaultRangeElementDescription extends MetadataEntity implements Ra
      * Returns the description of a set of specific range elements.
      */
     @Override
-    @XmlElement(name = "definition")
+    @XmlElement(name = "definition", namespace = Namespaces.GMI)
     public synchronized InternationalString getDefinition() {
         return definition;
     }
@@ -118,7 +118,7 @@ public class DefaultRangeElementDescription extends MetadataEntity implements Ra
     /**
      * Sets the description of a set of specific range elements.
      *
-     * @param newValue The new defintion value.
+     * @param newValue The new definition value.
      */
     public synchronized void setDefinition(final InternationalString newValue) {
         checkWritePermission();
@@ -132,7 +132,7 @@ public class DefaultRangeElementDescription extends MetadataEntity implements Ra
      * @todo implements {@link Record} in order to use the annotation.
      */
     @Override
-    //@XmlElement(name = "rangeElement")
+    //@XmlElement(name = "rangeElement", namespace = Namespaces.GMI)
     public synchronized Collection<Record> getRangeElements() {
         return rangeElements = nonNullCollection(rangeElements, Record.class);
     }

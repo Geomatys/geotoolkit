@@ -34,6 +34,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -41,7 +42,8 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * in the process step.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -55,7 +57,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "runTimeParameter",
     "algorithms"
 })
-@XmlRootElement(name = "LE_Processing")
+@XmlRootElement(name = "LE_Processing", namespace = Namespaces.GMI)
 public class DefaultProcessing extends MetadataEntity implements Processing {
     /**
      * Serial number for inter-operability with different versions.
@@ -112,7 +114,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      * Returns the information to identify the processing package that produced the data.
      */
     @Override
-    @XmlElement(name = "identifier")
+    @XmlElement(name = "identifier", namespace = Namespaces.GMI)
     public synchronized Identifier getIdentifier() {
         return identifier;
     }
@@ -131,7 +133,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      * Returns the reference to document describing processing software.
      */
     @Override
-    @XmlElement(name = "softwareReference")
+    @XmlElement(name = "softwareReference", namespace = Namespaces.GMI)
     public synchronized Collection<Citation> getSoftwareReferences() {
         return xmlOptional(softwareReferences = nonNullCollection(softwareReferences, Citation.class));
     }
@@ -149,7 +151,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      * Returns the additional details about the processing procedures. {@code null} if unspecified.
      */
     @Override
-    @XmlElement(name = "procedureDescription")
+    @XmlElement(name = "procedureDescription", namespace = Namespaces.GMI)
     public synchronized InternationalString getProcedureDescription() {
         return procedureDescription;
     }
@@ -168,7 +170,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      * Returns the reference to documentation describing the processing.
      */
     @Override
-    @XmlElement(name = "documentation")
+    @XmlElement(name = "documentation", namespace = Namespaces.GMI)
     public synchronized Collection<Citation> getDocumentations() {
         return xmlOptional(documentations = nonNullCollection(documentations, Citation.class));
     }
@@ -187,7 +189,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      * {@code null} if unspecified.
      */
     @Override
-    @XmlElement(name = "runTimeParameter")
+    @XmlElement(name = "runTimeParameter", namespace = Namespaces.GMI)
     public synchronized InternationalString getRunTimeParameter() {
         return runTimeParameter;
     }
@@ -207,7 +209,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      * instrument readings.
      */
     @Override
-    @XmlElement(name = "algorithm")
+    @XmlElement(name = "algorithm", namespace = Namespaces.GMI)
     public synchronized Collection<Algorithm> getAlgorithms() {
         return xmlOptional(algorithms = nonNullCollection(algorithms, Algorithm.class));
     }

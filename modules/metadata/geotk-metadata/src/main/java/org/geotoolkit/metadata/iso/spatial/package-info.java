@@ -62,6 +62,7 @@
     @XmlJavaTypeAdapter(GeometricObjectTypeAdapter.class),
     @XmlJavaTypeAdapter(GeometricObjectsAdapter.class),
     @XmlJavaTypeAdapter(PixelOrientationAdapter.class),
+    @XmlJavaTypeAdapter(ReferenceSystemAdapter.class),
     @XmlJavaTypeAdapter(TopologyLevelAdapter.class),
     @XmlJavaTypeAdapter(GeometryAdapter.class),
 
