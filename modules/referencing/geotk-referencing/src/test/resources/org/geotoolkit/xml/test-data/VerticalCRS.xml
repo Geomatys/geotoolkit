@@ -4,7 +4,7 @@
     <gco:CharacterString>20090901</gco:CharacterString>
   </gmd:fileIdentifier>
   <gmd:language>
-    <gco:CharacterString>eng</gco:CharacterString>
+    <gmd:LanguageCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#LanguageCode" codeListValue="eng">English</gmd:LanguageCode>
   </gmd:language>
   <gmd:characterSet>
     <gmd:MD_CharacterSetCode codeList="http://www.tc211.org/ISO19139/resources/codeList.xml#utf8" codeListValue="utf8"/>

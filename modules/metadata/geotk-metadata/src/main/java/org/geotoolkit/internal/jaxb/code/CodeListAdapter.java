@@ -23,7 +23,20 @@ import org.geotoolkit.internal.CodeLists;
 
 
 /**
- * An adapter for {@link CodeList}, in order to implement the ISO-19139 standard.
+ * An adapter for {@link CodeList}, in order to implement the ISO-19139 standard. This object
+ * wraps a {@link CodeListProxy}, which contains {@link CodeListProxy#codeList codeList} and
+ * {@link CodeListProxy#codeListValue codeListValue} attributes. The result looks like below:
+ *
+ * {@preformat xml
+ *   <dateType>
+ *     <CI_DateTypeCode codeList="../Codelist/ML_gmxCodelists.xml#CI_DateTypeCode" codeListValue="revision" codeSpace="fra">
+ *       révision
+ *     </CI_DateTypeCode>
+ *   </dateType>
+ * }
+ *
+ * A subclass must exist for each code list, with a {@link #getElement()} method having a
+ * {@code @XmlElement} annotation.
  *
  * @param <ValueType> The subclass implementing this adapter.
  * @param <BoundType> The code list being adapted.
@@ -31,6 +44,8 @@ import org.geotoolkit.internal.CodeLists;
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.05
+ *
+ * @see CodeListLocaleAdapter
  *
  * @since 2.5
  * @module
@@ -60,7 +75,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
     }
 
     /**
-     * Forces the initialisation of the given code list class, since some
+     * Forces the initialization of the given code list class, since some
      * calls to {@link CodeList#valueOf} are done whereas the constructor
      * has not already been called.
      *

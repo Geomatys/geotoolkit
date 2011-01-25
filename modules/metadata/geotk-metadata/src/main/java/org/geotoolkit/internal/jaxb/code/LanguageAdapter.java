@@ -25,9 +25,21 @@ import javax.xml.bind.annotation.XmlElement;
  * JAXB adapter for {@link Locale}, in order to integrate the value in an element respecting
  * the ISO-19139 standard. See package documentation for more information about the handling
  * of {@code CodeList} in ISO-19139.
+ * <p>
+ * This adapter formats the locale like below:
+ *
+ * {@preformat xml
+ *   <gmd:language>
+ *     <gmd:LanguageCode codeList="http://(...snip...)" codeListValue="eng">
+ *       English
+ *     </gmd:LanguageCode>
+ *   </gmd:language>
+ * }
+ *
+ * For an alternative (simpler) format, see {@link org.geotoolkit.internal.jaxb.text.LocaleAdapter}.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.17
  *
  * @since 2.5
  * @module
@@ -50,7 +62,7 @@ public final class LanguageAdapter extends CodeListLocaleAdapter<LanguageAdapter
      * {@inheritDoc}
      */
     @Override
-    protected LanguageAdapter wrap(CodeListProxy proxy) {
+    protected LanguageAdapter wrap(final CodeListProxy proxy) {
         return new LanguageAdapter(proxy);
     }
 
@@ -59,8 +71,9 @@ public final class LanguageAdapter extends CodeListLocaleAdapter<LanguageAdapter
      *
      * @return The value to be marshalled.
      */
+    @Override
     @XmlElement(name = "LanguageCode")
-    public CodeListProxy getCodeListProxy() {
+    public CodeListProxy getElement() {
         return proxy;
     }
 
@@ -69,7 +82,7 @@ public final class LanguageAdapter extends CodeListLocaleAdapter<LanguageAdapter
      *
      * @param proxy The unmarshalled value.
      */
-    public void setCodeListProxy(final CodeListProxy proxy) {
+    public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
 }

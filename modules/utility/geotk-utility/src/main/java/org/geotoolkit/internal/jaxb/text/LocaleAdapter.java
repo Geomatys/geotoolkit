@@ -25,7 +25,15 @@ import org.geotoolkit.resources.Locales;
 
 /**
  * JAXB adapter for {@link Locale}, in order to integrate the value in a element
- * complying with ISO-19139 standard.
+ * complying with ISO-19139 standard. This adapter formats the locale like below:
+ *
+ * {@preformat xml
+ *   <gmd:language>
+ *     <gco:CharacterString>eng</gco:CharacterString>
+ *   </gmd:language>
+ * }
+ *
+ * For an alternative format, see {@link org.geotoolkit.internal.jaxb.code.LanguageAdapter}.
  *
  * @author Cédric Briançon (Geomatys)
  * @version 3.04

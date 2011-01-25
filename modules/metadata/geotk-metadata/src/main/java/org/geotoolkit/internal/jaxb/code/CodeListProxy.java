@@ -17,23 +17,34 @@
  */
 package org.geotoolkit.internal.jaxb.code;
 
+import java.util.Locale;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlValue;
 import org.opengis.util.CodeList;
 
 
 /**
  * Stores information about {@link CodeList}, in order to handle format defined in ISO-19139
- * about the {@code CodeList} tags.
+ * about the {@code CodeList} tags. This object is wrapped by {@link CodeListAdapter} or, in
+ * the spacial case of {@link Locale} type, by {@link CodeListLocaleAdapter}. It provides the
+ * {@link #codeList} and {@link #codeListValue} attribute to be marshalled.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.17
+ *
+ * @see CodeListAdapter
+ * @see CodeListLocaleAdapter
  *
  * @since 2.5
  * @module
+ *
+ * @todo JAXB BUG: Properties must be declared in reverse order. This is fixed in a JAXB version
+ *       more recent than the one provided in the JDK. The test failure will fail when the bug
+ *       will be fixed, which will remind us to restore the correct order.
  */
-@XmlType(name = "CodeList", propOrder = { "codeListValue", "codeList" })
+@XmlType(name = "CodeList", propOrder = { "codeSpace", "codeListValue", "codeList" })
 public final class CodeListProxy {
     /**
      * Default common URL path for the {@code codeList} attribute value.
@@ -53,6 +64,29 @@ public final class CodeListProxy {
     public String codeListValue;
 
     /**
+     * The optional {@code codeSpace} attribute in the XML element. The default value is
+     * {@code null}. If a value is provided in this field, then {@link #value} should be
+     * set as well.
+     * <p>
+     * This attribute is set to the 3 letters language code of the {@link #value} attribute,
+     * as returned by {@link Locale#getISO3Language()}.
+     *
+     * @since 3.17
+     */
+    @XmlAttribute
+    public String codeSpace;
+
+    /**
+     * The optional value to write in the XML element. The default value is {@code null}.
+     * If a value is provided in this field, then {@link #codeSpace} is the language code
+     * of this field or {@code null} for English.
+     *
+     * @since 3.17
+     */
+    @XmlValue
+    public String value;
+
+    /**
      * Default empty constructor for JAXB.
      */
     public CodeListProxy() {
@@ -63,10 +97,13 @@ public final class CodeListProxy {
      *
      * @param codeList The {@code codeList} attribute, without the URL path.
      * @param codeListValue The {@code codeListValue} attribute.
+     * @param value The value to provide, in English language (because this
+     *        constructor does not set the {@link #codeSpace} attribute).
      */
-    CodeListProxy(final String codeList, final String codeListValue) {
+    CodeListProxy(final String codeList, final String codeListValue, final String value) {
         this.codeList = URL.concat(codeList);
         this.codeListValue = codeListValue;
+        this.value = value;
     }
 
     /**

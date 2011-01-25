@@ -48,6 +48,7 @@ import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
+import org.geotoolkit.internal.jaxb.code.LanguageAdapter;
 import org.geotoolkit.xml.Namespaces;
 
 
@@ -276,6 +277,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      */
     @Override
     @XmlElement(name = "language")
+    @XmlJavaTypeAdapter(LanguageAdapter.class)
     public synchronized Locale getLanguage() {
         return language;
     }

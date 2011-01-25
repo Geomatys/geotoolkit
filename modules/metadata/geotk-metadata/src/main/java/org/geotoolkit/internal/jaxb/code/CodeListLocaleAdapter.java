@@ -25,15 +25,29 @@ import org.geotoolkit.resources.Locales;
 
 
 /**
- * JAXB adapter for {@link Locale}, in order to integrate the value in an element respecting
- * the ISO-19139 standard. See package documentation for more information about the handling
- * of {@code CodeList} in ISO-19139.
+ * An adapter for {@link Locale} marshalled as {@link CodeList}, in order to integrate the value
+ * in an element respecting the ISO-19139 standard. This object wraps a {@link CodeListProxy} in
+ * a way similar to {@link CodeListAdapter}, but specialized for the {@code Locale} Java type.
+ * The result looks like below:
+ *
+ * {@preformat xml
+ *   <languageCode>
+ *     <LanguageCode codeList="../Codelist/ML_gmxCodelists.xml#LanguageCode" codeListValue="fra">
+ *       French
+ *     </LanguageCode>
+ *   </languageCode>
+ * }
+ *
+ * A subclass must exist for each code list, with a {@link #getElement()} method having a
+ * {@code @XmlElement} annotation. At this time, {@link LanguageAdapter} is the only subclass.
  *
  * @param <ValueType> The subclass implementing this adapter.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.17
+ *
+ * @see CodeListAdapter
  *
  * @since 2.5
  * @module
@@ -97,6 +111,20 @@ public abstract class CodeListLocaleAdapter<ValueType extends CodeListLocaleAdap
         if (value == null) {
             return null;
         }
-        return wrap(new CodeListProxy("LanguageCode", Locales.getLanguage(value)));
+        return wrap(new CodeListProxy("LanguageCode", Locales.getLanguage(value), value.getDisplayName(Locale.ENGLISH)));
     }
+
+    /**
+     * Invoked by JAXB on marshalling. Subclasses must override this
+     * method with the appropriate {@code @XmlElement} annotation.
+     *
+     * @return The {@code CodeList} value to be marshalled.
+     */
+    public abstract CodeListProxy getElement();
+
+    /*
+     * We do not define setter method (even abstract) since it seems to confuse JAXB.
+     * It is subclasses responsibility to define the setter method. The existence of
+     * this setter will be tested by MetadataAnnotationsTest.
+     */
 }
