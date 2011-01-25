@@ -21,6 +21,7 @@ import java.util.Locale;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.opengis.annotation.UML;
 import org.opengis.util.CodeList;
 
 
@@ -47,9 +48,16 @@ import org.opengis.util.CodeList;
 @XmlType(name = "CodeList", propOrder = { "codeSpace", "codeListValue", "codeList" })
 public final class CodeListProxy {
     /**
+     * The base directory of code lists.
+     *
+     * @since 3.17
+     */
+    public static final String BASE_URL = "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/";
+
+    /**
      * Default common URL path for the {@code codeList} attribute value.
      */
-    private static final String URL = "http://www.tc211.org/ISO19139/resources/codeList.xml#";
+    private static final String URL = BASE_URL + "gmxCodelists.xml#";
 
     /**
      * The {@code codeList} attribute in the XML element.
@@ -95,15 +103,15 @@ public final class CodeListProxy {
     /**
      * Builds a {@link CodeList} as defined in ISO-19139 standard.
      *
-     * @param codeList The {@code codeList} attribute, without the URL path.
+     * @param codeList The {@code codeList} attribute, <strong>including</strong> the URL path.
      * @param codeListValue The {@code codeListValue} attribute.
      * @param value The value to provide, in English language (because this
      *        constructor does not set the {@link #codeSpace} attribute).
      */
     CodeListProxy(final String codeList, final String codeListValue, final String value) {
-        this.codeList = URL.concat(codeList);
+        this.codeList      = codeList;
         this.codeListValue = codeListValue;
-        this.value = value;
+        this.value         = value;
     }
 
     /**
@@ -113,9 +121,21 @@ public final class CodeListProxy {
      * @param code The code list to wrap.
      */
     CodeListProxy(final CodeList<?> code) {
-        String identifier = code.identifier();
+        // Get the class identifier.
+        final Class<?> type = code.getClass();
+        final UML uml = type.getAnnotation(UML.class);
+        String identifier = null;
+        if (uml != null) {
+            identifier = uml.identifier();
+        }
+        if (identifier == null || (identifier = identifier.trim()).length() == 0) {
+            identifier = type.getSimpleName();
+        }
+        codeList = URL.concat(identifier);
+
+        // Get the field identifier.
+        identifier = code.identifier();
         codeListValue = (identifier != null &&
                 (identifier = identifier.trim()).length() != 0) ? identifier : code.name();
-        codeList = URL.concat(codeListValue);
     }
 }
