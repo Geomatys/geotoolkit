@@ -22,7 +22,6 @@ import java.awt.Color;
 import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Collection;
 import java.util.Date;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
@@ -32,11 +31,9 @@ import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellEditor;
 import javax.swing.table.TableCellRenderer;
-import javax.swing.tree.DefaultTreeModel;
-import javax.swing.tree.TreeModel;
+import javax.swing.tree.TreePath;
 
 import org.geotoolkit.feature.DefaultName;
-import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
@@ -51,7 +48,6 @@ import org.netbeans.swing.outline.RowModel;
 
 import org.opengis.feature.ComplexAttribute;
 import org.opengis.feature.Property;
-import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
@@ -69,9 +65,8 @@ public class JFeatureOutLine extends Outline{
     private static final ImageIcon ICON_OCC_ADD = IconBundle.getIcon("16_occurence_add");
     private static final ImageIcon ICON_OCC_REMOVE = IconBundle.getIcon("16_occurence_remove");
 
-
-
     private final PropertyRowModel rowModel = new PropertyRowModel();
+    private FeatureTreeModel treeModel = null;
     private Property edited = null;
     
     public JFeatureOutLine(){
@@ -88,8 +83,8 @@ public class JFeatureOutLine extends Outline{
      */
     public void setEdited(final Property property){
         this.edited = property;
-        final TreeModel model = new DefaultTreeModel(toNode(property));
-        setModel(DefaultOutlineModel.createOutlineModel(model, rowModel));
+        treeModel = new FeatureTreeModel(property);
+        setModel(DefaultOutlineModel.createOutlineModel(treeModel, rowModel));
         setRootVisible(!(property instanceof ComplexAttribute));
         getColumnModel().getColumn(0).setMinWidth(100);
         getColumnModel().getColumn(2).setMaxWidth(26);
@@ -135,62 +130,7 @@ public class JFeatureOutLine extends Outline{
         }
         return super.getCellRenderer(row, column);
     }
-      
-    private static MutableTreeNode toNode(final Property property){
-        final EleNode node = new EleNode(property);
-        
-        if(property instanceof ComplexAttribute){
-            final ComplexAttribute catt = (ComplexAttribute) property;
-            final ComplexType type = catt.getType();
-
-            for(PropertyDescriptor desc : type.getDescriptors()){
-                final Collection<Property> values = catt.getProperties(desc.getName());
-
-                final boolean arrayType = desc.getMaxOccurs() > 1;
-
-                if(values.isEmpty()){
-                    node.add(new EleNode(desc));
-                }else{
-                    if(arrayType){
-                        final EleNode descNode = new EleNode(desc);
-                        for(Property val : values){
-                            descNode.add(toNode(val));
-                        }
-                        node.add(descNode);
-                    }else{
-                        //there shoud be only one
-                        node.add(toNode(values.iterator().next()));
-                    }
-                }
-
-            }
-
-        }
-        return node;
-    }
-
-    private static class EleNode extends DefaultMutableTreeNode{
-
-        public EleNode(Object obj) {
-            super(obj);
-        }
-
-        @Override
-        public String toString() {
-
-            if(userObject instanceof Property){
-                final Name name = ((Property)getUserObject()).getName();
-                return String.valueOf(name);
-            }else if(userObject instanceof PropertyDescriptor){
-                final Name name = ((PropertyDescriptor)getUserObject()).getName();
-                return String.valueOf(name);
-            }
-
-            return super.toString();
-        }
-
-    }
-        
+    
     private class PropertyRowModel implements RowModel{
         
         @Override
@@ -388,7 +328,17 @@ public class JFeatureOutLine extends Outline{
         @Override
         public Component getTableCellEditorComponent(final JTable table, final Object value,
                 final boolean isSelected, final int row, final int column) {
-            return getActionComponent((JFeatureOutLine)table,value);
+            Component comp = getActionComponent((JFeatureOutLine)table, value);
+            if(comp instanceof JButton){
+                ((JButton)comp).addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        fireEditingStopped();
+                    }
+                });
+            }
+
+            return comp;
         }
         @Override
         public Object getCellEditorValue() {
@@ -396,21 +346,7 @@ public class JFeatureOutLine extends Outline{
         }
     }
 
-    private static ComplexAttribute getParent(MutableTreeNode node){
-        node = (MutableTreeNode) node.getParent();
-        if(node == null){
-            return null;
-        }
-
-        final Object userObject = node.getUserObject();
-        if(userObject instanceof ComplexAttribute){
-            return (ComplexAttribute) userObject;
-        }else{
-            return getParent(node);
-        }
-    }
-
-    public static Component getActionComponent(final JFeatureOutLine outline, final Object value) {
+    public Component getActionComponent(final JFeatureOutLine outline, final Object value) {
         
         final DefaultMutableTreeNode node = (DefaultMutableTreeNode) value;
         
@@ -418,9 +354,8 @@ public class JFeatureOutLine extends Outline{
             return new JLabel();
         }
 
+        final TreePath path = new TreePath(node.getPath());
         final Object obj = node.getUserObject();
-
-        final ComplexAttribute parent = getParent(node);
 
         if(obj instanceof PropertyDescriptor){
             final PropertyDescriptor desc = (PropertyDescriptor) obj;
@@ -435,9 +370,7 @@ public class JFeatureOutLine extends Outline{
                 butAdd.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        final Property prop = FeatureUtilities.defaultProperty(desc);
-                        ((Collection)parent.getValue()).add(prop);
-                        outline.setEdited(outline.getEdited());
+                        treeModel.createProperty(path);
                     }
                 });
                 return butAdd;
@@ -456,8 +389,7 @@ public class JFeatureOutLine extends Outline{
                 butRemove.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        parent.getValue().remove(prop);
-                        outline.setEdited(outline.getEdited());
+                        treeModel.removeProperty(path);
                     }
                 });
                 return butRemove;
