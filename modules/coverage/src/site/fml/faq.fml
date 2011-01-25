@@ -30,17 +30,21 @@ No suitable image reader for this input.</pre></blockquote>
 
         <p>The reason is that <cite>World file</cite> and GeoTIFF image readers need an other
         "plain" TIFF image reader for reading pixel values. They are basically wrappers around
-        a "plain" reader adding geographic metadata parsing capability. A standard TIFF image
-        reader is provided in the <cite>Image I/O extension for JAI</cite> library, which must
-        be reachable on the classpath.</p>
+        a "plain" reader adding geographic metadata parsing capability.</p>
 
-        <p>However in the particular case of applets, having the JAI library on the classpath
-        is not sufficient. For unknown reasons, the automatic Image I/O registration doesn't
-        seem to work in applet context. Registration must be forced programmatically as below:</p>
+        <p>A standard TIFF image reader is provided in the <cite>Image I/O extension for JAI</cite>
+        library, which must be reachable on the classpath. However in the particular case of applets,
+        having the JAI library on the classpath is not sufficient. For unknown reasons, the automatic
+        Image I/O registration doesn't seem to work in applet context. Registration must be forced
+        programmatically as below:</p>
 
 <blockquote><pre>import javax.imageio.spi.IIORegistry;
 import com.sun.media.imageioimpl.plugins.tiff.TIFFImageReaderSpi;
+import org.geotoolkit.image.io.plugin.WorldFileImageReader;
+import org.geotoolkit.image.io.plugin.GeoTiffImageReader;
+
 <i>(...snip...)</i>
+
 IIORegistry registry = IIORegistry.getDefaultInstance();
 registry.registerServiceProvider(new TIFFImageReaderSpi(), ImageReaderSpi.class);
 registry.registerServiceProvider(new GeoTiffImageReader.Spi("TIFF"), ImageReaderSpi.class);
@@ -56,7 +60,7 @@ WorldFileImageReader.Spi.registerDefaults(registry);
         <p>When using the Java Image I/O API, this kind of information can be stored in an
         <code><a href="http://download.oracle.com/javase/6/docs/api/javax/imageio/metadata/IIOMetadata.html">IIOMetadata</a></code>
         object. The Geotk project defines a format-neutral
-        <code><a href="../../apidocs/org/geotoolkit/image/io/metadata/SpatialMetadataFormat.html#default-formats">spatial format</a></code>
+        <a href="../../apidocs/org/geotoolkit/image/io/metadata/SpatialMetadataFormat.html#default-formats">spatial format</a>
         as a subset of the ISO 19115-2 metadata standard with few additions. If the NetCDF file
         defines explicit minimal and maximal values, then they should appear in the
         <code>minValue</code> and <code>maxValue</code> nodes of the above-cited metadata tree.
@@ -74,13 +78,14 @@ SampleDimension firstBand = bands.get(0);
 Double minValue = firstBand.getMinValue(); // <i>WARNING: Can be null!</i>
 Double maxValue = firstBand.getMaxValue(); // <i>WARNING: Can be null!</i></pre></blockquote>
 
-        <p><b>Tip:</b> If you wish to explore visually the metadata found in the NetCDF file, the
-        following widget (defined in the <code>geotk-widgets-swing</code> module) may be useful:</p>
+        <p><b>Tip:</b> If you wish to explore visually the metadata found in the NetCDF file, then the
+        <code><a href="../../apidocs/org/geotoolkit/gui/swing/image/ImageFileChooser.html">ImageFileChooser</a></code>
+        widget (defined in the <code>geotk-widgets-swing</code> module) may be useful:</p>
 
 <blockquote><pre>ImageFileChooser chooser = new ImageFileChooser("NetCDF", true);
 chooser.showOpenDialog(null);</pre></blockquote>
 
-        <p>Then select the NetCDF file, click on the "<cite>Metadata</cite>" tabs on the right side
+        <p>Select the NetCDF file, click on the "<cite>Metadata</cite>" tabs on the right side
         and select the metadata format in the combo box. The metadata tree should appear just below
         the combo box.</p>
       </answer>

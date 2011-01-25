@@ -31,6 +31,8 @@ package org.geotoolkit.util;
  * @author Martin Desruisseaux (IRD)
  * @version 3.00
  *
+ * @see Utilities#ensureNonNull(String, Object)
+ *
  * @since 3.00
  * @module
  */

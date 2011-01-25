@@ -194,12 +194,12 @@ public final class Units {
     }
 
     /**
-     * Makes sure that the specified unit is a temporal one.
-     * If the given argument is {@code null}, then this method does nothing.
+     * Makes sure that the specified unit is either null or a temporal unit.
+     * This method is used for argument checks in constructors and setter methods.
      *
      * @param  unit The unit to check, or {@code null} if none.
      * @return The given {@code unit} argument, which may be null.
-     * @throws IllegalArgumentException if {@code unit} is not a temporal unit.
+     * @throws IllegalArgumentException if {@code unit} is non-null and not a temporal unit.
      *
      * @see #isTemporal(Unit)
      *
@@ -214,12 +214,12 @@ public final class Units {
     }
 
     /**
-     * Makes sure that the specified unit is a linear one.
-     * If the given argument is {@code null}, then this method does nothing.
+     * Makes sure that the specified unit is either null or a linear unit.
+     * This method is used for argument checks in constructors and setter methods.
      *
      * @param  unit The unit to check, or {@code null} if none.
      * @return The given {@code unit} argument, which may be null.
-     * @throws IllegalArgumentException if {@code unit} is not a linear unit.
+     * @throws IllegalArgumentException if {@code unit} is non-null and not a linear unit.
      *
      * @see #isLinear(Unit)
      *
@@ -234,12 +234,12 @@ public final class Units {
     }
 
     /**
-     * Makes sure that the specified unit is an angular one.
-     * If the given argument is {@code null}, then this method does nothing.
+     * Makes sure that the specified unit is either null or an angular unit.
+     * This method is used for argument checks in constructors and setter methods.
      *
      * @param  unit The unit to check, or {@code null} if none.
      * @return The given {@code unit} argument, which may be null.
-     * @throws IllegalArgumentException if {@code unit} is not an angular unit.
+     * @throws IllegalArgumentException if {@code unit} is non-null and not an angular unit.
      *
      * @see #isAngular(Unit)
      *
@@ -254,12 +254,12 @@ public final class Units {
     }
 
     /**
-     * Makes sure that the specified unit is a scale one.
-     * If the given argument is {@code null}, then this method does nothing.
+     * Makes sure that the specified unit is either null or a scale unit.
+     * This method is used for argument checks in constructors and setter methods.
      *
      * @param  unit The unit to check, or {@code null} if none.
      * @return The given {@code unit} argument, which may be null.
-     * @throws IllegalArgumentException if {@code unit} is not a scale unit.
+     * @throws IllegalArgumentException if {@code unit} is non-null and not a scale unit.
      *
      * @see #isScale(Unit)
      *

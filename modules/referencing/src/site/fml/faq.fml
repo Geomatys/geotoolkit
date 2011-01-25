@@ -420,11 +420,10 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
         <p>The results of coordinates converted when running in a web application container (JBoss,
         <i>etc.</i>) may be a few meters off compared to coordinates converted in an IDE (NetBeans,
         Eclipse, <i>etc.</i>). The results depend on whatever an EPSG factory is available on the
-        classpath, <em>no matter how the CRS were created</em>, because the EPSG factory is not
-        only a CRS database. For some pairs of CRS, the EPSG factory specifies also explicitly the
-        coordinate operation to apply. In such case, the coordinate operation specified by EPSG has
-        precedence over the Burwa-Wolf parameters (the <code>TOWGS84</code> element in <cite>Well
-        Known Text</cite>).</p>
+        classpath, <em>no matter how the CRS were created</em>, because the EPSG factory specifies
+        explicitly the coordinate operation to apply for some pair of CRS. In such case, the
+        coordinate operation specified by EPSG has precedence over the Burwa-Wolf parameters
+        (the <code>TOWGS84</code> element in <cite>Well Known Text</cite>).</p>
 
         <p>A connection to the EPSG database may have been established for one environment (typically
         the JEE one) and not the other (typically the IDE one) because only the former has JDBC driver.
