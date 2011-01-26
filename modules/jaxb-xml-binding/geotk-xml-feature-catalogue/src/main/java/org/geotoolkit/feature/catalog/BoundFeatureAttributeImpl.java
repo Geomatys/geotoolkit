@@ -109,7 +109,9 @@ public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referen
     }
     
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
-        alreadySee.put(id, this);
+        if (id != null && !id.isEmpty()) {
+            alreadySee.put(id, this);
+        }
         
         if (featureType != null) {
             if (alreadySee.get(featureType.getId()) != null) {
