@@ -180,7 +180,7 @@ public class WmsXmlBindingTest {
         "            </gmd:linkage>" + '\n' +
         "        </inspire_vs:MetadataUrl>" + '\n' +
         "        <inspire_vs:ResourceType>" + '\n' +
-        "            <gmd:MD_ScopeCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#service\" codeListValue=\"service\"/>" + '\n' +
+        "            <gmd:MD_ScopeCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#MD_ScopeCode\" codeListValue=\"service\"/>" + '\n' +
         "        </inspire_vs:ResourceType>" + '\n' +
         "        <inspire_vs:TemporalRefererence>" + '\n' +
         "            <gmd:EX_Extent>" + '\n' +
@@ -226,19 +226,19 @@ public class WmsXmlBindingTest {
         "                                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
         "                                                </gmd:linkage>" + '\n' +
         "                                                <gmd:function>" + '\n' +
-        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#information\" codeListValue=\"information\"/>" + '\n' +
+        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
         "                                                </gmd:function>" + '\n' +
         "                                            </gmd:CI_OnlineResource>" + '\n' +
         "                                        </gmd:onlineResource>" + '\n' +
         "                                    </gmd:CI_Contact>" + '\n' +
         "                                </gmd:contactInfo>" + '\n' +
         "                                <gmd:role>" + '\n' +
-        "                                    <gmd:CI_RoleCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#principalInvestigator\" codeListValue=\"principalInvestigator\"/>" + '\n' +
+        "                                    <gmd:CI_RoleCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\"/>" + '\n' +
         "                                </gmd:role>" + '\n' +
         "                            </gmd:CI_ResponsibleParty>" + '\n' +
         "                        </gmd:citedResponsibleParty>" + '\n' +
         "                        <gmd:presentationForm>" + '\n' +
-        "                            <gmd:CI_PresentationFormCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#tableDigital\" codeListValue=\"tableDigital\"/>" + '\n' +
+        "                            <gmd:CI_PresentationFormCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_PresentationFormCode\" codeListValue=\"tableDigital\"/>" + '\n' +
         "                        </gmd:presentationForm>" + '\n' +
         "                    </gmd:CI_Citation>" + '\n' +
         "                </gmd:specification>" + '\n' +
@@ -268,14 +268,14 @@ public class WmsXmlBindingTest {
         "                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
         "                                </gmd:linkage>" + '\n' +
         "                                <gmd:function>" + '\n' +
-        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#information\" codeListValue=\"information\"/>" + '\n' +
+        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
         "                                </gmd:function>" + '\n' +
         "                            </gmd:CI_OnlineResource>" + '\n' +
         "                        </gmd:onlineResource>" + '\n' +
         "                    </gmd:CI_Contact>" + '\n' +
         "                </gmd:contactInfo>" + '\n' +
         "                <gmd:role>" + '\n' +
-        "                    <gmd:CI_RoleCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#principalInvestigator\" codeListValue=\"principalInvestigator\"/>" + '\n' +
+        "                    <gmd:CI_RoleCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\"/>" + '\n' +
         "                </gmd:role>" + '\n' +
         "            </gmd:CI_ResponsibleParty>" + '\n' +
         "        </inspire_vs:MetadataPointOfContact>" + '\n' +
@@ -327,7 +327,7 @@ public class WmsXmlBindingTest {
         "            </gmd:linkage>" + '\n' +
         "        </inspire_vs:MetadataUrl>" + '\n' +
         "        <inspire_vs:ResourceType>" + '\n' +
-        "            <gmd:MD_ScopeCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#service\" codeListValue=\"service\"/>" + '\n' +
+        "            <gmd:MD_ScopeCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#MD_ScopeCode\" codeListValue=\"service\"/>" + '\n' +
         "        </inspire_vs:ResourceType>" + '\n' +
         "        <inspire_vs:TemporalRefererence>" + '\n' +
         "            <gmd:EX_Extent>" + '\n' +
@@ -373,19 +373,19 @@ public class WmsXmlBindingTest {
         "                                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
         "                                                </gmd:linkage>" + '\n' +
         "                                                <gmd:function>" + '\n' +
-        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#information\" codeListValue=\"information\"/>" + '\n' +
+        "                                                    <gmd:CI_OnLineFunctionCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
         "                                                </gmd:function>" + '\n' +
         "                                            </gmd:CI_OnlineResource>" + '\n' +
         "                                        </gmd:onlineResource>" + '\n' +
         "                                    </gmd:CI_Contact>" + '\n' +
         "                                </gmd:contactInfo>" + '\n' +
         "                                <gmd:role>" + '\n' +
-        "                                    <gmd:CI_RoleCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#principalInvestigator\" codeListValue=\"principalInvestigator\"/>" + '\n' +
+        "                                    <gmd:CI_RoleCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\"/>" + '\n' +
         "                                </gmd:role>" + '\n' +
         "                            </gmd:CI_ResponsibleParty>" + '\n' +
         "                        </gmd:citedResponsibleParty>" + '\n' +
         "                        <gmd:presentationForm>" + '\n' +
-        "                            <gmd:CI_PresentationFormCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#tableDigital\" codeListValue=\"tableDigital\"/>" + '\n' +
+        "                            <gmd:CI_PresentationFormCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_PresentationFormCode\" codeListValue=\"tableDigital\"/>" + '\n' +
         "                        </gmd:presentationForm>" + '\n' +
         "                    </gmd:CI_Citation>" + '\n' +
         "                </gmd:specification>" + '\n' +
@@ -415,14 +415,14 @@ public class WmsXmlBindingTest {
         "                                    <gmd:URL>http://www.epsg.org</gmd:URL>" + '\n' +
         "                                </gmd:linkage>" + '\n' +
         "                                <gmd:function>" + '\n' +
-        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#information\" codeListValue=\"information\"/>" + '\n' +
+        "                                    <gmd:CI_OnLineFunctionCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" + '\n' +
         "                                </gmd:function>" + '\n' +
         "                            </gmd:CI_OnlineResource>" + '\n' +
         "                        </gmd:onlineResource>" + '\n' +
         "                    </gmd:CI_Contact>" + '\n' +
         "                </gmd:contactInfo>" + '\n' +
         "                <gmd:role>" + '\n' +
-        "                    <gmd:CI_RoleCode codeList=\"http://www.tc211.org/ISO19139/resources/codeList.xml#principalInvestigator\" codeListValue=\"principalInvestigator\"/>" + '\n' +
+        "                    <gmd:CI_RoleCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\"/>" + '\n' +
         "                </gmd:role>" + '\n' +
         "            </gmd:CI_ResponsibleParty>" + '\n' +
         "        </inspire_vs:MetadataPointOfContact>" + '\n' +
