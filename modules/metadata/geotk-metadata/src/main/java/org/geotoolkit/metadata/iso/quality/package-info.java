@@ -51,27 +51,27 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(ContentInformationAdapter.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(ElementAdapter.class),
-    @XmlJavaTypeAdapter(EvaluationMethodTypeAdapter.class),
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
-    @XmlJavaTypeAdapter(FormatAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(LineageAdapter.class),
-    @XmlJavaTypeAdapter(RecordTypeAdapter.class),
-    @XmlJavaTypeAdapter(ResultAdapter.class),
-    @XmlJavaTypeAdapter(ScopeAdapter.class),
-    @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
-    @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class),
-    @XmlJavaTypeAdapter(SpatialRepresentationTypeAdapter.class),
-    @XmlJavaTypeAdapter(SpatialRepresentationAdapter.class),
-    @XmlJavaTypeAdapter(UnitAdapter.class),
+    @XmlJavaTypeAdapter(CI_Citation.class),
+    @XmlJavaTypeAdapter(DQ_Element.class),
+    @XmlJavaTypeAdapter(DQ_EvaluationMethodTypeCode.class),
+    @XmlJavaTypeAdapter(DQ_Result.class),
+    @XmlJavaTypeAdapter(DQ_Scope.class),
+    @XmlJavaTypeAdapter(EX_Extent.class),
+    @XmlJavaTypeAdapter(LI_Lineage.class),
+    @XmlJavaTypeAdapter(MD_ContentInformation.class),
+    @XmlJavaTypeAdapter(MD_Format.class),
+    @XmlJavaTypeAdapter(MD_Identifier.class),
+    @XmlJavaTypeAdapter(MD_ScopeCode.class),
+    @XmlJavaTypeAdapter(MD_ScopeDescription.class),
+    @XmlJavaTypeAdapter(MD_SpatialRepresentation.class),
+    @XmlJavaTypeAdapter(MD_SpatialRepresentationTypeCode.class),
 
-    // Primitive type handling
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(UnitAdapter.class),
+    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(RecordTypeAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
 })
 package org.geotoolkit.metadata.iso.quality;
@@ -85,13 +85,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.*;
+import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.uom.DateAdapter;
-import org.geotoolkit.internal.jaxb.uom.UnitAdapter;
-import org.geotoolkit.internal.jaxb.code.EvaluationMethodTypeAdapter;
-import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
-import org.geotoolkit.internal.jaxb.code.SpatialRepresentationTypeAdapter;
-import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
-import org.geotoolkit.internal.jaxb.text.RecordTypeAdapter;
+import org.geotoolkit.internal.jaxb.primitive.*;

@@ -32,7 +32,7 @@
 @XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.FRA)
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(CitationAdapter.class)
+    @XmlJavaTypeAdapter(CI_Citation.class)
 })
 package org.geotoolkit.metadata.fra;
 
@@ -44,4 +44,4 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.metadata.CitationAdapter;
+import org.geotoolkit.internal.jaxb.metadata.CI_Citation;

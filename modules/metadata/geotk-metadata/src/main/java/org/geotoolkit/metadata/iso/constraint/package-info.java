@@ -49,9 +49,11 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(ClassificationAdapter.class),
-    @XmlJavaTypeAdapter(RestrictionAdapter.class)
+    @XmlJavaTypeAdapter(MD_ClassificationCode.class),
+    @XmlJavaTypeAdapter(MD_RestrictionCode.class),
+
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class)
 })
 package org.geotoolkit.metadata.iso.constraint;
 
@@ -64,6 +66,5 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.code.RestrictionAdapter;
-import org.geotoolkit.internal.jaxb.code.ClassificationAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.code.*;

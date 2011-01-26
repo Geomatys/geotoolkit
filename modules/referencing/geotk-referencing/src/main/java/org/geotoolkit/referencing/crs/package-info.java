@@ -77,35 +77,29 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(StringAdapter.class),
-    @XmlJavaTypeAdapter(AffineCSAdapter.class),
-    @XmlJavaTypeAdapter(CartesianCSAdapter.class),
-    @XmlJavaTypeAdapter(EllipsoidalCSAdapter.class),
-    @XmlJavaTypeAdapter(GeodeticDatumAdapter.class),
-    @XmlJavaTypeAdapter(ImageDatumAdapter.class),
-    @XmlJavaTypeAdapter(TemporalDatumAdapter.class),
-    @XmlJavaTypeAdapter(TimeCSAdapter.class),
-    @XmlJavaTypeAdapter(VerticalCSAdapter.class),
-    @XmlJavaTypeAdapter(VerticalDatumAdapter.class)
+    @XmlJavaTypeAdapter(CD_GeodeticDatum.class),
+    @XmlJavaTypeAdapter(CD_ImageDatum.class),
+    @XmlJavaTypeAdapter(CD_TemporalDatum.class),
+    @XmlJavaTypeAdapter(CD_VerticalDatum.class),
+    @XmlJavaTypeAdapter(CS_AffineCS.class),
+    @XmlJavaTypeAdapter(CS_CartesianCS.class),
+    @XmlJavaTypeAdapter(CS_EllipsoidalCS.class),
+    @XmlJavaTypeAdapter(CS_TimeCS.class),
+    @XmlJavaTypeAdapter(CS_VerticalCS.class),
+
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(StringAdapter.class)
 })
 package org.geotoolkit.referencing.crs;
 
-import javax.xml.bind.annotation.XmlAccessType;
-import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.text.StringAdapter;
-import org.geotoolkit.internal.jaxb.referencing.cs.AffineCSAdapter;
-import org.geotoolkit.internal.jaxb.referencing.cs.CartesianCSAdapter;
-import org.geotoolkit.internal.jaxb.referencing.cs.EllipsoidalCSAdapter;
-import org.geotoolkit.internal.jaxb.referencing.cs.TimeCSAdapter;
-import org.geotoolkit.internal.jaxb.referencing.cs.VerticalCSAdapter;
-import org.geotoolkit.internal.jaxb.referencing.datum.GeodeticDatumAdapter;
-import org.geotoolkit.internal.jaxb.referencing.datum.ImageDatumAdapter;
-import org.geotoolkit.internal.jaxb.referencing.datum.TemporalDatumAdapter;
-import org.geotoolkit.internal.jaxb.referencing.datum.VerticalDatumAdapter;
+import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.referencing.*;

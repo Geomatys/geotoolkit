@@ -26,7 +26,8 @@
  * substituted to that interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.00
+ * @author Cédric Briançon (Geomatys)
+ * @version 3.04
  *
  * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *

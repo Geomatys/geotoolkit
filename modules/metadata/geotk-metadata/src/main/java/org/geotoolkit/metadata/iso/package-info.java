@@ -49,33 +49,33 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AcquisitionInformationAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
-    @XmlJavaTypeAdapter(ApplicationSchemaInformationAdapter.class),
-    @XmlJavaTypeAdapter(CharacterSetAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(ConstraintsAdapter.class),
-    @XmlJavaTypeAdapter(ContentInformationAdapter.class),
-    @XmlJavaTypeAdapter(DataQualityAdapter.class),
-    @XmlJavaTypeAdapter(DatatypeAdapter.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(DistributionAdapter.class),
-    @XmlJavaTypeAdapter(ExtendedElementInformationAdapter.class),
-    @XmlJavaTypeAdapter(FeatureTypeListAdapter.class),
-    @XmlJavaTypeAdapter(IdentificationAdapter.class),
-    @XmlJavaTypeAdapter(LocaleAdapter.class),
-    @XmlJavaTypeAdapter(MaintenanceInformationAdapter.class),
-    @XmlJavaTypeAdapter(MetadataExtensionInformationAdapter.class),
-    @XmlJavaTypeAdapter(ObligationAdapter.class),
-    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
-    @XmlJavaTypeAdapter(PortrayalCatalogueReferenceAdapter.class),
-    @XmlJavaTypeAdapter(ReferenceSystemAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
-    @XmlJavaTypeAdapter(SpatialRepresentationAdapter.class),
+    @XmlJavaTypeAdapter(CI_Citation.class),
+    @XmlJavaTypeAdapter(CI_OnlineResource.class),
+    @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
+    @XmlJavaTypeAdapter(DQ_DataQuality.class),
+    @XmlJavaTypeAdapter(MD_ApplicationSchemaInformation.class),
+    @XmlJavaTypeAdapter(MD_CharacterSetCode.class),
+    @XmlJavaTypeAdapter(MD_Constraints.class),
+    @XmlJavaTypeAdapter(MD_ContentInformation.class),
+    @XmlJavaTypeAdapter(MD_DatatypeCode.class),
+    @XmlJavaTypeAdapter(MD_Distribution.class),
+    @XmlJavaTypeAdapter(MD_ExtendedElementInformation.class),
+    @XmlJavaTypeAdapter(MD_FeatureTypeList.class),
+    @XmlJavaTypeAdapter(MD_Identification.class),
+    @XmlJavaTypeAdapter(MD_MaintenanceInformation.class),
+    @XmlJavaTypeAdapter(MD_MetadataExtensionInformation.class),
+    @XmlJavaTypeAdapter(MD_ObligationCode.class),
+    @XmlJavaTypeAdapter(MD_PortrayalCatalogueReference.class),
+    @XmlJavaTypeAdapter(MD_ScopeCode.class),
+    @XmlJavaTypeAdapter(MD_SpatialRepresentation.class),
+    @XmlJavaTypeAdapter(MI_AcquisitionInformation.class),
+    @XmlJavaTypeAdapter(RS_ReferenceSystem.class),
 
-    // Primitive type handling
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(LocaleAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class),
     @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class)
 })
@@ -90,14 +90,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.*;
+import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.uom.DateAdapter;
-import org.geotoolkit.internal.jaxb.text.LocaleAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
-import org.geotoolkit.internal.jaxb.code.DatatypeAdapter;
-import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
-import org.geotoolkit.internal.jaxb.code.CharacterSetAdapter;
-import org.geotoolkit.internal.jaxb.code.ObligationAdapter;
-import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
-import org.geotoolkit.internal.jaxb.primitive.IntegerAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.primitive.*;

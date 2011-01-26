@@ -50,23 +50,23 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(CellGeometryAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(DataQualityAdapter.class),
-    @XmlJavaTypeAdapter(DimensionAdapter.class),
-    @XmlJavaTypeAdapter(DimensionNameTypeAdapter.class),
-    @XmlJavaTypeAdapter(ElementAdapter.class),
-    @XmlJavaTypeAdapter(GCPAdapter.class),
-    @XmlJavaTypeAdapter(GeolocationInformationAdapter.class),
-    @XmlJavaTypeAdapter(GeometricObjectTypeAdapter.class),
-    @XmlJavaTypeAdapter(GeometricObjectsAdapter.class),
-    @XmlJavaTypeAdapter(PixelOrientationAdapter.class),
-    @XmlJavaTypeAdapter(ReferenceSystemAdapter.class),
-    @XmlJavaTypeAdapter(TopologyLevelAdapter.class),
-    @XmlJavaTypeAdapter(GeometryAdapter.class),
+    @XmlJavaTypeAdapter(CI_Citation.class),
+    @XmlJavaTypeAdapter(DQ_DataQuality.class),
+    @XmlJavaTypeAdapter(DQ_Element.class),
+    @XmlJavaTypeAdapter(GM_Object.class),
+    @XmlJavaTypeAdapter(MD_CellGeometryCode.class),
+    @XmlJavaTypeAdapter(MD_Dimension.class),
+    @XmlJavaTypeAdapter(MD_DimensionNameTypeCode.class),
+    @XmlJavaTypeAdapter(MD_GeometricObjects.class),
+    @XmlJavaTypeAdapter(MD_GeometricObjectTypeCode.class),
+    @XmlJavaTypeAdapter(MD_PixelOrientationCode.class),
+    @XmlJavaTypeAdapter(MD_TopologyLevelCode.class),
+    @XmlJavaTypeAdapter(MI_GCP.class),
+    @XmlJavaTypeAdapter(MI_GeolocationInformation.class),
+    @XmlJavaTypeAdapter(RS_ReferenceSystem.class),
 
-    // Primitive type handling
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
     @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class),
     @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
@@ -82,10 +82,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.text.*;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
-import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
-import org.geotoolkit.internal.jaxb.primitive.IntegerAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
-import org.geotoolkit.internal.jaxb.geometry.GeometryAdapter;
+import org.geotoolkit.internal.jaxb.primitive.*;
+import org.geotoolkit.internal.jaxb.geometry.GM_Object;

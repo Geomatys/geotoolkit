@@ -49,20 +49,20 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(DigitalTransferOptionsAdapter.class),
-    @XmlJavaTypeAdapter(DistributorAdapter.class),
-    @XmlJavaTypeAdapter(FormatAdapter.class),
-    @XmlJavaTypeAdapter(MediumAdapter.class),
-    @XmlJavaTypeAdapter(MediumFormatAdapter.class),
-    @XmlJavaTypeAdapter(MediumNameAdapter.class),
-    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(StandardOrderProcessAdapter.class),
-    @XmlJavaTypeAdapter(UnitAdapter.class),
+    @XmlJavaTypeAdapter(MD_DigitalTransferOptions.class),
+    @XmlJavaTypeAdapter(MD_Distributor.class),
+    @XmlJavaTypeAdapter(MD_Format.class),
+    @XmlJavaTypeAdapter(MD_Medium.class),
+    @XmlJavaTypeAdapter(MD_MediumFormatCode.class),
+    @XmlJavaTypeAdapter(MD_MediumNameCode.class),
+    @XmlJavaTypeAdapter(CI_OnlineResource.class),
+    @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
+    @XmlJavaTypeAdapter(MD_StandardOrderProcess.class),
 
-    // Primitive type handling
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(UnitAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
     @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class)
 })
@@ -77,11 +77,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.*;
+import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.uom.DateAdapter;
-import org.geotoolkit.internal.jaxb.uom.UnitAdapter;
-import org.geotoolkit.internal.jaxb.code.MediumNameAdapter;
-import org.geotoolkit.internal.jaxb.code.MediumFormatAdapter;
-import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
-import org.geotoolkit.internal.jaxb.primitive.IntegerAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.primitive.*;

@@ -49,17 +49,17 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(GeographicBoundingBoxAdapter.class),
-    @XmlJavaTypeAdapter(GeographicExtentAdapter.class),
-    @XmlJavaTypeAdapter(GeometryAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(TemporalExtentAdapter.class),
-    @XmlJavaTypeAdapter(TemporalPrimitiveAdapter.class),
-    @XmlJavaTypeAdapter(VerticalCRSAdapter.class),
-    @XmlJavaTypeAdapter(VerticalExtentAdapter.class),
+    @XmlJavaTypeAdapter(EX_GeographicBoundingBox.class),
+    @XmlJavaTypeAdapter(EX_GeographicExtent.class),
+    @XmlJavaTypeAdapter(EX_TemporalExtent.class),
+    @XmlJavaTypeAdapter(EX_VerticalExtent.class),
+    @XmlJavaTypeAdapter(GM_Object.class),
+    @XmlJavaTypeAdapter(MD_Identifier.class),
+    @XmlJavaTypeAdapter(SC_VerticalCRS.class),
+    @XmlJavaTypeAdapter(TM_Primitive.class),
 
-    // Primitive type handling
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class),
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class)
 })
@@ -74,10 +74,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.text.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
-import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
-import org.geotoolkit.internal.jaxb.geometry.GeometryAdapter;
-import org.geotoolkit.internal.jaxb.referencing.TemporalPrimitiveAdapter;
-import org.geotoolkit.internal.jaxb.referencing.VerticalCRSAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.primitive.*;
+import org.geotoolkit.internal.jaxb.referencing.*;
+import org.geotoolkit.internal.jaxb.geometry.GM_Object;

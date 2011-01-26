@@ -76,9 +76,11 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(UnitAdapter.class),
-    @XmlJavaTypeAdapter(AxisDirectionAdapter.class),
-    @XmlJavaTypeAdapter(CoordinateSystemAxisAdapter.class)
+    @XmlJavaTypeAdapter(CS_AxisDirection.class),
+    @XmlJavaTypeAdapter(CS_CoordinateSystemAxis.class),
+
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(UnitAdapter.class)
 })
 package org.geotoolkit.referencing.cs;
 
@@ -91,6 +93,5 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.uom.UnitAdapter;
-import org.geotoolkit.internal.jaxb.referencing.AxisDirectionAdapter;
-import org.geotoolkit.internal.jaxb.referencing.CoordinateSystemAxisAdapter;
+import org.geotoolkit.internal.jaxb.uom.*;
+import org.geotoolkit.internal.jaxb.referencing.*;

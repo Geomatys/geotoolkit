@@ -67,7 +67,7 @@ public class ReferenceSystemMetadata implements ReferenceSystem, Serializable {
      * The primary name by which this object is identified.
      */
     @XmlElement
-    @XmlJavaTypeAdapter(ReferenceIdentifierAdapter.class)
+    @XmlJavaTypeAdapter(RS_Identifier.class)
     private ReferenceIdentifier referenceSystemIdentifier;
 
     /**

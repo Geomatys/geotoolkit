@@ -40,7 +40,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.internal.jaxb.metadata.CitationAdapter;
+import org.geotoolkit.internal.jaxb.metadata.CI_Citation;
 import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 import org.geotoolkit.resources.Loggings;
@@ -95,7 +95,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      * @see #getAuthority()
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
-    @XmlJavaTypeAdapter(CitationAdapter.class)
+    @XmlJavaTypeAdapter(CI_Citation.class)
     final Citation authority;
 
     /**

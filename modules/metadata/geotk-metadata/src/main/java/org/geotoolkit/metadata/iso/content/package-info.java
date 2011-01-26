@@ -60,21 +60,21 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(BandDefinitionAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(CoverageContentTypeAdapter.class),
-    @XmlJavaTypeAdapter(GenericNameAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(ImagingConditionAdapter.class),
-    @XmlJavaTypeAdapter(LocaleAdapter.class),
-    @XmlJavaTypeAdapter(PolarizationOrientationAdapter.class),
-    @XmlJavaTypeAdapter(RangeDimensionAdapter.class),
-    @XmlJavaTypeAdapter(RangeElementDescriptionAdapter.class),
-    @XmlJavaTypeAdapter(RecordTypeAdapter.class),
-    @XmlJavaTypeAdapter(TransferFunctionTypeAdapter.class),
+    @XmlJavaTypeAdapter(CI_Citation.class),
+    @XmlJavaTypeAdapter(MD_CoverageContentTypeCode.class),
+    @XmlJavaTypeAdapter(MD_Identifier.class),
+    @XmlJavaTypeAdapter(MD_ImagingConditionCode.class),
+    @XmlJavaTypeAdapter(MD_RangeDimension.class),
+    @XmlJavaTypeAdapter(MI_BandDefinition.class),
+    @XmlJavaTypeAdapter(MI_PolarizationOrientationCode.class),
+    @XmlJavaTypeAdapter(MI_RangeElementDescription.class),
+    @XmlJavaTypeAdapter(MI_TransferFunctionTypeCode.class),
 
-    // Primitive type handling
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(LocaleAdapter.class),
+    @XmlJavaTypeAdapter(RecordTypeAdapter.class),
+    @XmlJavaTypeAdapter(GenericNameAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class),
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
     @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class),
@@ -91,20 +91,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.primitive.LongAdapter;
-import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
-import org.geotoolkit.internal.jaxb.primitive.IntegerAdapter;
-import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
-import org.geotoolkit.internal.jaxb.text.LocaleAdapter;
-import org.geotoolkit.internal.jaxb.text.RecordTypeAdapter;
-import org.geotoolkit.internal.jaxb.text.GenericNameAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
-import org.geotoolkit.internal.jaxb.code.BandDefinitionAdapter;
-import org.geotoolkit.internal.jaxb.code.ImagingConditionAdapter;
-import org.geotoolkit.internal.jaxb.code.CoverageContentTypeAdapter;
-import org.geotoolkit.internal.jaxb.code.PolarizationOrientationAdapter;
-import org.geotoolkit.internal.jaxb.code.TransferFunctionTypeAdapter;
-import org.geotoolkit.internal.jaxb.metadata.CitationAdapter;
-import org.geotoolkit.internal.jaxb.metadata.IdentifierAdapter;
-import org.geotoolkit.internal.jaxb.metadata.RangeDimensionAdapter;
-import org.geotoolkit.internal.jaxb.metadata.RangeElementDescriptionAdapter;
+import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.code.*;
+import org.geotoolkit.internal.jaxb.metadata.*;
+import org.geotoolkit.internal.jaxb.primitive.*;

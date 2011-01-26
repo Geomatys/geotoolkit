@@ -73,7 +73,9 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
+    @XmlJavaTypeAdapter(EX_Extent.class),
+
+    // Java types, primitive types and basic OGC types handling
     @XmlJavaTypeAdapter(StringAdapter.class),
     @XmlJavaTypeAdapter(InternationalStringConverter.class)
 })
@@ -88,6 +90,5 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.metadata.ExtentAdapter;
-import org.geotoolkit.internal.jaxb.text.StringAdapter;
-import org.geotoolkit.internal.jaxb.text.InternationalStringConverter;
+import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.metadata.*;

@@ -49,32 +49,32 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AggregateInformationAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
-    @XmlJavaTypeAdapter(AssociationTypeAdapter.class),
-    @XmlJavaTypeAdapter(BrowseGraphicAdapter.class),
-    @XmlJavaTypeAdapter(CharacterSetAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(ConstraintsAdapter.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
-    @XmlJavaTypeAdapter(FormatAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(InitiativeTypeAdapter.class),
-    @XmlJavaTypeAdapter(KeywordTypeAdapter.class),
-    @XmlJavaTypeAdapter(KeywordsAdapter.class),
-    @XmlJavaTypeAdapter(LocaleAdapter.class),
-    @XmlJavaTypeAdapter(MaintenanceInformationAdapter.class),
-    @XmlJavaTypeAdapter(ProgressAdapter.class),
-    @XmlJavaTypeAdapter(RepresentativeFractionAdapter.class),
-    @XmlJavaTypeAdapter(ResolutionAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(SpatialRepresentationTypeAdapter.class),
-    @XmlJavaTypeAdapter(TopicCategoryAdapter.class),
-    @XmlJavaTypeAdapter(UsageAdapter.class),
+    @XmlJavaTypeAdapter(CI_Citation.class),
+    @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
+    @XmlJavaTypeAdapter(DS_AssociationTypeCode.class),
+    @XmlJavaTypeAdapter(DS_InitiativeTypeCode.class),
+    @XmlJavaTypeAdapter(EX_Extent.class),
+    @XmlJavaTypeAdapter(MD_AggregateInformation.class),
+    @XmlJavaTypeAdapter(MD_BrowseGraphic.class),
+    @XmlJavaTypeAdapter(MD_CharacterSetCode.class),
+    @XmlJavaTypeAdapter(MD_Constraints.class),
+    @XmlJavaTypeAdapter(MD_Format.class),
+    @XmlJavaTypeAdapter(MD_Identifier.class),
+    @XmlJavaTypeAdapter(MD_Keywords.class),
+    @XmlJavaTypeAdapter(MD_KeywordTypeCode.class),
+    @XmlJavaTypeAdapter(MD_MaintenanceInformation.class),
+    @XmlJavaTypeAdapter(MD_ProgressCode.class),
+    @XmlJavaTypeAdapter(MD_RepresentativeFraction.class),
+    @XmlJavaTypeAdapter(MD_Resolution.class),
+    @XmlJavaTypeAdapter(MD_SpatialRepresentationTypeCode.class),
+    @XmlJavaTypeAdapter(MD_TopicCategoryCode.class),
+    @XmlJavaTypeAdapter(MD_Usage.class),
 
-    // Primitive type handling
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(LocaleAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(DoubleAdapter.class), @XmlJavaTypeAdapter(type=double.class, value=DoubleAdapter.class),
     @XmlJavaTypeAdapter(LongAdapter.class),   @XmlJavaTypeAdapter(type=long.class,   value=LongAdapter.class)
 })
@@ -89,11 +89,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.*;
+import org.geotoolkit.internal.jaxb.text.*;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.uom.DateAdapter;
-import org.geotoolkit.internal.jaxb.primitive.LongAdapter;
-import org.geotoolkit.internal.jaxb.primitive.DoubleAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
-import org.geotoolkit.internal.jaxb.text.LocaleAdapter;
+import org.geotoolkit.internal.jaxb.primitive.*;

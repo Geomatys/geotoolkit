@@ -48,22 +48,24 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AddressAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
-    @XmlJavaTypeAdapter(CitationDateAdapter.class),
-    @XmlJavaTypeAdapter(ContactAdapter.class),
+    @XmlJavaTypeAdapter(CI_Address.class),
+    @XmlJavaTypeAdapter(CI_Contact.class),
+    @XmlJavaTypeAdapter(CI_Date.class),
+    @XmlJavaTypeAdapter(CI_DateTypeCode.class),
+    @XmlJavaTypeAdapter(CI_OnLineFunctionCode.class),
+    @XmlJavaTypeAdapter(CI_OnlineResource.class),
+    @XmlJavaTypeAdapter(CI_PresentationFormCode.class),
+    @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
+    @XmlJavaTypeAdapter(CI_RoleCode.class),
+    @XmlJavaTypeAdapter(CI_Series.class),
+    @XmlJavaTypeAdapter(CI_Telephone.class),
+    @XmlJavaTypeAdapter(MD_Identifier.class),
+
+    // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(URIAdapter.class),
     @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(DateTypeAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(OnLineFunctionAdapter.class),
-    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
-    @XmlJavaTypeAdapter(PresentationFormAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(RoleAdapter.class),
-    @XmlJavaTypeAdapter(SeriesAdapter.class),
-    @XmlJavaTypeAdapter(TelephoneAdapter.class),
-    @XmlJavaTypeAdapter(URIAdapter.class)
+    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class)
 })
 package org.geotoolkit.metadata.iso.citation;
 
@@ -76,8 +78,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.*;
+import org.geotoolkit.internal.jaxb.text.*;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.uom.DateAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;

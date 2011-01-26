@@ -36,7 +36,7 @@ import org.geotoolkit.metadata.fra.FRA_IndirectReferenceSystem;
  * @since 3.00
  * @module
  */
-public final class FRA_ReferenceSystemAdapter extends ReferenceSystemAdapter implements RegisterableAdapter {
+public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem implements RegisterableAdapter {
     /**
      * Empty constructor for JAXB only.
      */
@@ -59,7 +59,7 @@ public final class FRA_ReferenceSystemAdapter extends ReferenceSystemAdapter imp
      */
     @Override
     public void register(final Marshaller marshaller) {
-        marshaller.setAdapter(ReferenceSystemAdapter.class, this);
+        marshaller.setAdapter(RS_ReferenceSystem.class, this);
     }
 
     /**
@@ -69,7 +69,7 @@ public final class FRA_ReferenceSystemAdapter extends ReferenceSystemAdapter imp
      */
     @Override
     public void register(final Unmarshaller unmarshaller) {
-        unmarshaller.setAdapter(ReferenceSystemAdapter.class, this);
+        unmarshaller.setAdapter(RS_ReferenceSystem.class, this);
     }
 
     /**
@@ -79,7 +79,7 @@ public final class FRA_ReferenceSystemAdapter extends ReferenceSystemAdapter imp
      * @return The adapter which covers the metadata value.
      */
     @Override
-    protected ReferenceSystemAdapter wrap(ReferenceSystem value) {
+    protected RS_ReferenceSystem wrap(ReferenceSystem value) {
         return new FRA_ReferenceSystemAdapter(value);
     }
 

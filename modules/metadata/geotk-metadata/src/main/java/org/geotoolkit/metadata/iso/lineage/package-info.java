@@ -49,19 +49,21 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AlgorithmAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
+    @XmlJavaTypeAdapter(CI_Citation.class),
+    @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
+    @XmlJavaTypeAdapter(EX_Extent.class),
+    @XmlJavaTypeAdapter(LE_Algorithm.class),
+    @XmlJavaTypeAdapter(LE_NominalResolution.class),
+    @XmlJavaTypeAdapter(LE_Processing.class),
+    @XmlJavaTypeAdapter(LE_ProcessStepReport.class),
+    @XmlJavaTypeAdapter(LI_ProcessStep.class),
+    @XmlJavaTypeAdapter(LI_Source.class),
+    @XmlJavaTypeAdapter(MD_Identifier.class),
+    @XmlJavaTypeAdapter(MD_RepresentativeFraction.class),
+
+    // Java types, primitive types and basic OGC types handling
     @XmlJavaTypeAdapter(DateTimeAdapter.class),
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(NominalResolutionAdapter.class),
-    @XmlJavaTypeAdapter(ProcessStepAdapter.class),
-    @XmlJavaTypeAdapter(ProcessStepReportAdapter.class),
-    @XmlJavaTypeAdapter(ProcessingAdapter.class),
-    @XmlJavaTypeAdapter(RepresentativeFractionAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(SourceAdapter.class)
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class)
 })
 package org.geotoolkit.metadata.iso.lineage;
 
@@ -74,6 +76,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.*;
+import org.geotoolkit.internal.jaxb.text.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;

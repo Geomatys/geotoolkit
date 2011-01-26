@@ -47,31 +47,33 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(ContextAdapter.class),
-    @XmlJavaTypeAdapter(EnvironmentalRecordAdapter.class),
-    @XmlJavaTypeAdapter(EventAdapter.class),
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
+    @XmlJavaTypeAdapter(CI_Citation.class),
+    @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
+    @XmlJavaTypeAdapter(EX_Extent.class),
+    @XmlJavaTypeAdapter(MD_Identifier.class),
+    @XmlJavaTypeAdapter(MD_ProgressCode.class),
+    @XmlJavaTypeAdapter(MI_ContextCode.class),
+    @XmlJavaTypeAdapter(MI_EnvironmentalRecord.class),
+    @XmlJavaTypeAdapter(MI_Event.class),
+    @XmlJavaTypeAdapter(MI_GeometryTypeCode.class),
+    @XmlJavaTypeAdapter(MI_Instrument.class),
+    @XmlJavaTypeAdapter(MI_Objective.class),
+    @XmlJavaTypeAdapter(MI_ObjectiveTypeCode.class),
+    @XmlJavaTypeAdapter(MI_Operation.class),
+    @XmlJavaTypeAdapter(MI_OperationTypeCode.class),
+    @XmlJavaTypeAdapter(MI_Plan.class),
+    @XmlJavaTypeAdapter(MI_Platform.class),
+    @XmlJavaTypeAdapter(MI_PlatformPass.class),
+    @XmlJavaTypeAdapter(MI_PriorityCode.class),
+    @XmlJavaTypeAdapter(MI_RequestedDate.class),
+    @XmlJavaTypeAdapter(MI_Requirement.class),
+    @XmlJavaTypeAdapter(MI_SequenceCode.class),
+    @XmlJavaTypeAdapter(MI_TriggerCode.class),
+
+    // Java types, primitive types and basic OGC types handling
     @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(GeometryTypeAdapter.class),
-    @XmlJavaTypeAdapter(IdentifierAdapter.class),
-    @XmlJavaTypeAdapter(InstrumentAdapter.class),
-    @XmlJavaTypeAdapter(ObjectiveAdapter.class),
-    @XmlJavaTypeAdapter(ObjectiveTypeAdapter.class),
-    @XmlJavaTypeAdapter(OperationAdapter.class),
-    @XmlJavaTypeAdapter(OperationTypeAdapter.class),
-    @XmlJavaTypeAdapter(PlanAdapter.class),
-    @XmlJavaTypeAdapter(PlatformAdapter.class),
-    @XmlJavaTypeAdapter(PlatformPassAdapter.class),
-    @XmlJavaTypeAdapter(PriorityAdapter.class),
-    @XmlJavaTypeAdapter(ProgressAdapter.class),
-    @XmlJavaTypeAdapter(RequestedDateAdapter.class),
-    @XmlJavaTypeAdapter(RequirementAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(SequenceAdapter.class),
-    @XmlJavaTypeAdapter(TriggerAdapter.class)
+    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class)
 })
 package org.geotoolkit.metadata.iso.acquisition;
 
@@ -84,8 +86,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.text.*;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
 import org.geotoolkit.internal.jaxb.uom.DateAdapter;

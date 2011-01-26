@@ -55,7 +55,7 @@ import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.internal.jaxb.text.StringConverter;
-import org.geotoolkit.internal.jaxb.referencing.ReferenceIdentifierAdapter;
+import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
@@ -216,7 +216,7 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
      * The name for this object or code. Should never be {@code null}.
      */
     @XmlElement
-    @XmlJavaTypeAdapter(ReferenceIdentifierAdapter.ToString.class)
+    @XmlJavaTypeAdapter(RS_Identifier.ToString.class)
     private final ReferenceIdentifier name;
 
     /**

@@ -49,14 +49,16 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
+    @XmlJavaTypeAdapter(MD_MaintenanceFrequencyCode.class),
+    @XmlJavaTypeAdapter(MD_MaintenanceInformation.class),
+    @XmlJavaTypeAdapter(MD_ScopeCode.class),
+    @XmlJavaTypeAdapter(MD_ScopeDescription.class),
+
+    // Java types, primitive types and basic OGC types handling
     @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(MaintenanceFrequencyAdapter.class),
-    @XmlJavaTypeAdapter(MaintenanceInformationAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
-    @XmlJavaTypeAdapter(ScopeDescriptionAdapter.class)
+    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class)
 })
 package org.geotoolkit.metadata.iso.maintenance;
 
@@ -69,9 +71,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.*;
+import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.uom.DateAdapter;
-import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
-import org.geotoolkit.internal.jaxb.code.MaintenanceFrequencyAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;

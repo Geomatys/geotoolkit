@@ -54,9 +54,11 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
+    @XmlJavaTypeAdapter(CI_Citation.class),
+    @XmlJavaTypeAdapter(RS_Identifier.class),
+
+    // Java types, primitive types and basic OGC types handling
     @XmlJavaTypeAdapter(StringAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(ReferenceIdentifierAdapter.class),
     @XmlJavaTypeAdapter(InternationalStringConverter.class)
 })
 package org.geotoolkit.referencing;
@@ -70,7 +72,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.text.StringAdapter;
-import org.geotoolkit.internal.jaxb.text.InternationalStringConverter;
-import org.geotoolkit.internal.jaxb.referencing.ReferenceIdentifierAdapter;
-import org.geotoolkit.internal.jaxb.metadata.CitationAdapter;
+import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.metadata.*;
+import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;

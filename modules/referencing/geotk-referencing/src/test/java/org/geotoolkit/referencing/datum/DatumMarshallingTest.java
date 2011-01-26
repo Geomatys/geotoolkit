@@ -28,7 +28,7 @@ import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.MarshallerPool;
-import org.geotoolkit.internal.jaxb.referencing.datum.SecondDefiningParameter;
+import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;

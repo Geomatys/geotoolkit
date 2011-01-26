@@ -31,13 +31,11 @@ import javax.measure.converter.ConversionException;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import static java.lang.Math.*;
-import static java.lang.Double.*;
 
 import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.internal.jaxb.referencing.datum.SecondDefiningParameter;
+import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.uom.Measure;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.CoordinateFormat;
@@ -50,6 +48,8 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
 
+import static java.lang.Math.*;
+import static java.lang.Double.*;
 import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
