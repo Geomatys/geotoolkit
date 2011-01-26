@@ -258,7 +258,9 @@ public class PropertyTypeImpl implements PropertyType, Referenceable {
     }
     
     public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
-        alreadySee.put(id, this);
+        if (id != null && !id.isEmpty()) {
+            alreadySee.put(id, this);
+        }
         rootElement = false;
         
         if (featureType != null) {

@@ -230,7 +230,9 @@ public class InheritanceRelationImpl implements InheritanceRelation, Referenceab
     }
     
      public Map<String, Referenceable> beforeMarshal(Map<String, Referenceable> alreadySee) {
-        alreadySee.put(id, this);
+        if (id != null && !id.isEmpty()) {
+           alreadySee.put(id, this);
+        }
         rootElement = false;
         
         if (subtype != null) {
