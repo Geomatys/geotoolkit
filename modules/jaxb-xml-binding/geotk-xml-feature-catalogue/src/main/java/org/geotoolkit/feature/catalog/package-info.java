@@ -17,8 +17,8 @@ xmlns = {
     @XmlJavaTypeAdapter(ScopedNameAdapter.class),
     @XmlJavaTypeAdapter(LocalNameAdapter.class),
     @XmlJavaTypeAdapter(GenericNameAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
+    @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
+    @XmlJavaTypeAdapter(CI_Citation.class),
     // ISO 19110 adapter
     @XmlJavaTypeAdapter(FeatureCatalogueAdapter.class),
     @XmlJavaTypeAdapter(FeatureAssociationAdapter.class),

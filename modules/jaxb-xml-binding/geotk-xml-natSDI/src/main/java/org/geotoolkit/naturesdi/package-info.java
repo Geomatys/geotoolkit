@@ -26,9 +26,9 @@
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
-    @XmlJavaTypeAdapter(CitationAdapter.class),
-    @XmlJavaTypeAdapter(KeywordTypeAdapter.class),
-    @XmlJavaTypeAdapter(KeywordsAdapter.class),
+    @XmlJavaTypeAdapter(CI_Citation.class),
+    @XmlJavaTypeAdapter(MD_KeywordTypeCode.class),
+    @XmlJavaTypeAdapter(MD_Keywords.class),
     @XmlJavaTypeAdapter(RankNameAdapter.class)
 })
 package org.geotoolkit.naturesdi;

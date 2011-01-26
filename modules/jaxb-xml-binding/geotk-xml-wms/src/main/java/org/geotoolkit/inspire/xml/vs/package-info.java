@@ -30,15 +30,15 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(ContactAdapter.class),
+    @XmlJavaTypeAdapter(CI_Contact.class),
     @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(ScopeCodeAdapter.class),
-    @XmlJavaTypeAdapter(ExtentAdapter.class),
-    @XmlJavaTypeAdapter(ResultAdapter.class),
-    @XmlJavaTypeAdapter(OnlineResourceAdapter.class),
+    @XmlJavaTypeAdapter(MD_ScopeCode.class),
+    @XmlJavaTypeAdapter(EX_Extent.class),
+    @XmlJavaTypeAdapter(DQ_Result.class),
+    @XmlJavaTypeAdapter(CI_OnlineResource.class),
     @XmlJavaTypeAdapter(ServiceTypeAdapter.class),
-    @XmlJavaTypeAdapter(KeywordsAdapter.class),
-    @XmlJavaTypeAdapter(ResponsiblePartyAdapter.class)
+    @XmlJavaTypeAdapter(MD_Keywords.class),
+    @XmlJavaTypeAdapter(CI_ResponsibleParty.class)
 })
 package org.geotoolkit.inspire.xml.vs;
 
@@ -49,13 +49,13 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
-import org.geotoolkit.internal.jaxb.metadata.ContactAdapter;
-import org.geotoolkit.internal.jaxb.metadata.ExtentAdapter;
-import org.geotoolkit.internal.jaxb.metadata.direct.KeywordsAdapter;
-import org.geotoolkit.internal.jaxb.metadata.direct.OnlineResourceAdapter;
-import org.geotoolkit.internal.jaxb.metadata.ResponsiblePartyAdapter;
-import org.geotoolkit.internal.jaxb.metadata.ResultAdapter;
+import org.geotoolkit.internal.jaxb.code.MD_ScopeCode;
+import org.geotoolkit.internal.jaxb.metadata.CI_Contact;
+import org.geotoolkit.internal.jaxb.metadata.EX_Extent;
+import org.geotoolkit.internal.jaxb.metadata.direct.MD_Keywords;
+import org.geotoolkit.internal.jaxb.metadata.direct.CI_OnlineResource;
+import org.geotoolkit.internal.jaxb.metadata.CI_ResponsibleParty;
+import org.geotoolkit.internal.jaxb.metadata.DQ_Result;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.uom.DateAdapter;

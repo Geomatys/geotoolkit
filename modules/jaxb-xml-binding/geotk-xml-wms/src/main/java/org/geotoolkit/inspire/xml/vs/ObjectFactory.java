@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.namespace.QName;
-import org.geotoolkit.internal.jaxb.code.ScopeCodeAdapter;
+import org.geotoolkit.internal.jaxb.code.MD_ScopeCode;
 import org.opengis.metadata.maintenance.ScopeCode;
 
 /**

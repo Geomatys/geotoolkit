@@ -32,7 +32,7 @@ import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.PointType;
 
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
-import org.geotoolkit.internal.jaxb.geometry.GeometryAdapter;
+import org.geotoolkit.internal.jaxb.geometry.GM_Object;
 import org.opengis.geometry.Geometry;
 
 
@@ -46,7 +46,7 @@ import org.opengis.geometry.Geometry;
  * @since 3.00
  * @module
  */
-public final class GmlGeometryAdapter extends GeometryAdapter implements RegisterableAdapter {
+public final class GmlGeometryAdapter extends GM_Object implements RegisterableAdapter {
 
     /**
      * Empty constructor for JAXB only.
@@ -103,7 +103,7 @@ public final class GmlGeometryAdapter extends GeometryAdapter implements Registe
      */
     @Override
     public void register(final Marshaller marshaller) {
-        marshaller.setAdapter(GeometryAdapter.class, this);
+        marshaller.setAdapter(GM_Object.class, this);
     }
 
     /**
@@ -113,7 +113,7 @@ public final class GmlGeometryAdapter extends GeometryAdapter implements Registe
      */
     @Override
     public void register(final Unmarshaller unmarshaller) {
-        unmarshaller.setAdapter(GeometryAdapter.class, this);
+        unmarshaller.setAdapter(GM_Object.class, this);
     }
 
     /**
@@ -123,7 +123,7 @@ public final class GmlGeometryAdapter extends GeometryAdapter implements Registe
      * @return The adapter which covers the metadata value.
      */
     @Override
-    protected GeometryAdapter wrap(final Geometry value) {
+    protected GM_Object wrap(final Geometry value) {
         return new GmlGeometryAdapter(value);
     }
 
