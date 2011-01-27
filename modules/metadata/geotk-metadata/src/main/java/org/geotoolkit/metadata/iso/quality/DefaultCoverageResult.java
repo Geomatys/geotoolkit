@@ -182,7 +182,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * Returns the information about the data file containing the result coverage data.
      */
     @Override
-    @XmlElement(name = "resultFile")
+    @XmlElement(name = "resultFile", namespace = Namespaces.GMX)
     public synchronized DataFile getResultFile() {
         return resultFile;
     }

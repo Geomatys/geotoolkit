@@ -19,7 +19,10 @@ package org.geotoolkit.metadata;
 
 import java.lang.reflect.Modifier;
 import org.opengis.util.CodeList;
+import org.opengis.annotation.UML;
+import org.opengis.annotation.Specification;
 import org.geotoolkit.test.xml.AnnotationsTestBase;
+import org.geotoolkit.xml.Namespaces;
 
 import static org.junit.Assert.*;
 
@@ -29,7 +32,7 @@ import static org.junit.Assert.*;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.17
  *
  * @since 3.04
  */
@@ -204,7 +207,30 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
     }
 
     /**
-     * Returns the ISO 19139 wrapper for the given GeoAPI type.
+     * Returns the expected namespace for an element defined by the given specification.
+     */
+    @Override
+    protected String getNamespace(final Specification specification) {
+        switch (specification) {
+            case ISO_19115:   return Namespaces.GMD;
+            case ISO_19115_2: return Namespaces.GMI;
+            case ISO_19139:   return Namespaces.GMX;
+            case ISO_19108:   return Namespaces.GMD;
+            default: throw new IllegalArgumentException(specification.toString());
+        }
+    }
+
+    /**
+     * Returns the prefix to use for the given namespace.
+     */
+    @Override
+    protected String getPrefixForNamespace(final String namespace) {
+        return Namespaces.getPreferredPrefix(namespace, null);
+    }
+
+    /**
+     * Returns the ISO 19139 wrapper for the given GeoAPI type, or {@code null} if not found,
+     * or {@link Void#TYPE} if no adapter is expected for the given type.
      */
     @Override
     protected Class<?> getWrapper(final Class<?> type) {
@@ -218,14 +244,15 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
         }
         final String classname = "org.geotoolkit.internal.jaxb." +
               (CodeList.class.isAssignableFrom(type) ? "code" : "metadata") +
-              '.' + type.getSimpleName() + "Adapter";
+              '.' + type.getAnnotation(UML.class).identifier();
         final Class<?> wrapper;
         try {
             wrapper = Class.forName(classname);
         } catch (ClassNotFoundException e) {
+            // A warning will be logged by the caller.
             return null;
         }
-        assertTrue(wrapper.getName(), Modifier.isFinal(wrapper.getModifiers()));
+        assertTrue("Expected a final class for " + wrapper.getName(), Modifier.isFinal(wrapper.getModifiers()));
         return wrapper;
     }
 }

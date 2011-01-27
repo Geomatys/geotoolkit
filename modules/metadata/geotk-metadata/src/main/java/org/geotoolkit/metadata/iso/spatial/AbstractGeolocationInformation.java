@@ -39,7 +39,7 @@ import org.geotoolkit.xml.Namespaces;
  * Information used to determine geographic location corresponding to image location.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -82,7 +82,7 @@ public class AbstractGeolocationInformation extends MetadataEntity implements Ge
      * Returns an overall assessment of quality of geolocation information.
      */
     @Override
-    @XmlElement(name = "qualityInfo")
+    @XmlElement(name = "qualityInfo", namespace = Namespaces.GMI)
     public synchronized Collection<DataQuality> getQualityInfo() {
         return xmlOptional(qualityInfo = nonNullCollection(qualityInfo, DataQuality.class));
     }

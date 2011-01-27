@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Workaround;
 
 
 /**
- * The adapter for {@code "TimePeriod"}. This is an attribute of {@link TemporalPrimitiveAdapter}.
+ * The adapter for {@code "TimePeriod"}. This is an attribute of {@link TM_Primitive}.
  *
  * @author Guilhem Legal (Geomatys)
  * @version 3.03

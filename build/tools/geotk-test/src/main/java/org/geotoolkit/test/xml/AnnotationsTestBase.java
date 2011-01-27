@@ -19,41 +19,56 @@ package org.geotoolkit.test.xml;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import javax.xml.bind.annotation.XmlNs;
+import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.test.TestBase;
 
 import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
+import org.opengis.annotation.Specification;
+
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
 
 
 /**
- * Compares JAXB annotations with the UML ones.
+ * Compares JAXB annotations with the UML ones. Subclasses shall implement the abstract methods
+ * defined in this class, in order to provide the following information:
+ * <p>
+ * <ul>
+ *   <li>The list of GeoAPI interfaces for which to test the implementation.</li>
+ *   <li>The implementation class for a given GeoAPI interface.</li>
+ *   <li>The JAXB adapter class for a given GeoAPI interface.</li>
+ * </ul>
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.16 (derived from 3.05)
  */
 public abstract class AnnotationsTestBase extends TestBase {
     /**
-     * For formatting error message only.
+     * The string used in JAXB annotations for default namespace.
      */
-    private final StringBuilder buffer;
+    private static final String DEFAULT = "##default";
 
     /**
-     * The type being tested.
+     * The type being tested, or {@code null} if none. In case of test failure, this information
+     * will be used for formatting a message giving the name of class and methods where the failure
+     * occurred.
      */
     private String testingClass;
 
     /**
-     * The method being tested, or {@code null} if none.
+     * The method being tested, or {@code null} if none. In case of test failure, this information
+     * will be used for formatting a message giving the name of class and methods where the failure
+     * occurred.
      */
     private String testingMethod;
 
@@ -61,20 +76,33 @@ public abstract class AnnotationsTestBase extends TestBase {
      * Creates a new test suite.
      */
     protected AnnotationsTestBase() {
-        buffer = new StringBuilder();
     }
 
     /**
-     * Returns the given message followed by the name of the class being tested.
+     * Prints the given message followed by the name of the class being tested.
      */
-    private String message(final String text) {
-        buffer.setLength(0);
-        buffer.append(text).append(testingClass);
-        final String method = testingMethod;
-        if (method != null) {
-            buffer.append('.').append(method).append("()");
+    private void warning(String message) {
+        if (testingClass != null) {
+            final StringBuilder buffer = new StringBuilder(message);
+            buffer.append(testingClass);
+            if (testingMethod != null) {
+                buffer.append('.').append(testingMethod).append("()");
+            }
+            message = buffer.toString();
         }
-        return buffer.toString();
+        System.out.flush();
+        System.err.println(message);
+        System.err.flush();
+    }
+
+    /**
+     * If a test failed, reports the class and method names were the failure occurred.
+     */
+    @After
+    public final void printFailureLocation() {
+        if (testingClass != null) {
+            warning("TEST FAILURE: ");
+        }
     }
 
     /**
@@ -99,13 +127,29 @@ public abstract class AnnotationsTestBase extends TestBase {
      * are unusual, but the ISO 19139 standard is done that way.
      * <p>
      * This method can return the {@link Void#TYPE} special value if the given type is not
-     * intented to have any wrapper (as opposed to {@code null}, which means that a wrapper
+     * intended to have any wrapper (as opposed to {@code null}, which means that a wrapper
      * was expected but not found).
      *
      * @param  type The GeoAPI type.
      * @return The wrapper for the given type.
      */
     protected abstract Class<?> getWrapper(Class<?> type);
+
+    /**
+     * Returns the expected namespace for an element defined by the given specification.
+     *
+     * @param specification The specification.
+     * @return The expected namespace.
+     */
+    protected abstract String getNamespace(Specification specification);
+
+    /**
+     * Returns the prefix to use for the given namespace.
+     *
+     * @param namespace The namespace URI.
+     * @return The prefix to use.
+     */
+    protected abstract String getPrefixForNamespace(String namespace);
 
     /**
      * Returns the parent of the given interface, or {@code null} if none.
@@ -125,9 +169,44 @@ public abstract class AnnotationsTestBase extends TestBase {
     }
 
     /**
+     * Returns the given name space if different than {@value #DEFAULT}, or the package
+     * name space of the given class otherwise.
+     *
+     * @param type      The implementation or wrapper class for which to get the package namespace.
+     * @param namespace The namespace given by the {@code @XmlRoot} or {@code @XmlElement} annotation.
+     * @param uml       The {@code @UML} annotation, or {@code null} if none.
+     */
+    private String getNamespace(final Class<?> type, String namespace, final UML uml) {
+        assertTrue("Missing namespace.", namespace.trim().length() != 0);
+        final XmlSchema schema = type.getPackage().getAnnotation(XmlSchema.class);
+        assertNotNull("Missing @XmlSchema package annotation.", schema);
+        final String schemaNamespace = schema.namespace();
+        assertTrue("Missing namespace in @XmlSchema package annotation.", schemaNamespace.trim().length() != 0);
+        assertFalse("Redundant namespace declaration.", namespace.equals(schemaNamespace));
+        if (DEFAULT.equals(namespace)) {
+            namespace = schemaNamespace;
+        }
+        if (uml != null) {
+            final Specification specification = uml.specification();
+            if (specification != null) {
+                assertEquals("Wrong namespace for the ISO specification.", getNamespace(specification), namespace);
+            }
+        }
+        return namespace;
+    }
+
+    /**
      * Tests the annotations on adapters. The test is applied for everything returned
      * by the {@link #getTestedTypes()} method, including both metadata interfaces and
-     * code lists.
+     * code lists. More specifically this method tests that:
+     * <p>
+     * <ul>
+     *   <li>The wrapper have a getter and a setter method declared in the same class.</li>
+     *   <li>The getter method is annotated with {@code @XmlElement} <strong>or</strong>
+     *       {@code @XmlElementRef}, but not both</li>
+     *   <li>{@code @XmlElementRef} is used only in parent classes, not in leaf classes.</li>
+     *   <li>The name declared in {@code @XmlElement} matches the {@code @UML} identifier.</li>
+     * </ul>
      */
     @Test
     public void testAdapterAnnotations() {
@@ -137,7 +216,7 @@ public abstract class AnnotationsTestBase extends TestBase {
              * Get the @UML annotation, which is mandatory.
              */
             final UML classUML = type.getAnnotation(UML.class);
-            assertNotNull(message("Missing @UML annotation for "), classUML);
+            assertNotNull("Missing @UML annotation.", classUML);
             /*
              * Check the annotation on the wrapper, if there is one. If no wrapper is declared
              * specifically for the current type, check if a wrapper is defined for the parent
@@ -157,35 +236,53 @@ public abstract class AnnotationsTestBase extends TestBase {
                     }
                 }
             }
-            if (wrapper == null) {
-                /*
-                 * Do not consider missing wrapper as fatal errors for now, since we known
-                 * that some are missing. Instead just report the missing wrapper at build
-                 * time.
-                 */
-                System.err.println(message("Missing adapter for "));
-            } else if (!wrapper.equals(Void.TYPE)) {
-                testingClass = wrapper.getName();
-                final Method getter, setter;
-                try {
-                    getter = wrapper.getMethod("getElement", (Class<?>[]) null);
-                    setter = wrapper.getMethod("setElement", getter.getReturnType());
-                } catch (NoSuchMethodException e) {
-                    fail(e.toString());
-                    continue;
-                }
-                assertEquals("The setter method must be declared in the same class than the " +
-                        "getter method - not in a parent class, to avoid issues with JAXB.",
-                        getter.getDeclaringClass(), setter.getDeclaringClass());
-                final XmlElement xmlElem = getter.getAnnotation(XmlElement.class);
-                assertEquals(message("Expected @XmlElement XOR @XmlElementRef in "),
-                        (xmlElem == null), getter.isAnnotationPresent(XmlElementRef.class));
+            assertNotNull("Missing JAXB adapter.", wrapper);
+            if (wrapper.equals(Void.TYPE)) {
+                // If the wrapper is intentionally undefined, skip it.
+                continue;
+            }
+            /*
+             * Now fetch the getter/setter methods and verify the getter annotation.
+             */
+            testingClass = wrapper.getName();
+            final Method getter, setter;
+            try {
+                getter = wrapper.getMethod("getElement", (Class<?>[]) null);
+                setter = wrapper.getMethod("setElement", getter.getReturnType());
+            } catch (NoSuchMethodException e) {
+                fail(e.toString());
+                continue;
+            }
+            assertEquals("The setter method must be declared in the same class than the " +
+                    "getter method - not in a parent class, to avoid issues with JAXB.",
+                    getter.getDeclaringClass(), setter.getDeclaringClass());
+            final XmlElement xmlElem = getter.getAnnotation(XmlElement.class);
+            assertEquals("Expected @XmlElement XOR @XmlElementRef.",
+                    (xmlElem == null), getter.isAnnotationPresent(XmlElementRef.class));
+            if (xmlElem != null) {
+                assertFalse("Expected @XmlElementRef.", wrapperIsInherited);
+                assertEquals("Wrong @XmlElement.", classUML.identifier(), xmlElem.name());
+            }
+            /*
+             * Compare with the implementation annotation.
+             */
+            final Class<?> impl = getImplementation(type);
+            assertTrue("Wrong implementation class.", type.isAssignableFrom(impl));
+            if (!CodeList.class.isAssignableFrom(type)) {
+                testingClass = impl.getName();
+                final XmlRootElement root = impl.getAnnotation(XmlRootElement.class);
+                assertNotNull("Missing @XmlRootElement.", root);
+                final String rootNamespace = getNamespace(impl, root.namespace(), classUML);
                 if (xmlElem != null) {
-                    assertFalse(message("Expected @XmlElementRef for "), wrapperIsInherited);
-                    assertEquals(message("Wrong @XmlElement for "), classUML.identifier(), xmlElem.name());
+                    assertEquals("Inconsistent @XmlRootElement name.", xmlElem.name(), root.name());
+                    assertEquals("Inconsistent @XmlRootElement namespace.",
+                            getNamespace(wrapper, xmlElem.namespace(), null), rootNamespace);
                 }
             }
         }
+        // On success, disable the report of failed class or method.
+        testingClass  = null;
+        testingMethod = null;
     }
 
     /**
@@ -200,32 +297,32 @@ public abstract class AnnotationsTestBase extends TestBase {
             }
             testingMethod = null;
             testingClass = type.getName();
-            assertTrue(message("Not an interface: "), type.isInterface());
+            assertTrue("Not an interface.", type.isInterface());
             /*
              * Get the @UML annotation, which is mandatory.
              */
             final UML classUML = type.getAnnotation(UML.class);
-            assertNotNull(message("Missing @UML annotation for "), classUML);
+            assertNotNull("Missing @UML annotation.", classUML);
             /*
              * Get the implementation class, which is mandatory.
              */
             final Class<?> impl = getImplementation(type);
             testingClass = impl.getName();
-            assertNotNull(message("No implementation found for "), impl);
-            assertNotSame(message("No implementation found for "), type, impl);
+            assertNotNull("No implementation found.", impl);
+            assertNotSame("No implementation found.", type, impl);
             /*
              * Get the @XmlRootElement annotation and compare.
              */
             final XmlRootElement xmlRoot = impl.getAnnotation(XmlRootElement.class);
-            assertNotNull(message("Missing @XmlRootElement annotation for "), xmlRoot);
-            assertEquals(message("Wrong @XmlRootElement for "), classUML.identifier(), xmlRoot.name());
+            assertNotNull("Missing @XmlRootElement annotation.", xmlRoot);
+            assertEquals("Wrong @XmlRootElement.", classUML.identifier(), xmlRoot.name());
             /*
              * We do not expect a name attributes in @XmlType since the name
              * is already specified in the @XmlRootElement annotation.
              */
             final XmlType xmlType = impl.getAnnotation(XmlType.class);
             if (xmlType != null && false) { // TODO: this test is disabled for now.
-                assertEquals(message("No @XmlType(name) value expected for "), "##default", xmlType.name());
+                assertEquals("No @XmlType(name) value expected.", "##default", xmlType.name());
             }
             /*
              * Compare the method annotations.
@@ -245,7 +342,7 @@ public abstract class AnnotationsTestBase extends TestBase {
                 }
                 testingMethod = name;
                 final UML methodUML = method.getAnnotation(UML.class);
-                assertNotNull(message("Missing @UML annotation for "), methodUML);
+                assertNotNull("Missing @UML annotation.", methodUML);
                 /*
                  * Get the annotation from the method. If the method is not annotated,
                  * get the annotation from the field instead.
@@ -254,7 +351,7 @@ public abstract class AnnotationsTestBase extends TestBase {
                 try {
                     methodImpl = impl.getMethod(name, (Class<?>[]) null);
                 } catch (NoSuchMethodException ex) {
-                    fail(message("Missing implementation for "));
+                    fail("Missing implementation: " + ex);
                     continue;
                 }
                 XmlElement xmlElem = methodImpl.getAnnotation(XmlElement.class);
@@ -270,11 +367,34 @@ public abstract class AnnotationsTestBase extends TestBase {
                  * annotated).
                  */
                 if (xmlElem == null) {
-                    System.err.println(message("Missing @XmlElement annotation for "));
+                    warning("WARNING: Missing @XmlElement annotation for ");
                     continue;
                 }
-                assertEquals(message("Annotation mismatch for "), methodUML.identifier(), xmlElem.name());
+                assertEquals("Annotation mismatch.", methodUML.identifier(), xmlElem.name());
+                /*
+                 * Check that the namespace is coherent with the UML specification and not
+                 * redundant with the @XmlSchema. Then check that the package @XmlNs declare
+                 * all the namespace found in the implementation, and no more.
+                 */
+                final String namespace = xmlElem.namespace();
+                final String resolvedNS = getNamespace(impl, namespace, methodUML);
+                if (!DEFAULT.equals(namespace)) {
+                    assertFalse("Redundant namespace declaration.", namespace.equals(
+                            impl.getPackage().getAnnotation(XmlSchema.class).namespace()));
+                }
+                boolean found = false;
+                for (final XmlNs ns : impl.getPackage().getAnnotation(XmlSchema.class).xmlns()) {
+                    final String nsURI = ns.namespaceURI();
+                    assertEquals("Unexpected namespace prefix.", getPrefixForNamespace(nsURI), ns.prefix());
+                    if (resolvedNS.equals(nsURI)) {
+                        found = true;
+                    }
+                }
+                assertTrue("Undeclared namespace in package @XmlSchema", found);
             }
         }
+        // On success, disable the report of failed class or method.
+        testingClass  = null;
+        testingMethod = null;
     }
 }

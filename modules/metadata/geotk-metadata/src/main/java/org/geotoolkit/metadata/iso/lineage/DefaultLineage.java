@@ -34,7 +34,6 @@ import org.opengis.metadata.maintenance.ScopeCode;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.metadata.iso.quality.DefaultScope;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -47,7 +46,7 @@ import org.geotoolkit.xml.Namespaces;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -58,7 +57,7 @@ import org.geotoolkit.xml.Namespaces;
     "processSteps",
     "sources"
 })
-@XmlRootElement(name = "LI_Lineage", namespace = Namespaces.GMI)
+@XmlRootElement(name = "LI_Lineage")
 public class DefaultLineage extends MetadataEntity implements Lineage {
     /**
      * Serial number for inter-operability with different versions.

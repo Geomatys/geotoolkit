@@ -36,7 +36,7 @@ import org.geotoolkit.xml.Namespaces;
  * Distance between consistent parts of (centre, left side, right side) adjacent pixels.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -86,7 +86,7 @@ public class DefaultNominalResolution extends MetadataEntity implements NominalR
      */
     @Override
     @ValueRange(minimum=0, isMinIncluded=false)
-    @XmlElement(name = "scanningResolution")
+    @XmlElement(name = "scanningResolution", namespace = Namespaces.GMI)
     public synchronized Double getScanningResolution() {
         return scanningResolution;
     }
@@ -108,7 +108,7 @@ public class DefaultNominalResolution extends MetadataEntity implements NominalR
      */
     @Override
     @ValueRange(minimum=0, isMinIncluded=false)
-    @XmlElement(name = "groundResolution")
+    @XmlElement(name = "groundResolution", namespace = Namespaces.GMI)
     public synchronized Double getGroundResolution() {
         return groundResolution;
     }

@@ -30,6 +30,7 @@ import org.opengis.metadata.distribution.DataFile;
 import org.opengis.util.LocalName;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -37,7 +38,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Description of a transfer data file.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -47,7 +48,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 /// "featureTypes",
     "fileFormat"
 })
-@XmlRootElement(name = "MX_DataFile")
+@XmlRootElement(name = "MX_DataFile", namespace = Namespaces.GMX)
 public class DefaultDataFile extends MetadataEntity implements DataFile {
     /**
      * Serial number for inter-operability with different versions.
@@ -106,7 +107,7 @@ public class DefaultDataFile extends MetadataEntity implements DataFile {
      * Returns the format of the transfer data file.
      */
     @Override
-    @XmlElement(name = "fileFormat", required = true)
+    @XmlElement(name = "fileFormat", namespace = Namespaces.GMX, required = true)
     public synchronized Format getFileFormat() {
         return fileFormat;
     }
