@@ -275,16 +275,7 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
         requestParameters.put("WIDTH", String.valueOf(dimension.width));
         requestParameters.put("HEIGHT", String.valueOf(dimension.height));
         requestParameters.put("LAYERS", StringUtilities.toCommaSeparatedValues((Object[])layers));
-        requestParameters.putAll(toString(envelope));
-
-        String stylesParam = "";
-
-        if (styles != null && styles.length > 0 && styles[0] != null) {
-            stylesParam = StringUtilities.toCommaSeparatedValues((Object[])styles);
-        }
-        
-        requestParameters.put("STYLES", stylesParam);
-
+        requestParameters.putAll(toString(envelope));      
 
 
         // Add optional parameters
@@ -300,17 +291,28 @@ public abstract class AbstractGetMap extends AbstractRequest implements GetMapRe
             requestParameters.put("TRANSPARENT", Boolean.toString(transparent).toUpperCase());
         }
 
-        if (sld != null) {
-            requestParameters.put("SLD", sld);
-        }
-
         if (sldVersion != null) {
             requestParameters.put("SLD_VERSION", sldVersion);
         }
-
+        
+        
+        // Add one style parameter       
+        String styleParam = "STYLES"; 
+        String styleValue = "";
+        
         if (sldBody != null) {
-            requestParameters.put("SLD_BODY", sldBody);
+            styleParam = "SLD_BODY";
+            styleValue = sldBody;
+            
+        } else if (sld != null) {
+            styleParam = "SLD";
+            styleValue = sld;        
+        
+        } else if (styles != null && styles.length > 0 && styles[0] != null) {
+            styleValue = StringUtilities.toCommaSeparatedValues((Object[])styles);          
         }
+        
+        requestParameters.put(styleParam, styleValue);  
 
     }
 
