@@ -37,7 +37,7 @@ import static org.junit.Assert.*;
  */
 public final class ScriptRunnerTest {
     /**
-     * The runner that doesn't read any file, but keep trace of what was intented to be
+     * The runner that doesn't read any file, but keep trace of what was intended to be
      * read and their order.
      */
     private static final class Runner extends ScriptRunner {

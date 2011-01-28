@@ -334,7 +334,7 @@ public class ParameterWriter extends FilterWriter implements Localized {
     {
         /*
          * Gets the constants that are going to be used in the whole method. We get them as final
-         * local constants as a safety for protecting them from unintented changes. Then writes
+         * local constants as a safety for protecting them from unintended changes. Then writes
          * the operation name and its aliases. Those names are formatted before the table.
          */
         final Writer  out           = this.out;

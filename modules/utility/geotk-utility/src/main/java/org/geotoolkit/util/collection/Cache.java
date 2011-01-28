@@ -653,7 +653,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * A handler implementation used for telling other thread that the current thread is
      * computing a value.
      */
-    @SuppressWarnings("serial") // Actually not intented to be serialized.
+    @SuppressWarnings("serial") // Actually not intended to be serialized.
     final class Work extends ReentrantLock implements Handler<V>, CacheReferences.Handler {
         /**
          * The key to use for storing the result in the map.

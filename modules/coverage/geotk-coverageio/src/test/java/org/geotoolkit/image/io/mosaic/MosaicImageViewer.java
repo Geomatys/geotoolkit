@@ -40,7 +40,7 @@ import org.geotoolkit.internal.GraphicsUtilities;
 
 /**
  * Displays the image read by {@link MosaicImageReader}. This is used only for visual testing
- * of the {@link org.geotoolkit.image.io.mosaic} package. This is <strong>not</strong> intented
+ * of the {@link org.geotoolkit.image.io.mosaic} package. This is <strong>not</strong> intended
  * to be a building block of any application, since this class is keep simple on intend. For
  * example the image is reloaded everytime the component is paint, which is very inefficient
  * but appropriate for the purpose of testing the image reader.

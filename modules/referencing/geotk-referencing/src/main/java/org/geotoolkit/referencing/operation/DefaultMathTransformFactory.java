@@ -548,7 +548,7 @@ public class DefaultMathTransformFactory extends ReferencingFactory implements M
             }
             transform = pool.unique(transform);
         } finally {
-            getLocalVariables().lastMethod = method; // May be null in case of failure, which is intented.
+            getLocalVariables().lastMethod = method; // May be null in case of failure, which is intended.
         }
         return transform;
     }

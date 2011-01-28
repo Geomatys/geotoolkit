@@ -203,7 +203,7 @@ public final class PropertyEpsgFactoryTest extends ReferencingTestBase {
         if (isEpsgFactoryAvailable()) {
             /*
              * If an EPSG database is available, the referencing module will use it for
-             * fetching the CRS (which is the intented behavior) instead than using the
+             * fetching the CRS (which is the intended behavior) instead than using the
              * PropertyEpsgFactory.
              */
             assertNotSame(crs, CRS.decode("EPSG:3035"));

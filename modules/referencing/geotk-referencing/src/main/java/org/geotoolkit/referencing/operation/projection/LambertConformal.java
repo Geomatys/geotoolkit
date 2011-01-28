@@ -327,7 +327,7 @@ public class LambertConformal extends UnitaryProjection {
          * in LambertConformatTest.testExtremes().
          *
          * if (n<0) {rho=-rho; x=-x; y=-y;} was also removed because F should have the same
-         * sign than n, so the above sign reversal was intented to make F/rho positive. But
+         * sign than n, so the above sign reversal was intended to make F/rho positive. But
          * because we do not involve F here anymore (it is done in the affine transform),
          * we need to keep the current sign of rho which is positive, otherwise we get NaN
          * when used in the pow(rho, ...) expression below.
