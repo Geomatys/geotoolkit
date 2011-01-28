@@ -79,7 +79,7 @@ public class FloodFillTest extends SampleImageTestBase {
             new Point(650, 200)   // New-Found land
         };
         FloodFill.fill(image, new double[][] {{2}}, new double[] {1}, points);
-        assertChecksumEquals(2609270527L);
+        assertChecksumEquals("fill(CONTOUR - untiled)", 2609270527L);
         view("fill(CONTOUR - untiled)");
         /*
          * Tests again the same filling, but on a tiled image. The visual result should be idential
@@ -89,7 +89,7 @@ public class FloodFillTest extends SampleImageTestBase {
         loadSampleImage(SampleImage.CONTOUR);
         this.image = image = new TiledImage(this.image, 50, 50);
         FloodFill.fill(image, new double[][] {{2}}, new double[] {1}, points);
-        assertChecksumEquals(3271811962L);
+        assertChecksumEquals("fill(CONTOUR - tiled)", 3271811962L);
         view("fill(CONTOUR - tiled)");
     }
 
@@ -101,7 +101,7 @@ public class FloodFillTest extends SampleImageTestBase {
         WritableRenderedImage image;
         loadSampleImage(SampleImage.INDEXED);
         this.image = image = copyImage();
-        assertChecksumEquals(1873283205L);
+        assertChecksumEquals("copy", 1873283205L);
         /*
          * Replaces the color of Madagascar island (index 240 at location (125,220)) and its border
          * (black: index 0) by a white color (index 255). Do the same for the continent (starting
@@ -110,7 +110,7 @@ public class FloodFillTest extends SampleImageTestBase {
         FloodFill.fill(image, new double[][] {{240}, {0}}, new double[] {255},
                 new Point(125, 220), // Madagascar
                 new Point(0, 0));    // Africa
-        assertChecksumEquals(649828117L);
+        assertChecksumEquals("fill(INDEXED - untiled)", 649828117L);
         view("fill(INDEXED - untiled)");
     }
 
@@ -122,17 +122,17 @@ public class FloodFillTest extends SampleImageTestBase {
         WritableRenderedImage image;
         loadSampleImage(SampleImage.RGB_ROTATED);
         this.image = image = copyImage();
-        assertChecksumEquals(3650654124L, 4050219331L);
+        assertChecksumEquals(null, 3650654124L, 4050219331L);
         /*
          * Replaces the black color of the upper-left corner.
          */
         FloodFill.fill(image, new Color[] {Color.BLACK}, Color.BLUE, new Point(0, 0));
-        assertChecksumEquals(2215625664L, 1196099012L);
+        assertChecksumEquals(null, 2215625664L, 1196099012L);
         /*
          * Do the same for the other corner.
          */
         FloodFill.fill(image, new Color[] {Color.BLACK}, Color.CYAN, new Point(259, 299));
-        assertChecksumEquals(3983761906L, 2415208678L);
+        assertChecksumEquals("fill(RGB - untiled)", 3983761906L, 2415208678L);
         view("fill(RGB - untiled)");
         /*
          * Same test on a tiles image.
@@ -140,7 +140,7 @@ public class FloodFillTest extends SampleImageTestBase {
         loadSampleImage(SampleImage.RGB_ROTATED);
         this.image = image = new TiledImage(this.image, 50, 50);
         FloodFill.fill(image, new Color[] {Color.BLACK}, Color.BLUE, new Point(0, 0), new Point(259, 299));
-        assertChecksumEquals(1202618797L, 2266942802L);
+        assertChecksumEquals("fill(CONTOUR - tiled)", 1202618797L, 2266942802L);
         view("fill(CONTOUR - tiled)");
     }
 }

@@ -21,19 +21,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Iterator;
 import javax.imageio.ImageReader;
-import java.awt.image.RenderedImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.internal.io.TemporaryFile;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageWriter;
-import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.test.image.ImageTestBase;
+import org.geotoolkit.test.TestData;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -43,11 +42,18 @@ import static org.junit.Assert.*;
  * Tests {@link XImageIO}. Also ensure that every plugins are correctly registered.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.17
  *
  * @since 3.07
  */
-public final class XImageIOTest {
+public final class XImageIOTest extends ImageTestBase {
+    /**
+     * Creates a new test suite.
+     */
+    public XImageIOTest() {
+        super(XImageIO.class);
+    }
+
     /**
      * Tests the {@link XImageIO#getReaderBySuffix(Object, Boolean, Boolean)} method,
      * followed by {@link XImageIO#getWriterBySuffix(Object, RenderedImage)}.
@@ -64,7 +70,7 @@ public final class XImageIOTest {
         final ImageReader reader = XImageIO.getReaderBySuffix(file, true, true);
         assertTrue(reader.isSeekForwardOnly());
         assertTrue(reader.isIgnoringMetadata());
-        final RenderedImage image = reader.read(0);
+        image = reader.read(0);
         XImageIO.close(reader);
         reader.dispose();
 
@@ -78,6 +84,7 @@ public final class XImageIOTest {
         } finally {
             assertTrue(TemporaryFile.delete(tmp));
         }
+        view("testGetBySuffix()");
     }
 
     /**
@@ -88,7 +95,6 @@ public final class XImageIOTest {
      */
     @Test
     public void testPluginsRegistration() {
-        Registry.setDefaultCodecPreferences();
         final IIORegistry registry = IIORegistry.getDefaultInstance();
         WorldFileImageReader.Spi.registerDefaults(registry);
         WorldFileImageWriter.Spi.registerDefaults(registry);

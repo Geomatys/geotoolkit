@@ -33,6 +33,11 @@ import org.junit.*;
  */
 public abstract class TestBase {
     /**
+     * {@code true} if {@link #loggingSetup()} has been invoked.
+     */
+    private static boolean initialized;
+
+    /**
      * Creates a new test case.
      */
     protected TestBase() {
@@ -41,10 +46,12 @@ public abstract class TestBase {
     /**
      * Configures the logging handler and the logging level to use for the test suite.
      * This method uses reflection for installing the handler provided in Geotk.
+     * This method is invoked automatically by JUnit and doesn't need to be invoked explicitely.
      */
     @BeforeClass
-    public static void loggingSetup() {
-        try {
+    public static synchronized void loggingSetup() {
+        if (!initialized) try {
+            initialized = true; // Initialize only once even in case of failure.
             final Class<?> logging = Class.forName("org.geotoolkit.util.logging.Logging");
             logging.getMethod("forceMonolineConsoleOutput", Level.class).invoke(
                     logging.getField("GEOTOOLKIT").get(null), new Object[] {null});

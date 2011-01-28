@@ -39,6 +39,7 @@ import org.geotoolkit.test.TestBase;
 import org.geotoolkit.test.gui.SwingTestBase;
 
 import org.junit.After;
+import org.junit.BeforeClass;
 import static org.junit.Assert.*;
 
 
@@ -48,11 +49,33 @@ import static org.junit.Assert.*;
  * the {@link #view(String)} method will show the {@linkplain #image}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.16 (derived from 3.00)
  */
 public abstract class ImageTestBase extends TestBase {
+    /**
+     * {@code true} if {@link #setDefaultCodecPreferences()} has been invoked.
+     */
+    private static boolean initialized;
+
+    /**
+     * Invokes {@link org.geotoolkit.image.jai.Registry#setDefaultCodecPreferences()}
+     * in order to improve consistency between different execution of test suites.
+     * This method is invoked automatically by JUnit and doesn't need to be invoked explicitely.
+     */
+    @BeforeClass
+    public static synchronized void setDefaultCodecPreferences() {
+        if (!initialized) try {
+            initialized = true; // Initialize only once even in case of failure.
+            Class.forName("org.geotoolkit.image.jai.Registry")
+                 .getMethod("setDefaultCodecPreferences", (Class<?>[]) null)
+                 .invoke(null, (Object[]) null);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+    }
+
     /**
      * The image being tested.
      */
@@ -99,14 +122,19 @@ public abstract class ImageTestBase extends TestBase {
     /**
      * Asserts that the {@linkplain #image} checksum is equals to one of the specified values.
      *
+     * @param name The name of the image being tested, or {@code null} if none.
      * @param expected The expected checksum value.
      */
-    protected final synchronized void assertChecksumEquals(final long... expected) {
+    protected final synchronized void assertChecksumEquals(final String name, final long... expected) {
         final long c = Commons.checksum(image);
         for (final long e : expected) {
             if (e == c) return;
         }
-        fail("Unexpected image checksum: " + c);
+        final StringBuilder buffer = new StringBuilder("Unexpected image checksum");
+        if (name != null) {
+            buffer.append(" for \"").append(name).append('"');
+        }
+        fail(buffer.append(": ").append(c).toString());
     }
 
     /**

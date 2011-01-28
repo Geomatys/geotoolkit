@@ -21,7 +21,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.Transparency;
-import java.awt.image.RenderedImage;
 import java.awt.image.ComponentColorModel;
 
 import java.io.File;
@@ -34,9 +33,9 @@ import javax.imageio.stream.ImageInputStream;
 
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.image.jai.Registry;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.rmi.RMI;
+import org.geotoolkit.test.image.ImageTestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -49,11 +48,11 @@ import static org.junit.Assert.*;
  * which should have added an alpha channel.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.17
  *
  * @since 3.01
  */
-public final class MosaicReadWriteTest {
+public final class MosaicReadWriteTest extends ImageTestBase {
     /**
      * The width and height (in pixels) of source tiles.
      */
@@ -91,6 +90,13 @@ public final class MosaicReadWriteTest {
     private File targetDirectory;
 
     /**
+     * Creates a new test suite.
+     */
+    public MosaicReadWriteTest() {
+        super(Tile.class);
+    }
+
+    /**
      * Clears the target directory. This method does not scan in sub-directories.
      */
     @After
@@ -114,7 +120,6 @@ public final class MosaicReadWriteTest {
      */
     @Before
     public void setupSourceMosaic() throws IOException {
-        Registry.setDefaultCodecPreferences();
         final ImageReaderSpi spi = Formats.getReaderByFormatName("png", null);
         final TileManager[] managers = TileManagerFactory.DEFAULT.create(new Tile[] {
             new Tile(spi, TestData.url(MosaicReadWriteTest.class, "A1.png"), 0, new Rectangle(0*S, 0, S, S)),
@@ -131,22 +136,6 @@ public final class MosaicReadWriteTest {
     }
 
     /**
-     * Ensures that a checksum value is equals to any of the expected value.
-     *
-     * @param name     Name of the image to be checked.
-     * @param expected The expected checksum values.
-     * @param actual   The actual checksum value.
-     */
-    private static void assertEqualsAny(final String name, final long[] expected, final long actual) {
-        for (final long e : expected) {
-            if (e == actual) {
-                return;
-            }
-        }
-        fail(name + " has unexpected image checksum: " + actual);
-    }
-
-    /**
      * Performs a checksum on the input tiles. This is not yet the mosaic.
      * If this test fails, then all other tests in the file are likely to
      * fail as well.
@@ -158,14 +147,14 @@ public final class MosaicReadWriteTest {
         int i=0;
         for (final Tile tile : sourceMosaic.getTiles()) {
             final ImageReader reader = tile.getImageReader();
-            final RenderedImage image = reader.read(0);
+            image = reader.read(0);
             Tile.dispose(reader);
             final String name = tile.getInputName();
             assertEquals(name, S, image.getWidth());
             assertEquals(name, S, image.getHeight());
             assertEquals(3, image.getSampleModel().getNumBands());
             assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
-            assertEqualsAny(name, TILE_CHECKSUMS[i++], Commons.checksum(image));
+            assertChecksumEquals(name, TILE_CHECKSUMS[i++]);
         }
     }
 
@@ -188,7 +177,7 @@ public final class MosaicReadWriteTest {
         assertEquals("Width",    4*S, reader.getWidth (0));
         assertEquals("Height",   2*S, reader.getHeight(0));
         assertTrue(reader.getRawImageType(0).getColorModel() instanceof ComponentColorModel);
-        RenderedImage image = reader.read(0);
+        image = reader.read(0);
         assertEquals("Width",    4*S, image.getWidth ());
         assertEquals("Height",   2*S, image.getHeight());
         assertEquals("Checksum", 1800014439L, Commons.checksum(image));
@@ -201,7 +190,7 @@ public final class MosaicReadWriteTest {
                 assertEquals(S, image.getHeight());
                 assertEquals(3, image.getSampleModel().getNumBands());
                 assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
-                assertEqualsAny("Tile("+x+','+y+')', TILE_CHECKSUMS[i++], Commons.checksum(image));
+                assertChecksumEquals("Tile("+x+','+y+')', TILE_CHECKSUMS[i++]);
             }
         }
         /*
@@ -288,11 +277,11 @@ public final class MosaicReadWriteTest {
             final ImageInputStream in = ImageIO.createImageInputStream(file);
             assertNotNull("File not found", in);
             reader.setInput(in);
-            final RenderedImage image = reader.read(0);
+            image = reader.read(0);
             in.close();
             assertEquals(3, image.getSampleModel().getNumBands());
             assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
-            assertEqualsAny(filename, checksums[i++], Commons.checksum(image));
+            assertChecksumEquals(filename, checksums[i++]);
         }
         reader.dispose();
     }
@@ -327,7 +316,7 @@ public final class MosaicReadWriteTest {
          */
         for (final Tile tile : targetMosaic.getTiles()) {
             final ImageReader reader = tile.getImageReader();
-            final RenderedImage image = reader.read(0);
+            image = reader.read(0);
             Tile.dispose(reader);
             assertEquals(4, image.getSampleModel().getNumBands());
             assertEquals(Transparency.TRANSLUCENT, image.getColorModel().getTransparency());
@@ -337,16 +326,14 @@ public final class MosaicReadWriteTest {
          */
         final MosaicImageReader reader = new MosaicImageReader();
         reader.setInput(targetMosaic);
-        final RenderedImage image = reader.read(0);
+        image = reader.read(0);
         reader.dispose();
         assertEquals(4, image.getSampleModel().getNumBands());
         assertEquals(Transparency.TRANSLUCENT, image.getColorModel().getTransparency());
         assertEquals(3333171052L, Commons.checksum(image));
         /*
-         * If a visual test is wanted, enable the block below.
+         * Visual test (if enabled).
          */
-        if (false) {
-            assertTrue(ImageIO.write(image, "png", new File("testTransparency.png")));
-        }
+        view("testTransparency()");
     }
 }

@@ -35,17 +35,11 @@ import static java.awt.image.DataBuffer.*;
  * Tests {@link ImageWorker}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.17
  *
  * @since 3.00
  */
 public final class ImageWorkerTest extends SampleImageTestBase {
-    /**
-     * Whatever platform-dependent tests should be enabled. This is used for
-     * marking the tests where the result appears to vary between platforms.
-     */
-    private static final boolean RUN_PLATFORM_DEPENDENT_TESTS = false;
-
     /**
      * Creates a new test case.
      */
@@ -54,7 +48,7 @@ public final class ImageWorkerTest extends SampleImageTestBase {
     }
 
     /**
-     * To ensure strict reproductibility of the test suite accross different platforms,
+     * To ensure strict reproductibility of the test suite across different platforms,
      * disable native acceleration for some image operations that {@link ImageWorker}
      * uses through this test suite.
      */
@@ -124,13 +118,13 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         worker.setImage(original);
         worker.setColorModelType(ComponentColorModel.class);
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(1941874976L);
+        assertChecksumEquals("forceComponentColorModel()", 1941874976L);
         view("forceComponentColorModel()");
 
         final RenderedImage rgb = worker.image;
         worker.setColorSpaceType(PaletteInterpretation.GRAY);
         assertNotSame(rgb, image = worker.image);
-        assertChecksumEquals(2283780390L);
+        assertChecksumEquals("setColorSpaceType(GRAY)", 2283780390L);
         view("setColorSpaceType(GRAY)");
 
         final RenderedImage grayscale = worker.image;
@@ -139,13 +133,13 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         worker.setImage(original);
         worker.intensity();
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(3180171915L);
+        assertChecksumEquals("intensity()", 3180171915L);
         view("intensity()");
 
         final RenderedImage intensity = worker.image;
         worker.binarize(true);
         assertNotSame(intensity, image = worker.image);
-        assertChecksumEquals(312929432L);
+        assertChecksumEquals(null, 312929432L);
         worker.binarize(0.25);
         assertSame("Should be already binarized.", image, worker.image);
         view("binarize()");
@@ -153,25 +147,25 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         final RenderedImage binarize = worker.image;
         worker.binarize(192, 64);
         assertNotSame(binarize, image = worker.image);
-        assertChecksumEquals(4034897437L);
+        assertChecksumEquals("binarize(192,64)", 4034897437L);
         view("binarize(192,64)");
 
         worker.setImage(original);
         worker.mask(binarize, new double[] {0});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(2185221001L);
+        assertChecksumEquals("mask(binarize,0)", 2185221001L);
         view("mask(binarize,0)");
 
         worker.setImage(original);
         worker.maskBackground(new double[][] {{255}}, new double[] {0});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(3577749049L);
+        assertChecksumEquals("maskBackground(255,0)", 3577749049L);
         view("maskBackground(255,0)");
 
         worker.setImage(original);
         worker.maskBackground(new double[][] {{255}}, null);
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(1873283205L);
+        assertChecksumEquals("maskBackground(255,null)", 1873283205L);
         view("maskBackground(255,null)");
     }
 
@@ -219,16 +213,14 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         worker.setImage(original);
         worker.setColorModelType(IndexColorModel.class);
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(2550205381L);
+        assertChecksumEquals("forceIndexColorModel()", 2550205381L);
         view("forceIndexColorModel()");
 
         final RenderedImage indexed = worker.image;
         worker.setImage(original);
         worker.setColorSpaceType(PaletteInterpretation.GRAY);
         assertNotSame(indexed, image = worker.image);
-        if (RUN_PLATFORM_DEPENDENT_TESTS) {
-            assertChecksumEquals(163325088L);
-        }
+        assertChecksumEquals("setColorSpaceType(GRAY)", 163325088L);
         view("setColorSpaceType(GRAY)");
 
         final RenderedImage grayscale = worker.image;
@@ -237,13 +229,13 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         worker.setImage(original);
         worker.intensity();
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(529810612L);
+        assertChecksumEquals("intensity()", 529810612L);
         view("intensity()");
 
         final RenderedImage intensity = worker.image;
         worker.binarize(true);
         assertNotSame(intensity, image = worker.image);
-        assertChecksumEquals(564364433L);
+        assertChecksumEquals(null, 564364433L);
         worker.binarize(0.25);
         assertSame("Should be already binarized.", image, worker.image);
         view("binarize()");
@@ -251,25 +243,25 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         final RenderedImage binarize = worker.image;
         worker.binarize(192, 64);
         assertNotSame(binarize, image = worker.image);
-        assertChecksumEquals(1507269011L);
+        assertChecksumEquals("binarize(192,64)", 1507269011L);
         view("binarize(192,64)");
 
         worker.setImage(original);
         worker.mask(binarize, new double[] {255,128,64});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(3974692828L, 3148611825L);
+        assertChecksumEquals("mask(binarize,orange)", 3974692828L, 3148611825L);
         view("mask(binarize,orange)");
 
         worker.setImage(original);
         worker.maskBackground(new double[][] {{0,0,0}}, new double[] {64,128,255});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(346825169L, 1447818957L);
+        assertChecksumEquals("maskBackground(black,blue)", 346825169L, 1447818957L);
         view("maskBackground(black,blue)");
 
         worker.setImage(original);
         worker.maskBackground(new double[][] {{0,0,0}}, null);
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals(1508270032L);
+        assertChecksumEquals("maskBackground(black,transparent)", 1508270032L);
         view("maskBackground(black,transparent)");
     }
 }
