@@ -63,7 +63,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      * This method is systematically called at marshalling-time by JAXB.
      */
     @XmlElement(name = "UnlimitedInteger", namespace = "http://www.isotc211.org/2005/gco")
-    public XmlUnlimitedInteger getMutliplicity() {
+    public XmlUnlimitedInteger getMultiplicity() {
         return new XmlUnlimitedInteger(multiplicity);
     }
 
@@ -90,7 +90,6 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
     @Override
     public UnlimitedInteger unmarshal(final UnlimitedIntegerAdapter value) throws Exception {
         if (value == null) {
-            System.out.println("unmarshall null");
             return null;
         }
         return value.multiplicity;
