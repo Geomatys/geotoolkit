@@ -39,13 +39,14 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
 @XmlType(name = "MD_RangeDimension", propOrder={
+    "sequenceIdentifier",
     "descriptor"
 })
 @XmlSeeAlso({DefaultBand.class})
@@ -87,10 +88,9 @@ public class DefaultRangeDimension extends MetadataEntity implements RangeDimens
     /**
      * Returns the number that uniquely identifies instances of bands of wavelengths
      * on which a sensor operates.
-     *
-     * @todo needs to annotate the package org.geotoolkit.util before.
      */
     @Override
+    @XmlElement(name = "sequenceIdentifier")
     public synchronized MemberName getSequenceIdentifier() {
         return sequenceIdentifier;
     }

@@ -42,7 +42,9 @@ import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
- * A scoped identifier within a namespace.
+ * A composite of a {@linkplain NameSpace name space} (as a {@linkplain LocalName local name})
+ * and a {@linkplain GenericName generic name} valid in that name space. See the
+ * {@linkplain ScopedName GeoAPI javadoc} for more information.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

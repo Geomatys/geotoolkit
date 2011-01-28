@@ -34,14 +34,18 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
- * @version 3.04
+ * @version 3.17
  *
  * @since 2.1
  * @module
  */
 @ThreadSafe
 @XmlRootElement(name = "DQ_Result")
-@XmlSeeAlso({DefaultConformanceResult.class, DefaultQuantitativeResult.class})
+@XmlSeeAlso({
+    DefaultConformanceResult.class,
+    DefaultQuantitativeResult.class,
+    DefaultCoverageResult.class
+})
 public class AbstractResult extends MetadataEntity implements Result {
     /**
      * Serial number for inter-operability with different versions.

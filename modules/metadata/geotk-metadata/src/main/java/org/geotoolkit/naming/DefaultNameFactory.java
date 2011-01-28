@@ -27,6 +27,7 @@ import java.util.Collection;
 import org.opengis.util.TypeName;
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
+import org.opengis.util.MemberName;
 import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.InternationalString;
@@ -35,6 +36,7 @@ import org.opengis.metadata.Identifier;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.DefaultInternationalString;
 import static org.geotoolkit.util.Utilities.ensureNonNull;
@@ -45,7 +47,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  * A factory for {@link AbstractName} objects.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.17
  *
  * @see org.geotoolkit.factory.FactoryFinder#getNameFactory
  *
@@ -155,6 +157,23 @@ public class DefaultNameFactory extends Factory implements NameFactory {
     }
 
     /**
+     * Creates a member name from the given character sequence and attribute type.
+     * The default implementation returns a new {@linkplain DefaultMemberName} instance.
+     *
+     * @param  scope The {@linkplain GenericName#scope scope} of the type
+     *         name to be created, or {@code null} for a global namespace.
+     * @param  name The type name as a string or an international string.
+     * @param  attributeType The type of the data associated with the record member.
+     * @return The type name for the given character sequence.
+     * @throws NullArgumentException If the {@code name} or {@code attributeType} argument is null.
+     *
+     * @since 3.17
+     */
+    public MemberName createMemberName(final NameSpace scope, final CharSequence name, final TypeName attributeType) {
+        return new DefaultMemberName(scope, name, attributeType);
+    }
+
+    /**
      * Creates a type name from the given character sequence. The default implementation
      * returns a new {@linkplain DefaultTypeName} instance.
      *
@@ -162,14 +181,12 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      *         name to be created, or {@code null} for a global namespace.
      * @param  name The type name as a string or an international string.
      * @return The type name for the given character sequence.
-     * @throws IllegalArgumentException If the {@code name} argument is null.
+     * @throws NullArgumentException If the {@code name} argument is null.
      *
      * @since 3.04
      */
     @Override
-    public TypeName createTypeName(NameSpace scope, CharSequence name)
-            throws IllegalArgumentException
-    {
+    public TypeName createTypeName(final NameSpace scope, final CharSequence name) {
         return new DefaultTypeName(scope, name);
     }
 
@@ -181,14 +198,12 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      *         name to be created, or {@code null} for a global namespace.
      * @param  name The local name as a string or an international string.
      * @return The local name for the given character sequence.
-     * @throws IllegalArgumentException If the {@code name} argument is null.
+     * @throws NullArgumentException If the {@code name} argument is null.
      *
      * @since 3.00
      */
     @Override
-    public LocalName createLocalName(NameSpace scope, CharSequence name)
-            throws IllegalArgumentException
-    {
+    public LocalName createLocalName(final NameSpace scope, final CharSequence name) {
         if (scope instanceof DefaultNameSpace) {
             // Following may return a cached instance.
             return ((DefaultNameSpace) scope).local(name, null);
@@ -208,14 +223,12 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      *         {@linkplain InternationalString international strings}. This array must
      *         contains at least one element.
      * @return The generic name for the given parsed names.
-     * @throws IllegalArgumentException If the given array is empty.
+     * @throws NullArgumentException If the given array is empty.
      *
      * @since 3.00
      */
     @Override
-    public GenericName createGenericName(NameSpace scope, CharSequence... parsedNames)
-            throws IllegalArgumentException
-    {
+    public GenericName createGenericName(final NameSpace scope, final CharSequence... parsedNames) {
         ensureNonNull("parsedNames", parsedNames);
         switch (parsedNames.length) {
             default: return new DefaultScopedName(scope, Arrays.asList(parsedNames));
@@ -305,7 +318,7 @@ public class DefaultNameFactory extends Factory implements NameFactory {
      *
      * @param  value The object to cast into an array of generic names.
      * @return The generic names. May be a direct reference to {@code value}.
-     * @throws IllegalArgumentException if {@code value} is null.
+     * @throws NullArgumentException if {@code value} is null.
      * @throws ClassCastException if {@code value} can't be casted.
      */
     public GenericName[] toArray(Object value) throws ClassCastException {

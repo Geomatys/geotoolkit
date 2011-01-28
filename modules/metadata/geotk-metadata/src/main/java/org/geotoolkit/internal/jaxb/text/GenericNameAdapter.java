@@ -22,10 +22,12 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.opengis.util.TypeName;
 import org.opengis.util.LocalName;
+import org.opengis.util.MemberName;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.naming.AbstractName;
 import org.geotoolkit.naming.DefaultTypeName;
+import org.geotoolkit.naming.DefaultMemberName;
 import org.geotoolkit.naming.DefaultScopedName;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.xml.Namespaces;
@@ -37,7 +39,8 @@ import org.geotoolkit.xml.Namespaces;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.17
  *
  * @since 2.5
  * @module
@@ -83,7 +86,7 @@ public final class GenericNameAdapter extends XmlAdapter<GenericNameAdapter, Gen
     @XmlElement(name = "LocalName", namespace = Namespaces.GCO)
     public String getLocalName() {
         final Object name = this.name;
-        return (name instanceof LocalName) && !(name instanceof TypeName) ? name.toString() : null;
+        return (name instanceof LocalName) && !(name instanceof TypeName) && !(name instanceof MemberName) ? name.toString() : null;
     }
 
     /**
@@ -150,6 +153,30 @@ public final class GenericNameAdapter extends XmlAdapter<GenericNameAdapter, Gen
      * @throws IllegalStateException If a name is already defined.
      */
     public void setTypeName(final DefaultTypeName name) throws IllegalStateException {
+        ensureUndefined();
+        this.name = name;
+    }
+
+    /**
+     * Returns the {@code MemberName} generated from the metadata value.
+     * This method is called at marshalling-time by JAXB.
+     *
+     * @return The current name, or {@code null} if none.
+     */
+    @XmlElement(name = "MemberName", namespace = Namespaces.GCO)
+    public DefaultMemberName getMemberName() {
+        final Object name = this.name;
+        return (name instanceof MemberName) ? (DefaultMemberName) name : null;
+    }
+
+    /**
+     * Sets the value for the {@code MemberName}.
+     * This method is called at unmarshalling-time by JAXB.
+     *
+     * @param name The new name.
+     * @throws IllegalStateException If a name is already defined.
+     */
+    public void setMemberName(final DefaultMemberName name) throws IllegalStateException {
         ensureUndefined();
         this.name = name;
     }

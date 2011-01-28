@@ -42,7 +42,10 @@ import static org.geotoolkit.util.Utilities.ensureNonNull;
 
 
 /**
- * Identifier within a {@linkplain DefaultNameSpace name space}.
+ * Identifier within a {@linkplain NameSpace name space} for a local object. Local names are
+ * names which are directly accessible to and maintained by a name space. Names are local to
+ * one and only one name space. The name space within which they are local is indicated by
+ * the {@linkplain #scope() scope}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
