@@ -154,10 +154,10 @@ public final class Trees {
      * <ul>
      *   <li>If the given object is an instance of {@link Node}, then this method delegates
      *       to {@link #xmlToSwing(Node)}.</li>
-     *   <li>If the given object is an instance of {@link Collection}, {@link Map} or an array,
-     *       then a node is created with the name of the implemented collection interface (for
-     *       example {@code "List"} or {@code "Set"}) and each collection elements is added as
-     *       a child of the above-cited node.</li>
+     *   <li>If the given object is an instance of {@link Iterable}, {@link Map} or an array,
+     *       then a node is created with the name of the implemented interface (for example
+     *       {@code "List"} or {@code "Set"}) and each iterated elements is added as a child
+     *       of the above-cited node.</li>
      *   <li>If the given object is an instance of {@link java.util.Map.Entry}, then this
      *       method returns a {@link NamedTreeNode} which contain the entry key as the
      *       {@linkplain NamedTreeNode#getName() name} and the entry value as
