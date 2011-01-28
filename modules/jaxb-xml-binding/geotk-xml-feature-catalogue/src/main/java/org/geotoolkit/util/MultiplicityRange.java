@@ -115,8 +115,8 @@ public class MultiplicityRange {
         }
         if (object instanceof MultiplicityRange) {
             final MultiplicityRange that = (MultiplicityRange) object;
-            return Utilities.equals(this.lower, that.lower)
-                && Utilities.equals(this.upper, that.upper);
+            return Utilities.equals(this.lower, that.lower);
+                //&& Utilities.equals(this.upper, that.upper);
             // temporary patch TODO fix it  && Utilities.equals(this.upper, that.upper);
         }
         return false;

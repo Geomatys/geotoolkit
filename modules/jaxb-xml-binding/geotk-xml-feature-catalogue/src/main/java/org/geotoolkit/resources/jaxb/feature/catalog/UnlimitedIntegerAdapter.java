@@ -73,7 +73,7 @@ public class UnlimitedIntegerAdapter extends XmlAdapter<UnlimitedIntegerAdapter,
      */
     public void setMultiplicity(final XmlUnlimitedInteger multiplicity) {
         if (multiplicity != null) {
-            if (multiplicity.isInfinite())
+            if (multiplicity.isInfinite() != null && multiplicity.isInfinite())
                 this.multiplicity = new UnlimitedInteger(Integer.MAX_VALUE);
             else
                 this.multiplicity = new UnlimitedInteger(multiplicity.getValue());
