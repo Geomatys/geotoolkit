@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.quality.TopologicalConsistency;
@@ -39,6 +40,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "DQ_TopologicalConsistency_Type")
 @XmlRootElement(name = "DQ_TopologicalConsistency")
 public class DefaultTopologicalConsistency extends AbstractLogicalConsistency
         implements TopologicalConsistency

@@ -48,7 +48,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_CoverageDescription", propOrder={
+@XmlType(name = "MD_CoverageDescription_Type", propOrder={
     "attributeDescription",
     "contentType",
     "dimensions",

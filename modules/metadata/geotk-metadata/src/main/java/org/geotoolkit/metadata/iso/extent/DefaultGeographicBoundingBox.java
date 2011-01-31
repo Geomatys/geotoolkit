@@ -56,7 +56,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "EX_GeographicBoundingBox", propOrder={
+@XmlType(name = "EX_GeographicBoundingBox_Type", propOrder={
     "westBoundLongitude",
     "eastBoundLongitude",
     "southBoundLatitude",

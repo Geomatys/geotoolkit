@@ -45,7 +45,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_FeatureCatalogueDescription", propOrder={
+@XmlType(name = "MD_FeatureCatalogueDescription_Type", propOrder={
     "compliant",
     "languages",
     "includedWithDataset",

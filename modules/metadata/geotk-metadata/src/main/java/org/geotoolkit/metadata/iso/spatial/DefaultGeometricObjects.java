@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_GeometricObjects_Type", propOrder={
     "geometricObjectType",
     "geometricObjectCount"
 })

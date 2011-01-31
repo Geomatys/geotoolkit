@@ -49,7 +49,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MI_Objective_Type", propOrder={
     "identifiers",
     "priority",
     "types",

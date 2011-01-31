@@ -46,7 +46,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "DQ_QuantitativeResult_Type", propOrder={
     "valueType",
     "valueUnit",
     "errorStatistic"

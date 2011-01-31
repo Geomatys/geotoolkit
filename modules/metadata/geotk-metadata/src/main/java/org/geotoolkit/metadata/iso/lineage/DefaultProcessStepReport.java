@@ -43,7 +43,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "LE_ProcessStepReport_Type", propOrder={
     "name",
     "description",
     "fileType"

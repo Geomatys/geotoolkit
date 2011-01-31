@@ -42,7 +42,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "LE_NominalResolution_Type", propOrder={
     "scanningResolution",
     "groundResolution"
 })

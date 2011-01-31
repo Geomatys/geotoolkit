@@ -42,7 +42,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_Identifier_Type", propOrder={
     "code",
     "authority"
 })

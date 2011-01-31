@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.quality.CompletenessCommission;
@@ -38,6 +39,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "DQ_CompletenessCommission_Type")
 @XmlRootElement(name = "DQ_CompletenessCommission")
 public class DefaultCompletenessCommission extends AbstractCompleteness implements CompletenessCommission {
     /**

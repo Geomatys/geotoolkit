@@ -48,7 +48,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_Usage_Type", propOrder={
     "specificUsage",
     "usageDate",
     "userDeterminedLimitations",

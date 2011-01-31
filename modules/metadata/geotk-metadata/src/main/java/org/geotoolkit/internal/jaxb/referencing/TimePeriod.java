@@ -46,7 +46,12 @@ import org.geotoolkit.lang.Workaround;
  *       falls on conflict. Remove the namespace, in order to fallback on GML, when the temporal
  *       implementation will have a floor in Geotk.
  */
-@XmlType(name = "TimePeriodType", propOrder = {"beginPosition", "endPosition", "begin", "end"}, namespace = Namespaces.GMD)
+@XmlType(name = "TimePeriodType", namespace = Namespaces.GMD, propOrder = {
+    "beginPosition",
+    "endPosition",
+    "begin",
+    "end"
+})
 @Workaround(library="Geotk", version="3.15")
 public final class TimePeriod {
     /**

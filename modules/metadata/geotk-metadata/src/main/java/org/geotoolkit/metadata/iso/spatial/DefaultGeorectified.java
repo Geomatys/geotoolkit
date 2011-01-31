@@ -53,7 +53,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_Georectified", propOrder={
+@XmlType(name = "MD_Georectified_Type", propOrder={
     "checkPointAvailable",
     "checkPointDescription",
     "cornerPoints",

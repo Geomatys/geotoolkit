@@ -55,9 +55,9 @@ import static org.junit.Assert.*;
  */
 public abstract class AnnotationsTestBase extends TestBase {
     /**
-     * The string used in JAXB annotations for default namespace.
+     * The string used in JAXB annotations for default names or namespaces.
      */
-    private static final String DEFAULT = "##default";
+    protected static final String DEFAULT = "##default";
 
     /**
      * The type being tested, or {@code null} if none. In case of test failure, this information
@@ -151,6 +151,15 @@ public abstract class AnnotationsTestBase extends TestBase {
      * @return The prefix to use.
      */
     protected abstract String getPrefixForNamespace(String namespace);
+
+    /**
+     * Returns the type for an element of the given name. For example in ISO 19139, the type
+     * of {@code CI_Citation} is {@code CI_Citation_Type}.
+     *
+     * @param  name The name of the XML element.
+     * @return The name of the type for the given element, or {@link #DEFAULT} if none.
+     */
+    protected abstract String getTypeForElement(String name);
 
     /**
      * Returns the parent of the given interface, or {@code null} if none.
@@ -318,13 +327,11 @@ public abstract class AnnotationsTestBase extends TestBase {
             assertNotNull("Missing @XmlRootElement annotation.", xmlRoot);
             assertEquals("Wrong @XmlRootElement.", classUML.identifier(), xmlRoot.name());
             /*
-             * We do not expect a name attributes in @XmlType since the name
-             * is already specified in the @XmlRootElement annotation.
+             * Check the @XmlType attribute.
              */
             final XmlType xmlType = impl.getAnnotation(XmlType.class);
-            if (xmlType != null && false) { // TODO: this test is disabled for now.
-                assertEquals("No @XmlType(name) value expected.", "##default", xmlType.name());
-            }
+            assertNotNull("Missing @XmlType annotation.", xmlType);
+            assertEquals("Wrong @XmlType name.", getTypeForElement(xmlRoot.name()), xmlType.name());
             /*
              * Compare the method annotations.
              */

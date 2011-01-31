@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
@@ -39,6 +40,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "DQ_Completeness_Type")
 @XmlRootElement(name = "DQ_Completeness")
 @XmlSeeAlso({DefaultCompletenessCommission.class, DefaultCompletenessOmission.class})
 public class AbstractCompleteness extends AbstractElement implements Completeness {

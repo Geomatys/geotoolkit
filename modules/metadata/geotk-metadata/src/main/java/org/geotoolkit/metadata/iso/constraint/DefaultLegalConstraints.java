@@ -44,7 +44,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_LegalConstraints", propOrder={
+@XmlType(name = "MD_LegalConstraints_Type", propOrder={
     "accessConstraints",
     "useConstraints",
     "otherConstraints"

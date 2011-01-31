@@ -45,7 +45,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "LE_Algorithm_Type", propOrder={
     "citation",
     "description"
 })

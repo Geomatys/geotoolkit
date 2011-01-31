@@ -52,7 +52,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "LI_Source_Type", propOrder={
     "description",
     "scaleDenominator",
     "sourceCitation",

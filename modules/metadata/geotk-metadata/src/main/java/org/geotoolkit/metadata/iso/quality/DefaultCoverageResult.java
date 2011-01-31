@@ -45,7 +45,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "QE_CoverageResult_Type", propOrder={
     "spatialRepresentationType",
     "resultSpatialRepresentation",
     "resultContentDescription",

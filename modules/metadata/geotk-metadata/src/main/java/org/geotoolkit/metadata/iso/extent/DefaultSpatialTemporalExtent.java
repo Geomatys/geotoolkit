@@ -22,6 +22,7 @@ package org.geotoolkit.metadata.iso.extent;
 
 import java.util.Collection;
 import java.util.Date;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -45,6 +46,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "EX_SpatialTemporalExtent_Type")
 @XmlRootElement(name = "EX_SpatialTemporalExtent")
 public class DefaultSpatialTemporalExtent extends DefaultTemporalExtent implements SpatialTemporalExtent {
     /**

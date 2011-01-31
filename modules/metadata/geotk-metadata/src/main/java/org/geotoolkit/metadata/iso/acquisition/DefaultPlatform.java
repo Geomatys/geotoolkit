@@ -46,7 +46,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MI_Platform_Type", propOrder={
     "citation",
     "identifier",
     "description",

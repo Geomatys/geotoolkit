@@ -49,7 +49,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "LE_Processing_Type", propOrder={
     "identifier",
     "softwareReferences",
     "procedureDescription",

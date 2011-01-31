@@ -42,7 +42,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "EX_GeographicDescription")
+@XmlType(name = "EX_GeographicDescription_Type")
 @XmlRootElement(name = "EX_GeographicDescription")
 public class DefaultGeographicDescription extends AbstractGeographicExtent
         implements GeographicDescription

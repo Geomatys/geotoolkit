@@ -43,7 +43,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "CI_Telephone_Type", propOrder={
     "voices",
     "facsimiles"
 })

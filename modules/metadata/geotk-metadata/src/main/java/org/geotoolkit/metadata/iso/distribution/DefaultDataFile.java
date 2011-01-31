@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MX_DataFile_Type", propOrder={
     "featureTypes",
     "fileFormat"
 })

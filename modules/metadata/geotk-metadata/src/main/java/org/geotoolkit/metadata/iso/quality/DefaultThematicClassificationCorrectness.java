@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.quality.ThematicClassificationCorrectness;
@@ -38,6 +39,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "DQ_ThematicClassificationCorrectness_Type")
 @XmlRootElement(name = "DQ_ThematicClassificationCorrectness")
 public class DefaultThematicClassificationCorrectness extends AbstractThematicAccuracy
         implements ThematicClassificationCorrectness

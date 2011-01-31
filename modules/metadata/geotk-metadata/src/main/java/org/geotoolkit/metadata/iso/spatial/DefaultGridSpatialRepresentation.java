@@ -46,7 +46,7 @@ import org.geotoolkit.lang.ValueRange;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_GridSpatialRepresentation", propOrder={
+@XmlType(name = "MD_GridSpatialRepresentation_Type", propOrder={
     "numberOfDimensions",
     "axisDimensionProperties",
     "cellGeometry",

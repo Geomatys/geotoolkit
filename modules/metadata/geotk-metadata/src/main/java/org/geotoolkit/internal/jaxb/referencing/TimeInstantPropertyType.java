@@ -39,7 +39,7 @@ import org.geotoolkit.lang.Workaround;
  *       falls on conflict. Remove the namespace, in order to fallback on GML, when the temporal
  *       implementation will have a floor in Geotk.
  */
-@XmlType(name = "TimeInstantPropertyType", propOrder = {"timeInstant"}, namespace = Namespaces.GMD)
+@XmlType(name = "TimeInstantPropertyType", namespace = Namespaces.GMD)
 @Workaround(library="Geotk", version="3.15")
 public final class TimeInstantPropertyType {
     /**

@@ -48,7 +48,7 @@ import org.geotoolkit.lang.ValueRange;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_ExtendedElementInformation_Type", propOrder={
     "name",
     "shortName",
     "domainCode",

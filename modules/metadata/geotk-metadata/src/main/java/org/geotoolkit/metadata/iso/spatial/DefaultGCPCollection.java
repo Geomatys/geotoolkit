@@ -44,7 +44,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MI_GCPCollection_Type", propOrder={
     "collectionIdentification",
     "collectionName",
     "coordinateReferenceSystem",

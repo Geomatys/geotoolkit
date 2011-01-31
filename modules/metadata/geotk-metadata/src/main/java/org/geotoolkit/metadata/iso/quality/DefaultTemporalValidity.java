@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.quality.TemporalValidity;
@@ -38,6 +39,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "DQ_TemporalValidity_Type")
 @XmlRootElement(name = "DQ_TemporalValidity")
 public class DefaultTemporalValidity extends AbstractTemporalAccuracy implements TemporalValidity {
     /**

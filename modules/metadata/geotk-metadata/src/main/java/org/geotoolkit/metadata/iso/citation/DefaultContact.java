@@ -46,7 +46,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "CI_Contact_Type", propOrder={
     "phone",
     "address",
     "onlineResource",

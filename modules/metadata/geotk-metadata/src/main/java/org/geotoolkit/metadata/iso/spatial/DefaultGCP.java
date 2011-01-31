@@ -44,7 +44,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MI_GCP_Type", propOrder={
     //"geographicCoordinates",
     "accuracyReports"
 })

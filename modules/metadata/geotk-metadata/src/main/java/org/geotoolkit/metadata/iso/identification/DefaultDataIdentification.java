@@ -51,7 +51,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_DataIdentification", propOrder={
+@XmlType(name = "MD_DataIdentification_Type", propOrder={
     "spatialRepresentationTypes",
     "spatialResolutions",
     "languages",

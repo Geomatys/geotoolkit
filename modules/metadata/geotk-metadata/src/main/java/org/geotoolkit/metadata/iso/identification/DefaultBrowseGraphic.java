@@ -46,7 +46,7 @@ import org.geotoolkit.internal.jaxb.text.URINameAdapter;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_BrowseGraphic_Type", propOrder={
     "fileName",
     "fileDescription",
     "fileType"

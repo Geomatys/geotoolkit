@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "CI_Address_Type", propOrder={
     "deliveryPoints",
     "city",
     "administrativeArea",

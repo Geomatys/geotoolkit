@@ -50,7 +50,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "CI_ResponsibleParty_Type", propOrder={
     "individualName",
     "organisationName",
     "positionName",

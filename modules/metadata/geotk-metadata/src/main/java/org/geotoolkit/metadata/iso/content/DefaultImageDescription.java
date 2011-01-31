@@ -44,7 +44,7 @@ import org.geotoolkit.lang.ValueRange;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_ImageDescription", propOrder={
+@XmlType(name = "MD_ImageDescription_Type", propOrder={
     "illuminationElevationAngle",
     "illuminationAzimuthAngle",
     "imagingCondition",

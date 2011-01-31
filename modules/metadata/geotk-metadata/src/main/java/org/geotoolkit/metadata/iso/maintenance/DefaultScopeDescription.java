@@ -45,7 +45,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_ScopeDescription_Type", propOrder={
     "dataset",
     "other"
 })

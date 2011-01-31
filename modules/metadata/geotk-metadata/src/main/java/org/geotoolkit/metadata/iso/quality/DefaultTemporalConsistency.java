@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.metadata.quality.TemporalConsistency;
@@ -38,6 +39,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "DQ_TemporalConsistency_Type")
 @XmlRootElement(name = "DQ_TemporalConsistency")
 public class DefaultTemporalConsistency extends AbstractTemporalAccuracy implements TemporalConsistency {
     /**

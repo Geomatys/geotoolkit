@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MI_PlatformPass_Type", propOrder={
     "identifier",
     "extent",
     "relatedEvents"

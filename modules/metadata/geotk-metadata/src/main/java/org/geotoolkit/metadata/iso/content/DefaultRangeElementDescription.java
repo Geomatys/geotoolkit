@@ -45,7 +45,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MI_RangeElementDescription_Type", propOrder={
     "name",
     "definition"/*,
     "rangeElements"*/

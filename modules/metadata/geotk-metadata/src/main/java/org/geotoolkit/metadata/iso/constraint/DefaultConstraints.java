@@ -46,7 +46,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_Constraints", propOrder={
+@XmlType(name = "MD_Constraints_Type", propOrder={
     "useLimitations"
 })
 @XmlSeeAlso({DefaultLegalConstraints.class, DefaultSecurityConstraints.class})

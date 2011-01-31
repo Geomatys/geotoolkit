@@ -44,7 +44,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "CI_Series_Type", propOrder={
     "name",
     "issueIdentification",
     "page"

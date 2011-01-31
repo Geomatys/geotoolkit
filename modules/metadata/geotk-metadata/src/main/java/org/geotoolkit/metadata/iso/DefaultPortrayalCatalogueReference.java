@@ -22,6 +22,7 @@ package org.geotoolkit.metadata.iso;
 
 import java.util.Collection;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -43,6 +44,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "MD_PortrayalCatalogueReference_Type")
 @XmlRootElement(name = "MD_PortrayalCatalogueReference")
 public class DefaultPortrayalCatalogueReference extends MetadataEntity
         implements PortrayalCatalogueReference

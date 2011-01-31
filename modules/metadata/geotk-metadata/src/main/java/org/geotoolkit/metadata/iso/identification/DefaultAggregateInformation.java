@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_AggregateInformation", propOrder={
+@XmlType(name = "MD_AggregateInformation_Type", propOrder={
     "aggregateDataSetName", "aggregateDataSetIdentifier", "associationType", "initiativeType"
 })
 @XmlRootElement(name = "MD_AggregateInformation")

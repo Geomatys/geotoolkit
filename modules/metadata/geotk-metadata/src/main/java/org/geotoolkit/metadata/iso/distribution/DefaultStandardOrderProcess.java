@@ -47,7 +47,7 @@ import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_StandardOrderProcess_Type", propOrder={
     "fees",
     "plannedAvailableDateTime",
     "orderingInstructions",

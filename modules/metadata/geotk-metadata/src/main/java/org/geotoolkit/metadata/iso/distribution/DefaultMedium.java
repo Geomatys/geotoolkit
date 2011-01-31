@@ -48,7 +48,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_Medium_Type", propOrder={
     "name",
     "densities",
     "densityUnits",

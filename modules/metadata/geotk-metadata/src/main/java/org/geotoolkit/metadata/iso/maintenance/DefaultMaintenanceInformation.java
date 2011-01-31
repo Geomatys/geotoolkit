@@ -51,7 +51,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_MaintenanceInformation_Type", propOrder={
     "maintenanceAndUpdateFrequency", "dateOfNextUpdate",
     "updateScopes", "updateScopeDescriptions", "maintenanceNotes", "contacts"
 })

@@ -55,7 +55,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "EX_Extent_Type", propOrder={
     "description",
     "geographicElements",
     "temporalElements",

@@ -45,7 +45,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_MetadataExtensionInformation_Type", propOrder={
     "extensionOnLineResource",
     "extendedElementInformation"
 })

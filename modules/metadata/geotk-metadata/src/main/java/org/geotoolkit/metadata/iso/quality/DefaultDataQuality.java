@@ -45,7 +45,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "DQ_DataQuality_Type", propOrder={
     "scope",
     "reports",
     "lineage"

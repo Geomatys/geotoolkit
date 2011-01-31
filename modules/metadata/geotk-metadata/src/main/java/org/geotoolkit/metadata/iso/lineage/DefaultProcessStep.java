@@ -51,7 +51,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "LI_ProcessStep_Type", propOrder={
     "description",
     "rationale",
     "date",

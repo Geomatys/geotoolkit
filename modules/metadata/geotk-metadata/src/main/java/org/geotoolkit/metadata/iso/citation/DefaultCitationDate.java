@@ -45,7 +45,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "CI_Date_Type", propOrder={
     "date",
     "dateType"
 })

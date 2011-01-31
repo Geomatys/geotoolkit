@@ -47,7 +47,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_Distributor_Type", propOrder={
     "distributorContact",
     "distributionOrderProcesses",
     "distributorFormats",

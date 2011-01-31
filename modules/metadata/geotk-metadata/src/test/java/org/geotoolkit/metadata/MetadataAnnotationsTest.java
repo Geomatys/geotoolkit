@@ -229,6 +229,26 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
     }
 
     /**
+     * Returns the type of the given element, or {@link #DEFAULT} if the type is not yet
+     * determined (the later cases could change in a future version).
+     *
+     * @todo Use string switch with JDK 7.
+     */
+    @Override
+    protected String getTypeForElement(final String name) {
+        // We don't know yet what is the type of this one.
+        if (name.equals("MD_FeatureTypeList")) {
+            return DEFAULT;
+        }
+        // Following prefix was changed in ISO 19115 corrigendum,
+        // but ISO 19139 still use the old prefix.
+        if (name.equals("SV_ServiceIdentification")) {
+            return "MD_ServiceIdentification_Type";
+        }
+        return name + "_Type";
+    }
+
+    /**
      * Returns the ISO 19139 wrapper for the given GeoAPI type, or {@code null} if not found,
      * or {@link Void#TYPE} if no adapter is expected for the given type.
      */

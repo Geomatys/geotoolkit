@@ -52,7 +52,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultScope;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "LI_Lineage_Type", propOrder={
     "statement",
     "processSteps",
     "sources"

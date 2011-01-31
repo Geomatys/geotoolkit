@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
@@ -39,6 +40,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "DQ_TemporalAccuracy_Type")
 @XmlRootElement(name = "DQ_TemporalAccuracy")
 @XmlSeeAlso({
     DefaultAccuracyOfATimeMeasurement.class,

@@ -54,7 +54,7 @@ import org.geotoolkit.resources.Errors;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "DQ_Element_Type", propOrder={
     "namesOfMeasure",
     "measureIdentification",
     "measureDescription",

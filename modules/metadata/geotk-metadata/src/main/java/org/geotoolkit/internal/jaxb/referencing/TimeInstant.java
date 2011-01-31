@@ -44,7 +44,7 @@ import org.geotoolkit.lang.Workaround;
  *       implementation will have a floor in Geotk.
  */
 @XmlRootElement(name="TimeInstant")
-@XmlType(name = "TimeInstantType", propOrder = {"timePosition"}, namespace = Namespaces.GMD)
+@XmlType(name = "TimeInstantType", namespace = Namespaces.GMD)
 @Workaround(library="Geotk", version="3.15")
 public final class TimeInstant {
     /**

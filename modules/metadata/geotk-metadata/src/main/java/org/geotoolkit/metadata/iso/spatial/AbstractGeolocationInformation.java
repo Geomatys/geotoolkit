@@ -45,7 +45,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MI_GeolocationInformation_Type", propOrder={
     "qualityInfo"
 })
 @XmlRootElement(name = "MI_GeolocationInformation", namespace = Namespaces.GMI)

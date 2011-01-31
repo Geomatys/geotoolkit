@@ -54,7 +54,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_Band", propOrder={
+@XmlType(name = "MD_Band_Type", propOrder={
     "maxValue",
     "minValue",
     "units",

@@ -48,7 +48,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MI_Requirement_Type", propOrder={
     "citation",
     "identifier",
     "requestors",

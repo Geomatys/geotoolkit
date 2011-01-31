@@ -49,7 +49,7 @@ import org.geotoolkit.internal.jaxb.primitive.RealNumberAdapter;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_DigitalTransferOptions_Type", propOrder={
     "unitsOfDistribution",
     "transferSize",
     "onLines",

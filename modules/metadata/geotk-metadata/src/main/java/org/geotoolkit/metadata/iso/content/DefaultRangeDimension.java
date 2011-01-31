@@ -45,7 +45,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_RangeDimension", propOrder={
+@XmlType(name = "MD_RangeDimension_Type", propOrder={
     "sequenceIdentifier",
     "descriptor"
 })

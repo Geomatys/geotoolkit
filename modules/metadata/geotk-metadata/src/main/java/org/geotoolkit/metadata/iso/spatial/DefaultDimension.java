@@ -46,7 +46,7 @@ import org.geotoolkit.lang.ValueRange;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_Dimension_Type", propOrder={
     "dimensionName", "dimensionSize", "resolution"
 })
 @XmlRootElement(name = "MD_Dimension")

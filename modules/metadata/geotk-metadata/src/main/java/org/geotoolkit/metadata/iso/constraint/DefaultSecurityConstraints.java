@@ -43,7 +43,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_SecurityConstraints", propOrder={
+@XmlType(name = "MD_SecurityConstraints_Type", propOrder={
     "classification",
     "userNote",
     "classificationSystem",

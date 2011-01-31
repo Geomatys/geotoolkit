@@ -51,7 +51,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "CI_Citation_Type", propOrder={
     "title",
     "alternateTitles",
     "dates",

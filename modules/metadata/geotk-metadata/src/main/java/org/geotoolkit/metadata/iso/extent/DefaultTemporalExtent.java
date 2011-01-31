@@ -47,7 +47,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "EX_TemporalExtent")
+@XmlType(name = "EX_TemporalExtent_Type")
 @XmlSeeAlso({DefaultSpatialTemporalExtent.class})
 @XmlRootElement(name = "EX_TemporalExtent")
 public class DefaultTemporalExtent extends MetadataEntity implements TemporalExtent {

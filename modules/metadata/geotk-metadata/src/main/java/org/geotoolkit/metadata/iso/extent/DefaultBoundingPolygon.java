@@ -46,7 +46,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "EX_BoundingPolygon")
+@XmlType(name = "EX_BoundingPolygon_Type")
 @XmlRootElement(name = "EX_BoundingPolygon")
 public class DefaultBoundingPolygon extends AbstractGeographicExtent implements BoundingPolygon {
     /**

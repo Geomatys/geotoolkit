@@ -44,7 +44,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_VectorSpatialRepresentation", propOrder={
+@XmlType(name = "MD_VectorSpatialRepresentation_Type", propOrder={
     "topologyLevel",
     "geometricObjects"
 })

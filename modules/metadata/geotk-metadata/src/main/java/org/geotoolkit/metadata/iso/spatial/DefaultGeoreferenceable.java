@@ -52,7 +52,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_Georeferenceable", propOrder={
+@XmlType(name = "MD_Georeferenceable_Type", propOrder={
     "controlPointAvailable",
     "orientationParameterAvailable",
     "orientationParameterDescription",

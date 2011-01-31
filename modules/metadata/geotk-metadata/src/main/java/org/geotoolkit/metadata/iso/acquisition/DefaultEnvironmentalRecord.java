@@ -42,7 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MI_EnvironmentalRecord_Type", propOrder={
     "averageAirTemperature",
     "maxRelativeHumidity",
     "maxAltitude",

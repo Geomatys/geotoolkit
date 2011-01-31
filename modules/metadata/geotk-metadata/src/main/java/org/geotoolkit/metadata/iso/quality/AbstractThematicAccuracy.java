@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.metadata.iso.quality;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -40,6 +41,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
+@XmlType(name = "DQ_ThematicAccuracy_Type")
 @XmlRootElement(name = "DQ_ThematicAccuracy")
 @XmlSeeAlso({DefaultThematicClassificationCorrectness.class, DefaultNonQuantitativeAttributeAccuracy.class,
              DefaultQuantitativeAttributeAccuracy.class

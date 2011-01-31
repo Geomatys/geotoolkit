@@ -44,7 +44,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder = {
+@XmlType(name = "MD_ApplicationSchemaInformation_Type", propOrder={
     "name",
     "schemaLanguage",
     "constraintLanguage",

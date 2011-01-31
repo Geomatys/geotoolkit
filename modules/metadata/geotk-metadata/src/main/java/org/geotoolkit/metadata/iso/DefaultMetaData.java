@@ -64,7 +64,7 @@ import org.geotoolkit.xml.Namespaces;
  * @module
  */
 @ThreadSafe
-@XmlType(propOrder={
+@XmlType(name = "MD_Metadata_Type", propOrder={
     "fileIdentifier",
     "language",
     "characterSet",
