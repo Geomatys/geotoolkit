@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Aggregate dataset information.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -95,7 +95,7 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
      * @return Citation information about the aggregate dataset, or {@code null}.
      */
     @Override
-    @XmlElement(name = "aggregateDataSetName", required = false)
+    @XmlElement(name = "aggregateDataSetName")
     public synchronized Citation getAggregateDataSetName() {
         return aggregateDataSetName;
     }
@@ -116,7 +116,7 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
      * @return Identification information about aggregate dataset, or {@code null}.
      */
     @Override
-    @XmlElement(name = "aggregateDataSetIdentifier", required = false)
+    @XmlElement(name = "aggregateDataSetIdentifier")
     public synchronized Identifier getAggregateDataSetIdentifier() {
         return aggregateDataSetIdentifier;
     }
@@ -136,7 +136,7 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
      * @return Association type of the aggregate dataset.
      */
     @Override
-    @XmlElement(name = "associationType", required = false)
+    @XmlElement(name = "associationType", required = true)
     public synchronized AssociationType getAssociationType() {
         return associationType;
     }
@@ -156,7 +156,7 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
      * @return Type of initiative under which the aggregate dataset was produced, or {@code null}.
      */
     @Override
-    @XmlElement(name = "initiativeType", required = false)
+    @XmlElement(name = "initiativeType")
     public synchronized InitiativeType getInitiativeType() {
         return initiativeType;
     }

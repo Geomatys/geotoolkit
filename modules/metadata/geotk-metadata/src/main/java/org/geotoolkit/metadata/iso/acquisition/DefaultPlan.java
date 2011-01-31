@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Designations for the planning information related to meeting the data acquisition requirements.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -125,7 +125,7 @@ public class DefaultPlan extends MetadataEntity implements Plan {
      * Returns the current status of the plan (pending, completed, etc.)
      */
     @Override
-    @XmlElement(name = "status")
+    @XmlElement(name = "status", required = true)
     public synchronized Progress getStatus() {
         return status;
     }
@@ -144,7 +144,7 @@ public class DefaultPlan extends MetadataEntity implements Plan {
      * Returns the identification of authority requesting target collection.
      */
     @Override
-    @XmlElement(name = "citation")
+    @XmlElement(name = "citation", required = true)
     public synchronized Citation getCitation() {
         return citation;
     }

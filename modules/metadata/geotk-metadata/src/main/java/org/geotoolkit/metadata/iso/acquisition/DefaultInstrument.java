@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Designations for the measuring instruments.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -122,7 +122,7 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
      * Returns the unique identification of the instrument.
      */
     @Override
-    @XmlElement(name = "identifier")
+    @XmlElement(name = "identifier", required = true)
     public synchronized Identifier getIdentifier() {
         return identifier;
     }
@@ -141,7 +141,7 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
      * Returns the name of the type of instrument. Examples: framing, line-scan, push-broom, pan-frame.
      */
     @Override
-    @XmlElement(name = "type")
+    @XmlElement(name = "type", required = true)
     public synchronized InternationalString getType() {
         return type;
     }

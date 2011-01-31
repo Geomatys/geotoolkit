@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -123,7 +123,7 @@ public class DefaultKeywords extends MetadataEntity implements Keywords {
      * Returns the subject matter used to group similar keywords.
      */
     @Override
-    @XmlElement(name = "type", required = false)
+    @XmlElement(name = "type")
     public synchronized KeywordType getType() {
         return type;
     }

@@ -48,7 +48,7 @@ import org.geotoolkit.xml.Namespaces;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -57,6 +57,7 @@ import org.geotoolkit.xml.Namespaces;
 @XmlType(name = "MD_Band", propOrder={
     "maxValue",
     "minValue",
+    "units",
     "peakResponse",
     "bitsPerValue",
     "toneGradation",
@@ -216,7 +217,7 @@ public class DefaultBand extends DefaultRangeDimension implements Band {
      * are provided.
      */
     @Override
-/// @XmlElement(name = "units", required = false)
+    @XmlElement(name = "units")
     public synchronized Unit<Length> getUnits() {
         return units;
     }

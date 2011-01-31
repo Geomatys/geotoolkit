@@ -39,7 +39,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -187,7 +187,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * @since 2.4
      */
     @Override
-    @XmlElement(name = "dataset", required = true)
+    @XmlElement(name = "dataset")
     public synchronized String getDataset() {
         return dataset;
     }
@@ -211,7 +211,7 @@ public class DefaultScopeDescription extends MetadataEntity implements ScopeDesc
      * @since 2.4
      */
     @Override
-    @XmlElement(name = "other", required = true)
+    @XmlElement(name = "other")
     public synchronized String getOther() {
         return other;
     }

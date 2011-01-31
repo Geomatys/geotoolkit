@@ -39,7 +39,7 @@ import org.geotoolkit.xml.Namespaces;
  * Result of a data quality measure organising the measured values as a coverage.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -104,7 +104,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * Returns the method used to spatially represent the coverage result.
      */
     @Override
-    @XmlElement(name = "spatialRepresentationType", namespace = Namespaces.GMI)
+    @XmlElement(name = "spatialRepresentationType", namespace = Namespaces.GMI, required = true)
     public synchronized SpatialRepresentationType getSpatialRepresentationType() {
         return spatialRepresentationType;
     }
@@ -123,7 +123,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * Returns the digital representation of data quality measures composing the coverage result.
      */
     @Override
-    @XmlElement(name = "resultSpatialRepresentation", namespace = Namespaces.GMI)
+    @XmlElement(name = "resultSpatialRepresentation", namespace = Namespaces.GMI, required = true)
     public synchronized SpatialRepresentation getResultSpatialRepresentation() {
         return resultSpatialRepresentation;
     }
@@ -143,7 +143,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * of the data quality measures.
      */
     @Override
-    @XmlElement(name = "resultContentDescription", namespace = Namespaces.GMI)
+    @XmlElement(name = "resultContentDescription", namespace = Namespaces.GMI, required = true)
     public synchronized CoverageDescription getResultContentDescription() {
         return resultContentDescription;
     }
@@ -163,7 +163,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * Returns the information about the format of the result coverage data.
      */
     @Override
-    @XmlElement(name = "resultFormat", namespace = Namespaces.GMI)
+    @XmlElement(name = "resultFormat", namespace = Namespaces.GMI, required = true)
     public synchronized Format getResultFormat() {
         return resultFormat;
     }
@@ -182,7 +182,7 @@ public class DefaultCoverageResult extends AbstractResult implements CoverageRes
      * Returns the information about the data file containing the result coverage data.
      */
     @Override
-    @XmlElement(name = "resultFile", namespace = Namespaces.GMX)
+    @XmlElement(name = "resultFile", namespace = Namespaces.GMX, required = true)
     public synchronized DataFile getResultFile() {
         return resultFile;
     }

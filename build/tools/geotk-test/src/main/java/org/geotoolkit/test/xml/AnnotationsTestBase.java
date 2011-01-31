@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.opengis.util.CodeList;
 import org.opengis.annotation.UML;
+import org.opengis.annotation.Obligation;
 import org.opengis.annotation.Specification;
 
 import org.geotoolkit.test.TestBase;
@@ -374,7 +375,7 @@ public abstract class AnnotationsTestBase extends TestBase {
                 /*
                  * Check that the namespace is coherent with the UML specification and not
                  * redundant with the @XmlSchema. Then check that the package @XmlNs declare
-                 * all the namespace found in the implementation, and no more.
+                 * all the namespace found in the implementation.
                  */
                 final String namespace = xmlElem.namespace();
                 final String resolvedNS = getNamespace(impl, namespace, methodUML);
@@ -391,6 +392,11 @@ public abstract class AnnotationsTestBase extends TestBase {
                     }
                 }
                 assertTrue("Undeclared namespace in package @XmlSchema", found);
+                /*
+                 * Check the 'required' declaration.
+                 */
+                assertEquals("Wrong @XmlElement.required",
+                        Obligation.MANDATORY.equals(methodUML.obligation()), xmlElem.required());
             }
         }
         // On success, disable the report of failed class or method.

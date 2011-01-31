@@ -40,7 +40,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.15
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -89,7 +89,7 @@ public class DefaultBoundingPolygon extends AbstractGeographicExtent implements 
      * Returns the sets of points defining the bounding polygon.
      */
     @Override
-    @XmlElement(name = "polygon")
+    @XmlElement(name = "polygon", required = true)
     public synchronized Collection<Geometry> getPolygons() {
         return polygons = nonNullCollection(polygons, Geometry.class);
     }

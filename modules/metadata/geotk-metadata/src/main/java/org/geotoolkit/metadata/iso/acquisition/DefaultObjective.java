@@ -43,7 +43,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * observed.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -126,7 +126,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
      * Returns the code used to identify the objective.
      */
     @Override
-    @XmlElement(name = "identifier")
+    @XmlElement(name = "identifier", required = true)
     public synchronized Collection<Identifier> getIdentifiers() {
         return identifiers = nonNullCollection(identifiers, Identifier.class);
     }
@@ -219,7 +219,7 @@ public class DefaultObjective extends MetadataEntity implements Objective {
      * Returns the event or events associated with objective completion.
      */
     @Override
-    @XmlElement(name = "objectiveOccurence")
+    @XmlElement(name = "objectiveOccurence", required = true)
     public synchronized Collection<Event> getObjectiveOccurences() {
         return objectiveOccurences = nonNullCollection(objectiveOccurences, Event.class);
     }

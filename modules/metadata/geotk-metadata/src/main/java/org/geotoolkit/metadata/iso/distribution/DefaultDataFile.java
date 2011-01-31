@@ -45,7 +45,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  */
 @ThreadSafe
 @XmlType(propOrder={
-/// "featureTypes",
+    "featureTypes",
     "fileFormat"
 })
 @XmlRootElement(name = "MX_DataFile", namespace = Namespaces.GMX)
@@ -90,6 +90,7 @@ public class DefaultDataFile extends MetadataEntity implements DataFile {
      * data does not relate to a feature catalogue.
      */
     @Override
+    @XmlElement(name = "featureType", namespace = Namespaces.GMX)
     public synchronized Collection<LocalName> getFeatureTypes() {
         return xmlOptional(featureTypes = nonNullCollection(featureTypes, LocalName.class));
     }

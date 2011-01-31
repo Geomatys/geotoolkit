@@ -319,7 +319,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      * @since 2.4
      */
     @Override
-    @XmlElement(name = "result")
+    @XmlElement(name = "result", required = true)
     public synchronized Collection<Result> getResults() {
         return results = nonNullCollection(results, Result.class);
     }

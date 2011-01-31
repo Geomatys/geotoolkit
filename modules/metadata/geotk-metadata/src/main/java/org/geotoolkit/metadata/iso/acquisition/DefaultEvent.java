@@ -43,7 +43,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Identification of a significant collection point within an operation.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -125,7 +125,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      * Returns the event name or number.
      */
     @Override
-    @XmlElement(name = "identifier")
+    @XmlElement(name = "identifier", required = true)
     public synchronized Identifier getIdentifier() {
         return identifier;
     }
@@ -144,7 +144,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      * Returns the initiator of the event.
      */
     @Override
-    @XmlElement(name = "trigger")
+    @XmlElement(name = "trigger", required = true)
     public synchronized Trigger getTrigger() {
         return trigger;
     }
@@ -163,7 +163,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      * Meaning of the event.
      */
     @Override
-    @XmlElement(name = "context")
+    @XmlElement(name = "context", required = true)
     public synchronized Context getContext() {
         return context;
     }
@@ -182,7 +182,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      * Returns the relative time ordering of the event.
      */
     @Override
-    @XmlElement(name = "sequence")
+    @XmlElement(name = "sequence", required = true)
     public synchronized Sequence getSequence() {
         return sequence;
     }
@@ -201,7 +201,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      * Returns the time the event occurred.
      */
     @Override
-    @XmlElement(name = "time")
+    @XmlElement(name = "time", required = true)
     public synchronized Date getTime() {
         final long date = this.time;
         return (date != Long.MIN_VALUE) ? new Date(date) : null;

@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Designation of the platform used to acquire the dataset.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -124,7 +124,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      * Returns the unique identification of the platform.
      */
     @Override
-    @XmlElement(name = "identifier")
+    @XmlElement(name = "identifier", required = true)
     public synchronized Identifier getIdentifier() {
         return identifier;
     }
@@ -143,7 +143,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      * Gets the narrative description of the platform supporting the instrument.
      */
     @Override
-    @XmlElement(name = "description")
+    @XmlElement(name = "description", required = true)
     public synchronized InternationalString getDescription() {
         return description;
     }
@@ -180,7 +180,7 @@ public class DefaultPlatform extends MetadataEntity implements Platform {
      * Gets the instrument(s) mounted on a platform.
      */
     @Override
-    @XmlElement(name = "instrument")
+    @XmlElement(name = "instrument", required = true)
     public synchronized Collection<Instrument> getInstruments() {
         return instruments = nonNullCollection(instruments, Instrument.class);
     }

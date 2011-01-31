@@ -40,7 +40,7 @@ import org.geotoolkit.internal.jaxb.text.URINameAdapter;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -105,7 +105,7 @@ public class DefaultBrowseGraphic extends MetadataEntity implements BrowseGraphi
      */
     @Override
     @XmlJavaTypeAdapter(URINameAdapter.class)
-    @XmlElement(name = "fileName")
+    @XmlElement(name = "fileName", required = true)
     public synchronized URI getFileName() {
         return fileName;
     }

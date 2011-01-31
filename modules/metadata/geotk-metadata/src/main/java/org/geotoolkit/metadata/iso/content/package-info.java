@@ -47,7 +47,7 @@
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -71,6 +71,7 @@
     @XmlJavaTypeAdapter(MI_TransferFunctionTypeCode.class),
 
     // Java types, primitive types and basic OGC types handling
+    @XmlJavaTypeAdapter(UnitAdapter.class),
     @XmlJavaTypeAdapter(LocaleAdapter.class),
     @XmlJavaTypeAdapter(RecordTypeAdapter.class),
     @XmlJavaTypeAdapter(GenericNameAdapter.class),
@@ -91,6 +92,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.*;
 import org.geotoolkit.internal.jaxb.text.*;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;

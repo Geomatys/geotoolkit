@@ -36,7 +36,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Information about the environmental conditions during the acquisition.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -94,7 +94,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      * Returns the average air temperature along the flight pass during the photo flight.
      */
     @Override
-    @XmlElement(name = "averageAirTemperature")
+    @XmlElement(name = "averageAirTemperature", required = true)
     public synchronized Double getAverageAirTemperature() {
         return averageAirTemperature;
     }
@@ -102,7 +102,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
     /**
      * Sets the average air temperature along the flight pass during the photo flight.
      *
-     * @param newValue The new average air tempature value.
+     * @param newValue The new average air temperature value.
      */
     public synchronized void setAverageAirTemperature(final Double newValue) {
         checkWritePermission();
@@ -114,7 +114,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      */
     @Override
     @ValueRange(minimum=0, maximum=100)
-    @XmlElement(name = "maxRelativeHumidity")
+    @XmlElement(name = "maxRelativeHumidity", required = true)
     public synchronized Double getMaxRelativeHumidity() {
         return maxRelativeHumidity;
     }
@@ -133,7 +133,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      * Returns the maximum altitude during the photo flight.
      */
     @Override
-    @XmlElement(name = "maxAltitude")
+    @XmlElement(name = "maxAltitude", required = true)
     public synchronized Double getMaxAltitude() {
         return maxAltitude;
     }
@@ -153,7 +153,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
      * snow and wind.
      */
     @Override
-    @XmlElement(name = "meteorologicalConditions")
+    @XmlElement(name = "meteorologicalConditions", required = true)
     public synchronized InternationalString getMeteorologicalConditions() {
         return meteorologicalConditions;
     }

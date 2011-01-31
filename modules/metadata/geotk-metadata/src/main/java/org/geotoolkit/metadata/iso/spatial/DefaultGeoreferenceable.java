@@ -46,7 +46,7 @@ import org.geotoolkit.xml.Namespaces;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -248,7 +248,7 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      *       handle the XML formatting for this one?
      */
     @Override
-    @XmlElement(name = "geolocationInformation", namespace = Namespaces.GMI)
+    @XmlElement(name = "geolocationInformation", namespace = Namespaces.GMI, required = true)
     public synchronized Collection<GeolocationInformation> getGeolocationInformation() {
         return geolocationInformation = nonNullCollection(geolocationInformation, GeolocationInformation.class);
     }

@@ -89,7 +89,7 @@ public class DefaultProcessStepReport extends MetadataEntity implements ProcessS
      * Returns the name of the processing report.
      */
     @Override
-    @XmlElement(name = "name", namespace = Namespaces.GMI)
+    @XmlElement(name = "name", namespace = Namespaces.GMI, required = true)
     public synchronized InternationalString getName() {
         return name;
     }

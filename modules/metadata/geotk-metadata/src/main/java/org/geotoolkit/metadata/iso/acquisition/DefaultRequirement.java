@@ -42,7 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Requirement to be satisfied by the planned data acquisition.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -145,7 +145,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      * Returns the unique name, or code, for the requirement.
      */
     @Override
-    @XmlElement(name = "identifier")
+    @XmlElement(name = "identifier", required = true)
     public synchronized Identifier getIdentifier() {
         return identifier;
     }
@@ -164,7 +164,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      * Returns the origin of requirement.
      */
     @Override
-    @XmlElement(name = "requestor")
+    @XmlElement(name = "requestor", required = true)
     public synchronized Collection<ResponsibleParty> getRequestors() {
         return requestors = nonNullCollection(requestors, ResponsibleParty.class);
     }
@@ -182,7 +182,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      * Returns the person(s), or body(ies), to receive results of requirement.
      */
     @Override
-    @XmlElement(name = "recipient")
+    @XmlElement(name = "recipient", required = true)
     public synchronized Collection<ResponsibleParty> getRecipients() {
         return recipients = nonNullCollection(recipients, ResponsibleParty.class);
     }
@@ -200,7 +200,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      * Returns the relative ordered importance, or urgency, of the requirement.
      */
     @Override
-    @XmlElement(name = "priority")
+    @XmlElement(name = "priority", required = true)
     public synchronized Priority getPriority() {
         return priority;
     }
@@ -219,7 +219,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      * Returns the required or preferred acquisition date and time.
      */
     @Override
-    @XmlElement(name = "requestedDate")
+    @XmlElement(name = "requestedDate", required = true)
     public synchronized RequestedDate getRequestedDate() {
         return requestedDate;
     }
@@ -238,7 +238,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      * Returns the date and time after which collection is no longer valid.
      */
     @Override
-    @XmlElement(name = "expiryDate")
+    @XmlElement(name = "expiryDate", required = true)
     public synchronized Date getExpiryDate() {
         final long date = this.expiryDate;
         return (date != Long.MIN_VALUE) ? new Date(date) : null;

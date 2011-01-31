@@ -39,7 +39,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -144,7 +144,7 @@ public class DefaultFeatureCatalogueDescription extends AbstractContentInformati
      * Returns whether or not the feature catalogue is included with the dataset.
      */
     @Override
-    @XmlElement(name = "includedWithDataset")
+    @XmlElement(name = "includedWithDataset", required = true)
     public synchronized boolean isIncludedWithDataset() {
         return includedWithDataset;
     }

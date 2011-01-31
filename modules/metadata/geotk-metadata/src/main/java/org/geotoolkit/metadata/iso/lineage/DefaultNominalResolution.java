@@ -86,7 +86,7 @@ public class DefaultNominalResolution extends MetadataEntity implements NominalR
      */
     @Override
     @ValueRange(minimum=0, isMinIncluded=false)
-    @XmlElement(name = "scanningResolution", namespace = Namespaces.GMI)
+    @XmlElement(name = "scanningResolution", namespace = Namespaces.GMI, required = true)
     public synchronized Double getScanningResolution() {
         return scanningResolution;
     }
@@ -108,7 +108,7 @@ public class DefaultNominalResolution extends MetadataEntity implements NominalR
      */
     @Override
     @ValueRange(minimum=0, isMinIncluded=false)
-    @XmlElement(name = "groundResolution", namespace = Namespaces.GMI)
+    @XmlElement(name = "groundResolution", namespace = Namespaces.GMI, required = true)
     public synchronized Double getGroundResolution() {
         return groundResolution;
     }

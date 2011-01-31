@@ -34,7 +34,7 @@
  * than setting the collection as a whole with {@code setCitations(myCitations)}.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -50,6 +50,7 @@
     @XmlJavaTypeAdapter(CI_Citation.class),
     @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
     @XmlJavaTypeAdapter(EX_Extent.class),
+    @XmlJavaTypeAdapter(GM_Object.class),
     @XmlJavaTypeAdapter(MD_Identifier.class),
     @XmlJavaTypeAdapter(MD_ProgressCode.class),
     @XmlJavaTypeAdapter(MI_ContextCode.class),
@@ -86,7 +87,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.uom.*;
 import org.geotoolkit.internal.jaxb.text.*;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.uom.DateAdapter;
+import org.geotoolkit.internal.jaxb.geometry.GM_Object;

@@ -85,7 +85,7 @@ public class DefaultAlgorithm extends MetadataEntity implements Algorithm {
      * Returns the information identifying the algorithm and version or date.
      */
     @Override
-    @XmlElement(name = "citation", namespace = Namespaces.GMI)
+    @XmlElement(name = "citation", namespace = Namespaces.GMI, required = true)
     public synchronized Citation getCitation() {
         return citation;
     }
@@ -104,7 +104,7 @@ public class DefaultAlgorithm extends MetadataEntity implements Algorithm {
      * Returns the information describing the algorithm used to generate the data.
      */
     @Override
-    @XmlElement(name = "description", namespace = Namespaces.GMI)
+    @XmlElement(name = "description", namespace = Namespaces.GMI, required = true)
     public synchronized InternationalString getDescription() {
         return description;
     }

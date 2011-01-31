@@ -35,7 +35,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Range of date validity.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -83,7 +83,7 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
      * Returns the preferred date and time of collection.
      */
     @Override
-    @XmlElement(name = "requestedDateOfCollection")
+    @XmlElement(name = "requestedDateOfCollection", required = true)
     public synchronized Date getRequestedDateOfCollection() {
         final long date = this.requestedDateOfCollection;
         return (date != Long.MIN_VALUE) ? new Date(date) : null;
@@ -103,7 +103,7 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
      * Returns the latest date and time collection must be completed.
      */
     @Override
-    @XmlElement(name = "latestAcceptableDate")
+    @XmlElement(name = "latestAcceptableDate", required = true)
     public synchronized Date getLatestAcceptableDate() {
         final long date = this.latestAcceptableDate;
         return (date != Long.MIN_VALUE) ? new Date(date) : null;

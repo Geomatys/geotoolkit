@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Identification of collection coverage.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -46,7 +46,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @ThreadSafe
 @XmlType(propOrder={
     "identifier",
-    //"extent",
+    "extent",
     "relatedEvents"
 })
 @XmlRootElement(name = "MI_PlatformPass")
@@ -90,7 +90,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
      * Returns the unique name of the pass.
      */
     @Override
-    @XmlElement(name = "identifier")
+    @XmlElement(name = "identifier", required = true)
     public synchronized Identifier getIdentifier() {
         return identifier;
     }
@@ -111,7 +111,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
      * @todo annotate an implementation of {@link Geometry} in order to annotate this method.
      */
     @Override
-    //@XmlElement(name = "extent")
+    @XmlElement(name = "extent")
     public synchronized Geometry getExtent() {
         return extent;
     }

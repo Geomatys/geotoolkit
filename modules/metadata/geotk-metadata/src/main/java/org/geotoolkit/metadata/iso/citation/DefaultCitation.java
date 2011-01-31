@@ -45,7 +45,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -95,7 +95,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     private InternationalString edition;
 
     /**
-     * Date of the edition in millisecondes elapsed sine January 1st, 1970,
+     * Date of the edition in milliseconds elapsed sine January 1st, 1970,
      * or {@link Long#MIN_VALUE} if none.
      */
     private long editionDate = Long.MIN_VALUE;
@@ -406,7 +406,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * source cited. Returns {@code null} if there is no title.
      */
     @Override
-    @XmlElement(name = "collectiveTitle", required = true)
+    @XmlElement(name = "collectiveTitle")
     public synchronized InternationalString getCollectiveTitle() {
         return collectiveTitle;
     }

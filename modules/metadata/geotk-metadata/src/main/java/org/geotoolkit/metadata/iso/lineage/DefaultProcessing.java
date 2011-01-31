@@ -114,7 +114,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      * Returns the information to identify the processing package that produced the data.
      */
     @Override
-    @XmlElement(name = "identifier", namespace = Namespaces.GMI)
+    @XmlElement(name = "identifier", namespace = Namespaces.GMI, required = true)
     public synchronized Identifier getIdentifier() {
         return identifier;
     }

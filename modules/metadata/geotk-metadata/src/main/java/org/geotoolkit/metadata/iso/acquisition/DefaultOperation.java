@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Designations for the operation used to acquire the dataset.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -185,7 +185,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      * Returns the unique identification of the operation.
      */
     @Override
-    @XmlElement(name = "identifier")
+    @XmlElement(name = "identifier", required = true)
     public synchronized Identifier getIdentifier() {
         return identifier;
     }
@@ -204,7 +204,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      * Returns the status of the data acquisition.
      */
     @Override
-    @XmlElement(name = "status")
+    @XmlElement(name = "status", required = true)
     public synchronized Progress getStatus() {
         return status;
     }
@@ -278,7 +278,7 @@ public class DefaultOperation extends MetadataEntity implements Operation {
      * Returns the heritage of the operation.
      */
     @Override
-    @XmlElement(name = "parentOperation")
+    @XmlElement(name = "parentOperation", required = true)
     public synchronized Operation getParentOperation() {
         return parentOperation;
     }

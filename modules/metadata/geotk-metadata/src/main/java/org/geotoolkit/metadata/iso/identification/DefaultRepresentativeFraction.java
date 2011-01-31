@@ -35,7 +35,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Jody Garnett (Refractions)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 2.4
  * @module
@@ -141,7 +141,7 @@ public class DefaultRepresentativeFraction extends Number implements Representat
      * Returns the number below the line in a vulgar fraction.
      */
     @Override
-    @XmlElement(name = "denominator")
+    @XmlElement(name = "denominator", required = true)
     public synchronized long getDenominator() {
         return denominator;
     }

@@ -42,7 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -51,6 +51,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlType(propOrder={
     "name",
     "densities",
+    "densityUnits",
     "volumes",
     "mediumFormats",
     "mediumNote"
@@ -132,10 +133,30 @@ public class DefaultMedium extends MetadataEntity implements Medium {
     }
 
     /**
+     * Returns the density at which the data is recorded.
+     * The numbers should be greater than zero.
+     */
+    @Override
+    @XmlElement(name = "density")
+    public synchronized Collection<Double> getDensities() {
+        return xmlOptional(densities = nonNullCollection(densities, Double.class));
+    }
+
+    /**
+     * Sets density at which the data is recorded.
+     * The numbers should be greater than zero.
+     *
+     * @param newValues The new densities.
+     */
+    public synchronized void setDensities(final Collection<? extends Double> newValues) {
+        densities = copyCollection(newValues, densities, Double.class);
+    }
+
+    /**
      * Returns the units of measure for the recording density.
      */
     @Override
-/// @XmlElement(name = "densityUnits")
+    @XmlElement(name = "densityUnits")
     public synchronized Unit<?> getDensityUnits() {
         return densityUnits;
     }
@@ -207,25 +228,5 @@ public class DefaultMedium extends MetadataEntity implements Medium {
     public synchronized void setMediumNote(final InternationalString newValue) {
         checkWritePermission();
         mediumNote = newValue;
-    }
-
-    /**
-     * Returns the density at which the data is recorded.
-     * The numbers should be greater than zero.
-     */
-    @Override
-    @XmlElement(name = "density")
-    public synchronized Collection<Double> getDensities() {
-        return xmlOptional(densities = nonNullCollection(densities, Double.class));
-    }
-
-    /**
-     * Sets density at which the data is recorded.
-     * The numbers should be greater than zero.
-     *
-     * @param newValues The new densities.
-     */
-    public synchronized void setDensities(final Collection<? extends Double> newValues) {
-        densities = copyCollection(newValues, densities, Double.class);
     }
 }

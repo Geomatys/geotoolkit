@@ -38,7 +38,7 @@ import org.geotoolkit.xml.Namespaces;
  * Information about a control point collection.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 3.03
  * @module
@@ -96,7 +96,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      * Returns the identifier of the GCP collection.
      */
     @Override
-    @XmlElement(name = "collectionIdentification", namespace = Namespaces.GMI)
+    @XmlElement(name = "collectionIdentification", namespace = Namespaces.GMI, required = true)
     public synchronized Integer getCollectionIdentification() {
         return collectionIdentification;
     }
@@ -115,7 +115,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      * Returns the name of the GCP collection.
      */
     @Override
-    @XmlElement(name = "collectionName", namespace = Namespaces.GMI)
+    @XmlElement(name = "collectionName", namespace = Namespaces.GMI, required = true)
     public synchronized InternationalString getCollectionName() {
         return collectionName;
     }
@@ -134,7 +134,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      * Returns the coordinate system in which the ground control points are defined.
      */
     @Override
-    @XmlElement(name = "coordinateReferenceSystem", namespace = Namespaces.GMI)
+    @XmlElement(name = "coordinateReferenceSystem", namespace = Namespaces.GMI, required = true)
     public synchronized ReferenceSystem getCoordinateReferenceSystem() {
         return coordinateReferenceSystem;
     }
@@ -153,7 +153,7 @@ public class DefaultGCPCollection extends AbstractGeolocationInformation impleme
      * Returns the ground control point(s) used in the collection.
      */
     @Override
-    @XmlElement(name = "gcp", namespace = Namespaces.GMI)
+    @XmlElement(name = "gcp", namespace = Namespaces.GMI, required = true)
     public synchronized Collection<GCP> getGCPs() {
         return GCPs = nonNullCollection(GCPs, GCP.class);
     }

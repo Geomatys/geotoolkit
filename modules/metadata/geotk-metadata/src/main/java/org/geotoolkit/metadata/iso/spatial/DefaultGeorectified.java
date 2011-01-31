@@ -47,7 +47,7 @@ import org.geotoolkit.xml.Namespaces;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -213,7 +213,7 @@ public class DefaultGeorectified extends DefaultGridSpatialRepresentation implem
      * georectified grid; at least two corner points along one diagonal are required.
      */
     @Override
-    @XmlElement(name = "cornerPoints")
+    @XmlElement(name = "cornerPoints", required = true)
     public synchronized List<Point> getCornerPoints() {
         return cornerPoints = nonNullList(cornerPoints, Point.class);
     }

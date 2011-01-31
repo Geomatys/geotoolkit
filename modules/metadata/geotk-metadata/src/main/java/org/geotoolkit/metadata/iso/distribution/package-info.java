@@ -37,7 +37,7 @@
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -63,6 +63,7 @@
     // Java types, primitive types and basic OGC types handling
     @XmlJavaTypeAdapter(DateAdapter.class),
     @XmlJavaTypeAdapter(UnitAdapter.class),
+    @XmlJavaTypeAdapter(LocalNameAdapter.class),
     @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
     @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
     @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class)
