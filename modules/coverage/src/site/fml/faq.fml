@@ -90,5 +90,44 @@ chooser.showOpenDialog(null);</pre></blockquote>
         the combo box.</p>
       </answer>
     </faq>
+    <faq id="gray">
+      <question>
+        I only get a gray rectangle for my NetCDF image
+      </question>
+      <answer>
+        <p>Some file formats like NetCDF do not contain color information. In such case, the color palette
+        (a gray scale by default) is applied by the <code>ImageReader</code>. That color palette is scaled
+        from the minimal value to the maximal value, which need to be provided by the image reader in an
+        <code><a href="http://download.oracle.com/javase/6/docs/api/javax/imageio/metadata/IIOMetadata.html">IIOMetadata</a></code>
+        object. If this information is missing, then the color palette will be scaled for an arbitrary
+        range, typically much too large resulting in all useful values looking the same color.</p>
+
+        <p>Using the
+        <code><a href="../../apidocs/org/geotoolkit/gui/swing/image/ImageFileChooser.html">ImageFileChooser</a></code>
+        widget, select the file, click on the <cite>Metadata</cite> tab and select <cite>Geospatial - your image</cite>
+        in the combo box where "<cite>your image</cite> is the name of the image to load. In the tree below the
+        combo box, expand the <cite>Image Description</cite> node, then <cite>Dimensions</cite> and the
+        specific dimension to inspect. Check if the <cite>min value</cite> and <cite>max value</cite>
+        nodes exist, and if their values are reasonable.</p>
+
+        <p>If the minimal and maximal values do not appear, they can be specified explicitly either
+        by using the <code>geotk-coverage-sql</code> module, or by creating a subclass like below:</p>
+
+<blockquote><pre>class MyReader extends NetcdfImageReader {
+    @Override
+    protected SpatialMetadata createMetadata(int imageIndex) throws IOException {
+        SpatialMetadata metadata = super.createMetadata(imageIndex);
+        if (imageIndex &gt;= 0) {
+            double minValue, maxValue = ...; // <i> Get your min and max values here.</i>
+            MetadataAccessor accessor = new MetadataAccessor("ImageDescription/Dimensions", "Dimension");
+            accessor.selectChild(0); // <i>You may use an other index than 0 if there is many children.</i>
+            accessor.setAttribute("minValue", minValue);
+            accessor.setAttribute("maxValue", maxValue);
+        }
+        return metadata;
+    }
+}</pre></blockquote>
+      </answer>
+    </faq>
   </part>
 </faqs>
