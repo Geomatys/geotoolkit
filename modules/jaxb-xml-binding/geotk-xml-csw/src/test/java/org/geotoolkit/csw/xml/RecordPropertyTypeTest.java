@@ -182,7 +182,7 @@ public class RecordPropertyTypeTest {
         "    <csw:Update>"                                                                           + '\n' +
         "        <csw:RecordProperty>"                                                               + '\n' +
         "            <csw:Name>/csw:Record/dc:contributor</csw:Name>"                                + '\n' +
-        "            <csw:Value xsi:type=\"gmd:EX_GeographicBoundingBox\" >"                         + '\n' +
+        "            <csw:Value xsi:type=\"gmd:EX_GeographicBoundingBox_Type\" >"                    + '\n' +
         "                    <gmd:extentTypeCode>"                                                   + '\n' +
         "                        <gco:Boolean>true</gco:Boolean>"                                    + '\n' +
         "                    </gmd:extentTypeCode>"                                                  + '\n' +
