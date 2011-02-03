@@ -113,6 +113,8 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15
  *
+ * @see <a href="{@docRoot}/../modules/display/geotk-wizards-swing/AddCoverages.html">Adding layers and images to the Coverage-SQL database</a>
+ *
  * @since 3.11
  * @module
  */
@@ -428,7 +430,7 @@ public class LayerList extends WindowCreator {
 
         /**
          * Invoked when one of the buttons ("Refresh", "Add", etc.) has been pressed.
-         * This method delegates to the appropriate method in the encloding class.
+         * This method delegates to the appropriate method in the enclosing class.
          */
         @Override
         public void actionPerformed(final ActionEvent event) {
@@ -469,7 +471,7 @@ public class LayerList extends WindowCreator {
 
     /**
      * Refreshes the list of layer names with the result of the given task.
-     * The given taks shall be the value returned by {@link CoverageDatabase#getLayers()}.
+     * The given tasks shall be the value returned by {@link CoverageDatabase#getLayers()}.
      *
      * @param task The task which is computing the list of layer names.
      */
@@ -574,7 +576,7 @@ public class LayerList extends WindowCreator {
      * @param ranges  The ranges of measure, or {@code null} if none.
      * @param rangeText The text to display for the ranges, or {@code null} for computing
      *        it from the {@code ranges} argument. This is non-null only if an error occurred
-     *        while computing the range, because of incompatibles units.
+     *        while computing the range, because of incompatible units.
      */
     final void setFormat(final Set<String> formats, final List<MeasurementRange<?>> ranges, String rangeText) {
         String text = null;

@@ -18,6 +18,10 @@
 
 /**
  * Widgets related to {@linkplain org.geotoolkit.coverage.grid.GridCoverage2D grid coverages}.
+ * The {@link org.geotoolkit.gui.swing.coverage.LayerList} widget can also be used as a wizard
+ * for adding new data to a Coverage-SQL database. See
+ * <a href="{@docRoot}/../modules/display/geotk-wizards-swing/AddCoverages.html">Adding layers
+ * and images to the Coverage-SQL database</a> for more information.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.15

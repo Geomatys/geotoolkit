@@ -1,0 +1,86 @@
+                 -----------------------------------------------------
+                 Adding layers and images to the Coverage-SQL database
+                 -----------------------------------------------------
+
+
+Adding layers and images to the Coverage-SQL database
+
+* Prerequites
+
+  Before to go through the wizard, the user shall perform the following steps:
+
+  * {{{./CoverageDatabaseInstaller.html}Install the Coverage-SQL database}}.
+
+  * (Optional but recommended) Select "<File>", "<Preferences>", "<Connection parameters>".
+    In the combo box, select "<Coverages database>". In the "<Root directory>" field, specify
+    some directory which will be the root of your raster data. This is often a directory shared
+    on the network through NFS or Samba protocol.
+
+
+* Running the wizard
+
+  Select "<Browse>", "<Gridded data>". A list of available layers should appear. Select an
+  existing layer or create a new one by clicking on the "<Add>" button. Note that the name
+  of those layers are the value to be given to the <<<LAYER>>> parameter of <Web Map Server>
+  (WMS) queries.
+
+  Click on the "<Coverages list>" button. A dialog box appears with fields allowing to narrow
+  the search. This is usually not necessary, so just click on the "<Ok>" button.
+
+** Example 1: adding a NetCDF file of temperature data
+
+  In this example, a NetCDF file containing Temperature data in Kelvin degrees will be added
+  to the Coverage-SQL database. This NetCDF file stores temperature values as real numbers
+  (32 bits floating point). The -9999 sentinel value is used for missing data. A single file
+  contains many images at different time.
+
+  Click on the "<Add>" button in the upper left corner.
+  A new window like the screenshot below should appear:
+
+[screenshots/SelectNetcdfFileToAdd.png]
+
+  In the "<File type>" combo box, select "<NetCDF>". Then select the file to add to the database.
+  An image <<may>> be visible in the "<Preview>" tab on the right side. In this example, we see
+  only a gray block because:
+
+   * NetCDF files usually don't specify color palette. Consequently images usually appear
+     as grayscale.
+
+   * The NetCDF file used in this example does not specify the minimal and maximal values.
+     Consequently the widget doesn't know how to scale the grayscale values. The arbitrary
+     range selected by the widget may be too large as in this example.
+
+  Despite the gray block, continue by clicking on the "<Ok>" button. The next window should
+  looks like the screenshot below:
+
+[screenshots/SetupNetcdfCategories.png]
+
+  In the "<Format>" field, type a name easy to remember for the kind of data to be added.
+
+  In the "<Horizontal CRS>" field, make sure that the correct CRS is selected. <<Tip:>> for
+  selecting an other CRS, click on the search button, type "<Lambert>" (for example) and press
+  <Enter>. The combo box content will then be narrowed to Lambert projections, making easier to
+  locate the desired one.
+
+  Leave the "<Band>" field unchanged. The name in this field must match the name of the NetCDF
+  variable to be read.
+
+  The table below the band is the category table. Locate the "<tas>" line, rename the "<tas>"
+  label in something more explicit if desired (for example "<Temperature>"), then edit the
+  "<scale>" and "<offset>" coefficients. Those coefficients can be edited in two way:
+
+   * They can be edited directly in the table.
+
+   * They can be computed automatically by the widget when the content of the "<Minimum>"
+     and "<Maximum>" fields are edited.
+
+  We recommend to choose coefficients in such a way that the range of values ("<Minimum>" to
+  "<Maximum>") is a reasonable range for every values of this kind to be added in this database,
+  not only for the particular file chosen. The intend is to allow future completion of the time
+  series while using the same color scale.
+
+  Chose a color palette (the last cell on the "<tas>" line) and click on "<Ok>". The final window
+  should looks like the screenshot below. Note that many slices were added for different dates,
+  even if only one file were added.
+
+[screenshots/NetcdfCoverageList.png]
