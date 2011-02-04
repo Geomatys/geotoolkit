@@ -8,3 +8,5 @@ Simple demos of the Geotoolkit.org library
   This module contains standalone classes that can be run from the command line,
   and simple applets that shown components from the <<<geotk-widgets-swing>>>
   module. The list of demos is provided in the {{{../index.html}parent module}}.
+
+  * {{{xref/index.html}Browse source code}}

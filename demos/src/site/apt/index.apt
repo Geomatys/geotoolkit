@@ -44,16 +44,46 @@ Geotoolkit.org demos
 *--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
 
 
-* Demonstration code
+* Demonstration code in Java
 
   These are small standalone classes that could be compiled and run from the command line.
 
   * Referencing demonstration
 
-    * <<<{{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
+    * <<<{{{geotk-simples/xref/org/geotoolkit/demo/referencing/CoordinateConversion.html}CoordinateConversion}}>>>
+      ({{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}raw}})
       shows how to convert a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
 
   * Coverage demonstration
 
-    * <<<{{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}FloatRaster}}>>>
+    * <<<{{{geotk-simples/xref/org/geotoolkit/demo/coverage/FloatRaster.html}FloatRaster}}>>>
+      ({{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}raw}})
       shows how to create an image from a matrix of floating point values.
+
+
+* Demonstration code in Groovy
+
+  These are small standalone classes that could be run from the command line as
+  {{{http://groovy.codehaus.org/}Groovy}} scripts. In order for Grape (<Groovy Advanced Packaging Engine>)
+  to find the {{{http://maven.geotoolkit.org}Geotoolkit.org maven repository}}, a user needs to edit
+  <<<$HOME/.groovy/grapeConfig.xml>>> and add the Geotk repository. Here's an example <<<grapeConfig.xml>>>:
+
+----------------------------
+<?xml version="1.0"?>
+<ivysettings>
+  <settings defaultResolver="downloadGrapes"/>
+  <resolvers>
+    <chain name="downloadGrapes">
+      <ibiblio name="local"      root="file:${user.home}/.m2/repository/" m2compatible="true"/>
+      <ibiblio name="geotoolkit" root="http://maven.geotoolkit.org"       m2compatible="true"/>
+      <ibiblio name="ibiblio"                                             m2compatible="true"/>
+      <ibiblio name="java.net2"  root="http://download.java.net/maven/2/" m2compatible="true"/>
+    </chain>
+  </resolvers>
+</ivysettings>
+----------------------------
+
+  * Referencing demonstration
+
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/groovy/org/geotoolkit/demo/referencing/geo2utm.groovy}geo2utm}}>>>
+      shows how to convert the coordinates in a CSV file from a <Geocentric> CRS to a <UTM zone 10N> CRS.
