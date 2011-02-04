@@ -315,7 +315,7 @@ public final class MetadataMarshallingTest {
      */
     @Test
     public void testTextGroup() throws JAXBException, IOException {
-        final String xml = TestData.readText(MetadataMarshallingTest.class, "AbstractElement.xml");
+        final String xml = TestData.readText(MetadataMarshallingTest.class, "PositionalAccuracy.xml");
         final Object obj = XML.unmarshal(xml);
         assertTrue(obj instanceof AbstractElement);
 
@@ -331,5 +331,12 @@ public final class MetadataMarshallingTest {
                 + "regarded to the total surface size", nameOfMeasure.toString(null));
         assertEquals("Quantitative quality measure focusing on the effective class percent "
                 + "regarded to the total surface size", nameOfMeasure.toString(Locale.ENGLISH));
+        /*
+         * Opportunist test. While it was not the purpose of this test, the above metadata
+         * needs to contain a "result" element in order to pass XML validation test.
+         */
+        assertInstanceOf("Wrong value for <gmd:result>", DefaultConformanceResult.class,
+                ((AbstractElement) obj).getResults().iterator().next());
+        System.out.println(XML.marshal(obj));
     }
 }
