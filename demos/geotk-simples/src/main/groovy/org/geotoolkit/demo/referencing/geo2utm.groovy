@@ -4,8 +4,8 @@
 
  'file' should be a CSV file with a header row that contains 'latitude' and 'longitude'
  columns. This script converts lat and lon to UTM zone 10 and calculates the distance
- between the point on each consecutive line. The results are appended to the
- CSV data and printed to the terminal.
+ between the point on each consecutive line. The results are appended to the CSV data
+ and printed to the terminal. For an example, see the "coordinates.csv" file.
 
  @author Brian Schlining
  */
@@ -33,12 +33,12 @@ def file = new File(args[0])
 
 // Get the MathTransform once for all before to loop over the lines.
 // The 3 first lines below are costly, so better to execute them only once.
-def CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326")  // WGS84 (lat, lon)
-def CoordinateReferenceSystem targetCRS = CRS.decode('EPSG:32610') // UTM Zone 10N
-def MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS)
-def DirectPosition sourcePt   = new DirectPosition2D(sourceCRS)
-def DirectPosition targetPt   = new DirectPosition2D(targetCRS)
-def DirectPosition previousPt = new DirectPosition2D(targetCRS)
+CoordinateReferenceSystem sourceCRS = CRS.decode("EPSG:4326")  // WGS84 (lat, lon)
+CoordinateReferenceSystem targetCRS = CRS.decode('EPSG:32610') // UTM Zone 10N
+MathTransform tr = CRS.findMathTransform(sourceCRS, targetCRS)
+DirectPosition sourcePt   = new DirectPosition2D(sourceCRS)
+DirectPosition targetPt   = new DirectPosition2D(targetCRS)
+DirectPosition previousPt = new DirectPosition2D(targetCRS)
 
 // We will find Latitude and Longitude columns
 // in the first iteration of the loop.
@@ -48,22 +48,24 @@ def lineNumber = 0
 def df = new DecimalFormat('###0.0')
 
 file.eachLine { line ->
-    def p = line.split(",")
-    if (lineNumber == 0) {
-        latColumn = p.findIndexOf { it.toLowerCase() == 'latitude' }
-        lonColumn = p.findIndexOf { it.toLowerCase() == 'longitude' }
-        println("${line}, Easting, Northing, distanceFromPreviousLine[m]")
-    }
-    else {
-        previousPt.setLocation(targetPt)
-        sourcePt.setLocation(p[latColumn] as double, p[lonColumn] as double)
-        targetPt = tr.transform(sourcePt, targetPt)
-        def distance = Double.NaN
-        if (lineNumber > 1) {
-            distance = Math.hypot(targetPt.x - previousPt.x,
-                                  targetPt.y - previousPt.y)
+    line = line.trim();
+    if (line.length() != 0 && line.charAt(0) != '#') {
+        def p = line.split(",")
+        if (lineNumber == 0) {
+            latColumn = p.findIndexOf { it.toLowerCase() == 'latitude' }
+            lonColumn = p.findIndexOf { it.toLowerCase() == 'longitude' }
+            println("${line}, Easting, Northing, distanceFromPreviousLine[m]")
         }
-        println("${line}, ${df.format(targetPt.x)}, ${df.format(targetPt.y)}, ${df.format(distance)}")
+        else {
+            previousPt.setLocation(targetPt)
+            sourcePt.setLocation(p[latColumn] as double, p[lonColumn] as double)
+            targetPt = tr.transform(sourcePt, targetPt)
+            def distance = Double.NaN
+            if (lineNumber > 1) {
+                distance = targetPt.distance(previousPt)
+            }
+            println("${line}, ${df.format(targetPt.x)}, ${df.format(targetPt.y)}, ${df.format(distance)}")
+        }
+        lineNumber++
     }
-    lineNumber++
 }

@@ -1,3 +1,6 @@
+#
+# Input file example for the geo2utm.groovy script.
+#
 Latitude, Longitude
 36.719860, -125.250600
 36.720830, -125.250700
