@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.xml;
 
+import java.util.Locale;
 import java.io.File;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -34,13 +35,79 @@ import org.geotoolkit.lang.Static;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.17
  *
  * @since 3.00
  * @module
  */
 @Static
 public final class XML {
+    /**
+     * Allows client code to control the behavior of the (un)marshalling process when an element
+     * can not be processed. For example if an element in a XML document can not be parsed as a
+     * {@linkplain java.net.URL}, the default behavior is to throw an exception which cause the
+     * (un)marshalling of the entire document to fail. This default behavior can be changed by
+     * invoking <code>{@linkplain Marshaller#setProperty Marshaller.setProperty}(CONVERTERS,
+     * Object)</code> with a custom {@link ObjectConverters} instance. For example let suppose
+     * that we want to collect the failures in a list without stopping the (un)marshalling process.
+     * This could be done as below:
+     *
+     * {@preformat java
+     *     class Warnings extends ObjectConverters {
+     *         // The warnings collected during (un)marshalling.
+     *         List<String> messages = new ArrayList<String>();
+     *
+     *         // Override the default implementation in order to
+     *         // collect the warnings and allow the process to continue.
+     *         protected <T> boolean exceptionOccured(T value, Class<T> sourceType, Class<T> targetType, Exception e) {
+     *             mesages.add(e.getLocalizedMessage());
+     *             return true;
+     *         }
+     *     }
+     *
+     *     // Unmarshall a XML string, trapping some kind of errors.
+     *     // Not all errors are trapped - see the ObjectConverters
+     *     // javadoc for more details.
+     *     Warnings myWarningList = new Warnings();
+     *     Unmarshaller um = marshallerPool.acquireUnmarshaller();
+     *     um.setProperty(XML.CONVERTERS, myWarningList);
+     *     Object obj = um.unmarshal(xml);
+     *     marshallerPool.release(um);
+     *     if (!myWarningList.isEmpty()) {
+     *         // Report here the warnings to the user.
+     *     }
+     * }
+     *
+     * {@code ObjectConverters} can also be used for replacing an erroneous URL by a fixed URL.
+     * See the {@link ObjectConverters} javadoc for more details.
+     *
+     * @since 3.17
+     */
+    public static final String CONVERTERS = "org.geotoolkit.xml.converters";
+
+    /**
+     * Allows client code to specify the locale to use for marshalling. The value of this
+     * property is used for localizing the {@link org.opengis.util.InternationalString} and
+     * {@link org.opengis.util.CodeList} instances at marshalling time.
+     *
+     * {@section Default behavior}
+     * If this property is never set, then (un)marshalling will try to use "unlocalized" strings -
+     * typically some programmatic strings like {@linkplain org.opengis.annotation.UML#identifier()
+     * UML identifiers}. While such identifiers often look like English words, they are not
+     * considered as the {@linkplain Locale#ENGLISH English} localization.
+     * The algorithm attempting to find a "unlocalized" string is defined in the
+     * {@link org.geotoolkit.util.DefaultInternationalString#toString(Locale)} javadoc.
+     *
+     * {@section Special case}
+     * Note that if the object to be marshalled is an instance of
+     * {@link org.geotoolkit.metadata.iso.DefaultMetadata}, then the value given to the
+     * {@link org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage(Locale)} method will
+     * have precedence over this property. This behavior is compliant with INSPIRE rules.
+     *
+     * @since 3.17
+     */
+    public static final String LOCALE = "org.geotoolkit.xml.locale";
+
     /**
      * The pool of marshallers and unmarshallers used by this class.
      */

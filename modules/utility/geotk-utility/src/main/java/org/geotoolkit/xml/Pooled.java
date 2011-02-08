@@ -20,6 +20,7 @@ package org.geotoolkit.xml;
 import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.ConcurrentModificationException;
+import java.util.Locale;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.PropertyException;
@@ -37,7 +38,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  * "endorsed JAR" names if needed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -70,10 +71,20 @@ abstract class Pooled implements Catching {
 
     /**
      * The object converters to use during (un)marshalling.
+     * Can be set by the {@link XML#CONVERTERS} property.
      *
      * @since 3.07
      */
     private ObjectConverters converters;
+
+    /**
+     * An optional locale for {@link org.opengis.util.InternationalString} and
+     * {@link org.opengis.util.CodeList}. Can be set by the {@link XML#LOCALE}
+     * property.
+     *
+     * @since 3.17
+     */
+    private Locale locale;
 
     /**
      * Default constructor.
@@ -98,6 +109,8 @@ abstract class Pooled implements Catching {
             reset(entry.getKey(), entry.getValue());
         }
         initial.clear();
+        converters = ObjectConverters.DEFAULT;
+        locale = null;
     }
 
     /**
@@ -137,7 +150,7 @@ abstract class Pooled implements Catching {
      * @param  key The JAXB property key.
      * @return The property key to use.
      */
-    final String convertPropertyKey(String key) {
+    private String convertPropertyKey(String key) {
         if (internal && key.startsWith(INTERNAL)) {
             key = "com.sun.xml.internal.bind." + key.substring(INTERNAL.length());
         }
@@ -149,19 +162,55 @@ abstract class Pooled implements Catching {
      * It saves the initial state if it was not already done, but subclasses will
      * need to complete the work.
      */
-    public void setProperty(final String name, final Object value) throws PropertyException {
-        if (!initial.containsKey(name)) {
-            if (initial.put(name, getProperty(name)) != null) {
-                // Should never happen, unless on concurrent changes in a backgroung thread.
-                throw new ConcurrentModificationException(name);
+    public final void setProperty(String name, final Object value) throws PropertyException {
+        // TODO: Use strings in switch with JDK 7.
+        if (name.equals(XML.CONVERTERS)) {
+            converters = (value != null) ? (ObjectConverters) value : ObjectConverters.DEFAULT;
+        } else if (name.equals(XML.LOCALE)) {
+            locale = (Locale) value;
+        } else {
+            name = convertPropertyKey(name);
+            if (!initial.containsKey(name)) {
+                if (initial.put(name, getProperty(name)) != null) {
+                    // Should never happen, unless on concurrent changes in a backgroung thread.
+                    throw new ConcurrentModificationException(name);
+                }
             }
+            setStandardProperty(name, value);
         }
     }
 
     /**
      * A method which is common to both {@code Marshaller} and {@code Unmarshaller}.
      */
-    public abstract Object getProperty(final String name) throws PropertyException;
+    public final Object getProperty(final String name) throws PropertyException {
+        // TODO: Use strings in switch with JDK 7.
+        if (name.equals(XML.CONVERTERS)) {
+            return converters;
+        } else if (name.equals(XML.LOCALE)) {
+            return locale;
+        } else {
+            return getStandardProperty(convertPropertyKey(name));
+        }
+    }
+
+    /**
+     * Sets the given property to the wrapped (un)marshaller. This method is invoked
+     * automatically when the property given to the {@link #setProperty(String, Object)}
+     * method was not one of the {@link XML} constants.
+     *
+     * @since 3.17
+     */
+    abstract void setStandardProperty(String name, Object value) throws PropertyException;
+
+    /**
+     * Gets the given property from the wrapped (un)marshaller. This method is invoked
+     * automatically when the property key given to the {@link #getProperty(String)}
+     * method was not one of the {@link XML} constants.
+     *
+     * @since 3.17
+     */
+    abstract Object getStandardProperty(String name) throws PropertyException;
 
     /**
      * Delegates to {@code setAdapter(adapter.getClass(), adapter)} as specified
@@ -235,6 +284,7 @@ abstract class Pooled implements Catching {
      * @since 3.07
      */
     @Override
+    @Deprecated
     public final ObjectConverters getObjectConverters() {
         return converters;
     }
@@ -245,6 +295,7 @@ abstract class Pooled implements Catching {
      * @since 3.07
      */
     @Override
+    @Deprecated
     public final void setObjectConverters(final ObjectConverters converters) {
         this.converters = (converters != null) ? converters : ObjectConverters.DEFAULT;
     }
@@ -265,6 +316,6 @@ abstract class Pooled implements Catching {
      * @since 3.07
      */
     final MarshalContext begin() {
-        return MarshalContext.begin(converters);
+        return MarshalContext.begin(converters, locale);
     }
 }

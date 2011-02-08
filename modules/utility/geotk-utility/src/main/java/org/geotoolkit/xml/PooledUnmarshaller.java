@@ -45,7 +45,7 @@ import org.xml.sax.InputSource;
  * applied on it. This is done in order to make the unmarshaller safer for reuse.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -278,22 +278,21 @@ final class PooledUnmarshaller extends Pooled implements Catching.Unmarshaller {
     }
 
     /**
-     * Delegates to the wrapped unmarshaller. The initial state will be saved
-     * if it was not already done, for future restoration by {@link #reset()}.
+     * Delegates to the wrapped unmarshaller. This method is invoked by the parent
+     * class if the given name was not one of the {@link XML} constants.
      */
     @Override
-    public void setProperty(String name, final Object value) throws PropertyException {
-        name = convertPropertyKey(name);
-        super.setProperty(name, value);
+    void setStandardProperty(final String name, final Object value) throws PropertyException {
         unmarshaller.setProperty(name, value);
     }
 
     /**
-     * Delegates to the wrapped unmarshaller.
+     * Delegates to the wrapped unmarshaller. This method is invoked by the parent
+     * class if the given name was not one of the {@link XML} constants.
      */
     @Override
-    public Object getProperty(final String name) throws PropertyException {
-        return unmarshaller.getProperty(convertPropertyKey(name));
+    Object getStandardProperty(final String name) throws PropertyException {
+        return unmarshaller.getProperty(name);
     }
 
     /**

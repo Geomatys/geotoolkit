@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.Collection;
 import java.util.Collections;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -47,6 +48,7 @@ import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
 import org.geotoolkit.internal.jaxb.code.LanguageAdapter;
 import org.geotoolkit.xml.Namespaces;
@@ -55,10 +57,17 @@ import org.geotoolkit.xml.Namespaces;
 /**
  * Root entity which defines metadata about a resource or resources.
  *
+ * {@section Localization}
+ * When this object is marshalled as an ISO 19139 compliant XML document, the value
+ * given to the {@link #setLanguage(Locale)} method will be used for the localization
+ * of {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList}
+ * instances of every children of this {@code DefaultMetadata} object. This behavior is
+ * compliant with INSPIRE rules.
+ *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -274,6 +283,9 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
 
     /**
      * Returns the language used for documenting metadata.
+     * This is also the locale used for marshalling {@link org.opengis.util.InternationalString}
+     * and {@link org.opengis.util.CodeList} instances in ISO 19139 compliant XML documents, for
+     * this {@code DefaultMetadata} object and every children.
      */
     @Override
     @XmlElement(name = "language")
@@ -284,8 +296,15 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
 
     /**
      * Sets the language used for documenting metadata.
+     * In Geotk implementation, this will also set the locale used for marshalling
+     * {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList}
+     * instances in ISO 19139 compliant XML documents, for this {@code DefaultMetadata} object
+     * and every children. In other words, the value set to this method has precedence over
+     * the marshaller {@link org.geotoolkit.xml.XML#LOCALE} property, if any.
      *
      * @param newValue The new language.
+     *
+     * @see org.geotoolkit.xml.XML#LOCALE
      */
     public synchronized void setLanguage(final Locale newValue) {
         checkWritePermission();
@@ -738,5 +757,25 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     {
         acquisitionInformation = copyCollection(newValues, acquisitionInformation,
                 AcquisitionInformation.class);
+    }
+
+    /**
+     * Invoked before this object is marshalled to XML. This method sets the locale
+     * to be used for XML marshalling to the metadata language.
+     *
+     * @since 3.17
+     */
+    final void beforeMarshal(final Marshaller marshaller) {
+        MarshalContext.pushLocale(language);
+    }
+
+    /**
+     * Invoked after this object is marshalled to XML. This method restores the
+     * locale to be used for XML marshalling to its previous value.
+     *
+     * @since 3.17
+     */
+    final void afterMarshal(final Marshaller marshaller) {
+        MarshalContext.pullLocale();
     }
 }

@@ -54,6 +54,7 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
 import static org.geotoolkit.test.Assert.*;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -302,19 +303,20 @@ public final class MetadataMarshallingTest {
     }
 
     /**
-     * Tests the unmarshalling of a text group with a default {@code gco:CharacterString}
+     * Tests the unmarshalling of a text group with a default {@code <gco:CharacterString>}
      * element.
      *
+     * @throws IOException   If an error occurred while reading the XML file.
      * @throws JAXBException If an error occurred during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws IOException If an error occurred while reading the XML file.
+     * @throws SAXException  If an error occurred while parsing the XML document.
      *
      * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-107">GEOTK-107</a>
      *
      * @since 3.14
      */
     @Test
-    public void testTextGroup() throws JAXBException, IOException {
+    public void testTextGroup() throws IOException, JAXBException, SAXException {
         final String xml = TestData.readText(MetadataMarshallingTest.class, "PositionalAccuracy.xml");
         final Object obj = XML.unmarshal(xml);
         assertTrue(obj instanceof AbstractElement);
@@ -337,6 +339,6 @@ public final class MetadataMarshallingTest {
          */
         assertInstanceOf("Wrong value for <gmd:result>", DefaultConformanceResult.class,
                 ((AbstractElement) obj).getResults().iterator().next());
-        System.out.println(XML.marshal(obj));
+        if (false) assertDomEquals(xml, XML.marshal(obj)); // TODO
     }
 }

@@ -17,16 +17,20 @@
  */
 package org.geotoolkit.test;
 
+import java.io.IOException;
 import java.util.Enumeration;
 import java.awt.image.RenderedImage;
 import javax.swing.tree.TreeNode;
+import javax.xml.parsers.ParserConfigurationException;
+import org.xml.sax.SAXException;
+import org.geotoolkit.test.xml.DomComparator;
 
 
 /**
  * Assertion methods used by the Geotk project in addition of the JUnit and GeoAPI assertions.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.16 (derived from 3.00)
  */
@@ -106,6 +110,57 @@ public class Assert extends org.opengis.test.Assert {
      */
     private static String skipHeader(final String xml) {
         return xml.substring(xml.indexOf('\n', xml.indexOf('\n') + 1) + 1);
+    }
+
+    /**
+     * Parses two XML tree as DOM documents, and compares the nodes.
+     * The inputs given to this method can be any of the following types:
+     * <p>
+     * <ul>
+     *   <li>{@link org.w3c.dom.Node}; used directly without further processing.</li>
+     *   <li>{@link java.io.File}, {@link java.net.URL} or {@link java.net.URI}: the
+     *       stream is opened and parsed as a XML document.</li>
+     *   <li>{@link String}: The string content is parsed directly as a XML document.
+     *       Encoding <strong>must</strong> be UTF-8 (no other encoding is supported
+     *       by current implementation of this method).</li>
+     * </ul>
+     * <p>
+     * This method will ignore comments and the following attributes:
+     * <p>
+     * <ul>
+     *   <li>All namespace declarations ({@code "xmlns:*"})</li>
+     *   <li>{@code "xsi:schemaLocation"}</li>
+     *   <li>{@code "xsi:type"}</li>
+     * </ul>
+     * <p>
+     * In order to customize the list of attributes to ignore, users shall use
+     * {@link DomComparator} directly.
+     *
+     * @param  expected     The expected XML document.
+     * @param  actual       The XML document to compare.
+     * @throws IOException  If the stream can not be read.
+     * @throws SAXException If an error occurred while parsing the XML document.
+     *
+     * @see DomComparator
+     *
+     * @since 3.17
+     */
+    public static void assertDomEquals(final Object expected, final Object actual)
+            throws IOException, SAXException
+    {
+        final DomComparator comparator;
+        try {
+            comparator = new DomComparator(expected, actual);
+        } catch (ParserConfigurationException e) {
+            // In order to simplify a little bit the usage of this method, we do declare this
+            // checked exception since it should not happen in the controlled test environment.
+            throw new AssertionError(e);
+        }
+        comparator.ignoreComments = true;
+        comparator.ignoredAttributes.add("xmlns:*");
+        comparator.ignoredAttributes.add("xsi:schemaLocation");
+        comparator.ignoredAttributes.add("xsi:type");
+        comparator.compare();
     }
 
     /**

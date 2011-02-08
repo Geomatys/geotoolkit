@@ -245,6 +245,28 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      * but not found, then this method looks for the {@code "fr"} locale. The {@code null} locale
      * (which stand for unlocalized message) is tried last.
      *
+     * {@section Handling of <code>null</code> argument value}
+     * A {@code null} argument value can be given to this method for
+     * requesting a "unlocalized" string - typically some programmatic strings like
+     * {@linkplain org.opengis.annotation.UML#identifier() UML identifiers}. While such
+     * identifiers often look like English words, they are not considered as the
+     * {@linkplain Locale#ENGLISH English} localization. In order to approach this goal,
+     * this method handles {@code null} argument value as below:
+     * <p>
+     * <ul>
+     *   <li>If a string has been explicitly {@linkplain #add(Locale, String) added} for the
+     *       {@code null} locale, then that string is returned.</li>
+     *   <li>Otherwise, considering that UML identifiers in OGC/ISO specifications are
+     *       primarily expressed in the English language, this method looks for a string
+     *       for the English locale as an approximation of a "unlocalized" string. The
+     *       {@linkplain Locale#UK UK} variant is preferred because ISO specifications
+     *       seem to use that language.</li>
+     *   <li>If no English string was found, this method looks for a string for the
+     *       {@linkplain Locale#getDefault() system default locale}.</li>
+     *   <li>If none of the above steps found a string, then this method returns
+     *       an arbitrary string (this behavior may change in future Geotk implementation).</li>
+     * </ul>
+     *
      * @param  locale The locale to look for, or {@code null}.
      * @return The string in the specified locale, or in a default locale.
      */
@@ -254,7 +276,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
         if (text == null) {
             /*
              * No string for the requested locale. Try the string in the 'null' locale first, then
-             * the string in the system-default next.  Note: in a previous version we were looking
+             * the string in the system-default last.  Note: in a previous version we were looking
              * for the system default first, but it produced unexpected results in many cases. The
              * i18n string is often constructed with an English sentence for the "null" locale (the
              * unlocalized text) without explicit entry for the English locale since the "null" one
@@ -266,7 +288,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
              */
             text = localMap.get(null);
             if (text == null) {
-                Locale def = Locale.US; // The default language for "unlocalized" string.
+                Locale def = Locale.UK; // The default language for "unlocalized" string.
                 if (locale != def) { // Avoid requesting the same locale twice (optimization).
                     text = getString(def);
                     if (text != null) {
@@ -274,7 +296,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
                     }
                 }
                 def = Locale.getDefault();
-                if (locale != def && def != Locale.US) {
+                if (locale != def && def != Locale.UK) {
                     text = getString(def);
                     if (text != null) {
                         return text;

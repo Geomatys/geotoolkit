@@ -38,6 +38,10 @@ import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
 
 /**
  * Creates and configures {@link Marshaller} or {@link Unmarshaller} objects for use with Geotk.
+ * Users fetch (un)marshallers by calls to the {@link #acquireMarshaller()} or
+ * {@link #acquireUnmarshaller()} methods. The (un)marshallers can optionally by configured with
+ * Geotk-specific properties defined in the {@link XML} class, in addition of JAXB standard
+ * properties.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)

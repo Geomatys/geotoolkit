@@ -33,6 +33,15 @@
  * an existing collection using code like {@code getCitations().add(myCitation)} instead
  * than setting the collection as a whole with {@code setCitations(myCitations)}.
  *
+ * {@section Localization}
+ * When a metadata object is marshalled as an ISO 19139 compliant XML document, the marshaller
+ * {@link org.geotoolkit.xml.XML#LOCALE} property will be used for the localization of every
+ * {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList} instances,
+ * <strong>except</strong> if the object to be marshalled is an instance of
+ * {@link org.geotoolkit.metadata.iso.DefaultMetadata}, in which case the value given to the
+ * {@link org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage(Locale)} method will have
+ * precedence. The later behavior is compliant with INSPIRE rules.
+ *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
@@ -81,6 +90,7 @@
 })
 package org.geotoolkit.metadata.iso;
 
+import java.util.Locale; // For javadoc
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;

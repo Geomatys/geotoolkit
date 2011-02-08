@@ -62,7 +62,7 @@ public class CharacterString {
      *
      * @return The text, or {@code null}.
      */
-    @XmlElement(name = "CharacterString", namespace = Namespaces.GCO)
+    @XmlElement(name = "CharacterString")
     public final String getCharacterString() {
         final CharSequence text = this.text;
         return (text == null || text instanceof AnchorType) ? null : text.toString();
@@ -112,6 +112,6 @@ public class CharacterString {
     @Override
     public final String toString() {
         final CharSequence text = this.text;
-        return (text != null) ? text.toString() : null; // NOSONAR
+        return (text != null) ? text.toString() : null; // NOSONAR: Really want to return null.
     }
 }

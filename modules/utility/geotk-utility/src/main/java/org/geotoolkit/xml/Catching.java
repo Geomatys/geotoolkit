@@ -62,7 +62,10 @@ package org.geotoolkit.xml;
  *
  * @since 3.07
  * @module
+ *
+ * @deprecated Replaced by the {@link XML#CONVERTERS} property.
  */
+@Deprecated
 public interface Catching {
     /**
      * JAXB {@linkplain javax.xml.bind.Marshaller marshaller} combined with the {@link Catching}
@@ -73,7 +76,10 @@ public interface Catching {
      *
      * @since 3.07
      * @module
+     *
+     * @deprecated Replaced by the {@link XML#CONVERTERS} property.
      */
+    @Deprecated
     interface Marshaller extends javax.xml.bind.Marshaller, Catching {
     }
 
@@ -86,7 +92,10 @@ public interface Catching {
      *
      * @since 3.07
      * @module
+     *
+     * @deprecated Replaced by the {@link XML#CONVERTERS} property.
      */
+    @Deprecated
     interface Unmarshaller extends javax.xml.bind.Unmarshaller, Catching {
     }
 
