@@ -7,6 +7,9 @@
  between the point on each consecutive line. The results are appended to the CSV data
  and printed to the terminal. For an example, see the "coordinates.csv" file.
 
+ This file is hereby placed into the Public Domain.
+ This means anyone is free to do whatever they wish with this file.
+
  @author Brian Schlining
  */
 @Grapes([
