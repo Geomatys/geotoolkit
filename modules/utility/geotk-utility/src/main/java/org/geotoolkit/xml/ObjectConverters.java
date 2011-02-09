@@ -55,7 +55,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  *     }
  * }
  *
- * See the {@link Catching} javadoc for an example of registering a custom
+ * See the {@link XML#CONVERTERS} javadoc for an example of registering a custom
  * {@code ObjectConverters} to a (un)marshaller.
  *
  * @author Martin Desruisseaux (Geomatys)
@@ -68,7 +68,7 @@ public class ObjectConverters {
     /**
      * The default, thread-safe and immutable instance. This instance defines the
      * converters used during every (un)marshalling if no {@code ObjectConverters}
-     * was {@linkplain Catching#setObjectConverters explicitly set}.
+     * was explicitly set.
      */
     public static final ObjectConverters DEFAULT = new ObjectConverters();
 
@@ -86,7 +86,7 @@ public class ObjectConverters {
      * <p>
      * This method provides a single hook that subclasses can override in order to provide their
      * own error handling for every methods defined in this class, like the example documented in
-     * the {@link Catching} javadoc. Subclasses also have the possibility to override individual
+     * the {@link XML#CONVERTERS} javadoc. Subclasses also have the possibility to override individual
      * {@code toXXX(...)} methods, like the example provided in this <a href="#skip-navbar_top">class
      * javadoc</a>.
      *

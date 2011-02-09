@@ -339,6 +339,6 @@ public final class MetadataMarshallingTest {
          */
         assertInstanceOf("Wrong value for <gmd:result>", DefaultConformanceResult.class,
                 ((AbstractElement) obj).getResults().iterator().next());
-        if (false) assertDomEquals(xml, XML.marshal(obj)); // TODO
+        if (false) assertDomEquals(xml, XML.marshal(obj), "xmlns:*", "xsi:schemaLocation", "xsi:type"); // TODO
     }
 }

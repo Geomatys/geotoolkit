@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
+import java.util.Set;
+import java.util.Locale;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 
@@ -83,8 +85,32 @@ public final class FreeText extends CharacterString {
      *
      * @see org.geotoolkit.xml.XML#LOCALE
      */
-    public FreeText(final DefaultInternationalString text) {
+    private FreeText(final DefaultInternationalString text) {
         super(text.toString(MarshalContext.getLocale()));
         textGroup = new TextGroup(text);
+    }
+
+    /**
+     * Constructs a {@linkplain TextGroup text group} from the given {@link InternationalString}
+     * if it contains at least one non-null locale. Otherwise returns {@code null}, meaning that
+     * the simpler {@link CharacterString} construct should be used instead.
+     * 
+     * @param  text The international string which may (or may not) have several translations
+     *              embedded for the same text.
+     * @return A {@code FreeText} instance if the given text has several translations,
+     *         or {@code null} otherwise.
+     */
+    @SuppressWarnings("fallthrough")
+    public static FreeText create(final InternationalString text) {
+        if (text instanceof DefaultInternationalString) {
+            final DefaultInternationalString df = (DefaultInternationalString) text;
+            final Set<Locale> locales = df.getLocales();
+            switch (locales.size()) {
+                case 0:  break;
+                case 1:  if (locales.contains(null)) break; // Otherwise fallthrough
+                default: return new FreeText(df);
+            }
+        }
+        return null;
     }
 }

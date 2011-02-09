@@ -32,6 +32,13 @@ import org.geotoolkit.lang.Static;
 
 /**
  * Provides convenience methods for marshalling and unmarshalling Geotk objects.
+ * This class defines also some properties that can be given to the {@link Marshaller}
+ * and {@link Unmarshaller} instances created by {@link PooledMarshaller}:
+ * <p>
+ * <ul>
+ *   <li>{@link #CONVERTERS} for controlling the conversion of URL, UUID, Units or similar objects.</li>
+ *   <li>{@link #LOCALE} for specifying the locale to use for international strings and code lists.</li>
+ * </ul>
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
@@ -44,13 +51,19 @@ import org.geotoolkit.lang.Static;
 public final class XML {
     /**
      * Allows client code to control the behavior of the (un)marshalling process when an element
-     * can not be processed. For example if an element in a XML document can not be parsed as a
-     * {@linkplain java.net.URL}, the default behavior is to throw an exception which cause the
-     * (un)marshalling of the entire document to fail. This default behavior can be changed by
-     * invoking <code>{@linkplain Marshaller#setProperty Marshaller.setProperty}(CONVERTERS,
-     * Object)</code> with a custom {@link ObjectConverters} instance. For example let suppose
-     * that we want to collect the failures in a list without stopping the (un)marshalling process.
-     * This could be done as below:
+     * can not be processed, or alter the element values.
+     * <p>
+     * If an element in a XML document can not be parsed (for example if a {@linkplain java.net.URL}
+     * string is not valid), the default behavior is to throw an exception which cause the
+     * (un)marshalling of the entire document to fail. This default behavior can be customized by
+     * invoking {@link Marshaller#setProperty(String, Object} with this {@code CONVERTERS} property
+     * key and a custom {@link ObjectConverters} instance. {@code ObjectConverters} can also be used
+     * for replacing an erroneous URL by a fixed URL. See the {@link ObjectConverters} javadoc for
+     * more details.
+     *
+     * {@section Example}
+     * The following example collect the failures in a list without stopping the (un)marshalling
+     * process.
      *
      * {@preformat java
      *     class Warnings extends ObjectConverters {
@@ -78,17 +91,17 @@ public final class XML {
      *     }
      * }
      *
-     * {@code ObjectConverters} can also be used for replacing an erroneous URL by a fixed URL.
-     * See the {@link ObjectConverters} javadoc for more details.
+     * @see Unmarshaller#setProperty(String, Object)
+     * @see ObjectConverters
      *
      * @since 3.17
      */
     public static final String CONVERTERS = "org.geotoolkit.xml.converters";
 
     /**
-     * Allows client code to specify the locale to use for marshalling. The value of this
-     * property is used for localizing the {@link org.opengis.util.InternationalString} and
-     * {@link org.opengis.util.CodeList} instances at marshalling time.
+     * Allows client code to specify the locale to use for marshalling
+     * {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList}
+     * instances.
      *
      * {@section Default behavior}
      * If this property is never set, then (un)marshalling will try to use "unlocalized" strings -
@@ -99,10 +112,14 @@ public final class XML {
      * {@link org.geotoolkit.util.DefaultInternationalString#toString(Locale)} javadoc.
      *
      * {@section Special case}
-     * Note that if the object to be marshalled is an instance of
-     * {@link org.geotoolkit.metadata.iso.DefaultMetadata}, then the value given to the
-     * {@link org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage(Locale)} method will
-     * have precedence over this property. This behavior is compliant with INSPIRE rules.
+     * If the object to be marshalled is an instance of
+     * {@link org.geotoolkit.metadata.iso.DefaultMetadata}, then the value given to its
+     * {@link org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage setLanguage(Locale)}
+     * method will have precedence over this property. This behavior is compliant with
+     * INSPIRE rules.
+     *
+     * @see Marshaller#setProperty(String, Object)
+     * @see org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage(Locale)
      *
      * @since 3.17
      */

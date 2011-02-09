@@ -36,7 +36,7 @@ import org.geotoolkit.internal.jaxb.text.AnchorType;
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.14
+ * @version 3.17
  *
  * @since 2.5
  * @module
@@ -81,17 +81,26 @@ public class InternationalStringAdapter extends XmlAdapter<CharacterString, Inte
                     }
                 }
                 /*
-                 * Create the international string with all locales found in the
-                 * <gml:textGroup> element.
+                 * Create the international string with all locales found in the <gml:textGroup>
+                 * element. If the <gml:textGroup> element is missing or empty, then we will use
+                 * an instance of SimpleInternationalString instead than the more heavy
+                 * DefaultInternationalString.
                  */
-                final DefaultInternationalString ist = new DefaultInternationalString(defaultValue);
-                if (textGroup != null) {
+                final InternationalString ist;
+                if (textGroup != null && textGroup.localised != null && textGroup.localised.length != 0) {
+                    final DefaultInternationalString df = new DefaultInternationalString(defaultValue);
                     for (final LocalisedCharacterString localized : textGroup.localised) {
-                        ist.add(localized.locale, localized.text);
+                        df.add(localized.locale, localized.text);
                     }
+                    ist = df;
+                } else {
+                    ist = new SimpleInternationalString(defaultValue);
                 }
                 return ist;
             }
+            /*
+             * Case where the value is an ordinary CharacterString (not a FreeText).
+             */
             final AnchorType anchor = value.getAnchor();
             if (anchor != null) {
                 return anchor;
@@ -120,8 +129,9 @@ public class InternationalStringAdapter extends XmlAdapter<CharacterString, Inte
             if (value instanceof AnchorType) {
                 return new CharacterString((AnchorType) value);
             }
-            if (value instanceof DefaultInternationalString) {
-                return new FreeText((DefaultInternationalString) value);
+            final FreeText ft = FreeText.create(value);
+            if (ft != null) {
+                return ft;
             }
             String text = value.toString();
             if (text != null) {

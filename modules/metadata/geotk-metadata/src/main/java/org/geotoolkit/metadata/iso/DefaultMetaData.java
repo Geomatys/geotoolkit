@@ -61,8 +61,9 @@ import org.geotoolkit.xml.Namespaces;
  * When this object is marshalled as an ISO 19139 compliant XML document, the value
  * given to the {@link #setLanguage(Locale)} method will be used for the localization
  * of {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList}
- * instances of every children of this {@code DefaultMetadata} object. This behavior is
- * compliant with INSPIRE rules.
+ * instances of in this {@code DefaultMetadata} object and every children, as required by
+ * INSPIRE rules. If no language were specified, then the default locale will be the one
+ * defined in the {@link org.geotoolkit.xml.XML#LOCALE} marshaller property, if any.
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
@@ -282,10 +283,9 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     }
 
     /**
-     * Returns the language used for documenting metadata.
-     * This is also the locale used for marshalling {@link org.opengis.util.InternationalString}
-     * and {@link org.opengis.util.CodeList} instances in ISO 19139 compliant XML documents, for
-     * this {@code DefaultMetadata} object and every children.
+     * Returns the language used for documenting metadata. This {@code DefaultMetadata} object and
+     * its children will use that locale for marshalling {@link org.opengis.util.InternationalString}
+     * and {@link org.opengis.util.CodeList} instances in ISO 19139 compliant XML documents.
      */
     @Override
     @XmlElement(name = "language")
@@ -295,12 +295,9 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     }
 
     /**
-     * Sets the language used for documenting metadata.
-     * In Geotk implementation, this will also set the locale used for marshalling
-     * {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList}
-     * instances in ISO 19139 compliant XML documents, for this {@code DefaultMetadata} object
-     * and every children. In other words, the value set to this method has precedence over
-     * the marshaller {@link org.geotoolkit.xml.XML#LOCALE} property, if any.
+     * Sets the language used for documenting metadata. This {@code DefaultMetadata} object and its
+     * children will use the given locale for marshalling {@link org.opengis.util.InternationalString}
+     * and {@link org.opengis.util.CodeList} instances in ISO 19139 compliant XML documents.
      *
      * @param newValue The new language.
      *
@@ -309,6 +306,8 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     public synchronized void setLanguage(final Locale newValue) {
         checkWritePermission();
         language = newValue;
+        // The "magik" applying this language to every children
+        // is performed by the 'beforeMarshal(Marshaller)' method.
     }
 
     /**
@@ -760,22 +759,22 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     }
 
     /**
-     * Invoked before this object is marshalled to XML. This method sets the locale
-     * to be used for XML marshalling to the metadata language.
+     * Invoked by JAXB {@link javax.xml.bind.Marshaller} before this object is marshalled to XML.
+     * This method sets the locale to be used for XML marshalling to the metadata language.
      *
      * @since 3.17
      */
-    final void beforeMarshal(final Marshaller marshaller) {
+    private void beforeMarshal(final Marshaller marshaller) {
         MarshalContext.pushLocale(language);
     }
 
     /**
-     * Invoked after this object is marshalled to XML. This method restores the
-     * locale to be used for XML marshalling to its previous value.
+     * Invoked by JAXB {@link javax.xml.bind.Marshaller} after this object has been marshalled to
+     * XML. This method restores the locale to be used for XML marshalling to its previous value.
      *
      * @since 3.17
      */
-    final void afterMarshal(final Marshaller marshaller) {
+    private void afterMarshal(final Marshaller marshaller) {
         MarshalContext.pullLocale();
     }
 }

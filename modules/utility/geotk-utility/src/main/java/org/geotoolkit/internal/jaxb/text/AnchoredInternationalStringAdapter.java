@@ -18,7 +18,6 @@
 package org.geotoolkit.internal.jaxb.text;
 
 import org.opengis.util.InternationalString;
-import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.internal.jaxb.metadata.FreeText;
 import org.geotoolkit.internal.jaxb.metadata.InternationalStringAdapter;
 
@@ -75,8 +74,9 @@ public final class AnchoredInternationalStringAdapter extends InternationalStrin
         if (value instanceof AnchorType) {
             return new CharacterString((AnchorType) value);
         }
-        if (value instanceof DefaultInternationalString) {
-            return new FreeText((DefaultInternationalString) value);
+        final FreeText ft = FreeText.create(value);
+        if (ft != null) {
+            return ft;
         }
         return anchors.marshal(value);
     }

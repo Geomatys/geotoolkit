@@ -43,8 +43,8 @@ import static org.geotoolkit.resources.Locales.unique;
  * This behavior is a compromise between making constructions easier, and being suitable for
  * use in immutable objects.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.17
  *
  * @since 2.1
  * @module
@@ -54,26 +54,26 @@ public class DefaultInternationalString extends AbstractInternationalString impl
     /**
      * Serial number for inter-operability with different versions.
      */
-    private static final long serialVersionUID = 5760033376627376937L;
+    private static final long serialVersionUID = 5760033376627376938L;
 
     /**
      * The string values in different locales (never {@code null}).
      * Keys are {@link Locale} objects and values are {@link String}s.
      */
-    private Map<Locale,String> localMap;
+    private Map<Locale,String> localeMap;
 
     /**
-     * An unmodifiable view of the entry set in {@link #localMap}. This is the set of locales
+     * An unmodifiable view of the entry set in {@link #localeMap}. This is the set of locales
      * defined in this international string. Will be constructed only when first requested.
      */
-    private transient Set<Locale> localSet;
+    private transient Set<Locale> localeSet;
 
     /**
      * Creates an initially empty international string. Localized strings can been added
      * using one of {@link #add add(...)} methods.
      */
     public DefaultInternationalString() {
-        localMap = Collections.emptyMap();
+        localeMap = Collections.emptyMap();
     }
 
     /**
@@ -87,9 +87,9 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      */
     public DefaultInternationalString(final String string) {
         if (string != null) {
-            localMap = Collections.singletonMap(null, string);
+            localeMap = Collections.singletonMap(null, string);
         } else {
-            localMap = Collections.emptyMap();
+            localeMap = Collections.emptyMap();
         }
     }
 
@@ -104,14 +104,15 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      */
     public DefaultInternationalString(final Map<Locale,String> strings) {
         if (strings == null || strings.isEmpty()) {
-            localMap = Collections.emptyMap();
+            localeMap = Collections.emptyMap();
         } else {
             final Iterator<Map.Entry<Locale,String>> it = strings.entrySet().iterator();
             final Map.Entry<Locale,String> entry = it.next();
             if (!it.hasNext()) {
-                localMap = Collections.singletonMap(entry.getKey(), entry.getValue());
+                localeMap = Collections.singletonMap(entry.getKey(), entry.getValue());
             } else {
-                localMap = new HashMap<Locale,String>(strings);
+                localeMap = new HashMap<Locale,String>(strings);
+                // If HashMap is replaced by an other type, please revisit 'getLocales()'.
             }
         }
     }
@@ -128,18 +129,21 @@ public class DefaultInternationalString extends AbstractInternationalString impl
             throws IllegalArgumentException
     {
         if (string != null) {
-            switch (localMap.size()) {
+            switch (localeMap.size()) {
                 case 0: {
-                    localMap = Collections.singletonMap(locale, string);
+                    localeMap = Collections.singletonMap(locale, string);
+                    localeSet = null;
                     defaultValue = null; // Will be recomputed when first needed.
                     return;
                 }
                 case 1: {
-                    localMap = new HashMap<Locale,String>(localMap);
+                    // If HashMap is replaced by an other type, please revisit 'getLocales()'.
+                    localeMap = new HashMap<Locale,String>(localeMap);
+                    localeSet = null;
                     break;
                 }
             }
-            final String old = localMap.get(locale);
+            final String old = localeMap.get(locale);
             if (old != null) {
                 if (string.equals(old)) {
                     return;
@@ -147,7 +151,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
                 throw new IllegalArgumentException(Errors.format(
                         Errors.Keys.VALUE_ALREADY_DEFINED_$1, locale));
             }
-            localMap.put(locale, string);
+            localeMap.put(locale, string);
             defaultValue = null; // Will be recomputed when first needed.
         }
     }
@@ -198,12 +202,20 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      * Returns the set of locales defined in this international string.
      *
      * @return The set of locales.
+     *
+     * @todo Current implementation does not return a synchronized set. We should synchronize
+     *       on the same lock than the one used for accessing the internal locale map.
      */
     public synchronized Set<Locale> getLocales() {
-        if (localSet == null) {
-            localSet = Collections.unmodifiableSet(localMap.keySet());
+        Set<Locale> locales = localeSet;
+        if (locales == null) {
+            locales = localeMap.keySet();
+            if (localeMap instanceof HashMap<?,?>) {
+                locales = Collections.unmodifiableSet(locales);
+            }
+            localeSet = locales;
         }
-        return localSet;
+        return locales;
     }
 
     /**
@@ -217,7 +229,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      */
     private String getString(Locale locale) {
         while (locale != null) {
-            final String text = localMap.get(locale);
+            final String text = localeMap.get(locale);
             if (text != null) {
                 return text;
             }
@@ -250,17 +262,16 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      * requesting a "unlocalized" string - typically some programmatic strings like
      * {@linkplain org.opengis.annotation.UML#identifier() UML identifiers}. While such
      * identifiers often look like English words, they are not considered as the
-     * {@linkplain Locale#ENGLISH English} localization. In order to approach this goal,
-     * this method handles {@code null} argument value as below:
+     * {@linkplain Locale#ENGLISH English} localization. In order to produce a value close
+     * to the common practice, this method handles {@code null} argument value as below:
      * <p>
      * <ul>
      *   <li>If a string has been explicitly {@linkplain #add(Locale, String) added} for the
      *       {@code null} locale, then that string is returned.</li>
-     *   <li>Otherwise, considering that UML identifiers in OGC/ISO specifications are
-     *       primarily expressed in the English language, this method looks for a string
-     *       for the English locale as an approximation of a "unlocalized" string. The
-     *       {@linkplain Locale#UK UK} variant is preferred because ISO specifications
-     *       seem to use that language.</li>
+     *   <li>Otherwise, acknowledging that UML identifiers in OGC/ISO specifications are primarily
+     *       expressed in the English language, this method looks for an English string as an
+     *       approximation of a "unlocalized" string. The {@linkplain Locale#UK UK} variant is
+     *       preferred because ISO specifications seem to use that language.</li>
      *   <li>If no English string was found, this method looks for a string for the
      *       {@linkplain Locale#getDefault() system default locale}.</li>
      *   <li>If none of the above steps found a string, then this method returns
@@ -286,7 +297,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
              * not explicitly declared). Generally the "unlocalized" text is in English, so it is
              * a better bet as a fallback.
              */
-            text = localMap.get(null);
+            text = localeMap.get(null);
             if (text == null) {
                 Locale def = Locale.UK; // The default language for "unlocalized" string.
                 if (locale != def) { // Avoid requesting the same locale twice (optimization).
@@ -304,7 +315,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
                 }
                 // Every else failed; pickup a random string.
                 // This behavior may change in future versions.
-                final Iterator<String> it = localMap.values().iterator();
+                final Iterator<String> it = localeMap.values().iterator();
                 if (it.hasNext()) {
                     text = it.next();
                 }
@@ -345,7 +356,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
     public synchronized boolean isSubsetOf(final Object candidate) {
         if (candidate instanceof InternationalString) {
             final InternationalString string = (InternationalString) candidate;
-            for (final Map.Entry<Locale,String> entry : localMap.entrySet()) {
+            for (final Map.Entry<Locale,String> entry : localeMap.entrySet()) {
                 final Locale locale = entry.getKey();
                 final String text   = entry.getValue();
                 if (!text.equals(string.toString(locale))) {
@@ -354,14 +365,14 @@ public class DefaultInternationalString extends AbstractInternationalString impl
             }
         } else if (candidate instanceof CharSequence) {
             final String string = candidate.toString();
-            for (final String text : localMap.values()) {
+            for (final String text : localeMap.values()) {
                 if (!text.equals(string)) {
                     return false;
                 }
             }
         } else if (candidate instanceof Map<?,?>) {
             final Map<?,?> map = (Map<?,?>) candidate;
-            return map.entrySet().containsAll(localMap.entrySet());
+            return map.entrySet().containsAll(localeMap.entrySet());
         } else {
             return false;
         }
@@ -378,7 +389,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
     public boolean equals(final Object object) {
         if (object != null && object.getClass().equals(getClass())) {
             final DefaultInternationalString that = (DefaultInternationalString) object;
-            return Utilities.equals(this.localMap, that.localMap);
+            return Utilities.equals(this.localeMap, that.localeMap);
         }
         return false;
     }
@@ -388,7 +399,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      */
     @Override
     public synchronized int hashCode() {
-        return (int)serialVersionUID ^ localMap.hashCode();
+        return (int)serialVersionUID ^ localeMap.hashCode();
     }
 
     /**
@@ -396,21 +407,21 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      */
     private void readObject(final ObjectInputStream in) throws IOException, ClassNotFoundException {
         in.defaultReadObject();
-        final int size = localMap.size();
+        final int size = localeMap.size();
         if (size == 0) {
             return;
         }
         @SuppressWarnings({"unchecked","rawtypes"}) // Generic array creation.
         Map.Entry<Locale,String>[] entries = new Map.Entry[size];
-        entries = localMap.entrySet().toArray(entries);
+        entries = localeMap.entrySet().toArray(entries);
         if (size == 1) {
             final Map.Entry<Locale,String> entry = entries[0];
-            localMap = Collections.singletonMap(unique(entry.getKey()), entry.getValue());
+            localeMap = Collections.singletonMap(unique(entry.getKey()), entry.getValue());
         } else {
-            localMap.clear();
+            localeMap.clear();
             for (int i=0; i<entries.length; i++) {
                 final Map.Entry<Locale,String> entry = entries[i];
-                localMap.put(unique(entry.getKey()), entry.getValue());
+                localeMap.put(unique(entry.getKey()), entry.getValue());
             }
         }
     }

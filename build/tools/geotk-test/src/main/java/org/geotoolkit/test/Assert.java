@@ -18,6 +18,7 @@
 package org.geotoolkit.test;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.awt.image.RenderedImage;
 import javax.swing.tree.TreeNode;
@@ -125,19 +126,12 @@ public class Assert extends org.opengis.test.Assert {
      *       by current implementation of this method).</li>
      * </ul>
      * <p>
-     * This method will ignore comments and the following attributes:
-     * <p>
-     * <ul>
-     *   <li>All namespace declarations ({@code "xmlns:*"})</li>
-     *   <li>{@code "xsi:schemaLocation"}</li>
-     *   <li>{@code "xsi:type"}</li>
-     * </ul>
-     * <p>
-     * In order to customize the list of attributes to ignore, users shall use
-     * {@link DomComparator} directly.
+     * This method will ignore comments and the optional attributes given in arguments.
      *
-     * @param  expected     The expected XML document.
-     * @param  actual       The XML document to compare.
+     * @param  expected The expected XML document.
+     * @param  actual   The XML document to compare.
+     * @param  ignoredAttributes The fully-qualified names of attributes to ignore
+     *         (typically {@code "xmlns:*"} and {@code "xsi:schemaLocation"}).
      * @throws IOException  If the stream can not be read.
      * @throws SAXException If an error occurred while parsing the XML document.
      *
@@ -145,21 +139,19 @@ public class Assert extends org.opengis.test.Assert {
      *
      * @since 3.17
      */
-    public static void assertDomEquals(final Object expected, final Object actual)
-            throws IOException, SAXException
+    public static void assertDomEquals(final Object expected, final Object actual,
+            final String... ignoredAttributes) throws IOException, SAXException
     {
         final DomComparator comparator;
         try {
             comparator = new DomComparator(expected, actual);
         } catch (ParserConfigurationException e) {
-            // In order to simplify a little bit the usage of this method, we do declare this
+            // In order to simplify a little bit the usage of this method, we dont declare this
             // checked exception since it should not happen in the controlled test environment.
             throw new AssertionError(e);
         }
         comparator.ignoreComments = true;
-        comparator.ignoredAttributes.add("xmlns:*");
-        comparator.ignoredAttributes.add("xsi:schemaLocation");
-        comparator.ignoredAttributes.add("xsi:type");
+        comparator.ignoredAttributes.addAll(Arrays.asList(ignoredAttributes));
         comparator.compare();
     }
 

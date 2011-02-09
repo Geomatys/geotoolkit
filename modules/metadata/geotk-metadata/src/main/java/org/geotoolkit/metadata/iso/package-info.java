@@ -39,8 +39,8 @@
  * {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList} instances,
  * <strong>except</strong> if the object to be marshalled is an instance of
  * {@link org.geotoolkit.metadata.iso.DefaultMetadata}, in which case the value given to the
- * {@link org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage(Locale)} method will have
- * precedence. The later behavior is compliant with INSPIRE rules.
+ * {@link org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage setLanguage(Locale)} method
+ * will have precedence. The later behavior is compliant with INSPIRE rules.
  *
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
@@ -90,7 +90,6 @@
 })
 package org.geotoolkit.metadata.iso;
 
-import java.util.Locale; // For javadoc
 import javax.xml.bind.annotation.XmlNs;
 import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
