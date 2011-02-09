@@ -242,13 +242,8 @@ public class WmsXmlBindingTest {
         "                        </gmd:presentationForm>" + '\n' +
         "                    </gmd:CI_Citation>" + '\n' +
         "                </gmd:specification>" + '\n' +
-        "                <gmd:explanation xsi:type=\"gmd:PT_FreeText_PropertyType\">" + '\n' +
+        "                <gmd:explanation>" + '\n' +
         "                    <gco:CharacterString>see the referenced specification</gco:CharacterString>" + '\n' +
-        "                    <gmd:PT_FreeText>" + '\n' +
-        "                        <gmd:textGroup>" + '\n' +
-        "                            <gmd:LocalisedCharacterString>see the referenced specification</gmd:LocalisedCharacterString>" + '\n' +
-        "                        </gmd:textGroup>" + '\n' +
-        "                    </gmd:PT_FreeText>" + '\n' +
         "                </gmd:explanation>" + '\n' +
         "                <gmd:pass>" + '\n' +
         "                    <gco:Boolean>true</gco:Boolean>" + '\n' +
@@ -389,13 +384,8 @@ public class WmsXmlBindingTest {
         "                        </gmd:presentationForm>" + '\n' +
         "                    </gmd:CI_Citation>" + '\n' +
         "                </gmd:specification>" + '\n' +
-        "                <gmd:explanation xsi:type=\"gmd:PT_FreeText_PropertyType\">" + '\n' +
+        "                <gmd:explanation>" + '\n' +
         "                    <gco:CharacterString>see the referenced specification</gco:CharacterString>" + '\n' +
-        "                    <gmd:PT_FreeText>" + '\n' +
-        "                        <gmd:textGroup>" + '\n' +
-        "                            <gmd:LocalisedCharacterString>see the referenced specification</gmd:LocalisedCharacterString>" + '\n' +
-        "                        </gmd:textGroup>" + '\n' +
-        "                    </gmd:PT_FreeText>" + '\n' +
         "                </gmd:explanation>" + '\n' +
         "                <gmd:pass>" + '\n' +
         "                    <gco:Boolean>true</gco:Boolean>" + '\n' +
@@ -507,6 +497,11 @@ public class WmsXmlBindingTest {
         assertTrue(unmarshalled instanceof Capability);
 
         Capability result = (Capability) unmarshalled;
+
+        // The Unmarshaller replaced automatically the DefaultInternationalString by a
+        // SimpleInternationalString because it detected that there is only one locale.
+        // Perform the same change in our expected result in order to allow comparison.
+        cresult.setExplanation(new SimpleInternationalString(cresult.getExplanation().toString()));
 
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getExplanation(), result.getInspireExtendedCapabilities().getConformity().getExplanation());
         assertEquals(expResult.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle(), result.getInspireExtendedCapabilities().getConformity().getSpecification().getCollectiveTitle());
