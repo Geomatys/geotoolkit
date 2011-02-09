@@ -42,7 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_ContentInformation_Type")
+@XmlType(name = "AbstractMD_ContentInformation_Type")
 @XmlSeeAlso({DefaultCoverageDescription.class, DefaultFeatureCatalogueDescription.class})
 @XmlRootElement(name = "MD_ContentInformation")
 public class AbstractContentInformation extends MetadataEntity implements ContentInformation {

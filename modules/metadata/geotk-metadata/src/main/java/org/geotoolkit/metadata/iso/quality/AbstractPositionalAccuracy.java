@@ -44,7 +44,7 @@ import org.geotoolkit.resources.Descriptions;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "DQ_PositionalAccuracy_Type")
+@XmlType(name = "AbstractDQ_PositionalAccuracy_Type")
 @XmlRootElement(name = "DQ_PositionalAccuracy")
 @XmlSeeAlso({
     DefaultAbsoluteExternalPositionalAccuracy.class,

@@ -41,7 +41,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "DQ_LogicalConsistency_Type")
+@XmlType(name = "AbstractDQ_LogicalConsistency_Type")
 @XmlRootElement(name = "DQ_LogicalConsistency")
 @XmlSeeAlso({
     DefaultConceptualConsistency.class,

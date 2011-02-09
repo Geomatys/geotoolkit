@@ -41,7 +41,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "DQ_Result_Type")
+@XmlType(name = "AbstractDQ_Result_Type")
 @XmlRootElement(name = "DQ_Result")
 @XmlSeeAlso({
     DefaultConformanceResult.class,

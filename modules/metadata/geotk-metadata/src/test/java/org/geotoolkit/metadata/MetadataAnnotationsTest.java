@@ -42,6 +42,15 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
      * in alphabetical order.
      */
     private static final Class<?>[] TYPES = {
+        org.opengis.metadata.ApplicationSchemaInformation.class,
+        org.opengis.metadata.Datatype.class,
+        org.opengis.metadata.ExtendedElementInformation.class,
+        org.opengis.metadata.FeatureTypeList.class,
+        org.opengis.metadata.Identifier.class,
+        org.opengis.metadata.Metadata.class,
+        org.opengis.metadata.MetadataExtensionInformation.class,
+//      org.opengis.metadata.Obligation.class, // CodeList excluded because it doesn't use the usual kind of adapter.
+        org.opengis.metadata.PortrayalCatalogueReference.class,
         org.opengis.metadata.acquisition.AcquisitionInformation.class,
         org.opengis.metadata.acquisition.Context.class,
         org.opengis.metadata.acquisition.EnvironmentalRecord.class,
@@ -60,7 +69,6 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
         org.opengis.metadata.acquisition.Requirement.class,
         org.opengis.metadata.acquisition.Sequence.class,
         org.opengis.metadata.acquisition.Trigger.class,
-        org.opengis.metadata.ApplicationSchemaInformation.class,
         org.opengis.metadata.citation.Address.class,
         org.opengis.metadata.citation.Citation.class,
         org.opengis.metadata.citation.CitationDate.class,
@@ -90,7 +98,6 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
         org.opengis.metadata.content.RangeDimension.class,
         org.opengis.metadata.content.RangeElementDescription.class,
         org.opengis.metadata.content.TransferFunctionType.class,
-        org.opengis.metadata.Datatype.class,
         org.opengis.metadata.distribution.DataFile.class,
         org.opengis.metadata.distribution.DigitalTransferOptions.class,
         org.opengis.metadata.distribution.Distribution.class,
@@ -100,7 +107,6 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
         org.opengis.metadata.distribution.MediumFormat.class,
         org.opengis.metadata.distribution.MediumName.class,
         org.opengis.metadata.distribution.StandardOrderProcess.class,
-        org.opengis.metadata.ExtendedElementInformation.class,
         org.opengis.metadata.extent.BoundingPolygon.class,
         org.opengis.metadata.extent.Extent.class,
         org.opengis.metadata.extent.GeographicBoundingBox.class,
@@ -109,7 +115,6 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
         org.opengis.metadata.extent.SpatialTemporalExtent.class,
         org.opengis.metadata.extent.TemporalExtent.class,
         org.opengis.metadata.extent.VerticalExtent.class,
-        org.opengis.metadata.FeatureTypeList.class,
         org.opengis.metadata.identification.AggregateInformation.class,
         org.opengis.metadata.identification.AssociationType.class,
         org.opengis.metadata.identification.BrowseGraphic.class,
@@ -125,7 +130,6 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
         org.opengis.metadata.identification.ServiceIdentification.class,
         org.opengis.metadata.identification.TopicCategory.class,
         org.opengis.metadata.identification.Usage.class,
-        org.opengis.metadata.Identifier.class,
         org.opengis.metadata.lineage.Algorithm.class,
         org.opengis.metadata.lineage.Lineage.class,
         org.opengis.metadata.lineage.NominalResolution.class,
@@ -137,11 +141,6 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
         org.opengis.metadata.maintenance.MaintenanceInformation.class,
         org.opengis.metadata.maintenance.ScopeCode.class,
         org.opengis.metadata.maintenance.ScopeDescription.class,
-        org.opengis.metadata.Metadata.class,
-        org.opengis.metadata.MetadataExtensionInformation.class,
-// The following CodeList is excluded because it doesn't use the usual kind of adapter.
-//      org.opengis.metadata.Obligation.class,
-        org.opengis.metadata.PortrayalCatalogueReference.class,
         org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy.class,
         org.opengis.metadata.quality.AccuracyOfATimeMeasurement.class,
         org.opengis.metadata.quality.Completeness.class,
@@ -235,17 +234,21 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
      * @todo Use string switch with JDK 7.
      */
     @Override
-    protected String getTypeForElement(final String name) {
+    protected String getTypeForElement(final String rootName, final String implName) {
         // We don't know yet what is the type of this one.
-        if (name.equals("MD_FeatureTypeList")) {
+        if (rootName.equals("MD_FeatureTypeList")) {
             return DEFAULT;
         }
         // Following prefix was changed in ISO 19115 corrigendum,
         // but ISO 19139 still use the old prefix.
-        if (name.equals("SV_ServiceIdentification")) {
+        if (rootName.equals("SV_ServiceIdentification")) {
             return "MD_ServiceIdentification_Type";
         }
-        return name + "_Type";
+        final StringBuilder buffer = new StringBuilder();
+        if (implName.startsWith("Abstract")) {
+            buffer.append("Abstract");
+        }
+        return buffer.append(rootName).append("_Type").toString();
     }
 
     /**

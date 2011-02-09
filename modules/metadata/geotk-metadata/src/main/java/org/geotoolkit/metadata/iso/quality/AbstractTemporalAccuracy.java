@@ -40,7 +40,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "DQ_TemporalAccuracy_Type")
+@XmlType(name = "AbstractDQ_TemporalAccuracy_Type")
 @XmlRootElement(name = "DQ_TemporalAccuracy")
 @XmlSeeAlso({
     DefaultAccuracyOfATimeMeasurement.class,

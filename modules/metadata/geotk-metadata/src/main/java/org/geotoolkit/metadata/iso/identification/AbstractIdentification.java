@@ -55,7 +55,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "MD_Identification_Type", propOrder={
+@XmlType(name = "AbstractMD_Identification_Type", propOrder={
     "citation", "abstract", "purpose", "credits", "status", "pointOfContacts",
     "resourceMaintenances", "graphicOverviews", "resourceFormats", "descriptiveKeywords",
     "resourceSpecificUsages", "resourceConstraints", "aggregationInfo"

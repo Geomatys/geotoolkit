@@ -41,7 +41,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @ThreadSafe
-@XmlType(name = "DQ_ThematicAccuracy_Type")
+@XmlType(name = "AbstractDQ_ThematicAccuracy_Type")
 @XmlRootElement(name = "DQ_ThematicAccuracy")
 @XmlSeeAlso({DefaultThematicClassificationCorrectness.class, DefaultNonQuantitativeAttributeAccuracy.class,
              DefaultQuantitativeAttributeAccuracy.class

@@ -156,10 +156,11 @@ public abstract class AnnotationsTestBase extends TestBase {
      * Returns the type for an element of the given name. For example in ISO 19139, the type
      * of {@code CI_Citation} is {@code CI_Citation_Type}.
      *
-     * @param  name The name of the XML element.
-     * @return The name of the type for the given element, or {@link #DEFAULT} if none.
+     * @param  rootName The XML root name of the element (usually the same than the UML name).
+     * @param  implName The name of the implementation class.
+     * @return The name of the XML type for the given element, or {@link #DEFAULT} if none.
      */
-    protected abstract String getTypeForElement(String name);
+    protected abstract String getTypeForElement(String rootName, String implName);
 
     /**
      * Returns the parent of the given interface, or {@code null} if none.
@@ -331,7 +332,7 @@ public abstract class AnnotationsTestBase extends TestBase {
              */
             final XmlType xmlType = impl.getAnnotation(XmlType.class);
             assertNotNull("Missing @XmlType annotation.", xmlType);
-            assertEquals("Wrong @XmlType name.", getTypeForElement(xmlRoot.name()), xmlType.name());
+            assertEquals("Wrong @XmlType name.", getTypeForElement(xmlRoot.name(), impl.getSimpleName()), xmlType.name());
             /*
              * Compare the method annotations.
              */
