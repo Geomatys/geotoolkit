@@ -102,9 +102,9 @@ public abstract class AbstractFeatureFactory implements FeatureFactory {
     public GeometryAttribute createGeometryAttribute(
             final Object value, final GeometryDescriptor descriptor, final String id, final CoordinateReferenceSystem crs) {
         if(id != null && !id.isEmpty()){
-            return new DefaultGeometryAttribute((Geometry)value,descriptor, FF.gmlObjectId(id));
+            return new DefaultGeometryAttribute(value,descriptor, FF.gmlObjectId(id));
         }else{
-            return new DefaultGeometryAttribute((Geometry)value,descriptor, null);
+            return new DefaultGeometryAttribute(value,descriptor, null);
         }
     }
 
