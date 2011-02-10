@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.bind.JAXBException;
+import org.xml.sax.SAXException;
 
 import org.geotoolkit.xml.XML;
 import org.geotoolkit.test.TestData;
@@ -37,7 +38,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.17
  *
  * @since 3.00
  */
@@ -51,11 +52,12 @@ public final class XMLBindingsTest {
      * Ensures that the marshalling process of a {@link DefaultMetadata} produces
      * an XML document which complies with the one expected.
      *
-     * @throws JAXBException if the marshalling process fails.
      * @throws IOException if an error occurred while reading the resource file.
+     * @throws JAXBException if the marshalling process fails.
+     * @throws SAXException  If an error occurred while parsing the XML document.
      */
     @Test
-    public void marshallingTest() throws JAXBException, IOException {
+    public void marshallingTest() throws IOException, JAXBException, SAXException {
         final DefaultMetadata metadata = new DefaultMetadata();
         final FRA_DirectReferenceSystem refSys = new FRA_DirectReferenceSystem(
                 new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");
@@ -63,7 +65,7 @@ public final class XMLBindingsTest {
 
         String expected = TestData.readText(this, RESOURCE_FILE);
         String actual = XML.marshal(metadata);
-        assertXmlEquals(expected, actual);
+        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
     }
 
     /**
@@ -74,7 +76,7 @@ public final class XMLBindingsTest {
      * @throws IOException if an error occurred while reading the resource file.
      */
     @Test
-    public void UnmarshallingTest() throws JAXBException, IOException {
+    public void unmarshallingTest() throws JAXBException, IOException {
         final InputStream in = TestData.openStream(this, RESOURCE_FILE);
         final DefaultMetadata result = (DefaultMetadata) XML.unmarshal(in);
         in.close();

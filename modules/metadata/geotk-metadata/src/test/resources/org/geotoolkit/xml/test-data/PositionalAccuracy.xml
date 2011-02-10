@@ -29,7 +29,7 @@
             <gmd:CI_Date>
               <gmd:date>
                 <!-- Dummy date for the purpose of this test. -->
-                <gco:DateTime>2009-08-12T18:40:17.653+01:00</gco:DateTime>
+                <gco:DateTime>2009-08-12T19:40:17.653+02:00</gco:DateTime>
               </gmd:date>
               <gmd:dateType>
                 <gmd:CI_DateTypeCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation"/>

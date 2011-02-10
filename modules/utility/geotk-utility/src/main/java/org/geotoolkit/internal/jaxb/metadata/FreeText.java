@@ -21,11 +21,13 @@ import java.util.Set;
 import java.util.Locale;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 
 import org.opengis.util.InternationalString;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.text.CharacterString;
 import org.geotoolkit.util.DefaultInternationalString;
+import org.geotoolkit.util.SimpleInternationalString;
 
 
 /**
@@ -44,12 +46,19 @@ import org.geotoolkit.util.DefaultInternationalString;
  *   </gmd:title>
  * }
  *
+ * If there is more than one locale, the whole {@code <gmd:textGroup>} block is repeated for each
+ * locale, instead than repeating {@code <gmd:LocalisedCharacterString>} inside the same group as
+ * we could expect. However at unmarshalling time, both forms are accepted. See GEOTK-152 for more
+ * information.
+ * <p>
  * The {@code <gco:CharacterString>} element is inherited from the {@link CharacterString}
  * parent class.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.17
+ *
+ * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-152">GEOTK-152</a>
  *
  * @since 2.5
  * @module
@@ -58,9 +67,13 @@ import org.geotoolkit.util.DefaultInternationalString;
 public final class FreeText extends CharacterString {
     /**
      * A set of {@link LocalisedCharacterString}, representing the {@code <gmd:textGroup>} element.
+     * The array shall contain one element for each locale.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-152">GEOTK-152</a>
      */
-    @XmlElement(name = "PT_FreeText", required = true)
-    TextGroup textGroup;
+    @XmlElementWrapper(name = "PT_FreeText")
+    @XmlElement(required = true)
+    private TextGroup[] textGroup;
 
     /**
      * Empty constructor used only by JAXB.
@@ -87,7 +100,18 @@ public final class FreeText extends CharacterString {
      */
     private FreeText(final DefaultInternationalString text) {
         super(text.toString(MarshalContext.getLocale()));
-        textGroup = new TextGroup(text);
+        final Set<Locale> locales = text.getLocales();
+        int n = locales.size();
+        if (locales.contains(null)) {
+            n--;
+        }
+        textGroup = new TextGroup[n];
+        int i=0;
+        for (final Locale locale : locales) {
+            if (locale != null) {
+                textGroup[i++] = new TextGroup(locale, text.toString(locale));
+            }
+        }
     }
 
     /**
@@ -112,5 +136,71 @@ public final class FreeText extends CharacterString {
             }
         }
         return null;
+    }
+
+    /**
+     * Returns {@code true} if this {@code FreeText} contains the given localized text.
+     * This method search only in the localized text. The content of the {@link #text}
+     * field is intentionally omitted since it is usually the text we are searching for!
+     * (this method is used for detecting duplicated values).
+     *
+     * @param  search The text to search (usually the {@link #text} value).
+     * @return {@code true} if the given text has been found.
+     *
+     * @since 3.17
+     */
+    boolean contains(final String search) {
+        final TextGroup[] textGroup = this.textGroup;
+        if (textGroup != null) {
+            for (final TextGroup group : textGroup) {
+                if (group != null) {
+                    final LocalisedCharacterString[] localised = group.localized;
+                    if (localised != null) {
+                        for (final LocalisedCharacterString candidate : localised) {
+                            if (search.equals(candidate.text)) {
+                                return true;
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return false;
+    }
+
+    /**
+     * Returns the international string for this {@code FreeText}.
+     *
+     * @param  defaultValue The unlocalized string to give to {@link DefaultInternationalString},
+     *         or {@code null} if none.
+     * @return The international string, or {@code null} if none.
+     *         This is usually the {@link #text} value.
+     *
+     * @since 3.17
+     */
+    InternationalString toInternationalString(final String defaultValue) {
+        DefaultInternationalString i18n = null;
+        final TextGroup[] textGroup = this.textGroup;
+        if (textGroup != null) {
+            for (final TextGroup group : textGroup) {
+                if (group != null) {
+                    final LocalisedCharacterString[] localised = group.localized;
+                    if (localised != null) {
+                        for (final LocalisedCharacterString text : localised) {
+                            if (text != null) {
+                                if (i18n == null) {
+                                    i18n = new DefaultInternationalString(defaultValue);
+                                }
+                                i18n.add(text.locale, text.text);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        if (i18n == null && defaultValue != null) {
+            return new SimpleInternationalString(defaultValue);
+        }
+        return i18n;
     }
 }

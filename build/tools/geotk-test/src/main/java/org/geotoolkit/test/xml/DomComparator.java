@@ -233,7 +233,7 @@ public class DomComparator {
     /**
      * Compares a node which is expected to be of {@link Text} type. The default implementation
      * ensures that the given node is an instance of {@link Text}, then ensures that both nodes
-     * have the same text content.
+     * have the same names, attributes and text content.
      * <p>
      * Subclasses can override this method if they need a different processing.
      *
@@ -250,7 +250,7 @@ public class DomComparator {
     /**
      * Compares a node which is expected to be of {@link CDATASection} type. The default
      * implementation ensures that the given node is an instance of {@link CDATASection},
-     * then ensures that both nodes have the same text content.
+     * then ensures that both nodes have the same names, attributes and text content.
      * <p>
      * Subclasses can override this method if they need a different processing.
      *
@@ -267,7 +267,7 @@ public class DomComparator {
     /**
      * Compares a node which is expected to be of {@link Comment} type. The default
      * implementation ensures that the given node is an instance of {@link Comment},
-     * then ensures that both nodes have the same text content.
+     * then ensures that both nodes have the same names, attributes and text content.
      * <p>
      * Subclasses can override this method if they need a different processing.
      *
@@ -284,7 +284,7 @@ public class DomComparator {
     /**
      * Compares a node which is expected to be of {@link ProcessingInstruction} type. The default
      * implementation ensures that the given node is an instance of {@link ProcessingInstruction},
-     * then ensures that both nodes have the same text content.
+     * then ensures that both nodes have the same names, attributes and text content.
      * <p>
      * Subclasses can override this method if they need a different processing.
      *

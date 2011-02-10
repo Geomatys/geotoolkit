@@ -35,7 +35,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the XML marshalling.
+ * Tests the XML marshalling of generic names.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.10

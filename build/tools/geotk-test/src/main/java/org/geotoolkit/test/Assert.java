@@ -91,29 +91,6 @@ public class Assert extends org.opengis.test.Assert {
     }
 
     /**
-     * Asserts that two strings formatted by the XML marshaller are equal. The XML header is
-     * skipped, then the remaining is compared as with {@link #assertMultilinesEquals(String,
-     * String)}.
-     *
-     * @param expected The expected string.
-     * @param actual The actual string.
-     *
-     * @since 3.07
-     */
-    public static void assertXmlEquals(String expected, String actual) {
-        expected = skipHeader(expected);
-        actual   = skipHeader(actual);
-        assertMultilinesEquals(expected, actual);
-    }
-
-    /**
-     * Skips the two first lines, because the xlmns are not always in the same order.
-     */
-    private static String skipHeader(final String xml) {
-        return xml.substring(xml.indexOf('\n', xml.indexOf('\n') + 1) + 1);
-    }
-
-    /**
      * Parses two XML tree as DOM documents, and compares the nodes.
      * The inputs given to this method can be any of the following types:
      * <p>

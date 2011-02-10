@@ -20,12 +20,13 @@ package org.geotoolkit.util;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.Serializable;
-import java.util.Collections;
+import java.util.Set;
+import java.util.Map;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
 
 import org.opengis.util.InternationalString;
 
@@ -111,7 +112,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
             if (!it.hasNext()) {
                 localeMap = Collections.singletonMap(entry.getKey(), entry.getValue());
             } else {
-                localeMap = new HashMap<Locale,String>(strings);
+                localeMap = new LinkedHashMap<Locale,String>(strings);
                 // If HashMap is replaced by an other type, please revisit 'getLocales()'.
             }
         }
@@ -138,7 +139,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
                 }
                 case 1: {
                     // If HashMap is replaced by an other type, please revisit 'getLocales()'.
-                    localeMap = new HashMap<Locale,String>(localeMap);
+                    localeMap = new LinkedHashMap<Locale,String>(localeMap);
                     localeSet = null;
                     break;
                 }

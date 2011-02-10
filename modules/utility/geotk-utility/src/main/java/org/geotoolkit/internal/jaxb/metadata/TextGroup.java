@@ -17,11 +17,8 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import java.util.Set;
 import java.util.Locale;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlElementWrapper;
-import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -35,25 +32,36 @@ import org.geotoolkit.util.converter.Classes;
  * the {@code <gco:CharacterString>} element of the parent {@link FreeText}  (at
  * least in default behavior - actually the above may not be true anymore if the
  * marshaller {@link org.geotoolkit.xml.XML#LOCALE} property has been set).
+ * <p>
+ * The {@code TextGroup} name suggest that this object can contains many localized
+ * strings. It was done that way prior Geotk 3.17. However it appears that despite
+ * its name, {@code TextGroup} shall always contains exactly 1 localized strings
+ * and the whole {@code TextGroup} element shall be repeated for each additional
+ * languages. Geotk 3.17 uses the ISO 19139 compliant form is used for marshalling,
+ * but accepts both forms during unmarshalling.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.17
  *
  * @see LocalisedCharacterString
+ * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-152">GEOTK-152</a>
  *
  * @since 2.5
  * @module
  */
 final class TextGroup {
     /**
-     * The set of {@linkplain LocalisedCharacterString localised string}.
+     * The set of {@linkplain LocalisedCharacterString localized string}.
      * JAXB uses this field at marshalling-time in order to wrap {@code N}
      * {@code <LocalisedCharacterString>} elements inside a single {@code <textGroup>} element.
+     * <p>
+     * In ISO 19139 compliant documents, the length of this array shall be exactly 1.
+     * However Geotk allows arbitrary length for compatibility and convenience reasons.
+     * See GEOTK-152 for examples.
      */
-    @XmlElementWrapper(name = "textGroup")
     @XmlElement(name = "LocalisedCharacterString")
-    protected LocalisedCharacterString[] localised;
+    protected LocalisedCharacterString[] localized;
 
     /**
      * Empty constructor only used by JAXB.
@@ -62,24 +70,18 @@ final class TextGroup {
     }
 
     /**
-     * Constructs a {@linkplain TextGroup text group} from a {@link DefaultInternationalString}.
-     * Note that the element with {@code null} locale, if any, is ignored (see class javadoc).
+     * Constructs a {@linkplain TextGroup text group} for a single locale. This constructor
+     * put exactly one string in the {@code TextGroup}, as required by ISO 19139. However
+     * it would be possible to declare an other constructor allowing the more compact form
+     * (the one used before GEOTK-152 fix) if there is a need for that in the future.
      *
-     * @param text The international string.
+     * @param locale The string language.
+     * @param text The string.
      */
-    TextGroup(final DefaultInternationalString text) {
-        final Set<Locale> locales = text.getLocales();
-        int n = locales.size();
-        if (locales.contains(null)) {
-            n--;
-        }
-        localised = new LocalisedCharacterString[n];
-        int i=0;
-        for (final Locale locale : locales) {
-            if (locale != null) {
-                localised[i++] = new LocalisedCharacterString(locale, text.toString(locale));
-            }
-        }
+    TextGroup(final Locale locale, final String text) {
+        localized = new LocalisedCharacterString[] {
+            new LocalisedCharacterString(locale, text)
+        };
     }
 
     /**
@@ -88,9 +90,9 @@ final class TextGroup {
     @Override
     public String toString() {
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this));
-        if (localised != null) {
+        if (localized != null) {
             final String lineSeparator = System.getProperty("line.separator", "\n");
-            for (LocalisedCharacterString string : localised) {
+            for (LocalisedCharacterString string : localized) {
                 buffer.append(lineSeparator).append("  ").append(string);
             }
         }

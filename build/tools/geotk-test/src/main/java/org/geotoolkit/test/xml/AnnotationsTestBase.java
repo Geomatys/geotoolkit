@@ -376,7 +376,8 @@ public abstract class AnnotationsTestBase extends TestBase {
                  * annotated).
                  */
                 if (xmlElem == null) {
-                    warning("WARNING: Missing @XmlElement annotation for ");
+                    // Note: lines with the "[WARNING]" string are highlighted by Hudson.
+                    warning("[WARNING] Missing @XmlElement annotation for ");
                     continue;
                 }
                 assertEquals("Annotation mismatch.", methodUML.identifier(), xmlElem.name());
