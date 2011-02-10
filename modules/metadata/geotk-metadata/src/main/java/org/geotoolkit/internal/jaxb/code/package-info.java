@@ -26,7 +26,7 @@
  *   <li>
  *     {@linkplain org.opengis.metadata.identification.CharacterSet character set}:
  *     {@code <gmd:MD_CharacterSetCode
- *       codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode"
+ *       codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode"
  *       codeListValue="utf8"/>}
  *   </li>
  * </ul>

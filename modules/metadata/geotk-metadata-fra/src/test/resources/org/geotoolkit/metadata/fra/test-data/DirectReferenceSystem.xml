@@ -1,5 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<gmd:MD_Metadata xmlns:gmx="http://www.isotc211.org/2005/gmx" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:gmd="http://www.isotc211.org/2005/gmd" xmlns:gco="http://www.isotc211.org/2005/gco" xmlns:fra="http://www.cnig.gouv.fr/2005/fra" xmlns:gml="http://www.opengis.net/gml">
+<gmd:MD_Metadata
+  xmlns:gmd = "http://www.isotc211.org/2005/gmd"
+  xmlns:gco = "http://www.isotc211.org/2005/gco"
+  xmlns:fra = "http://www.cnig.gouv.fr/2005/fra"
+  xmlns:xsi = "http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation = "http://www.isotc211.org/2005/gmd http://schemas.opengis.net/iso/19139/20070417/gmd/gmd.xsd">
+
+  <!-- This XML file is known to be invalid. It does not declare every mandatory fields
+       (in order to keep the test simpler) and does not contain a link to the FRA XSD. -->
+
   <gmd:referenceSystemInfo>
     <fra:FRA_DirectReferenceSystem>
       <gmd:referenceSystemIdentifier>
@@ -25,14 +34,14 @@
                             <gmd:URL>http://www.epsg.org</gmd:URL>
                           </gmd:linkage>
                           <gmd:function>
-                            <gmd:CI_OnLineFunctionCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+                            <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
                           </gmd:function>
                         </gmd:CI_OnlineResource>
                       </gmd:onlineResource>
                     </gmd:CI_Contact>
                   </gmd:contactInfo>
                   <gmd:role>
-                    <gmd:CI_RoleCode codeList="http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator"/>
+                    <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator"/>
                   </gmd:role>
                 </gmd:CI_ResponsibleParty>
               </gmd:citedResponsibleParty>

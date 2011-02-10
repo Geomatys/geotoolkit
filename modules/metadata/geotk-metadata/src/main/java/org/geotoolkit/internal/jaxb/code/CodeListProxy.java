@@ -52,7 +52,7 @@ public final class CodeListProxy {
      *
      * @since 3.17
      */
-    public static final String BASE_URL = "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/";
+    public static final String BASE_URL = "http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/";
 
     /**
      * Default common URL path for the {@code codeList} attribute value.

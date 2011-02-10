@@ -42,7 +42,7 @@ public final class MeasureTest {
     @Test
     public void testSetUOM() throws URISyntaxException {
         final Measure measure = new Measure();
-        measure.setUOM("http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/uom/gmxUom.xml#m");
+        measure.setUOM("http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#m");
         assertEquals(SI.METRE, measure.unit);
 
         measure.unit = null;

@@ -34,7 +34,7 @@ import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Testing class for JAXB annotations on a metadata file with french profile.
+ * Testing class for JAXB annotations on a metadata file with French profile.
  *
  * @author Guilhem Legal (Geomatys)
  * @author Cédric Briançon (Geomatys)
