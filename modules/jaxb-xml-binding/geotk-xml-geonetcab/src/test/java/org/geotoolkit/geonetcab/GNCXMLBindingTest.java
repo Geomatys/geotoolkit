@@ -246,14 +246,14 @@ public class GNCXMLBindingTest {
                            "                                                        <gmd:URL>http://www.oracle.com</gmd:URL>" +'\n' +
                            "                                                    </gmd:linkage>" +'\n' +
                            "                                                    <gmd:function>" +'\n' +
-                           "                                                        <gmd:CI_OnLineFunctionCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" +'\n' +
+                           "                                                        <gmd:CI_OnLineFunctionCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode\" codeListValue=\"information\"/>" +'\n' +
                            "                                                    </gmd:function>" +'\n' +
                            "                                                </gmd:CI_OnlineResource>" +'\n' +
                            "                                            </gmd:onlineResource>" +'\n' +
                            "                                        </gmd:CI_Contact>" +'\n' +
                            "                                    </gmd:contactInfo>" +'\n' +
                            "                                    <gmd:role>" +'\n' +
-                           "                                        <gmd:CI_RoleCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"owner\"/>" +'\n' +
+                           "                                        <gmd:CI_RoleCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"owner\"/>" +'\n' +
                            "                                    </gmd:role>" +'\n' +
                            "                                </gmd:CI_ResponsibleParty>" +'\n' +
                            "                            </ns8:userContact>" +'\n' +
@@ -276,7 +276,7 @@ public class GNCXMLBindingTest {
                            "                                        <gco:Boolean>true</gco:Boolean>" +'\n' +
                            "                                    </ns8:nonCommercialUse>" +'\n' +
                            "                                    <ns8:thematicUsage>" +'\n' +
-                           "                                        <ns8:GNC_ThematicTypeCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#GNC_ThematicTypeCode\" codeListValue=\"Agriculture\"/>" +'\n' +
+                           "                                        <ns8:GNC_ThematicTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_ThematicTypeCode\" codeListValue=\"Agriculture\"/>" +'\n' +
                            "                                    </ns8:thematicUsage>" +'\n' +
                            "                                    <ns8:useRestrictions>" +'\n' +
                            "                                        <ns8:GNC_UseRestrictions>" +'\n' +
@@ -294,7 +294,7 @@ public class GNCXMLBindingTest {
                            "                                    <ns8:usersRestrictions>" +'\n' +
                            "                                        <ns8:GNC_UsersRestrictions>" +'\n' +
                            "                                            <ns8:categoryOfUsers>" +'\n' +
-                           "                                                <ns8:GNC_OrganisationTypeCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" +'\n' +
+                           "                                                <ns8:GNC_OrganisationTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" +'\n' +
                            "                                            </ns8:categoryOfUsers>" +'\n' +
                            "                                            <ns8:extentOfRestrictions>" +'\n' +
                            "                                                <gmd:EX_GeographicDescription/>" +'\n' +
@@ -311,7 +311,7 @@ public class GNCXMLBindingTest {
                            "                    <ns8:relationType>" +'\n' +
                            "                        <ns8:GNC_RelationType>" +'\n' +
                            "                            <ns8:relationName>" +'\n' +
-                           "                                <ns8:GNC_RelationNameCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#GNC_RelationNameCode\" codeListValue=\"Usedby\"/>" +'\n' +
+                           "                                <ns8:GNC_RelationNameCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_RelationNameCode\" codeListValue=\"Usedby\"/>" +'\n' +
                            "                            </ns8:relationName>" +'\n' +
                            "                        </ns8:GNC_RelationType>" +'\n' +
                            "                    </ns8:relationType>" +'\n' +
@@ -339,7 +339,7 @@ public class GNCXMLBindingTest {
                            "                <ns8:GNC_EOProduct/>" +'\n' +
                            "            </ns8:reference>" +'\n' +
                            "            <ns8:typeOfOrganisation>" +'\n' +
-                           "                <ns8:GNC_OrganisationTypeCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" +'\n' +
+                           "                <ns8:GNC_OrganisationTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" +'\n' +
                            "            </ns8:typeOfOrganisation>" +'\n' +
                            "        </ns8:GNC_OrganisationEntitie>" +'\n' +
                            "    </gmd:identificationInfo>" +'\n' +
@@ -420,7 +420,7 @@ public class GNCXMLBindingTest {
                 + "                                        <gco:Boolean>true</gco:Boolean>"+ '\n'
                 + "                                   </ns8:nonCommercialUse>" + '\n'
                 + "                                    <ns8:thematicUsage>" + '\n'
-                + "                                        <ns8:GNC_ThematicTypeCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#GNC_ThematicTypeCode\" codeListValue=\"Agriculture\"/>" + '\n'
+                + "                                        <ns8:GNC_ThematicTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_ThematicTypeCode\" codeListValue=\"Agriculture\"/>" + '\n'
                 + "                                    </ns8:thematicUsage>" + '\n'
                 + "                                    <ns8:useRestrictions>" + '\n'
                 + "                                        <ns8:GNC_UseRestrictions>" + '\n'
@@ -438,7 +438,7 @@ public class GNCXMLBindingTest {
                 + "                                    <ns8:usersRestrictions>" + '\n'
                 + "                                        <ns8:GNC_UsersRestrictions>" + '\n'
                 + "                                            <ns8:categoryOfUsers>" + '\n'
-                + "                                                <ns8:GNC_OrganisationTypeCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" + '\n'
+                + "                                                <ns8:GNC_OrganisationTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" + '\n'
                 + "                                            </ns8:categoryOfUsers>" + '\n'
                 + "                                            <ns8:extentOfRestrictions>" + '\n'
                 + "                                                <gmd:EX_GeographicDescription/>" + '\n'
@@ -476,7 +476,7 @@ public class GNCXMLBindingTest {
                 + "                <ns8:GNC_EOProduct/>" + '\n'
                 + "            </ns8:reference>" + '\n'
                 + "            <ns8:typeOfOrganisation>" + '\n'
-                + "                <ns8:GNC_OrganisationTypeCode codeList=\"http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" + '\n'
+                + "                <ns8:GNC_OrganisationTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" + '\n'
                 + "            </ns8:typeOfOrganisation>" + '\n'
                 + "        </ns8:GNC_OrganisationEntitie>" + '\n'
                 + "    </gmd:identificationInfo>" + '\n'
