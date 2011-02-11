@@ -60,6 +60,7 @@ import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
+import org.geotoolkit.test.LocaleDependantTestBase;
 import org.geotoolkit.test.TestData;
 
 import org.junit.*;
@@ -85,7 +86,7 @@ import static org.opengis.referencing.ReferenceSystem.SCOPE_KEY;
  *
  * @since 3.04
  */
-public class ReferencingMarsallingTest {
+public final class ReferencingMarsallingTest extends LocaleDependantTestBase {
     /**
      * The resource file which contains an XML representation of a
      * {@linkplain DefaultMetadata metadata} object, with a {@link VerticalCRS}.
@@ -110,15 +111,9 @@ public class ReferencingMarsallingTest {
         final GeographicCRS     crs = createGeographicCRS();
         final StringWriter       sw = new StringWriter();
         final MarshallerPool   pool = new MarshallerPool(DefaultGeographicCRS.class);
-        final Locale         locale = Locale.getDefault();
         final Marshaller marshaller = pool.acquireMarshaller();
-        try {
-            Locale.setDefault(Locale.FRANCE);
-            marshaller.marshal(crs, sw);
-        } finally {
-            Locale.setDefault(locale);
-            pool.release(marshaller);
-        }
+        marshaller.marshal(crs, sw);
+        pool.release(marshaller);
         final String result = sw.toString();
         final String expected = TestData.readText(this, GEOGRAPHIC_CRS_XML);
         assertMultilinesEquals(expected, result);
@@ -170,15 +165,9 @@ public class ReferencingMarsallingTest {
         final DefaultMetadata metadata = createMetadataWithVerticalCRS();
         final StringWriter          sw = new StringWriter();
         final MarshallerPool      pool = new MarshallerPool(DefaultMetadata.class);
-        final Locale            locale = Locale.getDefault();
         final Marshaller    marshaller = pool.acquireMarshaller();
-        try {
-            Locale.setDefault(Locale.FRANCE);
-            marshaller.marshal(metadata, sw);
-        } finally {
-            Locale.setDefault(locale);
-            pool.release(marshaller);
-        }
+        marshaller.marshal(metadata, sw);
+        pool.release(marshaller);
         final String result = sw.toString();
         final String expected = TestData.readText(this, VERTICAL_CRS_XML);
         assertMultilinesEquals(expected, result);
@@ -195,14 +184,10 @@ public class ReferencingMarsallingTest {
         final MarshallerPool pool = new MarshallerPool(DefaultMetadata.class);
         final DefaultMetadata expected = createMetadataWithVerticalCRS();
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();
-        final Object obj;
-        try {
-            final InputStream in = TestData.openStream(this, VERTICAL_CRS_XML);
-            obj = unmarshaller.unmarshal(in);
-            in.close();
-        } finally {
-            pool.release(unmarshaller);
-        }
+        final InputStream in = TestData.openStream(this, VERTICAL_CRS_XML);
+        final Object obj = unmarshaller.unmarshal(in);
+        in.close();
+        pool.release(unmarshaller);
         assertTrue(obj instanceof DefaultMetadata);
         final DefaultMetadata result = (DefaultMetadata) obj;
         assertEquals(expected, result);

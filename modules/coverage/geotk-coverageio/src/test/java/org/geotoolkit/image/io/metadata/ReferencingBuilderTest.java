@@ -17,8 +17,6 @@
  */
 package org.geotoolkit.image.io.metadata;
 
-import java.util.Locale;
-
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -38,6 +36,7 @@ import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
+import org.geotoolkit.test.LocaleDependantTestBase;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -53,31 +52,7 @@ import static org.geotoolkit.test.Commons.*;
  * @since 3.07
  */
 @Depend(MetadataAccessorTest.class)
-public final class ReferencingBuilderTest {
-    /**
-     * The previous locale before the test is run.
-     * This is usually the default locale.
-     */
-    private Locale defaultLocale;
-
-    /**
-     * Sets the locale to a compile-time value. We need to use a fixed value because the
-     * name of the coordinate system is locale-sensitive in this test.
-     */
-    @Before
-    public void fixLocale() {
-        defaultLocale = Locale.getDefault();
-        Locale.setDefault(Locale.FRANCE);
-    }
-
-    /**
-     * Restores the locales to its original value.
-     */
-    @After
-    public void restoreLocale() {
-        Locale.setDefault(defaultLocale);
-    }
-
+public final class ReferencingBuilderTest extends LocaleDependantTestBase {
     /**
      * Tests the formatting of the WGS84 CRS.
      */

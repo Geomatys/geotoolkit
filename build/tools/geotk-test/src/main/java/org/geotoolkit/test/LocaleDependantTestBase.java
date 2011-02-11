@@ -18,6 +18,7 @@
 package org.geotoolkit.test;
 
 import java.util.Locale;
+import java.util.TimeZone;
 import java.util.ResourceBundle;
 
 import org.junit.*;
@@ -35,9 +36,16 @@ import org.junit.*;
  */
 public abstract class LocaleDependantTestBase extends TestBase {
     /**
-     * The previous locale, before to set a constant locale for the test.
+     * The previous locale before the test is run.
+     * This is usually the default locale.
      */
     private static Locale defaultLocale;
+
+    /**
+     * The previous timezone before the test is run.
+     * This is usually the default timezone.
+     */
+    private static TimeZone defaultTimezone;
 
     /**
      * Sets a constant locale for the purpose of this test.
@@ -46,6 +54,8 @@ public abstract class LocaleDependantTestBase extends TestBase {
     public static void setLocale() {
         defaultLocale = Locale.getDefault();
         Locale.setDefault(Locale.FRANCE);
+        defaultTimezone = TimeZone.getDefault();
+        TimeZone.setDefault(TimeZone.getTimeZone("CET"));
         ResourceBundle.clearCache();
     }
 
@@ -55,6 +65,7 @@ public abstract class LocaleDependantTestBase extends TestBase {
     @AfterClass
     public static void restoreLocale() {
         Locale.setDefault(defaultLocale);
+        TimeZone.setDefault(defaultTimezone);
         ResourceBundle.clearCache();
     }
 

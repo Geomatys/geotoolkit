@@ -21,7 +21,6 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Locale;
-import java.util.TimeZone;
 import java.util.Collection;
 import javax.xml.bind.JAXBException;
 
@@ -43,6 +42,7 @@ import org.geotoolkit.metadata.iso.identification.*;
 import org.geotoolkit.metadata.MetadataStandardTest;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.test.LocaleDependantTestBase;
 
 import org.junit.*;
 
@@ -64,41 +64,8 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 2.5
  */
-@Depend({MetadataStandardTest.class, FreeTextMarshallingTest.class})
-public final class MetadataMarshallingTest {
-    /**
-     * The previous locale before the test is run.
-     * This is usually the default locale.
-     */
-    private Locale defaultLocale;
-
-    /**
-     * The previous timezone before the test is run.
-     * This is usually the default timezone.
-     */
-    private TimeZone defaultTimezone;
-
-    /**
-     * Sets the locale to a compile-time value. We need to use a fixed value because the
-     * value of an international string is locale-sensitive in this test.
-     */
-    @Before
-    public void fixLocale() {
-        defaultLocale = Locale.getDefault();
-        Locale.setDefault(Locale.FRANCE);
-        defaultTimezone = TimeZone.getDefault();
-        TimeZone.setDefault(TimeZone.getTimeZone("CET"));
-    }
-
-    /**
-     * Restores the locales to its original value.
-     */
-    @After
-    public void restoreLocale() {
-        Locale.setDefault(defaultLocale);
-        TimeZone.setDefault(defaultTimezone);
-    }
-
+@Depend({MetadataStandardTest.class, CodeListMarshallingTest.class, FreeTextMarshallingTest.class})
+public final class MetadataMarshallingTest extends LocaleDependantTestBase {
     /**
      * Generates a XML tree using the annotations on the {@link DefaultMetadata} class,
      * and writes it in a temporary buffer. The buffer is then read by the unmarshaller.
