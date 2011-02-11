@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
@@ -144,7 +145,12 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         updateCache(context);
 
         final CanvasMonitor monitor = context.getMonitor();
-        currentQuery = prepareQuery(context, item, rules);
+        try {
+            currentQuery = prepareQuery(context, item, rules);
+        } catch (PortrayalException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
         final Query query = currentQuery;
 
         final Name[] copy = query.getPropertyNames();
@@ -193,7 +199,13 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter visitFilter, final List<Graphic> graphics) {
         updateCache(context);
 
-        final Query query = prepareQuery(context, layer, rules);
+        final Query query;
+        try {
+            query = prepareQuery(context, layer, rules);
+        } catch (PortrayalException ex) {
+            context.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return graphics;
+        }
         
         final Name[] copy = query.getPropertyNames();
         if(!Arrays.deepEquals(copy, cachedAttributs)){

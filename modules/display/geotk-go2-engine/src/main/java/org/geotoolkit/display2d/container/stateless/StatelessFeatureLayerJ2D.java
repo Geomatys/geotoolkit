@@ -33,6 +33,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -196,7 +197,12 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
 
         final CanvasMonitor monitor = context.getMonitor();
-        currentQuery = prepareQuery(context, item, rules);
+        try {
+            currentQuery = prepareQuery(context, item, rules);
+        } catch (PortrayalException ex) {
+            monitor.exceptionOccured(ex, Level.WARNING);
+            return;
+        }
         final Query query = currentQuery;
 
         if(monitor.stopRequested()) return;
@@ -592,7 +598,13 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter visitFilter, final List<Graphic> graphics) {
 
-        final Query query = prepareQuery(renderingContext, layer, rules);
+        final Query query;
+        try {
+            query = prepareQuery(renderingContext, layer, rules);
+        } catch (PortrayalException ex) {
+            renderingContext.getMonitor().exceptionOccured(ex, Level.WARNING);
+            return graphics;
+        }
 
         final FeatureCollection<Feature> features;
         try{
@@ -705,7 +717,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
      * Creates an optimal query to send to the datastore, knowing which properties are knowned and
      * the appropriate bounding box to filter.
      */
-    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, final CachedRule[] rules){
+    protected static Query prepareQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, final CachedRule[] rules) throws PortrayalException{
 
         final FeatureCollection<? extends Feature> fs            = layer.getCollection();
         final FeatureType schema                                 = fs.getFeatureType();
@@ -716,6 +728,10 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         final CoordinateReferenceSystem layerCRS                 = schema.getCoordinateReferenceSystem();
         final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
         final RenderingHints hints                               = renderingContext.getRenderingHints();
+
+        if(layerCRS == null){
+            throw new PortrayalException("Layer " + layer.getName() +" do not define any coordinate reference system, layer will not be rendered");
+        }
 
         if( !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
