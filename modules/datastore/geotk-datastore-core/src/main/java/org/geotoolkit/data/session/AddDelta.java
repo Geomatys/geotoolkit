@@ -37,6 +37,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 
 /**
@@ -120,7 +121,8 @@ class AddDelta extends AbstractDelta{
 
         final FeatureIterator affected = features.subCollection(query).iterator();
 
-        if(query.getSortBy() != null){
+        final SortBy[] sort = query.getSortBy();
+        if(sort != null && sort.length > 0){
             return DataUtilities.combine(query.getSortBy(), reader, affected);
         }else{
             return DataUtilities.sequence(reader, affected);
