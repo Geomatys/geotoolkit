@@ -52,7 +52,7 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
         try {
             MERCATOR = CRS.decode("EPSG:3395");
         } catch (FactoryException ex) {
-            throw new RuntimeException("Could not load EPSG:3395 mercator projection.");
+            throw new RuntimeException("Could not load EPSG:3395 mercator projection.",ex);
         }
     }
 
