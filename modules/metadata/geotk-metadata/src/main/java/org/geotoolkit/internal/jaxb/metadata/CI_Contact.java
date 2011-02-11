@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Contact;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
 
@@ -66,7 +66,7 @@ public final class CI_Contact extends MetadataAdapter<CI_Contact, Contact> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "CI_Contact")
+    @XmlElementRef
     public DefaultContact getElement() {
         final Contact metadata = this.metadata;
         return (metadata instanceof DefaultContact) ?

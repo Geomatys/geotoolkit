@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.Source;
 import org.geotoolkit.metadata.iso.lineage.DefaultSource;
 
@@ -66,7 +66,7 @@ public final class LI_Source extends MetadataAdapter<LI_Source, Source> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "LI_Source")
+    @XmlElementRef
     public DefaultSource getElement() {
         final Source metadata = this.metadata;
         return (metadata instanceof DefaultSource) ?

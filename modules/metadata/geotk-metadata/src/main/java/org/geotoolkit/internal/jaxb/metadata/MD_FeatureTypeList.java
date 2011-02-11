@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.FeatureTypeList;
 import org.geotoolkit.metadata.iso.DefaultFeatureTypeList;
 
@@ -66,7 +66,7 @@ public final class MD_FeatureTypeList extends MetadataAdapter<MD_FeatureTypeList
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_FeatureTypeList")
+    @XmlElementRef
     public DefaultFeatureTypeList getElement() {
         final FeatureTypeList metadata = this.metadata;
         return (metadata instanceof DefaultFeatureTypeList) ?

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.extent.Extent;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 
@@ -66,7 +66,7 @@ public final class EX_Extent extends MetadataAdapter<EX_Extent, Extent> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "EX_Extent")
+    @XmlElementRef
     public DefaultExtent getElement() {
         final Extent metadata = this.metadata;
         return (metadata instanceof DefaultExtent) ?

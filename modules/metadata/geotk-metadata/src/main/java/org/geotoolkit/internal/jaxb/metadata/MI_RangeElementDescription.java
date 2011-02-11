@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.content.RangeElementDescription;
 import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -69,7 +68,7 @@ public final class MI_RangeElementDescription
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_RangeElementDescription", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultRangeElementDescription getElement() {
         final RangeElementDescription metadata = this.metadata;
         return (metadata instanceof DefaultRangeElementDescription) ?

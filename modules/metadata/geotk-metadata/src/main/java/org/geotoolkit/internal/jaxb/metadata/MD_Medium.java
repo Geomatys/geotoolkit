@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.Medium;
 import org.geotoolkit.metadata.iso.distribution.DefaultMedium;
 
@@ -66,7 +66,7 @@ public final class MD_Medium extends MetadataAdapter<MD_Medium, Medium> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_Medium")
+    @XmlElementRef
     public DefaultMedium getElement() {
         final Medium metadata = this.metadata;
         return (metadata instanceof DefaultMedium) ?

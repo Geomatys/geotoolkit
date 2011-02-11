@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.Resolution;
 import org.geotoolkit.metadata.iso.identification.DefaultResolution;
 
@@ -66,7 +66,7 @@ public final class MD_Resolution extends MetadataAdapter<MD_Resolution, Resoluti
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_Resolution")
+    @XmlElementRef
     public DefaultResolution getElement() {
         final Resolution metadata = this.metadata;
         return (metadata instanceof DefaultResolution) ?

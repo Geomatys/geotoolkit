@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Series;
 import org.geotoolkit.metadata.iso.citation.DefaultSeries;
 
@@ -66,7 +66,7 @@ public final class CI_Series extends MetadataAdapter<CI_Series, Series> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "CI_Series")
+    @XmlElementRef
     public DefaultSeries getElement() {
         final Series metadata = this.metadata;
         return (metadata instanceof DefaultSeries) ?

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.spatial.Dimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
 
@@ -66,7 +66,7 @@ public final class MD_Dimension extends MetadataAdapter<MD_Dimension, Dimension>
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_Dimension")
+    @XmlElementRef
     public DefaultDimension getElement() {
         final Dimension metadata = this.metadata;
         return (metadata instanceof DefaultDimension) ?

@@ -18,6 +18,7 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.ReferenceIdentifier;
@@ -70,7 +71,7 @@ public final class MD_Identifier extends MetadataAdapter<MD_Identifier, Identifi
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_Identifier")
+    @XmlElementRef
     public DefaultIdentifier getElement() {
         if (uuidref != null) {
             return null;

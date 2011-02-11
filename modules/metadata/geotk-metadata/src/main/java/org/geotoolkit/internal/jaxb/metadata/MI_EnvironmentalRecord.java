@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.EnvironmentalRecord;
 import org.geotoolkit.metadata.iso.acquisition.DefaultEnvironmentalRecord;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -69,7 +68,7 @@ public final class MI_EnvironmentalRecord
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_EnvironmentalRecord", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultEnvironmentalRecord getElement() {
         final EnvironmentalRecord metadata = this.metadata;
         return (metadata instanceof DefaultEnvironmentalRecord) ?

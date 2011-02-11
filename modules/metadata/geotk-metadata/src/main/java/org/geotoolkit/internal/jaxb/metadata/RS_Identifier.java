@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 
@@ -38,9 +38,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
  * @since 3.00
  * @module
  */
-public final class RS_Identifier
-        extends MetadataAdapter<RS_Identifier, ReferenceIdentifier>
-{
+public final class RS_Identifier extends MetadataAdapter<RS_Identifier, ReferenceIdentifier> {
     /**
      * Empty constructor for JAXB only.
      */
@@ -74,7 +72,7 @@ public final class RS_Identifier
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "RS_Identifier")
+    @XmlElementRef
     public DefaultReferenceIdentifier getElement() {
         final ReferenceIdentifier metadata = this.metadata;
         if (metadata instanceof DefaultReferenceIdentifier) {

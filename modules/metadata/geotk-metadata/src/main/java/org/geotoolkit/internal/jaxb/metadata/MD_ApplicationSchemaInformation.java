@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.ApplicationSchemaInformation;
 import org.geotoolkit.metadata.iso.DefaultApplicationSchemaInformation;
 
@@ -70,7 +70,7 @@ public final class MD_ApplicationSchemaInformation
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_ApplicationSchemaInformation")
+    @XmlElementRef
     public DefaultApplicationSchemaInformation getElement() {
         final ApplicationSchemaInformation metadata = this.metadata;
         return (metadata instanceof DefaultApplicationSchemaInformation) ?

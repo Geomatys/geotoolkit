@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Address;
 import org.geotoolkit.metadata.iso.citation.DefaultAddress;
 
@@ -66,7 +66,7 @@ public final class CI_Address extends MetadataAdapter<CI_Address, Address> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "CI_Address")
+    @XmlElementRef
     public DefaultAddress getElement() {
         final Address metadata = this.metadata;
         return (metadata instanceof DefaultAddress) ?

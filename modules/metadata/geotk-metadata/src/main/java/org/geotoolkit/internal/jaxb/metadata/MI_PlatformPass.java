@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.PlatformPass;
 import org.geotoolkit.metadata.iso.acquisition.DefaultPlatformPass;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class MI_PlatformPass extends MetadataAdapter<MI_PlatformPass, Plat
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_PlatformPass", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultPlatformPass getElement() {
         final PlatformPass metadata = this.metadata;
         return (metadata instanceof DefaultPlatformPass) ?

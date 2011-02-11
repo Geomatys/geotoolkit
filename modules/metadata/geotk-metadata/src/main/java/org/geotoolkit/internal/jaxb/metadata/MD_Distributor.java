@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.Distributor;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
 
@@ -66,7 +66,7 @@ public final class MD_Distributor extends MetadataAdapter<MD_Distributor, Distri
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_Distributor")
+    @XmlElementRef
     public DefaultDistributor getElement() {
         final Distributor metadata = this.metadata;
         return (metadata instanceof DefaultDistributor) ?

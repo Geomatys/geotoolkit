@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.spatial.GCP;
 import org.geotoolkit.metadata.iso.spatial.DefaultGCP;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class MI_GCP extends MetadataAdapter<MI_GCP, GCP> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_GCP", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultGCP getElement() {
         final GCP metadata = this.metadata;
         return (metadata instanceof DefaultGCP) ?

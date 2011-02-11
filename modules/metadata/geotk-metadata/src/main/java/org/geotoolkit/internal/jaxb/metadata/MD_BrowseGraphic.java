@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.BrowseGraphic;
 import org.geotoolkit.metadata.iso.identification.DefaultBrowseGraphic;
 
@@ -66,7 +66,7 @@ public final class MD_BrowseGraphic extends MetadataAdapter<MD_BrowseGraphic, Br
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_BrowseGraphic")
+    @XmlElementRef
     public DefaultBrowseGraphic getElement() {
         final BrowseGraphic metadata = this.metadata;
         return (metadata instanceof DefaultBrowseGraphic) ?

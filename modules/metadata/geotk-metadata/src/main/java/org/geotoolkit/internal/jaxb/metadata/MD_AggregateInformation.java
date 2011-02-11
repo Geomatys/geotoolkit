@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.AggregateInformation;
 import org.geotoolkit.metadata.iso.identification.DefaultAggregateInformation;
 
@@ -69,7 +69,7 @@ public final class MD_AggregateInformation extends
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_AggregateInformation")
+    @XmlElementRef
     public DefaultAggregateInformation getElement() {
         final AggregateInformation metadata = this.metadata;
         return (metadata instanceof DefaultAggregateInformation) ?

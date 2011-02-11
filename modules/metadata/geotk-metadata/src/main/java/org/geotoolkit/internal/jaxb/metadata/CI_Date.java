@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.CitationDate;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 
@@ -66,7 +66,7 @@ public final class CI_Date extends MetadataAdapter<CI_Date, CitationDate> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "CI_Date")
+    @XmlElementRef
     public DefaultCitationDate getElement() {
         final CitationDate metadata = this.metadata;
         return (metadata instanceof DefaultCitationDate) ?

@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -69,7 +68,7 @@ public final class MI_AcquisitionInformation
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_AcquisitionInformation", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultAcquisitionInformation getElement() {
         final AcquisitionInformation metadata = this.metadata;
         return (metadata instanceof DefaultAcquisitionInformation) ?

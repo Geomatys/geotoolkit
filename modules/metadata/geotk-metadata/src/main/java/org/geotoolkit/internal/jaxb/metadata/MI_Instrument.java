@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Instrument;
 import org.geotoolkit.metadata.iso.acquisition.DefaultInstrument;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class MI_Instrument extends MetadataAdapter<MI_Instrument, Instrume
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_Instrument" , namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultInstrument getElement() {
         final Instrument metadata = this.metadata;
         return (metadata instanceof DefaultInstrument) ?

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Telephone;
 import org.geotoolkit.metadata.iso.citation.DefaultTelephone;
 
@@ -66,7 +66,7 @@ public final class CI_Telephone extends MetadataAdapter<CI_Telephone, Telephone>
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "CI_Telephone")
+    @XmlElementRef
     public DefaultTelephone getElement() {
         final Telephone metadata = this.metadata;
         return (metadata instanceof DefaultTelephone) ?

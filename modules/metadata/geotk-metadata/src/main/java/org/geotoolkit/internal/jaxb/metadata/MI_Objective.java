@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Objective;
 import org.geotoolkit.metadata.iso.acquisition.DefaultObjective;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class MI_Objective extends MetadataAdapter<MI_Objective, Objective>
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_Objective", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultObjective getElement() {
         final Objective metadata = this.metadata;
         return (metadata instanceof DefaultObjective) ?

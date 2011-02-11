@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.PortrayalCatalogueReference;
 import org.geotoolkit.metadata.iso.DefaultPortrayalCatalogueReference;
 
@@ -70,7 +70,7 @@ public final class MD_PortrayalCatalogueReference
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_PortrayalCatalogueReference")
+    @XmlElementRef
     public DefaultPortrayalCatalogueReference getElement() {
         final PortrayalCatalogueReference metadata = this.metadata;
         return (metadata instanceof DefaultPortrayalCatalogueReference) ?

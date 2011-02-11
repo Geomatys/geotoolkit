@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.quality.DataQuality;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
 
@@ -66,7 +66,7 @@ public final class DQ_DataQuality extends MetadataAdapter<DQ_DataQuality, DataQu
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "DQ_DataQuality")
+    @XmlElementRef
     public DefaultDataQuality getElement() {
         final DataQuality metadata = this.metadata;
         return (metadata instanceof DefaultDataQuality) ?

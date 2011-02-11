@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Platform;
 import org.geotoolkit.metadata.iso.acquisition.DefaultPlatform;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class MI_Platform extends MetadataAdapter<MI_Platform, Platform> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_Platform", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultPlatform getElement() {
         final Platform metadata = this.metadata;
         return (metadata instanceof DefaultPlatform) ?

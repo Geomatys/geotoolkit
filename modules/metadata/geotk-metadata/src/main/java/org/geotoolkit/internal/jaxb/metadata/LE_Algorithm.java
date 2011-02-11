@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.Algorithm;
 import org.geotoolkit.metadata.iso.lineage.DefaultAlgorithm;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -68,7 +67,7 @@ public final class LE_Algorithm extends MetadataAdapter<LE_Algorithm, Algorithm>
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "LE_Algorithm", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultAlgorithm getElement() {
         final Algorithm metadata = this.metadata;
         return (metadata instanceof DefaultAlgorithm) ?

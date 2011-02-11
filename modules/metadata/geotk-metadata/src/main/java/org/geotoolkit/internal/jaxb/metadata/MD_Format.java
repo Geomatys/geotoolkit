@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.Format;
 import org.geotoolkit.metadata.iso.distribution.DefaultFormat;
 
@@ -66,7 +66,7 @@ public final class MD_Format extends MetadataAdapter<MD_Format, Format> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_Format")
+    @XmlElementRef
     public DefaultFormat getElement() {
         final Format metadata = this.metadata;
         return (metadata instanceof DefaultFormat) ?

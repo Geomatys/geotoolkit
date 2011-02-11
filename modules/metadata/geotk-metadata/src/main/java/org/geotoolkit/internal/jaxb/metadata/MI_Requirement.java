@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Requirement;
 import org.geotoolkit.metadata.iso.acquisition.DefaultRequirement;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class MI_Requirement extends MetadataAdapter<MI_Requirement, Requir
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_Requirement", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultRequirement getElement() {
         final Requirement metadata = this.metadata;
         return (metadata instanceof DefaultRequirement) ?

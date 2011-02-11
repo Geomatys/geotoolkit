@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
 
@@ -66,7 +66,7 @@ public final class LI_ProcessStep extends MetadataAdapter<LI_ProcessStep, Proces
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "LI_ProcessStep")
+    @XmlElementRef
     public DefaultProcessStep getElement() {
         final ProcessStep metadata = this.metadata;
         return (metadata instanceof DefaultProcessStep) ?

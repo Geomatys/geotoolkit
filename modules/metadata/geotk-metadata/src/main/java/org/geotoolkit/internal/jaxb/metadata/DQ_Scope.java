@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.quality.Scope;
 import org.geotoolkit.metadata.iso.quality.DefaultScope;
 
@@ -66,7 +66,7 @@ public final class DQ_Scope extends MetadataAdapter<DQ_Scope, Scope> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "DQ_Scope")
+    @XmlElementRef
     public DefaultScope getElement() {
         final Scope metadata = this.metadata;
         return (metadata instanceof DefaultScope) ?

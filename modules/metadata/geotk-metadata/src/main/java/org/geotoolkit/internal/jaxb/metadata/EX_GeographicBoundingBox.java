@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 
@@ -68,7 +68,7 @@ public final class EX_GeographicBoundingBox extends
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "EX_GeographicBoundingBox")
+    @XmlElementRef
     public DefaultGeographicBoundingBox getElement() {
         final GeographicBoundingBox metadata = this.metadata;
         return (metadata instanceof DefaultGeographicBoundingBox) ?

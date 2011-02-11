@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.RequestedDate;
 import org.geotoolkit.metadata.iso.acquisition.DefaultRequestedDate;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class MI_RequestedDate extends MetadataAdapter<MI_RequestedDate, Re
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_RequestedDate", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultRequestedDate getElement() {
         final RequestedDate metadata = this.metadata;
         return (metadata instanceof DefaultRequestedDate) ?

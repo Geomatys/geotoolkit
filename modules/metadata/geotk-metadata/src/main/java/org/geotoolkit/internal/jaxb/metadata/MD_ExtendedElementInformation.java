@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.ExtendedElementInformation;
 import org.geotoolkit.metadata.iso.DefaultExtendedElementInformation;
 
@@ -70,7 +70,7 @@ public final class MD_ExtendedElementInformation
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_ExtendedElementInformation")
+    @XmlElementRef
     public DefaultExtendedElementInformation getElement() {
         final ExtendedElementInformation metadata = this.metadata;
         return (metadata instanceof DefaultExtendedElementInformation) ?

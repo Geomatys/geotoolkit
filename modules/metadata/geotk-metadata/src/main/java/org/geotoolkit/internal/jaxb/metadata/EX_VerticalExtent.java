@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.extent.VerticalExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
 
@@ -66,7 +66,7 @@ public final class EX_VerticalExtent extends MetadataAdapter<EX_VerticalExtent, 
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "EX_VerticalExtent")
+    @XmlElementRef
     public DefaultVerticalExtent getElement() {
         final VerticalExtent metadata = this.metadata;
         return (metadata instanceof DefaultVerticalExtent) ?

@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.spatial.GeometricObjects;
 import org.geotoolkit.metadata.iso.spatial.DefaultGeometricObjects;
 
@@ -66,7 +66,7 @@ public final class MD_GeometricObjects extends MetadataAdapter<MD_GeometricObjec
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_GeometricObjects")
+    @XmlElementRef
     public DefaultGeometricObjects getElement() {
         final GeometricObjects metadata = this.metadata;
         return (metadata instanceof DefaultGeometricObjects) ?

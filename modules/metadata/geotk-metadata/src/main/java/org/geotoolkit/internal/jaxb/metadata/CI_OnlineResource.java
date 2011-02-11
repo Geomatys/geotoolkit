@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.OnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 
@@ -66,7 +66,7 @@ public final class CI_OnlineResource extends MetadataAdapter<CI_OnlineResource, 
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "CI_OnlineResource")
+    @XmlElementRef
     public DefaultOnlineResource getElement() {
         final OnlineResource metadata = this.metadata;
         return (metadata instanceof DefaultOnlineResource) ?

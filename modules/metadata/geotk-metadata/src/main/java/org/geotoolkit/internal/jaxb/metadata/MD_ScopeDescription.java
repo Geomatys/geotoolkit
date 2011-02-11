@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.maintenance.ScopeDescription;
 import org.geotoolkit.metadata.iso.maintenance.DefaultScopeDescription;
 
@@ -68,7 +68,7 @@ public final class MD_ScopeDescription
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_ScopeDescription")
+    @XmlElementRef
     public DefaultScopeDescription getElement() {
         final ScopeDescription metadata = this.metadata;
         return (metadata instanceof DefaultScopeDescription) ?

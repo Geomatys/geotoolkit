@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.maintenance.MaintenanceInformation;
 import org.geotoolkit.metadata.iso.maintenance.DefaultMaintenanceInformation;
 
@@ -70,7 +70,7 @@ public final class MD_MaintenanceInformation
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_MaintenanceInformation")
+    @XmlElementRef
     public DefaultMaintenanceInformation getElement() {
         final MaintenanceInformation metadata = this.metadata;
         return (metadata instanceof DefaultMaintenanceInformation) ?

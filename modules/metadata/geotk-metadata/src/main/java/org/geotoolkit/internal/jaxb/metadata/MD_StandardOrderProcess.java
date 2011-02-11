@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.StandardOrderProcess;
 import org.geotoolkit.metadata.iso.distribution.DefaultStandardOrderProcess;
 
@@ -69,7 +69,7 @@ public final class MD_StandardOrderProcess
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_StandardOrderProcess")
+    @XmlElementRef
     public DefaultStandardOrderProcess getElement() {
         final StandardOrderProcess metadata = this.metadata;
         return (metadata instanceof DefaultStandardOrderProcess) ?

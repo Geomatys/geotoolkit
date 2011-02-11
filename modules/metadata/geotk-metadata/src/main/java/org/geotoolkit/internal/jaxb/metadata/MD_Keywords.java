@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.Keywords;
 import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
 
@@ -66,7 +66,7 @@ public final class MD_Keywords extends MetadataAdapter<MD_Keywords, Keywords> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_Keywords")
+    @XmlElementRef
     public DefaultKeywords getElement() {
         final Keywords metadata = this.metadata;
         return (metadata instanceof DefaultKeywords) ?

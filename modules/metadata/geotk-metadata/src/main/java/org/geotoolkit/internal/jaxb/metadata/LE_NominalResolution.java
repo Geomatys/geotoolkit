@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.NominalResolution;
 import org.geotoolkit.metadata.iso.lineage.DefaultNominalResolution;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class LE_NominalResolution extends MetadataAdapter<LE_NominalResolu
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "LE_NominalResolution", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultNominalResolution getElement() {
         final NominalResolution metadata = this.metadata;
         return (metadata instanceof DefaultNominalResolution) ?

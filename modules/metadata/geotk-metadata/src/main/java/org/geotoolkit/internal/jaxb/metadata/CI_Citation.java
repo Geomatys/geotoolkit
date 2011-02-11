@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 
@@ -66,7 +66,7 @@ public final class CI_Citation extends MetadataAdapter<CI_Citation, Citation> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "CI_Citation")
+    @XmlElementRef
     public DefaultCitation getElement() {
         final Citation metadata = this.metadata;
         return (metadata instanceof DefaultCitation) ?

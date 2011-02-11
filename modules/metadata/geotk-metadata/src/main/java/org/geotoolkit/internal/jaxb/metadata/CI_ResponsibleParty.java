@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 
@@ -68,7 +68,7 @@ public final class CI_ResponsibleParty
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "CI_ResponsibleParty")
+    @XmlElementRef
     public DefaultResponsibleParty getElement() {
         final ResponsibleParty metadata = this.metadata;
         return (metadata instanceof DefaultResponsibleParty) ?

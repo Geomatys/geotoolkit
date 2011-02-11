@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.RepresentativeFraction;
 import org.geotoolkit.metadata.iso.identification.DefaultRepresentativeFraction;
 
@@ -70,7 +70,7 @@ public final class MD_RepresentativeFraction
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_RepresentativeFraction")
+    @XmlElementRef
     public DefaultRepresentativeFraction getElement() {
         final RepresentativeFraction metadata = this.metadata;
         return (metadata instanceof DefaultRepresentativeFraction) ?

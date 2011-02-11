@@ -18,6 +18,7 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.xml.Namespaces;
@@ -67,7 +68,7 @@ public class RS_ReferenceSystem extends MetadataAdapter<RS_ReferenceSystem, Refe
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_ReferenceSystem")
+    @XmlElementRef
     public ReferenceSystemMetadata getElement() {
         final ReferenceSystem metadata = this.metadata;
         if (metadata instanceof ReferenceSystemMetadata) {

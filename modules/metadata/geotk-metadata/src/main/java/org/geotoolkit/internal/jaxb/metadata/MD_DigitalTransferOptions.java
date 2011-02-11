@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.DigitalTransferOptions;
 import org.geotoolkit.metadata.iso.distribution.DefaultDigitalTransferOptions;
 
@@ -70,7 +70,7 @@ public final class MD_DigitalTransferOptions
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_DigitalTransferOptions")
+    @XmlElementRef
     public DefaultDigitalTransferOptions getElement() {
         final DigitalTransferOptions metadata = this.metadata;
         return (metadata instanceof DefaultDigitalTransferOptions) ?

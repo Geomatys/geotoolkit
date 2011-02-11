@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.DataFile;
 import org.geotoolkit.metadata.iso.distribution.DefaultDataFile;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class MX_DataFile extends MetadataAdapter<MX_DataFile, DataFile> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MX_DataFile", namespace = Namespaces.GMX)
+    @XmlElementRef
     public DefaultDataFile getElement() {
         if (uuidref != null) {
             return null;

@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Plan;
 import org.geotoolkit.metadata.iso.acquisition.DefaultPlan;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -67,7 +66,7 @@ public final class MI_Plan extends MetadataAdapter<MI_Plan, Plan> {
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name = "MI_Plan", namespace = Namespaces.GMI)
+    @XmlElementRef
     public DefaultPlan getElement() {
         final Plan metadata = this.metadata;
         return (metadata instanceof DefaultPlan) ?
