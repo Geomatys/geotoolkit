@@ -37,6 +37,7 @@ import org.opengis.util.NameSpace;
 
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.internal.CollectionUtilities;
 
 
 /**
@@ -109,7 +110,7 @@ public class DefaultRecordType implements RecordType, Serializable {
     {
         this.parent = parent;
         this.name = name;
-        memberTypes = Collections.unmodifiableMap(new LinkedHashMap<MemberName,Type>(members));
+        memberTypes = CollectionUtilities.unmodifiableMap(new LinkedHashMap<MemberName,Type>(members));
     }
 
     /**

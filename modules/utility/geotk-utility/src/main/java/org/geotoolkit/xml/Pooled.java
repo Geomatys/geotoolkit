@@ -27,6 +27,8 @@ import javax.xml.bind.PropertyException;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 
+import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
@@ -78,6 +80,14 @@ abstract class Pooled implements Catching {
     private ObjectConverters converters;
 
     /**
+     * The base URL of ISO 19139 (or other standards) schemas. It shall be an unmodifiable
+     * instance. The valid values are documented in the {@link XML#SCHEMAS} property.
+     *
+     * @since 3.17
+     */
+    private Map<String, String> schemas;
+
+    /**
      * An optional locale for {@link org.opengis.util.InternationalString} and
      * {@link org.opengis.util.CodeList}. Can be set by the {@link XML#LOCALE}
      * property.
@@ -96,7 +106,6 @@ abstract class Pooled implements Catching {
     Pooled(final boolean internal) {
         this.internal = internal;
         initial = new LinkedHashMap<Object, Object>();
-        converters = ObjectConverters.DEFAULT;
     }
 
     /**
@@ -109,8 +118,8 @@ abstract class Pooled implements Catching {
             reset(entry.getKey(), entry.getValue());
         }
         initial.clear();
-        converters = ObjectConverters.DEFAULT;
-        locale = null;
+        converters = null;
+        locale     = null;
     }
 
     /**
@@ -163,21 +172,32 @@ abstract class Pooled implements Catching {
      * need to complete the work.
      */
     public final void setProperty(String name, final Object value) throws PropertyException {
-        // TODO: Use strings in switch with JDK 7.
-        if (name.equals(XML.CONVERTERS)) {
-            converters = (value != null) ? (ObjectConverters) value : ObjectConverters.DEFAULT;
-        } else if (name.equals(XML.LOCALE)) {
-            locale = (Locale) value;
-        } else {
-            name = convertPropertyKey(name);
-            if (!initial.containsKey(name)) {
-                if (initial.put(name, getProperty(name)) != null) {
-                    // Should never happen, unless on concurrent changes in a backgroung thread.
-                    throw new ConcurrentModificationException(name);
-                }
+        try {
+            // TODO: Use strings in switch with JDK 7.
+            if (name.equals(XML.CONVERTERS)) {
+                converters = (ObjectConverters) value;
+                return;
             }
-            setStandardProperty(name, value);
+            if (name.equals(XML.SCHEMAS)) {
+                schemas = CollectionUtilities.subset((Map<?,?>) value, String.class, "gmd");
+                return;
+            }
+            if (name.equals(XML.LOCALE)) {
+                locale = (Locale) value;
+                return;
+            }
+        } catch (ClassCastException e) {
+            throw new PropertyException(Errors.format(Errors.Keys.BAD_PROPERTY_TYPE_$2,
+                    name, value.getClass()), e);
         }
+        name = convertPropertyKey(name);
+        if (!initial.containsKey(name)) {
+            if (initial.put(name, getStandardProperty(name)) != null) {
+                // Should never happen, unless on concurrent changes in a backgroung thread.
+                throw new ConcurrentModificationException(name);
+            }
+        }
+        setStandardProperty(name, value);
     }
 
     /**
@@ -187,6 +207,8 @@ abstract class Pooled implements Catching {
         // TODO: Use strings in switch with JDK 7.
         if (name.equals(XML.CONVERTERS)) {
             return converters;
+        } else if (name.equals(XML.SCHEMAS)) {
+            return schemas;
         } else if (name.equals(XML.LOCALE)) {
             return locale;
         } else {
@@ -286,7 +308,7 @@ abstract class Pooled implements Catching {
     @Override
     @Deprecated
     public final ObjectConverters getObjectConverters() {
-        return converters;
+        return (converters != null) ? converters : ObjectConverters.DEFAULT;
     }
 
     /**
@@ -297,7 +319,7 @@ abstract class Pooled implements Catching {
     @Override
     @Deprecated
     public final void setObjectConverters(final ObjectConverters converters) {
-        this.converters = (converters != null) ? converters : ObjectConverters.DEFAULT;
+        this.converters = converters;
     }
 
     /**
@@ -316,6 +338,6 @@ abstract class Pooled implements Catching {
      * @since 3.07
      */
     final MarshalContext begin() {
-        return MarshalContext.begin(converters, locale);
+        return MarshalContext.begin(converters, schemas, locale);
     }
 }

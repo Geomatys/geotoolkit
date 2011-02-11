@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 import org.opengis.annotation.UML;
 import org.opengis.util.CodeList;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
@@ -48,16 +49,29 @@ import org.opengis.util.CodeList;
 @XmlType(name = "CodeList", propOrder = { "codeSpace", "codeListValue", "codeList" })
 public final class CodeListProxy {
     /**
-     * The base directory of code lists.
+     * Returns the URL to given code list in the given XML file.
+     *
+     * @param  file The XML file, either {@code "gmxCodelists.xml"} or {@code "ML_gmxCodelists.xml"}.
+     * @param  identifier The UML identifier of the code list.
+     * @return The URL to the given code list in the given XSD schema.
      *
      * @since 3.17
      */
-    public static final String BASE_URL = "http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/";
-
-    /**
-     * Default common URL path for the {@code codeList} attribute value.
-     */
-    private static final String URL = BASE_URL + "gmxCodelists.xml#";
+    private static String schemaURL(final String file, final String identifier) {
+        final StringBuilder buffer = new StringBuilder(128);
+        final String base = MarshalContext.schema("gmd");
+        if (base == null) {
+            buffer.append("http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/");
+        } else {
+            buffer.append(base);
+            final int length = buffer.length();
+            if (length != 0 && buffer.charAt(length - 1) != '/') {
+                buffer.append('/');
+            }
+            buffer.append("resources/Codelist/");
+        }
+        return buffer.append(file).append('#').append(identifier).toString();
+    }
 
     /**
      * The {@code codeList} attribute in the XML element.
@@ -108,8 +122,8 @@ public final class CodeListProxy {
      * @param value The value to provide, in English language (because this
      *        constructor does not set the {@link #codeSpace} attribute).
      */
-    CodeListProxy(final String codeList, final String codeListValue, final String value) {
-        this.codeList      = codeList;
+    CodeListProxy(final String file, final String codeList, final String codeListValue, final String value) {
+        this.codeList      = schemaURL(file, codeList);
         this.codeListValue = codeListValue;
         this.value         = value;
     }
@@ -131,7 +145,7 @@ public final class CodeListProxy {
         if (identifier == null || (identifier = identifier.trim()).length() == 0) {
             identifier = type.getSimpleName();
         }
-        codeList = URL.concat(identifier);
+        codeList = schemaURL("gmxCodelists.xml", identifier);
 
         // Get the field identifier.
         identifier = code.identifier();

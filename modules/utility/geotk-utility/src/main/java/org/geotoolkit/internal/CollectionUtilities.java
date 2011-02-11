@@ -56,6 +56,73 @@ public final class CollectionUtilities {
     }
 
     /**
+     * Returns an unmodifiable map which contains a copy of the given map, only for the given keys.
+     * The value for the given keys shall be of the given type. Other values can be of any types,
+     * since they will be ignored.
+     *
+     * @param  <K>  The type of keys in the map.
+     * @param  <V>  The type of values in the map.
+     * @param  map  The map to copy, or {@code null}.
+     * @param  valueType The base type of retained values.
+     * @param  keys The keys of values to retain.
+     * @return A copy of the given map containing only the given keys, or {@code null}
+     *         if the given map was null.
+     * @throws ClassCastException If at least one retained value is not of the expected type.
+     *
+     * @since 3.17
+     */
+    public static <K,V> Map<K,V> subset(final Map<?,?> map, final Class<V> valueType, final K... keys)
+            throws ClassCastException
+    {
+        Map<K,V> copy = null;
+        if (map != null) {
+            copy = new HashMap<K,V>(XCollections.hashMapCapacity(Math.min(map.size(), keys.length)));
+            for (final K key : keys) {
+                final V value = valueType.cast(map.get(key));
+                if (value != null) {
+                    copy.put(key, value);
+                }
+            }
+            copy = unmodifiableMap(copy);
+        }
+        return copy;
+    }
+
+    /**
+     * Returns a unmodifiable version of the given map. This method is different than
+     * {@link Collections#unmodifiableMap(Map)} in that it tries to returns a more efficient
+     * object when there is zero or one elements. <strong>The map returned by this method may
+     * or may not be a view of the given map</strong>. Consequently this method shall be used
+     * <strong>only if the given map will not be modified after this method call</strong>. In
+     * case of doubt, use the standard {@link Collections#unmodifiableMap(Map)}.
+     *
+     * @param  <K>  The type of keys in the map.
+     * @param  <V>  The type of values in the map.
+     * @param  map  The map to make unmodifiable, or {@code null}.
+     * @return A unmodifiable version of the given map.
+     *
+     * @since 3.17
+     */
+    public static <K,V> Map<K,V> unmodifiableMap(Map<K,V> map) {
+        if (map != null) switch (map.size()) {
+            case 0: {
+                map = Collections.emptyMap();
+                break;
+            }
+            case 1: {
+                final Map.Entry<K,V> entry = map.entrySet().iterator().next();
+                map = Collections.singletonMap(entry.getKey(), entry.getValue());
+                break;
+            }
+            default: {
+                map = Collections.unmodifiableMap(map);
+                break;
+            }
+        }
+        return map;
+    }
+
+    /**
      * Copies the given map or collection. The {@code clone()} method is used for {@link ArrayList},
      * {@link HashSet}, {@link TreeSet}, {@link HashMap}, {@link TreeMap} types and their subclasses
      * because those methods are implemented efficiently. For all other types, the copy constructor

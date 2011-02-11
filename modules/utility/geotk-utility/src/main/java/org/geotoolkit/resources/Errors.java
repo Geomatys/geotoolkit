@@ -120,6 +120,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int BAD_PARAMETER_TYPE_$2 = 13;
 
         /**
+         * Values for the "{0}" property can not be of kind '{1}'.
+         */
+        public static final int BAD_PROPERTY_TYPE_$2 = 254;
+
+        /**
          * Range [{0} … {1}] is not valid.
          */
         public static final int BAD_RANGE_$2 = 14;

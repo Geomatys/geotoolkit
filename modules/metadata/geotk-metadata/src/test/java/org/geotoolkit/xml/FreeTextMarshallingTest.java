@@ -18,9 +18,7 @@
 package org.geotoolkit.xml;
 
 import java.util.Locale;
-import java.io.IOException;
 import javax.xml.bind.JAXBException;
-import org.xml.sax.SAXException;
 import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.util.DefaultInternationalString;
 
@@ -57,12 +55,10 @@ public final class FreeTextMarshallingTest {
      * The free text is wrapped inside a citation for marshalling
      * purpose, but only the free text is actually tested.
      *
-     * @throws IOException   Should never happen since this method doesn't read any file.
      * @throws JAXBException If the XML in this test can not be parsed by JAXB.
-     * @throws SAXException  If the XML in this test can not be parsed by SAX.
      */
     @Test
-    public void testStandard() throws IOException, JAXBException, SAXException {
+    public void testStandard() throws JAXBException {
         final String expected =
             "<gmd:CI_Citation xmlns:gmd=\"" + Namespaces.GMD + "\" xmlns:gco=\"" + Namespaces.GCO + "\" xmlns:xsi=\"" + Namespaces.XSI + "\">\n" +
             "  <gmd:title xsi:type=\"gmd:PT_FreeText_PropertyType\">\n" +

@@ -49,7 +49,6 @@ import org.junit.*;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
 import static org.geotoolkit.test.Assert.*;
-import org.xml.sax.SAXException;
 
 
 /**
@@ -108,10 +107,9 @@ public final class MetadataMarshallingTest {
      * @throws IOException If an error occurred while reading the XML file.
      * @throws JAXBException If an error occurred during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws SAXException  If an error occurred while parsing the XML document.
      */
     @Test
-    public void testMetadata() throws IOException, JAXBException, SAXException {
+    public void testMetadata() throws IOException, JAXBException {
         // Note: the text in the comment blocks below were produced by:
         //
         //       System.out.println(theObjectCreated);
@@ -299,12 +297,11 @@ public final class MetadataMarshallingTest {
      * @throws IOException If an error occurred while reading the XML file.
      * @throws JAXBException If an error occurred during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws SAXException  If an error occurred while parsing the XML document.
      *
      * @since 3.07
      */
     @Test
-    public void testProcessStep() throws IOException, JAXBException, SAXException {
+    public void testProcessStep() throws IOException, JAXBException {
         final DefaultProcessing info = new DefaultProcessing();
         info.setProcedureDescription(new SimpleInternationalString("Some procedure."));
         final DefaultProcessStep process = new DefaultProcessStep();
@@ -333,7 +330,6 @@ public final class MetadataMarshallingTest {
      * @throws IOException   If an error occurred while reading the XML file.
      * @throws JAXBException If an error occurred during the creation of the JAXB context,
      *                       or during marshalling / unmarshalling processes.
-     * @throws SAXException  If an error occurred while parsing the XML document.
      *
      * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-107">GEOTK-107</a>
      * @see FreeTextMarshallingTest
@@ -341,7 +337,7 @@ public final class MetadataMarshallingTest {
      * @since 3.14
      */
     @Test
-    public void testTextGroup() throws IOException, JAXBException, SAXException {
+    public void testTextGroup() throws IOException, JAXBException {
         final String xml = TestData.readText(MetadataMarshallingTest.class, "PositionalAccuracy.xml");
         final Object obj = XML.unmarshal(xml);
         assertTrue(obj instanceof AbstractElement);

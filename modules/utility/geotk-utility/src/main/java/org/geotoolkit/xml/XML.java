@@ -51,7 +51,8 @@ import org.geotoolkit.lang.Static;
 public final class XML {
     /**
      * Allows client code to control the behavior of the (un)marshalling process when an element
-     * can not be processed, or alter the element values.
+     * can not be processed, or alter the element values. The value for this property shall be an
+     * instance of {@link ObjectConverters}.
      * <p>
      * If an element in a XML document can not be parsed (for example if a {@linkplain java.net.URL}
      * string is not valid), the default behavior is to throw an exception which cause the
@@ -101,7 +102,7 @@ public final class XML {
     /**
      * Allows client code to specify the locale to use for marshalling
      * {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList}
-     * instances.
+     * instances. The value for this property shall be an instance of {@link Locale}.
      *
      * {@section Default behavior}
      * If this property is never set, then (un)marshalling will try to use "unlocalized" strings -
@@ -124,6 +125,34 @@ public final class XML {
      * @since 3.17
      */
     public static final String LOCALE = "org.geotoolkit.xml.locale";
+
+    /**
+     * Allows client code to specify the root URL of schemas. The value for this property shall
+     * be an instance of {@link java.util.Map Map&lt;String,String&gt;}. This property controls
+     * the URL to be used when marshalling the following elements:
+     * <p>
+     * <ul>
+     *   <li>The value of the {@code codeList} attribute when marshalling subclasses of
+     *       {@link org.opengis.util.CodeList} in ISO 19139 compliant XML document.</li>
+     * </ul>
+     * <p>
+     * As of Geotk 3.17, only one {@code Map} key is recognized: {@code "gmd"}, which stands
+     * for the ISO 19139 schemas. Additional keys, if any, are ignored. Future Geotk versions
+     * may recognize more keys.
+     *
+     * {@section Valid values}
+     * <table border="1" cellspacing="0" cellpadding="6">
+     *   <tr bgcolor="lightblue"><th>Map key</th> <th>Typical values (choose only one)</th></tr>
+     *   <tr><th><b>gmd</b></th><td nowrap>
+     *     http://schemas.opengis.net/iso/19139/20070417/<br>
+     *     http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/<br>
+     *     http://eden.ign.fr/xsd/fra/20060922/
+     *   </td></tr>
+     * </table>
+     *
+     * @since 3.17
+     */
+    public static final String SCHEMAS = "org.geotoolkit.xml.schemas";
 
     /**
      * The pool of marshallers and unmarshallers used by this class.

@@ -32,6 +32,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Attr;
 import org.w3c.dom.CDATASection;
 import org.w3c.dom.Comment;
 import org.w3c.dom.Document;
@@ -218,6 +219,8 @@ public class DomComparator {
             compareCommentNode((Comment) expected, actual);
         } else if (expected instanceof ProcessingInstruction) {
             compareProcessingInstructionNode((ProcessingInstruction) expected, actual);
+        } else if (expected instanceof Attr) {
+            compareAttributeNode((Attr) expected, actual);
         } else {
             compareNames(expected, actual);
             compareAttributes(expected, actual);
@@ -293,6 +296,23 @@ public class DomComparator {
      */
     protected void compareProcessingInstructionNode(final ProcessingInstruction expected, final Node actual) {
         assertInstanceOf("Actual node is not of the expected type.", ProcessingInstruction.class, actual);
+        compareNames(expected, actual);
+        compareAttributes(expected, actual);
+        assertTextContentEquals(expected, actual);
+    }
+
+    /**
+     * Compares a node which is expected to be of {@link Attr} type. The default
+     * implementation ensures that the given node is an instance of {@link Attr},
+     * then ensures that both nodes have the same names and text content.
+     * <p>
+     * Subclasses can override this method if they need a different processing.
+     *
+     * @param expected The expected node.
+     * @param actual   The actual node.
+     */
+    protected void compareAttributeNode(final Attr expected, final Node actual) {
+        assertInstanceOf("Actual node is not of the expected type.", Attr.class, actual);
         compareNames(expected, actual);
         compareAttributes(expected, actual);
         assertTextContentEquals(expected, actual);

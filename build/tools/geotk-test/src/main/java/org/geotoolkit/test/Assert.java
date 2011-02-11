@@ -109,23 +109,25 @@ public class Assert extends org.opengis.test.Assert {
      * @param  actual   The XML document to compare.
      * @param  ignoredAttributes The fully-qualified names of attributes to ignore
      *         (typically {@code "xmlns:*"} and {@code "xsi:schemaLocation"}).
-     * @throws IOException  If the stream can not be read.
-     * @throws SAXException If an error occurred while parsing the XML document.
      *
      * @see DomComparator
      *
      * @since 3.17
      */
-    public static void assertDomEquals(final Object expected, final Object actual,
-            final String... ignoredAttributes) throws IOException, SAXException
-    {
+    public static void assertDomEquals(final Object expected, final Object actual, final String... ignoredAttributes) {
         final DomComparator comparator;
         try {
             comparator = new DomComparator(expected, actual);
-        } catch (ParserConfigurationException e) {
-            // In order to simplify a little bit the usage of this method, we dont declare this
-            // checked exception since it should not happen in the controlled test environment.
+        } catch (IOException e) {
+            // We don't throw directly those exceptions since failing to parse the XML file can
+            // be considered as part of test failures and the JUnit exception for such failures
+            // is AssertionError. Having no checked exception in "assert" methods allow us to
+            // declare the checked exceptions only for the library code being tested.
             throw new AssertionError(e);
+        } catch (ParserConfigurationException e) {
+            throw new AssertionError(e); // TODO: multi-catch with JDK 7.
+        } catch (SAXException e) {
+            throw new AssertionError(e); // TODO: multi-catch with JDK 7.
         }
         comparator.ignoreComments = true;
         comparator.ignoredAttributes.addAll(Arrays.asList(ignoredAttributes));

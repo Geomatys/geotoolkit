@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb;
 
+import java.util.Map;
 import java.util.Arrays;
 import java.util.Locale;
 import org.geotoolkit.xml.ObjectConverters;
@@ -38,9 +39,17 @@ public final class MarshalContext {
     private static final ThreadLocal<MarshalContext> CURRENT = new ThreadLocal<MarshalContext>();
 
     /**
-     * The object converters currently in use.
+     * The object converters currently in use, or {@code null} for {@link ObjectConverters#DEFAULT}.
      */
     private ObjectConverters converters;
+
+    /**
+     * The base URL of ISO 19139 (or other standards) schemas. The valid values
+     * are documented in the {@link org.geotoolkit.xml.XML#SCHEMAS} property.
+     *
+     * @since 3.17
+     */
+    private Map<String, String> schemas;
 
     /**
      * The locale to use for marshalling, or {@code null} if no locale were explicitly specified.
@@ -66,19 +75,49 @@ public final class MarshalContext {
     }
 
     /**
-     * Returns the object converters in use for the current marshalling or unmarshalling process.
+     * Returns the object converters in use for the current marshalling or unmarshalling process. If
+     * no converter were explicitely set, then this method returns {@link ObjectConverters#DEFAULT}.
      *
-     * @return The current object converters.
+     * @return The current object converters (never null).
      */
     public static ObjectConverters converters() {
         final MarshalContext current = CURRENT.get();
-        return (current != null) ? current.converters : ObjectConverters.DEFAULT;
+        if (current != null) {
+            final ObjectConverters converters = current.converters;
+            if (converters != null) {
+                return converters;
+            }
+        }
+        return ObjectConverters.DEFAULT;
+    }
+
+    /**
+     * Returns the base URL of ISO 19139 (or other standards) schemas. The valid values
+     * are documented in the {@link org.geotoolkit.xml.XML#SCHEMAS} property.
+     *
+     * @param  key One of the value documented in the "<cite>Map key</cite>" column of
+     *         {@link org.geotoolkit.xml.XML#SCHEMAS}.
+     * @return The base URL of the schema, or {@code null} if none were specified.
+     *
+     * @since 3.17
+     */
+    public static String schema(final String key) {
+        final MarshalContext current = CURRENT.get();
+        if (current != null) {
+            final Map<String,String> schemas = current.schemas;
+            if (schemas != null) {
+                return schemas.get(key);
+            }
+        }
+        return null;
     }
 
     /**
      * Returns whatever a marshalling process is under progress.
      *
      * @return {@code true} if a marshalling process is in progress.
+     *
+     * @see #setMarshalling()
      */
     public static boolean isMarshalling() {
         final MarshalContext current = CURRENT.get();
@@ -173,13 +212,17 @@ public final class MarshalContext {
      * }
      *
      * @param  converters The converters in use.
+     * @param  schemas    The schemas root URL, or {@code null} if none.
      * @param  locale     The locale, or {@code null} if none.
      * @return The context on which to invoke {@link #finish()} when the (un)marshalling is finished.
      */
-    public static MarshalContext begin(final ObjectConverters converters, final Locale locale) {
+    public static MarshalContext begin(final ObjectConverters converters,
+            final Map<String,String> schemas, final Locale locale)
+    {
         final MarshalContext current = current();
         current.converters = converters;
-        current.locale = (locale != null) ? new Locale[] {locale} : null;
+        current.schemas    = schemas; // NOSONAR: No clone, because this method is internal.
+        current.locale     = (locale != null) ? new Locale[] {locale} : null;
         return current;
     }
 
@@ -188,6 +231,8 @@ public final class MarshalContext {
      * returns the previous value of the {@link #isMarshalling()} flag.
      *
      * @return The old value.
+     *
+     * @see #isMarshalling()
      */
     public boolean setMarshalling() {
         final boolean old = isMarshalling;
@@ -211,6 +256,7 @@ public final class MarshalContext {
     public void finish() {
         converters = null;
         locale     = null;
+        schemas    = null;
         // Intentionally leave isMarshalling unmodified.
     }
 }

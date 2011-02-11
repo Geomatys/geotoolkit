@@ -21,7 +21,6 @@ import java.util.Arrays;
 import java.io.IOException;
 import java.io.InputStream;
 import javax.xml.bind.JAXBException;
-import org.xml.sax.SAXException;
 
 import org.geotoolkit.xml.XML;
 import org.geotoolkit.test.TestData;
@@ -54,10 +53,9 @@ public final class XMLBindingsTest {
      *
      * @throws IOException if an error occurred while reading the resource file.
      * @throws JAXBException if the marshalling process fails.
-     * @throws SAXException  If an error occurred while parsing the XML document.
      */
     @Test
-    public void marshallingTest() throws IOException, JAXBException, SAXException {
+    public void marshallingTest() throws IOException, JAXBException {
         final DefaultMetadata metadata = new DefaultMetadata();
         final FRA_DirectReferenceSystem refSys = new FRA_DirectReferenceSystem(
                 new DefaultCitation(DefaultResponsibleParty.EPSG), null, "4326");

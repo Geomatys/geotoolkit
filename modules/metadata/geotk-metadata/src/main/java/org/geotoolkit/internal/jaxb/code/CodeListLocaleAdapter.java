@@ -111,7 +111,7 @@ public abstract class CodeListLocaleAdapter<ValueType extends CodeListLocaleAdap
         if (value == null) {
             return null;
         }
-        return wrap(new CodeListProxy(CodeListProxy.BASE_URL + "ML_gmxCodelists.xml#LanguageCode",
+        return wrap(new CodeListProxy("ML_gmxCodelists.xml", "LanguageCode",
                 Locales.getLanguage(value), value.getDisplayName(Locale.ENGLISH)));
     }
 
