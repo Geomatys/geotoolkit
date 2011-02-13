@@ -57,7 +57,7 @@ public final class XML {
      * If an element in a XML document can not be parsed (for example if a {@linkplain java.net.URL}
      * string is not valid), the default behavior is to throw an exception which cause the
      * (un)marshalling of the entire document to fail. This default behavior can be customized by
-     * invoking {@link Marshaller#setProperty(String, Object} with this {@code CONVERTERS} property
+     * invoking {@link Marshaller#setProperty(String, Object)} with this {@code CONVERTERS} property
      * key and a custom {@link ObjectConverters} instance. {@code ObjectConverters} can also be used
      * for replacing an erroneous URL by a fixed URL. See the {@link ObjectConverters} javadoc for
      * more details.

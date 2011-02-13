@@ -147,7 +147,7 @@
     <javadoc.exclude>
       org.geotoolkit.test:org.geotoolkit.demo:org.geotoolkit.maven:org.geotoolkit.openoffice:org.geotoolkit.internal:org.geotoolkit.resources:org.geotoolkit.legacy:org.geotoolkit.metadata.fra:com
     </javadoc.exclude>
-    <derby.version>10.6.2.1</derby.version>
+    <derby.version>10.7.1.1</derby.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <!-- TODO: Use <sourceEncoding>UTF-8</sourceEncoding> with Maven 3 -->
     <maven.build.timestamp.format>yyyy-MM-dd HH:mm:ss</maven.build.timestamp.format>
@@ -274,7 +274,7 @@
       <dependency>
         <groupId>javax.mail</groupId>
         <artifactId>mail</artifactId>
-        <version>1.4.3</version>
+        <version>1.4.4</version>
         <scope>provided</scope> <!-- Already included in JEE -->
       </dependency>
 
