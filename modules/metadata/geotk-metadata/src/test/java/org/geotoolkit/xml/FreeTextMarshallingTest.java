@@ -21,6 +21,7 @@ import java.util.Locale;
 import javax.xml.bind.JAXBException;
 import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.util.DefaultInternationalString;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -38,7 +39,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.17
  */
-public final class FreeTextMarshallingTest {
+public final class FreeTextMarshallingTest extends TestBase {
     /**
      * Returns the expected string.
      */

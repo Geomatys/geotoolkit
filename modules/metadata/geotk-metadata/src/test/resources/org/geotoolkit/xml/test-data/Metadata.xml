@@ -133,7 +133,7 @@
           </gmd:citedResponsibleParty>
         </gmd:CI_Citation>
       </gmd:citation>
-      <gmd:abstract xsi:type="gmd:PT_FreeText_PropertyType" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+      <gmd:abstract xsi:type="gmd:PT_FreeText_PropertyType">
         <gco:CharacterString>Geotoolkit.org, projet OpenSource</gco:CharacterString>
         <gmd:PT_FreeText>
           <gmd:textGroup>

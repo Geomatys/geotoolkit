@@ -19,7 +19,6 @@ package org.geotoolkit.internal.jaxb.text;
 
 import org.opengis.util.InternationalString;
 import org.geotoolkit.internal.jaxb.metadata.FreeText;
-import org.geotoolkit.internal.jaxb.metadata.InternationalStringAdapter;
 
 
 /**

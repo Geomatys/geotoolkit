@@ -15,16 +15,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.jaxb.metadata;
+package org.geotoolkit.internal.jaxb.text;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
 import org.opengis.util.InternationalString;
-
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.internal.jaxb.text.CharacterString;
-import org.geotoolkit.internal.jaxb.text.AnchorType;
-
+import org.geotoolkit.internal.jaxb.metadata.FreeText;
 
 
 /**

@@ -149,7 +149,7 @@ public final class FreeText extends CharacterString {
      *
      * @since 3.17
      */
-    boolean contains(final String search) {
+    public boolean contains(final String search) {
         final TextGroup[] textGroup = this.textGroup;
         if (textGroup != null) {
             for (final TextGroup group : textGroup) {
@@ -178,7 +178,7 @@ public final class FreeText extends CharacterString {
      *
      * @since 3.17
      */
-    InternationalString toInternationalString(final String defaultValue) {
+    public InternationalString toInternationalString(final String defaultValue) {
         DefaultInternationalString i18n = null;
         final TextGroup[] textGroup = this.textGroup;
         if (textGroup != null) {

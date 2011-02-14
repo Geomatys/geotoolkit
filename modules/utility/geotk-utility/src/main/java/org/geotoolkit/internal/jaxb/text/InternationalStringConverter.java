@@ -20,7 +20,6 @@ package org.geotoolkit.internal.jaxb.text;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.opengis.util.InternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.internal.jaxb.metadata.InternationalStringAdapter;
 
 
 /**

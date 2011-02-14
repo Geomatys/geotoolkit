@@ -40,6 +40,7 @@ import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.util.InternationalString;
 import org.opengis.util.NameFactory;
 
+import org.geotoolkit.test.TestBase;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
 
@@ -58,7 +59,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.14
  */
-public final class CustomMetadataTest {
+public final class CustomMetadataTest extends TestBase {
     /**
      * Tests the marshalling of a metadata implemented by {@link java.lang.reflect.Proxy}.
      *

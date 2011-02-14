@@ -27,6 +27,7 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.test.TestBase;
 import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
 
@@ -42,7 +43,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.00
  */
-public final class NameMarshallingTest {
+public final class NameMarshallingTest extends TestBase {
     /**
      * Marshalls the given name.
      */

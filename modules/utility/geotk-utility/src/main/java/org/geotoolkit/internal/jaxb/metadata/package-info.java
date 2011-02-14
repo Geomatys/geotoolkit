@@ -17,16 +17,40 @@
  */
 
 /**
- * JAXB adapters for metadata.
- * This package regroups all adapters mapping GeoAPI interfaces to their Geotk
- * implementation. We must use adapters since JAXB can not annotate interfaces.
- * Consequently the purpose of these adapters is to replace interfaces.
+ * JAXB adapters for metadata. The class defined in this package are both JAXB adapters
+ * replacing GeoAPI interfaces by Geotk implementation classes at marshalling time (since
+ * JAXB can not marshall directly interfaces), and wrappers around the value to be marshalled.
+ * ISO 19139 have the strange practice to wraps every property in an extra level, for example:
+ *
+ * {@preformat xml
+ *   <CI_ResponsibleParty>
+ *     <contactInfo>
+ *       <CI_Contact>
+ *         ...
+ *       </CI_Contact>
+ *     </contactInfo>
+ *   </CI_ResponsibleParty>
+ * }
+ *
+ * The {@code </CI_Contact>} level is not really necessary, and JAXB is not designed for inserting
+ * such level since it is not the usual way to write XML. In order to get this output with JAXB, we
+ * have to wraps metadata object in an additional object. Those additional objects are defined in
+ * this package.
  * <p>
- * Every time JAXB try to marshall or unmarshall an interface, the adapter will be
- * substituted to that interface.
+ * So each class in this package is both a JAXB adapter and a wrapper. We have merged those
+ * functionalities in order to avoid doubling the amount of classes, which is already large.
+ * <p>
+ * In ISO 19139 terminology:
+ * <ul>
+ *   <li>the public classes defined in the {@code org.geotoolkit.metadata.iso} packages defined
+ *       as {@code Foo_Type} in ISO 19139, where <var>Foo</var> is the ISO name of a class.</li>
+ *   <li>the internal classes defined in this package are defined as {@code Foo_PropertyType} in
+ *       ISO 19139 schemas.</li>
+ * </ul>
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.17
  *
  * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *

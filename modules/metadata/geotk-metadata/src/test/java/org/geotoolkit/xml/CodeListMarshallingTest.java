@@ -23,6 +23,7 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.JAXBException;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.ResponsibleParty;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -38,7 +39,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.17
  */
-public final class CodeListMarshallingTest {
+public final class CodeListMarshallingTest extends TestBase {
     /**
      * Returns a XML string to use for testing purpose.
      *
@@ -55,7 +56,7 @@ public final class CodeListMarshallingTest {
     /**
      * Tests marshalling using the default URL.
      *
-     * @throws JAXBException If an error occurred while unmarshalling the XML.
+     * @throws JAXBException If an error occurred while marshalling the XML.
      */
     @Test
     public void testDefault() throws JAXBException {
@@ -73,7 +74,7 @@ public final class CodeListMarshallingTest {
     /**
      * Tests marshalling using the ISO URL.
      *
-     * @throws JAXBException If an error occurred while unmarshalling the XML.
+     * @throws JAXBException If an error occurred while marshalling the XML.
      */
     @Test
     public void testISO() throws JAXBException {

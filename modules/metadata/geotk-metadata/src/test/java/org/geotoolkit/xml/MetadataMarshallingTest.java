@@ -42,12 +42,12 @@ import org.geotoolkit.metadata.iso.identification.*;
 import org.geotoolkit.metadata.MetadataStandardTest;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.test.LocaleDependantTestBase;
 
 import org.junit.*;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.test.LocaleDependantTestBase;
 import static org.geotoolkit.test.Assert.*;
 
 
