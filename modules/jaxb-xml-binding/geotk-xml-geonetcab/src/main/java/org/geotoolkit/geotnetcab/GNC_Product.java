@@ -49,9 +49,7 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GNC_Product_Type", propOrder = {
-    "typeOfProducts"
-})
+@XmlType(name = "GNC_Product_Type")
 @XmlSeeAlso({
     GNC_Training.class,
     GNC_Software.class,
@@ -59,32 +57,5 @@ import javax.xml.bind.annotation.XmlType;
 })
 @XmlRootElement(name = "GNC_Product", namespace = "http://www.mdweb-project.org/files/xsd")
 public class GNC_Product extends GNC_MaterialResource implements org.opengis.metadata.geonetcab.GNC_Product {
-
-    @XmlElement(required = true)
-    private GNC_ProductTypeCode typeOfProducts;
-
-    /**
-     * Gets the value of the typeOfProducts property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GNCProductTypeCodePropertyType }
-     *     
-     */
-    public GNC_ProductTypeCode getTypeOfProducts() {
-        return typeOfProducts;
-    }
-
-    /**
-     * Sets the value of the typeOfProducts property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GNCProductTypeCodePropertyType }
-     *     
-     */
-    public void setTypeOfProducts(final GNC_ProductTypeCode value) {
-        this.typeOfProducts = value;
-    }
 
 }

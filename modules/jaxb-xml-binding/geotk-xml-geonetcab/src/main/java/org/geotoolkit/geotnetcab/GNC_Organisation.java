@@ -49,11 +49,11 @@ import javax.xml.bind.annotation.XmlType;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GNC_OrganisationEntitie_Type", propOrder = {
+@XmlType(name = "GNC_Organisation_Type", propOrder = {
     "typeOfOrganisation"
 })
-@XmlRootElement(name = "GNC_OrganisationEntitie", namespace = "http://www.mdweb-project.org/files/xsd")
-public class GNC_OrganisationEntitie extends GNC_Resource implements org.opengis.metadata.geonetcab.GNC_OrganisationEntitie {
+@XmlRootElement(name = "GNC_Organisation", namespace = "http://www.mdweb-project.org/files/xsd")
+public class GNC_Organisation extends GNC_Resource implements org.opengis.metadata.geonetcab.GNC_Organisation {
 
     @XmlElement(required = true)
     private GNC_OrganisationTypeCode typeOfOrganisation;

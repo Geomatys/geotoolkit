@@ -60,7 +60,7 @@ public class GNC_RelationType implements org.opengis.metadata.geonetcab.GNC_Rela
     @XmlElement(required = true)
     private GNC_RelationNameCode relationName;
     @XmlElement(required = true)
-    private List<GNC_OrganisationEntitie> organisationIdentifier;
+    private List<String> organisationIdentifier;
 
     /**
      * Gets the value of the relationName property.
@@ -95,20 +95,20 @@ public class GNC_RelationType implements org.opengis.metadata.geonetcab.GNC_Rela
      * 
      */
     @Override
-    public List<GNC_OrganisationEntitie> getOrganisationIdentifier() {
+    public List<String> getOrganisationIdentifier() {
         if (organisationIdentifier == null) {
-            organisationIdentifier = new ArrayList<GNC_OrganisationEntitie>();
+            organisationIdentifier = new ArrayList<String>();
         }
         return this.organisationIdentifier;
     }
 
-    public void setOrganisationIdentifier(final List<GNC_OrganisationEntitie> organisationIdentifier) {
+    public void setOrganisationIdentifier(final List<String> organisationIdentifier) {
         this.organisationIdentifier = organisationIdentifier;
     }
 
-    public void setOrganisationIdentifier(final GNC_OrganisationEntitie organisationIdentifier) {
+    public void setOrganisationIdentifier(final String organisationIdentifier) {
         if (this.organisationIdentifier == null) {
-            this.organisationIdentifier = new ArrayList<GNC_OrganisationEntitie>();
+            this.organisationIdentifier = new ArrayList<String>();
         }
         this.organisationIdentifier.add(organisationIdentifier);
     }

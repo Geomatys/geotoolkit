@@ -21,16 +21,10 @@
 
 package org.opengis.metadata.geonetcab;
 
-import java.util.List;
-
-
 public interface GNC_MaterialResource extends GNC_Resource {
 
     Boolean getIsStillInProduction();
     
-    List<? extends GNC_UserDefinedMetadata> getUserDefinedMetadata();
-
-    List<? extends GNC_Access> getAccess();
+    GNC_Access getAccess();
     
-    List<? extends GNC_RelationType> getRelationType();
 }

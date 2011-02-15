@@ -21,10 +21,7 @@
 
 package org.geotoolkit.geotnetcab;
 
-import javax.xml.bind.JAXBElement;
-import javax.xml.bind.annotation.XmlElementDecl;
 import javax.xml.bind.annotation.XmlRegistry;
-import javax.xml.namespace.QName;
 
 /**
  * This object contains factory methods for each Java content interface and Java element interface 
@@ -57,13 +54,6 @@ public class ObjectFactory {
         return new GNC_Access();
     }
 
-    /**
-     * Create an instance of {@link GNCUseRestrictionsType }
-     * 
-     */
-    public GNC_UseRestrictions createGNCUseRestrictionsType() {
-        return new GNC_UseRestrictions();
-    }
 
     /**
      * Create an instance of {@link GNCMaterialResourceType }
@@ -134,8 +124,8 @@ public class ObjectFactory {
      * Create an instance of {@link GNCOrganisationEntitieType }
      * 
      */
-    public GNC_OrganisationEntitie createGNCOrganisationEntitieType() {
-        return new GNC_OrganisationEntitie();
+    public GNC_Organisation createGNCOrganisationType() {
+        return new GNC_Organisation();
     }
 
     /**
@@ -168,14 +158,6 @@ public class ObjectFactory {
      */
     public GNC_Product createGNCProductType() {
         return new GNC_Product();
-    }
-
-    /**
-     * Create an instance of {@link GNCUserDefinedMetadataType }
-     * 
-     */
-    public GNC_UserDefinedMetadata createGNCUserDefinedMetadataType() {
-        return new GNC_UserDefinedMetadata();
     }
 
 }

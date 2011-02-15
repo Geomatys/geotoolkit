@@ -62,7 +62,6 @@ import org.geotoolkit.util.Utilities;
     "nameOfConditions",
     "nonCommercialUse",
     "thematicUsage",
-    "useRestrictions",
     "usersRestrictions"
 })
 public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC_AccessConstraints {
@@ -74,8 +73,6 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
     private Boolean nonCommercialUse;
     @XmlElement(required = true)
     private List<GNC_ThematicTypeCode> thematicUsage;
-    @XmlElement(required = true)
-    private GNC_UseRestrictions useRestrictions;
     private List<GNC_UsersRestrictions> usersRestrictions;
 
     /**
@@ -181,31 +178,6 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
     }
 
     /**
-     * Gets the value of the useRestrictions property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link GNCUseRestrictionsPropertyType }
-     *     
-     */
-    @Override
-    public GNC_UseRestrictions getUseRestrictions() {
-        return useRestrictions;
-    }
-
-    /**
-     * Sets the value of the useRestrictions property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link GNCUseRestrictionsPropertyType }
-     *     
-     */
-    public void setUseRestrictions(final GNC_UseRestrictions value) {
-        this.useRestrictions = value;
-    }
-
-    /**
      * Gets the value of the userRestrictions property.
      * 
      * Objects of the following type(s) are allowed in the list
@@ -243,7 +215,6 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
                    Utilities.equals(this.nameOfConditions, that.nameOfConditions) &&
                    Utilities.equals(this.nonCommercialUse, that.nonCommercialUse) &&
                    Utilities.equals(this.thematicUsage, that.thematicUsage) &&
-                   Utilities.equals(this.useRestrictions, that.useRestrictions) &&
                    Utilities.equals(this.usersRestrictions, that.usersRestrictions);
 
         }
@@ -257,7 +228,6 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
         hash = 97 * hash + (this.nameOfConditions != null ? this.nameOfConditions.hashCode() : 0);
         hash = 97 * hash + (this.nonCommercialUse != null ? this.nonCommercialUse.hashCode() : 0);
         hash = 97 * hash + (this.thematicUsage != null ? this.thematicUsage.hashCode() : 0);
-        hash = 97 * hash + (this.useRestrictions != null ? this.useRestrictions.hashCode() : 0);
         hash = 97 * hash + (this.usersRestrictions != null ? this.usersRestrictions.hashCode() : 0);
         return hash;
     }

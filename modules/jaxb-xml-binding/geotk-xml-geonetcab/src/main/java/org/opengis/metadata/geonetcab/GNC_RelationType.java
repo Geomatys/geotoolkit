@@ -29,5 +29,5 @@ public interface GNC_RelationType {
 
     GNC_RelationNameCode getRelationName();
     
-    List<? extends GNC_OrganisationEntitie> getOrganisationIdentifier();
+    List<String> getOrganisationIdentifier();
 }

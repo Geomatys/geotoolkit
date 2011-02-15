@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 public class GNC_Document extends GNC_MaterialResource implements org.opengis.metadata.geonetcab.GNC_Document {
 
     @XmlElement(required = true)
-    private GNC_DocumentsTypeCode typeOfDocuments;
+    private GNC_DocumentTypeCode typeOfDocuments;
 
     /**
      * Gets the value of the typeOfDocuments property.
@@ -65,7 +65,7 @@ public class GNC_Document extends GNC_MaterialResource implements org.opengis.me
      *     {@link GNCDocumentTypeCodePropertyType }
      *     
      */
-    public GNC_DocumentsTypeCode getTypeOfDocuments() {
+    public GNC_DocumentTypeCode getTypeOfDocuments() {
         return typeOfDocuments;
     }
 
@@ -77,7 +77,7 @@ public class GNC_Document extends GNC_MaterialResource implements org.opengis.me
      *     {@link GNCDocumentTypeCodePropertyType }
      *     
      */
-    public void setTypeOfDocuments(final GNC_DocumentsTypeCode value) {
+    public void setTypeOfDocuments(final GNC_DocumentTypeCode value) {
         this.typeOfDocuments = value;
     }
 

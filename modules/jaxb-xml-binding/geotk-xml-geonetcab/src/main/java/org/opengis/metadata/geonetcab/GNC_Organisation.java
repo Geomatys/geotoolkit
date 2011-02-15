@@ -21,16 +21,11 @@
 
 package org.opengis.metadata.geonetcab;
 
-import java.util.Date;
-import java.util.List;
-import org.opengis.metadata.citation.ResponsibleParty;
+import org.geotoolkit.geotnetcab.GNC_OrganisationTypeCode;
 
 
-public interface GNC_UserDefinedMetadata {
+public interface GNC_Organisation extends GNC_Resource {
 
-    Date getDateStamp();
+    GNC_OrganisationTypeCode getTypeOfOrganisation();
 
-    String getFeedbackStatement();
-    
-    List<ResponsibleParty> getUserContact();
 }

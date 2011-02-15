@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004-2010, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2011, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,15 +21,10 @@
 
 package org.opengis.metadata.geonetcab;
 
-import java.util.List;
-import org.opengis.metadata.extent.GeographicDescription;
+/**
+ *
+ * @author Guilhem Legal (Geomatys)
+ */
+public interface GNC_AccessProgram extends GNC_MaterialResource {
 
-
-public interface GNC_UseRestrictions {
-
-    List<GeographicDescription> getExtentOfRestrictions();
-
-    Boolean getGeographicRestrictions();
-    
-    String getOtherConstraints();
 }

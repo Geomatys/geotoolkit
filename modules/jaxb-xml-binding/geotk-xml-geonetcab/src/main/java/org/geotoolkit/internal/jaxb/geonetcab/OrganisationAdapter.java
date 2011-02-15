@@ -18,8 +18,9 @@
 
 package org.geotoolkit.internal.jaxb.geonetcab;
 
+import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.geotnetcab.GNC_UserDefinedMetadata;
+import org.geotoolkit.geotnetcab.GNC_Organisation;
 import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
 
 /**
@@ -30,32 +31,32 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.16
  * @module pending
  */
-public class UserDefinedMetadataAdapter extends MetadataAdapter<UserDefinedMetadataAdapter, GNC_UserDefinedMetadata>
+public class OrganisationAdapter extends MetadataAdapter<OrganisationAdapter, GNC_Organisation>
 {
     /**
      * Empty constructor for JAXB only.
      */
-    public UserDefinedMetadataAdapter() {
+    public OrganisationAdapter() {
     }
 
     /**
-     * Wraps an ContentInformation value with a {@code GNC_UserDefinedMetadata} element at marshalling time.
+     * Wraps an ContentInformation value with a {@code GNC_Organisation} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
-    private UserDefinedMetadataAdapter(final GNC_UserDefinedMetadata metadata) {
+    private OrganisationAdapter(final GNC_Organisation metadata) {
         super(metadata);
     }
 
     /**
-     * Returns the ContentInformation value wrapped by a {@code MD_ContentInformation} element.
+     * Returns the ContentInformation value wrapped by a {@code GNC_Organisation} element.
      *
      * @param value The value to marshall.
      * @return The adapter which wraps the metadata value.
      */
     @Override
-    protected UserDefinedMetadataAdapter wrap(final GNC_UserDefinedMetadata value) {
-        return new UserDefinedMetadataAdapter(value);
+    protected OrganisationAdapter wrap(final GNC_Organisation value) {
+        return new OrganisationAdapter(value);
     }
 
     /**
@@ -65,9 +66,12 @@ public class UserDefinedMetadataAdapter extends MetadataAdapter<UserDefinedMetad
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name="GNC_UserDefinedMetadata", namespace="http://www.mdweb-project.org/files/xsd")
-    public GNC_UserDefinedMetadata getElement() {
-        return metadata;
+    @XmlElement(name="GNC_Organisation", namespace="http://www.mdweb-project.org/files/xsd")
+    public GNC_Organisation getElement() {
+        if (metadata.getHref() == null) {
+            return metadata;
+        }
+        return null;
     }
 
     /**
@@ -76,7 +80,34 @@ public class UserDefinedMetadataAdapter extends MetadataAdapter<UserDefinedMetad
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setElement(final GNC_UserDefinedMetadata metadata) {
+    public void setElement(final GNC_Organisation metadata) {
         this.metadata = metadata;
+    }
+
+    /**
+    * Returns the {@link AbstractContentInformation} generated from the metadata value.
+     * This method is systematically called at marshalling time by JAXB.
+     *
+     * @return The metadata to be marshalled.
+     */
+    @XmlAttribute(name="href", namespace="http://www.w3.org/1999/xlink")
+    public String getReference() {
+        if (metadata.getHref() != null) {
+            return metadata.getHref();
+        }
+        return null;
+    }
+
+    /**
+     * Sets the value for the {@link AbstractContentInformation}. This method is systematically
+     * called at unmarshalling time by JAXB.
+     *
+     * @param metadata The unmarshalled metadata.
+     */
+    public void setReference(final String href) {
+        if (href != null) {
+            this.metadata = new GNC_Organisation();
+            this.metadata.setHref(href);
+        }
     }
 }

@@ -21,9 +21,9 @@
 
 package org.opengis.metadata.geonetcab;
 
-import java.util.List;
 import org.geotoolkit.geotnetcab.GNC_TrainingDurationCode;
 import org.geotoolkit.geotnetcab.GNC_TrainingTypeCode;
+import org.geotoolkit.geotnetcab.GNC_DeliveryModeCode;
 
 
 public interface GNC_Training extends GNC_Product {
@@ -32,6 +32,6 @@ public interface GNC_Training extends GNC_Product {
 
     GNC_TrainingTypeCode getTypeOfTraining();
     
-    List<? extends GNC_Software> getTrainingOn();
+    GNC_DeliveryModeCode getDeliveryMode();
 
 }

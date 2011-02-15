@@ -22,6 +22,8 @@
 package org.opengis.metadata.geonetcab;
 
 import java.util.List;
+import org.geotoolkit.geotnetcab.GNC_ResourceTypeCode;
+import org.geotoolkit.geotnetcab.GNC_ThematicTypeCode;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.metadata.identification.DataIdentification;
 
@@ -29,8 +31,12 @@ import org.opengis.metadata.identification.DataIdentification;
 public interface GNC_Resource extends DataIdentification {
 
     List<OnlineResource> getOnlineInformation();
-    
-    List<? extends GNC_Resource> getReference();
+
+    GNC_ResourceTypeCode getResourceType();
+
+    GNC_RelationType getRelationType();
+
+    GNC_ThematicTypeCode getSocialBenefitArea();
 
     String getHref();
 }

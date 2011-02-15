@@ -21,11 +21,6 @@
 
 package org.opengis.metadata.geonetcab;
 
-import org.geotoolkit.geotnetcab.GNC_ProductTypeCode;
-
-
 public interface GNC_Product extends GNC_MaterialResource {
-
-    GNC_ProductTypeCode getTypeOfProducts();
 
 }

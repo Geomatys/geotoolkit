@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2010, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2011, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -18,39 +18,28 @@
 package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.geotnetcab.GNC_DocumentsTypeCode;
-import org.opengis.metadata.identification.CharacterSet;
-
+import org.geotoolkit.geotnetcab.GNC_DeliveryModeCode;
 
 /**
- * JAXB adapter for {@link GNC_DocumentsTypeCode}, in order to integrate the value in an element
- * complying with ISO-19139 standard. See package documentation for more information about
- * the handling of {@code CodeList} in ISO-19139.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
- * @since 3.16
+ * @since 3.17
  * @module pending
  */
-public final class DocumentsTypeAdapter extends CodeListAdapter<DocumentsTypeAdapter, GNC_DocumentsTypeCode> {
-    /**
-     * Ensures that the adapted code list class is loaded.
-     */
-    static {
-        ensureClassLoaded(CharacterSet.class);
-    }
+public class DeliveryModeCodeAdapter extends CodeListAdapter<DeliveryModeCodeAdapter, GNC_DeliveryModeCode> {
 
     /**
      * Empty constructor for JAXB only.
      */
-    public DocumentsTypeAdapter() {
+    public DeliveryModeCodeAdapter() {
     }
 
     /**
      * Creates a new adapter for the given proxy.
      */
-    private DocumentsTypeAdapter(final CodeListProxy proxy) {
+    private DeliveryModeCodeAdapter(final CodeListProxy proxy) {
         super(proxy);
     }
 
@@ -58,16 +47,16 @@ public final class DocumentsTypeAdapter extends CodeListAdapter<DocumentsTypeAda
      * {@inheritDoc}
      */
     @Override
-    protected DocumentsTypeAdapter wrap(final CodeListProxy proxy) {
-        return new DocumentsTypeAdapter(proxy);
+    protected DeliveryModeCodeAdapter wrap(final CodeListProxy proxy) {
+        return new DeliveryModeCodeAdapter(proxy);
     }
 
     /**
      * {@inheritDoc}
      */
     @Override
-    protected Class<GNC_DocumentsTypeCode> getCodeListClass() {
-        return GNC_DocumentsTypeCode.class;
+    protected Class<GNC_DeliveryModeCode> getCodeListClass() {
+        return GNC_DeliveryModeCode.class;
     }
 
     /**
@@ -76,7 +65,7 @@ public final class DocumentsTypeAdapter extends CodeListAdapter<DocumentsTypeAda
      * @return The value to be marshalled.
      */
     @Override
-    @XmlElement(name = "GNC_DocumentsTypeCode", namespace="http://www.mdweb-project.org/files/xsd")
+    @XmlElement(name = "GNC_DeliveryModeCode", namespace="http://www.mdweb-project.org/files/xsd")
     public CodeListProxy getElement() {
         return proxy;
     }
@@ -89,4 +78,5 @@ public final class DocumentsTypeAdapter extends CodeListAdapter<DocumentsTypeAda
     public void setElement(final CodeListProxy proxy) {
         this.proxy = proxy;
     }
+
 }

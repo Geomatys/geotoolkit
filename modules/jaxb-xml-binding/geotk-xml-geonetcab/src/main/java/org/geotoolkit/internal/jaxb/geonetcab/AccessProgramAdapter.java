@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008-2010, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2011, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,34 +16,35 @@
  *    Lesser General Public License for more details.
  */
 
+
 package org.geotoolkit.internal.jaxb.geonetcab;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.geotnetcab.GNC_UseRestrictions;
+import org.geotoolkit.geotnetcab.GNC_AccessProgram;
 import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
 
 /**
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
- * @since 3.16
+ * @since 3.17
  * @module pending
  */
-public class UseRestrictionsAdapter extends MetadataAdapter<UseRestrictionsAdapter, GNC_UseRestrictions>
+public class AccessProgramAdapter extends MetadataAdapter<AccessProgramAdapter, GNC_AccessProgram>
 {
     /**
      * Empty constructor for JAXB only.
      */
-    public UseRestrictionsAdapter() {
+    public AccessProgramAdapter() {
     }
 
     /**
-     * Wraps an ContentInformation value with a {@code GNC_UseRestrictions} element at marshalling time.
+     * Wraps an ContentInformation value with a {@code GNC_AccessProgram} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
-    private UseRestrictionsAdapter(final GNC_UseRestrictions metadata) {
+    private AccessProgramAdapter(final GNC_AccessProgram metadata) {
         super(metadata);
     }
 
@@ -54,8 +55,8 @@ public class UseRestrictionsAdapter extends MetadataAdapter<UseRestrictionsAdapt
      * @return The adapter which wraps the metadata value.
      */
     @Override
-    protected UseRestrictionsAdapter wrap(final GNC_UseRestrictions value) {
-        return new UseRestrictionsAdapter(value);
+    protected AccessProgramAdapter wrap(final GNC_AccessProgram value) {
+        return new AccessProgramAdapter(value);
     }
 
     /**
@@ -65,8 +66,8 @@ public class UseRestrictionsAdapter extends MetadataAdapter<UseRestrictionsAdapt
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name="GNC_UseRestrictions", namespace="http://www.mdweb-project.org/files/xsd")
-    public GNC_UseRestrictions getElement() {
+    @XmlElement(name="GNC_AccessProgram", namespace="http://www.mdweb-project.org/files/xsd")
+    public GNC_AccessProgram getElement() {
         return metadata;
     }
 
@@ -76,7 +77,7 @@ public class UseRestrictionsAdapter extends MetadataAdapter<UseRestrictionsAdapt
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setElement(final GNC_UseRestrictions metadata) {
+    public void setElement(final GNC_AccessProgram metadata) {
         this.metadata = metadata;
     }
 }

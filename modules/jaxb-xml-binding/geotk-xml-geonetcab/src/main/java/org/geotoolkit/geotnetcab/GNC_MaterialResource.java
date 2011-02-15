@@ -21,8 +21,6 @@
 
 package org.geotoolkit.geotnetcab;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -56,24 +54,21 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GNC_MaterialResource_Type", propOrder = {
     "isStillInProduction",
-    "userDefinedMetadata",
-    "access",
-    "relationType"
+    "access"
 })
 @XmlSeeAlso({
     GNC_Service.class,
     GNC_Document.class,
     GNC_Reference.class,
-    GNC_Product.class
+    GNC_Product.class,
+    GNC_AccessProgram.class
 })
 @XmlRootElement(name = "GNC_MaterialResource", namespace = "http://www.mdweb-project.org/files/xsd")
 public class GNC_MaterialResource extends GNC_Resource implements org.opengis.metadata.geonetcab.GNC_MaterialResource {
 
     @XmlElement(required = true)
     private Boolean isStillInProduction;
-    private List<GNC_UserDefinedMetadata> userDefinedMetadata;
-    private List<GNC_Access> access;
-    private List<GNC_RelationType> relationType;
+    private GNC_Access access;
 
     /**
      * Gets the value of the isStillInProduction property.
@@ -101,33 +96,6 @@ public class GNC_MaterialResource extends GNC_Resource implements org.opengis.me
     }
 
     /**
-     * Gets the value of the feedback property.
-     * 
-     * Objects of the following type(s) are allowed in the list
-     * {@link GNCUserDefinedMetadataPropertyType }
-     * 
-     * 
-     */
-    @Override
-    public List<GNC_UserDefinedMetadata> getUserDefinedMetadata() {
-        if (userDefinedMetadata == null) {
-            userDefinedMetadata = new ArrayList<GNC_UserDefinedMetadata>();
-        }
-        return this.userDefinedMetadata;
-    }
-
-    public void setUserDefinedMetadata(final List<GNC_UserDefinedMetadata> feedback) {
-        this.userDefinedMetadata = feedback;
-    }
-
-    public void setUserDefinedMetadata(final GNC_UserDefinedMetadata userDefinedMetadata) {
-        if (this.userDefinedMetadata == null) {
-            this.userDefinedMetadata = new ArrayList<GNC_UserDefinedMetadata>();
-        }
-        this.userDefinedMetadata.add(userDefinedMetadata);
-    }
-
-    /**
      * Gets the value of the access property.
      * 
      * Objects of the following type(s) are allowed in the list
@@ -136,48 +104,12 @@ public class GNC_MaterialResource extends GNC_Resource implements org.opengis.me
      * 
      */
     @Override
-    public List<GNC_Access> getAccess() {
-        if (access == null) {
-            access = new ArrayList<GNC_Access>();
-        }
+    public GNC_Access getAccess() {
         return this.access;
     }
 
-    public void setAccess(final List<GNC_Access> access) {
+    public void setAccess(final GNC_Access access) {
         this.access = access;
     }
 
-    public void setAccess(final GNC_Access access) {
-        if (this.access == null) {
-            this.access = new ArrayList<GNC_Access>();
-        }
-        this.access.add(access);
-    }
-
-    /**
-     * Gets the value of the relationType property.
-     * 
-     * Objects of the following type(s) are allowed in the list
-     * {@link GNCRelationTypePropertyType }
-     * 
-     * 
-     */
-    @Override
-    public List<GNC_RelationType> getRelationType() {
-        if (relationType == null) {
-            relationType = new ArrayList<GNC_RelationType>();
-        }
-        return this.relationType;
-    }
-
-    public void setRelationType(final List<GNC_RelationType> relationType) {
-        this.relationType = relationType;
-    }
-
-    public void setRelationType(final GNC_RelationType relationType) {
-        if (this.relationType == null) {
-            this.relationType = new ArrayList<GNC_RelationType>();
-        }
-        this.relationType.add(relationType);
-    }
 }

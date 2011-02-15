@@ -21,11 +21,11 @@
 
 package org.opengis.metadata.geonetcab;
 
-import org.geotoolkit.geotnetcab.GNC_DocumentsTypeCode;
+import org.geotoolkit.geotnetcab.GNC_DocumentTypeCode;
 
 
 public interface GNC_Document extends GNC_MaterialResource {
 
-    GNC_DocumentsTypeCode getTypeOfDocuments();
+    GNC_DocumentTypeCode getTypeOfDocuments();
 
 }

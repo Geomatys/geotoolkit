@@ -56,18 +56,25 @@ import org.opengis.metadata.citation.OnlineResource;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "GNC_Resource_Type", propOrder = {
     "onlineInformation",
-    "reference"
+    "resourceType",
+    "relationType",
+    "socialBenefitArea"
 })
 @XmlSeeAlso({
-    GNC_OrganisationEntitie.class,
+    GNC_Organisation.class,
     GNC_MaterialResource.class
 })
 @XmlRootElement(name = "GNC_Resource", namespace = "http://www.mdweb-project.org/files/xsd")
 public class GNC_Resource extends DefaultDataIdentification implements org.opengis.metadata.geonetcab.GNC_Resource {
 
     private List<OnlineResource> onlineInformation;
-    private List<GNC_Resource> reference;
 
+    private GNC_ResourceTypeCode resourceType;
+
+    private GNC_RelationType relationType;
+
+    private GNC_ThematicTypeCode socialBenefitArea;
+    
     @XmlTransient
     private String href;
     
@@ -103,37 +110,6 @@ public class GNC_Resource extends DefaultDataIdentification implements org.openg
     }
 
     /**
-     * Gets the value of the references property.
-     * 
-     */
-    @Override
-    public List<GNC_Resource> getReference() {
-        if (reference == null) {
-            reference = new ArrayList<GNC_Resource>();
-        }
-        return this.reference;
-    }
-
-    /**
-     * Sets the value of the references property.
-     *
-     */
-    public void setReference(final List<GNC_Resource> reference) {
-        this.reference = reference;
-    }
-
-    /**
-     * Sets the value of the references property.
-     *
-     */
-    public void setReference(final GNC_Resource reference) {
-        if (this.reference == null) {
-            this.reference = new ArrayList<GNC_Resource>();
-        }
-        this.reference.add(reference);
-    }
-
-    /**
      * @return the href
      */
     @Override
@@ -146,5 +122,47 @@ public class GNC_Resource extends DefaultDataIdentification implements org.openg
      */
     public void setHref(String href) {
         this.href = href;
+    }
+
+    /**
+     * @return the resourceType
+     */
+    public GNC_ResourceTypeCode getResourceType() {
+        return resourceType;
+    }
+
+    /**
+     * @param resourceType the resourceType to set
+     */
+    public void setResourceType(GNC_ResourceTypeCode resourceType) {
+        this.resourceType = resourceType;
+    }
+
+    /**
+     * @return the relationType
+     */
+    public GNC_RelationType getRelationType() {
+        return relationType;
+    }
+
+    /**
+     * @param relationType the relationType to set
+     */
+    public void setRelationType(GNC_RelationType relationType) {
+        this.relationType = relationType;
+    }
+
+    /**
+     * @return the socialBenefitArea
+     */
+    public GNC_ThematicTypeCode getSocialBenefitArea() {
+        return socialBenefitArea;
+    }
+
+    /**
+     * @param socialBenefitArea the socialBenefitArea to set
+     */
+    public void setSocialBenefitArea(GNC_ThematicTypeCode socialBenefitArea) {
+        this.socialBenefitArea = socialBenefitArea;
     }
 }

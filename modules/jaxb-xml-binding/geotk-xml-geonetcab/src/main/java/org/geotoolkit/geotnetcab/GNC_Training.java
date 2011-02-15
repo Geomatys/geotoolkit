@@ -21,8 +21,6 @@
 
 package org.geotoolkit.geotnetcab;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -55,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "GNC_Training_Type", propOrder = {
     "duration",
     "typeOfTraining",
-    "trainingOn"
+    "deliveryMode"
 })
 @XmlRootElement(name = "GNC_Training", namespace = "http://www.mdweb-project.org/files/xsd")
 public class GNC_Training extends GNC_Product implements org.opengis.metadata.geonetcab.GNC_Training {
@@ -64,7 +62,7 @@ public class GNC_Training extends GNC_Product implements org.opengis.metadata.ge
     private GNC_TrainingDurationCode duration;
     @XmlElement(required = true)
     private GNC_TrainingTypeCode typeOfTraining;
-    private List<GNC_Software> trainingOn;
+    private GNC_DeliveryModeCode deliveryMode;
 
     /**
      * Gets the value of the duration property.
@@ -115,30 +113,17 @@ public class GNC_Training extends GNC_Product implements org.opengis.metadata.ge
     }
 
     /**
-     * Gets the value of the trainingOn property.
-     * 
-     * Objects of the following type(s) are allowed in the list
-     * {@link GNCSoftwarePropertyType }
-     * 
-     * 
+     * @return the deliveryMode
      */
-    @Override
-    public List<GNC_Software> getTrainingOn() {
-        if (trainingOn == null) {
-            trainingOn = new ArrayList<GNC_Software>();
-        }
-        return this.trainingOn;
+    public GNC_DeliveryModeCode getDeliveryMode() {
+        return deliveryMode;
     }
 
-    public void setTrainingOn(List<GNC_Software> trainingOn) {
-        this.trainingOn = trainingOn;
-    }
-
-    public void setTrainingOn(GNC_Software trainingOn) {
-        if (this.trainingOn == null) {
-            this.trainingOn = new ArrayList<GNC_Software>();
-        }
-        this.trainingOn.add(trainingOn);
+    /**
+     * @param deliveryMode the deliveryMode to set
+     */
+    public void setDeliveryMode(GNC_DeliveryModeCode deliveryMode) {
+        this.deliveryMode = deliveryMode;
     }
 
 }

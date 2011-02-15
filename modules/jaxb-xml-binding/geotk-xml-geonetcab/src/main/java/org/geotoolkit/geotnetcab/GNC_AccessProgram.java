@@ -2,8 +2,8 @@
  *    Geotoolkit.org - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004-2010, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2009-2010, Geomatys
+ *    (C) 2011, Open Source Geospatial Foundation (OSGeo)
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -19,13 +19,20 @@
  *    OpenGIS consortium's work is fully acknowledged here.
  */
 
-package org.opengis.metadata.geonetcab;
+package org.geotoolkit.geotnetcab;
 
-import org.geotoolkit.geotnetcab.GNC_OrganisationTypeCode;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlType;
 
-
-public interface GNC_OrganisationEntitie extends GNC_Resource {
-
-    GNC_OrganisationTypeCode getTypeOfOrganisation();
+/**
+ *
+ * @author Guilhem Legal (Geomatys)
+ */
+@XmlAccessorType(XmlAccessType.FIELD)
+@XmlType(name = "GNC_AccessProgram_Type")
+@XmlRootElement(name = "GNC_AccessProgram", namespace = "http://www.mdweb-project.org/files/xsd")
+public class GNC_AccessProgram extends GNC_MaterialResource implements org.opengis.metadata.geonetcab.GNC_AccessProgram {
 
 }
