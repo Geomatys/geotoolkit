@@ -19,7 +19,7 @@ package org.geotoolkit.geonetcab;
 import java.net.URISyntaxException;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import java.util.Date;
-import org.geotoolkit.geotnetcab.GNC_UsersRestrictions;
+import org.geotoolkit.geotnetcab.GNC_UserRestriction;
 import java.net.MalformedURLException;
 import org.geotoolkit.geotnetcab.GNC_Product;
 import org.geotoolkit.geotnetcab.GNC_Document;
@@ -181,7 +181,7 @@ public class GNCXMLBindingTest {
         ac.setNameOfConditions("names");
         ac.setNonCommercialUse(Boolean.TRUE);
         ac.setThematicUsage(GNC_ThematicTypeCode.AGRICULTURE);
-        GNC_UsersRestrictions urr = new GNC_UsersRestrictions();
+        GNC_UserRestriction urr = new GNC_UserRestriction();
         urr.setCategoryOfUsers(GNC_OrganisationTypeCode.EXPERTS);
         urr.setOtherConstraints("confidential");
         urr.setExtentOfRestrictions(new DefaultGeographicDescription());
@@ -240,7 +240,7 @@ public class GNCXMLBindingTest {
                            "                                <ns8:GNC_ThematicTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_ThematicTypeCode\" codeListValue=\"Agriculture\"/>" +'\n' +
                            "                            </ns8:thematicUsage>" +'\n' +
                            "                            <ns8:usersRestrictions>" +'\n' +
-                           "                                <ns8:GNC_UsersRestrictions>" +'\n' +
+                           "                                <ns8:GNC_UserRestriction>" +'\n' +
                            "                                    <ns8:categoryOfUsers>" +'\n' +
                            "                                        <ns8:GNC_OrganisationTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" +'\n' +
                            "                                    </ns8:categoryOfUsers>" +'\n' +
@@ -250,7 +250,7 @@ public class GNCXMLBindingTest {
                            "                                    <ns8:otherConstraints>" +'\n' +
                            "                                        <gco:CharacterString>confidential</gco:CharacterString>" +'\n' +
                            "                                    </ns8:otherConstraints>" +'\n' +
-                           "                                </ns8:GNC_UsersRestrictions>" +'\n' +
+                           "                                </ns8:GNC_UserRestriction>" +'\n' +
                            "                            </ns8:usersRestrictions>" +'\n' +
                            "                        </ns8:GNC_AccessConstraints>" +'\n' +
                            "                    </ns8:detailAccessConstraints>" +'\n' +
@@ -364,7 +364,7 @@ public class GNCXMLBindingTest {
                 + "                                        <ns8:GNC_ThematicTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_ThematicTypeCode\" codeListValue=\"Agriculture\"/>" + '\n'
                 + "                                    </ns8:thematicUsage>" + '\n'
                 + "                                    <ns8:usersRestrictions>" + '\n'
-                + "                                        <ns8:GNC_UsersRestrictions>" + '\n'
+                + "                                        <ns8:GNC_UserRestriction>" + '\n'
                 + "                                            <ns8:categoryOfUsers>" + '\n'
                 + "                                                <ns8:GNC_OrganisationTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" + '\n'
                 + "                                            </ns8:categoryOfUsers>" + '\n'
@@ -374,7 +374,7 @@ public class GNCXMLBindingTest {
                 + "                                            <ns8:otherConstraints>" + '\n'
                 + "                                                <gco:CharacterString>confidential</gco:CharacterString>" + '\n'
                 + "                                            </ns8:otherConstraints>" + '\n'
-                + "                                        </ns8:GNC_UsersRestrictions>" + '\n'
+                + "                                        </ns8:GNC_UserRestriction>" + '\n'
                 + "                                    </ns8:usersRestrictions>" + '\n'
                 + "                                </ns8:GNC_AccessConstraints>" + '\n'
                 + "                            </ns8:detailAccessConstraints>" + '\n'
@@ -397,7 +397,7 @@ public class GNCXMLBindingTest {
         ac.setNameOfConditions("names");
         ac.setNonCommercialUse(Boolean.TRUE);
         ac.setThematicUsage(GNC_ThematicTypeCode.AGRICULTURE);
-        GNC_UsersRestrictions urr = new GNC_UsersRestrictions();
+        GNC_UserRestriction urr = new GNC_UserRestriction();
         urr.setCategoryOfUsers(GNC_OrganisationTypeCode.EXPERTS);
         urr.setOtherConstraints("confidential");
         urr.setExtentOfRestrictions(new DefaultGeographicDescription());

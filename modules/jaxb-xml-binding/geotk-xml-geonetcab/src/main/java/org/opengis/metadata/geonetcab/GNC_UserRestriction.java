@@ -26,7 +26,7 @@ import org.geotoolkit.geotnetcab.GNC_OrganisationTypeCode;
 import org.opengis.metadata.extent.GeographicDescription;
 
 
-public interface GNC_UsersRestrictions {
+public interface GNC_UserRestriction {
 
     GNC_OrganisationTypeCode getCategoryOfUsers();
 

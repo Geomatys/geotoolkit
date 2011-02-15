@@ -37,5 +37,5 @@ public interface GNC_AccessConstraints {
     
     List<GNC_ThematicTypeCode> getThematicUsage();
 
-    List<? extends GNC_UsersRestrictions> getUsersRestrictions();
+    List<? extends GNC_UserRestriction> getUsersRestrictions();
 }

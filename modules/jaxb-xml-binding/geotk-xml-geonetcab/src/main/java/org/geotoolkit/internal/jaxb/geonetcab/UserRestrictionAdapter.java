@@ -19,7 +19,7 @@
 package org.geotoolkit.internal.jaxb.geonetcab;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.geotnetcab.GNC_UsersRestrictions;
+import org.geotoolkit.geotnetcab.GNC_UserRestriction;
 import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
 
 /**
@@ -30,20 +30,20 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.16
  * @module pending
  */
-public class UsersRestrictionsAdapter extends MetadataAdapter<UsersRestrictionsAdapter, GNC_UsersRestrictions>
+public class UserRestrictionAdapter extends MetadataAdapter<UserRestrictionAdapter, GNC_UserRestriction>
 {
     /**
      * Empty constructor for JAXB only.
      */
-    public UsersRestrictionsAdapter() {
+    public UserRestrictionAdapter() {
     }
 
     /**
-     * Wraps an ContentInformation value with a {@code GNC_UsersRestrictions} element at marshalling time.
+     * Wraps an ContentInformation value with a {@code GNC_UserRestriction} element at marshalling time.
      *
      * @param metadata The metadata value to marshall.
      */
-    private UsersRestrictionsAdapter(final GNC_UsersRestrictions metadata) {
+    private UserRestrictionAdapter(final GNC_UserRestriction metadata) {
         super(metadata);
     }
 
@@ -54,8 +54,8 @@ public class UsersRestrictionsAdapter extends MetadataAdapter<UsersRestrictionsA
      * @return The adapter which wraps the metadata value.
      */
     @Override
-    protected UsersRestrictionsAdapter wrap(final GNC_UsersRestrictions value) {
-        return new UsersRestrictionsAdapter(value);
+    protected UserRestrictionAdapter wrap(final GNC_UserRestriction value) {
+        return new UserRestrictionAdapter(value);
     }
 
     /**
@@ -65,8 +65,8 @@ public class UsersRestrictionsAdapter extends MetadataAdapter<UsersRestrictionsA
      * @return The metadata to be marshalled.
      */
     @Override
-    @XmlElement(name="GNC_UsersRestrictions", namespace="http://www.mdweb-project.org/files/xsd")
-    public GNC_UsersRestrictions getElement() {
+    @XmlElement(name="GNC_UserRestriction", namespace="http://www.mdweb-project.org/files/xsd")
+    public GNC_UserRestriction getElement() {
         return metadata;
     }
 
@@ -76,7 +76,7 @@ public class UsersRestrictionsAdapter extends MetadataAdapter<UsersRestrictionsA
      *
      * @param metadata The unmarshalled metadata.
      */
-    public void setElement(final GNC_UsersRestrictions metadata) {
+    public void setElement(final GNC_UserRestriction metadata) {
         this.metadata = metadata;
     }
 }

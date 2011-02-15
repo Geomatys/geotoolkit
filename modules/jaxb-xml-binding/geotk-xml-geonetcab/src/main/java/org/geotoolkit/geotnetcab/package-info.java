@@ -55,7 +55,7 @@
     @XmlJavaTypeAdapter(TrainingAdapter.class),
     @XmlJavaTypeAdapter(ResourceTypeAdapter.class),
     @XmlJavaTypeAdapter(DeliveryModeCodeAdapter.class),
-    @XmlJavaTypeAdapter(UsersRestrictionsAdapter.class),
+    @XmlJavaTypeAdapter(UserRestrictionAdapter.class),
     @XmlJavaTypeAdapter(URIAdapter.class),
     @XmlJavaTypeAdapter(DateAdapter.class),
 

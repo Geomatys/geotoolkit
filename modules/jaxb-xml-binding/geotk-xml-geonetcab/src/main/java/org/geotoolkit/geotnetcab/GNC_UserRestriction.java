@@ -32,12 +32,12 @@ import org.opengis.metadata.extent.GeographicDescription;
 
 
 /**
- * <p>Java class for GNC_UsersRestrictions_Type complex type.
+ * <p>Java class for GNC_UserRestriction_Type complex type.
  * 
  * <p>The following schema fragment specifies the expected content contained within this class.
  * 
  * <pre>
- * &lt;complexType name="GNC_UsersRestrictions_Type">
+ * &lt;complexType name="GNC_UserRestriction_Type">
  *   &lt;complexContent>
  *     &lt;extension base="{http://www.isotc211.org/2005/gco}AbstractObject_Type">
  *       &lt;sequence>
@@ -53,12 +53,12 @@ import org.opengis.metadata.extent.GeographicDescription;
  * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-@XmlType(name = "GNC_UsersRestrictions_Type", propOrder = {
+@XmlType(name = "GNC_UserRestriction_Type", propOrder = {
     "categoryOfUsers",
     "extentOfRestrictions",
     "otherConstraints"
 })
-public class GNC_UsersRestrictions implements org.opengis.metadata.geonetcab.GNC_UsersRestrictions {
+public class GNC_UserRestriction implements org.opengis.metadata.geonetcab.GNC_UserRestriction {
 
     @XmlElement(required = true)
     private GNC_OrganisationTypeCode categoryOfUsers;
@@ -146,8 +146,8 @@ public class GNC_UsersRestrictions implements org.opengis.metadata.geonetcab.GNC
         if (this == obj) {
             return true;
         }
-        if (obj instanceof GNC_UsersRestrictions) {
-            GNC_UsersRestrictions that = (GNC_UsersRestrictions) obj;
+        if (obj instanceof GNC_UserRestriction) {
+            GNC_UserRestriction that = (GNC_UserRestriction) obj;
             return Utilities.equals(this.categoryOfUsers, that.categoryOfUsers) &&
                    Utilities.equals(this.extentOfRestrictions, that.extentOfRestrictions) &&
                    Utilities.equals(this.otherConstraints, that.otherConstraints);

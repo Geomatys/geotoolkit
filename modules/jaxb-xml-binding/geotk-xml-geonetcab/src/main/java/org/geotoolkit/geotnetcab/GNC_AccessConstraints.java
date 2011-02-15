@@ -73,7 +73,7 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
     private Boolean nonCommercialUse;
     @XmlElement(required = true)
     private List<GNC_ThematicTypeCode> thematicUsage;
-    private List<GNC_UsersRestrictions> usersRestrictions;
+    private List<GNC_UserRestriction> usersRestrictions;
 
     /**
      * Gets the value of the dataAccessConditionPortal property.
@@ -181,25 +181,25 @@ public class GNC_AccessConstraints implements org.opengis.metadata.geonetcab.GNC
      * Gets the value of the userRestrictions property.
      * 
      * Objects of the following type(s) are allowed in the list
-     * {@link GNCUsersRestrictionsPropertyType }
+     * {@link GNCUserRestrictionPropertyType }
      * 
      * 
      */
     @Override
-    public List<GNC_UsersRestrictions> getUsersRestrictions() {
+    public List<GNC_UserRestriction> getUsersRestrictions() {
         if (usersRestrictions == null) {
-            usersRestrictions = new ArrayList<GNC_UsersRestrictions>();
+            usersRestrictions = new ArrayList<GNC_UserRestriction>();
         }
         return this.usersRestrictions;
     }
 
-    public void setUsersRestrictions(final List<GNC_UsersRestrictions> usersRestrictions) {
+    public void setUsersRestrictions(final List<GNC_UserRestriction> usersRestrictions) {
         this.usersRestrictions = usersRestrictions;
     }
 
-    public void setUsersRestrictions(final GNC_UsersRestrictions usersRestrictions) {
+    public void setUsersRestrictions(final GNC_UserRestriction usersRestrictions) {
         if (this.usersRestrictions == null) {
-            this.usersRestrictions = new ArrayList<GNC_UsersRestrictions>();
+            this.usersRestrictions = new ArrayList<GNC_UserRestriction>();
         }
         this.usersRestrictions.add(usersRestrictions);
     }

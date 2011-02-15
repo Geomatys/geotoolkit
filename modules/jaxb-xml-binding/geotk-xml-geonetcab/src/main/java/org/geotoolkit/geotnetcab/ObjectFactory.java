@@ -97,11 +97,11 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link GNCUsersRestrictionsType }
+     * Create an instance of {@link GNCUserRestrictionType }
      * 
      */
-    public GNC_UsersRestrictions createGNCUsersRestrictionsType() {
-        return new GNC_UsersRestrictions();
+    public GNC_UserRestriction createGNCUserRestrictionType() {
+        return new GNC_UserRestriction();
     }
 
     /**
