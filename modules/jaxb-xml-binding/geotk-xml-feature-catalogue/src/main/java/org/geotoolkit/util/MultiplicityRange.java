@@ -9,7 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.primitive.IntegerAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_Integer;
 import org.geotoolkit.util.Utilities;
 
 
@@ -43,7 +43,7 @@ import org.geotoolkit.util.Utilities;
 })
 public class MultiplicityRange {
 
-    @XmlJavaTypeAdapter(IntegerAdapter.class)
+    @XmlJavaTypeAdapter(GO_Integer.class)
     @XmlElement(required = true)
     private Integer lower;
     

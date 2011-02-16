@@ -11,7 +11,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
 import org.geotoolkit.resources.jaxb.service.code.CouplingTypeAdapter;
-import org.geotoolkit.internal.jaxb.text.StringAdapter;
+import org.geotoolkit.internal.jaxb.gco.StringAdapter;
 import org.opengis.metadata.constraint.Constraints;
 import org.opengis.metadata.distribution.StandardOrderProcess;
 import org.opengis.metadata.extent.Extent;

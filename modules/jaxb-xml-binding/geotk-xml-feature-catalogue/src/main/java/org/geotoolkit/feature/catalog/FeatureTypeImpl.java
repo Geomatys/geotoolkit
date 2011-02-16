@@ -19,7 +19,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.text.GenericNameAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_GenericName;
 import org.geotoolkit.resources.jaxb.feature.catalog.FeatureCatalogueAdapter;
 import org.geotoolkit.util.Utilities;
 import org.opengis.util.LocalName;
@@ -90,7 +90,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     @XmlSchemaType(name = "ID")
     private String id;
 
-    @XmlJavaTypeAdapter(GenericNameAdapter.class)
+    @XmlJavaTypeAdapter(GO_GenericName.class)
     @XmlElement(required = true)
     private LocalName typeName;
     private String definition;
@@ -98,7 +98,7 @@ public class FeatureTypeImpl implements FeatureType, Referenceable {
     @XmlElement(required = true)
     private Boolean isAbstract;
 
-    @XmlJavaTypeAdapter(GenericNameAdapter.class)
+    @XmlJavaTypeAdapter(GO_GenericName.class)
     private List<LocalName> aliases;
     private List<InheritanceRelation> inheritsFrom;
     private List<InheritanceRelation> inheritsTo;

@@ -9,7 +9,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.text.StringAdapter;
+import org.geotoolkit.internal.jaxb.gco.StringAdapter;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.service.OperationMetadata;
 import org.opengis.service.Parameter;

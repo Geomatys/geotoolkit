@@ -16,7 +16,7 @@ xmlns = {
     // ISO 19115 adapter (metadata module)
     @XmlJavaTypeAdapter(ScopedNameAdapter.class),
     @XmlJavaTypeAdapter(LocalNameAdapter.class),
-    @XmlJavaTypeAdapter(GenericNameAdapter.class),
+    @XmlJavaTypeAdapter(GO_GenericName.class),
     @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
     @XmlJavaTypeAdapter(CI_Citation.class),
     // ISO 19110 adapter
@@ -41,17 +41,17 @@ xmlns = {
     @XmlJavaTypeAdapter(MultiplicityAdapter.class),
     @XmlJavaTypeAdapter(MultiplicityRangeAdapter.class),
     @XmlJavaTypeAdapter(StringAdapter.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
-    @XmlJavaTypeAdapter(DoubleAdapter.class),
-    @XmlJavaTypeAdapter(type=double.class, value=DoubleAdapter.class),
-    @XmlJavaTypeAdapter(FloatAdapter.class),
-    @XmlJavaTypeAdapter(type=float.class, value=FloatAdapter.class),
-    @XmlJavaTypeAdapter(IntegerAdapter.class),
-    @XmlJavaTypeAdapter(type=int.class, value=IntegerAdapter.class),
-    @XmlJavaTypeAdapter(LongAdapter.class),
-    @XmlJavaTypeAdapter(type=long.class, value=LongAdapter.class),
-    @XmlJavaTypeAdapter(BooleanAdapter.class),
-    @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
+    @XmlJavaTypeAdapter(GO_DateTime.class),
+    @XmlJavaTypeAdapter(GO_Decimal.class),
+    @XmlJavaTypeAdapter(type=double.class, value=GO_Decimal.class),
+    @XmlJavaTypeAdapter(GO_Decimal.AsFloat.class),
+    @XmlJavaTypeAdapter(type=float.class, value=GO_Decimal.AsFloat.class),
+    @XmlJavaTypeAdapter(GO_Integer.class),
+    @XmlJavaTypeAdapter(type=int.class, value=GO_Integer.class),
+    @XmlJavaTypeAdapter(GO_Integer.AsLong.class),
+    @XmlJavaTypeAdapter(type=long.class, value=GO_Integer.AsLong.class),
+    @XmlJavaTypeAdapter(GO_Boolean.class),
+    @XmlJavaTypeAdapter(type=boolean.class, value=GO_Boolean.class)
 })
 package org.geotoolkit.feature.catalog;
 
@@ -64,12 +64,10 @@ import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
-import org.geotoolkit.internal.jaxb.uom.*;
-import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.gco.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.code.*;
-import org.geotoolkit.internal.jaxb.primitive.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityAdapter;
 import org.geotoolkit.resources.jaxb.feature.catalog.MultiplicityRangeAdapter;
 

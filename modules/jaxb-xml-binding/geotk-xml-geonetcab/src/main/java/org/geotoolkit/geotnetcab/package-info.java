@@ -22,8 +22,8 @@
 @XmlSchema(namespace = "http://www.mdweb-project.org/files/xsd", elementFormDefault = XmlNsForm.QUALIFIED)
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(InternationalStringAdapter.class),
+    @XmlJavaTypeAdapter(StringAdapter.class),
     @XmlJavaTypeAdapter(CI_OnlineResource.class),
     @XmlJavaTypeAdapter(CI_ResponsibleParty.class),
     @XmlJavaTypeAdapter(EX_GeographicExtent.class),
@@ -56,11 +56,11 @@
     @XmlJavaTypeAdapter(ResourceTypeAdapter.class),
     @XmlJavaTypeAdapter(DeliveryModeCodeAdapter.class),
     @XmlJavaTypeAdapter(UserRestrictionAdapter.class),
-    @XmlJavaTypeAdapter(URIAdapter.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(GO_URL.class),
+    @XmlJavaTypeAdapter(GO_DateTime.class),
 
     // Primitive type handling
-    @XmlJavaTypeAdapter(BooleanAdapter.class), @XmlJavaTypeAdapter(type=boolean.class, value=BooleanAdapter.class)
+    @XmlJavaTypeAdapter(GO_Boolean.class), @XmlJavaTypeAdapter(type=boolean.class, value=GO_Boolean.class)
 })
 package org.geotoolkit.geotnetcab;
 
@@ -73,8 +73,8 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.internal.jaxb.geonetcab.*;
-import org.geotoolkit.internal.jaxb.primitive.BooleanAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
-import org.geotoolkit.internal.jaxb.uom.DateAdapter;
-
+import org.geotoolkit.internal.jaxb.gco.GO_Boolean;
+import org.geotoolkit.internal.jaxb.gco.InternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.gco.StringAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_DateTime;
+import org.geotoolkit.internal.jaxb.gmd.GO_URL;

@@ -31,7 +31,7 @@
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(CI_Contact.class),
-    @XmlJavaTypeAdapter(DateAdapter.class),
+    @XmlJavaTypeAdapter(GO_DateTime.class),
     @XmlJavaTypeAdapter(MD_ScopeCode.class),
     @XmlJavaTypeAdapter(EX_Extent.class),
     @XmlJavaTypeAdapter(DQ_Result.class),
@@ -58,6 +58,6 @@ import org.geotoolkit.internal.jaxb.metadata.CI_ResponsibleParty;
 import org.geotoolkit.internal.jaxb.metadata.DQ_Result;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.uom.DateAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_DateTime;
 import org.geotoolkit.resources.jaxb.service.ServiceTypeAdapter;
 

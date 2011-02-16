@@ -7,7 +7,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.text.GenericNameAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_GenericName;
 import org.geotoolkit.util.Utilities;
 import org.opengis.service.ServiceType;
 import org.opengis.util.LocalName;
@@ -36,7 +36,7 @@ import org.opengis.util.LocalName;
 @XmlType(name = "SV_ServiceType_Type")
 public class ServiceTypeImpl implements ServiceType {
 
-    @XmlJavaTypeAdapter(GenericNameAdapter.class)
+    @XmlJavaTypeAdapter(GO_GenericName.class)
     @XmlElement
     private LocalName serviceType;
 

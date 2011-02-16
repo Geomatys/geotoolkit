@@ -24,8 +24,8 @@
 })
 @XmlAccessorType(XmlAccessType.NONE)
 @XmlJavaTypeAdapters({
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class),
+    @XmlJavaTypeAdapter(InternationalStringAdapter.class),
+    @XmlJavaTypeAdapter(StringAdapter.class),
     @XmlJavaTypeAdapter(CI_Citation.class),
     @XmlJavaTypeAdapter(MD_KeywordTypeCode.class),
     @XmlJavaTypeAdapter(MD_Keywords.class),
@@ -44,5 +44,5 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.text.AnchoredInternationalStringAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
+import org.geotoolkit.internal.jaxb.gco.InternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.gco.StringAdapter;

@@ -15,16 +15,16 @@ xmlns = {
 @XmlJavaTypeAdapters({
     @XmlJavaTypeAdapter(ScopedNameAdapter.class),
     @XmlJavaTypeAdapter(LocalNameAdapter.class),
-    @XmlJavaTypeAdapter(GenericNameAdapter.class),
+    @XmlJavaTypeAdapter(GO_GenericName.class),
     // Primitive type handling
     @XmlJavaTypeAdapter(CharSequenceAdapter.class),
     @XmlJavaTypeAdapter(type=CharSequence.class, value=CharSequenceAdapter.class),
-    @XmlJavaTypeAdapter(DoubleAdapter.class),
-    @XmlJavaTypeAdapter(type=double.class, value=DoubleAdapter.class),
-    @XmlJavaTypeAdapter(FloatAdapter.class),
-    @XmlJavaTypeAdapter(type=float.class, value=FloatAdapter.class),
-    @XmlJavaTypeAdapter(LongAdapter.class),
-    @XmlJavaTypeAdapter(type=long.class, value=LongAdapter.class)
+    @XmlJavaTypeAdapter(GO_Decimal.class),
+    @XmlJavaTypeAdapter(type=double.class, value=GO_Decimal.class),
+    @XmlJavaTypeAdapter(GO_Decimal.AsFloat.class),
+    @XmlJavaTypeAdapter(type=float.class, value=GO_Decimal.AsFloat.class),
+    @XmlJavaTypeAdapter(GO_Integer.AsLong.class),
+    @XmlJavaTypeAdapter(type=long.class, value=GO_Integer.AsLong.class)
 })
 package org.geotoolkit.util;
 
@@ -38,6 +38,4 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 import org.geotoolkit.internal.jaxb.metadata.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.*;
 import org.geotoolkit.resources.jaxb.feature.catalog.code.*;
-import org.geotoolkit.internal.jaxb.primitive.*;
-import org.geotoolkit.internal.jaxb.text.*;
-
+import org.geotoolkit.internal.jaxb.gco.*;
