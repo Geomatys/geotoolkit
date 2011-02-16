@@ -36,7 +36,7 @@ import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
-import org.geotoolkit.internal.jaxb.uom.Measure;
+import org.geotoolkit.internal.jaxb.gco.Measure;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.referencing.ComparisonMode;

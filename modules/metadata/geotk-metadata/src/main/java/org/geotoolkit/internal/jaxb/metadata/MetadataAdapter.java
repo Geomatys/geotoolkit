@@ -28,6 +28,33 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
 
 /**
  * Base class for adapters from GeoAPI interfaces to their Geotk implementation.
+ * Implementation subclasses are actually both JAXB adapters and wrappers around
+ * the value to be marshalled. Wrappers exist because ISO 19139 have the strange
+ * habit to wrap every properties in an extra level, for example:
+ *
+ * {@preformat xml
+ *   <CI_ResponsibleParty>
+ *     <contactInfo>
+ *       <CI_Contact>
+ *         ...
+ *       </CI_Contact>
+ *     </contactInfo>
+ *   </CI_ResponsibleParty>
+ * }
+ *
+ * The {@code </CI_Contact>} level is not really necessary, and JAXB is not designed for inserting
+ * such level since it is not the usual way to write XML. In order to get this output with JAXB, we
+ * have to wrap metadata object in an additional object. So each {@code MetadataAdapter} subclass
+ * is both a JAXB adapter and a wrapper. We have merged those functionalities in order to avoid
+ * doubling the amount of classes, which is already large.
+ * <p>
+ * In ISO 19139 terminology:
+ * <ul>
+ *   <li>the public classes defined in the {@code org.geotoolkit.metadata.iso} packages are defined
+ *       as {@code Foo_Type} in ISO 19139, where <var>Foo</var> is the ISO name of a class.</li>
+ *   <li>the {@code MetadataAdapter} subclasses are defined as {@code Foo_PropertyType} in
+ *       ISO 19139 schemas.</li>
+ * </ul>
  *
  * @param <ValueType> The adapter subclass.
  * @param <BoundType> The interface being adapted.

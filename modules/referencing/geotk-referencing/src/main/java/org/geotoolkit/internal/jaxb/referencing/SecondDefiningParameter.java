@@ -25,7 +25,7 @@ import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.uom.Measure;
+import org.geotoolkit.internal.jaxb.gco.Measure;
 
 
 /**

@@ -49,7 +49,6 @@ import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.jaxb.MarshalContext;
-import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
 import org.geotoolkit.internal.jaxb.code.LanguageAdapter;
 import org.geotoolkit.xml.Namespaces;
 
@@ -408,7 +407,6 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      */
     @Override
     @XmlElement(name = "dateStamp", required = true)
-    @XmlJavaTypeAdapter(DateTimeAdapter.class)
     public synchronized Date getDateStamp() {
         return (dateStamp!=Long.MIN_VALUE) ? new Date(dateStamp) : (Date)null;
     }

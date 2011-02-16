@@ -30,7 +30,7 @@ import org.opengis.metadata.identification.Resolution;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
-import org.geotoolkit.internal.jaxb.uom.DistanceAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_Distance;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 
@@ -119,7 +119,7 @@ public class DefaultResolution extends MetadataEntity implements Resolution {
      */
     @Override
     @ValueRange(minimum=0, isMinIncluded=false)
-    @XmlJavaTypeAdapter(DistanceAdapter.class)
+    @XmlJavaTypeAdapter(GO_Distance.class)
     @XmlElement(name = "distance")
     public synchronized Double getDistance() {
         return distance;

@@ -18,8 +18,8 @@
 package org.geotoolkit.internal.jaxb;
 
 import java.util.Map;
-import java.util.Arrays;
 import java.util.Locale;
+import java.util.TimeZone;
 import org.geotoolkit.xml.ObjectConverters;
 
 
@@ -53,14 +53,18 @@ public final class MarshalContext {
 
     /**
      * The locale to use for marshalling, or {@code null} if no locale were explicitly specified.
-     * The locale to use is the first element in the array. Other elements were values previously
-     * pushed, to be pulled later.
-     * <p>
-     * This array is usually very short (typically no more than 3 elements).
      *
      * @since 3.17
      */
-    private Locale[] locale;
+    private Locale locale;
+
+    /**
+     * The timezone, or {@code null} if unspecified.
+     * In the later case, an implementation-default (typically UTC) timezone is used.
+     *
+     * @since 3.17
+     */
+    private TimeZone timezone;
 
     /**
      * {@code true} if a marshalling process is under progress.
@@ -69,9 +73,32 @@ public final class MarshalContext {
     private boolean isMarshalling;
 
     /**
-     * Do not allow instantiation outside this class.
+     * The context which was previously used. This form a linked list allowing
+     * to push properties (e.g. {@link #pushLocale(Locale)}) and pull back the
+     * context to its previous state once finished.
+     */
+    private final MarshalContext previous;
+
+    /**
+     * Creates a new context. The new context is immediately set in the {@link #CURRENT} field.
      */
     private MarshalContext() {
+        previous = CURRENT.get();
+        CURRENT.set(this);
+    }
+
+    /**
+     * Inherits all configuration from the previous context, if any.
+     */
+    private void inherit() {
+        final MarshalContext previous = this.previous;
+        if (previous != null) {
+            converters    = previous.converters;
+            schemas       = previous.schemas;
+            locale        = previous.locale;
+            timezone      = previous.timezone;
+            isMarshalling = previous.isMarshalling;
+        }
     }
 
     /**
@@ -116,12 +143,23 @@ public final class MarshalContext {
      * Returns whatever a marshalling process is under progress.
      *
      * @return {@code true} if a marshalling process is in progress.
-     *
-     * @see #setMarshalling()
      */
     public static boolean isMarshalling() {
         final MarshalContext current = CURRENT.get();
         return (current != null) ? current.isMarshalling : false;
+    }
+
+    /**
+     * Returns the timezone, or {@code null} if none were explicitely defined.
+     * In the later case, an implementation-default (typically UTC) timezone is used.
+     *
+     * @return The timezone, or {@code null} if unspecified.
+     *
+     * @since 3.17
+     */
+    public static TimeZone getTimeZone() {
+        final MarshalContext current = CURRENT.get();
+        return (current != null) ? current.timezone : null;
     }
 
     /**
@@ -138,14 +176,7 @@ public final class MarshalContext {
      */
     public static Locale getLocale() {
         final MarshalContext current = CURRENT.get();
-        return (current != null) ? getLocale(current.locale) : null;
-    }
-
-    /**
-     * Returns the first locale from the given array, or {@code null} if none.
-     */
-    private static Locale getLocale(final Locale[] locale) {
-        return (locale != null && locale.length != 0) ? locale[0] : null;
+        return (current != null) ? current.locale : null;
     }
 
     /**
@@ -156,17 +187,11 @@ public final class MarshalContext {
      *
      * @since 3.17
      */
-    public static void pushLocale(Locale locale) {
-        final MarshalContext current = current();
-        final Locale[] array = current.locale;
-        if (locale != null || (locale = getLocale(array)) != null) {
-            final int length = (array != null) ? array.length : 0;
-            final Locale[] copy = new Locale[length + 1];
-            if (array != null) {
-                System.arraycopy(array, 0, copy, 1, length);
-            }
-            copy[0] = locale;
-            current.locale = copy;
+    public static void pushLocale(final Locale locale) {
+        final MarshalContext current = new MarshalContext();
+        current.inherit();
+        if (locale != null) {
+            current.locale = locale;
         }
     }
 
@@ -178,24 +203,8 @@ public final class MarshalContext {
     public static void pullLocale() {
         final MarshalContext current = CURRENT.get();
         if (current != null) {
-            final Locale[] array = current.locale;
-            if (array != null) {
-                final int length = array.length;
-                current.locale = (length >= 2) ? Arrays.copyOfRange(array, 1, length) : null;
-            }
+            current.finish();
         }
-    }
-
-    /**
-     * Returns the {@code MarshalContext} for the current thread, creating a new one if necessary.
-     */
-    private static MarshalContext current() {
-        MarshalContext current = CURRENT.get();
-        if (current == null) {
-            current = new MarshalContext();
-            CURRENT.set(current);
-        }
-        return current;
     }
 
     /**
@@ -213,50 +222,38 @@ public final class MarshalContext {
      *
      * @param  converters The converters in use.
      * @param  schemas    The schemas root URL, or {@code null} if none.
-     * @param  locale     The locale, or {@code null} if none.
+     * @param  timezone   The timezone, or {@code null} if unspecified.
+     * @param  locale     The locale, or {@code null} if unspecified.
      * @return The context on which to invoke {@link #finish()} when the (un)marshalling is finished.
      */
     public static MarshalContext begin(final ObjectConverters converters,
-            final Map<String,String> schemas, final Locale locale)
+            final Map<String,String> schemas, final Locale locale, final TimeZone timezone)
     {
-        final MarshalContext current = current();
+        final MarshalContext current = new MarshalContext();
         current.converters = converters;
         current.schemas    = schemas; // NOSONAR: No clone, because this method is internal.
-        current.locale     = (locale != null) ? new Locale[] {locale} : null;
+        current.locale     = locale;
+        current.timezone   = timezone;
         return current;
     }
 
     /**
-     * Declares that the work which is about to begin is a marshalling, and
-     * returns the previous value of the {@link #isMarshalling()} flag.
-     *
-     * @return The old value.
+     * Declares that the work which is about to begin is a marshalling.
      *
      * @see #isMarshalling()
      */
-    public boolean setMarshalling() {
-        final boolean old = isMarshalling;
+    public void setMarshalling() {
         isMarshalling = true;
-        return old;
-    }
-
-    /**
-     * Invoked in a {@code finally} block when a marshalling process is finished.
-     *
-     * @param marshalling The value to restore for the {@link #isMarshalling()} flag.
-     */
-    public void finish(final boolean marshalling) {
-        isMarshalling = marshalling;
-        finish();
     }
 
     /**
      * Invoked in a {@code finally} block when a unmarshalling process is finished.
      */
     public void finish() {
-        converters = null;
-        locale     = null;
-        schemas    = null;
-        // Intentionally leave isMarshalling unmodified.
+        if (previous != null) {
+            CURRENT.set(previous);
+        } else {
+            CURRENT.remove();
+        }
     }
 }

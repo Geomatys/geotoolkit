@@ -36,7 +36,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.internal.jaxb.uom.DateAsLongAdapter;
+import org.geotoolkit.internal.jaxb.gco.DateAsLongAdapter;
 import org.geotoolkit.lang.Immutable;
 
 

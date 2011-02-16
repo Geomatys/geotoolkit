@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.uom.MeasureAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_Measure;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
@@ -143,7 +143,7 @@ public class DefaultDimension extends MetadataEntity implements Dimension {
      */
     @Override
     @ValueRange(minimum=0, isMinIncluded=false)
-    @XmlJavaTypeAdapter(MeasureAdapter.class)
+    @XmlJavaTypeAdapter(GO_Measure.class)
     @XmlElement(name = "resolution")
     public synchronized Double getResolution() {
         return resolution;

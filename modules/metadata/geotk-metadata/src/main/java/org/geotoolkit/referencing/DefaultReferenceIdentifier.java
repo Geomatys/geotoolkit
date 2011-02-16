@@ -41,8 +41,8 @@ import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.internal.jaxb.metadata.CI_Citation;
-import org.geotoolkit.internal.jaxb.text.AnchoredStringAdapter;
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
+import org.geotoolkit.internal.jaxb.gco.StringAdapter;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
@@ -75,7 +75,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      * @see #getCode()
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
+    @XmlJavaTypeAdapter(StringAdapter.class)
     final String code;
 
     /**
@@ -85,7 +85,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
      * @see #getCodeSpace()
      */
     @XmlElement(required = true, namespace = Namespaces.GMD)
-    @XmlJavaTypeAdapter(AnchoredStringAdapter.class)
+    @XmlJavaTypeAdapter(StringAdapter.class)
     final String codeSpace;
 
     /**

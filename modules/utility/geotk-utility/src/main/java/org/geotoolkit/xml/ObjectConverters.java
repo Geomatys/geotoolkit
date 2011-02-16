@@ -21,10 +21,12 @@ import java.net.URI;
 import java.net.URL;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
+import java.util.Locale;
 import java.util.UUID;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.measure.Units;
+import org.geotoolkit.resources.Locales;
 import org.geotoolkit.internal.io.IOUtilities;
 
 
@@ -59,7 +61,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * {@code ObjectConverters} to a (un)marshaller.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.17
  *
  * @since 3.07
  * @module
@@ -105,6 +107,30 @@ public class ObjectConverters {
             Exception exception)
     {
         return false;
+    }
+
+    /**
+     * Converts the given string to a locale. The string is the language code either as the 2
+     * letters or the 3 letters ISO code. It can optionally be followed by the {@code '_'}
+     * character and the country code (again either as 2 or 3 letters), optionally followed
+     * by {@code '_'} and the variant.
+     *
+     * @param  value The string to convert to a locale, or {@code null}.
+     * @return The converted locale, or {@code null} if the given value was null of if an
+     *         exception was thrown and {@code exceptionOccured} returned {@code true}.
+     * @throws IllegalArgumentException If the given string can not be converted to a locale.
+     *
+     * @since 3.17
+     */
+    public Locale toLocale(String value) throws IllegalArgumentException {
+        if (value != null && (value = value.trim()).length() != 0) try {
+            return Locales.parse(value);
+        } catch (IllegalArgumentException e) {
+            if (!exceptionOccured(value, String.class, Locale.class, e)) {
+                throw e;
+            }
+        }
+        return null;
     }
 
     /**

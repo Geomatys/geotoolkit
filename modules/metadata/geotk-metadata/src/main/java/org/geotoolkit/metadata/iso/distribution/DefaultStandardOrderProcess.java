@@ -24,14 +24,12 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.distribution.StandardOrderProcess;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
 
 
 /**
@@ -124,7 +122,6 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
      * Returns the date and time when the dataset will be available.
      */
     @Override
-    @XmlJavaTypeAdapter(DateTimeAdapter.class)
     @XmlElement(name = "plannedAvailableDateTime")
     public synchronized Date getPlannedAvailableDateTime() {
         return (plannedAvailableDateTime!=Long.MIN_VALUE) ?

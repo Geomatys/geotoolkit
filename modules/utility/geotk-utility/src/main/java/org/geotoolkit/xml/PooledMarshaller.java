@@ -101,11 +101,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     @Override
     public void marshal(final Object object, final Result output) throws JAXBException {
         final MarshalContext ctx = begin();
-        final boolean old = ctx.setMarshalling();
+        ctx.setMarshalling();
         try {
             marshaller.marshal(object, output);
         } finally {
-            ctx.finish(old);
+            ctx.finish();
         }
     }
 
@@ -115,11 +115,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     @Override
     public void marshal(final Object object, final OutputStream output) throws JAXBException {
         final MarshalContext ctx = begin();
-        final boolean old = ctx.setMarshalling();
+        ctx.setMarshalling();
         try {
             marshaller.marshal(object, output);
         } finally {
-            ctx.finish(old);
+            ctx.finish();
         }
     }
 
@@ -129,11 +129,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     @Override
     public void marshal(final Object object, final File output) throws JAXBException {
         final MarshalContext ctx = begin();
-        final boolean old = ctx.setMarshalling();
+        ctx.setMarshalling();
         try {
             marshaller.marshal(object, output);
         } finally {
-            ctx.finish(old);
+            ctx.finish();
         }
     }
 
@@ -143,11 +143,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     @Override
     public void marshal(final Object object, final Writer output) throws JAXBException {
         final MarshalContext ctx = begin();
-        final boolean old = ctx.setMarshalling();
+        ctx.setMarshalling();
         try {
             marshaller.marshal(object, output);
         } finally {
-            ctx.finish(old);
+            ctx.finish();
         }
     }
 
@@ -157,11 +157,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     @Override
     public void marshal(final Object object, final ContentHandler output) throws JAXBException {
         final MarshalContext ctx = begin();
-        final boolean old = ctx.setMarshalling();
+        ctx.setMarshalling();
         try {
             marshaller.marshal(object, output);
         } finally {
-            ctx.finish(old);
+            ctx.finish();
         }
     }
 
@@ -171,11 +171,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     @Override
     public void marshal(final Object object, final Node output) throws JAXBException {
         final MarshalContext ctx = begin();
-        final boolean old = ctx.setMarshalling();
+        ctx.setMarshalling();
         try {
             marshaller.marshal(object, output);
         } finally {
-            ctx.finish(old);
+            ctx.finish();
         }
     }
 
@@ -185,11 +185,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     @Override
     public void marshal(final Object object, final XMLStreamWriter output) throws JAXBException {
         final MarshalContext ctx = begin();
-        final boolean old = ctx.setMarshalling();
+        ctx.setMarshalling();
         try {
             marshaller.marshal(object, output);
         } finally {
-            ctx.finish(old);
+            ctx.finish();
         }
     }
 
@@ -199,11 +199,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     @Override
     public void marshal(final Object object, final XMLEventWriter output) throws JAXBException {
         final MarshalContext ctx = begin();
-        final boolean old = ctx.setMarshalling();
+        ctx.setMarshalling();
         try {
             marshaller.marshal(object, output);
         } finally {
-            ctx.finish(old);
+            ctx.finish();
         }
     }
 
@@ -213,11 +213,11 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
     @Override
     public Node getNode(final Object object) throws JAXBException {
         final MarshalContext ctx = begin();
-        final boolean old = ctx.setMarshalling();
+        ctx.setMarshalling();
         try {
             return marshaller.getNode(object);
         } finally {
-            ctx.finish(old);
+            ctx.finish();
         }
     }
 

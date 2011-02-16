@@ -34,7 +34,7 @@ import org.opengis.metadata.distribution.Medium;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.primitive.RealNumberAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_Real;
 
 
 /**
@@ -127,7 +127,7 @@ public class DefaultDigitalTransferOptions extends MetadataEntity implements Dig
     @Override
     @ValueRange(minimum=0)
     @XmlElement(name = "transferSize")
-    @XmlJavaTypeAdapter(RealNumberAdapter.class)
+    @XmlJavaTypeAdapter(GO_Real.class)
     public synchronized Double getTransferSize() {
         return transferSize;
     }

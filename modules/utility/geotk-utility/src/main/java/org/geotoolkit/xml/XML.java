@@ -127,6 +127,21 @@ public final class XML {
     public static final String LOCALE = "org.geotoolkit.xml.locale";
 
     /**
+     * The timezone to use during marshalling.
+     *
+     * {@section Default behavior}
+     * If this property is never set, then (un)marshalling will default to the UTC timezone.
+     *
+     * {@note This field is not yet public, because only partially honored in current
+     * implementation. For this reason, <code>Pooled</code> currently set the timezone
+     * to the default one (for more consistent behavior with code that do not yet honor
+     * the given timezone). For implementing the missing parts, see <code>DateAdapter</code>.}
+     *
+     * @since 3.17
+     */
+    static final String TIMEZONE = "org.geotoolkit.xml.timezone";
+
+    /**
      * Allows client code to specify the root URL of schemas. The value for this property shall
      * be an instance of {@link java.util.Map Map&lt;String,String&gt;}. This property controls
      * the URL to be used when marshalling the following elements:

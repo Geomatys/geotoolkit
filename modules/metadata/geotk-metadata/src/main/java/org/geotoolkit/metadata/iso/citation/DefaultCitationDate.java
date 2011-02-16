@@ -25,8 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
 import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.DateType;
 
@@ -99,7 +97,6 @@ public class DefaultCitationDate extends MetadataEntity implements CitationDate 
      */
     @Override
     @XmlElement(name = "date", required = true)
-    @XmlJavaTypeAdapter(DateTimeAdapter.class)
     public synchronized Date getDate() {
         return (date!=Long.MIN_VALUE) ? new Date(date) : null;
     }

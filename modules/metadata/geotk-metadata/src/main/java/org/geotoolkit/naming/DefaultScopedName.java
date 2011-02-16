@@ -35,7 +35,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.internal.jaxb.text.LocalNameAdapter;
+import org.geotoolkit.internal.jaxb.gco.LocalNameAdapter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import static org.geotoolkit.util.Utilities.ensureNonNull;

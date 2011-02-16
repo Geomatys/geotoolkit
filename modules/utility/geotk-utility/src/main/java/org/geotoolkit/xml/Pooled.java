@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.LinkedHashMap;
 import java.util.ConcurrentModificationException;
 import java.util.Locale;
+import java.util.TimeZone;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.bind.PropertyException;
@@ -97,6 +98,14 @@ abstract class Pooled implements Catching {
     private Locale locale;
 
     /**
+     * The timezone, or {@code null} if unspecified.
+     * In the later case, an implementation-default (typically UTC) timezone is used.
+     *
+     * @since 3.17
+     */
+    private TimeZone timezone;
+
+    /**
      * Default constructor.
      *
      * @param internal {@code true} if the JAXB implementation is the one bundled in JDK 6,
@@ -106,6 +115,7 @@ abstract class Pooled implements Catching {
     Pooled(final boolean internal) {
         this.internal = internal;
         initial = new LinkedHashMap<Object, Object>();
+        timezone = TimeZone.getDefault();
     }
 
     /**
@@ -186,6 +196,10 @@ abstract class Pooled implements Catching {
                 locale = (Locale) value;
                 return;
             }
+            if (name.equals(XML.TIMEZONE)) {
+                timezone = (TimeZone) value;
+                return;
+            }
         } catch (ClassCastException e) {
             throw new PropertyException(Errors.format(Errors.Keys.BAD_PROPERTY_TYPE_$2,
                     name, value.getClass()), e);
@@ -211,6 +225,8 @@ abstract class Pooled implements Catching {
             return schemas;
         } else if (name.equals(XML.LOCALE)) {
             return locale;
+        } else if (name.equals(XML.TIMEZONE)) {
+            return timezone;
         } else {
             return getStandardProperty(convertPropertyKey(name));
         }
@@ -338,6 +354,6 @@ abstract class Pooled implements Catching {
      * @since 3.07
      */
     final MarshalContext begin() {
-        return MarshalContext.begin(converters, schemas, locale);
+        return MarshalContext.begin(converters, schemas, locale, timezone);
     }
 }

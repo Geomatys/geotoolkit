@@ -61,12 +61,12 @@
     @XmlJavaTypeAdapter(MD_StandardOrderProcess.class),
 
     // Java types, primitive types and basic OGC types handling
-    @XmlJavaTypeAdapter(DateAdapter.class),
     @XmlJavaTypeAdapter(UnitAdapter.class),
     @XmlJavaTypeAdapter(LocalNameAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class),
-    @XmlJavaTypeAdapter(DoubleAdapter.class),  @XmlJavaTypeAdapter(type=double.class,  value=DoubleAdapter.class),
-    @XmlJavaTypeAdapter(IntegerAdapter.class), @XmlJavaTypeAdapter(type=int.class,     value=IntegerAdapter.class)
+    @XmlJavaTypeAdapter(InternationalStringAdapter.class),
+    @XmlJavaTypeAdapter(GO_DateTime.class),
+    @XmlJavaTypeAdapter(GO_Decimal.class), @XmlJavaTypeAdapter(type=double.class, value=GO_Decimal.class),
+    @XmlJavaTypeAdapter(GO_Integer.class), @XmlJavaTypeAdapter(type=int.class,    value=GO_Integer.class)
 })
 package org.geotoolkit.metadata.iso.distribution;
 
@@ -79,8 +79,6 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.uom.*;
-import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.gco.*;
 import org.geotoolkit.internal.jaxb.code.*;
 import org.geotoolkit.internal.jaxb.metadata.*;
-import org.geotoolkit.internal.jaxb.primitive.*;

@@ -35,7 +35,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
+import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;
 import org.geotoolkit.xml.Namespaces;
 
 import static org.geotoolkit.util.Utilities.ensureNonNull;
@@ -72,7 +72,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
     /**
      * The name, either as a {@link String} or an {@link InternationalString}.
      */
-    @XmlJavaTypeAdapter(AnchoredCharSequenceAdapter.class)
+    @XmlJavaTypeAdapter(CharSequenceAdapter.class)
     @XmlElement(name = "aName", namespace = Namespaces.GCO)
     final CharSequence name;
 

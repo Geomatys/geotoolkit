@@ -28,12 +28,18 @@ import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
+import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.jaxb.RegisterableTypes;
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;
-import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
+import org.geotoolkit.internal.jaxb.gco.GO_CharacterString;
+import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;
+import org.geotoolkit.internal.jaxb.gco.InternationalStringAdapter;
+import org.geotoolkit.internal.jaxb.gco.StringAdapter;
+import org.geotoolkit.internal.jaxb.gco.LocaleAdapter;
+import org.geotoolkit.internal.jaxb.gco.URIAdapter;
 
 
 /**
@@ -45,7 +51,7 @@ import org.geotoolkit.internal.jaxb.text.AnchoredCharSequenceAdapter;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -99,7 +105,12 @@ public class MarshallerPool {
     /**
      * A configurable adapter.
      */
-    private final AnchoredCharSequenceAdapter anchors = new AnchoredCharSequenceAdapter();
+    private final CharSequenceAdapter anchors;
+
+    /**
+     * Additional adapters derived from {@link #anchors}.
+     */
+    private final XmlAdapter<GO_CharacterString, ? extends CharSequence>[] adapters;
 
     /**
      * The pool of marshaller. This pool is initially empty
@@ -190,8 +201,17 @@ public class MarshallerPool {
      * @param  context       The JAXB context.
      * @throws JAXBException If the OGC namespace prefix mapper can not be created.
      */
+    @SuppressWarnings({"unchecked", "rawtypes"}) // Generic array creation
     private MarshallerPool(final Map<String,String> properties, final JAXBContext context) throws JAXBException {
         this.context = context;
+        anchors = new CharSequenceAdapter();
+        adapters = new XmlAdapter/*<GO_CharacterString, ? extends CharSequence>*/[] {
+            anchors,
+            new StringAdapter(anchors),
+            new InternationalStringAdapter(anchors),
+            new LocaleAdapter(anchors),
+            new URIAdapter(anchors)
+        };
         String rootNamespace = properties.get(ROOT_NAMESPACE_KEY);
         if (rootNamespace == null) {
             rootNamespace = "";
@@ -346,9 +366,9 @@ public class MarshallerPool {
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
         marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
         marshaller.setProperty(mapperKey, mapper);
-        marshaller.setAdapter(anchors);
-        marshaller.setAdapter(anchors.string);
-        marshaller.setAdapter(anchors.international);
+        for (final XmlAdapter<GO_CharacterString, ? extends CharSequence> adapter : adapters) {
+            marshaller.setAdapter(adapter);
+        }
         for (final RegisterableAdapter adapter : ADAPTERS) {
             adapter.register(marshaller);
         }
@@ -363,9 +383,9 @@ public class MarshallerPool {
      */
     protected Unmarshaller createUnmarshaller() throws JAXBException {
         final Unmarshaller unmarshaller = context.createUnmarshaller();
-        unmarshaller.setAdapter(anchors);
-        unmarshaller.setAdapter(anchors.string);
-        unmarshaller.setAdapter(anchors.international);
+        for (final XmlAdapter<GO_CharacterString, ? extends CharSequence> adapter : adapters) {
+            unmarshaller.setAdapter(adapter);
+        }
         for (final RegisterableAdapter adapter : ADAPTERS) {
             adapter.register(unmarshaller);
         }

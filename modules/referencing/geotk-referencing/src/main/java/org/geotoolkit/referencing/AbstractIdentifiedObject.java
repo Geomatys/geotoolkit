@@ -54,7 +54,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.DefaultInternationalString;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.internal.CollectionUtilities;
-import org.geotoolkit.internal.jaxb.text.StringConverter;
+import org.geotoolkit.internal.jaxb.gco.StringConverter;
 import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;

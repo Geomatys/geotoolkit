@@ -62,8 +62,8 @@
     @XmlJavaTypeAdapter(MD_RepresentativeFraction.class),
 
     // Java types, primitive types and basic OGC types handling
-    @XmlJavaTypeAdapter(DateTimeAdapter.class),
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class)
+    @XmlJavaTypeAdapter(GO_DateTime.class),
+    @XmlJavaTypeAdapter(InternationalStringAdapter.class)
 })
 package org.geotoolkit.metadata.iso.lineage;
 
@@ -76,6 +76,5 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.uom.*;
-import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.gco.*;
 import org.geotoolkit.internal.jaxb.metadata.*;

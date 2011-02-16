@@ -25,7 +25,6 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.identification.Usage;
@@ -33,7 +32,6 @@ import org.opengis.metadata.citation.ResponsibleParty;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.uom.DateTimeAdapter;
 
 
 /**
@@ -139,7 +137,6 @@ public class DefaultUsage extends MetadataEntity implements Usage {
      * of the resource and/or resource series.
      */
     @Override
-    @XmlJavaTypeAdapter(DateTimeAdapter.class)
     @XmlElement(name = "usageDateTime")
     public synchronized Date getUsageDate() {
         return (usageDate!=Long.MIN_VALUE) ? new Date(usageDate) : null;

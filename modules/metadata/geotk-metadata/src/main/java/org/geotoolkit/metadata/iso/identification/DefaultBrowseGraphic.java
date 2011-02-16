@@ -21,17 +21,15 @@
 package org.geotoolkit.metadata.iso.identification;
 
 import java.net.URI;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlType;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.identification.BrowseGraphic;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
-import org.geotoolkit.internal.jaxb.text.URINameAdapter;
 
 
 /**
@@ -104,7 +102,6 @@ public class DefaultBrowseGraphic extends MetadataEntity implements BrowseGraphi
      * Returns the name of the file that contains a graphic that provides an illustration of the dataset.
      */
     @Override
-    @XmlJavaTypeAdapter(URINameAdapter.class)
     @XmlElement(name = "fileName", required = true)
     public synchronized URI getFileName() {
         return fileName;

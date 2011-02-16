@@ -53,7 +53,7 @@
     @XmlJavaTypeAdapter(MD_RestrictionCode.class),
 
     // Java types, primitive types and basic OGC types handling
-    @XmlJavaTypeAdapter(AnchoredInternationalStringAdapter.class)
+    @XmlJavaTypeAdapter(InternationalStringAdapter.class)
 })
 package org.geotoolkit.metadata.iso.constraint;
 
@@ -66,5 +66,5 @@ import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapters;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.text.*;
+import org.geotoolkit.internal.jaxb.gco.*;
 import org.geotoolkit.internal.jaxb.code.*;

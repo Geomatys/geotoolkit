@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.jaxb.uom;
 
+import org.geotoolkit.internal.jaxb.gco.Measure;
 import java.net.URISyntaxException;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
