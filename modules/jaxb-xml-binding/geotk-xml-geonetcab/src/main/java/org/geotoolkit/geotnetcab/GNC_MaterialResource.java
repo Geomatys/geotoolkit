@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
+import org.opengis.metadata.geonetcab.GNC_Access;
 
 /**
  * <p>Java class for GNC_MaterialResource_Type complex type.

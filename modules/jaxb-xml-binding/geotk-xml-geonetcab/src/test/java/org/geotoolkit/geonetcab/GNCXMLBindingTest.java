@@ -136,6 +136,10 @@ public class GNCXMLBindingTest {
         resource = new DefaultOnlineResource(URI.create("http://something.com"));
         identInfo2.setOnlineInformation(resource);
 
+        GNC_RelationType rel = new GNC_RelationType();
+        rel.setOrganisationIdentifier("org1");
+        identInfo2.setRelationType(rel);
+
         identInfo2.setTypeOfOrganisation(GNC_OrganisationTypeCode.EXPERTS);
 
         meta.setIdentificationInfo(Arrays.asList(identInfo2));
@@ -162,6 +166,13 @@ public class GNCXMLBindingTest {
                            "                    </gmd:linkage>" +'\n' +
                            "                </gmd:CI_OnlineResource>" +'\n' +
                            "            </ns8:onlineInformation>" +'\n' +
+                           "            <ns8:relationType>" +'\n' +
+                           "                <ns8:GNC_RelationType>" +'\n' +
+                           "                    <ns8:organisationIdentifier>" +'\n' +
+                           "                        <gco:CharacterString>org1</gco:CharacterString>" +'\n' +
+                           "                    </ns8:organisationIdentifier>" +'\n' +
+                           "                </ns8:GNC_RelationType>" +'\n' +
+                           "            </ns8:relationType>" +'\n' +
                            "            <ns8:typeOfOrganisation>" +'\n' +
                            "                <ns8:GNC_OrganisationTypeCode codeList=\"http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#GNC_OrganisationTypeCode\" codeListValue=\"Experts\"/>" +'\n' +
                            "            </ns8:typeOfOrganisation>" +'\n' +

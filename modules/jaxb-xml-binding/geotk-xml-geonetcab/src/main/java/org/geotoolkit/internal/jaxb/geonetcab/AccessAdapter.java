@@ -30,7 +30,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.16
  * @module pending
  */
-public class AccessAdapter extends MetadataAdapter<AccessAdapter, GNC_Access>
+public class AccessAdapter extends MetadataAdapter<AccessAdapter, org.opengis.metadata.geonetcab.GNC_Access>
 {
     /**
      * Empty constructor for JAXB only.
@@ -43,7 +43,7 @@ public class AccessAdapter extends MetadataAdapter<AccessAdapter, GNC_Access>
      *
      * @param metadata The metadata value to marshall.
      */
-    private AccessAdapter(final GNC_Access metadata) {
+    private AccessAdapter(final org.opengis.metadata.geonetcab.GNC_Access metadata) {
         super(metadata);
     }
 
@@ -54,7 +54,7 @@ public class AccessAdapter extends MetadataAdapter<AccessAdapter, GNC_Access>
      * @return The adapter which wraps the metadata value.
      */
     @Override
-    protected AccessAdapter wrap(final GNC_Access value) {
+    protected AccessAdapter wrap(final org.opengis.metadata.geonetcab.GNC_Access value) {
         return new AccessAdapter(value);
     }
 
@@ -67,7 +67,7 @@ public class AccessAdapter extends MetadataAdapter<AccessAdapter, GNC_Access>
     @Override
     @XmlElement(name="GNC_Access", namespace="http://www.mdweb-project.org/files/xsd")
     public GNC_Access getElement() {
-        return metadata;
+        return (GNC_Access) metadata;
     }
 
     /**

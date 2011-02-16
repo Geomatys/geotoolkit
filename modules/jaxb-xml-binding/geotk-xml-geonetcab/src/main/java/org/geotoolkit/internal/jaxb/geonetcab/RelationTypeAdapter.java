@@ -30,7 +30,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.16
  * @module pending
  */
-public class RelationTypeAdapter extends MetadataAdapter<RelationTypeAdapter, GNC_RelationType>
+public class RelationTypeAdapter extends MetadataAdapter<RelationTypeAdapter, org.opengis.metadata.geonetcab.GNC_RelationType>
 {
     /**
      * Empty constructor for JAXB only.
@@ -43,7 +43,7 @@ public class RelationTypeAdapter extends MetadataAdapter<RelationTypeAdapter, GN
      *
      * @param metadata The metadata value to marshall.
      */
-    private RelationTypeAdapter(final GNC_RelationType metadata) {
+    private RelationTypeAdapter(final org.opengis.metadata.geonetcab.GNC_RelationType metadata) {
         super(metadata);
     }
 
@@ -54,7 +54,7 @@ public class RelationTypeAdapter extends MetadataAdapter<RelationTypeAdapter, GN
      * @return The adapter which wraps the metadata value.
      */
     @Override
-    protected RelationTypeAdapter wrap(final GNC_RelationType value) {
+    protected RelationTypeAdapter wrap(final org.opengis.metadata.geonetcab.GNC_RelationType value) {
         return new RelationTypeAdapter(value);
     }
 
@@ -67,7 +67,7 @@ public class RelationTypeAdapter extends MetadataAdapter<RelationTypeAdapter, GN
     @Override
     @XmlElement(name="GNC_RelationType", namespace="http://www.mdweb-project.org/files/xsd")
     public GNC_RelationType getElement() {
-        return metadata;
+        return (GNC_RelationType) metadata;
     }
 
     /**

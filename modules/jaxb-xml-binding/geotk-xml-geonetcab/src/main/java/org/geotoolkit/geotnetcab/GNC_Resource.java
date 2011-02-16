@@ -32,6 +32,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.opengis.metadata.citation.OnlineResource;
 
+import org.opengis.metadata.geonetcab.GNC_RelationType;
 
 /**
  * <p>Java class for GNC_Resource_Type complex type.
