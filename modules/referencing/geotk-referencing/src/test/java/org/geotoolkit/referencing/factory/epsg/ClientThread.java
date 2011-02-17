@@ -17,34 +17,50 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Random;
 import java.util.concurrent.CountDownLatch;
+import java.awt.geom.Point2D;
 
-import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.util.collection.XCollections;
+
+import static org.junit.Assert.*;
 
 
 /**
- * For internal use by {@link StressTest}.
+ * A thread which will perform many coordinate transformations between different pairs of CRS.
+ * The results are compared with previous results for consistency.
+ * <p>
+ * The {@link StressTest} class starts many instances of this class in order to test concurrency.
  *
  * @author Jody Garnett (Refractions)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.17
  *
  * @since 2.4
  */
 final class ClientThread extends Thread {
     /**
-     * Number of iterations to perform.
+     * The tolerance (in decimal degrees) between the results of transformation
+     * to geographic coordinates.
      */
-    static final int ITERATIONS = 100;
+    private static final double ANGLE_TOLERANCE = 1E-12;
+
+    /**
+     * The squared value of the maximal distance (in metres) allowed between a point
+     * in UTM 84 and its transform in UTM 72, or conversely.
+     */
+    private static final double UTM_TOLERANCE = 20 * 20;
 
     /**
      * Thread identifier.
@@ -52,9 +68,15 @@ final class ClientThread extends Thread {
     final int id;
 
     /**
-     * The first exception that occurred, or {@code null} if everything was successfull.
+     * The result of the {@link #testGeographicToRandom()} method.
+     * Keys are EPSG code of the source CRS. Values are the transformed coordinates.
      */
-    Exception exception;
+    final Map<Integer, Point2D.Double> result;
+
+    /**
+     * The first exception that occurred, or {@code null} if everything was successful.
+     */
+    Throwable exception;
 
     /**
      * The code of the CRS that caused the exception, or {@code null} if none.
@@ -94,6 +116,15 @@ final class ClientThread extends Thread {
         this.random     = new Random(179702531L + id);
         this.statistics = new Statistics();
         this.lock       = lock;
+        this.result     = createEmptyResultMap();
+    }
+
+    /**
+     * Creates an initially empty map which will hold the result of
+     * {@link #testGeographicToRandom()}.
+     */
+    static Map<Integer, Point2D.Double> createEmptyResultMap() {
+        return new HashMap<Integer, Point2D.Double>(XCollections.hashMapCapacity(CODES.length));
     }
 
     /**
@@ -101,6 +132,13 @@ final class ClientThread extends Thread {
      */
     @Override
     public void run() {
+        final CoordinateReferenceSystem sourceCRS = DefaultGeographicCRS.WGS84;
+        final DirectPosition2D sourcePt = new DirectPosition2D(104800, 273914); // Random coordinate
+        final DirectPosition2D targetPt = new DirectPosition2D();
+        final DirectPosition2D coordUTM = new DirectPosition2D();
+        /*
+         * Wait until every threads are ready to process.
+         */
         try {
             lock.await();
         } catch (InterruptedException e) {
@@ -108,23 +146,66 @@ final class ClientThread extends Thread {
             exception = e;
             return;
         }
-        final CoordinateReferenceSystem sourceCRS = DefaultGeographicCRS.WGS84;
-        final DirectPosition sourcePt = new DirectPosition2D(304800, 0);
-        final DirectPosition targetPt = new DirectPosition2D();
-        for (int i=0; i<ITERATIONS; i++) {
-            final long timeStart = System.currentTimeMillis();
-            final String code = String.valueOf(CODES[random.nextInt(CODES.length)]);
-            final CoordinateReferenceSystem targetCRS;
+        for (int i=0; i<StressTest.ITERATIONS; i++) {
+            /*
+             * Test the transformations from a random CRS to WGS84. This test uses a
+             * fixed coordinates so we can verify that every thread produce the same
+             * result for the same source CRS.
+             */
+            final int crsCode = CODES[random.nextInt(CODES.length)];
+            String code = String.valueOf(crsCode);
+            long startTime = System.nanoTime();
             try {
-                targetCRS = factory.createCoordinateReferenceSystem(code);
+                /*
+                 * Random CRS --> WGS84
+                 * The result will be saved for comparison with the results from other threads.
+                 */
+                final CoordinateReferenceSystem targetCRS = factory.createCoordinateReferenceSystem(code);
                 MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
-                transform.inverse().transform(sourcePt, targetPt);
-            } catch (Exception e) {
+                assertSame(targetPt, transform.inverse().transform(sourcePt, targetPt));
+                statistics.add(System.nanoTime() - startTime);
+                assertConsistent(result, crsCode, targetPt);
+                /*
+                 * UTM 72 --> UTM 84 (or conversely)
+                 * The distance should be small.
+                 */
+                int zone = random.nextInt(60) + 1;
+                if (random.nextBoolean()) {
+                    zone += 100; // Switch from zone North to zone South.
+                }
+                final ProjectedCRS sourceUTM = factory.createProjectedCRS(code = String.valueOf(32200 + zone));
+                final ProjectedCRS targetUTM = factory.createProjectedCRS(code = String.valueOf(32600 + zone));
+                transform = CRS.findMathTransform(sourceUTM, targetUTM);
+                if (random.nextBoolean()) {
+                    transform = transform.inverse();
+                }
+                assertFalse("Expected at datum shift.", transform.isIdentity());
+                final double x = coordUTM.x = random.nextDouble() *  300000 +  100000;
+                final double y = coordUTM.y = random.nextDouble() * 5000000 + 2500000;
+                assertSame(coordUTM, transform.transform(coordUTM, coordUTM));
+                final double distSq = coordUTM.distanceSq(x, y);
+                if (!(distSq <= UTM_TOLERANCE)) {
+                    fail("UTM tolerance error: " + Math.sqrt(distSq));
+                }
+            } catch (Throwable e) {
                 exception = e;
                 badCode = code;
-                return;
+                break;
             }
-            statistics.add(System.currentTimeMillis() - timeStart);
+        }
+    }
+
+    /**
+     * Asserts that the given result of a coordinate transformation is consistent with previous
+     * result.
+     */
+    static void assertConsistent(final Map<Integer, Point2D.Double> result,
+            final Integer code, final Point2D.Double point)
+    {
+        final Point2D.Double previous = result.put(code, new Point2D.Double(point.x, point.y));
+        if (previous != null) {
+            assertEquals("x", previous.x, point.x, ANGLE_TOLERANCE);
+            assertEquals("y", previous.y, point.y, ANGLE_TOLERANCE);
         }
     }
 
