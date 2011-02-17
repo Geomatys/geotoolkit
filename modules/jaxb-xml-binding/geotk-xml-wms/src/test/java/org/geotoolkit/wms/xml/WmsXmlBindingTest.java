@@ -138,7 +138,7 @@ public class WmsXmlBindingTest {
         ResponsibleParty party = DefaultResponsibleParty.EPSG;
         ext.setMetadataPointOfContact(party);
 
-        ext.setMetadataDate(new Date(124541215));
+        ext.setMetadataDate(new Date(82800000));
 
         DefaultKeywords key = new DefaultKeywords(Arrays.asList(new SimpleInternationalString("something")));
         ext.setInpireKeywords(key);
@@ -275,7 +275,7 @@ public class WmsXmlBindingTest {
         "            </gmd:CI_ResponsibleParty>" + '\n' +
         "        </inspire_vs:MetadataPointOfContact>" + '\n' +
         "        <inspire_vs:MetadataDate>" + '\n' +
-        "            <gco:Date>1970-01-02T11:35:41.215+01:00</gco:Date>" + '\n' +
+        "            <gco:Date>1970-01-02</gco:Date>" + '\n' +
         "        </inspire_vs:MetadataDate>" + '\n' +
         "        <inspire_vs:SpatialDataService>" + '\n' +
         "            <srv:serviceType>" + '\n' +
@@ -417,7 +417,7 @@ public class WmsXmlBindingTest {
         "            </gmd:CI_ResponsibleParty>" + '\n' +
         "        </inspire_vs:MetadataPointOfContact>" + '\n' +
         "        <inspire_vs:MetadataDate>" + '\n' +
-        "            <gco:Date>1970-01-02T11:35:41.215+01:00</gco:Date>" + '\n' +
+        "            <gco:Date>1970-01-02</gco:Date>" + '\n' +
         "        </inspire_vs:MetadataDate>" + '\n' +
         "        <inspire_vs:SpatialDataService>" + '\n' +
         "            <srv:serviceType>" + '\n' +
@@ -474,7 +474,7 @@ public class WmsXmlBindingTest {
         ResponsibleParty party = DefaultResponsibleParty.EPSG;
         ext.setMetadataPointOfContact(party);
 
-        ext.setMetadataDate(new Date(124541215));
+        ext.setMetadataDate(new Date(82800000));
 
         DefaultKeywords key = new DefaultKeywords(Arrays.asList(new SimpleInternationalString("something")));
         ext.setInpireKeywords(key);
