@@ -117,6 +117,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
      */
     @Override
     public Schema getSchemaFromFeatureType(final List<FeatureType> featureTypes) {
+        final Schema schema = new Schema(FormChoice.QUALIFIED, null);
         if (featureTypes != null && featureTypes.size() > 0) {
             // we get the first namespace
             String typeNamespace = null;
@@ -125,14 +126,13 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
                 typeNamespace = featureTypes.get(i).getName().getNamespaceURI();
                 i++;
             }
-            final Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
+            schema.setTargetNamespace(typeNamespace);
             schema.addImport(gmlImport);
             for (FeatureType ftype : featureTypes) {
                 fillSchemaWithFeatureType(ftype, schema);
             }
-            return schema;
         }
-        return null;
+        return schema;
     }
 
     /**
