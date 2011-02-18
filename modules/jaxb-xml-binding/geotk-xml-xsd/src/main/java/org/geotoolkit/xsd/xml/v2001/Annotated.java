@@ -164,7 +164,7 @@ public class Annotated extends OpenAttrs {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
         if (id != null) {
             sb.append("id:").append(id).append('\n');
         }

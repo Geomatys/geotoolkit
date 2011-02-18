@@ -195,23 +195,8 @@ public abstract class Element extends Annotated {
     /**
      * Gets the value of the identityConstraint property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the identityConstraint property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getIdentityConstraint().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link Keyref }
-     * {@link JAXBElement }{@code <}{@link Keybase }{@code >}
      * {@link JAXBElement }{@code <}{@link Keybase }{@code >}
      * 
      * 
@@ -378,20 +363,6 @@ public abstract class Element extends Annotated {
     /**
      * Gets the value of the final property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the final property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getFinal().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link String }
      * 
@@ -406,25 +377,6 @@ public abstract class Element extends Annotated {
 
     /**
      * Gets the value of the block property.
-     * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the block property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getBlock().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
-     * Objects of the following type(s) are allowed in the list
-     * {@link String }
-     * 
-     * 
      */
     public List<String> getBlock() {
         if (block == null) {
@@ -561,6 +513,60 @@ public abstract class Element extends Annotated {
         this.ref = value;
     }
 
+    @Override
+    public String toString() {
+         final StringBuilder sb = new StringBuilder(super.toString()).append('\n');
+        if (_abstract != null) {
+            sb.append("abstract:").append(_abstract).append('\n');
+        }
+        if (_default != null) {
+            sb.append("default:").append(_default).append('\n');
+        }
+        if (_final != null) {
+            sb.append("final:").append(_final).append('\n');
+        }
+        if (block != null) {
+            sb.append("block:").append(block).append('\n');
+        }
+        if (complexType != null) {
+            sb.append("complexType:").append(complexType).append('\n');
+        }
+        if (fixed != null) {
+            sb.append("fixed:").append(fixed).append('\n');
+        }
+        if (form != null) {
+            sb.append("form:").append(form).append('\n');
+        }
+        if (identityConstraint != null) {
+            sb.append("identityConstraint:").append(identityConstraint).append('\n');
+        }
+        if (maxOccurs != null) {
+            sb.append("maxOccurs:").append(maxOccurs).append('\n');
+        }
+        if (minOccurs != null) {
+            sb.append("minOccurs:").append(minOccurs).append('\n');
+        }
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (nillable != null) {
+            sb.append("nillable:").append(nillable).append('\n');
+        }
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        if (ref != null) {
+            sb.append("ref:").append(ref).append('\n');
+        }
+        if (simpleType != null) {
+            sb.append("simpleType:").append(simpleType).append('\n');
+        }
+        if (substitutionGroup != null) {
+            sb.append("substitutionGroup:").append(substitutionGroup).append('\n');
+        }
+        return  sb.toString();
+    }
+    
     /**
      * Verify if this entry is identical to the specified object.
      */
