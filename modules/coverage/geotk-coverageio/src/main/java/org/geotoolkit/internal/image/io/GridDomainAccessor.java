@@ -368,6 +368,10 @@ public final class GridDomainAccessor extends MetadataAccessor {
     /**
      * Convenience method invoking {@link #setSpatialRepresentation setSpatialRepresentation} and
      * {@link #setRectifiedGridDomain setRectifiedGridDomain} for a two-dimensional bounding box.
+     * <p>
+     * Note that the value of the {@code yBound} parameter can be lower than the value of the
+     * {@code yOrigin} parameter, in which case the scale factor for the <var>y</var> ordinates
+     * will be negative.
      *
      * @param xOrigin The first  ordinate of the {@code origin} parameter.
      * @param yOrigin The second ordinate of the {@code origin} parameter.
@@ -387,7 +391,7 @@ public final class GridDomainAccessor extends MetadataAccessor {
         final double[] origin = new double[] {xOrigin, yOrigin};
         final double[] bounds = new double[] {xBound,  yBound};
         final int[]    high   = new int[]    {width-1, height-1};
-        setRectifiedGridDomain(origin, bounds, null, high, null, true);
+        setRectifiedGridDomain(origin, bounds, null, high, null, pixelCenter);
         setSpatialRepresentation(origin, bounds, cellGeometry,
                 pixelCenter ? PixelOrientation.CENTER : PixelOrientation.UPPER_LEFT);
     }

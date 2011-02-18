@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.internal.image.io;
 
+import java.util.Locale;
 import java.io.IOException;
 import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
@@ -24,6 +25,8 @@ import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
 import javax.measure.unit.Unit;
 
+import org.opengis.util.InternationalString;
+import org.opengis.coverage.SampleDimension;
 import org.opengis.metadata.content.TransferFunctionType;
 
 import org.geotoolkit.util.NumberRange;
@@ -45,7 +48,7 @@ import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.FORMAT_NAME
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.06
  * @module
@@ -65,6 +68,27 @@ public final class DimensionAccessor extends MetadataAccessor {
      */
     public DimensionAccessor(final IIOMetadata metadata) {
         super(metadata, FORMAT_NAME, "ImageDescription/Dimensions", "Dimension");
+    }
+
+    /**
+     * Sets the description, transfer function, minimum, maximum and fill values from the
+     * given sample dimension. This convenience method fetches the information from the
+     * given band and delegates to the other setter methods defined in this class.
+     *
+     * @param band   The band from which to get the attribute values.
+     * @param locale The locale to use for localizing the description.
+     *
+     * @since 3.17
+     */
+    public void setDimension(final SampleDimension band, final Locale locale) {
+        final InternationalString description = band.getDescription();
+        if (description != null) {
+            setDescriptor(description.toString(locale));
+        }
+        setValueRange(band.getMinimumValue(), band.getMaximumValue());
+        setFillSampleValues(band.getNoDataValues());
+        setTransfertFunction(band.getScale(), band.getOffset(), null); // TODO: declare transfer function.
+        setUnits(band.getUnits());
     }
 
     /**

@@ -21,14 +21,21 @@ import java.io.IOException;
 import javax.imageio.IIOParam;
 import javax.imageio.ImageWriter;
 import java.awt.image.RenderedImage;
+import java.awt.geom.AffineTransform;
+import javax.imageio.metadata.IIOMetadata;
 
+import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.grid.RectifiedGrid;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.image.io.ImageMetadataException;
+import org.geotoolkit.image.io.metadata.MetadataHelper;
+import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -36,7 +43,7 @@ import static org.junit.Assert.*;
  * writing process.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.17
  *
  * @since 3.14
  */
@@ -61,6 +68,13 @@ final class ImageCoverageWriterInspector extends ImageCoverageWriter {
      * for fetching the pixel values to write.
      */
     private MathTransform2D differenceTransform;
+
+    /**
+     * The metadata created by the writer.
+     *
+     * @since 3.17
+     */
+    private IIOMetadata metadata;
 
     /**
      * Creates a new instance.
@@ -104,11 +118,24 @@ final class ImageCoverageWriterInspector extends ImageCoverageWriter {
     }
 
     /**
+     * Retains the image metadata (we don't care about the stream metadata for now).
+     *
+     * @since 3.17
+     */
+    @Override
+    protected void completeImageMetadata(IIOMetadata metadata, GridCoverage coverage) throws IOException {
+        super.completeImageMetadata(metadata, coverage);
+        if (coverage != null) {
+            this.metadata = metadata;
+        }
+    }
+
+    /**
      * Asserts that the write operation matched the user request without the need for
      * a scaling of translation. Note however that a need for a expanding the bounds
      * may still be present.
      */
-    public void assertIdentityTransform() {
+    public void assertNoDifference() {
         assertTrue("No scale or translation expected.", isIdentity(differenceTransform));
     }
 
@@ -116,7 +143,7 @@ final class ImageCoverageWriterInspector extends ImageCoverageWriter {
      * Asserts that the difference transform contains no translation terms,
      * and only the scale terms given to this method.
      */
-    public void assertScaleTransform(final double scaleX, final double scaleY) {
+    public void assertDifferenceEqualsScale(final double scaleX, final double scaleY) {
         assertFalse("Expected a scale factor.", isIdentity(differenceTransform));
         assertTrue(differenceTransform instanceof LinearTransform);
         final Matrix m = ((LinearTransform) differenceTransform).getMatrix();
@@ -141,7 +168,7 @@ final class ImageCoverageWriterInspector extends ImageCoverageWriter {
      * Asserts that the difference transform contains no scale terms,
      * and only the translation terms given to this method.
      */
-    public void assertTranslateTransform(final double tx, final double ty) {
+    public void assertDifferenceEqualsTranslation(final double tx, final double ty) {
         assertFalse("Expected translation terms.", isIdentity(differenceTransform));
         assertTrue(differenceTransform instanceof LinearTransform);
         final Matrix m = ((LinearTransform) differenceTransform).getMatrix();
@@ -161,6 +188,26 @@ final class ImageCoverageWriterInspector extends ImageCoverageWriter {
                 assertEquals(expected, m.getElement(j, i), EPS);
             }
         }
+    }
+
+    /**
+     * Tests that the rectified grid is equals to the given affine transform coefficients.
+     *
+     * @since 3.17
+     */
+    public void assertRectifiedGridEquals(final double scaleX, final double scaleY,
+            final double translateX, final double translateY) throws ImageMetadataException
+    {
+        assertInstanceOf("Expected a spatial metadata", SpatialMetadata.class, metadata);
+        final MetadataHelper helper = new MetadataHelper(null);
+        final RectifiedGrid rg = ((SpatialMetadata) metadata).getInstanceForType(RectifiedGrid.class);
+        final AffineTransform tr = helper.getAffineTransform(rg, null);
+        assertEquals("shearX",     0,          tr.getShearX(),     EPS);
+        assertEquals("shearY",     0,          tr.getShearY(),     EPS);
+        assertEquals("scaleX",     scaleX,     tr.getScaleX(),     EPS);
+        assertEquals("scaleY",     scaleY,     tr.getScaleY(),     EPS);
+        assertEquals("translateX", translateX, tr.getTranslateX(), EPS);
+        assertEquals("translateY", translateY, tr.getTranslateY(), EPS);
     }
 
     /**

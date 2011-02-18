@@ -30,6 +30,7 @@ import javax.imageio.ImageIO;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
+import javax.imageio.ImageTypeSpecifier;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.stream.ImageOutputStream;
@@ -42,8 +43,11 @@ import javax.media.jai.RenderedImageAdapter;
 import javax.media.jai.operator.WarpDescriptor;
 
 import org.opengis.util.InternationalString;
+import org.opengis.geometry.Envelope;
+import org.opengis.coverage.SampleDimension;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.coverage.InterpolationMethod;
+import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -52,11 +56,15 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriter;
+import org.geotoolkit.image.io.metadata.ReferencingBuilder;
+import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
 import org.geotoolkit.referencing.operation.transform.WarpFactory;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
+import org.geotoolkit.internal.image.io.DimensionAccessor;
+import org.geotoolkit.internal.image.io.GridDomainAccessor;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
@@ -84,7 +92,7 @@ import org.geotoolkit.resources.Errors;
  * responsibility to close them.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.14
  * @module
@@ -396,6 +404,25 @@ public class ImageCoverageWriter extends GridCoverageWriter {
     }
 
     /**
+     * Creates additional metadata to be merged with the one created by {@code ImageCoverageReader}.
+     * This method is invoked automatically just before to write the image, with a {@code metadata}
+     * argument containing basic information in the {@code RectifiedGridDomain} and {@code Dimensions}
+     * nodes (see <a href="../../image/io/metadata/SpatialMetadataFormat.html#default-formats">Image
+     * metadata</a> for a tree description). The default implementation does nothing. However
+     * subclasses can override this method in order to create additional metadata that this
+     * writer can not infer.
+     *
+     * @param  metadata The default metadata, to be modified in-place.
+     * @param  coverage {@code null} for {@linkplain ImageWriter#getDefaultStreamMetadata stream metadata},
+     *         or the coverage being written for {@linkplain ImageWriter#getDefaultImageMetadata image metadata}.
+     * @throws IOException If an I/O operation was required and failed.
+     *
+     * @since 3.17
+     */
+    protected void completeImageMetadata(IIOMetadata metadata, GridCoverage coverage) throws IOException {
+    }
+
+    /**
      * Converts geodetic parameters to image parameters, gets the image from the coverage and
      * writes it. First, this method creates an initially empty block of image parameters by
      * invoking the {@link #createImageWriteParam(RenderedImage)} method. The image parameter
@@ -431,8 +458,6 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         /*
          * Convert the geodetic coordinates to pixel coordinates.
          */
-        final IIOMetadata streamMetadata = null; // TODO
-        final IIOMetadata imageMetadata  = null; // TODO
         final ImageWriteParam imageParam;
         try {
             imageParam = createImageWriteParam(image);
@@ -568,12 +593,70 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             }
         }
         /*
+         * Creates metadata with the information calculated so far. The code above this
+         * point should have created an image having a grid geometry matching the user
+         * request, so we will write that user request in the metadata.
+         */
+        final ImageTypeSpecifier imageType = ImageTypeSpecifier.createFromRenderedImage(image);
+        final IIOMetadata streamMetadata = imageWriter.getDefaultStreamMetadata(imageParam);
+        final IIOMetadata imageMetadata  = imageWriter.getDefaultImageMetadata(imageType, imageParam);
+        if (XArrays.contains(imageMetadata.getMetadataFormatNames(), SpatialMetadataFormat.FORMAT_NAME)) {
+            CoordinateReferenceSystem crs = null;
+            Envelope env = null;
+            double[] res = null;
+            if (param != null) {
+                crs = param.getCoordinateReferenceSystem();
+                env = param.getEnvelope();
+                res = param.getResolution();
+            }
+            if (crs == null && gridGeometry.isDefined(GridGeometry2D.CRS)) {
+                crs = gridGeometry.getCoordinateReferenceSystem2D();
+            }
+            if (env == null && gridGeometry.isDefined(GridGeometry2D.ENVELOPE)) {
+                env = gridGeometry.getEnvelope2D();
+            }
+            if (crs != null) {
+                final ReferencingBuilder builder = new ReferencingBuilder(imageMetadata);
+                builder.setCoordinateReferenceSystem(crs);
+            }
+            if (env != null) {
+                final GridDomainAccessor accessor = new GridDomainAccessor(imageMetadata);
+                final Dimension size = getImageSize(image, imageParam);
+                final double xmin = env.getMinimum(X_DIMENSION);
+                final double ymax = env.getMaximum(Y_DIMENSION);
+                if (res != null) {
+                    final double[] p = new double[] {xmin, ymax};
+                    accessor.setOrigin(p);
+                    p[0] = +res[X_DIMENSION]; p[1]=0; accessor.addOffsetVector(p);
+                    p[1] = -res[Y_DIMENSION]; p[0]=0; accessor.addOffsetVector(p);
+                    p[0] = env.getMedian(X_DIMENSION);
+                    p[1] = env.getMedian(Y_DIMENSION);
+                    accessor.setSpatialRepresentation(p, null, PixelOrientation.UPPER_LEFT);
+                    accessor.setLimits(new int[2], new int[] {size.width-1, size.height-1});
+                } else {
+                    // Let the accessor compute the resolution for us.
+                    accessor.setAll(xmin, ymax, env.getMaximum(X_DIMENSION),
+                            env.getMinimum(Y_DIMENSION), size.width, size.height, false, null);
+                }
+            }
+            final int n = coverage.getNumSampleDimensions();
+            final DimensionAccessor accessor = new DimensionAccessor(imageMetadata);
+            for (int i=0; i<n; i++) {
+                final SampleDimension band = coverage.getSampleDimension(i);
+                accessor.selectChild(accessor.appendChild());
+                if (band != null) {
+                    accessor.setDimension(band, locale);
+                }
+            }
+        }
+        /*
          * Now process to the coverage writing.
          * Finally, logs the operation (if logging are enabled).
          */
-        final IIOImage bundle = new IIOImage(image, null, imageMetadata);
         try {
-            imageWriter.write(streamMetadata, bundle, imageParam);
+            completeImageMetadata(streamMetadata, null);
+            completeImageMetadata(imageMetadata, coverage);
+            imageWriter.write(streamMetadata, new IIOImage(image, null, imageMetadata), imageParam);
         } catch (IOException e) {
             throw new CoverageStoreException(formatErrorMessage(e), e);
         }
@@ -581,14 +664,7 @@ public class ImageCoverageWriter extends GridCoverageWriter {
             fullTime = System.nanoTime() - fullTime;
             final Level level = getLogLevel(fullTime);
             if (LOGGER.isLoggable(level)) {
-                final Dimension size = new Dimension(image.getWidth(), image.getHeight());
-                if (imageParam != null) {
-                    final Rectangle request = imageParam.getSourceRegion();
-                    if (request != null) {
-                        size.width  = Math.min(size.width,  request.width  / imageParam.getSourceXSubsampling());
-                        size.height = Math.min(size.height, request.height / imageParam.getSourceXSubsampling());
-                    }
-                }
+                final Dimension size = getImageSize(image, imageParam);
                 CoordinateReferenceSystem crs = null;
                 if (param != null) {
                     crs = param.getCoordinateReferenceSystem();
@@ -600,6 +676,25 @@ public class ImageCoverageWriter extends GridCoverageWriter {
         if (toDispose != null) {
             toDispose.dispose();
         }
+    }
+
+    /**
+     * Returns the size of the image to be written.
+     *
+     * @param  image The image to be written.
+     * @param  param The parameter to use for controlling the writing process, or {@code null}.
+     * @return The size of the image being written.
+     */
+    private static Dimension getImageSize(final RenderedImage image, final ImageWriteParam param) {
+        final Dimension size = new Dimension(image.getWidth(), image.getHeight());
+        if (param != null) {
+            final Rectangle request = param.getSourceRegion();
+            if (request != null) {
+                size.width  = Math.min(size.width,  request.width  / param.getSourceXSubsampling());
+                size.height = Math.min(size.height, request.height / param.getSourceXSubsampling());
+            }
+        }
+        return size;
     }
 
     /**

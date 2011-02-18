@@ -49,12 +49,12 @@ import static org.junit.Assume.*;
  * is the easiest one to debug.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.17
  *
  * @since 3.14
  */
 @Depend(ImageCoverageReaderTest.class)
-public class ImageCoverageWriterTest {
+public final class ImageCoverageWriterTest {
     /**
      * {@code true} for printing debugging information.
      */
@@ -179,7 +179,8 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        writer.assertIdentityTransform();
+        writer.assertNoDifference();
+        writer.assertRectifiedGridEquals(1000, -1000, -10000, 21000);
         writer.dispose();
         buffer.close(); // As a matter of principle.
         assertMatrixEqualsFile("matrix.txt", buffer.toString(), -9999);
@@ -205,7 +206,8 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        writer.assertIdentityTransform();
+        writer.assertNoDifference();
+        writer.assertRectifiedGridEquals(1000, -1000, -1000, 12000);
         writer.dispose();
         buffer.close(); // As a matter of principle.
         assertMatrixEquals(
@@ -247,7 +249,8 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        writer.assertIdentityTransform();
+        writer.assertNoDifference();
+        writer.assertRectifiedGridEquals(2000, -3000, -1000, 12000);
         writer.dispose();
         buffer.close(); // As a matter of principle.
         assertMatrixEquals(
@@ -281,7 +284,8 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        writer.assertScaleTransform(1.0 / 2, 1.0 / 3);
+        writer.assertDifferenceEqualsScale(1.0 / 2, 1.0 / 3);
+        writer.assertRectifiedGridEquals(500, -1000.0 / 3, 4000, 4000);
         writer.dispose();
         buffer.close(); // As a matter of principle.
         /*
@@ -343,7 +347,8 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        writer.assertTranslateTransform(-2, -3);
+        writer.assertDifferenceEqualsTranslation(-2, -3);
+        writer.assertRectifiedGridEquals(1000, -1000, -12000, 24000);
         writer.dispose();
         buffer.close(); // As a matter of principle.
         /*
@@ -389,7 +394,7 @@ public class ImageCoverageWriterTest {
         if (VERBOSE) {
             System.out.println(writer);
         }
-        writer.assertIdentityTransform();
+        writer.assertNoDifference();
         final long length = out.size();
         assertTrue("Empty file.", length > 0);
 
