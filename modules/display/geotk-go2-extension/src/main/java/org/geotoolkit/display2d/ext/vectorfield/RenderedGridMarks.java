@@ -63,6 +63,8 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+
 
 /**
  * Renderer {@linkplain GridCoverage grid coverage} data as marks.
@@ -387,14 +389,8 @@ public class RenderedGridMarks extends RenderedMarks {
      * @param decimateY Decimation among <var>y</var>, or 1 for none.
      */
     public void setDecimation(final int decimateX, final int decimateY) {
-        if (decimateX <=0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1,
-                                               new Integer(decimateX)));
-        }
-        if (decimateY <=0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1,
-                                               new Integer(decimateY)));
-        }
+        ensureStrictlyPositive("decimateX", decimateX);
+        ensureStrictlyPositive("decimateY", decimateY);
         if (decimateX!=this.decimateX || decimateY!=this.decimateY) {
             synchronized (getTreeLock()) {
                                 
