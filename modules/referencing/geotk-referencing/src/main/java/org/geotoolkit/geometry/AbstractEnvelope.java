@@ -26,7 +26,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.CRS;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.Strings.trimFractionalPart;
 
 
@@ -217,7 +217,7 @@ public abstract class AbstractEnvelope implements Envelope {
             }
             separator = ", ";
         }
-        if (separator == ", ") { // NOSONAR
+        if (separator == ", ") { // NOSONAR: identity comparison is okay here.
             buffer.append(')');
         }
         return buffer.append(')').toString();

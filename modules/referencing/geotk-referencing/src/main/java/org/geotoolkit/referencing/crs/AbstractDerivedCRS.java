@@ -45,7 +45,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

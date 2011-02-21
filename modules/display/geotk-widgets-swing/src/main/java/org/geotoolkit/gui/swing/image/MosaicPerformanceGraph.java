@@ -42,8 +42,9 @@ import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.MosaicProfiler;
 import org.geotoolkit.display.axis.NumberGraduation;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
+
+import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
 
 
 /**
@@ -138,9 +139,7 @@ public class MosaicPerformanceGraph extends Plot2D implements Dialog {
      * @param n The new number of image loadings to be done or simulated per subsampling level.
      */
     public void setImagesPerSubsampling(final int n) {
-        if (n < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1, n));
-        }
+        ensurePositive("n", n);
         final int old = imagesPerSubsampling;
         imagesPerSubsampling = n;
         firePropertyChange("imagesPerSubsampling", old, n);

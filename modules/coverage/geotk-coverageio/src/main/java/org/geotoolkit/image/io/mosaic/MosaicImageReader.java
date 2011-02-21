@@ -60,6 +60,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
+import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
 
 
 /**
@@ -192,10 +193,7 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     private TileManager getTileManager(final int imageIndex) throws IOException {
         if (input instanceof TileManager[]) {
             final TileManager[] tiles = (TileManager[]) input;
-            if (imageIndex < 0 || imageIndex >= tiles.length) {
-                throw new IndexOutOfBoundsException(Errors.format(
-                        Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, imageIndex));
-            }
+            ensureValidIndex(tiles.length, imageIndex);
             return tiles[imageIndex];
         }
         throw new IllegalStateException(Errors.format(Errors.Keys.NO_IMAGE_INPUT));

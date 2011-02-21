@@ -32,7 +32,7 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

@@ -30,7 +30,7 @@ import java.io.ObjectInputStream;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

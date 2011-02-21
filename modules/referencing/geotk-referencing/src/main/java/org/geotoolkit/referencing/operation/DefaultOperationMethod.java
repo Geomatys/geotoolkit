@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -180,8 +180,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
         this.parameters = method.getParameters();
         this.sourceDimension = sourceDimension;
         this.targetDimension = targetDimension;
-        ensurePositive("sourceDimension", sourceDimension);
-        ensurePositive("targetDimension", targetDimension);
+        checkDimension();
     }
 
     /**
@@ -247,25 +246,15 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
         this.parameters      = parameters;
         this.sourceDimension = sourceDimension;
         this.targetDimension = targetDimension;
-        ensurePositive("sourceDimension", sourceDimension);
-        ensurePositive("targetDimension", targetDimension);
+        checkDimension();
     }
 
     /**
-     * Ensures that the specified value is positive.
-     * An {@link IllegalArgumentException} is throws if it is not.
-     *
-     * @param name  The parameter name.
-     * @param value The parameter value.
-     * @throws IllegalArgumentException if the specified value is not positive.
+     * Checks the validity of source and target dimensions.
      */
-    private static void ensurePositive(final String name, final Integer value)
-            throws IllegalArgumentException
-    {
-        if (value != null && value < 0) {
-            throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.ILLEGAL_ARGUMENT_$2, name, value));
-        }
+    private void checkDimension() {
+        if (sourceDimension != null) ensurePositive("sourceDimension", sourceDimension);
+        if (targetDimension != null) ensurePositive("targetDimension", targetDimension);
     }
 
     /**

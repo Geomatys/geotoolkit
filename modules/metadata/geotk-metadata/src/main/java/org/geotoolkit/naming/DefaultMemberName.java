@@ -26,7 +26,7 @@ import org.opengis.util.NameSpace;
 import org.opengis.util.TypeName;
 import org.geotoolkit.lang.Immutable;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

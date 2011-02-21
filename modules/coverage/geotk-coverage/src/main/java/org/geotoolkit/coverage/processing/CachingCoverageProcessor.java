@@ -34,7 +34,7 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.coverage.grid.RenderedCoverage;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

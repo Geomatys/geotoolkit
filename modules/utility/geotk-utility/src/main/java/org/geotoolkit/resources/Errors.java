@@ -420,7 +420,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_ARGUMENT_$1 = 72;
 
         /**
-         * Illegal argument: "{0}={1}".
+         * Illegal argument: "{0}"={1}
          */
         public static final int ILLEGAL_ARGUMENT_$2 = 73;
 
@@ -541,7 +541,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int INDEX_OUT_OF_BOUNDS_$1 = 96;
 
         /**
-         * {0} value is infinite
+         * {0} value is infinite.
          */
         public static final int INFINITE_VALUE_$1 = 97;
 
@@ -797,9 +797,9 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NOT_DIFFERENT_THAN_ZERO_$1 = 147;
 
         /**
-         * Number {0} is invalid. Expected a number greater than 0.
+         * Value "{0}"={1} is invalid. Expected a number greater than 0.
          */
-        public static final int NOT_GREATER_THAN_ZERO_$1 = 148;
+        public static final int NOT_GREATER_THAN_ZERO_$2 = 148;
 
         /**
          * Not a 3D coordinate system.
@@ -1310,6 +1310,11 @@ public final class Errors extends IndexedResourceBundle {
          * Value {0} is out of range [{1} … {2}].
          */
         public static final int VALUE_OUT_OF_BOUNDS_$3 = 246;
+
+        /**
+         * Value "{0}"={1} is out of range [{2} … {3}].
+         */
+        public static final int VALUE_OUT_OF_BOUNDS_$4 = 255;
 
         /**
          * Numerical value tend toward infinity.

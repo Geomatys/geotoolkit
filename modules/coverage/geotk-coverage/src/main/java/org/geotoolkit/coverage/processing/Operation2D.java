@@ -40,7 +40,7 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

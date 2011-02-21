@@ -42,7 +42,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

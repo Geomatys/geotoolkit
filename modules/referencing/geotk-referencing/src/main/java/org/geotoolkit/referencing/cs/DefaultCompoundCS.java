@@ -31,7 +31,7 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -85,7 +85,7 @@ public class DefaultCompoundCS extends AbstractCS {
         ensureNonNull("cs", cs);
         cs = cs.clone();
         for (int i=0; i<cs.length; i++) {
-            ensureNonNull("cs", cs, i);
+            ensureNonNull("cs", i, cs);
         }
         return cs;
     }

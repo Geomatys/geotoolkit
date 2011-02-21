@@ -38,6 +38,8 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.internal.io.Buffers;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
+
 
 /**
  * An {@linkplain ImageInputStream Image Input Stream} using a {@linkplain ReadableByteChannel
@@ -339,10 +341,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      */
     @Override
     public void setBitOffset(final int bitOffset) throws IOException {
-        if (bitOffset < 0 || bitOffset >= 8) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, bitOffset, 0, Byte.SIZE-1));
-        }
+        ensureBetween("bitOffset", 0, Byte.SIZE-1, bitOffset);
         this.bitOffset = bitOffset;
     }
 
@@ -406,10 +405,7 @@ public class ChannelImageInputStream extends InputStream implements ImageInputSt
      */
     @Override
     public long readBits(int numBits) throws IOException {
-        if (numBits < 0 || numBits > Long.SIZE) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, numBits, 0, Long.SIZE));
-        }
+        ensureBetween("numBits", 0, Long.SIZE, numBits);
         if (numBits == 0) {
             return 0;
         }
@@ -659,10 +655,7 @@ loop:   while ((c = read()) >= 0) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$2, "length", length));
         }
-        if (offset < 0 || offset > maxLength) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, offset, 0, maxLength));
-        }
+        ensureBetween("offset", 0, maxLength, offset);
     }
 
     /**

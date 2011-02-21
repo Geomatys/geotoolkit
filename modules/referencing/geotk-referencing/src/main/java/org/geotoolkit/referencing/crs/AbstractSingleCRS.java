@@ -33,7 +33,7 @@ import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.lang.Immutable;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

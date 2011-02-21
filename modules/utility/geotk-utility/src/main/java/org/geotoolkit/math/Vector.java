@@ -27,6 +27,8 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.collection.CheckedCollection;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+
 
 /**
  * A vector of real numbers. An instance of {@code Vector} can be a wrapper around an
@@ -290,9 +292,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         index = index.clone();
         final int length = size();
         for (int i : index) {
-            if (i < 0 || i >= length) {
-                throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, i));
-            }
+            ensureValidIndex(length, i);
         }
         return index;
     }
@@ -625,10 +625,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
 
         /** Returns the index where to look for the value in the enclosing vector. */
         private int toBacking(final int index) throws IndexOutOfBoundsException {
-            if (index < 0 || index >= length) {
-                throw new IndexOutOfBoundsException(Errors.format(
-                        Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
-            }
+            ensureValidIndex(length, index);
             return index*step + first;
         }
 

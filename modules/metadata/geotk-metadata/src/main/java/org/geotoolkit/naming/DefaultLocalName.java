@@ -38,7 +38,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;
 import org.geotoolkit.xml.Namespaces;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

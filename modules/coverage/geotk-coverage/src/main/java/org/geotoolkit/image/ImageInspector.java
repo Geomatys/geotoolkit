@@ -37,7 +37,7 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 
 import static java.awt.image.DataBuffer.TYPE_BYTE;
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

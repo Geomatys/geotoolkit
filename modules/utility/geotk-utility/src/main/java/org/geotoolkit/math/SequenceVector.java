@@ -21,6 +21,8 @@ import java.io.Serializable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+
 
 /**
  * A vector which is a sequence of numbers.
@@ -117,9 +119,7 @@ final class SequenceVector extends Vector implements Serializable {
      */
     @Override
     public double doubleValue(final int index) throws IndexOutOfBoundsException {
-        if (index < 0 || index >= length) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
-        }
+        ensureValidIndex(length, index);
         return first + increment*index;
     }
 

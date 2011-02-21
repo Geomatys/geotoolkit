@@ -23,6 +23,8 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
+
 
 /**
  * An unmodifiable view of an array. Invoking
@@ -321,10 +323,7 @@ public class UnmodifiableArrayList<E> extends AbstractList<E>
          */
         @Override
         public E get(final int index) {
-            if (index < 0 || index >= size) {
-                throw new IndexOutOfBoundsException(Errors.format(
-                        Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
-            }
+            ensureValidIndex(size, index);
             return super.get(index + lower);
         }
     }

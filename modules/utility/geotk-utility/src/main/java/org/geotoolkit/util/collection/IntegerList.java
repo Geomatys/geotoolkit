@@ -29,13 +29,15 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 
 /**
  * A list of unsigned integer values. This class packs the values in the minimal amount of bits
  * required for storing unsigned integers of the given {@linkplain #maximalValue maximal value}.
  * <p>
  * This class is <strong>not</strong> thread-safe. Synchronizations (if wanted) are user's
- * reponsability.
+ * responsibility.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.01
@@ -107,14 +109,8 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      *        capacity with all values set to 0.
      */
     public IntegerList(final int initialCapacity, int maximalValue, final boolean fill) {
-        if (initialCapacity <= 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NOT_GREATER_THAN_ZERO_$1, initialCapacity));
-        }
-        if (maximalValue <= 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NOT_GREATER_THAN_ZERO_$1, maximalValue));
-        }
+        ensureStrictlyPositive("initialCapacity", initialCapacity);
+        ensureStrictlyPositive("maximalValue",    maximalValue);
         int bitCount = 0;
         do {
             bitCount++;
@@ -199,10 +195,7 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      */
     @SuppressWarnings("fallthrough")
     public void fill(int value) {
-        if (value < 0 || value > mask) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, value, 0, mask));
-        }
+        ensureBetween("value", 0, mask, value);
         final long p;
         if (value == 0) {
             p = 0;   // All bits set to 0.
@@ -255,10 +248,7 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      * @see #removeLast
      */
     public void addInteger(final int value) throws IllegalArgumentException {
-        if (value < 0 || value > mask) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, value, 0, mask));
-        }
+        ensureBetween("value", 0, mask, value);
         final int last = size;
         final int length = length(++size);
         if (length > values.length) {
@@ -287,9 +277,7 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      * @throws IndexOutOfBoundsException if the given index is out of bounds.
      */
     public int getInteger(final int index) throws IndexOutOfBoundsException {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
-        }
+        ensureValidIndex(size, index);
         return getUnchecked(index);
     }
 
@@ -340,14 +328,8 @@ public class IntegerList extends AbstractList<Integer> implements RandomAccess, 
      * @throws IllegalArgumentException if the given value is out of bounds.
      */
     public void setInteger(int index, int value) throws IndexOutOfBoundsException {
-        if (index < 0 || index >= size) {
-            throw new IndexOutOfBoundsException(Errors.format(
-                    Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
-        }
-        if (value < 0 || value > mask) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, value, 0, mask));
-        }
+        ensureValidIndex(size, index);
+        ensureBetween("value", 0, mask, value);
         setUnchecked(index, value);
     }
 

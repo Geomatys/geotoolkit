@@ -19,8 +19,9 @@ package org.geotoolkit.util.logging;
 
 import java.util.logging.Level;
 import java.util.concurrent.TimeUnit;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Configuration;
+
+import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
 
 
 /**
@@ -155,9 +156,7 @@ public final class PerformanceLevel extends Level {
     @Configuration
     @SuppressWarnings("fallthrough")
     public void setMinDuration(long duration, final TimeUnit unit) throws IllegalArgumentException {
-        if (duration < 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1, duration));
-        }
+        ensurePositive("duration", duration);
         duration = unit.toNanos(duration);
         final int value = intValue();
         synchronized (PerformanceLevel.class) {

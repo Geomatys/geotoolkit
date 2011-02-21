@@ -204,6 +204,7 @@ public class DirectPosition1D extends AbstractDirectPosition implements Serializ
      * @param  position The new position for this point.
      * @throws MismatchedDimensionException if this point doesn't have the expected dimension.
      */
+    @Override
     public void setLocation(final DirectPosition position) throws MismatchedDimensionException {
         AbstractDirectPosition.ensureDimensionMatch("position", position.getDimension(), 1);
         setCoordinateReferenceSystem(position.getCoordinateReferenceSystem());

@@ -33,6 +33,8 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+
 
 /**
  * A caching authority factory which delegates to different instances of a backing store for
@@ -468,10 +470,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
      * @param delay The delay of inactivity (in milliseconds) before to close a backing store.
      */
     public synchronized void setTimeout(final long delay) {
-        if (delay <= 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NOT_GREATER_THAN_ZERO_$1, delay));
-        }
+        ensureStrictlyPositive("delay", delay);
         timeout = delay; // Will be taken in account after the next factory to dispose.
     }
 

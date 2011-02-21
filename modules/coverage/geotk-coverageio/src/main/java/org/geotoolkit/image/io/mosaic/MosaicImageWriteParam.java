@@ -27,11 +27,10 @@ import javax.imageio.ImageWriteParam;
 
 import org.opengis.coverage.PaletteInterpretation;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.ImageWorker;
 import org.geotoolkit.internal.image.SimpleBufferedImageOp;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -101,10 +100,7 @@ public class MosaicImageWriteParam extends ImageWriteParam {
      * @param index The index of the image to be written.
      */
     public void setOutputIndex(final int index) {
-        if (index < 0 || index > Tile.MASK) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, index, 0, Tile.MASK));
-        }
+        ensureBetween("index", 0, Tile.MASK, index);
         outputIndex = index;
     }
 

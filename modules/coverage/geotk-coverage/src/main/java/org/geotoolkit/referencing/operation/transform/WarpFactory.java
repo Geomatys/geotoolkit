@@ -41,6 +41,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
 
+import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
+
 
 /**
  * Creates image {@link Warp} objects for the given {@link MathTransform2D}. The
@@ -118,9 +120,7 @@ public class WarpFactory {
      *        this factory.
      */
     public WarpFactory(final double tolerance) {
-        if (!(tolerance >= 0)) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1, tolerance));
-        }
+        ensurePositive("tolerance", tolerance);
         this.tolerance = tolerance;
         cache = new WarpCache();
     }

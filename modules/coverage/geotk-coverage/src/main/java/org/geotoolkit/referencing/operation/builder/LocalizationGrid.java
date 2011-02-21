@@ -30,8 +30,9 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
+
+import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
 
 
 /**
@@ -620,11 +621,7 @@ public class LocalizationGrid {
      * @return A math transform from grid to "real world" coordinates.
      */
     public synchronized MathTransform2D getPolynomialTransform(final int degree) {
-        if (degree < 0  ||  degree >= WarpTransform2D.MAX_DEGREE+1) {
-            // TODO: provides a localized error message.
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.VALUE_OUT_OF_BOUNDS_$3,
-                    degree, 0, WarpTransform2D.MAX_DEGREE+1));
-        }
+        ensureBetween("degree", 0, WarpTransform2D.MAX_DEGREE, degree);
         if (transforms == null) {
             transforms = new MathTransform2D[WarpTransform2D.MAX_DEGREE + 1];
         }

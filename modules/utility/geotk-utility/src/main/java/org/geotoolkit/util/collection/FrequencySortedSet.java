@@ -27,7 +27,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
-import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
 
 
 /**
@@ -140,10 +141,7 @@ public class FrequencySortedSet<E> extends AbstractSet<E> implements SortedSet<E
      */
     public boolean add(final E element, int occurrence) throws IllegalArgumentException {
         if (occurrence != 0) {
-            if (occurrence < 0) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.NOT_GREATER_THAN_ZERO_$1, occurrence));
-            }
+            ensurePositive("occurrence", occurrence);
             sorted = null;
             occurrence *= order;
             final Integer n = count.put(element, occurrence);

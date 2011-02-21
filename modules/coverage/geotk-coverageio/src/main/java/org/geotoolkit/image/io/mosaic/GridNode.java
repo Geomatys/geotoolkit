@@ -134,8 +134,9 @@ final class GridNode extends TreeNode implements Comparable<GridNode> {
         super(tile.getAbsoluteRegion());
         this.tile = tile;
         final Dimension subsampling = tile.getSubsampling();
-        xSubsampling = Tile.ensureStrictlyPositive(subsampling.width);
-        ySubsampling = Tile.ensureStrictlyPositive(subsampling.height);
+        Tile.checkSubsampling(subsampling);
+        xSubsampling = Tile.toShort(subsampling.width);
+        ySubsampling = Tile.toShort(subsampling.height);
         this.index = index;
     }
 

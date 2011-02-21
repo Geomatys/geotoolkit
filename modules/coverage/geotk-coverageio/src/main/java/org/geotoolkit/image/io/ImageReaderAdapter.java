@@ -49,7 +49,7 @@ import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.util.XArrays;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

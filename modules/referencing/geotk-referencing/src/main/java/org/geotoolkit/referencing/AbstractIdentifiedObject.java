@@ -63,7 +63,7 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.xml.Namespaces;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

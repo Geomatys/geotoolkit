@@ -33,7 +33,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

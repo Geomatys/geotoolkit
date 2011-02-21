@@ -47,6 +47,8 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
+
 
 /**
  * Creates {@link TileManager} from a set of images organized according a given
@@ -443,10 +445,7 @@ public class MosaicBuilder implements LogProducer {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.BAD_RANGE_$2, minSize, maxSize));
         }
-        if (tileSize < minSize || tileSize > maxSize) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, tileSize, minSize, maxSize));
-        }
+        ensureBetween("tileSize", minSize, maxSize, tileSize);
         if (imageSize <= minSize) {
             return imageSize;
         }

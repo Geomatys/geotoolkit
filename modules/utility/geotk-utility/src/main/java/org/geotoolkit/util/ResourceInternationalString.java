@@ -26,7 +26,7 @@ import java.util.MissingResourceException;
 import org.geotoolkit.lang.Immutable;
 import org.opengis.util.InternationalString;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

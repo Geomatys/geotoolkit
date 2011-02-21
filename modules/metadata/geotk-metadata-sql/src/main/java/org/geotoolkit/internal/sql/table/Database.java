@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.sql.StatementPool;
 import org.geotoolkit.internal.sql.AuthenticatedDataSource;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

@@ -26,6 +26,8 @@ import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+
 
 /**
  * Profiles the loading of random rectangular regions using a given {@link TileManager}.
@@ -147,15 +149,6 @@ public class MosaicProfiler {
     }
 
     /**
-     * Ensures that the given number is greater than 0.
-     */
-    private static void ensurePositive(final int n) throws IllegalArgumentException {
-        if (n <= 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1, n));
-        }
-    }
-
-    /**
      * Copies the given source dimension to the given target dimension. This method
      * ensures that the source dimension is not empty before to perform the copy.
      */
@@ -163,8 +156,8 @@ public class MosaicProfiler {
             throws IllegalArgumentException
     {
         final int width, height;
-        ensurePositive(width  = source.width);
-        ensurePositive(height = source.height);
+        ensureStrictlyPositive("width",  width  = source.width);
+        ensureStrictlyPositive("height", height = source.height);
         target.setSize(width, height);
     }
 
@@ -254,7 +247,7 @@ public class MosaicProfiler {
      * @param size The minimal width and height of the images to load.
      */
     public synchronized void setMinSize(final int size) {
-        ensurePositive(size);
+        ensureStrictlyPositive("size", size);
         minSize.setSize(size, size);
         adjust(minSize, maxSize, true);
     }
@@ -286,7 +279,7 @@ public class MosaicProfiler {
      * @param size The maximal width and height of the images to load.
      */
     public synchronized void setMaxSize(final int size) {
-        ensurePositive(size);
+        ensureStrictlyPositive("size", size);
         maxSize.setSize(size, size);
         adjust(minSize, maxSize, false);
     }
@@ -319,7 +312,7 @@ public class MosaicProfiler {
      * @param subsampling The minimal subsampling along <var>x</var> and <var>y</var> axis.
      */
     public synchronized void setMinSubsampling(final int subsampling) {
-        ensurePositive(subsampling);
+        ensureStrictlyPositive("subsampling", subsampling);
         minSubsampling.setSize(subsampling, subsampling);
         adjust(minSubsampling, maxSubsampling, true);
     }
@@ -352,7 +345,7 @@ public class MosaicProfiler {
      * @param subsampling The maximal subsampling along <var>x</var> and <var>y</var> axis.
      */
     public synchronized void setMaxSubsampling(final int subsampling) {
-        ensurePositive(subsampling);
+        ensureStrictlyPositive("subsampling", subsampling);
         maxSubsampling.setSize(subsampling, subsampling);
         adjust(minSubsampling, maxSubsampling, false);
     }

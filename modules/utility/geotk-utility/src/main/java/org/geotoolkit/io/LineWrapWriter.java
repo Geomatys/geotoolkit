@@ -22,7 +22,8 @@ import java.io.FilterWriter;
 import java.io.IOException;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
 
 
 /**
@@ -132,10 +133,7 @@ public class LineWrapWriter extends FilterWriter {
      * @param length The new maximal line length.
      */
     public void setMaximalLineLength(final int length) {
-        if (length <= 0) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.NOT_GREATER_THAN_ZERO_$1, length));
-        }
+        ensureStrictlyPositive("length", length);
         maximalLineLength = length;
     }
 

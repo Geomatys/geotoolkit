@@ -96,6 +96,8 @@ import java.lang.annotation.RetentionPolicy;
  *   </ul>
  *   <li><p>Loggings and exceptions</p></li>
  *   <ul>
+ *     <li>{@link org.geotoolkit.util.ArgumentChecks}: Perform argument checks and throw
+ *         {@link IllegalArgumentException} if needed.</li>
  *     <li>{@link org.geotoolkit.util.logging.Logging}: Get a {@linkplain java.util.logging.Logger logger},
  *         which may be a wrapper around <cite>Apache Commons Logging</cite>.</li>
  *     <li>{@link org.geotoolkit.util.Exceptions}: Paints a stack trace in a {@link java.awt.Graphics2D}.</li>

@@ -45,7 +45,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -168,7 +168,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
         this.parameters = new GeneralParameterDescriptor[parameters.length];
         for (int i=0; i<parameters.length; i++) {
             this.parameters[i] = parameters[i];
-            ensureNonNull("parameters", parameters, i);
+            ensureNonNull("parameters", i, parameters);
         }
         /*
          * Ensure there is no conflict in parameter names.

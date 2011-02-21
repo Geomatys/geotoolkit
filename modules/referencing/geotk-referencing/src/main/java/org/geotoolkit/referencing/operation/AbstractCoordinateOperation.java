@@ -50,7 +50,7 @@ import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.measure.Units;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -228,7 +228,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
         } else {
             positionalAccuracy = positionalAccuracy.clone();
             for (int i=0; i<positionalAccuracy.length; i++) {
-                ensureNonNull(COORDINATE_OPERATION_ACCURACY_KEY, positionalAccuracy, i);
+                ensureNonNull(COORDINATE_OPERATION_ACCURACY_KEY, i, positionalAccuracy);
             }
         }
         this.coordinateOperationAccuracy = CollectionUtilities.nonEmptySet(positionalAccuracy);

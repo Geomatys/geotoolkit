@@ -24,7 +24,7 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -115,10 +115,8 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      */
     @Override
     public double getMinimum(final int dimension) throws IndexOutOfBoundsException {
-        if (dimension >= 0 && dimension < ordinates.length/2) {
-            return ordinates[dimension];
-        }
-        throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension));
+        ensureValidIndex(ordinates.length >>> 1, dimension);
+        return ordinates[dimension];
     }
 
     /**
@@ -128,10 +126,8 @@ public final class ImmutableEnvelope extends AbstractEnvelope {
      */
     @Override
     public double getMaximum(final int dimension) throws IndexOutOfBoundsException {
-        if (dimension >= 0 && dimension < ordinates.length/2) {
-            return ordinates[dimension + ordinates.length/2];
-        }
-        throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension));
+        ensureValidIndex(ordinates.length >>> 1, dimension);
+        return ordinates[dimension + (ordinates.length >>> 1)];
     }
 
     /**

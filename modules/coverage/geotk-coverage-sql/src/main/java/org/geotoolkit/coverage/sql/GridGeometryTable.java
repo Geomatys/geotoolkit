@@ -50,7 +50,7 @@ import org.geotoolkit.resources.Errors;
 
 import static java.lang.reflect.Array.getLength;
 import static java.lang.reflect.Array.getDouble;
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

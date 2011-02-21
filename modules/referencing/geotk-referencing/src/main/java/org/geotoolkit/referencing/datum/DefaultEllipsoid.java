@@ -50,7 +50,7 @@ import org.geotoolkit.lang.Immutable;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

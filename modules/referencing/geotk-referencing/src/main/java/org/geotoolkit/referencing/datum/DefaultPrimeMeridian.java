@@ -40,7 +40,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Units;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

@@ -49,7 +49,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.util.converter.Classes;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addSpatialFormat;
 
 

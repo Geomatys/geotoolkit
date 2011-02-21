@@ -22,9 +22,9 @@ import java.util.AbstractList;
 import java.util.RandomAccess;
 import java.util.logging.Level;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.CheckedCollection;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
 import static org.geotoolkit.image.io.metadata.SpatialMetadataFormat.ARRAY_ATTRIBUTE_NAME;
 
 
@@ -103,9 +103,7 @@ final class MetadataProxyList<T> extends AbstractList<T> implements CheckedColle
      */
     @Override
     public T get(final int index) {
-        if (index < 0 || index >= size()) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, index));
-        }
+        ensureValidIndex(size(), index);
         T[] elements = this.elements;
         if (elements == null) {
             @SuppressWarnings("unchecked")

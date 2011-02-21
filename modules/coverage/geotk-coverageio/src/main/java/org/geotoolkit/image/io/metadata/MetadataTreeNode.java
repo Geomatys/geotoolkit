@@ -204,6 +204,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
      *
      * @return The programmatic name of this node.
      */
+    @Override
     public final String getName() {
         return super.toString();
     }

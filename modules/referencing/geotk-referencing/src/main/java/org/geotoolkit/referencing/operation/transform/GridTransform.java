@@ -42,6 +42,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+
 
 /**
  * Transforms a set of coordinate points using bilinear interpolation in a grid.
@@ -220,10 +222,8 @@ public class GridTransform extends AbstractMathTransform implements Serializable
         this.type   = type;
         this.width  = size.width;
         this.height = size.height;
-        int c;
-        if ((c=width) <= 0 || (c=height) <= 0) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1, c));
-        }
+        ensureStrictlyPositive("width",  width);
+        ensureStrictlyPositive("height", height);
         if (grid.getSize() != width*height) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
         }

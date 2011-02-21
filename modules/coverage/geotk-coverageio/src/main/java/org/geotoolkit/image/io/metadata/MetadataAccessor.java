@@ -59,7 +59,7 @@ import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.IndexedResourceBundle;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

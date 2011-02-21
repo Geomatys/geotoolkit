@@ -48,7 +48,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.lang.Immutable;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -204,7 +204,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
         MathTransform transform = null;
         ensureNonNull("operations", operations);
         for (int i=0; i<operations.length; i++) {
-            ensureNonNull("operations", operations, i);
+            ensureNonNull("operations", i, operations);
             final CoordinateOperation op = operations[i];
             if (op instanceof SingleOperation) {
                 target.add((SingleOperation) op);

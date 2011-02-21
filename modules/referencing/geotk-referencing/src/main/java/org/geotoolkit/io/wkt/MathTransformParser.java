@@ -34,7 +34,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

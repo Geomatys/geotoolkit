@@ -29,7 +29,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.StringUtilities;
 
 import static org.geotoolkit.io.X364.*;
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

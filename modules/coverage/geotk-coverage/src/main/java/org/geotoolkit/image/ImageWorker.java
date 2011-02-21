@@ -40,12 +40,12 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import static java.awt.color.ColorSpace.CS_GRAY;
 import static java.awt.color.ColorSpace.CS_sRGB;
 import static java.awt.image.DataBuffer.TYPE_BYTE;
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
  * Helper methods for applying JAI operations on an image. The image is specified at
- * {@linkplain #ImageWorker(RenderedImage) creation time}. Sucessive operations can
+ * {@linkplain #ImageWorker(RenderedImage) creation time}. Successive operations can
  * be applied by invoking the methods defined in this class, and the final image can
  * be obtained by invoking {@link #getRenderedImage} at the end of the process.
  * <p>
@@ -650,9 +650,7 @@ public class ImageWorker extends ImageInspector {
         ensureNonNull("toAdd", toAdd);
         final int numBands = getNumBands();
         if (insertAt < 0) insertAt += numBands + 1;
-        if (insertAt < 0 || insertAt > numBands) {
-            throw new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, insertAt));
-        }
+        ensureValidIndex(numBands + 1, insertAt);
         if (insertAt == 0) {
             image = BandMergeDescriptor.create(toAdd, image, getRenderingHints());
         } else if (insertAt == numBands) {

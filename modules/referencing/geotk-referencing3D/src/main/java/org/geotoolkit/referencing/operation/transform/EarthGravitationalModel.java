@@ -38,9 +38,9 @@ import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.util.collection.WeakValueHashMap;
-import org.geotoolkit.util.NullArgumentException;
 
 import static java.lang.Math.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 import static org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid.*;
 
 
@@ -204,13 +204,9 @@ public class EarthGravitationalModel extends VerticalTransform {
     EarthGravitationalModel(final GeodeticDatum datum, final int nmax, final boolean dummy)
             throws IllegalArgumentException
     {
+        ensureNonNull("datum", datum);
+        ensureBetween("nmax", 2, 9999, nmax); // Arbitrary upper limit.
         this.nmax = nmax;
-        if (nmax < 2) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1, nmax));
-        }
-        if (datum == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "datum"));
-        }
         isWGS84 = CRS.equalsIgnoreMetadata(DefaultGeodeticDatum.WGS84, datum);
         if (isWGS84) {
             /*

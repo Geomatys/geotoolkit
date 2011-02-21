@@ -55,7 +55,7 @@ import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 
 import static java.lang.Math.min;
 import static java.lang.Math.max;
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -317,12 +317,13 @@ public class Tile implements Comparable<Tile>, Serializable {
         ensureNonNull("location", location);
         this.provider   = provider;
         this.input      = input;
-        this.imageIndex = ensurePositive(imageIndex);
+        this.imageIndex = toShort(imageIndex);
         this.x          = location.x;
         this.y          = location.y;
         if (subsampling != null) {
-            xSubsampling = ensureStrictlyPositive(subsampling.width);
-            ySubsampling = ensureStrictlyPositive(subsampling.height);
+            checkSubsampling(subsampling);
+            xSubsampling = toShort(subsampling.width);
+            ySubsampling = toShort(subsampling.height);
         } else {
             xSubsampling = ySubsampling = 1;
         }
@@ -365,13 +366,14 @@ public class Tile implements Comparable<Tile>, Serializable {
         }
         this.provider   = provider;
         this.input      = input;
-        this.imageIndex = ensurePositive(imageIndex);
+        this.imageIndex = toShort(imageIndex);
         this.x          = region.x;
         this.y          = region.y;
         setSize(region.width, region.height);
         if (subsampling != null) {
-            xSubsampling = ensureStrictlyPositive(subsampling.width);
-            ySubsampling = ensureStrictlyPositive(subsampling.height);
+            checkSubsampling(subsampling);
+            xSubsampling = toShort(subsampling.width);
+            ySubsampling = toShort(subsampling.height);
         } else {
             xSubsampling = ySubsampling = 1;
         }
@@ -415,7 +417,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         ensureNonNull("gridToCRS", gridToCRS);
         this.provider   = provider;
         this.input      = input;
-        this.imageIndex = ensurePositive(imageIndex);
+        this.imageIndex = toShort(imageIndex);
         if (region != null) {
             this.x = region.x;
             this.y = region.y;
@@ -517,7 +519,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * Ensures that the given value is positive and in the range of 16 bits number.
      * Returns the value casted to an unsigned {@code short} type.
      */
-    private static short ensurePositive(final int n) throws IllegalArgumentException {
+    static short toShort(final int n) throws IllegalArgumentException {
         if (n < 0 || n > MASK) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, n, 0, MASK));
@@ -530,11 +532,9 @@ public class Tile implements Comparable<Tile>, Serializable {
      * user-supplied arguments, as opposed to {@link #checkGeometryValidity} which checks if
      * the subsampling has been computed. Both methods differ in exception type for that reason.
      */
-    static short ensureStrictlyPositive(final int n) throws IllegalArgumentException {
-        if (n < 1) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.NOT_GREATER_THAN_ZERO_$1, n));
-        }
-        return ensurePositive(n);
+    static void checkSubsampling(final Dimension subsampling) throws IllegalArgumentException {
+        ensureStrictlyPositive("width",  subsampling.width);
+        ensureStrictlyPositive("height", subsampling.height);
     }
 
     /**
@@ -981,8 +981,9 @@ public class Tile implements Comparable<Tile>, Serializable {
         if (xSubsampling != 0 || ySubsampling != 0) {
             throw new IllegalStateException(); // Should never happen.
         }
-        xSubsampling = ensureStrictlyPositive(subsampling.width);
-        ySubsampling = ensureStrictlyPositive(subsampling.height);
+        checkSubsampling(subsampling);
+        xSubsampling = toShort(subsampling.width);
+        ySubsampling = toShort(subsampling.height);
     }
 
     /**
@@ -1196,7 +1197,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         width  = 0;
         height = 0;
         throw new IllegalArgumentException(Errors.format(
-                Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, name + '=' + value, 0, MASK));
+                Errors.Keys.VALUE_OUT_OF_BOUNDS_$4, name, value, 0, MASK));
     }
 
     /**

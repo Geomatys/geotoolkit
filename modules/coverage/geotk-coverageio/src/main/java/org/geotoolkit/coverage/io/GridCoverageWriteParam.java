@@ -19,10 +19,9 @@ package org.geotoolkit.coverage.io;
 
 import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
-
 import org.opengis.coverage.InterpolationMethod;
 
-import org.geotoolkit.resources.Errors;
+import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
 
 
 /**
@@ -166,11 +165,7 @@ public class GridCoverageWriteParam extends GridCoverageStoreParam {
      */
     public void setCompressionQuality(final Float quality) throws IllegalArgumentException {
         if (quality != null) {
-            final float value = quality;
-            if (!(value >= 0f && value <= 1f)) {
-                throw new IllegalArgumentException(Errors.format(
-                        Errors.Keys.VALUE_OUT_OF_BOUNDS_$3, value, 0, 1));
-            }
+            ensureBetween("quality", 0f, 1f, quality);
         }
         compressionQuality = quality;
     }

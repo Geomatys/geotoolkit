@@ -46,7 +46,7 @@ import org.geotoolkit.referencing.factory.wkt.AuthorityFactoryProvider;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**

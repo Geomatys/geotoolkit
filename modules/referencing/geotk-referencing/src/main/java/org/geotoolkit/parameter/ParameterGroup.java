@@ -44,7 +44,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -167,7 +167,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         final Map<GeneralParameterDescriptor,int[]> occurrences =
                 new LinkedHashMap<GeneralParameterDescriptor,int[]>(XCollections.hashMapCapacity(values.length));
         for (int i=0; i<values.length; i++) {
-            ensureNonNull("values", values, i);
+            ensureNonNull("values", i, values);
             occurrences.put(values[i].getDescriptor(), new int[1]);
             // The value 'int[1]' will be used by 'ensureValidOccurs'
         }
@@ -194,7 +194,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
          * Count the parameters occurrences.
          */
         for (int i=0; i<values.length; i++) {
-            ensureNonNull("values", values, i);
+            ensureNonNull("values", i, values);
             final GeneralParameterDescriptor descriptor = values[i].getDescriptor();
             final int[] count = occurrences.get(descriptor);
             if (count == null) {

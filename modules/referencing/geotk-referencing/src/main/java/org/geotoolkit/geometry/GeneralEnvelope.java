@@ -51,7 +51,7 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -720,13 +720,6 @@ scanNumber: while (++i < length) {
     }
 
     /**
-     * Creates an exception for an index out of bounds.
-     */
-    private static IndexOutOfBoundsException indexOutOfBounds(final int dimension) {
-        return new IndexOutOfBoundsException(Errors.format(Errors.Keys.INDEX_OUT_OF_BOUNDS_$1, dimension));
-    }
-
-    /**
      * Returns the minimal ordinate along the specified dimension.
      *
      * @param  dimension The dimension to query.
@@ -735,11 +728,8 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final double getMinimum(final int dimension) throws IndexOutOfBoundsException {
-        if (dimension < (ordinates.length >>> 1)) {
-            return ordinates[dimension];
-        } else {
-            throw indexOutOfBounds(dimension);
-        }
+        ensureValidIndex(ordinates.length >>> 1, dimension);
+        return ordinates[dimension];
     }
 
     /**
@@ -751,11 +741,8 @@ scanNumber: while (++i < length) {
      */
     @Override
     public final double getMaximum(final int dimension) throws IndexOutOfBoundsException {
-        if (dimension >= 0) {
-            return ordinates[dimension + (ordinates.length >>> 1)];
-        } else {
-            throw indexOutOfBounds(dimension);
-        }
+        ensureValidIndex(ordinates.length >>> 1, dimension);
+        return ordinates[dimension + (ordinates.length >>> 1)];
     }
 
     /**
@@ -826,13 +813,9 @@ scanNumber: while (++i < length) {
             // while keeping it legal (min <= max).
             minimum = maximum = 0.5 * (minimum + maximum);
         }
-        if (dimension >= 0) {
-            // An exception will be thrown before any change if 'dimension' is out of range.
-            ordinates[dimension + (ordinates.length >>> 1)] = maximum;
-            ordinates[dimension]                            = minimum;
-        } else {
-            throw indexOutOfBounds(dimension);
-        }
+        ensureValidIndex(ordinates.length >>> 1, dimension);
+        ordinates[dimension + (ordinates.length >>> 1)] = maximum;
+        ordinates[dimension]                            = minimum;
     }
 
     /**

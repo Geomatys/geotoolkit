@@ -52,7 +52,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -166,7 +166,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
         ensureNonNull("axis", axis);
         this.axis = axis.clone();
         for (int i=0; i<axis.length; i++) {
-            ensureNonNull("axis", axis, i);
+            ensureNonNull("axis", i, axis);
             final AxisDirection direction = axis[i].getDirection();
             ensureNonNull("direction", direction);
             /*

@@ -44,7 +44,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.Immutable;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -178,7 +178,7 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
         }
         final CoordinateSystem[] cs = new CoordinateSystem[crs.length];
         for (int i=0; i<crs.length; i++) {
-            ensureNonNull("crs", crs, i);
+            ensureNonNull("crs", i, crs);
             cs[i] = crs[i].getCoordinateSystem();
         }
         return new DefaultCompoundCS(cs);

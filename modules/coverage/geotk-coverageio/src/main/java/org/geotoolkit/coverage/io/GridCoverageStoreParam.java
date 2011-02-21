@@ -34,6 +34,8 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
 
+import static org.geotoolkit.util.ArgumentChecks.ensurePositive;
+
 
 /**
  * Base class for {@link GridCoverageReadParam} and {@link GridCoverageWriteParam}. This class
@@ -359,10 +361,8 @@ public abstract class GridCoverageStoreParam implements Serializable {
         if (resolution != null) {
             resolution = resolution.clone();
             for (final double r : resolution) {
-                if (!(r >= 0)) { // Accept 0 as well, meaning "best resolution available".
-                    throw new IllegalArgumentException(Errors.format(
-                            Errors.Keys.NOT_GREATER_THAN_ZERO_$1, r));
-                }
+                // Accept 0 as well, meaning "best resolution available".
+                ensurePositive("resolution", r);
             }
         }
         this.resolution = resolution;

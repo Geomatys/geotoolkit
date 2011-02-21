@@ -36,6 +36,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.internal.image.ScaledColorSpace;
 
+import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+
 
 /**
  * Computes values at the location of grid cells from a set of values at random locations.
@@ -97,7 +99,7 @@ public class ObjectiveAnalysis {
     /**
      * Creates a new instance for interpolating values in the given region.
      *
-     * @param gridRegion The grid bounding box. The maximal ordinates are inclusives.
+     * @param gridRegion The grid bounding box. The maximal ordinates are inclusive.
      * @param nx The number of grid cells along the <var>x</var> axis.
      * @param ny The number of grid cells along the <var>y</var> axis.
      * @param cellLocation The position to evaluate in each grid cell.
@@ -108,8 +110,8 @@ public class ObjectiveAnalysis {
         if (gridRegion.isEmpty()) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.BAD_RECTANGLE_$1, gridRegion));
         }
-        ensurePositive("nx", nx);
-        ensurePositive("ny", ny);
+        ensureStrictlyPositive("nx", nx);
+        ensureStrictlyPositive("ny", ny);
         final double width  = gridRegion.getWidth();
         final double height = gridRegion.getHeight();
         final double dx = width  / (nx - 1);
@@ -122,15 +124,6 @@ public class ObjectiveAnalysis {
         xmin  = gridRegion.getMinX() + dx * (loc.dx + 0.5);
         ymax  = gridRegion.getMaxY() + dy * (loc.dy + 0.5);
         scale = Math.hypot(width, height) * 0.5;
-    }
-
-    /**
-     * Ensures that the given parameter is greater than zero.
-     */
-    private static void ensurePositive(final String name, final int n) {
-        if (n < 1) {
-            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, name, n));
-        }
     }
 
     /**
@@ -396,7 +389,7 @@ public class ObjectiveAnalysis {
      * {@section Default implementation}
      * Current implementation assumes that the correlation has a gaussian distribution,
      * with a value approaching zero as the distance between the two stations increase.
-     * The calibation coefficients in current implementation are totally arbitrary and
+     * The calibration coefficients in current implementation are totally arbitrary and
      * may change in any future version.
      *
      * @param  P1 The first location. Implementors shall not modify this value.

@@ -36,7 +36,7 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 
-import static org.geotoolkit.util.Utilities.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
 /**
@@ -165,8 +165,8 @@ public abstract class AbstractOperation implements Operation, Serializable {
                 count += getNumSources((ParameterDescriptorGroup) candidate);
                 continue;
             }
-            if (candidate instanceof ParameterDescriptor) {
-                final Class<?> type = ((ParameterDescriptor) candidate).getValueClass();
+            if (candidate instanceof ParameterDescriptor<?>) {
+                final Class<?> type = ((ParameterDescriptor<?>) candidate).getValueClass();
                 if (Coverage.class.isAssignableFrom(type)) {
                     count++;
                 }
