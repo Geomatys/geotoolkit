@@ -101,6 +101,17 @@ public class DomComparator {
     public final Set<String> ignoredAttributes;
 
     /**
+     * The fully-qualified name of nodes to ignore in comparisons. The name shall be in the form
+     * {@code "namespace:name"}, or only {@code "name"} if there is no namespace. In order to
+     * ignore everything in a namespace, use {@code "namespace:*"}.
+     * <p>
+     * This set is initially empty. Users can add or remove elements in this set as they wish.
+     * The content of this set will be honored by the default {@link #compareChildren(Node, Node)}
+     * implementation.
+     */
+    public final Set<String> ignoredNodes;
+
+    /**
      * Creates a new comparator for the given root nodes.
      *
      * @param expected The root node of the expected XML document.
@@ -112,6 +123,7 @@ public class DomComparator {
         expectedDoc = expected;
         actualDoc   = actual;
         ignoredAttributes = new HashSet<String>();
+        ignoredNodes = new HashSet<String>();
     }
 
     /**
@@ -320,7 +332,8 @@ public class DomComparator {
 
     /**
      * Compares the children of the given nodes. The node themselves are not compared.
-     * Children shall appear in the same order.
+     * Children shall appear in the same order. Nodes having a name declared in the
+     * {@link #ignoredNodes} set are ignored.
      * <p>
      * Subclasses can override this method if they need a different processing.
      *
@@ -377,31 +390,44 @@ public class DomComparator {
             final Node expAttr = expectedAttributes.item(i);
             final String ns    = expAttr.getNamespaceURI();
             final String name  = expAttr.getNodeName();
-            if (!ignoredAttributes.isEmpty()) {
-                if (ignoredAttributes.contains((ns != null) ? ns + ':' + name : name)) {
-                    // Ignore a specific attributes (for example "xsi:schemaLocation")
-                    continue;
+            if (!isIgnored(ignoredAttributes, ns, name)) {
+                final Node actAttr;
+                if (ns == null) {
+                    actAttr = actualAttributes.getNamedItem(name);
+                } else {
+                    actAttr = actualAttributes.getNamedItemNS(ns, name);
                 }
-                String head = ns;
-                if (head == null) {
-                    final int s = name.indexOf(':');
-                    if (s >= 1) {
-                        head = name.substring(0, s);
-                    }
-                }
-                if (head != null && ignoredAttributes.contains(head + ":*")) {
-                    // Ignore a full namespace (typically "xmlns:*")
-                    continue;
-                }
+                compareNode(expAttr, actAttr);
             }
-            final Node actAttr;
-            if (ns == null) {
-                actAttr = actualAttributes.getNamedItem(name);
-            } else {
-                actAttr = actualAttributes.getNamedItemNS(ns, name);
-            }
-            compareNode(expAttr, actAttr);
         }
+    }
+
+    /**
+     * Returns {@code true} if the given node or attribute shall be ignored.
+     *
+     * @param ignored The set of node or attribute fully qualified names to ignore.
+     * @param ns      The node or attribute namespace, or {@code null}.
+     * @param name    The node or attribute name.
+     * @return        {@coce true} if the node or attribute shall be ignored.
+     */
+    private static boolean isIgnored(final Set<String> ignored, String ns, final String name) {
+        if (!ignored.isEmpty()) {
+            if (ignored.contains((ns != null) ? ns + ':' + name : name)) {
+                // Ignore a specific node (for example "xsi:schemaLocation")
+                return true;
+            }
+            if (ns == null) {
+                final int s = name.indexOf(':');
+                if (s >= 1) {
+                    ns = name.substring(0, s);
+                }
+            }
+            if (ns != null && ignored.contains(ns + ":*")) {
+                // Ignore a full namespace (typically "xmlns:*")
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -414,29 +440,31 @@ public class DomComparator {
      */
     private Node firstNonEmptySibling(Node node) {
         for (; node != null; node = node.getNextSibling()) {
-            switch (node.getNodeType()) {
-                // For attribute node, continue the search unconditionally.
-                case Node.ATTRIBUTE_NODE: continue;
+            if (!isIgnored(ignoredNodes, node.getNamespaceURI(), node.getNodeName())) {
+                switch (node.getNodeType()) {
+                    // For attribute node, continue the search unconditionally.
+                    case Node.ATTRIBUTE_NODE: continue;
 
-                // For text node, continue the search if the node is empty.
-                case Node.TEXT_NODE: {
-                    final String text = node.getTextContent();
-                    if (text == null || text.trim().length() == 0) {
-                        continue;
+                    // For text node, continue the search if the node is empty.
+                    case Node.TEXT_NODE: {
+                        final String text = node.getTextContent();
+                        if (text == null || text.trim().length() == 0) {
+                            continue;
+                        }
+                        break;
                     }
-                    break;
-                }
 
-                // Ignore comment nodes only if requested.
-                case Node.COMMENT_NODE: {
-                    if (ignoreComments) {
-                        continue;
+                    // Ignore comment nodes only if requested.
+                    case Node.COMMENT_NODE: {
+                        if (ignoreComments) {
+                            continue;
+                        }
+                        break;
                     }
-                    break;
                 }
+                // Found a node: stop the search.
+                break;
             }
-            // Found a node: stop the search.
-            break;
         }
         return node;
     }
