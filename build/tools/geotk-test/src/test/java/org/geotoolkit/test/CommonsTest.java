@@ -30,7 +30,7 @@ import static org.geotoolkit.test.Commons.*;
  *
  * @since 3.00
  */
-public class CommonsTest {
+public final class CommonsTest {
     /**
      * Tests the {@link Commons#serialize} method.
      */

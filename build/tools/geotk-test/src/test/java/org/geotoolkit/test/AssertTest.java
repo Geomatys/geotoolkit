@@ -29,7 +29,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.16 (derived from 3.00)
  */
-public class AssertTest {
+public final class AssertTest {
     /**
      * Tests the {@link Assert#assertMultilinesEquals} method.
      */

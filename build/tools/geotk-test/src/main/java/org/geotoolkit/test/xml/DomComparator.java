@@ -105,6 +105,10 @@ public class DomComparator {
      * {@code "namespace:name"}, or only {@code "name"} if there is no namespace. In order to
      * ignore everything in a namespace, use {@code "namespace:*"}.
      * <p>
+     * This set provides a way to ignore a node of the given name <em>and all its children</em>.
+     * In order to ignore a node but still compare its children, override the
+     * {@link #compareNode(Node, Node)} method instead.
+     * <p>
      * This set is initially empty. Users can add or remove elements in this set as they wish.
      * The content of this set will be honored by the default {@link #compareChildren(Node, Node)}
      * implementation.
