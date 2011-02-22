@@ -18,7 +18,11 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Random;
+import java.io.Writer;
 import java.io.PrintStream;
+import java.io.StringWriter;
+import java.io.OutputStreamWriter;
+import java.io.IOException;
 import java.awt.geom.Point2D;
 import javax.measure.unit.Unit;
 
@@ -47,6 +51,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -190,9 +195,16 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
 
     /**
      * Prints the current {@linkplain #transform transform} as internal WKT. This method is for
-     * debugging purpose only. It should never be invoked after the test suite is "final".
+     * debugging purpose only.
      */
     protected final void printInternalWKT() {
+        printInternalWKT(new OutputStreamWriter(System.out));
+    }
+
+    /**
+     * Prints the WKT of the current transform to the given stream.
+     */
+    private void printInternalWKT(final Writer out) {
         final String name;
         final MathTransform transform = this.transform;
         if (transform instanceof AbstractMathTransform) {
@@ -200,11 +212,34 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         } else {
             name = Classes.getShortClassName(transform);
         }
-        System.out.println("\nInternal WKT of " + name + ':');
+        final TableWriter table = new TableWriter(out);
+        table.setMultiLinesCells(true);
+        table.writeHorizontalSeparator();
+        table.write("WKT of \"");
+        table.write(name);
+        table.write('"');
+        table.nextColumn();
+        table.write("Internal WKT");
+        table.writeHorizontalSeparator();
+        String wkt;
+        try {
+            wkt = transform.toWKT();
+        } catch (UnsupportedOperationException e) {
+            wkt = transform.toString();
+        }
+        table.write(wkt);
+        table.nextColumn();
         if (transform instanceof FormattableObject) {
-            System.out.println(((FormattableObject) transform).toWKT(FormattableObject.INTERNAL, 2));
+            wkt = ((FormattableObject) transform).toWKT(FormattableObject.INTERNAL, 2);
         } else {
-            System.out.println(transform);
+            wkt = transform.toString();
+        }
+        table.write(wkt);
+        table.writeHorizontalSeparator();
+        try {
+            table.flush();
+        } catch (IOException e) {
+            throw new AssertionError(e);
         }
     }
 
@@ -219,13 +254,21 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
     }
 
     /**
-     * Complete the error message by pre-concatenating {@link #messageOnFailure}, if non-null.
+     * Complete the error message by pre-concatenating {@link #messageOnFailure} if non-null.
+     * Then concatenate the WKT.
      */
     private String complete(String message) {
+        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final StringWriter buffer = new StringWriter();
         if (messageOnFailure != null) {
-            message = (message != null) ? messageOnFailure + ' ' + message : messageOnFailure;
+            buffer.append(messageOnFailure).append(lineSeparator);
         }
-        return message;
+        printInternalWKT(buffer);
+        if (message != null) {
+            buffer.append(message).append(lineSeparator);
+        }
+        // Note: JUnit message will beging with a space.
+        return buffer.append("JUnit message:").toString();
     }
 
     /**

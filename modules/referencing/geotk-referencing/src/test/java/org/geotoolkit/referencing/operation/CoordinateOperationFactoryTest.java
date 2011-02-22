@@ -36,6 +36,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 import org.opengis.referencing.operation.Projection;
 
 import org.geotoolkit.test.referencing.WKT;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
@@ -202,8 +203,9 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
      */
     @Before
     public void initMessageOnFailure() {
-        messageOnFailure = "datumShiftMethod=" + getDatumShiftMethod() +
-                ", isEpsgFactoryAvailable=" + isEpsgFactoryAvailable() + '.';
+        messageOnFailure = "Test failure in " + Classes.getShortClassName(this) +
+                "[datumShiftMethod=" + getDatumShiftMethod() +
+                ", isEpsgFactoryAvailable=" + isEpsgFactoryAvailable() + ']';
     }
 
     /**
@@ -310,16 +312,30 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
     }
 
     /**
-     * Tests a transformation that requires a datum shift.
+     * Tests a transformation that requires a datum shift. The datum shift method should be
+     * either "Molodensky" or "Abridged Molodensky" with Bursa-Wolf parameters taken from
+     * the {@code TOWGS84} declaration in the {@link WKT#GEOGCS_NTF} string.
      *
      * @throws Exception Should never happen.
      */
     @Test
     public void testDatumShift() throws Exception {
         assumeTrue(isEpsgFactoryAvailable());
-        assertEquals("Factory is not using the expected datum shift method.", getDatumShiftMethod(),
+        final String datumShiftMethod = getDatumShiftMethod();
+        assertEquals("Factory is not using the expected datum shift method.", datumShiftMethod,
                 ((Factory) opFactory).getImplementationHints().get(Hints.DATUM_SHIFT_METHOD));
-
+        final boolean isAbridged;
+        if (datumShiftMethod == null || datumShiftMethod.equals("Geocentric") || datumShiftMethod.equals("Molodensky")) {
+            isAbridged = false;
+        } else if (datumShiftMethod.equals("Abridged Molodensky")) {
+            isAbridged = true;
+        } else {
+            fail("Unexpected datum shift method: " + datumShiftMethod);
+            return;
+        }
+        /*
+         * Transform a point using the information provided in the TOWGS84 element.
+         */
         final CoordinateReferenceSystem sourceCRS = crsFactory.createFromWKT(WKT.GEOGCS_NTF);
         final CoordinateReferenceSystem targetCRS = crsFactory.createFromWKT(WKT.GEOGCS_WGS84);
         final CoordinateOperation operation = opFactory.createOperation(sourceCRS, targetCRS);
@@ -335,7 +351,6 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
          *       However, it was tested with both Molodenski and Geocentric transformations.
          */
         assertTransformEquals2_2(0, 0, 2.3367521703619816, 0.0028940088671177986);
-        final boolean isAbridged = "Abridged Molodensky".equals(getDatumShiftMethod());
         if (isAbridged) assertTransformEquals2_2(20, -10, -6.663517586507632, 18.00134007052471);
         else            assertTransformEquals2_2(20, -10, -6.663517606186469, 18.00134508026729);
         /*
@@ -360,13 +375,21 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
             // This is the expected exception.
         }
         /*
-         * Try again with hints, asking for a lenient factory.
+         * We will try again with hints, asking for a lenient factory. The transform should now
+         * succeed despite the missing {@code TOWGS84} element. But first, just as an opportunist
+         * test, make sure that when LENIENT_DATUM_SHIFT is set to FALSE, we get the same factory
+         * than the one used above.
          */
         CoordinateOperationFactory lenientFactory;
         final Hints hints = new Hints(testHints);
         assertNull(hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.FALSE));
         lenientFactory = AuthorityFactoryFinder.getCoordinateOperationFactory(hints);
         assertSame(opFactory, lenientFactory);
+        /*
+         * Now ensure that the lenient factory is different than the default one and get the
+         * transform. Note that the transform will still contain an [Abridged] Molodensky
+         * transform because of the ellipsoid changes, but the dx, dy, dz terms should be 0.
+         */
         assertEquals(Boolean.FALSE, hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE));
         lenientFactory = AuthorityFactoryFinder.getCoordinateOperationFactory(hints);
         assertNotSame(opFactory, lenientFactory);
@@ -383,7 +406,7 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
          * Note: Expected values below were computed with Geotk (not an external library).
          *       However, it was tested with both Molodenski and Geocentric transformations.
          */
-        assertTransformEquals2_2(0,    0,  2.33722917,  0.0);
+        assertTransformEquals2_2(0, 0, 2.33722917, 0);
         if (isAbridged) assertTransformEquals2_2(20, -10, -6.66277083, 17.99814367592171);
         else            assertTransformEquals2_2(20, -10, -6.66277083, 17.99814879585781);
     }

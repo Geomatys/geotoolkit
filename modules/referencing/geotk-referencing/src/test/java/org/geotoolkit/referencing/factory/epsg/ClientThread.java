@@ -164,6 +164,8 @@ final class ClientThread extends Thread {
                 MathTransform transform = CRS.findMathTransform(sourceCRS, targetCRS, true);
                 assertSame(targetPt, transform.inverse().transform(sourcePt, targetPt));
                 statistics.add(System.nanoTime() - startTime);
+                assertFalse("x=NaN", Double.isNaN(targetPt.x));
+                assertFalse("y=NaN", Double.isNaN(targetPt.y));
                 assertConsistent(result, crsCode, targetPt);
                 /*
                  * UTM 72 --> UTM 84 (or conversely)
@@ -184,7 +186,7 @@ final class ClientThread extends Thread {
                 final double y = coordUTM.y = random.nextDouble() * 5000000 + 2500000;
                 assertSame(coordUTM, transform.transform(coordUTM, coordUTM));
                 final double distSq = coordUTM.distanceSq(x, y);
-                if (!(distSq <= UTM_TOLERANCE)) {
+                if (!(distSq <= UTM_TOLERANCE)) { // Use '!' for catching NaN.
                     fail("UTM tolerance error: " + Math.sqrt(distSq));
                 }
             } catch (Throwable e) {

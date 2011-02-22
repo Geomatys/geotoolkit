@@ -268,7 +268,7 @@ public class FormattableObject implements Formattable {
             } else {
                 formatter.append(this);
             }
-            if (strict && formatter.isInvalidWKT()) {
+            if (strict && formatter.isInvalidWKT() && !INTERNAL.equals(authority)) {
                 final Class<?> unformattable = formatter.getUnformattableClass();
                 throw new UnformattableObjectException(formatter.warning, unformattable);
             }
