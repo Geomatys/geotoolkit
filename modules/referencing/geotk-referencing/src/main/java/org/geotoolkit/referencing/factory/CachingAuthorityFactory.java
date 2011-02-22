@@ -114,7 +114,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     private transient volatile Citation authority;
 
     /**
-     * The pool of cached objects. The keys are instances of {@link String} or {@link Pair}.
+     * The pool of cached objects. The keys are instances of {@link Key} or {@link CodePair}.
      */
     private final Cache<Object,Object> cache;
 
@@ -507,6 +507,44 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     }
 
     /**
+     * The key objects to use in the {@link CachingAuthorityFactory#cache}.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-2">GEOTK-2</a>
+     *
+     * @since 3.17
+     */
+    private static final class Key {
+        /** The type of the cached object.    */ final Class<?> type;
+        /** The cached object authority code. */ final String code;
+
+        /** Creates a new key for the given type and code. */
+        Key(final Class<?> type, final String code) {
+            this.type = type;
+            this.code = code;
+        }
+
+        /** Returns the hash code value for this key. */
+        @Override public int hashCode() {
+            return type.hashCode() ^ code.hashCode();
+        }
+
+        /** Compares this key with the given object for equality .*/
+        @Override public boolean equals(final Object other) {
+            if (other instanceof Key) {
+                final Key that = (Key) other;
+                return Utilities.equals(type, that.type) &&
+                       Utilities.equals(code, that.code);
+            }
+            return false;
+        }
+
+        /** Returns a string representation for debugging purpose. */
+        @Override public String toString() {
+            return "Key[" + code + ": " + type.getSimpleName() + ']';
+        }
+    }
+
+    /**
      * Returns an object from a code using the given proxy. This method first look in the
      * cache. If no object exists in the cache for the given code, then a lock is created
      * and the object creation is delegated to the {@linkplain #getBackingStore backing store}.
@@ -522,7 +560,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             throws FactoryException
     {
         final Class<T> type = proxy.type;
-        final String key = trimAuthority(code);
+        final Key key = new Key(type, trimAuthority(code));
         Object value = cache.peek(key);
         if (!type.isInstance(value)) {
             final Cache.Handler<Object> handler = cache.lock(key);
@@ -1206,7 +1244,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
      *
      * @param allowed {@code true} if key collisions are allowed.
      *
-     * @see Cache#setKeyCollisionAllowed
+     * @see Cache#setKeyCollisionAllowed(boolean)
      */
     protected void setKeyCollisionAllowed(final boolean allowed) {
         cache.setKeyCollisionAllowed(allowed);

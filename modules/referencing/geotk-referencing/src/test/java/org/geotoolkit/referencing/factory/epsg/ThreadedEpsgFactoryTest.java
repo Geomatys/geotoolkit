@@ -587,7 +587,11 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         assertNotNull(projection.getTargetCRS());
         assertNotNull(projection.getMathTransform());
         assertNotSame(projection, operation);
-        assertSame(((Conversion) operation).getMethod(), ((Conversion) projection).getMethod());
+        final OperationMethod copMethod = ((Conversion) operation) .getMethod();
+        final OperationMethod crsMethod = ((Conversion) projection).getMethod();
+        assertEquals(copMethod.hashCode(), crsMethod.hashCode());
+        assertEquals(copMethod, crsMethod);
+        assertSame  (copMethod, crsMethod);
         /*
          * WGS 72BE / UTM zone 10N
          */
@@ -751,7 +755,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
      *
      * @throws FactoryException if an error occurred while querying the factory.
      *
-     * @see http://jira.codehaus.org/browse/GEOT-1268
+     * @see <a href="http://jira.codehaus.org/browse/GEOT-1268">GEOT-1268</a>
      */
     @Test
     public final void testEquivalent() throws FactoryException {
