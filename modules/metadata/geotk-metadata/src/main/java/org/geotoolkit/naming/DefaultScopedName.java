@@ -33,7 +33,6 @@ import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.Immutable;
-import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.jaxb.gco.LocalNameAdapter;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -295,7 +294,7 @@ public class DefaultScopedName extends AbstractName implements ScopedName {
      */
     @Override
     @XmlJavaTypeAdapter(LocalNameAdapter.class) // Seems required in order to avoid random failures.
-    @XmlElement(name = "parsedName", namespace = Namespaces.GCO, required = true)
+    @XmlElement(name = "parsedName", required = true)
     public List<? extends LocalName> getParsedNames() {
         return parsedNames;
     }

@@ -32,7 +32,7 @@ import org.geotoolkit.lang.Static;
 
 /**
  * Provides convenience methods for marshalling and unmarshalling Geotk objects.
- * This class defines also some properties that can be given to the {@link Marshaller}
+ * This class defines also some property keys that can be given to the {@link Marshaller}
  * and {@link Unmarshaller} instances created by {@link PooledMarshaller}:
  * <p>
  * <ul>

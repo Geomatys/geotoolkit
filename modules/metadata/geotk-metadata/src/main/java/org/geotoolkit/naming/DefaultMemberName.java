@@ -20,6 +20,7 @@
  */
 package org.geotoolkit.naming;
 
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.util.MemberName;
 import org.opengis.util.NameSpace;
@@ -49,6 +50,7 @@ public class DefaultMemberName extends DefaultLocalName implements MemberName {
     /**
      * The type of the data associated with the record member.
      */
+    @XmlElement(required = true)
     private final TypeName attributeType;
 
     /**

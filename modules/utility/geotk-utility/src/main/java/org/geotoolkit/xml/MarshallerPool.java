@@ -45,13 +45,17 @@ import org.geotoolkit.internal.jaxb.gco.URIAdapter;
 /**
  * Creates and configures {@link Marshaller} or {@link Unmarshaller} objects for use with Geotk.
  * Users fetch (un)marshallers by calls to the {@link #acquireMarshaller()} or
- * {@link #acquireUnmarshaller()} methods. The (un)marshallers can optionally by configured with
- * Geotk-specific properties defined in the {@link XML} class, in addition of JAXB standard
- * properties.
+ * {@link #acquireUnmarshaller()} methods.
+ *
+ * {@section Configuring marshallers}
+ * The (un)marshallers created by this class can optionally by configured with the Geotk-specific
+ * properties defined in the {@link XML} class, in addition to JAXB standard properties.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @version 3.17
+ *
+ * @see XML
  *
  * @since 3.00
  * @module
