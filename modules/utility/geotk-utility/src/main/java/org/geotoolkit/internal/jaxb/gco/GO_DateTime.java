@@ -18,11 +18,9 @@
 package org.geotoolkit.internal.jaxb.gco;
 
 import java.util.Date;
-import java.util.TimeZone;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 
 import static javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED;
@@ -45,12 +43,9 @@ public final class GO_DateTime extends XmlAdapter<GO_DateTime, Date> {
     /**
      * The date and time value using the {@code code "DateTime"} name.
      * Only one of {@code date} and {@link #dateTime} shall be non-null.
-     *
-     * @todo Replace by {@code XmlGregorianCalendar} type and set the timezone
-     *       explicitely according the value provided by {@link MarshalContext}.
      */
     @XmlElement(name = "DateTime")
-    private Date dateTime;
+    private XMLGregorianCalendar dateTime;
 
     /**
      * The date value using the {@code "Date"} name, used when there is no
@@ -69,20 +64,27 @@ public final class GO_DateTime extends XmlAdapter<GO_DateTime, Date> {
      * Builds a wrapper for the given {@link Date}.
      *
      * @param date The date to marshal, or {@code null} for formating only an empty element.
-     * @param hasTime {@code true} for using the {@code "DateTime"} field
-     *        or {@code false} for the {@code "Date"} field.
+     * @param auto {@code true} for detecting whatever using the {@code "DateTime"} field,
+     *        or {@code false} for using {@code "Date"} field in every cases.
      */
-    GO_DateTime(final Date date, final boolean hasTime) {
-        if (hasTime) {
-            dateTime = date;
-        } else if (date != null) {
+    GO_DateTime(final Date date, boolean auto) {
+        if (date != null) {
             final XMLGregorianCalendar gc = XmlUtilities.toXML(date);
-            gc.setHour(FIELD_UNDEFINED);
-            gc.setMinute(FIELD_UNDEFINED);
-            gc.setSecond(FIELD_UNDEFINED);
-            gc.setMillisecond(FIELD_UNDEFINED);
-            gc.setTimezone(FIELD_UNDEFINED);
-            this.date = gc;
+            if (auto && gc.getHour() == 0 && gc.getMinute() == 0 &&
+                    gc.getSecond() == 0 && gc.getMillisecond() == 0)
+            {
+                auto = false;
+            }
+            if (auto) {
+                dateTime = gc;
+            } else {
+                gc.setHour(FIELD_UNDEFINED);
+                gc.setMinute(FIELD_UNDEFINED);
+                gc.setSecond(FIELD_UNDEFINED);
+                gc.setMillisecond(FIELD_UNDEFINED);
+                gc.setTimezone(FIELD_UNDEFINED);
+                this.date = gc;
+            }
         }
     }
 
@@ -91,11 +93,7 @@ public final class GO_DateTime extends XmlAdapter<GO_DateTime, Date> {
      * then {@link #dateTime} has precedence since it is assumed more accurate.
      */
     final Date getDate() {
-        if (dateTime == null && date != null) {
-            return XmlUtilities.toDate(date);
-        } else {
-            return dateTime;
-        }
+        return XmlUtilities.toDate(dateTime != null ? dateTime : date);
     }
 
     /**
@@ -120,14 +118,6 @@ public final class GO_DateTime extends XmlAdapter<GO_DateTime, Date> {
      */
     @Override
     public GO_DateTime marshal(final Date value) {
-        if (value == null) {
-            return null;
-        }
-        long time = value.getTime();
-        final TimeZone tz = MarshalContext.getTimeZone();
-        if (tz != null) {
-            time += tz.getOffset(time);
-        }
-        return new GO_DateTime(value, time % (24*60*60*1000L) != 0);
+        return (value != null) ? new GO_DateTime(value, true) : null;
     }
 }

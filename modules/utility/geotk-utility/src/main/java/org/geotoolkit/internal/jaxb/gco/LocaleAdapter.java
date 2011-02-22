@@ -73,8 +73,8 @@ public final class LocaleAdapter extends XmlAdapter<GO_CharacterString, Locale> 
      */
     @Override
     public Locale unmarshal(final GO_CharacterString value) {
-        final CharSequence text = adapter.unmarshal(value);
-        return (text != null) ? MarshalContext.converters().toLocale(text.toString()) : null;
+        final String text = StringAdapter.toString(adapter.unmarshal(value));
+        return (text != null) ? MarshalContext.converters().toLocale(text) : null;
     }
 
     /**

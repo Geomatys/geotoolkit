@@ -18,6 +18,8 @@
 package org.geotoolkit.internal.jaxb.gco;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import org.opengis.util.InternationalString;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
@@ -53,6 +55,23 @@ public final class StringAdapter extends XmlAdapter<GO_CharacterString, String> 
     }
 
     /**
+     * Returns a string representation of the given character sequence. If the given
+     * sequence is an instance of {@link InternationalString}, then the locale from
+     * the current unmashalling context is used in order to get a string.
+     *
+     * @since 3.17
+     */
+    static String toString(final CharSequence text) {
+        if (text != null) {
+            if (text instanceof InternationalString) {
+                return ((InternationalString) text).toString(MarshalContext.getLocale());
+            }
+            return text.toString();
+        }
+        return null;
+    }
+
+    /**
      * Converts a string read from a XML stream to the object containing
      * the value. JAXB calls automatically this method at unmarshalling time.
      *
@@ -61,8 +80,7 @@ public final class StringAdapter extends XmlAdapter<GO_CharacterString, String> 
      */
     @Override
     public String unmarshal(final GO_CharacterString value) {
-        final CharSequence text = adapter.unmarshal(value);
-        return (text != null) ? text.toString() : null;
+        return toString(adapter.unmarshal(value));
     }
 
     /**

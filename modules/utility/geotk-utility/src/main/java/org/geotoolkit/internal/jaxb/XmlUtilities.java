@@ -36,7 +36,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  * Utilities methods related to XML.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -49,7 +49,7 @@ public final class XmlUtilities {
     private static DatatypeFactory factory;
 
     /**
-     * The gregorian calendar to use for {@link #printDateTime}.
+     * The Gregorian calendar to use for {@link #printDateTime}.
      *
      * @since 3.06
      */
@@ -85,7 +85,8 @@ public final class XmlUtilities {
     }
 
     /**
-     * Converts the given date to a XML gregorian calendar.
+     * Converts the given date to a XML Gregorian calendar using the locale and timezone
+     * from the current {@linkplain MarshalContext marshalling context}.
      *
      * @param  date The date to convert to a XML calendar, or {@code null}.
      * @return The XML calendar, or {@code null} if {@code date} was null.
@@ -94,7 +95,7 @@ public final class XmlUtilities {
      */
     public static XMLGregorianCalendar toXML(final Date date) {
         if (date != null) {
-            final GregorianCalendar calendar = new GregorianCalendar();
+            final GregorianCalendar calendar = MarshalContext.createGregorianCalendar();
             calendar.setTime(date);
             return getDatatypeFactory().newXMLGregorianCalendar(calendar);
         }
@@ -102,7 +103,7 @@ public final class XmlUtilities {
     }
 
     /**
-     * Converts the given XML gregorian calendar to a date.
+     * Converts the given XML Gregorian calendar to a date.
      *
      * @param  xml The XML calendar to convert to a date, or {@code null}.
      * @return The date, or {@code null} if {@code xml} was null.

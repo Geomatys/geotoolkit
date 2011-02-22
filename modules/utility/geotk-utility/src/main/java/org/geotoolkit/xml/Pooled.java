@@ -99,7 +99,7 @@ abstract class Pooled implements Catching {
 
     /**
      * The timezone, or {@code null} if unspecified.
-     * In the later case, an implementation-default (typically UTC) timezone is used.
+     * In the later case, the default timezone is used.
      *
      * @since 3.17
      */
@@ -115,7 +115,6 @@ abstract class Pooled implements Catching {
     Pooled(final boolean internal) {
         this.internal = internal;
         initial = new LinkedHashMap<Object, Object>();
-        timezone = TimeZone.getDefault();
     }
 
     /**
@@ -130,6 +129,7 @@ abstract class Pooled implements Catching {
         initial.clear();
         converters = null;
         locale     = null;
+        timezone   = null;
     }
 
     /**

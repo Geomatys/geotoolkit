@@ -38,6 +38,8 @@ import org.geotoolkit.lang.Static;
  * <ul>
  *   <li>{@link #CONVERTERS} for controlling the conversion of URL, UUID, Units or similar objects.</li>
  *   <li>{@link #LOCALE} for specifying the locale to use for international strings and code lists.</li>
+ *   <li>{@link #TIMEZONE} for specifying the timezone to use for dates and times.</li>
+ *   <li>{@link #SCHEMAS} for specifying the root URL of metadata schemas to use.</li>
  * </ul>
  *
  * @author Cédric Briançon (Geomatys)
@@ -103,6 +105,12 @@ public final class XML {
      * Allows client code to specify the locale to use for marshalling
      * {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList}
      * instances. The value for this property shall be an instance of {@link Locale}.
+     * <p>
+     * This property is mostly for marshallers. However this property can also be used at
+     * unmarshalling time, for example if a {@code <gmd:PT_FreeText>} element containing
+     * many localized strings need to be represented in a Java {@link String} object. In
+     * such case, the unmarshaller will try to pickup a string in the language specified
+     * by this property.
      *
      * {@section Default behavior}
      * If this property is never set, then (un)marshalling will try to use "unlocalized" strings -
@@ -127,19 +135,15 @@ public final class XML {
     public static final String LOCALE = "org.geotoolkit.xml.locale";
 
     /**
-     * The timezone to use during marshalling.
+     * The timezone to use for marshalling dates and times.
      *
      * {@section Default behavior}
-     * If this property is never set, then (un)marshalling will default to the UTC timezone.
-     *
-     * {@note This field is not yet public, because only partially honored in current
-     * implementation. For this reason, <code>Pooled</code> currently set the timezone
-     * to the default one (for more consistent behavior with code that do not yet honor
-     * the given timezone). For implementing the missing parts, see <code>DateAdapter</code>.}
+     * If this property is never set, then (un)marshalling will use the default
+     * {@linkplain java.util.TimeZone#getDefault() default timezone}.
      *
      * @since 3.17
      */
-    static final String TIMEZONE = "org.geotoolkit.xml.timezone";
+    public static final String TIMEZONE = "org.geotoolkit.xml.timezone";
 
     /**
      * Allows client code to specify the root URL of schemas. The value for this property shall

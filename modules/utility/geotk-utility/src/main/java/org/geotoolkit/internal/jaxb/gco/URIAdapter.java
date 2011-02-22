@@ -67,8 +67,8 @@ public final class URIAdapter extends XmlAdapter<GO_CharacterString, URI> {
      */
     @Override
     public URI unmarshal(final GO_CharacterString value) throws URISyntaxException {
-        final CharSequence text = adapter.unmarshal(value);
-        return (text != null) ? MarshalContext.converters().toURI(text.toString()) : null;
+        final String text = StringAdapter.toString(adapter.unmarshal(value));
+        return (text != null) ? MarshalContext.converters().toURI(text) : null;
     }
 
     /**

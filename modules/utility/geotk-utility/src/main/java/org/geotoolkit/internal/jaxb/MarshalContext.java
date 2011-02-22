@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb;
 import java.util.Map;
 import java.util.Locale;
 import java.util.TimeZone;
+import java.util.GregorianCalendar;
 import org.geotoolkit.xml.ObjectConverters;
 
 
@@ -147,6 +148,35 @@ public final class MarshalContext {
     public static boolean isMarshalling() {
         final MarshalContext current = CURRENT.get();
         return (current != null) ? current.isMarshalling : false;
+    }
+
+    /**
+     * Creates a new Gregorian calendar for the current timezone and locale. If no locale or
+     * timezone were explicitely set, then the default ones are used as documented in the
+     * {@link org.geotoolkit.xml.XML#TIMEZONE} constant.
+     *
+     * @return A Gregorian calendar initialized with the current timezone and locale.
+     *
+     * @since 3.17
+     */
+    static GregorianCalendar createGregorianCalendar() {
+        final MarshalContext current = CURRENT.get();
+        if (current != null) {
+            final Locale locale = current.locale;
+            final TimeZone timezone = current.timezone;
+            /*
+             * Use the appropriate contructor rather than setting ourself the null values to
+             * the default locale or timezone, because the JDK constructors perform a better
+             * job of sharing existing timezone instances.
+             */
+            if (timezone != null) {
+                return (locale != null) ? new GregorianCalendar(timezone, locale)
+                                        : new GregorianCalendar(timezone);
+            } else if (locale != null) {
+                return new GregorianCalendar(locale);
+            }
+        }
+        return new GregorianCalendar();
     }
 
     /**
