@@ -17,8 +17,13 @@
  */
 package org.geotoolkit.internal.jaxb;
 
+import java.util.Date;
+import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.test.LocaleDependantTestBase;
+
 import org.junit.*;
 import static org.junit.Assert.*;
+import static javax.xml.datatype.DatatypeConstants.FIELD_UNDEFINED;
 
 
 /**
@@ -29,12 +34,24 @@ import static org.junit.Assert.*;
  *
  * @since 3.17
  */
-public final class XmlUtilitiesTest {
+public final class XmlUtilitiesTest extends LocaleDependantTestBase {
     /**
      * Tests the {@link XmlUtilities#parseDateTime(String)} method.
      */
     @Test
     public void testParseDateTime() {
         assertEquals(1230786000000L, XmlUtilities.parseDateTime("2009-01-01T06:00:00+01:00").getTime());
+    }
+
+    /**
+     * Tests the {@link XmlUtilities#toXML} method.
+     */
+    @Test
+    public void testToXML() {
+        final XMLGregorianCalendar cal = XmlUtilities.toXML(new Date(1230786000000L));
+        assertEquals("2009-01-01T06:00:00.000+01:00", cal.toString());
+
+        cal.setMillisecond(FIELD_UNDEFINED);
+        assertEquals("2009-01-01T06:00:00+01:00", cal.toString());
     }
 }
