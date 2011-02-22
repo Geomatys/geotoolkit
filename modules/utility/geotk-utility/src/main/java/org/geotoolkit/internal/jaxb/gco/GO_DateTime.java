@@ -76,6 +76,12 @@ public final class GO_DateTime extends XmlAdapter<GO_DateTime, Date> {
                 auto = false;
             }
             if (auto) {
+                if (gc.getMillisecond() == 0) {
+                    gc.setMillisecond(FIELD_UNDEFINED);
+                    if (gc.getSecond() == 0) {
+                        gc.setSecond(FIELD_UNDEFINED);
+                    }
+                }
                 dateTime = gc;
             } else {
                 gc.setHour(FIELD_UNDEFINED);
