@@ -23,17 +23,27 @@ import org.geotoolkit.resources.Errors;
 
 /**
  * Provides static methods for performing argument checks. The methods in this class throw
- * one of the exceptions widely used in standard Java API ({@link NullPointerException},
- * {@link IllegalArgumentException} or {@link IndexOutOfBoundsException}) if the given
- * argument is invalid.
+ * one of the following exceptions (or a subclass of them) widely used in standard Java API:
  * <p>
- * In addition to the argument value to check, the static methods in this class expect also
- * the programmatic name of the parameter being checked. An error message will be built for
- * the {@linkplain java.util.Locale#getDefault() default locale} using that parameter name
- * only if needed.
- * <p>
+ * <table>
+ * <tr><th>Exception</th></th>Thrown by</th></tr>
+ * <tr><td>{@link NullPointerException}</td>
+ * <td>{@link #ensureNonNull(String, Object) ensureNonNull}</td></tr>
+ *
+ * <tr><td>{@link IndexOutOfBoundsException}</td>
+ * <td>{@link #ensureValidIndex(int, int) ensureValidIndex}</td></tr>
+ *
+ * <tr><td>{@link IllegalArgumentException}</td>
+ * <td>{@link #ensurePositive(String, int) ensurePositive},
+ * {@link #ensureStrictlyPositive(String, int) ensureStrictlyPositive},
+ * {@link #ensureBetween(String, int, int, int) ensureBetween}</td></tr>
+ * </table>
+ *
+ * {@section Method Arguments}
  * By convention, the value to check is always the last parameter given to every methods
- * in this class.
+ * in this class. The other parameters may include the programmatic name of the argument
+ * being checked. This programmatic name is used for building an error message localized
+ * in the {@linkplain java.util.Locale#getDefault() default locale} if the check failed.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.17
@@ -89,7 +99,7 @@ public final class ArgumentChecks {
     /**
      * Ensures that the given index is equals or greater than zero and lower than the given
      * upper value. This method is primarily designed for methods that expect only an index
-     * argument. For this reason, this method does not expect the argument name.
+     * argument. For this reason, this method does not take the argument name.
      *
      * @param  upper The maximal index value, exclusive.
      * @param  index The index to check.

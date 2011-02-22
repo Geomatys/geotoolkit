@@ -61,7 +61,7 @@ public final class DomComparatorTest {
         cmp.compare();
 
         cmp.ignoredAttributes.clear();
-        cmp.ignoredAttributes.add("bgbackground");
+        cmp.ignoredAttributes.add("bgcolor");
         ensureFail("The \"cellpading\" attribute should not be ignored anymore.", cmp);
 
         // Ignore the table node, which contains the faulty attribute.

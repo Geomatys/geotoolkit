@@ -22,28 +22,34 @@
  * <ul>
  *   <li><p>Data objects:</p>
  *   <ul>
- *     <li>{@link org.geotoolkit.util.Range} and its subclasses
- *        ({@link org.geotoolkit.util.DateRange},
+ *     <li>{@link org.geotoolkit.util.Range} and its subclasses:
+ *         {@link org.geotoolkit.util.DateRange},
  *         {@link org.geotoolkit.util.NumberRange},
- *         {@link org.geotoolkit.util.MeasurementRange})</li>
+ *         {@link org.geotoolkit.util.MeasurementRange}.</li>
  *
- *     <li>Various implementations of {@link org.opengis.util.InternationalString}
- *        ({@link org.geotoolkit.util.SimpleInternationalString},
+ *     <li>Various implementations of {@link org.opengis.util.InternationalString}:
+ *         {@link org.geotoolkit.util.SimpleInternationalString},
  *         {@link org.geotoolkit.util.DefaultInternationalString},
- *         {@link org.geotoolkit.util.ResourceInternationalString})</li>
+ *         {@link org.geotoolkit.util.ResourceInternationalString}.</li>
  *   </ul></li>
  *
  *   <li><p>General purpose static methods working on:</p>
  *   <ul>
- *     <li>{@code Object} or primitive types: {@link org.geotoolkit.util.Utilities},
- *         {@link org.geotoolkit.util.Characters}</li>
- *     <li>Arrays: {@link org.geotoolkit.util.XArrays}, {@link org.geotoolkit.util.Utilities},
- *         {@link org.geotoolkit.util.Ranks}</li>
- *     <li>Other standard Java types: {@link org.geotoolkit.util.Comparators},
- *         {@link org.geotoolkit.util.Exceptions}</li>
+ *     <li>Primitive or basic Java types:
+ *         {@link org.geotoolkit.util.Utilities},
+ *         {@link org.geotoolkit.util.Characters},
+ *         {@link org.geotoolkit.util.Strings}.</li>
+ *     <li>Arrays:
+ *         {@link org.geotoolkit.util.XArrays},
+ *         {@link org.geotoolkit.util.Utilities},
+ *         {@link org.geotoolkit.util.Ranks}.</li>
+ *     <li>Other standard Java types:
+ *         {@link org.geotoolkit.util.Comparators},
+ *         {@link org.geotoolkit.util.Exceptions}.</li>
  *   </ul></li>
  * </ul>
- * <p>
+ *
+ * {@section Utility methods in other packages}
  * More public static methods are defined in the packages relevant to their services, for example:
  * {@link org.geotoolkit.math.XMath} for a few additional mathematic functions,
  * {@link org.geotoolkit.referencing.operation.matrix.XAffineTransform} for informations about affine transforms,
@@ -53,8 +59,8 @@
  * {@link org.geotoolkit.referencing.CRS} for methods related to <cite>Coordinate Reference Systems</cite>, and
  * {@link org.geotoolkit.factory.FactoryFinder} for factories of CRS and other objects,
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.04
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.17
  *
  * @since 2.0
  * @module
