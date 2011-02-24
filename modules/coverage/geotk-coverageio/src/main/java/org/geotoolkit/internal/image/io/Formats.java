@@ -269,7 +269,7 @@ attmpt: while (true) {
                  *
                  * If we were using an ImageInputStream, try with the original input.
                  * Note that we keep the ImageInputStream (referenced by the 'stream'
-                 * variable) in order to use it again if the upcomming try fails.
+                 * variable) in order to use it again if the upcoming try fails.
                  */
                 useSuffix = false;
                 if (inputOrStream != input) {

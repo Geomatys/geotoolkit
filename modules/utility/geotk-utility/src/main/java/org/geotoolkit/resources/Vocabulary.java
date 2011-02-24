@@ -640,12 +640,12 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int GENERAL = 344;
 
         /**
-         * Generic cartesian 2D
+         * Generic Cartesian 2D
          */
         public static final int GENERIC_CARTESIAN_2D = 113;
 
         /**
-         * Generic cartesian 3D
+         * Generic Cartesian 3D
          */
         public static final int GENERIC_CARTESIAN_3D = 114;
 

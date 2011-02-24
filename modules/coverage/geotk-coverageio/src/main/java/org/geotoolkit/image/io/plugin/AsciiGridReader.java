@@ -658,7 +658,7 @@ loop:       for (int y=0; /* stop condition inside */; y++) {
                     /*
                      * Skip whitespaces or EOL (if any), then copy the next character in the
                      * string buffer until the next space. If we are outside the region to be
-                     * read, those characters will be discarded immediatly except in case of
+                     * read, those characters will be discarded immediately except in case of
                      * error.
                      */
                     int nChar = 0;

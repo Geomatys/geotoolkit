@@ -40,7 +40,7 @@ public final class FactoryUtilities {
     /**
      * The minimal delay (in miliseconds) between uncessfull calls to {@link Factory#availability}.
      * If a first call failed, then all subsequent calls before the end of this delay will returns
-     * {@code false} immediatly without actually attempting a connection to the database. This is
+     * {@code false} immediately without actually attempting a connection to the database. This is
      * used in order to avoid too frequent connection attempts, assuming the reason for the initial
      * failure changed have probably not changed before this delay.
      */

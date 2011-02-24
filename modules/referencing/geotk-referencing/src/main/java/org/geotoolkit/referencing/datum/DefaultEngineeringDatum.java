@@ -53,7 +53,7 @@ public class DefaultEngineeringDatum extends AbstractDatum implements Engineerin
 
     /**
      * An engineering datum for unknown coordinate reference system. Such CRS are usually
-     * assumed cartesian, but will not have any transformation path to other CRS.
+     * assumed Cartesian, but will not have any transformation path to other CRS.
      *
      * @see org.geotoolkit.referencing.crs.DefaultEngineeringCRS#CARTESIAN_2D
      * @see org.geotoolkit.referencing.crs.DefaultEngineeringCRS#CARTESIAN_3D

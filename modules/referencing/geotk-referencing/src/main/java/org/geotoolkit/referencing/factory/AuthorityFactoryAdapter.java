@@ -935,7 +935,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     }
 
     /**
-     * Creates a cartesian coordinate system from a code.
+     * Creates a Cartesian coordinate system from a code.
      *
      * @throws FactoryException if the object creation failed.
      */

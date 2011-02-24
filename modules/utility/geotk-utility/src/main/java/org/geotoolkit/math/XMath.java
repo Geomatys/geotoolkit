@@ -90,7 +90,7 @@ public final class XMath {
      * has been implemente because this method is often invoked for computing the length of
      * {@linkplain org.opengis.coverage.grid.RectifiedGrid#getOffsetVectors() offset vectors},
      * typically aligned with the axes of a {@linkplain org.opengis.referencing.cs.CartesianCS
-     * cartesian coordinate system}.
+     * Cartesian coordinate system}.
      *
      * @param  vector The vector for which to compute the magnitude.
      * @return The magnitude of the given vector.

@@ -312,7 +312,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
 
     /**
      * Default axis info for <var>x</var> values in a
-     * {@linkplain org.opengis.referencing.cs.CartesianCS cartesian CS}.
+     * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}.
      *
      * Increasing ordinates values go {@linkplain AxisDirection#EAST East}
      * and units are {@linkplain SI#METRE metres}.
@@ -332,7 +332,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
 
     /**
      * Default axis info for <var>y</var> values in a
-     * {@linkplain org.opengis.referencing.cs.CartesianCS cartesian CS}.
+     * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}.
      *
      * Increasing ordinates values go {@linkplain AxisDirection#NORTH North}
      * and units are {@linkplain SI#METRE metres}.
@@ -352,7 +352,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
 
     /**
      * Default axis info for <var>z</var> values in a
-     * {@linkplain org.opengis.referencing.cs.CartesianCS cartesian CS}.
+     * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}.
      *
      * Increasing ordinates values go {@linkplain AxisDirection#UP up}
      * and units are {@linkplain SI#METRE metres}.
@@ -367,7 +367,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     /**
      * Default axis info for <var>x</var> values in a
      * {@linkplain org.opengis.referencing.crs.GeocentricCRS geocentric CRS} using
-     * {@linkplain org.opengis.referencing.cs.CartesianCS cartesian CS}.
+     * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}.
      *
      * Increasing ordinates values goes typically toward prime meridian, but the actual axis
      * direction is {@link AxisDirection#GEOCENTRIC_X GEOCENTRIC_X}. In legacy OGC 01-009
@@ -386,7 +386,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     /**
      * Default axis info for <var>y</var> values in a
      * {@linkplain org.opengis.referencing.crs.GeocentricCRS geocentric CRS} using
-     * {@linkplain org.opengis.referencing.cs.CartesianCS cartesian CS}.
+     * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}.
      *
      * Increasing ordinates values goes typically toward East, but the actual axis direction
      * is {@link AxisDirection#GEOCENTRIC_Y GEOCENTRIC_Y}. In legacy OGC 01-009 specification
@@ -405,7 +405,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     /**
      * Default axis info for <var>z</var> values in a
      * {@linkplain org.opengis.referencing.crs.GeocentricCRS geocentric CRS} using
-     * {@linkplain org.opengis.referencing.cs.CartesianCS cartesian CS}.
+     * {@linkplain org.opengis.referencing.cs.CartesianCS Cartesian CS}.
      *
      * Increasing ordinates values goes typically toward North, but the actual axis direction
      * is {@link AxisDirection#GEOCENTRIC_Z GEOCENTRIC_Z}. In legacy OGC 01-009 specification

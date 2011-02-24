@@ -484,7 +484,7 @@ public class FallbackAuthorityFactory extends AuthorityFactoryAdapter {
     }
 
     /**
-     * Creates a cartesian coordinate system from a code.
+     * Creates a Cartesian coordinate system from a code.
      *
      * @throws FactoryException if the object creation failed for all factories.
      */

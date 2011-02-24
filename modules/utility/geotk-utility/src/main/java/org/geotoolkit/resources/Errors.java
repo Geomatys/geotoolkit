@@ -702,7 +702,7 @@ public final class Errors extends IndexedResourceBundle {
         public static final int NON_ANGULAR_UNIT_$1 = 128;
 
         /**
-         * Coordinate system "{0}" is not cartesian.
+         * Coordinate system "{0}" is not Cartesian.
          */
         public static final int NON_CARTESIAN_COORDINATE_SYSTEM_$1 = 129;
 

@@ -79,7 +79,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
     private static final long serialVersionUID = 6695541732063382701L;
 
     /**
-     * A cartesian local coordinate system.
+     * A Cartesian local coordinate system.
      */
     private static final class Cartesian extends DefaultEngineeringCRS {
         /** Serial number for inter-operability with different versions. */
@@ -110,7 +110,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
     }
 
     /**
-     * A two-dimensional cartesian coordinate reference system with
+     * A two-dimensional Cartesian coordinate reference system with
      * {@linkplain DefaultCoordinateSystemAxis#X x},
      * {@linkplain DefaultCoordinateSystemAxis#Y y}
      * axes in {@linkplain SI#METRE metres}. By default, this CRS has no transformation
@@ -121,7 +121,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
             new Cartesian(Vocabulary.Keys.CARTESIAN_2D, DefaultCartesianCS.GENERIC_2D);
 
     /**
-     * A three-dimensional cartesian coordinate reference system with
+     * A three-dimensional Cartesian coordinate reference system with
      * {@linkplain DefaultCoordinateSystemAxis#X x},
      * {@linkplain DefaultCoordinateSystemAxis#Y y},
      * {@linkplain DefaultCoordinateSystemAxis#Z z}

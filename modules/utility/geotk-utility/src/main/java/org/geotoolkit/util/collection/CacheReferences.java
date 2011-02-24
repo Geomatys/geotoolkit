@@ -85,7 +85,7 @@ final class CacheReferences extends DaemonThread {
 
     /**
      * Adds the specified worker to the queue of workers which have just set a value in their
-     * cache. This method can be invoked from any thread and typically returns immediatly,
+     * cache. This method can be invoked from any thread and typically returns immediately,
      * unless we really have a huge amount of items waiting to be processed.
      */
     final void add(final Handler worker) {

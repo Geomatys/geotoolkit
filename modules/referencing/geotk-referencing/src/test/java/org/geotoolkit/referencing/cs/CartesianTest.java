@@ -40,7 +40,7 @@ import static org.junit.Assert.*;
  */
 public final class CartesianTest extends ReferencingTestBase {
     /**
-     * Tests the creation of a cartesian CS with legal and illegal axis.
+     * Tests the creation of a Cartesian CS with legal and illegal axis.
      */
     @Test
     public void testAxis() {
@@ -95,7 +95,7 @@ public final class CartesianTest extends ReferencingTestBase {
     }
 
     /**
-     * Tests {@link AbstractCS#standard} with cartesian CS, especially
+     * Tests {@link AbstractCS#standard} with Cartesian CS, especially
      * the ones that leads to the creation of right-handed CS.
      */
     @Test
@@ -159,7 +159,7 @@ public final class CartesianTest extends ReferencingTestBase {
     }
 
     /**
-     * Creates a cartesian CS using the provided test axis, invoke {@link AbstractCS#standard}
+     * Creates a Cartesian CS using the provided test axis, invoke {@link AbstractCS#standard}
      * with it and compare with the expected axis.
      */
     private static void assertOrdered(final String testX,     final String testY,

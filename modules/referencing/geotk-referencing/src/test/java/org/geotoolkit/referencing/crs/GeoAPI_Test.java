@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
 /**
  * Tests CRS creation using mostly GeoAPI factory methods.
  * <p>
- * Tests of the {@code createProjectedCRS(...)} setting up the CRS with a 3D cartesian output for
+ * Tests of the {@code createProjectedCRS(...)} setting up the CRS with a 3D Cartesian output for
  * one test, and using a 2D + vertical CRS compound for the second test. This test constructs most
  * objects using GeoAPI only (except for a few helper classes).
  *
@@ -190,7 +190,7 @@ public final class GeoAPI_Test {
      * Tries to transforms some points using the specified operation.
      * This method transforms two points from the projected CRS to the geocentric CRS.
      * The first point is on the ellipsoid, and the second point is 10 km above the ellipsoid.
-     * After transformation to geocentric CRS using a cartesian CS, the two points should still
+     * After transformation to geocentric CRS using a Cartesian CS, the two points should still
      * ten kilometers apart each others.
      *
      * @return Transformed coordinates.

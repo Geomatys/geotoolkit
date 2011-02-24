@@ -135,7 +135,7 @@ public final class SupportedListGenerator extends ReportGenerator {
         if (crs instanceof GeocentricCRS) {
             final CoordinateSystem cs = crs.getCoordinateSystem();
             if (cs instanceof CartesianCS) {
-                return "Geocentric (cartesian coordinate system)";
+                return "Geocentric (Cartesian coordinate system)";
             } else if (cs instanceof SphericalCS) {
                 return "Geocentric (spherical coordinate system)";
             }

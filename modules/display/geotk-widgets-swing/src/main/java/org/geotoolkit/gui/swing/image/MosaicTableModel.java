@@ -275,7 +275,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
      * same name in the same directory with {@code ".tfw"} extension (for TIFF images) or
      * {@code ".jgw"} extension (for JPEG images).
      * <p>
-     * This method loads the World Files and fetches the image sizes immediatly. Consequently
+     * This method loads the World Files and fetches the image sizes immediately. Consequently
      * it may be slow and should be invoked in a background thread. After having built the
      * collection of tiles, this method invokes {@link #add(Collection)} in the Swing thread,
      * {@linkplain #removeDuplicates removes duplicates} and {@linkplain #sort sorts} the result.

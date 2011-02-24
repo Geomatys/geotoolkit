@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Immutable;
 
 /**
  * A {@linkplain DefaultConversion conversion} transforming
- * (<var>longitude</var>,<var>latitude</var>) coordinates to cartesian coordinates
+ * (<var>longitude</var>,<var>latitude</var>) coordinates to Cartesian coordinates
  * (<var>x</var>,<var>y</var>).
  * <p>
  * An unofficial list of projections and their parameters can

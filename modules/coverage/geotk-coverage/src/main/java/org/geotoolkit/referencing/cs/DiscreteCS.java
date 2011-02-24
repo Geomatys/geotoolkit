@@ -86,7 +86,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
      */
     private transient MathTransform gridToCRS;
 
-    /** A discrete cartesian CS. */
+    /** A discrete Cartesian CS. */
     static final class Cartesian extends DiscreteCS implements CartesianCS {
         private static final long serialVersionUID = -6589829160460750116L;
         Cartesian(final CartesianCS cs, final double[]... ordinates) throws IllegalArgumentException {

@@ -786,7 +786,7 @@ public class ReferencingParser extends MathTransformParser {
      * @throws ParseException if the {@code "LOCAL_CS"} element can't be parsed.
      *
      * @todo The coordinate system used is always a Geotk implementation, since we don't
-     *       know which method to invokes in the {@link CSFactory} (is it a cartesian
+     *       know which method to invokes in the {@link CSFactory} (is it a Cartesian
      *       coordinate system? a spherical one? etc.).
      */
     private EngineeringCRS parseLocalCS(final Element parent) throws ParseException {

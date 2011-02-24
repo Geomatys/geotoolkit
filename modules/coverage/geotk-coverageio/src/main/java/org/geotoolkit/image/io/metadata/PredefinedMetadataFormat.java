@@ -385,7 +385,7 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
      * This method is also invoked by {@link ReferencingBuilder#getDefault(Class)}, which does not
      * rely on {@link IIOMetadataFormat#getObjectDefaultValue(String)} because the default value of
      * some referencing objects depends on the type of the enclosing element. For example the default
-     * coordinate system shall be ellipsoidal for a geographic CRS and cartesian for a projected
+     * coordinate system shall be ellipsoidal for a geographic CRS and Cartesian for a projected
      * CRS.
      * <p>
      * The default implementation returns a value determined from the table below.

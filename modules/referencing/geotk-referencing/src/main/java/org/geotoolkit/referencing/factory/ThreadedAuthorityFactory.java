@@ -410,7 +410,7 @@ public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
                  * We were unable to add the factory to the queue. It may be because the queue is full,
                  * which could happen if there is too much factories created recently (this behavior is
                  * enabled only if the queue is some implementation having a limited capacity). This is
-                 * probably not worth to keep yet more factories, so dispose the current one immediatly.
+                 * probably not worth to keep yet more factories, so dispose the current one immediately.
                  */
                 dispose(factory, false);
             } else {

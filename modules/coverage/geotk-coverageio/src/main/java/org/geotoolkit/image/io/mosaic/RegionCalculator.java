@@ -181,7 +181,7 @@ final class RegionCalculator {
                 matrix[4] = xMin;
                 reference = new AffineTransform(matrix);
             } else {
-                reference = new AffineTransform(reference); // Protects from upcomming changes.
+                reference = new AffineTransform(reference); // Protects from upcoming changes.
             }
             /*
              * Transforms the image bounding box from its own space to the reference space. If

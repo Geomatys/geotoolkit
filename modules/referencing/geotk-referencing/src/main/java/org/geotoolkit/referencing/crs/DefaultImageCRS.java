@@ -65,7 +65,7 @@ public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
     private static final long serialVersionUID = 7312452786096397847L;
 
     /**
-     * A two-dimensional cartesian coordinate reference system with
+     * A two-dimensional Cartesian coordinate reference system with
      * {@linkplain org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis#COLUMN column},
      * {@linkplain org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis#ROW row} axes.
      * By default, this CRS has no transformation path to any other CRS (i.e. a map using this

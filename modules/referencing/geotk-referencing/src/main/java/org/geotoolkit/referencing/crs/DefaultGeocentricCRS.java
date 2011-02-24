@@ -70,7 +70,7 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
 
     /**
      * The default geocentric CRS with a
-     * {@linkplain DefaultCartesianCS#GEOCENTRIC cartesian coordinate system}.
+     * {@linkplain DefaultCartesianCS#GEOCENTRIC Cartesian coordinate system}.
      * Prime meridian is Greenwich, geodetic datum is WGS84 and linear units are metres.
      * The <var>X</var> axis points towards the prime meridian.
      * The <var>Y</var> axis points East.

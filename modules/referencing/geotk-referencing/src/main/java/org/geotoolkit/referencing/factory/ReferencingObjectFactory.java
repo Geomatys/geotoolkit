@@ -413,7 +413,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
     }
 
     /**
-     * Creates a two dimensional cartesian coordinate system from the given pair of axis.
+     * Creates a two dimensional Cartesian coordinate system from the given pair of axis.
      *
      * @param  properties Name and other properties to give to the new object.
      * @param  axis0 The first  axis.
@@ -436,7 +436,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
     }
 
     /**
-     * Creates a three dimensional cartesian coordinate system from the given set of axis.
+     * Creates a three dimensional Cartesian coordinate system from the given set of axis.
      *
      * @param  properties Name and other properties to give to the new object.
      * @param  axis0 The first  axis.
@@ -861,11 +861,11 @@ public class ReferencingObjectFactory extends ReferencingFactory
 
     /**
      * Creates a geocentric coordinate reference system from a {@linkplain CartesianCS
-     * cartesian coordinate system}.
+     * Cartesian coordinate system}.
      *
      * @param  properties Name and other properties to give to the new object.
      * @param  datum Geodetic datum to use in created CRS.
-     * @param  cs The cartesian coordinate system for the created CRS.
+     * @param  cs The Cartesian coordinate system for the created CRS.
      * @throws FactoryException if the object creation failed.
      */
     @Override

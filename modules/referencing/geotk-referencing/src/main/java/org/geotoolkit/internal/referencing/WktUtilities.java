@@ -41,7 +41,7 @@ import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 @Static
 public final class WktUtilities {
     /**
-     * A three-dimensional cartesian CS with the legacy set of geocentric axes.
+     * A three-dimensional Cartesian CS with the legacy set of geocentric axes.
      * Those axes were defined in OGC 01-009 as <var>Other</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#EASTING Easting}</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#NORTHING Northing}</var>

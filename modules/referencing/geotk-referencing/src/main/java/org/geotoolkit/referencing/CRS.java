@@ -652,7 +652,7 @@ public final class CRS {
      * </ul>
      * <p>
      * The last condition ({@code GeneralDerivedCRS} based on a horizontal CRS) allows for example
-     * to express the coordinates of a projected CRS (which use a cartesian coordinate system) in
+     * to express the coordinates of a projected CRS (which use a Cartesian coordinate system) in
      * a {@linkplain org.opengis.referencing.cs.PolarCS polar coordinate system} and still consider
      * the result as horizontal. However this assumes that the axes of the derived CRS are coplanar
      * with the axes of the base CRS. This is not always true since a derived CRS could be created

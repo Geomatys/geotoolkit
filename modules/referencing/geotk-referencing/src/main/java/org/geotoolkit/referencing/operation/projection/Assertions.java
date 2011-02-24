@@ -149,7 +149,7 @@ final class Assertions {
                                                    expected[dstOff++],
                                                    expected[dstOff++]);
                 } else {
-                    // Computes cartesian distance.
+                    // Computes Cartesian distance.
                     transform.transform(srcPts, srcOff, buffer, 0);
                     longitude = srcPts[srcOff++];
                     latitude  = srcPts[srcOff++];

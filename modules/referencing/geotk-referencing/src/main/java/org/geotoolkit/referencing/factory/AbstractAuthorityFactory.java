@@ -421,7 +421,7 @@ public abstract class AbstractAuthorityFactory extends ReferencingFactory implem
     }
 
     /**
-     * Creates a cartesian coordinate system from a code.
+     * Creates a Cartesian coordinate system from a code.
      * The default implementation invokes
      * <code>{@linkplain #createCoordinateSystem createCoordinateSystem}(code)</code>.
      *

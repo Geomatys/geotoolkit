@@ -68,7 +68,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
     private static final long serialVersionUID = -6182037957705712945L;
 
     /**
-     * A two-dimensional cartesian CS with
+     * A two-dimensional Cartesian CS with
      * <var>{@linkplain DefaultCoordinateSystemAxis#EASTING Easting}</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#NORTHING Northing}</var>
      * axis in metres.
@@ -79,7 +79,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                     DefaultCoordinateSystemAxis.NORTHING);
 
     /**
-     * A three-dimensional cartesian CS with geocentric
+     * A three-dimensional Cartesian CS with geocentric
      * <var>{@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_X x}</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_Y y}</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#GEOCENTRIC_Z z}</var>
@@ -94,7 +94,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                     DefaultCoordinateSystemAxis.GEOCENTRIC_Z);
 
     /**
-     * A two-dimensional cartesian CS with
+     * A two-dimensional Cartesian CS with
      * <var>{@linkplain DefaultCoordinateSystemAxis#X x}</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#Y y}</var>
      * axis in metres.
@@ -105,7 +105,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                     DefaultCoordinateSystemAxis.Y);
 
     /**
-     * A three-dimensional cartesian CS with
+     * A three-dimensional Cartesian CS with
      * <var>{@linkplain DefaultCoordinateSystemAxis#X x}</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#Y y}</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#Z z}</var>
@@ -118,7 +118,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                     DefaultCoordinateSystemAxis.Z);
 
     /**
-     * A two-dimensional cartesian CS with
+     * A two-dimensional Cartesian CS with
      * <var>{@linkplain DefaultCoordinateSystemAxis#COLUMN column}</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#ROW row}</var>
      * axis.
@@ -129,7 +129,7 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
                     DefaultCoordinateSystemAxis.ROW);
 
     /**
-     * A two-dimensional cartesian CS with
+     * A two-dimensional Cartesian CS with
      * <var>{@linkplain DefaultCoordinateSystemAxis#DISPLAY_X display x}</var>,
      * <var>{@linkplain DefaultCoordinateSystemAxis#DISPLAY_Y display y}</var>
      * axis.

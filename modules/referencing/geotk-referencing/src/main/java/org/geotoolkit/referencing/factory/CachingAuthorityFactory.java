@@ -701,7 +701,7 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     }
 
     /**
-     * Returns a cartesian coordinate system from a code.
+     * Returns a Cartesian coordinate system from a code.
      *
      * @throws FactoryException if the object creation failed.
      */

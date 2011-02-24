@@ -371,7 +371,7 @@ public class CoordinateFormat extends Format {
 
     /**
      * Sets the pattern for numbers fields. If some ordinates are formatted as plain number
-     * (for example in {@linkplain org.geotoolkit.referencing.cs.DefaultCartesianCS cartesian
+     * (for example in {@linkplain org.geotoolkit.referencing.cs.DefaultCartesianCS Cartesian
      * coordinate system}), then those numbers will be formatted using this pattern.
      *
      * @param pattern The number pattern as specified in {@link DecimalFormat}.
