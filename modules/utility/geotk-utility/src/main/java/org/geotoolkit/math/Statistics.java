@@ -18,10 +18,8 @@
 package org.geotoolkit.math;
 
 import java.io.Writer;
-import java.io.Console;
 import java.io.IOException;
 import java.io.Serializable;
-import java.io.OutputStreamWriter;
 import java.text.FieldPosition;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -35,6 +33,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Descriptions;
+import org.geotoolkit.internal.io.IOUtilities;
 
 import static java.lang.Math.*;
 import static java.lang.Double.NaN;
@@ -498,13 +497,7 @@ public class Statistics implements Cloneable, Serializable {
      * @since 3.00
      */
     public static void printTable(CharSequence[] header, Statistics[] statistics, Locale locale) {
-        final Writer out;
-        final Console console = System.console();
-        if (console != null) {
-            out = console.writer();
-        } else {
-            out = new OutputStreamWriter(System.out);
-        }
+        final Writer out = IOUtilities.standardWriter();
         try {
             writeTable(out, header, statistics, locale);
         } catch (IOException e) {

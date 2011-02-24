@@ -2312,31 +2312,57 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * then the dimension is left to null.
      */
     private Dimensions getDimensionsForMethod(final String code) throws NoSuchIdentifierException, SQLException {
-        final PreparedStatement stmt;
-        stmt = prepareStatement("MethodDimensions",
-                "SELECT SOURCE_CRS_CODE," +
-                      " TARGET_CRS_CODE" +
-                " FROM [Coordinate_Operation]" +
-                " WHERE COORD_OP_METHOD_CODE = ?" +
-                  " AND SOURCE_CRS_CODE IS NOT NULL" +
-                  " AND TARGET_CRS_CODE IS NOT NULL");
-        final ResultSet result = executeQuery(stmt, code);
         final Map<Dimensions,Dimensions> dimensions = new HashMap<Dimensions,Dimensions>();
         final Dimensions temp = new Dimensions();
         Dimensions max = temp;
-        while (result.next()) {
-            temp.sourceDimensions = getDimensionForCRS(result.getString(1));
-            temp.targetDimensions = getDimensionForCRS(result.getString(2));
-            Dimensions candidate = dimensions.get(temp);
-            if (candidate == null) {
-                candidate = new Dimensions(temp);
-                dimensions.put(candidate, candidate);
+        boolean projections = false;
+        do {
+            /*
+             * This loop is executed twice. On the first execution, we look for the source and
+             * target CRS declared directly in the "Coordinate Operations" table. This applies
+             * mostly to coordinate transformations, since those fields are typically empty in
+             * the case of projected CRS.
+             *
+             * In the second execution, we will look for the for the base geographic CRS and
+             * the resulting projected CRS that use the given operation method. This allows
+             * us to handle the case of projected CRS (typically 2).
+             */
+            final String key, sql;
+            if (!projections) {
+                key = "MethodDimensions";
+                sql = "SELECT SOURCE_CRS_CODE," +
+                            " TARGET_CRS_CODE" +
+                      " FROM [Coordinate_Operation]" +
+                      " WHERE COORD_OP_METHOD_CODE = ?" +
+                        " AND SOURCE_CRS_CODE IS NOT NULL" +
+                        " AND TARGET_CRS_CODE IS NOT NULL";
+            } else {
+                key = "DerivedDimensions";
+                sql = "SELECT SOURCE_GEOGCRS_CODE," + // Source CRS
+                            " COORD_REF_SYS_CODE" +   // Target CRS
+                      " FROM [Coordinate Reference System] AS CRS" +
+                " INNER JOIN [Coordinate_Operation] AS CO" +
+                        " ON CRS.PROJECTION_CONV_CODE = CO.COORD_OP_CODE" +
+                     " WHERE COORD_OP_METHOD_CODE = ?" +
+                       " AND SOURCE_GEOGCRS_CODE IS NOT NULL" +
+                       " AND COORD_REF_SYS_CODE IS NOT NULL";
             }
-            if (++candidate.occurrences > max.occurrences) {
-                max = candidate;
+            final PreparedStatement stmt = prepareStatement(key, sql);
+            final ResultSet result = executeQuery(stmt, code);
+            while (result.next()) {
+                temp.sourceDimensions = getDimensionForCRS(result.getString(1));
+                temp.targetDimensions = getDimensionForCRS(result.getString(2));
+                Dimensions candidate = dimensions.get(temp);
+                if (candidate == null) {
+                    candidate = new Dimensions(temp);
+                    dimensions.put(candidate, candidate);
+                }
+                if (++candidate.occurrences > max.occurrences) {
+                    max = candidate;
+                }
             }
-        }
-        result.close();
+            result.close();
+        } while ((projections = !projections) == true);
         return max;
     }
 

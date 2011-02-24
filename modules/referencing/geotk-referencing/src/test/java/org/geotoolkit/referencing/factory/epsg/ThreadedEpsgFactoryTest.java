@@ -48,6 +48,7 @@ import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.internal.StringUtilities;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -567,7 +568,9 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
     public final void testConversions() throws FactoryException {
         assumeNotNull(factory);
         /*
-         * UTM zone 10N
+         * Fetch directly the "UTM zone 10N" operation. Because this
+         * operation was not obtained in the context of a projected CRS,
+         * the source and target CRS shall be unspecified (i.e. null).
          */
         final CoordinateOperation operation = factory.createCoordinateOperation("16010");
         assertEquals("16010", getIdentifier(operation));
@@ -576,7 +579,9 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         assertNull(operation.getTargetCRS());
         assertNull(operation.getMathTransform());
         /*
-         * WGS 72 / UTM zone 10N
+         * Fetch the "WGS 72 / UTM zone 10N" projected CRS.
+         * The operation associated to this CRS should now
+         * define the source and target CRS.
          */
         final ProjectedCRS crs = factory.createProjectedCRS("32210");
         final CoordinateOperation projection = crs.getConversionFromBase();
@@ -587,11 +592,28 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         assertNotNull(projection.getTargetCRS());
         assertNotNull(projection.getMathTransform());
         assertNotSame(projection, operation);
+        /*
+         * Compare the conversion obtained directly with the conversion obtained
+         * indirectly through a projected CRS. Both should use the same method.
+         */
         final OperationMethod copMethod = ((Conversion) operation) .getMethod();
         final OperationMethod crsMethod = ((Conversion) projection).getMethod();
+        assertEquals("9807", getIdentifier(copMethod));
+        assertEquals("9807", getIdentifier(crsMethod));
         assertEquals(copMethod.hashCode(), crsMethod.hashCode());
         assertEquals(copMethod, crsMethod);
-        assertSame  (copMethod, crsMethod);
+        try {
+            assertSame(copMethod, crsMethod);
+        } catch (AssertionError error) {
+            System.out.println(
+                    "The following contains more information about a JUnit test failure.\n" +
+                    "See the JUnit report for the stack trace. Below is a cache dump.\n" +
+                    "See the operation method EPSG:9807 and compare with:\n" +
+                    "  - Method obtained directly:   " + StringUtilities.identity(copMethod) + "\n" +
+                    "  - Method obtained indirectly: " + StringUtilities.identity(crsMethod));
+            ((ThreadedEpsgFactory) factory).printCacheContent(null);
+            throw error;
+        }
         /*
          * WGS 72BE / UTM zone 10N
          */

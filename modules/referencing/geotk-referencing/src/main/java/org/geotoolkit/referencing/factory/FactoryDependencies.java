@@ -20,7 +20,6 @@ package org.geotoolkit.referencing.factory;
 import java.util.Map;
 import java.util.Collection;
 import java.util.IdentityHashMap;
-import java.io.Console;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.lang.annotation.Annotation;
@@ -47,6 +46,7 @@ import org.geotoolkit.gui.swing.tree.TreeNode;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
+import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
@@ -241,13 +241,7 @@ public class FactoryDependencies {
      * @since 3.00
      */
     public void print() {
-        final PrintWriter out;
-        final Console console = System.console();
-        if (console != null) {
-            out = console.writer();
-        } else {
-            out = new PrintWriter(System.out);
-        }
+        final PrintWriter out = IOUtilities.standardPrintWriter();
         print(out);
         out.flush();
     }

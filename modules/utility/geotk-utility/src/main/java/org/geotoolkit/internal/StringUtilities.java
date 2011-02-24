@@ -22,6 +22,7 @@ import java.text.DecimalFormat;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.converter.Classes;
 
 
 /**
@@ -31,7 +32,7 @@ import org.geotoolkit.util.Strings;
  * tasks that do not really need such conversion.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -42,6 +43,20 @@ public final class StringUtilities {
      * Do not allow instantiation of this class.
      */
     private StringUtilities() {
+    }
+
+    /**
+     * Returns an identity string for the given value. This method returns a string similar to
+     * the one returned by the default implementation of {@link Object#toString()}, except that
+     * a simple class name (without package name) is used instead than the fully-qualified name.
+     *
+     * @param  value The object for which to get the identity string, or {@code null}.
+     * @return The identity string for the given object.
+     *
+     * @since 3.17
+     */
+    public static String identity(final Object value) {
+        return Classes.getShortClassName(value) + '@' + Integer.toHexString(System.identityHashCode(value));
     }
 
     /**

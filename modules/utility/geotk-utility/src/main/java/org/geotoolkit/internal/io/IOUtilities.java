@@ -40,7 +40,7 @@ import org.geotoolkit.io.ContentFormatException;
  * Utility methods related to I/O operations.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -51,6 +51,48 @@ public final class IOUtilities {
      * Do not allow instantiation of this class.
      */
     private IOUtilities() {
+    }
+
+    /**
+     * Returns a writer to the standard output stream. This method returns the
+     * {@linkplain Console#writer() console writer} if available, because that
+     * writer uses a more appropriate encoding on some platform. In no console
+     * writer is available, then a writer wrapping the {@linkplain System#out
+     * standard output stream} is returned.
+     *
+     * @return A writer to the standard output stream.
+     *
+     * @since 3.17
+     */
+    public static Writer standardWriter() {
+        final Console console = System.console();
+        if (console != null) {
+            return console.writer();
+        } else {
+            return new OutputStreamWriter(System.out);
+        }
+    }
+
+    /**
+     * Returns a printer to the standard output stream. This method returns the
+     * {@linkplain Console#writer() console printer} if available, because that
+     * printer uses a more appropriate encoding on some platform. In no console
+     * printer is available, then a printer wrapping the {@linkplain System#out
+     * standard output stream} is returned.
+     *
+     * @return A printer to the standard output stream.
+     *
+     * @see org.geotoolkit.io.NumberedLineWriter#getStandardOutput()
+     *
+     * @since 3.17
+     */
+    public static PrintWriter standardPrintWriter() {
+        final Console console = System.console();
+        if (console != null) {
+            return console.writer();
+        } else {
+            return new PrintWriter(System.out);
+        }
     }
 
     /**

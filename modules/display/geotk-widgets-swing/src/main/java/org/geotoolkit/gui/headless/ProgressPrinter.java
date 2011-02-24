@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.headless;
 
-import java.io.Console;
 import java.io.PrintWriter;
 import java.text.NumberFormat;
 import java.text.BreakIterator;
@@ -27,9 +26,10 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Disposable;
+import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.io.IOUtilities;
 
 
 /**
@@ -124,7 +124,7 @@ public class ProgressPrinter implements ProgressListener, Disposable {
      * The maximal line length is assumed to be 80 characters.
      */
     public ProgressPrinter() {
-        this(writer());
+        this(IOUtilities.standardPrintWriter());
     }
 
     /**
@@ -149,14 +149,6 @@ public class ProgressPrinter implements ProgressListener, Disposable {
         this.maxLength = maxLength;
         final String lineSeparator = System.getProperty("line.separator", "\n");
         CR_supported = lineSeparator.equals("\r\n") || lineSeparator.equals("\n");
-    }
-
-    /**
-     * Returns the default writer.
-     */
-    private static PrintWriter writer() {
-        final Console console = System.console();
-        return console != null ? console.writer() : new PrintWriter(System.out);
     }
 
     /**

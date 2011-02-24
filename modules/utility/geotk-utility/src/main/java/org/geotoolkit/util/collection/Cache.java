@@ -650,7 +650,7 @@ public class Cache<K,V> extends AbstractMap<K,V> {
     }
 
     /**
-     * A handler implementation used for telling other thread that the current thread is
+     * A handler implementation used for telling to other threads that the current thread is
      * computing a value.
      */
     @SuppressWarnings("serial") // Actually not intended to be serialized.
@@ -807,12 +807,9 @@ public class Cache<K,V> extends AbstractMap<K,V> {
                 final K oldKey = entry.getKey();
                 final Object oldValue = map.get(oldKey);
                 if (oldValue != null && !isReservedType(oldValue)) {
-                    final Reference<Object> ref;
-                    if (soft) {
-                        ref = new Soft<K>(map, oldKey, oldValue);
-                    } else {
-                        ref = new Weak<K>(map, oldKey, oldValue);
-                    }
+                    @SuppressWarnings("unchecked")
+                    final Reference<V> ref = soft ? new Soft<K,V>(map, oldKey, (V) oldValue)
+                                                  : new Weak<K,V>(map, oldKey, (V) oldValue);
                     if (!map.replace(oldKey, oldValue, ref)) {
                         ref.clear(); // Prevents the reference to be enqueued.
                     }
@@ -829,12 +826,12 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * A soft reference which remove itself from the concurrent map when the reference
      * is garbage-collected.
      */
-    private static final class Soft<K> extends SoftReference<Object> implements Disposable {
+    private static final class Soft<K,V> extends SoftReference<V> implements Disposable {
         /** The key of the referenced value.      */ private final K key;
         /** The map which contains the reference. */ private final ConcurrentMap<K,Object> map;
 
         /** Creates a references to be stored in the given map under the given key. */
-        Soft(final ConcurrentMap<K,Object> map, final K key, final Object value) {
+        Soft(final ConcurrentMap<K,Object> map, final K key, final V value) {
             super(value, ReferenceQueueConsumer.DEFAULT.queue);
             this.map = map;
             this.key = key;
@@ -843,6 +840,8 @@ public class Cache<K,V> extends AbstractMap<K,V> {
         /** Removes the reference from the map. */
         @Override public void dispose() {
             map.remove(key, this);
+            // There is nothing to remove from the cost map, since the later
+            // contains only the keys of objects hold by strong reference.
         }
     }
 
@@ -850,12 +849,12 @@ public class Cache<K,V> extends AbstractMap<K,V> {
      * A weak reference which remove itself from the concurrent map when the reference
      * is garbage-collected.
      */
-    private static final class Weak<K> extends WeakReference<Object> implements Disposable {
+    private static final class Weak<K,V> extends WeakReference<V> implements Disposable {
         /** The key of the referenced value.      */ private final K key;
         /** The map which contains the reference. */ private final ConcurrentMap<K,Object> map;
 
         /** Creates a references to be stored in the given map under the given key. */
-        Weak(final ConcurrentMap<K,Object> map, final K key, final Object value) {
+        Weak(final ConcurrentMap<K,Object> map, final K key, final V value) {
             super(value, ReferenceQueueConsumer.DEFAULT.queue);
             this.map = map;
             this.key = key;
@@ -864,6 +863,8 @@ public class Cache<K,V> extends AbstractMap<K,V> {
         /** Removes the reference from the map. */
         @Override public void dispose() {
             map.remove(key, this);
+            // There is nothing to remove from the cost map, since the later
+            // contains only the keys of objects hold by strong reference.
         }
     }
 

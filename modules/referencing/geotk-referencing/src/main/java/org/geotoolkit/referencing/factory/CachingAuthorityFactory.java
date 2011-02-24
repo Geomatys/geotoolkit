@@ -30,6 +30,7 @@ import java.util.logging.Level;
 import javax.measure.unit.Unit;
 import java.lang.ref.WeakReference;
 import java.awt.RenderingHints;
+import java.io.PrintWriter;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -538,9 +539,14 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             return false;
         }
 
-        /** Returns a string representation for debugging purpose. */
+        /** String representation used by {@link CacheRecord}. */
         @Override public String toString() {
-            return "Key[" + code + ": " + type.getSimpleName() + ']';
+            final StringBuilder buffer = new StringBuilder("Key[").append(code);
+            if (buffer.length() > 15) { // Arbitrary limit in string length.
+                buffer.setLength(15);
+                buffer.append('\u2026');
+            }
+            return buffer.append(" : ").append(type.getSimpleName()).append(']').toString();
         }
     }
 
@@ -987,9 +993,10 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
             return false;
         }
 
+        /** String representation used by {@link CacheRecord}. */
         @Override
         public String toString() {
-            return source + " \u21E8 " + target;
+            return "CodePair[" + source + " \u21E8 " + target + ']';
         }
     }
 
@@ -1234,6 +1241,20 @@ public class CachingAuthorityFactory extends AbstractAuthorityFactory {
                 }
             }
         }
+    }
+
+    /**
+     * Prints the cache content to the {@linkplain System#out standard output stream}.
+     * Keys are sorted by numerical order if possible, or alphabetical order otherwise.
+     * This method is used for debugging purpose only.
+     *
+     * @param out The output printer, or {@code null} for the
+     *            {@linkplain System#out standard output stream}.
+     *
+     * @since 3.17
+     */
+    public void printCacheContent(final PrintWriter out) {
+        CacheRecord.printCacheContent(cache, out);
     }
 
     /**

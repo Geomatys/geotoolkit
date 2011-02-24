@@ -19,12 +19,10 @@ package org.geotoolkit.parameter;
 
 import java.util.*;
 import java.io.Writer;
-import java.io.Console;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.FilterWriter;
-import java.io.OutputStreamWriter;
 import java.text.DateFormat;
 import java.text.NumberFormat;
 import java.text.DecimalFormat;
@@ -46,6 +44,7 @@ import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Localized;
+import org.geotoolkit.internal.io.IOUtilities;
 
 import static org.geotoolkit.io.TableWriter.*;
 import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
@@ -129,22 +128,9 @@ public class ParameterWriter extends FilterWriter implements Localized {
      * default value of {@link #isColorEnabled()} will be {@code true}.
      */
     public ParameterWriter() {
-        super(standardOutput());
+        super(IOUtilities.standardWriter());
         if (out instanceof PrintWriter) { // Implies out == System.console().writer();
             colorEnabled = X364.isSupported();
-        }
-    }
-
-    /**
-     * Work around for RFE #4093999 in Sun's bug database
-     * ("Relax constraint on placement of this()/super() call in constructors").
-     */
-    private static Writer standardOutput() {
-        final Console console = System.console();
-        if (console != null) {
-            return console.writer();
-        } else {
-            return new OutputStreamWriter(System.out);
         }
     }
 

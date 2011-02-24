@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.tree;
 
-import java.io.Console;
 import java.io.PrintWriter;
 import java.io.IOException;
 import java.util.Map;
@@ -43,6 +42,7 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.io.LineReader;
 import org.geotoolkit.io.LineReaders;
 import org.geotoolkit.io.ContentFormatException;
+import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.resources.Errors;
 
 
@@ -553,13 +553,7 @@ public final class Trees {
      * Prints the given text to the console.
      */
     private static void print(final String text) {
-        final PrintWriter out;
-        final Console console = System.console();
-        if (console != null) {
-            out = console.writer();
-        } else {
-            out = new PrintWriter(System.out);
-        }
+        final PrintWriter out = IOUtilities.standardPrintWriter();
         out.println(text);
         out.flush();
     }
