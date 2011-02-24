@@ -2333,7 +2333,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                       " FROM [Coordinate_Operation]" +
                       " WHERE COORD_OP_METHOD_CODE = ?" +
                         " AND SOURCE_CRS_CODE IS NOT NULL" +
-                        " AND TARGET_CRS_CODE IS NOT NULL";
+                        " AND TARGET_CRS_CODE IS NOT NULL" +
+                        " AND DEPRECATED = 0";
             } else {
                 key = "DerivedDimensions";
                 sql = "SELECT SOURCE_GEOGCRS_CODE," + // Source CRS
@@ -2343,7 +2344,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         " ON CRS.PROJECTION_CONV_CODE = CO.COORD_OP_CODE" +
                      " WHERE COORD_OP_METHOD_CODE = ?" +
                        " AND SOURCE_GEOGCRS_CODE IS NOT NULL" +
-                       " AND COORD_REF_SYS_CODE IS NOT NULL";
+                       " AND COORD_REF_SYS_CODE IS NOT NULL" +
+                       " AND CO.DEPRECATED = 0";
             }
             final PreparedStatement stmt = prepareStatement(key, sql);
             final ResultSet result = executeQuery(stmt, code);
