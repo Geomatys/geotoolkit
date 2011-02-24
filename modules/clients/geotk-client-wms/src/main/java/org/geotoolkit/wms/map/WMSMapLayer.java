@@ -55,6 +55,7 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.MathTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
@@ -149,7 +150,7 @@ public class WMSMapLayer extends AbstractMapLayer {
 
     /**
      * Transparence of the layer.
-     * WARNING: if we stictly respect the spec this value should be false.
+     * WARNING: if we strictly respect the spec this value should be false.
      */
     private Boolean transparent = true;
 
@@ -168,6 +169,13 @@ public class WMSMapLayer extends AbstractMapLayer {
     public WMSMapLayer(final WebMapServer server, final String... layers) {
         super(new DefaultStyleFactory().style());
         this.server = server;
+
+        for(final String str : layers){
+            if(str != null && str.contains(",")){
+                throw new IllegalArgumentException("invalid layer, name must nor contain ',' caractere : " + str);
+            }
+        }
+
         this.layers = layers;
 
         //register the default graphic builder for geotk 2D engine.
@@ -345,26 +353,25 @@ public class WMSMapLayer extends AbstractMapLayer {
 
             //change the 2D crs part of the envelope, preserve other axis
             final GeneralEnvelope beforeEnv = new GeneralEnvelope(env);
-            final GeneralEnvelope trsEnv;
 
-            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, EPSG_4326))) {
-                //in case we are asking for a WMS in 1.1.0 and EPSG:4326
-                //we must change the crs to 4326 but with CRS:84 coordinate
-                trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, WGS84));
-                env.setEnvelope(trsEnv);
-                CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(trsEnv.getCoordinateReferenceSystem(), EPSG_4326);
-                trsEnv.setCoordinateReferenceSystem(fakeCrs);
-                fakeEnv.setEnvelope(trsEnv);
-            }else if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, WGS84))) {
+            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, WGS84))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
-                trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, WGS84));
+                final GeneralEnvelope trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, WGS84));
                 env.setEnvelope(trsEnv);
                 final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(crs, EPSG_4326);
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
                 fakeEnv.setEnvelope(trsEnv);
+            }else if ((server.getVersion() == WMSVersion.v111) && isGeographic(crs2D)) {
+                //in case we are asking for a WMS in 1.1.0 and a geographic crs
+                //we must set longitude coordinates first but preserve the crs
+                final CoordinateReferenceSystem lfcrs = GO2Utilities.setLongitudeFirst(crs2D);
+                final GeneralEnvelope trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, lfcrs));
+                env.setEnvelope(trsEnv);
+                trsEnv.setCoordinateReferenceSystem(GO2Utilities.change2DComponent(crs, crs2D));
+                fakeEnv.setEnvelope(trsEnv);
             } else {
-                trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, crs2D));
+                final GeneralEnvelope  trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, crs2D));
                 env.setEnvelope(trsEnv);
                 fakeEnv.setEnvelope(trsEnv);
             }
@@ -395,19 +402,18 @@ public class WMSMapLayer extends AbstractMapLayer {
 
         }else{
             
-            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, EPSG_4326))) {
-                //in case we are asking for a WMS in 1.1.0 and EPSG:4326
-                //we must change the crs to 4326 but with CRS:84 coordinate
-                final GeneralEnvelope trsEnv = new GeneralEnvelope(GO2Utilities.transform2DCRS(env, WGS84));
-                final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(trsEnv.getCoordinateReferenceSystem(), EPSG_4326);
-                trsEnv.setCoordinateReferenceSystem(fakeCrs);
-                fakeEnv.setEnvelope(trsEnv);
-            } else if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, WGS84))) {
+            if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, WGS84))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
                 //we must change the crs to 4326 but with CRS:84 coordinate
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(env);
                 final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(crs, EPSG_4326);
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
+                fakeEnv.setEnvelope(trsEnv);
+            } else if ((server.getVersion() == WMSVersion.v111) && isGeographic(crs2D)) {
+                //in case we are asking for a WMS in 1.1.0 and a geographic crs
+                //we must set longitude coordinates first but preserve the crs
+                final GeneralEnvelope trsEnv = new GeneralEnvelope(GO2Utilities.setLongitudeFirst(env));
+                trsEnv.setCoordinateReferenceSystem(crs);
                 fakeEnv.setEnvelope(trsEnv);
             }
         }
@@ -655,6 +661,10 @@ public class WMSMapLayer extends AbstractMapLayer {
         }
 
         return false;
+    }
+
+    private boolean isGeographic(CoordinateReferenceSystem crs){
+        return crs instanceof GeographicCRS;
     }
 
     /**
