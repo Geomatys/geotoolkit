@@ -604,6 +604,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         assertEquals(copMethod, crsMethod);
         try {
             assertSame(copMethod, crsMethod);
+            assertSame(copMethod, factory.createOperationMethod("9807"));
         } catch (AssertionError error) {
             System.out.println(
                     "The following contains more information about a JUnit test failure.\n" +

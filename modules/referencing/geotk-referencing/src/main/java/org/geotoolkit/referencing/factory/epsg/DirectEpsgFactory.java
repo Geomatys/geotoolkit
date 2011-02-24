@@ -2285,15 +2285,14 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 final String name    = getString(result, 2, code);
                 final String formula = result.getString( 3);
                 final String remarks = result.getString( 4);
-                final Dimensions dim = getDimensionsForMethod(epsg);
+                final Integer[] dim = getDimensionsForMethod(epsg);
                 final ParameterDescriptor<?>[] descriptors = createParameterDescriptors(epsg);
                 final Map<String,Object> properties = createProperties(
                         "[Coordinate_Operation Method]", name, epsg, remarks);
                 if (formula != null) {
                     properties.put(OperationMethod.FORMULA_KEY, formula);
                 }
-                method = new DefaultOperationMethod(properties,
-                         dim.sourceDimensions, dim.targetDimensions,
+                method = new DefaultOperationMethod(properties, dim[0], dim[1],
                          new DefaultParameterDescriptorGroup(properties, descriptors));
                 returnValue = ensureSingleton(method, returnValue, code);
             }
@@ -2307,14 +2306,13 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     }
 
     /**
-     * Returns the most common source and target dimensions for the specified method.
-     * If this method can't infers the dimensions from the "Coordinate Operation" table,
-     * then the dimension is left to null.
+     * Returns the source and target dimensions for the specified method, provided that
+     * they are the same for every operation using that method. The returned array is
+     * never null, but some elements in that array may be null.
      */
-    private Dimensions getDimensionsForMethod(final String code) throws NoSuchIdentifierException, SQLException {
-        final Map<Dimensions,Dimensions> dimensions = new HashMap<Dimensions,Dimensions>();
-        final Dimensions temp = new Dimensions();
-        Dimensions max = temp;
+    private Integer[] getDimensionsForMethod(final String code) throws NoSuchIdentifierException, SQLException {
+        final Integer[] dimensions = new Integer[2];
+        final boolean[] differents = new boolean[2];
         boolean projections = false;
         do {
             /*
@@ -2350,25 +2348,26 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             final PreparedStatement stmt = prepareStatement(key, sql);
             final ResultSet result = executeQuery(stmt, code);
             while (result.next()) {
-                temp.sourceDimensions = getDimensionForCRS(result.getString(1));
-                temp.targetDimensions = getDimensionForCRS(result.getString(2));
-                Dimensions candidate = dimensions.get(temp);
-                if (candidate == null) {
-                    candidate = new Dimensions(temp);
-                    dimensions.put(candidate, candidate);
-                }
-                if (++candidate.occurrences > max.occurrences) {
-                    max = candidate;
+                for (int i=0; i<dimensions.length; i++) {
+                    if (!differents[i]) { // Note worth to test heterogenous dimensions.
+                        Integer dim = getDimensionForCRS(result.getString(i + 1));
+                        if (dim != null) {
+                            if (dimensions[i] != null && !dim.equals(dimensions[i])) {
+                                differents[i] = true;
+                                dim = null;
+                            }
+                            dimensions[i] = dim;
+                        }
+                    }
                 }
             }
             result.close();
         } while ((projections = !projections) == true);
-        return max;
+        return dimensions;
     }
 
     /**
-     * Returns the dimension of the specified CRS. If the CRS is not found, then this method
-     * returns {@code null}.
+     * Returns the dimension of the specified CRS, or {@code null} if not found.
      */
     private Integer getDimensionForCRS(final String code) throws NoSuchIdentifierException, SQLException {
         final PreparedStatement stmt;
