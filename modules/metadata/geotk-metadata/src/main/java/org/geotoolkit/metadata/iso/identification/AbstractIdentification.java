@@ -60,8 +60,11 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "resourceMaintenances", "graphicOverviews", "resourceFormats", "descriptiveKeywords",
     "resourceSpecificUsages", "resourceConstraints", "aggregationInfo"
 })
-@XmlSeeAlso({DefaultDataIdentification.class, DefaultServiceIdentification.class})
 @XmlRootElement(name = "MD_Identification")
+@XmlSeeAlso({
+    DefaultDataIdentification.class,
+    DefaultServiceIdentification.class
+})
 public class AbstractIdentification extends MetadataEntity implements Identification {
     /**
      * Serial number for compatibility with different versions.

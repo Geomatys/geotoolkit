@@ -43,8 +43,11 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  */
 @ThreadSafe
 @XmlType(name = "AbstractMD_ContentInformation_Type")
-@XmlSeeAlso({DefaultCoverageDescription.class, DefaultFeatureCatalogueDescription.class})
 @XmlRootElement(name = "MD_ContentInformation")
+@XmlSeeAlso({
+    DefaultCoverageDescription.class,
+    DefaultFeatureCatalogueDescription.class
+})
 public class AbstractContentInformation extends MetadataEntity implements ContentInformation {
     /**
      * Serial number for inter-operability with different versions.

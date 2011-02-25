@@ -34,7 +34,7 @@
  * @since 3.00
  * @module
  */
-@XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED, namespace = Namespaces.GML, xmlns = {
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GML, xmlns = {
     @XmlNs(prefix = "gml", namespaceURI = Namespaces.GML),
     @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
     @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO),

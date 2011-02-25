@@ -23,6 +23,7 @@ package org.geotoolkit.metadata.iso.lineage;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import org.opengis.metadata.Identifier;
@@ -62,6 +63,7 @@ import org.geotoolkit.xml.Namespaces;
     "resolution"
 })
 @XmlRootElement(name = "LI_Source")
+@XmlSeeAlso(org.geotoolkit.internal.jaxb.gmi.LE_Source.class)
 public class DefaultSource extends MetadataEntity implements Source {
     /**
      * Serial number for inter-operability with different versions.

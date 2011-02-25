@@ -49,8 +49,8 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
     "sequenceIdentifier",
     "descriptor"
 })
-@XmlSeeAlso({DefaultBand.class})
 @XmlRootElement(name = "MD_RangeDimension")
+@XmlSeeAlso(DefaultBand.class)
 public class DefaultRangeDimension extends MetadataEntity implements RangeDimension {
     /**
      * Serial number for inter-operability with different versions.

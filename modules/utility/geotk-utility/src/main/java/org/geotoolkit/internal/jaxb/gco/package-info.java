@@ -58,7 +58,7 @@
  * @since 2.5
  * @module
  */
-@XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED, namespace = Namespaces.GCO, xmlns = {
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GCO, xmlns = {
     @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO),
     @XmlNs(prefix = "gmx", namespaceURI = Namespaces.GMX)
 })

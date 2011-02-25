@@ -24,10 +24,10 @@ import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.FeatureCatalogueDescription;
 import org.opengis.metadata.content.ImageDescription;
 
+import org.geotoolkit.internal.jaxb.gmi.MI_ImageDescription;
+import org.geotoolkit.internal.jaxb.gmi.MI_CoverageDescription;
 import org.geotoolkit.metadata.iso.content.AbstractContentInformation;
-import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
 import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
-import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 
 
 /**
@@ -36,7 +36,7 @@ import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.17
  *
  * @since 2.5
  * @module
@@ -84,10 +84,10 @@ public final class MD_ContentInformation
             return (AbstractContentInformation) metadata;
         }
         if (metadata instanceof ImageDescription) {
-            return new DefaultImageDescription((ImageDescription) metadata);
+            return MI_ImageDescription.wrap((ImageDescription) metadata);
         }
         if (metadata instanceof CoverageDescription) {
-            return new DefaultCoverageDescription((CoverageDescription) metadata);
+            return MI_CoverageDescription.wrap((CoverageDescription) metadata);
         }
         if (metadata instanceof FeatureCatalogueDescription) {
             return new DefaultFeatureCatalogueDescription((FeatureCatalogueDescription) metadata);

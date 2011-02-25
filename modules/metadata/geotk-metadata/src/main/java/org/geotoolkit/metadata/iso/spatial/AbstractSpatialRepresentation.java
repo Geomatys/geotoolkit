@@ -44,7 +44,10 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @ThreadSafe
 @XmlType(name = "AbstractMD_SpatialRepresentation_Type")
 @XmlRootElement(name = "MD_SpatialRepresentation")
-@XmlSeeAlso({DefaultGridSpatialRepresentation.class, DefaultVectorSpatialRepresentation.class})
+@XmlSeeAlso({
+    DefaultGridSpatialRepresentation.class,
+    DefaultVectorSpatialRepresentation.class
+})
 public class AbstractSpatialRepresentation extends MetadataEntity implements SpatialRepresentation {
     /**
      * Serial number for inter-operability with different versions.

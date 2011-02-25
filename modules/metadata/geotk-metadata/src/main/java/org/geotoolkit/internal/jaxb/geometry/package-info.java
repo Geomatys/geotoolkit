@@ -33,7 +33,7 @@
  * @since 3.15
  * @module
  */
-@XmlSchema(elementFormDefault= XmlNsForm.QUALIFIED, namespace = Namespaces.GML, xmlns = {
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GML, xmlns = {
     @XmlNs(prefix = "gml", namespaceURI = Namespaces.GML)
 })
 @XmlAccessorType(XmlAccessType.NONE)

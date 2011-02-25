@@ -24,6 +24,7 @@ import java.util.Date;
 import java.util.Collection;
 
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -62,6 +63,7 @@ import org.geotoolkit.xml.Namespaces;
     "reports"
 })
 @XmlRootElement(name = "LI_ProcessStep")
+@XmlSeeAlso(org.geotoolkit.internal.jaxb.gmi.LE_ProcessStep.class)
 public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
     /**
      * Serial number for inter-operability with different versions.

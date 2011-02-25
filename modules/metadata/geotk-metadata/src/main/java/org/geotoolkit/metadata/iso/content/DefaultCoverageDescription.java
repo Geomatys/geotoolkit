@@ -54,8 +54,11 @@ import org.geotoolkit.xml.Namespaces;
     "dimensions",
     "rangeElementDescriptions"
 })
-@XmlSeeAlso({DefaultImageDescription.class})
 @XmlRootElement(name = "MD_CoverageDescription")
+@XmlSeeAlso({
+    DefaultImageDescription.class,
+    org.geotoolkit.internal.jaxb.gmi.MI_CoverageDescription.class
+})
 public class DefaultCoverageDescription extends AbstractContentInformation implements CoverageDescription {
     /**
      * Serial number for inter-operability with different versions.

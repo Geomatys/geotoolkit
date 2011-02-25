@@ -44,8 +44,12 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  */
 @ThreadSafe
 @XmlType(name = "AbstractEX_GeographicExtent_Type")
-@XmlSeeAlso({DefaultGeographicBoundingBox.class, DefaultBoundingPolygon.class, DefaultGeographicDescription.class})
 @XmlRootElement(name = "EX_GeographicExtent")
+@XmlSeeAlso({
+    DefaultGeographicBoundingBox.class,
+    DefaultBoundingPolygon.class,
+    DefaultGeographicDescription.class
+})
 public class AbstractGeographicExtent extends MetadataEntity implements GeographicExtent {
     /**
      * Serial number for inter-operability with different versions.

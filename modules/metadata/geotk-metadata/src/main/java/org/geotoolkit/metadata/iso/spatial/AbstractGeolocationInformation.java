@@ -49,9 +49,7 @@ import org.geotoolkit.xml.Namespaces;
     "qualityInfo"
 })
 @XmlRootElement(name = "MI_GeolocationInformation", namespace = Namespaces.GMI)
-@XmlSeeAlso({
-    DefaultGCPCollection.class
-})
+@XmlSeeAlso(DefaultGCPCollection.class)
 public class AbstractGeolocationInformation extends MetadataEntity implements GeolocationInformation {
     /**
      * Serial number for inter-operability with different versions.

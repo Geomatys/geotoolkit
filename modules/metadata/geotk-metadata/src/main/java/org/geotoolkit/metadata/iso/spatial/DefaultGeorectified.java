@@ -23,6 +23,7 @@ package org.geotoolkit.metadata.iso.spatial;
 import java.util.List;
 import java.util.Collection;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -64,6 +65,7 @@ import org.geotoolkit.xml.Namespaces;
     "checkPoints"
 })
 @XmlRootElement(name = "MD_Georectified")
+@XmlSeeAlso(org.geotoolkit.internal.jaxb.gmi.MI_Georectified.class)
 public class DefaultGeorectified extends DefaultGridSpatialRepresentation implements Georectified {
     /**
      * Serial number for inter-operability with different versions.

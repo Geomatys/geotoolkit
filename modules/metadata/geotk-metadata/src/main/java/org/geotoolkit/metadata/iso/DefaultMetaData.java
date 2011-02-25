@@ -26,6 +26,7 @@ import java.util.Collection;
 import java.util.Collections;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
@@ -99,6 +100,7 @@ import org.geotoolkit.xml.Namespaces;
     "acquisitionInformation"
 })
 @XmlRootElement(name = "MD_Metadata")
+@XmlSeeAlso(org.geotoolkit.internal.jaxb.gmi.MI_Metadata.class)
 public class DefaultMetadata extends MetadataEntity implements Metadata {
     /**
      * Serial number for inter-operability with different versions.

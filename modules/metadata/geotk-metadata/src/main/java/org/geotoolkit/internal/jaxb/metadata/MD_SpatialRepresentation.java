@@ -25,8 +25,8 @@ import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 import org.opengis.metadata.spatial.VectorSpatialRepresentation;
 
-import org.geotoolkit.metadata.iso.spatial.DefaultGeorectified;
-import org.geotoolkit.metadata.iso.spatial.DefaultGeoreferenceable;
+import org.geotoolkit.internal.jaxb.gmi.MI_Georectified;
+import org.geotoolkit.internal.jaxb.gmi.MI_Georeferenceable;
 import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
 import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
 import org.geotoolkit.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
@@ -38,7 +38,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.17
  *
  * @since 2.5
  * @module
@@ -88,10 +88,10 @@ public final class MD_SpatialRepresentation
         }
         if (metadata instanceof GridSpatialRepresentation) {
             if (metadata instanceof Georectified) {
-                return new DefaultGeorectified((Georectified) metadata);
+                return MI_Georectified.wrap((Georectified) metadata);
             }
             if (metadata instanceof Georeferenceable) {
-                return new DefaultGeoreferenceable((Georeferenceable) metadata);
+                return MI_Georeferenceable.wrap((Georeferenceable) metadata);
             }
             return new DefaultGridSpatialRepresentation((GridSpatialRepresentation) metadata);
         }

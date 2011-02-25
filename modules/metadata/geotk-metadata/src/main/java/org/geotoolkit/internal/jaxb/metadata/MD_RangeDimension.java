@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.content.Band;
 import org.opengis.metadata.content.RangeDimension;
 
-import org.geotoolkit.metadata.iso.content.DefaultBand;
+import org.geotoolkit.internal.jaxb.gmi.MI_Band;
 import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
 
 
@@ -32,7 +32,7 @@ import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.17
  *
  * @since 2.5
  * @module
@@ -78,7 +78,7 @@ public final class MD_RangeDimension extends MetadataAdapter<MD_RangeDimension, 
             return (DefaultRangeDimension) metadata;
         }
         if (metadata instanceof Band) {
-            return new DefaultBand((Band) metadata);
+            return MI_Band.wrap((Band) metadata);
         }
         return new DefaultRangeDimension(metadata);
     }

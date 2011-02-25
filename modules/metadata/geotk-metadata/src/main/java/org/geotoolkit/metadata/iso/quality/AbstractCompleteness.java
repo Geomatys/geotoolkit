@@ -42,7 +42,10 @@ import org.geotoolkit.lang.ThreadSafe;
 @ThreadSafe
 @XmlType(name = "AbstractDQ_Completeness_Type")
 @XmlRootElement(name = "DQ_Completeness")
-@XmlSeeAlso({DefaultCompletenessCommission.class, DefaultCompletenessOmission.class})
+@XmlSeeAlso({
+    DefaultCompletenessCommission.class,
+    DefaultCompletenessOmission.class
+})
 public class AbstractCompleteness extends AbstractElement implements Completeness {
     /**
      * Serial number for inter-operability with different versions.

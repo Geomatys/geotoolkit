@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.Source;
+import org.geotoolkit.internal.jaxb.gmi.LE_Source;
 import org.geotoolkit.metadata.iso.lineage.DefaultSource;
 
 
@@ -27,7 +28,7 @@ import org.geotoolkit.metadata.iso.lineage.DefaultSource;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.17
  *
  * @since 2.5
  * @module
@@ -68,9 +69,7 @@ public final class LI_Source extends MetadataAdapter<LI_Source, Source> {
     @Override
     @XmlElementRef
     public DefaultSource getElement() {
-        final Source metadata = this.metadata;
-        return (metadata instanceof DefaultSource) ?
-            (DefaultSource) metadata : new DefaultSource(metadata);
+        return LE_Source.wrap(metadata);
     }
 
     /**

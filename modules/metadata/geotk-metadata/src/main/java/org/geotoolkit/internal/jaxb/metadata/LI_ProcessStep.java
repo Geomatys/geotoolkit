@@ -19,6 +19,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.ProcessStep;
+import org.geotoolkit.internal.jaxb.gmi.LE_ProcessStep;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
 
 
@@ -27,7 +28,7 @@ import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.17
  *
  * @since 2.5
  * @module
@@ -68,9 +69,7 @@ public final class LI_ProcessStep extends MetadataAdapter<LI_ProcessStep, Proces
     @Override
     @XmlElementRef
     public DefaultProcessStep getElement() {
-        final ProcessStep metadata = this.metadata;
-        return (metadata instanceof DefaultProcessStep) ?
-            (DefaultProcessStep) metadata : new DefaultProcessStep(metadata);
+        return LE_ProcessStep.wrap(metadata);
     }
 
     /**

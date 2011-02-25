@@ -49,8 +49,11 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 @XmlType(name = "MD_Constraints_Type", propOrder={
     "useLimitations"
 })
-@XmlSeeAlso({DefaultLegalConstraints.class, DefaultSecurityConstraints.class})
 @XmlRootElement(name = "MD_Constraints")
+@XmlSeeAlso({
+    DefaultLegalConstraints.class,
+    DefaultSecurityConstraints.class
+})
 public class DefaultConstraints extends MetadataEntity implements Constraints {
     /**
      * Serial number for inter-operability with different versions.

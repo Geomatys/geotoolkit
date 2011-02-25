@@ -24,6 +24,7 @@ import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 
 import org.opengis.metadata.content.Band;
@@ -70,6 +71,7 @@ import org.geotoolkit.xml.Namespaces;
     "detectedPolarization"
 })
 @XmlRootElement(name = "MD_Band")
+@XmlSeeAlso(org.geotoolkit.internal.jaxb.gmi.MI_Band.class)
 public class DefaultBand extends DefaultRangeDimension implements Band {
     /**
      * Serial number for inter-operability with different versions.

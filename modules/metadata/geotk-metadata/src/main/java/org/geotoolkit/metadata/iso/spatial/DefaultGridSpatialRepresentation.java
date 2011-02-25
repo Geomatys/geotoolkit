@@ -52,7 +52,10 @@ import org.geotoolkit.lang.ValueRange;
     "cellGeometry",
     "transformationParameterAvailable"
 })
-@XmlSeeAlso({DefaultGeorectified.class, DefaultGeoreferenceable.class})
+@XmlSeeAlso({
+    DefaultGeorectified.class,
+    DefaultGeoreferenceable.class
+})
 @XmlRootElement(name = "MD_GridSpatialRepresentation")
 public class DefaultGridSpatialRepresentation extends AbstractSpatialRepresentation
         implements GridSpatialRepresentation

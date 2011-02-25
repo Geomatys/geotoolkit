@@ -21,6 +21,7 @@
 package org.geotoolkit.metadata.iso.content;
 
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
@@ -59,6 +60,7 @@ import org.geotoolkit.lang.ValueRange;
     "lensDistortionInformationAvailable"
 })
 @XmlRootElement(name = "MD_ImageDescription")
+@XmlSeeAlso(org.geotoolkit.internal.jaxb.gmi.MI_ImageDescription.class)
 public class DefaultImageDescription extends DefaultCoverageDescription implements ImageDescription {
     /**
      * Serial number for inter-operability with different versions.

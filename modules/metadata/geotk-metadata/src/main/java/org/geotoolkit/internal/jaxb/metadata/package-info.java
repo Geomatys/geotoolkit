@@ -57,9 +57,7 @@
  * @since 2.5
  * @module
  */
-@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED,
-namespace = Namespaces.GMD,
-xmlns = {
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, namespace = Namespaces.GMD, xmlns = {
     @XmlNs(prefix = "gmd", namespaceURI = Namespaces.GMD),
     @XmlNs(prefix = "gco", namespaceURI = Namespaces.GCO),
     @XmlNs(prefix = "xsi", namespaceURI = Namespaces.XSI),

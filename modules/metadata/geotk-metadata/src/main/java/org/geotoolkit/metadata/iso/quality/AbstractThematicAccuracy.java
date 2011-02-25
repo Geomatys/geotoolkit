@@ -43,8 +43,10 @@ import org.geotoolkit.lang.ThreadSafe;
 @ThreadSafe
 @XmlType(name = "AbstractDQ_ThematicAccuracy_Type")
 @XmlRootElement(name = "DQ_ThematicAccuracy")
-@XmlSeeAlso({DefaultThematicClassificationCorrectness.class, DefaultNonQuantitativeAttributeAccuracy.class,
-             DefaultQuantitativeAttributeAccuracy.class
+@XmlSeeAlso({
+    DefaultThematicClassificationCorrectness.class,
+    DefaultNonQuantitativeAttributeAccuracy.class,
+    DefaultQuantitativeAttributeAccuracy.class
 })
 public class AbstractThematicAccuracy extends AbstractElement implements ThematicAccuracy {
     /**
