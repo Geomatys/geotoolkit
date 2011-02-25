@@ -137,12 +137,13 @@ public final class DataBaseModel {
         try {
             cx = store.createConnection();
             final DatabaseMetaData metaData = cx.getMetaData();
-            final ResultSet tables = metaData.getTables(null, store.getDatabaseSchema(), "%", new String[]{MD_TABLE, MD_VIEW});
+            final ResultSet tables = metaData.getTables(null, store.getDatabaseSchema(), "%", new String[]{Table.VALUE_TYPE_TABLE, Table.VALUE_TYPE_VIEW});
 
             try {
                 while (tables.next()) {
-                    final String schemaName = tables.getString(MD_TABLE_SCHEM);
-                    final String tableName = tables.getString(MD_TABLE_NAME);
+
+                    final String schemaName = tables.getString(Table.TABLE_SCHEM);
+                    final String tableName = tables.getString(Table.TABLE_NAME);
 
                     //use the dialect to filter
                     if (!dialect.includeTable(schemaName, tableName, cx)) {
@@ -217,7 +218,7 @@ public final class DataBaseModel {
                 adb.reset();
                 atb.reset();
 
-                final String name = columns.getString(MD_COLUMN_NAME);
+                final String name = columns.getString(Column.COLUMN_NAME);
 
                 //we need the primary keys as fields since join query rely on them.
 //                    //encomment to not include primary key in the type
@@ -247,13 +248,13 @@ public final class DataBaseModel {
 
                 if (binding == null) {
                     //determine from type mappings
-                    final int dataType = columns.getInt(MD_DATA_TYPE);
+                    final int dataType = columns.getInt(Column.DATA_TYPE);
                     binding = dialect.getMapping(dataType);
                 }
 
                 if (binding == null) {
                     //determine from type name mappings
-                    final String tn = columns.getString(MD_TYPE_NAME);
+                    final String tn = columns.getString(Column.TYPE_NAME);
                     binding = dialect.getMapping(tn);
                 }
 
@@ -265,7 +266,7 @@ public final class DataBaseModel {
 
                 adb.setMinOccurs(1);
                 //nullability
-                if ( MD_NOT_NULL.equalsIgnoreCase( columns.getString(MD_IS_NULLABLE) ) ) {
+                if ( Column.VALUE_NO.equalsIgnoreCase( columns.getString(Column.IS_NULLABLE) ) ) {
                     adb.setNillable(false);
                 }else{
                     adb.setNillable(true);
@@ -275,7 +276,7 @@ public final class DataBaseModel {
                 final ResultSet primaryKeys = metaData.getPrimaryKeys(null, store.getDatabaseSchema(), tableName);
                 try {
                     while (primaryKeys.next()) {
-                        if (name.equals(primaryKeys.getString(MD_COLUMN_NAME))) {
+                        if (name.equals(primaryKeys.getString(Column.COLUMN_NAME))) {
                             adb.setNillable(false);
                             adb.setMinOccurs(1);
                             adb.addUserData(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
@@ -361,13 +362,13 @@ public final class DataBaseModel {
                 final ArrayList<PrimaryKeyColumn> cols = new ArrayList();
 
                 while (primaryKey.next()) {
-                    final String columnName = primaryKey.getString(MD_COLUMN_NAME);
+                    final String columnName = primaryKey.getString(Column.COLUMN_NAME);
 
                     //look up the type ( should only be one row )
                     final ResultSet columns = metaData.getColumns(null, store.getDatabaseSchema(), tableName, columnName);
                     columns.next();
 
-                    final int binding = columns.getInt(MD_DATA_TYPE);
+                    final int binding = columns.getInt(Column.DATA_TYPE);
                     Class columnType = dialect.getMapping(binding);
 
                     if (columnType == null) {
