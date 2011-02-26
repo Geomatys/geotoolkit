@@ -18,6 +18,7 @@
 package org.geotoolkit.jdbc;
 
 
+import org.geotoolkit.jdbc.reverse.DataBaseModel;
 import java.io.Closeable;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -930,6 +931,10 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     ////////////////////////////////////////////////////////////////////////////
     // SQL utils ///////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
+
+    public SQLQueryBuilder getQueryBuilder() {
+        return queryBuilder;
+    }
 
     /**
      * Helper method for splitting a filter.

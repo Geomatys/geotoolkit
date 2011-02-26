@@ -15,22 +15,23 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.jdbc;
+package org.geotoolkit.jdbc.reverse;
 
-import java.util.HashSet;
-import java.util.Collections;
 import com.vividsolutions.jts.geom.Geometry;
 
-import java.util.logging.Level;
-import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.HashSet;
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+import java.sql.Statement;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
@@ -38,6 +39,8 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.jdbc.DefaultJDBCDataStore;
+import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.jdbc.fid.PrimaryKeyColumn;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
@@ -47,11 +50,15 @@ import org.geotoolkit.jdbc.fid.NonIncrementingPrimaryKeyColumn;
 import org.geotoolkit.jdbc.fid.SequencedPrimaryKeyColumn;
 
 import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.FeatureTypeFactory;
 import org.opengis.feature.type.Name;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import static org.geotoolkit.jdbc.MetaDataConstants.*;
+import static org.geotoolkit.jdbc.reverse.MetaDataConstants.*;
 import static org.geotoolkit.jdbc.AbstractJDBCDataStore.*;
 
 /**
@@ -62,8 +69,19 @@ import static org.geotoolkit.jdbc.AbstractJDBCDataStore.*;
  */
 public final class DataBaseModel {
 
-    private final DefaultJDBCDataStore store;
+    /**
+     * Custom factory where types can be modified after they are created.
+     */
+    private static final FeatureTypeFactory FTF = new ModifiableFeatureTypeFactory();
+    /**
+     * Dummy type which will be replaced dynamically in the reverse engineering process.
+     */
+    private static final ComplexType FLAG_TYPE = FTF.createComplexType(
+            new DefaultName("flag"), Collections.EMPTY_LIST, false, false, Collections.EMPTY_LIST, null, null);
 
+    private Map<String,SchemaMetaModel> schemas = null;
+
+    private final DefaultJDBCDataStore store;
     private final Map<Name,PrimaryKey> primaryKeys = new HashMap<Name, PrimaryKey>();
     private final Map<Name,FeatureType> names = new HashMap<Name, FeatureType>();
     private Set<Name> nameCache = null;
@@ -80,6 +98,7 @@ public final class DataBaseModel {
         primaryKeys.clear();
         names.clear();
         nameCache = null;
+        schemas = null;
     }
 
     public PrimaryKey getPrimaryKey(final Name featureTypeName) throws DataStoreException{
@@ -103,36 +122,298 @@ public final class DataBaseModel {
         return names.get(typeName);
     }
 
+    /**
+     * Explore all tables and views then recreate a complex feature model from
+     * relations.
+     */
+    private void analyze() throws DataStoreException{
+        clearCache();
+        schemas = new HashMap<String, SchemaMetaModel>();
+
+        final String schemaName = store.getDatabaseSchema();
+        final SchemaMetaModel schema = new SchemaMetaModel(schemaName);
+
+        Connection cx = null;
+        ResultSet tableSet = null;
+        try {
+            cx = store.createConnection();
+
+            final DatabaseMetaData metadata = cx.getMetaData();
+            tableSet = metadata.getTables(null, schemaName, "%",
+                    new String[]{Table.VALUE_TYPE_TABLE, Table.VALUE_TYPE_VIEW});
+
+            while (tableSet.next()) {
+                final TableMetaModel table = analyzeTable(tableSet);
+                schema.tables.put(table.name, table);
+            }
+
+        } catch (SQLException e) {
+            throw new DataStoreException("Error occurred analyzing database model.", e);
+        } finally {
+            store.closeSafe(tableSet);
+            store.closeSafe(cx);
+        }
+
+        schemas.put(schemaName, schema);
+
+        reverseEngineering();
+    }
+
+    private TableMetaModel analyzeTable(final ResultSet tableSet) throws DataStoreException, SQLException{
+        final FeatureTypeBuilder tb = new FeatureTypeBuilder(FTF);
+
+        final String schemaName = tableSet.getString(Table.TABLE_SCHEM);
+        final String tableName = tableSet.getString(Table.TABLE_NAME);
+
+        final TableMetaModel table = new TableMetaModel(tableName);
+        
+        Connection cx = null;
+        ResultSet result = null;
+        try {
+            cx = store.createConnection();
+            final DatabaseMetaData metadata = cx.getMetaData();
+
+            //explore all columns
+            result = metadata.getColumns(null, schemaName, tableName, "%");
+            while (result.next()) {
+                final PropertyDescriptor desc = analyzeColumn(result);
+                tb.add(analyzeColumn(result));
+            }
+            store.closeSafe(result);
+
+            //find primary keys
+            result = metadata.getPrimaryKeys(null, schemaName, tableName);
+            while (result.next()) {
+                final String keyName = result.getString(MetaDataConstants.PrimaryKey.COLUMN_NAME);
+            }
+            store.closeSafe(result);
+
+            //find imported keys
+            result = metadata.getImportedKeys(null, schemaName, tableName);
+            while (result.next()) {
+                final String localColumn = result.getString(ImportedKey.FKCOLUMN_NAME);
+                final String refSchemaName = result.getString(ImportedKey.PKTABLE_SCHEM);
+                final String refTableName = result.getString(ImportedKey.PKTABLE_NAME);
+                final String refColumnName = result.getString(ImportedKey.PKCOLUMN_NAME);
+                table.importedKeys.add(new RelationMetaModel(localColumn,
+                        refSchemaName, refTableName, refColumnName, true));
+            }
+            store.closeSafe(result);
+
+            //find exported keys
+            result = metadata.getExportedKeys(null, schemaName, tableName);
+            while (result.next()) {
+                final String localColumn = result.getString(ExportedKey.PKCOLUMN_NAME);
+                final String refSchemaName = result.getString(ExportedKey.FKTABLE_SCHEM);
+                final String refTableName = result.getString(ExportedKey.FKTABLE_NAME);
+                final String refColumnName = result.getString(ExportedKey.FKCOLUMN_NAME);
+                table.exportedKeys.add(new RelationMetaModel(localColumn,
+                        refSchemaName, refTableName, refColumnName, false));
+            }
+            store.closeSafe(result);
+
+        } catch (SQLException e) {
+            throw new DataStoreException("Error occurred analyzing table : " + tableName, e);
+        } finally {
+            store.closeSafe(result);
+            store.closeSafe(cx);
+        }
+
+        tb.setName(tableName);
+        table.baseType = tb.buildType();
+        return table;
+    }
+
+    private AttributeDescriptor analyzeColumn(final ResultSet columnSet) throws SQLException, DataStoreException{
+        final SQLDialect dialect = store.getDialect();
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
+        final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
+
+        final String columnName     = columnSet.getString(Column.COLUMN_NAME);
+        final int columnDataType    = columnSet.getInt(Column.DATA_TYPE);
+        final String columnTypeName = columnSet.getString(Column.TYPE_NAME);
+        final String columnNullable = columnSet.getString(Column.IS_NULLABLE);
+
+
+        Connection cx = null;
+        Class binding;
+        try {
+            cx = store.createConnection();
+            binding = dialect.getMapping(columnSet, cx);
+
+        } catch (SQLException e) {
+            throw new DataStoreException("Error occurred analyzing column : " + columnName, e);
+        } finally {
+            store.closeSafe(cx);
+        }
+
+
+        if (binding == null) {
+            //determine from type mappings
+            binding = dialect.getMapping(columnDataType);
+        }
+        if (binding == null) {
+            //determine from type name mappings
+            binding = dialect.getMapping(columnTypeName);
+        }
+        if (binding == null) {
+            //if still not found, resort to Object
+            store.getLogger().log(Level.WARNING, "Could not find mapping for:{0}", columnName);
+            binding = Object.class;
+        }
+
+        //table values are always min 1, max 1
+        adb.setMinOccurs(1);
+        adb.setMaxOccurs(1);
+
+        //nullability
+        if (Column.VALUE_NO.equalsIgnoreCase(columnNullable)) {
+            adb.setNillable(false);
+        }else{
+            adb.setNillable(true);
+        }
+
+        atb.setName(columnName);
+        atb.setBinding(binding);
+
+        adb.setName(columnName);
+        adb.setType(atb.buildType());
+        adb.findBestDefaultValue();
+        return adb.buildDescriptor();
+    }
+
+    private void reverseEngineering(){
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(FTF);
+        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
+        
+        //result map
+        final Map<String,ModifiableType> builded = new HashMap<String, ModifiableType>();
+
+        //first pass to create the real types but without relations types-------
+        //since we must have all of them before creating relations
+        for(final SchemaMetaModel schema : schemas.values()){
+            for(final TableMetaModel table : schema.tables.values()){
+                final String code = schema.name +"."+table.name;
+
+                //create the complex model by replacing descriptors
+                final ComplexType baseType = table.baseType;
+                ftb.reset();
+                ftb.copy(baseType);
+
+                // replace 0:1 relations
+                for(final RelationMetaModel relation : table.importedKeys){
+
+                    //find the descriptor to replace
+                    final List<PropertyDescriptor> descs = ftb.getProperties();
+                    int index = -1;
+                    for(int i=0,n=descs.size();i<n;i++){
+                        final PropertyDescriptor pd = descs.get(i);
+                        if(pd.getName().getLocalPart().equals(relation.currentColumn)){
+                            index = i;
+                        }
+                    }
+
+                    //create the new descriptor derivated
+                    final PropertyDescriptor baseDescriptor = descs.get(index);
+                    adb.reset();
+                    adb.copy((AttributeDescriptor) baseDescriptor);
+                    adb.setType(FLAG_TYPE);
+                    adb.setDefaultValue(null);
+                    final PropertyDescriptor newDescriptor = adb.buildDescriptor();
+                    descs.set(index, newDescriptor);
+                }
+
+                // create N:1 relations
+                for(final RelationMetaModel relation : table.exportedKeys){
+
+                    adb.reset();
+                    adb.setName(relation.foreignTable);
+                    adb.setType(FLAG_TYPE);
+                    adb.setMinOccurs(0);
+                    adb.setMaxOccurs(Integer.MAX_VALUE);
+                    adb.setNillable(false);
+                    adb.setDefaultValue(null);
+                    ftb.add(adb.buildDescriptor());
+                }
+
+                final FeatureType ft = ftb.buildFeatureType();
+                builded.put(code, (ModifiableType) ft);
+            }
+        }
+
+        //second pass to fill relations-----------------------------------------
+        for(final SchemaMetaModel schema : schemas.values()){
+            for(final TableMetaModel table : schema.tables.values()){
+                final String code = schema.name +"."+table.name;
+
+                //modify the properties which are relations
+                final ModifiableType candidate = builded.get(code);
+
+                //replace 0:1 relations types
+                for(final RelationMetaModel relation : table.importedKeys){
+                    final String relCode = relation.foreignSchema +"."+relation.foreignTable;
+                    final ComplexType relType = builded.get(relCode);
+                    
+                    //find the descriptor to replace
+                    final List<PropertyDescriptor> descs = candidate.getDescriptors();
+                    int index = -1;
+                    for(int i=0,n=descs.size();i<n;i++){
+                        final PropertyDescriptor pd = descs.get(i);
+                        if(pd.getName().getLocalPart().equals(relation.currentColumn)){
+                            index = i;
+                        }
+                    }
+
+                    //create the new descriptor derivated
+                    final PropertyDescriptor baseDescriptor = descs.get(index);
+                    adb.reset();
+                    adb.copy((AttributeDescriptor) baseDescriptor);
+                    adb.setType(relType);
+                    final PropertyDescriptor newDescriptor = adb.buildDescriptor();
+                    candidate.changeProperty(index, newDescriptor);
+                }
+
+                //replace N:1 relations types
+                for(final RelationMetaModel relation : table.exportedKeys){
+                    final String relCode = relation.foreignSchema +"."+relation.foreignTable;
+                    final ComplexType relType = builded.get(relCode);
+
+                    //find the descriptor to replace
+                    final List<PropertyDescriptor> descs = candidate.getDescriptors();
+                    int index = -1;
+                    for(int i=0,n=descs.size();i<n;i++){
+                        final PropertyDescriptor pd = descs.get(i);
+                        if(pd.getName().getLocalPart().equals(relation.foreignTable)){
+                            index = i;
+                        }
+                    }
+
+                    //create the new descriptor derivated
+                    final PropertyDescriptor baseDescriptor = descs.get(index);
+                    adb.reset();
+                    adb.copy((AttributeDescriptor) baseDescriptor);
+                    adb.setType(relType);
+                    final PropertyDescriptor newDescriptor = adb.buildDescriptor();
+                    candidate.changeProperty(index, newDescriptor);
+                }
+
+            }
+        }
+
+    }
 
     /**
      * Explore the available tables and generate schemas and primary keys.
      * @throws DataStoreException
      */
     private synchronized void visitTables() throws DataStoreException{
+        analyze();
         final SQLDialect dialect = store.getDialect();
 
         //clear previous schemas, this might be called after an update schema
         nameCache = null;
         names.clear();
         primaryKeys.clear();
-
-        /*
-         *        <LI><B>TABLE_CAT</B> String => table catalog (may be <code>null</code>)
-         *        <LI><B>TABLE_SCHEM</B> String => table schema (may be <code>null</code>)
-         *        <LI><B>TABLE_NAME</B> String => table name
-         *        <LI><B>TABLE_TYPE</B> String => table type.  Typical types are "TABLE",
-         *                        "VIEW",        "SYSTEM TABLE", "GLOBAL TEMPORARY",
-         *                        "LOCAL TEMPORARY", "ALIAS", "SYNONYM".
-         *        <LI><B>REMARKS</B> String => explanatory comment on the table
-         *  <LI><B>TYPE_CAT</B> String => the types catalog (may be <code>null</code>)
-         *  <LI><B>TYPE_SCHEM</B> String => the types schema (may be <code>null</code>)
-         *  <LI><B>TYPE_NAME</B> String => type name (may be <code>null</code>)
-         *  <LI><B>SELF_REFERENCING_COL_NAME</B> String => name of the designated
-         *                  "identifier" column of a typed table (may be <code>null</code>)
-         *        <LI><B>REF_GENERATION</B> String => specifies how values in
-         *                  SELF_REFERENCING_COL_NAME are created. Values are
-         *                  "SYSTEM", "USER", "DERIVED". (may be <code>null</code>)
-         */
         Connection cx = null;
         try {
             cx = store.createConnection();
@@ -351,14 +632,6 @@ public final class DataBaseModel {
             final ResultSet primaryKey = metaData.getPrimaryKeys(null, store.getDatabaseSchema(), tableName);
 
             try {
-                /*
-                 *        <LI><B>TABLE_CAT</B> String => table catalog (may be <code>null</code>)
-                 *        <LI><B>TABLE_SCHEM</B> String => table schema (may be <code>null</code>)
-                 *        <LI><B>TABLE_NAME</B> String => table name
-                 *        <LI><B>COLUMN_NAME</B> String => column name
-                 *        <LI><B>KEY_SEQ</B> short => sequence number within primary key
-                 *        <LI><B>PK_NAME</B> String => primary key name (may be <code>null</code>)
-                 */
                 final ArrayList<PrimaryKeyColumn> cols = new ArrayList();
 
                 while (primaryKey.next()) {
@@ -390,7 +663,7 @@ public final class DataBaseModel {
                         sql.append("SELECT ");
                         dialect.encodeColumnName(columnName, sql);
                         sql.append(" FROM ");
-                        store.queryBuilder.encodeTableName(tableName, sql);
+                        store.getQueryBuilder().encodeTableName(tableName, sql);
 
                         sql.append(" WHERE 0=1");
 
@@ -445,6 +718,5 @@ public final class DataBaseModel {
 
         return pkey;
     }
-
 
 }

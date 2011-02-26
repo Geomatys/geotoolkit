@@ -123,7 +123,7 @@ public interface SQLDialect {
     Map<Class, Integer> getClassToSqlTypeMappings();
 
     /**
-     * Returns any ovverides which map integer constants for database types (from {@link Types})
+     * Returns any overrides which map integer constants for database types (from {@link Types})
      * to database type names.
      * <p>
      * This method will return an empty map when there are no overrides.
