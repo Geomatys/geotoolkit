@@ -16,12 +16,13 @@
  */
 package org.geotoolkit.feature.type;
 
+import java.util.Set;
 import java.io.IOException;
 import java.io.StringWriter;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,6 @@ import java.util.Map;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
@@ -170,7 +170,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
      */
     @Override
     public int hashCode() {
-        return 59 * super.hashCode() + Arrays.hashCode(descriptors);
+        return 59 * super.hashCode();
     }
 
     /**
@@ -203,8 +203,10 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         tablewriter.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
 
         final Collection<PropertyDescriptor> descs = getDescriptors();
+        final Set<PropertyType> loops = new HashSet<PropertyType>();
+        loops.add(this);
         for (PropertyDescriptor property : descs) {
-            tablewriter.write(toString(property));
+            tablewriter.write(toString(property,loops));
             tablewriter.write('\n');
         }
         tablewriter.nextLine(TableWriter.DOUBLE_HORIZONTAL_LINE);
@@ -236,10 +238,18 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         return sb.toString();
     }
 
-    private static String toString(final PropertyDescriptor property){
+    private static String toString(final PropertyDescriptor property, final Set<PropertyType> visited){
         final StringBuilder builder = new StringBuilder();
 
+        //check if we are in a cycle
+        final PropertyType type = property.getType();
+        final boolean inCycle = visited.contains(type);
+
         builder.append(DefaultName.toJCRExtendedForm(property.getName()));
+        if(inCycle){
+            builder.append(" <...CYCLIC...>");
+        }
+
         builder.append("\t");
         builder.append(Integer.toString(property.getMinOccurs()));
         builder.append("\t");
@@ -280,21 +290,29 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             }
         }
 
-        if(property.getType() instanceof ComplexType){
-            final ComplexType ct = (ComplexType) property.getType();
+        if(!inCycle && type instanceof ComplexType){
+            final ComplexType ct = (ComplexType) type;
             final Collection<PropertyDescriptor> descs = ct.getDescriptors();
 
             if(!descs.isEmpty()){
                 builder.append('\n');
             }
 
-            builder.append(toStringTree(descs));
+            visited.add(ct);
+            builder.append(toStringTree(descs,visited));
+            visited.remove(ct);
         }
 
         return builder.toString();
     }
 
-    private static String toStringTree(final Collection<PropertyDescriptor> objects){
+    /**
+     *
+     * @param objects : collection of properties to display as tree
+     * @param cycles : descriptors already visited, to avoid infinite cycles
+     * @return tree string form
+     */
+    private static String toStringTree(final Collection<PropertyDescriptor> objects, final Set<PropertyType> cycles){
         final StringBuilder sb = new StringBuilder();
 
         final int size = objects.size();
@@ -302,7 +320,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
         final Iterator<PropertyDescriptor> ite = objects.iterator();
         int i=1;
         while(ite.hasNext()){
-            String sub = toString(ite.next());
+            String sub = toString(ite.next(),cycles);
 
             if(i==size){
                 sb.append(TREE_END);

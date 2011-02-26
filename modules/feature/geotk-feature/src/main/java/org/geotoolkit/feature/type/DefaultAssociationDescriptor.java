@@ -29,7 +29,8 @@ import org.opengis.feature.type.Name;
 public class DefaultAssociationDescriptor extends DefaultPropertyDescriptor<AssociationType>
         implements AssociationDescriptor {
 
-    public DefaultAssociationDescriptor(final AssociationType type, final Name name, final int min, final int max, final boolean isNillable) {
+    public DefaultAssociationDescriptor(final AssociationType type, final Name name,
+            final int min, final int max, final boolean isNillable) {
         super(type, name, min, max, isNillable);
     }
     

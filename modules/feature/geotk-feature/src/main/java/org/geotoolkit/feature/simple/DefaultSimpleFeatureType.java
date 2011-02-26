@@ -44,7 +44,7 @@ import org.opengis.util.InternationalString;
  */
 public class DefaultSimpleFeatureType extends DefaultFeatureType implements SimpleFeatureType {
 
-    private final AttributeType[] types;
+    protected final AttributeType[] types;
     private final List<AttributeType> typesList;
     final Map<Object, Integer> index;
 

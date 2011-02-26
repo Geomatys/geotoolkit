@@ -187,7 +187,7 @@ public class FeatureTypeBuilder {
     /**
      * Initializes the builder with state from a pre-existing feature type.
      */
-    public void copy(final FeatureType type) {
+    public void copy(final ComplexType type) {
         if (type == null) {
             throw new NullPointerException("Can not copy information from a Null type.");
         }
@@ -551,6 +551,13 @@ public class FeatureTypeBuilder {
      */
     public void setProperties(final PropertyDescriptor ... attributes) {
         setProperties(Arrays.asList(attributes));
+    }
+
+    /**
+     * @return list of the current properties.
+     */
+    public List<PropertyDescriptor> getProperties(){
+        return properties;
     }
 
     /**
