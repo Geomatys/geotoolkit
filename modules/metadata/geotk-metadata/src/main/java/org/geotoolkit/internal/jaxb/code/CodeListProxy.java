@@ -18,12 +18,19 @@
 package org.geotoolkit.internal.jaxb.code;
 
 import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.MissingResourceException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+
 import org.opengis.annotation.UML;
 import org.opengis.util.CodeList;
+
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.internal.jaxb.MarshalContext;
+import org.geotoolkit.resources.Locales;
 
 
 /**
@@ -43,7 +50,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  * @module
  *
  * @todo JAXB BUG: Properties must be declared in reverse order. This is fixed in a JAXB version
- *       more recent than the one provided in the JDK. The test failure will fail when the bug
+ *       more recent than the one provided in the JDK. A Geotk test case should fail when the bug
  *       will be fixed, which will remind us to restore the correct order.
  */
 @XmlType(name = "CodeList", propOrder = { "codeSpace", "codeListValue", "codeList" })
@@ -148,8 +155,23 @@ public final class CodeListProxy {
         codeList = schemaURL("gmxCodelists.xml", identifier);
 
         // Get the field identifier.
-        identifier = code.identifier();
-        codeListValue = (identifier != null &&
-                (identifier = identifier.trim()).length() != 0) ? identifier : code.name();
+        String field = code.identifier();
+        codeListValue = (field != null && (field = field.trim()).length() != 0) ? field : code.name();
+
+        // Get the localized name of the field identifier, if possible.
+        Locale locale = MarshalContext.getLocale();
+        if (locale != null) {
+            final String key = identifier + '.' + field;
+            try {
+                value = ResourceBundle.getBundle("org.opengis.metadata.CodeLists", locale).getString(key);
+            } catch (MissingResourceException e) {
+                Logging.recoverableException(CodeListAdapter.class, "marshal", e);
+            }
+        }
+        if (value != null) {
+            codeSpace = Locales.getLanguage(locale);
+        } else {
+            value = StringUtilities.makeSentence(field);
+        }
     }
 }

@@ -17,13 +17,16 @@
  */
 package org.geotoolkit.xml;
 
+import java.util.Locale;
 import java.io.StringWriter;
 import java.util.Collections;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.JAXBException;
 import org.opengis.metadata.citation.Role;
+import org.opengis.metadata.citation.DateType;
+import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.citation.ResponsibleParty;
-import org.geotoolkit.test.TestBase;
+import org.geotoolkit.test.LocaleDependantTestBase;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -39,18 +42,42 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.17
  */
-public final class CodeListMarshallingTest extends TestBase {
+public final class CodeListMarshallingTest extends LocaleDependantTestBase {
     /**
      * Returns a XML string to use for testing purpose.
      *
      * @param baseURL The base URL of XML schemas.
      */
-    private static String getXML(final String baseURL) {
+    private static String getResponsiblePartyXML(final String baseURL) {
         return "<gmd:CI_ResponsibleParty xmlns:gmd=\"" + Namespaces.GMD + "\">\n" +
                "  <gmd:role>\n" +
-               "    <gmd:CI_RoleCode codeList=\"" + baseURL + "resources/Codelist/gmxCodelists.xml#CI_RoleCode\" codeListValue=\"principalInvestigator\"/>\n" +
+               "    <gmd:CI_RoleCode codeList=\"" + baseURL + "resources/Codelist/gmxCodelists.xml#CI_RoleCode\"" +
+                    " codeListValue=\"principalInvestigator\">" + "Principal investigator</gmd:CI_RoleCode>\n" +
                "  </gmd:role>\n" +
                "</gmd:CI_ResponsibleParty>";
+    }
+
+    /**
+     * Returns a XML string to use for testing purpose.
+     *
+     * @param baseURL The base URL of XML schemas.
+     */
+    private static String getCitationXML(final String baseURL, final String language, final String value) {
+        return "<gmd:CI_Date xmlns:gmd=\"" + Namespaces.GMD + "\">\n" +
+               "  <gmd:dateType>\n" +
+               "    <gmd:CI_DateTypeCode codeList=\"" + baseURL + "resources/Codelist/gmxCodelists.xml#CI_DateTypeCode\"" +
+                    " codeListValue=\"creation\" codeSpace=\"" + language + "\">" + value + "</gmd:CI_DateTypeCode>\n" +
+               "  </gmd:dateType>\n" +
+               "</gmd:CI_Date>";
+    }
+
+    /**
+     * Marshals the given object using the given marshaller.
+     */
+    private static String marshal(final Marshaller marshaller, final Object object) throws JAXBException {
+        final StringWriter output = new StringWriter();
+        marshaller.marshal(object, output);
+        return output.toString();
     }
 
     /**
@@ -59,8 +86,8 @@ public final class CodeListMarshallingTest extends TestBase {
      * @throws JAXBException If an error occurred while marshalling the XML.
      */
     @Test
-    public void testDefault() throws JAXBException {
-        final String expected = getXML("http://schemas.opengis.net/iso/19139/20070417/");
+    public void testDefaultURL() throws JAXBException {
+        final String expected = getResponsiblePartyXML("http://schemas.opengis.net/iso/19139/20070417/");
         final ResponsibleParty rp = (ResponsibleParty) XML.unmarshal(expected);
         assertEquals(Role.PRINCIPAL_INVESTIGATOR, rp.getRole());
         /*
@@ -77,21 +104,50 @@ public final class CodeListMarshallingTest extends TestBase {
      * @throws JAXBException If an error occurred while marshalling the XML.
      */
     @Test
-    public void testISO() throws JAXBException {
-        final String expected = getXML("http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/");
+    public void testISO_URL() throws JAXBException {
+        final String expected = getResponsiblePartyXML("http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas/");
         final ResponsibleParty rp = (ResponsibleParty) XML.unmarshal(expected);
         assertEquals(Role.PRINCIPAL_INVESTIGATOR, rp.getRole());
         /*
          * We have to create a MarshallerPool in order to apply the desired configuration.
          */
-        final StringWriter output = new StringWriter();
         final MarshallerPool pool = new MarshallerPool(MarshallerPool.defaultClassesToBeBound());
         final Marshaller marshaller = pool.acquireMarshaller();
         marshaller.setProperty(XML.SCHEMAS, Collections.singletonMap("gmd",
                 "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas")); // Intentionally omit trailing '/'.
-        marshaller.marshal(rp, output);
+        final String actual = marshal(marshaller, rp);
         pool.release(marshaller);
-        final String actual = output.toString();
         assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+    }
+
+    /**
+     * Tests a code list localization.
+     *
+     * @throws JAXBException If an error occurred while marshalling the XML.
+     */
+    @Test
+    public void testLocalization() throws JAXBException {
+        final MarshallerPool pool = new MarshallerPool(MarshallerPool.defaultClassesToBeBound());
+        final Marshaller marshaller = pool.acquireMarshaller();
+        /*
+         * First, test using the French locale.
+         */
+        marshaller.setProperty(XML.LOCALE, Locale.FRENCH);
+        String expected = getCitationXML("http://schemas.opengis.net/iso/19139/20070417/", "fra", "Création");
+        CitationDate ci = (CitationDate) XML.unmarshal(expected);
+        assertEquals(DateType.CREATION, ci.getDateType());
+        String actual = marshal(marshaller, ci);
+        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+        /*
+         * Tests again using the Englisg locale.
+         */
+        marshaller.setProperty(XML.LOCALE, Locale.ENGLISH);
+        expected = getCitationXML("http://schemas.opengis.net/iso/19139/20070417/", "eng", "Creation");
+        ci = (CitationDate) XML.unmarshal(expected);
+        assertEquals(DateType.CREATION, ci.getDateType());
+        actual = marshal(marshaller, ci);
+        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+
+        pool.release(marshaller);
     }
 }

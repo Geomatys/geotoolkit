@@ -8,7 +8,7 @@
     <gmd:LanguageCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/ML_gmxCodelists.xml#LanguageCode" codeListValue="fra">French</gmd:LanguageCode>
   </gmd:language>
   <gmd:characterSet>
-    <gmd:MD_CharacterSetCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8"/>
+    <gmd:MD_CharacterSetCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_CharacterSetCode" codeListValue="utf8">Utf8</gmd:MD_CharacterSetCode>
   </gmd:characterSet>
   <gmd:contact>
     <gmd:CI_ResponsibleParty>
@@ -23,14 +23,14 @@
                 <gmd:URL>http://www.geotoolkit.org</gmd:URL>
               </gmd:linkage>
               <gmd:function>
-                <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+                <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information" codeSpace="fra">Information</gmd:CI_OnLineFunctionCode>
               </gmd:function>
             </gmd:CI_OnlineResource>
           </gmd:onlineResource>
         </gmd:CI_Contact>
       </gmd:contactInfo>
       <gmd:role>
-        <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator"/>
+        <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator">Principal investigator</gmd:CI_RoleCode>
       </gmd:role>
     </gmd:CI_ResponsibleParty>
   </gmd:contact>
@@ -47,14 +47,14 @@
                 <gmd:URL>http://www.opengis.org</gmd:URL>
               </gmd:linkage>
               <gmd:function>
-                <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+                <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information" codeSpace="fra">Information</gmd:CI_OnLineFunctionCode>
               </gmd:function>
             </gmd:CI_OnlineResource>
           </gmd:onlineResource>
         </gmd:CI_Contact>
       </gmd:contactInfo>
       <gmd:role>
-        <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="resourceProvider"/>
+        <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="resourceProvider">Resource provider</gmd:CI_RoleCode>
       </gmd:role>
     </gmd:CI_ResponsibleParty>
   </gmd:contact>
@@ -72,7 +72,7 @@
       <gmd:axisDimensionProperties>
         <gmd:MD_Dimension>
           <gmd:dimensionName>
-            <gmd:MD_DimensionNameTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_DimensionNameTypeCode" codeListValue="column"/>
+            <gmd:MD_DimensionNameTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_DimensionNameTypeCode" codeListValue="column">Column</gmd:MD_DimensionNameTypeCode>
           </gmd:dimensionName>
           <gmd:dimensionSize>
             <gco:Integer>830</gco:Integer>
@@ -83,7 +83,7 @@
         </gmd:MD_Dimension>
       </gmd:axisDimensionProperties>
       <gmd:cellGeometry>
-        <gmd:MD_CellGeometryCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_CellGeometryCode" codeListValue="area"/>
+        <gmd:MD_CellGeometryCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_CellGeometryCode" codeListValue="area">Area</gmd:MD_CellGeometryCode>
       </gmd:cellGeometry>
       <gmd:transformationParameterAvailability>
         <gco:Boolean>false</gco:Boolean>
@@ -103,7 +103,7 @@
                 <gco:Date>2007-05-10</gco:Date>
               </gmd:date>
               <gmd:dateType>
-                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation"/>
+                <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" codeSpace="fra">Création</gmd:CI_DateTypeCode>
               </gmd:dateType>
             </gmd:CI_Date>
           </gmd:date>
@@ -120,14 +120,14 @@
                         <gmd:URL>http://www.geotoolkit.org</gmd:URL>
                       </gmd:linkage>
                       <gmd:function>
-                        <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+                        <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information" codeSpace="fra">Information</gmd:CI_OnLineFunctionCode>
                       </gmd:function>
                     </gmd:CI_OnlineResource>
                   </gmd:onlineResource>
                 </gmd:CI_Contact>
               </gmd:contactInfo>
               <gmd:role>
-                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator"/>
+                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator">Principal investigator</gmd:CI_RoleCode>
               </gmd:role>
             </gmd:CI_ResponsibleParty>
           </gmd:citedResponsibleParty>
@@ -169,14 +169,14 @@
                         <gmd:URL>http://www.geotoolkit.org</gmd:URL>
                       </gmd:linkage>
                       <gmd:function>
-                        <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+                        <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information" codeSpace="fra">Information</gmd:CI_OnLineFunctionCode>
                       </gmd:function>
                     </gmd:CI_OnlineResource>
                   </gmd:onlineResource>
                 </gmd:CI_Contact>
               </gmd:contactInfo>
               <gmd:role>
-                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator"/>
+                <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator">Principal investigator</gmd:CI_RoleCode>
               </gmd:role>
             </gmd:CI_ResponsibleParty>
           </gmd:distributorContact>
@@ -189,7 +189,7 @@
       <gmd:scope>
         <gmd:DQ_Scope>
           <gmd:level>
-            <gmd:MD_ScopeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="software"/>
+            <gmd:MD_ScopeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#MD_ScopeCode" codeListValue="software">Software</gmd:MD_ScopeCode>
           </gmd:level>
         </gmd:DQ_Scope>
       </gmd:scope>
@@ -209,7 +209,7 @@
             <gco:CharacterString>description</gco:CharacterString>
           </gmd:measureDescription>
           <gmd:evaluationMethodType>
-            <gmd:DQ_EvaluationMethodTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#DQ_EvaluationMethodTypeCode" codeListValue="indirect"/>
+            <gmd:DQ_EvaluationMethodTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#DQ_EvaluationMethodTypeCode" codeListValue="indirect">Indirect</gmd:DQ_EvaluationMethodTypeCode>
           </gmd:evaluationMethodType>
           <gmd:evaluationMethodDescription>
             <gco:CharacterString>method</gco:CharacterString>
@@ -225,7 +225,7 @@
                     <gco:Date>2007-05-10</gco:Date>
                   </gmd:date>
                   <gmd:dateType>
-                    <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation"/>
+                    <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" codeSpace="fra">Création</gmd:CI_DateTypeCode>
                   </gmd:dateType>
                 </gmd:CI_Date>
               </gmd:date>
@@ -242,14 +242,14 @@
                             <gmd:URL>http://www.geotoolkit.org</gmd:URL>
                           </gmd:linkage>
                           <gmd:function>
-                            <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+                            <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information" codeSpace="fra">Information</gmd:CI_OnLineFunctionCode>
                           </gmd:function>
                         </gmd:CI_OnlineResource>
                       </gmd:onlineResource>
                     </gmd:CI_Contact>
                   </gmd:contactInfo>
                   <gmd:role>
-                    <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator"/>
+                    <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator">Principal investigator</gmd:CI_RoleCode>
                   </gmd:role>
                 </gmd:CI_ResponsibleParty>
               </gmd:citedResponsibleParty>
@@ -268,7 +268,7 @@
                         <gco:Date>2007-05-10</gco:Date>
                       </gmd:date>
                       <gmd:dateType>
-                        <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation"/>
+                        <gmd:CI_DateTypeCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_DateTypeCode" codeListValue="creation" codeSpace="fra">Création</gmd:CI_DateTypeCode>
                       </gmd:dateType>
                     </gmd:CI_Date>
                   </gmd:date>
@@ -285,14 +285,14 @@
                                 <gmd:URL>http://www.geotoolkit.org</gmd:URL>
                               </gmd:linkage>
                               <gmd:function>
-                                <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information"/>
+                                <gmd:CI_OnLineFunctionCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_OnLineFunctionCode" codeListValue="information" codeSpace="fra">Information</gmd:CI_OnLineFunctionCode>
                               </gmd:function>
                             </gmd:CI_OnlineResource>
                           </gmd:onlineResource>
                         </gmd:CI_Contact>
                       </gmd:contactInfo>
                       <gmd:role>
-                        <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator"/>
+                        <gmd:CI_RoleCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/gmxCodelists.xml#CI_RoleCode" codeListValue="principalInvestigator">Principal investigator</gmd:CI_RoleCode>
                       </gmd:role>
                     </gmd:CI_ResponsibleParty>
                   </gmd:citedResponsibleParty>
