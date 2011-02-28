@@ -85,7 +85,7 @@ import org.geotoolkit.util.Utilities;
     "hoursOfService",
     "contactInstructions"
 })
-@XmlRootElement(name = "contactInfo")
+@XmlRootElement(name = "ContactInfo")
 public class ContactInfo implements AbstractContactInfo {
 
     private PhoneType phone;

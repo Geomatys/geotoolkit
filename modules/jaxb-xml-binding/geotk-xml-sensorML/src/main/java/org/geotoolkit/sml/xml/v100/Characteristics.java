@@ -60,7 +60,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "abstractDataRecord"
 })
-@XmlRootElement(name = "characteristics")
+@XmlRootElement(name = "Characteristics")
 public class Characteristics implements AbstractCharacteristics {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0", type = JAXBElement.class)

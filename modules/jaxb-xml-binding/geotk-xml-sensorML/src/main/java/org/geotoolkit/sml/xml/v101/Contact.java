@@ -55,7 +55,7 @@ import org.geotoolkit.util.Utilities;
     "responsibleParty",
     "contactList"
 })
-@XmlRootElement(name = "contact")
+@XmlRootElement(name = "Contact")
 public class Contact implements AbstractContact {
 
     @XmlElement(name = "Person")

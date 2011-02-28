@@ -5,6 +5,7 @@ package org.geotoolkit.feature.catalog;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.DefinitionReference;
@@ -43,6 +44,7 @@ import org.opengis.feature.catalog.ListedValue;
     "definition",
     "definitionReference"
 })
+@XmlRootElement(name = "FC_ListedValue")
 public class ListedValueImpl implements ListedValue {
 
     @XmlElement(required = true)

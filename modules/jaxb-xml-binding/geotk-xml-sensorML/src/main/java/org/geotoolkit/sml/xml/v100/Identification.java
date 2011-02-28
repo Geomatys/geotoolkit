@@ -75,7 +75,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "identifierList"
 })
-@XmlRootElement(name = "identification")
+@XmlRootElement(name = "Identification")
 public class Identification implements AbstractIdentification {
 
     @XmlElement(name = "IdentifierList")

@@ -18,7 +18,7 @@ package org.geotoolkit.sml.xml.v100;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractDerivableComponent;
@@ -69,22 +69,22 @@ import org.geotoolkit.util.Utilities;
 @XmlSeeAlso({AbstractComponentType.class, ComponentArrayType.class}) 
 public abstract class AbstractDerivableComponentType extends AbstractProcessType implements AbstractDerivableComponent {
 
-    @XmlElementRef(name = "spatialReferenceFrame",  namespace = "http://www.opengis.net/sensorML/1.0", type = SpatialReferenceFrame.class)
+    @XmlElement(name = "spatialReferenceFrame",  namespace = "http://www.opengis.net/sensorML/1.0", type = SpatialReferenceFrame.class)
     private SpatialReferenceFrame spatialReferenceFrame;
 
-    @XmlElementRef(name = "location", namespace = "http://www.opengis.net/sensorML/1.0", type = Location.class)
+    @XmlElement(name = "location", namespace = "http://www.opengis.net/sensorML/1.0", type = Location.class)
     private Location location;
 
-    @XmlElementRef(name = "position", namespace = "http://www.opengis.net/sensorML/1.0", type = Position.class)
+    @XmlElement(name = "position", namespace = "http://www.opengis.net/sensorML/1.0", type = Position.class)
     private Position position;
 
-    @XmlElementRef(name = "timePosition", namespace = "http://www.opengis.net/sensorML/1.0", type = TimePosition.class)
+    @XmlElement(name = "timePosition", namespace = "http://www.opengis.net/sensorML/1.0", type = TimePosition.class)
     private TimePosition timePosition;
 
-    @XmlElementRef(name = "temporalReferenceFrame", namespace = "http://www.opengis.net/sensorML/1.0", type = TemporalReferenceFrame.class)
+    @XmlElement(name = "temporalReferenceFrame", namespace = "http://www.opengis.net/sensorML/1.0", type = TemporalReferenceFrame.class)
     private TemporalReferenceFrame temporalReferenceFrame;
 
-    @XmlElementRef(name = "interfaces", namespace = "http://www.opengis.net/sensorML/1.0", type = Interfaces.class)
+    @XmlElement(name = "interfaces", namespace = "http://www.opengis.net/sensorML/1.0", type = Interfaces.class)
     private Interfaces interfaces;
 
     public AbstractDerivableComponentType() {

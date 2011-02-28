@@ -65,7 +65,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "keywordList"
 })
-@XmlRootElement(name = "keywords")
+@XmlRootElement(name = "Keywords")
 public class Keywords implements AbstractKeywords {
 
     @XmlElement(name = "KeywordList")

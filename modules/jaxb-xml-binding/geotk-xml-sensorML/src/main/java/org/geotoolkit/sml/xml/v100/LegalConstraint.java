@@ -53,7 +53,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "rights"
 })
-@XmlRootElement(name = "legalConstraint")
+@XmlRootElement(name = "LegalConstraint")
 public class LegalConstraint implements AbstractLegalConstraint {
 
     @XmlElement(name = "Rights")

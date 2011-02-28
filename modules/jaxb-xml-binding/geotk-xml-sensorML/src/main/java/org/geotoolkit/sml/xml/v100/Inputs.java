@@ -64,7 +64,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "inputList"
 })
-@XmlRootElement(name = "inputs")
+@XmlRootElement(name = "Inputs")
 public class Inputs implements AbstractInputs {
 
     @XmlElement(name = "InputList")

@@ -67,7 +67,7 @@ import org.geotoolkit.swe.xml.v100.TimeType;
     "time",
     "process"
 })
-@XmlRootElement(name = "timePosition")
+@XmlRootElement(name = "TimePosition")
 public class TimePosition implements AbstractTimePosition {
 
     @XmlElement(name = "Time", namespace = "http://www.opengis.net/swe/1.0")

@@ -61,7 +61,7 @@ import org.geotoolkit.sml.xml.AbstractLocation;
     "point",
     "abstractCurve"
 })
-@XmlRootElement(name = "location")
+@XmlRootElement(name = "Location")
 public class Location implements AbstractLocation {
 
     @XmlElement(name = "Point", namespace = "http://www.opengis.net/gml")

@@ -53,7 +53,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "eventList"
 })
-@XmlRootElement(name = "history")
+@XmlRootElement(name = "History")
 public class History implements AbstractHistory {
 
     @XmlElement(name = "EventList")

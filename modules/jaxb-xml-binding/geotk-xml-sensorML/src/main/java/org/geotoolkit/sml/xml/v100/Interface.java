@@ -56,7 +56,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "interfaceDefinition"
 })
-@XmlRootElement(name = "interface")
+@XmlRootElement(name = "Interface")
 public class Interface implements AbstractInterface {
 
     @XmlElement(name = "InterfaceDefinition")

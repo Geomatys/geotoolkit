@@ -3,6 +3,7 @@ package org.geotoolkit.feature.catalog;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.Binding;
@@ -14,6 +15,7 @@ import org.opengis.feature.catalog.Binding;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FC_Binding_Type")
+@XmlRootElement(name = "FC_Binding")
 public class BindingImpl implements Binding {
 
     private String description;

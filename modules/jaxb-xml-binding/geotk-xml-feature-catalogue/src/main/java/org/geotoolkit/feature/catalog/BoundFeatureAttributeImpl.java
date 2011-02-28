@@ -9,6 +9,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlID;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
@@ -29,6 +30,7 @@ import org.opengis.feature.catalog.FeatureType;
     "featureType",
     "attribute"
 })
+@XmlRootElement(name = "FC_BoundFeature")
 public class BoundFeatureAttributeImpl implements BoundFeatureAttribute, Referenceable {
 
     @XmlAttribute

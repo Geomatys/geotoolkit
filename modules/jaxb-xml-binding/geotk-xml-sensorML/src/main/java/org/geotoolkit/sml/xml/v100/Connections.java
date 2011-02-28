@@ -59,7 +59,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "connectionList"
 })
-@XmlRootElement(name = "connections")
+@XmlRootElement(name = "Connections")
 public class Connections implements AbstractConnections {
 
     @XmlElement(name = "ConnectionList")

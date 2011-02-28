@@ -75,7 +75,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "componentList"
 })
-@XmlRootElement(name = "components")
+@XmlRootElement(name = "Components")
 public class Components implements AbstractComponents {
 
     @XmlElement(name = "ComponentList")

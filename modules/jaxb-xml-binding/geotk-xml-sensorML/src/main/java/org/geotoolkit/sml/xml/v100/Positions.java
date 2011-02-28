@@ -65,7 +65,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "positionList"
 })
-@XmlRootElement(name = "positions")
+@XmlRootElement(name = "Positions")
 public class Positions implements AbstractPositions {
 
     @XmlElement(name = "PositionList")

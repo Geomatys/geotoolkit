@@ -70,7 +70,7 @@ import org.geotoolkit.util.Utilities;
     "position",
     "vector"
 })
-@XmlRootElement(name = "position")
+@XmlRootElement(name = "Position")
 public class Position implements AbstractPosition {
 
     @XmlElementRef(name = "AbstractProcess", namespace = "http://www.opengis.net/sensorML/1.0.1", type = JAXBElement.class)

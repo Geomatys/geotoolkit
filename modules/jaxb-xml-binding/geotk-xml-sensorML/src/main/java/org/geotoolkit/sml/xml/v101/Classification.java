@@ -75,7 +75,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "classifierList"
 })
-@XmlRootElement(name = "classification")
+@XmlRootElement(name = "Classification")
 public class Classification implements AbstractClassification {
 
     @XmlElement(name = "ClassifierList")

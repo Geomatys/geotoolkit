@@ -54,7 +54,7 @@ import org.geotoolkit.util.Utilities;
     "timeInstant",
     "timePeriod"
 })
-@XmlRootElement(name = "validTime")
+@XmlRootElement(name = "ValidTime")
 public class ValidTime implements AbstractValidTime {
 
     @XmlElement(name = "TimeInstant", namespace = "http://www.opengis.net/gml")

@@ -5,6 +5,7 @@ package org.geotoolkit.feature.catalog;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.opengis.feature.catalog.Constraint;
@@ -36,6 +37,7 @@ import org.opengis.feature.catalog.Constraint;
 @XmlType(name = "FC_Constraint_Type", propOrder = {
     "description"
 })
+@XmlRootElement(name = "FC_Constraint")
 public class ConstraintImpl implements Constraint {
 
     @XmlElement(required = true)

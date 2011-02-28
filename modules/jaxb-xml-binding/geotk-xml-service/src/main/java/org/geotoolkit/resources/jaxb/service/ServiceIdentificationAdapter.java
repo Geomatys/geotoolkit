@@ -85,7 +85,6 @@ public class ServiceIdentificationAdapter extends XmlAdapter<ServiceIdentificati
      */
     @Override
     public ServiceIdentification unmarshal(final ServiceIdentificationAdapter value) throws Exception {
-        System.out.println("per akei");
         if (value == null) {
             return null;
         }

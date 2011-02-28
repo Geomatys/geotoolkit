@@ -47,7 +47,7 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
-@XmlRootElement(name = "onlineResource")
+@XmlRootElement(name = "OnlineResource")
 public class OnlineResource implements AbstractOnlineResource {
 
     @XmlAttribute

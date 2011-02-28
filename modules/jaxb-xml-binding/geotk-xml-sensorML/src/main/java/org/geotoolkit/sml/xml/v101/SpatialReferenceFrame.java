@@ -49,7 +49,7 @@ import org.geotoolkit.sml.xml.AbstractSpatialReferenceFrame;
 @XmlType(name = "", propOrder = {
     "engineeringCRS"
 })
-@XmlRootElement(name = "spatialReferenceFrame")
+@XmlRootElement(name = "SpatialReferenceFrame")
 public class SpatialReferenceFrame implements AbstractSpatialReferenceFrame {
 
     @XmlElement(name = "EngineeringCRS", namespace = "http://www.opengis.net/gml", required = true)

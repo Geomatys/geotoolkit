@@ -49,7 +49,7 @@ import org.geotoolkit.sml.xml.AbstractTemporalReferenceFrame;
 @XmlType(name = "", propOrder = {
     "temporalCRS"
 })
-@XmlRootElement(name = "temporalReferenceFrame")
+@XmlRootElement(name = "TemporalReferenceFrame")
 public class TemporalReferenceFrame implements AbstractTemporalReferenceFrame {
 
     @XmlElement(name = "TemporalCRS", namespace = "http://www.opengis.net/gml", required = true)

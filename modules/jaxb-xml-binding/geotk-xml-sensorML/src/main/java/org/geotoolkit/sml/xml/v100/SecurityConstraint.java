@@ -48,7 +48,7 @@ import org.geotoolkit.sml.xml.AbstractSecurityConstraint;
 @XmlType(name = "", propOrder = {
     "security"
 })
-@XmlRootElement(name = "securityConstraint")
+@XmlRootElement(name = "SecurityConstraint")
 public class SecurityConstraint implements AbstractSecurityConstraint {
 
     @XmlElement(name = "Security", required = true)

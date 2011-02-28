@@ -54,7 +54,7 @@ import org.geotoolkit.sml.xml.AbstractConnection;
     "link",
     "arrayLink"
 })
-@XmlRootElement(name = "connection")
+@XmlRootElement(name = "Connection")
 public class Connection implements AbstractConnection {
 
     @XmlElement(name = "Link")

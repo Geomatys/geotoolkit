@@ -55,7 +55,7 @@ import org.geotoolkit.util.Utilities;
     "document",
     "documentList"
 })
-@XmlRootElement(name = "documentation")
+@XmlRootElement(name = "Documentation")
 public class Documentation implements AbstractDocumentation {
 
     @XmlElement(name = "Document")

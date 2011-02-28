@@ -64,7 +64,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "", propOrder = {
     "parameterList"
 })
-@XmlRootElement(name = "parameters")
+@XmlRootElement(name = "Parameters")
 public class Parameters implements AbstractParameters {
 
     @XmlElement(name = "ParameterList")
