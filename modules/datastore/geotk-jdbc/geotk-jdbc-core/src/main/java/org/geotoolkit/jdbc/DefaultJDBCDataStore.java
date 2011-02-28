@@ -932,10 +932,6 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     // SQL utils ///////////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    public SQLQueryBuilder getQueryBuilder() {
-        return queryBuilder;
-    }
-
     /**
      * Helper method for splitting a filter.
      */
