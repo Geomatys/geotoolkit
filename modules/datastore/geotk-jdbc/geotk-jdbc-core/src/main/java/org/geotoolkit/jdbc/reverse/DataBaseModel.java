@@ -31,6 +31,7 @@ import java.util.Set;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -396,6 +397,82 @@ public final class DataBaseModel {
         adb.setType(atb.buildType());
         adb.findBestDefaultValue();
         return adb.buildDescriptor();
+    }
+
+    /**
+     * Analyze the metadata of the ResultSet to rebuild a feature type.
+     *
+     * @param result
+     * @param name
+     * @return FeatureType
+     * @throws SQLException
+     */
+    public FeatureType analyzeResult(final ResultSet result, final String name) throws SQLException{
+        final SQLDialect dialect = store.getDialect();
+        final String namespace = store.getNamespaceURI();
+        
+        final FeatureTypeBuilder ftb = new FeatureTypeBuilder(FTF);
+        ftb.setName(ensureGMLNS(namespace, name));
+
+        final ResultSetMetaData metadata = result.getMetaData();
+        final int nbcol = metadata.getColumnCount();
+
+        for(int i=1; i<=nbcol; i++){
+            final String columnName = metadata.getColumnName(i);
+            final String typeName = metadata.getColumnTypeName(i);
+            final String schemaName = metadata.getSchemaName(i);
+            final String tableName = metadata.getTableName(i);
+            final int type = metadata.getColumnType(i);
+
+            //search if we already have this minute
+            PropertyDescriptor desc = null;
+            final SchemaMetaModel schema = getSchemaMetaModel(schemaName);
+            if(schema != null){
+                TableMetaModel table = schema.getTable(tableName);
+                if(table != null){
+                    desc = table.getSimpleType().getDescriptor(columnName);
+                }
+            }
+
+            if(desc == null){
+                //could not find the original type
+                //this column must be calculated
+                final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
+                final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
+
+                adb.setName(ensureGMLNS(namespace, columnName));
+                adb.setMinOccurs(1);
+                adb.setMaxOccurs(1);
+
+                final int nullable = metadata.isNullable(i);
+                adb.setNillable(nullable == metadata.columnNullable);
+
+
+                Class binding = null;
+                if (binding == null) {
+                    //determine from type mappings
+                    binding = dialect.getMapping(type);
+                }
+                if (binding == null) {
+                    //determine from type name mappings
+                    binding = dialect.getMapping(typeName);
+                }
+                if (binding == null) {
+                    //if still not found, resort to Object
+                    store.getLogger().log(Level.WARNING, "Could not find mapping for:{0}", columnName);
+                    binding = Object.class;
+                }
+
+                atb.setName(ensureGMLNS(namespace, columnName));
+                atb.setBinding(binding);
+                adb.setType(atb.buildType());
+                desc = adb.buildDescriptor();
+            }
+
+            ftb.add(desc);
+        }
+
+        return ftb.buildFeatureType();
     }
 
     /**

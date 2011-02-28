@@ -28,7 +28,6 @@ import com.vividsolutions.jts.io.InStream;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
-import org.geotoolkit.storage.DataStoreException;
 
 
 /**
