@@ -74,6 +74,19 @@ public final class MetaDataConstants {
         private Table(){}
     }
 
+    public static final class SuperTable{
+        /** the type's catalog (may be null) */
+        public static final String TABLE_CAT = "TABLE_CAT";
+        /** type's schema (may be null) */
+        public static final String TABLE_SCHEM = "TABLE_SCHEM";
+        /** type name */
+        public static final String TABLE_NAME = "TABLE_NAME";
+        /** the direct super type's name */
+        public static final String SUPERTABLE_NAME =  "SUPERTABLE_NAME";
+
+        private SuperTable(){}
+    }
+
     public static final class Column{
 
         /** table catalog (may be null) */

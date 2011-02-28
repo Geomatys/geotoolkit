@@ -38,6 +38,22 @@ public class RelationMetaModel {
         this.imported = imported;
     }
 
+    public String getCurrentColumn() {
+        return currentColumn;
+    }
+
+    public String getForeignColumn() {
+        return foreignColumn;
+    }
+
+    public String getForeignSchema() {
+        return foreignSchema;
+    }
+
+    public String getForeignTable() {
+        return foreignTable;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder(currentColumn);

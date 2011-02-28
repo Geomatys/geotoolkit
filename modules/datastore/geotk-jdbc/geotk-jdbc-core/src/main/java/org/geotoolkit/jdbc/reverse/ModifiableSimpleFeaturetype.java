@@ -34,6 +34,8 @@ import org.opengis.util.InternationalString;
  */
 class ModifiableSimpleFeaturetype extends DefaultSimpleFeatureType implements ModifiableType {
 
+    private AttributeType parent;
+    
     public ModifiableSimpleFeaturetype(final Name name, final List<AttributeDescriptor> schema, 
             final GeometryDescriptor defaultGeometry, final boolean isAbstract,
             final List<Filter> restrictions, final AttributeType superType, final InternationalString description) {
@@ -50,4 +52,19 @@ class ModifiableSimpleFeaturetype extends DefaultSimpleFeatureType implements Mo
     public List<PropertyDescriptor> getDescriptors() {
         return descriptorsList;
     }
+    
+    @Override
+    public void changeParent(AttributeType parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public AttributeType getSuper() {
+        if(this.parent != null){
+            return parent;
+        }else{
+            return super.getSuper();
+        }
+    }
+
 }

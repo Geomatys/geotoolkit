@@ -17,6 +17,7 @@
 package org.geotoolkit.jdbc.reverse;
 
 import java.util.List;
+import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.PropertyDescriptor;
 
@@ -28,7 +29,9 @@ import org.opengis.feature.type.PropertyDescriptor;
  */
 interface ModifiableType extends ComplexType {
 
-    void changeProperty(final int index, PropertyDescriptor desc);
+    void changeProperty(int index, PropertyDescriptor desc);
+
+    void changeParent(AttributeType parent);
 
     @Override
     List<PropertyDescriptor> getDescriptors();

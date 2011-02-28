@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.jdbc.reverse;
 
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import org.geotoolkit.util.StringUtilities;
@@ -32,6 +33,18 @@ public class SchemaMetaModel {
 
     public SchemaMetaModel(final String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public Collection<TableMetaModel> getTables() {
+        return tables.values();
+    }
+
+    public TableMetaModel getTable(final String name){
+        return tables.get(name);
     }
 
     @Override

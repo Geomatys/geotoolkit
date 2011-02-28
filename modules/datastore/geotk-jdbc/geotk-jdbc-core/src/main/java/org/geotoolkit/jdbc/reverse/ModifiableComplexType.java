@@ -34,6 +34,8 @@ import org.opengis.util.InternationalString;
  */
 class ModifiableComplexType extends DefaultComplexType implements ModifiableType {
 
+    private AttributeType parent;
+
     public ModifiableComplexType(final Name name, final Collection<PropertyDescriptor> properties, 
             final boolean identified, final boolean isAbstract, final List<Filter> restrictions,
             final AttributeType superType, final InternationalString description) {
@@ -49,4 +51,19 @@ class ModifiableComplexType extends DefaultComplexType implements ModifiableType
     public List<PropertyDescriptor> getDescriptors() {
         return descriptorsList;
     }
+
+    @Override
+    public void changeParent(AttributeType parent) {
+        this.parent = parent;
+    }
+
+    @Override
+    public AttributeType getSuper() {
+        if(this.parent != null){
+            return parent;
+        }else{
+            return super.getSuper();
+        }
+    }
+
 }

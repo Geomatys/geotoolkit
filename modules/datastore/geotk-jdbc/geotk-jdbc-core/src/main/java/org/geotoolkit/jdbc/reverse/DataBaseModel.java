@@ -17,6 +17,7 @@
 
 package org.geotoolkit.jdbc.reverse;
 
+import java.util.Collection;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.util.ArrayList;
@@ -89,6 +90,14 @@ public final class DataBaseModel {
 
     public DataBaseModel(final DefaultJDBCDataStore store){
         this.store = store;
+    }
+
+    public Collection<SchemaMetaModel> getSchemaMetaModels() {
+        return schemas.values();
+    }
+
+    public SchemaMetaModel getSchemaMetaModel(String name){
+        return schemas.get(name);
     }
 
     /**
@@ -283,6 +292,14 @@ public final class DataBaseModel {
             }
             store.closeSafe(result);
 
+            //find parent table if any -----------------------------------------
+            result = metadata.getSuperTables(null, schemaName, tableName);
+            while (result.next()) {
+                final String parentTable = result.getString(SuperTable.SUPERTABLE_NAME);
+                table.parents.add(parentTable);
+            }
+            store.closeSafe(result);
+
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing table : " + tableName, e);
         } finally {
@@ -366,7 +383,7 @@ public final class DataBaseModel {
         for(final SchemaMetaModel schema : schemas.values()){
             for(final TableMetaModel table : schema.tables.values()){
                 final String tableName = table.name;
-
+                
                 //add flag for primary key fields-------------------------------
                 final PrimaryKey pk = table.key;
                 for(PrimaryKeyColumn column : pk.getColumns()){
@@ -431,6 +448,7 @@ public final class DataBaseModel {
                 table.simpleType = ftb.buildSimpleFeatureType();
             }
         }
+        
     }
 
     /**
@@ -454,7 +472,7 @@ public final class DataBaseModel {
                 ftb.reset();
                 ftb.copy(baseType);
 
-                // replace 0:1 relations
+                // replace 0:1 relations----------------------------------------
                 for(final RelationMetaModel relation : table.importedKeys){
 
                     //find the descriptor to replace
@@ -477,7 +495,7 @@ public final class DataBaseModel {
                     descs.set(index, newDescriptor);
                 }
 
-                // create N:1 relations
+                // create N:1 relations-----------------------------------------
                 for(final RelationMetaModel relation : table.exportedKeys){
 
                     adb.reset();
@@ -505,7 +523,7 @@ public final class DataBaseModel {
                 //modify the properties which are relations
                 final ModifiableType candidate = builded.get(code);
 
-                //replace 0:1 relations types
+                //replace 0:1 relations types-----------------------------------
                 for(final RelationMetaModel relation : table.importedKeys){
                     final String relCode = relation.foreignSchema +"."+relation.foreignTable;
                     final ComplexType relType = builded.get(relCode);
@@ -529,7 +547,7 @@ public final class DataBaseModel {
                     candidate.changeProperty(index, newDescriptor);
                 }
 
-                //replace N:1 relations types
+                //replace N:1 relations types-----------------------------------
                 for(final RelationMetaModel relation : table.exportedKeys){
                     final String relCode = relation.foreignSchema +"."+relation.foreignTable;
                     final ComplexType relType = builded.get(relCode);
@@ -552,6 +570,19 @@ public final class DataBaseModel {
                     final PropertyDescriptor newDescriptor = adb.buildDescriptor();
                     candidate.changeProperty(index, newDescriptor);
                 }
+                                
+                //et parents ---------------------------------------------------
+                final Collection<String> parents = table.parents;
+                if(!parents.isEmpty()){
+                    //we can only set one parent on feature types
+                    //still better then nothing
+                    final String parent = parents.iterator().next();
+                    final TableMetaModel tmd = schema.getTable(parent);
+                    if(tmd != null){
+                        candidate.changeParent(tmd.complexType);
+                    }
+                }               
+                
             }
         }
 

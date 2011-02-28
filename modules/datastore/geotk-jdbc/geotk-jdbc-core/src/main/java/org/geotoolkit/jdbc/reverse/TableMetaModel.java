@@ -18,6 +18,7 @@ package org.geotoolkit.jdbc.reverse;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -40,9 +41,35 @@ public class TableMetaModel {
     final Collection<RelationMetaModel> importedKeys = new ArrayList<RelationMetaModel>();
     //those are 0:N relations
     final Collection<RelationMetaModel> exportedKeys = new ArrayList<RelationMetaModel>();
+    //inherited tables
+    final Collection<String> parents = new ArrayList<String>();
 
     public TableMetaModel(final String name) {
         this.name = name;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public ComplexType getBaseType() {
+        return baseType;
+    }
+
+    public SimpleFeatureType getSimpleType() {
+        return simpleType;
+    }
+
+    public FeatureType getComplexType() {
+        return complexType;
+    }
+
+    public Collection<RelationMetaModel> getExportedKeys() {
+        return Collections.unmodifiableCollection(exportedKeys);
+    }
+
+    public Collection<RelationMetaModel> getImportedKeys() {
+        return Collections.unmodifiableCollection(importedKeys);
     }
 
     @Override

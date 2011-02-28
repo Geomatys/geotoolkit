@@ -113,6 +113,10 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         super(namespace);
     }
 
+    public DataBaseModel getMetaModel(){
+        return dbmodel;
+    }
+
     /**
      * {@inheritDoc }
      */
