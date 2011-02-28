@@ -92,7 +92,7 @@ public class JDBCUpdateFeatureWriter extends JDBCFeatureReader implements
     public void write() throws DataStoreRuntimeException {
         try {
             //figure out what the fid is
-            final PrimaryKey key = dataStore.getPrimaryKey(featureType.getName());
+            final PrimaryKey key = dataStore.getMetaModel().getPrimaryKey(featureType.getName());
             final String fid = PrimaryKey.encodeFID(key, rs);
 
             final Id filter = dataStore.getFilterFactory()

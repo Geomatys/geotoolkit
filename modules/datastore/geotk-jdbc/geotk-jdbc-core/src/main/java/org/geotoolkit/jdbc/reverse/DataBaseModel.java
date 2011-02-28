@@ -81,11 +81,11 @@ public final class DataBaseModel {
     private static final ComplexType FLAG_TYPE = FTF.createComplexType(
             new DefaultName("flag"), Collections.EMPTY_LIST, false, false, Collections.EMPTY_LIST, null, null);
 
-    private Map<String,SchemaMetaModel> schemas = null;
 
     private final DefaultJDBCDataStore store;
-    private final Map<Name,PrimaryKey> primaryKeys = new HashMap<Name, PrimaryKey>();
-    private final Map<Name,FeatureType> names = new HashMap<Name, FeatureType>();
+    private final Map<Name,PrimaryKey> pkIndex = new HashMap<Name, PrimaryKey>();
+    private final Map<Name,FeatureType> typeIndex = new HashMap<Name, FeatureType>();
+    private Map<String,SchemaMetaModel> schemas = null;
     private Set<Name> nameCache = null;
 
     public DataBaseModel(final DefaultJDBCDataStore store){
@@ -104,43 +104,44 @@ public final class DataBaseModel {
      * Clear the model cache. A new database analyze will be made the next time
      * it is needed.
      */
-    public void clearCache(){
-        primaryKeys.clear();
-        names.clear();
+    public synchronized void clearCache(){
+        pkIndex.clear();
+        typeIndex.clear();
         nameCache = null;
         schemas = null;
     }
 
     public PrimaryKey getPrimaryKey(final Name featureTypeName) throws DataStoreException{
-        if(nameCache == null){
-            visitTables();
+        if(schemas == null){
+            analyze();
         }
-        return primaryKeys.get(featureTypeName);
+        return pkIndex.get(featureTypeName);
     }
 
     public synchronized Set<Name> getNames() throws DataStoreException {
         Set<Name> ref = nameCache;
         if(ref == null){
-            visitTables();
-            ref = Collections.unmodifiableSet(new HashSet<Name>(names.keySet()));
+            analyze();
+            ref = Collections.unmodifiableSet(new HashSet<Name>(typeIndex.keySet()));
             nameCache = ref;
         }
         return ref;
     }
 
     public FeatureType getFeatureType(final Name typeName) throws DataStoreException {
-        return names.get(typeName);
+        if(schemas == null){
+            analyze();
+        }
+        return typeIndex.get(typeName);
     }
 
     /**
      * Explore all tables and views then recreate a complex feature model from
      * relations.
      */
-    private void analyze() throws DataStoreException{
+    private synchronized void analyze() throws DataStoreException{
         clearCache();
         schemas = new HashMap<String, SchemaMetaModel>();
-
-        final String baseSchemaName = store.getDatabaseSchema();
 
         Connection cx = null;
         ResultSet schemaSet = null;
@@ -164,6 +165,27 @@ public final class DataBaseModel {
 
         reverseSimpleFeatureTypes();
         reverseComplexFeatureTypes();
+
+        //build indexes---------------------------------------------------------
+        final String baseSchemaName = store.getDatabaseSchema();
+
+        final Collection<SchemaMetaModel> candidates;
+        if(baseSchemaName == null){
+            //take all schemas
+            candidates = getSchemaMetaModels();
+        }else{
+            candidates = Collections.singleton(getSchemaMetaModel(baseSchemaName));
+        }
+
+        for(SchemaMetaModel schema : candidates){
+            for(TableMetaModel table : schema.tables.values()){
+                final SimpleFeatureType sft = table.simpleType;
+                final Name name = sft.getName();
+                typeIndex.put(name, sft);
+                pkIndex.put(name, table.key);
+            }
+        }
+
     }
 
     private SchemaMetaModel analyzeSchema(final String schemaName) throws DataStoreException{
@@ -293,12 +315,18 @@ public final class DataBaseModel {
             store.closeSafe(result);
 
             //find parent table if any -----------------------------------------
-            result = metadata.getSuperTables(null, schemaName, tableName);
-            while (result.next()) {
-                final String parentTable = result.getString(SuperTable.SUPERTABLE_NAME);
-                table.parents.add(parentTable);
+            try{
+                result = metadata.getSuperTables(null, schemaName, tableName);
+                while (result.next()) {
+                    final String parentTable = result.getString(SuperTable.SUPERTABLE_NAME);
+                    table.parents.add(parentTable);
+                }
+            }catch(final SQLException ex){
+                //not implemented by database
+                store.getLogger().log(Level.INFO, "Database does not handle getSuperTable, feature type hierarchy will be ignored.");
+            }finally{
+                store.closeSafe(result);
             }
-            store.closeSafe(result);
 
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing table : " + tableName, e);
@@ -586,253 +614,6 @@ public final class DataBaseModel {
             }
         }
 
-    }
-
-    /**
-     * Explore the available tables and generate schemas and primary keys.
-     * @throws DataStoreException
-     */
-    private synchronized void visitTables() throws DataStoreException{
-        //analyze();
-        final SQLDialect dialect = store.getDialect();
-
-        //clear previous schemas, this might be called after an update schema
-        nameCache = null;
-        names.clear();
-        primaryKeys.clear();
-        Connection cx = null;
-        try {
-            cx = store.createConnection();
-            final DatabaseMetaData metaData = cx.getMetaData();
-            final ResultSet tables = metaData.getTables(null, store.getDatabaseSchema(), "%", new String[]{Table.VALUE_TYPE_TABLE, Table.VALUE_TYPE_VIEW});
-
-            try {
-                while (tables.next()) {
-
-                    final String schemaName = tables.getString(Table.TABLE_SCHEM);
-                    final String tableName = tables.getString(Table.TABLE_NAME);
-
-                    //use the dialect to filter
-                    if (!dialect.includeTable(schemaName, tableName, cx)) {
-                        continue;
-                    }
-
-                    final Name name = new DefaultName(store.getNamespaceURI(), tableName);
-                    final SimpleFeatureType sft = createFeatureType(name);
-                    final PrimaryKey pkey = createPrimaryKey(name);
-                    names.put(name, sft);
-                    primaryKeys.put(name, pkey);
-                }
-            } finally {
-                store.closeSafe(tables);
-            }
-        } catch (SQLException e) {
-            throw new DataStoreException("Error occurred getting table name list.", e);
-        } finally {
-            store.closeSafe(cx);
-        }
-
-    }
-
-    /**
-     * Builds the feature type from database metadata.
-     */
-    private SimpleFeatureType createFeatureType(final Name typeName) throws DataStoreException {
-        final SQLDialect dialect = store.getDialect();
-        final FeatureTypeBuilder tb = new FeatureTypeBuilder();
-        final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder();
-        final AttributeTypeBuilder atb = new AttributeTypeBuilder();
-
-        //set up the name
-        final String tableName = typeName.getLocalPart();
-        final String namespace = typeName.getNamespaceURI();
-        tb.setName(typeName);
-
-        //ensure we have a connection
-        Connection cx = null;
-        ResultSet columns = null;
-        try {
-            cx = store.createConnection();
-            final DatabaseMetaData metaData = cx.getMetaData();
-            columns = metaData.getColumns(null, store.getDatabaseSchema(), tableName, "%");
-
-            columnIte :
-            while (columns.next()) {
-                adb.reset();
-                atb.reset();
-
-                final String name = columns.getString(Column.COLUMN_NAME);
-
-                //figure out the type mapping
-
-                //first ask the dialect
-                Class binding = dialect.getMapping(columns, cx);
-
-                if (binding == null) {
-                    //determine from type mappings
-                    final int dataType = columns.getInt(Column.DATA_TYPE);
-                    binding = dialect.getMapping(dataType);
-                }
-
-                if (binding == null) {
-                    //determine from type name mappings
-                    final String tn = columns.getString(Column.TYPE_NAME);
-                    binding = dialect.getMapping(tn);
-                }
-
-                //if still not found, resort to Object
-                if (binding == null) {
-                    store.getLogger().log(Level.WARNING, "Could not find mapping for:{0}", name);
-                    binding = Object.class;
-                }
-
-                adb.setMinOccurs(1);
-                //nullability
-                if ( Column.VALUE_NO.equalsIgnoreCase( columns.getString(Column.IS_NULLABLE) ) ) {
-                    adb.setNillable(false);
-                }else{
-                    adb.setNillable(true);
-                }
-
-                //primary key never null, min one
-                final ResultSet primaryKeys = metaData.getPrimaryKeys(null, store.getDatabaseSchema(), tableName);
-                try {
-                    while (primaryKeys.next()) {
-                        if (name.equals(primaryKeys.getString(Column.COLUMN_NAME))) {
-                            adb.setNillable(false);
-                            adb.setMinOccurs(1);
-                            adb.addUserData(HintsPending.PROPERTY_IS_IDENTIFIER, Boolean.TRUE);
-                            break;
-                        }
-                    }
-                } finally {
-                    store.closeSafe(primaryKeys);
-                }
-
-
-                //determine if this attribute is a geometry or not
-                if (Geometry.class.isAssignableFrom(binding)) {
-                    //add the attribute as a geometry, try to figure out
-                    // its srid first
-                    Integer srid = null;
-                    CoordinateReferenceSystem crs = null;
-                    try {
-                        srid = dialect.getGeometrySRID(store.getDatabaseSchema(), tableName, name, cx);
-                        if(srid != null)
-                            crs = dialect.createCRS(srid, cx);
-                    } catch (SQLException e) {
-                        String msg = "Error occured determing srid for " + tableName + "."+ name;
-                        store.getLogger().log(Level.WARNING, msg, e);
-                    }
-
-                    atb.setBinding(binding);
-                    atb.setName(ensureGMLNS(namespace,name));
-                    atb.setCRS(crs);
-                    if(srid != null) adb.addUserData(JDBCDataStore.JDBC_NATIVE_SRID, srid);
-                    adb.setName(ensureGMLNS(namespace,name));
-                    adb.setType(atb.buildGeometryType());
-                    adb.findBestDefaultValue();
-                    tb.add(adb.buildDescriptor());
-                } else {
-                    //add the attribute
-                    final Name attName = ensureGMLNS(namespace, name);
-                    atb.setName(attName);
-                    atb.setBinding(binding);
-                    adb.setName(attName);
-                    adb.setType(atb.buildType());
-                    adb.findBestDefaultValue();
-                    tb.add(adb.buildDescriptor());
-                }
-            }
-
-            return tb.buildSimpleFeatureType();
-
-        } catch (SQLException e) {
-            throw new DataStoreException("Error occurred building feature type", e);
-        }finally {
-            store.closeSafe(columns);
-            store.closeSafe(cx);
-        }
-    }
-
-    /**
-     * Returns the primary key object for a particular entry, deriving it from
-     * the underlying database metadata.
-     */
-    private PrimaryKey createPrimaryKey(final Name entry) throws DataStoreException {
-        final SQLDialect dialect = store.getDialect();
-
-        PrimaryKey pkey;
-
-        Connection cx = null;
-        try {
-            //get metadata from database
-            cx = store.createConnection();
-            final String tableName = entry.getLocalPart();
-            final DatabaseMetaData metaData = cx.getMetaData();
-            final ResultSet primaryKey = metaData.getPrimaryKeys(null, store.getDatabaseSchema(), tableName);
-
-            try {
-                final ArrayList<PrimaryKeyColumn> cols = new ArrayList();
-
-                while (primaryKey.next()) {
-                    final String columnName = primaryKey.getString(Column.COLUMN_NAME);
-
-                    //look up the type ( should only be one row )
-                    final ResultSet columns = metaData.getColumns(null, store.getDatabaseSchema(), tableName, columnName);
-                    columns.next();
-
-                    final int binding = columns.getInt(Column.DATA_TYPE);
-                    Class columnType = dialect.getMapping(binding);
-
-                    if (columnType == null) {
-                        store.getLogger().log(Level.WARNING, "No class for sql type {0}", binding);
-                        columnType = Object.class;
-                    }
-
-                    //determine which type of primary key we have
-                    PrimaryKeyColumn col = null;
-
-                    //1. Auto Incrementing?
-                    final String str = columns.getString(Column.IS_AUTOINCREMENT);
-                    if(Column.VALUE_YES.equalsIgnoreCase(str)){
-                        col = new AutoGeneratedPrimaryKeyColumn(columnName, columnType);
-                    }
-                    
-                    //2. Has a sequence?
-                    if (col == null) {
-                        //TODO: look for a sequence
-                        final String sequenceName = dialect.getSequenceForColumn(store.getDatabaseSchema(),
-                                tableName, columnName, cx);
-                        if (sequenceName != null) {
-                            col = new SequencedPrimaryKeyColumn(columnName, columnType, sequenceName);
-                        }
-                    }
-
-                    if (col == null) {
-                        col = new NonIncrementingPrimaryKeyColumn(columnName, columnType);
-                    }
-
-                    cols.add(col);
-                }
-
-                if (cols.isEmpty()) {
-                    store.getLogger().log(Level.INFO, "No primary key found for {0}.", tableName);
-                    pkey = new NullPrimaryKey(tableName);
-                } else {
-                    pkey = new PrimaryKey(tableName, cols);
-                }
-
-            } finally {
-                store.closeSafe(primaryKey);
-            }
-        } catch (SQLException e) {
-            throw new DataStoreException("Error looking up primary key", e);
-        } finally {
-            store.closeSafe(cx);
-        }
-
-        return pkey;
     }
 
 }

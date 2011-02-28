@@ -27,15 +27,13 @@ import javax.sql.DataSource;
 import com.vividsolutions.jts.geom.GeometryFactory;
 
 import org.geotoolkit.data.DataStore;
-import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.jdbc.FilterToSQL;
-import org.geotoolkit.jdbc.fid.PrimaryKey;
 import org.geotoolkit.jdbc.dialect.SQLDialect;
+import org.geotoolkit.jdbc.reverse.DataBaseModel;
 
 import org.opengis.feature.FeatureFactory;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.FeatureTypeFactory;
-import org.opengis.feature.type.Name;
 import org.opengis.filter.FilterFactory;
 
 
@@ -52,12 +50,10 @@ public interface JDBCDataStore extends DataStore {
     public static final String JDBC_NATIVE_SRID = "nativeSRID";
 
     /**
-     * Find the primary key of the given feature type.
-     * @param featureTypeName
-     * @return Primary key of the given feature type
-     * @throws DataStoreException
+     * return an internal representation of the database schemas and tables.
+     * @return DataBaseModel
      */
-    PrimaryKey getPrimaryKey(Name featureTypeName) throws DataStoreException;
+    DataBaseModel getMetaModel();
 
     /**
      * The factory used to create feature types.

@@ -106,7 +106,7 @@ public final class SQLQueryBuilder {
         final SQLDialect dialect = getDialect();
         final StringBuilder sql = new StringBuilder("SELECT ");
 
-        final PrimaryKey key = store.getPrimaryKey(featureType.getName());
+        final PrimaryKey key = store.getMetaModel().getPrimaryKey(featureType.getName());
 
         //column names
         for (PropertyDescriptor att : featureType.getDescriptors()) {
@@ -249,7 +249,7 @@ public final class SQLQueryBuilder {
     public String insertSQL(final SimpleFeatureType featureType, final SimpleFeature feature,
                                final List keyValues, final Connection cx) throws DataStoreException{
         final SQLDialect dialect = getDialect();
-        final PrimaryKey key = store.getPrimaryKey(featureType.getName());
+        final PrimaryKey key = store.getMetaModel().getPrimaryKey(featureType.getName());
         final List<PrimaryKeyColumn> keyColumns = key.getColumns();
 
         final StringBuilder sqlType = new StringBuilder();
@@ -510,7 +510,7 @@ public final class SQLQueryBuilder {
         final StringBuilder sql = new StringBuilder("SELECT ");
 
         // primary key
-        final PrimaryKey key = store.getPrimaryKey(featureType.getName());
+        final PrimaryKey key = store.getMetaModel().getPrimaryKey(featureType.getName());
 
         //other columns
         for (PropertyDescriptor att : featureType.getDescriptors()) {
@@ -681,7 +681,7 @@ public final class SQLQueryBuilder {
     public PreparedStatement insertSQLPS(final SimpleFeatureType featureType, final SimpleFeature feature,
             final List keyValues, final Connection cx) throws IOException, SQLException, DataStoreException{
         final PreparedStatementSQLDialect dialect = (PreparedStatementSQLDialect) getDialect();
-        final PrimaryKey key = store.getPrimaryKey(featureType.getName());
+        final PrimaryKey key = store.getMetaModel().getPrimaryKey(featureType.getName());
         final List<PrimaryKeyColumn> keyColumns = key.getColumns();
 
         final StringBuilder sqlType = new StringBuilder();
@@ -1274,7 +1274,7 @@ public final class SQLQueryBuilder {
             final PrimaryKey key;
 
             try {
-                key = store.getPrimaryKey(featureType.getName());
+                key = store.getMetaModel().getPrimaryKey(featureType.getName());
             } catch (DataStoreException e) {
                 throw new RuntimeException(e);
             }

@@ -113,21 +113,14 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         super(namespace);
     }
 
+    @Override
     public DataBaseModel getMetaModel(){
         return dbmodel;
     }
 
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public PrimaryKey getPrimaryKey(final Name featureTypeName) throws DataStoreException{
-        return dbmodel.getPrimaryKey(featureTypeName);
-    }
-
     @Override
     public boolean isWritable(final Name typeName) throws DataStoreException {
-        final PrimaryKey key = getPrimaryKey(typeName);
+        final PrimaryKey key = dbmodel.getPrimaryKey(typeName);
         return key != null && !(key instanceof NullPrimaryKey);
     }
 
@@ -307,7 +300,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     private void prepareSelect(final Selector source, final StringBuilder sql, final LinkedHashMap<String, List<AttributeDescriptor>> att,
             final List<PrimaryKey> pkeys, final Hints hints) throws DataStoreException{
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(source.getFeatureTypeName());
-        final PrimaryKey pk = getPrimaryKey(type.getName());
+        final PrimaryKey pk = dbmodel.getPrimaryKey(type.getName());
 
         sql.append("SELECT ");
 
@@ -332,7 +325,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
 
     private FeatureReader getSimpleFeatureReader(final Query query) throws DataStoreException {
         final SimpleFeatureType type = (SimpleFeatureType) getFeatureType(query.getTypeName());
-        final PrimaryKey pkey = getPrimaryKey(query.getTypeName());
+        final PrimaryKey pkey = dbmodel.getPrimaryKey(query.getTypeName());
 
         // split the filter
         final Filter[] split = splitFilter(query.getFilter(),type);
@@ -483,7 +476,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         Connection cx = null;
         FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
         try {
-            final PrimaryKey pkey = getPrimaryKey(typeName);
+            final PrimaryKey pkey = dbmodel.getPrimaryKey(typeName);
             cx = createConnection();
 
             //check for insert only
@@ -729,7 +722,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     protected void insert(final Collection<? extends Feature> features, final SimpleFeatureType featureType,
             final Connection cx) throws DataStoreException {
-        final PrimaryKey key = getPrimaryKey(featureType.getName());
+        final PrimaryKey key = dbmodel.getPrimaryKey(featureType.getName());
 
         // we do this in a synchronized block because we need to do two queries,
         // first to figure out what the id will be, then the insert statement
@@ -952,7 +945,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         }
 
         final SimplifyingFilterVisitor visitor = new SimplifyingFilterVisitor();
-        final PrimaryKey key = getPrimaryKey(schema.getName());
+        final PrimaryKey key = dbmodel.getPrimaryKey(schema.getName());
         visitor.setFIDValidator( new PrimaryKeyFIDValidator( this,key ) );
         split[0] = (Filter) split[0].accept(visitor, null);
         split[1] = (Filter) split[1].accept(visitor, null);

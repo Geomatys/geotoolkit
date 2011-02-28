@@ -395,7 +395,7 @@ public class JDBCFeatureReader implements  FeatureReader<SimpleFeatureType, Simp
             final ResultSetMetaData md = rs.getMetaData();
 
             //get the primary key
-            key = dataStore.getPrimaryKey(featureType.getName());
+            key = dataStore.getMetaModel().getPrimaryKey(featureType.getName());
             final int count = md.getColumnCount();
 
             //set up values
