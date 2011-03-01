@@ -58,7 +58,7 @@ public class ObservationPropertyType {
         @XmlElementRef(name = "Observation", namespace = "http://www.opengis.net/om/1.0", type = JAXBElement.class),
         @XmlElementRef(name = "Measurement", namespace = "http://www.opengis.net/om/1.0", type = JAXBElement.class)
     })
-    private JAXBElement<? extends ObservationEntry> observation;
+    private JAXBElement<? extends ObservationType> observation;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -94,9 +94,9 @@ public class ObservationPropertyType {
     /**
      * A JAXB constructor.
      */
-    public ObservationPropertyType(final ObservationEntry observation) {
-        if (observation instanceof MeasurementEntry) {
-            this.observation = omFactory.createMeasurement((MeasurementEntry) observation);
+    public ObservationPropertyType(final ObservationType observation) {
+        if (observation instanceof MeasurementType) {
+            this.observation = omFactory.createMeasurement((MeasurementType) observation);
         } else {
             this.observation = omFactory.createObservation(observation);
         }
@@ -112,7 +112,7 @@ public class ObservationPropertyType {
     /**
      * Gets the value of the observation property.
      */
-    public ObservationEntry getObservation() {
+    public ObservationType getObservation() {
         if (observation != null) {
             return observation.getValue();
         }

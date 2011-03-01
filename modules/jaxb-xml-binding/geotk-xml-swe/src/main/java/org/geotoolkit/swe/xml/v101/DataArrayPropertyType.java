@@ -55,7 +55,7 @@ import org.geotoolkit.util.Utilities;
 public class DataArrayPropertyType implements DataArrayProperty {
 
     @XmlElementRef(name = "DataArray", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-    private JAXBElement<? extends DataArrayEntry> dataArray;
+    private JAXBElement<? extends DataArrayType> dataArray;
 
     @XmlTransient
     private ObjectFactory factory = new ObjectFactory();
@@ -71,20 +71,20 @@ public class DataArrayPropertyType implements DataArrayProperty {
      * Clone a new Array Property type.
      */
     public DataArrayPropertyType(final DataArrayPropertyType dataArrayP) {
-        this.dataArray = factory.createDataArray(new DataArrayEntry(dataArrayP.dataArray.getValue()));
+        this.dataArray = factory.createDataArray(new DataArrayType(dataArrayP.dataArray.getValue()));
     }
 
     /**
      * Build a new Array Property type.
      */
-    public DataArrayPropertyType(final DataArrayEntry dataArray) {
+    public DataArrayPropertyType(final DataArrayType dataArray) {
         this.dataArray = factory.createDataArray(dataArray);
     }
     
     /**
      * Gets the value of the dataArray property.
      */
-    public DataArrayEntry getDataArray() {
+    public DataArrayType getDataArray() {
         if (dataArray != null) {
             return dataArray.getValue(); 
         }

@@ -22,7 +22,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
+import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.CurveInterpolationType;
 import org.geotoolkit.gml.xml.v311.CurvePropertyType;
@@ -74,7 +74,7 @@ public class GMLUtilities {
            MultiPrimitive multiPrim           = (MultiPrimitive) geometry;
            List<GeometryPropertyType> geometries = new ArrayList<GeometryPropertyType>();
            for (Primitive prim : multiPrim.getElements()) {
-               AbstractGMLEntry element = getGMLFromISO(prim);
+               AbstractGMLType element = getGMLFromISO(prim);
                GeometryPropertyType gp  = new GeometryPropertyType((AbstractGeometryType)element);
                geometries.add(gp);
            }

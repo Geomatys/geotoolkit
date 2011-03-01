@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.CurveType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.LineStringType;
 import org.geotoolkit.gml.xml.v311.LinearRingType;
 import org.geotoolkit.gml.xml.v311.MultiCurveType;
@@ -87,7 +87,7 @@ public class BinarySpatialOpType extends SpatialOpsType {
     private JAXBElement<PropertyNameType> propertyName;
 
     @XmlElementRef(name = "Envelope",         namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    private JAXBElement<EnvelopeEntry> envelope;
+    private JAXBElement<EnvelopeType> envelope;
     
     @XmlTransient
     private ObjectFactory ogcFactory = new ObjectFactory();
@@ -116,8 +116,8 @@ public class BinarySpatialOpType extends SpatialOpsType {
      */
     public BinarySpatialOpType(final PropertyNameType propertyName, final Object geometry) {
         this.propertyName     = ogcFactory.createPropertyName(propertyName);
-        if (geometry instanceof EnvelopeEntry) {
-            this.envelope = gmlFactory.createEnvelope((EnvelopeEntry)geometry);
+        if (geometry instanceof EnvelopeType) {
+            this.envelope = gmlFactory.createEnvelope((EnvelopeType)geometry);
         } else {
             this.abstractGeometry = getCorrectJaxbElement(geometry);
         }
@@ -254,11 +254,11 @@ public class BinarySpatialOpType extends SpatialOpsType {
         this.propertyName = propertyName;
     }
 
-    public JAXBElement<EnvelopeEntry> getEnvelope() {
+    public JAXBElement<EnvelopeType> getEnvelope() {
         return envelope;
     }
 
-    public void setEnvelope(final JAXBElement<EnvelopeEntry> envelope) {
+    public void setEnvelope(final JAXBElement<EnvelopeType> envelope) {
         this.envelope = envelope;
     }
 

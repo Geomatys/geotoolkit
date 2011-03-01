@@ -19,7 +19,7 @@ package org.geotoolkit.wcs.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.GridType;
 
 
@@ -60,7 +60,7 @@ public class SpatialSubsetType extends SpatialDomainType {
     /**
      * Build a new Spatial subset.
      */
-    public SpatialSubsetType(final EnvelopeEntry envelope, final GridType grid){
+    public SpatialSubsetType(final EnvelopeType envelope, final GridType grid){
         super(envelope, grid);
     }
     

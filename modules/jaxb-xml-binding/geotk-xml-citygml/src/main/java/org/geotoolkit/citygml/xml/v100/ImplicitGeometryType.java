@@ -24,7 +24,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
+import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.gml.xml.v311.GeometryPropertyType;
 import org.geotoolkit.gml.xml.v311.PointPropertyType;
 
@@ -74,7 +74,7 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
     "relativeGMLGeometry",
     "referencePoint"
 })
-public class ImplicitGeometryType extends AbstractGMLEntry {
+public class ImplicitGeometryType extends AbstractGMLType {
 
     private String mimeType;
     @XmlList

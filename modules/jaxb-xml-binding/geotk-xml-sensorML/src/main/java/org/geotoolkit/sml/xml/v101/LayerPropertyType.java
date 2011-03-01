@@ -28,10 +28,10 @@ import org.geotoolkit.sml.xml.AbstractLayerProperty;
 import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
-import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
+import org.geotoolkit.swe.xml.v101.AbstractDataRecordType;
 import org.geotoolkit.swe.xml.v101.Category;
 import org.geotoolkit.swe.xml.v101.DataRecordType;
-import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
+import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 
 
 
@@ -65,7 +65,7 @@ import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
 public class LayerPropertyType implements AbstractLayerProperty {
 
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-    private JAXBElement<? extends AbstractDataRecordEntry> abstractDataRecord;
+    private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
     @XmlElement(name = "Category", namespace = "http://www.opengis.net/swe/1.0.1")
     private Category category;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
@@ -102,7 +102,7 @@ public class LayerPropertyType implements AbstractLayerProperty {
                 AbstractDataRecord record = la.getDataRecord();
                 org.geotoolkit.swe.xml.v101.ObjectFactory factory = new org.geotoolkit.swe.xml.v101.ObjectFactory();
                 if (record instanceof SimpleDataRecord) {
-                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordEntry((SimpleDataRecord)record));
+                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordType((SimpleDataRecord)record));
                 } else if (record instanceof DataRecord) {
                     abstractDataRecord = factory.createDataRecord(new DataRecordType((DataRecord)record));
                 } else {
@@ -141,11 +141,11 @@ public class LayerPropertyType implements AbstractLayerProperty {
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractDataRecordEntry> getAbstractDataRecord() {
+    public JAXBElement<? extends AbstractDataRecordType> getAbstractDataRecord() {
         return abstractDataRecord;
     }
 
-    public AbstractDataRecordEntry getDataRecord() {
+    public AbstractDataRecordType getDataRecord() {
         if (abstractDataRecord != null) {
             return abstractDataRecord.getValue();
         }
@@ -169,8 +169,8 @@ public class LayerPropertyType implements AbstractLayerProperty {
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordEntry> value) {
-        this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordEntry> ) value);
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
+        this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
     }
 
     /**

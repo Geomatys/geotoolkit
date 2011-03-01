@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "SamplingFeatureCollectionType", propOrder = {
     "member"
 })
-public class SamplingFeatureCollectionType extends SamplingFeatureEntry {
+public class SamplingFeatureCollectionType extends SamplingFeatureType {
 
     @XmlElement(required = true)
     private List<SamplingFeaturePropertyType> member;

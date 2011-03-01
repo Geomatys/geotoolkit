@@ -53,7 +53,7 @@ import org.geotoolkit.swe.xml.DataBlockDefinitionProperty;
 public class DataBlockDefinitionPropertyType implements DataBlockDefinitionProperty {
 
     @XmlElement(name = "DataBlockDefinition")
-    private DataBlockDefinitionEntry dataBlockDefinition;
+    private DataBlockDefinitionType dataBlockDefinition;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -90,7 +90,7 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
             this.title        = db.getTitle();
             this.type         = db.getType();
             if (db.getDataBlockDefinition() != null) {
-                this.dataBlockDefinition = new DataBlockDefinitionEntry(db.getDataBlockDefinition());
+                this.dataBlockDefinition = new DataBlockDefinitionType(db.getDataBlockDefinition());
             }
         }
 
@@ -99,14 +99,14 @@ public class DataBlockDefinitionPropertyType implements DataBlockDefinitionPrope
     /**
      * Gets the value of the dataBlockDefinition property.
      */
-    public DataBlockDefinitionEntry getDataBlockDefinition() {
+    public DataBlockDefinitionType getDataBlockDefinition() {
         return dataBlockDefinition;
     }
 
     /**
      * Sets the value of the dataBlockDefinition property.
      */
-    public void setDataBlockDefinition(final DataBlockDefinitionEntry value) {
+    public void setDataBlockDefinition(final DataBlockDefinitionType value) {
         this.dataBlockDefinition = value;
     }
 

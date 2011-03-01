@@ -56,7 +56,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     MovingObjectStatusType.class
 })
-public abstract class AbstractTimeSliceType extends AbstractGMLEntry {
+public abstract class AbstractTimeSliceType extends AbstractGMLType {
 
     @XmlElement(required = true)
     private TimePrimitivePropertyType validTime;

@@ -29,7 +29,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.gml.GeometrytoJTS;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.ogc.xml.v110.AbstractIdType;
 import org.geotoolkit.ogc.xml.v110.BinaryOperatorType;
 import org.geotoolkit.ogc.xml.v110.ComparisonOpsType;
@@ -112,7 +112,7 @@ public class OGC110toGTTransformer {
         if (ops instanceof org.geotoolkit.ogc.xml.v110.BinarySpatialOpType) {
             final org.geotoolkit.ogc.xml.v110.BinarySpatialOpType binary = (org.geotoolkit.ogc.xml.v110.BinarySpatialOpType) ops;
             final JAXBElement<? extends AbstractGeometryType> geom = binary.getAbstractGeometry();
-            final JAXBElement<EnvelopeEntry> env = binary.getEnvelope();
+            final JAXBElement<EnvelopeType> env = binary.getEnvelope();
             final org.geotoolkit.ogc.xml.v110.PropertyNameType pnt = binary.getPropertyName().getValue();
                         
             final Expression left = visitPropertyName(pnt);
@@ -171,7 +171,7 @@ public class OGC110toGTTransformer {
 
         } else if (ops instanceof org.geotoolkit.ogc.xml.v110.BBOXType) {
             final org.geotoolkit.ogc.xml.v110.BBOXType binary = (org.geotoolkit.ogc.xml.v110.BBOXType) ops;
-            final EnvelopeEntry box = binary.getEnvelope();
+            final EnvelopeType box = binary.getEnvelope();
             final String pnt = binary.getPropertyName();
             
             final Expression geom;
@@ -399,8 +399,8 @@ public class OGC110toGTTransformer {
         return filterFactory.literal(GeometrytoJTS.toJTS(ele.getValue()));
     }
 
-    public Expression visitEnv(final JAXBElement<EnvelopeEntry> env) throws FactoryException{
-        final EnvelopeEntry entry = env.getValue();
+    public Expression visitEnv(final JAXBElement<EnvelopeType> env) throws FactoryException{
+        final EnvelopeType entry = env.getValue();
         String srs = entry.getSrsName();
         DirectPositionType lower = entry.getLowerCorner();
         DirectPositionType upper = entry.getUpperCorner();

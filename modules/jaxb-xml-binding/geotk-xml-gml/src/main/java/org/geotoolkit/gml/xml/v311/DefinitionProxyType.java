@@ -23,7 +23,10 @@ import javax.xml.bind.annotation.XmlType;
 
 
 /**
- * A proxy entry in a dictionary of definitions. An element of this type contains a reference to a remote definition object. This entry is expected to be convenient in allowing multiple elements in one XML document to contain short (abbreviated XPointer) references, which are resolved to an external definition provided in a Dictionary element in the same XML document. 
+ * A proxy entry in a dictionary of definitions.
+ * An element of this type contains a reference to a remote definition object.
+ * This entry is expected to be convenient in allowing multiple elements in one XML document to contain short (abbreviated XPointer) references,
+ * which are resolved to an external definition provided in a Dictionary element in the same XML document.
  * 
  * <p>Java class for DefinitionProxyType complex type.
  * 
@@ -51,41 +54,45 @@ import javax.xml.bind.annotation.XmlType;
 public class DefinitionProxyType extends DefinitionType {
 
     @XmlElement(required = true)
-    private ReferenceEntry definitionRef;
+    private ReferenceType definitionRef;
 
     DefinitionProxyType() {}
 
-    public DefinitionProxyType(final String id, final ReferenceEntry definiReferenceType) {
+    public DefinitionProxyType(final String id, final ReferenceType definiReferenceType) {
         super(id);
         this.definitionRef = definiReferenceType;
     }
 
-    public DefinitionProxyType(final String id, final String name, final String description, final ReferenceEntry definiReferenceType) {
+    public DefinitionProxyType(final String id, final String name, final String description, final ReferenceType definiReferenceType) {
         super(id, name, description);
         this.definitionRef = definiReferenceType;
     }
 
     /**
-     * A reference to a remote entry in this dictionary, used when this dictionary entry is identified to allow external references to this specific entry. The remote entry referenced can be in a dictionary in the same or different XML document. 
+     * A reference to a remote entry in this dictionary,
+     * used when this dictionary entry is identified to allow external references to this specific entry.
+     * The remote entry referenced can be in a dictionary in the same or different XML document.
      * 
      * @return
      *     possible object is
      *     {@link ReferenceType }
      *     
      */
-    public ReferenceEntry getDefinitionRef() {
+    public ReferenceType getDefinitionRef() {
         return definitionRef;
     }
 
     /**
-     * A reference to a remote entry in this dictionary, used when this dictionary entry is identified to allow external references to this specific entry. The remote entry referenced can be in a dictionary in the same or different XML document. 
+     * A reference to a remote entry in this dictionary,
+     * used when this dictionary entry is identified to allow external references to this specific entry.
+     * The remote entry referenced can be in a dictionary in the same or different XML document.
      * 
      * @param value
      *     allowed object is
      *     {@link ReferenceType }
      *     
      */
-    public void setDefinitionRef(final ReferenceEntry value) {
+    public void setDefinitionRef(final ReferenceType value) {
         this.definitionRef = value;
     }
 

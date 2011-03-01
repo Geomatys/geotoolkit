@@ -63,7 +63,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
     @XmlElement(name = "BinaryBlock")
     private BinaryBlock binaryBlock;
     @XmlElement(name = "TextBlock")
-    private TextBlockEntry textBlock;
+    private TextBlockType textBlock;
     @XmlElement(name = "XMLBlock")
     private XMLBlockType xmlBlock;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
@@ -108,7 +108,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
                 this.standardFormat = new StandardFormat(be.getStandardFormat());
             }
             if (be.getTextBlock() != null) {
-                this.textBlock = new TextBlockEntry(be.getTextBlock());
+                this.textBlock = new TextBlockType(be.getTextBlock());
             }
             if (be.getXMLBlock() != null) {
                 this.xmlBlock = new XMLBlockType(be.getXMLBlock());
@@ -172,7 +172,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link TextBlock }
      *     
      */
-    public TextBlockEntry getTextBlock() {
+    public TextBlockType getTextBlock() {
         return textBlock;
     }
 
@@ -184,7 +184,7 @@ public class BlockEncodingPropertyType implements BlockEncodingProperty {
      *     {@link TextBlock }
      *     
      */
-    public void setTextBlock(final TextBlockEntry value) {
+    public void setTextBlock(final TextBlockType value) {
         this.textBlock = value;
     }
 

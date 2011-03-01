@@ -744,8 +744,8 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * Create an instance of {@link BoundingShapeType }
      * 
      */
-    public BoundingShapeEntry createBoundingShapeType() {
-        return new BoundingShapeEntry();
+    public BoundingShapeType createBoundingShapeType() {
+        return new BoundingShapeType();
     }
 
     /**
@@ -960,8 +960,8 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * Create an instance of {@link EnvelopeType }
      * 
      */
-    public EnvelopeEntry createEnvelopeType() {
-        return new EnvelopeEntry();
+    public EnvelopeType createEnvelopeType() {
+        return new EnvelopeType();
     }
 
     /**
@@ -1088,8 +1088,8 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * Create an instance of {@link ReferenceType }
      * 
      */
-    public ReferenceEntry createReferenceType() {
-        return new ReferenceEntry();
+    public ReferenceType createReferenceType() {
+        return new ReferenceType();
     }
 
     /**
@@ -1806,8 +1806,8 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "_reference")
-    public JAXBElement<ReferenceEntry> createReference(final ReferenceEntry value) {
-        return new JAXBElement<ReferenceEntry>(_Reference_QNAME, ReferenceEntry.class, null, value);
+    public JAXBElement<ReferenceType> createReference(final ReferenceType value) {
+        return new JAXBElement<ReferenceType>(_Reference_QNAME, ReferenceType.class, null, value);
     }
 
     /**
@@ -2004,8 +2004,8 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "definitionRef")
-    public JAXBElement<ReferenceEntry> createDefinitionRef(final ReferenceEntry value) {
-        return new JAXBElement<ReferenceEntry>(_DefinitionRef_QNAME, ReferenceEntry.class, null, value);
+    public JAXBElement<ReferenceType> createDefinitionRef(final ReferenceType value) {
+        return new JAXBElement<ReferenceType>(_DefinitionRef_QNAME, ReferenceType.class, null, value);
     }
 
     /**
@@ -2535,8 +2535,8 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "boundedBy")
-    public JAXBElement<BoundingShapeEntry> createBoundedBy(final BoundingShapeEntry value) {
-        return new JAXBElement<BoundingShapeEntry>(_BoundedBy_QNAME, BoundingShapeEntry.class, null, value);
+    public JAXBElement<BoundingShapeType> createBoundedBy(final BoundingShapeType value) {
+        return new JAXBElement<BoundingShapeType>(_BoundedBy_QNAME, BoundingShapeType.class, null, value);
     }
 
     /**
@@ -2904,8 +2904,8 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "AbstractFeature", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractGML")
-    public JAXBElement<AbstractFeatureEntry> createAbstractFeature(final AbstractFeatureEntry value) {
-        return new JAXBElement<AbstractFeatureEntry>(_AbstractFeature_QNAME, AbstractFeatureEntry.class, null, value);
+    public JAXBElement<AbstractFeatureType> createAbstractFeature(final AbstractFeatureType value) {
+        return new JAXBElement<AbstractFeatureType>(_AbstractFeature_QNAME, AbstractFeatureType.class, null, value);
     }
 
     /**
@@ -3057,8 +3057,8 @@ public class ObjectFactory extends org.geotoolkit.internal.jaxb.geometry.ObjectF
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/gml", name = "Envelope")
-    public JAXBElement<EnvelopeEntry> createEnvelope(final EnvelopeEntry value) {
-        return new JAXBElement<EnvelopeEntry>(_Envelope_QNAME, EnvelopeEntry.class, null, value);
+    public JAXBElement<EnvelopeType> createEnvelope(final EnvelopeType value) {
+        return new JAXBElement<EnvelopeType>(_Envelope_QNAME, EnvelopeType.class, null, value);
     }
 
     /**

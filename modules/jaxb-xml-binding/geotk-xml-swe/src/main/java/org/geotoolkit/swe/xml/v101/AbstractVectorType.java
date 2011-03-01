@@ -54,7 +54,7 @@ import org.geotoolkit.util.Utilities;
     PositionType.class,
     VectorType.class
 })
-public abstract class AbstractVectorType extends AbstractDataRecordEntry implements AbstractVector {
+public abstract class AbstractVectorType extends AbstractDataRecordType implements AbstractVector {
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")

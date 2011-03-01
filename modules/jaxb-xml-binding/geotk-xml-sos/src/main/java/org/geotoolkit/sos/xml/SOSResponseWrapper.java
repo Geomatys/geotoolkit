@@ -17,9 +17,9 @@
 
 package org.geotoolkit.sos.xml;
 
-import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.AbstractTimePrimitiveType;
-import org.geotoolkit.observation.xml.v100.ObservationCollectionEntry;
+import org.geotoolkit.observation.xml.v100.ObservationCollectionType;
 
 /**
  *
@@ -29,11 +29,11 @@ public class SOSResponseWrapper implements SOSResponse {
 
     private Object response;
 
-    public SOSResponseWrapper(final ObservationCollectionEntry collection) {
+    public SOSResponseWrapper(final ObservationCollectionType collection) {
         this.response = collection;
     }
 
-    public SOSResponseWrapper(final AbstractFeatureEntry feature) {
+    public SOSResponseWrapper(final AbstractFeatureType feature) {
         this.response = feature;
     }
 

@@ -55,7 +55,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlSeeAlso({
     FeatureCollectionType.class
 })
-public abstract class AbstractFeatureCollectionType extends AbstractFeatureEntry {
+public abstract class AbstractFeatureCollectionType extends AbstractFeatureType {
 
     private List<FeaturePropertyType> featureMember;
     private FeatureArrayPropertyType featureMembers;

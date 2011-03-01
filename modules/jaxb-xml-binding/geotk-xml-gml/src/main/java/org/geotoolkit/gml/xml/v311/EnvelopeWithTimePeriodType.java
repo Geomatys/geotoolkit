@@ -52,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     "beginPosition",
     "endPosition"
 })
-public class EnvelopeWithTimePeriodType extends EnvelopeEntry {
+public class EnvelopeWithTimePeriodType extends EnvelopeType {
 
     @XmlElement(required = true)
     private TimePositionType beginPosition;

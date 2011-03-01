@@ -16,8 +16,8 @@
  */
 package org.geotoolkit.observation;
 
-import org.geotoolkit.observation.xml.v100.ProcessEntry;
-import org.geotoolkit.observation.xml.v100.ObservationEntry;
+import org.geotoolkit.observation.xml.v100.ProcessType;
+import org.geotoolkit.observation.xml.v100.ObservationType;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -33,19 +33,19 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
 import org.geotoolkit.gml.xml.v311.UnitOfMeasureEntry;
-import org.geotoolkit.observation.xml.v100.MeasureEntry;
-import org.geotoolkit.observation.xml.v100.MeasurementEntry;
-import org.geotoolkit.observation.xml.v100.ObservationCollectionEntry;
-import org.geotoolkit.sampling.xml.v100.SamplingPointEntry;
+import org.geotoolkit.observation.xml.v100.MeasureType;
+import org.geotoolkit.observation.xml.v100.MeasurementType;
+import org.geotoolkit.observation.xml.v100.ObservationCollectionType;
+import org.geotoolkit.sampling.xml.v100.SamplingPointType;
 
 //Junit dependencies
 import org.geotoolkit.swe.xml.v101.AnyScalarPropertyType;
-import org.geotoolkit.swe.xml.v101.DataArrayEntry;
+import org.geotoolkit.swe.xml.v101.DataArrayType;
 import org.geotoolkit.swe.xml.v101.DataArrayPropertyType;
-import org.geotoolkit.swe.xml.v101.PhenomenonEntry;
-import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
+import org.geotoolkit.swe.xml.v101.PhenomenonType;
+import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
-import org.geotoolkit.swe.xml.v101.TextBlockEntry;
+import org.geotoolkit.swe.xml.v101.TextBlockType;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -94,21 +94,21 @@ public class ObservationXMLBindingTest {
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location     = new PointType("point-ID", pos);
-        SamplingPointEntry sp  = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
+        SamplingPointType sp  = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
 
-        PhenomenonEntry observedProperty = new PhenomenonEntry("phenomenon-007", "urn:OGC:phenomenon-007");
-        ProcessEntry procedure           = new ProcessEntry("urn:sensor:007");
+        PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
+        ProcessType procedure           = new ProcessType("urn:sensor:007");
         TimePeriodType samplingTime      = new TimePeriodType("2007-01-01", "2008-09-09");
         samplingTime.setId("t1");
 
-        TextBlockEntry encoding            = new TextBlockEntry("encoding-001", ",", "@@", ".");
+        TextBlockType encoding            = new TextBlockType("encoding-001", ",", "@@", ".");
         List<AnyScalarPropertyType> fields = new ArrayList<AnyScalarPropertyType>();
         AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
-        SimpleDataRecordEntry record       = new SimpleDataRecordEntry(fields);
-        DataArrayEntry array               = new DataArrayEntry("array-001", 1, record, encoding, "somevalue");
+        SimpleDataRecordType record       = new SimpleDataRecordType(fields);
+        DataArrayType array               = new DataArrayType("array-001", 1, record, encoding, "somevalue");
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
-        ObservationEntry obs = new ObservationEntry("urn:Observation-007", "observation definition", sp, observedProperty, procedure, arrayProp, samplingTime);
+        ObservationType obs = new ObservationType("urn:Observation-007", "observation definition", sp, observedProperty, procedure, arrayProp, samplingTime);
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(obs, sw);
@@ -179,8 +179,8 @@ public class ObservationXMLBindingTest {
 
 
         UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", null);
-        MeasureEntry meas       = new MeasureEntry("result-1", uom, 7);
-        MeasurementEntry measmt = new MeasurementEntry("urn:Observation-007", "observation definition", sp, observedProperty, procedure, meas, samplingTime);
+        MeasureType meas       = new MeasureType("result-1", uom, 7);
+        MeasurementType measmt = new MeasurementType("urn:Observation-007", "observation definition", sp, observedProperty, procedure, meas, samplingTime);
 
         sw = new StringWriter();
         marshaller.marshal(measmt, sw);
@@ -236,7 +236,7 @@ public class ObservationXMLBindingTest {
         
         assertEquals(expResult, result);
         
-        ObservationCollectionEntry collection = new ObservationCollectionEntry();
+        ObservationCollectionType collection = new ObservationCollectionType();
         collection.add(measmt);
 
         sw = new StringWriter();
@@ -245,7 +245,7 @@ public class ObservationXMLBindingTest {
         result = sw.toString();
         //System.out.println(result);
 
-        collection = new ObservationCollectionEntry();
+        collection = new ObservationCollectionType();
         collection.add(obs.getTemporaryTemplate("temporaryName", samplingTime));
 
         sw = new StringWriter();
@@ -326,25 +326,25 @@ public class ObservationXMLBindingTest {
         StringReader sr = new StringReader(xml);
 
         JAXBElement jb =  (JAXBElement) unmarshaller.unmarshal(sr);
-        ObservationEntry result =  (ObservationEntry) jb.getValue();
+        ObservationType result =  (ObservationType) jb.getValue();
 
         DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
         PointType location = new PointType("point-ID", pos);
-        SamplingPointEntry sp = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType("urn:sampling:sampledFeature"), new PointPropertyType(location));
+        SamplingPointType sp = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType("urn:sampling:sampledFeature"), new PointPropertyType(location));
 
-        PhenomenonEntry observedProperty = new PhenomenonEntry("phenomenon-007", "urn:OGC:phenomenon-007");
-        ProcessEntry procedure = new ProcessEntry("urn:sensor:007");
+        PhenomenonType observedProperty = new PhenomenonType("phenomenon-007", "urn:OGC:phenomenon-007");
+        ProcessType procedure = new ProcessType("urn:sensor:007");
         TimePeriodType samplingTime = new TimePeriodType("2007-01-01", "2008-09-09");
 
-        TextBlockEntry encoding            = new TextBlockEntry("encoding-001", ",", "@@", ".");
+        TextBlockType encoding            = new TextBlockType("encoding-001", ",", "@@", ".");
         List<AnyScalarPropertyType> fields = new ArrayList<AnyScalarPropertyType>();
         AnyScalarPropertyType field        = new AnyScalarPropertyType("text-field-001", new Text("urn:something", "some value"));
         fields.add(field);
-        SimpleDataRecordEntry record       = new SimpleDataRecordEntry(fields);
-        DataArrayEntry array               = new DataArrayEntry("array-001", 1, record, encoding, "somevalue");
+        SimpleDataRecordType record       = new SimpleDataRecordType(fields);
+        DataArrayType array               = new DataArrayType("array-001", 1, record, encoding, "somevalue");
         DataArrayPropertyType arrayProp    = new DataArrayPropertyType(array);
         
-        ObservationEntry expResult = new ObservationEntry("urn:Observation-007", null, sp, observedProperty, procedure, arrayProp, samplingTime);
+        ObservationType expResult = new ObservationType("urn:Observation-007", null, sp, observedProperty, procedure, arrayProp, samplingTime);
 
         assertEquals(expResult.getFeatureOfInterest(), result.getFeatureOfInterest());
         assertEquals(expResult.getDefinition(), result.getDefinition());
@@ -411,12 +411,12 @@ public class ObservationXMLBindingTest {
         sr = new StringReader(xml);
 
         jb =  (JAXBElement) unmarshaller.unmarshal(sr);
-        MeasurementEntry result2 =  (MeasurementEntry) jb.getValue();
+        MeasurementType result2 =  (MeasurementType) jb.getValue();
 
         UnitOfMeasureEntry uom  = new UnitOfMeasureEntry("m", "meters", "distance", null);
-        MeasureEntry meas       = new MeasureEntry("result-1", uom, 7);
+        MeasureType meas       = new MeasureType("result-1", uom, 7);
 
-        MeasurementEntry expResult2 = new MeasurementEntry("urn:Observation-007", null, sp, observedProperty, procedure, meas, samplingTime);
+        MeasurementType expResult2 = new MeasurementType("urn:Observation-007", null, sp, observedProperty, procedure, meas, samplingTime);
 
         assertEquals(expResult2.getFeatureOfInterest(), result2.getFeatureOfInterest());
         assertEquals(expResult2.getDefinition(), result2.getDefinition());
@@ -481,7 +481,7 @@ public class ObservationXMLBindingTest {
 
         sr = new StringReader(xml);
 
-        ObservationCollectionEntry result3 =  (ObservationCollectionEntry) unmarshaller.unmarshal(sr);
+        ObservationCollectionType result3 =  (ObservationCollectionType) unmarshaller.unmarshal(sr);
 
     }
 }

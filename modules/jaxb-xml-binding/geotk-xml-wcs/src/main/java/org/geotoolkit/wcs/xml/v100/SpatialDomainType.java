@@ -26,7 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.GridType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.RectifiedGridType;
@@ -73,7 +73,7 @@ public class SpatialDomainType {
      * WCS version 1.0.0 attribute
      */ 
     @XmlElementRef(name = "Envelope", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    private List<JAXBElement<? extends EnvelopeEntry>> envelope;
+    private List<JAXBElement<? extends EnvelopeType>> envelope;
     @XmlElementRef(name = "Grid", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private List<JAXBElement<? extends GridType>> grid;
     
@@ -88,18 +88,18 @@ public class SpatialDomainType {
      *
      * @param envelope An envelope that should not be null.
      */
-    public SpatialDomainType(final EnvelopeEntry envelope) {
+    public SpatialDomainType(final EnvelopeType envelope) {
        ObjectFactory gmlFactory = new ObjectFactory();
-       this.envelope = new ArrayList<JAXBElement<? extends EnvelopeEntry>>();
+       this.envelope = new ArrayList<JAXBElement<? extends EnvelopeType>>();
        this.envelope.add(gmlFactory.createEnvelope(envelope));
     }
     
     /**
      * Build a new light Spatial Domain type version 1.0.0
      */
-    public SpatialDomainType(final EnvelopeEntry envelope, final GridType grid) {
+    public SpatialDomainType(final EnvelopeType envelope, final GridType grid) {
         ObjectFactory gmlFactory = new ObjectFactory();
-        this.envelope = new ArrayList<JAXBElement<? extends EnvelopeEntry>>();
+        this.envelope = new ArrayList<JAXBElement<? extends EnvelopeType>>();
         if (envelope != null) {
             this.envelope.add(gmlFactory.createEnvelope(envelope));
         }
@@ -114,10 +114,10 @@ public class SpatialDomainType {
     /**
      * Build a new Spatial Domain type version 1.0.0
      */
-    public SpatialDomainType(final List<EnvelopeEntry> envelopes, final List<GridType> grids) {
+    public SpatialDomainType(final List<EnvelopeType> envelopes, final List<GridType> grids) {
         ObjectFactory gmlFactory = new ObjectFactory();
-        this.envelope = new ArrayList<JAXBElement<? extends EnvelopeEntry>>();
-        for (EnvelopeEntry env : envelopes) {
+        this.envelope = new ArrayList<JAXBElement<? extends EnvelopeType>>();
+        for (EnvelopeType env : envelopes) {
             if (env != null) {
                 this.envelope.add(gmlFactory.createEnvelope(env));
             }
@@ -135,7 +135,7 @@ public class SpatialDomainType {
     /**
      * Build a new full Spatial Domain type version 1.0.0
      */
-    public SpatialDomainType(final List<JAXBElement<? extends EnvelopeEntry>> envelope, final List<JAXBElement<? extends GridType>> grid,
+    public SpatialDomainType(final List<JAXBElement<? extends EnvelopeType>> envelope, final List<JAXBElement<? extends GridType>> grid,
             final List<PolygonType> polygon) {
        this.envelope = envelope;
        this.grid     = grid;
@@ -147,7 +147,7 @@ public class SpatialDomainType {
      * Gets the value of the envelope.
      * 
      */
-    public EnvelopeEntry getEnvelope() {
+    public EnvelopeType getEnvelope() {
         if (envelope != null && envelope.size() >0) {
             return envelope.get(0).getValue();
         }

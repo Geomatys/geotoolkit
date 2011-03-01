@@ -43,7 +43,7 @@ import org.geotoolkit.swe.xml.AbstractObservableProperty;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "ObservableProperty")
-public class ObservableProperty extends AbstractDataComponentEntry implements AbstractObservableProperty {
+public class ObservableProperty extends AbstractDataComponentType implements AbstractObservableProperty {
 
     public ObservableProperty() {
 

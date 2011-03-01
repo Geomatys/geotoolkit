@@ -30,7 +30,7 @@ import javax.xml.bind.Unmarshaller;
 
 // Geotoolkit dependencies
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.OverlapsType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
@@ -93,7 +93,7 @@ public class FilterXMLBindingTest {
          */
         DirectPositionType lowerCorner = new DirectPositionType(10.0, 11.0);
         DirectPositionType upperCorner = new DirectPositionType(10.0, 11.0);
-        EnvelopeEntry envelope         = new EnvelopeEntry("env-id", lowerCorner, upperCorner, "EPSG:4326");
+        EnvelopeType envelope         = new EnvelopeType("env-id", lowerCorner, upperCorner, "EPSG:4326");
 
         OverlapsType filterElement     = new OverlapsType(new PropertyNameType("boundingBox"), envelope);
         FilterType filter              = new FilterType(filterElement);
@@ -157,7 +157,7 @@ public class FilterXMLBindingTest {
 
         DirectPositionType lowerCorner = new DirectPositionType(10.0, 11.0);
         DirectPositionType upperCorner = new DirectPositionType(10.0, 11.0);
-        EnvelopeEntry envelope         = new EnvelopeEntry("env-id", lowerCorner, upperCorner, "EPSG:4326");
+        EnvelopeType envelope         = new EnvelopeType("env-id", lowerCorner, upperCorner, "EPSG:4326");
 
         OverlapsType filterElement     = new OverlapsType(new PropertyNameType("boundingBox"), envelope);
         FilterType expResult           = new FilterType(filterElement);

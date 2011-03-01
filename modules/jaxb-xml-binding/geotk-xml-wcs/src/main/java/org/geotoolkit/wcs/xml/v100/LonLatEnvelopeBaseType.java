@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.Envelope;
@@ -60,7 +60,7 @@ import org.opengis.util.FactoryException;
 @XmlSeeAlso({
     LonLatEnvelopeType.class
 })
-public class LonLatEnvelopeBaseType extends EnvelopeEntry implements Envelope{
+public class LonLatEnvelopeBaseType extends EnvelopeType implements Envelope{
     
     LonLatEnvelopeBaseType(){
     }

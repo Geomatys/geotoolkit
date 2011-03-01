@@ -41,49 +41,49 @@ public class ObjectFactory {
     }
     
      /**
-     * Create an instance of {@link ObservationEntry }
+     * Create an instance of {@link ObservationType }
      * 
      */
-    public ObservationEntry createObservationEntry() {
-        return new ObservationEntry();
+    public ObservationType createObservationType() {
+        return new ObservationType();
     }
     
     /**
-     * Create an instance of {@link ObservationCollectionEntry }
+     * Create an instance of {@link ObservationCollectionType }
      * 
      */
-    public ObservationCollectionEntry createObservationCollectionEntry() {
-        return new ObservationCollectionEntry();
+    public ObservationCollectionType createObservationCollectionType() {
+        return new ObservationCollectionType();
     }
     
       /**
-     * Create an instance of {@link MeasurementEntry }
+     * Create an instance of {@link MeasurementType }
      * 
      */
-    public MeasurementEntry createMeasurementEntry() {
-        return new MeasurementEntry();
+    public MeasurementType createMeasurementType() {
+        return new MeasurementType();
     }
     
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ObservationEntry }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObservationType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "Observation", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<ObservationEntry> createObservation(final ObservationEntry value) {
-        return new JAXBElement<ObservationEntry>(_Observation_QNAME, ObservationEntry.class, null, value);
+    public JAXBElement<ObservationType> createObservation(final ObservationType value) {
+        return new JAXBElement<ObservationType>(_Observation_QNAME, ObservationType.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ObservationEntry }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObservationType }{@code >}}
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "Measurement", substitutionHeadNamespace = "http://www.opengis.net/om/1.0", substitutionHeadName = "Observation")
-    public JAXBElement<MeasurementEntry> createMeasurement(final MeasurementEntry value) {
-        return new JAXBElement<MeasurementEntry>(_Measurement_QNAME, MeasurementEntry.class, null, value);
+    public JAXBElement<MeasurementType> createMeasurement(final MeasurementType value) {
+        return new JAXBElement<MeasurementType>(_Measurement_QNAME, MeasurementType.class, null, value);
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ObservationEntry }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObservationType }{@code >}}
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/om/1.0", name = "result")

@@ -54,7 +54,7 @@ import org.geotoolkit.gml.xml.v311.CurveSegmentArrayPropertyType;
 import org.geotoolkit.gml.xml.v311.CurveType;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.GeodesicStringType;
 import org.geotoolkit.gml.xml.v311.LineStringPropertyType;
 import org.geotoolkit.gml.xml.v311.LineStringSegmentType;
@@ -101,7 +101,7 @@ public class GeometrytoJTS {
      * @throws org.opengis.referencing.NoSuchAuthorityCodeException
      * @throws org.opengis.util.FactoryException
      */
-    public static com.vividsolutions.jts.geom.Polygon toJTS(final EnvelopeEntry gmlEnvelope)
+    public static com.vividsolutions.jts.geom.Polygon toJTS(final EnvelopeType gmlEnvelope)
             throws NoSuchAuthorityCodeException, FactoryException {
         final String crsName = gmlEnvelope.getSrsName();
         if (crsName == null) {

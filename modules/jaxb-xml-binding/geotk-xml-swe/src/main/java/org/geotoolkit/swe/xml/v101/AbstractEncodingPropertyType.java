@@ -48,10 +48,10 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
      * Decribe the data encoding.
      */
     @XmlElementRef(name = "Encoding", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-    private JAXBElement<? extends AbstractEncodingEntry> encoding;
+    private JAXBElement<? extends AbstractEncodingType> encoding;
     
     @XmlTransient
-    private JAXBElement<? extends AbstractEncodingEntry> hiddenEncoding;
+    private JAXBElement<? extends AbstractEncodingType> hiddenEncoding;
     
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
@@ -102,7 +102,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
                 this.encoding = sweFactory.createMultiplexedStreamFormat(new MultiplexedStreamFormatType((MultiplexedStreamFormat)enc.getEncoding()));
             
             } else if (enc.getEncoding() instanceof TextBlock) {
-                this.encoding = sweFactory.createTextBlock(new TextBlockEntry((TextBlock)enc.getEncoding()));
+                this.encoding = sweFactory.createTextBlock(new TextBlockType((TextBlock)enc.getEncoding()));
             
             } else if (enc.getEncoding() instanceof XmlBlock) {
                 this.encoding = sweFactory.createXMLBlock(new XMLBlockType((XmlBlock)enc.getEncoding()));
@@ -120,7 +120,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
                 this.encoding = sweFactory.createMultiplexedStreamFormat(new MultiplexedStreamFormatType((MultiplexedStreamFormat)enc));
 
             } else if (enc instanceof TextBlock) {
-                this.encoding = sweFactory.createTextBlock(new TextBlockEntry((TextBlock)enc));
+                this.encoding = sweFactory.createTextBlock(new TextBlockType((TextBlock)enc));
 
             } else if (enc instanceof XmlBlock) {
                 this.encoding = sweFactory.createXMLBlock(new XMLBlockType((XmlBlock)enc));
@@ -132,15 +132,15 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Build a new Abstract encoding Property.
      */
-    public AbstractEncodingPropertyType(final AbstractEncodingEntry encoding) {
+    public AbstractEncodingPropertyType(final AbstractEncodingType encoding) {
         
-        if (encoding instanceof TextBlockEntry) {
-            this.encoding = sweFactory.createTextBlock((TextBlockEntry)encoding);
+        if (encoding instanceof TextBlockType) {
+            this.encoding = sweFactory.createTextBlock((TextBlockType)encoding);
         } else if (encoding instanceof MultiplexedStreamFormatType) {
             this.encoding = sweFactory.createMultiplexedStreamFormat((MultiplexedStreamFormatType) encoding);
 
-        } else if (encoding instanceof TextBlockEntry) {
-            this.encoding = sweFactory.createTextBlock((TextBlockEntry) encoding);
+        } else if (encoding instanceof TextBlockType) {
+            this.encoding = sweFactory.createTextBlock((TextBlockType) encoding);
 
         } else if (encoding instanceof XMLBlockType) {
             this.encoding = sweFactory.createXMLBlock((XMLBlockType) encoding);
@@ -157,14 +157,14 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
         this.actuate        = clone.actuate;
         this.arcrole        = clone.arcrole;
         if (clone.encoding != null) {
-            if (clone.encoding.getValue() instanceof TextBlockEntry) {
-                this.encoding = sweFactory.createTextBlock((TextBlockEntry) clone.encoding.getValue());
+            if (clone.encoding.getValue() instanceof TextBlockType) {
+                this.encoding = sweFactory.createTextBlock((TextBlockType) clone.encoding.getValue());
 
             } else if (encoding.getValue() instanceof MultiplexedStreamFormatType) {
                 this.encoding = sweFactory.createMultiplexedStreamFormat((MultiplexedStreamFormatType) encoding.getValue());
 
-            } else if (encoding.getValue() instanceof TextBlockEntry) {
-                this.encoding = sweFactory.createTextBlock((TextBlockEntry) encoding.getValue());
+            } else if (encoding.getValue() instanceof TextBlockType) {
+                this.encoding = sweFactory.createTextBlock((TextBlockType) encoding.getValue());
 
             } else if (encoding.getValue() instanceof XMLBlockType) {
                 this.encoding = sweFactory.createXMLBlock((XMLBlockType) encoding.getValue());
@@ -173,8 +173,8 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
             }
         }
         if (clone.hiddenEncoding != null) {
-            if (clone.hiddenEncoding.getValue() instanceof TextBlockEntry) {
-                this.hiddenEncoding = sweFactory.createTextBlock((TextBlockEntry)clone.hiddenEncoding.getValue());
+            if (clone.hiddenEncoding.getValue() instanceof TextBlockType) {
+                this.hiddenEncoding = sweFactory.createTextBlock((TextBlockType)clone.hiddenEncoding.getValue());
             } else {
                 throw new IllegalArgumentException("only TextBlock are allowed");
             }
@@ -199,7 +199,7 @@ public class AbstractEncodingPropertyType implements AbstractEncodingProperty {
     /**
      * Gets the value of the encoding property.
      */
-    public AbstractEncodingEntry getEncoding() {
+    public AbstractEncodingType getEncoding() {
         if (encoding != null) {
             return encoding.getValue();
         } else if (hiddenEncoding != null) {

@@ -53,7 +53,7 @@ import javax.xml.bind.annotation.XmlType;
 public class SamplingPointPropertyType {
 
     @XmlElement(name = "SamplingPoint")
-    private SamplingPointEntry samplingPoint;
+    private SamplingPointType samplingPoint;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -80,10 +80,10 @@ public class SamplingPointPropertyType {
      * 
      * @return
      *     possible object is
-     *     {@link SamplingPointEntry }
+     *     {@link SamplingPointType }
      *     
      */
-    public SamplingPointEntry getSamplingPoint() {
+    public SamplingPointType getSamplingPoint() {
         return samplingPoint;
     }
 
@@ -92,10 +92,10 @@ public class SamplingPointPropertyType {
      * 
      * @param value
      *     allowed object is
-     *     {@link SamplingPointEntry }
+     *     {@link SamplingPointType }
      *     
      */
-    public void setSamplingPoint(final SamplingPointEntry value) {
+    public void setSamplingPoint(final SamplingPointType value) {
         this.samplingPoint = value;
     }
 

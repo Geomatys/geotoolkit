@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.observation.xml.v100.ObservationEntry;
+import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.util.Utilities;
 
 
@@ -53,7 +53,7 @@ import org.geotoolkit.util.Utilities;
 public class ObservationTemplate {
 
     @XmlElement(name = "Observation", namespace = "http://www.opengis.net/om/1.0", required = true)
-    private ObservationEntry observation;
+    private ObservationType observation;
 
     /**
      * An empty constructor used by JAXB
@@ -65,14 +65,14 @@ public class ObservationTemplate {
     /**
      * Build a new ObservationTemplate
      */
-    public ObservationTemplate(final ObservationEntry observation){
+    public ObservationTemplate(final ObservationType observation){
         this.observation = observation;
     }
     
     /**
      * Gets the value of the observation property.
      */
-    public ObservationEntry getObservation() {
+    public ObservationType getObservation() {
         return observation;
     }
 

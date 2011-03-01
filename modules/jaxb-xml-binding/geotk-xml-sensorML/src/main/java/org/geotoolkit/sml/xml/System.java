@@ -16,7 +16,7 @@
  */
 package org.geotoolkit.sml.xml;
 
-import org.geotoolkit.gml.xml.v311.BoundingShapeEntry;
+import org.geotoolkit.gml.xml.v311.BoundingShapeType;
 import org.geotoolkit.gml.xml.v311.LocationPropertyType;
 
 /**
@@ -30,7 +30,7 @@ public interface System extends AbstractComponent {
 
     AbstractPositions getPositions();
 
-    BoundingShapeEntry getBoundedBy();
+    BoundingShapeType getBoundedBy();
 
     LocationPropertyType getLocation();
 

@@ -81,7 +81,7 @@ import org.geotoolkit.swe.xml.Vector;
 @XmlSeeAlso({
     ConditionalValueType.class
 })
-public class AbstractConditionalType extends AbstractDataRecordEntry implements AbstractConditional {
+public class AbstractConditionalType extends AbstractDataRecordType implements AbstractConditional {
 
     @XmlElement(required = true)
     private List<AbstractConditionalType.Condition> condition;
@@ -167,9 +167,9 @@ public class AbstractConditionalType extends AbstractDataRecordEntry implements 
         @XmlElement(name = "TimeRange")
         private TimeRange timeRange;
         @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-        private JAXBElement<? extends AbstractDataRecordEntry> abstractDataRecord;
+        private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
         @XmlElementRef(name = "AbstractDataArray", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-        private JAXBElement<? extends AbstractDataArrayEntry> abstractDataArray;
+        private JAXBElement<? extends AbstractDataArrayType> abstractDataArray;
         @XmlAttribute(required = true)
         @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
         @XmlSchemaType(name = "token")
@@ -209,8 +209,8 @@ public class AbstractConditionalType extends AbstractDataRecordEntry implements 
                     ObjectFactory sweFactory = new ObjectFactory();
                     AbstractDataRecord record = d.getAbstractDataRecord();
                     if (record instanceof SimpleDataRecord) {
-                        record = new SimpleDataRecordEntry((SimpleDataRecord)record);
-                        this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordEntry) record);
+                        record = new SimpleDataRecordType((SimpleDataRecord)record);
+                        this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordType) record);
                     } else if (record instanceof DataRecord) {
                         record = new DataRecordType((DataRecord)record);
                         this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType) record);
@@ -239,8 +239,8 @@ public class AbstractConditionalType extends AbstractDataRecordEntry implements 
                     ObjectFactory sweFactory = new ObjectFactory();
                     AbstractDataArray array = d.getAbstractDataArray();
                    if (array instanceof DataArray) {
-                        array = new DataArrayEntry((DataArray)array);
-                        this.abstractDataArray = sweFactory.createDataArray((DataArrayEntry) array);
+                        array = new DataArrayType((DataArray)array);
+                        this.abstractDataArray = sweFactory.createDataArray((DataArrayType) array);
                     } else if (array instanceof AbstractSquareMatrix) {
                         array = new SquareMatrixType((AbstractSquareMatrix)array);
                         this.abstractDataArray = sweFactory.createSquareMatrix((SquareMatrixType) array);
@@ -517,11 +517,11 @@ public class AbstractConditionalType extends AbstractDataRecordEntry implements 
          *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
          *     
          */
-        public JAXBElement<? extends AbstractDataRecordEntry> getJbAbstractDataRecord() {
+        public JAXBElement<? extends AbstractDataRecordType> getJbAbstractDataRecord() {
             return abstractDataRecord;
         }
 
-        public AbstractDataRecordEntry getAbstractDataRecord() {
+        public AbstractDataRecordType getAbstractDataRecord() {
             if (abstractDataRecord != null) {
                 return abstractDataRecord.getValue();
             }
@@ -545,8 +545,8 @@ public class AbstractConditionalType extends AbstractDataRecordEntry implements 
          *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
          *     
          */
-        public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordEntry> value) {
-            this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordEntry> ) value);
+        public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
+            this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
         }
 
         /**
@@ -560,11 +560,11 @@ public class AbstractConditionalType extends AbstractDataRecordEntry implements 
          *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
          *     
          */
-        public JAXBElement<? extends AbstractDataArrayEntry> getJbAbstractDataArray() {
+        public JAXBElement<? extends AbstractDataArrayType> getJbAbstractDataArray() {
             return abstractDataArray;
         }
 
-        public AbstractDataArrayEntry getAbstractDataArray() {
+        public AbstractDataArrayType getAbstractDataArray() {
             if (abstractDataArray != null) {
                 return abstractDataArray.getValue();
             }
@@ -582,8 +582,8 @@ public class AbstractConditionalType extends AbstractDataRecordEntry implements 
          *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
          *     
          */
-        public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayEntry> value) {
-            this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayEntry> ) value);
+        public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayType> value) {
+            this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);
         }
 
         /**

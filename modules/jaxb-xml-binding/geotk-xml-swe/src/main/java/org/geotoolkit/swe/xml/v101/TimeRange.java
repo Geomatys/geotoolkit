@@ -60,7 +60,7 @@ import org.geotoolkit.swe.xml.AbstractTimeRange;
     "value"
 })
 @XmlRootElement(name = "TimeRange")
-public class TimeRange extends AbstractDataComponentEntry implements AbstractTimeRange {
+public class TimeRange extends AbstractDataComponentType implements AbstractTimeRange {
 
     private UomPropertyType uom;
     private AllowedTimesPropertyType constraint;

@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
     "history",
     "dataSource"
 })
-public class DynamicFeatureType extends AbstractFeatureEntry {
+public class DynamicFeatureType extends AbstractFeatureType {
 
     private TimePrimitivePropertyType validTime;
     @XmlElementRef(name = "history", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)

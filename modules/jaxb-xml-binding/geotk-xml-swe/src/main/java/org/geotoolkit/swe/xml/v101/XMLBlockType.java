@@ -46,7 +46,7 @@ import org.geotoolkit.swe.xml.XmlBlock;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "XMLBlockType")
-public class XMLBlockType extends AbstractEncodingEntry implements XmlBlock{
+public class XMLBlockType extends AbstractEncodingType implements XmlBlock{
 
     @XmlAttribute
     private QName xmlElement;

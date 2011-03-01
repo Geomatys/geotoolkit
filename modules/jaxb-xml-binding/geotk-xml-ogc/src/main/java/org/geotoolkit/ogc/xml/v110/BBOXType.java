@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.EnvelopeWithTimePeriodType;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
@@ -63,7 +63,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
     @XmlElement(name = "PropertyName")
     private String propertyName;
     @XmlElement(name = "Envelope", namespace = "http://www.opengis.net/gml")
-    private EnvelopeEntry envelope;
+    private EnvelopeType envelope;
     @XmlElement(name = "EnvelopeWithTimePeriod", namespace = "http://www.opengis.net/gml")
     private EnvelopeWithTimePeriodType envelopeWithTimePeriod;
 
@@ -81,7 +81,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
         this.propertyName = propertyName;
         DirectPositionType lower = new DirectPositionType(minx, miny);
         DirectPositionType upper = new DirectPositionType(maxx, maxy);
-        this.envelope = new EnvelopeEntry(null, lower, upper, srs);
+        this.envelope = new EnvelopeType(null, lower, upper, srs);
         
     }
     /**
@@ -94,7 +94,7 @@ public class BBOXType extends SpatialOpsType implements BBOX {
     /**
      * Gets the value of the envelope property.
      */
-    public EnvelopeEntry getEnvelope() {
+    public EnvelopeType getEnvelope() {
         return envelope;
     }
 

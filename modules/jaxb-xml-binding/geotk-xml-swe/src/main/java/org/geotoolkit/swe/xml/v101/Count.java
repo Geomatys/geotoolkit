@@ -61,7 +61,7 @@ import org.geotoolkit.util.Utilities;
     "value"
 })
 @XmlRootElement(name = "Count")
-public class Count extends AbstractDataComponentEntry implements AbstractCount {
+public class Count extends AbstractDataComponentType implements AbstractCount {
 
     private AllowedValuesPropertyType constraint;
     private List<QualityPropertyType> quality;

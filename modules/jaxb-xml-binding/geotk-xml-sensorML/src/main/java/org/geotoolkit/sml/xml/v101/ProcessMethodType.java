@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
+import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.gml.xml.v311.StringOrRefType;
 import org.geotoolkit.gml.xml.v311.TimeInstantType;
 import org.geotoolkit.gml.xml.v311.TimePeriodType;
@@ -197,7 +197,7 @@ import org.geotoolkit.swe.xml.v101.DataRecordType;
     "algorithm",
     "implementation"
 })
-public class ProcessMethodType extends AbstractGMLEntry implements AbstractProcessMethod {
+public class ProcessMethodType extends AbstractGMLType implements AbstractProcessMethod {
 
     private List<Keywords> keywords;
     private List<Identification> identification;

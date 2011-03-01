@@ -47,9 +47,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "ArrayType", propOrder = {
     "members"
 })
-public class ArrayType
-    extends AbstractGMLEntry
-{
+public class ArrayType extends AbstractGMLType {
 
     protected ArrayAssociationType members;
 

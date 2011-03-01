@@ -82,9 +82,9 @@ public class AnyDataPropertyType {
     @XmlElement(name = "TimeRange")
     private TimeRange timeRange;
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-    private JAXBElement<? extends AbstractDataRecordEntry> abstractDataRecord;
+    private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
     @XmlElementRef(name = "AbstractDataArray", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-    private JAXBElement<? extends AbstractDataArrayEntry> abstractDataArray;
+    private JAXBElement<? extends AbstractDataArrayType> abstractDataArray;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -339,7 +339,7 @@ public class AnyDataPropertyType {
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractDataRecordEntry> getAbstractDataRecord() {
+    public JAXBElement<? extends AbstractDataRecordType> getAbstractDataRecord() {
         return abstractDataRecord;
     }
 
@@ -360,8 +360,8 @@ public class AnyDataPropertyType {
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordEntry> value) {
-        this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordEntry> ) value);
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
+        this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
     }
 
     /**
@@ -375,7 +375,7 @@ public class AnyDataPropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractDataArrayEntry> getAbstractDataArray() {
+    public JAXBElement<? extends AbstractDataArrayType> getAbstractDataArray() {
         return abstractDataArray;
     }
 
@@ -390,8 +390,8 @@ public class AnyDataPropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
      *     
      */
-    public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayEntry> value) {
-        this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayEntry> ) value);
+    public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayType> value) {
+        this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);
     }
 
     /**

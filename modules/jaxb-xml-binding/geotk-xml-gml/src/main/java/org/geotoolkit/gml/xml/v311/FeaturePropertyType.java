@@ -57,34 +57,34 @@ import org.geotoolkit.util.Utilities;
 public class FeaturePropertyType {
 
     @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
-    protected JAXBElement<? extends AbstractFeatureEntry> abstractFeature;
+    private JAXBElement<? extends AbstractFeatureType> abstractFeature;
 
     /**
      * Allow to record the feature when its in href mode
      */
     @XmlTransient
-    AbstractFeatureEntry  hiddenFeature;
+    AbstractFeatureType  hiddenFeature;
 
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
-    protected String remoteSchema;
+    private String remoteSchema;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String type;
-    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    @XmlSchemaType(name = "anyURI")
-    protected String href;
+    private String type;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String role;
+    private String href;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
     @XmlSchemaType(name = "anyURI")
-    protected String arcrole;
+    private String role;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String title;
+    @XmlSchemaType(name = "anyURI")
+    private String arcrole;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String show;
+    private String title;
     @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
-    protected String actuate;
+    private String show;
+    @XmlAttribute(namespace = "http://www.w3.org/1999/xlink")
+    private String actuate;
 
     /**
      * An empty constructor used by JAXB.
@@ -94,7 +94,7 @@ public class FeaturePropertyType {
     /**
      * Build a new feature.
      */
-    public FeaturePropertyType(final JAXBElement<? extends AbstractFeatureEntry> feature) {
+    public FeaturePropertyType(final JAXBElement<? extends AbstractFeatureType> feature) {
         this.abstractFeature = feature;
     }
 
@@ -126,7 +126,7 @@ public class FeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
      *     
      */
-    public AbstractFeatureEntry getAbstractFeature() {
+    public AbstractFeatureType getAbstractFeature() {
         if (abstractFeature != null) {
             return abstractFeature.getValue();
         }  else if (hiddenFeature != null) {
@@ -145,8 +145,8 @@ public class FeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link AbstractFeatureCollectionType }{@code >}
      *     
      */
-    public void setAbstractFeature(final JAXBElement<? extends AbstractFeatureEntry> value) {
-        this.abstractFeature = ((JAXBElement<? extends AbstractFeatureEntry> ) value);
+    public void setAbstractFeature(final JAXBElement<? extends AbstractFeatureType> value) {
+        this.abstractFeature = ((JAXBElement<? extends AbstractFeatureType> ) value);
     }
 
     /**

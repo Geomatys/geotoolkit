@@ -67,9 +67,9 @@ import javax.xml.bind.annotation.XmlType;
 public class ExtentType {
 
     private StringOrRefType description;
-    private List<EnvelopeEntry> boundingBox;
+    private List<EnvelopeType> boundingBox;
     private List<PolygonType> boundingPolygon;
-    private List<EnvelopeEntry> verticalExtent;
+    private List<EnvelopeType> verticalExtent;
     private List<TimePeriodType> temporalExtent;
 
     /**
@@ -93,9 +93,9 @@ public class ExtentType {
      * Gets the value of the boundingBox property.
      * 
      */
-    public List<EnvelopeEntry> getBoundingBox() {
+    public List<EnvelopeType> getBoundingBox() {
         if (boundingBox == null) {
-            boundingBox = new ArrayList<EnvelopeEntry>();
+            boundingBox = new ArrayList<EnvelopeType>();
         }
         return this.boundingBox;
     }
@@ -117,9 +117,9 @@ public class ExtentType {
      * Gets the value of the verticalExtent property.
      * 
      */
-    public List<EnvelopeEntry> getVerticalExtent() {
+    public List<EnvelopeType> getVerticalExtent() {
         if (verticalExtent == null) {
-            verticalExtent = new ArrayList<EnvelopeEntry>();
+            verticalExtent = new ArrayList<EnvelopeType>();
         }
         return this.verticalExtent;
     }

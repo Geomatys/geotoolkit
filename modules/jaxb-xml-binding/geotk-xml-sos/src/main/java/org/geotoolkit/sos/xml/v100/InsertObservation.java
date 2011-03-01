@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.observation.xml.v100.ObservationEntry;
+import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.util.Utilities;
 
 
@@ -59,7 +59,7 @@ public class InsertObservation extends RequestBaseType {
     @XmlSchemaType(name = "anyURI")
     private String assignedSensorId;
     @XmlElement(name = "Observation", namespace = "http://www.opengis.net/om/1.0", required = true)
-    private ObservationEntry observation;
+    private ObservationType observation;
 
     /**
      * An empty constructor used by jaxB
@@ -72,7 +72,7 @@ public class InsertObservation extends RequestBaseType {
      * @param version the version of the SOS interfaces.
      * @param observation The observation to insert in the database.
      */
-    public InsertObservation(final String version, final String assignedSensorId, final ObservationEntry observation) {
+    public InsertObservation(final String version, final String assignedSensorId, final ObservationType observation) {
         super(version);
         this.assignedSensorId = assignedSensorId;
         this.observation = observation;
@@ -91,7 +91,7 @@ public class InsertObservation extends RequestBaseType {
      * The observation to be inserted to the SOS.
      * 
      */
-    public ObservationEntry getObservation() {
+    public ObservationType getObservation() {
         return observation;
     }
 

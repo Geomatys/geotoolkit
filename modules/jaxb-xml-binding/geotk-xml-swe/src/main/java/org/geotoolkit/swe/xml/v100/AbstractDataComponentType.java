@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
+import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
 import org.geotoolkit.util.Utilities;
 
@@ -66,7 +66,7 @@ import org.geotoolkit.util.Utilities;
     QuantityRange.class,
     CountRange.class
 })
-public abstract class AbstractDataComponentType extends AbstractGMLEntry implements AbstractDataComponent {
+public abstract class AbstractDataComponentType extends AbstractGMLType implements AbstractDataComponent {
 
     @XmlAttribute
     private java.lang.Boolean fixed;

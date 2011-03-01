@@ -22,7 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.MultiPointPropertyType;
 
 
@@ -60,7 +60,7 @@ import org.geotoolkit.gml.xml.v311.MultiPointPropertyType;
     "multiPoint",
     "genericApplicationPropertyOfAddress"
 })
-public class AddressType extends AbstractFeatureEntry {
+public class AddressType extends AbstractFeatureType {
 
     @XmlElement(required = true)
     private XalAddressPropertyType xalAddress;

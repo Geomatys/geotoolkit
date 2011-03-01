@@ -48,5 +48,5 @@ import org.opengis.temporal.TemporalObject;
     AbstractTimePrimitiveType.class,
     AbstractTimeComplexType.class
 })
-public abstract class AbstractTimeObjectType extends AbstractGMLEntry implements TemporalObject {
+public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalObject {
 }

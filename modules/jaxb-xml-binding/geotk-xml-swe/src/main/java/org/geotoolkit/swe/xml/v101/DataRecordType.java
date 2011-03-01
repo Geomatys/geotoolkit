@@ -49,7 +49,7 @@ import org.geotoolkit.swe.xml.DataRecord;
 @XmlType(name = "DataRecordType", propOrder = {
     "field"
 })
-public class DataRecordType extends AbstractDataRecordEntry implements DataRecord {
+public class DataRecordType extends AbstractDataRecordType implements DataRecord {
 
     private List<DataComponentPropertyType> field;
 

@@ -33,18 +33,18 @@ import org.geotoolkit.swe.xml.AbstractDataRecord;
 import org.geotoolkit.swe.xml.DataArray;
 import org.geotoolkit.swe.xml.DataRecord;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
-import org.geotoolkit.swe.xml.v101.AbstractDataArrayEntry;
-import org.geotoolkit.swe.xml.v101.AbstractDataRecordEntry;
+import org.geotoolkit.swe.xml.v101.AbstractDataArrayType;
+import org.geotoolkit.swe.xml.v101.AbstractDataRecordType;
 import org.geotoolkit.swe.xml.v101.BooleanType;
 import org.geotoolkit.swe.xml.v101.Category;
 import org.geotoolkit.swe.xml.v101.Count;
 import org.geotoolkit.swe.xml.v101.CountRange;
-import org.geotoolkit.swe.xml.v101.DataArrayEntry;
+import org.geotoolkit.swe.xml.v101.DataArrayType;
 import org.geotoolkit.swe.xml.v101.DataRecordType;
 import org.geotoolkit.swe.xml.v101.ObservableProperty;
 import org.geotoolkit.swe.xml.v101.QuantityType;
 import org.geotoolkit.swe.xml.v101.QuantityRange;
-import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
+import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
 import org.geotoolkit.swe.xml.v101.TimeType;
 import org.geotoolkit.swe.xml.v101.TimeRange;
@@ -111,9 +111,9 @@ public class IoComponentPropertyType implements IoComponent {
     @XmlElement(name = "TimeRange", namespace = "http://www.opengis.net/swe/1.0.1")
     private TimeRange timeRange;
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-    private JAXBElement<? extends AbstractDataRecordEntry> abstractDataRecord;
+    private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
     @XmlElementRef(name = "AbstractDataArray", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-    private JAXBElement<? extends AbstractDataArrayEntry> abstractDataArray;
+    private JAXBElement<? extends AbstractDataArrayType> abstractDataArray;
     @XmlElement(name = "ObservableProperty", namespace = "http://www.opengis.net/swe/1.0.1")
     private ObservableProperty observableProperty;
     @XmlAttribute(required = true)
@@ -192,7 +192,7 @@ public class IoComponentPropertyType implements IoComponent {
             if (io.getDataRecord() != null) {
                 AbstractDataRecord record = (AbstractDataRecord) io.getDataRecord();
                 if (record instanceof SimpleDataRecord) {
-                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordEntry((SimpleDataRecord)record));
+                    abstractDataRecord = factory.createSimpleDataRecord(new SimpleDataRecordType((SimpleDataRecord)record));
                 } else if (record instanceof DataRecord) {
                     abstractDataRecord = factory.createDataRecord(new DataRecordType((DataRecord)record));
                 } else {
@@ -200,7 +200,7 @@ public class IoComponentPropertyType implements IoComponent {
                 }
             }
             if (io.getDataArray() instanceof DataArray) {
-                    abstractDataArray = factory.createDataArray(new DataArrayEntry((DataArray)io.getDataArray()));
+                    abstractDataArray = factory.createDataArray(new DataArrayType((DataArray)io.getDataArray()));
             }
         }
     }
@@ -215,7 +215,7 @@ public class IoComponentPropertyType implements IoComponent {
         this.quantity = quantity;
     }
 
-    public IoComponentPropertyType(final String name, final SimpleDataRecordEntry abstractDataRecord) {
+    public IoComponentPropertyType(final String name, final SimpleDataRecordType abstractDataRecord) {
         this.name = name;
         this.abstractDataRecord = factory.createSimpleDataRecord(abstractDataRecord);
     }
@@ -250,12 +250,12 @@ public class IoComponentPropertyType implements IoComponent {
             countRange = (CountRange) obj;
         } else if (obj instanceof TimeRange) {
             timeRange = (TimeRange) obj;
-        } else if (obj instanceof SimpleDataRecordEntry) {
-            abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordEntry) obj);
+        } else if (obj instanceof SimpleDataRecordType) {
+            abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordType) obj);
         } else if (obj instanceof DataRecordType) {
             abstractDataRecord = factory.createDataRecord((DataRecordType) obj);
-        } else if (obj instanceof DataArrayEntry) {
-            abstractDataArray = factory.createDataArray((DataArrayEntry) obj);
+        } else if (obj instanceof DataArrayType) {
+            abstractDataArray = factory.createDataArray((DataArrayType) obj);
 
         } else {
             System.out.println("UNINPLEMENTED CASE:" + obj.getClass().getName());
@@ -526,11 +526,11 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractDataRecordEntry> getAbstractDataRecord() {
+    public JAXBElement<? extends AbstractDataRecordType> getAbstractDataRecord() {
         return abstractDataRecord;
     }
 
-    public AbstractDataRecordEntry getDataRecord() {
+    public AbstractDataRecordType getDataRecord() {
         if (abstractDataRecord != null) {
             return abstractDataRecord.getValue();
         }
@@ -554,8 +554,8 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link JAXBElement }{@code <}{@link DataRecordType }{@code >}
      *     
      */
-    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordEntry> value) {
-        this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordEntry> ) value);
+    public void setAbstractDataRecord(final JAXBElement<? extends AbstractDataRecordType> value) {
+        this.abstractDataRecord = ((JAXBElement<? extends AbstractDataRecordType> ) value);
     }
 
     /**
@@ -569,11 +569,11 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
      *     
      */
-    public JAXBElement<? extends AbstractDataArrayEntry> getAbstractDataArray() {
+    public JAXBElement<? extends AbstractDataArrayType> getAbstractDataArray() {
         return abstractDataArray;
     }
 
-    public AbstractDataArrayEntry getDataArray() {
+    public AbstractDataArrayType getDataArray() {
         if (abstractDataArray != null) {
             return abstractDataArray.getValue();
         }
@@ -591,8 +591,8 @@ public class IoComponentPropertyType implements IoComponent {
      *     {@link JAXBElement }{@code <}{@link AbstractDataArrayType }{@code >}
      *     
      */
-    public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayEntry> value) {
-        this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayEntry> ) value);
+    public void setAbstractDataArray(final JAXBElement<? extends AbstractDataArrayType> value) {
+        this.abstractDataArray = ((JAXBElement<? extends AbstractDataArrayType> ) value);
     }
 
     /**

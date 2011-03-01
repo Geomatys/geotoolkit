@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.GridEnvelopeType;
 import org.geotoolkit.gml.xml.v311.TimePositionType;
 import org.geotoolkit.wcs.xml.GetCoverage;
@@ -227,7 +227,7 @@ public class GetCoverageType implements GetCoverage {
         {
             return null;
         }
-        final EnvelopeEntry env = domainSubset.getSpatialSubSet().getEnvelope();
+        final EnvelopeType env = domainSubset.getSpatialSubSet().getEnvelope();
         final List<DirectPositionType> positions = env.getPos();
         if (positions == null || positions.isEmpty()) {
             return null;

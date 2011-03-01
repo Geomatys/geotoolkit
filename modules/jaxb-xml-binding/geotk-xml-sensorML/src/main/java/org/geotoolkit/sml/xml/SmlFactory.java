@@ -105,11 +105,11 @@ public class SmlFactory {
                                                                 (org.geotoolkit.swe.xml.v100.SimpleDataRecordType)record);
 
         } else if ("1.0.1".equals(version)) {
-            if (record != null && !(record instanceof org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry)) {
+            if (record != null && !(record instanceof org.geotoolkit.swe.xml.v101.SimpleDataRecordType)) {
                 throw new IllegalArgumentException("Unexpected SWE version for record object.");
             }
             return new org.geotoolkit.sml.xml.v101.IoComponentPropertyType(name,
-                                                                (org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry)record);
+                                                                (org.geotoolkit.swe.xml.v101.SimpleDataRecordType)record);
         } else {
             throw new IllegalArgumentException("Unexpected SML version:" + version);
         }

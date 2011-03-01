@@ -21,9 +21,9 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
-import org.geotoolkit.gml.xml.v311.ReferenceEntry;
+import org.geotoolkit.gml.xml.v311.ReferenceType;
 import org.geotoolkit.gml.xml.v311.TimePrimitivePropertyType;
 
 
@@ -69,17 +69,17 @@ import org.geotoolkit.gml.xml.v311.TimePrimitivePropertyType;
     "projection",
     "surveyTime"
 })
-public class SurveyProcedureType extends AbstractFeatureEntry {
+public class SurveyProcedureType extends AbstractFeatureType {
 
     private AnyOrReferenceType operator;
-    private ReferenceEntry elevationDatum;
+    private ReferenceType elevationDatum;
     //private ProcessPropertyType elevationMethod;
     private MeasureType elevationAccuracy;
-    private ReferenceEntry geodeticDatum;
+    private ReferenceType geodeticDatum;
     @XmlElement(required = true)
     //private ProcessPropertyType positionMethod;
     private MeasureType positionAccuracy;
-    private ReferenceEntry projection;
+    private ReferenceType projection;
     private TimePrimitivePropertyType surveyTime;
 
     /**
@@ -111,10 +111,10 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      * 
      * @return
      *     possible object is
-     *     {@link ReferenceEntry }
+     *     {@link ReferenceType }
      *     
      */
-    public ReferenceEntry getElevationDatum() {
+    public ReferenceType getElevationDatum() {
         return elevationDatum;
     }
 
@@ -123,10 +123,10 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      * 
      * @param value
      *     allowed object is
-     *     {@link ReferenceEntry }
+     *     {@link ReferenceType }
      *     
      */
-    public void setElevationDatum(final ReferenceEntry value) {
+    public void setElevationDatum(final ReferenceType value) {
         this.elevationDatum = value;
     }
 
@@ -183,10 +183,10 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      * 
      * @return
      *     possible object is
-     *     {@link ReferenceEntry }
+     *     {@link ReferenceType }
      *     
      */
-    public ReferenceEntry getGeodeticDatum() {
+    public ReferenceType getGeodeticDatum() {
         return geodeticDatum;
     }
 
@@ -195,10 +195,10 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      * 
      * @param value
      *     allowed object is
-     *     {@link ReferenceEntry }
+     *     {@link ReferenceType }
      *     
      */
-    public void setGeodeticDatum(final ReferenceEntry value) {
+    public void setGeodeticDatum(final ReferenceType value) {
         this.geodeticDatum = value;
     }
 
@@ -255,10 +255,10 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      * 
      * @return
      *     possible object is
-     *     {@link ReferenceEntry }
+     *     {@link ReferenceType }
      *     
      */
-    public ReferenceEntry getProjection() {
+    public ReferenceType getProjection() {
         return projection;
     }
 
@@ -267,10 +267,10 @@ public class SurveyProcedureType extends AbstractFeatureEntry {
      * 
      * @param value
      *     allowed object is
-     *     {@link ReferenceEntry }
+     *     {@link ReferenceType }
      *     
      */
-    public void setProjection(final ReferenceEntry value) {
+    public void setProjection(final ReferenceType value) {
         this.projection = value;
     }
 

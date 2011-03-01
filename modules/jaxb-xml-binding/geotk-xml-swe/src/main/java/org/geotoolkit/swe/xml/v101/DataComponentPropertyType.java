@@ -89,10 +89,10 @@ public class DataComponentPropertyType implements DataComponentProperty {
     private TimeRange timeRange;
     
     @XmlElementRef(name = "AbstractDataRecord", namespace = "http://www.opengis.net/swe/1.0.1", type = JAXBElement.class)
-    private JAXBElement<? extends AbstractDataRecordEntry> abstractDataRecord;
+    private JAXBElement<? extends AbstractDataRecordType> abstractDataRecord;
     
     @XmlTransient
-    private JAXBElement<? extends AbstractDataRecordEntry> hiddenAbstractDataRecord;
+    private JAXBElement<? extends AbstractDataRecordType> hiddenAbstractDataRecord;
     
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)
@@ -154,7 +154,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
         this._boolean  = bool;
     }
 
-    public DataComponentPropertyType(final String name, final String role, final JAXBElement<? extends AbstractDataRecordEntry> dataRecord) {
+    public DataComponentPropertyType(final String name, final String role, final JAXBElement<? extends AbstractDataRecordType> dataRecord) {
         this.name      = name;
         this.role      = role;
         this.abstractDataRecord = dataRecord;
@@ -175,8 +175,8 @@ public class DataComponentPropertyType implements DataComponentProperty {
             if (d.getAbstractRecord() != null) {
                 AbstractDataRecord record = d.getAbstractRecord();
                 if (record instanceof SimpleDataRecord) {
-                    record = new SimpleDataRecordEntry((SimpleDataRecord)record);
-                    this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordEntry) record);
+                    record = new SimpleDataRecordType((SimpleDataRecord)record);
+                    this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordType) record);
                 } else if (record instanceof DataRecord) {
                     record = new DataRecordType((DataRecord)record);
                     this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType) record);
@@ -239,10 +239,10 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * 
      */
-    public DataComponentPropertyType(final AbstractDataRecordEntry component, final String name) {
+    public DataComponentPropertyType(final AbstractDataRecordType component, final String name) {
         this.name = name;
-        if (component instanceof SimpleDataRecordEntry) {
-            this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordEntry)component);
+        if (component instanceof SimpleDataRecordType) {
+            this.abstractDataRecord = sweFactory.createSimpleDataRecord((SimpleDataRecordType)component);
         }else if (component instanceof DataRecordType) {
             this.abstractDataRecord = sweFactory.createDataRecord((DataRecordType)component);
         } else {
@@ -252,7 +252,7 @@ public class DataComponentPropertyType implements DataComponentProperty {
     /**
      * Gets the value of the timeGeometricPrimitive property.
       */
-    public AbstractDataRecordEntry getAbstractRecord() {
+    public AbstractDataRecordType getAbstractRecord() {
         if (abstractDataRecord != null) {
             return abstractDataRecord.getValue();
         } else if (hiddenAbstractDataRecord != null){
@@ -292,8 +292,8 @@ public class DataComponentPropertyType implements DataComponentProperty {
             countRange = (CountRange) obj;
         } else if (obj instanceof TimeRange) {
             timeRange = (TimeRange) obj;
-        } else if (obj instanceof SimpleDataRecordEntry) {
-            abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordEntry) obj);
+        } else if (obj instanceof SimpleDataRecordType) {
+            abstractDataRecord = factory.createSimpleDataRecord((SimpleDataRecordType) obj);
         } else if (obj instanceof DataRecordType) {
             abstractDataRecord = factory.createDataRecord((DataRecordType) obj);
         } else if (obj instanceof EnvelopeType) {

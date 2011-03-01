@@ -35,7 +35,7 @@ import java.util.logging.Logger;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.CoordinatesType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.LineStringType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.ogc.xml.v110.AndType;
@@ -689,7 +689,7 @@ public class FilterFactoryImpl implements FilterFactory2 {
             if (coord.length == 5) {
                 DirectPositionType lowerCorner = new DirectPositionType(coord[0].x, coord[1].y);
                 DirectPositionType upperCorner = new DirectPositionType(coord[2].x, coord[0].y);
-                result = new EnvelopeEntry(null, lowerCorner, upperCorner, "EPSG:4326");
+                result = new EnvelopeType(null, lowerCorner, upperCorner, "EPSG:4326");
             }
         } else if (geom instanceof Point){ 
             Point p = (Point) geom;

@@ -77,7 +77,7 @@ import org.opengis.referencing.operation.TransformException;
     AbstractGeometricPrimitiveType.class,
     AbstractGeometricAggregateType.class
 })
-public abstract class AbstractGeometryType extends AbstractGMLEntry implements Geometry, Expression {
+public abstract class AbstractGeometryType extends AbstractGMLType implements Geometry, Expression {
 
     @XmlAttribute
     private String gid;

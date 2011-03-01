@@ -60,7 +60,7 @@ import org.geotoolkit.util.Utilities;
     "value"
 })
 @XmlRootElement(name = "Category")
-public class Category extends AbstractDataComponentEntry  implements AbstractCategory {
+public class Category extends AbstractDataComponentType  implements AbstractCategory {
 
     private CodeSpacePropertyType codeSpace;
     private AllowedTokensPropertyType constraint;

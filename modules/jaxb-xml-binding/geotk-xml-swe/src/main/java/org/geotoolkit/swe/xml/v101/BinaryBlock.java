@@ -102,7 +102,7 @@ import org.geotoolkit.util.Utilities;
     "member"
 })
 @XmlRootElement(name = "BinaryBlock")
-public class BinaryBlock extends AbstractEncodingEntry  implements AbstractBinaryBlock {
+public class BinaryBlock extends AbstractEncodingType  implements AbstractBinaryBlock {
 
     @XmlElement(required = true)
     private List<BinaryBlock.Member> member;

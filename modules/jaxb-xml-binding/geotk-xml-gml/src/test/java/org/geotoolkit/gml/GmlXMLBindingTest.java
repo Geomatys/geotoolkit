@@ -26,7 +26,7 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.gml.xml.v311.DirectPositionListType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 
 //Junit dependencies
 import org.geotoolkit.gml.xml.v311.LineStringSegmentType;
@@ -84,7 +84,7 @@ public class GmlXMLBindingTest {
 
         DirectPositionType lower = new DirectPositionType(-30.711, 134.196);
         DirectPositionType upper = new DirectPositionType(-30.702, 134.205);
-        EnvelopeEntry env = new EnvelopeEntry("bound-1", lower, upper, "urn:ogc:def:crs:EPSG:6.8:4283");
+        EnvelopeType env = new EnvelopeType("bound-1", lower, upper, "urn:ogc:def:crs:EPSG:6.8:4283");
 
         StringWriter sw = new StringWriter();
         marshaller.marshal(FACTORY.createEnvelope(env), sw);

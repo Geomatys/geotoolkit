@@ -33,7 +33,7 @@ import org.geotoolkit.util.Utilities;
     "uom",
     "value"
 })
-public class TimeType extends AbstractDataComponentEntry implements AbstractTime {
+public class TimeType extends AbstractDataComponentType implements AbstractTime {
 
     private UomPropertyType uom;
     //private AllowedTimesPropertyType constraint;

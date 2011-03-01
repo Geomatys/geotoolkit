@@ -49,7 +49,7 @@ import org.geotoolkit.util.Utilities;
     "value"
 })
 @XmlRootElement(name = "Text")
-public class Text extends AbstractDataComponentEntry implements AbstractText {
+public class Text extends AbstractDataComponentType implements AbstractText {
 
     private String value;
 

@@ -50,7 +50,7 @@ import org.geotoolkit.util.Utilities;
 @XmlSeeAlso({
     SquareMatrixType.class
 })
-public class AbstractMatrixType extends AbstractDataArrayEntry implements AbstractMatrix {
+public class AbstractMatrixType extends AbstractDataArrayType implements AbstractMatrix {
 
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")

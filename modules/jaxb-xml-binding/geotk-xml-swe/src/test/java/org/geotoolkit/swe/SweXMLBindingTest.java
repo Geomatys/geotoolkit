@@ -21,10 +21,10 @@ import java.util.Arrays;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import org.geotoolkit.swe.xml.v101.AnyScalarPropertyType;
-import org.geotoolkit.swe.xml.v101.DataArrayEntry;
-import org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry;
+import org.geotoolkit.swe.xml.v101.DataArrayType;
+import org.geotoolkit.swe.xml.v101.SimpleDataRecordType;
 import org.geotoolkit.swe.xml.v101.Text;
-import org.geotoolkit.swe.xml.v101.TextBlockEntry;
+import org.geotoolkit.swe.xml.v101.TextBlockType;
 
 //Junit dependencies
 import org.geotoolkit.xml.MarshallerPool;
@@ -90,11 +90,11 @@ public class SweXMLBindingTest {
                            "</swe:Text>" + '\n' ;
         assertEquals(expResult, result);
 
-        SimpleDataRecordEntry elementType = new SimpleDataRecordEntry();
+        SimpleDataRecordType elementType = new SimpleDataRecordType();
         AnyScalarPropertyType any = new AnyScalarPropertyType("id-1", "any name", text);
-        TextBlockEntry encoding = new TextBlockEntry("encoding-1", ",", "@@", ".");
+        TextBlockType encoding = new TextBlockType("encoding-1", ",", "@@", ".");
         elementType.setField(Arrays.asList(any));
-        DataArrayEntry array = new DataArrayEntry("array-id-1", 0, elementType, encoding, null);
+        DataArrayType array = new DataArrayType("array-id-1", 0, elementType, encoding, null);
 
 
         sw = new StringWriter();

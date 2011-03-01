@@ -100,63 +100,63 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link AbstractDataComponentEntry }
+     * Create an instance of {@link AbstractDataComponentType }
      * 
      */
-    public AbstractDataComponentEntry createAbstractDataComponentEntry() {
-        return new AbstractDataComponentEntry();
+    public AbstractDataComponentType createAbstractDataComponentType() {
+        return new AbstractDataComponentType();
     }
     
     /**
-     * Create an instance of {@link AbstractDataComponentEntry }
+     * Create an instance of {@link AbstractDataComponentType }
      * 
      */
-    public AbstractDataRecordEntry createAbstractDataRecordEntry() {
-        return new AbstractDataRecordEntry();
+    public AbstractDataRecordType createAbstractDataRecordType() {
+        return new AbstractDataRecordType();
     }
     
     /**
-     * Create an instance of {@link AbstractEncodingEntry }
+     * Create an instance of {@link AbstractEncodingType }
      * 
      */
-    public AbstractEncodingEntry createAbstractEncodingEntry() {
-        return new AbstractEncodingEntry();
+    public AbstractEncodingType createAbstractEncodingType() {
+        return new AbstractEncodingType();
     }
     
     /**
-     * Create an instance of {@link AnyResultEntry }
+     * Create an instance of {@link AnyResultType }
      * 
      */
-    public AnyResultEntry createAnyResultEntry() {
-        return new AnyResultEntry();
+    public AnyResultType createAnyResultType() {
+        return new AnyResultType();
     }
     
     /**
-     * Create an instance of {@link DataBlockDefinitionEntry }
+     * Create an instance of {@link DataBlockDefinitionType }
      * 
      */
-    public DataBlockDefinitionEntry createDataBlockDefinitionEntry() {
-        return new DataBlockDefinitionEntry();
+    public DataBlockDefinitionType createDataBlockDefinitionType() {
+        return new DataBlockDefinitionType();
     }
     
     /**
-     * Create an instance of {@link TextBlockEntry }
+     * Create an instance of {@link TextBlockType }
      * 
      */
-    public TextBlockEntry createTextBlockEntry() {
-        return new TextBlockEntry();
+    public TextBlockType createTextBlockType() {
+        return new TextBlockType();
     }
     
      /**
-     * Create an instance of {@link SimpleDataRecordEntry }
+     * Create an instance of {@link SimpleDataRecordType }
      * 
      */
-    public SimpleDataRecordEntry createSimpleDataRecordEntry() {
-        return new SimpleDataRecordEntry();
+    public SimpleDataRecordType createSimpleDataRecordType() {
+        return new SimpleDataRecordType();
     }
     
     /**
-     * Create an instance of {@link AnyScalarEntry }
+     * Create an instance of {@link AnyScalarType }
      * 
      */
     public AnyScalarPropertyType createAnyScalarEntry() {
@@ -172,19 +172,19 @@ public class ObjectFactory {
     }
      
     /**
-     * Create an instance of {@link CompositePhenomenonEntry }
+     * Create an instance of {@link CompositePhenomenonType }
      * 
      */
-    public CompositePhenomenonEntry createCompositePhenomenonEntry() {
-        return new CompositePhenomenonEntry();
+    public CompositePhenomenonType createCompositePhenomenonType() {
+        return new CompositePhenomenonType();
     }
     
      /**
-     * Create an instance of {@link CompositePhenomenonEntry }
+     * Create an instance of {@link CompositePhenomenonType }
      * 
      */
-    public PhenomenonEntry createPhenomenonEntry() {
-        return new PhenomenonEntry();
+    public PhenomenonType createPhenomenonType() {
+        return new PhenomenonType();
     }
     
     /**
@@ -199,8 +199,8 @@ public class ObjectFactory {
      * Create an instance of {@link DataArrayPropertyType }
      * 
      */
-    public DataArrayEntry createDataArrayEntry() {
-        return new DataArrayEntry();
+    public DataArrayType createDataArrayType() {
+        return new DataArrayType();
     }
 
     /**
@@ -716,8 +716,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "CompoundPhenomenon", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0.1", substitutionHeadName = "Phenomenon")
-    public JAXBElement<CompoundPhenomenonEntry> createCompoundPhenomenon(final CompoundPhenomenonEntry value) {
-        return new JAXBElement<CompoundPhenomenonEntry>(_CompoundPhenomenon_QNAME, CompoundPhenomenonEntry.class, null, value);
+    public JAXBElement<CompoundPhenomenonType> createCompoundPhenomenon(final CompoundPhenomenonType value) {
+        return new JAXBElement<CompoundPhenomenonType>(_CompoundPhenomenon_QNAME, CompoundPhenomenonType.class, null, value);
     }
     
     /**
@@ -725,8 +725,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "Phenomenon", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "Definition")
-    public JAXBElement<PhenomenonEntry> createPhenomenon(final PhenomenonEntry value) {
-        return new JAXBElement<PhenomenonEntry>(_Phenomenon_QNAME, PhenomenonEntry.class, null, value);
+    public JAXBElement<PhenomenonType> createPhenomenon(final PhenomenonType value) {
+        return new JAXBElement<PhenomenonType>(_Phenomenon_QNAME, PhenomenonType.class, null, value);
     }
     
     /**
@@ -734,8 +734,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "CompositePhenomenon", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0.1", substitutionHeadName = "CompoundPhenomenon")
-    public JAXBElement<CompositePhenomenonEntry> createCompositePhenomenon(final CompositePhenomenonEntry value) {
-        return new JAXBElement<CompositePhenomenonEntry>(_CompositePhenomenon_QNAME, CompositePhenomenonEntry.class, null, value);
+    public JAXBElement<CompositePhenomenonType> createCompositePhenomenon(final CompositePhenomenonType value) {
+        return new JAXBElement<CompositePhenomenonType>(_CompositePhenomenon_QNAME, CompositePhenomenonType.class, null, value);
     }
     
     /**
@@ -745,8 +745,8 @@ public class ObjectFactory {
      */
      
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "SimpleDataRecord", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0.1", substitutionHeadName = "AbstractDataRecord")
-    public JAXBElement<SimpleDataRecordEntry> createSimpleDataRecord(final SimpleDataRecordEntry value) {
-        return new JAXBElement<SimpleDataRecordEntry>(_SimpleDataRecord_QNAME, SimpleDataRecordEntry.class, null, value);
+    public JAXBElement<SimpleDataRecordType> createSimpleDataRecord(final SimpleDataRecordType value) {
+        return new JAXBElement<SimpleDataRecordType>(_SimpleDataRecord_QNAME, SimpleDataRecordType.class, null, value);
     }
     
     /**
@@ -754,8 +754,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "AbstractDataRecord")
-    public JAXBElement<AbstractDataRecordEntry> createAbstractDataRecord(final AbstractDataRecordEntry value) {
-        return new JAXBElement<AbstractDataRecordEntry>(_AbstractDataRecord_QNAME, AbstractDataRecordEntry.class, null, value);
+    public JAXBElement<AbstractDataRecordType> createAbstractDataRecord(final AbstractDataRecordType value) {
+        return new JAXBElement<AbstractDataRecordType>(_AbstractDataRecord_QNAME, AbstractDataRecordType.class, null, value);
     }
     
     /**
@@ -772,8 +772,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "TextBlock", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0.1", substitutionHeadName = "Encoding")
-    public JAXBElement<TextBlockEntry> createTextBlock(final TextBlockEntry value) {
-        return new JAXBElement<TextBlockEntry>(_TextBlock_QNAME, TextBlockEntry.class, null, value);
+    public JAXBElement<TextBlockType> createTextBlock(final TextBlockType value) {
+        return new JAXBElement<TextBlockType>(_TextBlock_QNAME, TextBlockType.class, null, value);
     }
     
     /**
@@ -781,8 +781,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "Encoding")
-    public JAXBElement<AbstractEncodingEntry> createAbstractEncoding(final AbstractEncodingEntry value) {
-        return new JAXBElement<AbstractEncodingEntry>(_Encoding_QNAME, AbstractEncodingEntry.class, null, value);
+    public JAXBElement<AbstractEncodingType> createAbstractEncoding(final AbstractEncodingType value) {
+        return new JAXBElement<AbstractEncodingType>(_Encoding_QNAME, AbstractEncodingType.class, null, value);
     }
     
     /**
@@ -790,8 +790,8 @@ public class ObjectFactory {
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "AbstractDataComponent")
-    public JAXBElement<AbstractDataComponentEntry> createAbstractDataComponent(final AbstractDataComponentEntry value) {
-        return new JAXBElement<AbstractDataComponentEntry>(_AbstractDataComponent_QNAME, AbstractDataComponentEntry.class, null, value);
+    public JAXBElement<AbstractDataComponentType> createAbstractDataComponent(final AbstractDataComponentType value) {
+        return new JAXBElement<AbstractDataComponentType>(_AbstractDataComponent_QNAME, AbstractDataComponentType.class, null, value);
     }
 
     /**
@@ -822,12 +822,12 @@ public class ObjectFactory {
     }
     
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link Object }{@code >}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "DataArray", substitutionHeadNamespace = "http://www.opengis.net/swe/1.0.1", substitutionHeadName = "AbstractDataArray")
-    public JAXBElement<DataArrayEntry> createDataArray(final DataArrayEntry value) {
-        return new JAXBElement<DataArrayEntry>(_DataArray_QNAME, DataArrayEntry.class, null, value);
+    public JAXBElement<DataArrayType> createDataArray(final DataArrayType value) {
+        return new JAXBElement<DataArrayType>(_DataArray_QNAME, DataArrayType.class, null, value);
     }
 
     /**
@@ -835,8 +835,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "AbstractDataArray")
-    public JAXBElement<AbstractDataArrayEntry> createAbstractDataArray(final AbstractDataArrayEntry value) {
-        return new JAXBElement<AbstractDataArrayEntry>(_AbstractDataArray_QNAME, AbstractDataArrayEntry.class, null, value);
+    public JAXBElement<AbstractDataArrayType> createAbstractDataArray(final AbstractDataArrayType value) {
+        return new JAXBElement<AbstractDataArrayType>(_AbstractDataArray_QNAME, AbstractDataArrayType.class, null, value);
     }
 
     /**
@@ -891,8 +891,8 @@ public class ObjectFactory {
      *
 
     @XmlElementDecl(namespace = "http://www.opengis.net/swe/1.0.1", name = "DataBlockDefinition")
-    public JAXBElement<DataBlockDefinitionEntry> createDataBlockDefinition(DataBlockDefinitionEntry value) {
-        return new JAXBElement<DataBlockDefinitionEntry>(_DataBlockDefinition_QNAME, DataBlockDefinitionEntry.class, null, value);
+    public JAXBElement<DataBlockDefinitionType> createDataBlockDefinition(DataBlockDefinitionType value) {
+        return new JAXBElement<DataBlockDefinitionType>(_DataBlockDefinition_QNAME, DataBlockDefinitionType.class, null, value);
     }
      */
 

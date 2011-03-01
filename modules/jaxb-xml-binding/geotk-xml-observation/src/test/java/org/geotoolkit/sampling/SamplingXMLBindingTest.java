@@ -30,7 +30,7 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
 
 //Junit dependencies
-import org.geotoolkit.sampling.xml.v100.SamplingPointEntry;
+import org.geotoolkit.sampling.xml.v100.SamplingPointType;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
  */
 public class SamplingXMLBindingTest {
 
-    private Logger logger = Logging.getLogger("org.constellation.metadata.fra");
+    private static final Logger LOGGER = Logging.getLogger("org.constellation.metadata.fra");
     private MarshallerPool pool;
     private Unmarshaller unmarshaller;
     private Marshaller   marshaller;
@@ -77,11 +77,11 @@ public class SamplingXMLBindingTest {
     @Test
     public void marshallingTest() throws JAXBException {
 
-        DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
-        PointType location = new PointType("point-ID", pos);
-        SamplingPointEntry sp = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
+        final DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
+        final PointType location = new PointType("point-ID", pos);
+        final SamplingPointType sp = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
 
-        StringWriter sw = new StringWriter();
+        final StringWriter sw = new StringWriter();
         marshaller.marshal(sp, sw);
 
         String result = sw.toString();
@@ -94,7 +94,7 @@ public class SamplingXMLBindingTest {
         result = result.replace(" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\"", "");
         result = result.replace(" xmlns:om=\"http://www.opengis.net/om/1.0\"", "");
 
-        String expResult = "<sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
+        final String expResult = "<sampling:SamplingPoint gml:id=\"samplingID-007\">" + '\n' +
                            "    <gml:description>a sampling Test</gml:description>" + '\n' +
                            "    <gml:name>urn:sampling:test:007</gml:name>" + '\n' +
                            "    <gml:boundedBy>" + '\n' +
@@ -107,7 +107,6 @@ public class SamplingXMLBindingTest {
                            "        </gml:Point>" + '\n' +
                            "    </sampling:position>" + '\n' +
                            "</sampling:SamplingPoint>" + '\n' ;
-        logger.finer("RESULT:" + result);
         assertEquals(expResult, result);
     }
 
@@ -123,7 +122,7 @@ public class SamplingXMLBindingTest {
          * Test Unmarshalling spatial filter.
          */
 
-        String xml =
+        final String xml =
        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
        "<sa:SamplingPoint xmlns:sa=\"http://www.opengis.net/sampling/1.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:gml=\"http://www.opengis.net/gml\" gml:id=\"samplingID-007\">" + '\n' +
        "    <gml:description>a sampling Test</gml:description>" + '\n' +
@@ -139,14 +138,14 @@ public class SamplingXMLBindingTest {
        "    </sa:position>" + '\n' +
        "</sa:SamplingPoint>" + '\n' ;
 
-        StringReader sr = new StringReader(xml);
+        final StringReader sr = new StringReader(xml);
 
-        JAXBElement jb =  (JAXBElement) unmarshaller.unmarshal(sr);
-        SamplingPointEntry result =  (SamplingPointEntry) jb.getValue();
+        final JAXBElement jb =  (JAXBElement) unmarshaller.unmarshal(sr);
+        final SamplingPointType result =  (SamplingPointType) jb.getValue();
 
-        DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
-        PointType location = new PointType("point-ID", pos);
-        SamplingPointEntry expResult = new SamplingPointEntry("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
+        final DirectPositionType pos = new DirectPositionType("urn:ogc:crs:espg:4326", 2, Arrays.asList(3.2, 6.5));
+        final PointType location = new PointType("point-ID", pos);
+        final SamplingPointType expResult = new SamplingPointType("samplingID-007", "urn:sampling:test:007", "a sampling Test", new FeaturePropertyType(""), new PointPropertyType(location));
 
         assertEquals(expResult.getPosition(), result.getPosition());
         assertEquals(expResult, result);

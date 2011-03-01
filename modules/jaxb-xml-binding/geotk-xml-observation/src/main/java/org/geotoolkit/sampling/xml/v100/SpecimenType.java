@@ -29,7 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.CodeType;
 import org.geotoolkit.gml.xml.v311.LocationPropertyType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
-import org.geotoolkit.gml.xml.v311.ReferenceEntry;
+import org.geotoolkit.gml.xml.v311.ReferenceType;
 import org.geotoolkit.gml.xml.v311.TimePrimitivePropertyType;
 
 
@@ -82,16 +82,16 @@ import org.geotoolkit.gml.xml.v311.TimePrimitivePropertyType;
 @XmlSeeAlso({
     LocatedSpecimenType.class
 })
-public class SpecimenType extends SamplingFeatureEntry {
+public class SpecimenType extends SamplingFeatureType {
 
     @XmlElement(required = true)
     private CodeType materialClass;
     private LocationPropertyType currentLocation;
     private SpecimenType.Size size;
-    private ReferenceEntry samplingMethod;
+    private ReferenceType samplingMethod;
     @XmlElement(required = true)
     private TimePrimitivePropertyType samplingTime;
-    private List<ReferenceEntry> processingDetails;
+    private List<ReferenceType> processingDetails;
 
     /**
      * Gets the value of the materialClass property.
@@ -173,7 +173,7 @@ public class SpecimenType extends SamplingFeatureEntry {
      *     {@link ReferenceType }
      *     
      */
-    public ReferenceEntry getSamplingMethod() {
+    public ReferenceType getSamplingMethod() {
         return samplingMethod;
     }
 
@@ -185,7 +185,7 @@ public class SpecimenType extends SamplingFeatureEntry {
      *     {@link ReferenceType }
      *     
      */
-    public void setSamplingMethod(final ReferenceEntry value) {
+    public void setSamplingMethod(final ReferenceType value) {
         this.samplingMethod = value;
     }
 
@@ -235,9 +235,9 @@ public class SpecimenType extends SamplingFeatureEntry {
      * 
      * 
      */
-    public List<ReferenceEntry> getProcessingDetails() {
+    public List<ReferenceType> getProcessingDetails() {
         if (processingDetails == null) {
-            processingDetails = new ArrayList<ReferenceEntry>();
+            processingDetails = new ArrayList<ReferenceType>();
         }
         return this.processingDetails;
     }

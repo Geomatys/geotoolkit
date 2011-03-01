@@ -56,17 +56,17 @@ import org.geotoolkit.util.Utilities;
 public class PhenomenonPropertyType {
 
     @XmlElement(name = "Phenomenon")
-    private PhenomenonEntry phenomenon;
+    private PhenomenonType phenomenon;
     @XmlElement(name = "CompoundPhenomenon")
-    private CompoundPhenomenonEntry compoundPhenomenon;
+    private CompoundPhenomenonType compoundPhenomenon;
     @XmlElement(name = "CompositePhenomenon")
-    private CompositePhenomenonEntry compositePhenomenon;
+    private CompositePhenomenonType compositePhenomenon;
     
     /**
      * Allow to record the pehnomenon when its in href mode
      */
     @XmlTransient
-    PhenomenonEntry hiddenPhenomenon;
+    PhenomenonType hiddenPhenomenon;
     
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
@@ -106,16 +106,16 @@ public class PhenomenonPropertyType {
     /**
      * Build a new Phenomenon Property.
      */
-    public PhenomenonPropertyType(final PhenomenonEntry observedProperty) {
+    public PhenomenonPropertyType(final PhenomenonType observedProperty) {
         
-        if (observedProperty instanceof CompositePhenomenonEntry) {
-            this.compositePhenomenon       = (CompositePhenomenonEntry)observedProperty;
-        } else if (observedProperty instanceof CompoundPhenomenonEntry) {
-            this.compoundPhenomenon        = (CompoundPhenomenonEntry)observedProperty;
-        } else if (observedProperty instanceof PhenomenonEntry) {
+        if (observedProperty instanceof CompositePhenomenonType) {
+            this.compositePhenomenon       = (CompositePhenomenonType)observedProperty;
+        } else if (observedProperty instanceof CompoundPhenomenonType) {
+            this.compoundPhenomenon        = (CompoundPhenomenonType)observedProperty;
+        } else if (observedProperty instanceof PhenomenonType) {
             this.phenomenon    =  observedProperty;
         } else {
-            throw new IllegalArgumentException("only phenomenonEntry, CompositePhenomenonEntry and compoundPhenomenonEntry are allowed");
+            throw new IllegalArgumentException("only phenomenonType, CompositePhenomenonType and compoundPhenomenonType are allowed");
         }
     }
     
@@ -123,7 +123,7 @@ public class PhenomenonPropertyType {
      * Set the phenomenon into href mode.
      */
     public void setToHref() {
-        PhenomenonEntry pheno = getPhenomenon();
+        PhenomenonType pheno = getPhenomenon();
         if (pheno != null) {
             this.href = pheno.getName();
             hiddenPhenomenon = pheno;
@@ -134,7 +134,7 @@ public class PhenomenonPropertyType {
     /**
      * Gets the value of the phenomenon property.
      */
-    public PhenomenonEntry getPhenomenon() {
+    public PhenomenonType getPhenomenon() {
         if (phenomenon != null) {
             return phenomenon;
         } else if (compositePhenomenon != null) {
@@ -147,18 +147,18 @@ public class PhenomenonPropertyType {
             return null;
     }
 
-    public void setPhenomenon(final PhenomenonEntry pheno) {
+    public void setPhenomenon(final PhenomenonType pheno) {
         
-        if (pheno instanceof CompositePhenomenonEntry) {
-            this.compositePhenomenon   = (CompositePhenomenonEntry)pheno;
+        if (pheno instanceof CompositePhenomenonType) {
+            this.compositePhenomenon   = (CompositePhenomenonType)pheno;
             this.phenomenon            = null;
             this.compoundPhenomenon    = null;
-        } else if (pheno instanceof CompoundPhenomenonEntry) {
-            this.compoundPhenomenon    = (CompoundPhenomenonEntry)pheno;
+        } else if (pheno instanceof CompoundPhenomenonType) {
+            this.compoundPhenomenon    = (CompoundPhenomenonType)pheno;
             this.phenomenon            = null;
             this.compositePhenomenon   = null;
             
-        } else if (pheno instanceof PhenomenonEntry) {
+        } else if (pheno instanceof PhenomenonType) {
             this.phenomenon           =  pheno;
             this.compositePhenomenon   = null;
             this.compoundPhenomenon    = null;

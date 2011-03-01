@@ -30,7 +30,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "Boolean", propOrder = {
     "value"
 })
-public class BooleanType extends AbstractDataComponentEntry  implements AbstractBoolean {
+public class BooleanType extends AbstractDataComponentType  implements AbstractBoolean {
 
     protected java.lang.Boolean value;
     @XmlAttribute

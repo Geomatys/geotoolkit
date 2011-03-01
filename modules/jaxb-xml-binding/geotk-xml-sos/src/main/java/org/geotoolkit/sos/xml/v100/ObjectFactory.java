@@ -51,8 +51,8 @@ public class ObjectFactory {
      * Create an instance of {@link ObservationOfferingType }
      * 
      */
-    public ObservationOfferingEntry createObservationOfferingType() {
-        return new ObservationOfferingEntry();
+    public ObservationOfferingType createObservationOfferingType() {
+        return new ObservationOfferingType();
     }
     
     /**
@@ -109,14 +109,6 @@ public class ObjectFactory {
      */
     public GetResultResponse createGetResultResponse() {
         return new GetResultResponse();
-    }
-
-    /**
-     * Create an instance of {@link ObservationOfferingType }
-     * 
-     */
-    public ObservationOfferingEntry createObservationOfferingEntry() {
-        return new ObservationOfferingEntry();
     }
 
     /**

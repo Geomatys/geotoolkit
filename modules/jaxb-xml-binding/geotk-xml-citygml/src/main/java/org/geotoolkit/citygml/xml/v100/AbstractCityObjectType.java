@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
-import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 
 
 /**
@@ -69,7 +69,7 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
 @XmlSeeAlso({
     AbstractSiteType.class
 })
-public abstract class AbstractCityObjectType extends AbstractFeatureEntry {
+public abstract class AbstractCityObjectType extends AbstractFeatureType {
 
     @XmlSchemaType(name = "date")
     private XMLGregorianCalendar creationDate;

@@ -62,7 +62,7 @@ public class UnitDefinitionType extends DefinitionType {
 
     @XmlElement(required = true)
     protected StringOrRefType quantityType;
-    private ReferenceEntry quantityTypeReference;
+    private ReferenceType quantityTypeReference;
     protected CodeType catalogSymbol;
 
     /**
@@ -92,14 +92,14 @@ public class UnitDefinitionType extends DefinitionType {
     /**
      * Gets the value of the quantityTypeReference property.
      */
-    public ReferenceEntry getQuantityTypeReference() {
+    public ReferenceType getQuantityTypeReference() {
         return quantityTypeReference;
     }
 
     /**
      * Sets the value of the quantityTypeReference property.
      */
-    public void getQuantityTypeReference(final ReferenceEntry quantityTypeReference) {
+    public void getQuantityTypeReference(final ReferenceType quantityTypeReference) {
         this.quantityTypeReference = quantityTypeReference;
     }
 

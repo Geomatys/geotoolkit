@@ -42,7 +42,7 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gml.GMLUtilities;
 import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.geotoolkit.gml.xml.v311.DirectPositionType;
-import org.geotoolkit.gml.xml.v311.EnvelopeEntry;
+import org.geotoolkit.gml.xml.v311.EnvelopeType;
 import org.geotoolkit.gml.xml.v311.ObjectFactory;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.gml.xml.v311.PolygonType;
@@ -630,7 +630,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
             }
 
             final JAXBElement<PropertyNameType> pnt = (JAXBElement<PropertyNameType>) extract(exp1);
-            final JAXBElement<EnvelopeEntry> jaxEnv;
+            final JAXBElement<EnvelopeType> jaxEnv;
             final JAXBElement<? extends AbstractGeometryType> jaxGeom;
 
             final Object geom = ((Literal)exp2).getValue();
@@ -672,7 +672,7 @@ public class GTtoSE110Transformer implements StyleVisitor{
                 jaxEnv = null;
             }else if(geom instanceof org.opengis.geometry.Envelope){
                 final org.opengis.geometry.Envelope genv = (org.opengis.geometry.Envelope)geom;
-                EnvelopeEntry ee = gml_factory.createEnvelopeType();
+                EnvelopeType ee = gml_factory.createEnvelopeType();
                 try {
                     ee.setSrsName(CRS.lookupIdentifier(genv.getCoordinateReferenceSystem(), true));
                 } catch (FactoryException ex) {

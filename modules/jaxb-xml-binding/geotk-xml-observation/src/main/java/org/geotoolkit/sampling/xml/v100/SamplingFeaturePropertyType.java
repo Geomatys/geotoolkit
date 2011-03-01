@@ -54,7 +54,7 @@ import javax.xml.bind.annotation.XmlType;
 public class SamplingFeaturePropertyType {
 
     @XmlElementRef(name = "SamplingFeature", namespace = "http://www.opengis.net/sampling/1.0", type = JAXBElement.class)
-    private JAXBElement<? extends SamplingFeatureEntry> samplingFeature;
+    private JAXBElement<? extends SamplingFeatureType> samplingFeature;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
     @XmlSchemaType(name = "anyURI")
     private String remoteSchema;
@@ -92,7 +92,7 @@ public class SamplingFeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link SamplingPointType }{@code >}
      *     
      */
-    public JAXBElement<? extends SamplingFeatureEntry> getSamplingFeature() {
+    public JAXBElement<? extends SamplingFeatureType> getSamplingFeature() {
         return samplingFeature;
     }
 
@@ -112,8 +112,8 @@ public class SamplingFeaturePropertyType {
      *     {@link JAXBElement }{@code <}{@link SamplingPointType }{@code >}
      *     
      */
-    public void setSamplingFeature(final JAXBElement<? extends SamplingFeatureEntry> value) {
-        this.samplingFeature = ((JAXBElement<? extends SamplingFeatureEntry> ) value);
+    public void setSamplingFeature(final JAXBElement<? extends SamplingFeatureType> value) {
+        this.samplingFeature = ((JAXBElement<? extends SamplingFeatureType> ) value);
     }
 
     /**

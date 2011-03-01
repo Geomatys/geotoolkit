@@ -58,7 +58,7 @@ import javax.xml.bind.annotation.XmlType;
     "constraintList",
     "otherConstraint"
 })
-public class PhenomenonSeriesType extends CompoundPhenomenonEntry {
+public class PhenomenonSeriesType extends CompoundPhenomenonType {
 
     @XmlElement(required = true)
     private PhenomenonPropertyType base;

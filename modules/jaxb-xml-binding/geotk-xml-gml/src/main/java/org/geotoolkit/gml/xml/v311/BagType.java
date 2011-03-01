@@ -26,7 +26,9 @@ import javax.xml.bind.annotation.XmlType;
 /**
  * A non-abstract generic collection type that can be used as a document element for a collection of any GML types - Geometries, Topologies, Features ...
  * 
- * FeatureCollections may only contain Features.  GeometryCollections may only contain Geometrys.  Bags are less constrained  they must contain objects that are substitutable for gml:_Object.  This may mix several levels, including Features, Definitions, Dictionaries, Geometries etc.  
+ * FeatureCollections may only contain Features.  GeometryCollections may only contain Geometrys.  
+ * Bags are less constrained  they must contain objects that are substitutable for gml:_Object.
+ * This may mix several levels, including Features, Definitions, Dictionaries, Geometries etc.
  * 
  * The content model would ideally be 
  *    member 0..*
@@ -63,30 +65,14 @@ import javax.xml.bind.annotation.XmlType;
     "member",
     "members"
 })
-public class BagType
-    extends AbstractGMLEntry
-{
+public class BagType extends AbstractGMLType {
 
-    protected List<AssociationType> member;
-    protected ArrayAssociationType members;
+    private List<AssociationType> member;
+    private ArrayAssociationType members;
 
     /**
      * Gets the value of the member property.
      * 
-     * <p>
-     * This accessor method returns a reference to the live list,
-     * not a snapshot. Therefore any modification you make to the
-     * returned list will be present inside the JAXB object.
-     * This is why there is not a <CODE>set</CODE> method for the member property.
-     * 
-     * <p>
-     * For example, to add a new item, do as follows:
-     * <pre>
-     *    getMember().add(newItem);
-     * </pre>
-     * 
-     * 
-     * <p>
      * Objects of the following type(s) are allowed in the list
      * {@link AssociationType }
      * 

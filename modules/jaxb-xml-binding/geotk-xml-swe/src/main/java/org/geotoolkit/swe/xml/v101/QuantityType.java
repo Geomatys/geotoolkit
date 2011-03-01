@@ -37,7 +37,7 @@ import org.geotoolkit.util.Utilities;
     "quality",
     "value"
 })
-public class QuantityType extends AbstractDataComponentEntry implements Quantity {
+public class QuantityType extends AbstractDataComponentType implements Quantity {
 
     private UomPropertyType uom;
     private AllowedValuesPropertyType constraint;

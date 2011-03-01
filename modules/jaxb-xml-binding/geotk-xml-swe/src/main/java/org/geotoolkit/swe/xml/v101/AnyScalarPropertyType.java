@@ -82,7 +82,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     private String name;
     
     @XmlElement(name = "AbstractDataComponent")
-    protected AbstractDataComponentEntry abstractDataComponent;
+    protected AbstractDataComponentType abstractDataComponent;
     @XmlElement(name = "Time")
     protected TimeType time;
     @XmlElement(name = "Boolean")
@@ -135,7 +135,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
                     this.text = new Text((AbstractText) component);
 
                 } else {
-                    abstractDataComponent = new AbstractDataComponentEntry(component);
+                    abstractDataComponent = new AbstractDataComponentType(component);
                 }
             }
             this.actuate = sc.getActuate();
@@ -158,7 +158,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Build a new component Property.
      */
-    public AnyScalarPropertyType(final String idDataRecord, final String name, final AbstractDataComponentEntry component) {
+    public AnyScalarPropertyType(final String idDataRecord, final String name, final AbstractDataComponentType component) {
         this.name         = name;
         this.idDataRecord = idDataRecord;
         if (component instanceof TimeType) {
@@ -206,7 +206,7 @@ public class AnyScalarPropertyType implements AnyScalar, Entry {
     /**
      * Gets the value of the phenomenon property.
      */
-    public AbstractDataComponentEntry getValue() {
+    public AbstractDataComponentType getValue() {
         if (abstractDataComponent != null) {
             return abstractDataComponent;
         } else if (time != null){

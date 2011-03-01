@@ -65,7 +65,7 @@ import org.geotoolkit.util.Utilities;
     "value"
 })
 @XmlRootElement(name = "QuantityRange")
-public class QuantityRange extends AbstractDataComponentEntry implements AbstractQuantityRange {
+public class QuantityRange extends AbstractDataComponentType implements AbstractQuantityRange {
 
     private UomPropertyType uom;
     private AllowedValuesPropertyType constraint;

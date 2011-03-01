@@ -19,7 +19,7 @@ package org.geotoolkit.sml.xml.v100;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractFeatureEntry;
+import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.sml.xml.AbstractSML;
 
 
@@ -53,7 +53,7 @@ import org.geotoolkit.sml.xml.AbstractSML;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "AbstractSMLType")
-public abstract class AbstractSMLType extends AbstractFeatureEntry implements AbstractSML {
+public abstract class AbstractSMLType extends AbstractFeatureType implements AbstractSML {
 
     public AbstractSMLType() {
 

@@ -44,20 +44,20 @@ public class ObjectFactory {
     private static final QName _SamplingFeatureCollection_QNAME = new QName("http://www.opengis.net/sampling/1.0", "SamplingFeatureCollection");
     
     /**
-     * Create an instance of {@link SamplingPointEntry }
+     * Create an instance of {@link SamplingPointType }
      * 
      */
-    public SamplingPointEntry createSamplingPointEntry() {
-        return new SamplingPointEntry();
+    public SamplingPointType createSamplingPointType() {
+        return new SamplingPointType();
     }
     
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link ObservationEntry }{@code >}}
+     * Create an instance of {@link JAXBElement }{@code <}{@link ObservationType }{@code >}}
      * 
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingPoint", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<SamplingPointEntry> createSamplingPoint(final SamplingPointEntry value) {
-        return new JAXBElement<SamplingPointEntry>(_SamplingPoint_QNAME, SamplingPointEntry.class, null, value);
+    public JAXBElement<SamplingPointType> createSamplingPoint(final SamplingPointType value) {
+        return new JAXBElement<SamplingPointType>(_SamplingPoint_QNAME, SamplingPointType.class, null, value);
     }
 
 
@@ -97,8 +97,8 @@ public class ObjectFactory {
      * Create an instance of {@link SamplingFeatureRelationType }
      *
      */
-    public SamplingFeatureRelationEntry createSamplingFeatureRelationType() {
-        return new SamplingFeatureRelationEntry();
+    public SamplingFeatureRelationType createSamplingFeatureRelationType() {
+        return new SamplingFeatureRelationType();
     }
 
     /**
@@ -121,8 +121,8 @@ public class ObjectFactory {
      * Create an instance of {@link SamplingFeatureType }
      *
      */
-    public SamplingFeatureEntry createSamplingFeatureType() {
-        return new SamplingFeatureEntry();
+    public SamplingFeatureType createSamplingFeatureType() {
+        return new SamplingFeatureType();
     }
 
     /**
@@ -131,14 +131,6 @@ public class ObjectFactory {
      */
     public SamplingCurveType createSamplingCurveType() {
         return new SamplingCurveType();
-    }
-
-    /**
-     * Create an instance of {@link SamplingPointType }
-     *
-     */
-    public SamplingPointEntry createSamplingPointType() {
-        return new SamplingPointEntry();
     }
 
     /**
@@ -329,8 +321,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingFeature", substitutionHeadNamespace = "http://www.opengis.net/gml", substitutionHeadName = "AbstractFeature")
-    public JAXBElement<SamplingFeatureEntry> createSamplingFeature(final SamplingFeatureEntry value) {
-        return new JAXBElement<SamplingFeatureEntry>(_SamplingFeature_QNAME, SamplingFeatureEntry.class, null, value);
+    public JAXBElement<SamplingFeatureType> createSamplingFeature(final SamplingFeatureType value) {
+        return new JAXBElement<SamplingFeatureType>(_SamplingFeature_QNAME, SamplingFeatureType.class, null, value);
     }
 
     /**
@@ -338,8 +330,8 @@ public class ObjectFactory {
      *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/sampling/1.0", name = "SamplingFeatureRelation")
-    public JAXBElement<SamplingFeatureRelationEntry> createSamplingFeatureRelation(final SamplingFeatureRelationEntry value) {
-        return new JAXBElement<SamplingFeatureRelationEntry>(_SamplingFeatureRelation_QNAME, SamplingFeatureRelationEntry.class, null, value);
+    public JAXBElement<SamplingFeatureRelationType> createSamplingFeatureRelation(final SamplingFeatureRelationType value) {
+        return new JAXBElement<SamplingFeatureRelationType>(_SamplingFeatureRelation_QNAME, SamplingFeatureRelationType.class, null, value);
     }
 
     /**

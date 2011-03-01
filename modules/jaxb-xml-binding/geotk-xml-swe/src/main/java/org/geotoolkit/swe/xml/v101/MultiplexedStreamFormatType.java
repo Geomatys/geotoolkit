@@ -45,7 +45,7 @@ import org.geotoolkit.swe.xml.MultiplexedStreamFormat;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "MultiplexedStreamFormatType")
-public class MultiplexedStreamFormatType extends AbstractEncodingEntry implements MultiplexedStreamFormat {
+public class MultiplexedStreamFormatType extends AbstractEncodingType implements MultiplexedStreamFormat {
 
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "anyURI")

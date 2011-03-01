@@ -48,7 +48,7 @@ import org.geotoolkit.swe.xml.AbstractStandardFormat;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "")
 @XmlRootElement(name = "StandardFormat")
-public class StandardFormat extends AbstractEncodingEntry implements AbstractStandardFormat {
+public class StandardFormat extends AbstractEncodingType implements AbstractStandardFormat {
 
     @XmlAttribute(required = true)
     @XmlJavaTypeAdapter(CollapsedStringAdapter.class)

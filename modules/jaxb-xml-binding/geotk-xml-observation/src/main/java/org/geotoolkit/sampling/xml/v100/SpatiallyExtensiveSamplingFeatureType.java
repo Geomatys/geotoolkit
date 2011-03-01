@@ -49,7 +49,7 @@ import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
     SamplingSolidType.class,
     SamplingSurfaceType.class
 })
-public class SpatiallyExtensiveSamplingFeatureType extends SamplingFeatureEntry {
+public class SpatiallyExtensiveSamplingFeatureType extends SamplingFeatureType {
 
     public SpatiallyExtensiveSamplingFeatureType() {
         

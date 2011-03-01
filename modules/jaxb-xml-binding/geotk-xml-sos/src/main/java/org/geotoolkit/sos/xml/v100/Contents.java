@@ -143,7 +143,7 @@ public class Contents {
     public static class ObservationOfferingList {
 
         @XmlElement(name = "ObservationOffering", required = true)
-        private List<ObservationOfferingEntry> observationOffering;
+        private List<ObservationOfferingType> observationOffering;
 
         /**
          * Empty constructor used by JAXB
@@ -155,16 +155,16 @@ public class Contents {
         /**
          * Build a new Observation offering list.
          */
-        public ObservationOfferingList(final List<ObservationOfferingEntry> observationOffering){
+        public ObservationOfferingList(final List<ObservationOfferingType> observationOffering){
             this.observationOffering = observationOffering;
         }
         
         /**
          * Return the list of observation Offering.
          */
-        public List<ObservationOfferingEntry> getObservationOffering() {
+        public List<ObservationOfferingType> getObservationOffering() {
             if (observationOffering == null){
-                observationOffering = new ArrayList<ObservationOfferingEntry>();
+                observationOffering = new ArrayList<ObservationOfferingType>();
             }
             return Collections.unmodifiableList(observationOffering);
         }
@@ -194,7 +194,7 @@ public class Contents {
         @Override
         public String toString() {
             StringBuilder s = new StringBuilder();
-            for (ObservationOfferingEntry o:observationOffering) {
+            for (ObservationOfferingType o:observationOffering) {
                 s.append(o.toString()).append('\n');
             }
             return s.toString();

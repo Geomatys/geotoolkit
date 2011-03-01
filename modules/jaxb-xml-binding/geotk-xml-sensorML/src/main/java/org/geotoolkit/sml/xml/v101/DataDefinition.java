@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.sml.xml.AbstractDataDefinition;
-import org.geotoolkit.swe.xml.v101.DataBlockDefinitionEntry;
+import org.geotoolkit.swe.xml.v101.DataBlockDefinitionType;
 import org.geotoolkit.swe.xml.v101.DataStreamDefinitionType;
 
 /**
@@ -55,7 +55,7 @@ import org.geotoolkit.swe.xml.v101.DataStreamDefinitionType;
 public class DataDefinition implements AbstractDataDefinition {
 
     @XmlElement(name = "DataBlockDefinition", namespace = "http://www.opengis.net/swe/1.0.1")
-    private DataBlockDefinitionEntry dataBlockDefinition;
+    private DataBlockDefinitionType dataBlockDefinition;
     @XmlElement(name = "DataStreamDefinition", namespace = "http://www.opengis.net/swe/1.0.1")
     private DataStreamDefinitionType dataStreamDefinition;
     @XmlAttribute(namespace = "http://www.opengis.net/gml")
@@ -94,7 +94,7 @@ public class DataDefinition implements AbstractDataDefinition {
             this.title        = ddef.getTitle();
             this.type         = ddef.getType();
             if (ddef.getDataBlockDefinition() != null) {
-                this.dataBlockDefinition = new DataBlockDefinitionEntry(ddef.getDataBlockDefinition());
+                this.dataBlockDefinition = new DataBlockDefinitionType(ddef.getDataBlockDefinition());
             }
             if (ddef.getDataStreamDefinition() != null) {
                 this.dataStreamDefinition = new DataStreamDefinitionType(ddef.getDataStreamDefinition());
@@ -109,7 +109,7 @@ public class DataDefinition implements AbstractDataDefinition {
      *     {@link DataBlockDefinitionType }
      *
      */
-    public DataBlockDefinitionEntry getDataBlockDefinition() {
+    public DataBlockDefinitionType getDataBlockDefinition() {
         return dataBlockDefinition;
     }
 
@@ -121,7 +121,7 @@ public class DataDefinition implements AbstractDataDefinition {
      *     {@link DataBlockDefinitionType }
      *
      */
-    public void setDataBlockDefinition(final DataBlockDefinitionEntry value) {
+    public void setDataBlockDefinition(final DataBlockDefinitionType value) {
         this.dataBlockDefinition = value;
     }
 

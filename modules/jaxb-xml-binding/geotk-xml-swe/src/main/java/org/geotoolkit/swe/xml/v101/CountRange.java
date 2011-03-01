@@ -61,7 +61,7 @@ import org.geotoolkit.swe.xml.AbstractQualityProperty;
     "value"
 })
 @XmlRootElement(name = "CountRange")
-public class CountRange extends AbstractDataComponentEntry implements AbstractCountRange {
+public class CountRange extends AbstractDataComponentType implements AbstractCountRange {
 
     private AllowedValuesPropertyType constraint;
     private List<QualityPropertyType> quality;

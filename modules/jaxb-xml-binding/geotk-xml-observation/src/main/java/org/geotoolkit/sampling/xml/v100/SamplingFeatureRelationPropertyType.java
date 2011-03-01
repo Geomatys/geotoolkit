@@ -50,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 public class SamplingFeatureRelationPropertyType {
 
     @XmlElement(name = "SamplingFeatureRelation", required = true)
-    private SamplingFeatureRelationEntry samplingFeatureRelation;
+    private SamplingFeatureRelationType samplingFeatureRelation;
 
     /**
      * Gets the value of the samplingFeatureRelation property.
@@ -60,7 +60,7 @@ public class SamplingFeatureRelationPropertyType {
      *     {@link SamplingFeatureRelationType }
      *     
      */
-    public SamplingFeatureRelationEntry getSamplingFeatureRelation() {
+    public SamplingFeatureRelationType getSamplingFeatureRelation() {
         return samplingFeatureRelation;
     }
 
@@ -72,7 +72,7 @@ public class SamplingFeatureRelationPropertyType {
      *     {@link SamplingFeatureRelationType }
      *     
      */
-    public void setSamplingFeatureRelation(final SamplingFeatureRelationEntry value) {
+    public void setSamplingFeatureRelation(final SamplingFeatureRelationType value) {
         this.samplingFeatureRelation = value;
     }
 

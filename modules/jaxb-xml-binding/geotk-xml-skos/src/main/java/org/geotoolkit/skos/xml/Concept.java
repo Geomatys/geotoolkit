@@ -28,7 +28,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
-import org.geotoolkit.gml.xml.v311.AbstractGMLEntry;
+import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.util.Utilities;
 
 /**
@@ -146,7 +146,7 @@ public class Concept implements Serializable {
     private String modified;
 
     @XmlElement(namespace="http://www.opengis.net/gml")
-    private List<AbstractGMLEntry> geometry;
+    private List<AbstractGMLType> geometry;
 
 
 
@@ -603,14 +603,14 @@ public class Concept implements Serializable {
     /**
      * @return the geometry
      */
-    public List<AbstractGMLEntry> getGeometry() {
+    public List<AbstractGMLType> getGeometry() {
         return geometry;
     }
 
     /**
      * @param geometry the geometry to set
      */
-    public void setGeometry(final List<AbstractGMLEntry> geometry) {
+    public void setGeometry(final List<AbstractGMLType> geometry) {
         this.geometry = geometry;
     }
 

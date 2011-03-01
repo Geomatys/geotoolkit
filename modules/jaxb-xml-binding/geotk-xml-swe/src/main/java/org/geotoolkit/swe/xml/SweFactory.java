@@ -238,7 +238,7 @@ public class SweFactory {
             return new org.geotoolkit.swe.xml.v100.SimpleDataRecordType((List<org.geotoolkit.swe.xml.v100.AnyScalarPropertyType>)fields);
 
         } else if ("1.0.1".equals(version)) {
-            return new org.geotoolkit.swe.xml.v101.SimpleDataRecordEntry((List<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType>)fields);
+            return new org.geotoolkit.swe.xml.v101.SimpleDataRecordType((List<org.geotoolkit.swe.xml.v101.AnyScalarPropertyType>)fields);
 
         } else {
             throw new IllegalArgumentException("Unexpected SWE version:" + version);
