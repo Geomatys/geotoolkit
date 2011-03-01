@@ -50,10 +50,23 @@ import org.opengis.feature.type.Name;
 public interface Query {
 
     /**
+     * Default GeotoolKit language used for querying databases.
+     */
+    public static final String GEOTK_QOM = "GEOTK-QOM";
+
+    /**
      * The feature source of the query.
      * Can be a selector or Join.
      */
     Source getSource();
+
+    /**
+     * Returns the language set for this query. This will be one of the query
+     * language constants returned by {@link DataStore#getSupportedQueryLanguages}.
+     *
+     * @return the query language.
+     */
+    public String getLanguage();
 
     /**
      * The typeName attribute is used to indicate the name of the feature type

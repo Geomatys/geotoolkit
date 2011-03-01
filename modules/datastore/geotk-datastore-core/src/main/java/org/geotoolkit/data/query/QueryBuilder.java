@@ -49,6 +49,7 @@ public final class QueryBuilder {
     private Integer maxFeatures = null;
     private Hints hints = null;
     private double[] resolution = null;
+    private String language = Query.GEOTK_QOM;
 
     public QueryBuilder(){
     }
@@ -84,6 +85,7 @@ public final class QueryBuilder {
         this.startIndex = query.getStartIndex();
         this.typeName = query.getTypeName();
         this.source = query.getSource();
+        this.language = query.getLanguage();
     }
 
     public Name getTypeName() {
@@ -208,6 +210,8 @@ public final class QueryBuilder {
             }else{
                 selectors.add(selectName);
             }
+        }else if(s instanceof TextStatement){
+            //can't check this
         }else{
             throw new IllegalStateException("Source type is unknowned : " + s +
                     "\n valid types ares Join and Selector");
@@ -262,9 +266,20 @@ public final class QueryBuilder {
     }
 
     /**
+     * Create a query in the defined language.
+     * 
+     * @param language
+     * @param statement
+     * @return Query
+     */
+    public static Query language(final String language, final String statement){
+        return new DefaultQuery(language, statement);
+    }
+
+    /**
      * Implements a query that will fetch all the FeatureIDs from a source.
      * This query should retrive no properties, with no maxFeatures, no
-     * filtering, and the a featureType with no attribtues.
+     * filtering, and the a featureType with no attributes.
      */
     public static Query fids(final Name name){
         return new DefaultQuery(new DefaultSelector(null, name, "s1"), NO_PROPERTIES);

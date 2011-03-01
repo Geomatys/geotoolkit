@@ -29,6 +29,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreJoinFeatureCollection;
 import org.geotoolkit.data.DefaultJoinFeatureCollection;
 import org.geotoolkit.data.DefaultSelectorFeatureCollection;
+import org.geotoolkit.data.DefaultTextStmtFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
@@ -63,6 +64,8 @@ public class QueryUtilities {
             return isAbsolute(j.getLeft()) && isAbsolute(j.getRight());
         }else if (source instanceof Selector){
             return ((Selector)source).getSession() != null;
+        }else if (source instanceof TextStatement){
+            return ((TextStatement)source).getSession() != null;
         }else{
             throw new IllegalStateException("Source type is unknowned : " + source +
                     "\n valid types ares Join and Selector");
@@ -99,6 +102,17 @@ public class QueryUtilities {
                 }
 
                 absolute = new DefaultSelector(session, select.getFeatureTypeName(), select.getSelectorName());
+            }else{
+                absolute = source;
+            }
+        }else if (source instanceof TextStatement){
+            final TextStatement select = (TextStatement) source;
+            if (select.getSession() == null){
+                if(session == null){
+                    throw new NullPointerException("Session can not be null.");
+                }
+
+                absolute = new DefaultTextStatement(select.getStatement(), session);
             }else{
                 absolute = source;
             }
@@ -141,22 +155,29 @@ public class QueryUtilities {
     public static FeatureCollection evaluate(final String id, Query query, final Session session){
         query = QueryUtilities.makeAbsolute(query, session);
 
-        final Source s = query.getSource();
 
-        if(s instanceof Selector){
-            return new DefaultSelectorFeatureCollection(id, query);
-        }else if(s instanceof Join){
-            final Collection<Session> sessions = getSessions(s, null);
+        final String language = query.getLanguage();
 
-            if(sessions.size() == 1 && sessions.iterator().next().getDataStore().getQueryCapabilities().handleCrossQuery()){
-                //the datastore can handle our join query, it will be much more efficient then a generic implementation
-                return new DataStoreJoinFeatureCollection(id, query);
+        if(query.GEOTK_QOM.equalsIgnoreCase(language)){
+            final Source s = query.getSource();
+            if(s instanceof Selector){
+                return new DefaultSelectorFeatureCollection(id, query);
+            }else if(s instanceof Join){
+                final Collection<Session> sessions = getSessions(s, null);
+
+                if(sessions.size() == 1 && sessions.iterator().next().getDataStore().getQueryCapabilities().handleCrossQuery()){
+                    //the datastore can handle our join query, it will be much more efficient then a generic implementation
+                    return new DataStoreJoinFeatureCollection(id, query);
+                }else{
+                    //can't optimize it, use the generic implementation
+                    return new DefaultJoinFeatureCollection(id, query);
+                }
             }else{
-                //can't optimize it, use the generic implementation
-                return new DefaultJoinFeatureCollection(id, query);
+                throw new IllegalArgumentException("Query source is an unknowned type : " + s);
             }
         }else{
-            throw new IllegalArgumentException("Query source is an unknowned type : " + s);
+            //custom language query, let the datastore handle it
+            return new DefaultTextStmtFeatureCollection(id, query);
         }
     }
 
@@ -180,6 +201,8 @@ public class QueryUtilities {
             }
             
             return session.getDataStore().isWritable(select.getFeatureTypeName());
+        }else if(source instanceof TextStatement){
+            return false;
         }else{
             throw new IllegalStateException("Source type is unknowned : " + source +
                     "\n valid types ares Join and Selector");
@@ -215,6 +238,10 @@ public class QueryUtilities {
 
     public static boolean queryAll(final Query query){
 
+        if(query.getSource() instanceof TextStatement){
+            return true;
+        }
+
         return     query.retrieveAllProperties()
                 && query.getCoordinateSystemReproject() == null
                 && query.getCoordinateSystemReproject() == null
@@ -227,9 +254,9 @@ public class QueryUtilities {
     /**
      * Combine two queries in the way that the resulting query act
      * as if it was a sub query result. 
-     * For exemple if the original query has a start index of 10 and the
-     * subquery a start index of 5, the resulting startIndex will be 15.
-     * The typename of the first query will override the one of the second.
+     * For example if the original query has a start index of 10 and the
+     * sub-query a start index of 5, the resulting startIndex will be 15.
+     * The type name of the first query will override the one of the second.
      * 
      * @param original
      * @param second
@@ -343,7 +370,7 @@ public class QueryUtilities {
      * want to load.
      * </li>
      * <li>
-     * filter: the filtets of both queries are or'ed
+     * filter: the filters of both queries are or'ed
      * </li>
      * <li>
      * <b>any other query property is ignored</b> and no guarantees are made of
@@ -354,7 +381,7 @@ public class QueryUtilities {
      * </p>
      *
      * @param firstQuery first query
-     * @param secondQuery econd query
+     * @param secondQuery second query
      *
      * @return Query restricted to the limits of definitionQuery
      *
@@ -454,7 +481,7 @@ public class QueryUtilities {
 
     /**
      * Creates a set of attribute names from the two input lists of names,
-     * while keep only the attributs from the second list
+     * while keep only the attributes from the second list
      */
     private static Name[] retainAttributes(final Name[] atts1, final Name[] atts2) {
         if (atts1 == null && atts2 == null) {

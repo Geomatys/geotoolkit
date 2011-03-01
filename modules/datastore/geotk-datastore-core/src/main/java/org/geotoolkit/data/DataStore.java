@@ -26,6 +26,7 @@ import java.util.Set;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.session.Session;
+import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.Feature;
@@ -64,7 +65,7 @@ public interface DataStore {
     Session createSession(boolean asynchrone);
 
     /**
-     * Convinient way to aquiere all names by ignoring the namespaces.
+     * Convinient way to aquire all names by ignoring the namespaces.
      * 
      * @return String array
      * @throws DataStoreException
@@ -88,9 +89,9 @@ public interface DataStore {
     void createSchema(Name typeName, FeatureType featureType) throws DataStoreException;
 
     /**
-     * Update a schema, should preserve attribut with the same
-     * name and set default values to new attributs.
-     * If the attributs type have changed, the datastore should do the best
+     * Update a schema, should preserve attribute with the same
+     * name and set default values to new attributes.
+     * If the attributes type have changed, the datastore should do the best
      * effort to try to convert values.
      *
      * @param typeName , type name to update
@@ -108,8 +109,8 @@ public interface DataStore {
     void deleteSchema(Name typeName) throws DataStoreException;
 
     /**
-     * Convinient way to aquiere a schema by ignoring the namespace.
-     * This should return the first schema which localpart name match the
+     * Convenient way to aquire a schema by ignoring the namespace.
+     * This should return the first schema which local part name match the
      * given typeName.
      * 
      * @return FeatureType
@@ -122,9 +123,18 @@ public interface DataStore {
      *
      * @param typeName name of the searched type
      * @return FeatureType type for the given name
-     * @throws DataStoreException if typeName doesnt exist or datastore internal error.
+     * @throws DataStoreException if typeName doesn't exist or datastore internal error.
      */
     FeatureType getFeatureType(Name typeName) throws DataStoreException;
+
+    /**
+     * Some kind of queries may define a custom language statement.
+     * In those cases the feature type can only be determinate by the datastore.
+     * @param query
+     * @return FeatureType
+     * @throws DataStoreException
+     */
+    FeatureType getFeatureType(Query query) throws DataStoreException, SchemaException;
 
     /**
      * Ask if the given type is editable. if true you can
@@ -132,7 +142,7 @@ public interface DataStore {
      *
      * @param typeName name of the searched type
      * @return true if the type features can be edited.
-     * @throws DataStoreException if typeName doesnt exist or datastore internal error.
+     * @throws DataStoreException if typeName doesn't exist or datastore internal error.
      */
     boolean isWritable(Name typeName) throws DataStoreException;
 
@@ -172,20 +182,20 @@ public interface DataStore {
      * @param groupName , group where features must be added
      * @param newFeatures , collection of new features
      * @return List of featureId of the added features, may be null or inexact
-     * if the datastore can not handle persistant ids.
+     * if the datastore can not handle persistent ids.
      * @throws DataStoreException
      */
     List<FeatureId> addFeatures(Name groupName, Collection<? extends Feature> newFeatures) throws DataStoreException;
 
     /**
-     * Convinient method to update a single attribut.
+     * convenient method to update a single attribute.
      * @see #update(org.opengis.feature.type.Name, org.opengis.filter.Filter, java.util.Map)
      */
     void updateFeatures(Name groupName, Filter filter, PropertyDescriptor desc, Object value) throws DataStoreException;
 
     /**
      * Update a set of features that match the given filter and replace
-     * there attributs values by thoses in the given map.
+     * there attributes values by those in the given map.
      *
      * @param groupName , group where features must be updated
      * @param filter , updating filter, all features that match the filter will be updated
@@ -212,17 +222,17 @@ public interface DataStore {
     FeatureReader getFeatureReader(Query query) throws DataStoreException;
 
     /**
-     * Aquiere a writer on a given featuretype in modify mode.
+     * Aquire a writer on a given feature type in modify mode.
      *
      * @param typeName , type name
-     * @param filter , limit features to only thoses that match this filter
+     * @param filter , limit features to only those that match this filter
      * @return FeatureWriter , never null but can be empty.
      * @throws DataStoreException
      */
     FeatureWriter getFeatureWriter(Name typeName, Filter filter) throws DataStoreException;
 
     /**
-     * Aquiere a writer on a given featuretype in append mode.
+     * Aquire a writer on a given feature type in append mode.
      *
      * @param typeName , type name
      * @return FeatureWriter , empty.

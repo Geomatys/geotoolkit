@@ -33,6 +33,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 class DefaultQuery implements Query {
 
+    private final String language;
     private final Source source;
     private final Name[] properties;
     private final Integer maxFeatures;
@@ -95,10 +96,28 @@ class DefaultQuery implements Query {
         }else{
             this.hints = hints;
         }
+
+        this.language = GEOTK_QOM;
     }
 
     /**
-     * Copy attributs from the given query
+     * A custom query statement in the given language.
+     */
+    DefaultQuery(final String language, final String statement) {
+        this.language = language;
+        this.source = new DefaultTextStatement(statement,null);
+        this.properties = null;
+        this.maxFeatures = null;
+        this.startIndex = 0;
+        this.filter = null;
+        this.sortBy = null;
+        this.hints = null;
+        this.crs = null;
+        this.resolution = null;
+    }
+
+    /**
+     * Copy attributes from the given query
      * @param query : query to copy
      */
     DefaultQuery(final Query query) {
@@ -111,6 +130,14 @@ class DefaultQuery implements Query {
              query.getMaxFeatures(),
              (query.getResolution()==null)?null:query.getResolution().clone(),
              query.getHints());
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getLanguage(){
+        return language;
     }
 
     /**

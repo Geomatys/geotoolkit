@@ -26,6 +26,7 @@ import java.util.Set;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
+import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.storage.DataStoreException;
 
@@ -89,6 +90,8 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     public Session getSession() {
         if(source instanceof Selector){
             return ((Selector)source).getSession();
+        }else if(source instanceof TextStatement){
+            return ((TextStatement)source).getSession();
         }else{
             return null;
         }

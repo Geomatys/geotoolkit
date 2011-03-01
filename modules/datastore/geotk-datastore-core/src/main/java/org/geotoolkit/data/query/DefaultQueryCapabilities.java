@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.query;
 
+import org.geotoolkit.util.XArrays;
+
 /**
  * Default query capabilities implementation.
  *
@@ -26,9 +28,23 @@ package org.geotoolkit.data.query;
 public class DefaultQueryCapabilities implements QueryCapabilities{
 
     private final boolean crossQuery;
+    private final String[] supportedLanguages;
 
     public DefaultQueryCapabilities(final boolean crossQuery) {
+        this(crossQuery, new String[]{Query.GEOTK_QOM});
+    }
+
+    public DefaultQueryCapabilities(final boolean crossQuery, final String[] languages) {
         this.crossQuery = crossQuery;
+
+        if(languages == null){
+            this.supportedLanguages = new String[]{Query.GEOTK_QOM};
+        }else{
+            if(!XArrays.contains(languages, Query.GEOTK_QOM)){
+                throw new IllegalArgumentException("Supported languages must at least contain GEOTK_QOM.");
+            }
+            this.supportedLanguages = languages.clone();
+        }
     }
 
     /**
@@ -37,6 +53,11 @@ public class DefaultQueryCapabilities implements QueryCapabilities{
     @Override
     public boolean handleCrossQuery(){
         return crossQuery;
+    }
+
+    @Override
+    public String[] getSupportedQueryLanguages() {
+        return supportedLanguages;
     }
 
 }

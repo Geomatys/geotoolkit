@@ -37,6 +37,8 @@ import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
 import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
 import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.Selector;
+import org.geotoolkit.data.query.Source;
 import org.geotoolkit.data.session.DefaultSession;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.Hints;
@@ -142,10 +144,31 @@ public abstract class AbstractDataStore implements DataStore{
         throw new DataStoreException("Schema : " + typeName + "doesnt exist in this datastore.");
     }
 
+    @Override
+    public FeatureType getFeatureType(final Query query) throws DataStoreException, SchemaException {
+
+        final Source source = query.getSource();
+
+        if(Query.GEOTK_QOM.equalsIgnoreCase(query.getLanguage()) && source instanceof Selector){
+            final Selector selector = (Selector) source;
+            FeatureType ft = selector.getSession().getDataStore().getFeatureType(query.getTypeName());
+            ft = FeatureTypeUtilities.createSubType(ft, query.getPropertyNames(), query.getCoordinateSystemReproject());
+
+            final Boolean hide = (Boolean) query.getHints().get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
+            if(hide != null && hide){
+                ft = FeatureTypeUtilities.excludePrimaryKeyFields(ft);
+            }
+
+            return ft;
+        }
+
+        throw new DataStoreException("Can not deduce feature type of query : " + query);
+    }
+
     /**
      * {@inheritDoc }
      *
-     * This implementation will try to aquiere a writer and return true if it
+     * This implementation will try to aquire a writer and return true if it
      * succeed.
      */
     @Override

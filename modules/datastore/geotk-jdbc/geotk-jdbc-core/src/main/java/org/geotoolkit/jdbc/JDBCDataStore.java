@@ -44,6 +44,8 @@ import org.opengis.filter.FilterFactory;
  */
 public interface JDBCDataStore extends DataStore {
 
+    public static final String CUSTOM_SQL = "CUSTOM-SQL";
+
     /**
      * The native SRID associated to a certain descriptor
      */

@@ -62,6 +62,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
+import org.geotoolkit.data.query.TextStatement;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.DefaultName;
@@ -106,7 +107,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     private final DataBaseModel dbmodel = new DataBaseModel(this);
-    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(true);
+    private final QueryCapabilities capabilities = new DefaultQueryCapabilities(true, new String[]{Query.GEOTK_QOM, CUSTOM_SQL});
     final SQLQueryBuilder queryBuilder = new SQLQueryBuilder(this);
 
     DefaultJDBCDataStore(final String namespace){
@@ -142,6 +143,35 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     }
 
     /**
+     * Handle standard QOM queries and SQL queries.
+     */
+    @Override
+    public FeatureType getFeatureType(final Query query) throws DataStoreException, SchemaException {
+
+        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
+
+            final TextStatement txt = (TextStatement) query.getSource();
+            final String sql = txt.getStatement();
+
+            Connection cx = null;
+            Statement stmt = null;
+            ResultSet rs = null;
+            try {
+                cx = createConnection();
+                stmt = cx.createStatement();
+                rs = stmt.executeQuery(sql);
+                return getMetaModel().analyzeResult(rs, "undefined");
+            } catch (SQLException ex) {
+                throw new DataStoreException(ex);
+            }finally{
+                closeSafe(cx,stmt,rs);
+            }
+        }
+
+        return super.getFeatureType(query);
+    }
+
+    /**
      * {@inheritDoc }
      */
     @Override
@@ -162,6 +192,8 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             reader = getCrossFeatureReader(query);
         }else if(source instanceof Selector){
             reader = getSimpleFeatureReader(query);
+        }else if(source instanceof TextStatement){
+            reader = getSQLFeatureReader(query);
         }else{
             throw new DataStoreException("Unexpected source type : " + source);
         }
@@ -439,6 +471,26 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         return reader;
     }
 
+    private FeatureReader getSQLFeatureReader(final Query query) throws DataStoreException {
+
+        final TextStatement stmt = (TextStatement) query.getSource();
+        final String sql = stmt.getStatement();
+        
+        try {
+            final SimpleFeatureType sft = (SimpleFeatureType) getFeatureType(query);
+            final PrimaryKey pk = new NullPrimaryKey(sft.getTypeName());
+            final Connection cx = createConnection();
+            final JDBCFeatureReader reader = new JDBCFeatureReader(sql, cx, this, null, sft, pk, null);
+            return reader;
+        } catch (SchemaException ex) {
+            throw new DataStoreException(ex);
+        } catch (SQLException ex) {
+            throw new DataStoreException(ex);
+        } catch (IOException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
+
     /**
      * {@inheritDoc }
      */
@@ -537,6 +589,15 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
      */
     @Override
     public long getCount(final Query query) throws DataStoreException {
+        if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
+            final FeatureReader reader = getSQLFeatureReader(query);
+            try{
+                return DataUtilities.calculateCount(reader);
+            }finally{
+                reader.close();
+            }
+        }
+
         typeCheck(query.getTypeName());
         final FeatureType type = getFeatureType(query.getTypeName());
 
