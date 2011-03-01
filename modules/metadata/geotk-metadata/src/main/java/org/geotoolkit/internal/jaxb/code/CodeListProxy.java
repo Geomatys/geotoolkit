@@ -145,33 +145,36 @@ public final class CodeListProxy {
         // Get the class identifier.
         final Class<?> type = code.getClass();
         final UML uml = type.getAnnotation(UML.class);
-        String identifier = null;
+        String classID = null;
         if (uml != null) {
-            identifier = uml.identifier();
+            classID = uml.identifier();
         }
-        if (identifier == null || (identifier = identifier.trim()).length() == 0) {
-            identifier = type.getSimpleName();
+        if (classID == null || (classID = classID.trim()).length() == 0) {
+            classID = type.getSimpleName();
         }
-        codeList = schemaURL("gmxCodelists.xml", identifier);
+        codeList = schemaURL("gmxCodelists.xml", classID);
 
         // Get the field identifier.
-        String field = code.identifier();
-        codeListValue = (field != null && (field = field.trim()).length() != 0) ? field : code.name();
-
-        // Get the localized name of the field identifier, if possible.
-        Locale locale = MarshalContext.getLocale();
-        if (locale != null) {
-            final String key = identifier + '.' + field;
-            try {
-                value = ResourceBundle.getBundle("org.opengis.metadata.CodeLists", locale).getString(key);
-            } catch (MissingResourceException e) {
-                Logging.recoverableException(CodeListAdapter.class, "marshal", e);
+        String fieldID = code.identifier();
+        if (fieldID == null || (fieldID = fieldID.trim()).length() == 0) {
+            fieldID = code.name();
+        } else {
+            // Get the localized name of the field identifier, if possible.
+            Locale locale = MarshalContext.getLocale();
+            if (locale != null) {
+                final String key = classID + '.' + fieldID;
+                try {
+                    value = ResourceBundle.getBundle("org.opengis.metadata.CodeLists", locale).getString(key);
+                } catch (MissingResourceException e) {
+                    Logging.recoverableException(CodeListAdapter.class, "marshal", e);
+                }
+            }
+            if (value != null) {
+                codeSpace = Locales.getLanguage(locale);
+            } else {
+                value = StringUtilities.makeSentence(fieldID);
             }
         }
-        if (value != null) {
-            codeSpace = Locales.getLanguage(locale);
-        } else {
-            value = StringUtilities.makeSentence(field);
-        }
+        codeListValue = fieldID;
     }
 }
