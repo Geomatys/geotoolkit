@@ -112,7 +112,6 @@ public abstract class JDBCTestSetup {
 
         //connect
         Connection conn = getDataSource().getConnection();
-        createDataStoreFactory().createSQLDialect(new DefaultJDBCDataStore("http://www.geotoolkit.org/test")).initializeConnection(conn);
         
         try {
             Statement st = conn.createStatement();

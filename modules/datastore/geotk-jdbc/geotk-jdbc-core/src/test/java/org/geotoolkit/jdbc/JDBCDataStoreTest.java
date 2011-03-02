@@ -91,7 +91,7 @@ public abstract class JDBCDataStoreTest extends JDBCTestSupport {
         // GEOT-2031
         assertNotSame(ft2, featureType);
 
-        Connection cx = dataStore.createConnection();
+        Connection cx = dataStore.getDataSource().getConnection();
         Statement st = cx.createStatement();
         ResultSet rs = null;
 

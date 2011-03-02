@@ -150,7 +150,7 @@ public final class DataBaseModel {
         Connection cx = null;
         ResultSet schemaSet = null;
         try {
-            cx = store.createConnection();
+            cx = store.getDataSource().getConnection();
 
             final DatabaseMetaData metadata = cx.getMetaData();
             schemaSet = metadata.getSchemas();
@@ -199,7 +199,7 @@ public final class DataBaseModel {
         Connection cx = null;
         ResultSet tableSet = null;
         try {
-            cx = store.createConnection();
+            cx = store.getDataSource().getConnection();
 
             final DatabaseMetaData metadata = cx.getMetaData();
             tableSet = metadata.getTables(null, schemaName, "%",
@@ -232,7 +232,7 @@ public final class DataBaseModel {
         Connection cx = null;
         ResultSet result = null;
         try {
-            cx = store.createConnection();
+            cx = store.getDataSource().getConnection();
             final DatabaseMetaData metadata = cx.getMetaData();
 
             //explore all columns ----------------------------------------------
@@ -361,7 +361,7 @@ public final class DataBaseModel {
         Connection cx = null;
         Class binding;
         try {
-            cx = store.createConnection();
+            cx = store.getDataSource().getConnection();
             binding = dialect.getMapping(columnSet, cx);
 
         } catch (SQLException e) {
@@ -534,7 +534,7 @@ public final class DataBaseModel {
                         CoordinateReferenceSystem crs = null;
                         Connection cx = null;
                         try {
-                            cx = store.createConnection();
+                            cx = store.getDataSource().getConnection();
                             srid = dialect.getGeometrySRID(store.getDatabaseSchema(), tableName, name, cx);
                             if(srid != null)
                                 crs = dialect.createCRS(srid, cx);

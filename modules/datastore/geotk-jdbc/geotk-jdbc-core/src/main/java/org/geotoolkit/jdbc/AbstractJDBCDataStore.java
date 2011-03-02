@@ -232,21 +232,6 @@ public abstract class AbstractJDBCDataStore extends AbstractDataStore implements
      * {@inheritDoc }
      */
     @Override
-    public final Connection createConnection() throws SQLException {
-        getLogger().fine("CREATE CONNECTION");
-        final Connection cx = getDataSource().getConnection();
-        // isolation level is not set in the datastore, see
-        // http://jira.codehaus.org/browse/GEOT-2021
-
-        //call dialect callback to initialize the connection
-        dialect.initializeConnection(cx);
-        return cx;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public void closeSafe(final Connection cx, final Statement st, final ResultSet rs){
         closeSafe(cx);
         closeSafe(st);

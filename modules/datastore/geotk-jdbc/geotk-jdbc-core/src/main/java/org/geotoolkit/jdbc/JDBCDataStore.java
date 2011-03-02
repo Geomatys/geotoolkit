@@ -19,7 +19,6 @@ package org.geotoolkit.jdbc;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Logger;
 import javax.sql.DataSource;
@@ -148,12 +147,6 @@ public interface JDBCDataStore extends DataStore {
 
 
     //todo should live here or not ? ///////////////////////////////////////////
-
-    /**
-     * Creates a new connection.
-     * Callers of this method should close the connection when done with it.
-     */
-    Connection createConnection() throws SQLException;
 
     /**
      * Utility method for closing a result set.

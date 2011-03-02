@@ -157,7 +157,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             Statement stmt = null;
             ResultSet rs = null;
             try {
-                cx = createConnection();
+                cx = getDataSource().getConnection();
                 stmt = cx.createStatement();
                 rs = stmt.executeQuery(sql);
                 return getMetaModel().analyzeResult(rs, "undefined");
@@ -258,7 +258,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         //grab connection
         final Connection cx;
         try {
-            cx = createConnection();
+            cx = getDataSource().getConnection();
         } catch (SQLException ex) {
             throw new DataStoreException(ex);
         }
@@ -407,7 +407,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         //grab connection
         final Connection cx;
         try {
-            cx = createConnection();
+            cx = getDataSource().getConnection();
         } catch (SQLException ex) {
             throw new DataStoreException(ex);
         }
@@ -479,7 +479,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         try {
             final SimpleFeatureType sft = (SimpleFeatureType) getFeatureType(query);
             final PrimaryKey pk = new NullPrimaryKey(sft.getTypeName());
-            final Connection cx = createConnection();
+            final Connection cx = getDataSource().getConnection();
             final JDBCFeatureReader reader = new JDBCFeatureReader(sql, cx, this, null, sft, pk, null);
             return reader;
         } catch (SchemaException ex) {
@@ -529,7 +529,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         FeatureWriter<SimpleFeatureType, SimpleFeature> writer;
         try {
             final PrimaryKey pkey = dbmodel.getPrimaryKey(typeName);
-            cx = createConnection();
+            cx = getDataSource().getConnection();
 
             //check for insert only
             if ( EditMode.INSERT == mode ) {
@@ -620,7 +620,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
             // either way we can use the datastore optimization
             final Connection cx;
             try {
-                cx = createConnection();
+                cx = getDataSource().getConnection();
             } catch (SQLException ex) {
                 throw new DataStoreException(ex);
             }
@@ -736,7 +736,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         Statement st = null;
         ResultSet rs = null;
         try {
-            cx = createConnection();
+            cx = getDataSource().getConnection();
             if (dialect instanceof PreparedStatementSQLDialect) {
                 st = queryBuilder.selectBoundsSQLPS(featureType, query, cx);
                 rs = ((PreparedStatement) st).executeQuery();
@@ -946,7 +946,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
         Connection cx = null;
 
         try {
-            cx = createConnection();
+            cx = getDataSource().getConnection();
             final String sql = queryBuilder.createTableSQL((SimpleFeatureType) featureType,cx);
             getLogger().log(Level.FINE, "Create schema: {0}", sql);
 

@@ -174,18 +174,6 @@ public interface SQLDialect {
     // todo MUST CHECK ALL THOSES FOLLOWING ////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-
-    /**
-     * Initializes a newly created database connection.
-     * <p>
-     * Subclasses should override this method if there is some additional action
-     * that needs to be taken when a new connection to the database is created. The
-     * default implementation does nothing.
-     * </p>
-     * @param cx The new database connection.
-     */
-    void initializeConnection(final Connection cx) throws SQLException;
-
     /**
      * Determines if the specified table should be included in those published
      * by the datastore.

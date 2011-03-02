@@ -301,14 +301,6 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public void initializeConnection(final Connection cx) throws SQLException {
-
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public boolean includeTable(final String schemaName, final String tableName, final Connection cx)
             throws SQLException {
         return true;
