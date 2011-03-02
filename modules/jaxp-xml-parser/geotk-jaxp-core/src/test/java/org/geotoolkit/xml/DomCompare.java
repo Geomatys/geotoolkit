@@ -20,6 +20,7 @@ package org.geotoolkit.xml;
 
 import java.io.IOException;
 import javax.xml.parsers.ParserConfigurationException;
+import org.geotoolkit.test.xml.DomComparator;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -32,8 +33,8 @@ import org.xml.sax.SAXException;
 public class DomCompare {
 
     /**
-     * Convinient method to test xml comparison by ignoring irrevelant details
-     * like formating, different attribut order, comments ...
+     * convenient method to test xml comparison by ignoring irrevelant details
+     * like formating, different attribute order, comments ...
      *  
      * @param expected : the expected structure (File,Stream,Document)
      * @param result : the obtained result (File,Stream,Document)
