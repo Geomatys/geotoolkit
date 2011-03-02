@@ -36,6 +36,8 @@ import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.style.Description;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Abstract implementation of a MapItem.
  * 
@@ -104,9 +106,7 @@ public abstract class AbstractMapItem implements MapItem {
      */
     @Override
     public void setDescription(final Description desc){
-        if (desc == null) {
-            throw new NullPointerException("description can't be null");
-        }
+        ensureNonNull("description", desc);
         
         final Description oldDesc;
         synchronized (this) {

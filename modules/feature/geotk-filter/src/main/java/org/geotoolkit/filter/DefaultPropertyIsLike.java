@@ -21,7 +21,6 @@ import java.io.Serializable;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
@@ -29,6 +28,8 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.expression.Expression;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Defines a like filter, which checks to see if an attribute matches a REGEXP.
@@ -238,7 +239,7 @@ public class DefaultPropertyIsLike implements PropertyIsLike,Serializable {
 
     public DefaultPropertyIsLike(final Expression expr, final String pattern, final String wildcardMulti,
             final String wildcardSingle, final String escape, final boolean matchCase) {
-        if(expr == null) throw new NullPointerException("Expression can not be null");
+        ensureNonNull("expression", expr);
 
         this.attribute = expr;
         this.pattern = pattern;

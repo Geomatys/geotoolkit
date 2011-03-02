@@ -20,6 +20,8 @@ package org.geotoolkit.data;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -30,9 +32,7 @@ public abstract class AbstractFeatureWriterAppend<T extends FeatureType, F exten
     protected final T type;
 
     public AbstractFeatureWriterAppend(final T type){
-        if(type == null){
-            throw new NullPointerException("Type can not be null.");
-        }
+        ensureNonNull("type", type);
         this.type = type;
     }
 

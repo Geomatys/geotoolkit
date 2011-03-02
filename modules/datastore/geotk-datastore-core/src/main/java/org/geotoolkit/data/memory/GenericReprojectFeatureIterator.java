@@ -52,8 +52,10 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
- * Basic support for a  FeatureIterator that reprojects the geometry attribut.
+ * Basic support for a  FeatureIterator that reprojects the geometry attribute.
  *
  * @author Chris Holmes
  * @author Johann Sorel (Geomatys)
@@ -93,9 +95,7 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
     private static GeometryTransformer findTransformer(final FeatureReader reader,
             final CoordinateReferenceSystem targetCRS) throws FactoryException{
-        if (targetCRS == null) {
-            throw new NullPointerException("CRS can not be null.");
-        }
+        ensureNonNull("crs", targetCRS);
 
         final FeatureType type = reader.getFeatureType();
         final CoordinateReferenceSystem original = type.getGeometryDescriptor().getCoordinateReferenceSystem();

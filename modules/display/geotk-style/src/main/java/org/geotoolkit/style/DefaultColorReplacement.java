@@ -20,6 +20,8 @@ import org.opengis.filter.expression.Function;
 import org.opengis.style.ColorReplacement;
 import org.opengis.style.StyleVisitor;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable implementation of GeoAPI ColorReplacement.
  *
@@ -36,9 +38,7 @@ public class DefaultColorReplacement implements ColorReplacement{
      * @param recode : can not be null.
      */
     public DefaultColorReplacement(final Function recode){
-        if(recode == null){
-            throw new NullPointerException("A color replacement must define a function");
-        }
+        ensureNonNull("recode function", recode);
         this.recode = recode;
     }
 

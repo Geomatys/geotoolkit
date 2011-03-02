@@ -38,6 +38,8 @@ import org.opengis.sld.FeatureTypeConstraint;
 import org.opengis.sld.SLDVisitor;
 import org.opengis.style.Description;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default mutable named layer, thread safe.
  * 
@@ -148,9 +150,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
      */
     @Override
     public void setDescription(final Description desc) {
-        if (desc == null) {
-            throw new NullPointerException("description can't be null");
-        }
+        ensureNonNull("description", desc);
         
         final Description oldDesc;
         synchronized (this) {

@@ -35,6 +35,8 @@ import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;
 import org.opengis.style.Description;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default mutable Style Layer Descriptor, thread safe.
  * 
@@ -176,9 +178,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
      */
     @Override
     public void setDescription(final Description desc) {
-        if (desc == null) {
-            throw new NullPointerException("description can't be null");
-        }
+        ensureNonNull("description", desc);
         
         final Description oldDesc;
         synchronized (this) {

@@ -25,6 +25,7 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.geometry.ImmutableEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.NullArgumentException;
 
 import org.opengis.feature.type.Name;
 import org.opengis.geometry.Envelope;
@@ -45,7 +46,7 @@ final class DefaultCoverageMapLayer extends AbstractMapLayer implements Coverage
     DefaultCoverageMapLayer(final GridCoverageReader reader, final MutableStyle style, final Name name){
         super(style);
         if(reader == null || name == null || name.toString() == null || name.getLocalPart() == null){
-            throw new NullPointerException("Coverage Reader and name can not be null");
+            throw new NullArgumentException("Coverage Reader and name can not be null");
         }
         this.reader = reader;
         this.coverageName = name;

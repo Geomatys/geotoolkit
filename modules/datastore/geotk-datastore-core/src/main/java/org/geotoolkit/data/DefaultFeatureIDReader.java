@@ -21,9 +21,11 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import org.opengis.feature.type.FeatureType;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Simple implementation of a feature id generator which
- * contatenate a String with a number.
+ * concatenate a String with a number.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -37,7 +39,7 @@ public class DefaultFeatureIDReader implements FeatureIDReader{
      * This constructor will use the local part of the type as a
      * base string for ids.
      *
-     * @param type the featuretype
+     * @param type the feature type
      */
     public DefaultFeatureIDReader(final FeatureType type){
         this(type.getName().getLocalPart());
@@ -47,7 +49,7 @@ public class DefaultFeatureIDReader implements FeatureIDReader{
      * @param base string use as start element of the generated ids
      */
     public DefaultFeatureIDReader(final String base){
-        if(base == null) throw new NullPointerException("Base string can not ben ull.");
+        ensureNonNull("base string", base);
         this.base = base + ".";
     }
 

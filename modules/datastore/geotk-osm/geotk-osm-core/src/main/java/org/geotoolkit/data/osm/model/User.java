@@ -25,6 +25,7 @@ import org.opengis.feature.Property;
 import org.opengis.filter.identity.Identifier;
 
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Open Street Map user.
@@ -55,9 +56,7 @@ public class User extends AbstractComplexAttribute<Collection<Property>,Identifi
      */
     private User(final int id, final String userName) {
         super(OSMModelConstants.ATT_USER, new SimpleId(id));
-        if (userName == null) {
-            throw new NullPointerException("The user name cannot be null.");
-        }
+        ensureNonNull("user name", userName);
 
         // Disallow a user to be created with the "NONE" id.
         if (NONE != null && id == USER_ID_NONE) {

@@ -18,15 +18,17 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.io.Serializable;
 
+import java.io.Serializable;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.util.FactoryException;
@@ -34,6 +36,8 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Immutable abstract binary spatial operator.
@@ -61,9 +65,8 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
     protected final F right;
 
     protected AbstractBinarySpatialOperator(final E left, final F right){
-        if(left == null || right == null){
-            throw new NullPointerException("Left and right expressions can not be null");
-        }
+        ensureNonNull("left", left);
+        ensureNonNull("right", right);
         this.left = left;
         this.right = right;
     }

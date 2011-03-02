@@ -53,6 +53,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 
 import static org.geotoolkit.data.shapefile.ShpFileType.*;
 import static org.geotoolkit.data.shapefile.ShapefileDataStoreFactory.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * The collection of all the files that are the shapefile and its metadata and
@@ -392,12 +393,8 @@ public class ShpFiles {
      *                the class that requested the url
      */
     public void unlockRead(final URL url, final Object requestor) {
-        if (url == null) {
-            throw new NullPointerException("url cannot be null");
-        }
-        if (requestor == null) {
-            throw new NullPointerException("requestor cannot be null");
-        }
+        ensureNonNull("url", url);
+        ensureNonNull("requestor", requestor);
 
         Collection threadLockers = getCurrentThreadLockers();
         boolean removed = threadLockers.remove(new ShpFilesLocker(url, requestor, false));
@@ -544,12 +541,9 @@ public class ShpFiles {
      *                the class that requested the url
      */
     public void unlockWrite(final URL url, final Object requestor) {
-        if (url == null) {
-            throw new NullPointerException("url cannot be null");
-        }
-        if (requestor == null) {
-            throw new NullPointerException("requestor cannot be null");
-        }
+        ensureNonNull("url", url);
+        ensureNonNull("requestor", requestor);
+        
         Collection<ShpFilesLocker> threadLockers = getCurrentThreadLockers();
         boolean removed = threadLockers.remove(new ShpFilesLocker(url, requestor, true));
         if (!removed) {

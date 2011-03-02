@@ -28,6 +28,8 @@ import org.opengis.display.primitive.Graphic;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.display.canvas.DisplayObject;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * The root abstraction of a graphic object taxonomy, specifying the methods common to a
  * lightweight set of graphic objects.
@@ -85,7 +87,7 @@ public abstract class AbstractGraphic extends DisplayObject implements Graphic, 
      * methods in order to define properly this graphic properties.
      */
     protected AbstractGraphic(final Canvas canvas) {
-        if(canvas == null) throw new NullPointerException("Canvas can not be null");
+        ensureNonNull("canvas", canvas);
         this.canvas = canvas;
 
         if(this.canvas instanceof DisplayObject)

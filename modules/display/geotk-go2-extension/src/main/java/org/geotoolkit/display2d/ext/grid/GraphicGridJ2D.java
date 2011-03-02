@@ -28,6 +28,8 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.opengis.display.primitive.Graphic;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Graphic decoration to paint a grid.
  *
@@ -40,8 +42,7 @@ public class GraphicGridJ2D extends AbstractGraphicJ2D{
 
     public GraphicGridJ2D(final J2DCanvas canvas, final GridTemplate template){
         super(canvas,canvas.getObjectiveCRS());
-
-        if(template == null) throw new NullPointerException("Template can not be null");
+        ensureNonNull("template", template);
         this.template = template;
     }
 

@@ -27,12 +27,15 @@ import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.util.NullArgumentException;
 
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Delta which modify a collection of features.
@@ -49,11 +52,9 @@ class ModifyDelta extends AbstractDelta{
 
     ModifyDelta(final Session session, final Name typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
         super(session);
-        if(typeName == null){
-            throw new NullPointerException("Type name can not be null.");
-        }
+        ensureNonNull("type name", typeName);
         if(filter == null){
-            throw new NullPointerException("Filter can not be null. Did you mean Filter.INCLUDE ?");
+            throw new NullArgumentException("Filter can not be null. Did you mean Filter.INCLUDE ?");
         }
         if(values == null || values.isEmpty()){
             throw new IllegalArgumentException("Modified values can not be null or empty. A modify delta is useless in this case.");

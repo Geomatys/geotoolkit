@@ -22,6 +22,8 @@ import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Expression;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable "is null" filter.
  *
@@ -33,9 +35,7 @@ public class DefaultPropertyIsNull implements PropertyIsNull,Serializable {
     private final Expression exp;
 
     public DefaultPropertyIsNull(final Expression exp) {
-        if(exp == null){
-            throw new NullPointerException("Expression can not be null");
-        }
+        ensureNonNull("expression", exp);
         this.exp = exp;
     }
 

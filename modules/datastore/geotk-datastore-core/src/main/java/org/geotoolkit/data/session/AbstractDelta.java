@@ -23,6 +23,8 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.filter.FilterFactory2;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -38,9 +40,7 @@ abstract class AbstractDelta implements Delta{
     protected final Session session;
 
     public AbstractDelta(final Session session){
-        if(session == null){
-            throw new NullPointerException("Session can not be null.");
-        }
+        ensureNonNull("session", session);
         this.session = session;
     }
 

@@ -25,6 +25,8 @@ import org.geotoolkit.filter.accessor.PropertyAccessor;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable property name expression.
  *
@@ -41,9 +43,7 @@ public class DefaultPropertyName extends AbstractExpression implements PropertyN
     private Entry<Class,PropertyAccessor> lastAccessor;
 
     public DefaultPropertyName(final String property) {
-        if(property == null){
-            throw new NullPointerException("Property name can not be null");
-        }
+        ensureNonNull("property name", property);
         this.property = property;
     }
 

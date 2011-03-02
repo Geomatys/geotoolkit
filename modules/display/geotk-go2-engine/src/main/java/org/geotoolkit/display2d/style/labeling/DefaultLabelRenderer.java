@@ -34,6 +34,8 @@ import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.referencing.operation.TransformException;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default implementation of label renderer.
  * 
@@ -58,7 +60,7 @@ public class DefaultLabelRenderer implements LabelRenderer{
      */
     @Override
     public void setRenderingContext(final RenderingContext2D context){
-        if(context == null) throw new NullPointerException("Rendering context can not be null");
+        ensureNonNull("context", context);
         this.context = context;
     }
 

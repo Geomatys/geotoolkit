@@ -27,6 +27,7 @@ import org.opengis.feature.Property;
 import org.opengis.filter.identity.Identifier;
 
 import static org.geotoolkit.data.osm.model.OSMModelConstants.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * A Single Member of a relation.
@@ -42,10 +43,7 @@ public class Member extends AbstractComplexAttribute<Collection<Property>,Identi
 
     public Member(final long ref, final MemberType type, final String role) {
         super(ATT_RELATION_MEMBER,null);
-        if(type == null){
-            throw new NullPointerException("Member type can not be null.");
-        }
-
+        ensureNonNull("member type", type);
         this.ref = ref;
         this.type = type;
         this.role = role;

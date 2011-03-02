@@ -50,6 +50,8 @@ import org.opengis.filter.Filter;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.util.InternationalString;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * A builder for feature types.
  * <p>
@@ -116,26 +118,20 @@ public class FeatureTypeBuilder {
 
         @Override
         public boolean add(PropertyDescriptor e) {
-            if(e == null){
-                throw new NullPointerException("Property descriptor can not be null.");
-            }
+            ensureNonNull("property descriptor", e);
             return super.add(e);
         }
 
         @Override
         public void add(int i, PropertyDescriptor e) {
-            if(e == null){
-                throw new NullPointerException("Property descriptor can not be null.");
-            }
+            ensureNonNull("property descriptor", e);
             super.add(i, e);
         }
 
         @Override
         public boolean addAll(Collection<? extends PropertyDescriptor> clctn) {
             for(PropertyDescriptor att : clctn){
-                if(att == null){
-                    throw new NullPointerException("Property descriptor can not be null.");
-                }
+                ensureNonNull("property descriptor", att);
             }
             return super.addAll(clctn);
         }
@@ -143,9 +139,7 @@ public class FeatureTypeBuilder {
         @Override
         public boolean addAll(int i, Collection<? extends PropertyDescriptor> clctn) {
             for(PropertyDescriptor att : clctn){
-                if(att == null){
-                    throw new NullPointerException("Property descriptor can not be null.");
-                }
+                ensureNonNull("property descriptor", att);
             }
             return super.addAll(i, clctn);
         }
@@ -188,9 +182,7 @@ public class FeatureTypeBuilder {
      * Initializes the builder with state from a pre-existing feature type.
      */
     public void copy(final ComplexType type) {
-        if (type == null) {
-            throw new NullPointerException("Can not copy information from a Null type.");
-        }
+        ensureNonNull("type", type);
 
         name = type.getName();
         description = type.getDescription();

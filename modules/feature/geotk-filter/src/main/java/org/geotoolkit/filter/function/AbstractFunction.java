@@ -25,6 +25,8 @@ import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.Function;
 import org.opengis.filter.expression.Literal;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable abstract function.
  *
@@ -38,9 +40,7 @@ public abstract class AbstractFunction extends AbstractExpression implements Fun
     protected final Literal fallback;
 
     public AbstractFunction(final String name, final Expression[] parameters, final Literal fallback) {
-        if(name == null){
-            throw new NullPointerException("name can not be null");
-        }
+        ensureNonNull("name", name);
         this.name = name;
         this.parameters = UnmodifiableArrayList.wrap(parameters);
         this.fallback = fallback;

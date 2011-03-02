@@ -22,6 +22,8 @@ import org.geotoolkit.filter.AbstractExpression;
 import org.opengis.filter.expression.BinaryExpression;
 import org.opengis.filter.expression.Expression;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable abstract binary expression.
  *
@@ -37,10 +39,8 @@ public abstract class AbstractBinaryExpression<E extends Expression,F extends Ex
     protected final F right;
 
     protected AbstractBinaryExpression(final E left, final F right){
-        if(left == null || right == null){
-            throw new NullPointerException("Expresions can not be null");
-        }
-
+        ensureNonNull("left", left);
+        ensureNonNull("right", right);
         this.left = left;
         this.right = right;
     }

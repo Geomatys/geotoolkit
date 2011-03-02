@@ -21,6 +21,8 @@ import java.io.Serializable;
 import org.opengis.feature.Feature;
 import org.opengis.filter.identity.GmlObjectId;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable gml object id.
  *
@@ -32,9 +34,7 @@ public class DefaultGmlObjectId implements GmlObjectId,Serializable {
     private final String id;
 
     public DefaultGmlObjectId(final String id) {
-        if (id == null) {
-            throw new NullPointerException("GML id can not be null");
-        }
+        ensureNonNull("gml id", id);
         this.id = id;
     }
 

@@ -20,6 +20,8 @@ package org.geotoolkit.filter.capability;
 import org.opengis.filter.capability.ArithmeticOperators;
 import org.opengis.filter.capability.Functions;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable arithmetic operators.
  *
@@ -32,9 +34,7 @@ public class DefaultArithmeticOperators implements ArithmeticOperators {
     private final Functions functions;
 
     public DefaultArithmeticOperators(final boolean simple, final Functions functions) {
-        if(functions == null){
-            throw new NullPointerException("Functions can not be null");
-        }
+        ensureNonNull("functions", functions);
         this.simple = simple;
         this.functions = functions;
     }

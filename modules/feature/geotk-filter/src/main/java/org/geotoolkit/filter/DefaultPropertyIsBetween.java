@@ -25,6 +25,8 @@ import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.PropertyIsBetween;
 import org.opengis.filter.expression.Expression;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable "is between" filter.
  *
@@ -38,10 +40,9 @@ public class DefaultPropertyIsBetween implements PropertyIsBetween,Serializable{
     private final Expression upper;
 
     public DefaultPropertyIsBetween(final Expression candidate, final Expression lower, final Expression upper) {
-        if(candidate == null || lower == null || upper == null){
-            throw new NullPointerException("Expressions can not be null");
-        }
-
+        ensureNonNull("candidate", candidate);
+        ensureNonNull("lower", lower);
+        ensureNonNull("upper", upper);
         this.candidate = candidate;
         this.lower = lower;
         this.upper = upper;

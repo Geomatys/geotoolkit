@@ -22,6 +22,8 @@ import org.opengis.style.ChannelSelection;
 import org.opengis.style.SelectedChannelType;
 import org.opengis.style.StyleVisitor;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable implementation of GeoAPI ChannelSelection.
  *
@@ -54,10 +56,7 @@ public class DefaultChannelSelection implements ChannelSelection{
      * @param gray : can not be null 
      */
     DefaultChannelSelection(final SelectedChannelType gray){
-        if(gray == null){
-            throw new NullPointerException("Gray channel can't be null");
-        }
-
+        ensureNonNull("gray channel", gray);
         this.gray = gray;
         this.rgb = null;
     }

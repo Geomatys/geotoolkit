@@ -29,6 +29,8 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.expression.Expression;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Style element editor
  * 
@@ -93,7 +95,7 @@ public abstract class StyleElementEditor<T> extends JPanel {
     }
     
     protected boolean isStatic(final Expression exp){
-        if(exp == null) throw new NullPointerException("Expression is null");
+        ensureNonNull("expression", exp);
         return (Boolean) exp.accept(IsStaticExpressionVisitor.VISITOR, null);
     }
     

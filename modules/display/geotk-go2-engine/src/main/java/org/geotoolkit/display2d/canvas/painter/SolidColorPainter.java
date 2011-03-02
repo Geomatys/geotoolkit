@@ -21,6 +21,8 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
@@ -31,9 +33,7 @@ public class SolidColorPainter implements BackgroundPainter{
     private final Color color;
 
     public SolidColorPainter(final Color color){
-        if(color == null){
-            throw new NullPointerException("Color can not be null.");
-        }
+        ensureNonNull("color", color);
         this.color = color;
     }
 

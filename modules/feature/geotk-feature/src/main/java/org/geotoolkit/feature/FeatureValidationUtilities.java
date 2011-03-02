@@ -30,6 +30,8 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 
 /**
  * This is a set of utility methods used when <b>implementing</b> types.
@@ -152,10 +154,7 @@ public final class FeatureValidationUtilities {
      * Ensure that attributeContent is a good value for descriptor.
      */
     public static void validate(final AttributeDescriptor descriptor, final Object value) throws IllegalAttributeException {
-
-        if (descriptor == null) {
-            throw new NullPointerException("Attribute descriptor required for validation");
-        }
+        ensureNonNull("descriptor", descriptor);
 
         if (value == null) {
             if (!descriptor.isNillable()) {

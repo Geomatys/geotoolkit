@@ -21,6 +21,8 @@ import org.geotoolkit.parameter.Parameters;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterValueGroup;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -68,9 +70,7 @@ public abstract class AbstractProcess implements Process{
     private ProcessMonitor monitor = null;
 
     public AbstractProcess(final ProcessDescriptor desc){
-        if(desc == null){
-            throw new NullPointerException("Descriptor is null");
-        }
+        ensureNonNull("descriptor", desc);
         this.descriptor = desc;
     }
 

@@ -33,6 +33,7 @@ import org.geotoolkit.data.DefaultTextStmtFeatureCollection;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.util.NullArgumentException;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -264,7 +265,7 @@ public class QueryUtilities {
      */
     public static Query subQuery(final Query original, final Query second){
         if ( original==null || second==null ) {
-            throw new NullPointerException("Both query must not be null.");
+            throw new NullArgumentException("Both query must not be null.");
         }
 
         final QueryBuilder qb = new QueryBuilder();
@@ -390,8 +391,8 @@ public class QueryUtilities {
      *         not match
      */
     public static Query mixQueries(final Query firstQuery, final Query secondQuery) {
-        if (  firstQuery==null || secondQuery==null ) {
-            throw new NullPointerException("Both query must not be null.");
+        if ( firstQuery==null || secondQuery==null ) {
+            throw new NullArgumentException("Both query must not be null.");
         }
 
         if ((firstQuery.getTypeName() != null) && (secondQuery.getTypeName() != null)) {

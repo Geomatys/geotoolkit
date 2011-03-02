@@ -27,11 +27,13 @@ import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.xml.StaxStreamReader;
+
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
+
 import static org.geotoolkit.xml.parameter.ParameterConstants.*;
 
 /**

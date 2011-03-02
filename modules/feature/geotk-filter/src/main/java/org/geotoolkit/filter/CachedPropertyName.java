@@ -23,6 +23,8 @@ import org.geotoolkit.filter.accessor.PropertyAccessor;
 import org.opengis.filter.expression.ExpressionVisitor;
 import org.opengis.filter.expression.PropertyName;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -34,9 +36,7 @@ class CachedPropertyName extends AbstractExpression implements PropertyName{
     private final PropertyAccessor accessor;
 
     CachedPropertyName(final String property, final Class clazz) {
-        if(property == null){
-            throw new NullPointerException("Property name can not be null");
-        }
+        ensureNonNull("property name", property);
         this.property = property;
         this.accessor = Accessors.getAccessor(clazz,property,null);
     }

@@ -59,9 +59,6 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
      * Constructor that can used by subclass only.
      */
     protected AbstractMapLayer(final MutableStyle style){
-        if (style == null){
-            throw new NullPointerException("Style can not be null");
-        }
         setStyle(style);
         this.desc = StyleConstants.DEFAULT_DESCRIPTION;
         this.selectionStyle = null;

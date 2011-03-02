@@ -34,6 +34,8 @@ import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageOutputStream;
 import org.geotoolkit.lang.Static;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 
 /**
  * Useful methods for image writing.
@@ -101,7 +103,7 @@ public final class ImageIOUtilities {
     }
 
     public static ImageWriter getImageWriter(final RenderedImage image, final String mime, final Object output) throws IOException{
-        if(image == null) throw new NullPointerException("Image can not be null");
+        ensureNonNull("image", image);
 
         int n = 0;
         final Iterator<ImageWriter> writers = ImageIO.getImageWritersByMIMEType(mime);

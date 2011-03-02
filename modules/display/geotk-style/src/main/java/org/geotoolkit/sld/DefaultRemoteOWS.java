@@ -20,6 +20,8 @@ import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.sld.RemoteOWS;
 import org.opengis.sld.SLDVisitor;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 
 /**
  * Default immutable implementation of remoteOWS. thread safe.
@@ -34,9 +36,8 @@ class DefaultRemoteOWS implements RemoteOWS{
     
     
     DefaultRemoteOWS(final String service, final OnlineResource online){
-        if(service == null || online == null){
-            throw new NullPointerException("Service and online resource can not be null.");
-        }
+        ensureNonNull("service", service);
+        ensureNonNull("online resource", online);
         this.service = service;
         this.online = online;
     }

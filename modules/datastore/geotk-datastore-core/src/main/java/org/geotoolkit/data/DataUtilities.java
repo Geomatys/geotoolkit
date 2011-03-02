@@ -50,6 +50,8 @@ import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -198,9 +200,7 @@ public class DataUtilities {
      * @throws DataStoreRuntimeException
      */
     public static Envelope calculateEnvelope(final FeatureIterator iterator) throws DataStoreRuntimeException{
-        if(iterator == null){
-            throw new NullPointerException("Iterator can not be null");
-        }
+        ensureNonNull("iterator", iterator);
         
         BoundingBox env = null;
 
@@ -261,9 +261,8 @@ public class DataUtilities {
         if(iterators == null || iterators.length < 2 || (iterators.length == 1 && iterators[0] == null)){
             throw new IllegalArgumentException("There must be at least 2 non null iterators.");
         }
-        if(comparator == null){
-            throw new NullPointerException("Comprator can not be null.");
-        }
+
+        ensureNonNull("comparator", comparator);
 
         FeatureIterator<F> ite = iterators[0];
 
@@ -618,11 +617,10 @@ public class DataUtilities {
         private F next = null;
 
         private FeatureIteratorCombine(final Comparator<? super Feature> comparator, final FeatureIterator<F> ite1, final FeatureIterator<F> ite2){
-            if(ite1 == null || ite2 == null){
-                throw new NullPointerException("Iterators can not be empty or null");
-            }
+            ensureNonNull("iterator1", ite1);
+            ensureNonNull("iterator2", ite2);
             if(comparator == null ){
-                throw new IllegalArgumentException("comparator can not be null or empty. use sequence if you have no comparator.");
+                throw new IllegalArgumentException("comparator can not be null. use sequence if you have no comparator.");
             }
 
             this.comparator = comparator;

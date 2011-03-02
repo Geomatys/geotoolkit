@@ -38,6 +38,8 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -53,13 +55,8 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     protected final Source source;
 
     public AbstractFeatureCollection(final String id, final Source source){
-
-        if(id == null){
-            throw new NullPointerException("Feature collection ID must not be null.");
-        }
-        if(source == null){
-            throw new NullPointerException("Feature collection source must not be null.");
-        }
+        ensureNonNull("feature collection id", id);
+        ensureNonNull("feature collection source", source);
 
         this.id = id;
         this.source = source;

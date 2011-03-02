@@ -23,9 +23,12 @@ import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import javax.swing.Icon;
 import javax.swing.event.MouseInputListener;
+
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
 import org.geotoolkit.gui.swing.resource.IconBundle;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *
@@ -55,9 +58,7 @@ public abstract class AbstractEditionDelegate extends MouseNavigatonListener imp
 
     protected AbstractEditionDelegate(final DefaultEditionHandler handler){
         super(null);
-        if(handler == null){
-            throw new NullPointerException("Handler should not be null");
-        }
+        ensureNonNull("handler", handler);
         this.handler = handler;
         setPanButton(MouseEvent.BUTTON2);
     }

@@ -31,6 +31,7 @@ import org.opengis.style.StyleVisitor;
 import org.opengis.style.TextSymbolizer;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Immutable implementation of GeoAPI text symbolizer.
@@ -73,10 +74,7 @@ public class DefaultTextSymbolizer implements TextSymbolizer{
      */
     public DefaultTextSymbolizer(final Expression label, final Font font, final LabelPlacement placement,
             final Halo halo, final Fill fill, final Unit uom, final String geom, final String name, final Description desc){
-        if(label == null){
-            throw new NullPointerException("Label can not be null");
-        }
-        
+        ensureNonNull("label", label);
         this.label = label;
         this.font = (font == null) ? DEFAULT_FONT : font;
         this.placement = (placement == null) ? DEFAULT_POINTPLACEMENT : placement;

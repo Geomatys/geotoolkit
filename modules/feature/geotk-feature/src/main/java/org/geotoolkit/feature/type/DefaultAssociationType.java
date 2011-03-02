@@ -26,6 +26,8 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default implementation of a association type
  *
@@ -41,9 +43,7 @@ public class DefaultAssociationType extends DefaultPropertyType<AssociationType>
         super(name, referenceType.getBinding(), isAbstract, restrictions, superType, description);
         this.relatedType = referenceType;
 
-        if (relatedType == null) {
-            throw new NullPointerException("relatedType");
-        }
+        ensureNonNull("related type", relatedType);
     }
 
     /**

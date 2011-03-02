@@ -17,6 +17,8 @@
 
 package org.geotoolkit.display2d.service;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Output definition, several parameters are available
  * to configure the ImageIO writer, like compression or progressive.
@@ -34,23 +36,12 @@ public class OutputDef {
 
 
     public OutputDef(final String mime, final Object output) {
-        if(output == null){
-            throw new NullPointerException("Output must not be null");
-        }
-        if(mime == null){
-            throw new NullPointerException("Mime type must not be null");
-        }
-        this.output = output;
-        this.mime = mime;
+        this(mime,output,null);
     }
 
     public OutputDef(final String mime, final Object output, final Float compression) {
-        if(output == null){
-            throw new NullPointerException("Output must not be null");
-        }
-        if(mime == null){
-            throw new NullPointerException("Mime type must not be null");
-        }
+        ensureNonNull("output", output);
+        ensureNonNull("mime", mime);
         this.output = output;
         this.mime = mime;
         this.compression = compression;
@@ -61,11 +52,7 @@ public class OutputDef {
     }
 
     public void setOutput(final Object output) {
-
-        if(output == null){
-            throw new NullPointerException("Output must not be null");
-        }
-
+        ensureNonNull("output", output);
         this.output = output;
     }
 
@@ -74,11 +61,7 @@ public class OutputDef {
     }
 
     public void setMime(final String mime) {
-
-        if(mime == null){
-            throw new NullPointerException("Mime type must not be null");
-        }
-
+        ensureNonNull("mime", mime);
         this.mime = mime;
     }
 

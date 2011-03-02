@@ -19,6 +19,8 @@ package org.geotoolkit.sld;
 import org.opengis.sld.Extent;
 import org.opengis.sld.SLDVisitor;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default imumutable extent, thread safe.
  * 
@@ -34,9 +36,8 @@ class DefaultExtent implements Extent{
      * Default constructor.
      */
     DefaultExtent(final String name, final String value){
-        if(name == null || value == null){
-            throw new NullPointerException("Name and value can not be null.");
-        }
+        ensureNonNull("name", name);
+        ensureNonNull("value", value);
         this.name = name;
         this.value = value;
     }

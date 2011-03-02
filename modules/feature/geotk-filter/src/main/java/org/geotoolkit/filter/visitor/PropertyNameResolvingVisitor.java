@@ -21,6 +21,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.expression.PropertyName;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 
 /**
  * Resolves all property name references in a filter against a particular feature type.
@@ -42,10 +44,7 @@ public class PropertyNameResolvingVisitor extends DuplicatingFilterVisitor {
     private final SimpleFeatureType featureType;
 
     public PropertyNameResolvingVisitor(final SimpleFeatureType featureType) {
-        if (featureType == null) {
-            throw new NullPointerException("featureType");
-        }
-
+        ensureNonNull("feature type", featureType);
         this.featureType = featureType;
     }
 

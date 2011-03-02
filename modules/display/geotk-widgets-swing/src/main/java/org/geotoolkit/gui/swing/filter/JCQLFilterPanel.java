@@ -37,6 +37,8 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * CQL filter panel
  * 
@@ -240,10 +242,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
     
     @Override
     public void setFilter(final Filter filter) {
-        if (filter == null) {
-            throw new NullPointerException();
-        }
-
+        ensureNonNull("filter", filter);
         this.filter = filter;
         parse(filter);
     }
@@ -261,11 +260,7 @@ public class JCQLFilterPanel extends javax.swing.JPanel implements FilterPanel{
 
     @Override
     public void setLayer(final FeatureMapLayer layer) {
-
-        if (layer == null) {
-            throw new NullPointerException();
-        }
-
+        ensureNonNull("layer", layer);
         this.layer = layer;
         parse(layer);
     }

@@ -18,6 +18,8 @@ package org.geotoolkit.style.function;
 
 import org.opengis.filter.expression.Expression;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -29,17 +31,17 @@ public class DefaultInterpolationPoint implements InterpolationPoint{
     private final double data;
     
     public DefaultInterpolationPoint(final double data, final Expression value){
-        if(value == null){
-           throw new NullPointerException();
-        }
+        ensureNonNull("value", value);
         this.value = value;
         this.data = data;
     }
     
+    @Override
     public Expression getValue() {
         return value;
     }
 
+    @Override
     public double getData() {
         return data;
     }

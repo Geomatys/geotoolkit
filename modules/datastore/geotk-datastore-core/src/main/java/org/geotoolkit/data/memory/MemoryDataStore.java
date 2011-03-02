@@ -52,6 +52,8 @@ import org.opengis.filter.Id;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * @todo : make this concurrent
  * @author Johann Sorel (Geomatys)
@@ -191,12 +193,8 @@ public class MemoryDataStore extends AbstractDataStore{
         if(singleTypeLock) throw new DataStoreException(
                 "Memory datastore is in single type mode. Schema modification are not allowed.");
 
-        if(featureType == null){
-            throw new NullPointerException("Feature type can not be null.");
-        }
-        if(name == null){
-            throw new NullPointerException("Name can not be null.");
-        }
+        ensureNonNull("feature type", featureType);
+        ensureNonNull("name", name);
 
         if(groups.containsKey(name)){
             throw new IllegalArgumentException("FeatureType with name : " + featureType.getName() + " already exist.");
@@ -221,12 +219,8 @@ public class MemoryDataStore extends AbstractDataStore{
 
         //todo must do it a way to avoid destroying all features.
 
-        if(featureType == null){
-            throw new NullPointerException("Feature type can not be null.");
-        }
-        if(typeName == null){
-            throw new NullPointerException("Name can not be null.");
-        }
+        ensureNonNull("feature type", featureType);
+        ensureNonNull("name", typeName);
 
         final Group grp = groups.remove(typeName);
 

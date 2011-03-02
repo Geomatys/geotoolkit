@@ -43,6 +43,8 @@ import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Utility class to create MapLayers, MapContexts and Elevation models from different sources.
  * This class is thread safe.
@@ -107,9 +109,7 @@ public final class MapBuilder {
      * Create a default coverage maplayer with a coverageReader, a style and the grid name.
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverageReader reader, final MutableStyle style, final String name){
-         if(name == null){
-            throw new NullPointerException("Name can not be null");
-        }
+        ensureNonNull("name", name);
         final CoverageMapLayer layer = new DefaultCoverageMapLayer(reader, style, new DefaultName(name) );
         layer.setDescription(new DefaultDescription(new SimpleInternationalString(name), new SimpleInternationalString(name)));
         return layer;

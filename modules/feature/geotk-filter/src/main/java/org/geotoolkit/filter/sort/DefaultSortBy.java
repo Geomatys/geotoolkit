@@ -22,6 +22,8 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable "sort by".
  *
@@ -34,9 +36,8 @@ public class DefaultSortBy implements SortBy,Serializable{
     private final SortOrder order;
 
     public DefaultSortBy(final PropertyName property, final SortOrder order) {
-        if(property == null || order == null){
-            throw new NullPointerException("Property and sort order can not be null.");
-        }
+        ensureNonNull("property name", property);
+        ensureNonNull("sort order", order);
         this.property = property;
         this.order = order;
     }

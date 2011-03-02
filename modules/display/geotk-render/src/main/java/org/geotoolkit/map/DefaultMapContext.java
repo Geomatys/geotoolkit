@@ -38,6 +38,8 @@ import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 
 /**
  * The default implementation of the {@linkplain org.geotoolkit.map.MapContext}
@@ -56,10 +58,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     private Envelope area = null;
 
     public DefaultMapContext(final CoordinateReferenceSystem crs) {
-        if(crs == null){
-            throw new NullPointerException("CRS can't be null");
-        }
-
+        ensureNonNull("crs", crs);
         this.crs = crs;
         desc = StyleConstants.DEFAULT_DESCRIPTION;
     }
@@ -70,9 +69,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
      */
     @Override
     public void setCoordinateReferenceSystem(final CoordinateReferenceSystem crs) {
-        if (crs == null) {
-            throw new NullPointerException("CRS can't be null");
-        }
+        ensureNonNull("crs", crs);
 
         synchronized (this) {
             if(CRS.equalsIgnoreMetadata(this.crs,crs)) return;
@@ -174,9 +171,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
      */
     @Override
     public void setAreaOfInterest(final Envelope aoi) {
-        if (aoi == null) {
-            throw new NullPointerException("Area of interest can't be null");
-        }
+        ensureNonNull("area of interest", aoi);
 
         final Envelope oldEnv;
         synchronized (this) {

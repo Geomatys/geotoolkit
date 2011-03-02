@@ -25,6 +25,8 @@ import java.util.logging.Logger;
 import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * General interface for cached style element.
  * 
@@ -36,8 +38,8 @@ public abstract class Cache<T extends Object> {
     protected static final Logger LOGGER = Logging.getLogger("org.geotoolkit.display2d.style");
 
     /**
-     * Empty collection used for attributs when the style needs
-     * no feature attributs or if the style can not be visible.
+     * Empty collection used for attributes when the style needs
+     * no feature attributes or if the style can not be visible.
      */
     public static final Collection<String> EMPTY_ATTRIBUTS = Collections.emptyList();
     
@@ -54,19 +56,19 @@ public abstract class Cache<T extends Object> {
     protected boolean isStatic = false;
     
     /**
-     * Visiblity of this style.
+     * Visibility of this style.
      * NOT_DEFINED : when the style has not been evaluated yet
      * VISIBLE : we are sure the style is always visible even if
-     * some attributs are dynamic, CAUTION this doesnt test very small 
+     * some attributes are dynamic, CAUTION this doesn't test very small
      * size. a width of 0.00000000001 is considered VISIBLE
-     * DYNAMIC : the visiblity of this style depends of the feature
+     * DYNAMIC : the visibility of this style depends of the feature
      * UNVISIBLE : whatever feature or parameter you give this style
      * will never be visible. nothing is cache is this case.
      */
     protected VisibilityState isStaticVisible = VisibilityState.NOT_DEFINED;
     
     /**
-     * collection of all requiered feature attributs needed by this style.
+     * collection of all required feature attributes needed by this style.
      * this should be empty if 
      */
     protected Collection<String> requieredAttributs = new HashSet<String>();
@@ -77,9 +79,7 @@ public abstract class Cache<T extends Object> {
     protected final T styleElement; 
         
     protected Cache(final T element){
-        if(element == null){
-            throw new NullPointerException("Style Element can not be null");
-        }
+        ensureNonNull("style element", element);
         styleElement = element;
     }
     

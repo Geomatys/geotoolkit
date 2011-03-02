@@ -89,6 +89,9 @@ public final class DataBaseModel {
     private Map<String,SchemaMetaModel> schemas = null;
     private Set<Name> nameCache = null;
 
+    //metadata getSuperTable query is not implemented on all databases
+    private Boolean handleSuperTableMetadata = null;
+
     public DataBaseModel(final DefaultJDBCDataStore store){
         this.store = store;
     }
@@ -316,17 +319,20 @@ public final class DataBaseModel {
             store.closeSafe(result);
 
             //find parent table if any -----------------------------------------
-            try{
-                result = metadata.getSuperTables(null, schemaName, tableName);
-                while (result.next()) {
-                    final String parentTable = result.getString(SuperTable.SUPERTABLE_NAME);
-                    table.parents.add(parentTable);
+            if(handleSuperTableMetadata == null || handleSuperTableMetadata){
+                try{
+                    result = metadata.getSuperTables(null, schemaName, tableName);
+                    while (result.next()) {
+                        final String parentTable = result.getString(SuperTable.SUPERTABLE_NAME);
+                        table.parents.add(parentTable);
+                    }
+                }catch(final SQLException ex){
+                    //not implemented by database
+                    handleSuperTableMetadata = Boolean.FALSE;
+                    store.getLogger().log(Level.INFO, "Database does not handle getSuperTable, feature type hierarchy will be ignored.");
+                }finally{
+                    store.closeSafe(result);
                 }
-            }catch(final SQLException ex){
-                //not implemented by database
-                store.getLogger().log(Level.INFO, "Database does not handle getSuperTable, feature type hierarchy will be ignored.");
-            }finally{
-                store.closeSafe(result);
             }
 
         } catch (SQLException e) {

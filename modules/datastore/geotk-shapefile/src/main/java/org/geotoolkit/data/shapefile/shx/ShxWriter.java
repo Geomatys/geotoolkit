@@ -23,6 +23,8 @@ import java.nio.channels.FileChannel;
 import org.geotoolkit.data.shapefile.shp.ShapeType;
 import org.geotoolkit.data.shapefile.shp.ShapefileHeader;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Handle writing of shx files.
  *
@@ -34,9 +36,7 @@ public class ShxWriter {
     private final ByteBuffer buffer;
 
     public ShxWriter(final FileChannel channel){
-        if(channel == null){
-            throw new NullPointerException("FileChannel can not be null.");
-        }
+        ensureNonNull("file channel", channel);
         this.channel = channel;
         buffer = ByteBuffer.allocateDirect(100);
     }

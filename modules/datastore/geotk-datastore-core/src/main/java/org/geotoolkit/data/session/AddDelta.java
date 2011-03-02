@@ -40,6 +40,8 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Delta which add a collection of features.
  *
@@ -63,12 +65,8 @@ class AddDelta extends AbstractDelta{
      */
     AddDelta(final Session session, final Name typeName, final Collection<Feature> features){
         super(session);
-        if(typeName == null){
-            throw new NullPointerException("Type name can not be null.");
-        }
-        if(features == null){
-            throw new IllegalArgumentException("Can not create an Add delta with no collection.");
-        }
+        ensureNonNull("type name", typeName);
+        ensureNonNull("features", features);
 
         this.type = typeName;
 

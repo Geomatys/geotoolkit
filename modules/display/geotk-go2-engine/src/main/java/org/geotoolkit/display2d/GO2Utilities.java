@@ -145,6 +145,8 @@ import org.opengis.style.Stroke;
 import org.opengis.style.Symbolizer;
 import org.opengis.util.FactoryException;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -970,9 +972,8 @@ public final class GO2Utilities {
     public static float calculateScaleCoefficient(final RenderingContext2D context, final Unit<Length> symbolUnit){
         final CoordinateReferenceSystem objectiveCRS = context.getObjectiveCRS();
 
-        if(symbolUnit == null || objectiveCRS == null){
-            throw new NullPointerException("symbol unit and objectiveCRS cant be null");
-        }
+        ensureNonNull("symbol unit", symbolUnit);
+        ensureNonNull("objective crs", objectiveCRS);
 
         //we have a special unit we must adjust the coefficient
 

@@ -40,6 +40,8 @@ import org.opengis.sld.SLDVisitor;
 import org.opengis.sld.Source;
 import org.opengis.style.Description;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default mutable user layer, thread safe.
  * 
@@ -150,9 +152,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      */
     @Override
     public void setDescription(final Description desc) {
-        if (desc == null) {
-            throw new NullPointerException("description can't be null");
-        }
+        ensureNonNull("description", desc);
         
         final Description oldDesc;
         synchronized (this) {
@@ -208,9 +208,7 @@ class DefaultMutableUserLayer implements MutableUserLayer,StyleListener{
      */
     @Override
     public void setConstraints(final MutableConstraints constraints) {
-        if (constraints == null) {
-            throw new NullPointerException("constraints can't be null");
-        }
+        ensureNonNull("constraints", constraints);
         
         final MutableConstraints oldConstraints;
         synchronized (this) {

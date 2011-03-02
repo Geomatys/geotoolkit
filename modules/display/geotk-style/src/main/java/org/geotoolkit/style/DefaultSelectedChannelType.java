@@ -21,6 +21,7 @@ import org.opengis.style.SelectedChannelType;
 import org.opengis.style.StyleVisitor;
 
 import static org.geotoolkit.style.StyleConstants.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Immutable implementation of GeoAPI SelectedChannelType.
@@ -41,9 +42,7 @@ public class DefaultSelectedChannelType implements SelectedChannelType{
      * @param enchance : if null will be replaced by default description.
      */
     public DefaultSelectedChannelType(final String name, final ContrastEnhancement enhance){
-        if(name == null){
-            throw new NullPointerException("Name can not be null");
-        }
+        ensureNonNull("name", name);
         this.name = name;
         this.enhance = (enhance == null) ? DEFAULT_CONTRAST_ENHANCEMENT : enhance;
     }

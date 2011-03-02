@@ -21,6 +21,8 @@ import java.util.EventObject;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Storage management event.
  *
@@ -43,17 +45,11 @@ public class StorageManagementEvent extends EventObject{
     private StorageManagementEvent(final Object source, final Type type, final Name name, final FeatureType oldtype, final FeatureType newtype){
         super(source);
 
-        if(type == null){
-            throw new NullPointerException("Type can not be null.");
-        }
-        if(name == null){
-            throw new NullPointerException("Name can not be null.");
-        }
+        ensureNonNull("type", type);
+        ensureNonNull("name", name);
         if(oldtype == null && newtype == null){
             throw new NullPointerException("Old and new feature type can not be both null.");
         }
-
-
         this.type = type;
         this.name = name;
         this.oldType = oldtype;

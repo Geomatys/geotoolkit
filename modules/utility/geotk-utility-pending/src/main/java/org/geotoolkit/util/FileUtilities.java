@@ -52,6 +52,8 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.logging.Logging;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Guilhem Legal (Geomatys)
@@ -847,6 +849,7 @@ public final class FileUtilities {
      */
     private static OutputStream toOutputStream(final Object resource)
             throws IOException {
+        ensureNonNull("resource", resource);
 
         OutputStream fot = null;
         if (resource instanceof File) {
@@ -858,8 +861,6 @@ public final class FileUtilities {
         } else if (resource != null) {
             throw new IllegalArgumentException("This argument must be instance of File, "
                     + "String (representing a path) or OutputStream.");
-        } else {
-            throw new NullPointerException("This argument cannot be null.");
         }
         return fot;
     }
@@ -876,6 +877,7 @@ public final class FileUtilities {
      */
     private static InputStream toInputStream(final Object resource)
             throws IOException {
+        ensureNonNull("resource", resource);
 
         InputStream fit = null;
         if (resource instanceof File) {
@@ -891,8 +893,6 @@ public final class FileUtilities {
         } else if (resource != null) {
             throw new IllegalArgumentException("This argument must be instance of File, "
                     + "String (representing a path), URL, URI or InputStream.");
-        } else {
-            throw new NullPointerException("This argument cannot be null.");
         }
         return fit;
     }

@@ -20,6 +20,8 @@ package org.geotoolkit.data.query;
 import org.geotoolkit.data.session.Session;
 import org.opengis.feature.type.Name;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default selector implementation.
  * 
@@ -33,14 +35,8 @@ public final class DefaultSelector implements Selector{
     private final String name;
 
     public DefaultSelector(final Session session, final Name typeName, final String selectorName) {
-
-        if(typeName == null){
-            throw new NullPointerException("Selector feature type name must not be null.");
-        }
-        if(selectorName == null){
-            throw new NullPointerException("Selector name must not be null.");
-        }
-
+        ensureNonNull("selector feature type name", typeName);
+        ensureNonNull("selector name", selectorName);
         this.session = session;
         this.typeName = typeName;
         this.name = selectorName;

@@ -21,6 +21,8 @@ import org.opengis.sld.SLDLibrary;
 import org.opengis.sld.SLDVisitor;
 import org.opengis.sld.StyledLayerDescriptor;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default immutable implementation of SLD library. thread safe.
  * 
@@ -34,13 +36,10 @@ class DefaultSLDLibrary implements SLDLibrary{
     
     
     DefaultSLDLibrary(final OnlineResource online){
-        if(online == null){
-            throw new NullPointerException("Online resource can not be null");
-        }
+        ensureNonNull("online resource", online);
         this.online = online;
     }
-    
-    
+        
     /**
      * {@inheritDoc }
      */

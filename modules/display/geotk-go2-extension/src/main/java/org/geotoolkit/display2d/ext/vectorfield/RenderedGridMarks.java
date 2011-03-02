@@ -64,6 +64,7 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -215,9 +216,7 @@ public class RenderedGridMarks extends RenderedMarks {
      */
     public RenderedGridMarks(final J2DCanvas canvas,final GridCoverage2D cover) {
         super(canvas, cover.getCoordinateReferenceSystem2D());
-        if(cover == null){
-            throw new NullPointerException("Coverage must not be null");
-        }
+        ensureNonNull("coverage", cover);
         
         //we reproject in 2D CRS
 //        CoordinateReferenceSystem planarCRS = CRS.getHorizontalCRS(cover.getEnvelope().getCoordinateReferenceSystem());

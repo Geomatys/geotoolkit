@@ -66,6 +66,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel
@@ -738,9 +740,8 @@ public class EditionHelper {
 
         final String ID = feature.getID();
 
-        if (geo == null || ID == null) {
-            throw new NullPointerException();
-        }
+        ensureNonNull("geometry", geo);
+        ensureNonNull("id", ID);
 
         final FeatureMapLayer editionLayer = handler.getEditedLayer();
         final JMap2D map = handler.getMap();
@@ -771,10 +772,7 @@ public class EditionHelper {
     }
 
     public void sourceRemoveFeature(final String ID) {
-
-        if (ID == null) {
-            throw new NullPointerException();
-        }
+        ensureNonNull("id", ID);
 
         final FeatureMapLayer editionLayer = handler.getEditedLayer();
         final JMap2D map = handler.getMap();

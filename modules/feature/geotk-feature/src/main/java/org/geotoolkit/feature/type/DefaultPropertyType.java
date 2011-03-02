@@ -32,6 +32,8 @@ import org.opengis.feature.type.PropertyType;
 import org.opengis.filter.Filter;
 import org.opengis.util.InternationalString;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default implementation of a property type
  *
@@ -52,9 +54,8 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
 
     public DefaultPropertyType(final Name name, final Class<?> binding, final boolean isAbstract,
             final List<Filter> restrictions, final T superType, final InternationalString description){
-        if (name == null) {
-            throw new NullPointerException("Name is required for PropertyType");
-        }
+        ensureNonNull("name", name);
+
         if (binding == null) {
             if (superType != null && superType.getBinding() != null) {
                 // FIXME: This should be optional as the superType may have the required information?
@@ -184,10 +185,10 @@ public class DefaultPropertyType<T extends PropertyType> implements PropertyType
         if ((object1 == object2) || (object1 != null && object1.equals(object2))) {
             return true;
         }
-        if (object1 == null && object2.size() == 0) {
+        if (object1 == null && object2.isEmpty()) {
             return true;
         }
-        if (object2 == null && object1.size() == 0) {
+        if (object2 == null && object1.isEmpty()) {
             return true;
         }
         return false;

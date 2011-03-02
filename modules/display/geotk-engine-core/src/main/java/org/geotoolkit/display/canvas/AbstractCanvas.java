@@ -33,6 +33,8 @@ import org.opengis.display.container.ContainerEvent;
 import org.opengis.display.container.ContainerListener;
 import org.opengis.geometry.DirectPosition;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Manages the display and user manipulation of {@link Graphic} instances. A newly constructed
  * {@code Canvas} is initially empty. To make something appears, {@link Graphic}s must be added
@@ -170,10 +172,7 @@ public abstract class AbstractCanvas<T extends AbstractContainer> extends Displa
      * @param monitor The canvas monitor.
      */
     public void setMonitor(final CanvasMonitor monitor) {
-        if(monitor == null){
-            throw new NullPointerException("Canvas monitor can not be null");
-        }
-
+        ensureNonNull("canvas monitor", monitor);
         final CanvasMonitor old;
         synchronized (this) {
             old = this.monitor;

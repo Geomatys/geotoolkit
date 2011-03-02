@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.query;
 
+import org.geotoolkit.util.NullArgumentException;
 import java.util.Arrays;
 
 import org.geotoolkit.factory.Hints;
@@ -24,6 +25,8 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Default query implementation.
@@ -74,12 +77,9 @@ class DefaultQuery implements Query {
             final CoordinateReferenceSystem crs, final int startIndex, final Integer MaxFeature, 
             final double[] resolution, final Hints hints){
 
-        if(source == null){
-            throw new NullPointerException("Query source can not be null");
-        }
-
+        ensureNonNull("query source", source);
         if(filter == null){
-            throw new IllegalArgumentException("Query filter can not be null, did you mean Filter.INCLUDE ?");
+            throw new NullArgumentException("Query filter can not be null, did you mean Filter.INCLUDE ?");
         }
 
         this.source = source;

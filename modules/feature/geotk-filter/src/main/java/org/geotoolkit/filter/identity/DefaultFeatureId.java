@@ -22,6 +22,8 @@ import org.opengis.feature.Attribute;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.identity.Identifier;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable feature id.
  *
@@ -33,9 +35,7 @@ public class DefaultFeatureId implements FeatureId,Serializable {
     private final String id;
 
     public DefaultFeatureId(final String id) {
-        if (id == null) {
-            throw new NullPointerException("Feature id can not be null");
-        }
+        ensureNonNull("feature id", id);
         this.id = id;
     }
 

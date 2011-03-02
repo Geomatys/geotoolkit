@@ -28,6 +28,8 @@ import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default implementation of a property descriptor
  *
@@ -46,8 +48,8 @@ public class DefaultPropertyDescriptor<T extends PropertyType> implements Proper
     public DefaultPropertyDescriptor(final T type, final Name name, final int min,
             final int max, final boolean isNillable){
 
-        if (type == null) throw new NullPointerException("Property type can not be null");
-        if (name == null) throw new NullPointerException("Name can not be null");
+        ensureNonNull("property type", type);
+        ensureNonNull("name", name);
 
         if (max > 0 && (max < min)) {
             throw new IllegalArgumentException("max must be -1, or < min");

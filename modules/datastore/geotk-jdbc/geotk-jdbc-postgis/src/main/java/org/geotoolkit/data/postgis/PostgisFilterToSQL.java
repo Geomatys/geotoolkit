@@ -35,6 +35,8 @@ import org.geotoolkit.filter.capability.DefaultFilterCapabilities;
 import org.opengis.filter.FilterFactory;
 import org.opengis.geometry.Envelope;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 public class PostgisFilterToSQL extends FilterToSQL {
 
     final FilterToSqlHelper helper;
@@ -77,9 +79,7 @@ public class PostgisFilterToSQL extends FilterToSQL {
     protected Object visitBinarySpatialOperator(final BinarySpatialOperator filter,
             final Object extraData) {
         // basic checks
-        if (filter == null)
-            throw new NullPointerException(
-                    "Filter to be encoded cannot be null");
+        ensureNonNull("filter", filter);
 
         final PropertyName property;
         Literal geometry;

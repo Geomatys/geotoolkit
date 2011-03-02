@@ -33,8 +33,10 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
- *  Abstract session which handle listeners and add convinient fire event methods.
+ *  Abstract session which handle listeners and add convenient fire event methods.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -46,10 +48,7 @@ public abstract class AbstractSession implements Session, StorageListener{
     protected final DataStore store;
 
     public AbstractSession(final DataStore store){
-        if(store == null){
-            throw new NullPointerException("DataStore can not be null.");
-        }
-
+        ensureNonNull("datastore", store);
         this.store = store;
         weakListener.registerSource(store);
     }

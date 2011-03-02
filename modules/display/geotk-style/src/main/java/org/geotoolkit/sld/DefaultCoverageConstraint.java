@@ -22,6 +22,8 @@ import org.opengis.sld.CoverageConstraint;
 import org.opengis.sld.CoverageExtent;
 import org.opengis.sld.SLDVisitor;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default imumutable coverage constraint, thread safe.
  * 
@@ -37,10 +39,7 @@ class DefaultCoverageConstraint implements CoverageConstraint{
      * default constructor.
      */
     DefaultCoverageConstraint(final String coverageName, final CoverageExtent extent){
-        if(coverageName == null){
-            throw new NullPointerException("Coverage name can not be null.");
-        }
-        
+        ensureNonNull("coverage name", coverageName);
         this.coverageName = coverageName;
         this.extent = extent;
     }

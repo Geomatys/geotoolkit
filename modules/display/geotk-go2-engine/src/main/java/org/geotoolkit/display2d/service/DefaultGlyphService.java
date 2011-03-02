@@ -35,8 +35,10 @@ import org.opengis.style.Rule;
 import org.opengis.style.Style;
 import org.opengis.style.Symbolizer;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
- * Factory to create small glyphs used in map or application legends.
+ * Factory to create small glyph used in map or application legends.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -46,9 +48,8 @@ public class DefaultGlyphService {
     private DefaultGlyphService(){}
 
     public static BufferedImage create(final Style style, final Dimension dim, final MapLayer layer) {
-        if (dim == null || style == null) {
-            throw new NullPointerException("Style and dimension can not be null");
-        }
+        ensureNonNull("dimension", dim);
+        ensureNonNull("style", style);
         if (dim.height <= 0 || dim.width <= 0) {
             throw new IllegalArgumentException("Invalid dimension, height and width must be superior to 0");
         }
@@ -64,9 +65,8 @@ public class DefaultGlyphService {
     }
 
     public static BufferedImage create(final FeatureTypeStyle style, final Dimension dim, final MapLayer layer) {
-        if (dim == null || style == null) {
-            throw new NullPointerException("Style and dimension can not be null");
-        }
+        ensureNonNull("dimension", dim);
+        ensureNonNull("style", style);
         if (dim.height <= 0 || dim.width <= 0) {
             throw new IllegalArgumentException("Invalid dimension, height and width must be superior to 0");
         }
@@ -82,9 +82,7 @@ public class DefaultGlyphService {
     }
 
     public static BufferedImage create(final Rule style, Dimension dim, final MapLayer layer) {
-        if (style == null) {
-            throw new NullPointerException("Style can not be null");
-        }
+        ensureNonNull("style", style);
         if (dim != null && (dim.height <= 0 || dim.width <= 0)) {
             throw new IllegalArgumentException("Invalid dimension, height and width must be superior to 0");
         }
@@ -117,9 +115,7 @@ public class DefaultGlyphService {
     }
 
     public static BufferedImage create(final Symbolizer style, Dimension dim, final MapLayer layer) {
-        if (style == null) {
-            throw new NullPointerException("Style can not be null");
-        }
+        ensureNonNull("style", style);
         if (dim != null && (dim.height <= 0 || dim.width <= 0)) {
             throw new IllegalArgumentException("Invalid dimension, height and width must be superior to 0");
         }

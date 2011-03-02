@@ -42,6 +42,8 @@ import org.opengis.style.SemanticType;
 
 import org.opengis.style.Symbolizer;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
@@ -64,9 +66,7 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
      */
     public StyleTreeModel(final T style) {
         super(new DefaultMutableTreeNode());
-        if (style == null) {
-            throw new NullPointerException("Style can't be null");
-        }
+        ensureNonNull("style", style);
         setStyleElement(style);
     }
 
@@ -75,9 +75,7 @@ public class StyleTreeModel<T> extends DefaultTreeModel implements StyleListener
      * @param style , can't be null
      */
     public void setStyleElement(final T style) {
-        if (style == null) {
-            throw new NullPointerException("Style can't be null");
-        }
+        ensureNonNull("style", style);
 
         weakStyleListener.dispose();
         weakFTSListener.dispose();

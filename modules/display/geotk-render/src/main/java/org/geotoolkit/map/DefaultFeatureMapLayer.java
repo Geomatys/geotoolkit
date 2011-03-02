@@ -36,6 +36,8 @@ import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default implementation of the MapLayer.
  * 
@@ -61,9 +63,7 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      */
     DefaultFeatureMapLayer(final FeatureCollection<? extends Feature> collection, final MutableStyle style) {
         super(style);
-        if (collection == null) {
-            throw new NullPointerException("FeatureSource and Style can not be null");
-        }
+        ensureNonNull("collection", collection);
         this.collection = collection;
     }
 
@@ -112,9 +112,7 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      */
     @Override
     public void setQuery(final Query query) {
-        if (query == null) {
-            throw new NullPointerException( "must provide a Query. Do you mean Query.ALL?");
-        }
+        ensureNonNull("query", query);
 
         final Query oldQuery;
         synchronized (this) {

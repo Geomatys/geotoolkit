@@ -59,6 +59,7 @@ import org.opengis.referencing.operation.MathTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
 import static org.geotoolkit.util.ArgumentChecks.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -190,9 +191,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     }
 
     public void setCrs84Politic(final CRS84Politic crs84Politic) {
-        if (crs84Politic == null) {
-            throw new NullPointerException("CRS84 politic can not be null.");
-        }
+        ensureNonNull("CRS84 politic", crs84Politic);
         this.crs84Politic = crs84Politic;
     }
 
@@ -201,9 +200,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     }
 
     public void setEpsg4326Politic(final EPSG4326Politic epsg4326Politic) {
-        if (epsg4326Politic == null) {
-            throw new NullPointerException("EPSG4326 politic can not be null.");
-        }
+        ensureNonNull("EPSG4326 politic", epsg4326Politic);
         this.epsg4326Politic = epsg4326Politic;
     }
 

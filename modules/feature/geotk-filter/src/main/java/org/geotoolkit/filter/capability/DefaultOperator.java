@@ -19,6 +19,8 @@ package org.geotoolkit.filter.capability;
 
 import org.opengis.filter.capability.Operator;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable operator.
  *
@@ -30,9 +32,7 @@ public class DefaultOperator implements Operator{
     private final String name;
 
     public DefaultOperator(final String name) {
-        if(name == null){
-            throw new NullPointerException("Operator name can not be null");
-        }
+        ensureNonNull("operator name", name);
         this.name = name;
     }
 

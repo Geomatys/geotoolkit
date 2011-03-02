@@ -36,6 +36,8 @@ import org.opengis.style.GraphicLegend;
 import org.opengis.style.StyleVisitor;
 import org.opengis.style.Symbolizer;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Mutable implementation of GeoAPI Rule.
  * 
@@ -130,9 +132,7 @@ public class DefaultMutableRule implements MutableRule{
      */
     @Override
     public void setDescription(final Description desc){
-        if (desc == null) {
-            throw new NullPointerException("description can't be null");
-        }
+        ensureNonNull("description", desc);
         
         final Description oldDesc;
         synchronized (this) {

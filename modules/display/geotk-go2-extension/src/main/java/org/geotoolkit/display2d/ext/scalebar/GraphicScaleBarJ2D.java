@@ -35,6 +35,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.ext.PositionedGraphic2D;
 
 import static javax.swing.SwingConstants.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Java2D graphic object displaying a scalebar.
@@ -60,7 +61,7 @@ public class GraphicScaleBarJ2D extends PositionedGraphic2D{
     }
 
     public void setTemplate(final ScaleBarTemplate template) {
-        if(template == null) throw new NullPointerException("Template can't be null");
+        ensureNonNull("template", template);
         this.template = template;
     }
 

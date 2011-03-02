@@ -54,6 +54,8 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -223,9 +225,9 @@ public abstract class J2DCanvas extends AbstractReferencedCanvas2D{
      * while testting.
      */
     public void getGraphicsIn(final Shape displayShape, final GraphicVisitor visitor, final VisitFilter filter) {
-        if(displayShape == null) throw new NullPointerException("Mask can not be null");
-        if(visitor == null)      throw new NullPointerException("Visitor can not be null");
-        if(filter == null)       throw new NullPointerException("Filter can not be null");
+        ensureNonNull("mask", displayShape);
+        ensureNonNull("visitor", visitor);
+        ensureNonNull("filter", filter);
 
         visitor.startVisit();
 

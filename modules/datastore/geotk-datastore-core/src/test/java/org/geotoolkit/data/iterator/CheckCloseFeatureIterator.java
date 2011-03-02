@@ -22,6 +22,8 @@ import org.geotoolkit.data.FeatureReader;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Wrap a feature Iterator and check that it is properly close.
  *
@@ -34,9 +36,7 @@ public class CheckCloseFeatureIterator implements FeatureIterator<Feature>, Feat
     private boolean isClosed = false;
 
     public CheckCloseFeatureIterator(final FeatureIterator ite){
-        if(ite == null){
-            throw new NullPointerException("Iterator can not be null.");
-        }
+        ensureNonNull("iterator", ite);
         this.ite = ite;
     }
 

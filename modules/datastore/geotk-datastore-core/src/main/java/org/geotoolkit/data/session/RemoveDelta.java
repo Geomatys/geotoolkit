@@ -27,6 +27,8 @@ import org.opengis.feature.type.Name;
 import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Delta which remove a collection of features.
  *
@@ -41,13 +43,8 @@ class RemoveDelta extends AbstractDelta{
 
     RemoveDelta(final Session session, final Name typeName, final Id filter){
         super(session);
-        if(typeName == null){
-            throw new NullPointerException("Type name can not be null.");
-        }
-        if(filter == null ){
-            throw new IllegalArgumentException("Can not create a remove delta with no filter.");
-        }
-
+        ensureNonNull("type name", typeName);
+        ensureNonNull("filter", filter);
         this.type = typeName;
         this.removedIds = filter;
     }

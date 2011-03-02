@@ -64,6 +64,8 @@ import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Create sql queries for JDBC Datastore, the queries syntax is
  * adjusted using the given SQLDialect.
@@ -75,10 +77,7 @@ public final class SQLQueryBuilder {
     private final AbstractJDBCDataStore store;
 
     public SQLQueryBuilder(final AbstractJDBCDataStore store){
-        if(store == null){
-            throw new NullPointerException("JDBCDataStore can not be null.");
-        }
-
+        ensureNonNull("JDBC DataStore", store);
         this.store = store;
     }
 

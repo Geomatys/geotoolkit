@@ -21,6 +21,8 @@ import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.expression.Expression;
 import org.opengis.filter.expression.PropertyName;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Default join implementation.
  * 
@@ -35,18 +37,10 @@ public final class DefaultJoin implements Join{
     private final PropertyIsEqualTo condition;
 
     public DefaultJoin(final Source left, final Source right, final JoinType type, final PropertyIsEqualTo condition){
-        if(left == null) {
-            throw new NullPointerException("Join left source must not be null.");
-        }
-        if(right == null) {
-            throw new NullPointerException("Join right source must not be null.");
-        }
-        if(type == null) {
-            throw new NullPointerException("Join type must not be null.");
-        }
-        if(left == null) {
-            throw new NullPointerException("Join condition must not be null.");
-        }
+        ensureNonNull("join left source", left);
+        ensureNonNull("join right source", right);
+        ensureNonNull("join type", type);
+        ensureNonNull("join condition", condition);
 
         //ensure that we have two property names only.
         final Expression expLeft = condition.getExpression1();

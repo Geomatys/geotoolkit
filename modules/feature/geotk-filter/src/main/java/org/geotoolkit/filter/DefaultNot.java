@@ -22,6 +22,8 @@ import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Not;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable "not" filter.
  *
@@ -33,9 +35,7 @@ public class DefaultNot implements Not,Serializable{
     private final Filter filter;
 
     public DefaultNot(final Filter filter) {
-        if(filter == null){
-            throw new NullPointerException("Fitler can not be null");
-        }
+        ensureNonNull("filter", filter);
         this.filter = filter;
     }
 

@@ -31,6 +31,8 @@ import org.geotoolkit.util.XArrays;
 
 import org.opengis.referencing.operation.TransformException;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Clip geometries using the given rectangle.
  *
@@ -91,30 +93,21 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
 
     public GeometryClipTransformer(final Rectangle2D clip){
         super();
-        if(clip == null){
-            throw new NullPointerException("Clip rectangle must not be null");
-        }
-
+        ensureNonNull("clip rectangle", clip);
         this.clip = clip;
         init();
     }
 
     public GeometryClipTransformer(final Rectangle2D clip, final CoordinateSequenceFactory csf){
         super(csf);
-        if(clip == null){
-            throw new NullPointerException("Clip rectangle must not be null");
-        }
-
+        ensureNonNull("clip rectangle", clip);
         this.clip = clip;
         init();
     }
 
     public GeometryClipTransformer(final Rectangle2D clip, final GeometryFactory gf){
         super(gf);
-        if(clip == null){
-            throw new NullPointerException("Clip rectangle must not be null");
-        }
-
+        ensureNonNull("clip rectangle", clip);
         this.clip = clip;
         init();
     }

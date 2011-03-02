@@ -25,6 +25,8 @@ import org.geotoolkit.util.Converters;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.expression.Expression;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable abstract "binary comparison operator".
  *
@@ -41,9 +43,8 @@ public abstract class AbstractBinaryComparisonOperator<E extends Expression,F ex
     protected final boolean match;
 
     public AbstractBinaryComparisonOperator(final E left, final F right, final boolean match) {
-        if(left == null || right == null){
-            throw new NullPointerException("Expressions can not be null");
-        }
+        ensureNonNull("left", left);
+        ensureNonNull("right", right);
         this.left = left;
         this.right = right;
         this.match = match;

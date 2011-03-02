@@ -70,6 +70,8 @@ import org.w3c.dom.Node;
 import org.xml.sax.ContentHandler;
 import org.xml.sax.InputSource;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Utility class to handle XML reading and writing for OGC SLD, SE and Filter.
  * 
@@ -292,8 +294,9 @@ public final class XMLUtilities {
      */
     public MutableStyledLayerDescriptor readSLD(final Object source, 
             final Specification.StyledLayerDescriptor version) throws JAXBException, FactoryException{
-        
-        if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
+
+        ensureNonNull("source", source);
+        ensureNonNull("version", version);
         
         final Object obj;
         
@@ -337,7 +340,9 @@ public final class XMLUtilities {
      */
     public void writeSLD(final Object target, final StyledLayerDescriptor sld, 
             final Specification.StyledLayerDescriptor version) throws JAXBException{
-        if(target == null || sld == null || version == null) throw new NullPointerException("Source, SLD and version can not be null");
+        ensureNonNull("target", target);
+        ensureNonNull("sld", sld);
+        ensureNonNull("version", version);
         
         final Object jax;
         
@@ -365,7 +370,9 @@ public final class XMLUtilities {
      */
     public void writeSLD(final Object target, final StyledLayerDescriptor sld, 
             final Specification.StyledLayerDescriptor version, final boolean isformatted) throws JAXBException{
-        if(target == null || sld == null || version == null) throw new NullPointerException("Source, SLD and version can not be null");
+        ensureNonNull("target", target);
+        ensureNonNull("sld", sld);
+        ensureNonNull("version", version);
         
         final Object jax;
         
@@ -395,7 +402,8 @@ public final class XMLUtilities {
      */
     public MutableStyle readStyle(final Object source, 
             final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
-        if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
+        ensureNonNull("source", source);
+        ensureNonNull("version", version);
         
         final Object obj;
         
@@ -429,7 +437,9 @@ public final class XMLUtilities {
      */
     public void writeStyle(final Object target, final Style style, 
             final Specification.StyledLayerDescriptor version) throws JAXBException{
-        if(target == null || style == null || version == null) throw new NullPointerException("Source, Style and version can not be null");
+        ensureNonNull("target", target);
+        ensureNonNull("style", style);
+        ensureNonNull("version", version);
         
         final Object jax;
         
@@ -457,7 +467,8 @@ public final class XMLUtilities {
      */
     public MutableFeatureTypeStyle readFeatureTypeStyle(final Object source, 
             final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
-        if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
+        ensureNonNull("source", source);
+        ensureNonNull("version", version);
         
         final Object obj;
         
@@ -495,7 +506,9 @@ public final class XMLUtilities {
      */
     public void writeFeatureTypeStyle(final Object target, final FeatureTypeStyle fts, 
             final Specification.SymbologyEncoding version) throws JAXBException{
-        if(target == null || fts == null || version == null) throw new NullPointerException("Source, FTS and version can not be null");
+        ensureNonNull("target",target);
+        ensureNonNull("fts",fts);
+        ensureNonNull("version",version);
         
         Object jax;
         
@@ -528,8 +541,9 @@ public final class XMLUtilities {
      */
     public MutableRule readRule(final Object source, 
             final Specification.SymbologyEncoding version) throws JAXBException, FactoryException{
-        if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
-        
+        ensureNonNull("source",source);
+        ensureNonNull("version",version);
+
         final Object obj;
         
         switch(version){
@@ -566,7 +580,9 @@ public final class XMLUtilities {
      */
     public void writeRule(final Object target, final Rule rule, 
             final Specification.SymbologyEncoding version) throws JAXBException{
-        if(target == null || rule == null || version == null) throw new NullPointerException("Source, FTS and version can not be null");
+        ensureNonNull("target",target);
+        ensureNonNull("rule",rule);
+        ensureNonNull("version",version);
         
         Object jax;
         
@@ -601,7 +617,8 @@ public final class XMLUtilities {
      */
     public SortBy readSortBy(final Object source,
             final Specification.Filter version) throws JAXBException{
-        if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
+        ensureNonNull("source",source);
+        ensureNonNull("version",version);
 
         final Object obj;
 
@@ -630,7 +647,8 @@ public final class XMLUtilities {
      */
     public Filter readFilter(final Object source, 
             final Specification.Filter version) throws JAXBException, FactoryException{
-        if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
+        ensureNonNull("source",source);
+        ensureNonNull("version",version);
         
         final Object obj;
         
@@ -670,7 +688,9 @@ public final class XMLUtilities {
      */
     public void writeFilter(final Object target, final Filter filter, 
             final Specification.Filter version) throws JAXBException{
-        if(target == null || filter == null || version == null) throw new NullPointerException("Source, FTS and version can not be null");
+        ensureNonNull("target",target);
+        ensureNonNull("filter",filter);
+        ensureNonNull("version",version);
         
         Object jax;
         
@@ -698,8 +718,9 @@ public final class XMLUtilities {
     // OGC property ------------------------------------------------------------
     public PropertyName readPropertyName(final Object source,
             final Specification.Filter version) throws JAXBException{
-        if(source == null || version == null) throw new NullPointerException("Source and version can not be null");
-
+        ensureNonNull("source",source);
+        ensureNonNull("version",version);
+        
         final Object obj;
 
         switch(version){

@@ -43,6 +43,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.dialect.PreparedStatementSQLDialect;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Extension of FilterToSQL intended for use with prepared statements.
  * <p>
@@ -217,9 +219,7 @@ public class PreparedFilterToSQL extends FilterToSQL {
     @Override
     protected Object visitBinarySpatialOperator(final BinarySpatialOperator filter, final Object extraData) {
         // basic checks
-        if (filter == null) {
-            throw new NullPointerException("Filter to be encoded cannot be null");
-        }
+        ensureNonNull("filter", filter);
 
         // extract the property name and the geometry literal
         final PropertyName property;

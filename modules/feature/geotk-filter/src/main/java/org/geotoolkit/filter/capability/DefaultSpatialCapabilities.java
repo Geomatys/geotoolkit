@@ -24,6 +24,8 @@ import org.opengis.filter.capability.GeometryOperand;
 import org.opengis.filter.capability.SpatialCapabilities;
 import org.opengis.filter.capability.SpatialOperators;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  * Immutable spatial capabilities
  *
@@ -36,13 +38,12 @@ public class DefaultSpatialCapabilities implements SpatialCapabilities{
     private final SpatialOperators operators;
 
     public DefaultSpatialCapabilities(final GeometryOperand[] operands, final SpatialOperators operators) {
-        if(operands == null || operands.length == 0){
-            throw new IllegalArgumentException("Operands must not be null or empty");
+        ensureNonNull("operands", operands);
+        ensureNonNull("spatial operators", operators);
+        if(operands.length == 0){
+            throw new IllegalArgumentException("Operands must not be empty");
         }
-        if(operators == null){
-            throw new NullPointerException("SpatialOperators can not be null");
-        }
-
+        
         this.operands = UnmodifiableArrayList.wrap(operands);
         this.operators = operators;
     }

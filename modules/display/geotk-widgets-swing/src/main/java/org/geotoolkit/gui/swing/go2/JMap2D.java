@@ -48,6 +48,8 @@ import org.opengis.display.canvas.CanvasListener;
 import org.opengis.display.canvas.RenderingState;
 import org.opengis.referencing.operation.TransformException;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -208,9 +210,7 @@ public class JMap2D extends JPanel{
      * @param info , can't be null
      */
     public void setInformationDecoration(final InformationDecoration info) {
-        if (info == null) {
-            throw new NullPointerException("info decoration can't be null");
-        }
+        ensureNonNull("info decoration", info);
 
         mainDecorationPane.remove(informationDecoration.geComponent());
         informationDecoration = info;
@@ -233,10 +233,7 @@ public class JMap2D extends JPanel{
      * @param back : MapDecoration, can't be null
      */
     public void setBackgroundDecoration(final MapDecoration back) {
-
-        if (back == null) {
-            throw new NullPointerException("background decoration can't be null");
-        }
+        ensureNonNull("background decoration", back);
 
         mainDecorationPane.remove(backDecoration.geComponent());
         backDecoration = back;

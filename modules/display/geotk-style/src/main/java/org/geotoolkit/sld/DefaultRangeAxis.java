@@ -19,8 +19,10 @@ package org.geotoolkit.sld;
 import org.opengis.sld.RangeAxis;
 import org.opengis.sld.SLDVisitor;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
+
 /**
- * Default imumutable range axis, thread safe.
+ * Default immutable range axis, thread safe.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -34,9 +36,8 @@ class DefaultRangeAxis implements RangeAxis {
      * Default constructor.
      */
     DefaultRangeAxis(final String name, final String value){
-        if(name == null || value == null){
-            throw new NullPointerException("Name and value can not be null.");
-        }
+        ensureNonNull("name", name);
+        ensureNonNull("value", value);
         this.name = name;
         this.value = value;
     }
