@@ -21,11 +21,11 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.geotoolkit.util.NullArgumentException;
-
 import org.opengis.feature.Property;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.feature.type.PropertyType;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Implementation of Property.
@@ -74,24 +74,17 @@ public class DefaultProperty<V extends Object, D extends PropertyDescriptor> ext
     }
 
     public DefaultProperty(final V value, final D descriptor) {
+        ensureNonNull("descriptor", descriptor);
         this.value = value;
-
-        if (descriptor == null) {
-            throw new NullArgumentException("Descriptor can not be null");
-        }
-
         this.descriptor = descriptor;
         this.type = descriptor.getType();
     }
 
     public DefaultProperty(final V value, final PropertyType type) {
+        ensureNonNull("type", type);
         this.value = value;
         this.descriptor = null;
         this.type = type;
-
-        if (type == null) {
-            throw new NullArgumentException("PropertyType can not be null");
-        }
     }
 
     /**

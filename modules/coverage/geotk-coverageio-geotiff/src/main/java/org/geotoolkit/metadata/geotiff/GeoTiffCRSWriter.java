@@ -41,7 +41,6 @@ import org.geotoolkit.referencing.operation.provider.Mercator2SP;
 import org.geotoolkit.referencing.operation.provider.TransverseMercator;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.NullArgumentException;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterDescriptor;
@@ -67,6 +66,7 @@ import org.opengis.util.FactoryException;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.referencing.AbstractIdentifiedObject.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Encode a CoordinateReferenceSystem as GeoTiff tags.
@@ -81,10 +81,7 @@ final class GeoTiffCRSWriter {
      */
     public void fillCRSMetaDatas(final GeoTiffMetaDataStack stack,
             final CoordinateReferenceSystem crs) throws IOException, FactoryException {
-
-        if(crs == null){
-            throw new NullArgumentException("CRS can not be null.");
-        }
+        ensureNonNull("crs", crs);
 
         final int crsType;
         if(crs instanceof ProjectedCRS){

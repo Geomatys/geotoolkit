@@ -39,7 +39,6 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.temporal.object.FastDateParser;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wms.GetFeatureInfoRequest;
 import org.geotoolkit.wms.GetMapRequest;
@@ -59,6 +58,7 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.operation.MathTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -588,11 +588,8 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @param format The mime type of an output format.
      */
     public void setFormat(final String format) {
-        if (format == null) {
-            throw new NullArgumentException("format  = "+format);
-        }
+        ensureNonNull("format", format);
         this.format = format;
-
     }
 
     /**

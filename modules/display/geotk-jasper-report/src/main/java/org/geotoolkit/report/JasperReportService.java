@@ -44,10 +44,11 @@ import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.NullArgumentException;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Utility class to generate html or pdf reports using JasperReport library.
@@ -142,12 +143,8 @@ public final class JasperReportService {
         final String mime = output.getMime();
         Object target = output.getOutput();
 
-        if(mime == null){
-            throw new NullArgumentException("Mime type can not be null.");
-        }
-        if(target == null){
-            throw new NullArgumentException("Output target can not be null.");
-        }
+        ensureNonNull("mime", mime);
+        ensureNonNull("output target", target);
 
         //we adjust the output target to a knowned type
         if(!(target instanceof OutputStream)){

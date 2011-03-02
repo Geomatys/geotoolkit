@@ -40,7 +40,6 @@ import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.geometry.Envelope;
@@ -50,6 +49,8 @@ import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * A canvas implementation with default support for two-dimensional CRS management. This
@@ -115,9 +116,7 @@ public abstract class AbstractReferencedCanvas2D extends AbstractCanvas implemen
 
     @Override
     public final synchronized void setObjectiveCRS(final CoordinateReferenceSystem objective) throws TransformException {
-        if(objective == null){
-            throw new NullArgumentException("Objective CRS can not be null.");
-        }
+        ensureNonNull("objective", objective);
         if(CRS.equalsIgnoreMetadata(envelope.getCoordinateReferenceSystem(), objective)){
             return;
         }

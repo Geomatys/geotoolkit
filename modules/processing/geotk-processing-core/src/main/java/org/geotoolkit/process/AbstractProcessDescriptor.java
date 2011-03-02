@@ -17,12 +17,13 @@
 
 package org.geotoolkit.process;
 
-import org.geotoolkit.util.NullArgumentException;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.identification.Identification;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.util.InternationalString;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *
@@ -43,24 +44,14 @@ public abstract class AbstractProcessDescriptor implements ProcessDescriptor {
 
     public AbstractProcessDescriptor(final Identifier id, final InternationalString abs,
             final ParameterDescriptorGroup inputDesc, final ParameterDescriptorGroup outputdesc) {
+        ensureNonNull("id", id);
+        ensureNonNull("abs", abs);
+        ensureNonNull("inputDesc", inputDesc);
+        ensureNonNull("outputdesc", outputdesc);
         this.id = id;
         this.abs = abs;
         this.inputDesc = inputDesc;
         this.outputdesc = outputdesc;
-
-        if(id == null){
-            throw new NullArgumentException("Process id can not be null.");
-        }
-        if(abs == null){
-            throw new NullArgumentException("Process description can not be null.");
-        }
-        if(inputDesc == null){
-            throw new NullArgumentException("Process input description can not be null.");
-        }
-        if(outputdesc == null){
-            throw new NullArgumentException("Process output description can not be null.");
-        }
-
     }
 
     @Override

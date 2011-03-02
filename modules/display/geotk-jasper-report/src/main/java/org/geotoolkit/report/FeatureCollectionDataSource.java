@@ -22,14 +22,15 @@ import java.util.Collection;
 import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JRField;
-import org.geotoolkit.data.FeatureCollection;
 
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.util.Converters;
-import org.geotoolkit.util.NullArgumentException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Map a FeatureCollection as a Jasper report data source.
@@ -44,17 +45,13 @@ public class FeatureCollectionDataSource implements JRDataSource {
     private Feature feature;
 
     public FeatureCollectionDataSource(final FeatureCollection collection){
-        if(collection == null){
-            throw new NullArgumentException("Feature collection can not be null.");
-        }
+        ensureNonNull("collection", collection);
         this.col = collection;
         this.iterator = collection.iterator();
     }
 
     public FeatureCollectionDataSource(final FeatureIterator iterator){
-        if(iterator == null){
-            throw new NullArgumentException("Feature iterator can not be null.");
-        }
+        ensureNonNull("iterator", iterator);
         this.col = null;
         this.iterator = iterator;
     }

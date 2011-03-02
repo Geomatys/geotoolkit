@@ -27,10 +27,11 @@ import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.StyleListener;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.collection.CheckedArrayList;
 
 import org.opengis.display.primitive.Graphic;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * Abstract implementation of the MapLayer.
@@ -96,9 +97,7 @@ public abstract class AbstractMapLayer extends AbstractMapItem implements MapLay
      */
     @Override
     public void setStyle(final MutableStyle style) {
-        if (style == null) {
-            throw new NullArgumentException("Style can not be null");
-        }
+        ensureNonNull("style", style);
         
         final MutableStyle oldStyle;
         synchronized (this) {

@@ -76,13 +76,14 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.style.DefaultStyleFactory;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.style.Description;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Rule;
+
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 public class JContextTree extends JScrollPane {
 
@@ -629,9 +630,7 @@ public class JContextTree extends JScrollPane {
 
         private MapItemTreeNode(final MapItem item){
             super(item);
-            if(item == null){
-                throw new NullArgumentException("Item can not be null.");
-            }
+            ensureNonNull("item", item);
             item.addItemListener(new ItemListener.Weak(item, MapItemTreeNode.this));
 
             resetStructure();

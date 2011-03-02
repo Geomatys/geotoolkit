@@ -33,7 +33,6 @@ import javax.xml.stream.XMLStreamException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.gpx.model.MetaData;
 import org.geotoolkit.data.gpx.model.Person;
-import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.xml.StaxStreamWriter;
 
 import org.opengis.feature.ComplexAttribute;
@@ -43,6 +42,7 @@ import org.opengis.geometry.Envelope;
 
 import static org.geotoolkit.data.gpx.xml.GPXConstants.*;
 import static org.geotoolkit.data.gpx.model.GPXModelConstants.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -63,9 +63,7 @@ public class GPXWriter100 extends StaxStreamWriter{
     }
 
     protected  GPXWriter100(final String namespace,final String creator){
-        if(creator == null){
-            throw new NullArgumentException("Creator can not be null.");
-        }
+        ensureNonNull("creator", creator);
         this.creator = creator;
         this.namespace = namespace;
     }

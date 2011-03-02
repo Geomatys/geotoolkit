@@ -19,18 +19,19 @@ package org.geotoolkit.metadata.geotiff;
 
 import com.sun.media.imageio.plugins.tiff.BaselineTIFFTagSet;
 import com.sun.media.imageio.plugins.tiff.GeoTIFFTagSet;
+
 import java.util.Collection;
 import java.awt.geom.AffineTransform;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.geotoolkit.util.NullArgumentException;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 import static org.geotoolkit.metadata.geotiff.GeoTiffMetaDataUtils.*;
 import static org.geotoolkit.metadata.geotiff.GeoTiffConstants.*;
 import static org.geotoolkit.util.DomUtilities.*;
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  *
@@ -51,9 +52,7 @@ final class GeoTiffMetaDataStack {
     private Node nTransform = null;
 
     GeoTiffMetaDataStack(final Node tiffTree) {
-        if(tiffTree == null){
-            throw new NullArgumentException("Tiff metadata tree can not be null.");
-        }
+        ensureNonNull("tiffTree", tiffTree);
         this.tiffTree = tiffTree;
         this.ifd = (Element)getNodeByLocalName(tiffTree, TAG_GEOTIFF_IFD);
 
