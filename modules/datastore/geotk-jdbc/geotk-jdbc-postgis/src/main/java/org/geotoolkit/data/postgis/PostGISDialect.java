@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.postgis;
 
+import org.geotoolkit.data.postgis.wkb.WKBAttributeIO;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -41,6 +42,8 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import org.geotoolkit.data.jdbc.FilterToSQL;
+import org.geotoolkit.data.postgis.ewkb.JtsBinaryParser;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
 import org.geotoolkit.referencing.CRS;
@@ -53,6 +56,14 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 public class PostGISDialect extends AbstractSQLDialect {
+
+    private static final String GEOM_ENCODING = "Encoding";
+    private static enum GeometryEncoding{
+        HEXEWKB,
+        WKB,
+        WKT,
+        UNKNOWNED
+    }
 
     private static final Map<String, Class> TYPE_TO_CLASS_MAP = new HashMap<String, Class>();
     private static final Map<Class, String> CLASS_TO_TYPE_MAP = new HashMap<Class, String>();
@@ -84,12 +95,8 @@ public class PostGISDialect extends AbstractSQLDialect {
         CLASS_TO_TYPE_MAP.put(GeometryCollection.class, "GEOMETRYCOLLECTION");
     }
 
-    private static final int SCHEMA_NAME = 2;
-    private static final int TABLE_NAME = 3;
-    private static final int COLUMN_NAME = 4;
-    private static final int TYPE_NAME = 6;
-
     private final ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
+    private final JtsBinaryParser hexewkbReader = new JtsBinaryParser();
     private boolean looseBBOXEnabled = false;
     private boolean estimatedExtentsEnabled = false;
 
@@ -136,26 +143,40 @@ public class PostGISDialect extends AbstractSQLDialect {
     public Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
             final String column, final GeometryFactory factory, final Connection cx)
             throws IOException, SQLException{
-        WKBAttributeIO reader = wkbReader.get();
-        if (reader == null) {
-            reader = new WKBAttributeIO(factory);
-            wkbReader.set(reader);
-        }
 
-        return (Geometry) reader.read(rs, column);
+        switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
+            case HEXEWKB:
+                return hexewkbReader.parse(rs.getString(column));
+            case WKB:
+                WKBAttributeIO reader = wkbReader.get();
+                if (reader == null) {
+                    reader = new WKBAttributeIO(factory);
+                    wkbReader.set(reader);
+                }
+                return (Geometry) reader.read(rs, column);
+            default:
+                throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
+        }
     }
 
     @Override
     public Geometry decodeGeometryValue(final GeometryDescriptor descriptor, final ResultSet rs,
             final int column, final GeometryFactory factory, final Connection cx)
             throws IOException, SQLException{
-        WKBAttributeIO reader = wkbReader.get();
-        if (reader == null) {
-            reader = new WKBAttributeIO(factory);
-            wkbReader.set(reader);
-        }
 
-        return (Geometry) reader.read(rs, column);
+        switch((GeometryEncoding)descriptor.getType().getUserData().get(GEOM_ENCODING)){
+            case HEXEWKB:
+                return hexewkbReader.parse(rs.getString(column));
+            case WKB:
+                WKBAttributeIO reader = wkbReader.get();
+                if (reader == null) {
+                    reader = new WKBAttributeIO(factory);
+                    wkbReader.set(reader);
+                }
+                return (Geometry) reader.read(rs, column);
+            default:
+                throw new IllegalStateException("Can not decode geometry not knowing it's encoding.");
+        }
     }
 
     @Override
@@ -208,48 +229,57 @@ public class PostGISDialect extends AbstractSQLDialect {
     }
 
     @Override
-    public Class<?> getMapping(final ResultSet columnMetaData, final Connection cx)
-            throws SQLException {
+    public void buildMapping(final AttributeTypeBuilder atb, final Connection cx,
+            final String typeName, final int datatype, final String schemaName,
+            final String tableName, final String columnName) throws SQLException {
 
-        if (!columnMetaData.getString(TYPE_NAME).equals("geometry")) {
-            return null;
+        if (!typeName.equals("geometry")) {
+            //not a geometry, fallback on type mappings
+            super.buildMapping(atb, cx, typeName, datatype,
+                    schemaName, tableName,columnName);
+            return;
         }
-
-        // grab the information we need to proceed
-        final String tableName = columnMetaData.getString(TABLE_NAME);
-        final String columnName = columnMetaData.getString(COLUMN_NAME);
-        final String schemaName = columnMetaData.getString(SCHEMA_NAME);
-
-        // first attempt, try with the geometry metadata
-        Statement statement = null;
-        ResultSet result = null;
+        
         String gType = null;
-        try {
-            final StringBuilder sb = new StringBuilder("SELECT TYPE FROM GEOMETRY_COLUMNS WHERE ");
-            sb.append("F_TABLE_SCHEMA = '").append(schemaName).append("' ");
-            sb.append("AND F_TABLE_NAME = '").append(tableName).append("' ");
-            sb.append("AND F_GEOMETRY_COLUMN = '").append(columnName).append('\'');
-            final String sqlStatement = sb.toString();
-            LOGGER.log(Level.FINE, "Geometry type check; {0} ", sqlStatement);
-            statement = cx.createStatement();
-            result = statement.executeQuery(sqlStatement);
+        if(tableName == null || tableName.isEmpty()){
+            //this column informations seems to come from a custom sql query
+            //the result will be the natural encoding of postgis which is hexadecimal EWKB
+            atb.addUserData(GEOM_ENCODING, GeometryEncoding.HEXEWKB);
 
-            if (result.next()) {
-                gType = result.getString(1);
+        }else{
+            //this column informations comes from a real table
+            atb.addUserData(GEOM_ENCODING, GeometryEncoding.WKB);
+
+            //first attempt, try with the geometry metadata
+            Statement statement = null;
+            ResultSet result = null;
+            try {
+                final StringBuilder sb = new StringBuilder("SELECT TYPE FROM GEOMETRY_COLUMNS WHERE ");
+                sb.append("F_TABLE_SCHEMA = '").append(schemaName).append("' ");
+                sb.append("AND F_TABLE_NAME = '").append(tableName).append("' ");
+                sb.append("AND F_GEOMETRY_COLUMN = '").append(columnName).append('\'');
+                final String sqlStatement = sb.toString();
+                LOGGER.log(Level.FINE, "Geometry type check; {0} ", sqlStatement);
+                statement = cx.createStatement();
+                result = statement.executeQuery(sqlStatement);
+                if (result.next()) {
+                    gType = result.getString(1);
+                }
+            } finally {
+                dataStore.closeSafe(result);
+                dataStore.closeSafe(statement);
             }
-        } finally {
-            dataStore.closeSafe(result);
-            dataStore.closeSafe(statement);
         }
 
-        // decode the type into
+        // decode the type
         Class geometryClass = (Class) TYPE_TO_CLASS_MAP.get(gType);
         if (geometryClass == null) {
             geometryClass = Geometry.class;
         }
-        return geometryClass;
-    }
 
+        atb.setBinding(geometryClass);
+    }
+    
     @Override
     public Integer getGeometrySRID(String schemaName, final String tableName, final String columnName,
             final Connection cx) throws SQLException{

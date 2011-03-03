@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.data.postgis;
+package org.geotoolkit.data.postgis.wkb;
 
 import java.io.IOException;
 import java.sql.PreparedStatement;
@@ -28,6 +28,7 @@ import com.vividsolutions.jts.io.InStream;
 import com.vividsolutions.jts.io.ParseException;
 import com.vividsolutions.jts.io.WKBReader;
 import com.vividsolutions.jts.io.WKBWriter;
+import net.iharder.Base64;
 
 
 /**
@@ -37,9 +38,10 @@ import com.vividsolutions.jts.io.WKBWriter;
  * @module pending
  * @since 2.4.1
  */
-public class WKBAttributeIO {
-    final WKBReader wkbr;
-    final ByteArrayInStream inStream = new ByteArrayInStream();
+public final class WKBAttributeIO {
+
+    private final WKBReader wkbr;
+    private final ByteArrayInStream inStream = new ByteArrayInStream();
 
     public WKBAttributeIO() {
         wkbr = new WKBReader();
@@ -53,21 +55,23 @@ public class WKBAttributeIO {
      * This method will convert a Well Known Binary representation to a
      * JTS  Geometry object.
      *
-     * @param wkb te wkb encoded byte array
+     * @param wkb the wkb encoded byte array
      *
      * @return a JTS Geometry object that is equivalent to the WTB
-     *         representation passed in by param wkb
+     *         representation passed in by parameter wkb
      *
      * @throws IOException if more than one geometry object was found in  the
      *         WTB representation, or if the parser could not parse the WKB
      *         representation.
      */
     private Geometry wkb2Geometry(final byte[] wkbBytes) throws IOException {
-        if (wkbBytes == null) { //DJB: null value from database --> null geometry (the same behavior as WKT).  NOTE: sending back a GEOMETRYCOLLECTION(EMPTY) is also a possibility, but this is not the same as NULL
+        if (wkbBytes == null) { 
+            //DJB: null value from database --> null geometry (the same behavior as WKT).
+            //NOTE: sending back a GEOMETRYCOLLECTION(EMPTY) is also a possibility, but this is not the same as NULL
             return null;
         }
+        inStream.setBytes(wkbBytes);
         try {
-            inStream.setBytes(wkbBytes);
             return wkbr.read(inStream);
         } catch (ParseException e) {
             throw new IOException("An exception occurred while parsing WKB data", e);
@@ -75,32 +79,37 @@ public class WKBAttributeIO {
     }
 
     public Object read(final ResultSet rs, final String columnName) throws IOException {
+        final byte bytes[];
         try {
-            final byte bytes[] = rs.getBytes(columnName);
-            if (bytes == null) { // ie. its a null column -> return a null geometry!
-                return null;
-            }
-            return wkb2Geometry(Base64.decode(bytes));
+            bytes = rs.getBytes(columnName);            
         } catch (SQLException e) {
             throw new IOException("SQL exception occurred while reading the geometry.", e);
         }
+
+        if (bytes == null) {
+            // ie. its a null column -> return a null geometry!
+            return null;
+        }
+        return wkb2Geometry(Base64.decode(bytes));
     }
 
     public Object read(final ResultSet rs, final int columnIndex) throws IOException {
+        final byte bytes[];
         try {
-            final byte bytes[] = rs.getBytes(columnIndex);
-            if (bytes == null) {// ie. its a null column -> return a null geometry!
-                return null;
-            }
-            return wkb2Geometry(Base64.decode(bytes));
+            bytes = rs.getBytes(columnIndex);
         } catch (SQLException e) {
             throw new IOException("SQL exception occurred while reading the geometry.", e);
         }
+
+        if (bytes == null) {
+            // ie. its a null column -> return a null geometry!
+            return null;
+        }
+        return wkb2Geometry(Base64.decode(bytes));
     }
 
     public void write(final PreparedStatement ps, final int position, final Object value)
-            throws IOException
-    {
+            throws IOException {
         try {
             if (value == null) {
                 ps.setNull(position, Types.OTHER);
@@ -110,7 +119,6 @@ public class WKBAttributeIO {
         } catch (SQLException e) {
             throw new IOException("SQL exception occurred while reading the geometry.", e);
         }
-
     }
 
     /**
@@ -154,7 +162,6 @@ public class WKBAttributeIO {
             this.buffer = buffer;
             this.position = 0;
         }
-
 
         @Override
         public void read(final byte[] buf) throws IOException {

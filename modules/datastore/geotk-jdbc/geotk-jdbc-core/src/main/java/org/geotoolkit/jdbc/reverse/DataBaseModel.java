@@ -363,37 +363,25 @@ public final class DataBaseModel {
         final AttributeDescriptorBuilder adb = new AttributeDescriptorBuilder(FTF);
         final AttributeTypeBuilder atb = new AttributeTypeBuilder(FTF);
 
+        final String schemaName     = columnSet.getString(Column.TABLE_SCHEM);
+        final String tableName      = columnSet.getString(Column.TABLE_NAME);
         final String columnName     = columnSet.getString(Column.COLUMN_NAME);
         final int columnDataType    = columnSet.getInt(Column.DATA_TYPE);
         final String columnTypeName = columnSet.getString(Column.TYPE_NAME);
         final String columnNullable = columnSet.getString(Column.IS_NULLABLE);
 
+        atb.setName(columnName);
+        adb.setName(columnName);
 
         Connection cx = null;
-        Class binding;
         try {
             cx = store.getDataSource().getConnection();
-            binding = dialect.getMapping(columnSet, cx);
-
+            dialect.buildMapping(atb, cx, columnTypeName, columnDataType,
+                    schemaName, tableName, columnName);
         } catch (SQLException e) {
             throw new DataStoreException("Error occurred analyzing column : " + columnName, e);
         } finally {
             store.closeSafe(cx);
-        }
-
-
-        if (binding == null) {
-            //determine from type mappings
-            binding = dialect.getMapping(columnDataType);
-        }
-        if (binding == null) {
-            //determine from type name mappings
-            binding = dialect.getMapping(columnTypeName);
-        }
-        if (binding == null) {
-            //if still not found, resort to Object
-            store.getLogger().log(Level.WARNING, "Could not find mapping for:{0}", columnName);
-            binding = Object.class;
         }
 
         //table values are always min 1, max 1
@@ -401,17 +389,13 @@ public final class DataBaseModel {
         adb.setMaxOccurs(1);
 
         //nullability
-        if (Column.VALUE_NO.equalsIgnoreCase(columnNullable)) {
-            adb.setNillable(false);
+        adb.setNillable(!Column.VALUE_NO.equalsIgnoreCase(columnNullable));
+
+        if(Geometry.class.isAssignableFrom(atb.getBinding())){
+            adb.setType(atb.buildGeometryType());
         }else{
-            adb.setNillable(true);
+            adb.setType(atb.buildType());
         }
-
-        atb.setName(columnName);
-        atb.setBinding(binding);
-
-        adb.setName(columnName);
-        adb.setType(atb.buildType());
         adb.findBestDefaultValue();
         return adb.buildDescriptor();
     }
@@ -465,53 +449,24 @@ public final class DataBaseModel {
                 adb.setNillable(nullable == metadata.columnNullable);
 
 
-                Class binding = null;
-                if (binding == null) {
-                    //determine from type mappings
-                    binding = dialect.getMapping(type);
-                }
-                if (binding == null) {
-                    //determine from type name mappings
-                    binding = dialect.getMapping(typeName);
-                }
-                if (binding == null) {
-                    //if still not found, resort to Object
-                    store.getLogger().log(Level.WARNING, "Could not find mapping for:{0}", columnName);
-                    binding = Object.class;
-                }
-
                 atb.setName(ensureGMLNS(namespace, columnName));
-                atb.setBinding(binding);
+                Connection cx = null;
+                try {
+                    cx = store.getDataSource().getConnection();
+                    dialect.buildMapping(atb, cx, typeName, type,
+                            schemaName, tableName, columnName);
+                } catch (SQLException e) {
+                    throw new DataStoreException("Error occurred analyzing column : " + columnName, e);
+                } finally {
+                    store.closeSafe(cx);
+                }
 
-                //Set the CRS if it's a geometry
-                if (Geometry.class.isAssignableFrom(binding)) {
-                    //add the attribute as a geometry, try to figure out
-                    // its srid first
-                    Integer srid = null;
-                    CoordinateReferenceSystem crs = null;
-//                    Connection cx = null;
-//                    try {
-//                        cx = store.getDataSource().getConnection();
-//                        srid = dialect.getGeometrySRID(store.getDatabaseSchema(), tableName, name, cx);
-//                        if(srid != null)
-//                            crs = dialect.createCRS(srid, cx);
-//                    } catch (SQLException e) {
-//                        String msg = "Error occured determing srid for " + tableName + "."+ name;
-//                        store.getLogger().log(Level.WARNING, msg, e);
-//                    } finally{
-//                        store.closeSafe(cx);
-//                    }
-
-                    atb.setCRS(crs);
-                    if(srid != null){
-                        adb.addUserData(JDBCDataStore.JDBC_NATIVE_SRID, srid);
-                    }
+                if(Geometry.class.isAssignableFrom(atb.getBinding())){
                     adb.setType(atb.buildGeometryType());
                 }else{
-                    //normal field type
                     adb.setType(atb.buildType());
                 }
-
+                
                 adb.findBestDefaultValue();
                 desc = adb.buildDescriptor();
             }

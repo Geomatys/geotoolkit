@@ -35,6 +35,7 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import org.geotoolkit.data.jdbc.FilterToSQL;
 
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 
 
 /**
@@ -168,6 +169,27 @@ public interface SQLDialect {
      */
     Integer getMapping(final Class<?> clazz);
 
+    /**
+     * Determines the class mapping for a particular column of a table.
+     * <p>
+     * Implementing this method is optional. It is used to allow database to
+     * perform custom type mappings based on various column metadata. It is called
+     * before the mappings registered in {@link #registerSqlTypeToClassMappings(Map)}
+     * and {@link #registerSqlTypeNameToClassMappings(Map)} are used to determine
+     * the mapping. Subclasses should implement as needed, this default implementation
+     * returns <code>null</code>.
+     * </p>
+     * <p>
+     * The <tt>columnMetaData</tt> argument is provided from
+     * {@link DatabaseMetaData#getColumns(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
+     * </p>
+     * @param columnMetaData The column metadata
+     * @param cx The connection used to retrieve the metadata
+     * @return The class mapped to the to column, or <code>null</code>.
+     */
+    void buildMapping(final AttributeTypeBuilder atb, final Connection cx,
+            final String typeName, final int datatype, final String schemaName,
+            final String tableName, final String columnName) throws SQLException;
 
 
     ////////////////////////////////////////////////////////////////////////////
@@ -194,26 +216,6 @@ public interface SQLDialect {
      */
     boolean includeTable(final String schemaName, final String tableName, final Connection cx)
             throws SQLException;
-
-    /**
-     * Determines the class mapping for a particular column of a table.
-     * <p>
-     * Implementing this method is optional. It is used to allow database to
-     * perform custom type mappings based on various column metadata. It is called
-     * before the mappings registered in {@link #registerSqlTypeToClassMappings(Map)}
-     * and {@link #registerSqlTypeNameToClassMappings(Map)} are used to determine
-     * the mapping. Subclasses should implement as needed, this default implementation
-     * returns <code>null</code>.
-     * </p>
-     * <p>
-     * The <tt>columnMetaData</tt> argument is provided from
-     * {@link DatabaseMetaData#getColumns(java.lang.String, java.lang.String, java.lang.String, java.lang.String)}.
-     * </p>
-     * @param columnMetaData The column metadata
-     * @param cx The connection used to retrieve the metadata
-     * @return The class mapped to the to column, or <code>null</code>.
-     */
-    Class<?> getMapping(final ResultSet columnMetaData, final Connection cx) throws SQLException;
 
     /**
      * Returns the string used to escape names.

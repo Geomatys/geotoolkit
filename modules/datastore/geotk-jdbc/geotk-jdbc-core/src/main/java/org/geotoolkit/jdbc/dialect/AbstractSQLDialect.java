@@ -35,7 +35,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.geotoolkit.data.jdbc.FilterToSQL;
 
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -43,6 +42,8 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.filter.capability.GeometryOperand;
 
+import org.geotoolkit.data.jdbc.FilterToSQL;
+import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.filter.capability.DefaultArithmeticOperators;
@@ -59,6 +60,7 @@ import org.geotoolkit.filter.capability.DefaultSpatialOperators;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.opengis.filter.expression.Literal;
 
+import static org.geotoolkit.util.ArgumentChecks.*;
 
 /**
  * The driver used by JDBCDataStore to directly communicate with the database.
@@ -160,12 +162,25 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     protected final JDBCDataStore dataStore;
 
+    protected final String escape;
+
     /**
      * Creates the dialect.
      * @param dataStore The dataStore using the dialect.
      */
     protected AbstractSQLDialect(final JDBCDataStore dataStore) {
+        this(dataStore,"\"");
+    }
+
+    /**
+     * Creates the dialect.
+     * @param dataStore The dataStore using the dialect.
+     */
+    protected AbstractSQLDialect(final JDBCDataStore dataStore, final String escape) {
+        ensureNonNull("datastore", dataStore);
+        ensureNonNull("name escape", escape);
         this.dataStore = dataStore;
+        this.escape = escape;
     }
 
     /**
@@ -264,7 +279,25 @@ public abstract class AbstractSQLDialect implements SQLDialect{
         return mapping;
     }
 
+    @Override
+    public void buildMapping(final AttributeTypeBuilder atb, final Connection cx,
+            final String typeName, final int datatype, final String schemaName,
+            final String tableName, final String columnName) throws SQLException {
+        
+        //determine from type mappings
+        Class binding = getMapping(datatype);
 
+        if (binding == null) {
+            //determine from type name mappings
+            binding = getMapping(typeName);
+        }
+        if (binding == null) {
+            //if still not found, resort to Object
+            binding = Object.class;
+        }
+
+        atb.setBinding(binding);
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // todo MUST CHECK ALL THOSES FOLLOWING ////////////////////////////////////
@@ -310,23 +343,8 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * {@inheritDoc }
      */
     @Override
-    public Class<?> getMapping(final ResultSet columnMetaData, final Connection cx) throws SQLException {
-        return null;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
     public String getNameEscape() {
-        return "\"";
-    }
-
-    /**
-     * Quick accessor for {@link #getNameEscape()}.
-     */
-    protected final String ne() {
-        return getNameEscape();
+        return escape;
     }
 
     /**
@@ -334,7 +352,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public void encodeColumnName(final String raw, final StringBuilder sql) {
-        sql.append(ne()).append(raw).append(ne());
+        sql.append(escape).append(raw).append(escape);
     }
 
     /**
@@ -368,7 +386,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public void encodeTableName(final String raw, final StringBuilder sql) {
-        sql.append(ne()).append(raw).append(ne());
+        sql.append(escape).append(raw).append(escape);
     }
 
     /**
@@ -376,7 +394,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      */
     @Override
     public void encodeSchemaName(final String raw, final StringBuilder sql) {
-        sql.append(ne()).append(raw).append(ne());
+        sql.append(escape).append(raw).append(escape);
     }
 
     /**
@@ -523,7 +541,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * This method register the basic type.
      * </p>
      */
-    protected static final void initBaseSqlTypeNameToClassMappings(final Map<String, Class> mappings) {
+    protected static void initBaseSqlTypeNameToClassMappings(final Map<String, Class> mappings) {
         //TODO: do the normal types
     }
 
@@ -534,7 +552,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * This method register the basic type.
      * </p>
      */
-    protected static final void initBaseSqlTypeToClassMappings(final Map<Integer, Class> mappings) {
+    protected static void initBaseSqlTypeToClassMappings(final Map<Integer, Class> mappings) {
         mappings.put(Types.VARCHAR, String.class);
         mappings.put(Types.CHAR, String.class);
         mappings.put(Types.LONGVARCHAR, String.class);
@@ -567,7 +585,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * This method register the basic type.
      * </p>
      */
-    protected static final void initBaseClassToSqlMappings(final Map<Class, Integer> mappings) {
+    protected static void initBaseClassToSqlMappings(final Map<Class, Integer> mappings) {
         mappings.put(String.class, Types.VARCHAR);
 
         mappings.put(Boolean.class, Types.BOOLEAN);
@@ -600,7 +618,7 @@ public abstract class AbstractSQLDialect implements SQLDialect{
      * </ul>
      * </p>
      */
-    protected static final void initBaseSqlTypeToSqlTypeNameOverrides(final Map<Integer,String> overrides) {
+    protected static void initBaseSqlTypeToSqlTypeNameOverrides(final Map<Integer,String> overrides) {
     }
 
 }
