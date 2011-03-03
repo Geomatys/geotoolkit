@@ -21,22 +21,22 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.Query;
 
 import org.opengis.feature.Feature;
-import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 
 /**
- * MapLayer holding Features.
+ * MapLayer holding a collection of features.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface FeatureMapLayer extends MapLayer{
+public interface FeatureMapLayer extends CollectionMapLayer{
 
     /**
-     * Get the feature source for this layer.
+     * The feature collection of this layer.
      *
      * @return The features for this layer, can not be null.
      */
+    @Override
     FeatureCollection<? extends Feature> getCollection();
     
     
@@ -66,18 +66,6 @@ public interface FeatureMapLayer extends MapLayer{
      * @param query
      */
     void setQuery(Query query);
-
-    /**
-     * A separate filter for datas that are selected on this layer.
-     * @return Filter, can be null or empty.
-     */
-    Id getSelectionFilter();
-
-    /**
-     * Set the selection fiter.
-     * @param filter Id
-     */
-    void setSelectionFilter(Id filter);
 
     Expression getHeight();
 

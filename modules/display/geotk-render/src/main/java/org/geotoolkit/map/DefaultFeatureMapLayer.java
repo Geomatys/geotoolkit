@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -30,8 +30,6 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.style.MutableStyle;
 
 import org.opengis.feature.Feature;
-import org.opengis.filter.Filter;
-import org.opengis.filter.Id;
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -44,12 +42,9 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMapLayer {
+final class DefaultFeatureMapLayer extends DefaultCollectionMapLayer implements FeatureMapLayer {
 
-    protected Query query = null;
-    protected Id selectionFilter = null;
-
-    private final FeatureCollection<? extends Feature> collection;
+    private Query query = null;
 
     private Expression height;
     private Expression[] elevationRange;
@@ -62,28 +57,7 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      * @param style : the style used to represent this layer
      */
     DefaultFeatureMapLayer(final FeatureCollection<? extends Feature> collection, final MutableStyle style) {
-        super(style);
-        ensureNonNull("collection", collection);
-        this.collection = collection;
-    }
-
-    @Override
-    public Id getSelectionFilter(){
-        return selectionFilter;
-    }
-
-    @Override
-    public void setSelectionFilter(final Id filter){
-
-        final Filter oldfilter;
-        synchronized (this) {
-            oldfilter = this.selectionFilter;
-            if(oldfilter == filter){
-                return;
-            }
-            this.selectionFilter = filter;
-        }
-        firePropertyChange(SELECTION_FILTER_PROPERTY, oldfilter, this.selectionFilter);
+        super(collection,style);
     }
 
     /**
@@ -130,7 +104,7 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      */
     @Override
     public FeatureCollection<? extends Feature> getCollection() {
-        return this.collection;
+        return (FeatureCollection<? extends Feature>) super.getCollection();
     }
     
     /**
@@ -138,11 +112,11 @@ final class DefaultFeatureMapLayer extends AbstractMapLayer implements FeatureMa
      */
     @Override
     public Envelope getBounds() {
-
-        final CoordinateReferenceSystem sourceCrs = collection.getFeatureType().getCoordinateReferenceSystem();
+        final FeatureCollection<? extends Feature> featureCol = getCollection();
+        final CoordinateReferenceSystem sourceCrs = featureCol.getFeatureType().getCoordinateReferenceSystem();
         Envelope env = null;
         try {
-            env = collection.getEnvelope();
+            env = featureCol.getEnvelope();
         } catch (DataStoreException e) {
             LOGGER.log(Level.WARNING, "Could not create referecenced envelope.",e);
         }

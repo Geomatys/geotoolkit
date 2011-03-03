@@ -17,6 +17,8 @@
 
 package org.geotoolkit.map;
 
+import java.util.ArrayList;
+import java.util.List;
 import junit.framework.TestCase;
 
 import org.geotoolkit.data.DataStore;
@@ -30,6 +32,7 @@ import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.style.DefaultStyleFactory;
+import org.geotoolkit.style.MutableStyle;
 
 import org.junit.After;
 import org.junit.AfterClass;
@@ -84,11 +87,39 @@ public class MapLayerTest extends TestCase{
     }
 
     @Test
-    public void testLayer() throws DataStoreException {
+    public void testCollectionLayer() {
 
         try{
             MapBuilder.createFeatureLayer(null, null);
-            throw new IllegalArgumentException("Creating maplayer with null source should raise an error");
+            fail("Creating collection maplayer with null style and source should raise an error");
+        }catch(Exception ex){
+            //ok
+        }
+
+        final MutableStyle style = new DefaultStyleFactory().style();
+
+        try{
+            MapBuilder.createFeatureLayer(null, style);
+            fail("Creating collection maplayer with null source should raise an error");
+        }catch(Exception ex){
+            //ok
+        }
+
+        final List<String> collection = new ArrayList<String>();
+
+        final CollectionMapLayer layer = MapBuilder.createCollectionLayer(collection, style);
+        assertNotNull(layer);
+
+        assertEquals(layer.getCollection(), collection);
+
+    }
+
+    @Test
+    public void testFeatureLayer() throws DataStoreException {
+
+        try{
+            MapBuilder.createFeatureLayer(null, null);
+            fail("Creating maplayer with null source should raise an error");
         }catch(Exception ex){
             //ok
         }

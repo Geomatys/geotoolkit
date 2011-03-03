@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2003 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2010, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.map;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CancellationException;
@@ -65,7 +66,7 @@ public final class MapBuilder {
 
     /**
      * Create a Default Mapcontext object with the given coordinate reference system.
-     * The crs is not used for renderering, it is only used when calling the getEnvelope
+     * The crs is not used for rendering, it is only used when calling the getEnvelope
      * method.
      */
     public static MapContext createContext(final CoordinateReferenceSystem crs){
@@ -80,8 +81,8 @@ public final class MapBuilder {
     }
 
     /**
-     * Create an empty map layer without any datas. It can be usefull in different
-     * kind of applications, like holding a space in the mapcontext for a layer
+     * Create an empty map layer without any datas. It can be useful in different
+     * kind of applications, like holding a space in the map context for a layer
      * when a datastore is unavailable.
      */
     public static EmptyMapLayer createEmptyMapLayer(){
@@ -92,21 +93,28 @@ public final class MapBuilder {
     }
 
     /**
-     * Create a default feature maplayer with a featurecollection and a style.
+     * Create a default collection map layer with a collection and a style.
+     */
+    public static CollectionMapLayer createCollectionLayer(final Collection<?> collection, final MutableStyle style){
+        return new DefaultCollectionMapLayer(collection, style);
+    }
+
+    /**
+     * Create a default feature map layer with a feature collection and a style.
      */
     public static FeatureMapLayer createFeatureLayer(final FeatureCollection<? extends Feature> collection, final MutableStyle style){
         return new DefaultFeatureMapLayer(collection, style);
     }
 
     /**
-     * Create a default coverage maplayer with a gridCoverage, a style and the grid name.
+     * Create a default coverage map layer with a gridCoverage, a style and the grid name.
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverage2D grid, final MutableStyle style, final String name){
         return createCoverageLayer(new SimpleCoverageReader(grid), style, name);
     }
 
     /**
-     * Create a default coverage maplayer with a coverageReader, a style and the grid name.
+     * Create a default coverage map layer with a coverageReader, a style and the grid name.
      */
     public static CoverageMapLayer createCoverageLayer(final GridCoverageReader reader, final MutableStyle style, final String name){
         ensureNonNull("name", name);

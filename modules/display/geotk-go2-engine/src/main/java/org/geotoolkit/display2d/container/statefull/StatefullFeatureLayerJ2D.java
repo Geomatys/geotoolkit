@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
@@ -52,7 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 
 /**
- * Single object to represent a complete mapcontext.
+ * Single object to represent a feature map layer.
  * This is a Stateless graphic object.
  *
  * @author Johann Sorel
