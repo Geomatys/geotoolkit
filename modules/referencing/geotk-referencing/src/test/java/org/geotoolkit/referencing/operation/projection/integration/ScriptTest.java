@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.projection.integration;
 import java.io.LineNumberReader;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.referencing.operation.provider.NADCON;
 import org.geotoolkit.referencing.operation.projection.KrovakTest;
 import org.geotoolkit.referencing.operation.projection.MercatorTest;
@@ -56,12 +57,7 @@ import org.junit.*;
     AlbersEqualAreaTest.class, OrthographicTest.class, ObliqueStereographicTest.class,
     PolarStereographicTest.class, PolyconicTest.class, KrovakTest.class, NadconTransformTest.class
 })
-public final class ScriptTest {
-    /**
-     * Sets to {@code true} for displaying statistics.
-     */
-    private static final boolean VERBOSE = false;
-
+public final class ScriptTest extends ReferencingTestBase {
     /**
      * Runs the specified test script.
      *
@@ -72,10 +68,11 @@ public final class ScriptTest {
         final ScriptRunner test = new ScriptRunner(in);
         test.run();
         in.close();
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(filename);
             test.printStatistics();
             System.out.println();
+            System.out.flush();
         }
         if (test.firstError != null) {
             throw test.firstError;

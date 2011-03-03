@@ -139,10 +139,11 @@ public final class StressTest extends EpsgFactoryTestBase {
             out.println("Minimum time (ms): " + minTime);
             out.println("Maximum time (ms): " + maxTime);
             out.println("Number CRS codes:  " + result.size() + " / " + ClientThread.CODES.length);
+            out.flush();
             /*
              * Append results to file.
              */
-            if (true) {
+            if (false) {
                 final String content =
                         ""   + RUNNER_COUNT +
                         ", " + MAX_WORKERS +

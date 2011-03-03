@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation;
 
+import java.io.IOException;
 import java.awt.geom.Point2D;
 import javax.imageio.spi.ServiceRegistry;
 
@@ -46,6 +47,7 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
+import org.geotoolkit.referencing.factory.FactoryDependencies;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.transform.TransformTestBase;
@@ -203,9 +205,19 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
      */
     @Before
     public void initMessageOnFailure() {
-        messageOnFailure = "Test failure in " + Classes.getShortClassName(this) +
-                "[datumShiftMethod=" + getDatumShiftMethod() +
-                ", isEpsgFactoryAvailable=" + isEpsgFactoryAvailable() + ']';
+        final StringBuilder buffer = new StringBuilder("Test failure in ")
+                .append(Classes.getShortClassName(this))
+                .append("[datumShiftMethod=").append(getDatumShiftMethod())
+                .append(", isEpsgFactoryAvailable=").append(isEpsgFactoryAvailable())
+                .append(']').append(System.getProperty("line.separator", "\n"));
+        final FactoryDependencies dep = new FactoryDependencies(opFactory);
+        try {
+            dep.print(buffer);
+        } catch (IOException e) {
+            // Should never happen, since we are printing in a StringBuilder.
+            throw new AssertionError(e);
+        }
+        messageOnFailure = buffer.toString();
     }
 
     /**

@@ -31,13 +31,14 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.test.Depend;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
+import org.geotoolkit.test.Depend;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -52,12 +53,7 @@ import static org.junit.Assert.*;
  * @since 3.16
  */
 @Depend(WarpAdapterTest.class)
-public final class WarpFactoryTest {
-    /**
-     * {@code true} for displaying statistical information about the errors.
-     */
-    private static final boolean VERBOSE = false;
-
+public final class WarpFactoryTest extends ReferencingTestBase {
     /**
      * The tolerance threshold (in pixels) used by the {@link WarpFactory} being tested.
      */
@@ -168,7 +164,7 @@ public final class WarpFactoryTest {
                 sy.add(dy);
             }
         }
-        if (VERBOSE) {
+        if (verbose) {
             final TableWriter table = new TableWriter(null, TableWriter.SINGLE_VERTICAL_LINE);
             table.setMultiLinesCells(true);
             table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
@@ -180,6 +176,7 @@ public final class WarpFactoryTest {
             System.out.println(name);
             System.out.println(table);
             System.out.println();
+            System.out.flush();
         }
     }
 

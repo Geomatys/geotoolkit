@@ -28,6 +28,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.test.Depend;
 
@@ -46,12 +47,7 @@ import static org.junit.Assert.*;
  * @since 2.4
  */
 @Depend(PropertyEpsgFactoryTest.class)
-public final class FallbackAuthorityFactoryTest {
-    /**
-     * Set to {@code true} for printing debugging information.
-     */
-    private static final boolean VERBOSE = false;
-
+public final class FallbackAuthorityFactoryTest extends ReferencingTestBase {
     /**
      * The extra factory.
      */
@@ -90,7 +86,7 @@ public final class FallbackAuthorityFactoryTest {
         boolean foundExtra = false;
         for (final CRSAuthorityFactory factory : factories) {
             final Class<? extends CRSAuthorityFactory> type = factory.getClass();
-            if (VERBOSE) {
+            if (verbose) {
                 System.out.println(type);
             }
             if (type.equals(ExtraEpsgFactory.class)) {

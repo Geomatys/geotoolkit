@@ -30,11 +30,6 @@ import org.geotoolkit.test.TestBase;
  */
 public abstract class ReferencingTestBase extends TestBase {
     /**
-     * Set to {@code true} for sending debugging information to the standard output stream.
-     */
-    protected boolean verbose = false;
-
-    /**
      * Creates a new test suite.
      */
     protected ReferencingTestBase() {

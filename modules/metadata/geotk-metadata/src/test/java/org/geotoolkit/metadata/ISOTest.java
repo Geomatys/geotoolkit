@@ -32,6 +32,7 @@ import org.opengis.metadata.identification.RepresentativeFraction;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -48,12 +49,7 @@ import static org.junit.Assert.*;
  * @todo Current implementation relies on {@link Metadata} dependencies. This is probably
  *       not enough; we should provide an explicit list of metadata interface.
  */
-public final class ISOTest {
-    /**
-     * {@code true} for displaying debugging informations.
-     */
-    private static final boolean VERBOSE = false;
-
+public final class ISOTest extends TestBase {
     /**
      * Root package for interfaces, with trailing dot.
      */
@@ -204,7 +200,7 @@ public final class ISOTest {
             }
             assertSetters(new PropertyAccessor(impl, type), done);
         }
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(done);
         }
     }

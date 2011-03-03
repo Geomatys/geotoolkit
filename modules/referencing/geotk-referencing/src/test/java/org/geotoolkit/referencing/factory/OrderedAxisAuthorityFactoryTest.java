@@ -456,7 +456,7 @@ public final class OrderedAxisAuthorityFactoryTest extends ReferencingTestBase {
         final boolean isStandard = (factory == CRS.getAuthorityFactory(Boolean.FALSE));
         final boolean isForceXY  = (factory == CRS.getAuthorityFactory(Boolean.TRUE));
         final String prefix = (isStandard) ? (isForceXY ? "Both standard and XY" : "Standard") :
-            (isForceXY ? "XY axis order" : "Unknow factory (probably an error)");
+                (isForceXY ? "XY axis order" : "Unknow factory (probably an error)");
         assertTrue(factory instanceof CachingAuthorityFactory);
         factory = ((CachingAuthorityFactory) factory).getBackingStore();
         assertTrue(factory instanceof MultiAuthoritiesFactory);

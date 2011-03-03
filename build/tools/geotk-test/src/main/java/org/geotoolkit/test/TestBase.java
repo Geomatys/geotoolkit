@@ -38,6 +38,14 @@ public abstract class TestBase {
     private static boolean initialized;
 
     /**
+     * Set to {@code true} for sending debugging information to the standard output stream.
+     * It is up to subclasses to use this field. If {@code true}, the {@linkplain System#out
+     * standard output stream} shall be used for better integration with Maven output at build
+     * time.
+     */
+    protected boolean verbose = false;
+
+    /**
      * Creates a new test case.
      */
     protected TestBase() {

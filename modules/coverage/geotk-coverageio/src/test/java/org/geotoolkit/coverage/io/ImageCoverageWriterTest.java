@@ -34,6 +34,7 @@ import org.geotoolkit.io.LineReaders;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.test.coverage.CoverageTestBase;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.test.PlatformDependentTest;
 import org.geotoolkit.internal.OS;
@@ -54,14 +55,9 @@ import static org.junit.Assume.*;
  * @since 3.14
  */
 @Depend(ImageCoverageReaderTest.class)
-public final class ImageCoverageWriterTest {
+public final class ImageCoverageWriterTest extends CoverageTestBase {
     /**
-     * {@code true} for printing debugging information.
-     */
-    private static final boolean VERBOSE = false;
-
-    /**
-     * Tolerance factor when comparing values from the "matrix.txt" file.
+     * Tolerance factor when comparing values from the {@code "matrix.txt"} file.
      * We set the tolerance to the first decimal digit after the significant digits.
      */
     private static final double EPS = 1E-4;
@@ -176,7 +172,7 @@ public final class ImageCoverageWriterTest {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, null);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(writer);
         }
         writer.assertNoDifference();
@@ -203,7 +199,7 @@ public final class ImageCoverageWriterTest {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(writer);
         }
         writer.assertNoDifference();
@@ -246,7 +242,7 @@ public final class ImageCoverageWriterTest {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(writer);
         }
         writer.assertNoDifference();
@@ -281,7 +277,7 @@ public final class ImageCoverageWriterTest {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(writer);
         }
         writer.assertDifferenceEqualsScale(1.0 / 2, 1.0 / 3);
@@ -344,7 +340,7 @@ public final class ImageCoverageWriterTest {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(writer);
         }
         writer.assertDifferenceEqualsTranslation(-2, -3);
@@ -391,7 +387,7 @@ public final class ImageCoverageWriterTest {
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeTwice");
         writer.setOutput(out);
         writer.write(coverage, param);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(writer);
         }
         writer.assertNoDifference();
@@ -404,7 +400,7 @@ public final class ImageCoverageWriterTest {
         param.setResolution(20, 30);
         writer.setOutput(out);
         writer.write(coverage, param);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(writer);
         }
         assertTrue("Expected a smaller file", out.size() < length);

@@ -38,6 +38,7 @@ import org.geotoolkit.test.TestData;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
+import org.geotoolkit.test.coverage.CoverageTestBase;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -56,12 +57,7 @@ import org.geotoolkit.image.SampleModels;
  * @since 3.09
  */
 @Depend({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
-public final class ImageCoverageReaderTest {
-    /**
-     * {@code true} for printing debugging information.
-     */
-    private static final boolean VERBOSE = false;
-
+public final class ImageCoverageReaderTest extends CoverageTestBase {
     /**
      * Small number for comparison of floating point values.
      */
@@ -122,7 +118,7 @@ public final class ImageCoverageReaderTest {
          * rendered image. The grid geometry should be equivalent to the one checked above.
          */
         final GridCoverage2D gridCoverage = reader.read(0, null);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(reader);
         }
         assertTrue("No transformation expected.", reader.getReadMatchesRequest());
@@ -169,7 +165,7 @@ public final class ImageCoverageReaderTest {
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
         final GridCoverage2D gridCoverage = reader.read(0, param);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(reader);
         }
         assertTrue("No transformation expected.", reader.getReadMatchesRequest());
@@ -218,7 +214,7 @@ public final class ImageCoverageReaderTest {
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
         param.setResolution(2000, 3000);
         final GridCoverage2D gridCoverage = reader.read(0, param);
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(reader);
         }
         assertTrue("No transformation expected.", reader.getReadMatchesRequest());
@@ -262,13 +258,13 @@ public final class ImageCoverageReaderTest {
         final File file = TestData.file(SampleModels.class, "Contour.png");
         reader.setInput(file);
         assertNotNull(reader.read(0, null));
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(reader);
         }
         reader.reset();
         reader.setInput(file);
         assertNotNull(reader.read(0, null));
-        if (VERBOSE) {
+        if (verbose) {
             System.out.println(reader);
         }
         reader.dispose();

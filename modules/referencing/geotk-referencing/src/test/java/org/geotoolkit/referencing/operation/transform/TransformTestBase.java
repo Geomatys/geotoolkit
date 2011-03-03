@@ -647,6 +647,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
             }
             Statistics.printTable(null, stats, null);
             out.println();
+            out.flush();
         }
         return coordinates;
     }
@@ -680,6 +681,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
             out.print(" from ");  out.print(transform.getSourceDimensions());
             out.print("D to ");   out.print(transform.getTargetDimensions());
             out.println('D');
+            out.flush();
         }
         final float[] asFloats = new float[source.length];
         for (int i=0; i<source.length; i++) {

@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.util.Range;
 import org.geotoolkit.test.Depend;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -38,12 +39,7 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 @Depend(CategoryTest.class)
-public final class CategoryListTest {
-    /**
-     * Set to {@code true} in order to print diagnostic messages.
-     */
-    private static final boolean VERBOSE = false;
-
+public final class CategoryListTest extends TestBase {
     /**
      * Small value for comparisons.
      */
@@ -55,7 +51,7 @@ public final class CategoryListTest {
     private static final Random random = new Random(1471753385855374101L);
 
     /**
-     * Returns the specified value as an hexadecimal string. Usefull
+     * Returns the specified value as an hexadecimal string. Useful
      * for comparing NaN values.
      */
     private static String toHexString(final double value) {
@@ -116,7 +112,7 @@ public final class CategoryListTest {
             new CategoryList(categories, null);
             fail("Argument check");
         } catch (IllegalArgumentException exception) {
-            if (VERBOSE) {
+            if (verbose) {
                 System.out.println(exception.getLocalizedMessage());
                 // This is the expected exception.
             }
@@ -130,7 +126,7 @@ public final class CategoryListTest {
             new CategoryList(categories, null);
             fail("Argument check");
         } catch (IllegalArgumentException exception) {
-            if (VERBOSE) {
+            if (verbose) {
                 System.out.println(exception.getLocalizedMessage());
                 // This is the expected exception.
             }

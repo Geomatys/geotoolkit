@@ -763,13 +763,15 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
             }
         }
         if (verbose) {
-            System.out.print("Number of coordinate operations:    "); System.out.println(identifiers.size());
-            System.out.print("Number of tested operations:        "); System.out.println(count);
-            System.out.print("Number of recognized operations:    "); System.out.println(created);
-            System.out.print("Number of operations with accuracy: "); System.out.println(valid);
-            System.out.print("Minimal accuracy value (meters):    "); System.out.println(min);
-            System.out.print("Maximal accuracy value (meters):    "); System.out.println(max);
-            System.out.print("Average accuracy value (meters):    "); System.out.println(sum / valid);
+            final PrintStream out = System.out;
+            out.print("Number of coordinate operations:    "); out.println(identifiers.size());
+            out.print("Number of tested operations:        "); out.println(count);
+            out.print("Number of recognized operations:    "); out.println(created);
+            out.print("Number of operations with accuracy: "); out.println(valid);
+            out.print("Minimal accuracy value (meters):    "); out.println(min);
+            out.print("Maximal accuracy value (meters):    "); out.println(max);
+            out.print("Average accuracy value (meters):    "); out.println(sum / valid);
+            out.flush();
         }
     }
 

@@ -24,9 +24,11 @@ import java.util.Collections;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.io.PrintStream;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.math.Statistics;
+import org.geotoolkit.test.TestBase;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -41,12 +43,7 @@ import static org.junit.Assert.*;
  *
  * @since 3.00
  */
-public final class CacheTest {
-    /**
-     * Sets to {@code true} for sending debugging informations to standard output stream.
-     */
-    private static final boolean VERBOSE = false;
-
+public final class CacheTest extends TestBase {
     /**
      * Tests with two values.
      */
@@ -96,7 +93,7 @@ public final class CacheTest {
                     handler.putAndUnlock(value);
                     assertSame(value, cache.peek(key1));
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.out);
                     failures.incrementAndGet();
                 }
                 // Put value 2 in the cache.
@@ -107,7 +104,7 @@ public final class CacheTest {
                     handler.putAndUnlock(value2);
                     assertSame(value2, cache.peek(key2));
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    e.printStackTrace(System.out);
                     failures.incrementAndGet();
                 }
             }
@@ -174,7 +171,7 @@ public final class CacheTest {
                         });
                         assertEquals(expected, value);
                     } catch (Throwable e) {
-                        e.printStackTrace();
+                        e.printStackTrace(System.out);
                         failures.incrementAndGet();
                         continue;
                     }
@@ -208,21 +205,22 @@ public final class CacheTest {
         assertEquals("There is failures in some background thread.", 0, failures.get());
         assertTrue("Should not have more entries than what we put in.", cache.size() <= count);
         assertFalse("Some entries should be retained by strong references.", cache.isEmpty());
-        if (VERBOSE) {
-            System.out.println();
-            System.out.println("The numbers below are for tuning the test only. The output is somewhat");
-            System.out.println("random so we can not check it in a test suite.  However if the test is");
-            System.out.println("properly tuned, most values should be non-zero.");
+        if (verbose) {
+            final PrintStream out = System.out;
+            out.println();
+            out.println("The numbers below are for tuning the test only. The output is somewhat");
+            out.println("random so we can not check it in a test suite.  However if the test is");
+            out.println("properly tuned, most values should be non-zero.");
             for (int i=0; i<threads.length;) {
                 final String n = String.valueOf(threads[i++].hit);
                 System.out.print(Strings.spaces(6 - n.length()));
                 System.out.print(n);
                 if ((i % 10) == 0) {
-                    System.out.println();
+                    out.println();
                 }
             }
-            System.out.println();
-            System.out.println("Now observe how the background thread cleans the cache.");
+            out.println();
+            out.println("Now observe how the background thread cleans the cache.");
             for (int i=0; i<10; i++) {
                 System.out.print("Cache size: ");
                 System.out.println(cache.size());
@@ -231,7 +229,8 @@ public final class CacheTest {
                     System.gc();
                 }
             }
-            System.out.println();
+            out.println();
+            out.flush();
         }
         System.gc();
         Thread.sleep(100);
@@ -245,12 +244,13 @@ public final class CacheTest {
         }
         assertTrue("Number of entries should not increase while we are not writing in the cache.",
                 afterGC.count() <= beforeGC.count());
-        if (VERBOSE) {
-            System.out.println("Statistics on the keys before garbage collection:");
-            System.out.println(beforeGC);
-            System.out.println("Statistics on the keys after garbage collection.");
-            System.out.println("The minimum and the mean values should be greater.");
-            System.out.println(afterGC);
+        if (verbose) {
+            final PrintStream out = System.out;
+            out.println("Statistics on the keys before garbage collection:");
+            out.println(beforeGC);
+            out.println("Statistics on the keys after garbage collection.");
+            out.println("The minimum and the mean values should be greater.");
+            out.println(afterGC);
         }
     }
 }
