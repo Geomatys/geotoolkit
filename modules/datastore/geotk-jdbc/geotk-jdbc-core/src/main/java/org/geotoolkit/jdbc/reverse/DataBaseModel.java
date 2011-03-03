@@ -96,11 +96,17 @@ public final class DataBaseModel {
         this.store = store;
     }
 
-    public Collection<SchemaMetaModel> getSchemaMetaModels() {
+    public Collection<SchemaMetaModel> getSchemaMetaModels() throws DataStoreException {
+        if(schemas == null){
+            analyze();
+        }
         return schemas.values();
     }
 
-    public SchemaMetaModel getSchemaMetaModel(String name){
+    public SchemaMetaModel getSchemaMetaModel(String name) throws DataStoreException{
+        if(schemas == null){
+            analyze();
+        }
         return schemas.get(name);
     }
 
@@ -144,6 +150,11 @@ public final class DataBaseModel {
      * relations.
      */
     private synchronized void analyze() throws DataStoreException{
+        if(schemas != null){
+            //already analyzed
+            return;
+        }
+
         clearCache();
         schemas = new HashMap<String, SchemaMetaModel>();
 
@@ -413,7 +424,7 @@ public final class DataBaseModel {
      * @return FeatureType
      * @throws SQLException
      */
-    public FeatureType analyzeResult(final ResultSet result, final String name) throws SQLException{
+    public FeatureType analyzeResult(final ResultSet result, final String name) throws SQLException, DataStoreException{
         final SQLDialect dialect = store.getDialect();
         final String namespace = store.getNamespaceURI();
         
@@ -471,7 +482,37 @@ public final class DataBaseModel {
 
                 atb.setName(ensureGMLNS(namespace, columnName));
                 atb.setBinding(binding);
-                adb.setType(atb.buildType());
+
+                //Set the CRS if it's a geometry
+                if (Geometry.class.isAssignableFrom(binding)) {
+                    //add the attribute as a geometry, try to figure out
+                    // its srid first
+                    Integer srid = null;
+                    CoordinateReferenceSystem crs = null;
+//                    Connection cx = null;
+//                    try {
+//                        cx = store.getDataSource().getConnection();
+//                        srid = dialect.getGeometrySRID(store.getDatabaseSchema(), tableName, name, cx);
+//                        if(srid != null)
+//                            crs = dialect.createCRS(srid, cx);
+//                    } catch (SQLException e) {
+//                        String msg = "Error occured determing srid for " + tableName + "."+ name;
+//                        store.getLogger().log(Level.WARNING, msg, e);
+//                    } finally{
+//                        store.closeSafe(cx);
+//                    }
+
+                    atb.setCRS(crs);
+                    if(srid != null){
+                        adb.addUserData(JDBCDataStore.JDBC_NATIVE_SRID, srid);
+                    }
+                    adb.setType(atb.buildGeometryType());
+                }else{
+                    //normal field type
+                    adb.setType(atb.buildType());
+                }
+
+                adb.findBestDefaultValue();
                 desc = adb.buildDescriptor();
             }
 

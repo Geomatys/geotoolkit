@@ -149,7 +149,7 @@ public final class DefaultJDBCDataStore extends AbstractJDBCDataStore {
     public FeatureType getFeatureType(final Query query) throws DataStoreException, SchemaException {
 
         if(CUSTOM_SQL.equalsIgnoreCase(query.getLanguage())){
-
+            
             final TextStatement txt = (TextStatement) query.getSource();
             final String sql = txt.getStatement();
 

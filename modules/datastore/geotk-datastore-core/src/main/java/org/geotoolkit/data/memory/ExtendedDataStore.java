@@ -83,12 +83,6 @@ public final class ExtendedDataStore extends AbstractDataStore{
     }
 
     @Override
-    public Session createSession(final boolean asynchrone) {
-        final Session base = wrapped.createSession(asynchrone);
-        return new ExtendedSession(base);
-    }
-
-    @Override
     public Set<Name> getNames() throws DataStoreException {
         final Set<Name> all = new HashSet<Name>(wrapped.getNames());
         all.addAll(getQueryNames());
@@ -124,7 +118,7 @@ public final class ExtendedDataStore extends AbstractDataStore{
         if(getQueryNames().contains(typeName)){
             final Query original = getQuery(typeName);
             try {
-                return getFeatureType(original);
+                return wrapped.getFeatureType(original);
             } catch (SchemaException ex) {
                 throw new DataStoreException(ex);
             }
