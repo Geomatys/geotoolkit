@@ -18,7 +18,9 @@
 package org.geotoolkit.feature;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -92,7 +94,6 @@ public class AttributeTypeBuilder {
 
     private final FeatureTypeFactory factory;
 
-    //
     /**
      * Local name used to name a descriptor; or combined with namespaceURI to name a type.
      */
@@ -122,8 +123,9 @@ public class AttributeTypeBuilder {
      */
     private AttributeType superType;
     
-    //GeometryType
-    //
+    /**
+     * GeometryType CRS
+     */
     private CoordinateReferenceSystem crs;
     
     /**
@@ -131,10 +133,11 @@ public class AttributeTypeBuilder {
      * will be added based on the length function.
      */
     private Integer length = null;
+
+    private final Map<Object,Object> userData = new HashMap<Object, Object>();
     
     /**
      * Constructs the builder.
-     *
      */
     public AttributeTypeBuilder() {
         this(null);
@@ -166,6 +169,7 @@ public class AttributeTypeBuilder {
         superType = null;
         crs = null;
         length = null;
+        userData.clear();
     }
 
     /**
@@ -187,6 +191,9 @@ public class AttributeTypeBuilder {
         if (type instanceof GeometryType) {
             crs = ((GeometryType) type).getCoordinateReferenceSystem();
         }
+
+        userData.putAll(type.getUserData());
+
         return this;
     }
 
@@ -262,6 +269,10 @@ public class AttributeTypeBuilder {
         restrictions().add(restriction);
     }
 
+    public void addUserData(final Object key, final Object value) {
+        userData.put(key, value);
+    }
+
     /**
      * Builds the attribute type.
      * <p>
@@ -285,7 +296,7 @@ public class AttributeTypeBuilder {
         final AttributeType type = factory.createAttributeType(
                 name, binding, isIdentifiable, isAbstract,
                 restrictions(), superType, description());
-
+        type.getUserData().putAll(userData);
         return type;
     }
 
@@ -307,7 +318,7 @@ public class AttributeTypeBuilder {
         final GeometryType type = factory.createGeometryType(
                 name, binding, crs, isIdentifiable, isAbstract,
                 restrictions(), superType, description());
-
+        type.getUserData().putAll(userData);
         return type;
     }
 
