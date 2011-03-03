@@ -20,30 +20,27 @@ package org.geotoolkit.internal.jaxb.gmd;
 import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.net.MalformedURLException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
  * JAXB adapter wrapping a URI in a {@code <gmd:URL>} element, for ISO-19139 compliance.
+ * Note that while this object is called {@code "URL"}, we actually use the {@link URI}
+ * Java object.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.17
  *
  * @since 2.5
  * @module
  */
 public final class GO_URL extends XmlAdapter<GO_URL, URI> {
     /**
-     * The URI value as a URL.
-     *
-     * @todo Explain why URI can not be used directly.
+     * The URI value.
      */
     @XmlElement(name = "URL")
-    public URL url;
+    public URI url;
 
     /**
      * Empty constructor for JAXB only.
@@ -56,7 +53,7 @@ public final class GO_URL extends XmlAdapter<GO_URL, URI> {
      *
      * @param url The URI to marshall, as a URL.
      */
-    private GO_URL(final URL url) {
+    private GO_URL(final URI url) {
         this.url = url;
     }
 
@@ -70,7 +67,7 @@ public final class GO_URL extends XmlAdapter<GO_URL, URI> {
      */
     @Override
     public URI unmarshal(final GO_URL value) throws URISyntaxException {
-        return (value != null) ? MarshalContext.converters().toURI(value.url) : null;
+        return (value != null) ? value.url : null;
     }
 
     /**
@@ -79,17 +76,10 @@ public final class GO_URL extends XmlAdapter<GO_URL, URI> {
      *
      * @param value The URI value.
      * @return The adapter for this URI.
-     * @throws MalformedURLException If the given URI is not a valid URL.
      * @throws IllegalArgumentException If the given URI is not absolute.
      */
     @Override
-    public GO_URL marshal(final URI value) throws MalformedURLException, IllegalArgumentException {
-        if (value != null) {
-            final URL url = MarshalContext.converters().toURL(value);
-            if (url != null) {
-                return new GO_URL(url);
-            }
-        }
-        return null;
+    public GO_URL marshal(final URI value) throws IllegalArgumentException {
+        return (value != null) ? new GO_URL(value) : null;
     }
 }
