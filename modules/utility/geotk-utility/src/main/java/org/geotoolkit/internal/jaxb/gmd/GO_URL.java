@@ -17,11 +17,12 @@
  */
 package org.geotoolkit.internal.jaxb.gmd;
 
-import java.net.URL;
 import java.net.URI;
 import java.net.URISyntaxException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+
+import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
@@ -37,10 +38,11 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
  */
 public final class GO_URL extends XmlAdapter<GO_URL, URI> {
     /**
-     * The URI value.
+     * The URI as a string. We uses a string in order to allow the user
+     * to catch potential error at unmarshalling time.
      */
     @XmlElement(name = "URL")
-    public URI url;
+    private String uri;
 
     /**
      * Empty constructor for JAXB only.
@@ -49,12 +51,12 @@ public final class GO_URL extends XmlAdapter<GO_URL, URI> {
     }
 
     /**
-     * Builds an adapter for the given {@link URL}.
+     * Builds an adapter for the given URI.
      *
-     * @param url The URI to marshall, as a URL.
+     * @param value The URI to marshall.
      */
-    private GO_URL(final URI url) {
-        this.url = url;
+    private GO_URL(final URI value) {
+        uri = value.toString();
     }
 
     /**
@@ -63,11 +65,11 @@ public final class GO_URL extends XmlAdapter<GO_URL, URI> {
      *
      * @param value The adapter for this metadata value.
      * @return A {@link URI} which represents the metadata value.
-     * @throws URISyntaxException if the given value contains an invalid URL.
+     * @throws URISyntaxException if the given value contains an invalid URI.
      */
     @Override
     public URI unmarshal(final GO_URL value) throws URISyntaxException {
-        return (value != null) ? value.url : null;
+        return (value != null) ? MarshalContext.converters().toURI(value.uri) : null;
     }
 
     /**
@@ -76,10 +78,9 @@ public final class GO_URL extends XmlAdapter<GO_URL, URI> {
      *
      * @param value The URI value.
      * @return The adapter for this URI.
-     * @throws IllegalArgumentException If the given URI is not absolute.
      */
     @Override
-    public GO_URL marshal(final URI value) throws IllegalArgumentException {
+    public GO_URL marshal(final URI value) {
         return (value != null) ? new GO_URL(value) : null;
     }
 }
