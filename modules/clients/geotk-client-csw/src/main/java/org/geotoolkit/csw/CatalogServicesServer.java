@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.csw;
 
+import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -29,29 +30,75 @@ import org.geotoolkit.csw.v202.GetRecordById202;
 import org.geotoolkit.csw.v202.GetRecords202;
 import org.geotoolkit.csw.v202.Harvest202;
 import org.geotoolkit.csw.v202.Transaction202;
+import org.geotoolkit.csw.xml.AbstractCapabilities;
+import org.geotoolkit.csw.xml.CSWBindingUtilities;
 import org.geotoolkit.csw.xml.CSWVersion;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 
 
 /**
- * CSW server.
+ * CSW server that allows creation of all needed request
+ * objects for calling several operations on catalog service.
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
 public class CatalogServicesServer implements Server {
+    /**
+     * Used for debugging purpose
+     */
     private static final Logger LOGGER = Logging.getLogger(CatalogServicesServer.class);
-
+    /**
+     * Version of this csw server
+     */
     private final CSWVersion version;
+    /**
+     * Url of this csw server
+     */
     private final URL serverURL;
+    /**
+     * Stored capabilities object that can be updated by calling {@link CatalogServicesServer.updateGetCapabilities}
+     */
+    private AbstractCapabilities capabilities;
 
+    /**
+     * Creates a new instance of {@link CatalogServicesServer} for serverUrl and version value
+     * @param serverURL {@link URL} of the server CSW
+     * @param version value of the CSW version, usually 2.0.2.
+     */
     public CatalogServicesServer(final URL serverURL, final String version) {
         if (version.equals("2.0.2")){
             this.version = CSWVersion.v202;
         } else {
             throw new IllegalArgumentException("unknown version : "+ version);
         }
+        ArgumentChecks.ensureNonNull("server url", serverURL);
         this.serverURL = serverURL;
+    }
+
+    /**
+     * Creates a new instance of {@link CatalogServicesServer} without passing version argument,
+     * It performs a getCapabilities request and set the version depending on the response.
+     * 
+     *
+     * @param serverURL {@link URL} for the server instance
+     * @throws IllegalStateException throws an exception if the capabilities cannot be resolved for serverUrl
+     */
+    public CatalogServicesServer(final URL serverURL) throws IllegalStateException{
+        ArgumentChecks.ensureNonNull("server url", serverURL);
+        this.serverURL = serverURL;
+        final AbstractCapabilities capa = getCapabilities();
+        if(capa == null){
+            throw new IllegalStateException("Cannot get Capabilities document from the server "+serverURL.toString());
+        }
+        final String v = capa.getVersion();
+        try {
+            this.version = CSWVersion.fromCode(v);
+        } catch (IllegalArgumentException ex) {
+            throw new IllegalStateException("unknown CSW version : " + v);
+        }
     }
 
     /**
@@ -89,6 +136,8 @@ public class CatalogServicesServer implements Server {
 
     /**
      * Creates and returns a getCapabilities request.
+     *
+     * @TODO rename this method to getCapabilitiesRequest
      */
     public GetCapabilitiesRequest createGetCapabilities() {
 
@@ -163,5 +212,49 @@ public class CatalogServicesServer implements Server {
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
+    }
+
+    /**
+     * Returns the {@link AbstractCapabilities capabilities} response for this
+     * server.
+     * This is a lazy loading for stored capabilities object.
+     *
+     */
+    public AbstractCapabilities getCapabilities() {
+
+        if (capabilities != null) {
+            return capabilities;
+        }
+        //Thread to prevent infinite request on a server
+        final Thread thread = new Thread() {
+
+            @Override
+            public void run() {
+                try {
+                    final URL getcapaUrl = new URL(serverURL.toString() + "?SERVICE=CSW&REQUEST=GetCapabilities");
+                    capabilities = CSWBindingUtilities.unmarshall(getcapaUrl);
+                } catch (Exception ex) {
+                    capabilities = null;
+                    try {
+                        LOGGER.log(Level.WARNING, "Wrong URL, the server doesn't answer : "
+                                + createGetCapabilities().getURL().toString(), ex);
+                    } catch (MalformedURLException ex1) {
+                        LOGGER.log(Level.WARNING, "Malformed URL, the server doesn't answer. ", ex1);
+                    }
+                }
+            }
+        };
+        thread.start();
+        final long start = System.currentTimeMillis();
+        try {
+            thread.join(10000);
+        } catch (InterruptedException ex) {
+            LOGGER.log(Level.WARNING, "The thread to obtain GetCapabilities doesn't answer.", ex);
+        }
+        if ((System.currentTimeMillis() - start) > 10000) {
+            LOGGER.log(Level.WARNING, "TimeOut error, the server takes too much time to answer. ");
+        }
+
+        return capabilities;
     }
 }

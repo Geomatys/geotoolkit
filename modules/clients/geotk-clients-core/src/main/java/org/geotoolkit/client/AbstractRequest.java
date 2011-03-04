@@ -88,18 +88,18 @@ public abstract class AbstractRequest implements Request {
         prepareParameters();
 
         String completeURL = this.serverURL;
-        final String subPath = getSubPath();
-        if (subPath != null) {
+        final String subpath = getSubPath();
+        if (subpath != null) {
             if (completeURL.endsWith("/")) {
-                if (subPath.startsWith("/")) {
+                if (subpath.startsWith("/")) {
                     completeURL = completeURL.substring(0, completeURL.length()-1);
                 }
             } else {
-                if (!subPath.startsWith("/")) {
+                if (!subpath.startsWith("/")) {
                     completeURL = completeURL + '/';
                 }
             }
-            completeURL = completeURL + subPath;
+            completeURL = completeURL + subpath;
         }
 
         final StringBuilder sb = new StringBuilder(completeURL);
@@ -161,6 +161,17 @@ public abstract class AbstractRequest implements Request {
         } catch (MalformedURLException ex) {
             return false;
         }
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.serverURL != null ? this.serverURL.hashCode() : 0);
+        hash = 41 * hash + (this.subPath != null ? this.subPath.hashCode() : 0);
+        return hash;
     }
 
     protected InputStream openRichException(final URLConnection cnx) throws IOException {

@@ -51,6 +51,18 @@
                 <role>Module Maintainer</role>
             </roles>
         </developer>
+        <developer>
+            <name>Mehdi Sidhoum</name>
+            <id>mediii</id>
+            <email>mehdi.sidhoum@geomatys.com</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+                <role>Module Maintainer</role>
+            </roles>
+        </developer>
     </developers>
 
 

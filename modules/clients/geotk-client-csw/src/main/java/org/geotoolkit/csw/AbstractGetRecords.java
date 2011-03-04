@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Geomatys
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -21,12 +21,25 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
+import javax.xml.namespace.QName;
 import org.geotoolkit.csw.xml.ElementSetType;
 import org.geotoolkit.csw.xml.ResultType;
+import org.geotoolkit.csw.xml.TypeNames;
 import org.geotoolkit.csw.xml.v202.DistributedSearchType;
+import org.geotoolkit.csw.xml.v202.ElementSetNameType;
 import org.geotoolkit.csw.xml.v202.GetRecordsType;
+import org.geotoolkit.csw.xml.v202.QueryConstraintType;
+import org.geotoolkit.csw.xml.v202.QueryType;
+import org.geotoolkit.filter.FilterFactoryImpl;
+import org.geotoolkit.filter.text.cql2.CQL;
+import org.geotoolkit.filter.text.cql2.CQLException;
+import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.ogc.xml.v110.SortByType;
+import org.opengis.filter.Filter;
 
 
 /**
@@ -34,6 +47,7 @@ import org.geotoolkit.csw.xml.v202.GetRecordsType;
  * parameters for a GetRecords request.
  *
  * @author Cédric Briançon (Geomatys)
+ * @author Mehdi Sidhoum (Geomatys)
  * @module pending
  */
 public abstract class AbstractGetRecords extends AbstractCSWRequest implements GetRecordsRequest {
@@ -309,9 +323,61 @@ public abstract class AbstractGetRecords extends AbstractCSWRequest implements G
         Marshaller marsh = null;
         try {
             marsh = POOL.acquireMarshaller();
+
+            /*
+             * Getting typeNames value used to build QueryType object
+             */
+            final List<QName> typNames = new ArrayList<QName>();
+            if (typeNames != null) {
+                typNames.add(TypeNames.valueOf(typeNames));
+            }
+
+            /*
+             * Getting ElementSetType value used to build QueryType object
+             */
+            ElementSetNameType esnt = null;
+            if (elementSetName != null) {
+                esnt = new ElementSetNameType(elementSetName);
+            }
+
+            /*
+             * Getting  SortByType value, default is null
+             * 
+             * @TODO if sortBy is not null we must creates SortByType instance
+             * the value can be sortBy=Title:A,Abstract:D where A for ascending order and D for decending.
+             * see Table 29 - Parameters in GetRecords operation request in document named
+             * OpenGIS Catalogue Services Specification 2.0.2 -ISO Metadata Application Profile
+             *
+             */
+            final SortByType sort;
+            if (sortBy != null) {
+                throw new UnsupportedOperationException("The parameter SortBy is not implemented yet for Method POST.");
+            } else {
+                sort = null;
+            }
+
+            /*
+             * Building QueryType from the cql constraint
+             */
+            QueryType queryType = null;
+            try {
+                final FilterType filterType;
+                Filter filter = CQL.toFilter(constraint, new FilterFactoryImpl());
+                if (!(filter instanceof FilterType)) {
+                    filterType = new FilterType(filter);
+                } else {
+                    filterType = (FilterType) filter;
+                }
+                final QueryConstraintType qct = new QueryConstraintType(filterType, constraintLanguageVersion != null ? constraintLanguageVersion : "1.1.0");
+                queryType = new QueryType(typNames, esnt, sort, qct);
+            } catch (CQLException ex) {
+                //@TODO maybe use another Exception.
+                throw new IllegalArgumentException("Constraint cannot be parsed to filter, the constraint parameter value is not in OGC CQL format.", ex);
+            }
+
             final GetRecordsType recordsXml = new GetRecordsType("CSW", version, resultType,
                     requestId, outputFormat, outputSchema, startPosition, maxRecords,
-                    null, new DistributedSearchType(hopcount));
+                    queryType, new DistributedSearchType(hopcount));
             marsh.marshal(recordsXml, stream);
         } catch (JAXBException ex) {
             throw new IOException(ex);

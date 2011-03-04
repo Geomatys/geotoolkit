@@ -2,7 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2008 - 2009, Geomatys
+ *    (C) 2008 - 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -116,6 +116,28 @@ public class TypeNames {
     public static final  QName GEOMETRY09_QNAME              = new QName("http://www.opengis.net/cat/wrs",              "Geometry");
     public static final  QName APPLICATION_MODULE09_QNAME    = new QName("http://www.opengis.net/cat/wrs",              "ApplicationModule");
     public static final  QName WRS_EXTRINSIC_OBJECT09_QNAME  = new QName("http://www.opengis.net/cat/wrs",              "WRSExtrinsicObject");
+
+
+    /**
+     * Returns QName from specified string value
+     * @TODO must be more generic
+     *
+     * @param key {@code String} key that should be qname localPart
+     * @return {@link QName} if localPart matches the specified key
+     * @throws IllegalArgumentException if key does not match any qname
+     */
+    public static final QName valueOf(final String key)throws IllegalArgumentException{
+        if("csw:Record".equalsIgnoreCase(key) || "Record".equalsIgnoreCase(key)){
+            return RECORD_QNAME;
+        }
+        if("gmd:MD_Metadata".equalsIgnoreCase(key)){
+            return METADATA_QNAME;
+        }
+        if("gmd:Dataset".equalsIgnoreCase(key)){
+            return DATASET_QNAME;
+        }
+        throw new IllegalArgumentException("Cannot get TypeNames for '"+key+"' there is no QName for this value.");
+    }
 
 
     //iso 19115 typeNames
