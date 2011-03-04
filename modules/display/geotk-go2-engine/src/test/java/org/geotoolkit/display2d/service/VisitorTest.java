@@ -115,7 +115,7 @@ public class VisitorTest {
         DefaultPortrayalService.portray(context, env, dim, true);
         DefaultPortrayalService.visit(context, env, dim, true, null, shparea, visitor);
 
-        assertTrue(visitor.features.size() == 1);
+        assertEquals(1, visitor.features.size());
         assertEquals("testingIntersect.0", visitor.features.get(0).getID());
 
         shparea = new Rectangle(30, 12, 2, 2); //starting at top left corner

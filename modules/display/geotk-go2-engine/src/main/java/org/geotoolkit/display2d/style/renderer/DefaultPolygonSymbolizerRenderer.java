@@ -316,7 +316,11 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         final Shape shape;
 
         Geometry geom = projectedFeature.getDisplayGeometry();
-        geom = geom.getBuffer(offset);
+        try{
+            geom = geom.getBuffer(offset);
+        }catch(IllegalArgumentException ex){
+            //can happen if the geometry has too few points, like a ring of 3points
+        }
         shape = GO2Utilities.toJava2D(geom);
 
         return shape;

@@ -17,28 +17,21 @@
  */
 package org.geotoolkit.display2d.container.stateless;
 
-import java.util.Arrays;
-import java.awt.Image;
-import java.awt.Graphics2D;
 import java.awt.RenderingHints;
-import java.awt.image.BufferedImage;
-import java.awt.image.ColorModel;
-import java.awt.image.SampleModel;
-import java.io.Closeable;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
+import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
-import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.DefaultGraphicFeatureJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
@@ -52,15 +45,12 @@ import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.primitive.DefaultSearchAreaJ2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.filter.DefaultLiteral;
-import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.geometry.DefaultBoundingBox;
-import org.geotoolkit.style.MutableRule;
-import org.geotoolkit.style.MutableStyle;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
@@ -69,14 +59,12 @@ import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
 import org.geotoolkit.display2d.primitive.ProjectedFeature;
-import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.filter.DefaultId;
 import org.geotoolkit.filter.FilterUtilities;
 import org.geotoolkit.filter.binaryspatial.LooseBBox;
-import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 
 import org.opengis.display.primitive.Graphic;
 import org.opengis.feature.Feature;
@@ -91,10 +79,6 @@ import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
-import org.opengis.style.Rule;
-import org.opengis.style.Style;
-import org.opengis.style.Symbolizer;
-import org.opengis.style.TextSymbolizer;
 
 import static org.geotoolkit.display2d.GO2Utilities.*;
 
@@ -105,7 +89,7 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  * @author johann sorel (Geomatys)
  * @module pending
  */
-public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLayer>{
+public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<FeatureMapLayer>{
 
     protected Query currentQuery = null;
 
@@ -128,61 +112,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         }
 
         final FeatureType sft = item.getCollection().getFeatureType();
-        final CachedRule[] rules;
-
-        final Style style = item.getStyle();
-
-        final Filter selectionFilter = item.getSelectionFilter();
-        if(selectionFilter != null && !Filter.EXCLUDE.equals(selectionFilter)){
-            //merge the style and filter with the selection
-            final List<Rule> selectionRules;
-            final List<Rule> normalRules = GO2Utilities.getValidRules(
-                   style, renderingContext.getSEScale(), sft);
-
-            final List<CachedRule> mixedRules = new ArrayList<CachedRule>();
-            final MutableStyle selectionStyle = item.getSelectionStyle();
-            if(selectionStyle == null){
-                selectionRules = GO2Utilities.getValidRules(
-                        ContextContainer2D.DEFAULT_SELECTION_STYLE, renderingContext.getSEScale(), sft);
-            }else{
-                selectionRules = GO2Utilities.getValidRules(
-                        selectionStyle, renderingContext.getSEScale(), sft);
-            }
-
-            //update the rules filters
-            for(final Rule rule : selectionRules){
-                final List<? extends Symbolizer> symbols = rule.symbolizers();
-                final MutableRule mixedRule = STYLE_FACTORY.rule(symbols.toArray(new Symbolizer[symbols.size()]));
-                Filter f = rule.getFilter();
-                if(f == null){
-                    f = selectionFilter;
-                }else{
-                    f = FILTER_FACTORY.and(f,selectionFilter);
-                }
-                mixedRule.setFilter(f);
-                mixedRules.add(GO2Utilities.getCached(mixedRule));
-            }
-
-            final Filter notSelectionFilter = FILTER_FACTORY.not(selectionFilter);
-
-            for(final Rule rule : normalRules){
-                final MutableRule mixedRule = STYLE_FACTORY.rule(rule.symbolizers().toArray(new Symbolizer[0]));
-                Filter f = rule.getFilter();
-                if(f == null){
-                    f = notSelectionFilter;
-                }else{
-                    f = FILTER_FACTORY.and(f,notSelectionFilter);
-                }
-                mixedRule.setFilter(f);
-                mixedRules.add(GO2Utilities.getCached(mixedRule));
-            }
-
-            rules = mixedRules.toArray(new CachedRule[mixedRules.size()]);
-
-        }else{
-            rules = GO2Utilities.getValidCachedRules(
-                style, renderingContext.getSEScale(), sft);
-        }
+        final CachedRule[] rules = prepareStyleRules(renderingContext, item, sft);
 
         //we perform a first check on the style to see if there is at least
         //one valid rule at this scale, if not we just continue.
@@ -193,406 +123,75 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         paintVectorLayer(rules, renderingContext);
     }
 
-    protected void paintVectorLayer(final CachedRule[] rules, final RenderingContext2D context) {
-
-        final CanvasMonitor monitor = context.getMonitor();
-        try {
-            currentQuery = prepareQuery(context, item, rules);
-        } catch (PortrayalException ex) {
-            monitor.exceptionOccured(ex, Level.WARNING);
-            return;
-        }
+    @Override
+    protected Collection<?> optimizeCollection(final RenderingContext2D context,
+            final CachedRule[] rules) throws Exception {
+        currentQuery = prepareQuery(context, item, rules);
         final Query query = currentQuery;
-
-        if(monitor.stopRequested()) return;
-
-        //we do not check if the collection is empty or not since
-        //it can be a very expensive operation
-
-        //prepare the rendering parameters
-        final StatefullContextParams params = prepareContextParams(context, null);
-
-        final FeatureCollection<Feature> features;
-        try{
-            features = ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
-        }catch(DataStoreException ex){
-            context.getMonitor().exceptionOccured(ex, Level.WARNING);
-            //can not continue this layer with this error
-            return;
-        }
-
-        final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
-        if(SymbolOrder == null || SymbolOrder == false){
-            try{
-                renderByFeatureOrder(features, context, rules, params);
-            }catch(PortrayalException ex){
-                monitor.exceptionOccured(ex, Level.WARNING);
-            }
-        }else{
-            try{
-                renderBySymbolOrder(features, context, rules, params);
-            }catch(PortrayalException ex){
-                monitor.exceptionOccured(ex, Level.WARNING);
-            }
-        }
-
+        return ((FeatureCollection<Feature>)item.getCollection()).subCollection(query);
     }
 
-    protected RenderingIterator getIterator(final FeatureCollection<? extends Feature> features,
-            final RenderingContext2D renderingContext, final StatefullContextParams params){
+    @Override
+    protected FeatureId id(Object candidate) {
+        return ((Feature)candidate).getIdentifier();
+    }
+
+    @Override
+    protected Collection<?> getIdFilteredCollection(final Collection<?> features,
+            final RenderingContext2D renderingContext, final StatefullContextParams params,
+            final Set<FeatureId> ids) throws PortrayalException {
+
+        final QueryBuilder qb = new QueryBuilder(currentQuery);
+        qb.setFilter(new DefaultId(ids));
+        final Query query = qb.buildQuery();
+        try {
+            return ((FeatureCollection) features).subCollection(query);
+        } catch (DataStoreException ex) {
+            throw new PortrayalException(ex);
+        }
+    }
+
+    @Override
+    protected RenderingIterator getIterator(final Collection<?> features,
+            final RenderingContext2D renderingContext, final StatefullContextParams params) {
         final Hints iteHints = new Hints(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
-        final FeatureIterator<? extends Feature> iterator = features.iterator(iteHints);
+        final FeatureIterator<? extends Feature> iterator = ((FeatureCollection)features).iterator(iteHints);
         final StatefullProjectedFeature projectedFeature = new StatefullProjectedFeature(params);
         return new GraphicIterator(iterator, projectedFeature);
     }
 
     /**
-     * Render by feature order.
-     * @param features
-     * @param renderers
-     * @param context
-     * @param params
-     * @throws PortrayalException
+     * {@inheritDoc }
      */
-    protected final void renderByFeatureOrder(final FeatureCollection<? extends Feature> features,
-            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
-            throws PortrayalException{        
-        final CanvasMonitor monitor = context.getMonitor();
-        final RenderingIterator statefullIterator = getIterator(features, context, params);
+    @Override
+    public List<Graphic> getGraphicAt(final RenderingContext rdcontext, final SearchArea mask, final VisitFilter filter, List<Graphic> graphics) {
 
+        if(!item.isSelectable()) return graphics;
 
-        //prepare the renderers
-        final StatefullCachedRule renderers = new StatefullCachedRule(rules, context);
+        if(!(rdcontext instanceof RenderingContext2D)) return graphics;
+        final RenderingContext2D c2d = (RenderingContext2D) rdcontext;
 
-        try{
-            //performance routine, only one symbol to render
-            if(renderers.rules.length == 1
-               && (renderers.rules[0].getFilter() == null || renderers.rules[0].getFilter() == Filter.INCLUDE)
-               && renderers.rules[0].symbolizers().length == 1){
-                renderers.renderers[0][0].portray(statefullIterator);
-                return;
-            }
+        //nothing visible so no possible selection
+        if (!item.isVisible()) return graphics;
 
-            while(statefullIterator.hasNext()){
-                if(monitor.stopRequested()) return;
-                final ProjectedFeature projectedFeature = statefullIterator.next();
+        final Name featureTypeName = item.getCollection().getFeatureType().getName();
+        final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
+                c2d.getSEScale(), featureTypeName);
 
-                boolean painted = false;
-                for(int i=0; i<renderers.elseRuleIndex; i++){
-                    final CachedRule rule = renderers.rules[i];
-                    final Filter ruleFilter = rule.getFilter();
-                    //test if the rule is valid for this feature
-                    if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getCandidate())) {
-                        painted = true;
-                        for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                            renderer.portray(projectedFeature);
-                        }
-                    }
-                }
-
-                //the feature hasn't been painted, paint it with the 'else' rules
-                if(!painted){
-                    for(int i=renderers.elseRuleIndex; i<renderers.rules.length; i++){
-                        final CachedRule rule = renderers.rules[i];
-                        final Filter ruleFilter = rule.getFilter();
-                        //test if the rule is valid for this feature
-                        if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getCandidate())) {
-                            for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                                renderer.portray(projectedFeature);
-                            }
-                        }
-                    }
-                }
-            }
-        }finally{
-            try {
-                statefullIterator.close();
-            } catch (IOException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            }
+        //we perform a first check on the style to see if there is at least
+        //one valid rule at this scale, if not we just return null.
+        if (rules.length == 0) {
+            return graphics;
         }
-    }
 
-    /**
-     * render by symbol order.
-     */
-    protected final void renderBySymbolOrder(final FeatureCollection<? extends Feature> features,
-            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
-            throws PortrayalException {
-                
-        //performance routine, only one symbol to render
-        if(rules.length == 1
-           && (rules[0].getFilter() == null || rules[0].getFilter() == Filter.INCLUDE)
-           && rules[0].symbolizers().length == 1){
-            final RenderingIterator statefullIterator = getIterator(features, context, params);
-            final CachedSymbolizer s = rules[0].symbolizers()[0];
-            final SymbolizerRenderer renderer = s.getRenderer().createRenderer(s, context);
-            renderer.portray(statefullIterator);
-            try {
-                statefullIterator.close();
-            } catch (IOException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            }
-            return;
-        }
-                
-        final Boolean parallal = (Boolean)context.getCanvas().getRenderingHint(GO2Hints.KEY_PARALLAL_BUFFER);        
-        if(parallal != null && parallal){
-            renderBySymbolParallal(features, context, rules, params);
+        if(graphics == null) graphics = new ArrayList<Graphic>();
+
+        if(mask instanceof SearchAreaJ2D){
+            return searchGraphicAt(item, rules, c2d, (SearchAreaJ2D)mask, filter, graphics);
         }else{
-            renderBySymbolStream(features, context, rules, params);
-        }        
+            return searchGraphicAt(item, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics);
+        }
     }
-    
-    /**
-     * Render by symbol order in multiple passes. consume less memory but require
-     * more time.
-     */
-    private void renderBySymbolStream(final FeatureCollection<? extends Feature> features,
-            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
-            throws PortrayalException {
-        final CanvasMonitor monitor = context.getMonitor();
-        
-        //prepare the renderers
-        final StatefullCachedRule renderers = new StatefullCachedRule(rules, context);
-                
-        //store the ids of the features painted during the first round -----------------------------
-        final Set<FeatureId> painted;
-        if(renderers.elseRuleIndex >= renderers.rules.length){
-            painted = new HashSet<FeatureId>();
-        }else{
-            //no need to store ids since we don't have any else rule
-            painted = null;
-        }
-
-        //render the main rules ------------------------------------------------
-        for (int i = 0; i < renderers.elseRuleIndex; i++) {
-            if(monitor.stopRequested()) return;
-            final CachedRule rule = renderers.rules[i];
-            final Filter rulefilter = rule.getFilter();
-
-            //starting from second path and after, we ask for features knowing there ids
-            //it should be much more efficient.
-            final Set<FeatureId> ruleFeatures = new HashSet<FeatureId>();
-            FeatureCollection<? extends Feature> col = features;
-
-            //encapsulate interator
-            for (int k=0,n=renderers.renderers[i].length; k<n;k++){
-
-                final SymbolizerRenderer renderer = renderers.renderers[i][k];
-                if(monitor.stopRequested()) return;
-
-                if(k==1){
-                    //we have collected all ids from the last round, let's optimize the query
-                    try {
-                        col = item.getCollection().subCollection(idQuery(context, item,
-                                new CachedRule[]{rule}, new DefaultId(ruleFeatures)));
-                    } catch (DataStoreException ex) {
-                        throw new PortrayalException(ex);
-                    }
-                }
-
-                RenderingIterator ite = getIterator(col, context, params);
-                if(k==0){
-                    //first pass, we must filter using the rule filter
-                    //next passes have a ids filter, so need to filter anymore
-                    ite = new FilterGraphicIterator(ite, rulefilter, (n>1)?ruleFeatures:null);
-                }
-
-                try {
-                    renderer.portray(ite);
-                } finally {
-                    try {
-                        ite.close();
-                    } catch (IOException ex) {
-                        getLogger().log(Level.WARNING, null, ex);
-                    }
-                }
-            }
-
-            if(painted!=null){ painted.addAll(ruleFeatures); }
-        }
-
-        //render the else rules ------------------------------------------------
-        for (int i = renderers.elseRuleIndex; i < renderers.rules.length; i++) {
-            if(monitor.stopRequested()) return;
-            final CachedRule rule = renderers.rules[i];
-            final Filter rulefilter = rule.getFilter();
-
-            for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
-                if(monitor.stopRequested()) return;
-                final RenderingIterator ite = getIterator(features, context, params);
-                try {
-                    while (ite.hasNext()) {
-                        if(monitor.stopRequested()) return;
-                        final ProjectedFeature pf = ite.next();
-                        final Feature f = pf.getCandidate();
-                        if (!painted.contains(f.getIdentifier())
-                            && (rulefilter == null || rulefilter.evaluate(pf.getCandidate()))) {
-                            renderer.portray(pf);
-                        }
-                    }
-                } finally {
-                    try {
-                        ite.close();
-                    } catch (IOException ex) {
-                        getLogger().log(Level.WARNING, null, ex);
-                    }
-                }
-            }
-        }        
-    }
-    
-    /**
-     * Render by symbol order in a single pass, this results in creating a buffered image
-     * for each symbol, which may be expensive in memory but efficient in performance.
-     */
-    private void renderBySymbolParallal(final FeatureCollection<? extends Feature> features,
-            final RenderingContext2D context, final CachedRule[] rules, final StatefullContextParams params)
-            throws PortrayalException {
-                
-        final CanvasMonitor monitor = context.getMonitor();
-
-        final int elseRuleIndex = StatefullCachedRule.sortByElseRule(rules);
-
-
-        //store the ids of the features painted during the first round -----------------------------
-        final BufferedImage originalBuffer = (BufferedImage) context.getCanvas().getSnapShot();
-        final ColorModel cm = ColorModel.getRGBdefault();
-        final SampleModel sm = cm.createCompatibleSampleModel(originalBuffer.getWidth(), originalBuffer.getHeight());
-        final RenderingContext2D originalContext = context;
-        
-        final Image[][] images = new Image[rules.length][0];
-        final SymbolizerRenderer[][] renderers = new SymbolizerRenderer[rules.length][0];
-        final boolean[][] used = new boolean[rules.length][0];
-
-        for(int i=0;i<rules.length;i++){
-            final CachedRule cr = rules[i];
-            final CachedSymbolizer[] css = cr.symbolizers();
-            images[i] = new Image[css.length];
-            //renderers[i] = new SymbolizerRenderer[css.length];
-            used[i] = new boolean[css.length];
-            Arrays.fill(used[i], false);
-        }
-
-        final RenderingIterator statefullIterator = getIterator(features, context, params);
-
-        try{
-            while(statefullIterator.hasNext()){
-                if(monitor.stopRequested()) return;
-                final ProjectedFeature projectedFeature = statefullIterator.next();
-
-                boolean painted = false;
-                for(int i=0; i<elseRuleIndex; i++){
-                    final CachedRule rule = rules[i];
-                    final Filter ruleFilter = rule.getFilter();
-                    //test if the rule is valid for this feature
-                    if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getCandidate())) {
-                        painted = true;
-                        SymbolizerRenderer[] rss = renderers[i];
-
-                        //if not created yet --------------
-                        if(rss.length==0){
-                            final CachedSymbolizer[] css = rule.symbolizers();
-                            renderers[i] = new SymbolizerRenderer[css.length];
-                            for(int k=0; k<css.length; k++){
-                                final CachedSymbolizer cs = css[k];
-                                if(cs.getSource() instanceof TextSymbolizer){
-                                    images[i][k] = originalBuffer;
-                                    renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                                }else{
-                                    if(i==0 && k==0){
-                                        //first buffer is the current one
-                                        images[i][k] = originalBuffer ;
-                                        renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                                    }else{
-                                        final BufferedImage img = createBufferedImage(cm, sm);
-                                        final RenderingContext2D ctx = context.create(img.createGraphics());
-                                        images[i][k] = img ;
-                                        renderers[i][k] = cs.getRenderer().createRenderer(cs, ctx);
-                                    }
-                                }
-                            }
-                            rss = renderers[i];
-                        }
-
-                        for (int k=0;k<rss.length;k++) {
-                            final SymbolizerRenderer renderer = rss[k];
-                            used[i][k] = true;
-                            renderer.portray(projectedFeature);
-                        }
-                    }
-                }
-
-                //the feature hasn't been painted, paint it with the 'else' rules
-                if(!painted){
-                    for(int i=elseRuleIndex; i<rules.length; i++){
-                        final CachedRule rule = rules[i];
-                        final Filter ruleFilter = rule.getFilter();
-                        //test if the rule is valid for this feature
-                        if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getCandidate())) {
-                            SymbolizerRenderer[] rss = renderers[i];
-
-                            //if not created yet --------------
-                            if(rss.length==0){
-                                final CachedSymbolizer[] css = rule.symbolizers();
-                                renderers[i] = new SymbolizerRenderer[css.length];
-                                for(int k=0; k<css.length; k++){
-                                    final CachedSymbolizer cs = css[k];
-                                    if(cs.getSource() instanceof TextSymbolizer){
-                                        images[i][k] = originalBuffer;
-                                        renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                                    }else{
-                                        if(i==0 && k==0){
-                                            //first buffer is the current one
-                                            images[i][k] = originalBuffer ;
-                                            renderers[i][k] = cs.getRenderer().createRenderer(cs, originalContext);
-                                        }else{
-                                            final BufferedImage img = createBufferedImage(cm, sm);
-                                            final RenderingContext2D ctx = context.create(img.createGraphics());
-                                            images[i][k] = img ;
-                                            renderers[i][k] = cs.getRenderer().createRenderer(cs, ctx);
-                                        }
-                                    }
-                                }
-                                rss = renderers[i];
-                            }
-
-
-
-                            for (int k=0;k<rss.length;k++) {
-                                final SymbolizerRenderer renderer = rss[k];
-                                used[i][k] = true;
-                                renderer.portray(projectedFeature);
-                            }
-                        }
-                    }
-                }
-            }
-        }finally{
-            try {
-                statefullIterator.close();
-            } catch (IOException ex) {
-                getLogger().log(Level.WARNING, null, ex);
-            }
-        }
-
-        //merge images --------------------------
-        originalContext.switchToDisplayCRS();
-        final Graphics2D g = originalContext.getGraphics();
-        g.setComposite(ALPHA_COMPOSITE_1F);
-        for(int i=0;i<images.length;i++){
-            for(int k=0,n=images[i].length; k<n; k++){
-                final Image img = images[i][k];
-                if(img != originalBuffer){
-                    if(used[i][k]){
-                        g.drawImage(img, 0, 0, null);
-                    }
-                    recycleBufferedImage((BufferedImage)img);
-                }
-            }
-        }
-    }    
 
     protected List<Graphic> searchGraphicAt(final FeatureMapLayer layer, final CachedRule[] rules,
             final RenderingContext2D renderingContext, final SearchAreaJ2D mask, final VisitFilter visitFilter, final List<Graphic> graphics) {
@@ -617,7 +216,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         //we do not check if the collection is empty or not since
         //it can be a very expensive operation
 
-        final StatefullContextParams params = prepareContextParams(renderingContext, null);
+        final StatefullContextParams params = getStatefullParameters(renderingContext);
 
 
         // iterate and find the first graphic that hit the given point
@@ -677,39 +276,6 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         }
 
         return graphics;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public List<Graphic> getGraphicAt(final RenderingContext rdcontext, final SearchArea mask, final VisitFilter filter, List<Graphic> graphics) {
-
-        if(!item.isSelectable()) return graphics;
-
-        if(!(rdcontext instanceof RenderingContext2D)) return graphics;
-        final RenderingContext2D c2d = (RenderingContext2D) rdcontext;
-
-        //nothing visible so no possible selection
-        if (!item.isVisible()) return graphics;
-
-        final Name featureTypeName = item.getCollection().getFeatureType().getName();
-        final CachedRule[] rules = GO2Utilities.getValidCachedRules(item.getStyle(),
-                c2d.getSEScale(), featureTypeName);
-
-        //we perform a first check on the style to see if there is at least
-        //one valid rule at this scale, if not we just return null.
-        if (rules.length == 0) {
-            return graphics;
-        }
-
-        if(graphics == null) graphics = new ArrayList<Graphic>();
-
-        if(mask instanceof SearchAreaJ2D){
-            return searchGraphicAt(item, rules, c2d, (SearchAreaJ2D)mask, filter, graphics);
-        }else{
-            return searchGraphicAt(item, rules, c2d, new DefaultSearchAreaJ2D(mask), filter, graphics);
-        }
     }
 
     /**
@@ -943,34 +509,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         qb.setHints(queryHints);
         return qb.buildQuery();
     }
-
-    protected final Query idQuery(final RenderingContext2D renderingContext, final FeatureMapLayer layer, final CachedRule[] rules, final Filter ids){
-
-        QueryBuilder qb = new QueryBuilder(currentQuery);
-        qb.setFilter(ids);
-        return qb.buildQuery();
-    }
-
-    private StatefullContextParams prepareContextParams(final RenderingContext2D renderingContext,
-            StatefullContextParams params){
-        final CoordinateReferenceSystem displayCRS   = renderingContext.getDisplayCRS();
-        final AffineTransform2D objtoDisp              = renderingContext.getObjectiveToDisplay();
-
-        if(params == null){
-            params = new StatefullContextParams(getCanvas(),item);
-        }
-
-        params.displayCRS = displayCRS;
-        params.objectiveToDisplay.setTransform(objtoDisp);
-        ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
-                .setTransform(objtoDisp);
-
-        return params;
-    }
-
     
-    protected static interface RenderingIterator extends Iterator<ProjectedFeature>,Closeable{}
-
     private static class GraphicIterator implements RenderingIterator{
 
         private final FeatureIterator<? extends Feature> ite;
@@ -1003,61 +542,5 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
         }
 
     }
-
-    private static class FilterGraphicIterator implements RenderingIterator{
-
-        private RenderingIterator ite;
-        private Filter filter;
-        private ProjectedFeature next = null;
-        private final Set<FeatureId> ids;
-
-        public FilterGraphicIterator(final RenderingIterator ite, final Filter filter, final Set<FeatureId> ids) {
-            this.ite = ite;
-            this.filter = (filter==null)?Filter.INCLUDE : filter ;
-            this.ids = ids;
-        }
-
-        @Override
-        public boolean hasNext() {
-            findNext();
-            return next != null;
-        }
-
-        @Override
-        public ProjectedFeature next() {
-            //we know the hasNext has been called before
-            final ProjectedFeature t = next;
-            next = null;
-            return t;
-        }
-
-        private void findNext(){
-            if(next != null){
-                return;
-            }
-
-            while(ite.hasNext()){
-                final ProjectedFeature candidate = ite.next();
-                final Feature f = candidate.getCandidate();
-                if(filter.evaluate(f)){
-                    next = candidate;
-                    if(ids!=null){ids.add(f.getIdentifier());}
-                    return;
-                }
-            }
-        }
-
-        @Override
-        public void remove() {
-            throw new UnsupportedOperationException("Not supported.");
-        }
-
-        @Override
-        public void close() throws IOException {
-            ite.close();
-        }
-
-    }
-
 
 }

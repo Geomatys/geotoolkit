@@ -34,6 +34,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.session.Session;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
@@ -499,8 +500,9 @@ public class QueryUtilities {
 
         final List atts = new LinkedList();
 
+        final List lst1 = UnmodifiableArrayList.wrap(atts1);
         for (int i = 0; i < atts2.length; i++) {
-            if (Arrays.binarySearch(atts1, atts2[i]) >= 0) {
+            if (lst1.contains(atts2[i])) {
                 atts.add(atts2[i]);
             }
         }

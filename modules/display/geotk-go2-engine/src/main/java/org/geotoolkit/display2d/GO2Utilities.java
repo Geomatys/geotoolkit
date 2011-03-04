@@ -1259,43 +1259,44 @@ public final class GO2Utilities {
             final Id ids = fts.getFeatureInstanceIDs();
             final Set<Name> names = fts.featureTypeNames();
 
-            //check semantic
-            final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
+            //check semantic, only if we have a feature type
+            if(type != null){
+                final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
+                if(!semantics.isEmpty()){
+                    final GeometryType gtype = type.getGeometryDescriptor().getType();
+                    final Class ctype = gtype.getBinding();
 
-            if(!semantics.isEmpty()){
-                final GeometryType gtype = type.getGeometryDescriptor().getType();
-                final Class ctype = gtype.getBinding();
+                    boolean valid = false;
 
-                boolean valid = false;
-
-                for(SemanticType semantic : semantics){
-                    if(semantic == SemanticType.ANY){
-                        valid = true;
-                        break;
-                    }else if(semantic == SemanticType.LINE){
-                        if(ctype == LineString.class || ctype == MultiLineString.class){
+                    for(SemanticType semantic : semantics){
+                        if(semantic == SemanticType.ANY){
                             valid = true;
                             break;
+                        }else if(semantic == SemanticType.LINE){
+                            if(ctype == LineString.class || ctype == MultiLineString.class){
+                                valid = true;
+                                break;
+                            }
+                        }else if(semantic == SemanticType.POINT){
+                            if(ctype == Point.class || ctype == MultiPoint.class){
+                                valid = true;
+                                break;
+                            }
+                        }else if(semantic == SemanticType.POLYGON){
+                            if(ctype == Polygon.class || ctype == MultiPolygon.class){
+                                valid = true;
+                                break;
+                            }
+                        }else if(semantic == SemanticType.RASTER){
+                            // can not test this on feature datas
+                        }else if(semantic == SemanticType.TEXT){
+                            //no text type in JTS, that's a stupid thing this Text semantic
                         }
-                    }else if(semantic == SemanticType.POINT){
-                        if(ctype == Point.class || ctype == MultiPoint.class){
-                            valid = true;
-                            break;
-                        }
-                    }else if(semantic == SemanticType.POLYGON){
-                        if(ctype == Polygon.class || ctype == MultiPolygon.class){
-                            valid = true;
-                            break;
-                        }
-                    }else if(semantic == SemanticType.RASTER){
-                        // can not test this on feature datas
-                    }else if(semantic == SemanticType.TEXT){
-                        //no text type in JTS, that's a stupid thing this Text semantic
                     }
+
+                    if(!valid) continue;
+
                 }
-
-                if(!valid) continue;
-
             }
 
 

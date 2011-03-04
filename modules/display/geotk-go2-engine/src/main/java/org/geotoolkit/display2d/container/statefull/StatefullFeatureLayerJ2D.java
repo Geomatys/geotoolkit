@@ -19,6 +19,7 @@ package org.geotoolkit.display2d.container.statefull;
 
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -133,10 +134,10 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     }
 
     @Override
-    protected RenderingIterator getIterator(final FeatureCollection<? extends Feature> features,
+    protected RenderingIterator getIterator(final Collection<?> features,
             final RenderingContext2D renderingContext, final StatefullContextParams params){
         updateCache(renderingContext);
-        return new StatefullGraphicIterator(features.iterator());
+        return new StatefullGraphicIterator(((FeatureCollection)features).iterator());
     }
 
     @Override
@@ -180,7 +181,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final Boolean SymbolOrder = (Boolean) canvas.getRenderingHint(GO2Hints.KEY_SYMBOL_RENDERING_ORDER);
         if(SymbolOrder == null || SymbolOrder == false){
             try{
-                renderByFeatureOrder(features, context, rules, params);
+                renderByObjectOrder(features, context, rules, params);
             }catch(PortrayalException ex){
                 monitor.exceptionOccured(ex, Level.WARNING);
             }
