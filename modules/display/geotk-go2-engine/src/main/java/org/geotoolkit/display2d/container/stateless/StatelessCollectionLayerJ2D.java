@@ -84,7 +84,7 @@ public class StatelessCollectionLayerJ2D<T extends CollectionMapLayer> extends S
 
     private static final Literal ID_EXPRESSION = FactoryFinder.getFilterFactory(null).literal("@id");
 
-    private final StatefullContextParams params;
+    protected final StatefullContextParams params;
 
     public StatelessCollectionLayerJ2D(final J2DCanvas canvas, final T layer){
         super(canvas, layer);

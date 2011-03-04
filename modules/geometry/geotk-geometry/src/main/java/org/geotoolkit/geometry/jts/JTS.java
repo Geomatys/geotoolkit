@@ -56,6 +56,7 @@ import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.factory.HintsPending;
 
 /**
  * JTS Geometry utility methods, bringing GeotoolKit to JTS.
@@ -660,4 +661,34 @@ public final class JTS {
             }
         }
     }
+
+    /**
+     * Find the crs of the geometry.
+     * 1 - search if the user data is a CRS
+     * 2 - search if the user data is a Map and has key JTSGeometryCRS
+     * 3 - try to rebuild CRS from the srid.
+     * return null if none where successful.
+     */
+    public static CoordinateReferenceSystem findCoordinateReferenceSystem(final Geometry geom)
+            throws NoSuchAuthorityCodeException, FactoryException{
+        //we don't know in which crs it is, try to find it
+        CoordinateReferenceSystem crs = null;
+        final Object userData = geom.getUserData();
+        if(userData instanceof CoordinateReferenceSystem){
+            crs = (CoordinateReferenceSystem) userData;
+        }else if(userData instanceof Map){
+            final Map values = (Map) userData;
+            values.get(HintsPending.JTS_GEOMETRY_CRS);
+        }
+        //not found yet, try to rebuild it from the srid
+        if(crs == null){
+            final int srid = geom.getSRID();
+            if(srid >= 0){
+                final String srs = SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1);
+                crs = CRS.decode(srs);
+            }
+        }
+        return crs;
+    }
+
 }

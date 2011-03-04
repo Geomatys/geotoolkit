@@ -138,7 +138,7 @@ public class PatternRenderer extends AbstractCoverageSymbolizerRenderer<CachedPa
             for(final Map.Entry<SimpleFeature,List<CachedSymbolizer>> entry : features.entrySet()){
                 Feature f = entry.getKey();
                 f.getDefaultGeometryProperty().setValue(trs.transform((Geometry)f.getDefaultGeometryProperty().getValue()));
-                projectedFeature.setFeature(entry.getKey());
+                projectedFeature.setCandidate(entry.getKey());
 
                 for(final CachedSymbolizer cached : entry.getValue()){
                     GO2Utilities.portray(projectedFeature, cached, renderingContext);

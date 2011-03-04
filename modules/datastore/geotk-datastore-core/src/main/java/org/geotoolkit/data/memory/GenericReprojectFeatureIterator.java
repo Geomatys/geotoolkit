@@ -33,6 +33,7 @@ import org.geotoolkit.feature.DefaultFeature;
 import org.geotoolkit.feature.FeatureTypeUtilities;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
@@ -158,9 +159,8 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                             //each feature has a different CRS.
                             final CoordinateReferenceSystem original;
                             if(value instanceof Geometry){
-                                final int srid = ((Geometry)value).getSRID();
                                 try {
-                                    original = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
+                                    original = JTS.findCoordinateReferenceSystem((Geometry)value);
                                 } catch (NoSuchAuthorityCodeException ex) {
                                     throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                                 } catch (FactoryException ex) {
@@ -249,9 +249,8 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
                             //each feature has a different CRS.
                             final CoordinateReferenceSystem original;
                             if(value instanceof Geometry){
-                                final int srid = ((Geometry)value).getSRID();
                                 try {
-                                    original = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
+                                    original = JTS.findCoordinateReferenceSystem((Geometry)value);
                                 } catch (NoSuchAuthorityCodeException ex) {
                                     throw new DataStoreRuntimeException("An exception occurred while reprojecting data on the fly", ex);
                                 } catch (FactoryException ex) {

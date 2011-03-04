@@ -98,7 +98,7 @@ public class JMap2DFrame extends javax.swing.JFrame {
         guiContextTree.setContext(context);
         initTree(guiContextTree);
                         
-        guiMap = new JMap2D(true);
+        guiMap = new JMap2D(false);
         guiMap.getContainer().setContext(context);
         guiMap.getCanvas().setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         guiMap.getCanvas().setRenderingHint(GO2Hints.KEY_GENERALIZE, GO2Hints.GENERALIZE_ON);

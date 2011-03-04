@@ -40,7 +40,6 @@ import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.style.CachedRule;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRenderer;
-import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 
@@ -63,7 +62,6 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     private final Map<String,StatefullProjectedFeature> cache = new HashMap<String, StatefullProjectedFeature>();
 
     //compare values to update caches if necessary
-    private final StatefullContextParams params;
     private final CoordinateReferenceSystem dataCRS;
     private CoordinateReferenceSystem lastObjectiveCRS = null;
 
@@ -74,12 +72,10 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
     
     public StatefullFeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
         super(canvas, layer);
-        params = new StatefullContextParams(canvas,layer);
         dataCRS = layer.getCollection().getFeatureType().getCoordinateReferenceSystem();
     }
 
     private synchronized void updateCache(final RenderingContext2D context){
-
         boolean objectiveCleared = false;
 
         //clear objective cache is objective crs changed -----------------------
@@ -93,7 +89,7 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             sourceCRS = objectiveCRS;
         }
 
-        final double[] newRes = context.getResolution(dataCRS);
+        final double[] newRes = context.getResolution(sourceCRS);
         if(oldRes == null || newRes[0]!= oldRes[0] || newRes[1] != oldRes[1]){
             //resolution change, so has features
             cache.clear();
@@ -115,9 +111,6 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
         final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
 
         if(!objtoDisp.equals(params.objectiveToDisplay)){
-            params.objectiveToDisplay.setTransform(objtoDisp);
-            ((CoordinateSequenceMathTransformer)params.objToDisplayTransformer.getCSTransformer())
-                    .setTransform(objtoDisp);
 
             if(!objectiveCleared){
                 //no need to clear the display cache if the objective clear has already been called
@@ -127,6 +120,9 @@ public class StatefullFeatureLayerJ2D extends StatelessFeatureLayerJ2D{
             }
 
         }
+
+        //update parameters
+        params.update(context);
     }
 
     private synchronized void clearCache(){

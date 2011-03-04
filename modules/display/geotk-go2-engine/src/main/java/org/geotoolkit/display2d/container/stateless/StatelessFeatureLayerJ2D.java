@@ -93,6 +93,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
     protected Query currentQuery = null;
 
+
     public StatelessFeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
         super(canvas, layer);
     }
@@ -235,7 +236,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         try{
             while(iterator.hasNext()){
                 Feature feature = iterator.next();
-                projectedFeature.setFeature(feature);
+                projectedFeature.setCandidate(feature);
 
                 boolean painted = false;
                 for(int i=0;i<preparedRenderers.elseRuleIndex;i++){
@@ -294,11 +295,9 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         final String geomAttName                                 = (geomDesc!=null)? geomDesc.getLocalName() : null;
         final RenderingHints hints                               = renderingContext.getRenderingHints();
 
-        if(layerCRS == null){
-            throw new PortrayalException("Layer " + layer.getName() +" do not define any coordinate reference system, layer will not be rendered");
-        }
-
-        if( !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
+        //layer crs may be null if it define an abstract collection
+        //or if the crs is defined only on the feature geometry
+        if(layerCRS != null && !CRS.equalsIgnoreMetadata(layerCRS,bboxCRS)){
             //BBox and layer bounds have different CRS. reproject bbox bounds
             Envelope env;
 
@@ -476,30 +475,33 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         qb.setFilter(filter);
         qb.setProperties(atts);
 
-        //add resampling -------------------------------------------------------
-        Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
-        if(!Boolean.FALSE.equals(resample)){
-            //we only disable resampling if it is explictly specified
-            final double[] res = renderingContext.getResolution(layerCRS);
+        //resampling and ignore flag only works when we know the layer crs
+        if(layerCRS != null){
+            //add resampling -------------------------------------------------------
+            Boolean resample = (hints == null) ? null : (Boolean) hints.get(GO2Hints.KEY_GENERALIZE);
+            if(!Boolean.FALSE.equals(resample)){
+                //we only disable resampling if it is explictly specified
+                final double[] res = renderingContext.getResolution(layerCRS);
 
-            //adjust with the generalization factor
-            final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
-            final double factor;
-            if(n != null){
-                factor = n.doubleValue();
-            }else{
-                factor = GO2Hints.GENERALIZE_FACTOR_DEFAULT.doubleValue();
+                //adjust with the generalization factor
+                final Number n =  (hints==null) ? null : (Number)hints.get(GO2Hints.KEY_GENERALIZE_FACTOR);
+                final double factor;
+                if(n != null){
+                    factor = n.doubleValue();
+                }else{
+                    factor = GO2Hints.GENERALIZE_FACTOR_DEFAULT.doubleValue();
+                }
+                res[0] *= factor;
+                res[1] *= factor;
+                qb.setResolution(res);
             }
-            res[0] *= factor;
-            res[1] *= factor;
-            qb.setResolution(res);
-        }
 
-        //add ignore flag ------------------------------------------------------
-        if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
-            //style does not expend itself further than the feature geometry
-            //that mean geometries smaller than a pixel will not be renderer are barely visible
-            queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
+            //add ignore flag ------------------------------------------------------
+            if(!GO2Utilities.visibleMargin(rules, 1.01f, renderingContext)){
+                //style does not expend itself further than the feature geometry
+                //that mean geometries smaller than a pixel will not be renderer are barely visible
+                queryHints.put(HintsPending.KEY_IGNORE_SMALL_FEATURES, renderingContext.getResolution(layerCRS));
+            }
         }
 
         //add reprojection -----------------------------------------------------
@@ -527,7 +529,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
         @Override
         public ProjectedFeature next() {
-            projected.setFeature(ite.next());
+            projected.setCandidate(ite.next());
             return projected;
         }
 

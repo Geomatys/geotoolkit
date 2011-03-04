@@ -26,9 +26,7 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.container.statefull.StatefullContextParams;
 import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
-import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.referencing.CRS;
 
@@ -47,26 +45,26 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DefaultProjectedObject implements ProjectedObject {
+public class DefaultProjectedObject<T> implements ProjectedObject {
 
-    private static final String DEFAULT_GEOM = "";
+    protected static final String DEFAULT_GEOM = "";
 
-    private final StatefullContextParams params;
-    private final Map<String,StatefullProjectedGeometry> geometries =
+    protected final StatefullContextParams params;
+    protected final Map<String,StatefullProjectedGeometry> geometries =
             new LinkedHashMap<String,StatefullProjectedGeometry>(); //linked hashmap is faster than hashmap on iteration.
-    private Object candidate;
+    protected T candidate;
 
 
     public DefaultProjectedObject(final StatefullContextParams params){
         this(params,null);
     }
 
-    public DefaultProjectedObject(final StatefullContextParams params, final Object candidate){
+    public DefaultProjectedObject(final StatefullContextParams params, final T candidate){
         this.params = params;
         this.candidate = candidate;
     }
 
-    public void setCandidate(final Object candidate) {
+    public void setCandidate(final T candidate) {
         //we dont test if it is the same object or not, even
         //if it's the same object, it might have change so we clear the cache anyway.
         clearDataCache();
@@ -97,67 +95,64 @@ public class DefaultProjectedObject implements ProjectedObject {
 
         StatefullProjectedGeometry proj = geometries.get(name);
         if(proj == null){
-            Geometry geom = GO2Utilities.getGeometry(candidate, name);
-
-            if(geom == null){
-                return null;
-            }
-            
-            //we don't know in which crs it is, try to find it
-            CoordinateReferenceSystem crs = null;
-            final Object userData = geom.getUserData();
-            if(userData instanceof CoordinateReferenceSystem){
-                crs = (CoordinateReferenceSystem) userData;
-            }else if(userData instanceof Map){
-                final Map values = (Map) userData;
-                values.get(HintsPending.JTS_GEOMETRY_CRS);
-            }
-            //not found yet, try to rebuild it from the srid
-            if(crs == null){
-                final int srid = geom.getSRID();
-                if(srid >= 0){
-                    try{
-                        final String srs = SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1);
-                        crs = CRS.decode(srs);
-                    }catch(IllegalArgumentException ex){
-                        params.context.getMonitor().exceptionOccured(ex, Level.FINE);
-                    }catch(NoSuchAuthorityCodeException ex){
-                        params.context.getMonitor().exceptionOccured(ex, Level.FINE);
-                    }catch(FactoryException ex){
-                        params.context.getMonitor().exceptionOccured(ex, Level.FINE);
-                    }
-                }
-            }
-
-            //if we don't know the crs, we will assume it's the objective crs already
-            if(crs != null){
-                //reproject in objective crs if needed
-                if(!CRS.equalsIgnoreMetadata(params.objectiveCRS,crs)){
-                    try {
-                        geom = JTS.transform(geom, CRS.findMathTransform(crs, params.objectiveCRS));
-                    } catch (MismatchedDimensionException ex) {
-                        params.context.getMonitor().exceptionOccured(ex, Level.WARNING);
-                    } catch (TransformException ex) {
-                        params.context.getMonitor().exceptionOccured(ex, Level.WARNING);
-                    } catch (FactoryException ex) {
-                        params.context.getMonitor().exceptionOccured(ex, Level.WARNING);
-                    }
-                }
-            }
-
+            final Geometry geom = getGeometryObjective(name);
             proj = new StatefullProjectedGeometry(params, Geometry.class, geom);
             geometries.put(name, proj);
         }else{
             //check that the geometry is set
             if(proj.getObjectiveGeometryJTS() == null){
-                proj.setObjectiveGeometry(GO2Utilities.getGeometry(candidate, name));
+                proj.setObjectiveGeometry(getGeometryObjective(name));
             }
         }
         return proj;
     }
 
+    /**
+     * Returns the geometry is objective crs.
+     * @param name
+     * @return Geometry
+     */
+    private Geometry getGeometryObjective(final String name){
+        Geometry geom = GO2Utilities.getGeometry(candidate, name);
+
+        if(geom == null){
+            return null;
+        }
+
+        //we don't know in which crs it is, try to find it
+        CoordinateReferenceSystem crs = null;
+        try{
+            crs = JTS.findCoordinateReferenceSystem(geom);
+        }catch(IllegalArgumentException ex){
+            params.context.getMonitor().exceptionOccured(ex, Level.FINE);
+        }catch(NoSuchAuthorityCodeException ex){
+            params.context.getMonitor().exceptionOccured(ex, Level.FINE);
+        }catch(FactoryException ex){
+            params.context.getMonitor().exceptionOccured(ex, Level.FINE);
+        }
+        
+        //if we don't know the crs, we will assume it's the objective crs already
+        if(crs != null){
+            //reproject in objective crs if needed
+            if(!CRS.equalsIgnoreMetadata(params.objectiveCRS,crs)){
+                try {
+                    geom = JTS.transform(geom, CRS.findMathTransform(crs, params.objectiveCRS));
+                } catch (MismatchedDimensionException ex) {
+                    params.context.getMonitor().exceptionOccured(ex, Level.WARNING);
+                } catch (TransformException ex) {
+                    params.context.getMonitor().exceptionOccured(ex, Level.WARNING);
+                } catch (FactoryException ex) {
+                    params.context.getMonitor().exceptionOccured(ex, Level.WARNING);
+                }
+            }
+        }
+
+        return geom;
+    }
+
+
     @Override
-    public Object getCandidate(){
+    public T getCandidate(){
         return candidate;
     }
 

@@ -38,9 +38,10 @@ import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -150,29 +151,38 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
             return false;
         }
 
-        final int srid = candidate.getSRID();
-        if(srid != 0 && srid != this.srid){
-            //check that the geometry has the same crs as the boundingbox
-            final CoordinateReferenceSystem crs;
-            try {
-                 crs = CRS.decode(SRIDGenerator.toSRS(srid, Version.V1));
 
-                 if(!CRS.equalsIgnoreMetadata(crs, this.crs)){
-                    //we must reproject the geometry
-                    MathTransform trs = CRS.findMathTransform(crs, this.crs);
-                    candidate = JTS.transform(candidate, trs);
-                }
-
-            } catch (FactoryException ex) {
-                //should not append if we have a srid
-                Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-                return false;
-            } catch (TransformException ex) {
-                Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-                return false;
-            }
-            
+        //we don't know in which crs it is, try to find it
+        CoordinateReferenceSystem crs = null;
+        try{
+            crs = JTS.findCoordinateReferenceSystem(candidate);
+        }catch(IllegalArgumentException ex){
+            Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
+        }catch(NoSuchAuthorityCodeException ex){
+            Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
+        }catch(FactoryException ex){
+            Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
         }
+
+        //if we don't know the crs, we will assume it's the objective crs already
+        if(crs != null){
+            //reproject in objective crs if needed
+            if(!CRS.equalsIgnoreMetadata(this.crs,crs)){
+                try {
+                    candidate = JTS.transform(candidate, CRS.findMathTransform(crs, this.crs));
+                } catch (MismatchedDimensionException ex) {
+                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
+                    return false;
+                } catch (TransformException ex) {
+                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
+                    return false;
+                } catch (FactoryException ex) {
+                    Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
+                    return false;
+                }
+            }
+        }
+
 
         final com.vividsolutions.jts.geom.Envelope candidateEnv = candidate.getEnvelopeInternal();
 
