@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ows.xml.v110;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -55,7 +56,7 @@ import org.geotoolkit.util.Utilities;
 @XmlType(name = "ExceptionType", propOrder = {
     "exceptionText"
 })
-public class ExceptionType {
+public class ExceptionType implements Serializable {
 
     @XmlElement(name = "ExceptionText")
     private List<String> exceptionText;
