@@ -293,33 +293,6 @@ public class WMSMapLayer extends AbstractMapLayer {
         final Point2D pickCoord = new Point2D.Double(x, y);
 
         prepareQuery(request, cenv, crect, pickCoord);
-
-        //recalculate x/y coordinates since there might be a local reprojection
-        final CoordinateReferenceSystem beforeCRS = env.getCoordinateReferenceSystem();
-        final CoordinateReferenceSystem afterCRS = cenv.getCoordinateReferenceSystem();
-
-        if(!CRS.equalsIgnoreMetadata(beforeCRS, afterCRS)){
-            //calculate new coordinate in the reprojected query
-            final Point2D point = new Point2D.Double(x, y);
-            final AffineTransform beforeTrs = GO2Utilities.toAffine(rect,env);
-            final AffineTransform afterTrs = GO2Utilities.toAffine(crect,cenv);
-            afterTrs.invert();
-
-            beforeTrs.transform(point, point);
-
-            final DirectPosition pos = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
-            pos.setOrdinate(0, point.getX());
-            pos.setOrdinate(1, point.getY());
-
-            final MathTransform trs = CRS.findMathTransform(beforeCRS, afterCRS);
-            trs.transform(pos, pos);
-
-            point.setLocation(pos.getOrdinate(0), pos.getOrdinate(1));
-            afterTrs.transform(point, point);
-            x = (int) point.getX();
-            y = (int) point.getY();
-
-        }
         request.setColumnIndex( (int)Math.round(pickCoord.getX()) );
         request.setRawIndex( (int)Math.round(pickCoord.getY()) );
 
