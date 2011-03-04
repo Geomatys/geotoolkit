@@ -24,7 +24,6 @@ import java.awt.Composite;
 import org.geotoolkit.coverage.processing.Operations;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.LineSymbolizer;
 import org.opengis.style.PolygonSymbolizer;
@@ -111,7 +110,7 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         return true;
     }
 
@@ -119,13 +118,13 @@ public class CachedRasterSymbolizer extends CachedSymbolizer<RasterSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
+    public float getMargin(final Object candidate, final float coeff) {
         evaluate();
 
         if(cachedoutLine == null){
             return 0;
         }else{
-            return cachedoutLine.getMargin(feature,coeff);
+            return cachedoutLine.getMargin(candidate,coeff);
         }
     }
 

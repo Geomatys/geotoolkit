@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.style;
 
 import org.geotoolkit.display2d.GO2Utilities;
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.PointPlacement;
 
@@ -44,24 +43,24 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
     /**
      * return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(final Feature feature, final float[] buffer){
-        return cachedDisplacement.getValues(feature, buffer);
+    public float[] getDisplacement(final Object candidate, final float[] buffer){
+        return cachedDisplacement.getValues(candidate, buffer);
     }
 
     /**
      * return an Array of 2 floats.
      */
-    public float[] getAnchor(final Feature feature, final float[] buffer){
-        return cachedAnchor.getValues(feature, buffer);
+    public float[] getAnchor(final Object candidate, final float[] buffer){
+        return cachedAnchor.getValues(candidate, buffer);
     }
     
-    public float getRotation(final Feature feature){
+    public float getRotation(final Object candidate){
         evaluate();
         
         if(Float.isNaN(rotation)){
             //value is feature dynamic
             final Expression exp = styleElement.getRotation();
-            return GO2Utilities.evaluate(exp, feature, Float.class, 0f);
+            return GO2Utilities.evaluate(exp, candidate, Float.class, 0f);
         }else{
             return rotation;
         }
@@ -98,7 +97,7 @@ public class CachedPointPlacement extends CachedLabelPlacement<PointPlacement>{
     }
 
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         evaluate();
         //placement doesnt know if it's visible or not whit those informations, always true.
         return true;

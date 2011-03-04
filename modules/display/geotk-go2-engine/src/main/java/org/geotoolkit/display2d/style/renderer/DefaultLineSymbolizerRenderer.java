@@ -26,18 +26,16 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Iterator;
 import java.util.logging.Level;
-import javax.measure.unit.NonSI;
-import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedLineSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedGraphicStroke;
 import org.geotoolkit.display2d.style.CachedStroke;
@@ -46,7 +44,6 @@ import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 
-import org.opengis.feature.Feature;
 import org.opengis.geometry.Geometry;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -82,16 +79,16 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedFeature projectedFeature) throws PortrayalException{
-        final Feature feature = projectedFeature.getFeature();
+    public void portray(final ProjectedObject projectedFeature) throws PortrayalException{
+        final Object candidate = projectedFeature.getCandidate();
         final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return;
 
         //test if the symbol is visible on this feature
-        if(symbol.isVisible(feature)){
-            portray(projectedGeometry, feature);
+        if(symbol.isVisible(candidate)){
+            portray(projectedGeometry, candidate);
         }
     }
 
@@ -99,7 +96,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public void portray(final Iterator<ProjectedFeature> graphics) throws PortrayalException {
+    public void portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
 
         if(dispGeom){
             renderingContext.switchToDisplayCRS();
@@ -108,8 +105,8 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
         }
 
         while(graphics.hasNext()){
-            final ProjectedFeature projectedFeature = graphics.next();
-            final Feature feature = projectedFeature.getFeature();
+            final ProjectedObject projectedFeature = graphics.next();
+            final Object feature = projectedFeature.getCandidate();
             final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
             //symbolizer doesnt match the featuretype, no geometry found with this name.
@@ -190,7 +187,7 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     }
 
-    private void portray(final ProjectedGeometry projectedGeometry, final Feature feature) throws PortrayalException{
+    private void portray(final ProjectedGeometry projectedGeometry, final Object feature) throws PortrayalException{
 
         final Shape j2dShape;
 
@@ -274,13 +271,13 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(final ProjectedFeature projectedFeature, final SearchAreaJ2D search, final VisitFilter filter) {
+    public boolean hit(final ProjectedObject projectedFeature, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
         final Geometry mask = search.getDisplayGeometry();
 
-        final Feature feature = projectedFeature.getFeature();
+        final Object feature = projectedFeature.getCandidate();
 
         //test if the symbol is visible on this feature
         if(!(symbol.isVisible(feature))) return false;

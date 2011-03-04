@@ -23,7 +23,6 @@ import java.awt.image.BufferedImage;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 
-import org.opengis.feature.Feature;
 import org.opengis.style.PointSymbolizer;
 
 /**
@@ -47,8 +46,8 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
-        return cachedGraphic.getMargin(feature, coeff);
+    public float getMargin(final Object candidate, final float coeff) {
+        return cachedGraphic.getMargin(candidate, coeff);
     }
 
     /**
@@ -75,22 +74,22 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(final Feature feature) {
-        return cachedGraphic.isVisible(feature);
+    public boolean isVisible(final Object candidate) {
+        return cachedGraphic.isVisible(candidate);
     }
     
     /**
      * 
      * @return BufferedImage for a feature 
      */
-    public BufferedImage getImage(final Feature feature, final float coeff, final RenderingHints hints) {
+    public BufferedImage getImage(final Object candidate, final float coeff, final RenderingHints hints) {
         evaluate();
 
         if(cache != null){
             //means the graphic is static, so we can cache fixed size images
             BufferedImage buffer = cache.get(coeff);
             if(buffer == null){
-                buffer = cachedGraphic.getImage(feature, coeff, hints);
+                buffer = cachedGraphic.getImage(candidate, coeff, hints);
                 cache.put(coeff, buffer);
             }
 
@@ -98,21 +97,21 @@ public class CachedPointSymbolizer extends CachedSymbolizer<PointSymbolizer>{
         }
 
         //no cache recalculate image
-        return cachedGraphic.getImage(feature, coeff, hints);
+        return cachedGraphic.getImage(candidate, coeff, hints);
     }
 
     /**
      * return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(final Feature feature, final float[] buffer){
-        return cachedGraphic.getDisplacement(feature, buffer);
+    public float[] getDisplacement(final Object candidate, final float[] buffer){
+        return cachedGraphic.getDisplacement(candidate, buffer);
     }
     
     /**
      * return an Array of 2 floats.
      */
-    public float[] getAnchor(final Feature feature, final float[] buffer){
-        return cachedGraphic.getAnchor(feature,buffer);
+    public float[] getAnchor(final Object candidate, final float[] buffer){
+        return cachedGraphic.getAnchor(candidate,buffer);
     }
     
 }

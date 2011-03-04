@@ -21,28 +21,27 @@ import java.io.IOException;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
-import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.map.CoverageMapLayer;
 
-import org.opengis.display.primitive.Graphic;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 
 /**
- * Convinient representation of a coverage for rendering.
+ * Convenient representation of a coverage for rendering.
  * We expect the sub classes to cache information for more efficient rendering.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface ProjectedCoverage extends Graphic {
+public interface ProjectedCoverage extends ProjectedObject<CoverageMapLayer> {
 
     /**
      * Get the original CoverageMapLayer from where the feature is from.
      *
      * @return CoverageMapLayer
      */
-    CoverageMapLayer getCoverageLayer();
+    @Override
+    CoverageMapLayer getLayer();
 
     /**
      * Get a coverage reference.
@@ -75,9 +74,5 @@ public interface ProjectedCoverage extends Graphic {
      */
     GridCoverage2D getElevationCoverage(GridCoverageReadParam param) throws CoverageStoreException;
 
-    /**
-     * @return original canvas of this graphic
-     */
-    ReferencedCanvas2D getCanvas();
 
 }

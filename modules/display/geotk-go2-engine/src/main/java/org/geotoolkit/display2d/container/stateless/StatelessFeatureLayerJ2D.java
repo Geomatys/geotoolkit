@@ -33,7 +33,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -100,7 +99,7 @@ import org.opengis.style.TextSymbolizer;
 import static org.geotoolkit.display2d.GO2Utilities.*;
 
 /**
- * Single object to represent a complete mapcontext.
+ * Single object to represent a complete feature map layer.
  * This is a Stateless graphic object.
  *
  * @author johann sorel (Geomatys)
@@ -283,7 +282,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                     final CachedRule rule = renderers.rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
-                    if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
+                    if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getCandidate())) {
                         painted = true;
                         for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
                             renderer.portray(projectedFeature);
@@ -297,7 +296,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                         final CachedRule rule = renderers.rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
-                        if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
+                        if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getCandidate())) {
                             for (final SymbolizerRenderer renderer : renderers.renderers[i]) {
                                 renderer.portray(projectedFeature);
                             }
@@ -346,7 +345,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
     }
     
     /**
-     * Render vy symbol order in mutiple passes. consume less memory but requiere
+     * Render by symbol order in multiple passes. consume less memory but require
      * more time.
      */
     private void renderBySymbolStream(final FeatureCollection<? extends Feature> features,
@@ -427,9 +426,9 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                     while (ite.hasNext()) {
                         if(monitor.stopRequested()) return;
                         final ProjectedFeature pf = ite.next();
-                        final Feature f = pf.getFeature();
+                        final Feature f = pf.getCandidate();
                         if (!painted.contains(f.getIdentifier())
-                            && (rulefilter == null || rulefilter.evaluate(pf.getFeature()))) {
+                            && (rulefilter == null || rulefilter.evaluate(pf.getCandidate()))) {
                             renderer.portray(pf);
                         }
                     }
@@ -488,7 +487,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                     final CachedRule rule = rules[i];
                     final Filter ruleFilter = rule.getFilter();
                     //test if the rule is valid for this feature
-                    if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
+                    if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getCandidate())) {
                         painted = true;
                         SymbolizerRenderer[] rss = renderers[i];
 
@@ -531,7 +530,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
                         final CachedRule rule = rules[i];
                         final Filter ruleFilter = rule.getFilter();
                         //test if the rule is valid for this feature
-                        if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getFeature())) {
+                        if (ruleFilter == null || ruleFilter.evaluate(projectedFeature.getCandidate())) {
                             SymbolizerRenderer[] rss = renderers[i];
 
                             //if not created yet --------------
@@ -1039,7 +1038,7 @@ public class StatelessFeatureLayerJ2D extends StatelessMapLayerJ2D<FeatureMapLay
 
             while(ite.hasNext()){
                 final ProjectedFeature candidate = ite.next();
-                final Feature f = candidate.getFeature();
+                final Feature f = candidate.getCandidate();
                 if(filter.evaluate(f)){
                     next = candidate;
                     if(ids!=null){ids.add(f.getIdentifier());}

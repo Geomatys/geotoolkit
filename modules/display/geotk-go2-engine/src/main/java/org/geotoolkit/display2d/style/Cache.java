@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.logging.Logger;
 import org.geotoolkit.util.logging.Logging;
-import org.opengis.feature.Feature;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
 
@@ -106,7 +105,7 @@ public abstract class Cache<T extends Object> {
      * @param feature : feature to evaluate
      * @return true is the feature is visible
      */
-    public abstract boolean isVisible(Feature feature);
+    public abstract boolean isVisible(Object candidate);
     
     /**
      * Returns the list of attributs requiered by this style.

@@ -27,7 +27,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.display.canvas.control.CanvasMonitor;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.util.logging.Logging;
 
@@ -71,7 +71,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     }
 
     @Override
-    public void portray(final Iterator<ProjectedFeature> graphics) throws PortrayalException {
+    public void portray(final Iterator<? extends ProjectedObject> graphics) throws PortrayalException {
         while(graphics.hasNext()){
             if(monitor.stopRequested()) return;
             portray(graphics.next());
@@ -83,7 +83,7 @@ public abstract class AbstractSymbolizerRenderer<C extends CachedSymbolizer<? ex
     ////////////////////////////////////////////////////////////////////////////
 
     /**
-     * Chack that the resolution asked match at least the span of the envelope.
+     * Check that the resolution asked match at least the span of the envelope.
      * @param resolution : resolution to check
      * @param bounds : reference envelope
      * @return resolution changed if necessary

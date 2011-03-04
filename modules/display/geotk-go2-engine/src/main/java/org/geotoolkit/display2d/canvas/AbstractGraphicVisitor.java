@@ -111,7 +111,7 @@ public abstract class AbstractGraphicVisitor implements GraphicVisitor {
      */
     protected static List<Entry<GridSampleDimension,Object>> getCoverageValues(final ProjectedCoverage gra, final RenderingContext2D context, final SearchAreaJ2D queryArea){
 
-        final CoverageMapLayer layer = gra.getCoverageLayer();
+        final CoverageMapLayer layer = gra.getLayer();
         Envelope objBounds = context.getCanvasObjectiveBounds();
         CoordinateReferenceSystem objCRS = objBounds.getCoordinateReferenceSystem();
         TemporalCRS temporalCRS = CRS.getTemporalCRS(objCRS);

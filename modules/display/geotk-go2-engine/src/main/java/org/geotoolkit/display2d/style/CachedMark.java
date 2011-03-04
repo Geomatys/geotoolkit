@@ -28,7 +28,6 @@ import javax.swing.Icon;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.renderer.style.WellKnownMarkFactory;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ExternalMark;
@@ -145,7 +144,7 @@ public class CachedMark extends Cache<Mark>{
         return styleElement.getWellKnownName()!= null || styleElement.getExternalMark() != null ;
     }
         
-    public BufferedImage getImage(final Feature feature, final Float size, final RenderingHints hints){
+    public BufferedImage getImage(final Object candidate, final Float size, final RenderingHints hints){
         evaluate();
                 
         final Expression wkn = styleElement.getWellKnownName();
@@ -160,7 +159,7 @@ public class CachedMark extends Cache<Mark>{
         
         if(candidateWKN == null){
             try {
-                candidateWKN = WKMF.getShape(null, wkn, feature);
+                candidateWKN = WKMF.getShape(null, wkn, candidate);
             } catch (Exception ex) {
                 LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }
@@ -168,7 +167,7 @@ public class CachedMark extends Cache<Mark>{
         
         if(wkn != null || external != null){
             j2dSize = (size != null) ? size.intValue() : 16;
-            margin = cachedStroke.getMargin(feature,1);
+            margin = cachedStroke.getMargin(candidate,1);
             maxWidth = (int)(margin+0.5f)+ j2dSize ;
             center = maxWidth/2  ;
         }
@@ -188,17 +187,17 @@ public class CachedMark extends Cache<Mark>{
             Shape shp = trs; //trs.createTransformedShape(marker);
 
             //test if we need to paint the fill
-            if(cachedFill.isVisible(feature)){
-                g2.setPaint(cachedFill.getJ2DPaint(feature,0, 0, 1,hints));
-                g2.setComposite(cachedFill.getJ2DComposite(feature));
+            if(cachedFill.isVisible(candidate)){
+                g2.setPaint(cachedFill.getJ2DPaint(candidate,0, 0, 1,hints));
+                g2.setComposite(cachedFill.getJ2DComposite(candidate));
                 g2.fill(shp);
             }
 
             //test if we need to paint the stroke
-            if(cachedStroke.isVisible(feature)){
-                g2.setStroke(cachedStroke.getJ2DStroke(feature,1));
-                g2.setPaint(cachedStroke.getJ2DPaint(feature, 0, 0, 1, hints));
-                g2.setComposite(cachedStroke.getJ2DComposite(feature));
+            if(cachedStroke.isVisible(candidate)){
+                g2.setStroke(cachedStroke.getJ2DStroke(candidate,1));
+                g2.setPaint(cachedStroke.getJ2DPaint(candidate, 0, 0, 1, hints));
+                g2.setComposite(cachedStroke.getJ2DComposite(candidate));
                 g2.draw(shp);
             }
             g2.dispose();
@@ -257,7 +256,7 @@ public class CachedMark extends Cache<Mark>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         evaluate();
         
         

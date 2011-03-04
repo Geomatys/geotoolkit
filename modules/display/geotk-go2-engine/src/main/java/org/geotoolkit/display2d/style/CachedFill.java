@@ -26,7 +26,6 @@ import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Fill;
 import org.opengis.style.GraphicFill;
@@ -159,7 +158,7 @@ public class CachedFill extends Cache<Fill>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(final Feature feature){
+    public boolean isVisible(final Object candidate){
         evaluate();
         
         
@@ -175,7 +174,7 @@ public class CachedFill extends Cache<Fill>{
             //test dynamic composite
             if(cachedComposite == null){
                 final Expression opacity = styleElement.getOpacity();
-                Float j2dOpacity = GO2Utilities.evaluate(opacity, feature, Float.class, 1f);
+                Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, Float.class, 1f);
                 if(j2dOpacity == 0) return false;
             }
             
@@ -184,7 +183,7 @@ public class CachedFill extends Cache<Fill>{
                 final Expression expColor = styleElement.getColor();
 
                 if (cachedGraphic != null) {
-                    boolean visible = cachedGraphic.isVisible(feature);
+                    boolean visible = cachedGraphic.isVisible(candidate);
                     if(!visible) return false;
                 } else {
                     //or it's a normal plain inside
@@ -201,13 +200,13 @@ public class CachedFill extends Cache<Fill>{
     /**
      * @return Java2D composite for this feature
      */
-    public AlphaComposite getJ2DComposite(final Feature feature){
+    public AlphaComposite getJ2DComposite(final Object candidate){
         evaluate();
 
         if(cachedComposite == null){
             //if composite is null it means it is dynamic
             final Expression opacity = styleElement.getOpacity();
-            Float j2dOpacity = GO2Utilities.evaluate(opacity, feature, Float.class, 1f);
+            Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, Float.class, 1f);
             return AlphaComposite.getInstance(AlphaComposite.SRC_OVER, j2dOpacity.floatValue());
         }
 
@@ -218,7 +217,7 @@ public class CachedFill extends Cache<Fill>{
      * 
      * @return Java2D paint for this feature
      */
-    public Paint getJ2DPaint(final Feature feature, final int x, final int y, final float coeff, final RenderingHints hints){
+    public Paint getJ2DPaint(final Object candidate, final int x, final int y, final float coeff, final RenderingHints hints){
         evaluate();
 
         if(cachedPaint == null){
@@ -227,7 +226,7 @@ public class CachedFill extends Cache<Fill>{
 
             if (cachedGraphic != null) {
                 //we have a graphic inside
-                BufferedImage mosaique = cachedGraphic.getImage(feature, coeff, hints);
+                BufferedImage mosaique = cachedGraphic.getImage(candidate, coeff, hints);
 
                 if (mosaique != null) {
                     return new TexturePaint(mosaique, new Rectangle(x, y, mosaique.getWidth(), mosaique.getHeight()));

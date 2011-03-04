@@ -28,7 +28,6 @@ import java.util.List;
 
 import org.geotoolkit.display.shape.TransformedShape;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.ExternalGraphic;
 import org.opengis.style.Graphic;
@@ -290,7 +289,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
      * 
      * @return BufferedImage for a feature 
      */
-    public BufferedImage getImage(final Feature feature, final float coeff, final RenderingHints hints) {
+    public BufferedImage getImage(final Object candidate, final float coeff, final RenderingHints hints) {
         evaluate();
         
         
@@ -306,18 +305,18 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
 
         if(Float.isNaN(candidateOpacity)){
             final Expression expOpacity = styleElement.getOpacity();
-            candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Number.class, 1f).floatValue();
+            candidateOpacity = GO2Utilities.evaluate(expOpacity, candidate, Number.class, 1f).floatValue();
         }
 
         if(Float.isNaN(candidateRotation)){
             final Expression expRotation = styleElement.getRotation();
-            final Number rot = GO2Utilities.evaluate(expRotation, feature, Number.class, 0f);
+            final Number rot = GO2Utilities.evaluate(expRotation, candidate, Number.class, 0f);
             candidateRotation = (float) Math.toRadians(rot.doubleValue());
         }
 
         if(candidateSize.isNaN()){
             final Expression expSize = styleElement.getSize();
-            candidateSize = GO2Utilities.evaluate(expSize, feature, Number.class, Float.NaN).floatValue();
+            candidateSize = GO2Utilities.evaluate(expSize, candidate, Number.class, Float.NaN).floatValue();
         }
         
         //the subbuffer image
@@ -331,9 +330,9 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         //we have a cached mark ------------------------------------------------------------------
         if(cachedMark != null){
             if(candidateSize.isNaN()){
-                subBuffer = cachedMark.getImage(feature, 16*coeff,hints);
+                subBuffer = cachedMark.getImage(candidate, 16*coeff,hints);
             }else{
-                subBuffer = cachedMark.getImage(feature, candidateSize*coeff,hints);
+                subBuffer = cachedMark.getImage(candidate, candidateSize*coeff,hints);
             }
         }
         
@@ -384,24 +383,24 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
     /**
      * return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(final Feature feature, final float[] buffer){
-        return cachedDisplacement.getValues(feature, buffer);
+    public float[] getDisplacement(final Object candidate, final float[] buffer){
+        return cachedDisplacement.getValues(candidate, buffer);
     }
     
     /**
      * return an Array of 2 floats.
      */
-    public float[] getAnchor(final Feature feature, final float[] buffer){
-        return cachedAnchor.getValues(feature, buffer);
+    public float[] getAnchor(final Object candidate, final float[] buffer){
+        return cachedAnchor.getValues(candidate, buffer);
     }
     
     /**
      * @return margin of this style for the given feature
      */
-    public float getMargin(final Feature feature,final float coeff) {
+    public float getMargin(final Object candidate,final float coeff) {
         evaluate();
 
-        final boolean noFeature = (feature == null);
+        final boolean noFeature = (candidate == null);
         
 //        //we have a cachedImage, we return it's bigest attribut
 //        BufferedImage img = (BufferedImage)cachedValues.get(ID_BUFFER);
@@ -420,7 +419,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
                 //can not evaluate
                 return Float.NaN;
             }else{
-                candidateOpacity = GO2Utilities.evaluate(expOpacity, feature, Number.class, 1f).floatValue();
+                candidateOpacity = GO2Utilities.evaluate(expOpacity, candidate, Number.class, 1f).floatValue();
             }
         }
 
@@ -428,7 +427,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         
         if(Float.isNaN(candidateRotation)){
             final Expression expRotation = styleElement.getRotation();
-            final Number rot = GO2Utilities.evaluate(expRotation, feature, Number.class, 0f);
+            final Number rot = GO2Utilities.evaluate(expRotation, candidate, Number.class, 0f);
             candidateRotation = (float) Math.toRadians(rot.doubleValue());
         }
 
@@ -438,7 +437,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
                 //can not evaluate
                 return Float.NaN;
             }else{
-                candidateSize = GO2Utilities.evaluate(expSize, feature, Number.class, 16f).floatValue();
+                candidateSize = GO2Utilities.evaluate(expSize, candidate, Number.class, 16f).floatValue();
             }
         }
 
@@ -456,10 +455,10 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
         if(cachedMark != null){
             if(noFeature){
                 if(cachedMark.isStatic()){
-                    subBuffer = cachedMark.getImage(feature, candidateSize*coeff,null);
+                    subBuffer = cachedMark.getImage(candidate, candidateSize*coeff,null);
                 }
             }else{
-                subBuffer = cachedMark.getImage(feature, candidateSize*coeff,null);
+                subBuffer = cachedMark.getImage(candidate, candidateSize*coeff,null);
             }
         }
         
@@ -499,7 +498,7 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         evaluate();
         
         
@@ -521,14 +520,14 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             //test dynamic opacity
             if(Float.isNaN(cachedOpacity)){
                 final Expression expopacity = styleElement.getOpacity();
-                float j2dOpacity = GO2Utilities.evaluate(expopacity, feature, Number.class, 1f).floatValue();
+                float j2dOpacity = GO2Utilities.evaluate(expopacity, candidate, Number.class, 1f).floatValue();
                 if(j2dOpacity == 0) return false;
             }
             
             //test dynamic size
             if(Float.isNaN(cachedSize)){
                 final Expression expSize = styleElement.getSize();
-                float j2dSize = GO2Utilities.evaluate(expSize, feature, Number.class, 16f).floatValue();
+                float j2dSize = GO2Utilities.evaluate(expSize, candidate, Number.class, 16f).floatValue();
                 if(j2dSize == 0) return false;
             }
             
@@ -538,13 +537,13 @@ public class CachedGraphic<C extends Graphic> extends Cache<C>{
             
                 //test dynamic mark
                 if(cachedMark != null){
-                    boolean visible = cachedMark.isVisible(feature);
+                    boolean visible = cachedMark.isVisible(candidate);
                     if(!visible) return false;
                 }
                 
                 //test dynamic external
                 if(cachedExternal != null){
-                    boolean visible = cachedExternal.isVisible(feature);
+                    boolean visible = cachedExternal.isVisible(candidate);
                     if(!visible) return false;
                 }
             }

@@ -25,7 +25,7 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.map.MapLayer;
@@ -50,25 +50,29 @@ public abstract class AbstractSymbolizerRendererService<S extends Symbolizer, C 
     }
 
     @Override
-    public void portray(final ProjectedFeature graphic, final C symbol, final RenderingContext2D context) throws PortrayalException {
+    public void portray(final ProjectedObject graphic, final C symbol,
+            final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         renderer.portray(graphic);
     }
 
     @Override
-    public void portray(final Iterator<ProjectedFeature> graphics, final C symbol, final RenderingContext2D context) throws PortrayalException {
+    public void portray(final Iterator<? extends ProjectedObject> graphics,
+            final C symbol, final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         renderer.portray(graphics);
     }
 
     @Override
-    public void portray(final ProjectedCoverage graphic, final C symbol, final RenderingContext2D context) throws PortrayalException {
+    public void portray(final ProjectedCoverage graphic, final C symbol,
+            final RenderingContext2D context) throws PortrayalException {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         renderer.portray(graphic);
     }
 
     @Override
-    public boolean hit(final ProjectedFeature graphic, final C symbol, final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter) {
+    public boolean hit(final ProjectedObject graphic, final C symbol,
+            final RenderingContext2D context, final SearchAreaJ2D mask, final VisitFilter filter) {
         final SymbolizerRenderer renderer = createRenderer(symbol, context);
         return renderer.hit(graphic, mask, filter);
     }

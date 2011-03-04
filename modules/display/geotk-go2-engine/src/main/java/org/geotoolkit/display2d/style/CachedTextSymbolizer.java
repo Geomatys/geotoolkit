@@ -27,7 +27,6 @@ import java.awt.RenderingHints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Fill;
 import org.opengis.style.Halo;
@@ -88,11 +87,11 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         
     }
 
-    public Paint getFontPaint(final Feature feature, final int x, final int y, final float coeff, final RenderingHints hints){
+    public Paint getFontPaint(final Object candidate, final int x, final int y, final float coeff, final RenderingHints hints){
         Paint paint;
                 
         if(cachedFill != null){
-            paint = cachedFill.getJ2DPaint(feature, x, y, coeff, hints);
+            paint = cachedFill.getJ2DPaint(candidate, x, y, coeff, hints);
         }else{
             paint = Color.BLACK;
         }
@@ -100,11 +99,11 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         return paint;
     }
     
-    public Composite getFontComposite(final Feature feature){
+    public Composite getFontComposite(final Object candidate){
         Composite composite;
                 
         if(cachedFill != null){
-            composite = cachedFill.getJ2DComposite(feature);
+            composite = cachedFill.getJ2DComposite(candidate);
         }else{
             composite = AlphaComposite.SrcOver;
         }
@@ -112,12 +111,12 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
         return composite;
     }
     
-    public Font getJ2dFont(final Feature feature, final float coeff){
-        return cachedFont.getJ2dFont(feature, coeff);
+    public Font getJ2dFont(final Object candidate, final float coeff){
+        return cachedFont.getJ2dFont(candidate, coeff);
     }
     
-    public String getLabel(final Feature feature){
-        return GO2Utilities.evaluate(styleElement.getLabel(),feature,String.class, "Label");
+    public String getLabel(final Object candidate){
+        return GO2Utilities.evaluate(styleElement.getLabel(),candidate,String.class, "Label");
     }
         
     public CachedHalo getHalo(){
@@ -159,8 +158,8 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     }
 
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
-        if(feature == null){
+    public float getMargin(final Object candidate, final float coeff) {
+        if(candidate == null){
             return Float.NaN;
         }else{
             return 0;
@@ -168,7 +167,7 @@ public class CachedTextSymbolizer extends CachedSymbolizer<TextSymbolizer>{
     }
 
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         return true;
     }
 

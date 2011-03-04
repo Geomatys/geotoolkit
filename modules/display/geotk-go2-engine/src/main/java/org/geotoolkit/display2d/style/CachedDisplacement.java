@@ -23,7 +23,6 @@ import java.util.Collection;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.style.StyleConstants;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Displacement;
 
@@ -68,7 +67,7 @@ public abstract class CachedDisplacement{
         }
     }
 
-    public abstract float[] getValues(Feature feature, float[] buffer);
+    public abstract float[] getValues(Object candidate, float[] buffer);
 
 
 
@@ -123,7 +122,7 @@ public abstract class CachedDisplacement{
         }
 
         @Override
-        public float[] getValues(final Feature feature, final float[] buffer){
+        public float[] getValues(final Object candidate, final float[] buffer){
             if(buffer == null){
                 return new float[]{cachedX,cachedY};
             }else{
@@ -146,7 +145,7 @@ public abstract class CachedDisplacement{
         }
 
         @Override
-        public float[] getValues(final Feature feature, float[] buffer){
+        public float[] getValues(final Object candidate, float[] buffer){
 
             if(buffer == null){
                 buffer = new float[2];

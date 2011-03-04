@@ -17,7 +17,6 @@
 
 package org.geotoolkit.display2d.style;
 
-import org.opengis.feature.Feature;
 import org.opengis.style.GraphicStroke;
 
 /**
@@ -31,12 +30,12 @@ public class CachedGraphicStroke extends CachedGraphic<GraphicStroke>{
         super(stroke);
     }
 
-    public float getGap(final Feature feature){
-        return styleElement.getGap().evaluate(feature,Float.class);
+    public float getGap(final Object candidate){
+        return styleElement.getGap().evaluate(candidate,Float.class);
     }
 
-    public float getInitialGap(final Feature feature){
-        return styleElement.getInitialGap().evaluate(feature,Float.class);
+    public float getInitialGap(final Object candidate){
+        return styleElement.getInitialGap().evaluate(candidate,Float.class);
     }
 
 

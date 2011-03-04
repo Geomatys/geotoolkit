@@ -18,10 +18,8 @@
 package org.geotoolkit.display2d.style;
 
 
-import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.opengis.feature.Feature;
 import org.opengis.style.Symbolizer;
 
 /**
@@ -56,24 +54,24 @@ public abstract class CachedSymbolizer<T extends Symbolizer> extends Cache<T>{
      * Get the maximum size of the symbol for the given feature.
      * This is used to calculate the display boundingbox of a feature.
      *
-     * @param feature : feature to evaluate
+     * @param candidate : feature to evaluate
      * @param coeff : use to adjust symbolizer size, if in display unit value equals 1
      * @return max width of this symbol with the given feature
      *     can be NaN if and only if the given feature is null.
      */
-    public final float getMargin(final Feature feature, final RenderingContext2D ctx){
-        return getMargin(feature, ctx.getUnitCoefficient(this.styleElement.getUnitOfMeasure()));
+    public final float getMargin(final Object candidate, final RenderingContext2D ctx){
+        return getMargin(candidate, ctx.getUnitCoefficient(this.styleElement.getUnitOfMeasure()));
     }
 
     /**
      * Get the maximum size of the symbol for the given feature.
      * This is used to calculate the display boundingbox of a feature.
      * 
-     * @param feature : feature to evaluate
+     * @param candidate : feature to evaluate
      * @param coeff : use to adjust symbolizer size, if in display unit value equals 1
      * @return max width of this symbol with the given feature
      *     can be NaN if and only if the given feature is null.
      */
-    public abstract float getMargin(Feature feature, float coeff);
+    public abstract float getMargin(Object candidate, float coeff);
     
 }

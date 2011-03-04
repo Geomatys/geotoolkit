@@ -23,7 +23,8 @@ import org.geotoolkit.display.canvas.ReferencedCanvas2D;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
 import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
-import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -33,18 +34,18 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class StatefullContextParams {
+public class StatefullContextParams<T extends MapLayer> {
 
     public RenderingContext2D context;
     public final ReferencedCanvas2D canvas;
-    public final FeatureMapLayer layer;
+    public final T layer;
     public final AffineTransform objectiveToDisplay = new AffineTransform(2,0,0,2,0,0);
     public final GeometryCSTransformer objToDisplayTransformer =
             new GeometryCSTransformer(new CoordinateSequenceMathTransformer(null));
     public CoordinateReferenceSystem objectiveCRS;
     public CoordinateReferenceSystem displayCRS;
 
-    public StatefullContextParams(final ReferencedCanvas2D canvas, final FeatureMapLayer layer){
+    public StatefullContextParams(final ReferencedCanvas2D canvas, final T layer){
         this.canvas = canvas;
         this.layer = layer;
     }
@@ -56,6 +57,18 @@ public class StatefullContextParams {
         sb.append("  ");
         sb.append(objectiveToDisplay);
         return sb.toString();
+    }
+
+    public void update(final RenderingContext2D context){
+        objectiveCRS = context.getObjectiveCRS2D();
+        displayCRS = context.getDisplayCRS();
+
+        final AffineTransform2D objtoDisp = context.getObjectiveToDisplay();
+        if(!objtoDisp.equals(objectiveToDisplay)){
+            objectiveToDisplay.setTransform(objtoDisp);
+            ((CoordinateSequenceMathTransformer)objToDisplayTransformer.getCSTransformer())
+                    .setTransform(objtoDisp);
+        }
     }
 
 }

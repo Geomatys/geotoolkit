@@ -20,8 +20,6 @@ package org.geotoolkit.display2d.ext.dimrange;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
-import org.opengis.feature.Feature;
-
 /**
  *
  * @author Johann Sorel (Geomatys)
@@ -35,7 +33,7 @@ public class CachedDimRangeSymbolizer extends CachedSymbolizer<DimRangeSymbolize
     }
 
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
+    public float getMargin(final Object candidate, final float coeff) {
         return 0;
     }
 
@@ -44,7 +42,7 @@ public class CachedDimRangeSymbolizer extends CachedSymbolizer<DimRangeSymbolize
     }
 
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         return false;
     }
 

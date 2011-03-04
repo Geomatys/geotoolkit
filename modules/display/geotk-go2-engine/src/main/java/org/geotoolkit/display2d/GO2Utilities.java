@@ -90,6 +90,8 @@ import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.raster.ShadedReliefCRIF;
 import org.geotoolkit.display2d.style.raster.ShadedReliefDescriptor;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
+import org.geotoolkit.filter.accessor.Accessors;
+import org.geotoolkit.filter.accessor.PropertyAccessor;
 import org.geotoolkit.filter.visitor.IsStaticExpressionVisitor;
 import org.geotoolkit.filter.visitor.ListingPropertyVisitor;
 import org.geotoolkit.geometry.GeneralEnvelope;
@@ -134,7 +136,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
-import org.opengis.style.GraphicalSymbol;
 import org.opengis.style.Mark;
 import org.opengis.style.RasterSymbolizer;
 import org.opengis.style.Style;
@@ -1077,9 +1078,9 @@ public final class GO2Utilities {
         }
     }
 
-    public static <T> T evaluate(final Expression exp, final Feature feature, final Class<T> type, final T defaultValue ){
+    public static <T> T evaluate(final Expression exp, final Object candidate, final Class<T> type, final T defaultValue ){
         T value;
-        if(exp == null || (value = exp.evaluate(feature, type)) == null){
+        if(exp == null || (value = exp.evaluate(candidate, type)) == null){
             value = defaultValue;
         }
         return value;
@@ -1102,6 +1103,24 @@ public final class GO2Utilities {
                     feature);
         }
     }
+
+    public static Geometry getGeometry(final Object obj, final String geomName){
+        final Object candidateGeom;
+        if(geomName != null){
+            final PropertyAccessor acc = Accessors.getAccessor(obj.getClass(), geomName, Geometry.class);
+            candidateGeom = acc.get(obj, geomName, Geometry.class);
+        }else{
+            candidateGeom = null;
+        }
+
+        if(candidateGeom == null || candidateGeom instanceof Geometry){
+            return (Geometry) candidateGeom;
+        }else{
+            throw new IllegalStateException("Attribut : " + geomName +" from object returned value :"+candidateGeom+". " +
+                    "This object is not a geometry, maybe you ask the wrong attribute.\n"+ obj);
+        }
+    }
+
 
     public static Class getGeometryClass(final FeatureType featuretype, final String geomName){
         final PropertyDescriptor prop;
@@ -1308,50 +1327,49 @@ public final class GO2Utilities {
             final Id ids = fts.getFeatureInstanceIDs();
             final Set<Name> names = fts.featureTypeNames();
 
-            //check semantic
-            final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
+            //check semantic, only if we have a feature type
+            if(type != null){
+                final Collection<SemanticType> semantics = fts.semanticTypeIdentifiers();
+                if(!semantics.isEmpty()){
+                    final GeometryType gtype = type.getGeometryDescriptor().getType();
+                    final Class ctype = gtype.getBinding();
 
-            if(!semantics.isEmpty()){
-                final GeometryType gtype = type.getGeometryDescriptor().getType();
-                final Class ctype = gtype.getBinding();
+                    boolean valid = false;
 
-                boolean valid = false;
-
-                for(SemanticType semantic : semantics){
-                    if(semantic == SemanticType.ANY){
-                        valid = true;
-                        break;
-                    }else if(semantic == SemanticType.LINE){
-                        if(ctype == LineString.class || ctype == MultiLineString.class){
+                    for(SemanticType semantic : semantics){
+                        if(semantic == SemanticType.ANY){
                             valid = true;
                             break;
+                        }else if(semantic == SemanticType.LINE){
+                            if(ctype == LineString.class || ctype == MultiLineString.class){
+                                valid = true;
+                                break;
+                            }
+                        }else if(semantic == SemanticType.POINT){
+                            if(ctype == Point.class || ctype == MultiPoint.class){
+                                valid = true;
+                                break;
+                            }
+                        }else if(semantic == SemanticType.POLYGON){
+                            if(ctype == Polygon.class || ctype == MultiPolygon.class){
+                                valid = true;
+                                break;
+                            }
+                        }else if(semantic == SemanticType.RASTER){
+                            // can not test this on feature datas
+                        }else if(semantic == SemanticType.TEXT){
+                            //no text type in JTS, that's a stupid thing this Text semantic
                         }
-                    }else if(semantic == SemanticType.POINT){
-                        if(ctype == Point.class || ctype == MultiPoint.class){
-                            valid = true;
-                            break;
-                        }
-                    }else if(semantic == SemanticType.POLYGON){
-                        if(ctype == Polygon.class || ctype == MultiPolygon.class){
-                            valid = true;
-                            break;
-                        }
-                    }else if(semantic == SemanticType.RASTER){
-                        // can not test this on feature datas
-                    }else if(semantic == SemanticType.TEXT){
-                        //no text type in JTS, that's a stupid thing this Text semantic
                     }
+                    if(!valid) continue;
                 }
-
-                if(!valid) continue;
-
             }
 
 
             //TODO filter correctly possibilities
             //test if the featutetype is valid
             //we move to next feature  type if not valid
-            if (false) continue;
+            //if (false) continue;
             //if (typeName != null && !(typeName.equalsIgnoreCase(fts.getFeatureTypeName())) ) continue;
 
 

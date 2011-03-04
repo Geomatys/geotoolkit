@@ -20,7 +20,6 @@ package org.geotoolkit.display2d.style;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.LineSymbolizer;
 
@@ -71,7 +70,7 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
      * 
      * @return offset of the given feature.
      */
-    public float getOffset(final Feature feature, final float coeff){
+    public float getOffset(final Object candidate, final float coeff){
         evaluate();
 
         if(Float.isNaN(cachedOffset)){
@@ -91,16 +90,16 @@ public class CachedLineSymbolizer extends CachedSymbolizer<LineSymbolizer>{
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
-        return cachedStroke.getMargin(feature, coeff);
+    public float getMargin(final Object candidate, final float coeff) {
+        return cachedStroke.getMargin(candidate, coeff);
     }
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(final Feature feature) {
-        return cachedStroke.isVisible(feature);
+    public boolean isVisible(final Object candidate) {
+        return cachedStroke.isVisible(candidate);
     }
     
 }

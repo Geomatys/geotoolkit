@@ -40,7 +40,7 @@ import org.opengis.referencing.operation.TransformException;
 
 /**
  * Not thread safe. 
- * Use it knowing you make clear cache operation in a syncrhonize way.
+ * Use it knowing you make clear cache operation in a synchronize way.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -97,7 +97,7 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     }
 
     @Override
-    public CoverageMapLayer getCoverageLayer() {
+    public CoverageMapLayer getLayer() {
         return layer;
     }
 
@@ -155,6 +155,16 @@ public class StatefullProjectedCoverage implements ProjectedCoverage {
     @Override
     public ReferencedCanvas2D getCanvas() {
         return params.canvas;
+    }
+
+    @Override
+    public CoverageMapLayer getCandidate() {
+        return layer;
+    }
+
+    @Override
+    public ProjectedGeometry getGeometry(String name) {
+        throw new UnsupportedOperationException("Not supported.");
     }
 
 }

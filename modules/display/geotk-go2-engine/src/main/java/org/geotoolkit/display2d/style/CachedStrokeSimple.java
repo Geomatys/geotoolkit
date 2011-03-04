@@ -27,7 +27,6 @@ import java.awt.RenderingHints;
 import java.awt.TexturePaint;
 import java.awt.image.BufferedImage;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.GraphicFill;
 import org.opengis.style.Stroke;
@@ -264,16 +263,16 @@ public class CachedStrokeSimple extends CachedStroke{
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(final Feature feature, final float coeff){
+    public float getMargin(final Object candidate, final float coeff){
         evaluate();
         
         if(Float.isNaN(cachedWidth)){
             final Expression expWidth = styleElement.getWidth();
-            if(feature == null){
+            if(candidate == null){
                 //can not evaluate
                 return Float.NaN;
             }else{
-                return GO2Utilities.evaluate(expWidth, feature, Float.class, 1f);
+                return GO2Utilities.evaluate(expWidth, candidate, Float.class, 1f);
             }
         }
 
@@ -283,16 +282,16 @@ public class CachedStrokeSimple extends CachedStroke{
     /**
      * Get the java2D Composite for the given feature.
      * 
-     * @param feature : evaluate paint with the given feature
+     * @param candidate : evaluate paint with the given feature
      * @return Java2D Composite
      */
-    public AlphaComposite getJ2DComposite(final Feature feature){
+    public AlphaComposite getJ2DComposite(final Object candidate){
         evaluate();
 
         if(cachedComposite == null){
             //if composite is null it means it is dynamic
             final Expression opacity = styleElement.getOpacity();
-            Float j2dOpacity = GO2Utilities.evaluate(opacity, feature, Float.class, 1f);
+            Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, Float.class, 1f);
             return AlphaComposite.getInstance(AlphaComposite.SRC_OVER, j2dOpacity.floatValue());
         }
 
@@ -307,12 +306,12 @@ public class CachedStrokeSimple extends CachedStroke{
     /**
      * Get the java2D Paint for the given feature.
      * 
-     * @param feature : evaluate paint with the given feature
+     * @param candidate : evaluate paint with the given feature
      * @param x : start X position of the fill area
      * @param y : start Y position of the fill area
      * @return Java2D Paint
      */
-    public Paint getJ2DPaint(final Feature feature, final int x, final int y, final float coeff, final RenderingHints hints){
+    public Paint getJ2DPaint(final Object candidate, final int x, final int y, final float coeff, final RenderingHints hints){
         evaluate();
 
 
@@ -322,7 +321,7 @@ public class CachedStrokeSimple extends CachedStroke{
 
             if (cachedGraphic != null) {
                 //we have a graphic inside
-                BufferedImage mosaique = cachedGraphic.getImage(feature, coeff, hints);
+                BufferedImage mosaique = cachedGraphic.getImage(candidate, coeff, hints);
 
                 if (mosaique != null) {
                     return new TexturePaint(mosaique, new Rectangle(x, y, mosaique.getWidth(), mosaique.getHeight()));
@@ -338,11 +337,11 @@ public class CachedStrokeSimple extends CachedStroke{
         return cachedPaint;
     }
 
-    public float getStrokeWidth(final Feature feature){
+    public float getStrokeWidth(final Object candidate){
         float candidateWidth = cachedWidth;
         if(Float.isNaN(candidateWidth)){
             final Expression expWidth = styleElement.getWidth();
-            candidateWidth = GO2Utilities.evaluate(expWidth, feature, Float.class, 1f);
+            candidateWidth = GO2Utilities.evaluate(expWidth, candidate, Float.class, 1f);
         }
 
         return candidateWidth;
@@ -351,11 +350,11 @@ public class CachedStrokeSimple extends CachedStroke{
     /**
      * Get the java2D Stroke for the given feature.
      * 
-     * @param feature : evaluate stroke with the given feature
+     * @param candidate : evaluate stroke with the given feature
      * @param coeff : use to adjust stroke size, if in display unit value equals 1
      * @return Java2D Stroke
      */
-    public java.awt.Stroke getJ2DStroke(final Feature feature, float coeff){
+    public java.awt.Stroke getJ2DStroke(final Object candidate, float coeff){
         evaluate();
 
         coeff = Math.abs(coeff);
@@ -372,7 +371,7 @@ public class CachedStrokeSimple extends CachedStroke{
 
             if(Float.isNaN(candidateOffset)){
                 final Expression expOffset = styleElement.getDashOffset();
-                candidateOffset = GO2Utilities.evaluate(expOffset, feature, Float.class, 1f);
+                candidateOffset = GO2Utilities.evaluate(expOffset, candidate, Float.class, 1f);
             }
 
             if(candidateCap == Integer.MAX_VALUE){
@@ -395,7 +394,7 @@ public class CachedStrokeSimple extends CachedStroke{
 
             if(Float.isNaN(candidateWidth)){
                 final Expression expWidth = styleElement.getWidth();
-                candidateWidth = GO2Utilities.evaluate(expWidth, feature, Float.class, 1f);
+                candidateWidth = GO2Utilities.evaluate(expWidth, candidate, Float.class, 1f);
             }
 
             if (candidateDashes != null){
@@ -416,7 +415,7 @@ public class CachedStrokeSimple extends CachedStroke{
      * {@inheritDoc}
      */
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         evaluate();
 
         if(isStaticVisible == VisibilityState.VISIBLE){
@@ -431,7 +430,7 @@ public class CachedStrokeSimple extends CachedStroke{
             //test dynamic composite
             if(cachedComposite == null){
                 final Expression opacity = styleElement.getOpacity();
-                Float j2dOpacity = GO2Utilities.evaluate(opacity, feature, Float.class, 1f);
+                Float j2dOpacity = GO2Utilities.evaluate(opacity, candidate, Float.class, 1f);
                 if(j2dOpacity == 0) return false;
             }
 
@@ -440,7 +439,7 @@ public class CachedStrokeSimple extends CachedStroke{
                 final Expression expColor = styleElement.getColor();
 
                 if (cachedGraphic != null) {
-                    boolean visible = cachedGraphic.isVisible(feature);
+                    boolean visible = cachedGraphic.isVisible(candidate);
                     if(!visible) return false;
                 } else {
                     //or it's a normal plain inside
@@ -452,7 +451,7 @@ public class CachedStrokeSimple extends CachedStroke{
             //test dynamic width
             if(Float.isNaN(cachedWidth)){
                 final Expression expWidth = styleElement.getWidth();
-                Float j2dWidth = GO2Utilities.evaluate(expWidth, feature, Float.class, 1f);
+                Float j2dWidth = GO2Utilities.evaluate(expWidth, candidate, Float.class, 1f);
                 if(j2dWidth == 0) return false;
             }
 

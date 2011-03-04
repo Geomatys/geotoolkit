@@ -20,7 +20,7 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 import org.geotoolkit.referencing.CRS;
@@ -37,7 +37,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
     }
 
     @Override
-    public void portray(ProjectedFeature graphic) throws PortrayalException {
+    public void portray(ProjectedObject graphic) throws PortrayalException {
         //works only with coverage data, do nothing
     }
 
@@ -93,7 +93,7 @@ public class CrystallizeSymbolizerRenderer extends AbstractSymbolizerRenderer<Cr
     }
 
     @Override
-    public boolean hit(ProjectedFeature graphic, SearchAreaJ2D mask, VisitFilter filter) {
+    public boolean hit(ProjectedObject graphic, SearchAreaJ2D mask, VisitFilter filter) {
         //works only with coverage data, do nothing
         return false;
     }

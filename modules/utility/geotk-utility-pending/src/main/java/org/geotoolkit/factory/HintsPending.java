@@ -34,6 +34,13 @@ public final class HintsPending extends Hints {
     ////////////////////////////////////////////////////////////////////////
 
     /**
+     * If it is needed to store a geometry crs. it can done by using the
+     * UserData object. it is expected to be directly the CRS or a Map with
+     * this key and CRS value associated.
+     */
+    public static String JTS_GEOMETRY_CRS = "JTSGeometryCRS";
+
+    /**
      * The {@code com.vividsolutions.jts.geom.GeometryFactory} instance to use.
      *
      */

@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.style;
 
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.opengis.feature.Feature;
 
 /**
  * Test that symbolizer renderer are properly called and only once.
@@ -34,7 +33,7 @@ public class CachedMokSymbolizer extends CachedSymbolizer<MokSymbolizer>{
     }
 
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
+    public float getMargin(final Object candidate, final float coeff) {
         return 0;
     }
 
@@ -43,7 +42,7 @@ public class CachedMokSymbolizer extends CachedSymbolizer<MokSymbolizer>{
     }
 
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         return true;
     }
 

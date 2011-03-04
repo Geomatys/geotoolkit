@@ -129,7 +129,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
         @Override
         public void visit(ProjectedFeature feature,  RenderingContext2D context, SearchAreaJ2D queryArea) {
 
-            final FeatureMapLayer layer = feature.getFeatureLayer();
+            final FeatureMapLayer layer = feature.getLayer();
             Set<FeatureId> ids = selection.get(layer);
 
             if(ids == null){

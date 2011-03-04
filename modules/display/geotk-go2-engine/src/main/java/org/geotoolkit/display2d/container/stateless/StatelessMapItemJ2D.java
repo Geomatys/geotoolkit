@@ -40,6 +40,7 @@ import org.geotoolkit.display2d.container.statefull.StatefullCoverageLayerJ2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.map.CollectionMapLayer;
 import org.geotoolkit.map.CoverageMapLayer;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.ItemListener;
@@ -119,28 +120,22 @@ public class StatelessMapItemJ2D<T extends MapItem> extends AbstractGraphicJ2D i
     protected GraphicJ2D parseChild(final MapItem child, final int index){
 
         //TODO simplify
+        final StatelessMapItemJ2D g2d;
         if (child instanceof FeatureMapLayer){
-            final StatelessFeatureLayerJ2D g2d = new StatelessFeatureLayerJ2D(getCanvas(), (FeatureMapLayer)child);
-            g2d.setParent(this);
-            g2d.setZOrderHint(index);
-            return g2d;
+            g2d = new StatelessFeatureLayerJ2D(getCanvas(), (FeatureMapLayer)child);
+        }else if (child instanceof CollectionMapLayer){
+            g2d = new StatelessCollectionLayerJ2D(getCanvas(), (CollectionMapLayer)child);
         }else if (child instanceof CoverageMapLayer){
-            final StatefullCoverageLayerJ2D g2d = new StatefullCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
-            g2d.setParent(this);
-            g2d.setZOrderHint(index);
-            return g2d;
+            g2d = new StatefullCoverageLayerJ2D(getCanvas(), (CoverageMapLayer)child);
         }else if(child instanceof MapLayer){
-            final StatelessMapLayerJ2D g2d = new StatelessMapLayerJ2D(getCanvas(), (MapLayer)child);
-            g2d.setParent(this);
-            g2d.setZOrderHint(index);
-            return g2d;
+            g2d = new StatelessMapLayerJ2D(getCanvas(), (MapLayer)child);
         }else{
-            final StatelessMapItemJ2D g2d = new StatelessMapItemJ2D(getCanvas(), child);
-            g2d.setParent(this);
-            g2d.setZOrderHint(index);
-            return g2d;
+            g2d = new StatelessMapItemJ2D(getCanvas(), child);
         }
 
+        g2d.setParent(this);
+        g2d.setZOrderHint(index);
+        return g2d;
     }
 
     @Override

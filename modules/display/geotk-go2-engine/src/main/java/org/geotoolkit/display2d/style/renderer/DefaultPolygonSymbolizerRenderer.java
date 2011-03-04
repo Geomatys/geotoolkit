@@ -28,13 +28,13 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPolygonSymbolizer;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedGraphicStroke;
 import org.geotoolkit.display2d.style.CachedStroke;
@@ -43,7 +43,6 @@ import org.geotoolkit.display2d.style.CachedStrokeSimple;
 import org.geotoolkit.display2d.style.j2d.DefaultPathWalker;
 import org.geotoolkit.display2d.style.j2d.PathWalker;
 
-import org.opengis.feature.Feature;
 import org.opengis.geometry.Geometry;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
@@ -62,19 +61,19 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedFeature projectedFeature) throws PortrayalException{
+    public void portray(final ProjectedObject projectedFeature) throws PortrayalException{
 
-        final Feature feature = projectedFeature.getFeature();
+        final Object candidate = projectedFeature.getCandidate();
 
         //test if the symbol is visible on this feature
-        if(symbol.isVisible(feature)){
+        if(symbol.isVisible(candidate)){
 
             final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
             //symbolizer doesnt match the featuretype, no geometry found with this name.
             if(projectedGeometry == null) return;
 
-            portray(projectedGeometry, feature);
+            portray(projectedGeometry, candidate);
         }
     }
 
@@ -92,13 +91,13 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
         portray(projectedGeometry, null);
     }
 
-    private void portray(final ProjectedGeometry projectedGeometry, final Feature feature) throws PortrayalException{
+    private void portray(final ProjectedGeometry projectedGeometry, final Object candidate) throws PortrayalException{
 
-        final float offset = symbol.getOffset(feature, coeff);
+        final float offset = symbol.getOffset(candidate, coeff);
         final Shape shape;
 
         //calculate displacement
-        final float[] disps = symbol.getDisplacement(feature);
+        final float[] disps = symbol.getDisplacement(candidate);
         Point2D dispStep = null;
         if(disps[0] != 0 || disps[1] != 0){
             dispStep = new Point2D.Float(disps[0], -disps[1]);
@@ -132,34 +131,34 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             g2d.translate(dispStep.getX(), dispStep.getY());
         }
 
-        final float margin = symbol.getMargin(feature, coeff) /2f;
+        final float margin = symbol.getMargin(candidate, coeff) /2f;
         final Rectangle2D bounds = shape.getBounds2D();
         final int x = (int) (bounds.getMinX() - margin);
         final int y = (int) (bounds.getMinY() - margin);
 
-        if(symbol.isFillVisible(feature)){
-            g2d.setComposite( symbol.getJ2DFillComposite(feature) );
-            g2d.setPaint( symbol.getJ2DFillPaint(feature, x, y,coeff, hints) );
+        if(symbol.isFillVisible(candidate)){
+            g2d.setComposite( symbol.getJ2DFillComposite(candidate) );
+            g2d.setPaint( symbol.getJ2DFillPaint(candidate, x, y,coeff, hints) );
             g2d.fill(shape);
         }
         
-        if(symbol.isStrokeVisible(feature)){
+        if(symbol.isStrokeVisible(candidate)){
             final CachedStroke cachedStroke = symbol.getCachedStroke();
             if(cachedStroke instanceof CachedStrokeSimple){
             final CachedStrokeSimple cs = (CachedStrokeSimple)cachedStroke;
-                g2d.setComposite(cs.getJ2DComposite(feature));
-                g2d.setPaint(cs.getJ2DPaint(feature, x, y, coeff, hints));
-                g2d.setStroke(cs.getJ2DStroke(feature,coeff));
+                g2d.setComposite(cs.getJ2DComposite(candidate));
+                g2d.setPaint(cs.getJ2DPaint(candidate, x, y, coeff, hints));
+                g2d.setStroke(cs.getJ2DStroke(candidate,coeff));
                 g2d.draw(shape);
             }else if(cachedStroke instanceof CachedStrokeGraphic){
                 final CachedStrokeGraphic gc = (CachedStrokeGraphic)cachedStroke;
-                final float initGap = gc.getInitialGap(feature);
+                final float initGap = gc.getInitialGap(candidate);
                 final Point2D pt = new Point2D.Double();
                 final CachedGraphicStroke cgs = gc.getCachedGraphic();
-                final Image img = cgs.getImage(feature, 1, hints);
+                final Image img = cgs.getImage(candidate, 1, hints);
                 final float imgWidth = img.getWidth(null);
                 final float imgHeight = img.getHeight(null);
-                final float gap = gc.getGap(feature)+ imgWidth;
+                final float gap = gc.getGap(candidate)+ imgWidth;
                 final AffineTransform trs = new AffineTransform();
 
                 final PathIterator ite = shape.getPathIterator(null);
@@ -171,8 +170,8 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
                     final float angle = walker.getRotation();
                     trs.setToTranslation(pt.getX(), pt.getY());
                     trs.rotate(angle);
-                    final float[] anchor = cgs.getAnchor(feature, null);
-                    final float[] disp = cgs.getDisplacement(feature, null);
+                    final float[] anchor = cgs.getAnchor(candidate, null);
+                    final float[] disp = cgs.getDisplacement(candidate, null);
                     trs.translate(-imgWidth*anchor[0], -imgHeight*anchor[1]);
                     trs.translate(disp[0], -disp[1]);
 
@@ -195,23 +194,23 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(final ProjectedFeature projectedFeature, final SearchAreaJ2D search, final VisitFilter filter) {
+    public boolean hit(final ProjectedObject projectedFeature, final SearchAreaJ2D search, final VisitFilter filter) {
 
         //TODO optimize test using JTS geometries, Java2D Area cost to much cpu
 
         final Shape mask = search.getDisplayShape();
 
-        final Feature feature = projectedFeature.getFeature();
+        final Object candidate = projectedFeature.getCandidate();
 
         //test if the symbol is visible on this feature
-        if(!symbol.isVisible(feature)) return false;
+        if(!symbol.isVisible(candidate)) return false;
 
         final ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(geomPropertyName);
 
         //symbolizer doesnt match the featuretype, no geometry found with this name.
         if(projectedGeometry == null) return false;
 
-        final float offset = symbol.getOffset(feature, coeff);
+        final float offset = symbol.getOffset(candidate, coeff);
 
         //we switch to  more appropriate context CRS for rendering -------------
         final Shape CRSShape;
@@ -249,7 +248,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
 
 
         //Test composites ------------------------------------------------------
-        final float fillAlpha   = symbol.getJ2DFillComposite(feature).getAlpha();
+        final float fillAlpha   = symbol.getJ2DFillComposite(candidate).getAlpha();
 
         //todo must hanlde graphic stroke
         //final float strokeAlpha = symbol.getJ2DStrokeComposite(feature).getAlpha();

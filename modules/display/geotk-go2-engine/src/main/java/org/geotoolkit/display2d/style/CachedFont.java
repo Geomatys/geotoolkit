@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.style;
 
 import org.geotoolkit.display2d.GO2Utilities;
 import java.util.List;
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Font;
 
@@ -40,7 +39,7 @@ public class CachedFont extends Cache<Font>{
         super(font);
     }
     
-    public java.awt.Font getJ2dFont(final Feature feature, final float coeff) {
+    public java.awt.Font getJ2dFont(final Object candidate, final float coeff) {
 
         final Font font = styleElement;
         
@@ -49,7 +48,7 @@ public class CachedFont extends Cache<Font>{
             j2dSize = fontSize;
         }else{
             //size is dynamic
-            j2dSize = GO2Utilities.evaluate(font.getSize(), feature, Integer.class, 10);
+            j2dSize = GO2Utilities.evaluate(font.getSize(), candidate, Integer.class, 10);
         }
         
         final int j2dStyle;
@@ -57,8 +56,8 @@ public class CachedFont extends Cache<Font>{
             j2dStyle = fontStyle;
         }else{
             //style is dynamic
-            String style = GO2Utilities.evaluate(font.getStyle(), feature, String.class, FONT_STYLE_NORMAL_STRING);
-            String weight = GO2Utilities.evaluate(font.getWeight(), feature, String.class, FONT_WEIGHT_NORMAL_STRING);
+            String style = GO2Utilities.evaluate(font.getStyle(), candidate, String.class, FONT_STYLE_NORMAL_STRING);
+            String weight = GO2Utilities.evaluate(font.getWeight(), candidate, String.class, FONT_WEIGHT_NORMAL_STRING);
 
             if (FONT_WEIGHT_BOLD_STRING.equalsIgnoreCase(weight)) {
                 if (FONT_STYLE_ITALIC_STRING.equalsIgnoreCase(style)) {
@@ -85,7 +84,7 @@ public class CachedFont extends Cache<Font>{
         }else{
             final List<Expression> families = font.getFamily();
             if (families != null && !families.isEmpty()) {
-                name = GO2Utilities.evaluate(font.getStyle(), feature, String.class, "arial");
+                name = GO2Utilities.evaluate(font.getStyle(), candidate, String.class, "arial");
             }else{
                 name = "Dialog";
             }
@@ -165,7 +164,7 @@ public class CachedFont extends Cache<Font>{
     }
 
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         evaluate();
         //font doesnt know if it's visible or not whit those informations, always true.
         return true;

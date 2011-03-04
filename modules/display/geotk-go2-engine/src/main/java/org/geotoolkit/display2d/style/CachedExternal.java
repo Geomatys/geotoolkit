@@ -20,7 +20,6 @@ package org.geotoolkit.display2d.style;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
 import java.net.URI;
 import java.util.Collection;
@@ -31,7 +30,6 @@ import javax.swing.Icon;
 
 import org.geotoolkit.renderer.style.DynamicSymbolFactoryFinder;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Function;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.style.ColorReplacement;
@@ -118,13 +116,13 @@ public class CachedExternal extends Cache<ExternalGraphic>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         return isValid();
     }
 
     /**
      * 
-     * @return true if this externam image is valid.
+     * @return true if this external image is valid.
      */
     public boolean isValid(){
         evaluate();

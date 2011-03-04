@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.display2d.style;
 
-import org.opengis.feature.Feature;
 import org.opengis.style.Stroke;
 
 
@@ -52,27 +51,25 @@ public class CachedStrokeGraphic extends CachedStroke{
         return cachedGraphic;
     }
 
-    public float getGap(final Feature feature){
-        return cachedGraphic.getGap(feature);
+    public float getGap(final Object candidate){
+        return cachedGraphic.getGap(candidate);
     }
 
-    public float getInitialGap(final Feature feature){
-        return cachedGraphic.getInitialGap(feature);
+    public float getInitialGap(final Object candidate){
+        return cachedGraphic.getInitialGap(candidate);
     }
-
-
 
     /**
      * {@inheritDoc}
      */
     @Override
-    public boolean isVisible(final Feature feature) {
-        return cachedGraphic.isVisible(feature);
+    public boolean isVisible(final Object candidate) {
+        return cachedGraphic.isVisible(candidate);
     }
 
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
-        return cachedGraphic.getMargin(feature, coeff);
+    public float getMargin(final Object candidate, final float coeff) {
+        return cachedGraphic.getMargin(candidate, coeff);
     }
 
 }

@@ -44,17 +44,17 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
 
     private static final String DEFAULT_GEOM = "";
 
-    private final StatefullContextParams params;
+    private final StatefullContextParams<FeatureMapLayer> params;
     private final Map<String,StatefullProjectedGeometry> geometries =
             new LinkedHashMap<String,StatefullProjectedGeometry>(); //linked hashmap is faster than hashmap on iteration.
     private Feature feature;
 
 
-    public StatefullProjectedFeature(final StatefullContextParams params){
+    public StatefullProjectedFeature(final StatefullContextParams<FeatureMapLayer> params){
         this(params,null);
     }
 
-    public StatefullProjectedFeature(final StatefullContextParams params, final Feature feature){
+    public StatefullProjectedFeature(final StatefullContextParams<FeatureMapLayer> params, final Feature feature){
         this.params = params;
         this.feature = feature;
     }
@@ -107,12 +107,12 @@ public class StatefullProjectedFeature implements ProjectedFeature,Graphic {
     }
 
     @Override
-    public Feature getFeature(){
+    public Feature getCandidate(){
         return feature;
     }
 
     @Override
-    public FeatureMapLayer getFeatureLayer() {
+    public FeatureMapLayer getLayer() {
         return params.layer;
     }
 

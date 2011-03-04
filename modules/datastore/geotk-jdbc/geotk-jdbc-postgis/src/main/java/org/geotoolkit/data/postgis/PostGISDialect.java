@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.data.postgis;
 
-import org.geotoolkit.data.postgis.wkb.WKBAttributeIO;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -43,6 +42,7 @@ import java.util.logging.Level;
 
 import org.geotoolkit.data.jdbc.FilterToSQL;
 import org.geotoolkit.data.postgis.ewkb.JtsBinaryParser;
+import org.geotoolkit.data.postgis.wkb.WKBAttributeIO;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.jdbc.JDBCDataStore;
 import org.geotoolkit.jdbc.dialect.AbstractSQLDialect;
@@ -96,7 +96,25 @@ public class PostGISDialect extends AbstractSQLDialect {
     }
 
     private final ThreadLocal<WKBAttributeIO> wkbReader = new ThreadLocal<WKBAttributeIO>();
-    private final JtsBinaryParser hexewkbReader = new JtsBinaryParser();
+    private final JtsBinaryParser hexewkbReader = new JtsBinaryParser(){
+
+        @Override
+        public Geometry parse(String value) {
+            final Geometry geom =  super.parse(value);
+
+            final int srid = geom.getSRID();
+            if(srid >= 0){
+                try {
+                    //set the real crs
+                    geom.setUserData(createCRS(geom.getSRID(), null));
+                } catch (SQLException ex) {
+                    dataStore.getLogger().log(Level.WARNING, ex.getLocalizedMessage(),ex);
+                }
+            }
+            return geom;
+        }
+
+    };
     private boolean looseBBOXEnabled = false;
     private boolean estimatedExtentsEnabled = false;
 

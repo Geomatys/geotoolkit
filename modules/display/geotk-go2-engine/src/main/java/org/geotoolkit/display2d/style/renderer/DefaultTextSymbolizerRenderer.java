@@ -28,7 +28,7 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.container.statefull.StatefullProjectedGeometry;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.ProjectedGeometry;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedHalo;
 import org.geotoolkit.display2d.style.CachedLabelPlacement;
@@ -42,7 +42,6 @@ import org.geotoolkit.display2d.style.labeling.DefaultLinearLabelDescriptor;
 import org.geotoolkit.display2d.style.labeling.LabelLayer;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
-import org.opengis.feature.Feature;
 
 /**
  * @author Johann Sorel (Geomatys)
@@ -70,12 +69,12 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public void portray(final ProjectedFeature projectedFeature) throws PortrayalException{
+    public void portray(final ProjectedObject projectedFeature) throws PortrayalException{
 
-        final Feature feature = projectedFeature.getFeature();
+        final Object candidate = projectedFeature.getCandidate();
 
         //test if the symbol is visible on this feature
-        if(symbol.isVisible(feature)){
+        if(symbol.isVisible(candidate)){
             
             //we adjust coefficient for rendering ------------------------------
             float coeff = 1;
@@ -92,7 +91,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
 
             //strat to extract label parameters---------------------------------
-            final String label = symbol.getLabel(feature).trim();
+            final String label = symbol.getLabel(candidate).trim();
             if(label.isEmpty()) return; //nothing to paint
             final CachedHalo halo = symbol.getHalo();
             final CachedLabelPlacement placement = symbol.getPlacement();
@@ -101,16 +100,16 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
             final float haloWidth;
             final Paint haloPaint;
             if(halo != null){
-                haloWidth = halo.getWidth(feature);
-                haloPaint = halo.getJ2DPaint(feature, 0, 0, hints);
+                haloWidth = halo.getWidth(candidate);
+                haloPaint = halo.getJ2DPaint(candidate, 0, 0, hints);
             }else{
                 haloWidth = 0;
                 haloPaint = Color.WHITE;
             }
 
             //extract text parameters
-            final Paint fontPaint = symbol.getFontPaint(feature, 0,0, coeff, hints);
-            final Font j2dFont = symbol.getJ2dFont(feature, coeff);
+            final Paint fontPaint = symbol.getFontPaint(candidate, 0,0, coeff, hints);
+            final Font j2dFont = symbol.getJ2dFont(candidate, coeff);
 
             ProjectedGeometry projectedGeometry = projectedFeature.getGeometry(symbol.getSource().getGeometryPropertyName());
 
@@ -124,17 +123,19 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 
     }
 
-    private void portray(final ProjectedGeometry projectedGeometry, final RenderingContext2D context, final ProjectedFeature projectedFeature,
-            final CachedLabelPlacement placement, final float haloWidth, final Paint haloPaint, final Paint fontPaint, final Font j2dFont,
+    private void portray(final ProjectedGeometry projectedGeometry, final RenderingContext2D context, 
+            final ProjectedObject projectedFeature, final CachedLabelPlacement placement,
+            final float haloWidth, final Paint haloPaint, final Paint fontPaint, final Font j2dFont,
             final String label) throws PortrayalException{
 
-        final Feature feature = projectedFeature.getFeature();
+        final Object candidate = projectedFeature.getCandidate();
 
         final LabelLayer labelLayer = getLabelLayer();
-        exploreAndPortray(projectedGeometry, feature, context, placement, haloWidth, haloPaint, fontPaint, j2dFont, label, labelLayer);
+        exploreAndPortray(projectedGeometry, candidate, context, placement, haloWidth,
+                haloPaint, fontPaint, j2dFont, label, labelLayer);
     }
 
-    private static void exploreAndPortray(final ProjectedGeometry projectedGeometry, final Feature feature, final RenderingContext2D context,
+    private static void exploreAndPortray(final ProjectedGeometry projectedGeometry, final Object feature, final RenderingContext2D context,
             final CachedLabelPlacement placement, final float haloWidth, final Paint haloPaint, final Paint fontPaint, final Font j2dFont,
             final String label, final LabelLayer layer) throws PortrayalException{
 
@@ -190,7 +191,7 @@ public class DefaultTextSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
      * {@inheritDoc }
      */
     @Override
-    public boolean hit(final ProjectedFeature feature, final SearchAreaJ2D mask, final VisitFilter filter) {
+    public boolean hit(final ProjectedObject candidate, final SearchAreaJ2D mask, final VisitFilter filter) {
         //text symbolizer are not hittable
         return false;
     }

@@ -20,7 +20,6 @@ package org.geotoolkit.renderer.style;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -39,12 +38,12 @@ public interface MarkFactory {
      *            <code>plainName</code> or like <code>protocol://path</code>.
      *            See the actual implementations for details on the kind of
      *            supported name.
-     * @param feature
+     * @param candidate
      *            The feature that will be used to evaluate the symbolURL
      *            expression (or to extract data from it, think complex attributes, in that
      *            case a visit to the expression and some direct attribute value extraction 
      *            might be needed instead)
      * 
      */
-    public Shape getShape(Graphics2D graphics, Expression symbolUrl, Feature feature) throws Exception;
+    public Shape getShape(Graphics2D graphics, Expression symbolUrl, Object candidate) throws Exception;
 }

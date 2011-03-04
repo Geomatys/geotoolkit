@@ -6,7 +6,6 @@ import com.jhlabs.image.CrystallizeFilter;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
-import org.opengis.feature.Feature;
 
 public class CrystallizeCachedSymbolizer extends CachedSymbolizer<CrystallizeSymbolizer> {
 
@@ -24,12 +23,12 @@ public class CrystallizeCachedSymbolizer extends CachedSymbolizer<CrystallizeSym
     }
 
     @Override
-    public float getMargin(Feature feature, float coeff) {
+    public float getMargin(Object feature, float coeff) {
         return 0;
     }
 
     @Override
-    public boolean isVisible(Feature feature) {
+    public boolean isVisible(Object feature) {
         return true;
     }
 

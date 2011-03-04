@@ -24,7 +24,6 @@ import java.awt.geom.GeneralPath;
 import java.awt.geom.Rectangle2D.Double;
 import java.util.logging.Logger;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 
 public class WellKnownMarkFactory implements MarkFactory {
@@ -146,12 +145,12 @@ public class WellKnownMarkFactory implements MarkFactory {
     }
     
     @Override
-    public Shape getShape(final Graphics2D graphics, final Expression symbolUrl, final Feature feature) throws Exception {
+    public Shape getShape(final Graphics2D graphics, final Expression symbolUrl, final Object candidate) throws Exception {
         // cannot handle a null url
         if(symbolUrl == null)
             return null;
         
-        final String wellKnownName = symbolUrl.evaluate(feature, String.class);
+        final String wellKnownName = symbolUrl.evaluate(candidate, String.class);
         
         LOGGER.finer("fetching mark of name " + wellKnownName);
 

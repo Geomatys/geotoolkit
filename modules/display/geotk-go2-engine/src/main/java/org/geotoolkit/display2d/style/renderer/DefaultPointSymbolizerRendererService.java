@@ -26,7 +26,6 @@ import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.style.CachedPointSymbolizer;
 import org.geotoolkit.map.MapLayer;
 
-import org.opengis.feature.Feature;
 import org.opengis.style.PointSymbolizer;
 
 /**
@@ -74,7 +73,7 @@ public class DefaultPointSymbolizerRendererService extends AbstractSymbolizerRen
     public void glyph(final Graphics2D g2d, final Rectangle2D rectangle, final CachedPointSymbolizer symbol, final MapLayer layer) {
         g2d.setClip(rectangle);
         
-        final Feature feature = null;
+        final Object feature = null;
         final float coeff = 1;
         final BufferedImage img = symbol.getImage(feature, coeff, null);
         final float[] disps = new float[]{0,0};

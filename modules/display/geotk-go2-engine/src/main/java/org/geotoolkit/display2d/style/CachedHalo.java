@@ -21,7 +21,6 @@ import org.geotoolkit.display2d.GO2Utilities;
 import java.awt.Composite;
 import java.awt.Paint;
 import java.awt.RenderingHints;
-import org.opengis.feature.Feature;
 import org.opengis.style.Halo;
 
 /**
@@ -46,21 +45,21 @@ public class CachedHalo extends Cache<Halo>{
         isNotEvaluated = false;
     }
 
-    public Composite getJ2DComposite(final Feature feature){
-        return cachedFill.getJ2DComposite(feature);
+    public Composite getJ2DComposite(final Object candidate){
+        return cachedFill.getJ2DComposite(candidate);
     }
     
-    public Paint getJ2DPaint(final Feature feature,final int x, final int y, final RenderingHints hints){
-        return cachedFill.getJ2DPaint(feature, x, y, 1f, hints);
+    public Paint getJ2DPaint(final Object candidate,final int x, final int y, final RenderingHints hints){
+        return cachedFill.getJ2DPaint(candidate, x, y, 1f, hints);
     }
     
-    public float getWidth(final Feature feature){
+    public float getWidth(final Object candidate){
         float j2dWidth = GO2Utilities.evaluate(styleElement.getRadius(), null, Float.class, 1f);
         return j2dWidth;
     }
     
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         evaluate();
         
         return (cachedWidth >0);

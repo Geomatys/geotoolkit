@@ -24,7 +24,6 @@ import java.awt.RenderingHints;
 import org.geotoolkit.display2d.GO2Utilities;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.Displacement;
 import org.opengis.style.Fill;
@@ -132,26 +131,26 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
         return cacheStroke;
     }
 
-    public boolean isStrokeVisible(final Feature feature){
-        return cacheStroke != null && cacheStroke.isVisible(feature);
+    public boolean isStrokeVisible(final Object candidate){
+        return cacheStroke != null && cacheStroke.isVisible(candidate);
     }
 
-    public boolean isFillVisible(final Feature feature){
-        return cacheFill != null && cacheFill.isVisible(feature);
+    public boolean isFillVisible(final Object candidate){
+        return cacheFill != null && cacheFill.isVisible(candidate);
     }
 
-    public AlphaComposite getJ2DFillComposite(final Feature feature){
-        return cacheFill.getJ2DComposite(feature);
+    public AlphaComposite getJ2DFillComposite(final Object candidate){
+        return cacheFill.getJ2DComposite(candidate);
     }
     
-    public Paint getJ2DFillPaint(final Feature feature, final int x, final int y, final float coeff, final RenderingHints hints){
-        return cacheFill.getJ2DPaint(feature, x,y, coeff,hints);
+    public Paint getJ2DFillPaint(final Object candidate, final int x, final int y, final float coeff, final RenderingHints hints){
+        return cacheFill.getJ2DPaint(candidate, x,y, coeff,hints);
     }
 
     /**
      * @return a float value of this style offset
      */
-    public float getOffset(final Feature feature, final float coeff){
+    public float getOffset(final Object candidate, final float coeff){
         evaluate();
         
         if(Float.isNaN(cachedOffset)){
@@ -166,7 +165,7 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
     /**
      * @return an Array of 2 floats always in display unit.
      */
-    public float[] getDisplacement(final Feature feature){
+    public float[] getDisplacement(final Object candidate){
         evaluate();
         
         final float[] disps = new float[2];
@@ -195,9 +194,9 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(final Feature feature){
-        return (cacheStroke == null || cacheStroke.isVisible(feature))
-                || (cacheFill == null || cacheFill.isVisible(feature));
+    public boolean isVisible(final Object candidate){
+        return (cacheStroke == null || cacheStroke.isVisible(candidate))
+                || (cacheFill == null || cacheFill.isVisible(candidate));
     }
     
     /**
@@ -227,11 +226,11 @@ public class CachedPolygonSymbolizer extends CachedSymbolizer<PolygonSymbolizer>
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
+    public float getMargin(final Object candidate, final float coeff) {
         if(cacheStroke == null){
             return 0f;
         }else{
-            return cacheStroke.getMargin(feature,coeff);
+            return cacheStroke.getMargin(candidate,coeff);
         }
         
     }

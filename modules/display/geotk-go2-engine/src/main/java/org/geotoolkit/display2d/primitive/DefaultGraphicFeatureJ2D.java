@@ -102,7 +102,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
     }
 
     @Override
-    public Feature getFeature(){
+    public Feature getCandidate(){
         try {
             return getCompleteFeature(getFeatureId());
         } catch (DataStoreException ex) {
@@ -115,7 +115,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
 
     @Override
     public Object getUserObject() {
-        return getFeature();
+        return getCandidate();
     }
     
     public com.vividsolutions.jts.geom.Geometry getObjectiveGeometry() throws TransformException{
@@ -174,7 +174,7 @@ public class DefaultGraphicFeatureJ2D extends AbstractGraphicJ2D implements Proj
     }
 
     @Override
-    public FeatureMapLayer getFeatureLayer() {
+    public FeatureMapLayer getLayer() {
         return layer;
     }
 

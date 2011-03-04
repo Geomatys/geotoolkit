@@ -18,7 +18,6 @@
 package org.geotoolkit.display2d.style;
 
 import org.geotoolkit.display2d.GO2Utilities;
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 import org.opengis.style.LinePlacement;
 
@@ -38,37 +37,37 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
         super(placement);
     }
 
-    public float getGap(final Feature feature){
+    public float getGap(final Object candidate){
         evaluate();
         
         if(Float.isNaN(gap)){
             //value is feature dynamic
             final Expression exp = styleElement.getGap();
-            return GO2Utilities.evaluate(exp, feature, Float.class, 0f);
+            return GO2Utilities.evaluate(exp, candidate, Float.class, 0f);
         }else{
             return gap;
         }
     }
 
-    public float getInitialGap(final Feature feature){
+    public float getInitialGap(final Object candidate){
         evaluate();
         
         if(Float.isNaN(initial)){
             //value is feature dynamic
             final Expression exp = styleElement.getInitialGap();
-            return GO2Utilities.evaluate(exp, feature, Float.class, 0f);
+            return GO2Utilities.evaluate(exp, candidate, Float.class, 0f);
         }else{
             return initial;
         }
     }
 
-    public float getOffset(final Feature feature){
+    public float getOffset(final Object candidate){
         evaluate();
         
         if(Float.isNaN(offset)){
             //value is feature dynamic
             final Expression exp = styleElement.getPerpendicularOffset();
-            return GO2Utilities.evaluate(exp, feature, Float.class, 0f);
+            return GO2Utilities.evaluate(exp, candidate, Float.class, 0f);
         }else{
             return offset;
         }
@@ -127,7 +126,7 @@ public class CachedLinePlacement extends CachedLabelPlacement<LinePlacement>{
     }
 
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         evaluate();
         //placement doesnt know if it's visible or not whit those informations, always true.
         return true;

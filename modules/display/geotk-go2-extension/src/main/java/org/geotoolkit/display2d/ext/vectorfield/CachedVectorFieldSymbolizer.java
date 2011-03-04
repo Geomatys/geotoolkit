@@ -19,7 +19,6 @@ package org.geotoolkit.display2d.ext.vectorfield;
 
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.display2d.style.renderer.SymbolizerRendererService;
-import org.opengis.feature.Feature;
 
 /**
  *
@@ -37,7 +36,7 @@ public class CachedVectorFieldSymbolizer extends CachedSymbolizer<VectorFieldSym
      * {@inheritDoc }
      */
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
+    public float getMargin(final Object feature, final float coeff) {
         return 0;
     }
 
@@ -50,7 +49,7 @@ public class CachedVectorFieldSymbolizer extends CachedSymbolizer<VectorFieldSym
     }
 
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object feature) {
         return true;
     }
 

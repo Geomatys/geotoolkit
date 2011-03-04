@@ -32,7 +32,6 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.WindowConstants;
 
-import org.opengis.feature.Feature;
 import org.opengis.filter.expression.Expression;
 
 /**
@@ -59,9 +58,9 @@ public class TTFMarkFactory implements MarkFactory {
             new AffineTransform(), false, false);
 
     @Override
-    public Shape getShape(final Graphics2D graphics, final Expression symbolUrl, final Feature feature)
+    public Shape getShape(final Graphics2D graphics, final Expression symbolUrl, final Object candidate)
             throws Exception {
-        String markUrl = symbolUrl.evaluate(feature, String.class);
+        String markUrl = symbolUrl.evaluate(candidate, String.class);
 
         // if it does not start with the right prefix, it's not our business
         if (!markUrl.startsWith("ttf://"))

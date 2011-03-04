@@ -21,7 +21,7 @@ import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.renderer.AbstractSymbolizerRenderer;
 
@@ -40,7 +40,7 @@ public class MokSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedMokS
     }
 
     @Override
-    public void portray(final ProjectedFeature graphic) throws PortrayalException {
+    public void portray(final ProjectedObject graphic) throws PortrayalException {
         called++;
     }
 
@@ -49,7 +49,7 @@ public class MokSymbolizerRenderer extends AbstractSymbolizerRenderer<CachedMokS
     }
 
     @Override
-    public boolean hit(final ProjectedFeature graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
+    public boolean hit(final ProjectedObject graphic, final SearchAreaJ2D mask, final VisitFilter filter) {
         return false;
     }
 

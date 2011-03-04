@@ -23,9 +23,9 @@ import java.util.Iterator;
 
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
-import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
+import org.geotoolkit.display2d.primitive.ProjectedObject;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.display2d.style.CachedSymbolizer;
 import org.geotoolkit.map.MapLayer;
@@ -41,9 +41,9 @@ import org.opengis.style.Symbolizer;
  * with method getSymbolizerClass.
  * - Second create a cached version of the symbolizer using the createCachedSymbolizer() method.
  * A cached symbolizer is a prepare symbolizer that should optimize the rendering performance
- * when called often, an exemple is a symbolizer using a reference to a distant image file, the
+ * when called often, an example is a symbolizer using a reference to a distant image file, the
  * cached version of this symbolizer should make a cache of it to greatly improve performances.
- * - Theard call the appropriate portray method given a graphic object, the cached symbolizer
+ * - Thread call the appropriate portray method given a graphic object, the cached symbolizer
  * and the rendering context.
  *
  * To perform some visual intersection test using the hit methods.
@@ -94,7 +94,7 @@ public interface SymbolizerRendererService<S extends Symbolizer, C extends Cache
      * @param context : rendering context contains the java2d rendering parameters
      * @throws PortrayalException
      */
-    void portray(ProjectedFeature graphic, C symbol,
+    void portray(ProjectedObject graphic, C symbol,
             RenderingContext2D context) throws PortrayalException;
 
     /**
@@ -105,7 +105,7 @@ public interface SymbolizerRendererService<S extends Symbolizer, C extends Cache
      * @param context : rendering context contains the java2d rendering parameters
      * @throws PortrayalException
      */
-    void portray(Iterator<ProjectedFeature> graphics, C symbol,
+    void portray(Iterator<? extends ProjectedObject> graphics, C symbol,
             RenderingContext2D context) throws PortrayalException;
 
     /**
@@ -129,7 +129,7 @@ public interface SymbolizerRendererService<S extends Symbolizer, C extends Cache
      * @param filter : the type of searching, intersect or within
      * @return true if the searcharea hit this graphic object, false otherwise.
      */
-    boolean hit(ProjectedFeature graphic, C symbol,
+    boolean hit(ProjectedObject graphic, C symbol,
             RenderingContext2D context, SearchAreaJ2D mask, VisitFilter filter);
 
     /**

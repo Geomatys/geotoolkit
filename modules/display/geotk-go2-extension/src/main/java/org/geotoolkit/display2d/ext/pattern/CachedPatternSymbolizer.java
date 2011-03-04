@@ -41,7 +41,6 @@ import org.geotoolkit.process.coverage.CoverageProcessFactory;
 import org.geotoolkit.process.coverage.CoverageToVectorDescriptor;
 import org.geotoolkit.util.NumberRange;
 
-import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.filter.expression.Expression;
@@ -158,7 +157,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
     }
 
     @Override
-    public float getMargin(final Feature feature, final float coeff) {
+    public float getMargin(final Object candidate, final float coeff) {
         return 0;
     }
 
@@ -167,7 +166,7 @@ public class CachedPatternSymbolizer extends CachedSymbolizer<PatternSymbolizer>
     }
 
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
         return false;
     }
 

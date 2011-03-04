@@ -103,10 +103,10 @@ public class CachedRule extends Cache<Rule>{
      * {@inheritDoc }
      */
     @Override
-    public boolean isVisible(final Feature feature) {
+    public boolean isVisible(final Object candidate) {
 
         for(CachedSymbolizer cached : symbols){
-            if(cached.isVisible(feature)) return true;
+            if(cached.isVisible(candidate)) return true;
         }
 
         return false;

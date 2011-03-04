@@ -2,8 +2,7 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2004 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2011, Geomatys
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -17,41 +16,45 @@
  */
 package org.geotoolkit.display2d.primitive;
 
-import org.geotoolkit.map.FeatureMapLayer;
+import org.geotoolkit.display.canvas.ReferencedCanvas2D;
+import org.geotoolkit.map.MapLayer;
 
-import org.opengis.feature.Feature;
-import org.opengis.filter.identity.FeatureId;
+import org.opengis.display.primitive.Graphic;
 
 /**
- * Convenient representation of a feature for rendering.
+ * Convenient representation of a custom object for rendering.
  * We expect the sub classes to cache information for more efficient rendering.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface ProjectedFeature<T extends Feature> extends ProjectedObject<T> {
+public interface ProjectedObject<T> extends Graphic {
 
     /**
-     * Get the id of the feature.
+     * Get the original MapLayer from where the object is from.
      *
-     * @return FeatureId
+     * @return MapLayer
      */
-    FeatureId getFeatureId();
+    MapLayer getLayer();
 
     /**
-     * Get the original FeatureMapLayer from where the feature is from.
+     * Get the object itself.
      *
-     * @return FeatureMapLayer
+     * @return Object
      */
-    @Override
-    FeatureMapLayer getLayer();
-
-    /**
-     * Get the feature itself.
-     *
-     * @return Feature
-     */
-    @Override
     T getCandidate();
+
+    /**
+     * Get a Projected geometry for rendering purpose.
+     *
+     * @param name of the wanted geometry.
+     * @return ProjectedGeometry or null if the named geometry attribute doesn't exist
+     */
+    ProjectedGeometry getGeometry(String name);
+
+    /**
+     * @return original canvas of this graphic
+     */
+    ReferencedCanvas2D getCanvas();
 
 }
