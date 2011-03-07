@@ -59,7 +59,6 @@ import org.opengis.referencing.operation.MathTransform;
 
 import static org.geotoolkit.referencing.crs.DefaultGeographicCRS.*;
 import static org.geotoolkit.util.ArgumentChecks.*;
-import static org.geotoolkit.util.ArgumentChecks.*;
 
 
 /**
@@ -309,10 +308,13 @@ public class WMSMapLayer extends AbstractMapLayer {
      */
     void prepareQuery(final GetMapRequest request, final GeneralEnvelope env, final Dimension dim, final Point2D pickCoord) throws TransformException, FactoryException{
 
+        //envelope before any modification
+        final Envelope beforeEnv = new GeneralEnvelope(env);
+
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
         CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
         GeneralEnvelope fakeEnv = new GeneralEnvelope(env);
-
+        
         //check if we must make the  coverage reprojection ourself--------------
         if (isUseLocalReprojection() && !supportCRS(crs2D)) {
             crs2D = findOriginalCRS();
@@ -320,9 +322,6 @@ public class WMSMapLayer extends AbstractMapLayer {
                 //last chance use : EPSG:4326
                 crs2D = EPSG_4326;
             }
-
-            //change the 2D crs part of the envelope, preserve other axis
-            final GeneralEnvelope beforeEnv = new GeneralEnvelope(env);
 
             if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, WGS84))) {
                 //in case we are asking for a WMS in 1.1.0 and CRS:84
@@ -346,30 +345,6 @@ public class WMSMapLayer extends AbstractMapLayer {
                 fakeEnv.setEnvelope(trsEnv);
             }
 
-            //Recalculate pick coordinate according to reverse transformation
-            if(pickCoord != null){
-                //calculate new coordinate in the reprojected query
-                final AffineTransform beforeTrs = GO2Utilities.toAffine(dim,beforeEnv);
-                final AffineTransform afterTrs = GO2Utilities.toAffine(dim,env);
-                try {
-                    afterTrs.invert();
-                } catch (NoninvertibleTransformException ex) {
-                    throw new TransformException("Failed to invert transform.",ex);
-                }
-
-                beforeTrs.transform(pickCoord, pickCoord);
-
-                final DirectPosition pos = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
-                pos.setOrdinate(0, pickCoord.getX());
-                pos.setOrdinate(1, pickCoord.getY());
-
-                final MathTransform trs = CRS.findMathTransform(beforeEnv.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem());
-                trs.transform(pos, pos);
-
-                pickCoord.setLocation(pos.getOrdinate(0), pos.getOrdinate(1));
-                afterTrs.transform(pickCoord, pickCoord);
-            }
-
         }else{
             
             if ((server.getVersion() == WMSVersion.v111) && (CRS.equalsIgnoreMetadata(crs2D, WGS84))) {
@@ -391,6 +366,31 @@ public class WMSMapLayer extends AbstractMapLayer {
         //WMS returns images with EAST-WEST axis first, so we ensure we modify the crs as expected
         final Envelope longFirstEnvelope = GO2Utilities.setLongitudeFirst(env);
         env.setEnvelope(longFirstEnvelope);
+
+
+        //Recalculate pick coordinate according to reverse transformation
+        if(pickCoord != null){
+            //calculate new coordinate in the reprojected query
+            final AffineTransform beforeTrs = GO2Utilities.toAffine(dim,beforeEnv);
+            final AffineTransform afterTrs = GO2Utilities.toAffine(dim,env);
+            try {
+                afterTrs.invert();
+            } catch (NoninvertibleTransformException ex) {
+                throw new TransformException("Failed to invert transform.",ex);
+            }
+
+            beforeTrs.transform(pickCoord, pickCoord);
+
+            final DirectPosition pos = new GeneralDirectPosition(env.getCoordinateReferenceSystem());
+            pos.setOrdinate(0, pickCoord.getX());
+            pos.setOrdinate(1, pickCoord.getY());
+
+            final MathTransform trs = CRS.findMathTransform(beforeEnv.getCoordinateReferenceSystem(), env.getCoordinateReferenceSystem());
+            trs.transform(pos, pos);
+
+            pickCoord.setLocation(pos.getOrdinate(0), pos.getOrdinate(1));
+            afterTrs.transform(pickCoord, pickCoord);
+        }
 
         prepareGetMapRequest(request, fakeEnv, dim);
     }
@@ -609,7 +609,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      *         in the list of supported crs in the GetCapabilities response. {@code False} otherwise.
      * @throws FactoryException
      */
-    boolean supportCRS(final CoordinateReferenceSystem crs) throws FactoryException {
+    protected boolean supportCRS(final CoordinateReferenceSystem crs) throws FactoryException {
         final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layers[0]);
 
         if(stack != null){
@@ -637,7 +637,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     /**
      * Find the best original crs of the data in the capabilities.
      */
-    CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
+    protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
         final AbstractLayer[] stack = server.getCapabilities().getLayerStackFromName(layers[0]);
 
         if(stack != null){
