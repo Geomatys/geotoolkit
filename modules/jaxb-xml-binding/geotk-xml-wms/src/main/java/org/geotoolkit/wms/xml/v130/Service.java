@@ -96,13 +96,13 @@ public class Service extends AbstractService {
     private String accessConstraints;
     @XmlElement(name = "LayerLimit")
     @XmlSchemaType(name = "positiveInteger")
-    private int layerLimit;
+    private Integer layerLimit;
     @XmlElement(name = "MaxWidth")
     @XmlSchemaType(name = "positiveInteger")
-    private int maxWidth;
+    private Integer maxWidth;
     @XmlElement(name = "MaxHeight")
     @XmlSchemaType(name = "positiveInteger")
-    private int maxHeight;
+    private Integer maxHeight;
 
     /**
      * An empty constructor used by JAXB.
@@ -196,14 +196,14 @@ public class Service extends AbstractService {
     /**
      * Gets the value of the layerLimit property.
      */
-    public int getLayerLimit() {
+    public Integer getLayerLimit() {
         return layerLimit;
     }
 
     /**
      * Gets the value of the maxWidth property.
      */
-    public int getMaxWidth() {
+    public Integer getMaxWidth() {
         return maxWidth;
     }
 
@@ -211,7 +211,7 @@ public class Service extends AbstractService {
     * Gets the value of the maxHeight property.
     *     
     */
-    public int getMaxHeight() {
+    public Integer getMaxHeight() {
         return maxHeight;
     }
 
