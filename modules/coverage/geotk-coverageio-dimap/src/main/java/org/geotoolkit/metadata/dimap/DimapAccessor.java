@@ -316,7 +316,7 @@ public final class DimapAccessor {
     /**
      * Converts the given dimap document in a metadata object.
      * Since there is no one to one relation between ISO 19115 and Dimap,
-     * the returned metadta is a best effort relation.
+     * the returned metadata is a best effort relation.
      *
      * @param doc
      * @param metadata : metadata to fill, if null it will create one.
@@ -336,9 +336,12 @@ public final class DimapAccessor {
 
 
         //<xsd:element minOccurs="0" ref="Dataset_Id"/> ------------------------
-        // contain base informations : data name
         final Element datasetID = firstElement(doc, TAG_DATASET_ID);
         if(datasetID != null){
+            //MAPPING
+            //DATASET_NAME  → Dataset title (MD_Metadata.fileIdentifier)
+            //COPYRIGHT     → RestrictionCode ( MD_Metadata > MD_Constraints > MD_LegalConstraints.accessConstraints)
+
             final DefaultDataIdentification identificationInfo;
 
             final Collection<Identification> ids = metadata.getIdentificationInfo();
@@ -365,12 +368,38 @@ public final class DimapAccessor {
         }
 
         //<xsd:element minOccurs="0" ref="Dataset_Frame"/> ---------------------
+        final Element datasetFrame = firstElement(doc, TAG_DATASET_FRAME);
+        if(datasetFrame != null){
+            //MAPPING
+            //FRAME_LON                         → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
+            //FRAME_LAT                         → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
+            //FRAME_ROW                         → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
+            //FRAME_COL                         → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
+            //FRAME_X                           → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
+            //FRAME_Y                           → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
+            //FRAME_LON (Scene Center)          → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
+            //FRAME_LAT (Scene Center)          → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
+            //FRAME_ROW (Scene Center)          → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
+            //FRAME_COL (Scene Center)          → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
+            //SCENE_ORIENTATION (Scene Center)  → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
+        }
+
         //<xsd:element minOccurs="0" ref="Dataset_Use"/> -----------------------
 
         //<xsd:element minOccurs="0" ref="Production"/> ------------------------
         // can be changed in a Responsible party information
         final Element production = firstElement(doc, TAG_PRODUCTION);
         if(production != null){
+            //MAPPING
+            //PRODUCT_TYPE            → Type of product ( MD_Metada > identificationInfo > MD_DataIdentification.citation > CI_Citation.presentationForm > CI_PresentationFormCode )
+            //PRODUCT_INFO            → Product title (MD_Metadata > identificationInfo > MD_DataIdentification.citation > CI_Citation.title)
+            //DATASET_PRODUCER_NAME   → Producer Name (MD_Metadata > identificationInfo >MD_DataIdentification.citation > CI_Citation > CI_ResponsibleParty.organisationName )
+            //DATASET_PRODUCER_URL    → URL Producer (MD_Metada > identificationInfo > /MD_DataIdentification.citation >CI_Citation > CI_ResponsibleParty CI_Contact > CI_Address.electronicMailAddress
+            //DATASET_PRODUCTION_DATE → Date de production (MD_Metadata > identificationInfo > MD_DataIdentification.citation > CI_Citation > CI_Date.date
+            //SOFTWARE_NAME           → Software name (DQ_DataQuality > LI_Lineage > LI_ProcessStepL.E_ProcessStep > LE_Processing > CI_Citation.title)
+            //SOFTWARE_VERSION        → Software version (DQ_DataQuqlity > LI_Lineage > LI_ProcessStepL.E_ProcessStep > LE_Processing > CI_Citation.edition)
+            //PROCESSING_CENTER       → Processing center (DQ_DataQuqlity > LI_Lineage > LI_ProcessStepL.E_ProcessStep > LE_Processing > CI_Citation.citedResponsibleParty > CI_ResponsibleParty.OrganisationName)
+
             final String producerName   = textValueSafe(production, TAG_DATASET_PRODUCER_NAME, String.class);
             final String producerURL    = textValueSafe(production, TAG_DATASET_PRODUCER_URL, String.class);
             final String productionDate = textValueSafe(production, TAG_DATASET_PRODUCTION_DATE, String.class);
@@ -425,29 +454,162 @@ public final class DimapAccessor {
 
         //<xsd:element minOccurs="0" ref="Coordinate_Reference_System"/> -------
         //has been set from the geotiff informations
+        final Element datasetCRS = firstElement(doc, TAG_CRS);
+        if(datasetCRS != null){        
+            //MAPPING
+            //GEO_TABLES            → ( MD_METADATA > MD_ReferenceSystem.referenceSystemIdentifier >  RS_identifier.codeSpace and version )
+            //HORIZONTAL_CS_CODE    → Reference Projection Système code (MD_Metadata > referenceSystemInfo > MD_ReferenceSystem.referenceSystemIdentifier > RS_Identifier.codeSpace)
+            //HORIZONTAL_CS_TYPE    → ?
+            //HORIZONTAL_CS_NAME    → Reference Projection Système name (MD_Metadata > referenceSystemInfo > MD_ReferenceSystem.referenceSystemIdentifier > RS_ReferenceSystem.name)
+        }
+
 
         //<xsd:element minOccurs="0" ref="Raster_CS"/> -------------------------
         //has been set from the geotiff informations
+//        final Element rasterCS = firstElement(doc, TAG_RASTER_CS);
+//        if(rasterCS != null){
+//            //MAPPING
+//            //RASTER_CS_TYPE    → ?
+//            //PIXEL_ORIGIN      → ?
+//            
+//        }
+
 
         //<xsd:element minOccurs="0" ref="Geoposition"/> -----------------------
+        final Element datasetGeoposition = firstElement(doc, TAG_GEOPOSITION);
+        if(datasetGeoposition != null){
+            //MAPPING
+            //ULXMAP    → ? 
+            //ULYMAP    → ? 
+            //XDIM      → X Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
+            //YDIM      → Y Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
+        }
+
+
         //<xsd:element minOccurs="0" ref="Map_Declination"/> -------------------
         //<xsd:element minOccurs="0" ref="Raster_Dimensions"/> -----------------
+        final Element rasterDim = firstElement(doc, TAG_RASTER_DIMENSIONS);
+        if(rasterDim != null){
+            //MAPPING
+            //NCOLS     → Number of COLUMN (MD_Metadata > spatialRepresentationInfo > MD_GridSpatialRepresentation.axisDimensionsProperties >MD_Dimension.dimensionSize)
+            //NROWS     → Number of ROWS (MD_Metadata > spatialRepresentationInfo > MD_GridSpatialRepresentation.axisDimensionsProperties >MD_Dimension.dimensionSize)
+            //NBANDS    → ?
+
+        }
+
         //<xsd:element minOccurs="0" ref="Raster_Encoding"/> -------------------
+        final Element rasterEncoding = firstElement(doc, TAG_RASTER_ENCODING);
+        if(rasterEncoding != null){
+            //MAPPING
+            //NBITS               → ?
+            //BYTEORDER           → ?
+            //COMPRESSION_NAME    → ?
+            //DATA_TYPE           → ?
+        }
+
         //<xsd:element minOccurs="0" ref="Data_Processing"/> -------------------
+        final Element dataProcessing = firstElement(doc, TAG_DATA_PROCESSING);
+        if(dataProcessing != null){
+            //MAPPING
+            //PROCESSING_LEVEL            → ( DQ_DATAQUALITY > LI_LINEAGE > LI_Source.LE_Source.processedLEvel > MD_Identifier.abstract )
+            //GEOMETRIC_PROCESSING        → ( DQ_DATAQUALITY > LI_LINEAGE > LI_Source.LE_Source.processedLEvel > MD_Identifier.abstract )
+            //RADIOMETRIC_PROCESSING      → ( DQ_DATAQUALITY > LI_LINEAGE > LI_Source.LE_Source.processedLEvel > MD_Identifier.abstract )
+            //MEAN_RECTIFICATION_ELEVATION→ ?
+            //BAND_INDEX                  → ?
+            //LOW_THRESHOLD               → ?
+            //HIGH_THRESHOLD              → ?
+            //LINE_SHIFT                  → ?
+            //DECOMPRESSION_TYPE          → ?
+            //KERNEL_ID                   → ?
+            //KERNEL_DATE                 → ?
+            //SAMPLING_STEP_X             → ?
+            //SAMPLING_STEP_Y             → ?
+            //SWIR_BAND_REGISTRATION_FLAG → ?
+            //X_BANDS_REGISTRATION_FLAG   → ?
+            //ALGORITHM_TYPE              → ( DQ_DATAQUALITY > LI_LINEAGE > LI_ProcessStep.LE_ProcessStep > LE_Processing > LE_Algorithm.description )
+            //ALGORITHM_NAME              → ( DQ_DATAQUALITY > LI_LINEAGE > LI_ProcessStep.LE_ProcessStep > LE_Processing > LE_Algorithm > CI_Citation.title )
+            //ALGORITHM_ACTIVATION        → ( DQ_DATAQUALITY > LI_LINEAGE > LI_ProcessStep.LE_ProcessStep > LE_Processing > LE_Algorithm )
+        }
+
         //<xsd:element minOccurs="0" ref="Data_Access"/> -----------------------
+        final Element dataAccess = firstElement(doc, TAG_DATA_ACCESS);
+        if(dataAccess != null){
+            //MAPPING
+            //DATA_FILE_ORGANISATION    → ?
+            //DATA_FILE_FORMAT          → Data Format (MD_Metadata > IdentificationInfo > DataIdentification.resourceFormat > MD_Format.name et MD_Format.version)
+            //DATA_FILE_FORMAT_DESC*    →
+            //DATA_FILE_PATH            → ?
+        }
+
+
         //<xsd:element minOccurs="0" ref="Image_Display"/> ---------------------
+        final Element imageDisplay = firstElement(doc, TAG_IMAGE_DISPLAY);
+        if(imageDisplay != null){
+            //MAPPING
+            //ULXMAP    → ? 
+            //ULYMAP    → ? 
+            //XDIM      → X Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
+            //YDIM      → Y Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
+        }
+
         //<xsd:element minOccurs="0" ref="Image_Interpretation"/> --------------
+        final Element imageInter = firstElement(doc, TAG_IMAGE_INTERPRETATION);
+        if(imageInter != null){
+            //MAPPING
+            //BAND_DESCRIPTION            → ?
+            //PHYSICAL_UNIT               → ?
+            //PHYSICAL_BIAS               → ?
+            //PHYSICAL_GAIN               → ?
+            //PHYSICAL_CALIBRATION_DATE   → ?
+            //BAND_INDEX                  → ?
+            //DATA_STRIP_ID               → ?
+        }
+
 
         //<xsd:element minOccurs="0" ref="Dataset_Sources"/> -------------------
         // could be mapped to Aquisition informations
         final Element datasetSources = firstElement(doc, TAG_DATASET_SOURCES);
         if(datasetSources != null){
+            //MAPPING
+            //SOURCE_TYPE *             → ?
+            //SOURCE_ID *               → ?
+            //SOURCE_DESCRIPTION *      → Abstract ( MD_Metadata > identificationInfo > MD_DataIdentification.abstract )
+            //GRID_REFERENCE            → ?
+            //SHIFT_VALUE               → ?
+            //IMAGING_DATE              → Acquisition date ( MI_AcquisitionInformation > MI_Operation.citation > MD_Citation.date)
+            //IMAGING_TIME              → ?
+            //MISSION                   → Mission ( MI_AcquisitionInformation > MI_Operation.description)
+            //MISSION_INDEX             → Mission index (MI_AcquisitionInformation > MI_Operation.description.identifier > MD_identifier.code)
+            //INSTRUMENT                → instrument ( MI_AcquisitionInformation > MI_Instrument.description.type )
+            //INSTRUMENT_INDEX          → instrument description ( MI_AcquisitionInformation > MI_Instrument.type.description )
+            //SENSOR_CODE
+            //SCENE_PROCESSING_LEVEL    → ( MD_Metadata > MD_ContentInformation.MD_CoverageDescription.MD_ImageDescription )
+            //INCIDENCE_ANGLE           → ( MD_Metadata > MD_ContentInformation.MD_CoverageDescription.MD_ImageDescription )
+            //VIEWING_ANGLE             → ( MD_Metadata > MD_ContentInformation.MD_CoverageDescription.MD_ImageDescription )
+            //SUN_AZIMUTH               → Sun Azimut ( MD_Metadata > MD_ContentInformation > MD_CoverageDescription > MD_ImageDescription.illuminationAzimutAngle)
+            //SUN_ELEVATION             → Sun elevation ( MD_Metadata > MD_ContentInformation > MD_CoverageDescription > MD_ImageDescription.illuminationElevationAngle)
+            //REVOLUTION_NUMBER         → ?
+            //COMPRESSION_MODE          → ?
+            //DIRECT_PLAYBACK_INDICATOR → ?
+            //REFOCUSING_STEP_NUM       → ?
+            //SWATH_MODE                → ?
+
             //TODO
 //            final DefaultAcquisitionInformation info = new DefaultAcquisitionInformation();
 //
 //            metadata.getAcquisitionInformation().add(aqui);
         }
-        
+
+        //Satellite_Time -------------------------------------------------------
+        final Element satelliteTime = firstElement(doc, TAG_SATELLITE_TIME);
+        if(satelliteTime != null){
+            //MAPPING
+            //UT_DATE         → ?
+            //CLOCK_VALUE     → ?
+            //CLOCK_PERIOD    → ?
+            //BOARD_TIME      → ?
+            //TAI_TUC         → ?
+        }
 
         //<xsd:element minOccurs="0" ref="Vector_Attributes"/> -----------------
 

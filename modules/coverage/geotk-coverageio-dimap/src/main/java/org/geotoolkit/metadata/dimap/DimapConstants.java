@@ -202,6 +202,15 @@ public final class DimapConstants {
     public static final String TAG_PHYSICAL_BIAS = "PHYSICAL_BIAS";
     public static final String TAG_PHYSICAL_UNIT = "PHYSICAL_UNIT";
 
+    //Data Access tag group ----------------------------------------------------
+    public static final String TAG_DATA_ACCESS = "Data_Access";
+
+    //Data Processing tag group ------------------------------------------------
+    public static final String TAG_DATA_PROCESSING = "Data_Processing";
+
+    //Satellite_Time------------------------------------------------------------
+    public static final String TAG_SATELLITE_TIME = "Satellite_Time";
+
     private DimapConstants(){}
 
 }
