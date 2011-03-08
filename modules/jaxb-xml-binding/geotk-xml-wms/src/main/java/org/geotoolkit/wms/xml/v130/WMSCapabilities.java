@@ -200,4 +200,25 @@ public class WMSCapabilities extends AbstractWMSCapabilities {
         return null;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[WMSCapabilities]\n");
+        if (service != null) {
+            sb.append("service:").append(service).append("\n");
+        }
+        if (capability != null) {
+            sb.append("capability:").append(capability).append("\n");
+        }
+        if (schemaLocation != null) {
+            sb.append("schemaLocation:").append(schemaLocation).append("\n");
+        }
+        if (updateSequence != null) {
+            sb.append("updateSequence:").append(updateSequence).append("\n");
+        }
+        if (version != null) {
+            sb.append("version:").append(version).append("\n");
+        }
+        return sb.toString();
+    }
+
 }

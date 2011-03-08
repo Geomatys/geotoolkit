@@ -660,4 +660,83 @@ public class Layer extends AbstractLayer {
     public void setFixedHeight(final Integer fixedHeight) {
         this.fixedHeight = fixedHeight;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[Layer]\n");
+        if (identifier != null) {
+            sb.append("identifier:").append(identifier).append("\n");
+        }
+        if (name != null) {
+            sb.append("name:").append(name).append("\n");
+        }
+        if (title != null) {
+            sb.append("title:").append(title).append("\n");
+        }
+        if (style != null) {
+            sb.append("style:").append(style).append("\n");
+        }
+        if (_abstract != null) {
+            sb.append("_abstract:").append(_abstract).append("\n");
+        }
+        if (attribution != null) {
+            sb.append("attribution:").append(attribution).append("\n");
+        }
+        if (authorityURL != null) {
+            sb.append("authorityURL:").append(authorityURL).append("\n");
+        }
+        if (boundingBox != null) {
+            sb.append("boundingBox:").append(boundingBox).append("\n");
+        }
+        if (cascaded != null) {
+            sb.append("cascaded:").append(cascaded).append("\n");
+        }
+        if (crs != null) {
+            sb.append("crs:").append(crs).append("\n");
+        }
+        if (dataURL != null) {
+            sb.append("dataURL:").append(dataURL).append("\n");
+        }
+        if (dimension != null) {
+            sb.append("dimension:").append(dimension).append("\n");
+        }
+        if (exGeographicBoundingBox != null) {
+            sb.append("exGeographicBoundingBox:").append(exGeographicBoundingBox).append("\n");
+        }
+        if (featureListURL != null) {
+            sb.append("featureListURL:").append(featureListURL).append("\n");
+        }
+        if (fixedHeight != null) {
+            sb.append("fixedHeight:").append(fixedHeight).append("\n");
+        }
+        if (fixedWidth != null) {
+            sb.append("fixedWidth:").append(fixedWidth).append("\n");
+        }
+        if (keywordList != null) {
+            sb.append("keywordList:").append(keywordList).append("\n");
+        }
+        if (maxScaleDenominator != null) {
+            sb.append("maxScaleDenominator:").append(maxScaleDenominator).append("\n");
+        }
+        if (metadataURL != null) {
+            sb.append("metadataURL:").append(metadataURL).append("\n");
+        }
+        if (minScaleDenominator != null) {
+            sb.append("minScaleDenominator:").append(minScaleDenominator).append("\n");
+        }
+        if (noSubsets != null) {
+            sb.append("noSubsets:").append(noSubsets).append("\n");
+        }
+        if (opaque != null) {
+            sb.append("opaque:").append(opaque).append("\n");
+        }
+        if (queryable != null) {
+            sb.append("queryable:").append(queryable).append("\n");
+        }
+        if (layer != null) {
+            sb.append("layer:").append(layer).append("\n");
+        }
+        return sb.toString();
+    }
+
 }
