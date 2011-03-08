@@ -19,6 +19,7 @@ package org.geotoolkit.wms.map;
 
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -52,6 +53,7 @@ import org.geotoolkit.wms.GetMapRequest;
 
 import org.opengis.display.canvas.Canvas;
 import org.opengis.display.primitive.Graphic;
+import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -63,7 +65,7 @@ import org.opengis.util.FactoryException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
+public final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
 
     /**
      * One instance for all WMS map layers. Object is concurrent.
@@ -106,7 +108,7 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
         return buffer;
     }
 
-    private static class WMSGraphic extends AbstractGraphicJ2D{
+    public static class WMSGraphic extends AbstractGraphicJ2D{
 
         private final WMSMapLayer layer;
 
@@ -186,31 +188,32 @@ final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 return graphics;
             }
 
-//            final RenderingContext2D ctx2D = (RenderingContext2D) context;
-//            final DirectPosition center = mask.getDisplayGeometry().getCentroid();
-
-//            final URL url;
-//            try {
-//                url = layer.queryFeatureInfo(
-//                        ctx2D.getCanvasObjectiveBounds(),
-//                        ctx2D.getCanvasDisplayBounds().getSize(),
-//                        (int) center.getOrdinate(0),
-//                        (int) center.getOrdinate(1));
-//                System.out.println(url);
-//            } catch (TransformException ex) {
-//                Logger.getLogger(WMSGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (FactoryException ex) {
-//                Logger.getLogger(WMSGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (MalformedURLException ex) {
-//                Logger.getLogger(WMSGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
-//            } catch (NoninvertibleTransformException ex) {
-//                Logger.getLogger(WMSGraphicBuilder.class.getName()).log(Level.SEVERE, null, ex);
-//            }
-
+            graphics.add(this);
 
             return graphics;
         }
-        
+
+        public URL getFeatureInfo(final RenderingContext context, final SearchArea mask, 
+                final String infoFormat, final int featureCount)
+                throws TransformException, FactoryException,
+                MalformedURLException, NoninvertibleTransformException{
+            
+            final RenderingContext2D ctx2D = (RenderingContext2D) context;
+            final DirectPosition center = mask.getDisplayGeometry().getCentroid();
+
+            final URL url;
+                url = layer.queryFeatureInfo(
+                        ctx2D.getCanvasObjectiveBounds(),
+                        ctx2D.getCanvasDisplayBounds().getSize(),
+                        (int) center.getOrdinate(0),
+                        (int) center.getOrdinate(1),
+                        layer.getLayerNames(),
+                        infoFormat,featureCount);
+                System.out.println(url);
+
+            return url;
+        }
+
     }
 
 }

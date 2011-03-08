@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.go2.control.information;
 
+import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;

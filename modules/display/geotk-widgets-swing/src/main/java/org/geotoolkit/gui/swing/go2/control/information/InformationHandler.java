@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.go2.control.information;
 
+import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import java.awt.Cursor;
 import java.awt.Component;
 import java.awt.event.MouseWheelEvent;
@@ -35,6 +36,7 @@ import org.geotoolkit.display.primitive.SearchArea;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.information.presenter.DefaultInformationPresenter;
 import org.geotoolkit.gui.swing.go2.control.navigation.AbstractNavigationHandler;
 
 import org.opengis.display.primitive.Graphic;
@@ -49,7 +51,7 @@ public class InformationHandler extends AbstractNavigationHandler {
 
     private final MouseListen mouseInputListener = new MouseListen();
     private final InformationDecoration infoPane = new InformationDecoration();
-    private InformationPresenter presenter = new InformationPresenter();
+    private InformationPresenter presenter = new DefaultInformationPresenter();
     private double zoomFactor = 2;
 
     public InformationHandler(final JMap2D map) {

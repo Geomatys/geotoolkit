@@ -2,7 +2,8 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2010, Johann Sorel
+ *    (C) 2010-2011, Johann Sorel
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,7 +16,7 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.gui.swing.go2.control.information;
+package org.geotoolkit.gui.swing.go2.control.information.presenter;
 
 import java.awt.Color;
 import java.awt.ComponentOrientation;
@@ -27,45 +28,23 @@ import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JScrollPane;
 import org.geotoolkit.coverage.GridSampleDimension;
-
 import org.geotoolkit.display2d.canvas.AbstractGraphicVisitor;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
-import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.display2d.primitive.ProjectedCoverage;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
-import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
-
-import org.opengis.feature.Property;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class InformationPresenter {
+public class CoveragePresenter implements InformationPresenter{
 
-    /**
-     * Create a user interface component to display the given object.
-     * @param candidate , object to display
-     * @return JComponent or null if no component appropriate.
-     */
-    public JComponent createComponent(final Object graphic, final RenderingContext2D context, final SearchAreaJ2D area){
-
+    @Override
+    public JComponent createComponent(final Object graphic, final RenderingContext2D context, final SearchAreaJ2D area) {
         if(graphic instanceof ProjectedCoverage){
             return createComponent((ProjectedCoverage)graphic, context, area);
-        } else if (graphic instanceof GraphicJ2D){
-            final GraphicJ2D gra = (GraphicJ2D) graphic;
-            final Object userObj = gra.getUserObject();
-
-            if(userObj instanceof Property){
-                final JFeatureOutLine outline = new JFeatureOutLine();
-                outline.setEdited((Property) userObj);
-                final JScrollPane pane = new JScrollPane(outline);
-                pane.setBorder(null);
-                return pane;
-            }
         }
-
         return null;
     }
 
@@ -100,7 +79,6 @@ public class InformationPresenter {
         scroll.getViewport().setBorder(null);
         return scroll;
     }
-
 
     protected List<Entry<GridSampleDimension,Object>> visit(final ProjectedCoverage projectedCoverage, final RenderingContext2D context, final SearchAreaJ2D queryArea) {
         return Bridge.readCoverageValues(projectedCoverage, context, queryArea);

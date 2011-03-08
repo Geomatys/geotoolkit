@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.go2.control.information;
 
+import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import java.awt.event.ActionEvent;
 import javax.swing.AbstractAction;
 import javax.swing.ImageIcon;
