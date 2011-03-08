@@ -76,6 +76,10 @@ public final class ProcessConsole {
             args = Arrays.copyOfRange(args, 1, args.length);
         }
 
+        if(args.length < 1){
+            globalHelp();
+        }
+
         //first argument must be the tool name
         //can be written 'processName' or 'authority'.'processName'
         firstArg = args[0];
