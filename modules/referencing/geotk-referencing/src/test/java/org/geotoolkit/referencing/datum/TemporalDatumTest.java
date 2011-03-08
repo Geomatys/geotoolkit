@@ -17,11 +17,6 @@
  */
 package org.geotoolkit.referencing.datum;
 
-import java.util.Locale;
-import java.util.TimeZone;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-
 import org.opengis.referencing.datum.TemporalDatum;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.junit.*;
@@ -39,20 +34,6 @@ import static org.geotoolkit.referencing.datum.DefaultTemporalDatum.*;
  * @since 2.2
  */
 public final class TemporalDatumTest extends ReferencingTestBase {
-    /**
-     * The object to use for formatting dates.
-     */
-    private DateFormat format;
-
-    /**
-     * Initialize the object to be used for testing purpose.
-     */
-    @Before
-    public void setUp() {
-        format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CANADA);
-        format.setTimeZone(TimeZone.getTimeZone("UTC"));
-    }
-
     /**
      * Verifies the epoch values compared to the julian epoch.
      *
@@ -84,6 +65,6 @@ public final class TemporalDatumTest extends ReferencingTestBase {
      * Returns the epoch of the given datum formatted as a string.
      */
     private String epochString(final TemporalDatum datum) {
-        return format.format(datum.getOrigin());
+        return format(datum.getOrigin());
     }
 }

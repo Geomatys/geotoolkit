@@ -102,7 +102,7 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         worker.setColorSpaceType(PaletteInterpretation.RGB);
         assertSame("Expected no-op because already RGB.", image, worker.image);
         assertTrue(worker.isIndexed());
-        view("new ImageWorker(INDEXED)");
+        showCurrentImage("new ImageWorker(INDEXED)");
         /*
          * Applies an operation that just change the color model, not the data.
          */
@@ -111,21 +111,21 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         assertNotSame(original.getColorModel(), image.getColorModel());
         assertSame(((DataBufferByte) original.getTile(0,0).getDataBuffer()).getData(0),
                    ((DataBufferByte)    image.getTile(0,0).getDataBuffer()).getData(0));
-        view("forceBitmaskIndexColorModel(240)");
+        showCurrentImage("forceBitmaskIndexColorModel(240)");
         /*
          * Now applies somes operation that does real work.
          */
         worker.setImage(original);
         worker.setColorModelType(ComponentColorModel.class);
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("forceComponentColorModel()", 1941874976L);
-        view("forceComponentColorModel()");
+        assertCurrentChecksumEquals("forceComponentColorModel()", 1941874976L);
+        showCurrentImage("forceComponentColorModel()");
 
         final RenderedImage rgb = worker.image;
         worker.setColorSpaceType(PaletteInterpretation.GRAY);
         assertNotSame(rgb, image = worker.image);
-        assertChecksumEquals("setColorSpaceType(GRAY)", 2283780390L);
-        view("setColorSpaceType(GRAY)");
+        assertCurrentChecksumEquals("setColorSpaceType(GRAY)", 2283780390L);
+        showCurrentImage("setColorSpaceType(GRAY)");
 
         final RenderedImage grayscale = worker.image;
         worker.intensity();
@@ -133,40 +133,40 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         worker.setImage(original);
         worker.intensity();
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("intensity()", 3180171915L);
-        view("intensity()");
+        assertCurrentChecksumEquals("intensity()", 3180171915L);
+        showCurrentImage("intensity()");
 
         final RenderedImage intensity = worker.image;
         worker.binarize(true);
         assertNotSame(intensity, image = worker.image);
-        assertChecksumEquals(null, 312929432L);
+        assertCurrentChecksumEquals(null, 312929432L);
         worker.binarize(0.25);
         assertSame("Should be already binarized.", image, worker.image);
-        view("binarize()");
+        showCurrentImage("binarize()");
 
         final RenderedImage binarize = worker.image;
         worker.binarize(192, 64);
         assertNotSame(binarize, image = worker.image);
-        assertChecksumEquals("binarize(192,64)", 4034897437L);
-        view("binarize(192,64)");
+        assertCurrentChecksumEquals("binarize(192,64)", 4034897437L);
+        showCurrentImage("binarize(192,64)");
 
         worker.setImage(original);
         worker.mask(binarize, new double[] {0});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("mask(binarize,0)", 2185221001L);
-        view("mask(binarize,0)");
+        assertCurrentChecksumEquals("mask(binarize,0)", 2185221001L);
+        showCurrentImage("mask(binarize,0)");
 
         worker.setImage(original);
         worker.maskBackground(new double[][] {{255}}, new double[] {0});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("maskBackground(255,0)", 3577749049L);
-        view("maskBackground(255,0)");
+        assertCurrentChecksumEquals("maskBackground(255,0)", 3577749049L);
+        showCurrentImage("maskBackground(255,0)");
 
         worker.setImage(original);
         worker.maskBackground(new double[][] {{255}}, null);
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("maskBackground(255,null)", 1873283205L);
-        view("maskBackground(255,null)");
+        assertCurrentChecksumEquals("maskBackground(255,null)", 1873283205L);
+        showCurrentImage("maskBackground(255,null)");
     }
 
     /**
@@ -206,22 +206,22 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         worker.setColorSpaceType(PaletteInterpretation.RGB);
         assertSame("Expected no-op because already RGB.", image, worker.image);
         assertFalse(worker.isIndexed());
-        view("new ImageWorker(RGB_ROTATED)");
+        showCurrentImage("new ImageWorker(RGB_ROTATED)");
         /*
          * Now applies somes operation that does real work.
          */
         worker.setImage(original);
         worker.setColorModelType(IndexColorModel.class);
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("forceIndexColorModel()", 2550205381L);
-        view("forceIndexColorModel()");
+        assertCurrentChecksumEquals("forceIndexColorModel()", 2550205381L);
+        showCurrentImage("forceIndexColorModel()");
 
         final RenderedImage indexed = worker.image;
         worker.setImage(original);
         worker.setColorSpaceType(PaletteInterpretation.GRAY);
         assertNotSame(indexed, image = worker.image);
-        assertChecksumEquals("setColorSpaceType(GRAY)", 163325088L);
-        view("setColorSpaceType(GRAY)");
+        assertCurrentChecksumEquals("setColorSpaceType(GRAY)", 163325088L);
+        showCurrentImage("setColorSpaceType(GRAY)");
 
         final RenderedImage grayscale = worker.image;
         worker.intensity();
@@ -229,39 +229,39 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         worker.setImage(original);
         worker.intensity();
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("intensity()", 529810612L);
-        view("intensity()");
+        assertCurrentChecksumEquals("intensity()", 529810612L);
+        showCurrentImage("intensity()");
 
         final RenderedImage intensity = worker.image;
         worker.binarize(true);
         assertNotSame(intensity, image = worker.image);
-        assertChecksumEquals(null, 564364433L);
+        assertCurrentChecksumEquals(null, 564364433L);
         worker.binarize(0.25);
         assertSame("Should be already binarized.", image, worker.image);
-        view("binarize()");
+        showCurrentImage("binarize()");
 
         final RenderedImage binarize = worker.image;
         worker.binarize(192, 64);
         assertNotSame(binarize, image = worker.image);
-        assertChecksumEquals("binarize(192,64)", 1507269011L);
-        view("binarize(192,64)");
+        assertCurrentChecksumEquals("binarize(192,64)", 1507269011L);
+        showCurrentImage("binarize(192,64)");
 
         worker.setImage(original);
         worker.mask(binarize, new double[] {255,128,64});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("mask(binarize,orange)", 3974692828L, 3148611825L);
-        view("mask(binarize,orange)");
+        assertCurrentChecksumEquals("mask(binarize,orange)", 3974692828L, 3148611825L);
+        showCurrentImage("mask(binarize,orange)");
 
         worker.setImage(original);
         worker.maskBackground(new double[][] {{0,0,0}}, new double[] {64,128,255});
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("maskBackground(black,blue)", 346825169L, 1447818957L);
-        view("maskBackground(black,blue)");
+        assertCurrentChecksumEquals("maskBackground(black,blue)", 346825169L, 1447818957L);
+        showCurrentImage("maskBackground(black,blue)");
 
         worker.setImage(original);
         worker.maskBackground(new double[][] {{0,0,0}}, null);
         assertNotSame(original, image = worker.image);
-        assertChecksumEquals("maskBackground(black,transparent)", 1508270032L);
-        view("maskBackground(black,transparent)");
+        assertCurrentChecksumEquals("maskBackground(black,transparent)", 1508270032L);
+        showCurrentImage("maskBackground(black,transparent)");
     }
 }

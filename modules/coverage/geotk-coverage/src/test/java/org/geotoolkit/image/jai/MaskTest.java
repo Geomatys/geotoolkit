@@ -72,8 +72,8 @@ public final class MaskTest extends SampleImageTestBase {
         final double[] blueColor = new double[] {64, 64, 255};
         parameters = new ParameterBlockJAI(Mask.OPERATION_NAME);
         image = JAI.create(Mask.OPERATION_NAME, parameters.addSource(image).addSource(mask).set(blueColor, 0));
-        assertChecksumEquals("testOnRGB", 2300860193L, 3418587197L);
-        view("testOnRGB");
+        assertCurrentChecksumEquals("testOnRGB", 2300860193L, 3418587197L);
+        showCurrentImage("testOnRGB");
     }
 
     /**
@@ -89,7 +89,7 @@ public final class MaskTest extends SampleImageTestBase {
         final double[] newValues = new double[] {0};
         parameters = new ParameterBlockJAI(Mask.OPERATION_NAME);
         image = JAI.create(Mask.OPERATION_NAME, parameters.addSource(image).addSource(mask).set(newValues, 0));
-        assertChecksumEquals("testOnIndexed", 3577749049L);
-        view("testOnIndexed");
+        assertCurrentChecksumEquals("testOnIndexed", 3577749049L);
+        showCurrentImage("testOnIndexed");
     }
 }

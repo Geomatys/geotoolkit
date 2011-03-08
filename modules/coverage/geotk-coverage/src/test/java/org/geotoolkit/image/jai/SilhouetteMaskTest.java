@@ -65,7 +65,7 @@ public final class SilhouetteMaskTest extends SampleImageTestBase {
         loadSampleImage(SampleImage.RGB_ROTATED);
         final ParameterBlockJAI parameters = new ParameterBlockJAI(SilhouetteMask.OPERATION_NAME);
         applyUnary(parameters, 2197236510L);
-        view("testOnRGB");
+        showCurrentImage("testOnRGB");
     }
 
     /**
@@ -77,6 +77,6 @@ public final class SilhouetteMaskTest extends SampleImageTestBase {
         final ParameterBlockJAI parameters = new ParameterBlockJAI(SilhouetteMask.OPERATION_NAME);
         parameters.setParameter("background", new double[][] {{255}});
         applyUnary(parameters, 3206331653L);
-        view("testOnIndexed");
+        showCurrentImage("testOnIndexed");
     }
 }

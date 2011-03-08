@@ -34,6 +34,7 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.referencing.WKT;
+import org.geotoolkit.test.referencing.ReferencingTestBase;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.display.shape.XRectangle2D;
@@ -62,7 +63,7 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * @since 3.00
  */
 @Depend(CoordinateReferenceSystemTest.class)
-public final class CRS_Test {
+public final class CRS_Test extends ReferencingTestBase {
     /**
      * Tests the {@link CRS#getSupportedAuthorities} method.
      */

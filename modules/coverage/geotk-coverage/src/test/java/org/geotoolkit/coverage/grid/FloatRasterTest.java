@@ -43,6 +43,13 @@ import org.junit.*;
  */
 public final class FloatRasterTest extends GridCoverageTestBase {
     /**
+     * Creates a new test suite.
+     */
+    public FloatRasterTest() {
+        super(GridCoverage2D.class);
+    }
+
+    /**
      * Tests the creation of a floating point {@link WritableRaster}.
      */
     @Test

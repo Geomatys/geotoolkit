@@ -35,10 +35,10 @@ import static org.junit.Assert.*;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
+import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.test.coverage.CoverageTestBase;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReader;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
@@ -57,11 +57,18 @@ import org.geotoolkit.image.SampleModels;
  * @since 3.09
  */
 @Depend({TextMatrixImageReaderTest.class, WorldFileImageReaderTest.class})
-public final class ImageCoverageReaderTest extends CoverageTestBase {
+public final class ImageCoverageReaderTest extends ImageTestBase {
     /**
      * Small number for comparison of floating point values.
      */
     private static final float EPS = 1E-9f;
+
+    /**
+     * Creates a new test suite.
+     */
+    public ImageCoverageReaderTest() {
+        super(ImageCoverageReader.class);
+    }
 
     /**
      * Registers a "matrix" reader forced to the US format.

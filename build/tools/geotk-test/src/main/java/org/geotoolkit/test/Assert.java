@@ -21,10 +21,16 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.awt.image.RenderedImage;
+import java.awt.geom.AffineTransform;
 import javax.swing.tree.TreeNode;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.media.jai.iterator.RectIter;
+import javax.media.jai.iterator.RectIterFactory;
 import org.xml.sax.SAXException;
+import org.opengis.coverage.Coverage;
 import org.geotoolkit.test.xml.DomComparator;
+
+import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
 
 
 /**
@@ -178,15 +184,74 @@ public class Assert extends org.opengis.test.Assert {
     }
 
     /**
+     * Compares two affine transforms for equality.
+     *
+     * @param expected The expected affine transform.
+     * @param actual   The actual affine transform.
+     */
+    public static void assertTransformEquals(final AffineTransform expected, final AffineTransform actual) {
+        assertEquals("scaleX",     expected.getScaleX(),     actual.getScaleX(),     SAMPLE_TOLERANCE);
+        assertEquals("scaleY",     expected.getScaleY(),     actual.getScaleY(),     SAMPLE_TOLERANCE);
+        assertEquals("shearX",     expected.getShearX(),     actual.getShearX(),     SAMPLE_TOLERANCE);
+        assertEquals("shearY",     expected.getShearY(),     actual.getShearY(),     SAMPLE_TOLERANCE);
+        assertEquals("translateX", expected.getTranslateX(), actual.getTranslateX(), SAMPLE_TOLERANCE);
+        assertEquals("translateY", expected.getTranslateY(), actual.getTranslateY(), SAMPLE_TOLERANCE);
+    }
+
+    /**
      * Asserts that two images have the same origin and the same size.
      *
      * @param expected The image having the expected size.
      * @param actual   The image to compare with the expected one.
      */
-    public static void assertSameImageBounds(final RenderedImage expected, final RenderedImage actual) {
+    public static void assertBoundEquals(final RenderedImage expected, final RenderedImage actual) {
         assertEquals("Min X",  expected.getMinX(),   actual.getMinX());
         assertEquals("Min Y",  expected.getMinY(),   actual.getMinY());
         assertEquals("Width",  expected.getWidth(),  actual.getWidth());
         assertEquals("Height", expected.getHeight(), actual.getHeight());
+    }
+
+    /**
+     * Compares two rasters for equality.
+     *
+     * @param expected The image containing the expected pixel values.
+     * @param actual   The image containing the actual pixel values.
+     */
+    public static void assertRasterEquals(final RenderedImage expected, final RenderedImage actual) {
+        final RectIter e = RectIterFactory.create(expected, null);
+        final RectIter a = RectIterFactory.create(actual,   null);
+        if (!e.finishedLines()) do {
+            assertFalse(a.finishedLines());
+            if (!e.finishedPixels()) do {
+                assertFalse(a.finishedPixels());
+                if (!e.finishedBands()) do {
+                    assertFalse(a.finishedBands());
+                    final float pe = e.getSampleFloat();
+                    final float pa = a.getSampleFloat();
+                    assertEquals(pe, pa, SAMPLE_TOLERANCE);
+                    a.nextBand();
+                } while (!e.nextBandDone());
+                assertTrue(a.finishedBands());
+                a.nextPixel();
+                a.startBands();
+                e.startBands();
+            } while (!e.nextPixelDone());
+            assertTrue(a.finishedPixels());
+            a.nextLine();
+            a.startPixels();
+            e.startPixels();
+        } while (!e.nextLineDone());
+        assertTrue(a.finishedLines());
+    }
+
+    /**
+     * Compares the rendered view of two coverages for equality.
+     *
+     * @param expected The coverage containing the expected pixel values.
+     * @param actual   The coverage containing the actual pixel values.
+     */
+    public static void assertRasterEquals(final Coverage expected, final Coverage actual) {
+        assertRasterEquals(expected.getRenderableImage(0,1).createDefaultRendering(),
+                             actual.getRenderableImage(0,1).createDefaultRendering());
     }
 }

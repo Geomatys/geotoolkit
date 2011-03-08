@@ -34,9 +34,9 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
-import org.geotoolkit.test.coverage.CoverageTestBase;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.test.image.ImageTestBase;
 
 import static javax.measure.unit.SI.*;
 import static org.junit.Assert.*;
@@ -51,7 +51,7 @@ import static org.junit.Assert.*;
  *
  * @since 2.1
  */
-public abstract class GridCoverageTestBase extends CoverageTestBase {
+public abstract class GridCoverageTestBase extends ImageTestBase {
     /**
      * Random number generator for this test.
      */
@@ -62,6 +62,15 @@ public abstract class GridCoverageTestBase extends CoverageTestBase {
      * {@link #loadSampleCoverage(SampleCoverage)} or {@link #createRandomCoverage()}.
      */
     protected GridCoverage2D coverage;
+
+    /**
+     * Creates a new test suite for the given class.
+     *
+     * @param testing The class to be tested.
+     */
+    protected GridCoverageTestBase(final Class<?> testing) {
+        super(testing);
+    }
 
     /**
      * Loads the given sample coverage. The result is stored in the {@link #coverage} field.
@@ -164,13 +173,13 @@ public abstract class GridCoverageTestBase extends CoverageTestBase {
                 double r = raster.getSampleDouble(i,j,bandN);
                 bufferCov =   coverage.evaluate(point, bufferCov);
                 bufferGeo = geophysics.evaluate(point, bufferGeo);
-                assertEquals(r, bufferCov[bandN], EPS);
+                assertEquals(r, bufferCov[bandN], SAMPLE_TOLERANCE);
 
                 // Compares transcoded samples.
                 if (r < BEGIN_VALID) {
                     assertTrue(Double.isNaN(bufferGeo[bandN]));
                 } else {
-                    assertEquals(OFFSET + SCALE*r, bufferGeo[bandN], EPS);
+                    assertEquals(OFFSET + SCALE*r, bufferGeo[bandN], SAMPLE_TOLERANCE);
                 }
             }
         }

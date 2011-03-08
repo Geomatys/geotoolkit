@@ -154,7 +154,7 @@ public final class MosaicReadWriteTest extends ImageTestBase {
             assertEquals(name, S, image.getHeight());
             assertEquals(3, image.getSampleModel().getNumBands());
             assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
-            assertChecksumEquals(name, TILE_CHECKSUMS[i++]);
+            assertCurrentChecksumEquals(name, TILE_CHECKSUMS[i++]);
         }
     }
 
@@ -190,7 +190,7 @@ public final class MosaicReadWriteTest extends ImageTestBase {
                 assertEquals(S, image.getHeight());
                 assertEquals(3, image.getSampleModel().getNumBands());
                 assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
-                assertChecksumEquals("Tile("+x+','+y+')', TILE_CHECKSUMS[i++]);
+                assertCurrentChecksumEquals("Tile("+x+','+y+')', TILE_CHECKSUMS[i++]);
             }
         }
         /*
@@ -281,7 +281,7 @@ public final class MosaicReadWriteTest extends ImageTestBase {
             in.close();
             assertEquals(3, image.getSampleModel().getNumBands());
             assertEquals(Transparency.OPAQUE, image.getColorModel().getTransparency());
-            assertChecksumEquals(filename, checksums[i++]);
+            assertCurrentChecksumEquals(filename, checksums[i++]);
         }
         reader.dispose();
     }
@@ -334,6 +334,6 @@ public final class MosaicReadWriteTest extends ImageTestBase {
         /*
          * Visual test (if enabled).
          */
-        view("testTransparency()");
+        showCurrentImage("testTransparency()");
     }
 }

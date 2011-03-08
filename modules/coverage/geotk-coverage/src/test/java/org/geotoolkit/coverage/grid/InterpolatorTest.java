@@ -26,7 +26,7 @@ import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.geometry.Envelope;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -38,6 +38,13 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 public final class InterpolatorTest extends GridCoverageTestBase {
+    /**
+     * Creates a new test suite.
+     */
+    public InterpolatorTest() {
+        super(Interpolator2D.class);
+    }
+
     /**
      * Tests bilinear intersection at pixel edges. It should be equals
      * to the average of the four pixels around.
@@ -74,7 +81,7 @@ public final class InterpolatorTest extends GridCoverageTestBase {
                 double r10 = data.getSampleDouble(i-1, j-0, band);
                 double r11 = data.getSampleDouble(i-1, j-1, band);
                 double r = (r00 + r01 + r10 + r11) / 4;
-                assertEquals(r, t, EPS);
+                assertEquals(r, t, SAMPLE_TOLERANCE);
             }
         }
     }

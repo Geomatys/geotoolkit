@@ -34,6 +34,8 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 import java.util.concurrent.CountDownLatch;
 
+import org.opengis.coverage.Coverage;
+
 import org.geotoolkit.test.Commons;
 import org.geotoolkit.test.TestBase;
 import org.geotoolkit.test.gui.SwingTestBase;
@@ -54,6 +56,13 @@ import static org.junit.Assert.*;
  * @since 3.16 (derived from 3.00)
  */
 public abstract class ImageTestBase extends TestBase {
+    /**
+     * Small value for comparison of sample values. Since most grid coverage implementations in
+     * Geotk 2 store geophysics values as {@code float} numbers, this {@code SAMPLE_TOLERANCE}
+     * value must be of the order of {@code float} relative precision, not {@code double}.
+     */
+    public static final float SAMPLE_TOLERANCE = 1E-5f;
+
     /**
      * {@code true} if {@link #setDefaultCodecPreferences()} has been invoked.
      */
@@ -113,7 +122,7 @@ public abstract class ImageTestBase extends TestBase {
      *
      * @return A copy of the current image.
      */
-    protected final synchronized BufferedImage copyImage() {
+    protected final synchronized BufferedImage copyCurrentImage() {
         assertNotNull("No image currently defined.", image);
         final ColorModel cm = image.getColorModel();
         return new BufferedImage(cm, image.copyData(null), cm.isAlphaPremultiplied(), null);
@@ -125,7 +134,7 @@ public abstract class ImageTestBase extends TestBase {
      * @param name The name of the image being tested, or {@code null} if none.
      * @param expected The expected checksum value.
      */
-    protected final synchronized void assertChecksumEquals(final String name, final long... expected) {
+    protected final synchronized void assertCurrentChecksumEquals(final String name, final long... expected) {
         final long c = Commons.checksum(image);
         for (final long e : expected) {
             if (e == c) return;
@@ -145,7 +154,7 @@ public abstract class ImageTestBase extends TestBase {
      *        This is used only for the frame title.
      */
     @SuppressWarnings("deprecation")
-    protected final synchronized void view(final String method) {
+    protected final synchronized void showCurrentImage(final String method) {
         assertNotNull("An image must be set.", image);
         final RenderedImage image = this.image;
         /*
@@ -205,6 +214,32 @@ public abstract class ImageTestBase extends TestBase {
             frame.setSize(image.getWidth() + 100, image.getHeight() + 150);
             frame.setLocationByPlatform(true);
             frame.setVisible(true);
+        }
+    }
+
+    /**
+     * Shows the default rendering of the specified coverage.
+     * This is used for debugging only.
+     *
+     * @param coverage The coverage to display.
+     */
+    protected final void show(final Coverage coverage) {
+        if (!viewEnabled) {
+            return;
+        }
+        final RenderedImage image = coverage.getRenderableImage(0,1).createDefaultRendering();
+        try {
+            Class.forName("org.geotoolkit.gui.swing.OperationTreeBrowser")
+                 .getMethod("show", new Class<?>[] {RenderedImage.class})
+                 .invoke(null, new Object[]{image});
+        } catch (RuntimeException e) {
+            throw e;
+        } catch (Exception e) {
+            /*
+             * The OperationTreeBrowser is not part of Geotk's core. It is optional and this
+             * class should not fails if it is not presents. This is only a helper for debugging.
+             */
+            System.err.println(e);
         }
     }
 

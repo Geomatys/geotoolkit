@@ -44,6 +44,13 @@ public final class OperationsTest extends GridProcessingTestBase {
     private Operations processor;
 
     /**
+     * Creates a new test suite.
+     */
+    public OperationsTest() {
+        super(Operations.class);
+    }
+
+    /**
      * Fetches the processor before each test.
      */
     @Before

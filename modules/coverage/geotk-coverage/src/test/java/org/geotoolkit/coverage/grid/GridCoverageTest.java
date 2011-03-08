@@ -18,11 +18,9 @@
 package org.geotoolkit.coverage.grid;
 
 import java.io.IOException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 
 
 /**
@@ -34,6 +32,13 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 public final class GridCoverageTest extends GridCoverageTestBase {
+    /**
+     * Creates a new test suite.
+     */
+    public GridCoverageTest() {
+        super(GridCoverage2D.class);
+    }
+
     /**
      * Tests a grid coverage filled with random values.
      */

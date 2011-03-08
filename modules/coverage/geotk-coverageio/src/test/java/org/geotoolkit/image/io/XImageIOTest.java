@@ -84,7 +84,7 @@ public final class XImageIOTest extends ImageTestBase {
         } finally {
             assertTrue(TemporaryFile.delete(tmp));
         }
-        view("testGetBySuffix()");
+        showCurrentImage("testGetBySuffix()");
     }
 
     /**

@@ -40,6 +40,13 @@ public final class ViewsManagerTest extends GridCoverageTestBase {
     private static final Random random = new Random(7667138224618831007L);
 
     /**
+     * Creates a new test suite.
+     */
+    public ViewsManagerTest() {
+        super(ViewsManager.class);
+    }
+
+    /**
      * Tests "Piecewise" operation using a simple transform.
      */
     @Test

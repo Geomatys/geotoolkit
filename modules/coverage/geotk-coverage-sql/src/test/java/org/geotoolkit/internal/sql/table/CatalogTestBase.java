@@ -18,13 +18,7 @@
 package org.geotoolkit.internal.sql.table;
 
 import java.io.File;
-import java.util.Date;
-import java.util.Locale;
-import java.util.TimeZone;
 import java.util.Properties;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.text.ParseException;
 import java.sql.SQLException;
 import javax.sql.DataSource;
 import java.lang.reflect.Constructor;
@@ -32,10 +26,8 @@ import java.lang.reflect.Constructor;
 import org.postgresql.ds.PGSimpleDataSource;
 
 import org.geotoolkit.test.TestData;
-import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.coverage.grid.ViewType;
-import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.test.image.ImageTestBase;
+import org.geotoolkit.internal.io.Installation;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -51,7 +43,7 @@ import static org.junit.Assume.*;
  * <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/coverage/geotk-coverage-sql/src/test/resources/Tests/README.html">About large test files</a>
  * <p>
  * This class inherits {@link ImageTestBase} for allowing the display of images
- * by the {@link #view(String)} method if the {@link #viewEnabled} field is set
+ * by the {@link #view(Coverage)} method if the {@link #viewEnabled} field is set
  * to {@code true}. Most subclasses does not need this feature. However since
  * coverages are the final purpose of {@code geotk-coverage-sql}, this functionality
  * is provided here.
@@ -61,7 +53,7 @@ import static org.junit.Assume.*;
  *
  * @since 3.09 (derived from Seagis)
  */
-public class CatalogTestBase extends ImageTestBase {
+public abstract class CatalogTestBase extends ImageTestBase {
     /**
      * The connection to the database.
      */
@@ -71,11 +63,6 @@ public class CatalogTestBase extends ImageTestBase {
      * The {@code "rootDirectory"} property, or {@code null} if undefined.
      */
     private static String rootDirectory;
-
-    /**
-     * Date parser, created when first needed.
-     */
-    private DateFormat dateFormat;
 
     /**
      * For subclass constructors only.
@@ -154,27 +141,6 @@ public class CatalogTestBase extends ImageTestBase {
     }
 
     /**
-     * Parses the date for the given string using the {@code "yyyy-MM-dd HH:mm"} pattern
-     * in UTC timezone.
-     *
-     * @param  date The date as a {@link String}.
-     * @return The date as a {@link Date}.
-     *
-     * @since 3.15
-     */
-    protected synchronized final Date date(final String date) {
-        if (dateFormat == null) {
-            dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm", Locale.CANADA);
-            dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
-        }
-        try {
-            return dateFormat.parse(date);
-        } catch (ParseException e) {
-            throw new AssertionError(e);
-        }
-    }
-
-    /**
      * Subclasses shall invoke this method if the remaining code in a method requires
      * the image files. Typically, this method is invoked right before the first call
      * to {@link org.geotoolkit.coverage.sql.GridCoverageEntry#read}.
@@ -200,20 +166,5 @@ public class CatalogTestBase extends ImageTestBase {
         final File file = new File(rootDirectory, path);
         assertTrue("Not a file: " + file, file.isFile());
         return file;
-    }
-
-    /**
-     * Shows the given coverage for a few seconds.
-     * This is used for debugging purpose only.
-     *
-     * @param coverage The coverage to show.
-     */
-    protected static void show(final GridCoverage2D coverage) {
-        try {
-            coverage.view(ViewType.RENDERED).show();
-            Thread.sleep(8000);
-        } catch (InterruptedException e) {
-            throw new AssertionError(e);
-        }
     }
 }

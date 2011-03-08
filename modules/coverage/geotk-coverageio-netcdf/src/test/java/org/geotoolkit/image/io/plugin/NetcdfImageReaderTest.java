@@ -231,7 +231,7 @@ public final class NetcdfImageReaderTest extends ImageReaderTestBase {
     {
         final BufferedImage image = reader.read(imageIndex, param);
         this.image = image;
-        view(method);
+        showCurrentImage(method);
         return image.getRaster();
     }
 

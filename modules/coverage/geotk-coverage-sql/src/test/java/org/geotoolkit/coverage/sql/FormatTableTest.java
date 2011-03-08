@@ -41,7 +41,7 @@ import static org.junit.Assert.*;
  * @since 3.09 (derived from Seagis)
  */
 @Depend(SampleDimensionTableTest.class)
-public class FormatTableTest extends CatalogTestBase {
+public final class FormatTableTest extends CatalogTestBase {
     /**
      * The name of the temperature format to be tested.
      */

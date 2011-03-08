@@ -266,14 +266,14 @@ public final class GridCoverageTableTest extends CatalogTestBase {
         table.envelope.clear();
         table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
 
-        table.envelope.setTimeRange(date("2007-05-22 00:08"), date("2007-05-22 00:22"));
+        table.envelope.setTimeRange(date("2007-05-22 00:08:00"), date("2007-05-22 00:22:00"));
         assertEquals("The time range should encompass only one entry.", 1, table.getEntries().size());
         GridCoverageEntry entry = table.getEntry();
         assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);
         assertEquals(0, entry.getIdentifier().zIndex);
         assertEquals(2, entry.getIdentifier().imageIndex);
 
-        table.envelope.setTimeRange(date("2007-05-22 00:24"), date("2007-05-22 00:36"));
+        table.envelope.setTimeRange(date("2007-05-22 00:24:00"), date("2007-05-22 00:36:00"));
         assertEquals("The time range should encompass only one entry.", 1, table.getEntries().size());
         entry = table.getEntry();
         assertEquals(Boolean.FALSE, table.getLayerEntry(true).isTiled);

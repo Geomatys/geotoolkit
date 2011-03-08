@@ -24,6 +24,7 @@ import java.awt.geom.Rectangle2D;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
+import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReadParam;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -50,11 +51,6 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
     public LayerCoverageReaderTest() {
         super(LayerCoverageReader.class);
     }
-
-    /**
-     * Whatever we should show the image in images (for debugging purpose only).
-     */
-    private static final boolean SHOW = false;
 
     /**
      * The coverage database.
@@ -155,7 +151,7 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
         assertEquals(256, coverage.getRenderedImage().getHeight());
         GridCoverageLoaderTest.checkTemperatureCoverage(coverage);
 
-        if (SHOW) show(coverage);
+        show(coverage.view(ViewType.RENDERED));
 
         // Read one more time, in order to ensure that recycling LayerCoverageReader work.
         // Before we fixed this test, we got an "Input not set" exception in such situation.
@@ -193,7 +189,7 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
         assertEquals(175, coverage.getRenderedImage().getHeight());
         GridCoverageLoaderTest.checkCoriolisCoverage(coverage);
 
-        if (SHOW) show(coverage);
+        show(coverage.view(ViewType.RENDERED));
     }
 
     /**
@@ -254,6 +250,6 @@ public final class LayerCoverageReaderTest extends CatalogTestBase {
         assertEquals(640, coverage.getRenderedImage().getHeight());
         GridCoverageLoaderTest.checkBluemarbleCoverage(coverage);
 
-        if (SHOW) show(coverage);
+        show(coverage.view(ViewType.RENDERED));
     }
 }

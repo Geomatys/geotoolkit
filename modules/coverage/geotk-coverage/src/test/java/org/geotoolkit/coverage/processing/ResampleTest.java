@@ -48,8 +48,8 @@ import org.geotoolkit.coverage.grid.SampleCoverage;
 import org.geotoolkit.coverage.grid.ViewType;
 
 import org.junit.*;
-import static org.junit.Assert.*;
-import static org.geotoolkit.test.Commons.decodeQuotes;
+import static org.geotoolkit.test.Assert.*;
+import static org.geotoolkit.test.Commons.*;
 
 
 /**
@@ -63,6 +63,13 @@ import static org.geotoolkit.test.Commons.decodeQuotes;
  * @since 2.1
  */
 public final class ResampleTest extends GridProcessingTestBase {
+    /**
+     * Creates a new test suite.
+     */
+    public ResampleTest() {
+        super(Operations.class);
+    }
+
     /**
      * Returns a projected CRS for test purpose.
      */

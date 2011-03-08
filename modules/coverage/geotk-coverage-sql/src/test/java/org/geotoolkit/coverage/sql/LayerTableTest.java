@@ -147,8 +147,7 @@ public final class LayerTableTest extends CatalogTestBase {
         assertEquals(END_TIME,   entry.getTimeRange().getMaxValue());
 
         image = entry.getColorRamp(0, entry.getSampleValueRanges().get(0), null);
-        assertNotNull(image);
-        view("testTemperature");
+        showCurrentImage("testTemperature");
 
         final Set<LayerEntry> entries = table.getEntries();
         assertFalse(entries.isEmpty());

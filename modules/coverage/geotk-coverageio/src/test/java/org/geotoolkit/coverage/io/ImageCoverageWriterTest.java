@@ -34,9 +34,9 @@ import org.geotoolkit.io.LineReaders;
 import org.geotoolkit.image.SampleModels;
 import org.geotoolkit.geometry.Envelope2D;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.test.coverage.CoverageTestBase;
 import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.test.PlatformDependentTest;
+import org.geotoolkit.test.image.ImageTestBase;
 import org.geotoolkit.internal.OS;
 
 import org.junit.*;
@@ -55,12 +55,19 @@ import static org.junit.Assume.*;
  * @since 3.14
  */
 @Depend(ImageCoverageReaderTest.class)
-public final class ImageCoverageWriterTest extends CoverageTestBase {
+public final class ImageCoverageWriterTest extends ImageTestBase {
     /**
      * Tolerance factor when comparing values from the {@code "matrix.txt"} file.
      * We set the tolerance to the first decimal digit after the significant digits.
      */
     private static final double EPS = 1E-4;
+
+    /**
+     * Creates a new test suite.
+     */
+    public ImageCoverageWriterTest() {
+        super(ImageCoverageWriter.class);
+    }
 
     /**
      * Registers a "matrix" reader forced to the US format.

@@ -17,9 +17,16 @@
  */
 package org.geotoolkit.test;
 
+import java.util.Date;
+import java.util.Locale;
+import java.util.TimeZone;
 import java.util.logging.Level;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 
 import org.junit.*;
+import static org.junit.Assert.*;
 
 
 /**
@@ -46,6 +53,11 @@ public abstract class TestBase {
     protected boolean verbose = false;
 
     /**
+     * Date parser, created when first needed.
+     */
+    private transient DateFormat dateFormat;
+
+    /**
      * Creates a new test case.
      */
     protected TestBase() {
@@ -66,5 +78,50 @@ public abstract class TestBase {
         } catch (Exception e) {
             System.err.println(e);
         }
+    }
+
+    /**
+     * Returns the date format.
+     */
+    private DateFormat getDateFormat() {
+        DateFormat df = dateFormat;
+        if (df == null) {
+            dateFormat = df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.CANADA);
+            df.setTimeZone(TimeZone.getTimeZone("UTC"));
+            df.setLenient(false);
+        }
+        return df;
+    }
+
+    /**
+     * Parses the date for the given string using the {@code "yyyy-MM-dd HH:mm:ss"} pattern
+     * in UTC timezone.
+     *
+     * @param  date The date as a {@link String}.
+     * @return The date as a {@link Date}.
+     *
+     * @since 3.15
+     */
+    protected final synchronized Date date(final String date) {
+        assertNotNull("A date must be specified", date);
+        final DateFormat dateFormat = getDateFormat();
+        try {
+            return dateFormat.parse(date);
+        } catch (ParseException e) {
+            throw new AssertionError(e);
+        }
+    }
+
+    /**
+     * Formats the given date using the {@code "yyyy-MM-dd HH:mm:ss"} pattern in UTC timezone.
+     *
+     * @param  date The date to format.
+     * @return The date as a {@link String}.
+     *
+     * @since 3.17
+     */
+    protected final synchronized String format(final Date date) {
+        assertNotNull("A date must be specified", date);
+        return getDateFormat().format(date);
     }
 }

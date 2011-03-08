@@ -53,11 +53,6 @@ import static org.junit.Assert.*;
 @Depend(GridCoverageTableTest.class)
 public final class GridCoverageLoaderTest extends CatalogTestBase {
     /**
-     * Whatever we should show the image in images (for debugging purpose only).
-     */
-    private static final boolean SHOW = false;
-
-    /**
      * Creates a new test suite.
      */
     public GridCoverageLoaderTest() {
@@ -89,7 +84,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertEquals(2048, image.getHeight());
         table.release();
 
-        if (SHOW) show(coverage);
+        show(coverage.view(ViewType.RENDERED));
     }
 
     /**
@@ -167,7 +162,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertEquals(499, image.getHeight());
         table.release();
 
-        if (SHOW) show(coverage);
+        show(coverage.view(ViewType.RENDERED));
     }
 
     /**
@@ -247,7 +242,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         assertEquals(107, image.getHeight());
         table.release();
 
-        if (SHOW) show(coverage);
+        show(coverage.view(ViewType.RENDERED));
     }
 
     /**
@@ -276,7 +271,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
     public void testMars2D() throws SQLException, IOException, CoverageStoreException {
         final GridCoverageTable table = getDatabase().getTable(GridCoverageTable.class);
         table.envelope.clear();
-        table.envelope.setTimeRange(date("2007-05-22 00:24"), date("2007-05-22 00:36"));
+        table.envelope.setTimeRange(date("2007-05-22 00:24:00"), date("2007-05-22 00:36:00"));
         table.setLayer(LayerTableTest.GEOSTROPHIC_CURRENT);
         final GridCoverageReference entry = table.getEntry();
 
@@ -285,7 +280,7 @@ public final class GridCoverageLoaderTest extends CatalogTestBase {
         checkMars2DCoverage(coverage);
         table.release();
 
-        if (SHOW) show(coverage);
+        show(coverage.view(ViewType.RENDERED));
     }
 
     /**

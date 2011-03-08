@@ -17,7 +17,7 @@
  */
 
 /**
- * Tools for Geotk test suites on images.
+ * Tools for Geotk test suites on images and grid coverages.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.16

@@ -38,7 +38,7 @@ import static org.junit.Assert.*;
  * @since 3.09 (derived from Seagis)
  */
 @Depend(CategoryTableTest.class)
-public class SampleDimensionTableTest extends CatalogTestBase {
+public final class SampleDimensionTableTest extends CatalogTestBase {
     /**
      * Creates a new test suite.
      */

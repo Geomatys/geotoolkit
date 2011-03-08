@@ -83,7 +83,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
         final BufferedImage image = reader.read(0);
         reader.dispose();
         this.image = image;
-        view("testCanRead");
+        showCurrentImage("testCanRead");
 
         assertEquals(20, image.getWidth());
         assertEquals(42, image.getHeight());
@@ -105,7 +105,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
         reader.dispose();
 
         this.image = image;
-        view("testReadFile");
+        showCurrentImage("testReadFile");
 
         assertEquals(20, image.getWidth());
         assertEquals(42, image.getHeight());
@@ -140,7 +140,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
         reader.dispose();
 
         this.image = image;
-        view("testSubRegion");
+        showCurrentImage("testSubRegion");
 
         assertEquals(5, image.getWidth());
         assertEquals(6, image.getHeight());
@@ -180,7 +180,7 @@ public abstract class TextImageReaderTestBase extends ImageReaderTestBase {
         reader.dispose();
 
         this.image = image;
-        view("testByteType");
+        showCurrentImage("testByteType");
 
         assertEquals(IndexColorModel.class, image.getColorModel().getClass());
         assertEquals(DataBuffer.TYPE_BYTE,  image   .getSampleModel().getDataType());

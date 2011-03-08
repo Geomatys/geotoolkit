@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.crs.DefaultDerivedCRS;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
 import static org.junit.Assert.*;
+import static org.geotoolkit.test.Commons.*;
 
 
 /**
@@ -48,6 +49,15 @@ import static org.junit.Assert.*;
  * @since 2.1
  */
 public abstract class GridProcessingTestBase extends GridCoverageTestBase {
+    /**
+     * Creates a new test suite for the given class.
+     *
+     * @param testing The class to be tested.
+     */
+    protected GridProcessingTestBase(final Class<?> testing) {
+        super(testing);
+    }
+
     /**
      * Rotates the {@linkplain #coverage current coverage} by the given angle. This
      * method replaces the coverage CRS by a derived one containing the rotated axes.
@@ -153,7 +163,7 @@ public abstract class GridProcessingTestBase extends GridCoverageTestBase {
      * @param asCRS
      *          The expected operation name if the resampling is performed as a CRS change.
      * @param asGG
-     *          The expected operation name if the resampling is perofrmed as a Grid Geometry change.
+     *          The expected operation name if the resampling is performed as a Grid Geometry change.
      */
     protected final void showTranslated(final Hints    hints,
                                         final boolean  useGeophysics,

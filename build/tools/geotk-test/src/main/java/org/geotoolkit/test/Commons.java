@@ -25,6 +25,12 @@ import java.awt.image.Raster;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.DataBufferByte;
+import java.awt.geom.AffineTransform;
+
+import org.opengis.coverage.Coverage;
+import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.coverage.grid.GridGeometry;
+import org.opengis.referencing.operation.MathTransform;
 
 import static org.junit.Assert.*;
 
@@ -33,7 +39,7 @@ import static org.junit.Assert.*;
  * Provides shared methods and constants for Geotk tests.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.00
  */
@@ -55,6 +61,28 @@ public class Commons {
      * For subclass constructor only.
      */
     protected Commons() {
+    }
+
+    /**
+     * Returns the "Sample to geophysics" transform as an affine transform, or {@code null}
+     * if none. Note that the returned instance may be an immutable one, not necessarily the
+     * default Java2D implementation.
+     *
+     * @param  coverage The coverage for which to get the "grid to CRS" affine transform.
+     * @return The "grid to CRS" affine transform of the given coverage, or {@code null}
+     *         if none or if the transform is not affine.
+     */
+    public static AffineTransform getAffineTransform(final Coverage coverage) {
+        if (coverage instanceof GridCoverage) {
+            final GridGeometry geometry = ((GridCoverage) coverage).getGridGeometry();
+            if (geometry != null) {
+                final MathTransform gridToCRS = geometry.getGridToCRS();
+                if (gridToCRS instanceof AffineTransform) {
+                    return (AffineTransform) gridToCRS;
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -210,16 +238,5 @@ public class Commons {
             out.print(')');
         }
         out.println(';');
-    }
-
-    /**
-     * Returns {@code true} if the given value is neither {@linkplain Double#NaN NaN}
-     * or infinity.
-     *
-     * @param  value The value to test.
-     * @return {@code true} if the given value is neither NaN of infinity.
-     */
-    public static boolean isReal(final double value) {
-        return !Double.isNaN(value) && !Double.isInfinite(value);
     }
 }
