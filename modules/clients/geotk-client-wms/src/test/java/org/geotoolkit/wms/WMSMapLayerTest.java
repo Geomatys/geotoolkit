@@ -128,7 +128,136 @@ public class WMSMapLayerTest {
         assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG:4326"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-90.0,-180.0,90.0,180.0"));
     }
+    
+    /**
+     * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
+     * with the parameters given.
+     * This test is to make sure pick coordinates are correct when local reprojection is not used.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
+    @Test
+    public void test_v111_GetFeatureInfo_EPSG4326() throws NoSuchAuthorityCodeException,
+            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
 
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
+
+        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
+            @Override
+            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
+                return true;
+            }
+        };
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        env.setRange(0, -90, 90);
+        env.setRange(1, -180, 180);
+        final Dimension rect = new Dimension(360, 180);
+
+        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+
+        final String sUrl = url.toString();
+        assertTrue(sUrl.startsWith("http://test.com?"));
+        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
+        assertTrue(sUrl.contains("SRS=EPSG:4326"));
+        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("WIDTH=360"));
+        assertTrue(sUrl.contains("HEIGHT=180"));
+        assertTrue(sUrl.contains("LAYERS=test"));
+        assertTrue(sUrl.contains("STYLES="));
+        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(sUrl.contains("X=140"));
+        assertTrue(sUrl.contains("Y=250"));
+    }
+    
+    /**
+     * Ensures the {@link GetFeatureInfo130#getURL()} method returns a well-built url,
+     * with the parameters given.
+     * This test is to make sure pick coordinates are correct when local reprojection is not used.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
+    @Test
+    public void test_v130_GetFeatureInfo_EPSG4326() throws NoSuchAuthorityCodeException,
+            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
+
+        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
+            @Override
+            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
+                return true;
+            }
+        };
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:4326"));
+        env.setRange(0, -90, 90);
+        env.setRange(1, -180, 180);
+        final Dimension rect = new Dimension(360, 180);
+
+        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+
+        final String sUrl = url.toString();
+        assertTrue(sUrl.startsWith("http://test.com?"));
+        assertTrue(sUrl.contains("BBOX=-90.0,-180.0,90.0,180.0"));
+        assertTrue(sUrl.contains("CRS=EPSG:4326"));
+        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("WIDTH=360"));
+        assertTrue(sUrl.contains("HEIGHT=180"));
+        assertTrue(sUrl.contains("LAYERS=test"));
+        assertTrue(sUrl.contains("STYLES="));
+        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(sUrl.contains("I=140"));
+        assertTrue(sUrl.contains("J=250"));
+    }
+    
+    /**
+     * Ensures the {@link GetFeatureInfo130#getURL()} method returns a well-built url,
+     * with the parameters given.
+     * This test is to make sure pick coordinates are correct when local reprojection is not used.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
+    @Test
+    public void test_v130_GetFeatureInfo_CRS84() throws NoSuchAuthorityCodeException,
+            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
+
+        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
+            @Override
+            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
+                return true;
+            }
+        };
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("CRS:84"));
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);
+        final Dimension rect = new Dimension(360, 180);
+
+        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+
+        final String sUrl = url.toString();
+        assertTrue(sUrl.startsWith("http://test.com?"));
+        assertTrue(sUrl.contains("BBOX=-180.0,-90.0,180.0,90.0"));
+        assertTrue(sUrl.contains("CRS=CRS:84"));
+        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("WIDTH=360"));
+        assertTrue(sUrl.contains("HEIGHT=180"));
+        assertTrue(sUrl.contains("LAYERS=test"));
+        assertTrue(sUrl.contains("STYLES="));
+        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(sUrl.contains("I=140"));
+        assertTrue(sUrl.contains("J=250"));
+    }
+    
     /**
      * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
      * with the parameters given.
@@ -160,7 +289,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 0, 0, new String[]{"test"}, "gml", 1);
+        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -173,8 +302,8 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("STYLES="));
         assertTrue(sUrl.contains("INFO_FORMAT=gml"));
         assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("X=0"));
-        assertTrue(sUrl.contains("Y=0"));
+        assertTrue(sUrl.contains("X=140"));
+        assertTrue(sUrl.contains("Y=250"));
     }
 
     /**
@@ -208,7 +337,7 @@ public class WMSMapLayerTest {
         env.setRange(1, -90, 90);
         final Dimension rect = new Dimension(360, 180);
 
-        final URL url = layer.queryFeatureInfo(env, rect, 0, 0, new String[]{"test"}, "gml", 1);
+        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
 
         final String sUrl = url.toString();
         assertTrue(sUrl.startsWith("http://test.com?"));
@@ -221,8 +350,8 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("STYLES="));
         assertTrue(sUrl.contains("INFO_FORMAT=gml"));
         assertTrue(sUrl.contains("QUERY_LAYERS=test"));
-        assertTrue(sUrl.contains("I=0"));
-        assertTrue(sUrl.contains("J=0"));
+        assertTrue(sUrl.contains("I=140"));
+        assertTrue(sUrl.contains("J=250"));
     }
 
 }
