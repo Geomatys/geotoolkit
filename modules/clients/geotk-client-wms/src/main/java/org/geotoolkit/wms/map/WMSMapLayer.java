@@ -309,7 +309,7 @@ public class WMSMapLayer extends AbstractMapLayer {
     void prepareQuery(final GetMapRequest request, final GeneralEnvelope env, final Dimension dim, final Point2D pickCoord) throws TransformException, FactoryException{
 
         //envelope before any modification
-        final Envelope beforeEnv = new GeneralEnvelope(env);
+        GeneralEnvelope beforeEnv = new GeneralEnvelope(env);
 
         final CoordinateReferenceSystem crs = env.getCoordinateReferenceSystem();
         CoordinateReferenceSystem crs2D = CRSUtilities.getCRS2D(crs);
@@ -370,6 +370,8 @@ public class WMSMapLayer extends AbstractMapLayer {
 
         //Recalculate pick coordinate according to reverse transformation
         if(pickCoord != null){
+            beforeEnv = (GeneralEnvelope) GO2Utilities.setLongitudeFirst(beforeEnv);
+
             //calculate new coordinate in the reprojected query
             final AffineTransform beforeTrs = GO2Utilities.toAffine(dim,beforeEnv);
             final AffineTransform afterTrs = GO2Utilities.toAffine(dim,env);
