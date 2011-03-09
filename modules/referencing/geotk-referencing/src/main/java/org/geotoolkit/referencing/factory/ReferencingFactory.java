@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
  * <ul>
  *   <li><p>{@linkplain AuthorityFactory Authority factories} creates objects from a compact
  *       string defined by an authority. These classes are working as "builders": they hold
- *       the definition or recipies used to construct an objet.</p></li>
+ *       the definition or recipes used to construct an object.</p></li>
  *
  *   <li><p>{@linkplain Factory Object factories} allows applications to make objects that
  *       cannot be created by an authority factory. This factory is very flexible, whereas
@@ -61,13 +61,13 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 @ThreadSafe
 public class ReferencingFactory extends org.geotoolkit.factory.Factory implements Factory {
     /**
-     * The logger for event related to Geotk's factories.
+     * The logger for event related to Geotk factories.
      */
     public static final Logger LOGGER = Logging.getLogger(ReferencingFactory.class);
 
     /**
      * A citation which contains only the title "All" in localized language. Used
-     * as a pseudoèauthority name for {@link AllAuthoritiesFactory}. Declared here
+     * as a pseudo-authority name for {@link AllAuthoritiesFactory}. Declared here
      * because processed specially by {@link IdentifiedObjectFinder}, since it is
      * not a valid authority name (not declared in {@link AllAuthoritiesFactory}
      * because we want to avoid this dependency in {@link IdentifiedObjectFinder}).

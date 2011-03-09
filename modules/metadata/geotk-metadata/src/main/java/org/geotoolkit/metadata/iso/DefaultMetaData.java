@@ -50,7 +50,8 @@ import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.jaxb.MarshalContext;
-import org.geotoolkit.internal.jaxb.code.LanguageAdapter;
+import org.geotoolkit.internal.jaxb.gmd.LanguageCode;
+import org.geotoolkit.internal.jaxb.gmd.PT_Locale;
 import org.geotoolkit.xml.Namespaces;
 
 
@@ -86,6 +87,7 @@ import org.geotoolkit.xml.Namespaces;
     "metadataStandardName",
     "metadataStandardVersion",
     "dataSetUri",
+    "locales",
     "spatialRepresentationInfo",
     "referenceSystemInfo",
     "metadataExtensionInfo",
@@ -290,7 +292,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      */
     @Override
     @XmlElement(name = "language")
-    @XmlJavaTypeAdapter(LanguageAdapter.class)
+    @XmlJavaTypeAdapter(LanguageCode.class)
     public synchronized Locale getLanguage() {
         return language;
     }
@@ -679,7 +681,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     /**
      * Sets information about the frequency of metadata updates, and the scope of those updates.
      *
-     * @param newValue The new metadata maintainance.
+     * @param newValue The new metadata maintenance.
      */
     public synchronized void setMetadataMaintenance(final MaintenanceInformation newValue) {
         checkWritePermission();
@@ -693,6 +695,8 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      * @since 2.4
      */
     @Override
+    @XmlElement(name = "locale")
+    @XmlJavaTypeAdapter(PT_Locale.class)
     public synchronized Collection<Locale> getLocales() {
         return locales = nonNullCollection(locales, Locale.class);
     }

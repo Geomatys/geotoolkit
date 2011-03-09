@@ -124,24 +124,24 @@ public final class CodeListProxy {
     /**
      * Builds a {@link CodeList} as defined in ISO-19139 standard.
      *
-     * @param codeList The {@code codeList} attribute, <strong>including</strong> the URL path.
-     * @param codeListValue The {@code codeListValue} attribute.
-     * @param value The value to provide, in English language (because this
-     *        constructor does not set the {@link #codeSpace} attribute).
+     * @param catalog The file which defines the code list (for example {@code "ML_gmxCodelists.xml"}), without its path.
+     * @param codeList The {@code codeList} attribute, to be concatenated after the catalog name and the {@code "#"} symbol.
+     * @param codeListValue The {@code codeListValue} attribute, to be declared in the attribute.
+     * @param value The value in English language (because this constructor does not set the {@link #codeSpace} attribute).
      */
-    CodeListProxy(final String file, final String codeList, final String codeListValue, final String value) {
-        this.codeList      = schemaURL(file, codeList);
+    public CodeListProxy(final String catalog, final String codeList, final String codeListValue, final String value) {
+        this.codeList      = schemaURL(catalog, codeList);
         this.codeListValue = codeListValue;
         this.value         = value;
     }
 
     /**
-     * Builds a proxy instance of {@link CodeList}. It stores the values that will be
-     * used for marshalling.
+     * Builds a proxy instance of {@link CodeList}. This constructors stores
+     * the values that will be used for marshalling.
      *
      * @param code The code list to wrap.
      */
-    CodeListProxy(final CodeList<?> code) {
+    public CodeListProxy(final CodeList<?> code) {
         // Get the class identifier.
         final Class<?> type = code.getClass();
         final UML uml = type.getAnnotation(UML.class);
@@ -172,7 +172,17 @@ public final class CodeListProxy {
             if (value != null) {
                 codeSpace = Locales.getLanguage(locale);
             } else {
-                value = StringUtilities.makeSentence(fieldID);
+                // Fallback when the no value is defined for the code list. Build a value from the
+                // most descriptive name (excluding the field name), which is usually the UML name
+                // except for CharacterSet in which case it is a string like "UTF-8".
+                String id = fieldID;
+                final String fieldName = code.name();
+                for (final String candidate : code.names()) {
+                    if (!candidate.equals(fieldName) && candidate.length() >= id.length()) {
+                        id = candidate;
+                    }
+                }
+                value = StringUtilities.makeSentence(id);
             }
         }
         codeListValue = fieldID;

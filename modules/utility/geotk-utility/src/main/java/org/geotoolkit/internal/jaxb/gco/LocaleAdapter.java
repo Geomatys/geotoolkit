@@ -33,11 +33,14 @@ import org.geotoolkit.resources.Locales;
  *   </gmd:language>
  * }
  *
- * For an alternative format, see {@link org.geotoolkit.internal.jaxb.code.LanguageAdapter}.
+ * For an alternative format, see {@link org.geotoolkit.internal.jaxb.gmd.LanguageAdapter}.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.17
+ *
+ * @see org.geotoolkit.internal.jaxb.gmd.LanguageCode
+ * @see org.geotoolkit.internal.jaxb.gmd.PT_Locale
  *
  * @since 2.5
  * @module

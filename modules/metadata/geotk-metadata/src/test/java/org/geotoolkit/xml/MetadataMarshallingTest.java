@@ -102,9 +102,13 @@ public final class MetadataMarshallingTest extends LocaleDependantTestBase {
          *   Date Stamp: 16 décembre 2009 12:00:29 CET
          *   Character Set: utf 8
          *   Language: fr
+         *   Locales:
+         *     fr_CA
+         *     en_GB
          *   Metadata Standard Version: ISO-19115
          */
         final DefaultMetadata metadata = new DefaultMetadata();
+        metadata.setLocales(Arrays.asList(Locale.CANADA_FRENCH, Locale.UK));
         metadata.setLanguage(Locale.FRENCH);
         metadata.setCharacterSet(CharacterSet.UTF_8);
         metadata.setDateStamp(new Date(1260961229580L));

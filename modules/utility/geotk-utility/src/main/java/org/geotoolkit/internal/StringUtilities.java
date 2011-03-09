@@ -124,12 +124,20 @@ public final class StringUtilities {
      *   <li>Finally this method makes the first character an upper-case one.</li>
      * </ol>
      *
+     * As an exception of the above, if the given identifier contains only upper-case letters,
+     * digits and the {@code '_'} character, then the identifier is returned "as is" except for
+     * the {@code '_'} which are replaced by {@code '-'}. This work well for identifier like
+     * {@code "UTF-8"} or {@code "ISO-LATIN-1"} for example.
+     *
      * @param  identifier An identifier with no space, words begin with an upper-case character.
      * @return The identifier with spaces inserted after what looks like words.
      *
      * @since 3.09
      */
     public static String makeSentence(final CharSequence identifier) {
+        if (isCode(identifier)) {
+            return identifier.toString().replace('_', '-');
+        }
         final StringBuilder buffer = Strings.camelCaseToWords(identifier, true);
         final int length = buffer.length();
         for (int i=0; i<length; i++) {
@@ -141,6 +149,25 @@ public final class StringUtilities {
             buffer.setCharAt(0, Character.toUpperCase(buffer.charAt(0)));
         }
         return buffer.toString().trim();
+    }
+
+    /**
+     * Returns {@code true} if the given string contains only upper case letters or digits.
+     * A few punctuation characters like {@code '_'} and {@code '.'} are also accepted.
+     * <p>
+     * This method is used for identifying character strings that are likely to be code
+     * like {@code "UTF-8"} or {@code "ISO-LATIN-1"}.
+     *
+     * @since 3.17
+     */
+    private static boolean isCode(final CharSequence identifier) {
+        for (int i=identifier.length(); --i>=0;) {
+            final char c = identifier.charAt(i);
+            if (!((c >= 'A' && c <= 'Z') || (c >= '-' && c <= ':') || c == '_')) {
+                return false;
+            }
+        }
+        return true;
     }
 
     /**

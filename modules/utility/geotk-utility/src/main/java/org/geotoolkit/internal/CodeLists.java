@@ -29,7 +29,7 @@ import org.geotoolkit.lang.Static;
  * Utility methods working on {@link CodeList}. This class defines a Geotk
  * {@code CodeLists.valueOf(Class,String)} method which should be used instead
  * than the GeoAPI {@code CodeList.valueOf(Class,String)} in every cases. The
- * main difference is that the Geotk method ignore case and whitespaces,
+ * main difference is that the Geotk method ignores case and whitespaces,
  * and treats the {@code '_'} character like whitespace.
  *
  * @author Martin Desruisseaux (Geomatys)
