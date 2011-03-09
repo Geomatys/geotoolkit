@@ -16,6 +16,12 @@
  */
 package org.geotoolkit.metadata.dimap;
 
+import org.opengis.metadata.acquisition.Instrument;
+import org.opengis.metadata.distribution.Format;
+import org.opengis.metadata.lineage.Processing;
+import java.text.ParseException;
+import org.opengis.metadata.citation.Contact;
+import org.opengis.metadata.citation.Citation;
 import java.util.Collection;
 import org.geotoolkit.gui.swing.tree.Trees;
 import java.awt.geom.AffineTransform;
@@ -24,7 +30,9 @@ import javax.swing.tree.TreeModel;
 import javax.xml.parsers.ParserConfigurationException;
 
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.DomUtilities;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -39,9 +47,22 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.acquisition.Operation;
+import org.opengis.metadata.citation.Address;
+import org.opengis.metadata.citation.OnlineResource;
+import org.opengis.metadata.citation.PresentationForm;
+import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.constraint.Constraints;
 import org.opengis.metadata.constraint.LegalConstraints;
 import org.opengis.metadata.constraint.Restriction;
+import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.lineage.Algorithm;
+import org.opengis.metadata.lineage.Lineage;
+import org.opengis.metadata.lineage.ProcessStep;
+import org.opengis.metadata.quality.DataQuality;
 import org.xml.sax.SAXException;
 
 import static org.junit.Assert.*;
@@ -124,7 +145,7 @@ public class DimapAccessorTest {
     }
 
     @Test
-    public void testDimapToISO(){
+    public void testDimapToISO() throws ParseException{
 
         DefaultMetadata metadata = new DefaultMetadata();
 
@@ -150,6 +171,7 @@ public class DimapAccessorTest {
 
 
         //<xsd:element minOccurs="0" ref="Dataset_Frame"/> ---------------------
+        //filled and tested by geotiff module
         //FRAME_LON                         → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
         //FRAME_LAT                         → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
         //FRAME_ROW                         → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.cornerPoints )
@@ -162,7 +184,6 @@ public class DimapAccessorTest {
         //FRAME_COL (Scene Center)          → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
         //SCENE_ORIENTATION (Scene Center)  → ( MD_Metadata > MD_SpatialRepresentation > MD_GridSpatialReprensentation > MD_Georectified.centerPoints )
         
-
         //<xsd:element minOccurs="0" ref="Dataset_Use"/> -----------------------
 
 
@@ -170,12 +191,57 @@ public class DimapAccessorTest {
         //PRODUCT_TYPE            → Type of product ( MD_Metada > identificationInfo > MD_DataIdentification.citation > CI_Citation.presentationForm > CI_PresentationFormCode )
         //PRODUCT_INFO            → Product title (MD_Metadata > identificationInfo > MD_DataIdentification.citation > CI_Citation.title)
         //DATASET_PRODUCER_NAME   → Producer Name (MD_Metadata > identificationInfo >MD_DataIdentification.citation > CI_Citation > CI_ResponsibleParty.organisationName )
-        //DATASET_PRODUCER_URL    → URL Producer (MD_Metada > identificationInfo > /MD_DataIdentification.citation >CI_Citation > CI_ResponsibleParty CI_Contact > CI_Address.electronicMailAddress
+        //DATASET_PRODUCER_URL    → URL Producer (MD_Metada > identificationInfo > MD_DataIdentification.citation >CI_Citation > CI_ResponsibleParty CI_Contact > CI_Address.electronicMailAddress
         //DATASET_PRODUCTION_DATE → Date de production (MD_Metadata > identificationInfo > MD_DataIdentification.citation > CI_Citation > CI_Date.date
         //SOFTWARE_NAME           → Software name (DQ_DataQuality > LI_Lineage > LI_ProcessStepL.E_ProcessStep > LE_Processing > CI_Citation.title)
         //SOFTWARE_VERSION        → Software version (DQ_DataQuqlity > LI_Lineage > LI_ProcessStepL.E_ProcessStep > LE_Processing > CI_Citation.edition)
         //PROCESSING_CENTER       → Processing center (DQ_DataQuqlity > LI_Lineage > LI_ProcessStepL.E_ProcessStep > LE_Processing > CI_Citation.citedResponsibleParty > CI_ResponsibleParty.OrganisationName)
 
+        final Collection<Identification> identifications = metadata.getIdentificationInfo();
+        assertNotNull(identifications);
+        assertFalse(identifications.isEmpty());
+
+        final Identification identification = identifications.iterator().next();
+        final Citation citation = identification.getCitation();
+        assertNotNull(citation);
+        final Collection<PresentationForm> forms = citation.getPresentationForms();
+        assertFalse(forms.isEmpty());
+        final PresentationForm form = forms.iterator().next();
+        assertEquals("SCSI1R20N", form.name());
+        assertEquals("Spot SYSTEM SCENE level 2A", citation.getTitle().toString());
+
+        final Collection<? extends ResponsibleParty> parties = citation.getCitedResponsibleParties();
+        assertNotNull(parties);
+        assertFalse(parties.isEmpty());
+        final ResponsibleParty party = parties.iterator().next();
+        assertEquals("SPOT_IMAGE",party.getOrganisationName().toString());
+
+        final Contact contact = party.getContactInfo();
+        assertNotNull(contact);
+        assertEquals("http://www.spotimage.fr",contact.getOnlineResource().getLinkage().toString());
+        assertEquals(TemporalUtilities.parseDate("2008-12-12T13:33:28.158000"),citation.getDates().iterator().next().getDate());
+
+        final Collection<DataQuality> qualities = metadata.getDataQualityInfo();
+        assertNotNull(qualities);
+        assertFalse(qualities.isEmpty());
+        final DataQuality quality = qualities.iterator().next();
+        final Lineage lineage = quality.getLineage();
+        final Collection<? extends ProcessStep> steps = lineage.getProcessSteps();
+        final ProcessStep step = steps.iterator().next();
+        final Processing processing = step.getProcessingInformation();
+        assertNotNull(processing);
+        final Collection<? extends Citation> softRefs = processing.getSoftwareReferences();
+        assertNotNull(softRefs);
+        assertFalse(softRefs.isEmpty());
+        final Citation software = softRefs.iterator().next();
+        assertEquals("CAP_T", software.getTitle().toString());
+        assertEquals("SPOT5_V07_03", software.getEdition().toString());
+
+        final Collection<? extends ResponsibleParty> citeds = software.getCitedResponsibleParties();
+        assertNotNull(citeds);
+        assertFalse(citeds.isEmpty());
+        final ResponsibleParty cited = citeds.iterator().next();
+        assertEquals("SLS_TOULOUSE", cited.getOrganisationName().toString());
 
         //<xsd:element minOccurs="0" ref="Dataset_Components"/> ----------------
 
@@ -184,12 +250,12 @@ public class DimapAccessorTest {
 
 
         //<xsd:element minOccurs="0" ref="Coordinate_Reference_System"/> -------
+        //filled and tested by geotiff module
         //GEO_TABLES            → ( MD_METADATA > MD_ReferenceSystem.referenceSystemIdentifier >  RS_identifier.codeSpace and version )
         //HORIZONTAL_CS_CODE    → Reference Projection Système code (MD_Metadata > referenceSystemInfo > MD_ReferenceSystem.referenceSystemIdentifier > RS_Identifier.codeSpace)
         //HORIZONTAL_CS_TYPE    → ?
         //HORIZONTAL_CS_NAME    → Reference Projection Système name (MD_Metadata > referenceSystemInfo > MD_ReferenceSystem.referenceSystemIdentifier > RS_ReferenceSystem.name)
         
-
 
         //<xsd:element minOccurs="0" ref="Raster_CS"/> -------------------------
         //MAPPING
@@ -198,14 +264,15 @@ public class DimapAccessorTest {
 
 
         //<xsd:element minOccurs="0" ref="Geoposition"/> -----------------------
+        //filled and tested by geotiff module
         //ULXMAP    → ?
         //ULYMAP    → ?
         //XDIM      → X Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
         //YDIM      → Y Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
         
-
         //<xsd:element minOccurs="0" ref="Map_Declination"/> -------------------
         //<xsd:element minOccurs="0" ref="Raster_Dimensions"/> -----------------
+        //filled and tested by geotiff module
         //NCOLS     → Number of COLUMN (MD_Metadata > spatialRepresentationInfo > MD_GridSpatialRepresentation.axisDimensionsProperties >MD_Dimension.dimensionSize)
         //NROWS     → Number of ROWS (MD_Metadata > spatialRepresentationInfo > MD_GridSpatialRepresentation.axisDimensionsProperties >MD_Dimension.dimensionSize)
         //NBANDS    → ?
@@ -238,15 +305,30 @@ public class DimapAccessorTest {
         //ALGORITHM_NAME              → ( DQ_DATAQUALITY > LI_LINEAGE > LI_ProcessStep.LE_ProcessStep > LE_Processing > LE_Algorithm > CI_Citation.title )
         //ALGORITHM_ACTIVATION        → ( DQ_DATAQUALITY > LI_LINEAGE > LI_ProcessStep.LE_ProcessStep > LE_Processing > LE_Algorithm )
 
+        final Collection<? extends Algorithm> algos = processing.getAlgorithms();
+        assertNotNull(algos);
+        assertFalse(algos.isEmpty());
+
+        final Algorithm algo = algos.iterator().next();
+        assertEquals("DCT_COMPRESSION_CORRECTION_TYPE", algo.getDescription().toString());
+        assertEquals("DCT_COMPRESSION_CORRECTION_NAME", algo.getCitation().getTitle().toString());
+
 
         //<xsd:element minOccurs="0" ref="Data_Access"/> -----------------------
         //DATA_FILE_ORGANISATION    → ?
         //DATA_FILE_FORMAT          → Data Format (MD_Metadata > IdentificationInfo > DataIdentification.resourceFormat > MD_Format.name et MD_Format.version)
         //DATA_FILE_FORMAT_DESC*    →
         //DATA_FILE_PATH            → ?
+        final Collection<? extends Format> formats = identification.getResourceFormats();
+        assertNotNull(formats);
+        assertFalse(formats.isEmpty());
+        final Format format = formats.iterator().next();
+        assertEquals("GEOTIFF", format.getName().toString());
+        assertEquals("1.0", format.getVersion().toString());
 
 
         //<xsd:element minOccurs="0" ref="Image_Display"/> ---------------------
+        //filled and tested by geotiff module
         //ULXMAP    → ?
         //ULYMAP    → ?
         //XDIM      → X Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
@@ -286,6 +368,40 @@ public class DimapAccessorTest {
         //DIRECT_PLAYBACK_INDICATOR → ?
         //REFOCUSING_STEP_NUM       → ?
         //SWATH_MODE                → ?
+
+        assertEquals("SCENE HRG1 J", identification.getAbstract().toString());
+
+        final Collection<? extends AcquisitionInformation> acquis = metadata.getAcquisitionInformation();
+        assertNotNull(acquis);
+        assertFalse(acquis.isEmpty());
+        final AcquisitionInformation acqui = acquis.iterator().next();
+
+        final Collection<? extends Operation> operations = acqui.getOperations();
+        assertNotNull(operations);
+        assertFalse(operations.isEmpty());
+        final Operation operation = operations.iterator().next();
+        assertEquals(
+            TemporalUtilities.parseDate("2007-03-01"),
+            operation.getCitation().getDates().iterator().next().getDate());
+        assertEquals("SPOT", operation.getDescription().toString());
+        assertEquals("5", operation.getIdentifier().getCode());
+
+        final Collection<? extends Instrument> insts = acqui.getInstruments();
+        assertNotNull(insts);
+        assertFalse(insts.isEmpty());
+        final Instrument inst = insts.iterator().next();
+        assertEquals("HRG", inst.getDescription().toString());
+        assertEquals("1", inst.getIdentifier().getCode());
+
+
+        final Collection<ContentInformation> infos = metadata.getContentInfo();
+        assertNotNull(infos);
+        assertFalse(infos.isEmpty());
+        final ContentInformation info = infos.iterator().next();
+        assertTrue(info instanceof ImageDescription);
+        final ImageDescription imgDesc = (ImageDescription) info;
+        assertEquals(66.084528d,imgDesc.getIlluminationAzimuthAngle().doubleValue(), 0.00000001d);
+        assertEquals(59.429144d,imgDesc.getIlluminationElevationAngle().doubleValue(), 0.00000001d);
 
 
         //Satellite_Time -------------------------------------------------------

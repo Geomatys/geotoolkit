@@ -16,12 +16,14 @@
  */
 package org.geotoolkit.metadata.dimap;
 
+import java.util.Collection;
+import java.net.URISyntaxException;
 import java.util.Collections;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.Locale;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
+import java.net.URI;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -45,9 +47,9 @@ import org.geotoolkit.metadata.iso.citation.DefaultAddress;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
+import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
-import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
 import org.geotoolkit.metadata.iso.content.DefaultImageDescription;
 import org.geotoolkit.metadata.iso.distribution.DefaultFormat;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
@@ -58,20 +60,21 @@ import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
-import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.coverage.SampleDimensionType;
-import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.metadata.Metadata;
 import org.opengis.metadata.citation.DateType;
 import org.opengis.metadata.citation.PresentationForm;
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.constraint.Restriction;
-import org.opengis.metadata.content.ContentInformation;
-import org.opengis.metadata.distribution.Format;
 import org.opengis.metadata.identification.CharacterSet;
+import org.opengis.metadata.identification.Identification;
+import org.opengis.metadata.lineage.Lineage;
+import org.opengis.metadata.lineage.ProcessStep;
+import org.opengis.metadata.quality.DataQuality;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -406,14 +409,18 @@ public final class DimapAccessor {
             final String productType    = textValueSafe(production, TAG_PRODUCT_TYPE, String.class);
             final String productInfo    = textValueSafe(production, TAG_PRODUCT_INFO, String.class);
             final String producerName   = textValueSafe(production, TAG_DATASET_PRODUCER_NAME, String.class);
-            final String producerURL    = textValueSafe(production, TAG_DATASET_PRODUCER_URL, String.class);
+            final Element producerEle = firstElement(production, TAG_DATASET_PRODUCER_URL);
+            URI producerURL = null;
+            try {
+                producerURL = new URI(producerEle.getAttribute(ATT_HREF));
+            } catch (URISyntaxException ex) {
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
+            }
             final Date productionDate = textValueSafe(production, TAG_DATASET_PRODUCTION_DATE, Date.class);
 
-
-            final DefaultAddress address = new DefaultAddress();
-            address.getElectronicMailAddresses().add(producerURL);
+            final DefaultOnlineResource online = new DefaultOnlineResource(producerURL);
             final DefaultContact contact = new DefaultContact();
-            contact.setAddress(address);
+            contact.setOnlineResource(online);
             final DefaultResponsibleParty responsibleParty = new DefaultResponsibleParty(Role.ORIGINATOR);
             responsibleParty.setOrganisationName(new SimpleInternationalString(producerName));
             responsibleParty.setContactInfo(contact);
@@ -422,11 +429,8 @@ public final class DimapAccessor {
             citation.setTitle(new SimpleInternationalString(productInfo));
             citation.getCitedResponsibleParties().add(responsibleParty);
             citation.getDates().add(new DefaultCitationDate(productionDate, DateType.CREATION));
-            final DefaultDataIdentification identification = new DefaultDataIdentification();
+            final DefaultDataIdentification identification = getIdentification(metadata);
             identification.setCitation(citation);
-
-            metadata.getIdentificationInfo().add(identification);
-
 
             final Element facility = firstElement(production, TAG_PRODUCTION_FACILITY);
             if(facility != null){
@@ -448,17 +452,13 @@ public final class DimapAccessor {
                     softCitation.getCitedResponsibleParties().add(softResposibleParty);
                 }
 
-                final DefaultProcessing processing = new DefaultProcessing();
+                final DefaultProcessStep step = getProcessStep(metadata);
+                DefaultProcessing processing = (DefaultProcessing) step.getProcessingInformation();
+                if(processing == null){
+                    processing = new DefaultProcessing();
+                    step.setProcessingInformation(processing);
+                }
                 processing.getSoftwareReferences().add(softCitation);
-
-                final DefaultProcessStep step = new DefaultProcessStep();
-                step.setProcessingInformation(processing);
-                final DefaultLineage lineage = new DefaultLineage();
-                lineage.getProcessSteps().add(step);
-                final DefaultDataQuality quality = new DefaultDataQuality();
-                quality.setLineage(lineage);
-
-                metadata.getDataQualityInfo().add(quality);
             }
 
         }
@@ -565,19 +565,13 @@ public final class DimapAccessor {
             algo.setDescription(new SimpleInternationalString(algoType));
             algo.setCitation(citation);
 
-            final DefaultProcessing processing = new DefaultProcessing();
+            final DefaultProcessStep step = getProcessStep(metadata);
+            DefaultProcessing processing = (DefaultProcessing) step.getProcessingInformation();
+            if(processing == null){
+                processing = new DefaultProcessing();
+                step.setProcessingInformation(processing);
+            }
             processing.getAlgorithms().add(algo);
-
-            final DefaultProcessStep step = new DefaultProcessStep();
-            step.setProcessingInformation(processing);
-
-            final DefaultLineage lineage = new DefaultLineage();
-            lineage.getProcessSteps().add(step);
-
-            final DefaultDataQuality quality = new DefaultDataQuality();
-            quality.setLineage(lineage);
-            
-            metadata.getDataQualityInfo().add(quality);
         }
 
         //<xsd:element minOccurs="0" ref="Data_Access"/> -----------------------
@@ -596,9 +590,8 @@ public final class DimapAccessor {
             format.setName(new SimpleInternationalString(formatName));
             format.setVersion(new SimpleInternationalString(version));
 
-            final DefaultDataIdentification idf = new DefaultDataIdentification();
-
-            metadata.getIdentificationInfo().add(idf);
+            final DefaultDataIdentification idf = getIdentification(metadata);
+            idf.getResourceFormats().add(format);
         }
 
 
@@ -670,7 +663,7 @@ public final class DimapAccessor {
             final Double sunElevation = textValueSafe(sceneSource, TAG_SCENE_SUN_ELEVATION, Double.class);
 
 
-            final DefaultDataIdentification idf = new DefaultDataIdentification();
+            final DefaultDataIdentification idf = getIdentification(metadata);
             idf.setAbstract(new SimpleInternationalString(sourceDesc));
 
             final DefaultCitation citation = new DefaultCitation();
@@ -686,7 +679,7 @@ public final class DimapAccessor {
 
 
             final DefaultIdentifier instrumentId = new DefaultIdentifier();
-            missinId.setCode(instrumentIndex);
+            instrumentId.setCode(instrumentIndex);
 
             final DefaultInstrument instrument = new DefaultInstrument();
             instrument.setDescription(new SimpleInternationalString(instrumentName));
@@ -701,7 +694,6 @@ public final class DimapAccessor {
             contentInfo.setIlluminationAzimuthAngle(sunAzimuth);
             contentInfo.setIlluminationElevationAngle(sunElevation);
 
-            metadata.getIdentificationInfo().add(idf);
             metadata.getAcquisitionInformation().add(acqInfo);
             metadata.getContentInfo().add(contentInfo);
 
@@ -721,6 +713,59 @@ public final class DimapAccessor {
         //<xsd:element minOccurs="0" ref="Vector_Attributes"/> -----------------
 
         return metadata;
+    }
+
+    private static DefaultProcessStep getProcessStep(final DefaultMetadata metadata){
+        final DefaultLineage lineage = getLineage(metadata);
+
+        final Collection<ProcessStep> steps = lineage.getProcessSteps();
+
+        if(steps.isEmpty()){
+            final DefaultProcessStep step = new DefaultProcessStep();
+            steps.add(step);
+            return step;
+        }else{
+            return (DefaultProcessStep) steps.iterator().next();
+        }
+    }
+
+    private static DefaultLineage getLineage(final DefaultMetadata metadata){
+        final DefaultDataQuality quality = getDataQuality(metadata);
+
+        Lineage lineage = quality.getLineage();
+
+        if(lineage == null){
+            lineage = new DefaultLineage();
+            quality.setLineage(lineage);
+        }
+
+        return (DefaultLineage) lineage;
+    }
+
+    private static DefaultDataQuality getDataQuality(final DefaultMetadata metadata){
+        final Collection<DataQuality> qualities = metadata.getDataQualityInfo();
+
+        if(qualities.isEmpty()){
+            final DefaultDataQuality quality = new DefaultDataQuality();
+            metadata.getDataQualityInfo().add(quality);
+            return quality;
+        }else{
+            return (DefaultDataQuality) qualities.iterator().next();
+        }
+
+    }
+
+    private static DefaultDataIdentification getIdentification(final DefaultMetadata metadata){
+        final Collection<Identification> ids = metadata.getIdentificationInfo();
+
+        if(ids.isEmpty()){
+            final DefaultDataIdentification id = new DefaultDataIdentification();
+            ids.add(id);
+            return id;
+        }else{
+            return (DefaultDataIdentification)ids.iterator().next();
+        }
+
     }
 
 }
