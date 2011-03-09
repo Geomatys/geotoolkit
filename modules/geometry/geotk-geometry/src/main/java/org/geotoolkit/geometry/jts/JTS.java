@@ -678,12 +678,15 @@ public final class JTS {
             crs = (CoordinateReferenceSystem) userData;
         }else if(userData instanceof Map){
             final Map values = (Map) userData;
-            values.get(HintsPending.JTS_GEOMETRY_CRS);
+            final Object candidate = values.get(HintsPending.JTS_GEOMETRY_CRS);
+            if(candidate instanceof CoordinateReferenceSystem){
+                crs = (CoordinateReferenceSystem) candidate;
+            }
         }
         //not found yet, try to rebuild it from the srid
         if(crs == null){
             final int srid = geom.getSRID();
-            if(srid >= 0){
+            if(srid != 0 && srid != -1){
                 final String srs = SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1);
                 crs = CRS.decode(srs);
             }

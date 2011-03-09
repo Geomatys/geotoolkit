@@ -62,6 +62,12 @@
           <artifactId>geotk-provided</artifactId>
           <scope>provided</scope>
       </dependency>
+      <dependency>
+          <groupId>org.geotoolkit</groupId>
+          <artifactId>geotk-epsg-javadb</artifactId>
+          <version>${geotoolkit.version}</version>
+          <scope>test</scope>
+      </dependency>
 
   </dependencies>
             
