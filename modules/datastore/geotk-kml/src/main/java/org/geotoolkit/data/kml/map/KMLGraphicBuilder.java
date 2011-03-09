@@ -79,6 +79,7 @@ import org.geotoolkit.display.canvas.RenderingContext;
 import org.geotoolkit.display.canvas.VisitFilter;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display.primitive.SearchArea;
+import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.AbstractGraphicJ2D;
 import org.geotoolkit.display2d.primitive.DefaultProjectedGeometry;
@@ -160,7 +161,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
     @Override
     public Collection<GraphicJ2D> createGraphics(MapLayer layer, Canvas canvas) {
         if (layer instanceof KmlMapLayer && canvas instanceof ReferencedCanvas2D) {
-            return Collections.singleton((GraphicJ2D) new KMLGraphic((ReferencedCanvas2D) canvas, (KmlMapLayer) layer));
+            return Collections.singleton((GraphicJ2D) new KMLGraphic((J2DCanvas) canvas, (KmlMapLayer) layer));
         } else {
             return Collections.emptyList();
         }
@@ -631,7 +632,7 @@ final class KMLGraphicBuilder implements GraphicBuilder<GraphicJ2D> {
         private final KmlCache cache;
         private RenderingContext2D context2d;
 
-        private KMLGraphic(ReferencedCanvas2D canvas, KmlMapLayer layer) {
+        private KMLGraphic(J2DCanvas canvas, KmlMapLayer layer) {
             super(canvas, canvas.getObjectiveCRS());
             cache = new KmlCache(layer.kml);
         }
