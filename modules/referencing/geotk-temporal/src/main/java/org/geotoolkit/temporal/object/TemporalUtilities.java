@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.temporal.object;
 
-import java.util.Locale;
 import java.util.Map;
 import java.util.List;
 import java.text.DateFormat;
@@ -175,7 +174,7 @@ public final class TemporalUtilities {
                 defaultTimezone = true;
             }
 
-            
+
             if (dateString.indexOf('.') > 0) {
                 //simple date format is not thread safe
                 synchronized (sdf3){
@@ -666,6 +665,16 @@ public final class TemporalUtilities {
                     return resultDate;
                 }
             } catch (ParseException e) {
+                LOGGER.log(Level.FINE, "Could not parse date : " + date +" with getDateFromString method.");
+            }
+
+            try {
+                final FastDateParser fp = new FastDateParser();
+                final java.util.Date resultDate = fp.parseToDate(date);
+                if (resultDate != null) {
+                    return resultDate;
+                }
+            } catch (NumberFormatException e) {
                 LOGGER.log(Level.FINE, "Could not parse date : " + date +" with getDateFromString method.");
             }
 
