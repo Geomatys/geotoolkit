@@ -267,7 +267,7 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v111_GetFeatureInfo_Reproject() throws NoSuchAuthorityCodeException,
+    public void test_v111_GetFeatureInfo_Reproject_EPSG4326_to_CRS84() throws NoSuchAuthorityCodeException,
             FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
@@ -315,7 +315,7 @@ public class WMSMapLayerTest {
      * @throws FactoryException
      */
     @Test
-    public void test_v130_GetFeatureInfo_Reproject() throws NoSuchAuthorityCodeException,
+    public void test_v130_GetFeatureInfo_Reproject_EPSG4326_to_CRS84() throws NoSuchAuthorityCodeException,
             FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
@@ -352,6 +352,201 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("QUERY_LAYERS=test"));
         assertTrue(sUrl.contains("I=140"));
         assertTrue(sUrl.contains("J=250"));
+    }
+    
+    /**
+     * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
+     * with the parameters given.
+     * This test is to make sure pick coordinates are correct when local reprojection is used.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
+    @Test
+    public void test_v111_GetFeatureInfo_Reproject_CRS84_to_EPSG3857() throws NoSuchAuthorityCodeException,
+            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
+
+        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
+            @Override
+            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
+                return false;
+            }
+            @Override
+            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
+                return CRS.decode("CRS:84");
+            }
+        };
+        layer.setUseLocalReprojection(true);
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:3857"));
+        env.setRange(0, -2.0037507067162E7, 2.0037507067162E7);
+        env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
+        
+        final Dimension rect = new Dimension(512, 512);
+
+        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+
+        final String sUrl = url.toString();
+        
+        assertTrue(sUrl.startsWith("http://test.com?"));
+        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262")); 
+        assertTrue(sUrl.contains("SRS=EPSG:4326"));
+        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("WIDTH=512"));
+        assertTrue(sUrl.contains("HEIGHT=512"));
+        assertTrue(sUrl.contains("LAYERS=test"));
+        assertTrue(sUrl.contains("STYLES="));
+        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(sUrl.contains("X=140"));
+        assertTrue(sUrl.contains("Y=243"));
+    }
+    
+    /**
+     * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
+     * with the parameters given.
+     * This test is to make sure pick coordinates are correct when local reprojection is used.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
+    @Test
+    public void test_v130_GetFeatureInfo_Reproject_CRS84_to_EPSG3857() throws NoSuchAuthorityCodeException,
+            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
+
+        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
+            @Override
+            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
+                return false;
+            }
+            @Override
+            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
+                return CRS.decode("CRS:84");
+            }
+        };
+        layer.setUseLocalReprojection(true);
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:3857"));
+        env.setRange(0, -2.0037507067162E7, 2.0037507067162E7);
+        env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
+        final Dimension rect = new Dimension(512, 512);
+
+        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+
+        final String sUrl = url.toString();        
+        assertTrue(sUrl.startsWith("http://test.com?"));
+        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262")); 
+        assertTrue(sUrl.contains("CRS=CRS:84"));
+        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("WIDTH=512"));
+        assertTrue(sUrl.contains("HEIGHT=512"));
+        assertTrue(sUrl.contains("LAYERS=test"));
+        assertTrue(sUrl.contains("STYLES="));
+        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(sUrl.contains("I=140"));
+        assertTrue(sUrl.contains("J=243"));
+    }
+    
+    /**
+     * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
+     * with the parameters given.
+     * This test is to make sure pick coordinates are correct when local reprojection is used.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
+    @Test
+    public void test_v111_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857() throws NoSuchAuthorityCodeException,
+            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
+
+        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
+            @Override
+            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
+                return false;
+            }
+            @Override
+            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
+                return CRS.decode("EPSG:4326");
+            }
+        };
+        layer.setUseLocalReprojection(true);
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:3857"));
+        //-2.0037507067162E7,-2.0037507067162E7,2.0037507067162E7,2.0037507067162E7
+        env.setRange(0, -2.0037507067162E7, 2.0037507067162E7);
+        env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
+        final Dimension rect = new Dimension(512, 512);
+
+        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+
+        final String sUrl = url.toString();
+        assertTrue(sUrl.startsWith("http://test.com?"));
+        assertTrue(sUrl.contains("BBOX=-179.9999885408455,-85.05112779126263,179.9999885408455,85.05112779126262")); 
+        assertTrue(sUrl.contains("SRS=EPSG:4326"));
+        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("WIDTH=512"));
+        assertTrue(sUrl.contains("HEIGHT=512"));
+        assertTrue(sUrl.contains("LAYERS=test"));
+        assertTrue(sUrl.contains("STYLES="));
+        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(sUrl.contains("X=140"));
+        assertTrue(sUrl.contains("Y=243"));
+    }
+    
+    /**
+     * Ensures the {@link GetFeatureInfo111#getURL()} method returns a well-built url,
+     * with the parameters given.
+     * This test is to make sure pick coordinates are correct when local reprojection is used.
+     *
+     * @throws NoSuchAuthorityCodeException
+     * @throws FactoryException
+     */
+    @Test
+    public void test_v130_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857() throws NoSuchAuthorityCodeException,
+            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+
+        final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
+
+        final WMSMapLayer layer = new WMSMapLayer(server, "test"){
+            @Override
+            protected boolean supportCRS(CoordinateReferenceSystem crs) throws FactoryException {
+                return false;
+            }
+            @Override
+            protected CoordinateReferenceSystem findOriginalCRS() throws FactoryException {
+                return CRS.decode("EPSG:4326");
+            }
+        };
+        layer.setUseLocalReprojection(true);
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:3857"));
+        env.setRange(0, -2.0037507067162E7, 2.0037507067162E7);
+        env.setRange(1, -2.0037507067162E7, 2.0037507067162E7);
+        final Dimension rect = new Dimension(512, 512);
+        
+        final URL url = layer.queryFeatureInfo(env, rect, 140, 250, new String[]{"test"}, "gml", 1);
+
+        final String sUrl = url.toString();
+        assertTrue(sUrl.startsWith("http://test.com?"));
+        assertTrue(sUrl.contains("BBOX=-85.05112779126263,-179.9999885408455,85.05112779126262,179.9999885408455")); 
+        assertTrue(sUrl.contains("CRS=EPSG:4326"));
+        assertTrue(sUrl.contains("FORMAT=image/png"));
+        assertTrue(sUrl.contains("WIDTH=512"));
+        assertTrue(sUrl.contains("HEIGHT=512"));
+        assertTrue(sUrl.contains("LAYERS=test"));
+        assertTrue(sUrl.contains("STYLES="));
+        assertTrue(sUrl.contains("INFO_FORMAT=gml"));
+        assertTrue(sUrl.contains("QUERY_LAYERS=test"));
+        assertTrue(sUrl.contains("I=140"));
+        assertTrue(sUrl.contains("J=243"));
     }
 
 }
