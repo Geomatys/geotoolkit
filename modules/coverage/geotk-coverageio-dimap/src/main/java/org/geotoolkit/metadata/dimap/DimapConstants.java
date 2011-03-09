@@ -106,7 +106,11 @@ public final class DimapConstants {
     public static final String TAG_PRODUCT_TYPE = "PRODUCT_TYPE";
     public static final String TAG_PRODUCT_INFO = "PRODUCT_INFO";
     public static final String TAG_JOB_ID = "JOB_ID";
-
+    public static final String TAG_PRODUCTION_FACILITY = "Production_Facility";
+    public static final String TAG_PRODUCTION_FACILITY_SOFTWARE_NAME = "SOFTWARE_NAME";
+    public static final String TAG_PRODUCTION_FACILITY_SOFTWARE_VERSION = "SOFTWARE_VERSION";
+    public static final String TAG_PRODUCTION_FACILITY_PROCESSING_CENTER = "PROCESSING_CENTER";
+    
     // Quality assessment group ------------------------------------------------
     public static final String TAG_QUALITY_ASSESSMENT = "Quality_Assessment";
     public static final String TAG_QUALITY_TABLES = "QUALITY_TABLES";
@@ -122,8 +126,18 @@ public final class DimapConstants {
     public static final String TAG_SOURCE_TYPE = "SOURCE_TYPE";
     public static final String TAG_SOURCE_DESCRIPTION = "SOURCE_DESCRIPTION";
     public static final String TAG_SOURCE_REF = "SOURCE_REF";
-    //TAG_CRS
+    // Scene tags
     public static final String TAG_SCENE_SOURCE = "Scene_Source";
+    public static final String TAG_SCENE_IMAGING_DATE = "IMAGING_DATE";
+    public static final String TAG_SCENE_MISSION = "MISSION";
+    public static final String TAG_SCENE_MISSION_INDEX = "MISSION_INDEX";
+    public static final String TAG_SCENE_INSTRUMENT = "INSTRUMENT";
+    public static final String TAG_SCENE_INSTRUMENT_INDEX = "INSTRUMENT_INDEX";
+    public static final String TAG_SCENE_PROCESSING_LEVEL = "SCENE_PROCESSING_LEVEL";
+    public static final String TAG_SCENE_INCIDENCE_ANGLE = "INCIDENCE_ANGLE";
+    public static final String TAG_SCENE_VIEWING_ANGLE = "VIEWING_ANGLE";
+    public static final String TAG_SCENE_SUN_AZIMUTH = "SUN_AZIMUTH";
+    public static final String TAG_SCENE_SUN_ELEVATION = "SUN_ELEVATION";
     // ...
     //TAG quality assessment
 
@@ -170,6 +184,9 @@ public final class DimapConstants {
     public static final String TAG_HORIZONTAL_CS_TYPE = "HORIZONTAL_CS_TYPE";
     public static final String TAG_HORIZONTAL_CS_NAME = "HORIZONTAL_CS_NAME";
 
+    // RASTER CS tag group -----------------------------------------------------
+    public static final String TAG_RASTER_CS = "Raster_CS";
+
     // Image display information -----------------------------------------------
     public static final String TAG_IMAGE_DISPLAY = "Image_Display";
     public static final String TAG_BAND_DISPLAY_ORDER = "Band_Display_Order";
@@ -204,9 +221,17 @@ public final class DimapConstants {
 
     //Data Access tag group ----------------------------------------------------
     public static final String TAG_DATA_ACCESS = "Data_Access";
+    public static final String TAG_DATA_FILE_FORMAT = "DATA_FILE_FORMAT";
+    public static final String ATT_VERSION = "version";
 
     //Data Processing tag group ------------------------------------------------
     public static final String TAG_DATA_PROCESSING = "Data_Processing";
+    public static final String TAG_DATA_PROCESSING_PROCESSING_LEVEL = "PROCESSING_LEVEL";
+    public static final String TAG_DATA_PROCESSING_GEOMETRIC_PROCESSING = "GEOMETRIC_PROCESSING";
+    public static final String TAG_DATA_PROCESSING_RADIOMETRIC_PROCESSING = "RADIOMETRIC_PROCESSING";
+    public static final String TAG_DATA_PROCESSING_ALGORITHM_TYPE = "ALGORITHM_TYPE";
+    public static final String TAG_DATA_PROCESSING_ALGORITHM_NAME = "ALGORITHM_NAME";
+    public static final String TAG_DATA_PROCESSING_ALGORITHM_ACTIVATION = "ALGORITHM_ACTIVATION";
 
     //Satellite_Time------------------------------------------------------------
     public static final String TAG_SATELLITE_TIME = "Satellite_Time";

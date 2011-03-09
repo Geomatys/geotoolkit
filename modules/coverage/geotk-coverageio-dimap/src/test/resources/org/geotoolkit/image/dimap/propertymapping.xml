@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<Dimap_Document xmlns:xsi='http://www.w3.org/2001/XMLSchema-instance' xsi:noNamespaceSchemaLocation='Spot_Scene.xsd' name='METADATA.DIM'>
+
+    <Dataset_Id>
+        <DATASET_NAME>Testing Scene 2</DATASET_NAME>
+        <COPYRIGHT>TESTING COPYRIGHT</COPYRIGHT>
+    </Dataset_Id>
+
+    <Dataset_Frame>
+        <Vertex>
+            <FRAME_LON>47.022487</FRAME_LON>
+            <FRAME_LAT>-22.182929</FRAME_LAT>
+            <FRAME_ROW>1</FRAME_ROW>
+            <FRAME_COL>1350</FRAME_COL>
+            <FRAME_X>708525.174148</FRAME_X>
+            <FRAME_Y>7545535.180323</FRAME_Y>
+        </Vertex>
+        <Vertex>
+            <FRAME_LON>47.646429</FRAME_LON>
+            <FRAME_LAT>-22.306508</FRAME_LAT>
+            <FRAME_ROW>1469</FRAME_ROW>
+            <FRAME_COL>7762</FRAME_COL>
+            <FRAME_X>772645.174148</FRAME_X>
+            <FRAME_Y>7530855.180323</FRAME_Y>
+        </Vertex>
+        <Vertex>
+            <FRAME_LON>47.524881</FRAME_LON>
+            <FRAME_LAT>-22.835484</FRAME_LAT>
+            <FRAME_ROW>7307</FRAME_ROW>
+            <FRAME_COL>6410</FRAME_COL>
+            <FRAME_X>759125.174148</FRAME_X>
+            <FRAME_Y>7472475.180323</FRAME_Y>
+        </Vertex>
+        <Vertex>
+            <FRAME_LON>46.898874</FRAME_LON>
+            <FRAME_LAT>-22.711981</FRAME_LAT>
+            <FRAME_ROW>5843</FRAME_ROW>
+            <FRAME_COL>1</FRAME_COL>
+            <FRAME_X>695035.174148</FRAME_X>
+            <FRAME_Y>7487115.180323</FRAME_Y>
+        </Vertex>
+        <Scene_Center>
+            <FRAME_LON>47.269764</FRAME_LON>
+            <FRAME_LAT>-22.508962</FRAME_LAT>
+            <FRAME_ROW>3648</FRAME_ROW>
+            <FRAME_COL>3846</FRAME_COL>
+        </Scene_Center>
+        <SCENE_ORIENTATION>12.022308</SCENE_ORIENTATION>
+    </Dataset_Frame>
+
+    <Coordinate_Reference_System>
+        <GEO_TABLES version='5.2'>EPSG</GEO_TABLES>
+        <Horizontal_CS>
+            <HORIZONTAL_CS_CODE>epsg:32738</HORIZONTAL_CS_CODE>
+            <HORIZONTAL_CS_TYPE>PROJECTED</HORIZONTAL_CS_TYPE>
+            <HORIZONTAL_CS_NAME>WGS 84/UTM38S</HORIZONTAL_CS_NAME>
+        </Horizontal_CS>
+    </Coordinate_Reference_System>
+
+    <Raster_CS>
+        <RASTER_CS_TYPE>CELL</RASTER_CS_TYPE>
+        <PIXEL_ORIGIN>1</PIXEL_ORIGIN>
+    </Raster_CS>
+
+    <Geoposition>
+        <Geoposition_Insert>
+            <ULXMAP>300</ULXMAP>
+            <ULYMAP>700</ULYMAP>
+            <XDIM>10.000000</XDIM>
+            <YDIM>20.000000</YDIM>
+        </Geoposition_Insert>
+    </Geoposition>
+
+    <Image_Display>
+        <Band_Display_Order>
+            <RED_CHANNEL>1</RED_CHANNEL>
+            <GREEN_CHANNEL>2</GREEN_CHANNEL>
+            <BLUE_CHANNEL>3</BLUE_CHANNEL>
+        </Band_Display_Order>
+        <Special_Value>
+            <SPECIAL_VALUE_INDEX>255</SPECIAL_VALUE_INDEX>
+            <SPECIAL_VALUE_TEXT>SATURATED</SPECIAL_VALUE_TEXT>
+            <Special_Value_Color>
+                <RED_LEVEL>1</RED_LEVEL>
+                <GREEN_LEVEL>1</GREEN_LEVEL>
+                <BLUE_LEVEL>1</BLUE_LEVEL>
+                <ALPHA_LEVEL>1</ALPHA_LEVEL>
+            </Special_Value_Color>
+        </Special_Value>
+        <Special_Value>
+            <SPECIAL_VALUE_INDEX>0</SPECIAL_VALUE_INDEX>
+            <SPECIAL_VALUE_TEXT>NODATA</SPECIAL_VALUE_TEXT>
+            <Special_Value_Color>
+                <RED_LEVEL>0</RED_LEVEL>
+                <GREEN_LEVEL>0</GREEN_LEVEL>
+                <BLUE_LEVEL>0</BLUE_LEVEL>
+                <ALPHA_LEVEL>0</ALPHA_LEVEL>
+            </Special_Value_Color>
+        </Special_Value>
+    </Image_Display>
+
+    <Production>
+        <JOB_ID>313255101</JOB_ID>
+        <PRODUCT_TYPE>SCSI1R20N</PRODUCT_TYPE>
+        <PRODUCT_INFO>Spot SYSTEM SCENE level 2A</PRODUCT_INFO>
+        <DATASET_PRODUCER_NAME>SPOT_IMAGE</DATASET_PRODUCER_NAME>
+        <DATASET_PRODUCER_URL href='http://www.spotimage.fr'></DATASET_PRODUCER_URL>
+        <DATASET_PRODUCTION_DATE>2008-12-12T13:33:28.158000</DATASET_PRODUCTION_DATE>
+        <Production_Facility>
+            <SOFTWARE_NAME>CAP_T</SOFTWARE_NAME>
+            <SOFTWARE_VERSION>SPOT5_V07_03</SOFTWARE_VERSION>
+            <PROCESSING_CENTER>SLS_TOULOUSE</PROCESSING_CENTER>
+        </Production_Facility>
+    </Production>
+
+    <Dataset_Sources>
+        <Source_Information>
+            <SOURCE_TYPE>SCENE</SOURCE_TYPE>
+            <SOURCE_ID>51703950703010711391J</SOURCE_ID>
+            <SOURCE_DESCRIPTION>SCENE HRG1 J</SOURCE_DESCRIPTION>
+            <Scene_Source>
+                <GRID_REFERENCE>170395</GRID_REFERENCE>
+                <SHIFT_VALUE>0</SHIFT_VALUE>
+                <IMAGING_DATE>2007-03-01</IMAGING_DATE>
+                <IMAGING_TIME>07:11:39</IMAGING_TIME>
+                <MISSION>SPOT</MISSION>
+                <MISSION_INDEX>5</MISSION_INDEX>
+                <INSTRUMENT>HRG</INSTRUMENT>
+                <INSTRUMENT_INDEX>1</INSTRUMENT_INDEX>
+                <SENSOR_CODE>J</SENSOR_CODE>
+                <SCENE_PROCESSING_LEVEL>0</SCENE_PROCESSING_LEVEL>
+                <INCIDENCE_ANGLE>17.160764</INCIDENCE_ANGLE>
+                <VIEWING_ANGLE>15.171776</VIEWING_ANGLE>
+                <SUN_AZIMUTH>66.084528</SUN_AZIMUTH>
+                <SUN_ELEVATION>59.429144</SUN_ELEVATION>
+                <Imaging_Parameters>
+                    <REVOLUTION_NUMBER>83</REVOLUTION_NUMBER>
+                    <COMPRESSION_MODE>DCT</COMPRESSION_MODE>
+                    <DIRECT_PLAYBACK_INDICATOR>MX</DIRECT_PLAYBACK_INDICATOR>
+                    <REFOCUSING_STEP_NUM>4000</REFOCUSING_STEP_NUM>
+                    <SWATH_MODE>FULL</SWATH_MODE>
+                </Imaging_Parameters>
+            </Scene_Source>
+        </Source_Information>
+        <Source_Information>
+            <SOURCE_TYPE>DEM</SOURCE_TYPE>
+            <SOURCE_ID>GLOBE</SOURCE_ID>
+            <SOURCE_DESCRIPTION>Global Land One Kilometer Base Elevation Model</SOURCE_DESCRIPTION>
+        </Source_Information>
+    </Dataset_Sources>
+
+    <Raster_Dimensions>
+        <NCOLS>7762</NCOLS>
+        <NROWS>7308</NROWS>
+        <NBANDS>4</NBANDS>
+    </Raster_Dimensions>
+
+    <Raster_Encoding>
+        <NBITS>8</NBITS>
+        <BYTEORDER>I</BYTEORDER>
+        <COMPRESSION_NAME>NONE</COMPRESSION_NAME>
+        <DATA_TYPE>UNSIGNED</DATA_TYPE>
+    </Raster_Encoding>
+
+    <Data_Access>
+        <DATA_FILE_ORGANISATION>BAND_COMPOSITE</DATA_FILE_ORGANISATION>
+        <DATA_FILE_FORMAT version='1.0'>GEOTIFF</DATA_FILE_FORMAT>
+        <DATA_FILE_FORMAT_DESC>NONE</DATA_FILE_FORMAT_DESC>
+        <Data_File>
+            <DATA_FILE_PATH href='IMAGERY.TIF'></DATA_FILE_PATH>
+        </Data_File>
+    </Data_Access>
+
+    <Data_Processing>
+        <PROCESSING_LEVEL>2A</PROCESSING_LEVEL>
+        <GEOMETRIC_PROCESSING>PRECISION 2A</GEOMETRIC_PROCESSING>
+        <RADIOMETRIC_PROCESSING>SYSTEM</RADIOMETRIC_PROCESSING>
+        <Processing_Options>
+            <MEAN_RECTIFICATION_ELEVATION>399.326999</MEAN_RECTIFICATION_ELEVATION>
+            <Dynamic_Stretch>
+                <Thresholds>
+                    <BAND_INDEX>1</BAND_INDEX>
+                    <LOW_THRESHOLD>1</LOW_THRESHOLD>
+                    <HIGH_THRESHOLD>255</HIGH_THRESHOLD>
+                </Thresholds>
+                <Thresholds>
+                    <BAND_INDEX>2</BAND_INDEX>
+                    <LOW_THRESHOLD>1</LOW_THRESHOLD>
+                    <HIGH_THRESHOLD>255</HIGH_THRESHOLD>
+                </Thresholds>
+                <Thresholds>
+                    <BAND_INDEX>3</BAND_INDEX>
+                    <LOW_THRESHOLD>1</LOW_THRESHOLD>
+                    <HIGH_THRESHOLD>255</HIGH_THRESHOLD>
+                </Thresholds>
+                <Thresholds>
+                    <BAND_INDEX>4</BAND_INDEX>
+                    <LOW_THRESHOLD>1</LOW_THRESHOLD>
+                    <HIGH_THRESHOLD>255</HIGH_THRESHOLD>
+                </Thresholds>
+            </Dynamic_Stretch>
+            <LINE_SHIFT>8</LINE_SHIFT>
+            <DECOMPRESSION_TYPE>QIA+C</DECOMPRESSION_TYPE>
+            <Deconvolution>
+                <KERNEL_ID>0</KERNEL_ID>
+                <KERNEL_DATE>1950-01-01T00:00:00.000000</KERNEL_DATE>
+            </Deconvolution>
+            <Sampling_Step>
+                <SAMPLING_STEP_X>10.000000</SAMPLING_STEP_X>
+                <SAMPLING_STEP_Y>10.000000</SAMPLING_STEP_Y>
+            </Sampling_Step>
+            <SWIR_BAND_REGISTRATION_FLAG>Y</SWIR_BAND_REGISTRATION_FLAG>
+            <X_BANDS_REGISTRATION_FLAG>Y</X_BANDS_REGISTRATION_FLAG>
+            <Correction_Algorithm>
+                <ALGORITHM_TYPE>DCT_COMPRESSION_CORRECTION</ALGORITHM_TYPE>
+                <ALGORITHM_NAME>DCT_COMPRESSION_CORRECTION</ALGORITHM_NAME>
+                <ALGORITHM_ACTIVATION>Y</ALGORITHM_ACTIVATION>
+            </Correction_Algorithm>
+        </Processing_Options>
+    </Data_Processing>
+
+    <Image_Interpretation>
+        <Spectral_Band_Info>
+            <BAND_DESCRIPTION>XS1</BAND_DESCRIPTION>
+            <PHYSICAL_UNIT>equivalent radiance (W.m-2.Sr-1.um-1)</PHYSICAL_UNIT>
+            <PHYSICAL_BIAS>0.000000</PHYSICAL_BIAS>
+            <PHYSICAL_GAIN>2.290530</PHYSICAL_GAIN>
+            <PHYSICAL_CALIBRATION_DATE>2007-03-01T00:00:00.000000</PHYSICAL_CALIBRATION_DATE>
+            <BAND_INDEX>1</BAND_INDEX>
+        </Spectral_Band_Info>
+        <Spectral_Band_Info>
+            <BAND_DESCRIPTION>XS2</BAND_DESCRIPTION>
+            <PHYSICAL_UNIT>equivalent radiance (W.m-2.Sr-1.um-1)</PHYSICAL_UNIT>
+            <PHYSICAL_BIAS>0.000000</PHYSICAL_BIAS>
+            <PHYSICAL_GAIN>2.788479</PHYSICAL_GAIN>
+            <PHYSICAL_CALIBRATION_DATE>2007-03-01T00:00:00.000000</PHYSICAL_CALIBRATION_DATE>
+            <BAND_INDEX>2</BAND_INDEX>
+        </Spectral_Band_Info>
+        <Spectral_Band_Info>
+            <BAND_DESCRIPTION>XS3</BAND_DESCRIPTION>
+            <PHYSICAL_UNIT>equivalent radiance (W.m-2.Sr-1.um-1)</PHYSICAL_UNIT>
+            <PHYSICAL_BIAS>0.000000</PHYSICAL_BIAS>
+            <PHYSICAL_GAIN>1.307791</PHYSICAL_GAIN>
+            <PHYSICAL_CALIBRATION_DATE>2007-03-01T00:00:00.000000</PHYSICAL_CALIBRATION_DATE>
+            <BAND_INDEX>3</BAND_INDEX>
+        </Spectral_Band_Info>
+        <Spectral_Band_Info>
+            <BAND_DESCRIPTION>SWIR</BAND_DESCRIPTION>
+            <PHYSICAL_UNIT>equivalent radiance (W.m-2.Sr-1.um-1)</PHYSICAL_UNIT>
+            <PHYSICAL_BIAS>0.000000</PHYSICAL_BIAS>
+            <PHYSICAL_GAIN>8.188070</PHYSICAL_GAIN>
+            <PHYSICAL_CALIBRATION_DATE>2007-03-01T00:00:00.000000</PHYSICAL_CALIBRATION_DATE>
+            <BAND_INDEX>4</BAND_INDEX>
+        </Spectral_Band_Info>
+    </Image_Interpretation>
+    
+</Dimap_Document>
