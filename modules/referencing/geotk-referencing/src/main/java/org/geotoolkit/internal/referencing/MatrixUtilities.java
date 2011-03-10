@@ -40,7 +40,7 @@ import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
  * example multiplication) for efficiency again.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.00
  * @module
@@ -73,12 +73,12 @@ public final class MatrixUtilities {
      *
      * @since 3.16
      */
-    public static XMatrix forDimensions(final MathTransform transform,
+    public static Matrix forDimensions(final MathTransform transform,
             final int sourceDimension, final int targetDimension)
     {
         if (transform instanceof LinearTransform) {
-            XMatrix matrix = toXMatrix(getMatrix(transform));
-            if (matrix != null && matrix.isAffine()) {
+            Matrix matrix = getMatrix(transform);
+            if (matrix != null && isAffine(matrix)) {
                 final int oldSrcDim = matrix.getNumCol() - 1;
                 final int oldTgtDim = matrix.getNumRow() - 1;
                 if (oldSrcDim != sourceDimension && oldTgtDim != targetDimension) {
@@ -148,18 +148,42 @@ public final class MatrixUtilities {
     }
 
     /**
-     * Returns {@code true} if the given matrix can be converted to an {@link AffineTransform}
-     * object.
+     * Returns {@code true} if the given matrix can be converted to a two-dimensional
+     * {@link AffineTransform} object.
      *
      * @param  matrix The matrix to check for convertibility.
      * @return {@code true} if the given matrix can be converted to an {@link AffineTransform}.
      */
-    private static boolean isAffineTransform(final Matrix matrix) {
-        return matrix.getNumRow() == 3 &&
-               matrix.getNumCol() == 3 &&
-               matrix.getElement(2,0) == 0 &&
-               matrix.getElement(2,1) == 0 &&
-               matrix.getElement(2,2) == 1;
+    private static boolean isAffine2D(final Matrix matrix) {
+        return matrix.getNumRow() == 3 && matrix.getNumCol() == 3 && isAffine(matrix);
+    }
+
+    /**
+     * Returns {@code true} if the given matrix is affine.
+     *
+     * @param matrix The matrix to test.
+     * @return {@code true} if the matrix is affine.
+     *
+     * @see XMatrix#isAffine()
+     *
+     * @since 3.17
+     */
+    public static boolean isAffine(final Matrix matrix) {
+        if (matrix instanceof AffineTransform) {
+            return true;
+        }
+        if (matrix instanceof XMatrix) {
+            return ((XMatrix) matrix).isAffine();
+        }
+        double expected = 1;
+        final int lastRow = matrix.getNumRow() - 1;
+        for (int i=matrix.getNumCol(); --i>=0;) {
+            if (matrix.getElement(lastRow, i) != expected) {
+                return false;
+            }
+            expected = 0;
+        }
+        return true;
     }
 
     /**
@@ -271,9 +295,60 @@ skipColumn: for (int i=numCol; --i>=0;) {
      * @return The inverse of the given matrix. May be {@code matrix} itself.
      * @throws NoninvertibleTransformException if the given matrix is not invertible.
      */
-    public static Matrix invertSquare(final Matrix matrix) throws NoninvertibleTransformException {
-        Exception cause;
-        if (isAffineTransform(matrix)) {
+    public static Matrix invertSquare(Matrix matrix) throws NoninvertibleTransformException {
+        /*
+         * Searches for NaN values. If some NaN values are found but the matrix is writen in
+         * such a way that the NaN value is used for exactly one ordinate value (i.e. a row
+         * in the matrix expresses a one-dimensional conversion which is independent of all
+         * other dimensions), then we will edit the matrix in such a way that this NaN value
+         * does not prevent the invert matrix to be computed.
+         */
+        int   numIndex = 0;
+        int[] indexNaN = null; // Pairs of (i,j)
+        final int srcDim = matrix.getNumCol() - 1; // Exclude the translation column
+        final int tgtDim = matrix.getNumRow() - 1; // Exclude the (0, 0, ..., 1) row
+        if (isAffine(matrix)) {
+search:     for (int j=tgtDim; --j>=0;) {
+                for (int i=srcDim; i>=0; i--) { // Scan also the translation column.
+                    if (Double.isNaN(matrix.getElement(j, i))) {
+                        boolean hasNonZero = false; // Not counting the translation column.
+                        for (int k=Math.max(tgtDim, srcDim); --k>=0;) {
+                            if ((k < tgtDim && matrix.getElement(k, i) != 0) ||
+                                (k < srcDim && matrix.getElement(j, k) != 0))
+                            {
+                                // If there is more than 1 non-zero element,
+                                // abandon the attempt to handle NaN values.
+                                if (hasNonZero) {
+                                    indexNaN = null;
+                                    numIndex = 0;
+                                    break search;
+                                }
+                                hasNonZero = true;
+                            }
+                        }
+                        if (indexNaN == null) {
+                            indexNaN = new int[tgtDim * 4]; // At most one scale and one offset per row.
+                        }
+                        indexNaN[numIndex++] = i;
+                        indexNaN[numIndex++] = j;
+                    }
+                }
+            }
+            /*
+             * IF there is any NaN value to edit, replace them by 0 if they appear in the
+             * translation column or by 1 otherwise (scale or shear).
+             */
+            for (int k=0; k<numIndex;) {
+                final int i = indexNaN[k++];
+                final int j = indexNaN[k++];
+                matrix.setElement(j, i, i == srcDim ? 0 : 1);
+            }
+        }
+        /*
+         * Now apply the inversion.
+         */
+        Exception failure = null;
+        if (isAffine2D(matrix)) {
             /*
              * Uses AffineTransform path if possible, because it leads to more accurate
              * result. The JDK AffineTransform implementation contains a lot of special
@@ -282,9 +357,9 @@ skipColumn: for (int i=numCol; --i>=0;) {
             final AffineMatrix3 at = toAffineMatrix3(matrix);
             try {
                 at.invert();
-                return at;
+                matrix = at;
             } catch (java.awt.geom.NoninvertibleTransformException exception) {
-                cause = exception;
+                failure = exception;
             }
         } else {
             /*
@@ -294,15 +369,28 @@ skipColumn: for (int i=numCol; --i>=0;) {
             final XMatrix m = toOptimalMatrix(matrix);
             try {
                 m.invert();
-                return m;
+                matrix = m;
             } catch (SingularMatrixException exception) {
-                cause = exception;
+                failure = exception;
             } catch (MismatchedSizeException exception) {
                 // This exception is thrown if the matrix is not square.
-                cause = exception;
+                failure = exception;
             }
         }
-        throw new NoninvertibleTransformException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM), cause);
+        if (failure != null) {
+            throw new NoninvertibleTransformException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM), failure);
+        }
+        /*
+         * At this point, the matrix has been inverted. If they were any NaN value,
+         * restore back those values.
+         */
+        for (int k=0; k<numIndex;) {
+            final int i = indexNaN[k++];
+            final int j = indexNaN[k++];
+            matrix.setElement(i, j, Double.NaN); // Note that i,j indices are interchanged.
+            matrix.setElement(i, tgtDim, Double.NaN); // Translation is always NaN.
+        }
+        return matrix;
     }
 
     /**
@@ -317,7 +405,7 @@ skipColumn: for (int i=numCol; --i>=0;) {
         final int numRow = matrix1.getNumRow();
         final int numCol = matrix2.getNumCol();
         if (numCol == matrix1.getNumCol()) {
-            if (isAffineTransform(matrix1) && isAffineTransform(matrix2)) {
+            if (isAffine2D(matrix1) && isAffine2D(matrix2)) {
                 final AffineMatrix3 matrix = toAffineMatrix3(matrix1);
                 matrix.concatenate(toAffineTransform(matrix2));
                 return matrix;

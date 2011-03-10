@@ -163,11 +163,10 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
             if (matrix.isIdentity()) {
                 return IdentityTransform.create(sourceDimension);
             }
-            final XMatrix m = MatrixFactory.toXMatrix(matrix);
-            if (m.isAffine()) {
+            if (isAffine(matrix)) {
                 switch (sourceDimension) {
-                    case 1: return LinearTransform1D.create(m.getElement(0,0), m.getElement(0,1));
-                    case 2: return create(toAffineTransform(m));
+                    case 1: return LinearTransform1D.create(matrix.getElement(0,0), matrix.getElement(0,1));
+                    case 2: return create(toAffineTransform(matrix));
                 }
             } else if (sourceDimension == 2) {
                 return new ProjectiveTransform2D(matrix);

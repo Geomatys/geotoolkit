@@ -25,13 +25,14 @@ import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 
 import org.junit.*;
 import static org.junit.Assert.*;
+import static java.lang.Double.NaN;
 
 
 /**
  * Tests the {@link MatrixUtilities} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.17
  *
  * @since 3.10
  */
@@ -42,7 +43,7 @@ public final class MatrixUtilitiesTest {
     private static final double EPS = 1E-12;
 
     /**
-     * Tests {@link MatrixUtilities#forDimensions}
+     * Tests {@link MatrixUtilities#forDimensions}.
      *
      * @since 3.16
      */
@@ -64,7 +65,7 @@ public final class MatrixUtilitiesTest {
     }
 
     /**
-     * Tests {@link MatrixUtilities#invert}
+     * Tests {@link MatrixUtilities#invert(Matrix)} with a non-square matrix.
      *
      * @throws NoninvertibleTransformException Should not happen.
      */
@@ -77,13 +78,41 @@ public final class MatrixUtilitiesTest {
         });
         final double[] expected = {
             0.5, 0,    -4,
-            0,   0,     Double.NaN,
+            0,   0,     NaN,
             0,   0.25, -1.25,
-            0,   0,     Double.NaN,
+            0,   0,     NaN,
             0,   0,     1
         };
         final Matrix inverse = MatrixUtilities.invert(matrix);
         assertMatrixEquals(expected, 5, 3, inverse);
+    }
+
+    /**
+     * Tests {@link MatrixUtilities#invert(Matrix)} with a square matrix that
+     * contains a {@link Double#NaN} value.
+     *
+     * @throws NoninvertibleTransformException Should not happen.
+     *
+     * @since 3.17
+     */
+    @Test
+    public void testInvertSquareNaN() throws NoninvertibleTransformException {
+        final Matrix matrix = MatrixFactory.create(5, 5, new double[] {
+            20,  0,   0,   0, -3000,
+            0, -20,   0,   0,  4000,
+            0,   0, 400,   0,  2000,
+            0,   0,   0, NaN,    10,
+            0,   0,   0,   0,     1
+        });
+        final double[] expected = {
+            0.05,  0,      0,   0,  150,
+            0, -0.05,      0,   0,  200,
+            0,     0, 0.0025,   0,   -5,
+            0,     0,      0, NaN,  NaN,
+            0,     0,      0,   0,    1
+        };
+        final Matrix inverse = MatrixUtilities.invertSquare(matrix);
+        assertMatrixEquals(expected, 5, 5, inverse);
     }
 
     /**
