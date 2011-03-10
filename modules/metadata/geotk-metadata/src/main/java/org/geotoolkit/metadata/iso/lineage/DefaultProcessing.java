@@ -54,7 +54,7 @@ import org.geotoolkit.xml.Namespaces;
     "softwareReferences",
     "procedureDescription",
     "documentations",
-    "runTimeParameter",
+    "runTimeParameters",
     "algorithms"
 })
 @XmlRootElement(name = "LE_Processing", namespace = Namespaces.GMI)
@@ -87,7 +87,7 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
     /**
      * Parameters to control the processing operations, entered at run time.
      */
-    private InternationalString runTimeParameter;
+    private InternationalString runTimeParameters;
 
     /**
      * Details of the methodology by which geographic information was derived from the
@@ -189,9 +189,9 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      * {@code null} if unspecified.
      */
     @Override
-    @XmlElement(name = "runTimeParameter", namespace = Namespaces.GMI)
-    public synchronized InternationalString getRunTimeParameter() {
-        return runTimeParameter;
+    @XmlElement(name = "runTimeParameters", namespace = Namespaces.GMI)
+    public synchronized InternationalString getRunTimeParameters() {
+        return runTimeParameters;
     }
 
     /**
@@ -199,9 +199,9 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      *
      * @param newValue The new runtime parameter value.
      */
-    public synchronized void setRunTimeParameter(final InternationalString newValue) {
+    public synchronized void setRunTimeParameters(final InternationalString newValue) {
         checkWritePermission();
-        runTimeParameter = newValue;
+        runTimeParameters = newValue;
     }
 
     /**
