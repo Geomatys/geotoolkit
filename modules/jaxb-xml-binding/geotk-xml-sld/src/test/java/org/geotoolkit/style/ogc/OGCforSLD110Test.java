@@ -40,6 +40,7 @@ import org.geotoolkit.ogc.xml.v110.PropertyIsLikeType;
 import org.geotoolkit.ogc.xml.v110.PropertyIsNullType;
 import org.geotoolkit.ogc.xml.v110.PropertyNameType;
 import org.geotoolkit.ogc.xml.v110.UnaryLogicOpType;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.se.xml.v110.ParameterValueType;
 import org.geotoolkit.sld.DefaultSLDFactory;
 import org.geotoolkit.sld.MutableSLDFactory;
@@ -47,6 +48,7 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.sld.xml.GTtoSE110Transformer;
 import org.geotoolkit.sld.xml.JAXBSLDUtilities;
 import org.geotoolkit.sld.xml.SEJAXBStatics;
+import org.geotoolkit.sld.xml.XMLUtilities;
 import org.geotoolkit.xml.MarshallerPool;
 import org.junit.Test;
 import org.opengis.filter.And;
@@ -56,6 +58,7 @@ import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Not;
 import org.opengis.filter.Or;
 import org.opengis.filter.PropertyIsBetween;
+import org.opengis.filter.PropertyIsEqualTo;
 import org.opengis.filter.PropertyIsLike;
 import org.opengis.filter.PropertyIsNull;
 import org.opengis.filter.expression.Add;
@@ -64,11 +67,16 @@ import org.opengis.filter.expression.Literal;
 import org.opengis.filter.expression.Multiply;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.expression.Subtract;
+import org.opengis.filter.sort.SortBy;
+import org.opengis.filter.sort.SortOrder;
+import org.opengis.filter.spatial.BBOX;
 import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.filter.spatial.Disjoint;
 import org.opengis.filter.spatial.Overlaps;
+import org.opengis.geometry.BoundingBox;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Test class for Filter and Expression jaxb marshelling and unmarshelling.
@@ -166,6 +174,9 @@ public class OGCforSLD110Test extends TestCase{
     private static File TEST_FILE_FIL_SPA_OVERLAPS2 = null;
     private static File TEST_FILE_FIL_SPA_TOUCHES = null;
     private static File TEST_FILE_FIL_SPA_WITHIN = null;
+
+    private static File TEST_FILE_CUSTOM_1 = null;
+    private static File TEST_FILE_CUSTOM_2 = null;
     
     
     static {
@@ -212,6 +223,8 @@ public class OGCforSLD110Test extends TestCase{
             FILE_FIL_SPA_OVERLAPS2 = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Overlaps2.xml").toURI() );
             FILE_FIL_SPA_TOUCHES = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Touches.xml").toURI() );
             FILE_FIL_SPA_WITHIN = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/sample/Filter_Spatial_Within.xml").toURI() );
+            TEST_FILE_CUSTOM_1 = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/test/filter/filterbbox.xml").toURI() );
+            TEST_FILE_CUSTOM_2 = new File( OGCforSLD110Test.class.getResource("/org/geotoolkit/test/filter/sortby.xml").toURI() );
         } catch (URISyntaxException ex) { ex.printStackTrace(); }
         
         assertNotNull(FILE_EXP_ADD);
@@ -1243,5 +1256,56 @@ public class OGCforSLD110Test extends TestCase{
     public void testFilterSpatialWithin() throws JAXBException{
         
     }
-    
+
+    ////////////////////////////////////////////////////////////////////////////
+    // CUSTOM TESTS ////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////////
+
+    @Test
+    public void testCustom1() throws JAXBException, FactoryException{
+
+        XMLUtilities util = new XMLUtilities();
+        final Filter filter = util.readFilter(TEST_FILE_CUSTOM_1, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
+
+        assertTrue(filter instanceof Or);
+
+        final Or or = (Or) filter;
+        final Filter f1 = or.getChildren().get(0);
+        final Filter f2 = or.getChildren().get(1);
+        assertTrue(f1 instanceof PropertyIsEqualTo);
+        assertTrue(f2 instanceof BBOX);
+
+        final PropertyIsEqualTo ff1 = (PropertyIsEqualTo) f1;
+        final BBOX ff2 = (BBOX) f2;
+
+        assertTrue(ff1.getExpression1() instanceof PropertyName);
+        assertTrue(ff1.getExpression2() instanceof Literal);
+        assertTrue(ff2.getExpression1() instanceof PropertyName);
+        assertTrue(ff2.getExpression2() instanceof Literal);
+
+        assertEquals("sf:str4Property", ((PropertyName)ff1.getExpression1()).getPropertyName());
+        assertEquals("abc3", ((Literal)ff1.getExpression2()).getValue());
+        assertEquals("sf:attribut.Géométrie", ((PropertyName)ff2.getExpression1()).getPropertyName());
+
+        final BoundingBox geom = (BoundingBox) ((Literal)ff2.getExpression2()).getValue();
+        assertEquals(34d,geom.getMinX(),1e-7);
+        assertEquals(40d,geom.getMaxX(),1e-7);
+        assertEquals(15d,geom.getMinY(),1e-7);
+        assertEquals(19d,geom.getMaxY(),1e-7);
+        final CoordinateReferenceSystem crs = geom.getCoordinateReferenceSystem();
+        assertEquals(CRS.decode("EPSG:4326"), crs);
+
+    }
+
+    @Test
+    public void testCustom2() throws JAXBException, FactoryException{
+
+        XMLUtilities util = new XMLUtilities();
+        final SortBy sort = util.readSortBy(TEST_FILE_CUSTOM_2, org.geotoolkit.sld.xml.Specification.Filter.V_1_1_0);
+
+        assertEquals("sf:str4Property", sort.getPropertyName().getPropertyName());
+        assertEquals(SortOrder.ASCENDING, sort.getSortOrder());
+
+    }
+
 }

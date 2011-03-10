@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.sld.xml;
 
+import java.util.List;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -620,17 +621,23 @@ public final class XMLUtilities {
         ensureNonNull("source",source);
         ensureNonNull("version",version);
 
-        final Object obj;
+        Object obj;
 
         switch(version){
             case V_1_0_0 :
                 throw new JAXBException("SortBy doesnt exist in OGC Filter v1.0.0");
             case V_1_1_0 :
                 obj = unmarshallV110(source);
+
+                if(obj instanceof JAXBElement){
+                    obj = ((JAXBElement)obj).getValue();
+                }
+
                 if(obj instanceof org.geotoolkit.ogc.xml.v110.SortByType){
-//                    return transformerGTv110.visitFilter( (org.geotoolkit.ogc.xml.v110.FilterType) obj);
+                    final List<SortBy> sorts = transformerGTv110.visitSortBy( (org.geotoolkit.ogc.xml.v110.SortByType) obj);
+                    return sorts.get(0);
                 }else{
-                    throw new JAXBException("Source is not a valid OGC SortBy v1.1.0");
+                    throw new JAXBException("Source is not a valid OGC SortBy v1.1.0 : " + obj);
                 }
             default :
                 throw new IllegalArgumentException("Unable to read source, specified version is not supported");
