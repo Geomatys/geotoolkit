@@ -87,7 +87,7 @@ public final class DatumMarshallingTest {
         assertMultilinesEquals(
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<gml:SecondDefiningParameter xmlns:gml=\"http://www.opengis.net/gml\">\n" +
-            "  <gml:semiMinorAxis uom=\"../uom/gmxUom.xsd#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +
+            "  <gml:semiMinorAxis uom=\"http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +
             "</gml:SecondDefiningParameter>", xml);
     }
 
@@ -102,7 +102,7 @@ public final class DatumMarshallingTest {
         final String xml =
             "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n" +
             "<gml:SecondDefiningParameter xmlns:gml=\"http://www.opengis.net/gml\">\n" +
-            "  <gml:semiMinorAxis uom=\"../uom/gmxUom.xsd#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +
+            "  <gml:semiMinorAxis uom=\"http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])\">6371000.0</gml:semiMinorAxis>\n" +
             "</gml:SecondDefiningParameter>";
         final StringReader reader = new StringReader(xml);
         final Unmarshaller unmarshaller = pool.acquireUnmarshaller();

@@ -401,7 +401,9 @@ public final class Units {
             return null;
         }
         uom = uom.trim();
-        if (equalsIgnorePlural(uom, "pixel")) {
+        if (uom.length() == 0) {
+            return Unit.ONE;
+        } else if (equalsIgnorePlural(uom, "pixel")) {
             return NonSI.PIXEL;
         } else if (uom.equalsIgnoreCase("deg") || equalsIgnorePlural(uom, "degree") ||
                 equalsIgnorePlural(uom, "decimal_degree") || uom.equals("°"))

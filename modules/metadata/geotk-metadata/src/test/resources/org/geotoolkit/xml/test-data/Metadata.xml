@@ -104,7 +104,7 @@
             <gco:Integer>830</gco:Integer>
           </gmd:dimensionSize>
           <gmd:resolution>
-            <gco:Measure uom="../uom/gmxUom.xsd#xpointer(//*[@gml:id='m'])">70.5</gco:Measure>
+            <gco:Measure uom="http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])">70.5</gco:Measure>
           </gmd:resolution>
         </gmd:MD_Dimension>
       </gmd:axisDimensionProperties>

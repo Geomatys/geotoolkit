@@ -60,24 +60,12 @@ public final class CodeListProxy {
      *
      * @param  file The XML file, either {@code "gmxCodelists.xml"} or {@code "ML_gmxCodelists.xml"}.
      * @param  identifier The UML identifier of the code list.
-     * @return The URL to the given code list in the given XSD schema.
+     * @return The URL to the given code list in the given schema.
      *
      * @since 3.17
      */
     private static String schemaURL(final String file, final String identifier) {
-        final StringBuilder buffer = new StringBuilder(128);
-        final String base = MarshalContext.schema("gmd");
-        if (base == null) {
-            buffer.append("http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/");
-        } else {
-            buffer.append(base);
-            final int length = buffer.length();
-            if (length != 0 && buffer.charAt(length - 1) != '/') {
-                buffer.append('/');
-            }
-            buffer.append("resources/Codelist/");
-        }
-        return buffer.append(file).append('#').append(identifier).toString();
+        return MarshalContext.schema("gmd", "resources/Codelist", file, identifier);
     }
 
     /**

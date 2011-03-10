@@ -17,10 +17,10 @@
  */
 package org.geotoolkit.internal.jaxb.uom;
 
-import org.geotoolkit.internal.jaxb.gco.Measure;
 import java.net.URISyntaxException;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
+import org.geotoolkit.internal.jaxb.gco.Measure;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -30,7 +30,7 @@ import static org.junit.Assert.*;
  * Test {@link Measure}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.17
  *
  * @since 3.10
  */
@@ -45,13 +45,16 @@ public final class MeasureTest {
         final Measure measure = new Measure();
         measure.setUOM("http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#m");
         assertEquals(SI.METRE, measure.unit);
+        assertEquals("http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])", measure.getUOM());
 
         measure.unit = null;
         measure.setUOM("../uom/ML_gmxUom.xsd#xpointer(//*[@gml:id='deg'])");
         assertEquals(NonSI.DEGREE_ANGLE, measure.unit);
+        assertEquals("http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='deg'])", measure.getUOM());
 
         measure.unit = null;
         measure.setUOM("http://my.big.org/units/kg");
         assertEquals(SI.KILOGRAM, measure.unit);
+        assertEquals("http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='kg'])", measure.getUOM());
     }
 }

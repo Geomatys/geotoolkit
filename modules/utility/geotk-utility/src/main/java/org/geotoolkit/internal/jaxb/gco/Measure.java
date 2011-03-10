@@ -39,7 +39,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.17
  *
  * @see org.geotoolkit.measure.Measure
  *
@@ -50,11 +50,6 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  *       if we can find some way to use {@code @XmlValue} with that class.
  */
 public final class Measure {
-    /**
-     * The namespace of UOM identifier, to be used during XML marshalling.
-     */
-    private static final String NAMESPACE = "../uom/gmxUom.xsd";
-
     /**
      * The value of the measure.
      */
@@ -76,7 +71,7 @@ public final class Measure {
 
     /**
      * Constructs a representation of the measure as defined in ISO-19103 standard,
-     * with the UOM attribute like {@code '../uom/gmxUom.xsd#xpointer(//*[@gml:id='m'])'}.
+     * with the UOM attribute like {@code "gmxUom.xml#xpointer(//*[@gml:id='m'])"}.
      *
      * @param value The value of the measure.
      * @param unit  The unit of measure to use.
@@ -92,7 +87,7 @@ public final class Measure {
      * then this method returns:
      *
      * {@preformat text
-     *     ../uom/gmxUom.xsd#xpointer(//*[@gml:id='m'])
+     *     http://schemas.opengis.net/iso/19139/20070417/resources/uom/gmxUom.xml#xpointer(//*[@gml:id='m'])
      * }
      *
      * @return The string representation of the unit of measure.
@@ -106,7 +101,7 @@ public final class Measure {
         } else if (unit.equals(NonSI.PIXEL)) {
             symbol = "pixel";
         } else {
-            symbol = NAMESPACE + "#xpointer(//*[@gml:id='" + unit + "'])";
+            symbol = MarshalContext.schema("gmd", "resources/uom", "gmxUom.xml", "xpointer(//*[@gml:id='" + unit + "'])");
         }
         return symbol;
     }
@@ -119,10 +114,10 @@ public final class Measure {
      * @throws URISyntaxException If the {@code uom} looks like a URI, but can not be parsed.
      */
     public void setUOM(String uom) throws URISyntaxException {
-        if (unit != null) {
-            throw new IllegalStateException();
+        if (uom == null || (uom = uom.trim()).length() == 0) {
+            unit = null;
+            return;
         }
-        uom = uom.trim();
         /*
          * Try to guess if the UOM is a URN or URL. We looks for character that are usually
          * part of URI but not part of unit symbols, for example ':'. We can not search for

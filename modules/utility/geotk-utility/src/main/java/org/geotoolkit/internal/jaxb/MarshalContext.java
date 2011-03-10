@@ -141,6 +141,36 @@ public final class MarshalContext {
     }
 
     /**
+     * Returns the URL to a given code list in the given XML file. This method concatenates
+     * the {@linkplain #schema(String) base schema URL} with the given directory, file and
+     * identifier.
+     *
+     * @param  key One of the value documented in the "<cite>Map key</cite>" column of
+     *         {@link org.geotoolkit.xml.XML#SCHEMAS}. Typical value is {@code "gmd"}.
+     * @param  directory The directory to concatenate, for example {@code "resources/uom"}
+     *         or {@code "resources/Codelist"} (<strong>no trailing {@code '/'}</strong>).
+     * @param  file The XML file, for example {@code "gmxUom.xml"}, {@code "gmxCodelists.xml"}
+     *         or {@code "ML_gmxCodelists.xml"} (<strong>no trailing {@code '#'}</strong>).
+     * @param  identifier The UML identifier of the code list.
+     * @return The URL to the given code list in the given schema.
+     *
+     * @since 3.17
+     */
+    public static String schema(final String key, final String directory, final String file, final String identifier) {
+        final StringBuilder buffer = new StringBuilder(128);
+        String base = schema(key);
+        if (base == null) {
+            base = "http://schemas.opengis.net/iso/19139/20070417/";
+        }
+        buffer.append(base);
+        final int length = buffer.length();
+        if (length != 0 && buffer.charAt(length - 1) != '/') {
+            buffer.append('/');
+        }
+        return buffer.append(directory).append('/').append(file).append('#').append(identifier).toString();
+    }
+
+    /**
      * Returns whatever a marshalling process is under progress.
      *
      * @return {@code true} if a marshalling process is in progress.
