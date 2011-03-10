@@ -34,7 +34,7 @@ import org.opengis.metadata.identification.Identification;
 public class VectorProcessFactory extends AbstractProcessFactory{
 
     //Factory name
-    public static final String NAME = "vectortools";
+    public static final String NAME = "vector";
     static final DefaultServiceIdentification IDENTIFICATION;
 
     static {
