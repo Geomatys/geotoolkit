@@ -297,40 +297,63 @@ skipColumn: for (int i=numCol; --i>=0;) {
      */
     public static Matrix invertSquare(Matrix matrix) throws NoninvertibleTransformException {
         /*
-         * Searches for NaN values. If some NaN values are found but the matrix is writen in
-         * such a way that the NaN value is used for exactly one ordinate value (i.e. a row
-         * in the matrix expresses a one-dimensional conversion which is independent of all
+         * Searches for NaN values. If some NaN values are found but the matrix is written
+         * in such a way that the NaN value is used for exactly one ordinate value (i.e. a
+         * matrix row is used for a one-dimensional conversion which is independent of all
          * other dimensions), then we will edit the matrix in such a way that this NaN value
-         * does not prevent the invert matrix to be computed.
+         * does not prevent the inverse matrix to be computed.
          */
         int   numIndex = 0;
-        int[] indexNaN = null; // Pairs of (i,j)
-        final int srcDim = matrix.getNumCol() - 1; // Exclude the translation column
-        final int tgtDim = matrix.getNumRow() - 1; // Exclude the (0, 0, ..., 1) row
+        int[] indexNaN = null; // Pairs of (i,j) followed by the column of scale factor.
+        final int numCol = matrix.getNumCol() - 1; // Exclude the translation column
+        final int numRow = matrix.getNumRow() - 1; // Exclude the (0, 0, ..., 1) row
         if (isAffine(matrix)) {
-search:     for (int j=tgtDim; --j>=0;) {
-                for (int i=srcDim; i>=0; i--) { // Scan also the translation column.
+search:     for (int j=numRow; --j>=0;) {
+                for (int i=numCol; i>=0; i--) { // Scan also the translation column.
                     if (Double.isNaN(matrix.getElement(j, i))) {
-                        boolean hasNonZero = false; // Not counting the translation column.
-                        for (int k=Math.max(tgtDim, srcDim); --k>=0;) {
-                            if ((k < tgtDim && matrix.getElement(k, i) != 0) ||
-                                (k < srcDim && matrix.getElement(j, k) != 0))
-                            {
-                                // If there is more than 1 non-zero element,
-                                // abandon the attempt to handle NaN values.
-                                if (hasNonZero) {
+                        /*
+                         * Found a NaN value. First, if the we are not in the translation
+                         * column, ensure that the column contains only zero values except
+                         * on the current line.
+                         */
+                        int scaleColumn = -1;
+                        if (i != numCol) {
+                            scaleColumn = i; // The non-translation element is the scale factor.
+                            for (int k=numRow; --k>=0;) {
+                                if (k != j && matrix.getElement(k, i) != 0) {
                                     indexNaN = null;
                                     numIndex = 0;
                                     break search;
                                 }
-                                hasNonZero = true;
                             }
                         }
+                        /*
+                         * Next, ensure that the row contains only zero elements except for
+                         * the scale factor and the offset (the element in the translation
+                         * column, which is not checked by the loop below).
+                         */
+                        for (int k=numCol; --k>=0;) {
+                            if (k != i && matrix.getElement(j, k) != 0) {
+                                if (scaleColumn >= 0) {
+                                    // If there is more than 1 non-zero element,
+                                    // abandon the attempt to handle NaN values.
+                                    indexNaN = null;
+                                    numIndex = 0;
+                                    break search;
+                                }
+                                scaleColumn = k;
+                            }
+                        }
+                        /*
+                         * At this point, the NaN element has been determined as replaceable.
+                         * Remember its index; the replacement will be performed later.
+                         */
                         if (indexNaN == null) {
-                            indexNaN = new int[tgtDim * 4]; // At most one scale and one offset per row.
+                            indexNaN = new int[numRow * 6]; // At most one scale and one offset per row.
                         }
                         indexNaN[numIndex++] = i;
                         indexNaN[numIndex++] = j;
+                        indexNaN[numIndex++] = scaleColumn; // May be -1 (while uncommon)
                     }
                 }
             }
@@ -338,10 +361,10 @@ search:     for (int j=tgtDim; --j>=0;) {
              * IF there is any NaN value to edit, replace them by 0 if they appear in the
              * translation column or by 1 otherwise (scale or shear).
              */
-            for (int k=0; k<numIndex;) {
-                final int i = indexNaN[k++];
-                final int j = indexNaN[k++];
-                matrix.setElement(j, i, i == srcDim ? 0 : 1);
+            for (int k=0; k<numIndex; k+=3) {
+                final int i = indexNaN[k];
+                final int j = indexNaN[k+1];
+                matrix.setElement(j, i, (i == numCol) ? 0 : 1);
             }
         }
         /*
@@ -381,14 +404,23 @@ search:     for (int j=tgtDim; --j>=0;) {
             throw new NoninvertibleTransformException(Errors.format(Errors.Keys.NONINVERTIBLE_TRANSFORM), failure);
         }
         /*
-         * At this point, the matrix has been inverted. If they were any NaN value,
-         * restore back those values.
+         * At this point, the matrix has been inverted. If they were any NaN value in the original
+         * matrix, set the corresponding scale factor and offset to NaN in the resulting matrix.
          */
         for (int k=0; k<numIndex;) {
             final int i = indexNaN[k++];
             final int j = indexNaN[k++];
-            matrix.setElement(i, j, Double.NaN); // Note that i,j indices are interchanged.
-            matrix.setElement(i, tgtDim, Double.NaN); // Translation is always NaN.
+            final int s = indexNaN[k++];
+            if (i != numCol) {
+                // Found a scale factor to set to NaN.
+                matrix.setElement(i, j, Double.NaN); // Note that i,j indices are interchanged.
+                if (matrix.getElement(i, numRow) != 0) {
+                    matrix.setElement(i, numRow, Double.NaN); // = -offset/scale, so 0 stay 0.
+                }
+            } else if (s >= 0) {
+                // Found a translation factory to set to NaN.
+                matrix.setElement(s, numRow, Double.NaN);
+            }
         }
         return matrix;
     }

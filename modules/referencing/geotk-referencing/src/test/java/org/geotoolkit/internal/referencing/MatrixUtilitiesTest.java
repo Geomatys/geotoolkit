@@ -97,21 +97,77 @@ public final class MatrixUtilitiesTest {
      */
     @Test
     public void testInvertSquareNaN() throws NoninvertibleTransformException {
-        final Matrix matrix = MatrixFactory.create(5, 5, new double[] {
+        Matrix matrix = MatrixFactory.create(5, 5, new double[] {
             20,  0,   0,   0, -3000,
             0, -20,   0,   0,  4000,
+            0,   0,   0,   2,    20,
             0,   0, 400,   0,  2000,
-            0,   0,   0, NaN,    10,
             0,   0,   0,   0,     1
         });
-        final double[] expected = {
-            0.05,  0,      0,   0,  150,
-            0, -0.05,      0,   0,  200,
-            0,     0, 0.0025,   0,   -5,
-            0,     0,      0, NaN,  NaN,
-            0,     0,      0,   0,    1
+        double[] expected = {
+            0.05,  0,  0,      0,  150,
+            0, -0.05,  0,      0,  200,
+            0,     0,  0, 0.0025,   -5,
+            0,     0,  0.5,    0,  -10,
+            0,     0,  0,      0,    1
         };
-        final Matrix inverse = MatrixUtilities.invertSquare(matrix);
+        // Just for making sure that our matrix is correct.
+        Matrix inverse = MatrixUtilities.invertSquare(matrix);
+        assertMatrixEquals(expected, 5, 5, inverse);
+
+        // Set the scale factor to NaN. The offset become invalid.
+        matrix = MatrixFactory.create(5, 5, new double[] {
+            20,  0,   0,   0, -3000,
+            0, -20,   0,   0,  4000,
+            0,   0,   0, NaN,    20,
+            0,   0, 400,   0,  2000,
+            0,   0,   0,   0,     1
+        });
+        expected = new double[] {
+            0.05,  0,  0,      0,  150,
+            0, -0.05,  0,      0,  200,
+            0,     0,  0, 0.0025,   -5,
+            0,     0,  NaN,    0,  NaN,
+            0,     0,  0,      0,    1
+        };
+        inverse = MatrixUtilities.invertSquare(matrix);
+        assertMatrixEquals(expected, 5, 5, inverse);
+
+        // Set the scale factor to NaN with an offset equals to 0.
+        // The zero value should be preserved.
+        matrix = MatrixFactory.create(5, 5, new double[] {
+            20,  0,   0,   0, -3000,
+            0, -20,   0,   0,  4000,
+            0,   0,   0, NaN,     0,
+            0,   0, 400,   0,  2000,
+            0,   0,   0,   0,     1
+        });
+        expected = new double[] {
+            0.05,  0,  0,      0,  150,
+            0, -0.05,  0,      0,  200,
+            0,     0,  0, 0.0025,   -5,
+            0,     0,  NaN,    0,    0,
+            0,     0,  0,      0,    1
+        };
+        inverse = MatrixUtilities.invertSquare(matrix);
+        assertMatrixEquals(expected, 5, 5, inverse);
+
+        // Set the offset to NaN.
+        matrix = MatrixFactory.create(5, 5, new double[] {
+            20,  0,   0,   0, -3000,
+            0, -20,   0,   0,  4000,
+            0,   0,   0,   2,   NaN,
+            0,   0, 400,   0,  2000,
+            0,   0,   0,   0,     1
+        });
+        expected = new double[] {
+            0.05,  0,  0,      0,  150,
+            0, -0.05,  0,      0,  200,
+            0,     0,  0, 0.0025,   -5,
+            0,     0,  0.5,    0,  NaN,
+            0,     0,  0,      0,    1
+        };
+        inverse = MatrixUtilities.invertSquare(matrix);
         assertMatrixEquals(expected, 5, 5, inverse);
     }
 
