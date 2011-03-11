@@ -34,21 +34,10 @@ The Geotoolkit.org library
 
 * News
 
-  Latest Geotoolkit.org monthly release is Geotk-3.16, released December 17, 2010.
-  This release depends on GeoAPI 2.3-M9.
+  Latest Geotoolkit.org monthly release is Geotk-3.17, released March 11, 2011.
+  This release depends on GeoAPI 2.3-RC1.
 
-  The Geotk 3.16 release features performance improvement in raster reprojections, a specialized
-  TIFF reader for uncompressed images, and improved support of multi-dimensional Coordinate
-  Reference Systems.
-
-  The Geotk-pending 3.16 release features bug fixes.
-
-  <<NOTE:>> It was previously said that Geotk-3.16 would be the last release to use
-  the <<<javax.measure>>> package name of units of measurement, before the switch
-  to {{{http://www.unitsofmeasurement.org/}org.unitsofmeasurement}}. However recent
-  development in the UOM land suggests that a new JSR could be started, in which case
-  the <<<javax.measure>>> package name would continue to exist. Consequently, the
-  switch to <<<org.unitsofmeasurement>>> has been canceled for now. Wait and see.
+  The Geotk 3.17 release features improvements in ISO 19139 compliance, and bug fixes.
 
 
 * License
