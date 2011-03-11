@@ -15,14 +15,18 @@
  *    Lesser General Public License for more details.
  */
 
-package org.geotoolkit.process.vector.centroid;
+package org.geotoolkit.process.vector.clipGeometry;
 
+import com.vividsolutions.jts.geom.Geometry;
+
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.vector.VectorDescriptor;
-import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
@@ -30,23 +34,29 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boleau
  * @module pending
  */
-public class CentroidDescriptor extends VectorDescriptor {
+public class ClipGeometryDescriptor extends VectorDescriptor {
 
-    public static final String NAME = "centroid";
+    public static final String NAME = "clipGeometry";
 
-     public static final ParameterDescriptorGroup INPUT_DESC =
+    /**
+     * Mandatory - Feature Collection
+     */
+    public static final ParameterDescriptor<Geometry> CLIP_GEOMETRY_DESC =
+            new DefaultParameterDescriptor("clip_geometry_in", "Inpute clip geometry", Geometry.class, null, true);
+
+    public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor []{FEATURE_IN});
+            new GeneralParameterDescriptor []{FEATURE_IN,CLIP_GEOMETRY_DESC});
 
 
      public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
             new GeneralParameterDescriptor[]{FEATURE_OUT});
 
-    public static final ProcessDescriptor INSTANCE = new CentroidDescriptor();
+    public static final ProcessDescriptor INSTANCE = new ClipGeometryDescriptor();
 
-    private CentroidDescriptor(){
-        super(NAME, "Return Feature centroid of all Feature in FeatureCollection",INPUT_DESC, OUTPUT_DESC);
+    private ClipGeometryDescriptor(){
+        super(NAME, "Return the centroid of a feature",INPUT_DESC, OUTPUT_DESC);
     }
 
     /**
@@ -54,7 +64,7 @@ public class CentroidDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess() {
-        return new Centroid();
+        return new ClipGeometry();
     }
 
 }

@@ -29,7 +29,7 @@ import org.opengis.feature.type.FeatureType;
  */
 public class CentroidFeatureCollection extends VectorFeatureCollection {
 
-    final FeatureType newFeatureType;
+    private final FeatureType newFeatureType;
 
     /**
      * Connect to the original FeatureConnection
@@ -37,7 +37,7 @@ public class CentroidFeatureCollection extends VectorFeatureCollection {
      */
     public CentroidFeatureCollection(FeatureCollection<Feature> originalFC) {
         super(originalFC);
-        newFeatureType = Centroid.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
+        this.newFeatureType = Centroid.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
     }
 
     /**

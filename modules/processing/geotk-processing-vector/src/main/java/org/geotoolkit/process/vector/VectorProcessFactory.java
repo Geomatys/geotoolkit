@@ -18,11 +18,15 @@
 package org.geotoolkit.process.vector;
 
 import org.geotoolkit.process.vector.centroid.CentroidDescriptor;
+
 import java.util.Collections;
+
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
+import org.geotoolkit.process.vector.clipGeometry.ClipGeometryDescriptor;
+
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 
@@ -46,7 +50,7 @@ public class VectorProcessFactory extends AbstractProcessFactory{
     }
 
     public VectorProcessFactory(){
-        super(CentroidDescriptor.INSTANCE);
+        super(CentroidDescriptor.INSTANCE,ClipGeometryDescriptor.INSTANCE);
     }
 
     @Override
