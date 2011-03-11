@@ -21,7 +21,6 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Point;
-import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -32,7 +31,6 @@ import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.util.collection.XCollections;
 
 import org.junit.Test;
 import org.opengis.feature.Feature;

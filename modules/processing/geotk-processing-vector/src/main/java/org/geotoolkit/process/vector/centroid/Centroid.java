@@ -18,8 +18,9 @@ package org.geotoolkit.process.vector.centroid;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+
 import java.util.ListIterator;
-import org.geotoolkit.data.DataUtilities;
+
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
@@ -59,35 +60,15 @@ public class Centroid extends AbstractProcess {
         return result;
     }
 
-     /**
+    /**
      *  {@inheritDoc }
      */
     @Override
     public void run() {
-        final FeatureCollection<?> inputFeatureList = Parameters.value(CentroidDescriptor.FEATURE_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList = Parameters.value(CentroidDescriptor.FEATURE_IN, inputParameters);
 
-        //Change the geometry feature type
-        final FeatureType newType = changeFeatureType(inputFeatureList.getFeatureType());
+        final CentroidFeatureCollection resultFeatureList = new CentroidFeatureCollection(inputFeatureList);
 
-        final FeatureCollection<Feature> resultFeatureList = DataUtilities.collection("", newType);
-                
-        for(Feature inputFeature : inputFeatureList){
-           
-
-            //create result feature based on the new feature type and th input feature
-            final Feature resultFeature = FeatureUtilities.defaultFeature(newType, inputFeature.getIdentifier().getID());
-
-            for (Property property : inputFeature.getProperties()) {
-                //if the propperty is a geometry
-                if (property.getDescriptor()instanceof GeometryDescriptor) {
-                    final Geometry inputFeatureGeometry = (Geometry) property.getValue();
-                    resultFeature.getProperty(property.getName()).setValue(inputFeatureGeometry.getCentroid());
-                } else {
-                    resultFeature.getProperty(property.getName()).setValue(property.getValue());
-                }
-            }
-            resultFeatureList.add(resultFeature);   
-        }
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
     }
@@ -97,7 +78,7 @@ public class Centroid extends AbstractProcess {
      * @param FeatureType
      * @return FeatureType
      */
-    private FeatureType changeFeatureType(FeatureType oldFeatureType) {
+    public static FeatureType changeFeatureType(FeatureType oldFeatureType) {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
@@ -127,5 +108,29 @@ public class Centroid extends AbstractProcess {
         }
 
         return ftb.buildFeatureType();
+    }
+
+    /**
+     * Create a new Feature with centroid to
+     * @param oldFeature Feature
+     * @param newType the new FeatureType for the Feature
+     * @return Feature
+     */
+    public static Feature changeFeature(Feature oldFeature, FeatureType newType) {
+
+        //create result feature based on the new feature type and th input feature
+        final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
+
+        for (Property property : oldFeature.getProperties()) {
+            //if the propperty is a geometry
+            if (property.getDescriptor() instanceof GeometryDescriptor) {
+                final Geometry inputFeatureGeometry = (Geometry) property.getValue();
+                resultFeature.getProperty(property.getName()).setValue(inputFeatureGeometry.getCentroid());
+            } else {
+                resultFeature.getProperty(property.getName()).setValue(property.getValue());
+            }
+        }
+
+        return resultFeature;
     }
 }

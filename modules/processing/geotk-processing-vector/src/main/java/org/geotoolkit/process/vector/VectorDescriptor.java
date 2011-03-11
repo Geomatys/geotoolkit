@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.process.vector;
 
 import org.geotoolkit.data.FeatureCollection;
@@ -23,6 +22,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.util.SimpleInternationalString;
 
+import org.opengis.feature.Feature;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -34,36 +34,28 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  */
 public abstract class VectorDescriptor extends AbstractProcessDescriptor {
 
-  
-     /**
+    /**
      * Mandatory - Feature Collection
      */
-    public static final ParameterDescriptor <FeatureCollection<?>> FEATURE_IN=
-            new DefaultParameterDescriptor("feature_in","Inpute Feature",FeatureCollection.class,null,true);
-
+    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_IN =
+            new DefaultParameterDescriptor("feature_in", "Inpute Feature", FeatureCollection.class, null, true);
 
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-                new GeneralParameterDescriptor[]{FEATURE_IN});
-
-
+            new GeneralParameterDescriptor[]{FEATURE_IN});
     /**
      * Mandatory - Resulting Feature Collection
      */
-    public static final ParameterDescriptor <FeatureCollection<?>> FEATURE_OUT=
-            new DefaultParameterDescriptor("feature_out","Outpute Feature",FeatureCollection.class,null,true);
-
-     public static final ParameterDescriptorGroup OUTPUT_DESC =
+    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_OUT =
+            new DefaultParameterDescriptor("feature_out", "Outpute Feature", FeatureCollection.class, null, true);
+    
+    public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
-                new GeneralParameterDescriptor[]{FEATURE_OUT});
+            new GeneralParameterDescriptor[]{FEATURE_OUT});
 
-
-    protected VectorDescriptor(String name,String msg){
+    protected VectorDescriptor(String name, String msg) {
         super(name, VectorProcessFactory.IDENTIFICATION,
                 new SimpleInternationalString(msg),
                 INPUT_DESC, OUTPUT_DESC);
     }
-
-
-
 }

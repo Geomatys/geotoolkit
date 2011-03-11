@@ -36,6 +36,9 @@ public class CentroidDescriptor extends VectorDescriptor {
         super(NAME, "Return the centroid of a feature");
     }
 
+    /**
+     *  {@inheritDoc }
+     */
     @Override
     public Process createProcess() {
         return new Centroid();

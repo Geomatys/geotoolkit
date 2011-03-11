@@ -1,0 +1,167 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2011, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+package org.geotoolkit.process.vector;
+
+import java.util.Map;
+
+import org.geotoolkit.data.AbstractFeatureCollection;
+import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.query.Query;
+
+import org.geotoolkit.factory.Hints;
+
+import org.geotoolkit.storage.DataStoreException;
+
+import org.opengis.feature.Feature;
+import org.opengis.feature.type.AttributeDescriptor;
+
+import org.opengis.filter.Filter;
+
+/**
+ *  Abstract FeatureCollection for vector process
+ * @author Quentin Boileau
+ * @module pending
+ */
+public abstract class VectorFeatureCollection extends AbstractFeatureCollection<Feature> {
+
+    private final FeatureCollection<?> originalFC;
+
+    /**
+     * Connect to the original FeatureConnection
+     * @param originalFC FeatureCollection
+     */
+    public VectorFeatureCollection(final FeatureCollection<?> originalFC) {
+        super(originalFC.getID(), originalFC.getSource());
+        this.originalFC = originalFC;
+    }
+
+    /**
+     * Return the feature modify by the process
+     * @param original Feature
+     */
+    protected abstract Feature modify(Feature original);
+
+    /**
+     * Return the orignal FeatureCollection
+     * @return FeatureCollection : original
+     */
+    protected FeatureCollection<?> getOriginalFeatureCollection() {
+        return originalFC;
+    }
+
+    /**
+     *  {@inheritDoc }
+     */
+    @Override
+    public FeatureCollection<Feature> subCollection(Query query) throws DataStoreException {
+        throw new UnsupportedOperationException("Not supported yet.");
+    }
+
+    /**
+     * Return FeatureIterator connecting to the FeatureIterator from the
+     * original FeatureCollection
+     * @param hints
+     * @return FeatureIterator
+     * @throws DataStoreRuntimeException
+     */
+    @Override
+    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
+        return new VectorFeatureIterator(originalFC.iterator());
+    }
+
+    /**
+     * Useless because current FeatureCollection can't be modified
+     * @param filter
+     * @param values
+     * @throws DataStoreException
+     */
+    @Override
+    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+        throw new DataStoreException("Unmodifiable collection");
+    }
+
+    /**
+     * Useless because current FeatureCollection can't be modified
+     * @param filter
+     * @throws DataStoreException
+     */
+    @Override
+    public void remove(Filter filter) throws DataStoreException {
+        throw new DataStoreException("Unmodifiable collection");
+    }
+
+    /**
+     *  {@inheritDoc }
+     */
+    @Override
+    public boolean isWritable() throws DataStoreRuntimeException {
+        return false;
+    }
+
+    /**
+     * Implementation of FeatureIterator for VectorFeatureCollection
+     * @author Quentin Boileau
+     * @module pending
+     */
+    private class VectorFeatureIterator implements FeatureIterator<Feature> {
+
+        private final FeatureIterator<?> originalFI;
+
+        /**
+         * Connect to the original FeatureIterator
+         * @param originalFI FeatureIterator
+         */
+        public VectorFeatureIterator(final FeatureIterator<?> originalFI) {
+            this.originalFI = originalFI;
+        }
+
+        /**
+         * Return the Feature modify by the process
+         * @return Feature
+         */
+        @Override
+        public Feature next() {
+            return modify(originalFI.next());
+        }
+
+        /**
+         * Close the original FeatureIterator
+         */
+        @Override
+        public void close() {
+            originalFI.close();
+        }
+
+        /**
+         * Return hasNext() result from the original FeatureIterator
+         */
+        @Override
+        public boolean hasNext() {
+            return originalFI.hasNext();
+        }
+
+        /**
+         * Useless because current FeatureCollection can't be modified
+         */
+        @Override
+        public void remove() {
+            throw new DataStoreRuntimeException("Unmodifiable collection");
+        }
+    }
+}
