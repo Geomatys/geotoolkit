@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Map;
 
 
 /**
@@ -30,6 +31,11 @@ import java.net.URL;
  * @module pending
  */
 public interface Request {
+
+    /**
+     * Returns a map that represents the request header parameters.
+     */
+    Map<String,String> getHeaderMap();
 
     /**
      * Returns the URL of a request on a web service, in REST mode.

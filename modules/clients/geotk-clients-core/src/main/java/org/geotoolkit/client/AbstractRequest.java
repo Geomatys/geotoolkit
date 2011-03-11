@@ -60,6 +60,12 @@ public abstract class AbstractRequest implements Request {
      */
     protected final Map<String, String> requestParameters = new HashMap<String, String>();
 
+    /**
+     * The request header map that contains a set of key-value for HTTP header
+     * fields (user-agent, referer, accept-language...)
+     */
+    protected final Map<String,String> headerMap = new HashMap<String, String>();
+
     protected AbstractRequest(final String serverURL) {
         this(serverURL,null);
     }
@@ -79,6 +85,14 @@ public abstract class AbstractRequest implements Request {
     }
 
     protected void prepareParameters(){};
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<String,String> getHeaderMap(){
+        return headerMap;
+    }
 
     /**
      * {@inheritDoc }
@@ -143,6 +157,12 @@ public abstract class AbstractRequest implements Request {
     @Override
     public InputStream getResponseStream() throws IOException{
         final URLConnection cnx = getURL().openConnection();
+
+        //Set all fields from the headerMap to the properties of this URLConnection.
+        for(final Entry<String,String> entry : headerMap.entrySet()){
+            cnx.setRequestProperty(entry.getKey(),entry.getValue());
+        }
+
         return openRichException(cnx);
     }
 

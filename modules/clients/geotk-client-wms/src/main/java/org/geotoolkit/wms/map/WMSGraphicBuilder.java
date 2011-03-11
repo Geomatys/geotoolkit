@@ -22,11 +22,13 @@ import java.awt.Image;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import javax.imageio.ImageIO;
 
@@ -122,6 +124,13 @@ public final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             final CanvasMonitor monitor = context2D.getMonitor();
 
             final GetMapRequest request = layer.getServer().createGetMap();
+
+            //Filling the request header map from the map of the layer's server
+            final Map<String, String> headerMap = layer.getServer().getRequestHeaderMap();
+            if (headerMap != null) {
+                request.getHeaderMap().putAll(headerMap);
+            }
+
             final GeneralEnvelope env = new GeneralEnvelope(context2D.getCanvasObjectiveBounds());
             final Dimension dim = context2D.getCanvasDisplayBounds().getSize();
             final double[] resolution = context2D.getResolution(context2D.getDisplayCRS());
@@ -132,13 +141,8 @@ public final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
             dim.width /= resolution[0];
             dim.height /= resolution[1];
 
-            final URL url;
             try {
                 layer.prepareQuery(request, env, dim, null);
-                url = request.getURL();
-            } catch (MalformedURLException ex) {
-                monitor.exceptionOccured(new PortrayalException(ex), Level.WARNING);
-                return;
             } catch (TransformException ex) {
                 monitor.exceptionOccured(new PortrayalException(ex), Level.WARNING);
                 return;
@@ -147,21 +151,28 @@ public final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                 return;
             }
 
-            getLogger().log(Level.WARNING, "[WMSMapLayer] : GETMAP request : {0}", url);
-
             final BufferedImage image;
+            InputStream is = null;
             try {
-                image = ImageIO.read(url);
+                is = request.getResponseStream();
+                image = ImageIO.read(is);
             } catch (IOException io) {
                 monitor.exceptionOccured(new PortrayalException(io), Level.WARNING);
                 return;
+            } finally {
+                if (is != null) {
+                    try {
+                        is.close();
+                    } catch (IOException ex) {
+                        monitor.exceptionOccured(ex, Level.WARNING);
+                    }
+                }
             }
 
             if (image == null) {
                 monitor.exceptionOccured(new PortrayalException("WMS server didn't return an image."), Level.WARNING);
                 return;
             }
-
 
             try {
                 final CoordinateReferenceSystem crs2d = CRSUtilities.getCRS2D(env.getCoordinateReferenceSystem());

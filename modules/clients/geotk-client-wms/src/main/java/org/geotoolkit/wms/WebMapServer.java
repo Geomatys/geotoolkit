@@ -20,6 +20,8 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -52,6 +54,12 @@ public class WebMapServer implements Server{
     private final WMSVersion version;
     private final URL serverURL;
     private AbstractWMSCapabilities capabilities;
+
+    /**
+     * The request header map for this server
+     * that contains a set of key-value for HTTP header fields (user-agent, referer, accept-language...)
+     */
+    private final Map<String,String> requestHeaderMap = new HashMap<String, String>();
 
     /**
      * Builds a web map server with the given server url and version.
@@ -125,8 +133,14 @@ public class WebMapServer implements Server{
         final Thread thread = new Thread() {
             @Override
             public void run() {
+                final GetCapabilitiesRequest getCaps = createGetCapabilities();
+
+                //Filling the request header map from the map of the layer's server
+                final Map<String, String> headerMap = getRequestHeaderMap();
+                getCaps.getHeaderMap().putAll(headerMap);
+
                 try {
-                    capabilities = WMSBindingUtilities.unmarshall(createGetCapabilities().getURL(), version);
+                    capabilities = WMSBindingUtilities.unmarshall(getCaps.getResponseStream(), version);
                 } catch (Exception ex) {
                     capabilities = null;
                     try {
@@ -221,6 +235,14 @@ public class WebMapServer implements Server{
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
+    }
+
+    /**
+     * Returns the request header map for this server.
+     * @return
+     */
+    public Map<String,String> getRequestHeaderMap() {
+        return requestHeaderMap;
     }
 
     @Override
