@@ -41,12 +41,12 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  * "endorsed JAR" names if needed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.00
  * @module
  */
-abstract class Pooled implements Catching {
+abstract class Pooled {
     /**
      * The prefix of property names which are internal to Sun implementation of JAXB.
      */
@@ -308,35 +308,6 @@ abstract class Pooled implements Catching {
      * A method which is common to both {@code Marshaller} and {@code Unmarshaller}.
      */
     public abstract ValidationEventHandler getEventHandler() throws JAXBException;
-
-
-
-    ////////////////                                               ////////////////
-    ////////////////   Methods related to the Catching interface   ////////////////
-    ////////////////                                               ////////////////
-
-    /**
-     * Returns the current object converters. This is {@link ObjectConverters#DEFAULT}
-     * unless the user invoked {@link #setObjectConverters(ObjectConverters)}.
-     *
-     * @since 3.07
-     */
-    @Override
-    @Deprecated
-    public final ObjectConverters getObjectConverters() {
-        return (converters != null) ? converters : ObjectConverters.DEFAULT;
-    }
-
-    /**
-     * Sets a new object converters to use for (un)marshalling processes.
-     *
-     * @since 3.07
-     */
-    @Override
-    @Deprecated
-    public final void setObjectConverters(final ObjectConverters converters) {
-        this.converters = converters;
-    }
 
     /**
      * Must be invoked by subclasses before a {@code try} block performing a (un)marshalling

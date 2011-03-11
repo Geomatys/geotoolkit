@@ -53,7 +53,7 @@ import org.geotoolkit.internal.jaxb.gco.URIAdapter;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @see XML
  *
@@ -120,13 +120,13 @@ public class MarshallerPool {
      * The pool of marshaller. This pool is initially empty
      * and will be filled with elements as needed.
      */
-    private final Deque<Catching.Marshaller> marshallers = new LinkedList<Catching.Marshaller>();
+    private final Deque<Marshaller> marshallers = new LinkedList<Marshaller>();
 
     /**
      * The pool of unmarshaller. This pool is initially empty
      * and will be filled with elements as needed.
      */
-    private final Deque<Catching.Unmarshaller> unmarshallers = new LinkedList<Catching.Unmarshaller>();
+    private final Deque<Unmarshaller> unmarshallers = new LinkedList<Unmarshaller>();
 
     /**
      * Returns the root classes of Geotk objects to be marshalled by default.
@@ -251,7 +251,7 @@ public class MarshallerPool {
      * Returns the marshaller or unmarshaller to use from the given queue.
      * If the queue is empty, returns {@code null}.
      */
-    private static <T extends Catching> T acquire(final Deque<T> queue) {
+    private static <T> T acquire(final Deque<T> queue) {
         synchronized (queue) {
             return queue.pollLast();
         }
@@ -260,7 +260,7 @@ public class MarshallerPool {
     /**
      * Marks the given marshaller or unmarshaller available for further reuse.
      */
-    private static <T extends Catching> void release(final Deque<T> queue, final T marshaller) {
+    private static <T> void release(final Deque<T> queue, final T marshaller) {
         try {
             ((Pooled) marshaller).reset();
         } catch (JAXBException exception) {
@@ -297,8 +297,8 @@ public class MarshallerPool {
      * @return A marshaller configured for formatting OGC/ISO XML.
      * @throws JAXBException If an error occurred while creating and configuring a marshaller.
      */
-    public Catching.Marshaller acquireMarshaller() throws JAXBException {
-        Catching.Marshaller marshaller = acquire(marshallers);
+    public Marshaller acquireMarshaller() throws JAXBException {
+        Marshaller marshaller = acquire(marshallers);
         if (marshaller == null) {
             marshaller = new PooledMarshaller(createMarshaller(), internal);
         }
@@ -324,8 +324,8 @@ public class MarshallerPool {
      * @return A unmarshaller configured for parsing OGC/ISO XML.
      * @throws JAXBException If an error occurred while creating and configuring the unmarshaller.
      */
-    public Catching.Unmarshaller acquireUnmarshaller() throws JAXBException {
-        Catching.Unmarshaller unmarshaller = acquire(unmarshallers);
+    public Unmarshaller acquireUnmarshaller() throws JAXBException {
+        Unmarshaller unmarshaller = acquire(unmarshallers);
         if (unmarshaller == null) {
             unmarshaller = new PooledUnmarshaller(createUnmarshaller(), internal);
         }
@@ -339,9 +339,7 @@ public class MarshallerPool {
      * @param marshaller The marshaller to return to the pool.
      */
     public void release(final Marshaller marshaller) {
-        if (marshaller instanceof Catching.Marshaller) {
-            release(marshallers, (Catching.Marshaller) marshaller);
-        }
+        release(marshallers, marshaller);
     }
 
     /**
@@ -351,9 +349,7 @@ public class MarshallerPool {
      * @param unmarshaller The unmarshaller to return to the pool.
      */
     public void release(final Unmarshaller unmarshaller) {
-        if (unmarshaller instanceof Catching.Unmarshaller) {
-            release(unmarshallers, (Catching.Unmarshaller) unmarshaller);
-        }
+        release(unmarshallers, unmarshaller);
     }
 
     /**

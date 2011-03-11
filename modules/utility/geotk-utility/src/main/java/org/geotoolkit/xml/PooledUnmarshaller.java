@@ -21,6 +21,7 @@ import java.net.URL;
 import java.io.File;
 import java.io.Reader;
 import java.io.InputStream;
+import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
@@ -41,21 +42,21 @@ import org.xml.sax.InputSource;
 
 
 /**
- * Wraps a {@link javax.xml.bind.Unmarshaller} in order to have some control on the modifications
+ * Wraps a {@link Unmarshaller} in order to have some control on the modifications
  * applied on it. This is done in order to make the unmarshaller safer for reuse.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.00
  * @module
  */
-@Decorator(javax.xml.bind.Unmarshaller.class)
-final class PooledUnmarshaller extends Pooled implements Catching.Unmarshaller {
+@Decorator(Unmarshaller.class)
+final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     /**
      * The wrapper marshaller which does the real work.
      */
-    private final javax.xml.bind.Unmarshaller unmarshaller;
+    private final Unmarshaller unmarshaller;
 
     /**
      * Creates a pooled unmarshaller wrapping the given one.
@@ -65,7 +66,7 @@ final class PooledUnmarshaller extends Pooled implements Catching.Unmarshaller {
      *        or {@code false} if this is an external implementation like a JAR put in the
      *        endorsed directory.
      */
-    PooledUnmarshaller(final javax.xml.bind.Unmarshaller unmarshaller, final boolean internal) {
+    PooledUnmarshaller(final Unmarshaller unmarshaller, final boolean internal) {
         super(internal);
         this.unmarshaller = unmarshaller;
     }

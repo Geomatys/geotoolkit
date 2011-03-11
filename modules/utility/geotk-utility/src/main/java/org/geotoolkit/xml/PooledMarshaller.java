@@ -20,6 +20,7 @@ package org.geotoolkit.xml;
 import java.io.File;
 import java.io.Writer;
 import java.io.OutputStream;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.PropertyException;
 import javax.xml.bind.ValidationEventHandler;
@@ -37,21 +38,21 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
- * Wraps a {@link javax.xml.bind.Marshaller} in order to have some control on the modifications
+ * Wraps a {@link Marshaller} in order to have some control on the modifications
  * applied on it. This is done in order to make the marshaller safer for reuse.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.00
  * @module
  */
-@Decorator(javax.xml.bind.Marshaller.class)
-final class PooledMarshaller extends Pooled implements Catching.Marshaller {
+@Decorator(Marshaller.class)
+final class PooledMarshaller extends Pooled implements Marshaller {
     /**
      * The wrapper marshaller which does the real work.
      */
-    private final javax.xml.bind.Marshaller marshaller;
+    private final Marshaller marshaller;
 
     /**
      * Creates a pooled marshaller wrapping the given one.
@@ -61,7 +62,7 @@ final class PooledMarshaller extends Pooled implements Catching.Marshaller {
      *        or {@code false} if this is an external implementation like a JAR put in the
      *        endorsed directory.
      */
-    PooledMarshaller(final javax.xml.bind.Marshaller marshaller, final boolean internal) {
+    PooledMarshaller(final Marshaller marshaller, final boolean internal) {
         super(internal);
         this.marshaller = marshaller;
     }
