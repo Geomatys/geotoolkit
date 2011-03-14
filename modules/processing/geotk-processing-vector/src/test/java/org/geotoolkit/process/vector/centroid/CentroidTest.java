@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.process.vector.centroid;
 
 import com.vividsolutions.jts.geom.Coordinate;
@@ -40,30 +39,59 @@ import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import static org.junit.Assert.*;
+
 /**
- * Description of vector process.
+ * Junit test of Centroid process
  * @author Quentin Boleau
  * @module pending
  */
 public class CentroidTest {
+
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static SimpleFeatureType type;
 
+    @Test
+    public void testCentroid() {
 
-   private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException{
+        // Features in
+        final FeatureCollection<?> featureList = buildFeatureList();
+
+        // Process
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "centroid");
+        org.geotoolkit.process.Process proc = desc.createProcess();
+
+        ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        in.parameter("feature_in").setValue(featureList);
+
+        proc.setInput(in);
+        proc.run();
+
+        //Features out
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+
+        //Expected Features out
+        final FeatureCollection<?> featureListResult = buildResultList();
+
+        assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
+        assertEquals(featureListOut.getID(), featureListResult.getID());
+        assertEquals(featureListOut.size(), featureListResult.size());
+        assertTrue(featureListOut.containsAll(featureListResult));
+    }
+
+    private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
         ftb.add("name", String.class);
         ftb.add("position", LinearRing.class, CRS.decode("EPSG:3395"));
         ftb.add("height", Integer.class);
-        
+
         ftb.setDefaultGeometry("position");
         final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
         return sft;
     }
 
-     private static SimpleFeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException{
+    private static SimpleFeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
         ftb.add("name", String.class);
@@ -97,7 +125,7 @@ public class CentroidTest {
             sfb = new SimpleFeatureBuilder(type);
             sfb.set("name", "Building" + i);
             sfb.set("height", 12);
-            sfb.set("position",  geometryFactory.createLinearRing(
+            sfb.set("position", geometryFactory.createLinearRing(
                     new Coordinate[]{
                         new Coordinate(5.0, 18.0),
                         new Coordinate(10.0, 23.0),
@@ -112,7 +140,7 @@ public class CentroidTest {
 
         return featureList;
     }
-    
+
     private static FeatureCollection<?> buildResultList() {
 
         try {
@@ -130,7 +158,7 @@ public class CentroidTest {
             Feature myFeature;
             geometryFactory = new GeometryFactory();
 
-            LinearRing ring =  geometryFactory.createLinearRing(
+            LinearRing ring = geometryFactory.createLinearRing(
                     new Coordinate[]{
                         new Coordinate(5.0, 18.0),
                         new Coordinate(10.0, 23.0),
@@ -150,36 +178,4 @@ public class CentroidTest {
 
         return featureList;
     }
-
-    @Test
-    public void testCentroid() {
-
-        // Features in
-        final FeatureCollection<?> featureList = buildFeatureList();
-        
-        // Process
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "centroid");
-        org.geotoolkit.process.Process proc = desc.createProcess();
-
-        ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        in.parameter("feature_in").setValue(featureList);
-
-        proc.setInput(in);
-
-        proc.run();
-
-        //Features out
-        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-
-        //Expected Features out
-        final FeatureCollection<?> featureListResult = buildResultList();
-
-        assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
-        assertEquals(featureListOut.getID(), featureListResult.getID());
-        assertEquals(featureListOut.size(), featureListResult.size());
-        assertTrue(featureListOut.containsAll(featureListResult));
-       
-
-    }
-
 }

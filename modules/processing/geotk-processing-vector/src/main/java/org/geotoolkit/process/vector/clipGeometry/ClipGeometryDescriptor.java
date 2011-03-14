@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.process.vector.clipGeometry;
 
 import com.vividsolutions.jts.geom.Geometry;
@@ -37,26 +36,21 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 public class ClipGeometryDescriptor extends VectorDescriptor {
 
     public static final String NAME = "clipGeometry";
-
     /**
      * Mandatory - Feature Collection
      */
     public static final ParameterDescriptor<Geometry> CLIP_GEOMETRY_DESC =
             new DefaultParameterDescriptor("clip_geometry_in", "Inpute clip geometry", Geometry.class, null, true);
-
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor []{FEATURE_IN,CLIP_GEOMETRY_DESC});
-
-
-     public static final ParameterDescriptorGroup OUTPUT_DESC =
+            new GeneralParameterDescriptor[]{FEATURE_IN, CLIP_GEOMETRY_DESC});
+    public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
             new GeneralParameterDescriptor[]{FEATURE_OUT});
-
     public static final ProcessDescriptor INSTANCE = new ClipGeometryDescriptor();
 
-    private ClipGeometryDescriptor(){
-        super(NAME, "Return the centroid of a feature",INPUT_DESC, OUTPUT_DESC);
+    private ClipGeometryDescriptor() {
+        super(NAME, "Return the centroid of a feature", INPUT_DESC, OUTPUT_DESC);
     }
 
     /**
@@ -66,5 +60,4 @@ public class ClipGeometryDescriptor extends VectorDescriptor {
     public Process createProcess() {
         return new ClipGeometry();
     }
-
 }

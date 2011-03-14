@@ -69,8 +69,6 @@ public class ClipGeometry extends AbstractProcess {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipGeometryDescriptor.FEATURE_IN, inputParameters);
         inputClippingGeometry = Parameters.value(ClipGeometryDescriptor.CLIP_GEOMETRY_DESC, inputParameters);
 
-        System.out.println("Param Entrée : " + inputClippingGeometry);
-
         final ClipGeometryFeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList);
 
         result = super.getOutput();
@@ -124,21 +122,19 @@ public class ClipGeometry extends AbstractProcess {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
-       
+
         for (Property property : oldFeature.getProperties()) {
             if (property.getDescriptor() instanceof GeometryDescriptor) {
-               final Geometry interGeometry = testClipping((Geometry) property.getValue(), inputClippingGeometry);
+                final Geometry interGeometry = testClipping((Geometry) property.getValue(), inputClippingGeometry);
 
                 //test clipping
-               if(interGeometry != null){
-                   System.out.println("Test Clipping OK");
+                if (interGeometry != null) {
+
                     resultFeature.getProperty(property.getName()).setValue(interGeometry);
-               }
-                else{
-                   return null;
+                } else {
+                    return null;
                 }
-            }
-            else {
+            } else {
                 resultFeature.getProperty(property.getName()).setValue(property.getValue());
             }
 
@@ -146,23 +142,22 @@ public class ClipGeometry extends AbstractProcess {
 
         return resultFeature;
 
-       /*
-            //FeatureType newType = oldFeature.getType();
-            //create result feature based on the new feature type and th input feature
-            final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
+        /*
+        //FeatureType newType = oldFeature.getType();
+        //create result feature based on the new feature type and th input feature
+        final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
-            for (Property property : oldFeature.getProperties()) {
-                //if the propperty is a geometry
-                if (property.getDescriptor() instanceof GeometryDescriptor) {
-                    final Geometry inputFeatureGeometry = (Geometry) property.getValue();
-                    resultFeature.getProperty(property.getName()).setValue(inputFeatureGeometry.getCentroid());
-                } else {
-                    resultFeature.getProperty(property.getName()).setValue(property.getValue());
-                }
-            }*/
+        for (Property property : oldFeature.getProperties()) {
+        //if the propperty is a geometry
+        if (property.getDescriptor() instanceof GeometryDescriptor) {
+        final Geometry inputFeatureGeometry = (Geometry) property.getValue();
+        resultFeature.getProperty(property.getName()).setValue(inputFeatureGeometry.getCentroid());
+        } else {
+        resultFeature.getProperty(property.getName()).setValue(property.getValue());
+        }
+        }*/
     }
 
-    
     public static Geometry testClipping(Geometry featureGeometry, Geometry clippingGeometry) {
 
         Geometry intersectGeometry;

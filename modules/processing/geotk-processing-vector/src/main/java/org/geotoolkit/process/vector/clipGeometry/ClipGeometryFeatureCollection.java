@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.process.vector.clipGeometry;
 
-import com.vividsolutions.jts.geom.Geometry;
 import java.util.NoSuchElementException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
@@ -35,7 +34,6 @@ import org.opengis.feature.type.FeatureType;
 public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
 
     private final FeatureType newFeatureType;
-   
 
     /**
      * Connect to the original FeatureConnection
@@ -45,7 +43,7 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
         super(originalFC);
 
         this.newFeatureType = ClipGeometry.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
-        
+
     }
 
     /**
@@ -57,7 +55,7 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
         return newFeatureType;
     }
 
-      /**
+    /**
      * Return FeatureIterator connecting to the FeatureIterator from the
      * original FeatureCollection
      * @param hints
@@ -77,8 +75,7 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
         return ClipGeometry.clipFeature(original, newFeatureType);
     }
 
-
-     /**
+    /**
      * Implementation of FeatureIterator for VectorFeatureCollection
      * @author Quentin Boileau
      * @module pending
@@ -86,7 +83,6 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
     private class ClipGeometryFeatureIterator implements FeatureIterator<Feature> {
 
         private final FeatureIterator<?> originalFI;
-
         private Feature nextFeature;
 
         /**
@@ -106,7 +102,7 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
         public Feature next() {
             findNext();
 
-            if(nextFeature == null){
+            if (nextFeature == null) {
                 throw new NoSuchElementException("No more Feature.");
             }
 
@@ -141,11 +137,11 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
         }
 
         private void findNext() {
-            if(nextFeature != null){
+            if (nextFeature != null) {
                 return;
             }
 
-            while(nextFeature == null && originalFI.hasNext()){
+            while (nextFeature == null && originalFI.hasNext()) {
                 nextFeature = modify(originalFI.next());
             }
 
