@@ -22,6 +22,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.process.vector.VectorFeatureCollection;
+import org.geotoolkit.process.vector.clipGeometry.ClipGeometry;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -42,7 +43,7 @@ public class ClipFeatureCollection extends VectorFeatureCollection {
     public ClipFeatureCollection(FeatureCollection<Feature> originalFC) {
         super(originalFC);
 
-        this.newFeatureType = Clip.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
+        this.newFeatureType = ClipGeometry.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
 
     }
 
