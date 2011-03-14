@@ -27,7 +27,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 
 /**
- * FeatureCollection for ClipGeometry process
+ * FeatureCollection for Clip process
  * @author Quentin Boileau
  * @module pending
  */
@@ -41,9 +41,7 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
      */
     public ClipGeometryFeatureCollection(FeatureCollection<Feature> originalFC) {
         super(originalFC);
-
         this.newFeatureType = ClipGeometry.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
-
     }
 
     /**
@@ -136,6 +134,9 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
             throw new DataStoreRuntimeException("Unmodifiable collection");
         }
 
+        /**
+         * Find the next feature using clipping process
+         */
         private void findNext() {
             if (nextFeature != null) {
                 return;
@@ -144,7 +145,6 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
             while (nextFeature == null && originalFI.hasNext()) {
                 nextFeature = modify(originalFI.next());
             }
-
         }
     }
 }

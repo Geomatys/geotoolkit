@@ -48,6 +48,9 @@ public class Centroid extends AbstractProcess {
 
     ParameterValueGroup result;
 
+    /**
+     * Default Constructor
+     */
     public Centroid() {
         super(CentroidDescriptor.INSTANCE);
     }
@@ -111,7 +114,7 @@ public class Centroid extends AbstractProcess {
     }
 
     /**
-     * Create a new Feature with centroid to
+     * Create a new Feature with centroid
      * @param oldFeature Feature
      * @param newType the new FeatureType for the Feature
      * @return Feature

@@ -14,17 +14,16 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.process.vector;
-
-import org.geotoolkit.process.vector.centroid.CentroidDescriptor;
 
 import java.util.Collections;
 
+import org.geotoolkit.process.vector.centroid.CentroidDescriptor;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
+import org.geotoolkit.process.vector.clip.ClipDescriptor;
 import org.geotoolkit.process.vector.clipGeometry.ClipGeometryDescriptor;
 
 import org.opengis.metadata.Identifier;
@@ -32,12 +31,13 @@ import org.opengis.metadata.identification.Identification;
 
 /**
  * Description of centroid process.
+ * Factory name : "vector"
  * @author Quentin Boleau
  * @module pending
  */
-public class VectorProcessFactory extends AbstractProcessFactory{
+public class VectorProcessFactory extends AbstractProcessFactory {
 
-    //Factory name
+    /**Factory name*/
     public static final String NAME = "vector";
     static final DefaultServiceIdentification IDENTIFICATION;
 
@@ -49,10 +49,16 @@ public class VectorProcessFactory extends AbstractProcessFactory{
         IDENTIFICATION.setCitation(citation);
     }
 
-    public VectorProcessFactory(){
-        super(CentroidDescriptor.INSTANCE,ClipGeometryDescriptor.INSTANCE);
+    /**
+     * Default constructor 
+     */
+    public VectorProcessFactory() {
+        super(CentroidDescriptor.INSTANCE, ClipGeometryDescriptor.INSTANCE, ClipDescriptor.INSTANCE);
     }
 
+    /**
+     *  {@inheritDoc }
+     */
     @Override
     public Identification getIdentification() {
         return IDENTIFICATION;

@@ -26,7 +26,15 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * Description of vector process.
+ * Input and output descriptor for vector process.
+ * Inputs :
+ * <ul>
+ *     <li>FEATURE_IN "feature_in" FeatureCollection to clip</li>
+ * </ul>
+ * Outputs :
+ * <ul>
+ *     <li>FEATURE_OUT "feature_out" FeatureCollection clipped</li>
+ * </ul>
  * @author Quentin Boleau
  * @module pending
  */
@@ -37,16 +45,21 @@ public abstract class VectorDescriptor extends AbstractProcessDescriptor {
      */
     public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_IN =
             new DefaultParameterDescriptor("feature_in", "Inpute Feature", FeatureCollection.class, null, true);
-
     /**
      * Mandatory - Resulting Feature Collection
      */
     public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_OUT =
             new DefaultParameterDescriptor("feature_out", "Outpute Feature", FeatureCollection.class, null, true);
-    
 
-    protected VectorDescriptor(
-           String name, String msg, ParameterDescriptorGroup input, ParameterDescriptorGroup output) {
+    /**
+     * Default constructor
+     * @param name : process descriptor name
+     * @param msg  : process descriptor message
+     * @param input : process input
+     * @param output : process output
+     */
+    protected VectorDescriptor(String name, String msg,
+            ParameterDescriptorGroup input, ParameterDescriptorGroup output) {
 
         super(name, VectorProcessFactory.IDENTIFICATION,
                 new SimpleInternationalString(msg),

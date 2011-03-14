@@ -14,14 +14,18 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.clipGeometry;
+package org.geotoolkit.process.vector.clip;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
 
+import java.util.ArrayList;
 import java.util.ListIterator;
 
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -40,20 +44,20 @@ import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Process to clip a FeatureCollection using a geometry
+ * Process to clip a FeatureCollection using another FeatureCollection
  * @author Quentin Boileau
  * @module pending
  */
-public class ClipGeometry extends AbstractProcess {
+public class Clip extends AbstractProcess {
 
     ParameterValueGroup result;
-    static Geometry inputClippingGeometry;
+    static FeatureCollection<Feature>  inputFeatureClippingList;
 
     /**
      * Default constructor
      */
-    public ClipGeometry() {
-        super(ClipGeometryDescriptor.INSTANCE);
+    public Clip() {
+        super(ClipDescriptor.INSTANCE);
     }
 
     /**
@@ -69,19 +73,19 @@ public class ClipGeometry extends AbstractProcess {
      */
     @Override
     public void run() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipGeometryDescriptor.FEATURE_IN, inputParameters);
-        inputClippingGeometry = Parameters.value(ClipGeometryDescriptor.CLIP_GEOMETRY_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipDescriptor.FEATURE_IN, inputParameters);
+        inputFeatureClippingList = Parameters.value(ClipDescriptor.FEATURE_CLIP, inputParameters);
 
-        final ClipGeometryFeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList);
+        final ClipFeatureCollection resultFeatureList = new ClipFeatureCollection(inputFeatureList);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
     }
 
     /**
-     * Change the geometry descriptor to Geometry for clipping.
-     * @param oldFeatureType FeatureType
-     * @return newFeatureType FeatureType
+     * Change the geometry descriptor to GeometryCollection.
+     * @param FeatureType
+     * @return FeatureType
      */
     public static FeatureType changeFeatureType(FeatureType oldFeatureType) {
 
@@ -102,10 +106,12 @@ public class ClipGeometry extends AbstractProcess {
 
                     final AttributeDescriptorBuilder descBuilder = new AttributeDescriptorBuilder();
                     final AttributeTypeBuilder typeBuilder = new AttributeTypeBuilder();
+
                     descBuilder.copy((AttributeDescriptor) desc);
                     typeBuilder.copy(type);
-                    typeBuilder.setBinding(Geometry.class);
+                    typeBuilder.setBinding(GeometryCollection.class);
                     descBuilder.setType(typeBuilder.buildGeometryType());
+
                     final PropertyDescriptor newDesc = descBuilder.buildDescriptor();
                     ite.set(newDesc);
                 }
@@ -116,7 +122,7 @@ public class ClipGeometry extends AbstractProcess {
     }
 
     /**
-     * Clip the feature with the Geometry Clipping
+     * Clip a feature with the FeatureCollection's geometries
      * @param oldFeature Feature
      * @param newType the new FeatureType for the Feature
      * @return Feature
@@ -124,28 +130,57 @@ public class ClipGeometry extends AbstractProcess {
     public static Feature clipFeature(Feature oldFeature, FeatureType newType) {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
-
+        final GeometryFactory GF = new GeometryFactory();
 
         for (Property property : oldFeature.getProperties()) {
+            
+            //for each Geometry in the oldFeature
             if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry interGeometry = testClipping((Geometry) property.getValue(), inputClippingGeometry);
 
-                //test clipping
-                if (interGeometry != null) {
+                //loop and test intersection between each geometry of each clipping feature from
+                //clipping FeatureCollection
+                final ArrayList<Geometry> bufferInterGeometries = new ArrayList<Geometry>();
+                final FeatureIterator<Feature> clipIterator = inputFeatureClippingList.iterator();
+                try{
+                    while(clipIterator.hasNext()){
+                        Feature clipFeature = clipIterator.next();
+                        for (Property clipFeatureProperty : clipFeature.getProperties()) {
+                            if (clipFeatureProperty.getDescriptor() instanceof GeometryDescriptor) {
+                                final Geometry interGeometry = testClipping((Geometry) property.getValue(), 
+                                                                            (Geometry) clipFeatureProperty.getValue());
 
-                    resultFeature.getProperty(property.getName()).setValue(interGeometry);
+                                //if an intersection geometry exist, store it into a buffer Collection
+                                if (interGeometry != null) {
+                                    bufferInterGeometries.add(interGeometry);
+                                }                                 
+                            }
+                        }
+                    }  
+                }
+                finally{
+                    clipIterator.close();
+                }
+               
+                //if the feature intersect one of the feature clipping list
+                if (bufferInterGeometries.size() > 0) {
+                    final Geometry[] bufferArray = (bufferInterGeometries.toArray(new Geometry[bufferInterGeometries.size()]));
+                    
+                    //create a GeometryCollection with all the intersections
+                    final GeometryCollection resultGeometry = GF.createGeometryCollection(bufferArray);
+
+                    resultFeature.getProperty(property.getName()).setValue(resultGeometry);
                 } else {
                     return null;
                 }
             } else {
+                //others properties (no geometry)
                 resultFeature.getProperty(property.getName()).setValue(property.getValue());
             }
         }
-
         return resultFeature;
     }
 
-    /**
+     /**
      * Test clipping between the feature's geometry and the clipping geometry
      * @param featureGeometry Geometry
      * @param clippingGeometry Geometry

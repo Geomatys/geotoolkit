@@ -14,60 +14,45 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector;
+package org.geotoolkit.process.vector.clip;
 
-import java.util.Map;
-
-import org.geotoolkit.data.AbstractFeatureCollection;
+import java.util.NoSuchElementException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.process.vector.VectorFeatureCollection;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.type.AttributeDescriptor;
-import org.opengis.filter.Filter;
+import org.opengis.feature.type.FeatureType;
 
 /**
- *  FeatureCollection for vector process
+ * FeatureCollection for Clip process
  * @author Quentin Boileau
  * @module pending
  */
-public abstract class VectorFeatureCollection extends AbstractFeatureCollection<Feature> {
+public class ClipFeatureCollection extends VectorFeatureCollection {
 
-    private final FeatureCollection<?> originalFC;
+    private final FeatureType newFeatureType;
 
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      */
-    public VectorFeatureCollection(final FeatureCollection<?> originalFC) {
-        super(originalFC.getID(), originalFC.getSource());
-        this.originalFC = originalFC;
+    public ClipFeatureCollection(FeatureCollection<Feature> originalFC) {
+        super(originalFC);
+
+        this.newFeatureType = Clip.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
+
     }
 
     /**
-     * Return the feature modify by the process
-     * @param original Feature
-     */
-    protected abstract Feature modify(Feature original);
-
-    /**
-     * Return the orignal FeatureCollection
-     * @return FeatureCollection : original
-     */
-    protected FeatureCollection<?> getOriginalFeatureCollection() {
-        return originalFC;
-    }
-
-    /**
-     *  {@inheritDoc }
+     * Return the new FeatureType
+     * @return FeatureType
      */
     @Override
-    public FeatureCollection<Feature> subCollection(Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
+    public FeatureType getFeatureType() {
+        return newFeatureType;
     }
 
     /**
@@ -79,36 +64,15 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      */
     @Override
     public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
-        return new VectorFeatureIterator(originalFC.iterator());
-    }
-
-    /**
-     * Useless because current FeatureCollection can't be modified
-     * @param filter
-     * @param values
-     * @throws DataStoreException
-     */
-    @Override
-    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
-        throw new DataStoreException("Unmodifiable collection");
-    }
-
-    /**
-     * Useless because current FeatureCollection can't be modified
-     * @param filter
-     * @throws DataStoreException
-     */
-    @Override
-    public void remove(Filter filter) throws DataStoreException {
-        throw new DataStoreException("Unmodifiable collection");
+        return new ClipFeatureIterator(getOriginalFeatureCollection().iterator());
     }
 
     /**
      *  {@inheritDoc }
      */
     @Override
-    public boolean isWritable() throws DataStoreRuntimeException {
-        return false;
+    protected Feature modify(final Feature original) {
+        return Clip.clipFeature(original, newFeatureType);
     }
 
     /**
@@ -116,16 +80,18 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      * @author Quentin Boileau
      * @module pending
      */
-    private class VectorFeatureIterator implements FeatureIterator<Feature> {
+    private class ClipFeatureIterator implements FeatureIterator<Feature> {
 
         private final FeatureIterator<?> originalFI;
+        private Feature nextFeature;
 
         /**
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
-        public VectorFeatureIterator(final FeatureIterator<?> originalFI) {
+        public ClipFeatureIterator(final FeatureIterator<?> originalFI) {
             this.originalFI = originalFI;
+            nextFeature = null;
         }
 
         /**
@@ -134,7 +100,15 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
          */
         @Override
         public Feature next() {
-            return modify(originalFI.next());
+            findNext();
+
+            if (nextFeature == null) {
+                throw new NoSuchElementException("No more Feature.");
+            }
+
+            Feature feat = nextFeature;
+            nextFeature = null;
+            return feat;
         }
 
         /**
@@ -150,7 +124,8 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
          */
         @Override
         public boolean hasNext() {
-            return originalFI.hasNext();
+            findNext();
+            return nextFeature != null;
         }
 
         /**
@@ -159,6 +134,20 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
         @Override
         public void remove() {
             throw new DataStoreRuntimeException("Unmodifiable collection");
+        }
+
+        /**
+         * Find the next feature using clipping process
+         */
+        private void findNext() {
+            if (nextFeature != null) {
+                return;
+            }
+
+            while (nextFeature == null && originalFI.hasNext()) {
+                nextFeature = modify(originalFI.next());
+            }
+
         }
     }
 }
