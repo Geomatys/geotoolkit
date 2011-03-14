@@ -77,6 +77,7 @@ public class ClipTest {
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
 
+        
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
 
@@ -102,7 +103,7 @@ public class ClipTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("Building");
         ftb.add("name", String.class);
-        ftb.add("position", GeometryCollection.class, CRS.decode("EPSG:3395"));
+        ftb.add("position", Geometry.class, CRS.decode("EPSG:3395"));
         ftb.add("height", Integer.class);
 
         ftb.setDefaultGeometry("position");
@@ -316,7 +317,7 @@ public class ClipTest {
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "Building1");
         sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createGeometryCollection(new Geometry[]{poly}));
+        sfb.set("position", poly);
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -355,7 +356,7 @@ public class ClipTest {
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "Building3");
         sfb.set("height", 12);
-        sfb.set("position",  geometryFactory.createGeometryCollection(new Geometry[]{poly}));
+        sfb.set("position",  poly);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
@@ -364,7 +365,7 @@ public class ClipTest {
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "Building4");
         sfb.set("height", 12);
-        sfb.set("position", geometryFactory.createGeometryCollection(new Geometry[]{pt}));
+        sfb.set("position", pt);
         myFeature4 = sfb.buildFeature("id-04");
         featureList.add(myFeature4);
 

@@ -153,6 +153,11 @@ public class ClipGeometry extends AbstractProcess {
      */
     public static Geometry testClipping(Geometry featureGeometry, Geometry clippingGeometry) {
         if(featureGeometry == null || clippingGeometry == null) return null;
-        return featureGeometry.intersection(clippingGeometry);
+        
+        if(featureGeometry.intersects(clippingGeometry)){
+            return featureGeometry.intersection(clippingGeometry);
+        }else{
+            return null;
+        }
     }
 }

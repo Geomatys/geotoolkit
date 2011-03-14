@@ -127,6 +127,7 @@ public class Clip extends AbstractProcess {
                
                 //if the feature intersect one of the feature clipping list
                 final int size = bufferInterGeometries.size();
+
                 if (size == 1) {
                     resultFeature.getProperty(property.getName()).setValue(bufferInterGeometries.get(0));
                 }else if (size > 1) {
