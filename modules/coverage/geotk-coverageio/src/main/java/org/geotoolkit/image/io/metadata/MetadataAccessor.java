@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.image.io.metadata;
 
-import java.io.IOException;
 import java.lang.reflect.Array;
 import java.text.ParseException;
 import java.util.ArrayList;
@@ -1927,11 +1926,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         final StringBuilder buffer = new StringBuilder(Classes.getShortName(owner)).append("[\"");
         int offset = buffer.length();
         final TreeFormat tf = new TreeFormat();
-        try {
-            tf.format(Trees.xmlToSwing(parent), buffer);
-        } catch (IOException e) {
-            throw new AssertionError(e); // Should never happen.
-        }
+        tf.format(Trees.xmlToSwing(parent), buffer);
         offset = buffer.indexOf(tf.getLineSeparator(), offset); // Should never be -1.
         return buffer.insert(offset, "\"]").toString();
     }

@@ -402,12 +402,7 @@ public final class Trees {
     public static String toString(final TreeModel tree) {
         final TreeFormat tf = new TreeFormat();
         final StringBuilder buffer = new StringBuilder();
-        try {
-            tf.format(tree, buffer);
-        } catch (IOException e) {
-            // Should never happen when writing into a StringBuilder.
-            throw new AssertionError(e);
-        }
+        tf.format(tree, buffer);
         return buffer.toString();
     }
 
@@ -426,12 +421,7 @@ public final class Trees {
     public static String toString(final TreeNode node) {
         final TreeFormat tf = new TreeFormat();
         final StringBuilder buffer = new StringBuilder();
-        try {
-            tf.format(node, buffer);
-        } catch (IOException e) {
-            // Should never happen when writing into a StringBuilder.
-            throw new AssertionError(e);
-        }
+        tf.format(node, buffer);
         return buffer.toString();
     }
 
@@ -459,12 +449,7 @@ public final class Trees {
     public static String toString(final String root, final Iterable<?> nodes) {
         final TreeFormat tf = new TreeFormat();
         final StringBuilder buffer = new StringBuilder(root).append(tf.getLineSeparator());
-        try {
-            tf.format(nodes, buffer);
-        } catch (IOException e) {
-            // Should never happen when writing into a StringBuilder.
-            throw new AssertionError(e);
-        }
+        tf.format(nodes, buffer);
         return buffer.toString();
     }
 

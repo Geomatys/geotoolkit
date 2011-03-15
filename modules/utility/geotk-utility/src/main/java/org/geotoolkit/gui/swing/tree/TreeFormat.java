@@ -34,6 +34,7 @@ import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.resources.Errors;
 
 
@@ -422,6 +423,29 @@ public class TreeFormat extends Format {
     }
 
     /**
+     * Convenience method which delegate to the above {@link #format(TreeModel, Appendable)}
+     * method, but without throwing {@link IOException}. The I/O exception should never occur
+     * since we are writing in a {@link StringBuilder}.
+     *
+     * {@note Strictly speaking, an <code>IOException</code> could still occur in the user
+     * overrides the above <code>format</code> method and performs some I/O operation outside
+     * the given <code>StringBuilder</code>. However this is not the intended usage of this
+     * class and implementors should avoid such unexpected I/O operation.}
+     *
+     * @param  tree       The tree to format.
+     * @param  toAppendTo Where to format the tree.
+     */
+    public final void format(final TreeModel tree, final StringBuilder toAppendTo) {
+        try {
+            format(tree, (Appendable) toAppendTo);
+        } catch (IOException e) {
+            // Should never occur, unless the user overriden the above 'format'
+            // method in a weird way. This is why we don't use AssertionError.
+            throw new BackingStoreException(e);
+        }
+    }
+
+    /**
      * Writes a graphical representation of the specified tree in the given buffer.
      * The default implementation delegates to {@link #format(TreeModel, Appendable)}.
      *
@@ -433,6 +457,29 @@ public class TreeFormat extends Format {
      */
     public void format(final TreeNode node, final Appendable toAppendTo) throws IOException {
         format(new DefaultTreeModel(node, true), toAppendTo);
+    }
+
+    /**
+     * Convenience method which delegate to the above {@link #format(TreeNode, Appendable)}
+     * method, but without throwing {@link IOException}. The I/O exception should never occur
+     * since we are writing in a {@link StringBuilder}.
+     *
+     * {@note Strictly speaking, an <code>IOException</code> could still occur in the user
+     * overrides the above <code>format</code> method and performs some I/O operation outside
+     * the given <code>StringBuilder</code>. However this is not the intended usage of this
+     * class and implementors should avoid such unexpected I/O operation.}
+     *
+     * @param  node        The root node of the tree to format.
+     * @param  toAppendTo Where to format the tree.
+     */
+    public final void format(final TreeNode node, final StringBuilder toAppendTo) {
+        try {
+            format(node, (Appendable) toAppendTo);
+        } catch (IOException e) {
+            // Should never occur, unless the user overriden the above 'format'
+            // method in a weird way. This is why we don't use AssertionError.
+            throw new BackingStoreException(e);
+        }
     }
 
     /**
@@ -451,7 +498,7 @@ public class TreeFormat extends Format {
      * It is up to the {@code toString()} implementation of each element to invoke this
      * {@code format} method recursively if they wish (this method is safe for this purpose).
      *
-     * @param  nodes A collection of node to format.
+     * @param  nodes A collection of nodes to format.
      * @param  toAppendTo  Where to format the tree.
      * @throws IOException If an error occurred while writing in the given appender.
      *
@@ -479,6 +526,29 @@ public class TreeFormat extends Format {
                     margin = next;
                 }
             }
+        }
+    }
+
+    /**
+     * Convenience method which delegate to the above {@link #format(Iterable, Appendable)}
+     * method, but without throwing {@link IOException}. The I/O exception should never occur
+     * since we are writing in a {@link StringBuilder}.
+     *
+     * {@note Strictly speaking, an <code>IOException</code> could still occur in the user
+     * overrides the above <code>format</code> method and performs some I/O operation outside
+     * the given <code>StringBuilder</code>. However this is not the intended usage of this
+     * class and implementors should avoid such unexpected I/O operation.}
+     *
+     * @param  nodes A collection of nodes to format.
+     * @param  toAppendTo Where to format the tree.
+     */
+    public final void format(final Iterable<?> nodes, final StringBuilder toAppendTo) {
+        try {
+            format(nodes, (Appendable) toAppendTo);
+        } catch (IOException e) {
+            // Should never occur, unless the user overriden the above 'format'
+            // method in a weird way. This is why we don't use AssertionError.
+            throw new BackingStoreException(e);
         }
     }
 
