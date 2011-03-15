@@ -35,6 +35,7 @@ import javax.measure.converter.UnitConverter;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.StringUtilities;
 
 
 /**
@@ -400,7 +401,7 @@ public final class Units {
         if (uom == null) {
             return null;
         }
-        uom = uom.trim();
+        uom = StringUtilities.toASCII(uom.trim()).toString();
         if (uom.length() == 0) {
             return Unit.ONE;
         } else if (equalsIgnorePlural(uom, "pixel")) {

@@ -218,7 +218,9 @@ public final class UnitsTest {
         assertSame(DEGREE_ANGLE, Units.valueOf("deg"));
         assertSame(DEGREE_ANGLE, Units.valueOf("degree"));
         assertSame(DEGREE_ANGLE, Units.valueOf("degrees"));
+        assertSame(DEGREE_ANGLE, Units.valueOf("degrées"));
         assertSame(DEGREE_ANGLE, Units.valueOf("DEGREES"));
+        assertSame(DEGREE_ANGLE, Units.valueOf("DEGRÉES"));
         assertSame(DEGREE_ANGLE, Units.valueOf("°"));
         assertSame(RADIAN,       Units.valueOf("rad"));
         assertSame(RADIAN,       Units.valueOf("radian"));
@@ -227,11 +229,13 @@ public final class UnitsTest {
         assertSame(METRE,        Units.valueOf("metre"));
         assertSame(METRE,        Units.valueOf("meter"));
         assertSame(METRE,        Units.valueOf("metres"));
+        assertSame(METRE,        Units.valueOf("mètres"));
         assertSame(METRE,        Units.valueOf("meters"));
         assertSame(KILOMETRE,    Units.valueOf("km"));
         assertSame(KILOMETRE,    Units.valueOf("kilometre"));
         assertSame(KILOMETRE,    Units.valueOf("kilometer"));
         assertSame(KILOMETRE,    Units.valueOf("kilometres"));
+        assertSame(KILOMETRE,    Units.valueOf("kilomètres"));
         assertSame(KILOMETRE,    Units.valueOf("kilometers"));
     }
 }

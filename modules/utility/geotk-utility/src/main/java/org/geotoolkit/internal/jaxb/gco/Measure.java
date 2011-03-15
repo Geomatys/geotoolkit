@@ -25,7 +25,6 @@ import javax.measure.unit.NonSI;
 import javax.xml.bind.annotation.XmlValue;
 import javax.xml.bind.annotation.XmlAttribute;
 
-import org.geotoolkit.measure.Units;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
@@ -145,6 +144,6 @@ public final class Measure {
                 uom = new File(part).getName();
             }
         }
-        unit = Units.valueOf(uom);
+        unit = MarshalContext.converters().toUnit(uom);
     }
 }

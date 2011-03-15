@@ -27,11 +27,23 @@ import static org.geotoolkit.internal.StringUtilities.*;
  * Tests {@link StringUtilities} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.18
  *
  * @since 3.00
  */
 public final class StringUtilitiesTest {
+    /**
+     * Tests the {@link StringUtilities#toASCII} method.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testToASCII() {
+        final String metre = "metre";
+        assertSame  (metre, StringUtilities.toASCII(metre));
+        assertEquals(metre, StringUtilities.toASCII("mètre").toString());
+    }
+
     /**
      * Tests the {@link StringUtilities#removeLF} method.
      */

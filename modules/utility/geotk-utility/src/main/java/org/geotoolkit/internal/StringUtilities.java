@@ -32,13 +32,22 @@ import org.geotoolkit.util.converter.Classes;
  * tasks that do not really need such conversion.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.00
  * @module
  */
 @Static
 public final class StringUtilities {
+    /**
+     * Letters in the range 00C0 (192) to 00FF (255) inclusive with their accent removed,
+     * when possible.
+     *
+     * @since 3.18
+     */
+    private static final String ASCII = "AAAAAAÆCEEEEIIIIDNOOOOO*OUUUUYÞsaaaaaaæceeeeiiiionooooo/ouuuuyþy";
+    // Original letters (with accent) = "ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÐÑÒÓÔÕÖ×ØÙÚÛÜÝÞßàáâãäåæçèéêëìíîïðñòóôõö÷øùúûüýþÿ";
+
     /**
      * Do not allow instantiation of this class.
      */
@@ -57,6 +66,42 @@ public final class StringUtilities {
      */
     public static String identity(final Object value) {
         return Classes.getShortClassName(value) + '@' + Integer.toHexString(System.identityHashCode(value));
+    }
+
+    /**
+     * Replaces some unicode characters by ASCII characters on a "best effort basis".
+     * Current implementation handles only the characters in the 00C0 to 00FF range,
+     * inclusive.
+     * <p>
+     * Note that if the given character sequence is an instance of {@link StringBuilder},
+     * then the replacement will be performed in-place.
+     *
+     * @param  text The text to scan for unicode characters to replace by ASCII characters.
+     * @return The given text with substitution applied, or {@code text} if no replacement
+     *         has been applied.
+     *
+     * @since 3.18
+     */
+    public static CharSequence toASCII(CharSequence text) {
+        StringBuilder buffer = null;
+        final int length = text.length();
+        for (int i=0; i<length; i++) {
+            char c = text.charAt(i);
+            final int r = c - 0xC0;
+            if (r >= 0 && r<ASCII.length()) {
+                c = ASCII.charAt(r);
+                if (buffer == null) {
+                    if (text instanceof StringBuilder) {
+                        buffer = (StringBuilder) text;
+                    } else {
+                        buffer = new StringBuilder(text);
+                        text = buffer;
+                    }
+                }
+                buffer.setCharAt(i, c);
+            }
+        }
+        return text;
     }
 
     /**
