@@ -32,6 +32,7 @@ import java.awt.Rectangle;
 import java.io.IOException;
 
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.util.Cloneable;
 
 import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
@@ -279,10 +280,10 @@ final class RTree implements Cloneable {
             assert bestCandidate.checkValidity() : bestCandidate.toTree();
             bestCandidate.getTiles(tiles);
             if (LOGGER.isLoggable(LEVEL)) {
-                final String lineSeparator = System.getProperty("line.separator", "\n");
+                final TreeFormat tf = new TreeFormat();
                 final StringBuilder message = new StringBuilder("Tiles count: ")
-                        .append(tiles.size()).append(lineSeparator);
-                Trees.format(bestCandidate, message, lineSeparator);
+                        .append(tiles.size()).append(tf.getLineSeparator());
+                tf.format((javax.swing.tree.TreeNode) bestCandidate, message);
                 final LogRecord record = new LogRecord(LEVEL, message.toString());
                 record.setSourceClassName("org.geotoolkit.image.io.mosaic.TileManager");
                 record.setSourceMethodName("getTiles"); // This is the public API for this method.

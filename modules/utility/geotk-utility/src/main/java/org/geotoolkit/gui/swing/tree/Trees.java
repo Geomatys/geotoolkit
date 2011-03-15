@@ -41,9 +41,7 @@ import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.io.LineReader;
 import org.geotoolkit.io.LineReaders;
-import org.geotoolkit.io.ContentFormatException;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -60,7 +58,7 @@ import org.geotoolkit.resources.Errors;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -249,7 +247,7 @@ public final class Trees {
      * Returns a copy of the tree starting at the given node. The references to the
      * {@linkplain org.geotoolkit.gui.swing.tree.TreeNode#getUserObject() user objects}
      * (if any) and the {@linkplain org.geotoolkit.gui.swing.tree.TreeNode#toString()
-     * string representations} are copied verbatism.
+     * string representations} are copied verbalism.
      *
      * @param  node The tree to copy (may be {@code null}).
      * @return A mutable copy of the given tree, or {@code null} if the given tree was null.
@@ -303,15 +301,17 @@ public final class Trees {
 
     /**
      * Creates a tree from the given string representation. This method can parse the trees
-     * created by the {@code format(...)} methods defined in this class. This convenience
-     * method delegates the work to {@link #parse(LineReader)}.
+     * created by the {@code toString(...)} methods defined in this class.
      *
      * @param text The string representation of the tree to parse.
      * @return The root of the parsed tree.
      * @throws IllegalArgumentException If an error occurred while parsing the tree.
      *
      * @since 3.02
+     *
+     * @deprecated Moved to {@link TreeFormat#parse(String)
      */
+    @Deprecated
     public static MutableTreeNode parse(final String text) throws IllegalArgumentException {
         try {
             return parse(LineReaders.wrap(text));
@@ -333,122 +333,12 @@ public final class Trees {
      * @throws IOException If an error occurred while parsing the tree.
      *
      * @since 3.02
-     */
-    public static MutableTreeNode parse(final LineReader input) throws IOException {
-        /*
-         * 'indentation' is the number of spaces (ignoring drawing characters) for each level.
-         * 'level' is the current indentation level. 'lastNode' is the last node parsed up to
-         * date. It has 'indentation[level]' spaces or drawing characters before its content.
-         */
-        int level = 0;
-        int[] indentation = new int[16];
-        DefaultMutableTreeNode root = null;
-        DefaultMutableTreeNode lastNode = null;
-        String line;
-        while ((line = input.readLine()) != null) {
-            boolean hasChar = false;
-            final int length = line.length();
-            int i; // The indentation of current line.
-            for (i=0; i<length; i++) {
-                char c = line.charAt(i);
-                if (!Character.isSpaceChar(c)) {
-                    hasChar = true;
-                    if ("\u2500\u2502\u2514\u251C".indexOf(c) < 0) {
-                        break;
-                    }
-                }
-            }
-            if (!hasChar) {
-                continue; // The line contains only whitespaces.
-            }
-            /*
-             * Go back to the fist non-space character (should be '─'). This is in case the
-             * user puts some spaces in the node text, since we don't want those user-spaces
-             * to interfer with the calculation of indentation.
-             */
-            while (i != 0 && Character.isSpaceChar(line.charAt(i-1))) i--;
-            /*
-             * Found the first character which is not part of the indentation.
-             * If this is the first node created so far, it will be the root.
-             */
-            final DefaultMutableTreeNode node = new DefaultMutableTreeNode(line.substring(i).trim());
-            if (root == null) {
-                indentation[0] = i;
-                root = node;
-            } else {
-                int p;
-                while (i < (p = indentation[level])) {
-                    /*
-                     * Lower indentation level: go up in the tree until we found the new parent.
-                     * Note that lastNode.getParent() should never return null, since only the
-                     * node at 'level == 0' has a null parent and we checked this case.
-                     */
-                    if (--level < 0) {
-                        throw new ContentFormatException(Errors.format(Errors.Keys.NODE_HAS_NO_PARENT_$1, node));
-                    }
-                    lastNode = (DefaultMutableTreeNode) lastNode.getParent();
-                }
-                if (i == p) {
-                    /*
-                     * The node we just created is a sibling of the previous node. This is
-                     * illegal if level==0, in which case we have no parent. Otherwise adds
-                     * the sibling to the common parent and let the indentation level unchanged.
-                     */
-                    final DefaultMutableTreeNode parent = (DefaultMutableTreeNode) lastNode.getParent();
-                    if (parent == null) {
-                        throw new ContentFormatException(Errors.format(Errors.Keys.NODE_HAS_NO_PARENT_$1, node));
-                    }
-                    parent.add(node);
-                } else if (i > p) {
-                    /*
-                     * The node we just created is a child of the previous node.
-                     * Add a new indentation level.
-                     */
-                    lastNode.add(node);
-                    if (++level == indentation.length) {
-                        indentation = Arrays.copyOf(indentation, level*2);
-                    }
-                    indentation[level] = i;
-                }
-            }
-            lastNode = node;
-        }
-        return root;
-    }
-
-    /**
-     * Appends to the given buffer the string representation of the given node and all
-     * its children.
      *
-     * @param model  The tree to format.
-     * @param node   The node of the tree to format.
-     * @param buffer Where to write the string representation.
-     * @param level  Indentation level. The first level is 0.
-     * @param last   {@code true} if the previous levels are writing the last node.
-     * @return       The {@code last} array, or a copy of that array if it was necessary
-     *               to increase its length.
+     * @deprecated Moved to {@link TreeFormat#parse(LineReader)
      */
-    private static boolean[] format(final TreeModel model, final Object node,
-                                    final Appendable buffer, final int level, boolean[] last,
-                                    final String lineSeparator) throws IOException
-    {
-        for (int i=0; i<level; i++) {
-            if (i != level-1) {
-                buffer.append(last[i] ? '\u00A0' : '\u2502').append("\u00A0\u00A0\u00A0");
-            } else {
-                buffer.append(last[i] ? '\u2514' : '\u251C').append("\u2500\u2500\u2500");
-            }
-        }
-        buffer.append(String.valueOf(node)).append(lineSeparator);
-        if (level >= last.length) {
-            last = Arrays.copyOf(last, level*2);
-        }
-        final int count = model.getChildCount(node);
-        for (int i=0; i<count; i++) {
-            last[level] = (i == count-1);
-            last = format(model, model.getChild(node,i), buffer, level+1, last, lineSeparator);
-        }
-        return last;
+    @Deprecated
+    public static MutableTreeNode parse(final LineReader input) throws IOException {
+        return new TreeFormat().parse(input);
     }
 
     /**
@@ -460,17 +350,18 @@ public final class Trees {
      * @throws IOException if an error occurred while writing in the given buffer.
      *
      * @since 2.5
+     *
+     * @deprecated Moved to {@link TreeFormat#format(TreeModel, Appendable)
      */
+    @Deprecated
     public static void format(final TreeModel tree, final Appendable buffer, String lineSeparator)
             throws IOException
     {
-        final Object root = tree.getRoot();
-        if (root != null) {
-            if (lineSeparator == null) {
-                lineSeparator = System.getProperty("line.separator", "\n");
-            }
-            format(tree, root, buffer, 0, new boolean[64], lineSeparator);
+        final TreeFormat format = new TreeFormat();
+        if (lineSeparator == null) {
+            format.setLineSeparator(lineSeparator);
         }
+        format.format(tree, buffer);
     }
 
     /**
@@ -482,30 +373,37 @@ public final class Trees {
      * @throws IOException if an error occurred while writing in the given buffer.
      *
      * @since 2.5
+     *
+     * @deprecated Moved to {@link TreeFormat#format(TreeNode, Appendable)
      */
+    @Deprecated
     public static void format(final TreeNode node, final Appendable buffer, String lineSeparator)
             throws IOException
     {
-        format(new DefaultTreeModel(node, true), buffer, lineSeparator);
+        final TreeFormat format = new TreeFormat();
+        if (lineSeparator == null) {
+            format.setLineSeparator(lineSeparator);
+        }
+        format.format(node, buffer);
     }
 
     /**
      * Returns a graphical representation of the specified tree model. This representation can
      * be printed to the {@linkplain System#out standard output stream} (for example) if it uses
      * a monospaced font and supports unicode.
+     * <p>
+     * This convenience method delegates to {@link TreeFormat#format(TreeModel, Appendable)}.
+     * Users are encouraged to use {@code TreeFormat} directly if they want more control on
+     * the formatting process.
      *
      * @param  tree The tree to format.
-     * @return A string representation of the tree, or {@code null} if it doesn't contain any node.
+     * @return A string representation of the tree.
      */
     public static String toString(final TreeModel tree) {
-        final Object root = tree.getRoot();
-        if (root == null) {
-            return null;
-        }
+        final TreeFormat tf = new TreeFormat();
         final StringBuilder buffer = new StringBuilder();
-        final String lineSeparator = System.getProperty("line.separator", "\n");
         try {
-            format(tree, root, buffer, 0, new boolean[64], lineSeparator);
+            tf.format(tree, buffer);
         } catch (IOException e) {
             // Should never happen when writing into a StringBuilder.
             throw new AssertionError(e);
@@ -517,12 +415,57 @@ public final class Trees {
      * Returns a graphical representation of the specified tree. This representation can be
      * printed to the {@linkplain System#out standard output stream} (for example) if it uses
      * a monospaced font and supports unicode.
+     * <p>
+     * This convenience method delegates to {@link TreeFormat#format(TreeNode, Appendable)}.
+     * Users are encouraged to use {@code TreeFormat} directly if they want more control on
+     * the formatting process.
      *
      * @param  node The root node of the tree to format.
-     * @return A string representation of the tree, or {@code null} if it doesn't contain any node.
+     * @return A string representation of the tree.
      */
     public static String toString(final TreeNode node) {
-        return toString(new DefaultTreeModel(node, true));
+        final TreeFormat tf = new TreeFormat();
+        final StringBuilder buffer = new StringBuilder();
+        try {
+            tf.format(node, buffer);
+        } catch (IOException e) {
+            // Should never happen when writing into a StringBuilder.
+            throw new AssertionError(e);
+        }
+        return buffer.toString();
+    }
+
+    /**
+     * Returns a graphical representation of the specified nodes. This representation can be
+     * printed to the {@linkplain System#out standard output stream} (for example) if it uses
+     * a monospaced font and supports unicode.
+     * <p>
+     * This convenience method delegates to {@link TreeFormat#format(Iterable, Appendable)}.
+     * Users are encouraged to use {@code TreeFormat} directly if they want more control on
+     * the formatting process.
+     *
+     * {@section Recursivity}
+     * This method does not perform any check on the element types. In particular, elements of type
+     * {@link TreeModel}, {@link TreeNode} or inner {@link Iterable} are not processed recursively.
+     * It is up to the {@code toString()} implementation of each element to invoke this
+     * {@code toString} method recursively if they wish (this method is safe for this purpose).
+     *
+     * @param  root  The root name of the tree to format.
+     * @param  nodes The nodes to format.
+     * @return A string representation of the tree.
+     *
+     * @since 3.18
+     */
+    public static String toString(final String root, final Iterable<?> nodes) {
+        final TreeFormat tf = new TreeFormat();
+        final StringBuilder buffer = new StringBuilder(root).append(tf.getLineSeparator());
+        try {
+            tf.format(nodes, buffer);
+        } catch (IOException e) {
+            // Should never happen when writing into a StringBuilder.
+            throw new AssertionError(e);
+        }
+        return buffer.toString();
     }
 
     /**

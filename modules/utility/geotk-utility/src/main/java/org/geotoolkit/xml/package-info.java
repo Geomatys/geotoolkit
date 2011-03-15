@@ -50,7 +50,7 @@
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.07
+ * @version 3.18
  *
  * @since 3.00
  * @module

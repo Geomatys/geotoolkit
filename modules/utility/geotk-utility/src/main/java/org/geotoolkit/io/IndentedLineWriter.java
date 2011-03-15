@@ -24,14 +24,16 @@ import java.io.Writer;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.lang.Decorator;
 import org.geotoolkit.lang.ThreadSafe;
+import org.geotoolkit.util.ArgumentChecks;
 
 
 /**
  * A writer that put some spaces in front of every lines. The indentation is initially set
- * to 0 spaces. Users must invoke {@link #setIndentation} in order to set a different value.
+ * to 0 spaces. Users must invoke {@link #setIndentation(int)} or {@link #setMargin(String)}
+ * in order to set a different value.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.4
  * @module
@@ -56,8 +58,9 @@ public class IndentedLineWriter extends FilterWriter {
 
     /**
      * Constructs a stream which will add spaces in front of each line.
-     * The {@link #setIndentation} method must be invoked after this
-     * constructor in order to specify the amount of spaces to add.
+     * The {@link #setIndentation(int)} or {@link #setMargin(String)}
+     * method must be invoked after this constructor in order to specify
+     * the amount of spaces to add.
      *
      * @param out The underlying stream to write to.
      */
@@ -67,11 +70,11 @@ public class IndentedLineWriter extends FilterWriter {
 
     /**
      * Constructs a stream which will the given amount of spaces in front of each line.
-     * This is a convenience method invoking {@link #setIndentation} right after the
+     * This is a convenience method invoking {@link #setIndentation(int)} right after the
      * construction.
      *
-     * @param width The indentation.
      * @param out The underlying stream to write to.
+     * @param width The indentation.
      *
      * @since 3.00
      */
@@ -81,22 +84,56 @@ public class IndentedLineWriter extends FilterWriter {
     }
 
     /**
-     * Returns the current indentation.
+     * Returns the current indentation. This is either the value given to the last call
+     * to {@link #setIndentation(int)} method, or the length of the string given to the
+     * {@link #setMargin(String)} method.
      *
      * @return The current indentation.
      */
     public int getIdentation() {
-        return margin.length();
+        synchronized (lock) {
+            return margin.length();
+        }
     }
 
     /**
-     * Sets the indentation to the specified value.
+     * Sets the indentation to the specified value. This method will {@linkplain #setMargin(String)
+     * defines a margin} as the given number of white spaces.
      *
-     * @param width The new indentation.
+     * @param width The number of space to insert at the beginning of every line.
      */
     public void setIndentation(final int width) {
         synchronized (lock) {
             margin = Strings.spaces(width);
+        }
+    }
+
+    /**
+     * Returns the margin which is written at the beginning of every line. The default
+     * value is an empty string. This value can be modified either explicitely by a call to
+     * {@link #setMargin(String)}, or implicitly by a call to {@link #setIndentation(int)}.
+     *
+     * @return The string which is inserted at the beginning of every lines.
+     *
+     * @since 3.18
+     */
+    public String getMargin() {
+        synchronized (lock) {
+            return margin;
+        }
+    }
+
+    /**
+     * Sets the margin to be written at the beginning of every line.
+     *
+     * @param margin The string to be inserted at the beginning of every lines.
+     *
+     * @since 3.18
+     */
+    public void setMargin(final String margin) {
+        ArgumentChecks.ensureNonNull("margin", margin);
+        synchronized (lock) {
+            this.margin = margin;
         }
     }
 

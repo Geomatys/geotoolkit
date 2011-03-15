@@ -39,6 +39,9 @@ import org.geotoolkit.resources.Errors;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.16
  *
+ * @see Arrays#toString(Object[])
+ * @see XArrays#containsIgnoreCase(String[], String)
+ *
  * @since 3.09 (derived from 3.00)
  * @module
  */

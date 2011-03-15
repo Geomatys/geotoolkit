@@ -21,25 +21,28 @@ import java.util.Locale;
 import java.util.Arrays;
 import java.util.AbstractMap;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.test.Depend;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
 
 
 /**
- * Tests the {@link Trees} implementation.
+ * Tests the {@link Trees} implementation. Those methods test also indirectly the
+ * {@link TreeFormat} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.00
  */
+@Depend(TreeFormat.class)
 public final class TreesTest {
     /**
      * Tests the formatting as a tree.
      */
     @Test
-    public void testFormat() {
+    public void testToString() {
         final NamedTreeNode root = new NamedTreeNode("Node #1", 1);
         final NamedTreeNode branch = new NamedTreeNode("Node #2", 2);
         root.add(branch);
@@ -56,21 +59,23 @@ public final class TreesTest {
     }
 
     /**
-     * Tests the parsing of a tree. This method parses and reformats a tree,
-     * and perform its check on the assumption that the tree formatting is
-     * accurate.
-     *
-     * @since 3.02
+     * Tests the formatting of an {@link java.lang.Iterable} as a tree.
      */
     @Test
-    public void testParsing() {
-        final String text =
-                "Node #1\n" +
-                "├───Node #2\n" +
-                "│   └───Node #4\n" +
-                "└───Node #3\n";
-        final TreeNode root = Trees.parse(text);
-        assertMultilinesEquals(text, Trees.toString(root));
+    public void testToStringIterable() {
+        String tree = Trees.toString("Leaf", Arrays.asList("Node #1", "Node #2", "Node #3"));
+        tree = Trees.toString("Root", Arrays.asList(tree, "Median node", tree));
+        assertMultilinesEquals(
+                "Root\n" +
+                "├───Leaf\n" +
+                "│   ├───Node #1\n" +
+                "│   ├───Node #2\n" +
+                "│   └───Node #3\n" +
+                "├───Median node\n" +
+                "└───Leaf\n" +
+                "    ├───Node #1\n" +
+                "    ├───Node #2\n" +
+                "    └───Node #3\n", tree);
     }
 
     /**

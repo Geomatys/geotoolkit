@@ -46,6 +46,7 @@ import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.image.io.WarningProducer;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.image.io.Warnings;
@@ -1925,13 +1926,13 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
     final String toString(final Class<?> owner) {
         final StringBuilder buffer = new StringBuilder(Classes.getShortName(owner)).append("[\"");
         int offset = buffer.length();
-        final String lineSeparator = System.getProperty("line.separator", "\n");
+        final TreeFormat tf = new TreeFormat();
         try {
-            Trees.format(Trees.xmlToSwing(parent), buffer, lineSeparator);
+            tf.format(Trees.xmlToSwing(parent), buffer);
         } catch (IOException e) {
             throw new AssertionError(e); // Should never happen.
         }
-        offset = buffer.indexOf(lineSeparator, offset); // Should never be -1.
+        offset = buffer.indexOf(tf.getLineSeparator(), offset); // Should never be -1.
         return buffer.insert(offset, "\"]").toString();
     }
 }

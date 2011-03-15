@@ -30,6 +30,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeNode;
+import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
@@ -42,12 +43,22 @@ import static org.geotoolkit.test.Assert.*;
  * Tests {@link PropertyTree}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.18
  *
  * @since 3.00
  */
 @Depend(MetadataStandard.class)
 public final class PropertyTreeTest {
+    /**
+     * Creates a tree from the given string representation. Each node must have at least one
+     * {@code '─'} character (unicode 2500) in front of it. The number of spaces and drawing
+     * characters ({@code '│'}, {@code '├'} or {@code '└'}) before the node determines its
+     * indentation, and the indentation determines the parent of each node.
+     */
+    private static TreeNode parse(final String text) throws ParseException {
+        return new TreeFormat().parseObject(text);
+    }
+
     /**
      * Creates a tree from a metadata object and verifies that the tree contains
      * the expected values. Then remove values from this map.
@@ -121,7 +132,7 @@ public final class PropertyTreeTest {
          * should be lost in this process, so we are testing the capability to parse code
          * list string here (the previous test took the code directly from the user object).
          */
-        root = Trees.parse(Trees.toString(tree));
+        root = parse(Trees.toString(tree));
         tree = new DefaultTreeModel(root);
         newCitation = new DefaultCitation();
         newCitation.parse(tree);
@@ -130,7 +141,7 @@ public final class PropertyTreeTest {
          * Parses a somewhat malformed (but still understandable) tree
          * and compares with the original citation.
          */
-        root = Trees.parse(
+        root = parse(
             "Citation\n" +
             "├───Title\n" +
             "│   └───Undercurrent\n" +

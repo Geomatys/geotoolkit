@@ -147,6 +147,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
     private static <S> boolean swap(final ObjectConverter<S,?> primary, final ObjectConverter<S,?> fallback) {
         assert !primary.equals(fallback) : primary;
         if (primary instanceof FallbackConverter<?,?>) {
+            @SuppressWarnings("unchecked")
             final FallbackConverter<S,?> candidate = (FallbackConverter<S,?>) primary;
             return swap(candidate.primary, fallback) && swap(candidate.fallback, fallback);
         } else {
@@ -209,6 +210,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
      * @param insertAt  An existing chain in which to add the given converter.
      * @param converter A new converter to be used as the fallback one.
      */
+    @SuppressWarnings("unchecked")
     private static <S> void add(FallbackConverter<S,?> insertAt, final ObjectConverter<S,?> converter) {
         final Class<?> targetClass = converter.getTargetClass();
         /*
