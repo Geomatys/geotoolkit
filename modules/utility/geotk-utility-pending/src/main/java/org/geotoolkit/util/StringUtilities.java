@@ -102,7 +102,10 @@ public final class StringUtilities {
      *
      * @param s the string to clean.
      * @return a String without special character.
+     *
+     * @deprecated Replaced by {@link org.geotoolkit.internal.StringUtilities#toASCII}.
      */
+    @Deprecated
     public static String cleanSpecialCharacter(String s) {
         if (s != null) {
             s = s.replace('é', 'e');
@@ -150,6 +153,8 @@ public final class StringUtilities {
      * Returns true if the list contains a string in one of the list elements.
      * This test is not case sensitive.
      *
+     * @see org.geotoolkit.util.XArrays#containsIgnoreCase(String[], String)
+     *
      * @param list A list of String.
      * @param str The value searched.
      * @return
@@ -173,7 +178,10 @@ public final class StringUtilities {
      *
      * @param s The initial string. Should not be {@code null}.
      * @return A string with all spaces replaced by the matching URL character %20.
+     *
+     * @deprecated Use {@link java.net.URLEncoder#encode(String, String)} instead.
      */
+    @Deprecated
     public static String convertSpacesForUrl(final String s) {
         return s.replaceAll(" ", "%20");
     }
@@ -455,12 +463,16 @@ public final class StringUtilities {
         return toStringTree(Arrays.asList(objects));
     }
 
+    /**
+     * @deprecated Replaced by {@link org.geotoolkit.gui.swing.tree.Trees#toString(String, Iterable)}.
+     */
+    @Deprecated
     public static String toStringTree(final Collection<?> objects){
         final StringBuilder sb = new StringBuilder();
 
         final int size = objects.size();
 
-        final Iterator ite = objects.iterator();
+        final Iterator<?> ite = objects.iterator();
         int i=1;
         while(ite.hasNext()){
             String sub = ite.next().toString();
