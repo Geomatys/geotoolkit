@@ -405,6 +405,10 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
         assertEquals(Boolean.FALSE, hints.put(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE));
         lenientFactory = AuthorityFactoryFinder.getCoordinateOperationFactory(hints);
         assertNotSame(opFactory, lenientFactory);
+        if (datumShiftMethod != null) {
+            assertEquals("Factory is not using the expected datum shift method.", datumShiftMethod,
+                    ((Factory) lenientFactory).getImplementationHints().get(Hints.DATUM_SHIFT_METHOD));
+        }
         final CoordinateOperation lenient = lenientFactory.createOperation(amputedCRS, targetCRS);
         assertSame(amputedCRS, lenient.getSourceCRS());
         assertSame( targetCRS, lenient.getTargetCRS());

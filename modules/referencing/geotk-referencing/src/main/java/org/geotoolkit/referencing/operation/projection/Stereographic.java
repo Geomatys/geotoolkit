@@ -227,7 +227,6 @@ public class Stereographic extends UnitaryProjection {
     protected Stereographic(final Parameters parameters) {
         this(parameters, parameters.latitudeOfOrigin);
         double k0 = 2*msfn(sinphi0, cosphi0) / coschi1;   // part of (14 - 15)
-        assert (abs(k0-2) < EPSILON) == (isSpherical() || phi0 == 0) : k0;
         if (excentricity == 0) {
             k0 = 2; // For fixing rounding errors.
         }
