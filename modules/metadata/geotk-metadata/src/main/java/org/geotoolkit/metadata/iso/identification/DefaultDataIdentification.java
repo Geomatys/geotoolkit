@@ -120,7 +120,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      *
      * @since 2.4
      */
@@ -134,7 +134,7 @@ public class DefaultDataIdentification extends AbstractIdentification implements
      * @param citation        The citation data for the resource(s).
      * @param abstracts       A brief narrative summary of the content of the resource(s).
      * @param language        The language(s) used within the dataset.
-     * @param topicCategories The main theme(s) of the datset.
+     * @param topicCategories The main theme(s) of the dataset.
      */
     public DefaultDataIdentification(final Citation citation,
                                      final InternationalString abstracts,

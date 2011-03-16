@@ -118,7 +118,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * This constructor behavior is as in {@linkplain AbstractMetadata#AbstractMetadata(Object)
      * superclass constructor}.
      *
-     * @param  source The metadata to copy values from.
+     * @param  source The metadata to copy values from, or {@code null} if none.
      * @throws ClassCastException if the specified metadata don't implements the expected
      *         metadata interface.
      * @throws UnmodifiableMetadataException if this class don't define {@code set} methods

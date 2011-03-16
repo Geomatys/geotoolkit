@@ -70,7 +70,7 @@ public class AbstractGeolocationInformation extends MetadataEntity implements Ge
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      */
     public AbstractGeolocationInformation(final GeolocationInformation source) {
         super(source);

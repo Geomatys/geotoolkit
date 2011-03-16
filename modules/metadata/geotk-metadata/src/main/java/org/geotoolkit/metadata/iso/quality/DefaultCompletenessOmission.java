@@ -56,7 +56,7 @@ public class DefaultCompletenessOmission extends AbstractCompleteness implements
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      *
      * @since 2.4
      */

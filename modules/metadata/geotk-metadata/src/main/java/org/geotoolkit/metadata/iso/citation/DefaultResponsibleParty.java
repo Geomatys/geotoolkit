@@ -328,7 +328,7 @@ public class DefaultResponsibleParty extends MetadataEntity implements Responsib
      * This constructor performs a shallow copy (i.e. each source attributes are reused without
      * copying them).
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      * @since 2.2
      */
     public DefaultResponsibleParty(final ResponsibleParty source) {

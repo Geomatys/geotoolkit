@@ -94,7 +94,7 @@ public class DefaultInstrument extends MetadataEntity implements Instrument {
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      */
     public DefaultInstrument(final Instrument source) {
         super(source);

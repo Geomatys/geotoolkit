@@ -157,7 +157,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * This constructor performs a shallow copy (i.e. each source attributes are reused
      * without copying them).
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      */
     public DefaultCitation(final Citation source) {
         super(source);

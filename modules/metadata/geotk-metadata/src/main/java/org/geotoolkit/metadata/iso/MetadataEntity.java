@@ -58,7 +58,7 @@ public class MetadataEntity extends ModifiableMetadata implements Serializable {
      * Constructs a metadata entity initialized with the values from the specified metadata.
      * The {@code source} metadata must implements the same metadata interface than this class.
      *
-     * @param  source The metadata to copy values from.
+     * @param  source The metadata to copy values from, or {@code null} if none.
      * @throws ClassCastException if the specified metadata don't implements the expected
      *         metadata interface.
      *

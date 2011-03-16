@@ -84,7 +84,7 @@ public class DefaultEnvironmentalRecord extends MetadataEntity implements Enviro
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      */
     public DefaultEnvironmentalRecord(final EnvironmentalRecord source) {
         super(source);

@@ -83,7 +83,7 @@ public class DefaultAggregateInformation extends MetadataEntity implements Aggre
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      */
     public DefaultAggregateInformation(final AggregateInformation source) {
         super(source);

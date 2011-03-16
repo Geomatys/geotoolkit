@@ -80,7 +80,7 @@ public class DefaultPlatformPass extends MetadataEntity implements PlatformPass 
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      */
     public DefaultPlatformPass(final PlatformPass source) {
         super(source);

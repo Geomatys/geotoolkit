@@ -69,7 +69,7 @@ public abstract class AbstractMetadata {
      * the {@linkplain #getStandard standard}) than this class, but don't need to be the same
      * implementation class. The copy is performed using Java reflections.
      *
-     * @param  source The metadata to copy values from.
+     * @param  source The metadata to copy values from, or {@code null} if none.
      * @throws ClassCastException if the specified metadata don't implements the expected
      *         metadata interface.
      * @throws UnmodifiableMetadataException if this class don't define {@code set} methods
@@ -79,7 +79,9 @@ public abstract class AbstractMetadata {
     protected AbstractMetadata(final Object source)
             throws ClassCastException, UnmodifiableMetadataException
     {
-        getStandard().shallowCopy(source, this, true);
+        if (source != null) {
+            getStandard().shallowCopy(source, this, true);
+        }
     }
 
     /**

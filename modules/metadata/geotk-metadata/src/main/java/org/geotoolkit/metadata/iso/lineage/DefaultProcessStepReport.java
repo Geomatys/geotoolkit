@@ -79,7 +79,7 @@ public class DefaultProcessStepReport extends MetadataEntity implements ProcessS
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      */
     public DefaultProcessStepReport(final ProcessStepReport source) {
         super(source);

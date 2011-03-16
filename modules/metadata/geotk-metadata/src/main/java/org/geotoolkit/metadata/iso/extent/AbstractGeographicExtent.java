@@ -71,7 +71,7 @@ public class AbstractGeographicExtent extends MetadataEntity implements Geograph
     /**
      * Constructs a geographic extent initialized to the same values than the specified one.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      *
      * @since 2.2
      */

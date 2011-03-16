@@ -81,7 +81,7 @@ public class DefaultRangeElementDescription extends MetadataEntity implements Ra
     /**
      * Constructs a metadata entity initialized with the values from the specified metadata.
      *
-     * @param source The metadata to copy.
+     * @param source The metadata to copy, or {@code null} if none.
      */
     public DefaultRangeElementDescription(final RangeElementDescription source) {
         super(source);
