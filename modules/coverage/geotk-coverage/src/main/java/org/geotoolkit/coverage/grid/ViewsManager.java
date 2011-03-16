@@ -65,6 +65,7 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
 import static java.lang.Double.doubleToRawLongBits;
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
 /**
@@ -104,8 +105,7 @@ final class ViewsManager {
 scan:   for (int i=0; i<numBands; i++) {
             final GridSampleDimension band = coverage.getSampleDimension(i);
             if (band != null) {
-                final List<Category> categories = band.getCategories();
-                if (categories == null || categories.isEmpty()) {
+                if (isNullOrEmpty(band.getCategories())) {
                     // No category. The image is treated as photographic.
                     continue;
                 }
@@ -163,7 +163,7 @@ scan:   for (int i=0; i<numBands; i++) {
                         }
                     }
                     final Collection<GridCoverage> more = source.getSources();
-                    if (more != null && !more.isEmpty()) {
+                    if (!isNullOrEmpty(more)) {
                         if (next == null) {
                             next = new LinkedHashSet<GridCoverage>(more);
                         } else {

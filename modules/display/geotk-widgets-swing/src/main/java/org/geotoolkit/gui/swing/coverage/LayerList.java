@@ -88,6 +88,8 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Widgets;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * A widget displaying the {@linkplain CoverageDatabase#getLayers() list of layers} available
@@ -580,12 +582,12 @@ public class LayerList extends WindowCreator {
      */
     final void setFormat(final Set<String> formats, final List<MeasurementRange<?>> ranges, String rangeText) {
         String text = null;
-        if (formats != null && !formats.isEmpty()) {
+        if (!isNullOrEmpty(formats)) {
             text = formats.toString();
             text = text.substring(1, text.length() - 1); // For removing the brackets.
         }
         setText(imageFormat, text);
-        if (rangeText == null && ranges != null && !ranges.isEmpty()) {
+        if (rangeText == null && !isNullOrEmpty(ranges)) {
             boolean hasMore = false;
             final StringBuffer buffer = new StringBuffer("<html>");
             final FieldPosition pos = new FieldPosition(0);
@@ -718,7 +720,7 @@ public class LayerList extends WindowCreator {
                     endTime   = timeRange.getMaxValue();
                 }
                 final Set<Number> z = layer.getAvailableElevations();
-                if (z != null && !z.isEmpty()) {
+                if (!isNullOrEmpty(z)) {
                     int numDigits = 0;
                     for (final Number value : z) {
                         final int n = XMath.countDecimalFractionDigits(value.doubleValue());

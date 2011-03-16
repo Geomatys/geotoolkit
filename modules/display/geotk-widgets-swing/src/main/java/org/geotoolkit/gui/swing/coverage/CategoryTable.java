@@ -48,6 +48,7 @@ import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Vocabulary;
 
 import static org.geotoolkit.gui.swing.coverage.CategoryRecord.*;
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
 /**
@@ -258,7 +259,7 @@ public class CategoryTable extends ListTableModel<CategoryRecord> {
      */
     public void setCategories(final List<Category> categories) {
         elements.clear();
-        if (categories != null && !categories.isEmpty()) {
+        if (!isNullOrEmpty(categories)) {
             for (final Category category : categories) {
                 elements.add(new CategoryRecord(category, locale, paletteFactory, paletteChoices));
             }

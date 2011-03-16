@@ -30,6 +30,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.lang.ThreadSafe;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * Create metadata objects of the given {@link Class} using the properties given in a {@link Map}.
@@ -105,7 +107,7 @@ public class MetadataFactory extends Factory {
      * @param standards The metadata standards implemented by this factory.
      */
     public MetadataFactory(final Set<?> factories, final MetadataStandard... standards) {
-        if (factories != null && !factories.isEmpty()) {
+        if (!isNullOrEmpty(factories)) {
             this.factories = factories.toArray();
             factoryMethods = new HashMap<Class<?>, FactoryMethod>();
         } else {

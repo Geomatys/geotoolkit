@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.spatial.Georeferenceable;
 import org.geotoolkit.metadata.iso.spatial.DefaultGeoreferenceable;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * A wrapper for a metadata using the {@code "gmi"} namespace.
@@ -67,7 +69,7 @@ public class MI_Georeferenceable  extends DefaultGeoreferenceable {
      */
     public static DefaultGeoreferenceable wrap(final Georeferenceable original) {
         if (original != null && !(original instanceof MI_Georeferenceable)) {
-            if (!MI_Metadata.isEmpty(original.getGeolocationInformation())) {
+            if (!isNullOrEmpty(original.getGeolocationInformation())) {
                 return new MI_Georeferenceable(original);
             }
             if (!(original instanceof DefaultGeoreferenceable)) {

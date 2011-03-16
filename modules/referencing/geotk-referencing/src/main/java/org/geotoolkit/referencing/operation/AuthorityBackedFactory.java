@@ -52,6 +52,7 @@ import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 import static org.geotoolkit.factory.AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory;
 
 
@@ -331,7 +332,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         Set<CoordinateOperation> operations;
         try {
             operations = authorityFactory.createFromCoordinateReferenceSystemCodes(sourceCode, targetCode);
-            inverse = (operations == null || operations.isEmpty());
+            inverse = isNullOrEmpty(operations);
             if (inverse) {
                 /*
                  * No operation from 'source' to 'target' available. But maybe there is an inverse

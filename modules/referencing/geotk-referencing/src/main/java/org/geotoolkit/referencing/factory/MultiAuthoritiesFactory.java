@@ -38,6 +38,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * An authority factory that delegates the object creation to an other factory determined from the
@@ -125,7 +127,7 @@ public class MultiAuthoritiesFactory extends AuthorityFactoryAdapter implements 
          * the hints present in the factory given by the caller.
          */
         hints.clear();
-        if (factories!=null && !factories.isEmpty()) {
+        if (!isNullOrEmpty(factories)) {
             for (final AuthorityFactory factory : factories) {
                 if (factory instanceof Factory) {
                     hints.putAll(((Factory) factory).getImplementationHints());

@@ -44,6 +44,8 @@ import org.geotoolkit.internal.swing.UnitFormatter;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.resources.Vocabulary;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * An editable table listing the categories in a {@link GridSampleDimension}. The table is
@@ -248,7 +250,7 @@ public class SampleDimensionPanel extends JComponent {
         units   = null;
         records = null;
         sampleDimensions = null;
-        if (bands != null && !bands.isEmpty()) {
+        if (!isNullOrEmpty(bands)) {
             final int n = bands.size();
             sampleDimensions = bands.toArray(new GridSampleDimension[n]);
             records = new CategoryRecord[n][];

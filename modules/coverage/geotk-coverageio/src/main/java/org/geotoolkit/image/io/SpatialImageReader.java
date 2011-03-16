@@ -54,6 +54,7 @@ import org.geotoolkit.image.io.metadata.SampleDomain;
 import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.SampleConversionType.*;
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
 /**
@@ -618,7 +619,7 @@ public abstract class SpatialImageReader extends ImageReader implements WarningP
             }
             if (metadata != null) {
                 final List<SampleDimension> sd = metadata.getListForType(SampleDimension.class);
-                if (sd != null && !sd.isEmpty()) {
+                if (!isNullOrEmpty(sd)) {
                     convertBandIndices = (sourceBands != null);
                     bands = sd;
                 }

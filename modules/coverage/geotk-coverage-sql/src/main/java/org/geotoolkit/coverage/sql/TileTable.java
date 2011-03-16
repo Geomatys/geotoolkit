@@ -57,6 +57,8 @@ import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.internal.sql.table.CatalogException;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.resources.Errors;
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 
 /**
@@ -347,7 +349,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
             }
             recoverableException(e);
         }
-        if (directories != null && !directories.isEmpty()) {
+        if (!isNullOrEmpty(directories)) {
             File file = directories.first();
             file = new File(file, "TileManager.serialized");
             return file;

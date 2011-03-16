@@ -59,6 +59,8 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * Utility methods extracting commonly used informations from ISO 19115-2 or ISO 19123 objects.
@@ -629,7 +631,7 @@ public class MetadataHelper implements Localized {
     public List<GridSampleDimension> getGridSampleDimensions(
             final List<? extends SampleDimension> sampleDimensions) throws ImageMetadataException
     {
-        if (sampleDimensions == null || sampleDimensions.isEmpty()) {
+        if (isNullOrEmpty(sampleDimensions)) {
             return null;
         }
         /*

@@ -48,6 +48,8 @@ import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.internal.io.IOUtilities;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * Build a tree of factory dependencies, usually for printing to the console. This is a
@@ -325,7 +327,7 @@ public class FactoryDependencies {
             final Citation authority = ((AuthorityFactory) factory).getAuthority();
             if (authority != null) {
                 final Collection<? extends Identifier> identifiers = authority.getIdentifiers();
-                if (identifiers != null && !identifiers.isEmpty()) {
+                if (!isNullOrEmpty(identifiers)) {
                     boolean next = false;
                     for (final Identifier id : identifiers) {
                         if (next) buffer.append(", ");

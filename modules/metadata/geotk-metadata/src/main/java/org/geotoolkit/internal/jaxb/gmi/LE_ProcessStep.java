@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * A wrapper for a metadata using the {@code "gmi"} namespace.
@@ -68,8 +70,8 @@ public class LE_ProcessStep extends DefaultProcessStep {
     public static DefaultProcessStep wrap(final ProcessStep original) {
         if (original != null && !(original instanceof LE_ProcessStep)) {
             if (original.getProcessingInformation() != null ||
-                !MI_Metadata.isEmpty(original.getOutputs()) ||
-                !MI_Metadata.isEmpty(original.getReports()))
+                !isNullOrEmpty(original.getOutputs()) ||
+                !isNullOrEmpty(original.getReports()))
             {
                 return new LE_ProcessStep(original);
             }

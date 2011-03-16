@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.content.CoverageDescription;
 import org.geotoolkit.metadata.iso.content.DefaultCoverageDescription;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * A wrapper for a metadata using the {@code "gmi"} namespace.
@@ -67,7 +69,7 @@ public class MI_CoverageDescription extends DefaultCoverageDescription {
      */
     public static DefaultCoverageDescription wrap(final CoverageDescription original) {
         if (original != null && !(original instanceof MI_CoverageDescription)) {
-            if (!MI_Metadata.isEmpty(original.getRangeElementDescriptions())) {
+            if (!isNullOrEmpty(original.getRangeElementDescriptions())) {
                 return new MI_CoverageDescription(original);
             }
             if (!(original instanceof DefaultCoverageDescription)) {

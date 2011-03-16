@@ -17,11 +17,12 @@
  */
 package org.geotoolkit.internal.jaxb.gmi;
 
-import java.util.Collection;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.Metadata;
 import org.geotoolkit.metadata.iso.DefaultMetadata;
+
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
 /**
@@ -60,13 +61,6 @@ public class MI_Metadata extends DefaultMetadata {
     }
 
     /**
-     * Returns {@code true} if the given collection is null or empty.
-     */
-    static boolean isEmpty(final Collection<?> collection) {
-        return (collection == null) || collection.isEmpty();
-    }
-
-    /**
      * Wraps the given metadata into a Geotk implementation that can be marshalled,
      * using the {@code "gmi"} namespace if necessary.
      *
@@ -75,7 +69,7 @@ public class MI_Metadata extends DefaultMetadata {
      */
     public static DefaultMetadata wrap(final Metadata original) {
         if (original != null && !(original instanceof MI_Metadata)) {
-            if (!isEmpty(original.getAcquisitionInformation())) {
+            if (!isNullOrEmpty(original.getAcquisitionInformation())) {
                 return new MI_Metadata(original);
             }
             if (!(original instanceof DefaultMetadata)) {

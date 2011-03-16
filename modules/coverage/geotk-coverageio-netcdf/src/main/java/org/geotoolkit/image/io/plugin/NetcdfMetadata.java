@@ -64,6 +64,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import ucar.nc2.dataset.NetcdfDataset;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * Metadata from NetCDF file. This implementation assumes that the NetCDF file follows the
@@ -172,7 +174,7 @@ final class NetcdfMetadata extends SpatialMetadata {
         for (final VariableIF variable : variables) {
             if (variable instanceof Enhancements) {
                 final List<CoordinateSystem> systems = ((Enhancements) variable).getCoordinateSystems();
-                if (systems != null && !systems.isEmpty()) {
+                if (!isNullOrEmpty(systems)) {
                     CoordinateReferenceSystem crs = parseWKT(variable, "ESRI_pe_string");
                     setCoordinateSystem(file, systems.get(0), crs);
                     break; // Infers the CRS only from the first variable having such CRS.

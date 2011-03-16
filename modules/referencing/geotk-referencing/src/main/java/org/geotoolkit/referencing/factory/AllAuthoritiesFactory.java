@@ -42,6 +42,8 @@ import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;
 import org.geotoolkit.lang.ThreadSafe;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * An authority factory that delegates the object creation to an other factory determined from the
@@ -112,7 +114,7 @@ public class AllAuthoritiesFactory extends MultiAuthoritiesFactory {
         super(null);
         FactoryUtilities.addImplementationHints(userHints, hints);
         Collection<?> factories = (Collection<?>) hints.get(USER_FACTORIES_KEY);
-        if (factories != null && !factories.isEmpty()) {
+        if (!isNullOrEmpty(factories)) {
             factories = UnmodifiableArrayList.wrap(factories.toArray(new AuthorityFactory[factories.size()]));
         } else {
             factories = Collections.EMPTY_LIST;

@@ -68,6 +68,8 @@ import org.geotoolkit.gui.swing.referencing.AuthorityCodesComboBox;
 import org.geotoolkit.internal.swing.ComponentDisposer;
 import org.geotoolkit.internal.swing.SwingUtilities;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * A form showing details about a {@link NewGridCoverageReference}.
@@ -316,7 +318,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
              * bands, except if the format does not exist. In the later case, we assume that the
              * user wants to create a new format using the current values as a template.
              */
-            if (!editable || (bands != null && !bands.isEmpty())) {
+            if (!editable || !isNullOrEmpty(bands)) {
                 boolean geophysics = false;
                 if (bands != null) {
                     for (final GridSampleDimension band : bands) {

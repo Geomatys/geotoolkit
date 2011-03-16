@@ -48,6 +48,8 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.Immutable;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * Describes the data values for a coverage as a list of {@linkplain Category categories}. For
@@ -952,7 +954,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
      */
     @Override
     public double getMinimumValue() {
-        if (categories != null && !categories.isEmpty()) {
+        if (!isNullOrEmpty(categories)) {
             final double value = categories.get(0).minimum;
             if (!Double.isNaN(value)) {
                 return value;

@@ -29,6 +29,8 @@ import java.util.Collections;
 import java.util.NoSuchElementException;
 import java.io.Serializable;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * List of elements sorted by a key which is not the element itself.
@@ -157,7 +159,7 @@ public class KeySortedList<K extends Comparable<K>,V> extends AbstractSequential
      */
     public V first(final K key) throws NoSuchElementException {
         final List<V> values = map.get(key);
-        if (values==null || values.isEmpty()) {
+        if (isNullOrEmpty(values)) {
             throw new NoSuchElementException();
         }
         return values.get(0);
@@ -173,7 +175,7 @@ public class KeySortedList<K extends Comparable<K>,V> extends AbstractSequential
      */
     public V last(final K key) throws NoSuchElementException {
         final List<V> values = map.get(key);
-        if (values==null || values.isEmpty()) {
+        if (isNullOrEmpty(values)) {
             throw new NoSuchElementException();
         }
         return values.get(values.size()-1);

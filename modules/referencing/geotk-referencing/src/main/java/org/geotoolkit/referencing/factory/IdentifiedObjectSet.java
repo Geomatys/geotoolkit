@@ -45,6 +45,8 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.collection.BackingStoreException;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * A lazy set of {@linkplain IdentifiedObject identified objects}. This set creates
@@ -330,7 +332,7 @@ public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet
     protected String getAuthorityCode(final T object) {
         final Identifier id;
         final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
-        if (identifiers!=null && !identifiers.isEmpty()) {
+        if (!isNullOrEmpty(identifiers)) {
             id = identifiers.iterator().next();
         } else {
             id = object.getName();

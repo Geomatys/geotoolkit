@@ -31,6 +31,8 @@ import javax.swing.DefaultComboBoxModel;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.image.ColorUtilities;
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 
 /**
@@ -105,7 +107,7 @@ public final class ColorPalette implements Serializable {
      */
     public static ComboBoxModel getChoices(final PaletteFactory factory) {
         final Set<String> names = factory.getAvailableNames();
-        if (names == null || names.isEmpty()) {
+        if (isNullOrEmpty(names)) {
             return null;
         }
         final Vector<Object> items = new Vector<Object>(names.size());

@@ -33,7 +33,7 @@ import org.geotoolkit.lang.Static;
  * Java {@link Collections} utility class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.10 (derived from 3.00)
  * @module
@@ -44,6 +44,21 @@ public final class XCollections {
      * Do not allow instantiation of this class.
      */
     private XCollections() {
+    }
+
+    /**
+     * Returns {@code true} if the given collection is either null or
+     * {@linkplain Collection#isEmpty() empty}. If this method returns {@code false},
+     * then the given collection is guaranteed to be non-null and to contain at least
+     * one element.
+     *
+     * @param collection The collection to test, or {@code null}.
+     * @return {@code true} if the given collection is null or empty, or {@code false} otherwise.
+     *
+     * @since 3.18
+     */
+    public static boolean isNullOrEmpty(final Collection<?> collection) {
+        return (collection == null) || collection.isEmpty();
     }
 
     /**

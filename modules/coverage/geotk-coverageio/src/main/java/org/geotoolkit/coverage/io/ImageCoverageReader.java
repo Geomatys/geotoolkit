@@ -77,6 +77,8 @@ import org.geotoolkit.referencing.operation.transform.IdentityTransform;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * A {@link GridCoverageReader} implementation which use an {@link ImageReader} for reading
@@ -639,7 +641,7 @@ public class ImageCoverageReader extends GridCoverageReader {
             } catch (IOException e) {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
-            if (bands == null || bands.isEmpty()) {
+            if (isNullOrEmpty(bands)) {
                 // See the convention documented below.
                 sampleDimensions = Collections.emptyList();
             } else try {

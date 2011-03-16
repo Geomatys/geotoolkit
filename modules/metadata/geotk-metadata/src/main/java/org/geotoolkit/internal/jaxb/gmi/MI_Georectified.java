@@ -22,6 +22,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.opengis.metadata.spatial.Georectified;
 import org.geotoolkit.metadata.iso.spatial.DefaultGeorectified;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * A wrapper for a metadata using the {@code "gmi"} namespace.
@@ -67,7 +69,7 @@ public class MI_Georectified extends DefaultGeorectified {
      */
     public static DefaultGeorectified wrap(final Georectified original) {
         if (original != null && !(original instanceof MI_Georectified)) {
-            if (!MI_Metadata.isEmpty(original.getCheckPoints())) {
+            if (!isNullOrEmpty(original.getCheckPoints())) {
                 return new MI_Georectified(original);
             }
             if (!(original instanceof DefaultGeorectified)) {

@@ -49,6 +49,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
 /**
@@ -285,7 +286,7 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
                 if (op instanceof Transformation) {
                     // See javadoc for a rational why we take only transformations in account.
                     Collection<PositionalAccuracy> candidates = op.getCoordinateOperationAccuracy();
-                    if (candidates!=null && !candidates.isEmpty()) {
+                    if (!isNullOrEmpty(candidates)) {
                         if (accuracy == null) {
                             accuracy = new LinkedHashSet<PositionalAccuracy>();
                         }

@@ -46,6 +46,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
 /**
@@ -289,7 +290,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
              * Looks in subgroups only after all parameters in the current group have been verified.
              * Search in a "first in, first out" basis.
              */
-            if (subgroups==null || subgroups.isEmpty()) {
+            if (isNullOrEmpty(subgroups)) {
                 break;
             }
             parameters = subgroups.remove(0).descriptors();

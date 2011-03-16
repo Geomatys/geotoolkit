@@ -36,7 +36,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.EnumSet;
 import java.util.Iterator;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
@@ -68,6 +67,8 @@ import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
 /**
@@ -1063,11 +1064,8 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * which may or may not be {@link RenderedImage}s. If there is no sinks, we can process.
      */
     final synchronized boolean disposeImage(final boolean force) {
-        if (!force) {
-            Collection<?> sinks = image.getSinks();
-            if (sinks != null && !sinks.isEmpty()) {
-                return false;
-            }
+        if (!force && !isNullOrEmpty(image.getSinks())) {
+            return false;
         }
         image.dispose();
         return true;

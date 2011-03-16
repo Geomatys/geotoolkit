@@ -38,6 +38,8 @@ import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * Default parameters for {@link SpatialImageReader}. This class extends the standard
@@ -584,7 +586,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
             buffer.setLength(length - 2);
         }
         buffer.append(']');
-        if (identifiers != null && !identifiers.isEmpty()) {
+        if (!isNullOrEmpty(identifiers)) {
             int last = 0;
             for (final DimensionIdentification slice : identifiers) {
                 last = buffer.append("\n\u00A0\u00A0\u251C\u2500\u00A0").length();

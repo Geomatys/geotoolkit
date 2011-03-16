@@ -29,6 +29,8 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.LoggedFormat;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * An element in a <cite>Well Know Text</cite> (WKT). An {@code Element} is
@@ -547,7 +549,7 @@ final class Element {
      * @throws ParseException If the list still contains some unprocessed elements.
      */
     public void close() throws ParseException {
-        if (list != null && !list.isEmpty()) {
+        if (!isNullOrEmpty(list)) {
             throw new ParseException(complete(Errors.format(Errors.Keys.UNEXPECTED_PARAMETER_$1,
                     list.get(0))), offset + keyword.length());
         }

@@ -50,6 +50,8 @@ import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.internal.image.io.Warnings;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
+
 
 /**
  * Writer for the ASCII Grid format. As the "ASCII" name implies, the data file are written in
@@ -227,7 +229,7 @@ public class AsciiGridWriter extends TextImageWriter {
          */
         String fillValue = DEFAULT_FILL;
         final List<SampleDimension> dimensions = metadata.getListForType(SampleDimension.class);
-        if (dimensions != null && !dimensions.isEmpty()) {
+        if (!isNullOrEmpty(dimensions)) {
             final SampleDimension dim = dimensions.get(0);
             if (dim != null) {
                 final double[] fillValues = dim.getFillSampleValues();
