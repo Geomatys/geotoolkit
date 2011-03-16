@@ -49,7 +49,7 @@ public final class Loggings extends IndexedResourceBundle {
         }
 
         /**
-         * Grid geometry has been adjusted for coverage "{0}".
+         * Grid geometry has been adjusted for coverage “{0}”.
          */
         public static final int ADJUSTED_GRID_GEOMETRY_$1 = 0;
 
@@ -59,19 +59,19 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int AMBIGUOUS_ELLIPSOID = 1;
 
         /**
-         * {3,choice,0#Apply|1#Reuse} operation "{1}" on coverage "{0}" with interpolation "{2}".
+         * {3,choice,0#Apply|1#Reuse} operation “{1}” on coverage “{0}” with interpolation “{2}”.
          */
         public static final int APPLIED_OPERATION_$4 = 2;
 
         /**
-         * Resampled coverage "{0}" from coordinate system "{1}" (for an image of size {2}×{3}) to
-         * coordinate system "{4}" (image size {5}×{6}). JAI operation is "{7}" with "{9}"
+         * Resampled coverage “{0}” from coordinate system “{1}” (for an image of size {2}×{3}) to
+         * coordinate system “{4}” (image size {5}×{6}). JAI operation is “{7}” with “{9}”
          * interpolation on {8,choice,0#packed|1#geophysics} pixels values. Background value is ({10}).
          */
         public static final int APPLIED_RESAMPLE_$11 = 3;
 
         /**
-         * Converted "{0}" from "{1}" to "{2}" units. We assume that this is the expected units for
+         * Converted “{0}” from “{1}” to “{2}” units. We assume that this is the expected units for
          * computation purpose.
          */
         public static final int APPLIED_UNIT_CONVERSION_$3 = 4;
@@ -82,17 +82,17 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int CACHING_$1 = 5;
 
         /**
-         * Failed to bind a "{0}" entry.
+         * Failed to bind a “{0}” entry.
          */
         public static final int CANT_BIND_DATASOURCE_$1 = 6;
 
         /**
-         * Failed to create a coordinate operation from "{0}" authority factory.
+         * Failed to create a coordinate operation from “{0}” authority factory.
          */
         public static final int CANT_CREATE_COORDINATE_OPERATION_$1 = 7;
 
         /**
-         * Failed to create an object for code "{0}". This entry will be ignored.
+         * Failed to create an object for code “{0}”. This entry will be ignored.
          */
         public static final int CANT_CREATE_OBJECT_FROM_CODE_$1 = 8;
 
@@ -102,22 +102,22 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int CANT_DISPOSE_BACKING_STORE = 9;
 
         /**
-         * Can't load a service for category "{0}". Cause is "{1}".
+         * Can’t load a service for category “{0}”. Cause is “{1}”.
          */
         public static final int CANT_LOAD_SERVICE_$2 = 10;
 
         /**
-         * Can't read "{0}".
+         * Can’t read “{0}”.
          */
         public static final int CANT_READ_FILE_$1 = 11;
 
         /**
-         * Can't register JAI operation "{0}". Some grid coverage operations may not work.
+         * Can’t register JAI operation “{0}”. Some grid coverage operations may not work.
          */
         public static final int CANT_REGISTER_JAI_OPERATION_$1 = 12;
 
         /**
-         * Can't roll longitude for this {0} projection.
+         * Can’t roll longitude for this {0} projection.
          */
         public static final int CANT_ROLL_LONGITUDE_$1 = 13;
 
@@ -132,7 +132,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int CLOSED_EPSG_DATABASE = 15;
 
         /**
-         * Connected to EPSG database "{0}" on "{1}".
+         * Connected to EPSG database “{0}” on “{1}”.
          */
         public static final int CONNECTED_EPSG_DATABASE_$2 = 16;
 
@@ -153,17 +153,17 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int CREATED_CODEC_OF_CLASS_$2 = 61;
 
         /**
-         * Created coordinate operation "{0}" for source CRS "{1}" and target CRS "{2}".
+         * Created coordinate operation “{0}” for source CRS “{1}” and target CRS “{2}”.
          */
         public static final int CREATED_COORDINATE_OPERATION_$3 = 17;
 
         /**
-         * Created a "{0}" entry in the naming system.
+         * Created a “{0}” entry in the naming system.
          */
         public static final int CREATED_DATASOURCE_ENTRY_$1 = 18;
 
         /**
-         * Created serializable image for coverage "{0}" using the "{1}" codec.
+         * Created serializable image for coverage “{0}” using the “{1}” codec.
          */
         public static final int CREATED_SERIALIZABLE_IMAGE_$2 = 19;
 
@@ -178,7 +178,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int DEFERRED_TILE_PAINTING_$2 = 21;
 
         /**
-         * File "{0}" contains values that duplicate previously stored values.
+         * File “{0}” contains values that duplicate previously stored values.
          */
         public static final int DUPLICATED_CONTENT_IN_FILE_$1 = 22;
 
@@ -214,7 +214,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int FOUND_MISMATCHED_CRS_$4 = 28;
 
         /**
-         * Ignored "{0}" hint.
+         * Ignored “{0}” hint.
          */
         public static final int HINT_IGNORED_$1 = 29;
 
@@ -229,7 +229,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int JDBC_DRIVER_VERSION_$3 = 31;
 
         /**
-         * Loading datum aliases from "{0}".
+         * Loading datum aliases from “{0}”.
          */
         public static final int LOADING_DATUM_ALIASES_$1 = 32;
 
@@ -245,32 +245,32 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int LOCALES_DISCARTED = 33;
 
         /**
-         * No coordinate operation from "{0}" to "{1}" because of mismatched factories.
+         * No coordinate operation from “{0}” to “{1}” because of mismatched factories.
          */
         public static final int MISMATCHED_COORDINATE_OPERATION_FACTORIES_$2 = 34;
 
         /**
-         * The type of the requested object doesn't match the "{0}" URN type.
+         * The type of the requested object doesn’t match the “{0}” URN type.
          */
         public static final int MISMATCHED_URN_TYPE_$1 = 35;
 
         /**
-         * Native acceleration {1,choice,0#disabled|1#enabled} for "{0}" operation.
+         * Native acceleration {1,choice,0#disabled|1#enabled} for “{0}” operation.
          */
         public static final int NATIVE_ACCELERATION_STATE_$2 = 36;
 
         /**
-         * JAI codec {1,choice,0#disabled|1#enabled} for {2,choice,0#reading|1#writing} "{0}" format.
+         * JAI codec {1,choice,0#disabled|1#enabled} for {2,choice,0#reading|1#writing} “{0}” format.
          */
         public static final int NATIVE_CODEC_STATE_$3 = 37;
 
         /**
-         * Offscreen rendering failed for layer "{0}". Fall back on default rendering.
+         * Offscreen rendering failed for layer “{0}”. Fall back on default rendering.
          */
         public static final int OFFSCREEN_RENDERING_FAILED_$1 = 38;
 
         /**
-         * Renderer "{0}" painted in {1} seconds.
+         * Renderer “{0}” painted in {1} seconds.
          */
         public static final int PAINTING_LAYER_$2 = 39;
 
@@ -301,33 +301,33 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int REGISTERED_RMI_SERVICES_$1 = 44;
 
         /**
-         * Select an image of "{0}" decimated to level {1} of {2}.
+         * Select an image of “{0}” decimated to level {1} of {2}.
          */
         public static final int RESSAMPLING_RENDERED_IMAGE_$3 = 45;
 
         /**
-         * Creates a {1,choice,0#packed|1#geophysics|2#photographic} view of grid coverage "{0}" using
-         * operation "{2}".
+         * Creates a {1,choice,0#packed|1#geophysics|2#photographic} view of grid coverage “{0}” using
+         * operation “{2}”.
          */
         public static final int SAMPLE_TRANSCODE_$3 = 46;
 
         /**
-         * Layer "{0}" send a repaint event for the whole widget area.
+         * Layer “{0}” send a repaint event for the whole widget area.
          */
         public static final int SEND_REPAINT_EVENT_$1 = 47;
 
         /**
-         * Layer "{0}" send a repaint event for pixels x=[{1}..{2}] and y=[{3}..{4}] in widget area.
+         * Layer “{0}” send a repaint event for pixels x=[{1}..{2}] and y=[{3}..{4}] in widget area.
          */
         public static final int SEND_REPAINT_EVENT_$5 = 48;
 
         /**
-         * No column "{0}" has been found in table "{1}". Value "{2}" will be used instead.
+         * No column “{0}” has been found in table “{1}”. Value “{2}” will be used instead.
          */
         public static final int TABLE_COLUMN_NOT_FOUND_$3 = 49;
 
         /**
-         * Temporary file "{0}" has been garbage-collected.
+         * Temporary file “{0}” has been garbage-collected.
          */
         public static final int TEMPORARY_FILE_GC_$1 = 50;
 
@@ -342,38 +342,38 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int UNEXPECTED_EXCEPTION = 52;
 
         /**
-         * Unexpected unit "{0}". Map scale may be inaccurate.
+         * Unexpected unit “{0}”. Map scale may be inaccurate.
          */
         public static final int UNEXPECTED_UNIT_$1 = 53;
 
         /**
-         * Ignoring unknown parameter: "{0}" = {1} {2}.
+         * Ignoring unknown parameter: “{0}” = {1} {2}.
          */
         public static final int UNKNOWN_PARAMETER_$3 = 54;
 
         /**
-         * Can't handle style of class {0}. Consequently, geometry "{1}" will ignore its style
+         * Can’t handle style of class {0}. Consequently, geometry “{1}” will ignore its style
          * information.
          */
         public static final int UNKNOWN_STYLE_$2 = 55;
 
         /**
-         * Unrecognized scale type: "{0}". Default to linear.
+         * Unrecognized scale type: “{0}”. Default to linear.
          */
         public static final int UNRECOGNIZED_SCALE_TYPE_$1 = 56;
 
         /**
-         * Update the cache for layer "{0}".
+         * Update the cache for layer “{0}”.
          */
         public static final int UPDATE_RENDERER_CACHE_$1 = 57;
 
         /**
-         * Using "{0}" as a fallback.
+         * Using “{0}” as a fallback.
          */
         public static final int USING_FALLBACK_$1 = 58;
 
         /**
-         * Using "{0}" as {1} factory.
+         * Using “{0}” as {1} factory.
          */
         public static final int USING_FILE_AS_FACTORY_$2 = 59;
     }

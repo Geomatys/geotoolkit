@@ -1757,7 +1757,7 @@ public final class Vocabulary extends IndexedResourceBundle {
         public static final int VERSION_$1 = 322;
 
         /**
-         * "{0}" version
+         * “{0}” version
          */
         public static final int VERSION_OF_$1 = 323;
 

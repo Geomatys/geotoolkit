@@ -80,7 +80,7 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int CONFORMANCE_MEANS_DATUM_SHIFT = 4;
 
         /**
-         * This result indicates if the factory "{0}" is available for use.
+         * This result indicates if the factory “{0}” is available for use.
          */
         public static final int CONFORMANCE_MEANS_FACTORY_AVAILABLE_$1 = 5;
 
@@ -91,7 +91,7 @@ public final class Descriptions extends IndexedResourceBundle {
 
         /**
          * Are the {0} data installed? Some optional data can be downloaded and installed by running
-         * the "{2}" module. The default directory for {0} data is "{1}", but {2} allows to change this
+         * the “{2}” module. The default directory for {0} data is “{1}”, but {2} allows to change this
          * setting.
          */
         public static final int DATA_NOT_INSTALLED_$3 = 7;
@@ -108,7 +108,7 @@ public final class Descriptions extends IndexedResourceBundle {
         public static final int INSERTED_ROWS_$2 = 9;
 
         /**
-         * Parameter "{0}" is not conform. {1}
+         * Parameter “{0}” is not conform. {1}
          */
         public static final int NON_CONFORM_PARAMETER_$2 = 10;
 

@@ -83,7 +83,7 @@ public final class Wizards extends IndexedResourceBundle {
         public static final int CREATE_EPSG = 5;
 
         /**
-         * Create the "{0}" and "{1}" roles
+         * Create the “{0}” and “{1}” roles
          */
         public static final int CREATE_ROLES_$2 = 6;
 
