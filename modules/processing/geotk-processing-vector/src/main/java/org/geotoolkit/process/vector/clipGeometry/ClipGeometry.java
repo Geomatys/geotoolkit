@@ -47,7 +47,6 @@ import org.opengis.parameter.ParameterValueGroup;
 public class ClipGeometry extends AbstractProcess {
 
     ParameterValueGroup result;
-    static Geometry inputClippingGeometry;
 
     /**
      * Default constructor
@@ -70,9 +69,9 @@ public class ClipGeometry extends AbstractProcess {
     @Override
     public void run() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipGeometryDescriptor.FEATURE_IN, inputParameters);
-        inputClippingGeometry = Parameters.value(ClipGeometryDescriptor.CLIP_GEOMETRY_IN, inputParameters);
+        final Geometry inputClippingGeometry = Parameters.value(ClipGeometryDescriptor.CLIP_GEOMETRY_IN, inputParameters);
 
-        final ClipGeometryFeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList);
+        final ClipGeometryFeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList,inputClippingGeometry);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
@@ -83,7 +82,7 @@ public class ClipGeometry extends AbstractProcess {
      * @param oldFeatureType FeatureType
      * @return newFeatureType FeatureType
      */
-    public static FeatureType changeFeatureType(FeatureType oldFeatureType) {
+    public static FeatureType changeFeatureType(final FeatureType oldFeatureType) {
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
@@ -121,14 +120,14 @@ public class ClipGeometry extends AbstractProcess {
      * @param newType the new FeatureType for the Feature
      * @return Feature
      */
-    public static Feature clipFeature(Feature oldFeature, FeatureType newType) {
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final Geometry clipGeometry) {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
 
         for (Property property : oldFeature.getProperties()) {
             if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry interGeometry = testClipping((Geometry) property.getValue(), inputClippingGeometry);
+                final Geometry interGeometry = testClipping((Geometry) property.getValue(), clipGeometry);
 
                 //test clipping
                 if (interGeometry != null) {
@@ -151,7 +150,7 @@ public class ClipGeometry extends AbstractProcess {
      * @param clippingGeometry Geometry
      * @return Geometry
      */
-    public static Geometry testClipping(Geometry featureGeometry, Geometry clippingGeometry) {
+    public static Geometry testClipping(final Geometry featureGeometry, final Geometry clippingGeometry) {
         if(featureGeometry == null || clippingGeometry == null) return null;
         
         if(featureGeometry.intersects(clippingGeometry)){

@@ -25,7 +25,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
 import org.geotoolkit.process.vector.clip.ClipDescriptor;
 import org.geotoolkit.process.vector.clipgeometry.ClipGeometryDescriptor;
-import org.geotoolkit.process.vector.douglasPeucker.DouglasPeuckerDescriptor;
+import org.geotoolkit.process.vector.douglaspeucker.DouglasPeuckerDescriptor;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;

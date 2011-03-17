@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.douglasPeucker;
+package org.geotoolkit.process.vector.douglaspeucker;
 
 import javax.measure.unit.Unit;
 
@@ -47,7 +47,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boleau
  * @module pending
  */
-public class DouglasPeuckerDescriptor extends VectorDescriptor {
+final public class DouglasPeuckerDescriptor extends VectorDescriptor {
 
     /**Process name : douglaspeucker */
     public static final String NAME = "douglasPeucker";

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.douglasPeucker;
+package org.geotoolkit.process.vector.douglaspeucker;
 
 import java.util.NoSuchElementException;
 import javax.measure.quantity.Length;
@@ -53,7 +53,8 @@ public class DouglasPeuckerFeatureCollection extends VectorFeatureCollection {
    * @param inputBehavior
    * @param inputLenient
    */
-    public DouglasPeuckerFeatureCollection(FeatureCollection<Feature> originalFC, double inputAccuracy, Unit<Length> inputUnit, Boolean inputBehavior, Boolean inputLenient) {
+    public DouglasPeuckerFeatureCollection(final FeatureCollection<Feature> originalFC, final double inputAccuracy,
+            final  Unit<Length> inputUnit, final Boolean inputBehavior, final Boolean inputLenient) {
         super(originalFC);
         this.inputAccuracy = inputAccuracy;
         this.inputUnit = inputUnit;

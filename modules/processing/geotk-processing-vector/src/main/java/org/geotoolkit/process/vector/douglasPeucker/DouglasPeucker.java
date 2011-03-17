@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.douglasPeucker;
+package org.geotoolkit.process.vector.douglaspeucker;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
@@ -81,10 +81,10 @@ public class DouglasPeucker extends AbstractProcess {
     @Override
     public void run() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DouglasPeuckerDescriptor.FEATURE_IN, inputParameters);
-        double inputAccuracy = Parameters.value(DouglasPeuckerDescriptor.ACCURACY_IN, inputParameters).doubleValue();
-        Unit<Length> inputUnit = Parameters.value(DouglasPeuckerDescriptor.UNIT_IN, inputParameters);
-        boolean inputBehavior = Parameters.value(DouglasPeuckerDescriptor.DEL_SMALL_GEO_IN, inputParameters);
-        boolean inputLenient = Parameters.value(DouglasPeuckerDescriptor.LENIENT_TRANSFORM_IN, inputParameters);
+        final double inputAccuracy = Parameters.value(DouglasPeuckerDescriptor.ACCURACY_IN, inputParameters).doubleValue();
+        final Unit<Length> inputUnit = Parameters.value(DouglasPeuckerDescriptor.UNIT_IN, inputParameters);
+        final boolean inputBehavior = Parameters.value(DouglasPeuckerDescriptor.DEL_SMALL_GEO_IN, inputParameters);
+        final boolean inputLenient = Parameters.value(DouglasPeuckerDescriptor.LENIENT_TRANSFORM_IN, inputParameters);
 
         final DouglasPeuckerFeatureCollection resultFeatureList =
                 new DouglasPeuckerFeatureCollection(inputFeatureList,inputAccuracy,inputUnit,inputBehavior,inputLenient);
@@ -109,7 +109,8 @@ public class DouglasPeucker extends AbstractProcess {
      * @throws MismatchedDimensionException
      * @throws TransformException
      */
-    static Feature simplifyFeature(final Feature oldFeature, double accuracy, Unit<Length> unit,boolean behavior, boolean lenient)
+    static Feature simplifyFeature(final Feature oldFeature, final double accuracy, final Unit<Length> unit,
+            final boolean behavior, final boolean lenient)
             throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException, TransformException {
 
         final CoordinateReferenceSystem originalCRS = oldFeature.getType().getCoordinateReferenceSystem();
@@ -169,7 +170,9 @@ public class DouglasPeucker extends AbstractProcess {
      * @throws NoSuchIdentifierException
      * @throws FactoryException
      */
-    private static MathTransform changeProjection(final Envelope geomEnvelope, final GeographicCRS longLatCRS,Unit<Length> unit) throws NoSuchIdentifierException, FactoryException {
+    private static MathTransform changeProjection(final Envelope geomEnvelope, final GeographicCRS longLatCRS,
+            final Unit<Length> unit) throws NoSuchIdentifierException, FactoryException {
+        
         //collect data to create the projection
         final double centerMeridian = geomEnvelope.getWidth() / 2 + geomEnvelope.getMinX();
         final double centerParallal = geomEnvelope.getHeight() / 2 + geomEnvelope.getMinY();
@@ -222,7 +225,6 @@ public class DouglasPeucker extends AbstractProcess {
         p.parameter("central_meridian").setValue(centerMeridian);
         p.parameter("latitude_of_origin").setValue(centerParallal);*/
 
-        final MathTransform pTransform = f.createParameterizedTransform(p);
-        return pTransform;
+        return f.createParameterizedTransform(p);
     }
 }

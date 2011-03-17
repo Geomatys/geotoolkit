@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.process.vector.clipgeometry;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.NoSuchElementException;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
@@ -34,13 +35,14 @@ import org.opengis.feature.type.FeatureType;
 public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
 
     private final FeatureType newFeatureType;
-
+    private final Geometry clipGeometry;
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      */
-    public ClipGeometryFeatureCollection(FeatureCollection<Feature> originalFC) {
+    public ClipGeometryFeatureCollection(final FeatureCollection<Feature> originalFC, final Geometry inputClipGeometry) {
         super(originalFC);
+        this.clipGeometry = inputClipGeometry;
         this.newFeatureType = ClipGeometry.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
     }
 
@@ -70,7 +72,7 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
      */
     @Override
     protected Feature modify(final Feature original) {
-        return ClipGeometry.clipFeature(original, newFeatureType);
+        return ClipGeometry.clipFeature(original, newFeatureType, clipGeometry);
     }
 
     /**

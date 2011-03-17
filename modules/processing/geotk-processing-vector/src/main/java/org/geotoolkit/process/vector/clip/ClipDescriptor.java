@@ -43,7 +43,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boleau
  * @module pending
  */
-public class ClipDescriptor extends VectorDescriptor {
+final public class ClipDescriptor extends VectorDescriptor {
 
     /**Process name : clip */
     public static final String NAME = "clip";

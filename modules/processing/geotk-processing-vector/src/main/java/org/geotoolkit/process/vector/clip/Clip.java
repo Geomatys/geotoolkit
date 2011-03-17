@@ -45,9 +45,7 @@ import org.opengis.parameter.ParameterValueGroup;
 public class Clip extends AbstractProcess {
     
     private static final GeometryFactory GF = new GeometryFactory();
-
     ParameterValueGroup result;
-    static FeatureCollection<Feature>  inputFeatureClippingList;
 
     /**
      * Default constructor
@@ -70,9 +68,9 @@ public class Clip extends AbstractProcess {
     @Override
     public void run() {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipDescriptor.FEATURE_IN, inputParameters);
-        inputFeatureClippingList = Parameters.value(ClipDescriptor.FEATURE_CLIP, inputParameters);
+        final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(ClipDescriptor.FEATURE_CLIP, inputParameters);
 
-        final ClipFeatureCollection resultFeatureList = new ClipFeatureCollection(inputFeatureList);
+        final ClipFeatureCollection resultFeatureList = new ClipFeatureCollection(inputFeatureList,inputFeatureClippingList);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
@@ -82,9 +80,10 @@ public class Clip extends AbstractProcess {
      * Clip a feature with the FeatureCollection's geometries
      * @param oldFeature Feature
      * @param newType the new FeatureType for the Feature
+     * @param featureClippingList FeatureCollection used to clip
      * @return Feature
      */
-    public static Feature clipFeature(Feature oldFeature, FeatureType newType) {
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList) {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
@@ -96,7 +95,7 @@ public class Clip extends AbstractProcess {
                 //loop and test intersection between each geometry of each clipping feature from
                 //clipping FeatureCollection
                 final List<Geometry> bufferInterGeometries = new ArrayList<Geometry>();
-                final FeatureIterator<Feature> clipIterator = inputFeatureClippingList.iterator();
+                final FeatureIterator<Feature> clipIterator = featureClippingList.iterator();
                 try{
                     while(clipIterator.hasNext()){
                         final Feature clipFeature = clipIterator.next();

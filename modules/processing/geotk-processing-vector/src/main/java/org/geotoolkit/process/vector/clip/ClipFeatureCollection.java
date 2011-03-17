@@ -35,14 +35,16 @@ import org.opengis.feature.type.FeatureType;
 public class ClipFeatureCollection extends VectorFeatureCollection {
 
     private final FeatureType newFeatureType;
+    private final FeatureCollection<Feature> clippingList;
 
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
+     * @param clippingList 
      */
-    public ClipFeatureCollection(FeatureCollection<Feature> originalFC) {
+    public ClipFeatureCollection(final FeatureCollection<Feature> originalFC, final FeatureCollection<Feature> clippingList) {
         super(originalFC);
-
+        this.clippingList = clippingList;
         this.newFeatureType = ClipGeometry.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
 
     }
@@ -73,7 +75,7 @@ public class ClipFeatureCollection extends VectorFeatureCollection {
      */
     @Override
     protected Feature modify(final Feature original) {
-        return Clip.clipFeature(original, newFeatureType);
+        return Clip.clipFeature(original, newFeatureType, clippingList);
     }
 
     /**
