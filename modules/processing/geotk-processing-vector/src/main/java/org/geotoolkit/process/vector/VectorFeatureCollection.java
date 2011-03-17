@@ -52,7 +52,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      * Return the feature modify by the process
      * @param original Feature
      */
-    protected abstract Feature modify(Feature original);
+    protected abstract Feature modify(Feature original) throws DataStoreRuntimeException;
 
     /**
      * Return the orignal FeatureCollection

@@ -18,7 +18,6 @@ package org.geotoolkit.process.vector.clip;
 
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -56,7 +55,7 @@ public class ClipTest {
     private static SimpleFeatureType type;
 
     @Test
-    public void testClipGeometry() {
+    public void testClip() {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();

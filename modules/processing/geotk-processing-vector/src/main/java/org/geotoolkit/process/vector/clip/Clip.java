@@ -19,30 +19,22 @@ package org.geotoolkit.process.vector.clip;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
-import com.vividsolutions.jts.geom.Point;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.ListIterator;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorDescriptor;
-import org.geotoolkit.process.vector.clipGeometry.ClipGeometry;
+import org.geotoolkit.process.vector.clipgeometry.ClipGeometry;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**

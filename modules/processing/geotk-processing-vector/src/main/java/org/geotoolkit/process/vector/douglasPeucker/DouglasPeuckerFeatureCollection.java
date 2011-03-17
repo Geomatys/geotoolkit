@@ -14,9 +14,12 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.clipgeometry;
+package org.geotoolkit.process.vector.douglasPeucker;
 
 import java.util.NoSuchElementException;
+import javax.measure.quantity.Length;
+import javax.measure.unit.Unit;
+
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -25,24 +28,41 @@ import org.geotoolkit.process.vector.VectorFeatureCollection;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
- * FeatureCollection for Clip process
+ * FeatureCollection for Douglas Peucker simplification process
  * @author Quentin Boileau
  * @module pending
  */
-public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
+public class DouglasPeuckerFeatureCollection extends VectorFeatureCollection {
 
     private final FeatureType newFeatureType;
+    private final double inputAccuracy;
+    private final Unit<Length> inputUnit;
+    private final Boolean inputBehavior;
+    private final Boolean inputLenient;
 
-    /**
-     * Connect to the original FeatureConnection
-     * @param originalFC FeatureCollection
-     */
-    public ClipGeometryFeatureCollection(FeatureCollection<Feature> originalFC) {
+  /**
+   * Connect to the original FeatureConnection
+   * @param originalFC
+   * @param inputAccuracy
+   * @param inputUnit
+   * @param inputBehavior
+   * @param inputLenient
+   */
+    public DouglasPeuckerFeatureCollection(FeatureCollection<Feature> originalFC, double inputAccuracy, Unit<Length> inputUnit, Boolean inputBehavior, Boolean inputLenient) {
         super(originalFC);
-        this.newFeatureType = ClipGeometry.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
+        this.inputAccuracy = inputAccuracy;
+        this.inputUnit = inputUnit;
+        this.inputBehavior = inputBehavior;
+        this.inputLenient = inputLenient;
+        this.newFeatureType = super.getOriginalFeatureCollection().getFeatureType();
     }
+
+
 
     /**
      * Return the new FeatureType
@@ -69,8 +89,16 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
      *  {@inheritDoc }
      */
     @Override
-    protected Feature modify(final Feature original) {
-        return ClipGeometry.clipFeature(original, newFeatureType);
+    public Feature modify(final Feature original) throws DataStoreRuntimeException {
+        try {
+            return DouglasPeucker.simplifyFeature(original,inputAccuracy,inputUnit,inputBehavior,inputLenient);
+        }catch (FactoryException ex) {
+            throw new DataStoreRuntimeException(ex);
+        } catch (MismatchedDimensionException ex) {
+           throw new DataStoreRuntimeException(ex);
+        } catch (TransformException ex) {
+           throw new DataStoreRuntimeException(ex);
+        }
     }
 
     /**

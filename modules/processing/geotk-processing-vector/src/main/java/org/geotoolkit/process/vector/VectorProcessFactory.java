@@ -24,7 +24,8 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
 import org.geotoolkit.process.vector.clip.ClipDescriptor;
-import org.geotoolkit.process.vector.clipGeometry.ClipGeometryDescriptor;
+import org.geotoolkit.process.vector.clipgeometry.ClipGeometryDescriptor;
+import org.geotoolkit.process.vector.douglasPeucker.DouglasPeuckerDescriptor;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -53,7 +54,8 @@ public class VectorProcessFactory extends AbstractProcessFactory {
      * Default constructor 
      */
     public VectorProcessFactory() {
-        super(CentroidDescriptor.INSTANCE, ClipGeometryDescriptor.INSTANCE, ClipDescriptor.INSTANCE);
+        super(CentroidDescriptor.INSTANCE, ClipGeometryDescriptor.INSTANCE, ClipDescriptor.INSTANCE,
+                DouglasPeuckerDescriptor.INSTANCE);
     }
 
     /**

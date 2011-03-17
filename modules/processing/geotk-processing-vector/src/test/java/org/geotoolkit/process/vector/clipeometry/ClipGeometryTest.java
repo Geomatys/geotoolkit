@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.clipGeometry;
+package org.geotoolkit.process.vector.clipeometry;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Coordinate;
@@ -32,13 +32,13 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
 import org.geotoolkit.referencing.CRS;
 
-import org.junit.Test;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
+import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
