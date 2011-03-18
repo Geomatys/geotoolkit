@@ -457,7 +457,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                         Vocabulary.Keys.DATA_BASE_$3, "EPSG", version, engine));
                 c.setEdition(new SimpleInternationalString(version));
                 c.setEditionDate(date);
-                authority = (Citation) c.unmodifiable();
+                c.freeze();
+                authority = c;
                 hints.put(Hints.VERSION, new Version(version));  // For getImplementationHints()
             } else {
                 authority = Citations.EPSG;
@@ -1398,7 +1399,8 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                             new DefaultGeographicBoundingBox(xmin, xmax, ymin, ymax)));
                 }
                 if (extent != null) {
-                    returnValue = ensureSingleton((Extent) extent.unmodifiable(), returnValue, code);
+                    extent.freeze();
+                    returnValue = ensureSingleton(extent, returnValue, code);
                 }
             }
             result.close();
@@ -2595,10 +2597,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     accuracyElement = new DefaultAbsoluteExternalPositionalAccuracy(accuracyResult);
                     accuracyElement.setMeasureDescription(TRANSFORMATION_ACCURACY);
                     accuracyElement.setEvaluationMethodType(EvaluationMethodType.DIRECT_EXTERNAL);
+                    accuracyElement.freeze();
                     properties.put(CoordinateOperation.COORDINATE_OPERATION_ACCURACY_KEY,
-                            new PositionalAccuracy[] {
-                                (PositionalAccuracy)accuracyElement.unmodifiable()
-                            });
+                            new PositionalAccuracy[] {accuracyElement});
                 }
                 /*
                  * Creates the operation. Conversions should be the only operations allowed to

@@ -345,7 +345,8 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
                 party.setRole(Role.RESOURCE_PROVIDER);
                 party.setContactInfo(new DefaultContact(resource));
                 parties.add(party);
-                authority = (Citation) citation.unmodifiable();
+                citation.freeze();
+                authority = citation;
             } catch (URISyntaxException exception) {
                 // Invalid URI syntax. Ignore, since this property
                 // was really just for information purpose.

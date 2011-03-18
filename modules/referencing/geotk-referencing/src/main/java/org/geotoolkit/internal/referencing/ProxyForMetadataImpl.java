@@ -17,13 +17,13 @@
  */
 package org.geotoolkit.internal.referencing;
 
-import java.util.Locale;
-import java.text.FieldPosition;
 import java.awt.geom.Rectangle2D;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.opengis.util.FactoryException;
+import org.opengis.referencing.crs.TemporalCRS;
+import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.CoordinateOperation;
@@ -32,43 +32,46 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.geometry.Envelope;
 
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.measure.Latitude;
-import org.geotoolkit.measure.Longitude;
-import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.operation.TransformPathNotFoundException;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.metadata.iso.extent.DefaultVerticalExtent;
+import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
+import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.resources.Errors;
 
 
 /**
- * Provides convenience methods for {@linkplain GeographicBoundingBox geographic bounding boxes}.
- * This is mostly a helper class for {@link DefaultGeographicBoundingBox}; users should not use
- * this class directly.
+ * Provides convenience methods for some metadata constructors. This is mostly a helper class
+ * for {@link DefaultGeographicBoundingBox}; users should not use this class directly.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.4
  * @module
  */
-@Static
-public final class BoundingBoxes implements ChangeListener {
+public final class ProxyForMetadataImpl extends ProxyForMetadata implements ChangeListener {
     /**
      * The coordinate operation factory to be used for transforming the envelope. We will fetch
      * a lenient factory because {@link GeographicBoundingBox} are usually for approximative
      * bounds (e.g. the area of validity of some CRS). If a user wants accurate bounds, he
      * should probably use an {@link Envelope} with the appropriate CRS.
      */
-    private static CoordinateOperationFactory factory;
-    static {
-        Factories.addChangeListener(new BoundingBoxes());
+    private CoordinateOperationFactory factory;
+
+    /**
+     * Creates a new instance. This constructor is invoked by reflection only, in the
+     * {@link #getInstance()} method.
+     */
+    ProxyForMetadataImpl() {
+        Factories.addChangeListener(this);
     }
 
     /**
@@ -79,20 +82,14 @@ public final class BoundingBoxes implements ChangeListener {
      */
     @Override
     public void stateChanged(ChangeEvent e) {
-        factory = null; // NOSONAR: really want to write to the static field.
-    }
-
-    /**
-     * Prevents the creation of instances of this class.
-     */
-    private BoundingBoxes() {
+        factory = null;
     }
 
     /**
      * Returns the coordinate operation factory. This method doesn't need to be synchronized;
      * it is not a big deal if the factory is queried twice from {@link FactoryFinder}.
      */
-    private static CoordinateOperationFactory getFactory() {
+    private CoordinateOperationFactory getFactory() {
         if (factory == null) {
             final Hints hints = new Hints(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
             factory = FactoryFinder.getCoordinateOperationFactory(hints);
@@ -110,7 +107,8 @@ public final class BoundingBoxes implements ChangeListener {
      * @param  target The target bounding box.
      * @throws TransformException If the given rectangle can't be transformed to a geographic CRS.
      */
-    public static void copy(Rectangle2D bounds, CoordinateReferenceSystem crs,
+    @Override
+    public void copy(Rectangle2D bounds, CoordinateReferenceSystem crs,
             final DefaultGeographicBoundingBox target) throws TransformException
     {
         if (crs != null) {
@@ -131,10 +129,7 @@ public final class BoundingBoxes implements ChangeListener {
                 }
             }
         }
-        target.setWestBoundLongitude(bounds.getMinX());
-        target.setEastBoundLongitude(bounds.getMaxX());
-        target.setSouthBoundLatitude(bounds.getMinY());
-        target.setNorthBoundLatitude(bounds.getMaxY());
+        target.setBounds(bounds);
     }
 
     /**
@@ -146,7 +141,8 @@ public final class BoundingBoxes implements ChangeListener {
      * @param  target The target bounding box.
      * @throws TransformException If the given envelope can't be transformed.
      */
-    public static void copy(Envelope envelope, final DefaultGeographicBoundingBox target)
+    @Override
+    public void copy(Envelope envelope, final DefaultGeographicBoundingBox target)
             throws TransformException
     {
         final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
@@ -167,10 +163,8 @@ public final class BoundingBoxes implements ChangeListener {
                 envelope = CRS.transform(operation, envelope);
             }
         }
-        target.setWestBoundLongitude(envelope.getMinimum(0));
-        target.setEastBoundLongitude(envelope.getMaximum(0));
-        target.setSouthBoundLatitude(envelope.getMinimum(1));
-        target.setNorthBoundLatitude(envelope.getMaximum(1));
+        target.setBounds(envelope.getMinimum(0), envelope.getMaximum(0),
+                         envelope.getMinimum(1), envelope.getMaximum(1));
     }
 
     /**
@@ -185,25 +179,103 @@ public final class BoundingBoxes implements ChangeListener {
     }
 
     /**
-     * Returns a string representation of the specified extent using the specified angle
-     * pattern and locale. See {@link AngleFormat} for a description of angle patterns.
+     * Initializes a vertical extent with the value inferred from the given envelope.
+     * Only the vertical ordinates are extracted; all other ordinates are ignored.
      *
-     * @param  box     The bounding box to format.
-     * @param  pattern The angle pattern (e.g. {@code DD°MM'SS.s"}.
-     * @param  locale  The locale, or {@code null} for the default one.
-     * @return A string representation of the given bounding box.
+     * @param  envelope The source envelope.
+     * @param  target The target vertical extent.
+     * @throws TransformException If no vertical component can be extracted from the given envelope.
      */
-    public static String toString(final GeographicBoundingBox box,
-                                  final String pattern, final Locale locale)
+    @Override
+    public void copy(final Envelope envelope, final DefaultVerticalExtent target) throws TransformException {
+        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
+        if (verticalCRS == null && envelope.getDimension() != 1) {
+            throw new TransformPathNotFoundException(Errors.format(
+                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
+        }
+        copy(envelope, target, crs, verticalCRS);
+    }
+
+    /**
+     * Initializes a temporal extent with the value inferred from the given envelope.
+     * Only the vertical ordinates are extracted; all other ordinates are ignored.
+     *
+     * @param  envelope The source envelope.
+     * @param  target The target temporal extent.
+     * @throws TransformException If no temporal component can be extracted from the given envelope.
+     */
+    @Override
+    public void copy(final Envelope envelope, final DefaultTemporalExtent target) throws TransformException {
+        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
+        if (temporalCRS == null) {
+            throw new TransformPathNotFoundException(Errors.format(
+                    Errors.Keys.ILLEGAL_COORDINATE_REFERENCE_SYSTEM));
+        }
+        copy(envelope, target, crs, temporalCRS);
+    }
+
+    /**
+     * Implementation of the public {@code copy} methods for the vertical extent.
+     */
+    private void copy(final Envelope envelope, final DefaultVerticalExtent target,
+            final CoordinateReferenceSystem crs, final VerticalCRS verticalCRS)
+            throws TransformException
     {
-        final AngleFormat format;
-        format = (locale!=null) ? new AngleFormat(pattern, locale) : new AngleFormat(pattern);
-        final FieldPosition pos = new FieldPosition(0);
-        final StringBuffer buffer = new StringBuffer();
-        format.format(new  Latitude(box.getNorthBoundLatitude()), buffer, pos).append(", ");
-        format.format(new Longitude(box.getWestBoundLongitude()), buffer, pos).append(" - ");
-        format.format(new  Latitude(box.getSouthBoundLatitude()), buffer, pos).append(", ");
-        format.format(new Longitude(box.getEastBoundLongitude()), buffer, pos);
-        return buffer.toString();
+        final int dim = (verticalCRS == null) ? 0 : CRSUtilities.dimensionColinearWith(
+                crs.getCoordinateSystem(), verticalCRS.getCoordinateSystem());
+        if (dim >= 0) {
+            target.setMinimumValue(envelope.getMinimum(dim));
+            target.setMaximumValue(envelope.getMaximum(dim));
+        }
+        target.setVerticalCRS(verticalCRS);
+    }
+
+    /**
+     * Implementation of the public {@code copy} methods for the temporal extent.
+     */
+    private void copy(final Envelope envelope, final DefaultTemporalExtent target,
+            final CoordinateReferenceSystem crs, final TemporalCRS temporalCRS)
+            throws TransformException
+    {
+        final int dim = CRSUtilities.dimensionColinearWith(
+                crs.getCoordinateSystem(), temporalCRS.getCoordinateSystem());
+        if (dim >= 0) {
+            final DefaultTemporalCRS converter = DefaultTemporalCRS.wrap(temporalCRS);
+            target.setStartTime(converter.toDate(envelope.getMinimum(dim)));
+            target.setEndTime  (converter.toDate(envelope.getMaximum(dim)));
+        }
+    }
+
+    /**
+     * Initializes a horizontal, vertical and temporal extent with the values inferred from
+     * the given envelope.
+     *
+     * @param  envelope The source envelope.
+     * @param  target The target extent.
+     * @throws TransformException If a coordinate transformation was required and failed.
+     */
+    @Override
+    public void copy(final Envelope envelope, final DefaultExtent target) throws TransformException {
+        final CoordinateReferenceSystem crs = envelope.getCoordinateReferenceSystem();
+        if (CRS.getHorizontalCRS(crs) != null) {
+            final DefaultGeographicBoundingBox extent = new DefaultGeographicBoundingBox();
+            extent.setInclusion(Boolean.TRUE);
+            copy(envelope, extent);
+            target.getGeographicElements().add(extent);
+        }
+        final VerticalCRS verticalCRS = CRS.getVerticalCRS(crs);
+        if (verticalCRS != null) {
+            final DefaultVerticalExtent extent = new DefaultVerticalExtent();
+            copy(envelope, extent, crs, verticalCRS);
+            target.getVerticalElements().add(extent);
+        }
+        final TemporalCRS temporalCRS = CRS.getTemporalCRS(crs);
+        if (temporalCRS != null) {
+            final DefaultTemporalExtent extent = new DefaultTemporalExtent();
+            copy(envelope, extent, crs, temporalCRS);
+            target.getTemporalElements().add(extent);
+        }
     }
 }

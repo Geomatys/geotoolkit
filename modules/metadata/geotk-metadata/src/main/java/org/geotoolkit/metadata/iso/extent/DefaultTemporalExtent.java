@@ -26,11 +26,14 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.metadata.extent.TemporalExtent;
+import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.referencing.ProxyForMetadata;
 
 
 /**
@@ -38,10 +41,10 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * (<var>x</var>,<var>y</var>) coordinates of the polygon. The last
  * point replicates first point.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -90,6 +93,27 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      */
     public DefaultTemporalExtent(final TemporalExtent source) {
         super(source);
+    }
+
+    /**
+     * Constructs a temporal extent from the specified envelope. The envelope can be multi-dimensional,
+     * in which case the {@linkplain Envelope#getCoordinateReferenceSystem() envelope CRS} must have
+     * a vertical component.
+     *
+     * {@note This constructor is available only if the referencing module is on the classpath.}
+     *
+     * @param  envelope The envelope to use for initializing this temporal extent.
+     * @throws UnsupportedOperationException if the referencing module is not on the classpath.
+     * @throws TransformException if the envelope can't be transformed to a temporal extent.
+     *
+     * @see DefaultExtent#DefaultExtent(Envelope)
+     * @see DefaultGeographicBoundingBox#DefaultGeographicBoundingBox(Envelope)
+     * @see DefaultVerticalExtent#DefaultVerticalExtent(Envelope)
+     *
+     * @since 3.18
+     */
+    public DefaultTemporalExtent(final Envelope envelope) throws TransformException {
+        ProxyForMetadata.getInstance().copy(envelope, this);
     }
 
     /**

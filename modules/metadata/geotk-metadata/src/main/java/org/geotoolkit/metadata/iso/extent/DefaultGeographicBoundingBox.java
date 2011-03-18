@@ -21,14 +21,11 @@
 package org.geotoolkit.metadata.iso.extent;
 
 import java.util.Locale;
+import java.text.FieldPosition;
 import java.awt.geom.Rectangle2D;
-import java.lang.reflect.Method;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.UndeclaredThrowableException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
-import static java.lang.Double.doubleToLongBits;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -38,8 +35,12 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.measure.Latitude;
+import org.geotoolkit.measure.Longitude;
+import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.internal.referencing.ProxyForMetadata;
 
 
 /**
@@ -50,7 +51,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.11
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -70,18 +71,6 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * Serial number for inter-operability with different versions.
      */
     private static final long serialVersionUID = -3278089380004172514L;
-
-    /**
-     * The method for constructing a bounding box from an envelope or a rectangle.
-     * Will be obtained only when first needed.
-     */
-    private static Method fromEnvelope, fromRectangle;
-
-    /**
-     * The method for constructing a string representation of this box.
-     * Will be obtained only when first needed.
-     */
-    private static Method toString;
 
     /**
      * A bounding box ranging from 180°W to 180°E and 90°S to 90°N.
@@ -130,6 +119,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      *
      * @param box The existing box to use for initializing this geographic bounding box.
      *
+     * @see #setBounds(GeographicBoundingBox)
+     *
      * @since 2.2
      */
     public DefaultGeographicBoundingBox(final GeographicBoundingBox box) {
@@ -162,26 +153,15 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @throws UnsupportedOperationException if the referencing module is not on the classpath.
      * @throws TransformException if the envelope can't be transformed.
      *
+     * @see DefaultExtent#DefaultExtent(Envelope)
+     * @see DefaultVerticalExtent#DefaultVerticalExtent(Envelope)
+     * @see DefaultTemporalExtent#DefaultTemporalExtent(Envelope)
+     *
      * @since 2.2
      */
     public DefaultGeographicBoundingBox(final Envelope envelope) throws TransformException {
         super(true);
-        if (fromEnvelope == null) {
-            // No need to synchronize; not a big deal if we set this field twice.
-            fromEnvelope = getMethod("copy", new Class<?>[] {
-                Envelope.class,
-                DefaultGeographicBoundingBox.class
-            });
-        }
-        try {
-            invoke(fromEnvelope, new Object[] {envelope, this});
-        } catch (InvocationTargetException exception) {
-            final Throwable cause = exception.getTargetException();
-            if (cause instanceof TransformException) {
-                throw (TransformException) cause;
-            }
-            throw new UndeclaredThrowableException(cause);
-        }
+        ProxyForMetadata.getInstance().copy(envelope, this);
     }
 
     /**
@@ -209,23 +189,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
             throws TransformException
     {
         super(true);
-        if (fromRectangle == null) {
-            // No need to synchronize; not a big deal if we set this field twice.
-            fromRectangle = getMethod("copy", new Class<?>[] {
-                Rectangle2D.class,
-                CoordinateReferenceSystem.class,
-                DefaultGeographicBoundingBox.class
-            });
-        }
-        try {
-            invoke(fromRectangle, new Object[] {bounds, crs, this});
-        } catch (InvocationTargetException exception) {
-            final Throwable cause = exception.getTargetException();
-            if (cause instanceof TransformException) {
-                throw (TransformException) cause;
-            }
-            throw new UndeclaredThrowableException(cause);
-        }
+        ProxyForMetadata.getInstance().copy(bounds, crs, this);
     }
 
     /**
@@ -233,6 +197,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * in {@linkplain org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84 WGS84} CRS.
      *
      * @param bounds The rectangle to use for initializing this geographic bounding box.
+     *
+     * @see #setBounds(Rectangle2D)
      */
     public DefaultGeographicBoundingBox(final Rectangle2D bounds) {
         this(bounds.getMinX(), bounds.getMaxX(),
@@ -255,6 +221,8 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @throws IllegalArgumentException If (<var>west bound</var> &gt; <var>east bound</var>)
      *         or (<var>south bound</var> &gt; <var>north bound</var>). Note that
      *         {@linkplain Double#NaN NaN} values are allowed.
+     *
+     * @see #setBounds(double, double, double, double)
      */
     public DefaultGeographicBoundingBox(final double westBoundLongitude,
                                         final double eastBoundLongitude,
@@ -423,6 +391,19 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
     }
 
     /**
+     * Sets the bounding box to the specified rectangle. The rectangle is assumed in
+     * {@linkplain org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84 WGS84} CRS.
+     *
+     * @param bounds The rectangle to use for setting the values of this box.
+     *
+     * @since 3.18
+     */
+    public void setBounds(final Rectangle2D bounds) {
+        ensureNonNull("bounds", bounds);
+        setBounds(bounds.getMinX(), bounds.getMaxX(), bounds.getMinY(), bounds.getMaxY());
+    }
+
+    /**
      * Sets the bounding box to the same values than the specified box.
      *
      * @param box The geographic bounding box to use for setting the values of this box.
@@ -537,7 +518,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
         // is generic enough for all other cases.
         if (object!=null && object.getClass().equals(DefaultGeographicBoundingBox.class)) { // NOSONAR
             final DefaultGeographicBoundingBox that = (DefaultGeographicBoundingBox) object;
-            return Utilities.equals(this.getInclusion(), that.getInclusion()) &&
+            return Utilities.equals(this.getInclusion(),     that.getInclusion())     &&
                    Utilities.equals(this.southBoundLatitude, that.southBoundLatitude) &&
                    Utilities.equals(this.northBoundLatitude, that.northBoundLatitude) &&
                    Utilities.equals(this.eastBoundLongitude, that.eastBoundLongitude) &&
@@ -547,43 +528,16 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
     }
 
     /**
-     * Returns a hash code value for this extent.
-     *
-     * @todo Consider relying on the default implementation, since it cache the hash code.
-     */
-    @Override
-    public synchronized int hashCode() {
-        if (!getClass().equals(DefaultGeographicBoundingBox.class)) {
-            return super.hashCode();
-        }
-        final Boolean inclusion = getInclusion();
-        int code = (inclusion != null) ? inclusion.hashCode() : 0;
-        code += hashCode(southBoundLatitude);
-        code += hashCode(northBoundLatitude);
-        code += hashCode(eastBoundLongitude);
-        code += hashCode(westBoundLongitude);
-        return code;
-    }
-
-    /**
-     * Returns a hash code value for the specified {@code double}.
-     */
-    private static int hashCode(final double value) {
-        final long code = doubleToLongBits(value);
-        return (int)code ^ (int)(code >>> 32);
-    }
-
-    /**
      * Returns a string representation of this extent using a default angle pattern.
      */
     @Override
     public synchronized String toString() {
-        return toString(this, "DD°MM'SS.s\"", null);
+        return toString(this, "DD°MM′SS.s″", null);
     }
 
     /**
      * Returns a string representation of the specified extent using the specified angle pattern
-     * and locale. See {@link org.geotoolkit.measure.AngleFormat} for a description of angle patterns.
+     * and locale. See {@link AngleFormat} for a description of angle patterns.
      *
      * @param box     The bounding box to format.
      * @param pattern The angle pattern (e.g. {@code DD°MM'SS.s"}.
@@ -595,54 +549,14 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
     public static String toString(final GeographicBoundingBox box,
                                   final String pattern, final Locale locale)
     {
-        if (toString == null) {
-            // No need to synchronize.
-            toString = getMethod("toString",  new Class<?>[] {
-                    GeographicBoundingBox.class, String.class, Locale.class});
-        }
-        try {
-            return String.valueOf(invoke(toString, new Object[] {box, pattern, locale}));
-        } catch (InvocationTargetException exception) {
-            throw new UndeclaredThrowableException(exception.getTargetException());
-        }
-    }
-
-    /**
-     * Returns a helper method which depends on the referencing module. We use reflection
-     * since we can't have a direct dependency to this module.
-     */
-    private static Method getMethod(final String name, final Class<?>[] arguments) {
-        try {
-            return Class.forName("org.geotoolkit.internal.referencing.BoundingBoxes").getMethod(name, arguments);
-        } catch (ClassNotFoundException exception) {
-            throw new UnsupportedOperationException(Errors.format(
-                    Errors.Keys.MISSING_MODULE_$1, "geotk-referencing"), exception);
-        } catch (NoSuchMethodException exception) {
-            // Should never happen if we didn't broke our BoundingBoxes helper class.
-            throw new AssertionError(exception);
-        }
-    }
-
-    /**
-     * Invokes the specified method with the specified arguments.
-     */
-    private static Object invoke(final Method method, final Object[] arguments)
-            throws InvocationTargetException
-    {
-        try {
-            return method.invoke(null, arguments);
-        } catch (IllegalAccessException exception) {
-            // Should never happen if our BoundingBoxes helper class is not broken.
-            throw new AssertionError(exception);
-        } catch (InvocationTargetException exception) {
-            final Throwable cause = exception.getTargetException();
-            if (cause instanceof RuntimeException) {
-                throw (RuntimeException) cause;
-            }
-            if (cause instanceof Error) {
-                throw (Error) cause;
-            }
-            throw exception;
-        }
+        final AngleFormat format;
+        format = (locale != null) ? new AngleFormat(pattern, locale) : new AngleFormat(pattern);
+        final FieldPosition pos = new FieldPosition(0);
+        final StringBuffer buffer = new StringBuffer();
+        format.format(new  Latitude(box.getNorthBoundLatitude()), buffer, pos).append(", ");
+        format.format(new Longitude(box.getWestBoundLongitude()), buffer, pos).append(" - ");
+        format.format(new  Latitude(box.getSouthBoundLatitude()), buffer, pos).append(", ");
+        format.format(new Longitude(box.getEastBoundLongitude()), buffer, pos);
+        return buffer.toString();
     }
 }

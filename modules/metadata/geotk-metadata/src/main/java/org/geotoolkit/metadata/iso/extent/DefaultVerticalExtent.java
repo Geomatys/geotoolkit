@@ -24,20 +24,23 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.VerticalCRS;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.extent.VerticalExtent;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.referencing.ProxyForMetadata;
 
 
 /**
  * Vertical domain of dataset.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -87,6 +90,27 @@ public class DefaultVerticalExtent extends MetadataEntity implements VerticalExt
      */
     public DefaultVerticalExtent(final VerticalExtent source) {
         super(source);
+    }
+
+    /**
+     * Constructs a vertical extent from the specified envelope. The envelope can be multi-dimensional,
+     * in which case the {@linkplain Envelope#getCoordinateReferenceSystem() envelope CRS} must have
+     * a vertical component.
+     *
+     * {@note This constructor is available only if the referencing module is on the classpath.}
+     *
+     * @param  envelope The envelope to use for initializing this vertical extent.
+     * @throws UnsupportedOperationException if the referencing module is not on the classpath.
+     * @throws TransformException if the envelope can't be transformed to a vertical extent.
+     *
+     * @see DefaultExtent#DefaultExtent(Envelope)
+     * @see DefaultGeographicBoundingBox#DefaultGeographicBoundingBox(Envelope)
+     * @see DefaultTemporalExtent#DefaultTemporalExtent(Envelope)
+     *
+     * @since 3.18
+     */
+    public DefaultVerticalExtent(final Envelope envelope) throws TransformException {
+        ProxyForMetadata.getInstance().copy(envelope, this);
     }
 
     /**

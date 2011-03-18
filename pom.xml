@@ -344,6 +344,7 @@
           <optimize>true</optimize>  <!-- Whether to optimize the compiled code.        -->
           <encoding>UTF-8</encoding> <!-- The -encoding argument for the Java compiler. -->
           <showWarnings>true</showWarnings>
+          <showDeprecation>true</showDeprecation>
           <maxmem>512M</maxmem>
         </configuration>
       </plugin>

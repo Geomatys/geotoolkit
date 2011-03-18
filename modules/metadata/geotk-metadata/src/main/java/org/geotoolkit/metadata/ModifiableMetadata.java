@@ -25,6 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
+import java.util.NoSuchElementException;
 
 import org.opengis.util.CodeList;
 
@@ -42,7 +43,7 @@ import org.geotoolkit.internal.CollectionUtilities;
  * Base class for metadata that may (or may not) be modifiable. Implementations will typically
  * provide {@code set*(...)} methods for each corresponding {@code get*()} method. An initially
  * modifiable metadata may become unmodifiable at a later stage (typically after its construction
- * is completed) by the call to the {@link #freeze} method.
+ * is completed) by the call to the {@link #freeze()} method.
  *
  * {@section Guidline for implementors}
  * Subclasses should follow the pattern below for every {@code get} and {@code set} methods,
@@ -64,19 +65,19 @@ import org.geotoolkit.internal.CollectionUtilities;
  * For collections (note that the call to {@link #checkWritePermission()} is implicit):
  *
  * {@preformat java
- *         private Collection<Foo> properties;
+ *     private Collection<Foo> properties;
  *
- *         public synchronized Collection<Foo> getProperties() {
- *             return properties = nonNullCollection(properties, Foo.class);
- *         }
+ *     public synchronized Collection<Foo> getProperties() {
+ *         return properties = nonNullCollection(properties, Foo.class);
+ *     }
  *
- *         public synchronized void setProperties(Collection<Foo> newValues) {
- *             properties = copyCollection(newValues, properties, Foo.class);
+ *     public synchronized void setProperties(Collection<Foo> newValues) {
+ *         properties = copyCollection(newValues, properties, Foo.class);
  *     }
  * }
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.02
+ * @version 3.18
  *
  * @since 2.4
  * @module
@@ -103,6 +104,9 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * An unmodifiable copy of this metadata. Will be created only when first needed.
      * If {@code null}, then no unmodifiable entity is available.
      * If {@code this}, then this entity is itself unmodifiable.
+     *
+     * @todo Replace by some kind of flag after {@link #unmodifiable()} has been removed.
+     *       This will also allow us to get ride of the {@code Null} inner class.
      */
     private transient ModifiableMetadata unmodifiable;
 
@@ -136,6 +140,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * {@code false} if {@link #freeze()} has been invoked on this object.
      *
      * @return {@code true} if this metadata is modifiable.
+     *
+     * @see #freeze()
      */
     @Override
     public final boolean isModifiable() {
@@ -151,7 +157,15 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * {@linkplain #freeze() freeze} the clone before to return it.
      *
      * @return An unmodifiable copy of this metadata.
+     *
+     * @deprecated Use #freeze() instead.
      */
+    /*
+     * TODO: After removal of this method, move the static unmodifiable(Object) method inside
+     *       PropertyAccessor, delete its case #4 and edit its "ModifiableMetadata" case. Then
+     *       replace de 'unmodifiable' field by some flag and delete the Null inner class.
+     */
+    @Deprecated
     public synchronized AbstractMetadata unmodifiable() {
         // Reminder: 'unmodifiable' is reset to null by checkWritePermission().
         if (unmodifiable == null) {
@@ -205,6 +219,13 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
          *          its own algorithm for creating an unmodifiable view of metadata.
          */
         if (object instanceof ModifiableMetadata) {
+            if (false) {
+                // TODO: Use this code after we removed the deprecated unmodifiable()
+                // method. Don't forget to update the documentation of 'freeze()' with
+                // a statement saying that metadata children are frozen as well.
+                ((ModifiableMetadata) object).freeze();
+                return object;
+            }
             return ((ModifiableMetadata) object).unmodifiable();
         }
         /*
@@ -256,6 +277,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         }
         /*
          * CASE 4 - The object is cloneable.
+         *
+         * @todo Suppress this case after we removed the deprecated unmodifiable() method.
          */
         if (object instanceof org.geotoolkit.util.Cloneable) {
             return ((org.geotoolkit.util.Cloneable) object).clone();
@@ -267,18 +290,25 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
-     * Declares this metadata and all its attributes as unmodifiable. This method is invoked
-     * automatically by the {@link #unmodifiable()} method. Subclasses usually don't need to
-     * override it since the default implementation performs its work using Java reflection.
+     * Declares this metadata and all its attributes as unmodifiable. Any attempt to modify a
+     * property after this method call will throw an {@link UnmodifiableMetadataException}. If
+     * this metadata is already unmodifiable, then this method does nothing.
+     * <p>
+     * Subclasses usually don't need to override this method since the default implementation
+     * performs its work using Java reflection.
+     *
+     * @see #isModifiable()
      */
     public synchronized void freeze() {
-        ModifiableMetadata success = null;
-        try {
-            unmodifiable = FREEZING;
-            getStandard().freeze(this);
-            success = this;
-        } finally {
-            unmodifiable = success;
+        if (isModifiable()) {
+            ModifiableMetadata success = null;
+            try {
+                unmodifiable = FREEZING;
+                getStandard().freeze(this);
+                success = this;
+            } finally {
+                unmodifiable = success;
+            }
         }
     }
 
@@ -335,6 +365,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * @return {@code target}, or a newly created list.
      * @throws UnmodifiableMetadataException if this metadata is unmodifiable.
      *
+     * @see #nonNullList(List, Class)
+     *
      * @since 2.5
      */
     protected final <E> List<E> copyList(final Collection<? extends E> source,
@@ -377,6 +409,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * @return {@code target}, or a newly created Set.
      * @throws UnmodifiableMetadataException if this metadata is unmodifiable.
      *
+     * @see #nonNullSet(Set, Class)
+     *
      * @since 3.02
      */
     protected final <E> Set<E> copySet(final Collection<? extends E> source,
@@ -413,13 +447,12 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * the given target collection. If the target collection is {@code null}, a new one is
      * created.
      *
-     * {@note It could be considered good practice to invoke <code>copyList</code> or
-     *        <code>copySet</code> instead than this method, since this method does not
-     *        specify which kind of collection is created. However this method provides
-     *        a central place where to decide the collection type. Current implementation
-     *        creates a <code>Set</code> for immutable elements like <code>CodeList</code>,
-     *        <code>Enum</code> or <code>String</code>, but this rule may evolve in future
-     *        Geotk versions}.
+     * {@section Choosing a collection type}
+     * Implementations shall invoke {@link #copyList copyList} or {@link #copySet copySet}
+     * instead than this method when the collection type is enforced by ISO specification.
+     * When the type is not enforced by the specification, some freedom are allowed at
+     * implementor choice. The default implementation invokes {@link #collectionType(Class)}
+     * in order to get a hint about whatever a {@link List} or a {@link Set} should be used.
      *
      * @param  <E>         The type of elements in the collection.
      * @param  source      The source collection. {@code null} is synonymous to empty.
@@ -445,7 +478,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                  */
                 @SuppressWarnings("unchecked")
                 final Collection<E> unmodifiable = (Collection<E>) source;
-                assert (unmodifiable instanceof Set<?>) == useSet(elementType) : elementType;
+                assert collectionType(elementType).isAssignableFrom(unmodifiable.getClass());
                 assert !isModifiable(unmodifiable);
                 return unmodifiable;
             }
@@ -470,43 +503,24 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
-     * Returns the specified collection, or a new one if {@code c} is null.
+     * Returns the specified list, or a new one if {@code c} is null.
      * This is a convenience method for implementation of {@code getFoo()}
      * methods.
      *
-     * {@note It could be considered good practice to invoke <code>nonNullList</code> or
-     *        <code>nonNullSet</code> instead than this method, since this method does not
-     *        specify which kind of collection is created. However this method provides
-     *        a central place where to decide the collection type. Current implementation
-     *        creates a <code>Set</code> for immutable elements like <code>CodeList</code>,
-     *        <code>Enum</code> or <code>String</code>, but this rule may evolve in future
-     *        Geotk versions}.
-     *
-     * @param  <E> The type of elements in the collection.
-     * @param  c The collection to checks.
+     * @param  <E> The type of elements in the list.
+     * @param  c The list to checks.
      * @param  elementType The element type (used only if {@code c} is null).
-     * @return {@code c}, or a new collection if {@code c} is null.
+     * @return {@code c}, or a new list if {@code c} is null.
      */
-    protected final <E> Collection<E> nonNullCollection(final Collection<E> c, final Class<E> elementType) {
+    protected final <E> List<E> nonNullList(final List<E> c, final Class<E> elementType) {
         assert Thread.holdsLock(this);
         if (c != null) {
-            assert (c instanceof Set<?>) == useSet(elementType) : elementType;
             return c;
         }
-        final boolean isModifiable = isModifiable();
-        if (useSet(elementType)) {
-            if (isModifiable) {
-                return new MutableSet<E>(elementType);
-            } else {
-                return Collections.emptySet();
-            }
-        } else {
-            if (isModifiable) {
-                return new MutableList<E>(elementType);
-            } else {
-                return Collections.emptyList();
-            }
+        if (isModifiable()) {
+            return new MutableList<E>(elementType);
         }
+        return Collections.emptyList();
     }
 
     /**
@@ -533,24 +547,43 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     }
 
     /**
-     * Returns the specified list, or a new one if {@code c} is null.
+     * Returns the specified collection, or a new one if {@code c} is null.
      * This is a convenience method for implementation of {@code getFoo()}
      * methods.
      *
-     * @param  <E> The type of elements in the list.
-     * @param  c The list to checks.
+     * {@section Choosing a collection type}
+     * Implementations shall invoke {@link #nonNullList nonNullList} or {@link #nonNullSet
+     * nonNullSet} instead than this method when the collection type is enforced by ISO
+     * specification. When the type is not enforced by the specification, some freedom are
+     * allowed at implementor choice. The default implementation invokes
+     * {@link #collectionType(Class)} in order to get a hint about whatever a {@link List}
+     * or a {@link Set} should be used.
+     *
+     * @param  <E> The type of elements in the collection.
+     * @param  c The collection to checks.
      * @param  elementType The element type (used only if {@code c} is null).
-     * @return {@code c}, or a new list if {@code c} is null.
+     * @return {@code c}, or a new collection if {@code c} is null.
      */
-    protected final <E> List<E> nonNullList(final List<E> c, final Class<E> elementType) {
+    protected final <E> Collection<E> nonNullCollection(final Collection<E> c, final Class<E> elementType) {
         assert Thread.holdsLock(this);
         if (c != null) {
+            assert collectionType(elementType).isAssignableFrom(c.getClass());
             return c;
         }
-        if (isModifiable()) {
-            return new MutableList<E>(elementType);
+        final boolean isModifiable = isModifiable();
+        if (useSet(elementType)) {
+            if (isModifiable) {
+                return new MutableSet<E>(elementType);
+            } else {
+                return Collections.emptySet();
+            }
+        } else {
+            if (isModifiable) {
+                return new MutableList<E>(elementType);
+            } else {
+                return Collections.emptyList();
+            }
         }
-        return Collections.emptyList();
     }
 
     /**
@@ -609,13 +642,41 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * Returns {@code true} if we should use a {@link Set} instead than a {@link List}
-     * for elements of the given type. We are allowed to return {@code true} only for
-     * a few selected immutable types.
+     * for elements of the given type.
      */
-    private static boolean useSet(final Class<?> elementType) {
-        return CodeList.class.isAssignableFrom(elementType) ||
-                   Enum.class.isAssignableFrom(elementType) ||
-                 String.class.equals(elementType);
+    private <E> boolean useSet(final Class<E> elementType) {
+        final Class<? extends Collection<E>> type = collectionType(elementType);
+        if (Set.class.isAssignableFrom(type)) {
+            return true;
+        }
+        if (List.class.isAssignableFrom(type)) {
+            return false;
+        }
+        throw new NoSuchElementException(Errors.format(Errors.Keys.UNSUPPORTED_DATA_TYPE_$1, type));
+    }
+
+    /**
+     * Returns the type of collection to use for the given type. The current implementation can
+     * return only two values: {@code Set.class} if the attribute should not accept duplicated
+     * values, or {@code List.class} otherwise. Future Geotk versions may accept other types.
+     * <p>
+     * The default implementation returns {@code Set.class} if the element type is assignable to
+     * {@link Enum} or {@link CodeList}, and {@code List.class} otherwise. Subclasses can override
+     * this method for specifying different kind of collections. Note however that {@link Set}
+     * should be used only with immutable element type, for {@linkplain Object#hashCode() hash
+     * code} stability.
+     *
+     * @param  <E> The type of elements in the collection to be created.
+     * @param  elementType The type of elements in the collection to be created.
+     * @return {@code List.class} or {@code Set.class} depending on whatever the
+     *         attribute shall accept duplicated values or not.
+     *
+     * @since 3.18
+     */
+    @SuppressWarnings({"rawtypes","unchecked"})
+    protected <E> Class<? extends Collection<E>> collectionType(final Class<E> elementType) {
+        return (Class) (CodeList.class.isAssignableFrom(elementType) ||
+                            Enum.class.isAssignableFrom(elementType) ? Set.class : List.class);
     }
 
     /**

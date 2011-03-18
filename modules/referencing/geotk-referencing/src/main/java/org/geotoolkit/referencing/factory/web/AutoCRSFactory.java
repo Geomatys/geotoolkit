@@ -108,7 +108,8 @@ public class AutoCRSFactory extends DirectAuthorityFactory implements CRSAuthori
     static {
         final DefaultCitation c = new DefaultCitation(Citations.AUTO2);
         c.getIdentifiers().addAll(Citations.AUTO.getIdentifiers());
-        AUTHORITY = (Citation) c.unmodifiable();
+        c.freeze();
+        AUTHORITY = c;
     }
 
     /**

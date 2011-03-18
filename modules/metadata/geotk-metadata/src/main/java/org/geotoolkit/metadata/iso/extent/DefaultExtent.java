@@ -25,16 +25,19 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.extent.VerticalExtent;
 import org.opengis.metadata.extent.TemporalExtent;
 import org.opengis.metadata.extent.BoundingPolygon;
 import org.opengis.metadata.extent.GeographicExtent;
 import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.internal.referencing.ProxyForMetadata;
 
 
 /**
@@ -46,10 +49,10 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *  {@linkplain #getDescription description}.
  *  At least one of the four shall be used.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -116,6 +119,29 @@ public class DefaultExtent extends MetadataEntity implements Extent {
      */
     public DefaultExtent(final Extent source) {
         super(source);
+    }
+
+    /**
+     * Constructs an extent from the specified envelope. This method inspects the
+     * {@linkplain Envelope#getCoordinateReferenceSystem() envelope CRS} and creates
+     * a {@link GeographicBoundingBox}, {@link VerticalExtent} or {@link TemporalExtent}
+     * as needed.
+     *
+     * {@note This constructor is available only if the referencing module is on the classpath.}
+     *
+     * @param  envelope The envelope to use for initializing this extent.
+     * @throws UnsupportedOperationException if the referencing module is not on the classpath.
+     * @throws TransformException If a coordinate transformation was required and failed.
+     *
+     * @see #addElements(Envelope)
+     * @see DefaultGeographicBoundingBox#DefaultGeographicBoundingBox(Envelope)
+     * @see DefaultVerticalExtent#DefaultVerticalExtent(Envelope)
+     * @see DefaultTemporalExtent#DefaultTemporalExtent(Envelope)
+     *
+     * @since 3.18
+     */
+    public DefaultExtent(final Envelope envelope) throws TransformException {
+        ProxyForMetadata.getInstance().copy(envelope, this);
     }
 
     /**
@@ -189,6 +215,23 @@ public class DefaultExtent extends MetadataEntity implements Extent {
      */
     public synchronized void setVerticalElements(final Collection<? extends VerticalExtent> newValues) {
         verticalElements = copyCollection(newValues, verticalElements, VerticalExtent.class);
+    }
+
+    /**
+     * Adds geographic, vertical or temporal extents inferred from the given envelope. The elements
+     * to add are inferred from the {@linkplain Envelope#getCoordinateReferenceSystem() envelope CRS}.
+     * This method does not check for duplicate values.
+     *
+     * {@note This method is available only if the referencing module is on the classpath.}
+     *
+     * @param  envelope The envelope to use for inferring the additional extents.
+     * @throws UnsupportedOperationException if the referencing module is not on the classpath.
+     * @throws TransformException If a coordinate transformation was required and failed.
+     *
+     * @since 3.18
+     */
+    public synchronized void addElements(final Envelope envelope) throws TransformException {
+        ProxyForMetadata.getInstance().copy(envelope, this);
     }
 
     /**
