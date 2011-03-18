@@ -67,7 +67,7 @@ import static java.lang.Double.isInfinite;
  * digits for the integer part and three digits for the fractional part (e.g. 4.4578 will be
  * formatted as "04.458").
  * <p>
- * Separator characters like {@code °}, {@code '} and {@code "} are inserted "as-is" in the
+ * Separator characters like {@code °}, {@code ′} and {@code ″} are inserted "as-is" in the
  * formatted string, except the decimal separator dot ("{@code .}") which is replaced by the
  * local-dependent decimal separator. Separator characters may be completely omitted;
  * {@code AngleFormat} will still differentiate degrees, minutes and seconds fields according
@@ -78,8 +78,8 @@ import static java.lang.Double.isInfinite;
  *
  * <blockquote><table cellpadding="3">
  * <tr><th>Pattern           </th>  <th>Example   </th></tr>
- * <tr><td>{@code DD°MM'SS" }</td>  <td>48°30'00" </td></tr>
- * <tr><td>{@code DD°MM'    }</td>  <td>48°30'    </td></tr>
+ * <tr><td>{@code DD°MM′SS″ }</td>  <td>48°30′00″ </td></tr>
+ * <tr><td>{@code DD°MM′    }</td>  <td>48°30′    </td></tr>
  * <tr><td>{@code DD.ddd    }</td>  <td>48.500    </td></tr>
  * <tr><td>{@code DDMM      }</td>  <td>4830      </td></tr>
  * <tr><td>{@code DDMMSS    }</td>  <td>483000    </td></tr>
@@ -107,43 +107,14 @@ public class AngleFormat extends Format {
     private static final long serialVersionUID = 4320403817210439764L;
 
     /**
-     * Caractère représentant l'hémisphère nord.
-     * Il doit obligatoirement être en majuscule.
+     * Hemisphere symbols. Must be upper-case.
      */
-    private static final char NORTH = 'N';
+    private static final char NORTH='N', SOUTH='S', EAST='E', WEST='W';
 
     /**
-     * Caractère représentant l'hémisphère sud.
-     * Il doit obligatoirement être en majuscule.
+     * Constants for the kind of angle or ordinate to format.
      */
-    private static final char SOUTH = 'S';
-
-    /**
-     * Caractère représentant l'hémisphère est.
-     * Il doit obligatoirement être en majuscule.
-     */
-    private static final char EAST = 'E';
-
-    /**
-     * Caractère représentant l'hémisphère ouest.
-     * Il doit obligatoirement être en majuscule.
-     */
-    private static final char WEST = 'W';
-
-    /**
-     * Constante indique que l'angle à formater est une longitude.
-     */
-    static final int LONGITUDE = 0;
-
-    /**
-     * Constante indique que l'angle à formater est une latitude.
-     */
-    static final int LATITUDE = 1;
-
-    /**
-     * Constante indique que le nombre à formater est une altitude.
-     */
-    static final int ALTITUDE = 2;
+    static final int LONGITUDE=0, LATITUDE=1, ALTITUDE=2;
 
     /**
      * A constant for the symbol to appears before the degrees fields.
@@ -176,12 +147,12 @@ public class AngleFormat extends Format {
     /**
      * Constant for hemisphere field. When formatting a string, this value may be
      * specified to the {@link java.text.FieldPosition} constructor in order to
-     * get the bounding index where the hemisphere synbol has been written.
+     * get the bounding index where the hemisphere symbol has been written.
      */
     public static final int HEMISPHERE_FIELD = 3;
 
     /**
-     * Symboles représentant les degrés (0), minutes (1) et les secondes (2).
+     * Symbols for degrees (0), minutes (1) and seconds (2).
      */
     private static final char[] SYMBOLS = {'D', 'M', 'S'};
 
@@ -198,7 +169,7 @@ public class AngleFormat extends Format {
      * secondes ({@code suffix0..2}). Ces champs doivent être {@code null} s'il n'y a rien
      * à insérer.
      */
-    private String prefix=null, suffix0="\u00B0", suffix1="'", suffix2="\"";
+    private String prefix=null, suffix0="°", suffix1="′", suffix2="″";
 
     /**
      * Indique s'il faut utiliser le séparateur décimal pour séparer la partie entière de
@@ -209,14 +180,13 @@ public class AngleFormat extends Format {
     private boolean decimalSeparator = true;
 
     /**
-     * Format à utiliser pour écrire les nombres (degrés, minutes ou secondes) lors
-     * de l'écriture d'un angle.
+     * Formats to use for writing numbers (degrees, minutes or seconds) when formatting an angle.
      */
     private final DecimalFormat numberFormat;
 
     /**
-     * Objet à transmetre aux méthodes {@code DecimalFormat.format}. Ce paramètre existe
-     * simplement pour éviter de créer cet objet trop souvent, alors qu'on ne s'y intéresse pas.
+     * Object to give to {@code DecimalFormat.format} methods, cached in order to
+     * recreate this object too often.
      */
     private transient FieldPosition dummy = new FieldPosition(0);
 
@@ -242,7 +212,7 @@ public class AngleFormat extends Format {
 
     /**
      * Sets the width for the specified field.
-     * All folowing fields will be set to 0.
+     * All following fields will be set to 0.
      */
     @SuppressWarnings("fallthrough")
     private void setWidth(final int index, int width) {
@@ -273,10 +243,10 @@ public class AngleFormat extends Format {
     @SuppressWarnings("fallthrough")
     private void setSuffix(final int index, String s) {
         switch (index) {
-            case  PREFIX_FIELD:  prefix=s; s="\u00B0";  // fall through
-            case DEGREES_FIELD: suffix0=s; s="'";       // fall through
-            case MINUTES_FIELD: suffix1=s; s="\"";      // fall through
-            case SECONDS_FIELD: suffix2=s;              // fall through
+            case  PREFIX_FIELD:  prefix=s; s="°";  // fall through
+            case DEGREES_FIELD: suffix0=s; s="′";  // fall through
+            case MINUTES_FIELD: suffix1=s; s="″";  // fall through
+            case SECONDS_FIELD: suffix2=s;         // fall through
         }
     }
 
@@ -298,7 +268,7 @@ public class AngleFormat extends Format {
      * @return An angle format in the given locale.
      */
     public static AngleFormat getInstance(final Locale locale) {
-        return new AngleFormat("D\u00B0MM.m'", locale);
+        return new AngleFormat("D°MM.m′", locale);
     }
 
     /**
@@ -306,7 +276,7 @@ public class AngleFormat extends Format {
      * the current default locale and a default pattern.
      */
     public AngleFormat() {
-        this("D\u00B0MM.m'");
+        this("D°MM.m′");
     }
 
     /**
@@ -622,10 +592,10 @@ public class AngleFormat extends Format {
             numberFormat.setMinimumIntegerDigits(w+widthDecimal);
             toAppendTo = numberFormat.format(value, toAppendTo, dummy);
         }
-        if (s!=null) {
+        if (s != null) {
             toAppendTo.append(s);
         }
-        if (pos!=null) {
+        if (pos != null) {
             pos.setBeginIndex(startPosition);
             pos.setEndIndex(toAppendTo.length()-1);
         }
@@ -638,7 +608,7 @@ public class AngleFormat extends Format {
      * to {@link #applyPattern}. The argument {@code obj} shall be an {@link Angle} object or
      * one of its derived class ({@link Latitude}, {@link Longitude}). If {@code obj} is a
      * {@link Latitude} object, then a symbol "N" or "S" will be appended to the end of the
-     * string (the symbol will be chosen according the angle's sign). Otherwise, if {@code obj}
+     * string (the symbol will be chosen according the angle sign). Otherwise, if {@code obj}
      * is a {@link Longitude} object, then a symbol "E" or "W" will be appended to the end of the
      * string. Otherwise, no hemisphere symbol will be appended.
      * <p>
@@ -812,10 +782,10 @@ public class AngleFormat extends Format {
         }
         while (Character.isSpaceChar(c = source.charAt(start++)));
         switch (c) {
-            case '\u00B0' : pos.setIndex(start); return DEGREES_FIELD;
-            case '\''     : pos.setIndex(start); return MINUTES_FIELD;
-            case '"'      : pos.setIndex(start); return SECONDS_FIELD;
-            default       : return SYMBOLS.length; // Unknow field.
+            case '°' :            pos.setIndex(start); return DEGREES_FIELD;
+            case '′' : case '\'': pos.setIndex(start); return MINUTES_FIELD;
+            case '″' : case '"' : pos.setIndex(start); return SECONDS_FIELD;
+            default  : return SYMBOLS.length; // Unknow field.
         }
     }
 
@@ -825,7 +795,7 @@ public class AngleFormat extends Format {
      * "{@code 48°12.34'}" even if the expected pattern was "{@code DDMM.mm}" (i.e. the string
      * should have been "{@code 4812.34}").
      * <p>
-     * Spaces between degrees, minutes and secondes are ignored. If the string ends with an
+     * Spaces between degrees, minutes and seconds are ignored. If the string ends with an
      * hemisphere symbol "N" or "S", then this method returns an object of class {@link Latitude}.
      * Otherwise, if the string ends with an hemisphere symbol "E" or "W", then this method returns
      * an object of class {@link Longitude}. Otherwise, this method returns an object of class

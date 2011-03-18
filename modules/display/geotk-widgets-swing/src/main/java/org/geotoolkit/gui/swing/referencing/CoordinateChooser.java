@@ -269,7 +269,7 @@ public class CoordinateChooser extends JComponent implements Dialog {
         xres = new JSpinner(new SpinnerNumberModel(1d, 0d, 360d*60, 1d));
         yres = new JSpinner(new SpinnerNumberModel(1d, 0d, 180d*60, 1d));
 
-        final AngleFormat   angleFormat = new AngleFormat("D°MM.m'", locale);
+        final AngleFormat   angleFormat = AngleFormat.getInstance(locale);
         final DateFormat     dateFormat = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale);
         final NumberFormat numberFormat = NumberFormat.getNumberInstance(locale);
         xmin.setEditor(new SpinnerAngleModel.Editor(xmin, angleFormat));

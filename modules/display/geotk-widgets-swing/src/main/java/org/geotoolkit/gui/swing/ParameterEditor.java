@@ -446,7 +446,7 @@ public class ParameterEditor extends JComponent {
         if (value instanceof Angle) {
             Singleton editor = (Singleton) getEditor(ANGLE);
             if (editor == null) {
-                editor = new Singleton(new AngleFormat("D°MM.mm'", getLocale()));
+                editor = new Singleton(AngleFormat.getInstance(getLocale()));
                 addEditor(ANGLE, editor, false);
             }
             editor.setValue(value);

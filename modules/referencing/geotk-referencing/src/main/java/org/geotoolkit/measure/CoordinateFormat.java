@@ -98,7 +98,7 @@ public class CoordinateFormat extends Format {
     private final Locale locale;
 
     /**
-     * The formats to use for formatting. This array's length must be equals
+     * The formats to use for formatting. This array length must be equals
      * to the {@linkplain #getCoordinateReferenceSystem coordinate system}'s
      * dimension. This array is never {@code null}.
      * <p>
@@ -498,7 +498,7 @@ public class CoordinateFormat extends Format {
      */
     private AngleFormat getAngleFormat() {
         if (angleFormat == null) {
-            angleFormat = new AngleFormat("DD°MM.m'", locale);
+            angleFormat = AngleFormat.getInstance(locale);
         }
         return angleFormat;
     }
@@ -524,7 +524,7 @@ public class CoordinateFormat extends Format {
     }
 
     /**
-     * Formats a direct position. The position's dimension must matches the
+     * Formats a direct position. The position dimension must matches the
      * {@linkplain #getCoordinateReferenceSystem coordinate reference system} dimension.
      *
      * @param  point The position to format.
@@ -538,7 +538,7 @@ public class CoordinateFormat extends Format {
 
     /**
      * Formats a direct position and appends the resulting text to a given string buffer.
-     * The position's dimension must matches the {@linkplain #getCoordinateReferenceSystem
+     * The position dimension must matches the {@linkplain #getCoordinateReferenceSystem
      * coordinate reference system} dimension.
      *
      * @param point
@@ -620,7 +620,7 @@ public class CoordinateFormat extends Format {
 
     /**
      * Formats a direct position and appends the resulting text to a given string buffer.
-     * The position's dimension must matches the {@linkplain #getCoordinateReferenceSystem
+     * The position dimension must matches the {@linkplain #getCoordinateReferenceSystem
      * coordinate reference system} dimension.
      *
      * @param object     The {@link DirectPosition} to format.

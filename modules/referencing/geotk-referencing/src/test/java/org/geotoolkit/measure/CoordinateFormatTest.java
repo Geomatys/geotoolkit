@@ -72,7 +72,7 @@ public final class CoordinateFormatTest {
         final GeneralDirectPosition position = new GeneralDirectPosition(new double[] {
             23.78, -12.74, 127.9, 3.25
         });
-        assertEquals("23°46,8'E 12°44,4'S 127,9\u00A0m 04-01-2003 06:00", format.format(position));
+        assertEquals("23°46,8′E 12°44,4′S 127,9\u00A0m 04-01-2003 06:00", format.format(position));
         /*
          * Try a point with wrong dimension.
          */
@@ -101,6 +101,6 @@ public final class CoordinateFormatTest {
         format.setSeparator("; ");
         assertEquals(datePattern, format.getDatePattern());
         assertSame(crs, format.getCoordinateReferenceSystem());
-        assertEquals("23°46,8'E; 12°44,4'S; 127,9\u00A0m; 04-01-2003 06:00", format.format(position));
+        assertEquals("23°46,8′E; 12°44,4′S; 127,9\u00A0m; 04-01-2003 06:00", format.format(position));
      }
 }

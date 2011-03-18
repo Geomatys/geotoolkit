@@ -23,6 +23,7 @@ import java.text.ParseException;
 import java.util.Locale;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.SimpleConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 
@@ -73,12 +74,12 @@ public class Angle implements Comparable<Angle>, Serializable {
     }
 
     /**
-     * Angle value in degres.
+     * Angle value in degrees.
      */
     private final double theta;
 
     /**
-     * Contructs a new angle with the specified value.
+     * Constructs a new angle with the specified value.
      *
      * @param theta Angle in degrees.
      */
@@ -151,13 +152,10 @@ public class Angle implements Comparable<Angle>, Serializable {
         if (object == this) {
             return true;
         }
-        if (object!=null && getClass().equals(object.getClass())) {
-            final Angle that = (Angle) object;
-            return Double.doubleToLongBits(this.theta) ==
-                   Double.doubleToLongBits(that.theta);
-        }  else {
-            return false;
+        if (object != null && getClass().equals(object.getClass())) {
+            return Utilities.equals(theta, ((Angle) object).theta);
         }
+        return false;
     }
 
     /**
@@ -192,7 +190,8 @@ public class Angle implements Comparable<Angle>, Serializable {
     private static Format getAngleFormat() {
         assert Thread.holdsLock(Angle.class);
         if (format == null) {
-            format = new AngleFormat("D°MM.m'", Locale.US);
+            format = AngleFormat.getInstance(Locale.CANADA);
+            // Canada locale is closer to ISO standards than US locale.
         }
         return format;
     }

@@ -38,12 +38,12 @@ public final class AngleFormatTest {
      */
     @Test
     public void testCanadaLocale() {
-        final AngleFormat f = new AngleFormat("DD.ddd\u00B0", Locale.CANADA);
-        assertEquals( "20.000\u00B0",  formatAndParse(f, new Angle   ( 20.000)));
-        assertEquals( "20.749\u00B0",  formatAndParse(f, new Angle   ( 20.749)));
-        assertEquals("-12.247\u00B0",  formatAndParse(f, new Angle   (-12.247)));
-        assertEquals( "13.214\u00B0N", formatAndParse(f, new Latitude( 13.214)));
-        assertEquals( "12.782\u00B0S", formatAndParse(f, new Latitude(-12.782)));
+        final AngleFormat f = new AngleFormat("DD.ddd°", Locale.CANADA);
+        assertEquals( "20.000°",  formatAndParse(f, new Angle   ( 20.000)));
+        assertEquals( "20.749°",  formatAndParse(f, new Angle   ( 20.749)));
+        assertEquals("-12.247°",  formatAndParse(f, new Angle   (-12.247)));
+        assertEquals( "13.214°N", formatAndParse(f, new Latitude( 13.214)));
+        assertEquals( "12.782°S", formatAndParse(f, new Latitude(-12.782)));
     }
 
     /**
@@ -51,9 +51,9 @@ public final class AngleFormatTest {
      */
     @Test
     public void testFranceLocale() {
-        final AngleFormat f = new AngleFormat("DD.ddd\u00B0", Locale.FRANCE);
-        assertEquals("19,457\u00B0E", formatAndParse(f, new Longitude( 19.457)));
-        assertEquals("78,124\u00B0S", formatAndParse(f, new Latitude (-78.124)));
+        final AngleFormat f = new AngleFormat("DD.ddd°", Locale.FRANCE);
+        assertEquals("19,457°E", formatAndParse(f, new Longitude( 19.457)));
+        assertEquals("78,124°S", formatAndParse(f, new Latitude (-78.124)));
     }
 
     /**
@@ -71,8 +71,8 @@ public final class AngleFormatTest {
      */
     @Test
     public void testDegreeSeparator() {
-        final AngleFormat f = new AngleFormat("DD\u00B0MM.m", Locale.CANADA);
-        assertEquals( "12\u00B030.0", formatAndParse(f, new Angle( 12.50)));
-        assertEquals("-10\u00B015.0", formatAndParse(f, new Angle(-10.25)));
+        final AngleFormat f = new AngleFormat("DD°MM.m", Locale.CANADA);
+        assertEquals( "12°30.0", formatAndParse(f, new Angle( 12.50)));
+        assertEquals("-10°15.0", formatAndParse(f, new Angle(-10.25)));
     }
 }
