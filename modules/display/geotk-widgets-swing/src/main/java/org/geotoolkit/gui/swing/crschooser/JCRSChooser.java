@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2010, Johann Sorel
+ *    (C) 2008 - 2011, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -22,9 +22,12 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.GroupLayout;
 import javax.swing.GroupLayout.Alignment;
 import javax.swing.JButton;
+import javax.swing.JCheckBox;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
@@ -36,6 +39,7 @@ import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
+import org.geotoolkit.display2d.GO2Utilities;
 
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.io.wkt.UnformattableObjectException;
@@ -125,7 +129,15 @@ public class JCRSChooser extends javax.swing.JDialog {
 
     public CoordinateReferenceSystem getCRS() {
         if(liste != null){
-             return liste.getCRS();
+            CoordinateReferenceSystem crs = liste.getCRS();
+            if(guiForceLongitudeFirst.isSelected()){
+                try {
+                    crs = GO2Utilities.setLongitudeFirst(crs);
+                } catch (FactoryException ex) {
+                    Logger.getLogger(JCRSChooser.class.getName()).log(Level.SEVERE, null, ex);
+                }
+            }
+            return crs;
         }else{
             return crs;
         }
@@ -180,11 +192,13 @@ public class JCRSChooser extends javax.swing.JDialog {
 
 
 
+
         jTabbedPane1 = new JTabbedPane();
         jPanel1 = new JPanel();
         jLabel1 = new JLabel();
         gui_jtf_crs = new JTextField();
         pan_list = new JPanel();
+        guiForceLongitudeFirst = new JCheckBox();
         jPanel2 = new JPanel();
         jScrollPane1 = new JScrollPane();
         wktArea = new JTextArea();
@@ -207,18 +221,20 @@ public class JCRSChooser extends javax.swing.JDialog {
 
         pan_list.setLayout(new BorderLayout());
 
+        guiForceLongitudeFirst.setText(MessageBundle.getString("force_longitude_first")); // NOI18N
         GroupLayout jPanel1Layout = new GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(Alignment.LEADING)
-            .addGroup(jPanel1Layout.createSequentialGroup()
+            .addGroup(Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(jPanel1Layout.createParallelGroup(Alignment.LEADING)
-                    .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
-                    .addComponent(gui_jtf_crs, GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
-                    .addGroup(jPanel1Layout.createSequentialGroup()
+                .addGroup(jPanel1Layout.createParallelGroup(Alignment.TRAILING)
+                    .addComponent(pan_list, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
+                    .addComponent(gui_jtf_crs, Alignment.LEADING, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
+                    .addGroup(Alignment.LEADING, jPanel1Layout.createSequentialGroup()
                         .addComponent(jLabel1)
-                        .addGap(21, 21, 21)))
+                        .addGap(21, 21, 21))
+                    .addComponent(guiForceLongitudeFirst, Alignment.LEADING))
                 .addContainerGap())
         );
         jPanel1Layout.setVerticalGroup(
@@ -229,7 +245,9 @@ public class JCRSChooser extends javax.swing.JDialog {
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(gui_jtf_crs, GroupLayout.PREFERRED_SIZE, GroupLayout.DEFAULT_SIZE, GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(ComponentPlacement.RELATED)
-                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 205, Short.MAX_VALUE)
+                .addComponent(guiForceLongitudeFirst)
+                .addPreferredGap(ComponentPlacement.RELATED)
+                .addComponent(pan_list, GroupLayout.DEFAULT_SIZE, 175, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -247,14 +265,14 @@ public class JCRSChooser extends javax.swing.JDialog {
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 433, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 429, Short.MAX_VALUE)
                 .addContainerGap())
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 261, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, GroupLayout.DEFAULT_SIZE, 257, Short.MAX_VALUE)
                 .addContainerGap())
         );
 
@@ -278,7 +296,7 @@ public class JCRSChooser extends javax.swing.JDialog {
         layout.setHorizontalGroup(
             layout.createParallelGroup(Alignment.LEADING)
             .addGroup(Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(349, Short.MAX_VALUE)
+                .addContainerGap(352, Short.MAX_VALUE)
                 .addComponent(but_valider)
                 .addPreferredGap(ComponentPlacement.RELATED)
                 .addComponent(but_fermer)
@@ -318,6 +336,7 @@ public class JCRSChooser extends javax.swing.JDialog {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private JButton but_fermer;
     private JButton but_valider;
+    private JCheckBox guiForceLongitudeFirst;
     private JTextField gui_jtf_crs;
     private JLabel jLabel1;
     private JPanel jPanel1;

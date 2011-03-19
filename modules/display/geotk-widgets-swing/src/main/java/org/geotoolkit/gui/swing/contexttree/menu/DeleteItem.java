@@ -3,7 +3,7 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2011, Johann Sorel
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -29,7 +29,8 @@ import javax.swing.tree.TreePath;
 import org.geotoolkit.gui.swing.contexttree.AbstractTreePopupItem;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.map.MapLayer;
+import org.geotoolkit.map.MapContext;
+import org.geotoolkit.map.MapItem;
 
 /**
  * delete item for JContextTree
@@ -39,7 +40,7 @@ import org.geotoolkit.map.MapLayer;
  */
 public class DeleteItem extends AbstractTreePopupItem{
 
-    private WeakReference<MapLayer> layerRef;
+    private WeakReference<TreePath> itemRef;
     
     /**
      * delete item for jcontexttree
@@ -56,12 +57,14 @@ public class DeleteItem extends AbstractTreePopupItem{
         addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                if(layerRef == null) return;
+                if(itemRef == null) return;
 
-                MapLayer layer = layerRef.get();
-                if(layer == null) return;
+                TreePath path = itemRef.get();
+                if(path == null) return;
 
-                tree.getContext().layers().remove(layer);
+                final DefaultMutableTreeNode parent = (DefaultMutableTreeNode) path.getParentPath().getLastPathComponent();
+                final DefaultMutableTreeNode candidate = (DefaultMutableTreeNode) path.getLastPathComponent();
+                ((MapItem)parent.getUserObject()).items().remove(candidate.getUserObject());
             }
         }
         );
@@ -69,13 +72,19 @@ public class DeleteItem extends AbstractTreePopupItem{
     
     @Override
     public boolean isValid(final TreePath[] selection) {
-        return uniqueAndType(selection,MapLayer.class);
+        boolean valid = uniqueAndType(selection,MapItem.class);
+        if(valid){
+            //check it's not the root mapcontext
+            final DefaultMutableTreeNode candidate = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
+            valid = !(candidate.getUserObject() instanceof MapContext);
+        }
+
+        return valid;
     }
 
     @Override
     public Component getComponent(final TreePath[] selection) {
-        DefaultMutableTreeNode node = (DefaultMutableTreeNode) selection[0].getLastPathComponent();
-        layerRef = new WeakReference<MapLayer>((MapLayer) node.getUserObject());
+        itemRef = new WeakReference<TreePath>(selection[0]);
         return this;
     }
 

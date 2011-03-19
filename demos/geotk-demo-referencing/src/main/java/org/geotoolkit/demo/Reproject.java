@@ -1,8 +1,11 @@
 
 package org.geotoolkit.demo;
 
+import java.util.Set;
+import org.apache.derby.jdbc.EmbeddedDriver;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.geometry.DirectPosition2D;
+import org.geotoolkit.lang.Setup;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -18,6 +21,10 @@ public class Reproject {
      * This exemple shows how to transform a coordinate from one CRS to another.
      */
     public static void main(String[] args) throws Exception {
+        Class.forName(EmbeddedDriver.class.getName());
+
+        Setup.initialize(null);
+
         Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
 
         CoordinateReferenceSystem inCRS = CRS.decode("EPSG:4326");
@@ -30,6 +37,13 @@ public class Reproject {
 
         DirectPosition d2 = trs.transform(d1, null);
         System.out.println("TO EPSG:27582 = " + d2);
+
+        final Set<String> codes = CRS.getSupportedCodes("EPSG");
+
+        for(String str : codes){
+            System.out.println("EPSG:"+str);
+        }
+
 
     }
 
