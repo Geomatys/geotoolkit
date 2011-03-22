@@ -89,7 +89,10 @@ public final class GridCoverageReaders {
      * @param reader
      * @param metadata : metadata to fill, if null it will create one.
      * @return Metadata, never null
+     *
+     * @deprecated Replaced by {@link GridCoverageReader#getMetadata()}.
      */
+    @Deprecated
     public static DefaultMetadata fillMetadata(final GridCoverageReader reader, DefaultMetadata metadata) 
             throws CoverageStoreException, TransformException{
         if(metadata == null){
