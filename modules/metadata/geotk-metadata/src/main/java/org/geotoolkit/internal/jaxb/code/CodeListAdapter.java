@@ -43,7 +43,7 @@ import org.geotoolkit.internal.CodeLists;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.18
  *
  * @see CodeListLocaleAdapter
  *
@@ -117,7 +117,7 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
         if (adapter == null) {
             return null;
         }
-        return CodeLists.valueOf(getCodeListClass(), adapter.proxy.codeListValue);
+        return CodeLists.valueOf(getCodeListClass(), adapter.proxy.identifier());
     }
 
     /**
@@ -132,7 +132,19 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
         if (value == null) {
             return null;
         }
-        return wrap(new CodeListProxy(value));
+        return wrap(isEnum() ? new CodeListProxy(value.identifier()) : new CodeListProxy(value));
+    }
+
+    /**
+     * Returns {@code true} if this code list is actually an enum. The default implementation
+     * returns {@code false} in every cases, since there is very few enums in ISO 19115.
+     *
+     * @return {@code true} if this code list is actually an enum.
+     *
+     * @since 3.18
+     */
+    protected boolean isEnum() {
+        return false;
     }
 
     /**

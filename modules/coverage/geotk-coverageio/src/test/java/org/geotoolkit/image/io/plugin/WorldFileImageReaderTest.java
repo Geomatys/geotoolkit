@@ -118,11 +118,11 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
                 "│       │       ├───CoordinateSystemAxis\n" +
                 "│       │       │   ├───name=“x”\n" +
                 "│       │       │   ├───direction=“east”\n" +
-                "│       │       │   └───unit=“m”\n" +
+                "│       │       │   └───unit=“km”\n" +
                 "│       │       └───CoordinateSystemAxis\n" +
                 "│       │           ├───name=“y”\n" +
                 "│       │           ├───direction=“north”\n" +
-                "│       │           └───unit=“m”\n" +
+                "│       │           └───unit=“km”\n" +
                 "│       └───Conversion\n" +
                 "│           ├───name=“WGS 84 / World Mercator”\n" +
                 "│           └───method=“Mercator_1SP”\n" +

@@ -174,8 +174,8 @@ public final class WritableGridCoverageTableTest extends CatalogTestBase {
                 assertEquals( -1000,                reference.gridToCRS.getScaleY(),     0);
                 assertEquals(-10000,                reference.gridToCRS.getTranslateX(), 0);
                 assertEquals( 21000,                reference.gridToCRS.getTranslateY(), 0);
-                assertEquals(3395,                  reference.horizontalSRID);
-                assertEquals(0,                     reference.verticalSRID);
+                assertEquals(  6001,                reference.horizontalSRID);
+                assertEquals(     0,                reference.verticalSRID);
                 assertNull  (                       reference.verticalValues);
                 assertNull  (                       reference.dateRanges);
             }

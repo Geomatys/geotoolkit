@@ -19,7 +19,6 @@ package org.geotoolkit.internal.jaxb.code;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.metadata.spatial.PixelOrientation;
-import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -28,7 +27,7 @@ import org.geotoolkit.xml.Namespaces;
  * the handling of {@code CodeList} in ISO-19139.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -73,12 +72,22 @@ public final class MD_PixelOrientationCode
     }
 
     /**
+     * Returns {@code true} since this code list is actually an enum.
+     *
+     * @since 3.18
+     */
+    @Override
+    protected boolean isEnum() {
+        return true;
+    }
+
+    /**
      * Invoked by JAXB on marshalling.
      *
      * @return The value to be marshalled.
      */
     @Override
-    @XmlElement(name = "MD_PixelOrientationCode", namespace = Namespaces.GMI)
+    @XmlElement(name = "MD_PixelOrientationCode")
     public CodeListProxy getElement() {
         return proxy;
     }

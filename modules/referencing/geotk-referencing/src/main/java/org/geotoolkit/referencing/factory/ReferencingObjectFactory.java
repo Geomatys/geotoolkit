@@ -1073,6 +1073,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
         if (parser == null) {
             parser = new ReferencingParser(Symbols.DEFAULT,
                     getDatumFactory(), this, this, getMathTransformFactory());
+            parser.setISOConform(true);
             this.parser.set(parser);
         }
         try {

@@ -300,8 +300,8 @@ public final class WKT {
             "      SPHEROID[“WGS_1984”, 6378137.0, 298.257223563]],\n" +
             "    PRIMEM[“Greenwich”, 0.0],\n" +
             "    UNIT[“degree”, 0.017453292519943295],\n" +
-            "    AXIS[“Longitude”, EAST],\n" +
-            "    AXIS[“Latitude”, NORTH]],\n" +
+            "    AXIS[“Geodetic longitude”, EAST],\n" +
+            "    AXIS[“Geodetic latitude”, NORTH]],\n" +
             "  PROJECTION[“Lambert_Conformal_Conic_2SP”],\n" +
             "  PARAMETER[“central_meridian”, -95.0],\n" +
             "  PARAMETER[“latitude_of_origin”, 0.0],\n" +

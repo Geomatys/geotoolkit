@@ -5,6 +5,8 @@
 # Pad value is -9999.
 #
 # The values provided in this file are not accurate.
+# Actually the geographic bounding box (ranging from
+# 85°S to 85°N and from 87°W to 87°E) is quite wrong.
 # This is a semi-dummy file for testing purpose only.
 #
   -1.123  -1.348  -1.477  -1.399  -1.141   -9999   0.141   -9999   -9999   0.292   2.514   2.945   0.842   -9999   0.102   -9999   -9999  -0.144  -0.599  -1.251

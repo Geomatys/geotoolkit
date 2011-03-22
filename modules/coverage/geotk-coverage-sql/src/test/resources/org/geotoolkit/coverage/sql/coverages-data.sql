@@ -12,9 +12,12 @@ SET search_path = coverages, postgis;
 --------------------------------------------------------------------------------------------------
 -- Additional Coordinate Reference Systems                                                      --
 --------------------------------------------------------------------------------------------------
-INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext) VALUES
- (6000, 'EPSG', 57150, 'VERT_CS["mean sea level depth",VERT_DATUM["Mean Sea Level",2005],UNIT["m",1.0],AXIS["Gravity-related depth",DOWN]]');
+INSERT INTO spatial_ref_sys (srid, auth_name, auth_srid, srtext, proj4text) VALUES
 -- Intentionally different SRID.
+ (6000, 'EPSG', 57150, 'VERT_CS["mean sea level depth",VERT_DATUM["Mean Sea Level",2005],UNIT["m",1.0],AXIS["Gravity-related depth",DOWN]]', NULL),
+ (6001, 'EPSG(km)', 3395,
+  'PROJCS["WGS 84 / World Mercator",GEOGCS["WGS 84",DATUM["WGS_1984",SPHEROID["WGS 84",6378137,298.257223563]],PRIMEM["Greenwich",0],UNIT["degree",0.01745329251994328],AUTHORITY["EPSG","4326"]],PROJECTION["Mercator_1SP"],UNIT["km",1000]]',
+  '+proj=merc +lon_0=0 +k=1.000000 +x_0=0 +y_0=0 +ellps=WGS84 +datum=WGS84 +units=km +no_defs');
 
 
 

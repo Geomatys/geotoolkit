@@ -37,9 +37,17 @@
  * {@section Referencing WKT}
  * Parsing of {@link org.opengis.referencing.crs.CoordinateReferenceSystem} and
  * {@link org.opengis.referencing.operation.MathTransform} objects are performed
- * by the {@link org.geotoolkit.io.wkt.ReferencingParser} class.
+ * by the {@link org.geotoolkit.io.wkt.ReferencingParser} class. The parser provides
+ * methods for:
+ * <p>
+ * </ul>
+ *   <li>Specifying whatever the default axis names shall be ISO identifiers or the
+ *       legacy identifiers specified in the WKT specification.</li>
+ *   <li>Ignoring the {@code AXIS[...]} elements, which may be used as a way to force
+ *       the (<var>longitude</var>, <var>latitude</var>) axes order.</li>
+ * </ul>
  *
- *(@section Geometry WKT}
+ * {@section Geometry WKT}
  * The {@link org.geotoolkit.geometry.GeneralEnvelope} and
  * {@link org.geotoolkit.geometry.GeneralDirectPosition} classes provide their own, limited,
  * WKT parsing and formatting services for the {@code BOX} and {@code POINT} elements.
@@ -54,7 +62,7 @@
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Rémi Eve (IRD)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.0
  * @module

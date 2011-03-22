@@ -654,6 +654,7 @@ public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
          */
         public Parser() {
             super(Symbols.DEFAULT, factories);
+            setISOConform(true);
         }
 
         /**

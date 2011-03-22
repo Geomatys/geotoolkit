@@ -200,11 +200,17 @@ public abstract class ImageTestBase extends TestBase {
                     if (JOptionPane.showConfirmDialog(panel, message, title,
                             JOptionPane.YES_NO_OPTION, type) == JOptionPane.OK_OPTION)
                     {
+                        final boolean done;
                         try {
-                            assertTrue(ImageIO.write(image, "png", file));
+                            done = ImageIO.write(image, "png", file);
                         } catch (IOException e) {
-                            JOptionPane.showMessageDialog(panel, e.toString(), "Error",
-                                    JOptionPane.WARNING_MESSAGE);
+                            JOptionPane.showMessageDialog(panel, e.toString(),
+                                    "Error", JOptionPane.WARNING_MESSAGE);
+                            return;
+                        }
+                        if (!done) {
+                            JOptionPane.showMessageDialog(panel, "No appropriate writer found",
+                                    "Error", JOptionPane.WARNING_MESSAGE);
                         }
                     }
                 }

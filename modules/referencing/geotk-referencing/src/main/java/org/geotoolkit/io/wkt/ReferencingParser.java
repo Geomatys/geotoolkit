@@ -78,9 +78,29 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
  * {@linkplain MathTransform Math Transform} objects as well because they are part of the WKT's
  * {@code "FITTED_CS"} element.
  *
+ * {@code Default axis names}
+ * The default axis names differ depending on whatever the parsing shall be strictly compliant to
+ * the legacy WKT specification, or whatever ISO 19111 identifiers shall be used instead. The
+ * following table compares the names:
+ *
+ * <table>
+ * <tr><th>CRS type</th>  <th>WKT defaults</th><th>ISO abbreviations</th></tr>
+ * <tr><td>Geographic</td><td>Lon, Lat</td>    <td>&lambda;, &phi;</td></tr>
+ * <tr><td>Vertical</td>  <td>Z</td>           <td>h</td></tr>
+ * <tr><td>Projected</td> <td>X, Y</td>        <td>x, y</td></tr>
+ * <tr><td>Geocentric</td><td>X, Y, Z</td>     <td>X, Y, Z</td></tr>
+ * </table>
+ *
+ * The default behavior is to use the legacy WKT identifiers, for compliance with the WKT
+ * specification. This behavior can be changed by call to {@link #setISOConform(boolean)}.
+ * Note that Geotk referencing factories like
+ * {@link org.geotoolkit.referencing.factory.wkt.WKTParsingAuthorityFactory} perform the
+ * above-cited {@code setISOConform(true)} method call on their internal parser instance,
+ * for ISO compliance.
+ *
  * @author Rémi Eve (IRD)
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @see <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html">Well Know Text specification</A>
  * @see <A HREF="http://home.gdal.org/projects/opengis/wktproblems.html">OGC WKT Coordinate System Issues</A>
@@ -114,8 +134,16 @@ public class ReferencingParser extends MathTransformParser {
     private final CRSFactory crsFactory;
 
     /**
+     * {@code true} if ISO axis identifiers should be used instead than the one defined
+     * by the WKT specification.
+     *
+     * @since 3.18
+     */
+    private boolean isoConform;
+
+    /**
      * {@code true} if {@code AXIS[...]} elements should be ignored. This is sometime used
-     * for similating a "force longitude first axis orde" behavior. It is also used for
+     * for simulating a "force longitude first axis order" behavior. It is also used for
      * compatibility with ESRI softwares which ignore axis elements.
      */
     private boolean axisIgnored;
@@ -217,6 +245,32 @@ public class ReferencingParser extends MathTransformParser {
     }
 
     /**
+     * Returns {@code true} if the default names of {@code AXIS[...]} elements shall be ISO 19111
+     * identifiers. The default value is {@code false}, which mean that the identifiers specified
+     * by the WKT specification are used.
+     *
+     * @return {@code true} if the default identifiers of {@code AXIS[...]} elements shall be
+     *         conform to ISO 19111.
+     *
+     * @since 3.18
+     */
+    public boolean isISOConform() {
+        return isoConform;
+    }
+
+    /**
+     * Sets whatever the default names of {@code AXIS[...]} elements shall be ISO identifiers.
+     *
+     * @param conform {@code true} if the default identifiers of {@code AXIS[...]} elements shall
+     *        be conform to ISO 19111.
+     *
+     * @since 3.18
+     */
+    public void setISOConform(final boolean conform) {
+        isoConform = conform;
+    }
+
+    /**
      * Returns {@code true} if {@code AXIS[...]} elements will be ignored during parsing.
      * The default value is {@code false}.
      *
@@ -231,7 +285,7 @@ public class ReferencingParser extends MathTransformParser {
     /**
      * Sets whatever {@code AXIS[...]} elements will be ignored during parsing. The default
      * value is {@code false} as we would expect from a WKT compliant parser. However this
-     * flag may occasionnaly be set to {@code true} for compatibility with ESRI softwares,
+     * flag may occasionally be set to {@code true} for compatibility with ESRI softwares,
      * which ignore {@code AXIS} elements. It may also be used as a way to force the longitude
      * axis to be first.
      * <p>
@@ -374,7 +428,7 @@ public class ReferencingParser extends MathTransformParser {
      *
      * @param  parent The parent element.
      * @param  name The name of the parent object being parsed.
-     * @return A properties map with the parent name and the optional autority code.
+     * @return A properties map with the parent name and the optional authority code.
      * @throws ParseException if the {@code "AUTHORITY"} can't be parsed.
      */
     private Map<String,Object> parseAuthority(final Element parent, final String name)
@@ -486,7 +540,7 @@ public class ReferencingParser extends MathTransformParser {
     /**
      * Creates an axis. If the name matches one of pre-defined axis, the pre-defined one
      * will be returned. This replacement help to get more success when comparing a CS
-     * built from WKT against a CS built from one of Geotk's constants.
+     * built from WKT against a CS built from one of Geotk constants.
      *
      * @param  properties Name and other properties to give to the new object.
      *         If {@code null}, the abbreviation will be used as the axis name.
@@ -879,7 +933,7 @@ public class ReferencingParser extends MathTransformParser {
         element.close();
         try {
             if (axis == null || axisIgnored) {
-                axis = createAxis(null, "Z", AxisDirection.UP, linearUnit);
+                axis = createAxis(null, isoConform ? "h" : "Z", AxisDirection.UP, linearUnit);
             }
             return crsFactory.createVerticalCRS(properties, datum,
                     csFactory.createVerticalCS(singletonMap("name", name), axis));
@@ -913,9 +967,9 @@ public class ReferencingParser extends MathTransformParser {
                 axis1 = parseAxis(element, angularUnit, true);
             }
             if (axis0 == null || axisIgnored) {
-                // Those default values are part of WKT specification.
-                axis0 = createAxis(null, "Lon", AxisDirection.EAST,  angularUnit);
-                axis1 = createAxis(null, "Lat", AxisDirection.NORTH, angularUnit);
+                // The (Lon,Lat) default values are part of WKT specification.
+                axis0 = createAxis(null, isoConform ? "\u03BB" : "Lon", AxisDirection.EAST,  angularUnit);
+                axis1 = createAxis(null, isoConform ? "\u03C6" : "Lat", AxisDirection.NORTH, angularUnit);
             }
             element.close();
             return crsFactory.createGeographicCRS(properties, datum,
@@ -954,9 +1008,9 @@ public class ReferencingParser extends MathTransformParser {
                 axis1 = parseAxis(element, linearUnit, true);
             }
             if (axis0 == null || axisIgnored) {
-                // Those default values are part of WKT specification.
-                axis0 = createAxis(null, "X", AxisDirection.EAST,  linearUnit);
-                axis1 = createAxis(null, "Y", AxisDirection.NORTH, linearUnit);
+                // The (X,Y) default values are part of WKT specification.
+                axis0 = createAxis(null, isoConform ? "x" : "X", AxisDirection.EAST,  linearUnit);
+                axis1 = createAxis(null, isoConform ? "y" : "Y", AxisDirection.NORTH, linearUnit);
             }
             element.close();
             final Conversion conversion = new DefiningConversion(name, projection);

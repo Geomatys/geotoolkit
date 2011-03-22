@@ -25,13 +25,15 @@ import java.io.File;
 import java.io.IOException;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
+import javax.xml.bind.JAXBException;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.metadata.spatial.PixelOrientation;
+import org.opengis.metadata.Metadata;
 
 import org.junit.*;
-import static org.junit.Assert.*;
+import static org.geotoolkit.test.Assert.*;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
@@ -44,6 +46,7 @@ import org.geotoolkit.image.io.plugin.TextMatrixImageReaderTest;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReaderTest;
 import org.geotoolkit.image.SampleModels;
+import org.geotoolkit.xml.XML;
 
 
 /**
@@ -52,7 +55,7 @@ import org.geotoolkit.image.SampleModels;
  * is the easiest one to debug.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 3.09
  */
@@ -92,6 +95,29 @@ public final class ImageCoverageReaderTest extends ImageTestBase {
         final ImageReaderSpi spi= registry.getServiceProviderByClass(TextMatrixImageReaderTest.Spi.class);
         assertTrue(registry.deregisterServiceProvider(spi, ImageReaderSpi.class));
         WorldFileImageReader.Spi.unregisterDefaults(registry);
+    }
+
+    /**
+     * Tests the reading of ISO 19115 metadata. This also tests indirectly the reading of stream
+     * and image metadata. Note that correct metadata are required for correct working of read
+     * operations.
+     *
+     * @throws IOException If the text file can not be open (should not happen).
+     * @throws CoverageStoreException Should not happen.
+     * @throws JAXBException If the metadata can not be marshalled to XML (should not happen).
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testMetadata() throws IOException, CoverageStoreException, JAXBException {
+        final ImageCoverageReaderInspector reader = new ImageCoverageReaderInspector("readFull");
+        reader.setInput(TestData.file(TextMatrixImageReaderTest.class, "matrix.txt"));
+        assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
+        final Metadata metadata = reader.getMetadata();
+        final String xml = XML.marshal(metadata);
+        assertFalse("Nothing to write.", xml.length() == 0);
+        assertDomEquals(TestData.url(ImageCoverageReaderTest.class, "MatrixMetadata.xml"),
+                xml, 0.0001, "xmlns:*", "xsi:schemaLocation");
     }
 
     /**

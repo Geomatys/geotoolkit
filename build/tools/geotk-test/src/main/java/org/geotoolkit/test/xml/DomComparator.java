@@ -62,7 +62,7 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @author Johann Sorel (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.17
  */
@@ -114,6 +114,14 @@ public class DomComparator {
      * implementation.
      */
     public final Set<String> ignoredNodes;
+
+    /**
+     * The tolerance threshold for comparisons of numerical values, or 0 for strict comparisons.
+     * The default value is 0.
+     *
+     * @since 3.18
+     */
+    public double tolerance;
 
     /**
      * Creates a new comparator for the given root nodes.
@@ -496,6 +504,10 @@ public class DomComparator {
         expected = trim(expected);
         actual   = trim(actual);
         if ((expected != actual) && (expected == null || !expected.equals(actual))) {
+            // Before to declare a test failure, compares again as numerical values if possible.
+            if (tolerance > 0 && Math.abs(doubleValue(expected) - doubleValue(actual)) <= tolerance) {
+                return;
+            }
             final StringBuilder buffer = new StringBuilder(1024).append("Expected ")
                     .append(property).append(" \"")
                     .append(expected).append("\" but got \"")
@@ -511,6 +523,23 @@ public class DomComparator {
      */
     private static Comparable<?> trim(final Comparable<?> property) {
         return (property instanceof String) ? ((String) property).trim() : property;
+    }
+
+    /**
+     * Parses the given text as a number. If the given text is null or can not be parsed,
+     * returns {@code NaN}. This is used only if a {@linkplain #tolerance} threshold greater
+     * than zero has been provided.
+     */
+    private static double doubleValue(final Comparable<?> property) {
+        if (property instanceof Number) {
+            return ((Number) property).doubleValue();
+        }
+        if (property instanceof CharSequence) try {
+            return Double.parseDouble(property.toString());
+        } catch (NumberFormatException e) {
+            // Ignore, as specified in method javadoc.
+        }
+        return Double.NaN;
     }
 
     /**

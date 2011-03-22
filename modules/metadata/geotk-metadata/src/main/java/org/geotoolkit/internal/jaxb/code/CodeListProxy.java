@@ -41,7 +41,7 @@ import org.geotoolkit.resources.Locales;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @see CodeListAdapter
  * @see CodeListLocaleAdapter
@@ -110,6 +110,22 @@ public final class CodeListProxy {
     }
 
     /**
+     * Creates a new code list for the given enum.
+     *
+     * @param value The ISO 19115 identifier of the enum.
+     *
+     * @todo Replace the argument type by {@link Enum} if we fix the type of ISO 19115
+     *       code lists which are supposed to be enum.
+     *
+     * @see <a href="http://jira.codehaus.org/browse/GEO-199">GEO-199</a>
+     *
+     * @since 3.18
+     */
+    public CodeListProxy(final String value) {
+        this.value = value;
+    }
+
+    /**
      * Builds a {@link CodeList} as defined in ISO-19139 standard.
      *
      * @param catalog The file which defines the code list (for example {@code "ML_gmxCodelists.xml"}), without its path.
@@ -174,5 +190,23 @@ public final class CodeListProxy {
             }
         }
         codeListValue = fieldID;
+    }
+
+    /**
+     * Returns the identifier to use for fetching a {@link CodeList} instance.
+     * This is normally the {@link #codeListValue} attribute. However if the
+     * code list is actually used as an enumeration, then the above attribute
+     * is null and we have to use directly the {@linkplain #value} instead.
+     *
+     * @return The identifier to be given to the {@code CodeList.valueOf(...)} method.
+     *
+     * @since 3.18
+     */
+    public String identifier() {
+        String id = codeListValue;
+        if (id == null) {
+            id = value;
+        }
+        return id;
     }
 }

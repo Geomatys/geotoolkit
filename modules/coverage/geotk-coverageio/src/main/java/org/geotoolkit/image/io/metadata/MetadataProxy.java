@@ -501,7 +501,7 @@ final class MetadataProxy<T> implements InvocationHandler {
                 final String   elementName = SpatialMetadataFormat.toElementName(name);
                 final Class<?> elementType = getElementClass(elementName, targetType);
                 final MetadataAccessor acc = new MetadataAccessor(accessor, elementName, "#auto");
-                child = acc.newProxyInstance(elementType);
+                child = acc.isEmpty() ? Void.TYPE : acc.newProxyInstance(elementType);
             } catch (IllegalArgumentException e) {
                 /*
                  * Report the warning and remember that we can not return a value for this

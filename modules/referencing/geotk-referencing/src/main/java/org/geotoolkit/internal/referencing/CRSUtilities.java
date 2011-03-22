@@ -38,6 +38,7 @@ import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 
 
@@ -51,7 +52,7 @@ import org.geotoolkit.resources.Errors;
  * in any future release.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -412,5 +413,41 @@ public final class CRSUtilities {
             }
         }
         return new DefaultGeographicCRS(crs.getName().getCode(), geoDatum, DefaultEllipsoidalCS.GEODETIC_2D);
+    }
+
+    /**
+     * Computes the resolution of the horizontal component, or {@code null} if it can not be
+     * computed.
+     *
+     * @param  crs The full (potentially multi-dimensional) CRS.
+     * @param  resolution The resolution along each CRS dimension, or {@code null} if none.
+     *         The array length shall be equals to the CRS dimension.
+     * @return The horizontal resolution, or {@code null}.
+     *
+     * @since 3.18
+     */
+    public static Measure getHorizontalResolution(final CoordinateReferenceSystem crs, double... resolution) {
+        if (resolution != null) {
+            final SingleCRS horizontalCRS = CRS.getHorizontalCRS(crs);
+            if (horizontalCRS != null) {
+                final CoordinateSystem hcs = horizontalCRS.getCoordinateSystem();
+                final Unit<?> unit = getUnit(hcs);
+                if (unit != null) {
+                    final int s = dimensionColinearWith(crs.getCoordinateSystem(), hcs);
+                    if (s >= 0) {
+                        final int dim = hcs.getDimension();
+                        double min = Double.POSITIVE_INFINITY;
+                        for (int i=s; i<dim; i++) {
+                            final double r = resolution[i];
+                            if (r > 0 && r < min) min = r;
+                        }
+                        if (min != Double.POSITIVE_INFINITY) {
+                            return new Measure(min, unit);
+                        }
+                    }
+                }
+            }
+        }
+        return null;
     }
 }

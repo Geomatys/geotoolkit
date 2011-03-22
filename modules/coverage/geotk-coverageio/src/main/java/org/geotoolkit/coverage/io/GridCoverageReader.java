@@ -20,18 +20,37 @@ package org.geotoolkit.coverage.io;
 import java.util.Arrays;
 import java.util.Map;
 import java.util.List;
+import java.util.Set;
+import java.util.LinkedHashSet;
 import java.util.concurrent.CancellationException;
 import javax.imageio.ImageReader;
 
+import org.opengis.metadata.Metadata;
+import org.opengis.metadata.quality.DataQuality;
+import org.opengis.metadata.spatial.Georectified;
+import org.opengis.metadata.content.ImageDescription;
+import org.opengis.metadata.identification.Resolution;
+import org.opengis.metadata.identification.DataIdentification;
+import org.opengis.metadata.acquisition.AcquisitionInformation;
+import org.opengis.referencing.operation.TransformException;
 import org.opengis.coverage.grid.GridCoverage;
 
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
+import org.geotoolkit.metadata.iso.DefaultMetadata;
+import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.geotoolkit.metadata.iso.identification.DefaultResolution;
+import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.geotoolkit.measure.Measure;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.util.MeasurementRange;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.referencing.CRSUtilities;
+
+import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
 
 /**
@@ -58,7 +77,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @see ImageReader
  *
@@ -221,6 +240,128 @@ public abstract class GridCoverageReader extends GridCoverageStore {
             }
         }
         return Arrays.asList(ranges);
+    }
+
+    /**
+     * Returns the ISO 19115 metadata object associated with in input source as a whole
+     * and each coverages. The default implementation constructs the metadata from the
+     * {@linkplain #getStreamMetadata() stream metadata} and the
+     * {@linkplain #getCoverageMetadata(int) coverage metadata},
+     * eventually completed by the {@linkplain #getGridGeometry(int)}.
+     * <p>
+     * Since the relationship between Image I/O metadata and ISO 19115 is not always a
+     * "<cite>one-to-one</cite>" relationship, this method works on a best effort basis.
+     *
+     * @return The ISO 19115 metadata (never {@code null}).
+     * @throws CoverageStoreException if an error occurs reading the information from the input source.
+     *
+     * @see <a href="../../image/io/metadata/SpatialMetadataFormat.html#default-formats">Metadata formats</a>
+     *
+     * @since 3.18
+     */
+    public Metadata getMetadata() throws CoverageStoreException {
+        final DefaultMetadata metadata       = new DefaultMetadata();
+        final SpatialMetadata streamMetadata = getStreamMetadata();
+        final List<String>    coverageNames  = getCoverageNames();
+        final int             numCoverages   = coverageNames.size();
+        /*
+         * Extract all information available from the stream metadata,
+         * then check if we should complete the extents and resolutions.
+         */
+        DataIdentification identification = null;
+        if (streamMetadata != null) {
+            final DataQuality quality = streamMetadata.getInstanceForType(DataQuality.class);
+            if (quality != null) {
+                metadata.getDataQualityInfo().add(quality);
+            }
+            AcquisitionInformation acquisition = streamMetadata.getInstanceForType(AcquisitionInformation.class);
+            if (acquisition != null) {
+                metadata.getAcquisitionInformation().add(acquisition);
+            }
+            identification = streamMetadata.getInstanceForType(DataIdentification.class);
+        }
+        final boolean computeExtents, computeResolutions;
+        if (identification != null) {
+            computeExtents     = isNullOrEmpty(identification.getExtents());
+            computeResolutions = isNullOrEmpty(identification.getSpatialResolutions());
+        } else {
+            computeExtents     = true;
+            computeResolutions = true;
+        }
+        /*
+         * If there is no "DiscoveryMetadata" node, or if this node does not contain any
+         * extent or resolution, computes the missing elements from the grid geometry.
+         */
+        boolean         failed      = false;  // For logging warning only once.
+        DefaultExtent   extent      = null;   // The extents to compute, if needed.
+        Set<Resolution> resolutions = null;   // The resolutions to compute, if needed.
+        for (int i=0; i<numCoverages; i++) {
+            final SpatialMetadata coverageMetadata = getCoverageMetadata(i);
+            if (coverageMetadata != null) {
+                final ImageDescription description = coverageMetadata.getInstanceForType(ImageDescription.class);
+                if (description != null) {
+                    metadata.getContentInfo().add(description);
+                }
+                final Georectified rectified = coverageMetadata.getInstanceForType(Georectified.class);
+                if (rectified != null) {
+                    metadata.getSpatialRepresentationInfo().add(rectified);
+                }
+            }
+            if (computeResolutions || computeExtents) {
+                /*
+                 * Resolution along the horizontal axes only, ignoring all other axis.
+                 */
+                final GeneralGridGeometry gg = getGridGeometry(i);
+                if (computeResolutions) {
+                    final Measure m = CRSUtilities.getHorizontalResolution(
+                            gg.getCoordinateReferenceSystem(), gg.getResolution());
+                    if (m != null) {
+                        final DefaultResolution resolution = new DefaultResolution();
+                        resolution.setDistance(m.doubleValue()); // TODO: take unit in account.
+                        if (resolutions == null) {
+                            resolutions = new LinkedHashSet<Resolution>();
+                        }
+                        resolutions.add(resolution);
+                    }
+                }
+                /*
+                 * Horizontal, vertical and temporal extents. The horizontal extents is
+                 * represented as a geographic bounding box, which may require a reprojection.
+                 */
+                if (computeExtents) {
+                    if (extent == null) {
+                        extent = new UniqueExtents();
+                    }
+                    try {
+                        extent.addElements(gg.getEnvelope());
+                    } catch (TransformException e) {
+                        // Not a big deal if we fail. We will just let the identification section unchanged.
+                        if (!failed) {
+                            failed = true; // Log only once.
+                            Logging.recoverableException(LOGGER, GridCoverageReader.class, "getMetadata", e);
+                        }
+                    }
+                }
+            }
+        }
+        /*
+         * At this point, we have computed extents and resolutions from every images
+         * in the stream. Now store the result.
+         */
+        if (extent != null || resolutions != null) {
+            final DefaultDataIdentification copy = new DefaultDataIdentification(identification);
+            if (extent != null) {
+                copy.getExtents().add(extent);
+            }
+            if (resolutions != null) {
+                copy.setSpatialResolutions(resolutions);
+            }
+            identification = copy;
+        }
+        if (identification != null) {
+            metadata.getIdentificationInfo().add(identification);
+        }
+        return metadata;
     }
 
     /**

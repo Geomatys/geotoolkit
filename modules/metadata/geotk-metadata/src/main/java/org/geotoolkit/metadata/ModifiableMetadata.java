@@ -142,6 +142,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * @return {@code true} if this metadata is modifiable.
      *
      * @see #freeze()
+     * @see #checkWritePermission()
      */
     @Override
     public final boolean isModifiable() {
@@ -158,7 +159,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      *
      * @return An unmodifiable copy of this metadata.
      *
-     * @deprecated Use #freeze() instead.
+     * @deprecated Use {@link #freeze()} instead.
      */
     /*
      * TODO: After removal of this method, move the static unmodifiable(Object) method inside
@@ -298,6 +299,7 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * performs its work using Java reflection.
      *
      * @see #isModifiable()
+     * @see #checkWritePermission()
      */
     public synchronized void freeze() {
         if (isModifiable()) {
@@ -318,6 +320,9 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * change.
      *
      * @throws UnmodifiableMetadataException if this metadata is unmodifiable.
+     *
+     * @see #isModifiable()
+     * @see #freeze()
      */
     protected void checkWritePermission() throws UnmodifiableMetadataException {
         assert Thread.holdsLock(this);
@@ -354,21 +359,30 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * Copies the content of one list ({@code source}) into an other ({@code target}).
-     * First, the {@link #checkWritePermission()} method is invoked in order to ensure that
-     * this metadata is modifiable. Next the content of the given list is copied in the given
-     * target list. If the target list is {@code null}, a new one is created.
+     * This method performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Invokes {@link #checkWritePermission()} in order to ensure that this metadata is
+     *       modifiable.</li>
+     *   <li>If {@code source} is null, returns {@code null} (meaning that the metadata is
+     *       not provided).</li>
+     *   <li>If {@code target} is null, creates a new {@link List}.</li>
+     *   <li>Copies the content of the given {@code source} into the target.</li>
+     * </ul>
      *
      * @param  <E>         The type of elements in the list.
-     * @param  source      The source list. {@code null} is synonymous to empty.
+     * @param  source      The source list, or {@code null}.
      * @param  target      The target list, or {@code null} if not yet created.
      * @param  elementType The base type of elements to put in the list.
-     * @return {@code target}, or a newly created list.
+     * @return A list (possibly the {@code target} instance) containing the {@code source}
+     *         elements, or {@code null} if the source was null.
      * @throws UnmodifiableMetadataException if this metadata is unmodifiable.
      *
      * @see #nonNullList(List, Class)
      *
      * @since 2.5
      */
+    @SuppressWarnings("unchecked")
     protected final <E> List<E> copyList(final Collection<? extends E> source,
             List<E> target, final Class<E> elementType)
             throws UnmodifiableMetadataException
@@ -376,10 +390,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         // See the comments in copyCollection(...) for implementation notes.
         if (source != target) {
             if (unmodifiable == FREEZING) {
-                @SuppressWarnings("unchecked")
-                final List<E> unmodifiable = (List<E>) source; // NOSONAR
-                assert !isModifiable(unmodifiable);
-                return unmodifiable;
+                assert !isModifiable(source);
+                return (List<E>) source;
             }
             checkWritePermission();
             if (source == null) {
@@ -398,21 +410,30 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * Copies the content of one Set ({@code source}) into an other ({@code target}).
-     * First, the {@link #checkWritePermission()} method is invoked in order to ensure that
-     * this metadata is modifiable. Next the content of the given collection is copied in
-     * the given target Set. If the target Set is {@code null}, a new one is created.
+     * This method performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Invokes {@link #checkWritePermission()} in order to ensure that this metadata is
+     *       modifiable.</li>
+     *   <li>If {@code source} is null, returns {@code null} (meaning that the metadata is
+     *       not provided).</li>
+     *   <li>If {@code target} is null, creates a new {@link Set}.</li>
+     *   <li>Copies the content of the given {@code source} into the target.</li>
+     * </ul>
      *
-     * @param  <E>         The type of elements in the Set.
-     * @param  source      The source Set. {@code null} is synonymous to empty.
-     * @param  target      The target Set, or {@code null} if not yet created.
-     * @param  elementType The base type of elements to put in the Set.
-     * @return {@code target}, or a newly created Set.
+     * @param  <E>         The type of elements in the set.
+     * @param  source      The source set, or {@code null}.
+     * @param  target      The target set, or {@code null} if not yet created.
+     * @param  elementType The base type of elements to put in the set.
+     * @return A set (possibly the {@code target} instance) containing the {@code source}
+     *         elements, or {@code null} if the source was null.
      * @throws UnmodifiableMetadataException if this metadata is unmodifiable.
      *
      * @see #nonNullSet(Set, Class)
      *
      * @since 3.02
      */
+    @SuppressWarnings("unchecked")
     protected final <E> Set<E> copySet(final Collection<? extends E> source,
             Set<E> target, final Class<E> elementType)
             throws UnmodifiableMetadataException
@@ -420,10 +441,8 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
         // See the comments in copyCollection(...) for implementation notes.
         if (source != target) {
             if (unmodifiable == FREEZING) {
-                @SuppressWarnings("unchecked")
-                final Set<E> unmodifiable = (Set<E>) source; // NOSONAR
-                assert !isModifiable(unmodifiable);
-                return unmodifiable;
+                assert !isModifiable(source);
+                return (Set<E>) source;
             }
             checkWritePermission();
             if (source == null) {
@@ -442,10 +461,17 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * Copies the content of one collection ({@code source}) into an other ({@code target}).
-     * First, the {@link #checkWritePermission()} method is invoked in order to ensure that
-     * this metadata is modifiable. Next the content of the given collection is copied in
-     * the given target collection. If the target collection is {@code null}, a new one is
-     * created.
+     * This method performs the following steps:
+     * <p>
+     * <ul>
+     *   <li>Invokes {@link #checkWritePermission()} in order to ensure that this metadata is
+     *       modifiable.</li>
+     *   <li>If {@code source} is null, returns {@code null} (meaning that the metadata is
+     *       not provided).</li>
+     *   <li>If {@code target} is null, creates a new {@link Set} or a new {@link List}
+     *       depending on the value returned by {@link #collectionType(Class)}.</li>
+     *   <li>Copies the content of the given {@code source} into the target.</li>
+     * </ul>
      *
      * {@section Choosing a collection type}
      * Implementations shall invoke {@link #copyList copyList} or {@link #copySet copySet}
@@ -455,12 +481,14 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
      * in order to get a hint about whatever a {@link List} or a {@link Set} should be used.
      *
      * @param  <E>         The type of elements in the collection.
-     * @param  source      The source collection. {@code null} is synonymous to empty.
+     * @param  source      The source collection, or {@code null}.
      * @param  target      The target collection, or {@code null} if not yet created.
      * @param  elementType The base type of elements to put in the collection.
-     * @return {@code target}, or a newly created collection.
+     * @return A collection (possibly the {@code target} instance) containing the {@code source}
+     *         elements, or {@code null} if the source was null.
      * @throws UnmodifiableMetadataException if this metadata is unmodifiable.
      */
+    @SuppressWarnings("unchecked")
     protected final <E> Collection<E> copyCollection(final Collection<? extends E> source,
             Collection<E> target, final Class<E> elementType)
             throws UnmodifiableMetadataException
@@ -476,11 +504,9 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
                  * freeze() method is under progress. The source collection is already
                  * an unmodifiable instance created by unmodifiable(Object).
                  */
-                @SuppressWarnings("unchecked")
-                final Collection<E> unmodifiable = (Collection<E>) source;
-                assert collectionType(elementType).isAssignableFrom(unmodifiable.getClass());
-                assert !isModifiable(unmodifiable);
-                return unmodifiable;
+                assert collectionType(elementType).isAssignableFrom(source.getClass());
+                assert !isModifiable(source);
+                return (Collection<E>) source;
             }
             checkWritePermission();
             if (source == null) {
@@ -657,14 +683,15 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
 
     /**
      * Returns the type of collection to use for the given type. The current implementation can
-     * return only two values: {@code Set.class} if the attribute should not accept duplicated
-     * values, or {@code List.class} otherwise. Future Geotk versions may accept other types.
+     * return only two values: <code>{@linkplain Set}.class</code> if the attribute should not
+     * accept duplicated values, or <code>{@linkplain List}.class</code> otherwise. Future Geotk
+     * versions may accept other types.
      * <p>
-     * The default implementation returns {@code Set.class} if the element type is assignable to
-     * {@link Enum} or {@link CodeList}, and {@code List.class} otherwise. Subclasses can override
-     * this method for specifying different kind of collections. Note however that {@link Set}
-     * should be used only with immutable element type, for {@linkplain Object#hashCode() hash
-     * code} stability.
+     * The default implementation returns <code>{@linkplain Set}.class</code> if the element type
+     * is assignable to {@link Enum} or {@link CodeList}, and <code>{@linkplain List}.class</code>
+     * otherwise. Subclasses can override this method for choosing different kind of collections.
+     * <em>Note however that {@link Set} should be used only with immutable element types</em>,
+     * for {@linkplain Object#hashCode() hash code} stability.
      *
      * @param  <E> The type of elements in the collection to be created.
      * @param  elementType The type of elements in the collection to be created.

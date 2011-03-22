@@ -37,7 +37,7 @@ import static org.geotoolkit.test.image.ImageTestBase.SAMPLE_TOLERANCE;
  * Assertion methods used by the Geotk project in addition of the JUnit and GeoAPI assertions.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.16 (derived from 3.00)
  */
@@ -121,6 +121,28 @@ public class Assert extends org.opengis.test.Assert {
      * @since 3.17
      */
     public static void assertDomEquals(final Object expected, final Object actual, final String... ignoredAttributes) {
+        assertDomEquals(expected, actual, 0, ignoredAttributes);
+    }
+
+    /**
+     * Parses two XML tree as DOM documents, and compares the nodes with the given tolerance
+     * threshold for numerical values. The inputs given to this method can be any of the types
+     * documented {@linkplain #assertDomEquals(Object, Object, String[]) above}. This method
+     * will ignore comments and the optional attributes given in arguments.
+     *
+     * @param  expected  The expected XML document.
+     * @param  actual    The XML document to compare.
+     * @param  tolerance The tolerance threshold for comparison of numerical values.
+     * @param  ignoredAttributes The fully-qualified names of attributes to ignore
+     *         (typically {@code "xmlns:*"} and {@code "xsi:schemaLocation"}).
+     *
+     * @see DomComparator
+     *
+     * @since 3.18
+     */
+    public static void assertDomEquals(final Object expected, final Object actual,
+            final double tolerance, final String... ignoredAttributes)
+    {
         final DomComparator comparator;
         try {
             comparator = new DomComparator(expected, actual);
@@ -135,6 +157,7 @@ public class Assert extends org.opengis.test.Assert {
         } catch (SAXException e) {
             throw new AssertionError(e); // TODO: multi-catch with JDK 7.
         }
+        comparator.tolerance = tolerance;
         comparator.ignoreComments = true;
         comparator.ignoredAttributes.addAll(Arrays.asList(ignoredAttributes));
         comparator.compare();

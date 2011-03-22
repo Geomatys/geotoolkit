@@ -113,10 +113,7 @@ public final class MetadataProxyTest {
         assertEquals("okay", identifier.getCode());
 
         assertSame(identifier, proxy.getImageQualityCode());
-        final Identifier other = proxy.getProcessingLevelCode();
-        assertNotSame(identifier, other);
-        assertNull(other.getAuthority());
-        assertNull(other.getCode());
+        assertNull(proxy.getProcessingLevelCode());
     }
 
     /**
