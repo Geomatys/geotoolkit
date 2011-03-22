@@ -17,14 +17,8 @@
 package org.geotoolkit.process.vector.clipgeometry;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.Point;
-
-import java.util.ListIterator;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
@@ -32,11 +26,8 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -75,43 +66,6 @@ public class ClipGeometry extends AbstractProcess {
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-    }
-
-    /**
-     * Change the geometry descriptor to Geometry for clipping.
-     * @param oldFeatureType FeatureType
-     * @return newFeatureType FeatureType
-     */
-    public static FeatureType changeFeatureType(final FeatureType oldFeatureType) {
-
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-
-        ftb.copy(oldFeatureType);
-
-        final ListIterator<PropertyDescriptor> ite = ftb.getProperties().listIterator();
-
-        while (ite.hasNext()) {
-
-            final PropertyDescriptor desc = ite.next();
-            if (desc instanceof GeometryDescriptor) {
-
-                GeometryType type = (GeometryType) desc.getType();
-                //if type bunding =! Point
-                if (!Point.class.isAssignableFrom(type.getBinding())) {
-
-                    final AttributeDescriptorBuilder descBuilder = new AttributeDescriptorBuilder();
-                    final AttributeTypeBuilder typeBuilder = new AttributeTypeBuilder();
-                    descBuilder.copy((AttributeDescriptor) desc);
-                    typeBuilder.copy(type);
-                    typeBuilder.setBinding(Geometry.class);
-                    descBuilder.setType(typeBuilder.buildGeometryType());
-                    final PropertyDescriptor newDesc = descBuilder.buildDescriptor();
-                    ite.set(newDesc);
-                }
-            }
-        }
-
-        return ftb.buildFeatureType();
     }
 
     /**

@@ -20,17 +20,16 @@ import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
 
-import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorDescriptor;
+import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -42,12 +41,9 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Process to simplify geometry contained into a Features.
@@ -129,7 +125,7 @@ public class DouglasPeucker extends AbstractProcess {
                 Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
 
                 //create custom projection for the geometry
-                final MathTransform projection = DouglasPeucker.changeProjection(convertEnvelope, longLatCRS, unit);
+                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, unit);
                 //Apply the custom projection to geometry
                 final Geometry calculatedGeom = JTS.transform(convertedGeometry, projection);
                 convertEnvelope = calculatedGeom.getEnvelopeInternal();
@@ -160,71 +156,5 @@ public class DouglasPeucker extends AbstractProcess {
         return resultFeature;
     }
 
-    /**
-     * Create a custom projection (Conic or Mercator) for the geometry using the
-     * geometry envelope.
-     * @param geomEnvelope Geometry bounding envelope
-     * @param longLatCRS WGS84 projection
-     * @param unit unit wanted for the geometry
-     * @return MathTransform
-     * @throws NoSuchIdentifierException
-     * @throws FactoryException
-     */
-    private static MathTransform changeProjection(final Envelope geomEnvelope, final GeographicCRS longLatCRS,
-            final Unit<Length> unit) throws NoSuchIdentifierException, FactoryException {
-        
-        //collect data to create the projection
-        final double centerMeridian = geomEnvelope.getWidth() / 2 + geomEnvelope.getMinX();
-        final double centerParallal = geomEnvelope.getHeight() / 2 + geomEnvelope.getMinY();
-        final double northParallal = geomEnvelope.getMaxY() - geomEnvelope.getHeight() / 3;
-        final double southParallal = geomEnvelope.getMinY() + geomEnvelope.getHeight() / 3;
-
-        boolean conicProjection = true;
-        //if the geomery is near the equator we use the mercator projection
-        if (geomEnvelope.getMaxY() > 0 && geomEnvelope.getMinY() < 0) {
-            conicProjection = false;
-        }
-        //conicProjection = true;
-        
-        //create geometry lambert projection or mercator projection
-        final Ellipsoid ellipsoid = longLatCRS.getDatum().getEllipsoid();
-        double semiMajorAxis = ellipsoid.getSemiMajorAxis();
-        double semiMinorAxis = ellipsoid.getSemiMinorAxis();
-
-        Unit<Length> projectionUnit = ellipsoid.getAxisUnit();
-        //check for unit conversion
-        if (unit != projectionUnit) {
-            UnitConverter converter = projectionUnit.getConverterTo(unit);
-            semiMajorAxis = converter.convert(semiMajorAxis);
-            semiMinorAxis = converter.convert(semiMinorAxis);
-        }
-
-        final MathTransformFactory f = AuthorityFactoryFinder.getMathTransformFactory(null);
-        ParameterValueGroup p;
-        if (conicProjection) {
-            
-            p = f.getDefaultParameters("Albers_Conic_Equal_Area");
-            p.parameter("semi_major").setValue(semiMajorAxis);
-            p.parameter("semi_minor").setValue(semiMinorAxis);
-            p.parameter("central_meridian").setValue(centerMeridian);
-            p.parameter("standard_parallel_1").setValue(northParallal);
-            p.parameter("standard_parallel_2").setValue(southParallal);
-        } else {
-
-            p = f.getDefaultParameters("Mercator_2SP");
-            p.parameter("semi_major").setValue(semiMajorAxis);
-            p.parameter("semi_minor").setValue(semiMinorAxis);
-            p.parameter("central_meridian").setValue(centerMeridian);
-            p.parameter("standard_parallel_1").setValue(centerParallal);
-        }
-        
-        /*final MathTransformFactory f = AuthorityFactoryFinder.getMathTransformFactory(null);
-        ParameterValueGroup p = f.getDefaultParameters("Stereographic");
-        p.parameter("semi_major").setValue(semiMajorAxis);
-        p.parameter("semi_minor").setValue(semiMajorAxis);//TODO use semiMinorAxis
-        p.parameter("central_meridian").setValue(centerMeridian);
-        p.parameter("latitude_of_origin").setValue(centerParallal);*/
-
-        return f.createParameterizedTransform(p);
-    }
+    
 }

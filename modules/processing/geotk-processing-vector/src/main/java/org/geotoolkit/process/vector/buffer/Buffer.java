@@ -19,41 +19,30 @@ package org.geotoolkit.process.vector.buffer;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 
-import java.util.ListIterator;
-import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
-import org.geotoolkit.feature.AttributeDescriptorBuilder;
-import org.geotoolkit.feature.AttributeTypeBuilder;
-import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorDescriptor;
+import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
-import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
-import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
-import org.opengis.referencing.datum.Ellipsoid;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
-import org.opengis.util.NoSuchIdentifierException;
 
 /**
  * Process buffer, create a buffer around Feature's geometry and
@@ -136,7 +125,7 @@ public class Buffer extends AbstractProcess {
                 Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
 
                 //create custom projection for the geometry
-                final MathTransform projection = Buffer.changeProjection(convertEnvelope, longLatCRS, unit);
+                final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, unit);
 
                 //Apply the custom projection to geometry
                 final Geometry calculatedGeom = JTS.transform(convertedGeometry, projection);
@@ -155,101 +144,5 @@ public class Buffer extends AbstractProcess {
             }
         }
         return resultFeature;
-
-    }
-
-     /**
-     * Change the geometry descriptor to Geometry.
-     * @param oldFeatureType FeatureType
-     * @return newFeatureType FeatureType
-     */
-    public static FeatureType changeFeatureType(final FeatureType oldFeatureType) {
-
-        final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-
-        ftb.copy(oldFeatureType);
-
-        final ListIterator<PropertyDescriptor> ite = ftb.getProperties().listIterator();
-
-        while (ite.hasNext()) {
-
-            final PropertyDescriptor desc = ite.next();
-            if (desc instanceof GeometryDescriptor) {
-
-                GeometryType type = (GeometryType) desc.getType();
-
-                final AttributeDescriptorBuilder descBuilder = new AttributeDescriptorBuilder();
-                final AttributeTypeBuilder typeBuilder = new AttributeTypeBuilder();
-                descBuilder.copy((AttributeDescriptor) desc);
-                typeBuilder.copy(type);
-                typeBuilder.setBinding(Geometry.class);
-                descBuilder.setType(typeBuilder.buildGeometryType());
-                final PropertyDescriptor newDesc = descBuilder.buildDescriptor();
-                ite.set(newDesc);
-            }
-        }
-
-        return ftb.buildFeatureType();
-    }
-
-    /**
-     * Create a custom projection (Conic or Mercator) for the geometry using the
-     * geometry envelope.
-     * @param geomEnvelope Geometry bounding envelope
-     * @param longLatCRS WGS84 projection
-     * @param unit unit wanted for the geometry
-     * @return MathTransform
-     * @throws NoSuchIdentifierException
-     * @throws FactoryException
-     */
-    private static MathTransform changeProjection(final Envelope geomEnvelope, final GeographicCRS longLatCRS,
-            final Unit<Length> unit) throws NoSuchIdentifierException, FactoryException {
-
-        //collect data to create the projection
-        final double centerMeridian = geomEnvelope.getWidth() / 2 + geomEnvelope.getMinX();
-        final double centerParallal = geomEnvelope.getHeight() / 2 + geomEnvelope.getMinY();
-        final double northParallal = geomEnvelope.getMaxY() - geomEnvelope.getHeight() / 3;
-        final double southParallal = geomEnvelope.getMinY() + geomEnvelope.getHeight() / 3;
-
-        boolean conicProjection = true;
-        //if the geomery is near the equator we use the mercator projection
-        if (geomEnvelope.getMaxY() > 0 && geomEnvelope.getMinY() < 0) {
-            conicProjection = false;
-        }
-        //conicProjection = true;
-
-        //create geometry lambert projection or mercator projection
-        final Ellipsoid ellipsoid = longLatCRS.getDatum().getEllipsoid();
-        double semiMajorAxis = ellipsoid.getSemiMajorAxis();
-        double semiMinorAxis = ellipsoid.getSemiMinorAxis();
-
-        Unit<Length> projectionUnit = ellipsoid.getAxisUnit();
-        //check for unit conversion
-        if (unit != projectionUnit) {
-            UnitConverter converter = projectionUnit.getConverterTo(unit);
-            semiMajorAxis = converter.convert(semiMajorAxis);
-            semiMinorAxis = converter.convert(semiMinorAxis);
-        }
-
-        final MathTransformFactory f = AuthorityFactoryFinder.getMathTransformFactory(null);
-        ParameterValueGroup p;
-        if (conicProjection) {
-
-            p = f.getDefaultParameters("Albers_Conic_Equal_Area");
-            p.parameter("semi_major").setValue(semiMajorAxis);
-            p.parameter("semi_minor").setValue(semiMinorAxis);
-            p.parameter("central_meridian").setValue(centerMeridian);
-            p.parameter("standard_parallel_1").setValue(northParallal);
-            p.parameter("standard_parallel_2").setValue(southParallal);
-        } else {
-
-            p = f.getDefaultParameters("Mercator_2SP");
-            p.parameter("semi_major").setValue(semiMajorAxis);
-            p.parameter("semi_minor").setValue(semiMinorAxis);
-            p.parameter("central_meridian").setValue(centerMeridian);
-            p.parameter("standard_parallel_1").setValue(centerParallal);
-        }
-
-        return f.createParameterizedTransform(p);
     }
 }

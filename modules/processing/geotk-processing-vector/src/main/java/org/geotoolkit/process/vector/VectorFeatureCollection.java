@@ -17,6 +17,7 @@
 package org.geotoolkit.process.vector;
 
 import java.util.Map;
+import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -28,6 +29,7 @@ import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 
 /**
@@ -38,6 +40,7 @@ import org.opengis.filter.Filter;
 public abstract class VectorFeatureCollection extends AbstractFeatureCollection<Feature> {
 
     private final FeatureCollection<?> originalFC;
+    private final FeatureType featureType;
 
     /**
      * Connect to the original FeatureConnection
@@ -46,6 +49,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
     public VectorFeatureCollection(final FeatureCollection<?> originalFC) {
         super(originalFC.getID(), originalFC.getSource());
         this.originalFC = originalFC;
+        this.featureType = originalFC.getFeatureType();
     }
 
     /**
@@ -60,6 +64,15 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      */
     protected FeatureCollection<?> getOriginalFeatureCollection() {
         return originalFC;
+    }
+
+    /**
+     * Return the new FeatureType
+     * @return FeatureType
+     */
+    @Override
+    public FeatureType getFeatureType() {
+        return featureType;
     }
 
     /**
@@ -111,14 +124,15 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
         return false;
     }
 
-    /**
-     * Implementation of FeatureIterator for VectorFeatureCollection
+   /**
+     * Implementation of FeatureIterator for BufferFeatureCollection
      * @author Quentin Boileau
      * @module pending
      */
     private class VectorFeatureIterator implements FeatureIterator<Feature> {
 
         private final FeatureIterator<?> originalFI;
+        private Feature nextFeature;
 
         /**
          * Connect to the original FeatureIterator
@@ -126,6 +140,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
          */
         public VectorFeatureIterator(final FeatureIterator<?> originalFI) {
             this.originalFI = originalFI;
+            nextFeature = null;
         }
 
         /**
@@ -134,7 +149,15 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
          */
         @Override
         public Feature next() {
-            return modify(originalFI.next());
+            findNext();
+
+            if (nextFeature == null) {
+                throw new NoSuchElementException("No more Feature.");
+            }
+
+            Feature feat = nextFeature;
+            nextFeature = null;
+            return feat;
         }
 
         /**
@@ -150,7 +173,8 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
          */
         @Override
         public boolean hasNext() {
-            return originalFI.hasNext();
+            findNext();
+            return nextFeature != null;
         }
 
         /**
@@ -159,6 +183,19 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
         @Override
         public void remove() {
             throw new DataStoreRuntimeException("Unmodifiable collection");
+        }
+
+        /**
+         * Find the next feature using clipping process
+         */
+        private void findNext() {
+            if (nextFeature != null) {
+                return;
+            }
+
+            while (nextFeature == null && originalFI.hasNext()) {
+                nextFeature = modify(originalFI.next());
+            }
         }
     }
 }

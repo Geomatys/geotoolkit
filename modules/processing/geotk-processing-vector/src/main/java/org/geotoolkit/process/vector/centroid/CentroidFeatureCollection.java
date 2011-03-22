@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.process.vector.centroid;
 
+import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.vector.VectorFeatureCollection;
+import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -37,7 +39,7 @@ public class CentroidFeatureCollection extends VectorFeatureCollection {
      */
     public CentroidFeatureCollection(FeatureCollection<Feature> originalFC) {
         super(originalFC);
-        this.newFeatureType = Centroid.changeFeatureType(super.getOriginalFeatureCollection().getFeatureType());
+        this.newFeatureType = VectorProcessUtils.changeFeatureType(super.getFeatureType(), Point.class);
     }
 
     /**

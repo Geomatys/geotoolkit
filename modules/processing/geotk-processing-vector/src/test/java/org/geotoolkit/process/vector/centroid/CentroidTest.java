@@ -69,7 +69,6 @@ public class CentroidTest {
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
 
