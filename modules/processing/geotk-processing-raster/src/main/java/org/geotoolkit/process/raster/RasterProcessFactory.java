@@ -14,32 +14,29 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector;
+package org.geotoolkit.process.raster;
 
 import java.util.Collections;
 
-import org.geotoolkit.process.vector.centroid.CentroidDescriptor;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
-import org.geotoolkit.process.vector.clip.ClipDescriptor;
-import org.geotoolkit.process.vector.clipgeometry.ClipGeometryDescriptor;
-import org.geotoolkit.process.vector.douglaspeucker.DouglasPeuckerDescriptor;
+import org.geotoolkit.process.raster.coveragetofeatures.CoverageToFeaturesDescriptor;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
 
 /**
- * Factory for vector process
- * Factory name : "vector"
- * @author Quentin Boileau
+ * Factory for raster process
+ * Factory name : "raster"
+ * @author Quentin Boleau
  * @module pending
  */
-public class VectorProcessFactory extends AbstractProcessFactory {
+public class RasterProcessFactory extends AbstractProcessFactory {
 
     /**Factory name*/
-    public static final String NAME = "vector";
+    public static final String NAME = "raster";
     static final DefaultServiceIdentification IDENTIFICATION;
 
     static {
@@ -53,9 +50,8 @@ public class VectorProcessFactory extends AbstractProcessFactory {
     /**
      * Default constructor 
      */
-    public VectorProcessFactory() {
-        super(CentroidDescriptor.INSTANCE, ClipGeometryDescriptor.INSTANCE, ClipDescriptor.INSTANCE,
-                DouglasPeuckerDescriptor.INSTANCE);
+    public RasterProcessFactory() {
+        super(CoverageToFeaturesDescriptor.INSTANCE);
     }
 
     /**

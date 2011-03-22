@@ -42,7 +42,7 @@ import static org.junit.Assert.*;
 
 /**
  * Junit test of Centroid process
- * @author Quentin Boleau
+ * @author Quentin Boileau
  * @module pending
  */
 public class CentroidTest {

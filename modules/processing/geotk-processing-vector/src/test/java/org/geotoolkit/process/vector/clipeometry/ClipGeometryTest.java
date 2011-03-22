@@ -43,7 +43,7 @@ import static org.junit.Assert.*;
 
 /**
  * Junit test of clip with a geometry process
- * @author Quentin Boleau
+ * @author Quentin Boileau
  * @module pending
  */
 public class ClipGeometryTest {

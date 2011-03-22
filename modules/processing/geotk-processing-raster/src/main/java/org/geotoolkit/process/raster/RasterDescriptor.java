@@ -14,9 +14,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector;
+package org.geotoolkit.process.raster;
 
-import org.geotoolkit.data.FeatureCollection;
+import java.util.Collection;
+
+import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -26,30 +28,30 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * Input and output descriptor for vector process.
+ * Input and output descriptor for raster process.
  * Inputs :
  * <ul>
- *     <li>FEATURE_IN "feature_in" FeatureCollection to clip</li>
+ *     <li>FEATURE_IN "reader_in" input GridCoverageReader</li>
  * </ul>
  * Outputs :
  * <ul>
- *     <li>FEATURE_OUT "feature_out" FeatureCollection clipped</li>
+ *     <li>FEATURE_OUT "feature_out" Features Collection </li>
  * </ul>
  * @author Quentin Boileau
  * @module pending
  */
-public abstract class VectorDescriptor extends AbstractProcessDescriptor {
+public abstract class RasterDescriptor extends AbstractProcessDescriptor {
 
     /**
-     * Mandatory - Feature Collection
+     * Mandatory - CoverageReader
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_IN =
-            new DefaultParameterDescriptor("feature_in", "Inpute Feature", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<GridCoverageReader> READER_IN =
+            new DefaultParameterDescriptor("reader_in", "Inpute GridCoverageReader", GridCoverageReader.class, null, true);
     /**
      * Mandatory - Resulting Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_OUT =
-            new DefaultParameterDescriptor("feature_out", "Outpute Feature", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<Collection<Feature>> FEATURE_OUT =
+            new DefaultParameterDescriptor("feature_out", "Outpute Feature", Collection.class, null, true);
 
     /**
      * Default constructor
@@ -58,10 +60,10 @@ public abstract class VectorDescriptor extends AbstractProcessDescriptor {
      * @param input : process input
      * @param output : process output
      */
-    protected VectorDescriptor(String name, String msg,
+    protected RasterDescriptor(String name, String msg,
             ParameterDescriptorGroup input, ParameterDescriptorGroup output) {
 
-        super(name, VectorProcessFactory.IDENTIFICATION,
+        super(name, RasterProcessFactory.IDENTIFICATION,
                 new SimpleInternationalString(msg),
                 input, output);
     }

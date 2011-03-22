@@ -48,11 +48,11 @@ import org.opengis.feature.type.GeometryDescriptor;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of clip with a geometry process
- * @author Quentin Boleau
+ * Junit test douglas peucker simplification on FeatureCollection
+ * @author Quentin Boileau
  * @module pending
  */
-public class TestDouglasPeucker {
+public class DouglasPeuckerTest {
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
@@ -233,9 +233,9 @@ public class TestDouglasPeucker {
         try {
             type = createSimpleType();
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
@@ -293,9 +293,9 @@ public class TestDouglasPeucker {
         try {
             type = createSimpleType();
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
@@ -329,9 +329,9 @@ public class TestDouglasPeucker {
         try {
             type = createSimpleType();
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);
@@ -382,9 +382,9 @@ public class TestDouglasPeucker {
         try {
             type = createSimpleType();
         } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
         } catch (FactoryException ex) {
-            Logger.getLogger(ClipGeometryTest.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DouglasPeuckerTest.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("", type);

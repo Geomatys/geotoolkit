@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * <ul>
  *     <li>FEATURE_OUT "feature_out" FeatureCollection simplified</li>
  * </ul>
- * @author Quentin Boleau
+ * @author Quentin Boileau
  * @module pending
  */
 final public class DouglasPeuckerDescriptor extends VectorDescriptor {

@@ -83,7 +83,7 @@ public class DouglasPeuckerFeatureCollection extends VectorFeatureCollection {
      */
     @Override
     public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
-        return new ClipGeometryFeatureIterator(getOriginalFeatureCollection().iterator());
+        return new DouglasPeuckerFeatureIterator(getOriginalFeatureCollection().iterator());
     }
 
     /**
@@ -107,7 +107,7 @@ public class DouglasPeuckerFeatureCollection extends VectorFeatureCollection {
      * @author Quentin Boileau
      * @module pending
      */
-    private class ClipGeometryFeatureIterator implements FeatureIterator<Feature> {
+    private class DouglasPeuckerFeatureIterator implements FeatureIterator<Feature> {
 
         private final FeatureIterator<?> originalFI;
         private Feature nextFeature;
@@ -116,7 +116,7 @@ public class DouglasPeuckerFeatureCollection extends VectorFeatureCollection {
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
-        public ClipGeometryFeatureIterator(final FeatureIterator<?> originalFI) {
+        public DouglasPeuckerFeatureIterator(final FeatureIterator<?> originalFI) {
             this.originalFI = originalFI;
             nextFeature = null;
         }
