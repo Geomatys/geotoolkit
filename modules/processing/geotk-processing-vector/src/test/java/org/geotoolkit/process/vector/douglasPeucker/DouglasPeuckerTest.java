@@ -61,7 +61,7 @@ public class DouglasPeuckerTest {
     /**
      * Test DouglasPeucker process with in input two Feature into a FeatureCollection
      * Feature projection should be conic for the first and mercator for second one.
-     * The accuracy of the precision is set to 10 and the "delete small geometry"
+     * The accuracy of the simplification is set to 10 and the "delete small geometry"
      * disable.
      *
      */

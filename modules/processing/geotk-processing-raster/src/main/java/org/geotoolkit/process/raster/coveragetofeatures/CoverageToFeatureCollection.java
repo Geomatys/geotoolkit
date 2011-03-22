@@ -83,14 +83,14 @@ public class CoverageToFeatureCollection extends RasterFeatureCollection {
      * @return the Feature
      */
     @Override
-    protected Feature create(int x, int y) {
+    protected Feature create(int x, int y) throws DataStoreRuntimeException {
         Feature feat = null;
         try {
             feat = CoverageToFeatures.convertToFeature(getFeatureType(), x, y, coverage, reader, gridGeom);
         } catch (CoverageStoreException ex) {
-            Logger.getLogger(CoverageToFeatureCollection.class.getName()).log(Level.SEVERE, null, ex);
+           throw new DataStoreRuntimeException(ex);
         } catch (TransformException ex) {
-            Logger.getLogger(CoverageToFeatureCollection.class.getName()).log(Level.SEVERE, null, ex);
+           throw new DataStoreRuntimeException(ex);
         }
         return feat;
     }

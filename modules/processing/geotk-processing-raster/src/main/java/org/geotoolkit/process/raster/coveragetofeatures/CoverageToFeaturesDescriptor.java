@@ -60,7 +60,7 @@ final public class CoverageToFeaturesDescriptor extends RasterDescriptor {
      * Default constructor
      */
     private CoverageToFeaturesDescriptor() {
-        super(NAME, "", INPUT_DESC, OUTPUT_DESC);
+        super(NAME, "Parameter description of Coverage to Feature process.", INPUT_DESC, OUTPUT_DESC);
     }
 
     /**

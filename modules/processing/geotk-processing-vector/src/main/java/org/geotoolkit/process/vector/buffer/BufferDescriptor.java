@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.douglaspeucker;
+package org.geotoolkit.process.vector.buffer;
 
 import javax.measure.unit.Unit;
 
@@ -29,50 +29,40 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * Parameters description for DouglasPeucker process.
- * Simplify Feature geometry
- * Name of the process : "douglaspeucker"
+ * Parameters description for Buffer process.
+ * Make a geometry buffer around Features geometry
+ * Name of the process : "buffer"
  * Inputs :
  * <ul>
  *     <li>FEATURE_IN "feature_in" FeatureCollection to clip</li>
- *     <li>ACCURACY_IN "accuracy_in" simplification accuracy</li>
+ *     <li>DISTANCE_IN "distance_in" buffer distance</li>
  *     <li>UNIT_IN "unit_in" simplification unit</li>
- *     <li>DEL_SMALL_GEO_IN "del_small_geo_in" Simplification behavior with small geometry</li>
  *     <li>LENIENT_TRANSFORM_IN "lenient_transform_in" CRS transformation accuracy</li>
  * </ul>
- * outputs :
+ * Outputs :
  * <ul>
- *     <li>FEATURE_OUT "feature_out" FeatureCollection simplified</li>
+ *     <li>FEATURE_OUT "feature_out" FeatureCollection buffered</li>
  * </ul>
  * @author Quentin Boileau
  * @module pending
  */
-final public class DouglasPeuckerDescriptor extends VectorDescriptor {
+final public class BufferDescriptor extends VectorDescriptor {
 
-    /**Process name : douglaspeucker */
-    public static final String NAME = "douglasPeucker";
+    /**Process name : buffer */
+    public static final String NAME = "buffer";
     /**
-     * Mandatory - Simplification accuracy
+     * Mandatory - Buffer distance
      */
-    public static final ParameterDescriptor<Double> ACCURACY_IN=
-            new DefaultParameterDescriptor("accuracy_in", "Input simplification accuracy", Double.class, null, true);
+    public static final ParameterDescriptor<Double> DISTANCE_IN=
+            new DefaultParameterDescriptor("distance_in", "Input buffer distance", Double.class, null, true);
 
     /**
-     * Mandatory - Simplification unit
+     * Mandatory - Distance unit
      */
     public static final ParameterDescriptor<Unit> UNIT_IN=
             new DefaultParameterDescriptor("unit_in", "Input simplification unit", Unit.class, null, true);
 
-     /**
-     * Optional - Simplification behavior
-     */
-    public static final ParameterDescriptor<Boolean> DEL_SMALL_GEO_IN=
-            new DefaultParameterDescriptor("del_small_geo_in", "Input boolean to set process behavior with small geometry",
-                                            Boolean.class, null, false);
-
-    /**
-     * Optional - Simplification behavior
-     */
+  
     public static final ParameterDescriptor<Boolean> LENIENT_TRANSFORM_IN=
             new DefaultParameterDescriptor("lenient_transform_in", "Input boolean to set accuracy CRS transformation",
                                             Boolean.class, true, false);
@@ -80,7 +70,7 @@ final public class DouglasPeuckerDescriptor extends VectorDescriptor {
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, ACCURACY_IN, UNIT_IN, DEL_SMALL_GEO_IN, LENIENT_TRANSFORM_IN});
+            new GeneralParameterDescriptor[]{FEATURE_IN, DISTANCE_IN, UNIT_IN, LENIENT_TRANSFORM_IN});
 
     /**Output parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
@@ -88,13 +78,13 @@ final public class DouglasPeuckerDescriptor extends VectorDescriptor {
             new GeneralParameterDescriptor[]{FEATURE_OUT});
 
     /**Instance */
-    public static final ProcessDescriptor INSTANCE = new DouglasPeuckerDescriptor();
+    public static final ProcessDescriptor INSTANCE = new BufferDescriptor();
 
     /**
      * Default constructor
      */
-    private DouglasPeuckerDescriptor() {
-        super(NAME, "Simplify a FeatureCollection geometry with Douglas Pucker algorithm", INPUT_DESC, OUTPUT_DESC);
+    private BufferDescriptor() {
+        super(NAME, "Apply buffer function to a FeatureCollection geometry", INPUT_DESC, OUTPUT_DESC);
     }
 
     /**
@@ -102,6 +92,6 @@ final public class DouglasPeuckerDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess() {
-        return new DouglasPeucker();
+        return new Buffer();
     }
 }
