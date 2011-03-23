@@ -27,6 +27,7 @@ import org.geotoolkit.process.vector.buffer.BufferDescriptor;
 import org.geotoolkit.process.vector.clip.ClipDescriptor;
 import org.geotoolkit.process.vector.clipgeometry.ClipGeometryDescriptor;
 import org.geotoolkit.process.vector.douglaspeucker.DouglasPeuckerDescriptor;
+import org.geotoolkit.process.vector.intersect.IntersectDescriptor;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -56,7 +57,7 @@ public class VectorProcessFactory extends AbstractProcessFactory {
      */
     public VectorProcessFactory() {
         super(CentroidDescriptor.INSTANCE, ClipGeometryDescriptor.INSTANCE, ClipDescriptor.INSTANCE,
-                DouglasPeuckerDescriptor.INSTANCE,BufferDescriptor.INSTANCE);
+                DouglasPeuckerDescriptor.INSTANCE,BufferDescriptor.INSTANCE, IntersectDescriptor.INSTANCE);
     }
 
     /**

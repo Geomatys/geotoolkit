@@ -27,6 +27,7 @@ import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.lang.Static;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
@@ -46,7 +47,10 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module pending
  */
-public class VectorProcessUtils {
+@Static
+public final class VectorProcessUtils {
+
+    private VectorProcessUtils(){}
 
      /**
      * Change the geometry descriptor to Geometry.
