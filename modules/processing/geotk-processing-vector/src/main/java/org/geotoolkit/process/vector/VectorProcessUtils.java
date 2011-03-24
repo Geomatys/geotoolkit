@@ -14,7 +14,6 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-
 package org.geotoolkit.process.vector;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -41,7 +40,6 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.util.FactoryException;
 import org.opengis.util.NoSuchIdentifierException;
 
-
 /**
  * Set of function and methods used by vector process
  * @author Quentin Boileau
@@ -50,9 +48,10 @@ import org.opengis.util.NoSuchIdentifierException;
 @Static
 public final class VectorProcessUtils {
 
-    private VectorProcessUtils(){}
+    private VectorProcessUtils() {
+    }
 
-     /**
+    /**
      * Change the geometry descriptor to Geometry.
      * @param oldFeatureType FeatureType
      * @param class the new type of geometry
@@ -147,5 +146,4 @@ public final class VectorProcessUtils {
 
         return f.createParameterizedTransform(p);
     }
-
 }

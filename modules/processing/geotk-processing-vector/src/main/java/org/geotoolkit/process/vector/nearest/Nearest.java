@@ -17,14 +17,11 @@
 package org.geotoolkit.process.vector.nearest;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -51,8 +48,6 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -64,7 +59,7 @@ import org.opengis.util.FactoryException;
 public class Nearest extends AbstractProcess {
 
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-                                                new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+            new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     ParameterValueGroup result;
 
     /**
@@ -89,39 +84,38 @@ public class Nearest extends AbstractProcess {
     public void run() {
         try {
             final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
-            Geometry interGeom= Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
-            CoordinateReferenceSystem crs =  JTS.findCoordinateReferenceSystem(interGeom);
-            
+            Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
+            CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(interGeom);
+
             /* 
-            * If geometry crs is null, we consider that the geometry and FeatureCollection are
-            * in the same projection.
-            */
-            if(crs != null){
-                if(crs != inputFeatureList.getFeatureType().getCoordinateReferenceSystem()){
+             * If geometry crs is null, we consider that the geometry and FeatureCollection are
+             * in the same projection.
+             */
+            if (crs != null) {
+                if (crs != inputFeatureList.getFeatureType().getCoordinateReferenceSystem()) {
                     interGeom = JTS.transform(interGeom,
                             CRS.findMathTransform(crs, inputFeatureList.getFeatureType().getCoordinateReferenceSystem()));
                 }
             }
-            
-            final NearestFeatureCollection resultFeatureList = 
-                    new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)), interGeom);
+
+            final NearestFeatureCollection resultFeatureList =
+                    new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
 
             result = super.getOutput();
             result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-            
+
         } catch (NoSuchAuthorityCodeException ex) {
             getMonitor().failed(new ProcessEvent(this, 0, null, ex));
         } catch (FactoryException ex) {
             getMonitor().failed(new ProcessEvent(this, 0, null, ex));
         } catch (DataStoreException ex) {
             getMonitor().failed(new ProcessEvent(this, 0, null, ex));
-        }catch (MismatchedDimensionException ex) {
+        } catch (MismatchedDimensionException ex) {
             getMonitor().failed(new ProcessEvent(this, 0, null, ex));
         } catch (TransformException ex) {
             getMonitor().failed(new ProcessEvent(this, 0, null, ex));
         }
     }
-
 
     /**
      * Create a query to filter nearest feature to the geometry
@@ -129,7 +123,7 @@ public class Nearest extends AbstractProcess {
      * @param geom
      * @return nearest query filter
      */
-    private Query nearestQuery (final FeatureCollection<Feature> original, final Geometry geom){
+    private Query nearestQuery(final FeatureCollection<Feature> original, final Geometry geom) {
 
         double dist = Double.POSITIVE_INFINITY;
         final Collection<Identifier> listID = new ArrayList<Identifier>();
@@ -141,14 +135,14 @@ public class Nearest extends AbstractProcess {
                 if (property.getDescriptor() instanceof GeometryDescriptor) {
 
                     final double computedDist = geom.distance((Geometry) property.getValue());
-                    
-                    if(computedDist < dist){
+
+                    if (computedDist < dist) {
                         listID.clear();
                         dist = computedDist;
                         listID.add(feature.getIdentifier());
 
-                    }else {
-                        if(computedDist == dist){
+                    } else {
+                        if (computedDist == dist) {
                             listID.add(feature.getIdentifier());
                         }
                     }

@@ -59,8 +59,8 @@ public class VectorProcessFactory extends AbstractProcessFactory {
      */
     public VectorProcessFactory() {
         super(CentroidDescriptor.INSTANCE, ClipGeometryDescriptor.INSTANCE, ClipDescriptor.INSTANCE,
-                DouglasPeuckerDescriptor.INSTANCE,BufferDescriptor.INSTANCE, IntersectDescriptor.INSTANCE,
-                NearestDescriptor.INSTANCE,SpacialJoinDescriptor.INSTANCE);
+                DouglasPeuckerDescriptor.INSTANCE, BufferDescriptor.INSTANCE, IntersectDescriptor.INSTANCE,
+                NearestDescriptor.INSTANCE, SpacialJoinDescriptor.INSTANCE);
     }
 
     /**

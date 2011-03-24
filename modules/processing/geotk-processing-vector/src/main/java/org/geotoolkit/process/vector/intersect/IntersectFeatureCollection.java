@@ -48,7 +48,7 @@ public class IntersectFeatureCollection extends VectorFeatureCollection {
     private final FeatureType newFeatureType;
     private final Geometry interGeom;
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-                                                new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+            new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
     /**
      * Connect to the original FeatureConnection with an intersection filter
@@ -79,7 +79,7 @@ public class IntersectFeatureCollection extends VectorFeatureCollection {
      */
     @Override
     public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
-        return  (FeatureIterator<Feature>) GenericFilterFeatureIterator.wrap(getOriginalFeatureCollection().iterator(null), createFilter());
+        return (FeatureIterator<Feature>) GenericFilterFeatureIterator.wrap(getOriginalFeatureCollection().iterator(null), createFilter());
     }
 
     /**
@@ -95,15 +95,15 @@ public class IntersectFeatureCollection extends VectorFeatureCollection {
      * and feature geometries
      * @return the intersect filter
      */
-    private Filter createFilter(){
+    private Filter createFilter() {
 
         List<Filter> filterList = new ArrayList<Filter>();
         Collection<PropertyDescriptor> descList = this.newFeatureType.getDescriptors();
         Iterator<PropertyDescriptor> descIter = descList.iterator();
 
-        while(descIter.hasNext()){
+        while (descIter.hasNext()) {
             PropertyDescriptor property = descIter.next();
-            if(property instanceof GeometryDescriptor){
+            if (property instanceof GeometryDescriptor) {
 
                 final Filter filter = FF.intersects(FF.property(property.getName()), FF.literal(interGeom));
                 filterList.add(filter);

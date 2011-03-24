@@ -28,7 +28,7 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * Parameter description of clip process.
+ * Parameter description of Intersect process.
  * name of the process : "intersect"
  * inputs :
  * <ul>

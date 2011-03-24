@@ -46,23 +46,19 @@ final public class NearestDescriptor extends VectorDescriptor {
 
     /**Process name : nearest */
     public static final String NAME = "nearest";
-
     /**
      * Mandatory - Intersection geometry
      */
     public static final ParameterDescriptor<Geometry> GEOMETRY_IN =
             new DefaultParameterDescriptor("geometry_in", "Input geometry", Geometry.class, null, true);
-
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
             new GeneralParameterDescriptor[]{FEATURE_IN, GEOMETRY_IN});
-
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
             new GeneralParameterDescriptor[]{FEATURE_OUT});
-
     /** Instance */
     public static final ProcessDescriptor INSTANCE = new NearestDescriptor();
 
@@ -72,6 +68,7 @@ final public class NearestDescriptor extends VectorDescriptor {
     private NearestDescriptor() {
         super(NAME, "Return the nearest Feature(s) in a FeatureCollection with the inputGeometry", INPUT_DESC, OUTPUT_DESC);
     }
+
     /**
      *  {@inheritDoc }
      */

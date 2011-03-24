@@ -86,7 +86,6 @@ public class NearestTest {
         assertTrue(featureListOut.containsAll(featureListResult));
     }
 
-
     private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
@@ -148,12 +147,10 @@ public class NearestTest {
         return featureList;
     }
 
-    
-
     private static FeatureCollection<?> buildResultList() {
 
 
-         try {
+        try {
             type = createSimpleType();
         } catch (NoSuchAuthorityCodeException ex) {
             Logger.getLogger(NearestTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -179,13 +176,13 @@ public class NearestTest {
     private Geometry buildIntersectionGeometry() {
 
         LinearRing ring = geometryFactory.createLinearRing(
-                   new Coordinate[]{
-                   new Coordinate(4.0, 2.0),
-                   new Coordinate(4.0, 3.0),
-                   new Coordinate(5.0, 3.0),
-                   new Coordinate(5.0, 2.0),
-                   new Coordinate(4.0, 2.0)
-               });
+                new Coordinate[]{
+                    new Coordinate(4.0, 2.0),
+                    new Coordinate(4.0, 3.0),
+                    new Coordinate(5.0, 3.0),
+                    new Coordinate(5.0, 2.0),
+                    new Coordinate(4.0, 2.0)
+                });
 
         return geometryFactory.createPolygon(ring, null);
     }

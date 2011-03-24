@@ -17,7 +17,6 @@
 package org.geotoolkit.process.vector.intersect;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.Parameters;
@@ -33,9 +32,6 @@ import org.opengis.parameter.ParameterValueGroup;
  * @module pending
  */
 public class Intersect extends AbstractProcess {
-    
-    private static final GeometryFactory GF = new GeometryFactory();
-
 
     ParameterValueGroup result;
 
@@ -62,10 +58,9 @@ public class Intersect extends AbstractProcess {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(IntersectDescriptor.FEATURE_IN, inputParameters);
         final Geometry interGeom = Parameters.value(IntersectDescriptor.GEOMETRY_IN, inputParameters);
 
-        final IntersectFeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList,interGeom);
+        final IntersectFeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList, interGeom);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
     }
-
 }

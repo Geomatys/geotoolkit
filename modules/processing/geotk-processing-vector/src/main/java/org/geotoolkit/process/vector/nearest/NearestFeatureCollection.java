@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.process.vector.nearest;
 
-import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.process.vector.VectorFeatureCollection;
 
@@ -31,16 +30,14 @@ import org.opengis.feature.type.FeatureType;
 public class NearestFeatureCollection extends VectorFeatureCollection {
 
     private final FeatureType newFeatureType;
-    private final Geometry geom;
 
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      * @param clippingList 
      */
-    public NearestFeatureCollection(final FeatureCollection<Feature> originalFC, final Geometry geom) {
+    public NearestFeatureCollection(final FeatureCollection<Feature> originalFC) {
         super(originalFC);
-        this.geom = geom;
         this.newFeatureType = super.getFeatureType();
     }
 

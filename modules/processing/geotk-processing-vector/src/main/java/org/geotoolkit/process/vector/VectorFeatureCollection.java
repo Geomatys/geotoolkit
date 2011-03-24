@@ -124,7 +124,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
         return false;
     }
 
-   /**
+    /**
      * Implementation of FeatureIterator for BufferFeatureCollection
      * @author Quentin Boileau
      * @module pending

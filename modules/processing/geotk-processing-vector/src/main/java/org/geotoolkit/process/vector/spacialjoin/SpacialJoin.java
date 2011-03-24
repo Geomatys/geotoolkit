@@ -17,15 +17,12 @@
 package org.geotoolkit.process.vector.spacialjoin;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryFactory;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -46,7 +43,6 @@ import org.opengis.feature.type.AttributeType;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.filter.FilterFactory2;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
@@ -57,9 +53,6 @@ import org.opengis.parameter.ParameterValueGroup;
  */
 public class SpacialJoin extends AbstractProcess {
 
-    private static final GeometryFactory GF = new GeometryFactory();
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-            new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     ParameterValueGroup result;
 
     /**
@@ -115,7 +108,7 @@ public class SpacialJoin extends AbstractProcess {
 
         //copy target Feature
         for (Property targetProperty : target.getProperties()) {
-               resultFeature.getProperty(targetProperty.getName()).setValue(targetProperty.getValue());
+            resultFeature.getProperty(targetProperty.getName()).setValue(targetProperty.getValue());
         }
 
         ProcessDescriptor desc;
@@ -167,9 +160,9 @@ public class SpacialJoin extends AbstractProcess {
                     }
 
                 } else {//nearest method
-                    if(featureOutArray.isEmpty()){
+                    if (featureOutArray.isEmpty()) {
                         return resultFeature;
-                    }else{
+                    } else {
                         resultFeature = copyAttributes(target, featureOutArray.get(0), newType);
                     }
                 }
@@ -193,14 +186,14 @@ public class SpacialJoin extends AbstractProcess {
 
         //copy target Feature
         for (Property targetProperty : target.getProperties()) {
-               resultFeature.getProperty(targetProperty.getName()).setValue(targetProperty.getValue());
+            resultFeature.getProperty(targetProperty.getName()).setValue(targetProperty.getValue());
         }
 
-         //copy source Feature except geometry descriptor
+        //copy source Feature except geometry descriptor
         for (Property sourceProperty : source.getProperties()) {
-            if(!(sourceProperty.getDescriptor() instanceof GeometryDescriptor)){
+            if (!(sourceProperty.getDescriptor() instanceof GeometryDescriptor)) {
 
-               resultFeature.getProperty(sourceProperty.getName().getLocalPart()+"_"+source.getType().getName().getLocalPart()).setValue(sourceProperty.getValue());
+                resultFeature.getProperty(sourceProperty.getName().getLocalPart() + "_" + source.getType().getName().getLocalPart()).setValue(sourceProperty.getValue());
             }
         }
 
@@ -254,10 +247,10 @@ public class SpacialJoin extends AbstractProcess {
     static FeatureType concatType(FeatureType targetType, FeatureType sourceType) {
 
         boolean isSameName = false;
-        
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.copy(targetType);
-        ftb.setName(targetType.getName().getLocalPart()+"+"+sourceType.getName().getLocalPart());
+        ftb.setName(targetType.getName().getLocalPart() + "+" + sourceType.getName().getLocalPart());
         final Iterator<PropertyDescriptor> iteSource = sourceType.getDescriptors().iterator();
         while (iteSource.hasNext()) {
 
@@ -272,17 +265,17 @@ public class SpacialJoin extends AbstractProcess {
                 final AttributeTypeBuilder typeBuilder = new AttributeTypeBuilder();
                 descBuilder.copy((AttributeDescriptor) sourceDesc);
                 typeBuilder.copy(property);
-                
+
                 //test if exist in targetType
                 final Iterator<PropertyDescriptor> iteTarget = sourceType.getDescriptors().iterator();
-                while(iteTarget.hasNext()){
+                while (iteTarget.hasNext()) {
                     final PropertyDescriptor targetDesc = iteTarget.next();
-                    if(targetDesc.getName() == sourceDesc.getName()){
+                    if (targetDesc.getName() == sourceDesc.getName()) {
                         isSameName = true;
                     }
                 }
-                if(isSameName){
-                    final String newName = sourceDesc.getName().getLocalPart()+"_"+sourceType.getName().getLocalPart();
+                if (isSameName) {
+                    final String newName = sourceDesc.getName().getLocalPart() + "_" + sourceType.getName().getLocalPart();
                     typeBuilder.setName(newName);
                     descBuilder.setName(newName);
                 }

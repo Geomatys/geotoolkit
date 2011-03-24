@@ -62,7 +62,7 @@ public class SpacialJoinTest {
         // Inputs
         final FeatureCollection<?> targetFeatures = buildFeatureList1();
         final FeatureCollection<?> sourceFeatures = buildFeatureList2();
-        
+
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "spacialjoin");
         org.geotoolkit.process.Process proc = desc.createProcess();
@@ -78,11 +78,6 @@ public class SpacialJoinTest {
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-        System.out.println("############################################################################################ RESULT");
-        for (Feature feature : featureListOut) {
-            System.out.println(feature);
-        }
-
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultNear();
@@ -91,7 +86,6 @@ public class SpacialJoinTest {
         assertEquals(featureListOut.size(), featureListResult.size());
         assertTrue(featureListOut.containsAll(featureListResult));
     }
-
 
     /**
      * Test SpacialJoin process with Intersection method
@@ -118,11 +112,6 @@ public class SpacialJoinTest {
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-        System.out.println("############################################################################################ RESULT");
-        for (Feature feature : featureListOut) {
-            System.out.println(feature);
-        }
-
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultInter();
@@ -132,8 +121,7 @@ public class SpacialJoinTest {
         assertTrue(featureListOut.containsAll(featureListResult));
     }
 
-
-        /**
+    /**
      * Test SpacialJoin process with Intersection method and no intersection
      */
     @Test
@@ -158,10 +146,7 @@ public class SpacialJoinTest {
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-        System.out.println("############################################################################################ RESULT");
-        for (Feature feature : featureListOut) {
-            System.out.println(feature);
-        }
+
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultInter2();
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
@@ -169,12 +154,11 @@ public class SpacialJoinTest {
         assertTrue(featureListOut.containsAll(featureListResult));
     }
 
-
     private static SimpleFeatureType createSimpleType1() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("SJ_Type1");
         ftb.add("name", String.class);
-        ftb.add("age",Integer.class);
+        ftb.add("age", Integer.class);
         ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
         ftb.setDefaultGeometry("geom1");
         final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
@@ -185,7 +169,7 @@ public class SpacialJoinTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("SJ_Type2");
         ftb.add("type", String.class);
-        ftb.add("age",Integer.class);
+        ftb.add("age", Integer.class);
         ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
         ftb.setDefaultGeometry("geom1");
         final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
@@ -196,10 +180,10 @@ public class SpacialJoinTest {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("SJ_Type1+SJ_Type2");
         ftb.add("name", String.class);
-        ftb.add("age",Integer.class);
+        ftb.add("age", Integer.class);
         ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
         ftb.add("type_SJ_Type2", String.class);
-        ftb.add("age_SJ_Type2",Integer.class);
+        ftb.add("age_SJ_Type2", Integer.class);
         ftb.setDefaultGeometry("geom1");
         final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
         return sft;
@@ -262,8 +246,7 @@ public class SpacialJoinTest {
         return featureList;
     }
 
-
-     private static FeatureCollection<?> buildFeatureList2() {
+    private static FeatureCollection<?> buildFeatureList2() {
 
         try {
             type = createSimpleType2();
@@ -337,12 +320,12 @@ public class SpacialJoinTest {
         feature1.getProperty("age").setValue(1);
 
         LinearRing ring = geometryFactory.createLinearRing(new Coordinate[]{
-            new Coordinate(4, 3),
-            new Coordinate(4, 5),
-            new Coordinate(7, 5),
-            new Coordinate(7, 3),
-            new Coordinate(4, 3)
-        });
+                    new Coordinate(4, 3),
+                    new Coordinate(4, 5),
+                    new Coordinate(7, 5),
+                    new Coordinate(7, 3),
+                    new Coordinate(4, 3)
+                });
 
         feature1.getProperty("geom1").setValue(geometryFactory.createPolygon(ring, null));
         featureList.add(feature1);
@@ -350,7 +333,7 @@ public class SpacialJoinTest {
         return featureList;
     }
 
-     private static FeatureCollection<?> buildFeatureListInter1_2() {
+    private static FeatureCollection<?> buildFeatureListInter1_2() {
 
         try {
             type = createSimpleType1();
@@ -367,12 +350,12 @@ public class SpacialJoinTest {
         feature1.getProperty("age").setValue(1);
 
         LinearRing ring = geometryFactory.createLinearRing(new Coordinate[]{
-            new Coordinate(40, 30),
-            new Coordinate(40, 50),
-            new Coordinate(70, 50),
-            new Coordinate(70, 30),
-            new Coordinate(40, 30)
-        });
+                    new Coordinate(40, 30),
+                    new Coordinate(40, 50),
+                    new Coordinate(70, 50),
+                    new Coordinate(70, 30),
+                    new Coordinate(40, 30)
+                });
 
         feature1.getProperty("geom1").setValue(geometryFactory.createPolygon(ring, null));
         featureList.add(feature1);
@@ -396,12 +379,12 @@ public class SpacialJoinTest {
         feature1.getProperty("type").setValue("something1");
         feature1.getProperty("age").setValue(1);
         LinearRing ring = geometryFactory.createLinearRing(new Coordinate[]{
-            new Coordinate(1, 3),
-            new Coordinate(1, 5),
-            new Coordinate(2, 5),
-            new Coordinate(2, 3),
-            new Coordinate(1, 3)
-        });
+                    new Coordinate(1, 3),
+                    new Coordinate(1, 5),
+                    new Coordinate(2, 5),
+                    new Coordinate(2, 3),
+                    new Coordinate(1, 3)
+                });
         feature1.getProperty("geom1").setValue(geometryFactory.createPolygon(ring, null));
         featureList.add(feature1);
 
@@ -409,12 +392,12 @@ public class SpacialJoinTest {
         feature2.getProperty("type").setValue("something2");
         feature2.getProperty("age").setValue(2);
         ring = geometryFactory.createLinearRing(new Coordinate[]{
-            new Coordinate(3, 2),
-            new Coordinate(3, 6),
-            new Coordinate(5, 6),
-            new Coordinate(5, 2),
-            new Coordinate(3, 2)
-        });
+                    new Coordinate(3, 2),
+                    new Coordinate(3, 6),
+                    new Coordinate(5, 6),
+                    new Coordinate(5, 2),
+                    new Coordinate(3, 2)
+                });
         feature2.getProperty("geom1").setValue(geometryFactory.createPolygon(ring, null));
         featureList.add(feature2);
 
@@ -422,12 +405,12 @@ public class SpacialJoinTest {
         feature3.getProperty("type").setValue("something3");
         feature3.getProperty("age").setValue(3);
         ring = geometryFactory.createLinearRing(new Coordinate[]{
-            new Coordinate(6, 4),
-            new Coordinate(6, 6),
-            new Coordinate(8, 6),
-            new Coordinate(8, 4),
-            new Coordinate(6, 4)
-        });
+                    new Coordinate(6, 4),
+                    new Coordinate(6, 6),
+                    new Coordinate(8, 6),
+                    new Coordinate(8, 4),
+                    new Coordinate(6, 4)
+                });
         feature3.getProperty("geom1").setValue(geometryFactory.createPolygon(ring, null));
         featureList.add(feature3);
 
@@ -435,19 +418,19 @@ public class SpacialJoinTest {
         feature4.getProperty("type").setValue("something4");
         feature4.getProperty("age").setValue(4);
         ring = geometryFactory.createLinearRing(new Coordinate[]{
-            new Coordinate(7, 2),
-            new Coordinate(7, 3),
-            new Coordinate(8, 3),
-            new Coordinate(8, 2),
-            new Coordinate(7, 2)
-        });
+                    new Coordinate(7, 2),
+                    new Coordinate(7, 3),
+                    new Coordinate(8, 3),
+                    new Coordinate(8, 2),
+                    new Coordinate(7, 2)
+                });
         feature4.getProperty("geom1").setValue(geometryFactory.createPolygon(ring, null));
         featureList.add(feature4);
 
         return featureList;
     }
 
-     private static FeatureCollection<?> buildResultNear() {
+    private static FeatureCollection<?> buildResultNear() {
         try {
             type = createSimpleTypeResult();
         } catch (NoSuchAuthorityCodeException ex) {
@@ -519,7 +502,7 @@ public class SpacialJoinTest {
 
     private static FeatureCollection<?> buildResultInter() {
 
-         try {
+        try {
             type = createSimpleTypeResult();
         } catch (NoSuchAuthorityCodeException ex) {
             Logger.getLogger(SpacialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -529,17 +512,17 @@ public class SpacialJoinTest {
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
 
-       final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01");
+        final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01");
         feature1.getProperty("name").setValue("Field");
         feature1.getProperty("age").setValue(1);
 
         LinearRing ring = geometryFactory.createLinearRing(new Coordinate[]{
-            new Coordinate(4, 3),
-            new Coordinate(4, 5),
-            new Coordinate(7, 5),
-            new Coordinate(7, 3),
-            new Coordinate(4, 3)
-        });
+                    new Coordinate(4, 3),
+                    new Coordinate(4, 5),
+                    new Coordinate(7, 5),
+                    new Coordinate(7, 3),
+                    new Coordinate(4, 3)
+                });
 
         feature1.getProperty("geom1").setValue(geometryFactory.createPolygon(ring, null));
         feature1.getProperty("type_SJ_Type2").setValue("something2");
@@ -551,7 +534,7 @@ public class SpacialJoinTest {
 
     private static FeatureCollection<?> buildResultInter2() {
 
-         try {
+        try {
             type = createSimpleTypeResult();
         } catch (NoSuchAuthorityCodeException ex) {
             Logger.getLogger(SpacialJoinTest.class.getName()).log(Level.SEVERE, null, ex);
@@ -561,17 +544,17 @@ public class SpacialJoinTest {
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
 
-       final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01");
+        final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01");
         feature1.getProperty("name").setValue("Field");
         feature1.getProperty("age").setValue(1);
 
         LinearRing ring = geometryFactory.createLinearRing(new Coordinate[]{
-            new Coordinate(40, 30),
-            new Coordinate(40, 50),
-            new Coordinate(70, 50),
-            new Coordinate(70, 30),
-            new Coordinate(40, 30)
-        });
+                    new Coordinate(40, 30),
+                    new Coordinate(40, 50),
+                    new Coordinate(70, 50),
+                    new Coordinate(70, 30),
+                    new Coordinate(40, 30)
+                });
 
         feature1.getProperty("geom1").setValue(geometryFactory.createPolygon(ring, null));
         feature1.getProperty("type_SJ_Type2").setValue(null);

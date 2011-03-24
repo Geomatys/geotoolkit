@@ -45,8 +45,7 @@ public class SpacialJoinFeatureCollection extends VectorFeatureCollection {
         super(targetFC);
         this.sourceFC = sourceFC;
         this.method = method;
-        this.newFeatureType = SpacialJoin.concatType(targetFC.getFeatureType(), sourceFC.getFeatureType()) ;
-        System.out.println(newFeatureType);
+        this.newFeatureType = SpacialJoin.concatType(targetFC.getFeatureType(), sourceFC.getFeatureType());
     }
 
     /**
@@ -63,6 +62,6 @@ public class SpacialJoinFeatureCollection extends VectorFeatureCollection {
      */
     @Override
     protected Feature modify(final Feature original) {
-        return SpacialJoin.join(original,newFeatureType,sourceFC,method);
+        return SpacialJoin.join(original, newFeatureType, sourceFC, method);
     }
 }

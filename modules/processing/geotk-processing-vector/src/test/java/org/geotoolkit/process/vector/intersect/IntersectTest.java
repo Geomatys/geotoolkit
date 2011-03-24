@@ -84,7 +84,6 @@ public class IntersectTest {
         assertTrue(featureListOut.containsAll(featureListResult));
     }
 
-
     private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
@@ -122,7 +121,7 @@ public class IntersectTest {
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature1");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", geometryFactory.createPoint(new Coordinate(3.5,3.5)));
+        sfb.set("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -174,8 +173,6 @@ public class IntersectTest {
         return featureList;
     }
 
-    
-
     private static FeatureCollection<?> buildResultList() {
 
 
@@ -202,7 +199,7 @@ public class IntersectTest {
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature1");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", geometryFactory.createPoint(new Coordinate(3.5,3.5)));
+        sfb.set("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -237,13 +234,13 @@ public class IntersectTest {
     private Geometry buildIntersectionGeometry() {
 
         LinearRing ring = geometryFactory.createLinearRing(
-                   new Coordinate[]{
-                   new Coordinate(2.0, 2.0),
-                   new Coordinate(2.0, 5.0),
-                   new Coordinate(7.0, 5.0),
-                   new Coordinate(7.0, 2.0),
-                   new Coordinate(2.0, 2.0)
-               });
+                new Coordinate[]{
+                    new Coordinate(2.0, 2.0),
+                    new Coordinate(2.0, 5.0),
+                    new Coordinate(7.0, 5.0),
+                    new Coordinate(7.0, 2.0),
+                    new Coordinate(2.0, 2.0)
+                });
 
         return geometryFactory.createPolygon(ring, null);
     }
