@@ -78,7 +78,7 @@ public class IntersectFeatureCollection extends VectorFeatureCollection {
      * @throws DataStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
         return (FeatureIterator<Feature>) GenericFilterFeatureIterator.wrap(getOriginalFeatureCollection().iterator(null), createFilter());
     }
 
@@ -97,12 +97,12 @@ public class IntersectFeatureCollection extends VectorFeatureCollection {
      */
     private Filter createFilter() {
 
-        List<Filter> filterList = new ArrayList<Filter>();
-        Collection<PropertyDescriptor> descList = this.newFeatureType.getDescriptors();
-        Iterator<PropertyDescriptor> descIter = descList.iterator();
+        final List<Filter> filterList = new ArrayList<Filter>();
+        final Collection<PropertyDescriptor> descList = this.newFeatureType.getDescriptors();
+        final Iterator<PropertyDescriptor> descIter = descList.iterator();
 
         while (descIter.hasNext()) {
-            PropertyDescriptor property = descIter.next();
+            final PropertyDescriptor property = descIter.next();
             if (property instanceof GeometryDescriptor) {
 
                 final Filter filter = FF.intersects(FF.property(property.getName()), FF.literal(interGeom));
@@ -110,8 +110,6 @@ public class IntersectFeatureCollection extends VectorFeatureCollection {
             }
         }
 
-        Filter resultFilter = FF.or(filterList);
-
-        return resultFilter;
+        return  FF.or(filterList);
     }
 }

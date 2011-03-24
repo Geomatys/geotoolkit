@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-final public class SpacialJoinDescriptor extends VectorDescriptor {
+public final class SpacialJoinDescriptor extends VectorDescriptor {
 
     /**Process name : spacialjoin */
     public static final String NAME = "spacialjoin";

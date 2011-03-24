@@ -79,7 +79,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      *  {@inheritDoc }
      */
     @Override
-    public FeatureCollection<Feature> subCollection(Query query) throws DataStoreException {
+    public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
@@ -91,7 +91,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      * @throws DataStoreRuntimeException
      */
     @Override
-    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
         return new VectorFeatureIterator(originalFC.iterator());
     }
 
@@ -102,7 +102,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      * @throws DataStoreException
      */
     @Override
-    public void update(Filter filter, Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
+    public void update(final Filter filter, final Map<? extends AttributeDescriptor, ? extends Object> values) throws DataStoreException {
         throw new DataStoreException("Unmodifiable collection");
     }
 
@@ -112,7 +112,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      * @throws DataStoreException
      */
     @Override
-    public void remove(Filter filter) throws DataStoreException {
+    public void remove(final Filter filter) throws DataStoreException {
         throw new DataStoreException("Unmodifiable collection");
     }
 
@@ -155,7 +155,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
                 throw new NoSuchElementException("No more Feature.");
             }
 
-            Feature feat = nextFeature;
+            final Feature feat = nextFeature;
             nextFeature = null;
             return feat;
         }

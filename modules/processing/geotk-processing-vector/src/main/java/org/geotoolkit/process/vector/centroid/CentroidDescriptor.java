@@ -38,7 +38,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-final public class CentroidDescriptor extends VectorDescriptor {
+public final class CentroidDescriptor extends VectorDescriptor {
 
     /**Process name : centroid */
     public static final String NAME = "centroid";

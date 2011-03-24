@@ -42,7 +42,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-final public class IntersectDescriptor extends VectorDescriptor {
+public final class IntersectDescriptor extends VectorDescriptor {
 
     /**Process name : intersect */
     public static final String NAME = "intersect";

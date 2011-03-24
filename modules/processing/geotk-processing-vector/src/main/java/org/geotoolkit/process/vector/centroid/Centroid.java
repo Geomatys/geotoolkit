@@ -73,7 +73,7 @@ public class Centroid extends AbstractProcess {
      * @param newType the new FeatureType for the Feature
      * @return Feature
      */
-    public static Feature changeFeature(Feature oldFeature, FeatureType newType) {
+    public static Feature changeFeature(final Feature oldFeature, final FeatureType newType) {
 
         //create result feature based on the new feature type and th input feature
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());

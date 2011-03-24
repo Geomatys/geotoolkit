@@ -42,7 +42,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-final public class NearestDescriptor extends VectorDescriptor {
+public final class NearestDescriptor extends VectorDescriptor {
 
     /**Process name : nearest */
     public static final String NAME = "nearest";

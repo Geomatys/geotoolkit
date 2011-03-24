@@ -44,7 +44,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-final public class ClipGeometryDescriptor extends VectorDescriptor {
+public final class ClipGeometryDescriptor extends VectorDescriptor {
 
     /**Process name : clipGeometry */
     public static final String NAME = "clipGeometry";

@@ -129,7 +129,6 @@ public class Buffer extends AbstractProcess {
 
                 //Apply the custom projection to geometry
                 final Geometry calculatedGeom = JTS.transform(convertedGeometry, projection);
-                convertEnvelope = calculatedGeom.getEnvelopeInternal();
 
                 //create buffer around the geometry
                 Geometry bufferedGeometry = calculatedGeom.buffer(distance);

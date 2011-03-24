@@ -85,7 +85,7 @@ public class Nearest extends AbstractProcess {
         try {
             final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
             Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
-            CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(interGeom);
+            final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(interGeom);
 
             /* 
              * If geometry crs is null, we consider that the geometry and FeatureCollection are

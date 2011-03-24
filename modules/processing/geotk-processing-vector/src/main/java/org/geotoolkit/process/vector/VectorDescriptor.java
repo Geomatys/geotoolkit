@@ -58,8 +58,8 @@ public abstract class VectorDescriptor extends AbstractProcessDescriptor {
      * @param input : process input
      * @param output : process output
      */
-    protected VectorDescriptor(String name, String msg,
-            ParameterDescriptorGroup input, ParameterDescriptorGroup output) {
+    protected VectorDescriptor(final String name, final String msg,
+            final ParameterDescriptorGroup input, final ParameterDescriptorGroup output) {
 
         super(name, VectorProcessFactory.IDENTIFICATION,
                 new SimpleInternationalString(msg),

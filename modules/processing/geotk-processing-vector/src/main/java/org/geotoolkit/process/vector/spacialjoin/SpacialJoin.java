@@ -114,6 +114,7 @@ public class SpacialJoin extends AbstractProcess {
         ProcessDescriptor desc;
         org.geotoolkit.process.Process proc;
         ParameterValueGroup in;
+        ArrayList<Feature> featureOutArray;
 
         //for each feature geometry
         for (Property property : target.getProperties()) {
@@ -143,7 +144,7 @@ public class SpacialJoin extends AbstractProcess {
                 final FeatureCollection<Feature> featureOut =
                         (FeatureCollection<Feature>) proc.getOutput().parameter("feature_out").getValue();
 
-                final ArrayList<Feature> featureOutArray = new ArrayList<Feature>(featureOut);
+                featureOutArray = new ArrayList<Feature>(featureOut);
 
                 if (method) {//intersect method
 
@@ -244,9 +245,13 @@ public class SpacialJoin extends AbstractProcess {
      * @param sourceType source FeatureType
      * @return the new FeatureType
      */
-    static FeatureType concatType(FeatureType targetType, FeatureType sourceType) {
+    static FeatureType concatType(final FeatureType targetType, final FeatureType sourceType) {
 
         boolean isSameName = false;
+        AttributeType property;
+        AttributeDescriptorBuilder descBuilder;
+        AttributeTypeBuilder typeBuilder;
+
 
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.copy(targetType);
@@ -259,10 +264,10 @@ public class SpacialJoin extends AbstractProcess {
             //add all descriptors but geometry 
             if (!(sourceDesc instanceof GeometryDescriptor)) {
 
-                final AttributeType property = (AttributeType) sourceDesc.getType();
+                property = (AttributeType) sourceDesc.getType();
 
-                final AttributeDescriptorBuilder descBuilder = new AttributeDescriptorBuilder();
-                final AttributeTypeBuilder typeBuilder = new AttributeTypeBuilder();
+                descBuilder = new AttributeDescriptorBuilder();
+                typeBuilder = new AttributeTypeBuilder();
                 descBuilder.copy((AttributeDescriptor) sourceDesc);
                 typeBuilder.copy(property);
 

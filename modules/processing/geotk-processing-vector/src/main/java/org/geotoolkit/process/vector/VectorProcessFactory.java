@@ -48,8 +48,8 @@ public class VectorProcessFactory extends AbstractProcessFactory {
 
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
-        Identifier id = new DefaultIdentifier(NAME);
-        DefaultCitation citation = new DefaultCitation(NAME);
+        final Identifier id = new DefaultIdentifier(NAME);
+        final DefaultCitation citation = new DefaultCitation(NAME);
         citation.setIdentifiers(Collections.singleton(id));
         IDENTIFICATION.setCitation(citation);
     }

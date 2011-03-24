@@ -17,7 +17,6 @@
 package org.geotoolkit.process.vector;
 
 import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
 import java.util.ListIterator;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
@@ -59,6 +58,9 @@ public final class VectorProcessUtils {
      */
     public static FeatureType changeFeatureType(final FeatureType oldFeatureType, final Class clazz) {
 
+        AttributeDescriptorBuilder descBuilder;
+        AttributeTypeBuilder typeBuilder;
+
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
         ftb.copy(oldFeatureType);
@@ -70,10 +72,10 @@ public final class VectorProcessUtils {
             final PropertyDescriptor desc = ite.next();
             if (desc instanceof GeometryDescriptor) {
 
-                GeometryType type = (GeometryType) desc.getType();
+                final GeometryType type = (GeometryType) desc.getType();
 
-                final AttributeDescriptorBuilder descBuilder = new AttributeDescriptorBuilder();
-                final AttributeTypeBuilder typeBuilder = new AttributeTypeBuilder();
+                descBuilder = new AttributeDescriptorBuilder();
+                typeBuilder = new AttributeTypeBuilder();
                 descBuilder.copy((AttributeDescriptor) desc);
                 typeBuilder.copy(type);
                 typeBuilder.setBinding(clazz);
@@ -117,10 +119,10 @@ public final class VectorProcessUtils {
         double semiMajorAxis = ellipsoid.getSemiMajorAxis();
         double semiMinorAxis = ellipsoid.getSemiMinorAxis();
 
-        Unit<Length> projectionUnit = ellipsoid.getAxisUnit();
+        final Unit<Length> projectionUnit = ellipsoid.getAxisUnit();
         //check for unit conversion
         if (unit != projectionUnit) {
-            UnitConverter converter = projectionUnit.getConverterTo(unit);
+            final  UnitConverter converter = projectionUnit.getConverterTo(unit);
             semiMajorAxis = converter.convert(semiMajorAxis);
             semiMinorAxis = converter.convert(semiMinorAxis);
         }

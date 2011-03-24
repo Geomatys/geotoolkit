@@ -47,7 +47,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-final public class DouglasPeuckerDescriptor extends VectorDescriptor {
+public final class DouglasPeuckerDescriptor extends VectorDescriptor {
 
     /**Process name : douglaspeucker */
     public static final String NAME = "douglasPeucker";
