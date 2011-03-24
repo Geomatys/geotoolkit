@@ -302,7 +302,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
                 }
             }
         }
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.MISSING_PARAMETER_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
     }
 
     /**
@@ -340,7 +340,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
                     ((ParameterDescriptorGroup) descriptor).descriptor(name);
             if (!(check instanceof ParameterDescriptorGroup)) {
                 throw new ParameterNotFoundException(Errors.format(
-                        Errors.Keys.MISSING_PARAMETER_$1, name), name);
+                        Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
             }
         }
         return groups;
@@ -368,7 +368,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
                 ((ParameterDescriptorGroup) descriptor).descriptor(name);
         if (!(check instanceof ParameterDescriptorGroup)) {
             throw new ParameterNotFoundException(Errors.format(
-                    Errors.Keys.MISSING_PARAMETER_$1, name), name);
+                    Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
         }
         int count = 0;
         for (final GeneralParameterValue value : values) {

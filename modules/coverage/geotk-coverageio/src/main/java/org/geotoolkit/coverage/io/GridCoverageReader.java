@@ -243,11 +243,11 @@ public abstract class GridCoverageReader extends GridCoverageStore {
     }
 
     /**
-     * Returns the ISO 19115 metadata object associated with in input source as a whole
+     * Returns the ISO 19115 metadata object associated with the input source as a whole
      * and each coverages. The default implementation constructs the metadata from the
      * {@linkplain #getStreamMetadata() stream metadata} and the
      * {@linkplain #getCoverageMetadata(int) coverage metadata},
-     * eventually completed by the {@linkplain #getGridGeometry(int)}.
+     * eventually completed by the {@link #getGridGeometry(int)}.
      * <p>
      * Since the relationship between Image I/O metadata and ISO 19115 is not always a
      * "<cite>one-to-one</cite>" relationship, this method works on a best effort basis.

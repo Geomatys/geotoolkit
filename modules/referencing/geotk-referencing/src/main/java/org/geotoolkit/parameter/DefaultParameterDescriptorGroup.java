@@ -295,7 +295,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
             }
             parameters = subgroups.remove(0).descriptors();
         }
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.MISSING_PARAMETER_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
     }
 
     /**

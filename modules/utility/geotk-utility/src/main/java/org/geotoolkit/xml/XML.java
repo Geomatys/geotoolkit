@@ -138,7 +138,7 @@ public final class XML {
      * The timezone to use for marshalling dates and times.
      *
      * {@section Default behavior}
-     * If this property is never set, then (un)marshalling will use the default
+     * If this property is never set, then (un)marshalling will use the
      * {@linkplain java.util.TimeZone#getDefault() default timezone}.
      *
      * @since 3.17
@@ -153,6 +153,8 @@ public final class XML {
      * <ul>
      *   <li>The value of the {@code codeList} attribute when marshalling subclasses of
      *       {@link org.opengis.util.CodeList} in ISO 19139 compliant XML document.</li>
+     *   <li>The value of the {@code uom} attribute when marshalling measures (for example
+     *       {@code <gco:Distance>}) in ISO 19139 compliant XML document.</li>
      * </ul>
      * <p>
      * As of Geotk 3.17, only one {@code Map} key is recognized: {@code "gmd"}, which stands

@@ -301,10 +301,7 @@ public class AsciiGridReader extends TextImageReader {
                 }
                 yll = parseDouble(ensureDefined(key, value));
             } catch (NumberFormatException cause) {
-                final IIOException ex = new IIOException(Warnings.message(
-                        this, Errors.Keys.UNPARSABLE_NUMBER_$1, key));
-                ex.initCause(cause);
-                throw ex;
+                throw new IIOException(Warnings.message(this, Errors.Keys.UNPARSABLE_NUMBER_$1, key), cause);
             }
             /*
              * The binary format, which is a Geotk extension.

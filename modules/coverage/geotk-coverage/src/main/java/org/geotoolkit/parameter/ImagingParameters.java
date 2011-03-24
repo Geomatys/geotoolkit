@@ -296,7 +296,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
                 return value;
             }
         }
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.MISSING_PARAMETER_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
     }
 
     /**
@@ -305,7 +305,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
      */
     @Override
     public List<ParameterValueGroup> groups(final String name) throws ParameterNotFoundException {
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.MISSING_PARAMETER_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
     }
 
     /**
@@ -314,7 +314,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
      */
     @Override
     public ParameterValueGroup addGroup(final String name) throws ParameterNotFoundException {
-        throw new ParameterNotFoundException(Errors.format(Errors.Keys.MISSING_PARAMETER_$1, name), name);
+        throw new ParameterNotFoundException(Errors.format(Errors.Keys.UNKNOWN_PARAMETER_NAME_$1, name), name);
     }
 
     /**

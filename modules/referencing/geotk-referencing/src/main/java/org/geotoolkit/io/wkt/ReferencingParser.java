@@ -86,7 +86,7 @@ import static org.geotoolkit.referencing.datum.DefaultVerticalDatum.getVerticalD
  * <table>
  * <tr><th>CRS type</th>  <th>WKT defaults</th><th>ISO abbreviations</th></tr>
  * <tr><td>Geographic</td><td>Lon, Lat</td>    <td>&lambda;, &phi;</td></tr>
- * <tr><td>Vertical</td>  <td>Z</td>           <td>h</td></tr>
+ * <tr><td>Vertical</td>  <td>H</td>           <td>h</td></tr>
  * <tr><td>Projected</td> <td>X, Y</td>        <td>x, y</td></tr>
  * <tr><td>Geocentric</td><td>X, Y, Z</td>     <td>X, Y, Z</td></tr>
  * </table>
@@ -933,7 +933,7 @@ public class ReferencingParser extends MathTransformParser {
         element.close();
         try {
             if (axis == null || axisIgnored) {
-                axis = createAxis(null, isoConform ? "h" : "Z", AxisDirection.UP, linearUnit);
+                axis = createAxis(null, isoConform ? "h" : "H", AxisDirection.UP, linearUnit);
             }
             return crsFactory.createVerticalCRS(properties, datum,
                     csFactory.createVerticalCS(singletonMap("name", name), axis));
