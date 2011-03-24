@@ -32,7 +32,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * name of the process : "nearest"
  * inputs :
  * <ul>
- *     <li>FEATURE_IN "feature_in" FeatureCollection to clip</li>
+ *     <li>FEATURE_IN "feature_in" FeatureCollection</li>
  *     <li>GEOMETRY_IN "geometry_in" a geometry</li>
  * </ul>
  * outputs :

@@ -14,26 +14,28 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.intersect;
+package org.geotoolkit.process.vector.spacialjoin;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.vector.VectorDescriptor;
+import org.opengis.feature.Feature;
 
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * Parameter description of clip process.
- * name of the process : "intersect"
+ * Parameters description for SpacialJoin process.
+ * name of the process : "spacialjoin"
  * inputs :
  * <ul>
- *     <li>FEATURE_IN "feature_in" FeatureCollection </li>
- *     <li>GEOMETRY_IN "geometry_in" intersect geometry</li>
+ *     <li>FEATURE_IN "feature_in" Source FeatureCollection</li>
+ *     <li>FEATURE_TARGET "feature_target" Target FeatureCollection </li>
+ *     <li>INTERSECT "intersect" Method used. true => Intersection, false => Nearest</li>
  * </ul>
  * outputs :
  * <ul>
@@ -42,43 +44,48 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-final public class IntersectDescriptor extends VectorDescriptor {
+final public class SpacialJoinDescriptor extends VectorDescriptor {
 
-    /**Process name : intersect */
-    public static final String NAME = "intersect";
+    /**Process name : spacialjoin */
+    public static final String NAME = "spacialjoin";
 
     /**
-     * Mandatory - Intersection geometry
+     * Mandatory - Target FeatureCollection
      */
-    public static final ParameterDescriptor<Geometry> GEOMETRY_IN =
-            new DefaultParameterDescriptor("geometry_in", "Input geometry", Geometry.class, null, true);
+    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_TARGET =
+            new DefaultParameterDescriptor("feature_target", "Target Features", FeatureCollection.class, null, true);
+
+     /**
+     * Optional - Method used. true => Intersection, false => Nearest
+     */
+    public static final ParameterDescriptor<Boolean> INTERSECT =
+            new DefaultParameterDescriptor("intersect", "Method used, intersect or nearest", Boolean.class, true, false);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, GEOMETRY_IN});
+            new GeneralParameterDescriptor[]{FEATURE_IN, FEATURE_TARGET,INTERSECT});
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
             new GeneralParameterDescriptor[]{FEATURE_OUT});
-    
+
     /** Instance */
-    public static final ProcessDescriptor INSTANCE = new IntersectDescriptor();
+    public static final ProcessDescriptor INSTANCE = new SpacialJoinDescriptor();
 
     /**
      * Default constructor
      */
-    private IntersectDescriptor() {
-        super(NAME, "Return the result FeatureCollection of intersection between a "
-                + "FeatureCollection and a Geometry", INPUT_DESC, OUTPUT_DESC);
+    private SpacialJoinDescriptor() {
+        super(NAME, "Return the target FeatureCollection with source FeatureCollection attributes."
+                + "The link between target and source depend of method used (Intersect or Nearest)", INPUT_DESC, OUTPUT_DESC);
     }
-
     /**
      *  {@inheritDoc }
      */
     @Override
     public Process createProcess() {
-        return new Intersect();
+        return new SpacialJoin();
     }
 }
