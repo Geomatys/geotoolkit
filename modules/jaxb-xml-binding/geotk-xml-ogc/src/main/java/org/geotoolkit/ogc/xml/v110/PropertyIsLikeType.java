@@ -137,7 +137,10 @@ public class PropertyIsLikeType extends ComparisonOpsType implements PropertyIsL
      * Gets the value of the literal property.
      */
     public String getLiteral() {
-        return literal.getStringValue();
+        if (literal != null) {
+            return literal.getStringValue();
+        }
+        return null;
     }
 
     public void setLiteral(final String literal) {
