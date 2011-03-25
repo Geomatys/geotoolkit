@@ -160,12 +160,13 @@ public final class CodeLists implements CodeList.Filter {
         if (name == null || (name = name.trim()).length() == 0) {
             return null;
         }
+        final String typeName = codeType.getName();
         try {
             // Forces initialization of the given class in order
             // to register its list of static final constants.
-            Class.forName(codeType.getName(), true, codeType.getClassLoader());
+            Class.forName(typeName, true, codeType.getClassLoader());
         } catch (ClassNotFoundException e) {
-            throw new AssertionError(e); // Should never happen.
+            throw new TypeNotPresentException(typeName, e); // Should never happen.
         }
         return CodeList.valueOf(codeType, new CodeLists(name, canCreate));
     }

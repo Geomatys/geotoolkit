@@ -83,10 +83,11 @@ public abstract class CodeListAdapter<ValueType extends CodeListAdapter<ValueTyp
      * @param type The code list class to initialize.
      */
     protected static <T extends CodeList<T>> void ensureClassLoaded(final Class<T> type) {
+        final String name = type.getName();
         try {
-            Class.forName(type.getName(), true, type.getClassLoader());
+            Class.forName(name, true, type.getClassLoader());
         } catch (ClassNotFoundException ex) {
-            throw new AssertionError(ex); // Should never happen.
+            throw new TypeNotPresentException(name, ex); // Should never happen.
         }
     }
 

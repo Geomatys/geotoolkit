@@ -174,7 +174,7 @@ public final class Classes {
                 try {
                     element = Class.forName(name);
                 } catch (ClassNotFoundException e) {
-                    throw new AssertionError(e);
+                    throw new TypeNotPresentException(name, e);
                     // Should never happen because we are creating an array of an existing class.
                 }
             }

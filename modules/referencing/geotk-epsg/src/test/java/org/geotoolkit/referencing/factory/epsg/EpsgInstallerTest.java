@@ -102,7 +102,7 @@ public final class EpsgInstallerTest {
             // Need explicit registration as of HSQL 1.8.0.10.
             Class.forName(HSQL.DRIVER_CLASS);
         } catch (ClassNotFoundException e) {
-            throw new SQLException(e);
+            throw new TypeNotPresentException(HSQL.DRIVER_CLASS, e);
         }
         final EpsgInstaller installer = new EpsgInstaller();
         if (true) {
