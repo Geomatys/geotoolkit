@@ -51,6 +51,7 @@ import org.geotoolkit.coverage.io.GridCoverageWriter;
 import org.geotoolkit.coverage.io.ImageCoverageReader;
 import org.geotoolkit.coverage.io.ImageCoverageWriter;
 import org.geotoolkit.coverage.processing.Operations;
+import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 
 
@@ -202,7 +203,7 @@ public class CoverageReadWriteStressor extends Stressor {
             try {
                 input = TileManagerFactory.DEFAULT.create(file);
                 if (!file.isFile() || !file.getName().endsWith(".serialized")) {
-                    file = new File(file, "TileManager.serialized");
+                    file = new File(file, TileManager.SERIALIZED_FILENAME);
                     LOGGER.log(Level.INFO, "Saving {0}", file);
                     final ObjectOutputStream bs = new ObjectOutputStream(new FileOutputStream(file));
                     bs.writeObject(input);

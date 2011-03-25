@@ -121,7 +121,7 @@ public final class MosaicReadWriteTest extends ImageTestBase {
     @Before
     public void setupSourceMosaic() throws IOException {
         final ImageReaderSpi spi = Formats.getReaderByFormatName("png", null);
-        final TileManager[] managers = TileManagerFactory.DEFAULT.create(new Tile[] {
+        final TileManager[] managers = TileManagerFactory.DEFAULT.create(
             new Tile(spi, TestData.url(MosaicReadWriteTest.class, "A1.png"), 0, new Rectangle(0*S, 0, S, S)),
             new Tile(spi, TestData.url(MosaicReadWriteTest.class, "B1.png"), 0, new Rectangle(1*S, 0, S, S)),
             new Tile(spi, TestData.url(MosaicReadWriteTest.class, "C1.png"), 0, new Rectangle(2*S, 0, S, S)),
@@ -130,7 +130,7 @@ public final class MosaicReadWriteTest extends ImageTestBase {
             new Tile(spi, TestData.url(MosaicReadWriteTest.class, "B2.png"), 0, new Rectangle(1*S, S, S, S)),
             new Tile(spi, TestData.url(MosaicReadWriteTest.class, "C2.png"), 0, new Rectangle(2*S, S, S, S)),
             new Tile(spi, TestData.url(MosaicReadWriteTest.class, "D2.png"), 0, new Rectangle(3*S, S, S, S))
-        });
+        );
         assertEquals(1, managers.length);
         sourceMosaic = managers[0];
     }

@@ -94,7 +94,7 @@ final class MosaicCreator extends DeferredWizardResult implements IIOWriteProgre
              * the TileManager object which describe the new mosaic.
              */
             final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(
-                    new File(builder.getTileDirectory(), "TileManager.serialized")));
+                    new File(builder.getTileDirectory(), TileManager.SERIALIZED_FILENAME)));
             out.writeObject(tiles);
             out.close();
         } catch (Throwable exception) { // NOSONAR: We also want to catch OutOfMemoryError.

@@ -333,7 +333,7 @@ final class TileTable extends Table implements Comparator<TileManager> {
      * Returns the file of the cached tile manager. If there is no known directory, then
      * this method returns {@code null}.
      *
-     * @return The {@code "TileManager.serialized"} file, or {@code null} if none.
+     * @return The {@value TileManager#SERIALIZED_FILENAME} file, or {@code null} if none.
      * @throws SQLException If an error occurred which querying the database.
      *
      * @since 3.15
@@ -351,14 +351,14 @@ final class TileTable extends Table implements Comparator<TileManager> {
         }
         if (!isNullOrEmpty(directories)) {
             File file = directories.first();
-            file = new File(file, "TileManager.serialized");
+            file = new File(file, TileManager.SERIALIZED_FILENAME);
             return file;
         }
         return null;
     }
 
     /**
-     * Tries to load the tile managers from the given file. If a {@code "TileManager.serialized"}
+     * Tries to load the tile managers from the given file. If a {@value TileManager#SERIALIZED_FILENAME}
      * file exists, loading it is much faster than creating it from the database content.
      *
      * @param  file The file of the serialized tile managers, or {@code null} if none.

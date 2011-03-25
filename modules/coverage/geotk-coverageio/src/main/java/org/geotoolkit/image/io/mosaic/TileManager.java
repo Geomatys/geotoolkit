@@ -65,6 +65,15 @@ public abstract class TileManager implements Serializable {
     private static final long serialVersionUID = -7645850962821189968L;
 
     /**
+     * The default name of the filename containing a serialized form of a {@code TileManager}
+     * instance. Files of this name can be created and loaded by various Geotk module, for
+     * example {@code geotk-coverage-sql} and {@code geotk-wizards-swing}.
+     *
+     * @since 3.18
+     */
+    public static final String SERIALIZED_FILENAME = "TileManager.serialized";
+
+    /**
      * The grid geometry, including the "<cite>grid to real world</cite>" transform
      * mapping pixel {@linkplain PixelOrientation#UPPER_LEFT upper left} corner.
      * This is provided by {@link TileManagerFactory} when this information is available.
@@ -77,11 +86,11 @@ public abstract class TileManager implements Serializable {
     transient Set<ImageReaderSpi> providers;
 
     /**
-     * If this tile manager has been created by reading a "{@code TileManager.serialized}"
+     * If this tile manager has been created by reading a {@value #SERIALIZED_FILENAME}
      * file or by scanning a directory, that file or directory. Otherwise {@code null}.
      * <p>
      * This field is not serialized because it is set by {@link TileManagerFactory} on
-     * deserialization, and the user may have moved the {@code "TileManager.serialized"} file.
+     * deserialization, and the user may have moved the {@value #SERIALIZED_FILENAME} file.
      *
      * @since 3.15
      */

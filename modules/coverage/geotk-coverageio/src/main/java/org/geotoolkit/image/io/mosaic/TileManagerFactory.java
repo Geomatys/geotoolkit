@@ -258,7 +258,7 @@ public class TileManagerFactory extends Factory {
      * @return A tile manager created from the given tiles.
      * @throws IOException If an I/O operation was required and failed.
      */
-    public TileManager[] create(final Tile[] tiles) throws IOException {
+    public TileManager[] create(final Tile... tiles) throws IOException {
         // The default called invokes Collection.toArray(), which will copy the array.
         return create(Arrays.asList(tiles));
     }
