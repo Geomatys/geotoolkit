@@ -130,7 +130,10 @@ public final class GridCoverageReaders {
     /**
      * Create a simple reader which doesnt use any pyramid or mosaic tiling.
      * Use this reader if you know you have a small image.
+     *
+     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#createSimpleReader}.
      */
+    @Deprecated
     public static GridCoverageReader createSimpleReader(final File input) throws CoverageStoreException{
         final ImageCoverageReader ic = new ImageCoverageReader();
         ic.setInput(input);
@@ -142,7 +145,10 @@ public final class GridCoverageReaders {
      * resolutions. Tiles creation time depends on the available memory, the image
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
+     *
+     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#createMosaicReader}.
      */
+    @Deprecated
     public static GridCoverageReader createMosaicReader(final File input) throws IOException, CoverageStoreException{
         final int tileSize = 512;
         final File tileFolder = getTempFolder(input,tileSize);

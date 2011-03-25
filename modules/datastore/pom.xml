@@ -84,7 +84,7 @@
     </dependency>
     <dependency>
       <groupId>org.opengis</groupId>
-      <artifactId>conformance</artifactId>
+      <artifactId>geoapi-conformance</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
