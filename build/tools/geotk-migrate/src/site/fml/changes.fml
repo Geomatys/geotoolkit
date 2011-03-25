@@ -112,7 +112,7 @@
         test suite can be checked by those validators, which perform a more extensive object
         inspection than GeoTools 2 ever had.</p>
 
-        <p><a href="http://geoapi.sourceforge.net/conformance/index.html">More about GeoAPI
+        <p><a href="http://www.geoapi.org/geoapi-conformance/index.html">More about GeoAPI
         conformance module</a>.</p>
       </answer>
     </faq>
