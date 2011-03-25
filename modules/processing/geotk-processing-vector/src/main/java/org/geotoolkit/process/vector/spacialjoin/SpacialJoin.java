@@ -214,26 +214,30 @@ public class SpacialJoin extends AbstractProcess {
         final ArrayList<Feature> listID = new ArrayList<Feature>();
 
         final FeatureIterator<Feature> iter = outFC.iterator(null);
-        while (iter.hasNext()) {
-            final Feature feature = iter.next();
-            for (Property property : feature.getProperties()) {
-                if (property.getDescriptor() instanceof GeometryDescriptor) {
+        try{
+            while (iter.hasNext()) {
+                final Feature feature = iter.next();
+                for (Property property : feature.getProperties()) {
+                    if (property.getDescriptor() instanceof GeometryDescriptor) {
 
-                    final Geometry geom = (Geometry) property.getValue();
+                        final Geometry geom = (Geometry) property.getValue();
 
-                    final double computeArea = intersectGeometry.intersection(geom).getArea();
-                    if (computeArea > area) {
-                        listID.clear();
-                        area = computeArea;
-                        listID.add(feature);
-
-                    } else {
-                        if (computeArea == area) {
+                        final double computeArea = intersectGeometry.intersection(geom).getArea();
+                        if (computeArea > area) {
+                            listID.clear();
+                            area = computeArea;
                             listID.add(feature);
+
+                        } else {
+                            if (computeArea == area) {
+                                listID.add(feature);
+                            }
                         }
                     }
                 }
             }
+        }finally{
+            iter.close();
         }
         return listID.get(0);
     }

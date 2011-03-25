@@ -17,6 +17,7 @@
 package org.geotoolkit.process.vector;
 
 import com.vividsolutions.jts.geom.Envelope;
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.ListIterator;
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
@@ -99,7 +100,7 @@ public final class VectorProcessUtils {
      * @throws FactoryException
      */
     public static MathTransform changeProjection(final Envelope geomEnvelope, final GeographicCRS longLatCRS,
-            final Unit<Length> unit) throws NoSuchIdentifierException, FactoryException {
+            final Unit<Length> unit) throws FactoryException {
 
         //collect data to create the projection
         final double centerMeridian = geomEnvelope.getWidth() / 2 + geomEnvelope.getMinX();
@@ -148,4 +149,50 @@ public final class VectorProcessUtils {
 
         return f.createParameterizedTransform(p);
     }
+
+    /**
+     * Compute clipping between the feature geometry and the clipping geometry
+     * @param featureGeometry Geometry
+     * @param clippingGeometry Geometry
+     * @return the intersection Geometry
+     * If featureGeometry didn't intersect clippingGeometry the function return null;
+     */
+    public static Geometry testClipping(final Geometry featureGeometry, final Geometry clippingGeometry) {
+        if(featureGeometry == null || clippingGeometry == null) return null;
+
+        if(featureGeometry.intersects(clippingGeometry)){
+            return featureGeometry.intersection(clippingGeometry);
+        }else{
+            return null;
+        }
+    }
+
+    /**
+     * Compute difference between the feature's geometry and the geometry
+     * @param featureGeometry Geometry
+     * @param diffGeometry Geometry
+     * @return the computed geometry. Return the featureGeometry if there is no intersections
+     * between geometries. And return null if the featureGeometry is contained into
+     * the diffGeometry
+     */
+    public static Geometry testDifference(final Geometry featureGeometry, final Geometry diffGeometry) {
+        if(featureGeometry == null || diffGeometry == null) return null;
+
+        if(featureGeometry.intersects(diffGeometry)){
+            if(diffGeometry.contains(featureGeometry)){
+                return null;
+            }else{
+                return featureGeometry.difference(diffGeometry);
+            }
+        }else{
+            return featureGeometry;
+        }
+    }
+
+
+
+
+
+
+
 }

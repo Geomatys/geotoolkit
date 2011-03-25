@@ -26,6 +26,8 @@ import org.geotoolkit.process.AbstractProcessFactory;
 import org.geotoolkit.process.vector.buffer.BufferDescriptor;
 import org.geotoolkit.process.vector.clip.ClipDescriptor;
 import org.geotoolkit.process.vector.clipgeometry.ClipGeometryDescriptor;
+import org.geotoolkit.process.vector.difference.DifferenceDescriptor;
+import org.geotoolkit.process.vector.differencegeometry.DifferenceGeometryDescriptor;
 import org.geotoolkit.process.vector.douglaspeucker.DouglasPeuckerDescriptor;
 import org.geotoolkit.process.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.process.vector.nearest.NearestDescriptor;
@@ -60,7 +62,8 @@ public class VectorProcessFactory extends AbstractProcessFactory {
     public VectorProcessFactory() {
         super(CentroidDescriptor.INSTANCE, ClipGeometryDescriptor.INSTANCE, ClipDescriptor.INSTANCE,
                 DouglasPeuckerDescriptor.INSTANCE, BufferDescriptor.INSTANCE, IntersectDescriptor.INSTANCE,
-                NearestDescriptor.INSTANCE, SpacialJoinDescriptor.INSTANCE);
+                NearestDescriptor.INSTANCE, SpacialJoinDescriptor.INSTANCE,
+                DifferenceGeometryDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE);
     }
 
     /**

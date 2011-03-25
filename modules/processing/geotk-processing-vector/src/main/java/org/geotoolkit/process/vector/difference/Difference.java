@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.clip;
+package org.geotoolkit.process.vector.difference;
 
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -31,6 +31,7 @@ import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.process.vector.clipgeometry.ClipGeometry;
+import org.geotoolkit.process.vector.differencegeometry.DifferenceGeometry;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -39,11 +40,11 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Process to clip a FeatureCollection using another FeatureCollection
+ * Process to compute difference between two FeatureCollection
  * @author Quentin Boileau
  * @module pending
  */
-public class Clip extends AbstractProcess {
+public class Difference extends AbstractProcess {
     
     private static final GeometryFactory GF = new GeometryFactory();
     ParameterValueGroup result;
@@ -51,8 +52,8 @@ public class Clip extends AbstractProcess {
     /**
      * Default constructor
      */
-    public Clip() {
-        super(ClipDescriptor.INSTANCE);
+    public Difference() {
+        super(DifferenceDescriptor.INSTANCE);
     }
 
     /**
@@ -68,20 +69,20 @@ public class Clip extends AbstractProcess {
      */
     @Override
     public void run() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipDescriptor.FEATURE_IN, inputParameters);
-        final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(ClipDescriptor.FEATURE_CLIP, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceDescriptor.FEATURE_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(DifferenceDescriptor.FEATURE_DIFF, inputParameters);
 
-        final ClipFeatureCollection resultFeatureList = new ClipFeatureCollection(inputFeatureList,inputFeatureClippingList);
+        final DifferenceFeatureCollection resultFeatureList = new DifferenceFeatureCollection(inputFeatureList,inputFeatureClippingList);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
     }
 
     /**
-     * Clip a feature with the FeatureCollection's geometries
+     * Compute difference between a feature and FeatureCollection's geometries
      * @param oldFeature Feature
      * @param newType the new FeatureType for the Feature
-     * @param featureClippingList FeatureCollection used to clip
+     * @param featureClippingList FeatureCollection used to compute the difference
      * @return Feature
      */
     public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList) {
@@ -95,20 +96,22 @@ public class Clip extends AbstractProcess {
 
                 //loop and test intersection between each geometry of each clipping feature from
                 //clipping FeatureCollection
-                final List<Geometry> bufferInterGeometries = new ArrayList<Geometry>();
+                //final List<Geometry> bufferInterGeometries = new ArrayList<Geometry>();
+                Geometry resultGeometry = (Geometry) property.getValue();
                 final FeatureIterator<Feature> clipIterator = featureClippingList.iterator();
                 try{
                     while(clipIterator.hasNext()){
                         final Feature clipFeature = clipIterator.next();
                         for (Property clipFeatureProperty : clipFeature.getProperties()) {
                             if (clipFeatureProperty.getDescriptor() instanceof GeometryDescriptor) {
-                                final Geometry interGeometry = VectorProcessUtils.testClipping((Geometry) property.getValue(),
-                                                                            (Geometry) clipFeatureProperty.getValue());
+                                final Geometry diffGeometry = 
+                                        VectorProcessUtils.testDifference(resultGeometry,(Geometry) clipFeatureProperty.getValue());
 
-                                //if an intersection geometry exist, store it into a buffer Collection
-                                if (interGeometry != null) {
-                                    bufferInterGeometries.add(interGeometry);
-                                }                                 
+                                if (diffGeometry != null) {
+                                   resultGeometry = diffGeometry;
+                                }else{
+                                    return null;
+                                }
                             }
                         }
                     }  
@@ -116,22 +119,9 @@ public class Clip extends AbstractProcess {
                 finally{
                     clipIterator.close();
                 }
-               
-                //if the feature intersect one of the feature clipping list
-                final int size = bufferInterGeometries.size();
-
-                if (size == 1) {
-                    resultFeature.getProperty(property.getName()).setValue(bufferInterGeometries.get(0));
-                }else if (size > 1) {
-                    final Geometry[] bufferArray = bufferInterGeometries.toArray(new Geometry[bufferInterGeometries.size()]);
-                    
-                    //create a GeometryCollection with all the intersections
-                    final GeometryCollection resultGeometry = GF.createGeometryCollection(bufferArray);
-
-                    resultFeature.getProperty(property.getName()).setValue(resultGeometry);
-                } else {
-                    return null;
-                }
+              
+                resultFeature.getProperty(property.getName()).setValue(resultGeometry);
+                
             } else {
                 //others properties (no geometry)
                 resultFeature.getProperty(property.getName()).setValue(property.getValue());
@@ -139,5 +129,4 @@ public class Clip extends AbstractProcess {
         }
         return resultFeature;
     }
-
 }

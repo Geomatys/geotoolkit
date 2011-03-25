@@ -129,25 +129,29 @@ public class Nearest extends AbstractProcess {
         final Collection<Identifier> listID = new ArrayList<Identifier>();
 
         final FeatureIterator<Feature> iter = original.iterator(null);
-        while (iter.hasNext()) {
-            final Feature feature = iter.next();
-            for (Property property : feature.getProperties()) {
-                if (property.getDescriptor() instanceof GeometryDescriptor) {
+        try{
+            while (iter.hasNext()) {
+                final Feature feature = iter.next();
+                for (Property property : feature.getProperties()) {
+                    if (property.getDescriptor() instanceof GeometryDescriptor) {
 
-                    final double computedDist = geom.distance((Geometry) property.getValue());
+                        final double computedDist = geom.distance((Geometry) property.getValue());
 
-                    if (computedDist < dist) {
-                        listID.clear();
-                        dist = computedDist;
-                        listID.add(feature.getIdentifier());
-
-                    } else {
-                        if (computedDist == dist) {
+                        if (computedDist < dist) {
+                            listID.clear();
+                            dist = computedDist;
                             listID.add(feature.getIdentifier());
+
+                        } else {
+                            if (computedDist == dist) {
+                                listID.add(feature.getIdentifier());
+                            }
                         }
                     }
                 }
             }
+        }finally{
+            iter.close();
         }
 
         final Set<Identifier> setID = new HashSet<Identifier>();

@@ -107,7 +107,7 @@ public class DouglasPeucker extends AbstractProcess {
      */
     static Feature simplifyFeature(final Feature oldFeature, final double accuracy, final Unit<Length> unit,
             final boolean behavior, final boolean lenient)
-            throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException, TransformException {
+            throws FactoryException, MismatchedDimensionException, TransformException {
 
         final CoordinateReferenceSystem originalCRS = oldFeature.getType().getCoordinateReferenceSystem();
         final GeographicCRS longLatCRS = DefaultGeographicCRS.WGS84;

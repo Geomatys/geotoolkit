@@ -122,7 +122,7 @@ public class Buffer extends AbstractProcess {
 
                 //convert geometry into WGS84
                 final Geometry convertedGeometry = JTS.transform(originalGeometry, mtToLongLatCRS);
-                Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
+                final Envelope convertEnvelope = convertedGeometry.getEnvelopeInternal();
 
                 //create custom projection for the geometry
                 final MathTransform projection = VectorProcessUtils.changeProjection(convertEnvelope, longLatCRS, unit);

@@ -14,7 +14,7 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.clipgeometry;
+package org.geotoolkit.process.vector.differencegeometry;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -32,19 +32,19 @@ import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 /**
- * Process to clip a FeatureCollection using a geometry
+ * Process to clip the difference with a FeatureCollection using a geometry
  * @author Quentin Boileau
  * @module pending
  */
-public class ClipGeometry extends AbstractProcess {
+public class DifferenceGeometry extends AbstractProcess {
 
     ParameterValueGroup result;
 
     /**
      * Default constructor
      */
-    public ClipGeometry() {
-        super(ClipGeometryDescriptor.INSTANCE);
+    public DifferenceGeometry() {
+        super(DifferenceGeometryDescriptor.INSTANCE);
     }
 
     /**
@@ -60,35 +60,35 @@ public class ClipGeometry extends AbstractProcess {
      */
     @Override
     public void run() {
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipGeometryDescriptor.FEATURE_IN, inputParameters);
-        final Geometry inputClippingGeometry = Parameters.value(ClipGeometryDescriptor.CLIP_GEOMETRY_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceGeometryDescriptor.FEATURE_IN, inputParameters);
+        final Geometry inputDifferenceGeometry = Parameters.value(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN, inputParameters);
 
-        final ClipGeometryFeatureCollection resultFeatureList = new ClipGeometryFeatureCollection(inputFeatureList,inputClippingGeometry);
+        final DifferenceGeometryFeatureCollection resultFeatureList = 
+                new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
     }
 
     /**
-     * Clip the feature with the Geometry Clipping
+     * Clip difference the feature with the Geometry
      * @param oldFeature Feature
      * @param newType the new FeatureType for the Feature
+     * @param geometry th geometry
      * @return Feature
      */
-    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final Geometry clipGeometry) {
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final Geometry geometry) {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
 
         for (Property property : oldFeature.getProperties()) {
             if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry interGeometry = VectorProcessUtils.testClipping((Geometry) property.getValue(), clipGeometry);
+                final Geometry diffGeometry = VectorProcessUtils.testDifference((Geometry) property.getValue(), geometry);
 
-                //test clipping
-                if (interGeometry != null) {
-
-                    resultFeature.getProperty(property.getName()).setValue(interGeometry);
-                } else {
+                if(diffGeometry != null){
+                    resultFeature.getProperty(property.getName()).setValue(diffGeometry);
+                }else{
                     return null;
                 }
             } else {

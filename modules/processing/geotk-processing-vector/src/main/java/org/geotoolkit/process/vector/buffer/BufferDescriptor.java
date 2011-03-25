@@ -46,7 +46,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-final public class BufferDescriptor extends VectorDescriptor {
+public final class BufferDescriptor extends VectorDescriptor {
 
     /**Process name : buffer */
     public static final String NAME = "buffer";

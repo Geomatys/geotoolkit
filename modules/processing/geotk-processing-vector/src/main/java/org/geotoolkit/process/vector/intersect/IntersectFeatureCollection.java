@@ -45,10 +45,10 @@ import org.opengis.filter.FilterFactory2;
  */
 public class IntersectFeatureCollection extends VectorFeatureCollection {
 
-    private final FeatureType newFeatureType;
-    private final Geometry interGeom;
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+    private final FeatureType newFeatureType;
+    private final Geometry interGeom;
 
     /**
      * Connect to the original FeatureConnection with an intersection filter
@@ -109,7 +109,6 @@ public class IntersectFeatureCollection extends VectorFeatureCollection {
                 filterList.add(filter);
             }
         }
-
         return  FF.or(filterList);
     }
 }
