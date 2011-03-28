@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+ xmlns:gx="http://www.google.com/kml/ext/2.2">
+<NetworkLinkControl>
+  <Update>
+  <targetHref>http://myserver.com/Bof.kml</targetHref>
+  <Delete>
+    <gx:Tour>
+      <gx:Playlist>
+      </gx:Playlist>
+    </gx:Tour>
+  </Delete>
+</Update>
+</NetworkLinkControl>
+</kml>

@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+ xmlns:gx="http://www.google.com/kml/ext/2.2">
+  <Document>
+    <name>gx:AnimatedUpdate example</name>
+    <open>1</open>
+    <gx:Tour>
+      <name>Play me!</name>
+      <gx:Playlist>
+        <gx:AnimatedUpdate>
+          <gx:duration>6.5</gx:duration>
+          <Update>
+            <targetHref>http://moncoco.com</targetHref>
+            <Change>
+                <IconStyle id="iconstyle1">
+                  <scale>10.0</scale>
+                </IconStyle>
+            </Change>
+          </Update>
+        </gx:AnimatedUpdate>
+      </gx:Playlist>
+    </gx:Tour>
+  </Document>
+</kml>

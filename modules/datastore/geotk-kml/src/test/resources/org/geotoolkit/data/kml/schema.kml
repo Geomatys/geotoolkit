@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <Schema name="TrailHeadType" id="TrailHeadTypeId">
+    <SimpleField type="string" name="TrailHeadName">
+      <displayName><![CDATA[<b>Trail Head Name</b>]]></displayName>
+    </SimpleField>
+    <SimpleField type="double" name="TrailLength">
+      <displayName><![CDATA[<i>The length in miles</i>]]></displayName>
+    </SimpleField>
+    <SimpleField type="int" name="ElevationGain">
+      <displayName><![CDATA[<i>change in altitude</i>]]></displayName>
+    </SimpleField>
+  </Schema>
+</Document>
+</kml>

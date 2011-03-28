@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Configuration of "geotk-xml-gml" module from GeotoolKit project.
+  Version: $Id: pom.xml 1552 2009-04-21 16:09:31Z desruisseaux $
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>org.geotoolkit.pending</groupId>
+        <artifactId>jaxp-xml-parser</artifactId>
+        <version>SNAPSHOT</version>
+    </parent>
+
+
+
+    <!--
+    Module description.
+  -->
+    <groupId>org.geotoolkit.pending</groupId>
+    <artifactId>geotk-jaxp-atom</artifactId>
+    <packaging>jar</packaging>
+    <name>JAXP Parser ATOM</name>
+    <description>
+        ATOM stax readers and writers.
+    </description>
+
+
+
+    <!--
+    Developers and contributors.
+  -->
+    <developers>
+        <developer>
+            <name>Samuel Andrés</name>
+            <id>sandres</id>
+            <email>samuel.andres@yahoo.fr</email>
+            <organization>Geomatys</organization>
+            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <timezone>+1</timezone>
+            <roles>
+                <role>Java Developer</role>
+                <role>Module Maintainer</role>
+            </roles>
+        </developer>
+    </developers>
+
+
+
+    <!--
+    Required dependencies for building. These dependencies will be included
+    in the JARs' list that maven will put in the directory "target/binaries".
+  -->
+    <dependencies>
+        <dependency>
+            <groupId>org.geotoolkit.pending</groupId>
+            <artifactId>geotk-jaxp-core</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+    </dependencies>
+
+</project>

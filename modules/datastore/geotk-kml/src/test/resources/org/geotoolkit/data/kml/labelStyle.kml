@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+   <Style id="randomLabelColor">
+      <LabelStyle>
+         <color>ff0000cc</color>
+         <colorMode>random</colorMode>
+         <scale>1.5</scale>
+      </LabelStyle>
+   </Style>
+   <Placemark>
+      <name>LabelStyle.kml</name>
+      <styleUrl>#randomLabelColor</styleUrl>
+      <Point>
+         <coordinates>-122.367375,37.829192,0.0</coordinates>
+      </Point>
+   </Placemark>
+</Document>
+</kml>

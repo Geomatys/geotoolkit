@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Placemark>
+  <name>Google Earth - New Placemark</name>
+  <description>Some Descriptive text.</description>
+  <LookAt>
+    <longitude>-90.86879847669974</longitude>
+    <latitude>48.25330383601299</latitude>
+    <heading>2.7</heading>
+    <tilt>8.3</tilt>
+    <range>440.8</range>
+  </LookAt>
+  <Point>
+    <coordinates>-90.86948943473118,48.25450093195546,0.0</coordinates>
+  </Point>
+</Placemark>
+</kml>

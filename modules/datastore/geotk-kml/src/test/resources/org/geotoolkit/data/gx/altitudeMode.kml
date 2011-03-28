@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2"
+ xmlns:gx="http://www.google.com/kml/ext/2.2">
+<Placemark>
+  <name>gx:altitudeMode Example</name>
+  <LookAt>
+    <longitude>146.806</longitude>
+    <latitude>12.219</latitude>
+    <heading>-60.0</heading>
+    <tilt>70.0</tilt>
+    <range>6300.0</range>
+    <gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+  </LookAt>
+  <LineString>
+    <extrude>1</extrude>
+    <gx:altitudeMode>relativeToSeaFloor</gx:altitudeMode>
+    <coordinates>
+      146.825,12.233,400.0 146.82,12.222,400.0 146.812,12.212,400.0 146.796,12.209,400.0 146.788,12.205,400.0
+    </coordinates>
+  </LineString>
+</Placemark>
+</kml>

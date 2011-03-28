@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Placemark>
+  <name>Club house</name>
+  <ExtendedData>
+    <Data name="holeNumber">
+      <value>1</value>
+    </Data>
+    <Data name="holeYardage">
+      <value>234</value>
+    </Data>
+    <Data name="holePar">
+      <value>4</value>
+    </Data>
+  </ExtendedData>
+</Placemark>
+</kml>

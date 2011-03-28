@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<author xmlns="http://www.w3.org/2005/Atom">
+<name>Samuel</name>
+<uri>c:est:une:uri</uri>
+<name>Prénom Nom</name>
+<email>mon.email@serveur.net</email>
+</author>

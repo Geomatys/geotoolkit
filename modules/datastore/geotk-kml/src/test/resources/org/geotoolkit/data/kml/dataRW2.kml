@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2" xmlns:sam="http://www.sandres.com">
+<Document>
+  <name>Document.kml</name>
+  <open>1</open>
+  <Placemark>
+    <ExtendedData>
+    <sam:racine>
+      <sam:element>Je suis un element.</sam:element>
+      <sam:element>J'en suis un autre.</sam:element>
+    </sam:racine>
+    </ExtendedData>
+  </Placemark>
+  <Placemark>
+    <Metadata>
+    <sam:racine>
+      <sam:element>Et moi aussi.</sam:element>
+      <sam:element>Sans commentaire.</sam:element>
+    </sam:racine>
+    </Metadata>
+  </Placemark>
+</Document>
+</kml>

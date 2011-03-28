@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xAL xmlns="urn:oasis:names:tc:ciq:xsdschema:xAL:2.0">
+<AddressDetails>
+<Country>
+<AddressLine Type="type1" Code="code1">Première ligne</AddressLine>
+<AddressLine Type= "type2" Code="code2">Seconde ligne</AddressLine>
+<CountryNameCode Scheme="scheme1" Code="code1">countryNameCode1</CountryNameCode>
+<CountryNameCode Scheme="scheme2" Code="code2">countryNameCode2</CountryNameCode>
+<CountryName Type="typeCN" Code="codeCN">Country Name</CountryName>
+<AdministrativeArea Type="typeAA" UsageType="usageTypeAA" Indicator="indicatorAA">
+<AddressLine>Troisième ligne</AddressLine>
+<AdministrativeAreaName Type="typeAAN" Code="codeAAN">Administrative Area Name</AdministrativeAreaName>
+<SubAdministrativeArea Type="typeSAA" UsageType="usageTypeSAA" Indicator="indicatorSAA">
+<AddressLine>Quatrième Ligne</AddressLine>
+<SubAdministrativeAreaName Type="typeSAAN" Code="codeSAAN">Sub Administrative Area Name</SubAdministrativeAreaName>
+<PostOffice>
+<AddressLine>PostOfficeAddressLine</AddressLine>
+<PostOfficeName Type="postOfficeNameType" Code="postOfficeNameCode">post office name</PostOfficeName>
+<PostOfficeName>post office name 2</PostOfficeName>
+<PostalRoute>
+<AddressLine>postal route address line</AddressLine>
+<PostalRouteName Type="postalRouteNameType" Code="postalRouteNameCode">postal route name</PostalRouteName>
+<PostBox>
+<PostBoxNumber>postal route post box number</PostBoxNumber>
+</PostBox>
+</PostalRoute>
+<PostBox Type="postBoxType" Indicator="postBoxIndicator">
+<AddressLine>post box address line</AddressLine>
+<PostBoxNumber Code="postBoxNumberCode">post box number</PostBoxNumber>
+<PostBoxNumberPrefix NumberPrefixSeparator="prefixSeparator" Code="prefixCode">post box number prefix</PostBoxNumberPrefix>
+<PostBoxNumberSuffix NumberSuffixSeparator="suffixSeparator" Code="suffixCode">post box number suffix</PostBoxNumberSuffix>
+<PostBoxNumberExtension NumberExtensionSeparator="extensionSeparator">post box number extension</PostBoxNumberExtension>
+<Firm Type="firmType">
+<AddressLine>firm address line</AddressLine>
+<FirmName Type="firmNameType" Code="firmNameCode">firm name</FirmName>
+<Department Type="departmentType">
+<AddressLine>department address line</AddressLine>
+<DepartmentName Type="departmentNameType" Code="departmentNameCode">department name</DepartmentName>
+<MailStop Type="mailStopType">
+<AddressLine>mail stop address line</AddressLine>
+<MailStopName Type="mailStopNameType" Code="mailStopNameCode">mail stop name</MailStopName>
+<MailStopNumber NameNumberSeparator="numberSeparator" Code="mailStopNumberCode">mail stop number</MailStopNumber>
+</MailStop>
+<PostalCode Type="postalCodeType">
+<AddressLine>postal code address line</AddressLine>
+<PostalCodeNumber Type="postalCodeNumberType" Code="postalCodeNumberCode">postal code number</PostalCodeNumber>
+<PostalCodeNumberExtension Type="extensionType" Code="extensionCode" NumberExtensionSeparator="separator">postal code number extension</PostalCodeNumberExtension>
+<PostTown Type="postTownType">
+<AddressLine>post town address line</AddressLine>
+<PostTownName Type="nameType" Code="nameCode">name</PostTownName>
+<PostTownSuffix Code="suffixCode">suffix</PostTownSuffix>
+</PostTown>
+</PostalCode>
+</Department>
+<MailStop>
+<AddressLine>mail stop 1</AddressLine>
+<AddressLine>mail stop 2</AddressLine>
+</MailStop>
+<PostalCode>
+<AddressLine>postal code line 1</AddressLine>
+<AddressLine>postal code line 2</AddressLine>
+</PostalCode>
+</Firm>
+</PostBox>
+<PostalCode>
+<PostalCodeNumber>postalCodeNumber1</PostalCodeNumber>
+<PostalCodeNumber>postalCodeNumber2</PostalCodeNumber>
+<PostalCodeNumberExtension>extension1</PostalCodeNumberExtension>
+<PostalCodeNumberExtension>extension2</PostalCodeNumberExtension>
+</PostalCode>
+</PostOffice>
+</SubAdministrativeArea>
+<PostOffice>
+<PostOfficeNumber Indicator="indicator" IndicatorOccurrence="Before" Code="code">post office number</PostOfficeNumber>
+</PostOffice>
+</AdministrativeArea>
+</Country>
+</AddressDetails>
+</xAL>
+

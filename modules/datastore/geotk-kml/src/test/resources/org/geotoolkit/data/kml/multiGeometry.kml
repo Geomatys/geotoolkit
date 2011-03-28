@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Placemark>
+  <name>SF Marina Harbor Master</name>
+  <visibility>0</visibility>
+  <MultiGeometry>
+    <LineString>
+      <coordinates>
+        -122.4425587930444,37.80666418607323,0.0 -122.4428379594768,37.80663578323093,0.0
+      </coordinates>
+    </LineString>
+    <LineString>
+      <coordinates>
+        -122.4425509770566,37.80662588061205,0.0 -122.4428340530617,37.8065999493009,0.0
+      </coordinates>
+    </LineString>
+  </MultiGeometry>
+</Placemark>
+</kml>

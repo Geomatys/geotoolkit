@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>Document.kml</name>
+  <open>1</open>
+  <Placemark>
+    <snippet>Bonjour</snippet>
+  </Placemark>
+  <Placemark>
+    <snippet><![CDATA[Salut]]></snippet>
+  </Placemark>
+  <Placemark>
+    <Snippet maxLines="3">Bonjour, ô noble sauvage !</Snippet>
+  </Placemark>
+  <Placemark>
+    <Snippet><![CDATA[Salut, ô noble sauvage !]]></Snippet>
+  </Placemark>
+</Document>
+</kml>

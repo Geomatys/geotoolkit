@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<Document>
+  <name>ListStyle.kml</name>
+  <open>1</open>
+  <Style id="bgColorExample">
+    <ListStyle>
+      <bgColor>ff336699</bgColor>
+    </ListStyle>
+  </Style>
+  <Style id="checkHideChildrenExample">
+    <ListStyle>
+      <listItemType>checkHideChildren</listItemType>
+    </ListStyle>
+  </Style>
+  <Style id="radioFolderExample">
+    <ListStyle>
+      <listItemType>radioFolder</listItemType>
+    </ListStyle>
+  </Style>
+  <Folder>
+    <name>ListStyle Examples</name>
+    <open>1</open>
+    <Folder>
+      <name>bgColor example</name>
+      <open>1</open>
+      <styleUrl>#bgColorExample</styleUrl>
+      <Placemark>
+        <name>pl1</name>
+        <Point>
+          <coordinates>-122.362815,37.822931,0.0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>pl2</name>
+        <Point>
+          <coordinates>-122.362825,37.822931,0.0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>pl3</name>
+        <Point>
+          <coordinates>-122.362835,37.822931,0.0</coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>checkHideChildren example</name>
+      <open>1</open>
+      <styleUrl>#checkHideChildrenExample</styleUrl>
+      <Placemark>
+        <name>pl4</name>
+        <Point>
+          <coordinates>-122.362845,37.822941,0.0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>pl5</name>
+        <Point>
+          <coordinates>-122.362855,37.822941,0.0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>pl6</name>
+        <Point>
+          <coordinates>-122.362865,37.822941,0.0</coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+    <Folder>
+      <name>radioFolder example</name>
+      <open>1</open>
+      <styleUrl>#radioFolderExample</styleUrl>
+      <Placemark>
+        <name>pl7</name>
+        <Point>
+          <coordinates>-122.362875,37.822951,0.0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>pl8</name>
+        <Point>
+          <coordinates>-122.362885,37.822951,0.0</coordinates>
+        </Point>
+      </Placemark>
+      <Placemark>
+        <name>pl9</name>
+        <Point>
+          <coordinates>-122.362895,37.822951,0.0</coordinates>
+        </Point>
+      </Placemark>
+    </Folder>
+  </Folder>
+</Document>
+</kml>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<kml xmlns="http://www.opengis.net/kml/2.2">
+<NetworkLinkControl>
+  <Update>
+  <targetHref>http://www.foo.com/Point.kml</targetHref>
+  <Delete>
+    <Placemark targetId="pa3556"></Placemark>
+  </Delete>
+</Update>
+</NetworkLinkControl>
+</kml>
