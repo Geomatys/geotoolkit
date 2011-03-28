@@ -83,6 +83,8 @@
   <modules>
     <module>geotk-jaxp-core</module>
     <module>geotk-jaxp-gml</module>
+    <module>geotk-jaxp-atom</module>
+    <module>geotk-jaxp-xal</module>
   </modules>
 
 </project>

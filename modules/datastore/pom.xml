@@ -98,6 +98,7 @@
     <module>geotk-dbf</module>
     <module>geotk-csv</module>
     <module>geotk-gpx</module>
+    <module>geotk-kml</module>
     <module>geotk-shapefile</module>
     <module>geotk-jdbc</module>
     <module>geotk-om</module>
