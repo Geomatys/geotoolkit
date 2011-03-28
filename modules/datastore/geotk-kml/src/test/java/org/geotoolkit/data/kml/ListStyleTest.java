@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -134,7 +135,7 @@ public class ListStyleTest {
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature folder = (Feature) object;
             assertTrue(folder.getType().equals(KmlModelConstants.TYPE_FOLDER));
@@ -147,7 +148,7 @@ public class ListStyleTest {
             Iterator j = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
 
             if (j.hasNext()){
-                final Object obj = ((Property) j.next()).getValue();
+                final Object obj = j.next();
                 final Feature folder0 = (Feature) obj;
                 assertEquals("bgColor example", folder0.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
                 assertTrue((Boolean) folder0.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
@@ -158,7 +159,7 @@ public class ListStyleTest {
                 Iterator k = folder0.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
 
                 if(k.hasNext()){
-                    final Object o = ((Property) k.next()).getValue();
+                    final Object o = k.next();
                     assertTrue(o instanceof Feature);
                     final Feature placemark00 = (Feature) o;
 
@@ -172,7 +173,7 @@ public class ListStyleTest {
                 }
 
                 if(k.hasNext()){
-                    final Object o = ((Property) k.next()).getValue();
+                    final Object o = k.next();
                     assertTrue(o instanceof Feature);
                     final Feature placemark01 = (Feature) o;
 
@@ -186,7 +187,7 @@ public class ListStyleTest {
                 }
 
                 if(k.hasNext()){
-                    final Object o = ((Property) k.next()).getValue();
+                    final Object o = k.next();
                     assertTrue(o instanceof Feature);
                     final Feature placemark02 = (Feature) o;
 
@@ -201,7 +202,7 @@ public class ListStyleTest {
             }
 
             if (j.hasNext()){
-                final Object obj = ((Property) j.next()).getValue();
+                final Object obj = j.next();
                 final Feature folder1 = (Feature) obj;
 
                 assertEquals("checkHideChildren example", folder1.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
@@ -213,7 +214,7 @@ public class ListStyleTest {
                 Iterator k = folder1.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
 
                 if(k.hasNext()){
-                    final Object o = ((Property) k.next()).getValue();
+                    final Object o = k.next();
                     assertTrue(o instanceof Feature);
                     final Feature placemark10 = (Feature) o;
 
@@ -228,7 +229,7 @@ public class ListStyleTest {
                 }
 
                 if(k.hasNext()){
-                    final Object o = ((Property) k.next()).getValue();
+                    final Object o = k.next();
                     assertTrue(o instanceof Feature);
                     final Feature placemark11 = (Feature) o;
 
@@ -243,7 +244,7 @@ public class ListStyleTest {
                 }
 
                 if(k.hasNext()){
-                    final Object o = ((Property) k.next()).getValue();
+                    final Object o = k.next();
                     assertTrue(o instanceof Feature);
                     final Feature placemark12 = (Feature) o;
 
@@ -259,7 +260,7 @@ public class ListStyleTest {
             }
 
             if (j.hasNext()){
-                final Object obj = ((Property) j.next()).getValue();
+                final Object obj = j.next();
                 final Feature folder2 = (Feature) obj;
 
                 assertEquals("radioFolder example", folder2.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
@@ -271,7 +272,7 @@ public class ListStyleTest {
                 Iterator k = folder2.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
 
                 if(k.hasNext()){
-                    final Object o = ((Property) k.next()).getValue();
+                    final Object o = k.next();
                     assertTrue(o instanceof Feature);
                     final Feature placemark20 = (Feature) o;
 
@@ -285,7 +286,7 @@ public class ListStyleTest {
                 }
 
                 if(k.hasNext()){
-                    final Object o = ((Property) k.next()).getValue();
+                    final Object o = k.next();
                     assertTrue(o instanceof Feature);
                     final Feature placemark21 = (Feature) o;
 
@@ -300,7 +301,7 @@ public class ListStyleTest {
                 }
 
                 if(k.hasNext()){
-                    final Object o = ((Property) k.next()).getValue();
+                    final Object o = k.next();
                     assertTrue(o instanceof Feature);
                     final Feature placemark22 = (Feature) o;
 
@@ -401,35 +402,35 @@ public class ListStyleTest {
         folder0Properties.add(FF.createAttribute("bgColor example", KmlModelConstants.ATT_NAME, null));
         folder0.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         folder0Properties.add(FF.createAttribute(new URI("#bgColorExample"), KmlModelConstants.ATT_STYLE_URL, null));
-        folder0Properties.add(FF.createAttribute(placemark00, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folder0Properties.add(FF.createAttribute(placemark01, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folder0Properties.add(FF.createAttribute(placemark02, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folder0Properties.add(FeatureUtilities.wrapProperty(placemark00, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folder0Properties.add(FeatureUtilities.wrapProperty(placemark01, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folder0Properties.add(FeatureUtilities.wrapProperty(placemark02, KmlModelConstants.ATT_FOLDER_FEATURES));
 
         final Feature folder1 = kmlFactory.createFolder();
         final Collection<Property> folder1Properties = folder1.getProperties();      
         folder1Properties.add(FF.createAttribute("checkHideChildren example", KmlModelConstants.ATT_NAME, null));
         folder1.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         folder1Properties.add(FF.createAttribute(new URI("#checkHideChildrenExample"), KmlModelConstants.ATT_STYLE_URL, null));
-        folder1Properties.add(FF.createAttribute(placemark10, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folder1Properties.add(FF.createAttribute(placemark11, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folder1Properties.add(FF.createAttribute(placemark12, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folder1Properties.add(FeatureUtilities.wrapProperty(placemark10, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folder1Properties.add(FeatureUtilities.wrapProperty(placemark11, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folder1Properties.add(FeatureUtilities.wrapProperty(placemark12, KmlModelConstants.ATT_FOLDER_FEATURES));
 
         final Feature folder2 = kmlFactory.createFolder();
         final Collection<Property> folder2Properties = folder2.getProperties();
         folder2Properties.add(FF.createAttribute("radioFolder example", KmlModelConstants.ATT_NAME, null));
         folder2.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         folder2Properties.add(FF.createAttribute(new URI("#radioFolderExample"), KmlModelConstants.ATT_STYLE_URL, null));
-        folder2Properties.add(FF.createAttribute(placemark20, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folder2Properties.add(FF.createAttribute(placemark21, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folder2Properties.add(FF.createAttribute(placemark22, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folder2Properties.add(FeatureUtilities.wrapProperty(placemark20, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folder2Properties.add(FeatureUtilities.wrapProperty(placemark21, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folder2Properties.add(FeatureUtilities.wrapProperty(placemark22, KmlModelConstants.ATT_FOLDER_FEATURES));
 
         final Feature folder = kmlFactory.createFolder();
         final Collection<Property> folderProperties = folder.getProperties();
         folderProperties.add(FF.createAttribute("ListStyle Examples", KmlModelConstants.ATT_NAME, null));
         folder.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        folderProperties.add(FF.createAttribute(folder0, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folderProperties.add(FF.createAttribute(folder1, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folderProperties.add(FF.createAttribute(folder2, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folderProperties.add(FeatureUtilities.wrapProperty(folder0, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folderProperties.add(FeatureUtilities.wrapProperty(folder1, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folderProperties.add(FeatureUtilities.wrapProperty(folder2, KmlModelConstants.ATT_FOLDER_FEATURES));
 
         final ListStyle listStyle1 = kmlFactory.createListStyle();
         listStyle1.setBgColor(new Color(153, 102, 51, 255));
@@ -456,7 +457,7 @@ public class ListStyleTest {
         final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("ListStyle.kml", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute(folder, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(folder, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         documentProperties.add(FF.createAttribute(style1, KmlModelConstants.ATT_STYLE_SELECTOR, null));
         documentProperties.add(FF.createAttribute(style2, KmlModelConstants.ATT_STYLE_SELECTOR, null));
         documentProperties.add(FF.createAttribute(style3, KmlModelConstants.ATT_STYLE_SELECTOR, null));

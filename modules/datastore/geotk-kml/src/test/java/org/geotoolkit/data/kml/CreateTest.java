@@ -40,6 +40,7 @@ import org.geotoolkit.data.kml.model.Update;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 
@@ -113,7 +114,7 @@ public class CreateTest {
         Iterator i;
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
         if(i.hasNext()){
-            final Object object = ((Property) i.next()).getValue();
+            final Object object = i.next();
             assertTrue(object instanceof Feature);
             final Feature placemark = (Feature) object;
             assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
@@ -149,7 +150,7 @@ public class CreateTest {
 
         final Feature document = kmlFactory.createDocument();
         final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         final IdAttributes documentIdAttributes = kmlFactory.createIdAttributes(null, "region24");
         documentProperties.add(FF.createAttribute(documentIdAttributes, KmlModelConstants.ATT_ID_ATTRIBUTES, null));
 

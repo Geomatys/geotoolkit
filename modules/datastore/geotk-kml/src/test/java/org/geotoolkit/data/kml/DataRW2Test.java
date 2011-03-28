@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import java.net.URISyntaxException;
 import org.geotoolkit.data.kml.xml.KmlReader;
 import java.io.File;
@@ -104,7 +105,7 @@ public class DataRW2Test {
         Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
 
             final Feature placemark0 = (Feature) object;
             assertTrue(placemark0.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue() instanceof ExtendedData);
@@ -121,7 +122,7 @@ public class DataRW2Test {
         }
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
 
             final Feature placemark1 = (Feature) object;
             assertTrue(placemark1.getProperty(KmlModelConstants.ATT_EXTENDED_DATA.getName()).getValue() instanceof Metadata);
@@ -157,8 +158,8 @@ public class DataRW2Test {
 
         final Feature document = kmlFactory.createDocument();
         final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         documentProperties.add(FF.createAttribute("Document.kml", KmlModelConstants.ATT_NAME, null));
 

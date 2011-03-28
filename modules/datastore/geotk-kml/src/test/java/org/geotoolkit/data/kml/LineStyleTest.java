@@ -41,6 +41,7 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 
@@ -101,10 +102,10 @@ public class LineStyleTest {
 
         assertEquals(1, document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).size());
 
-        Iterator i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
+        Iterator<Property> i = document.getProperties(KmlModelConstants.ATT_STYLE_SELECTOR.getName()).iterator();
 
         if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next().getValue();
             assertTrue(object instanceof Style);
             Style style = (Style) object;
             assertEquals("linestyleExample", style.getIdAttributes().getId());
@@ -118,7 +119,7 @@ public class LineStyleTest {
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark = (Feature) object;
             assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
@@ -170,7 +171,7 @@ public class LineStyleTest {
         final Feature document = kmlFactory.createDocument();
         final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR,null));
-        documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES,null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         documentProperties.add(FF.createAttribute("LineStyle.kml", KmlModelConstants.ATT_NAME,null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
 

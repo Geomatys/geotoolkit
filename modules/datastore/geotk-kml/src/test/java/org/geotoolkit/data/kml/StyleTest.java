@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
@@ -133,7 +134,7 @@ public class StyleTest {
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark0 = (Feature) object;
             assertEquals("Google Earth - New Polygon", placemark0.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
@@ -142,7 +143,7 @@ public class StyleTest {
         }
 
         if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark1 = (Feature) object;
             assertEquals("Google Earth - New Path", placemark1.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
@@ -197,8 +198,8 @@ public class StyleTest {
         final Feature document = kmlFactory.createDocument();
         final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
 
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);

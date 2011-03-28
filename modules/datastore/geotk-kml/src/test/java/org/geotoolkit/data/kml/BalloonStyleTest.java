@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -126,7 +127,7 @@ public class BalloonStyleTest {
         assertEquals(1, document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).size());
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
         if (i.hasNext()){
-            final Object object = ((Property) i.next()).getValue();
+            final Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark = (Feature) object;
             assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
@@ -182,7 +183,7 @@ public class BalloonStyleTest {
         documentProperties.add(FF.createAttribute("BalloonStyle.kml", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 
         final File temp = File.createTempFile("testBalloonStyle", ".kml");

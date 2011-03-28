@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -124,7 +125,7 @@ public class PolyStyleTest {
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
 
             Feature placemark = (Feature) object;
@@ -267,7 +268,7 @@ public class PolyStyleTest {
         final Feature document = kmlFactory.createDocument();
         final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         documentProperties.add(FF.createAttribute("PolygonStyle.kml", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
 

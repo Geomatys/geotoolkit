@@ -158,6 +158,7 @@ import org.geotoolkit.xal.model.AddressDetails;
 import org.geotoolkit.data.kml.xsd.SimpleTypeContainer;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 
 import org.opengis.feature.Feature;
@@ -525,8 +526,8 @@ public class DefaultKmlFactory implements KmlFactory{
                     KmlModelConstants.ATT_DOCUMENT_SCHEMAS, null));
         }
         for (Feature feature : features){
-            properties.add(FF.createAttribute(feature,
-                    KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+            //wrap feature to set it's descriptor
+            properties.add(FeatureUtilities.wrapProperty(feature, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         }
         properties.add(FF.createAttribute(extensions,
                 KmlModelConstants.ATT_EXTENSIONS, null));
@@ -659,8 +660,8 @@ public class DefaultKmlFactory implements KmlFactory{
         properties.add(FF.createAttribute(extendedData,
                 KmlModelConstants.ATT_EXTENDED_DATA, null));
         for (Feature feature : features){
-            properties.add(FF.createAttribute(feature,
-                    KmlModelConstants.ATT_FOLDER_FEATURES, null));
+            properties.add(FeatureUtilities.wrapProperty(feature,
+                    KmlModelConstants.ATT_FOLDER_FEATURES));
         }
         properties.add(FF.createAttribute(extensions,
                 KmlModelConstants.ATT_EXTENSIONS, null));

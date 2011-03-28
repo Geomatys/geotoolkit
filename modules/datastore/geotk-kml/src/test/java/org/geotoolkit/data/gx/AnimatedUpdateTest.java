@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.gx;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -141,7 +142,7 @@ public class AnimatedUpdateTest {
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if(i.hasNext()){
-            Object object  = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark = (Feature) object;
             assertEquals(placemark.getType(), KmlModelConstants.TYPE_PLACEMARK);
@@ -161,7 +162,7 @@ public class AnimatedUpdateTest {
         }
 
         if (i.hasNext()){
-            Object obj  = ((Property) i.next()).getValue();
+            Object obj = i.next();
             assertTrue(obj instanceof Feature);
             Feature tour = (Feature) obj;
             assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
@@ -290,8 +291,8 @@ public class AnimatedUpdateTest {
         Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("gx:AnimatedUpdate example", KmlModelConstants.ATT_NAME, null));
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
-        documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        documentProperties.add(FF.createAttribute(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        documentProperties.add(FeatureUtilities.wrapProperty(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.FALSE);
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);

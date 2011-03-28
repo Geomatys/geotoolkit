@@ -34,6 +34,7 @@ import org.geotoolkit.data.kml.xsd.Cdata;
 import org.geotoolkit.data.kml.xsd.DefaultCdata;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 
@@ -99,21 +100,21 @@ public class SnippetsTest {
         Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             final Feature placemark0 = (Feature) object;
             assertTrue(placemark0.getProperty(KmlModelConstants.ATT_SNIPPET.getName()).getValue() instanceof String);
             assertEquals("Bonjour", placemark0.getProperty(KmlModelConstants.ATT_SNIPPET.getName()).getValue());
         }
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             final Feature placemark1 = (Feature) object;
             assertTrue(placemark1.getProperty(KmlModelConstants.ATT_SNIPPET.getName()).getValue() instanceof Cdata);
             assertEquals(new DefaultCdata("Salut"), placemark1.getProperty(KmlModelConstants.ATT_SNIPPET.getName()).getValue());
         }
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             final Feature placemark2 = (Feature) object;
             assertTrue(placemark2.getProperty(KmlModelConstants.ATT_SNIPPET.getName()).getValue() instanceof Snippet);
             assertEquals("Bonjour, ô noble sauvage !", ((Snippet) placemark2.getProperty(KmlModelConstants.ATT_SNIPPET.getName()).getValue()).getContent());
@@ -121,7 +122,7 @@ public class SnippetsTest {
         }
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             final Feature placemark3 = (Feature) object;
             assertTrue(placemark3.getProperty(KmlModelConstants.ATT_SNIPPET.getName()).getValue() instanceof Snippet);
             assertEquals(new DefaultCdata("Salut, ô noble sauvage !"), ((Snippet) placemark3.getProperty(KmlModelConstants.ATT_SNIPPET.getName()).getValue()).getContent());
@@ -149,10 +150,10 @@ public class SnippetsTest {
 
         final Feature document = kmlFactory.createDocument();
         final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        documentProperties.add(FF.createAttribute(placemark2, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        documentProperties.add(FF.createAttribute(placemark3, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark2, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark3, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         documentProperties.add(FF.createAttribute("Document.kml", KmlModelConstants.ATT_NAME, null));
 

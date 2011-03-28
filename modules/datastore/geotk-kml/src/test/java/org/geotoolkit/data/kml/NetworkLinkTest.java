@@ -30,6 +30,7 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 
@@ -92,7 +93,7 @@ public class NetworkLinkTest {
         Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature networkLink = (Feature) object;
             assertEquals("NE US Radar", networkLink.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
@@ -113,7 +114,7 @@ public class NetworkLinkTest {
 
         final Feature document = kmlFactory.createDocument();
         document.getProperty(KmlModelConstants.ATT_VISIBILITY.getName()).setValue(Boolean.FALSE);
-        document.getProperties().add(FF.createAttribute(networkLink, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        document.getProperties().add(FeatureUtilities.wrapProperty(networkLink, KmlModelConstants.ATT_DOCUMENT_FEATURES));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 

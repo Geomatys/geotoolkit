@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.gx;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -105,11 +106,9 @@ public class TourTest {
         assertTrue((Boolean) document.getProperty(
                 KmlModelConstants.ATT_OPEN.getName()).getValue());
         
-        assertTrue(document.getProperty(
-                KmlModelConstants.ATT_DOCUMENT_FEATURES.getName())
-                .getValue() instanceof Feature);
+        assertTrue(document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()) instanceof Feature);
         Feature tour = (Feature) document.getProperty(
-                KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue();
+                KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
         assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
 
         assertEquals("Play me!", tour.getProperty(
@@ -145,7 +144,7 @@ public class TourTest {
         Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("gx:AnimatedUpdate example", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         final Kml kml = kmlFactory.createKml(null, document, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 

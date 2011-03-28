@@ -40,6 +40,7 @@ import org.geotoolkit.data.kml.model.SimpleData;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 
@@ -102,7 +103,7 @@ public class SchemaDataTest {
         Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark0 = (Feature) object;
             assertTrue(placemark0.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
@@ -140,7 +141,7 @@ public class SchemaDataTest {
         }
 
         if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark1 = (Feature) object;
             assertTrue(placemark1.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
@@ -226,8 +227,8 @@ public class SchemaDataTest {
 
         final Feature document = kmlFactory.createDocument();
         final Collection<Property> documentProperties = document.getProperties();
-        documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
 

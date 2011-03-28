@@ -1952,7 +1952,7 @@ public class KmlWriter extends StaxStreamWriter {
         if (folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) != null) {
             i = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
             while (i.hasNext()) {
-                this.writeAbstractFeature((Feature) ((Property) i.next()).getValue());
+                this.writeAbstractFeature((Feature) i.next());
             }
         }
         this.writeStandardExtensionLevel(
@@ -1982,7 +1982,7 @@ public class KmlWriter extends StaxStreamWriter {
         if (document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()) != null) {
             i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
             while (i.hasNext()) {
-                this.writeAbstractFeature((Feature) ((Property) i.next()).getValue());
+                this.writeAbstractFeature((Feature) (i.next()));
             }
         }
         this.writeStandardExtensionLevel(

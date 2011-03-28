@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.gx;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -116,7 +117,7 @@ public class TimePrimitivesTest {
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if(i.hasNext()){
-            final Object object = ((Property) i.next()).getValue();
+            final Object object = i.next();
             assertTrue(object instanceof Feature);
             final Feature placemark0 = (Feature) object;
 
@@ -142,7 +143,7 @@ public class TimePrimitivesTest {
         }
 
         if(i.hasNext()){
-            final Object object = ((Property) i.next()).getValue();
+            final Object object = i.next();
             assertTrue(object instanceof Feature);
             final Feature placemark1 = (Feature) object;
 
@@ -220,8 +221,8 @@ public class TimePrimitivesTest {
                 "    ";
         documentProperties.add(FF.createAttribute(description, KmlModelConstants.ATT_DESCRIPTION, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");

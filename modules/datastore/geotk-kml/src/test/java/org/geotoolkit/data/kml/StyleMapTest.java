@@ -143,7 +143,7 @@ public class StyleMapTest {
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark = (Feature) object;
             assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));

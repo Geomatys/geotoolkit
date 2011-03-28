@@ -39,6 +39,7 @@ import org.geotoolkit.data.kml.model.Polygon;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 
@@ -104,7 +105,7 @@ public class PolygonTest {
         Iterator i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if (i.hasNext()) {
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark = (Feature) object;
             assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
@@ -223,7 +224,7 @@ public class PolygonTest {
         final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("Polygon.kml", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_DOCUMENT_FEATURES));
 
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);

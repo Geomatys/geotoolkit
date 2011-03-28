@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.gx;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -107,8 +108,8 @@ public class MultiTrackTest {
         final Feature folder = kmlObjects.getAbstractFeature();
         assertTrue(folder.getType().equals(KmlModelConstants.TYPE_FOLDER));
        
-        assertTrue(folder.getProperty(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).getValue() instanceof Feature);
-        Feature placemark = (Feature) folder.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue();
+        assertTrue(folder.getProperty(KmlModelConstants.ATT_FOLDER_FEATURES.getName()) instanceof Feature);
+        Feature placemark = (Feature) folder.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
         assertTrue(placemark.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
         
         assertTrue(placemark.getProperty(KmlModelConstants.ATT_PLACEMARK_GEOMETRY.getName()).getValue() instanceof MultiTrack);
@@ -210,7 +211,7 @@ public class MultiTrackTest {
 
         final Feature folder = kmlFactory.createFolder();
         Collection<Property> folderProperties = folder.getProperties();
-        folderProperties.add(FF.createAttribute(placemark, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folderProperties.add(FeatureUtilities.wrapProperty(placemark, KmlModelConstants.ATT_FOLDER_FEATURES));
         final Kml kml = kmlFactory.createKml(null, folder, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");
 

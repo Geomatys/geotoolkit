@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.kml;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 
@@ -105,7 +106,7 @@ public class FolderTest {
         Iterator i = folder.getProperties(KmlModelConstants.ATT_FOLDER_FEATURES.getName()).iterator();
 
         if (i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark0 = (Feature) object;
             assertTrue(placemark0.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
@@ -123,7 +124,7 @@ public class FolderTest {
         }
 
         if (i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark1 = (Feature) object;
             assertTrue(placemark1.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
@@ -155,7 +156,7 @@ public class FolderTest {
         }
 
         if (i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark2 = (Feature) object;
             assertTrue(placemark2.getType().equals(KmlModelConstants.TYPE_PLACEMARK));
@@ -240,9 +241,9 @@ public class FolderTest {
         folderProperties.add(FF.createAttribute("Folder.kml", KmlModelConstants.ATT_NAME, null));
         folder.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
         folderProperties.add(FF.createAttribute("\n    A folder is a container that can hold multiple other objects\n  ", KmlModelConstants.ATT_DESCRIPTION, null));
-        folderProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folderProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_FOLDER_FEATURES, null));
-        folderProperties.add(FF.createAttribute(placemark2, KmlModelConstants.ATT_FOLDER_FEATURES, null));
+        folderProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folderProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_FOLDER_FEATURES));
+        folderProperties.add(FeatureUtilities.wrapProperty(placemark2, KmlModelConstants.ATT_FOLDER_FEATURES));
 
         final Kml kml = kmlFactory.createKml(null, folder, null, null);
 

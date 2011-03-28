@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.data.gx;
 
+import org.geotoolkit.feature.FeatureUtilities;
 import java.io.File;
 import java.io.IOException;
 import java.net.URISyntaxException;
@@ -107,8 +108,8 @@ public class SoundCueTest {
         assertTrue((Boolean) document.getProperty(KmlModelConstants.ATT_OPEN.getName()).getValue());
         assertEquals(1, document.getProperties(KmlModelConstants.ATT_EXTENSIONS.getName()).size());
 
-        assertTrue(document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue() instanceof Feature);
-        final Feature tour = (Feature) document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).getValue();
+        assertTrue(document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()) instanceof Feature);
+        final Feature tour = (Feature) document.getProperty(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName());
         assertTrue(tour.getType().equals(GxModelConstants.TYPE_TOUR));
 
         assertEquals("example", tour.getProperty(KmlModelConstants.ATT_NAME.getName()).getValue());
@@ -147,7 +148,7 @@ public class SoundCueTest {
         final Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("gx:SoundCue example", KmlModelConstants.ATT_NAME, null));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(Boolean.TRUE);
-        documentProperties.add(FF.createAttribute(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(tour, KmlModelConstants.ATT_DOCUMENT_FEATURES));
 
         final Kml kml = kmlFactory.createKml(null, document, null, null);
         kml.addExtensionUri(GxConstants.URI_GX, "gx");

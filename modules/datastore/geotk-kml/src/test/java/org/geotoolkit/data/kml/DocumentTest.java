@@ -42,6 +42,7 @@ import org.geotoolkit.data.kml.xml.KmlReader;
 import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.xml.DomCompare;
 
@@ -115,7 +116,7 @@ public class DocumentTest {
         i = document.getProperties(KmlModelConstants.ATT_DOCUMENT_FEATURES.getName()).iterator();
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
+            Object object = i.next();
             System.out.println(object.getClass());
             assertTrue(object instanceof Feature);
             Feature placemark0 = (Feature) object;
@@ -134,8 +135,7 @@ public class DocumentTest {
         }
 
         if(i.hasNext()){
-            Object object = ((Property) i.next()).getValue();
-            System.out.println(object.getClass());
+            Object object = i.next();
             assertTrue(object instanceof Feature);
             Feature placemark1 = (Feature) object;
 
@@ -193,8 +193,8 @@ public class DocumentTest {
         Feature document = kmlFactory.createDocument();
         Collection<Property> documentProperties = document.getProperties();
         documentProperties.add(FF.createAttribute("Document.kml", KmlModelConstants.ATT_NAME, null));
-        documentProperties.add(FF.createAttribute(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
-        documentProperties.add(FF.createAttribute(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES, null));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark0, KmlModelConstants.ATT_DOCUMENT_FEATURES));
+        documentProperties.add(FeatureUtilities.wrapProperty(placemark1, KmlModelConstants.ATT_DOCUMENT_FEATURES));
         document.getProperty(KmlModelConstants.ATT_OPEN.getName()).setValue(true);
         documentProperties.add(FF.createAttribute(style, KmlModelConstants.ATT_STYLE_SELECTOR, null));
 
