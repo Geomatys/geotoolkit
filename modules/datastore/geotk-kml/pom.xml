@@ -88,39 +88,22 @@
         <dependency>
             <groupId>org.geotoolkit.project</groupId>
             <artifactId>geotk-test</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.geotoolkit</groupId>
             <artifactId>geotk-epsg</artifactId>
-            <version>${project.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>postgresql</groupId>
             <artifactId>postgresql</artifactId>
-            <version>8.4-701.jdbc4</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.derby</groupId>
             <artifactId>derby</artifactId>
-            <version>10.5.3.0_1</version>
             <scope>test</scope>
-        </dependency>
-        <!-- Implémentation de référence BEA -->
-        <dependency>
-            <groupId>stax</groupId>
-            <artifactId>stax</artifactId>
-            <version>1.2.0</version>
-        </dependency>
-        <!-- Implémentation de Woodstock -->
-        <dependency>
-            <artifactId>wstx-asl</artifactId>
-            <groupId>org.codehaus.woodstox</groupId>
-            <type>jar</type>
-            <version>3.2.1</version>
         </dependency>
         <dependency>
           <groupId>org.geotoolkit.pending</groupId>
