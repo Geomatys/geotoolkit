@@ -76,6 +76,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.opengis.feature.type.PropertyType;
 
 /**
  * Utility methods for working against the FeatureType interface.
@@ -922,15 +923,12 @@ public final class FeatureTypeUtilities {
      * Walks up the type hierachy of the feature returning all super types of the specified feature
      * type.
      */
-    public static List<FeatureType> getAncestors(FeatureType featureType) {
-        final List<FeatureType> ancestors = new ArrayList<FeatureType>();
-        AttributeType ancestor;
-        while ((ancestor = featureType.getSuper()) != null) {
-            if (ancestor instanceof FeatureType) {
-                final FeatureType superType = (FeatureType) ancestor;
-                ancestors.add(superType);
-                featureType = superType;
-            }
+    public static List<PropertyType> getAncestors(PropertyType candidate) {
+        final List<PropertyType> ancestors = new ArrayList<PropertyType>();
+        PropertyType ancestor;
+        while ((ancestor = candidate.getSuper()) != null) {
+            ancestors.add(ancestor);
+            candidate = ancestor;
         }
         return ancestors;
     }
@@ -956,14 +954,14 @@ public final class FeatureTypeUtilities {
      *            typename to match against, or null for a "wildcard"
      * @return true if featureType is a decendent of the indicated namespace & typeName
      */
-    public static boolean isDecendedFrom(final FeatureType featureType, final URI namespace,
+    public static boolean isDecendedFrom(final PropertyType featureType, final URI namespace,
             final String typeName){
 
         if (featureType == null) {
             return false;
         }
-        final List<FeatureType> ancestors = getAncestors(featureType);
-        for (FeatureType superType : ancestors) {
+        final List<PropertyType> ancestors = getAncestors(featureType);
+        for (PropertyType superType : ancestors) {
             if (namespace == null) {
                 // dont match on namespace
                 if (Utilities.equals(superType.getName().getLocalPart(), typeName)) {
@@ -979,7 +977,7 @@ public final class FeatureTypeUtilities {
         return false;
     }
 
-    public static boolean isDecendedFrom(final FeatureType featureType, final FeatureType isParentType) {
+    public static boolean isDecendedFrom(final PropertyType featureType, final PropertyType isParentType) {
         try {
             return isDecendedFrom(featureType, new URI(isParentType.getName().getNamespaceURI()),
                     isParentType.getName().getLocalPart());

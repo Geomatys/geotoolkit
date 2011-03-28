@@ -52,8 +52,9 @@ abstract class WrapProperty<P extends org.opengis.feature.Property> extends Abst
         this.prop = prop;
         this.desc = desc;
 
-        if (!prop.getType().equals(desc.getType())) {
-            throw new IllegalArgumentException("Descriptor should have the same property type as the wrapped property");
+        if (!(prop.getType().equals(desc.getType()) || FeatureTypeUtilities.isDecendedFrom(prop.getType(), desc.getType()))) {
+            throw new IllegalArgumentException(
+                    "Descriptor should have the same property type or subtype of the wrapped property.");
         }
     }
 

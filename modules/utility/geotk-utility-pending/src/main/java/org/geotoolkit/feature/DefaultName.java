@@ -258,7 +258,7 @@ public class DefaultName implements Name,Serializable {
 
     public static boolean match(final Name name, final Name candidate){
         if(name.getNamespaceURI() == null || candidate.getNamespaceURI()==null){
-            //compare only namespaces
+            //compare only localpart
             return name.getLocalPart().equals(candidate.getLocalPart());
         }else{
             return name.getNamespaceURI().equals(candidate.getNamespaceURI())
