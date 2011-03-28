@@ -106,6 +106,20 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>stax</groupId>
+            <artifactId>stax</artifactId>
+            <version>1.2.0</version>
+            <scope>test</scope>
+        </dependency>
+        <!-- Implémentation de Woodstock -->
+        <dependency>
+            <artifactId>wstx-asl</artifactId>
+            <groupId>org.codehaus.woodstox</groupId>
+            <type>jar</type>
+            <version>3.2.1</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
           <groupId>org.geotoolkit.pending</groupId>
           <artifactId>geotk-jaxp-core</artifactId>
           <version>${project.version}</version>
