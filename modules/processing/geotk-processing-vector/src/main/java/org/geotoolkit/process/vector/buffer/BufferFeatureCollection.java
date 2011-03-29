@@ -23,7 +23,7 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.process.vector.WrapFeatureCollection;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;

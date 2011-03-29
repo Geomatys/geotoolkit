@@ -19,7 +19,7 @@ package org.geotoolkit.process.vector.differencegeometry;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.process.vector.WrapFeatureCollection;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;

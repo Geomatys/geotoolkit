@@ -29,7 +29,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.process.vector.WrapFeatureCollection;
+import org.geotoolkit.data.memory.WrapFeatureCollection;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;

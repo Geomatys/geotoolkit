@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.process.vector;
 
-import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -31,9 +30,10 @@ import com.vividsolutions.jts.geom.Polygon;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Iterator;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.ListIterator;
-import javax.management.Descriptor;
+import java.util.Map;
 
 import javax.measure.converter.UnitConverter;
 import javax.measure.quantity.Length;
@@ -60,7 +60,6 @@ import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
-import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -124,10 +123,10 @@ public final class VectorProcessUtils {
     
     
     /**
-     *
+     * Create a copy of a FeatureType in keeping only one geometry
      * @param oldFeatureType
      * @param keepedGeometry
-     * @return
+     * @return the new FeatureType
      */
     public static FeatureType oneGeometryFeatureType(final FeatureType oldFeatureType, String keepedGeometry) {
 
@@ -241,6 +240,34 @@ public final class VectorProcessUtils {
     }
 
     /**
+     * Get recursively all primaries Geometries contained in the input Geometry.
+     * @param inputGeom
+     * @return a collection of primary geometries
+     */
+    public static Collection<Geometry> getGeometries(Geometry inputGeom) {
+
+        Collection<Geometry> listGeom = new ArrayList<Geometry>();
+
+        //if geometry is a primary type
+        if (inputGeom instanceof Polygon || inputGeom instanceof Point
+                || inputGeom instanceof LinearRing || inputGeom instanceof LineString) {
+            listGeom.add(inputGeom);
+        }
+
+        //if it's a complex type (Multi... or GeometryCollection)
+        if (inputGeom instanceof MultiPolygon || inputGeom instanceof MultiPoint
+                || inputGeom instanceof MultiLineString || inputGeom instanceof GeometryCollection) {
+
+            for (int i = 0; i < inputGeom.getNumGeometries(); i++) {
+                listGeom.addAll(getGeometries(inputGeom.getGeometryN(i)));
+            }
+        }
+
+        return listGeom;
+    }
+
+
+    /**
      * Compute clipping between the feature geometry and the clipping geometry
      * @param featureGeometry Geometry
      * @param clippingGeometry Geometry
@@ -283,206 +310,17 @@ public final class VectorProcessUtils {
         }
     }
 
-
-    /**
-     * Get recursively all primaries Geometries contained in the input Geometry.
-     * @param inputGeom
-     * @return a collection of primary geometries
-     */
-    public static Collection<Geometry> getGeometries(Geometry inputGeom) {
-
-        Collection<Geometry> listGeom = new ArrayList<Geometry>();
-
-        //if geometry is a primary type
-        if (inputGeom instanceof Polygon || inputGeom instanceof Point
-                || inputGeom instanceof LinearRing || inputGeom instanceof LineString) {
-            listGeom.add(inputGeom);
-        }
-
-        //if it's a complex type (Multi... or GeometryCollection)
-        if (inputGeom instanceof MultiPolygon || inputGeom instanceof MultiPoint
-                || inputGeom instanceof MultiLineString || inputGeom instanceof GeometryCollection) {
-
-            for (int i = 0; i < inputGeom.getNumGeometries(); i++) {
-                listGeom.addAll(getGeometries(inputGeom.getGeometryN(i)));
-            }
-        }
-
-        return listGeom;
-    }
-
-    /**
-     * Convert a geometry to a MultiPolygon. If inputGeometry is a Multi... something or a GeometryCollection,
-     * the function use the <code>getGeometries</code> function to get all geometries before covert them.
-     * @param inputGeom
-     * @return a MultiPolygon
-     */
-    public static MultiPolygon convertGeomToPolygon(Geometry inputGeom) {
-
-        final GeometryFactory GF = new GeometryFactory();
-
-        MultiPolygon multiPoly;
-
-        final Collection<Geometry> listGeom = getGeometries(inputGeom);
-        final Collection<Polygon> multiPolyArray = new ArrayList<Polygon>();
-        final Iterator<Geometry> ite = listGeom.iterator();
-
-
-        while (ite.hasNext()) {
-            final Geometry aGeom = ite.next();
-
-            // Polygon
-            if (aGeom instanceof Polygon) {
-                multiPolyArray.add((Polygon) aGeom);
-            }
-
-            //LinearRing
-            if (aGeom instanceof LinearRing) {
-                multiPolyArray.add(GF.createPolygon((LinearRing) aGeom, null));
-            }
-
-            final Coordinate[] coordinates = aGeom.getCoordinates();
-            final int nbCoord = coordinates.length;
-
-            Coordinate[] polygonCoordianates;
-
-            //Point
-            if (aGeom instanceof Point) {
-                polygonCoordianates = new Coordinate[]{
-                            coordinates[0],
-                            coordinates[0],
-                            coordinates[0],
-                            coordinates[0]
-                        };
-
-                multiPolyArray.add(GF.createPolygon(GF.createLinearRing(polygonCoordianates), null));
-            }
-
-            //LineString
-            if (aGeom instanceof LineString) {
-                polygonCoordianates = new Coordinate[(nbCoord * 2)];
-                //copy of array
-                System.arraycopy(coordinates, 0, polygonCoordianates, 0, nbCoord);
-
-                int index = nbCoord;
-
-                //adding the reverse array
-                for (int i = (nbCoord - 1) ; i >=0  ; i--){
-                    polygonCoordianates[index] = coordinates[i];
-                    index++;
-                }
-                multiPolyArray.add(GF.createPolygon(GF.createLinearRing(polygonCoordianates), null));
-            }
-        }
-        final Polygon[] bufferArray = multiPolyArray.toArray(new Polygon[multiPolyArray.size()]);
-
-        return GF.createMultiPolygon(bufferArray);
-    }
-
     /**
      * Compute the intersection between a Feature and a FeatureCollection and return a FeatureCollection
-     * where each Feature geometry are the intersection.
+     * where each Feature contained  the intersection geometry as default geometry.
      * If a feature have many geometries, we concatenate them before compute intersection.
      * @param inputFeature
      * @param featureList
-     * @return a FeatureCollection of intersection Geometry. The FeatureCollection ID is "<inputFeatureID>-intersection"
+     * @param geometryName the geometry name in inputFeature to compute the intersection
+     * @return a FeatureCollection of intersection Geometry. The FeatureCollection ID is "inputFeatureID-intersection"
+     * The Feature returned ID will look like "inputFeatureID<->intersectionFeatureID"
      */
     public static FeatureCollection<Feature> intersection(final Feature inputFeature,
-            final FeatureCollection<Feature> featureList) {
-
-        final FeatureType newType = VectorProcessUtils.changeGeometryFeatureType(inputFeature.getType(), Geometry.class);
-
-
-        //name of the new collection "<inputFeatureID>-intersection"
-        final FeatureCollection<Feature> resultFeatureList =
-                DataUtilities.collection(inputFeature.getIdentifier().getID() + "-intersection", newType);
-
-        Geometry inputGeometry = null;
-        // concat all inputFeature geometries
-        for (Property inputProperty : inputFeature.getProperties()) {
-            if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                 if (inputGeometry != null) {
-                     inputGeometry = inputGeometry.union((Geometry) inputProperty.getValue());
-                 } else {
-                     inputGeometry = (Geometry) inputProperty.getValue();
-                 }
-            }
-        }
-        
-
-        //lauch Intersect process to get all features which intersect the inputFeature geometry
-        final ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(VectorProcessFactory.NAME, IntersectDescriptor.NAME);
-        final org.geotoolkit.process.Process proc = desc.createProcess();
-        final ParameterValueGroup in = desc.getInputDescriptor().createValue();
-        in.parameter(IntersectDescriptor.FEATURE_IN.getName().getCode()).setValue(featureList);
-        in.parameter(IntersectDescriptor.GEOMETRY_IN.getName().getCode()).setValue(inputGeometry);
-        proc.setInput(in);
-        proc.run();
-        
-        //get all Feature which intersect the intput Feature geometry
-        final FeatureCollection<Feature> featuresOut = (FeatureCollection<Feature>) proc.getOutput().parameter(IntersectDescriptor.FEATURE_OUT.getName().getCode()).getValue();
-
-        if (featuresOut.isEmpty()) {
-            //return an empty FeatureCollection
-            return resultFeatureList;
-        } else {
-
-            //loop in resulting FeatureCollection
-            final FeatureIterator<Feature> ite = featuresOut.iterator();
-            int num = 0;
-            try {
-                while (ite.hasNext()) {
-
-                    final Feature outFeature = ite.next();
-
-                    Geometry outGeometry = null;
-                    // concat all outFeature geometries
-                    for (Property outProperty : outFeature.getProperties()) {
-                        if (outProperty.getDescriptor() instanceof GeometryDescriptor) {
-                            if (outGeometry != null) {
-                                outGeometry = outGeometry.union((Geometry) outProperty.getValue());
-                            } else {
-                                outGeometry = (Geometry) outProperty.getValue();
-                            }
-                        }
-                    }
-                    //conversion into MultiPolygon
-                    MultiPolygon multiPolyOut = convertGeomToPolygon(outGeometry);
-
-                    //create the result Feature
-                    final Feature resultFeature = FeatureUtilities.defaultFeature(newType,
-                            inputFeature.getIdentifier().getID() + "-" + num);
-
-                    for (Property property : inputFeature.getProperties()) {
-                        if (property.getDescriptor() instanceof GeometryDescriptor) {
-                            //set the intersection as the feature Geometry
-                            resultFeature.getProperty(property.getName()).setValue(inputGeometry.intersection(multiPolyOut));
-                        } else {
-
-                            resultFeature.getProperty(property.getName()).setValue(property.getValue());
-                        }
-                    }
-                    num++;
-                    resultFeatureList.add(resultFeature);
-                }
-            } finally {
-                ite.close();
-            }
-        }
-
-        return resultFeatureList;
-    }
-
-
-     /**
-     * Compute the intersection between a Feature and a FeatureCollection and return a FeatureCollection
-     * where each Feature geometry are the intersection.
-     * If a feature have many geometries, we concatenate them before compute intersection.
-     * @param inputFeature
-     * @param featureList
-     * @return a FeatureCollection of intersection Geometry. The FeatureCollection ID is "<inputFeatureID>-intersection"
-     */
-    public static FeatureCollection<Feature> intersection2(final Feature inputFeature,
             final FeatureCollection<Feature> featureList, String geometryName) 
             throws FactoryException, MismatchedDimensionException, TransformException {
 
@@ -498,7 +336,7 @@ public final class VectorProcessUtils {
         final FeatureCollection<Feature> resultFeatureList =
                 DataUtilities.collection(inputFeature.getIdentifier().getID() + "-intersection", newType);
 
-        Geometry inputGeometry = null;
+        Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem inputCRS = null;
         // concat all inputFeature geometries
         for (Property inputProperty : inputFeature.getProperties()) {
@@ -519,11 +357,11 @@ public final class VectorProcessUtils {
         in.parameter(IntersectDescriptor.GEOMETRY_IN.getName().getCode()).setValue(inputGeometry);
         proc.setInput(in);
         proc.run();
-
+        
         //get all Features which intersects the intput Feature geometry
         final FeatureCollection<Feature> featuresOut = (FeatureCollection<Feature>)
                 proc.getOutput().parameter(IntersectDescriptor.FEATURE_OUT.getName().getCode()).getValue();
-
+        
         if (featuresOut.isEmpty()) {
             //return an empty FeatureCollection
             return resultFeatureList;
@@ -531,63 +369,79 @@ public final class VectorProcessUtils {
 
             //loop in resulting FeatureCollection
             final FeatureIterator<Feature> ite = featuresOut.iterator();
-            int num = 0;
             try {
                 while (ite.hasNext()) {
 
+                    //get the next Feature which intersect the inputFeature
                     final Feature outFeature = ite.next();
+                    
+                    Map<Geometry, CoordinateReferenceSystem> mapGeomCRS = new HashMap<Geometry, CoordinateReferenceSystem>();
 
-                    Geometry outGeometry = null;
-                    CoordinateReferenceSystem outputCRS = null;
-
-                    // concat all outFeature geometries
+                    //generate a map with all feature geometry and geometry CRS
                     for (Property outProperty : outFeature.getProperties()) {
                         if (outProperty.getDescriptor() instanceof GeometryDescriptor) {
                             
-                            // Others geometries : get there CRS and convert them into first geometry CRS found
-                            // and generate an union
-                            if (outGeometry != null) {
-                                final GeometryDescriptor geomDescOut = (GeometryDescriptor)outProperty.getDescriptor();
-                                Geometry newOutGeometry = (Geometry) outProperty.getValue();
-                                if(newOutGeometry != null){
-                                    final MathTransform transform = CRS.findMathTransform(outputCRS, geomDescOut.getCoordinateReferenceSystem());
-                                    newOutGeometry = JTS.transform(newOutGeometry, transform);
-                                    outGeometry = outGeometry.union(newOutGeometry);
-                                }
-                                
-                            } else {// First geometry set in outGeometry and store the geometry CRS
-                                outGeometry = (Geometry) outProperty.getValue();
-                                final GeometryDescriptor geomDescOut = (GeometryDescriptor)outProperty.getDescriptor();
-                                outputCRS = geomDescOut.getCoordinateReferenceSystem();
-                            }
+                            Geometry outGeom = (Geometry) outProperty.getValue();
+                            final GeometryDescriptor geomDescOut = (GeometryDescriptor)outProperty.getDescriptor();
+                            CoordinateReferenceSystem outputCRS = geomDescOut.getCoordinateReferenceSystem();
+                            mapGeomCRS.put(outGeom, outputCRS);
                         }
                     }
-                    //conversion into MultiPolygon
-                    MultiPolygon multiPolyOut = convertGeomToPolygon(outGeometry);
+
+                    //get the first geometry CRS in the map. It'll be used to homogenize the Feature geometries CRS
+                    CoordinateReferenceSystem outputBaseCRS = mapGeomCRS.entrySet().iterator().next().getValue();
+
+                    Geometry interGeom = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+                    Geometry interGeomBuffer = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+
+                    //for each Feature Geometry
+                    for(Map.Entry<Geometry, CoordinateReferenceSystem> entry : mapGeomCRS.entrySet()){
+
+                        Geometry geom = entry.getKey();
+                        final CoordinateReferenceSystem geomCRS = entry.getValue();
+
+                        //if geometry is not null
+                        if(geom != null){
+                            //re projection into the first geometry CRS found if different
+                            if(!(geomCRS.equals(outputBaseCRS))){
+                                final MathTransform transform = CRS.findMathTransform(outputBaseCRS, geomCRS);
+                                geom = JTS.transform(geom, transform);
+                            }
+
+                            //get all geometries recursively
+                            final Collection<Geometry> subGeometry = getGeometries(geom);
+
+                            //each sub geometries
+                            for(Geometry aGeometry : subGeometry){
+                                //if geometry CRS is different of inputGeometry CRS
+                                if(!(outputBaseCRS.equals(inputCRS))){
+                                    //re-projection into the inputGeometry CRS
+                                    final MathTransform transformToOriginal = CRS.findMathTransform(inputCRS, outputBaseCRS);
+                                    aGeometry = JTS.transform(aGeometry, transformToOriginal);
+                                }
+                                //concatenate all intersections between this geometry and the inputGeometry
+                                interGeomBuffer = interGeomBuffer.union(inputGeometry.intersection(aGeometry));
+                            }
+                             //concatenate all intersections between Feature geometries and the inputGeometry
+                            interGeom = interGeom.union(interGeomBuffer);
+                        }
+                    }
 
                     //create the result Feature
                     final Feature resultFeature = FeatureUtilities.defaultFeature(newType,
-                            inputFeature.getIdentifier().getID() + "-" + num);
+                            inputFeature.getIdentifier().getID() + "<->" + outFeature.getIdentifier().getID());
 
                     for (Property property : inputFeature.getProperties()) {
                         if (property.getDescriptor() instanceof GeometryDescriptor) {
                             if(property.getName().getLocalPart().equals(geometryName)){
-
-                                if(!(outputCRS.equals(inputCRS))){
-                                    final MathTransform transformToOriginal = CRS.findMathTransform(inputCRS, outputCRS);
-                                    multiPolyOut = (MultiPolygon) JTS.transform((Geometry)multiPolyOut, transformToOriginal);
-                                }
-                                System.out.println("####### inputGeom " + inputGeometry);
-                                System.out.println("####### outPGeom " + multiPolyOut);
                                 //set the intersection as the feature Geometry
-                                resultFeature.getProperty(property.getName()).setValue(inputGeometry.intersection(multiPolyOut));
+                                resultFeature.getProperty(property.getName()).setValue(interGeom);
                             }
                         } else {
                             
                             resultFeature.getProperty(property.getName()).setValue(property.getValue());
                         }
                     }
-                    num++;
                     resultFeatureList.add(resultFeature);
                 }
             } finally {
