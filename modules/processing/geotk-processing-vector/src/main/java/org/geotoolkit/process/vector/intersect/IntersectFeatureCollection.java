@@ -29,7 +29,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.process.vector.VectorFeatureCollection;
+import org.geotoolkit.process.vector.WrapFeatureCollection;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -43,7 +43,7 @@ import org.opengis.filter.FilterFactory2;
  * @author Quentin Boileau
  * @module pending
  */
-public class IntersectFeatureCollection extends VectorFeatureCollection {
+public class IntersectFeatureCollection extends WrapFeatureCollection {
 
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
             new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));

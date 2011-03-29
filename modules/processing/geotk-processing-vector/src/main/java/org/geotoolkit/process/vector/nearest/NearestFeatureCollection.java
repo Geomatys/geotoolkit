@@ -17,7 +17,7 @@
 package org.geotoolkit.process.vector.nearest;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.process.vector.VectorFeatureCollection;
+import org.geotoolkit.process.vector.WrapFeatureCollection;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -27,7 +27,7 @@ import org.opengis.feature.type.FeatureType;
  * @author Quentin Boileau
  * @module pending
  */
-public class NearestFeatureCollection extends VectorFeatureCollection {
+public class NearestFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
 

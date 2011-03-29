@@ -19,7 +19,7 @@ package org.geotoolkit.process.vector.differencegeometry;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.process.vector.VectorFeatureCollection;
+import org.geotoolkit.process.vector.WrapFeatureCollection;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
@@ -30,7 +30,7 @@ import org.opengis.feature.type.FeatureType;
  * @author Quentin Boileau
  * @module pending
  */
-public class DifferenceGeometryFeatureCollection extends VectorFeatureCollection {
+public class DifferenceGeometryFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
     private final Geometry diffGeometry;

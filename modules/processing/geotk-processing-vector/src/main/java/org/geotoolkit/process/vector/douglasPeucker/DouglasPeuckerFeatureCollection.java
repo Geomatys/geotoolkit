@@ -21,7 +21,7 @@ import javax.measure.unit.Unit;
 
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
-import org.geotoolkit.process.vector.VectorFeatureCollection;
+import org.geotoolkit.process.vector.WrapFeatureCollection;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -34,7 +34,7 @@ import org.opengis.util.FactoryException;
  * @author Quentin Boileau
  * @module pending
  */
-public class DouglasPeuckerFeatureCollection extends VectorFeatureCollection {
+public class DouglasPeuckerFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
     private final double inputAccuracy;

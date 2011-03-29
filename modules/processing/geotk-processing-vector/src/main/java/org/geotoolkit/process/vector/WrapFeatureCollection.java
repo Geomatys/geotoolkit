@@ -37,7 +37,7 @@ import org.opengis.filter.Filter;
  * @author Quentin Boileau
  * @module pending
  */
-public abstract class VectorFeatureCollection extends AbstractFeatureCollection<Feature> {
+public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Feature> {
 
     private final FeatureCollection<?> originalFC;
     private final FeatureType featureType;
@@ -46,7 +46,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      */
-    public VectorFeatureCollection(final FeatureCollection<?> originalFC) {
+    public WrapFeatureCollection(final FeatureCollection<?> originalFC) {
         super(originalFC.getID(), originalFC.getSource());
         this.originalFC = originalFC;
         this.featureType = originalFC.getFeatureType();
@@ -129,73 +129,21 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
      * @author Quentin Boileau
      * @module pending
      */
-    private class VectorFeatureIterator implements FeatureIterator<Feature> {
+    private class VectorFeatureIterator extends  WrapFeatureIterator {
 
-        private final FeatureIterator<?> originalFI;
-        private Feature nextFeature;
 
         /**
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
         public VectorFeatureIterator(final FeatureIterator<?> originalFI) {
-            this.originalFI = originalFI;
-            nextFeature = null;
+            super(originalFI);
         }
 
-        /**
-         * Return the Feature modify by the process
-         * @return Feature
-         */
         @Override
-        public Feature next() {
-            findNext();
-
-            if (nextFeature == null) {
-                throw new NoSuchElementException("No more Feature.");
-            }
-
-            final Feature feat = nextFeature;
-            nextFeature = null;
-            return feat;
+        protected Feature modify(Feature feature){
+            return WrapFeatureCollection.this.modify(feature);
         }
 
-        /**
-         * Close the original FeatureIterator
-         */
-        @Override
-        public void close() {
-            originalFI.close();
-        }
-
-        /**
-         * Return hasNext() result from the original FeatureIterator
-         */
-        @Override
-        public boolean hasNext() {
-            findNext();
-            return nextFeature != null;
-        }
-
-        /**
-         * Useless because current FeatureCollection can't be modified
-         */
-        @Override
-        public void remove() {
-            throw new DataStoreRuntimeException("Unmodifiable collection");
-        }
-
-        /**
-         * Find the next feature
-         */
-        private void findNext() {
-            if (nextFeature != null) {
-                return;
-            }
-
-            while (nextFeature == null && originalFI.hasNext()) {
-                nextFeature = modify(originalFI.next());
-            }
-        }
     }
 }
