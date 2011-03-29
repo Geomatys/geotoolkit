@@ -194,7 +194,13 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
      * Wrap a FeatureIterator with a start index.
      */
     public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final int limit){
-        return new GenericStartIndexFeatureIterator(reader, limit);
+        if(reader instanceof FeatureReader){
+            return wrap((FeatureReader)reader,limit);
+        }else if(reader instanceof FeatureWriter){
+            return wrap((FeatureWriter)reader,limit);
+        }else{
+            return new GenericStartIndexFeatureIterator(reader, limit);
+        }
     }
 
     /**

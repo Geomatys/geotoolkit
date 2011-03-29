@@ -181,7 +181,11 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
      * Wrap a FeatureIterator will a sort by order.
      */
     public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final SortBy[] orders){
-        return new GenericSortByFeatureIterator(reader, orders);
+        if(reader instanceof FeatureReader){
+            return wrap((FeatureReader)reader,orders);
+        }else{
+            return new GenericSortByFeatureIterator(reader, orders);
+        }
     }
 
     /**

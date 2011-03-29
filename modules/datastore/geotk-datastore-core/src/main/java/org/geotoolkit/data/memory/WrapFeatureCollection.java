@@ -17,15 +17,14 @@
 package org.geotoolkit.data.memory;
 
 import java.util.Map;
-import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.AbstractFeatureCollection;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.query.Query;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.storage.DataStoreException;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
@@ -59,7 +58,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
     protected abstract Feature modify(Feature original) throws DataStoreRuntimeException;
 
     /**
-     * Return the orignal FeatureCollection
+     * Return the original FeatureCollection
      * @return FeatureCollection : original
      */
     protected FeatureCollection<?> getOriginalFeatureCollection() {
@@ -73,14 +72,6 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
     @Override
     public FeatureType getFeatureType() {
         return featureType;
-    }
-
-    /**
-     *  {@inheritDoc }
-     */
-    @Override
-    public FeatureCollection<Feature> subCollection(final Query query) throws DataStoreException {
-        throw new UnsupportedOperationException("Not supported yet.");
     }
 
     /**
@@ -124,13 +115,22 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
         return false;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append('\n');
+        String subIterator = "\u2514\u2500\u2500" + originalFC.toString(); //move text to the right
+        subIterator = subIterator.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+        sb.append(subIterator);
+        return sb.toString();
+    }
+
     /**
      * Implementation of FeatureIterator for BufferFeatureCollection
      * @author Quentin Boileau
      * @module pending
      */
     private class VectorFeatureIterator extends  WrapFeatureIterator {
-
 
         /**
          * Connect to the original FeatureIterator

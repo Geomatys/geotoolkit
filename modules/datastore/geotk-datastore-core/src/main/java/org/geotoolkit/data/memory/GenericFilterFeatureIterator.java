@@ -191,7 +191,13 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
      * Wrap a FeatureIterator with a filter.
      */
     public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final Filter filter){
-        return new GenericFilterFeatureIterator(reader, filter);
+        if(reader instanceof FeatureReader){
+            return wrap((FeatureReader)reader,filter);
+        }else if(reader instanceof FeatureWriter){
+            return wrap((FeatureWriter)reader,filter);
+        }else{
+            return new GenericFilterFeatureIterator(reader, filter);
+        }
     }
 
     /**

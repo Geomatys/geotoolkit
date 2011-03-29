@@ -130,7 +130,7 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
 
         @Override
         public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
-            return createIterator();
+            return createReader(getOriginalFeatureCollection().getFeatureType());
         }
 
         @Override

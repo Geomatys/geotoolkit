@@ -5,9 +5,15 @@
 
 package org.geotoolkit.data.memory;
 
+import java.io.Closeable;
+import java.io.IOException;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.util.converter.Classes;
 import org.opengis.feature.Feature;
 
 /**
@@ -17,14 +23,14 @@ import org.opengis.feature.Feature;
  */
 public abstract class WrapFeatureIterator implements FeatureIterator<Feature> {
 
-    private final FeatureIterator<?> originalFI;
+    private final Iterator<? extends Feature> originalFI;
     private Feature nextFeature;
 
     /**
      * Connect to the original FeatureIterator
      * @param originalFI FeatureIterator
      */
-    public WrapFeatureIterator(final FeatureIterator<?> originalFI) {
+    public WrapFeatureIterator(final Iterator<? extends Feature> originalFI) {
         this.originalFI = originalFI;
         nextFeature = null;
     }
@@ -51,7 +57,13 @@ public abstract class WrapFeatureIterator implements FeatureIterator<Feature> {
      */
     @Override
     public void close() {
-        originalFI.close();
+        if (originalFI instanceof Closeable) {
+            try {
+                ((Closeable) originalFI).close();
+            } catch (IOException ex) {
+                Logger.getLogger(WrapFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
+            }
+        }
     }
 
     /**
@@ -84,6 +96,24 @@ public abstract class WrapFeatureIterator implements FeatureIterator<Feature> {
         }
     }
 
-    protected abstract Feature modify (Feature feature);
-    
+    /**
+     * Override this method to modify on the fly the feature.
+     * By default this method return the original feature.
+     * @param feature
+     * @return modified feature.
+     */
+    protected Feature modify (Feature feature){
+        return feature;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(Classes.getShortClassName(this));
+        sb.append('\n');
+        String subIterator = "\u2514\u2500\u2500" + originalFI.toString(); //move text to the right
+        subIterator = subIterator.replaceAll("\n", "\n\u00A0\u00A0\u00A0"); //move text to the right
+        sb.append(subIterator);
+        return sb.toString();
+    }
+
 }
