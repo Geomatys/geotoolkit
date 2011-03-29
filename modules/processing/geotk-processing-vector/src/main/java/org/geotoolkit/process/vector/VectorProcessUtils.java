@@ -120,8 +120,7 @@ public final class VectorProcessUtils {
 
         return ftb.buildFeatureType();
     }
-    
-    
+
     /**
      * Create a copy of a FeatureType in keeping only one geometry
      * @param oldFeatureType
@@ -138,10 +137,10 @@ public final class VectorProcessUtils {
         ftb.copy(oldFeatureType);
 
         //if keepedGeometry is null we use the default Geometry
-        if(keepedGeometry == null){
-            keepedGeometry = ftb.getDefaultGeometry().getLocalPart();
+        if (keepedGeometry == null) {
+            keepedGeometry = oldFeatureType.getGeometryDescriptor().getName().getLocalPart();
         }
-        
+
         final Collection<String> listToRemove = new ArrayList<String>();
 
         final ListIterator<PropertyDescriptor> ite = ftb.getProperties().listIterator();
@@ -149,10 +148,10 @@ public final class VectorProcessUtils {
 
             final PropertyDescriptor desc = ite.next();
             if (desc instanceof GeometryDescriptor) {
-                
+
                 final GeometryType type = (GeometryType) desc.getType();
 
-                if(desc.getName().getLocalPart().equals(keepedGeometry)){
+                if (desc.getName().getLocalPart().equals(keepedGeometry)) {
                     descBuilder = new AttributeDescriptorBuilder();
                     typeBuilder = new AttributeTypeBuilder();
                     descBuilder.copy((AttributeDescriptor) desc);
@@ -161,13 +160,12 @@ public final class VectorProcessUtils {
                     descBuilder.setType(typeBuilder.buildGeometryType());
                     final PropertyDescriptor newDesc = descBuilder.buildDescriptor();
                     ite.set(newDesc);
-                }
-                else{
+                } else {
                     listToRemove.add(desc.getName().getLocalPart());
                 }
             }
         }
-        
+
         ftb.setDefaultGeometry(keepedGeometry);
         for (String delPropertyDesc : listToRemove) {
             ftb.remove(delPropertyDesc);
@@ -177,7 +175,6 @@ public final class VectorProcessUtils {
         return ftb.buildFeatureType();
     }
 
-    
     /**
      * Create a custom projection (Conic or Mercator) for the geometry using the
      * geometry envelope.
@@ -266,7 +263,6 @@ public final class VectorProcessUtils {
         return listGeom;
     }
 
-
     /**
      * Compute clipping between the feature geometry and the clipping geometry
      * @param featureGeometry Geometry
@@ -321,11 +317,11 @@ public final class VectorProcessUtils {
      * The Feature returned ID will look like "inputFeatureID<->intersectionFeatureID"
      */
     public static FeatureCollection<Feature> intersection(final Feature inputFeature,
-            final FeatureCollection<Feature> featureList, String geometryName) 
+            final FeatureCollection<Feature> featureList, String geometryName)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
         //if the wanted feature geometry is null, we use the default geometry
-        if(geometryName == null){
+        if (geometryName == null) {
             geometryName = inputFeature.getDefaultGeometryProperty().getName().getLocalPart();
         }
 
@@ -341,9 +337,9 @@ public final class VectorProcessUtils {
         // concat all inputFeature geometries
         for (Property inputProperty : inputFeature.getProperties()) {
             if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
-                if(inputProperty.getName().getLocalPart().equals(geometryName)){
+                if (inputProperty.getName().getLocalPart().equals(geometryName)) {
                     inputGeometry = (Geometry) inputProperty.getValue();
-                    final GeometryDescriptor geomDesc = (GeometryDescriptor)inputProperty.getDescriptor();
+                    final GeometryDescriptor geomDesc = (GeometryDescriptor) inputProperty.getDescriptor();
                     inputCRS = geomDesc.getCoordinateReferenceSystem();
                 }
             }
@@ -357,11 +353,10 @@ public final class VectorProcessUtils {
         in.parameter(IntersectDescriptor.GEOMETRY_IN.getName().getCode()).setValue(inputGeometry);
         proc.setInput(in);
         proc.run();
-        
+
         //get all Features which intersects the intput Feature geometry
-        final FeatureCollection<Feature> featuresOut = (FeatureCollection<Feature>)
-                proc.getOutput().parameter(IntersectDescriptor.FEATURE_OUT.getName().getCode()).getValue();
-        
+        final FeatureCollection<Feature> featuresOut = (FeatureCollection<Feature>) proc.getOutput().parameter(IntersectDescriptor.FEATURE_OUT.getName().getCode()).getValue();
+
         if (featuresOut.isEmpty()) {
             //return an empty FeatureCollection
             return resultFeatureList;
@@ -374,15 +369,15 @@ public final class VectorProcessUtils {
 
                     //get the next Feature which intersect the inputFeature
                     final Feature outFeature = ite.next();
-                    
+
                     Map<Geometry, CoordinateReferenceSystem> mapGeomCRS = new HashMap<Geometry, CoordinateReferenceSystem>();
 
                     //generate a map with all feature geometry and geometry CRS
                     for (Property outProperty : outFeature.getProperties()) {
                         if (outProperty.getDescriptor() instanceof GeometryDescriptor) {
-                            
+
                             Geometry outGeom = (Geometry) outProperty.getValue();
-                            final GeometryDescriptor geomDescOut = (GeometryDescriptor)outProperty.getDescriptor();
+                            final GeometryDescriptor geomDescOut = (GeometryDescriptor) outProperty.getDescriptor();
                             CoordinateReferenceSystem outputCRS = geomDescOut.getCoordinateReferenceSystem();
                             mapGeomCRS.put(outGeom, outputCRS);
                         }
@@ -395,15 +390,15 @@ public final class VectorProcessUtils {
                     Geometry interGeomBuffer = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
 
                     //for each Feature Geometry
-                    for(Map.Entry<Geometry, CoordinateReferenceSystem> entry : mapGeomCRS.entrySet()){
+                    for (Map.Entry<Geometry, CoordinateReferenceSystem> entry : mapGeomCRS.entrySet()) {
 
                         Geometry geom = entry.getKey();
                         final CoordinateReferenceSystem geomCRS = entry.getValue();
 
                         //if geometry is not null
-                        if(geom != null){
+                        if (geom != null) {
                             //re projection into the first geometry CRS found if different
-                            if(!(geomCRS.equals(outputBaseCRS))){
+                            if (!(geomCRS.equals(outputBaseCRS))) {
                                 final MathTransform transform = CRS.findMathTransform(outputBaseCRS, geomCRS);
                                 geom = JTS.transform(geom, transform);
                             }
@@ -412,9 +407,9 @@ public final class VectorProcessUtils {
                             final Collection<Geometry> subGeometry = getGeometries(geom);
 
                             //each sub geometries
-                            for(Geometry aGeometry : subGeometry){
+                            for (Geometry aGeometry : subGeometry) {
                                 //if geometry CRS is different of inputGeometry CRS
-                                if(!(outputBaseCRS.equals(inputCRS))){
+                                if (!(outputBaseCRS.equals(inputCRS))) {
                                     //re-projection into the inputGeometry CRS
                                     final MathTransform transformToOriginal = CRS.findMathTransform(inputCRS, outputBaseCRS);
                                     aGeometry = JTS.transform(aGeometry, transformToOriginal);
@@ -422,7 +417,7 @@ public final class VectorProcessUtils {
                                 //concatenate all intersections between this geometry and the inputGeometry
                                 interGeomBuffer = interGeomBuffer.union(inputGeometry.intersection(aGeometry));
                             }
-                             //concatenate all intersections between Feature geometries and the inputGeometry
+                            //concatenate all intersections between Feature geometries and the inputGeometry
                             interGeom = interGeom.union(interGeomBuffer);
                         }
                     }
@@ -433,12 +428,12 @@ public final class VectorProcessUtils {
 
                     for (Property property : inputFeature.getProperties()) {
                         if (property.getDescriptor() instanceof GeometryDescriptor) {
-                            if(property.getName().getLocalPart().equals(geometryName)){
+                            if (property.getName().getLocalPart().equals(geometryName)) {
                                 //set the intersection as the feature Geometry
                                 resultFeature.getProperty(property.getName()).setValue(interGeom);
                             }
                         } else {
-                            
+
                             resultFeature.getProperty(property.getName()).setValue(property.getValue());
                         }
                     }

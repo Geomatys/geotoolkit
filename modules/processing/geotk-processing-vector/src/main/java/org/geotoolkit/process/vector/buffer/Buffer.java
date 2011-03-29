@@ -27,6 +27,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.referencing.CRS;
@@ -81,6 +82,7 @@ public class Buffer extends AbstractProcess {
      */
     @Override
     public void run() {
+        getMonitor().started(new ProcessEvent(this,0,null,null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(BufferDescriptor.FEATURE_IN, inputParameters);
         final double inputDistance = Parameters.value(BufferDescriptor.DISTANCE_IN, inputParameters).doubleValue();
         final Unit<Length> inputUnit = Parameters.value(BufferDescriptor.UNIT_IN, inputParameters);
@@ -91,6 +93,7 @@ public class Buffer extends AbstractProcess {
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getMonitor().ended(new ProcessEvent(this,100,null,null));
     }
 
     /**

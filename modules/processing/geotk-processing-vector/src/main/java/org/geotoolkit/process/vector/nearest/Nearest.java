@@ -83,6 +83,7 @@ public class Nearest extends AbstractProcess {
     @Override
     public void run() {
         try {
+            getMonitor().started(new ProcessEvent(this,0,null,null));
             final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
             Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
             final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(interGeom);
@@ -103,7 +104,8 @@ public class Nearest extends AbstractProcess {
 
             result = super.getOutput();
             result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-
+            getMonitor().ended(new ProcessEvent(this,100,null,null));
+            
         } catch (NoSuchAuthorityCodeException ex) {
             getMonitor().failed(new ProcessEvent(this, 0, null, ex));
         } catch (FactoryException ex) {

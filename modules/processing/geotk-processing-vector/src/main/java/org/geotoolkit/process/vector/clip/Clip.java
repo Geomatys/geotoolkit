@@ -28,6 +28,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
@@ -67,6 +68,7 @@ public class Clip extends AbstractProcess {
      */
     @Override
     public void run() {
+        getMonitor().started(new ProcessEvent(this,0,null,null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(ClipDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(ClipDescriptor.FEATURE_CLIP, inputParameters);
 
@@ -74,6 +76,7 @@ public class Clip extends AbstractProcess {
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getMonitor().ended(new ProcessEvent(this,100,null,null));
     }
 
     /**

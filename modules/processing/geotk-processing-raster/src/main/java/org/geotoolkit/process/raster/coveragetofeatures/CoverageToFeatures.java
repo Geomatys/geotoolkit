@@ -83,6 +83,7 @@ public class CoverageToFeatures extends AbstractProcess {
     @Override
     public void run() {
         try {
+            getMonitor().started(new ProcessEvent(this,0,null,null));
             GridCoverageReader reader = Parameters.value(CoverageToFeaturesDescriptor.READER_IN, inputParameters);
             GridCoverage2D coverage = (GridCoverage2D) reader.read(0, null);
             GeneralGridGeometry gridGeom = reader.getGridGeometry(0);
@@ -92,7 +93,7 @@ public class CoverageToFeatures extends AbstractProcess {
 
             result = super.getOutput();
             result.parameter(CoverageToFeaturesDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-
+            getMonitor().ended(new ProcessEvent(this,100,null,null));
         } catch (CoverageStoreException ex) {
             getMonitor().failed(new ProcessEvent(this, 0, null, ex));
             Logger.getLogger(CoverageToFeatures.class.getName()).log(Level.SEVERE, null, ex);

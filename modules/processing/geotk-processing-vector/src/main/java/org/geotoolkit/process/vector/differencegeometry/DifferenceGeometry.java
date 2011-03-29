@@ -22,6 +22,7 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
+import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
@@ -60,6 +61,7 @@ public class DifferenceGeometry extends AbstractProcess {
      */
     @Override
     public void run() {
+        getMonitor().started(new ProcessEvent(this,0,null,null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceGeometryDescriptor.FEATURE_IN, inputParameters);
         final Geometry inputDifferenceGeometry = Parameters.value(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN, inputParameters);
 
@@ -68,6 +70,7 @@ public class DifferenceGeometry extends AbstractProcess {
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
+        getMonitor().ended(new ProcessEvent(this,100,null,null));
     }
 
     /**
