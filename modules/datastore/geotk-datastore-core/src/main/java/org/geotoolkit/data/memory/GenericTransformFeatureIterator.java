@@ -25,6 +25,7 @@ import java.util.List;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
@@ -221,6 +222,27 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
         }
     }
 
+    private static final class GenericTransformFeatureCollection extends WrapFeatureCollection{
+
+        private final GeometryTransformer transformer;
+
+        private GenericTransformFeatureCollection(final FeatureCollection original, final GeometryTransformer transformer){
+            super(original);
+            this.transformer = transformer;
+        }
+
+        @Override
+        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+            return wrap((FeatureReader) getOriginalFeatureCollection().iterator(hints), transformer, hints);
+        }
+
+        @Override
+        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+            throw new UnsupportedOperationException("should not have been called.");
+        }
+
+    }
+
     /**
      * Wrap a FeatureReader with a reprojection.
      */
@@ -242,5 +264,13 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
             return reader;
         }
     }
+
+    /**
+     * Create a reproject FeatureCollection wrapping the given collection.
+     */
+    public static FeatureCollection wrap(final FeatureCollection original, final GeometryTransformer transformer){
+        return new GenericTransformFeatureCollection(original, transformer);
+    }
+
 
 }

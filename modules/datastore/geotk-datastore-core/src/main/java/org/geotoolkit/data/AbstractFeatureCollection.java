@@ -23,6 +23,21 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+
+import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
+import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
+import org.geotoolkit.data.memory.GenericRetypeFeatureIterator;
+import org.geotoolkit.data.memory.GenericMaxFeatureIterator;
+import org.geotoolkit.data.memory.GenericStartIndexFeatureIterator;
+import org.geotoolkit.geometry.jts.transform.GeometryScaleTransformer;
+import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.feature.SchemaException;
+import org.geotoolkit.feature.FeatureTypeUtilities;
+import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
+import org.geotoolkit.data.memory.GenericEmptyFeatureIterator;
+import org.geotoolkit.data.memory.GenericSortByFeatureIterator;
+import org.geotoolkit.factory.Hints;
+import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.data.query.Selector;
 import org.geotoolkit.data.query.Source;
@@ -34,9 +49,11 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
 
@@ -148,6 +165,97 @@ public abstract class AbstractFeatureCollection<F extends Feature> extends Abstr
     @Override
     public void update(final Filter filter, final AttributeDescriptor desc, final Object value) throws DataStoreException {
         update(filter, Collections.singletonMap(desc, value));
+    }
+
+    @Override
+    public FeatureCollection<F> subCollection(final Query remainingParameters) throws DataStoreException {
+
+        FeatureCollection result = this;
+
+        final Integer start = remainingParameters.getStartIndex();
+        final Integer max = remainingParameters.getMaxFeatures();
+        final Filter filter = remainingParameters.getFilter();
+        final Name[] properties = remainingParameters.getPropertyNames();
+        final SortBy[] sorts = remainingParameters.getSortBy();
+        final double[] resampling = remainingParameters.getResolution();
+        final CoordinateReferenceSystem crs = remainingParameters.getCoordinateSystemReproject();
+        final Hints hints = remainingParameters.getHints();
+
+        //we should take care of wrapping the reader in a correct order to avoid
+        //unnecessary calculations. fast and reducing number wrapper should be placed first.
+        //but we must not take misunderstanding assumptions neither.
+        //exemple : filter is slow than startIndex and MaxFeature but must be placed before
+        //          otherwise the result will be illogic.
+
+
+        //wrap sort by ---------------------------------------------------------
+        //This can be really expensive, and force the us to read the full iterator.
+        //that may cause out of memory errors.
+        if(sorts != null && sorts.length != 0){
+            result = GenericSortByFeatureIterator.wrap(result, sorts);
+        }
+
+        //wrap filter ----------------------------------------------------------
+        //we must keep the filter first since it impacts the start index and max feature
+        if(filter != null && filter != Filter.INCLUDE){
+            if(filter == Filter.EXCLUDE){
+                //filter that exclude everything, use optimzed reader
+                result = GenericEmptyFeatureIterator.wrap(result);
+            }else{
+                result = GenericFilterFeatureIterator.wrap(result, filter);
+            }
+        }
+
+        //wrap start index -----------------------------------------------------
+        if(start != null && start > 0){
+            result = GenericStartIndexFeatureIterator.wrap(result, start);
+        }
+
+        //wrap max -------------------------------------------------------------
+        if(max != null){
+            if(max == 0){
+                //use an optimized reader
+                result = GenericEmptyFeatureIterator.wrap(result);
+            }else{
+                result = GenericMaxFeatureIterator.wrap(result, max);
+            }
+        }
+
+        //wrap properties, remove primary keys if necessary --------------------
+        final Boolean hide = (Boolean) hints.get(HintsPending.FEATURE_HIDE_ID_PROPERTY);
+        final FeatureType original = result.getFeatureType();
+        FeatureType mask = original;
+        if(properties != null){
+            try {
+                mask = FeatureTypeUtilities.createSubType(mask, properties);
+            } catch (SchemaException ex) {
+                throw new DataStoreException(ex);
+            }
+        }
+        if(hide != null && hide){
+            try {
+                //remove primary key properties
+                mask = FeatureTypeUtilities.excludePrimaryKeyFields(mask);
+            } catch (SchemaException ex) {
+                throw new DataStoreException(ex);
+            }
+        }
+        if(mask != original){
+            result = GenericRetypeFeatureIterator.wrap(result, mask);
+        }
+
+        //wrap resampling ------------------------------------------------------
+        if(resampling != null){
+            result = GenericTransformFeatureIterator.wrap(result,
+                    new GeometryScaleTransformer(resampling[0], resampling[1]));
+        }
+
+        //wrap reprojection ----------------------------------------------------
+        if(crs != null){
+            result = GenericReprojectFeatureIterator.wrap(result, crs);
+        }
+
+        return result;
     }
 
     ////////////////////////////////////////////////////////////////////////////

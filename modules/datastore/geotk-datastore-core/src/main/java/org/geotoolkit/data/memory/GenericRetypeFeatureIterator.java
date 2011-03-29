@@ -25,6 +25,7 @@ import java.util.List;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
@@ -283,6 +284,32 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         }
     }
 
+    private static final class GenericRetypeFeatureCollection extends WrapFeatureCollection{
+
+        private final FeatureType mask;
+
+        private GenericRetypeFeatureCollection(final FeatureCollection original, final FeatureType mask){
+            super(original);
+            this.mask = mask;
+        }
+
+        @Override
+        public FeatureType getFeatureType() {
+            return mask;
+        }
+
+        @Override
+        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+            return wrap((FeatureReader) getOriginalFeatureCollection().iterator(hints), mask, hints);
+        }
+
+        @Override
+        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+            throw new UnsupportedOperationException("should not have been called.");
+        }
+
+    }
+
 
     /**
      * Wrap a FeatureReader with a new featuretype.
@@ -305,6 +332,13 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
             return new GenericReuseRetypeFeatureReader(reader, mask);
         }
         
+    }
+
+    /**
+     * Create a retyped FeatureCollection wrapping the given collection.
+     */
+    public static FeatureCollection wrap(final FeatureCollection original, final FeatureType mask){
+        return new GenericRetypeFeatureCollection(original, mask);
     }
 
 }

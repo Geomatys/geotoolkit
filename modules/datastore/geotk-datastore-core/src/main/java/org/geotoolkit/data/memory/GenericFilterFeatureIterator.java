@@ -24,6 +24,8 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
@@ -164,6 +166,27 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
         }
     }
 
+    private static final class GenericFilterFeatureCollection extends WrapFeatureCollection{
+
+        private final Filter filter;
+
+        private GenericFilterFeatureCollection(final FeatureCollection original, final Filter filter){
+            super(original);
+            this.filter = filter;
+        }
+
+        @Override
+        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+            return wrap(getOriginalFeatureCollection().iterator(hints), filter);
+        }
+
+        @Override
+        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+            throw new UnsupportedOperationException("should not have been called.");
+        }
+
+    }
+
     /**
      * Wrap a FeatureIterator with a filter.
      */
@@ -183,6 +206,13 @@ public class GenericFilterFeatureIterator<F extends Feature, R extends FeatureIt
      */
     public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(final FeatureWriter<T,F> writer, final Filter filter){
         return new GenericFilterFeatureWriter(writer, filter);
+    }
+
+    /**
+     * Create an filtered FeatureCollection wrapping the given collection.
+     */
+    public static FeatureCollection wrap(final FeatureCollection original, final Filter filter){
+        return new GenericFilterFeatureCollection(original, filter);
     }
 
 }

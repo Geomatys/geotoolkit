@@ -18,11 +18,14 @@
 package org.geotoolkit.data.memory;
 
 import java.util.NoSuchElementException;
+import org.geotoolkit.data.AbstractFeatureCollection;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.factory.Hints;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -119,6 +122,24 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
         }
     }
 
+    private static final class GenericEmptyFeatureCollection extends WrapFeatureCollection{
+
+        private GenericEmptyFeatureCollection(final FeatureCollection original){
+            super(original);
+        }
+
+        @Override
+        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+            return createIterator();
+        }
+
+        @Override
+        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+            throw new UnsupportedOperationException("should not have been called.");
+        }
+
+    }
+
     /**
      * Create an empty FeatureReader of the given type.
      * @param type FeatureType can be null
@@ -141,6 +162,13 @@ public class GenericEmptyFeatureIterator<F extends Feature> implements FeatureIt
      */
     public static <F extends Feature> FeatureIterator<F> createIterator(){
         return new GenericEmptyFeatureIterator<F>();
+    }
+
+    /**
+     * Create an empty FeaturCollection wrapping the collection.
+     */
+    public static FeatureCollection wrap(final FeatureCollection original){
+        return new GenericEmptyFeatureCollection(original);
     }
 
 }

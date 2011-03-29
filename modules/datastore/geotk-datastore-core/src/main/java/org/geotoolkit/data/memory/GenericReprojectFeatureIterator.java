@@ -18,6 +18,9 @@
 
 package org.geotoolkit.data.memory;
 
+import java.util.logging.Logger;
+import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.FeatureCollection;
 import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -288,6 +291,44 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
     }
 
+    private static final class GenericReprojectFeatureCollection extends WrapFeatureCollection{
+
+        private final CoordinateReferenceSystem targetCrs;
+
+        private GenericReprojectFeatureCollection(final FeatureCollection original, final CoordinateReferenceSystem targetCrs){
+            super(original);
+            this.targetCrs = targetCrs;
+        }
+
+        @Override
+        public FeatureType getFeatureType() {
+            try {
+                return FeatureTypeUtilities.transform(
+                        getOriginalFeatureCollection().getFeatureType(), targetCrs);
+            } catch (SchemaException ex) {
+                Logger.getLogger(GenericReprojectFeatureIterator.class.getName()).log(Level.WARNING, null, ex);
+            }
+            return super.getFeatureType();
+        }
+
+        @Override
+        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+            try {
+                return wrap((FeatureReader) getOriginalFeatureCollection().iterator(hints), targetCrs, hints);
+            } catch (FactoryException ex) {
+                throw new DataStoreRuntimeException(ex);
+            } catch (SchemaException ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+        }
+
+        @Override
+        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+            throw new UnsupportedOperationException("should not have been called.");
+        }
+
+    }
+
     /**
      * Wrap a FeatureReader with a reprojection.
      */
@@ -315,6 +356,13 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
         } else {
             return reader;
         }
+    }
+
+    /**
+     * Create a reproject FeatureCollection wrapping the given collection.
+     */
+    public static FeatureCollection wrap(final FeatureCollection original, final CoordinateReferenceSystem crs){
+        return new GenericReprojectFeatureCollection(original, crs);
     }
 
 }

@@ -26,7 +26,9 @@ import java.util.NoSuchElementException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.query.SortByComparator;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.util.converter.Classes;
 
@@ -147,6 +149,27 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
 
     }
 
+    private static final class GenericSortByFeatureCollection extends WrapFeatureCollection{
+
+        private final SortBy[] order;
+
+        private GenericSortByFeatureCollection(final FeatureCollection original, final SortBy[] order){
+            super(original);
+            this.order = order;
+        }
+
+        @Override
+        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+            return wrap(getOriginalFeatureCollection().iterator(hints), order);
+        }
+
+        @Override
+        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+            throw new UnsupportedOperationException("should not have been called.");
+        }
+
+    }
+
     /**
      * Wrap a FeatureReader will a sort by order.
      */
@@ -159,6 +182,13 @@ public class GenericSortByFeatureIterator<F extends Feature, R extends FeatureIt
      */
     public static <F extends Feature> FeatureIterator<F> wrap(final FeatureIterator<F> reader, final SortBy[] orders){
         return new GenericSortByFeatureIterator(reader, orders);
+    }
+
+    /**
+     * Wrap a FeatureCollection will a sort by order.
+     */
+    public static FeatureCollection wrap(final FeatureCollection original, final SortBy[] orders){
+        return new GenericSortByFeatureCollection(original,orders);
     }
 
 }

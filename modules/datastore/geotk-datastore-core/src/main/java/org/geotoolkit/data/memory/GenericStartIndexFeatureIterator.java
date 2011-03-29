@@ -24,6 +24,8 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
 import org.geotoolkit.data.FeatureWriter;
 import org.geotoolkit.data.DataStoreRuntimeException;
+import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.feature.Feature;
@@ -166,6 +168,28 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
         }
     }
 
+    private static final class GenericStartIndexFeatureCollection extends WrapFeatureCollection{
+
+        private final int startIndex;
+
+        private GenericStartIndexFeatureCollection(final FeatureCollection original, final int startIndex){
+            super(original);
+            this.startIndex = startIndex;
+        }
+
+        @Override
+        public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+            return wrap(getOriginalFeatureCollection().iterator(hints), startIndex);
+        }
+
+        @Override
+        protected Feature modify(Feature original) throws DataStoreRuntimeException {
+            throw new UnsupportedOperationException("should not have been called.");
+        }
+
+    }
+
+
     /**
      * Wrap a FeatureIterator with a start index.
      */
@@ -185,6 +209,13 @@ public class GenericStartIndexFeatureIterator<F extends Feature, R extends Featu
      */
     public static <T extends FeatureType, F extends Feature> FeatureWriter<T,F> wrap(final FeatureWriter<T,F> writer, final int limit){
         return new GenericStartIndexFeatureWriter(writer, limit);
+    }
+
+    /**
+     * Create an differed start index FeatureCollection wrapping the given collection.
+     */
+    public static FeatureCollection wrap(final FeatureCollection original, final int startIndex){
+        return new GenericStartIndexFeatureCollection(original, startIndex);
     }
 
 }
