@@ -313,8 +313,12 @@ public abstract class GenericReprojectFeatureIterator<F extends Feature, R exten
 
         @Override
         public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
+            FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
+            if(!(ite instanceof FeatureReader)){
+                ite = GenericWrapFeatureIterator.wrapToReader(ite, getFeatureType());
+            }
             try {
-                return wrap((FeatureReader) getOriginalFeatureCollection().iterator(hints), targetCrs, hints);
+                return wrap((FeatureReader) ite, targetCrs, hints);
             } catch (FactoryException ex) {
                 throw new DataStoreRuntimeException(ex);
             } catch (SchemaException ex) {

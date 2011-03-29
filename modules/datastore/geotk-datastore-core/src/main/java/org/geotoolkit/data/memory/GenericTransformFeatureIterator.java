@@ -233,7 +233,11 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
 
         @Override
         public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
-            return wrap((FeatureReader) getOriginalFeatureCollection().iterator(hints), transformer, hints);
+            FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
+            if(!(ite instanceof FeatureReader)){
+                ite = GenericWrapFeatureIterator.wrapToReader(ite, getFeatureType());
+            }
+            return wrap((FeatureReader) ite, transformer, hints);
         }
 
         @Override
