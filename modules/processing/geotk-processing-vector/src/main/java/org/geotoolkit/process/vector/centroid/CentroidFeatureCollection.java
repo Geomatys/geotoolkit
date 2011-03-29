@@ -39,7 +39,7 @@ public class CentroidFeatureCollection extends VectorFeatureCollection {
      */
     public CentroidFeatureCollection(final FeatureCollection<Feature> originalFC) {
         super(originalFC);
-        this.newFeatureType = VectorProcessUtils.changeFeatureType(super.getFeatureType(), Point.class);
+        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Point.class);
     }
 
     /**

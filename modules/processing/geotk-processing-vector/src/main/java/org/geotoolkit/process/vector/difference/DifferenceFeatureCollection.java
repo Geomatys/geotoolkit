@@ -42,7 +42,7 @@ public class DifferenceFeatureCollection extends VectorFeatureCollection {
     public DifferenceFeatureCollection(final FeatureCollection<Feature> originalFC, final FeatureCollection<Feature> clippingList) {
         super(originalFC);
         this.clippingList = clippingList;
-        this.newFeatureType = VectorProcessUtils.changeFeatureType(super.getFeatureType(), Geometry.class);
+        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);
     }
 
     /**

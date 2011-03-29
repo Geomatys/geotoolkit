@@ -82,7 +82,7 @@ public class ClipGeometry extends AbstractProcess {
 
         for (Property property : oldFeature.getProperties()) {
             if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry interGeometry = VectorProcessUtils.testClipping((Geometry) property.getValue(), clipGeometry);
+                final Geometry interGeometry = VectorProcessUtils.clipping((Geometry) property.getValue(), clipGeometry);
 
                 //test clipping
                 if (interGeometry != null) {

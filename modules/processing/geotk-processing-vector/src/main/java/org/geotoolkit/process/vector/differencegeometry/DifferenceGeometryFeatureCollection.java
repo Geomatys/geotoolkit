@@ -42,7 +42,7 @@ public class DifferenceGeometryFeatureCollection extends VectorFeatureCollection
     public DifferenceGeometryFeatureCollection(final FeatureCollection<Feature> originalFC, final Geometry diffGeometry) {
         super(originalFC);
         this.diffGeometry = diffGeometry;
-        this.newFeatureType = VectorProcessUtils.changeFeatureType(super.getFeatureType(), Geometry.class);
+        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);
     }
 
     /**

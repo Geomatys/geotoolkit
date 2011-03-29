@@ -58,7 +58,7 @@ public class BufferFeatureCollection extends VectorFeatureCollection {
         this.inputDistance = inputDistance;
         this.inputUnit = inputUnit;
         this.inputLenient = inputLenient;
-        this.newFeatureType = VectorProcessUtils.changeFeatureType(super.getFeatureType(), Geometry.class);
+        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);
     }
 
     /**

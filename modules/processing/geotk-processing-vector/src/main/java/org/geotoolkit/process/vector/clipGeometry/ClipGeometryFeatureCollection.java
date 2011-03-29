@@ -42,7 +42,7 @@ public class ClipGeometryFeatureCollection extends VectorFeatureCollection {
     public ClipGeometryFeatureCollection(final FeatureCollection<Feature> originalFC, final Geometry inputClipGeometry) {
         super(originalFC);
         this.clipGeometry = inputClipGeometry;
-        this.newFeatureType = VectorProcessUtils.changeFeatureType(super.getFeatureType(), Geometry.class);
+        this.newFeatureType = VectorProcessUtils.changeGeometryFeatureType(super.getFeatureType(), Geometry.class);
     }
 
     /**

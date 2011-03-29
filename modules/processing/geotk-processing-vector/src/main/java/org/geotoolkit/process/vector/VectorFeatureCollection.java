@@ -186,7 +186,7 @@ public abstract class VectorFeatureCollection extends AbstractFeatureCollection<
         }
 
         /**
-         * Find the next feature using clipping process
+         * Find the next feature
          */
         private void findNext() {
             if (nextFeature != null) {

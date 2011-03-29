@@ -17,11 +17,6 @@
 package org.geotoolkit.process.vector.difference;
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
-import com.vividsolutions.jts.geom.GeometryFactory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -30,8 +25,6 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
-import org.geotoolkit.process.vector.clipgeometry.ClipGeometry;
-import org.geotoolkit.process.vector.differencegeometry.DifferenceGeometry;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -41,12 +34,12 @@ import org.opengis.parameter.ParameterValueGroup;
 
 /**
  * Process to compute difference between two FeatureCollection
+ * It is usually called "Spatial NOT", because it distracts the geometries from a FeatureCollection.
  * @author Quentin Boileau
  * @module pending
  */
 public class Difference extends AbstractProcess {
     
-    private static final GeometryFactory GF = new GeometryFactory();
     ParameterValueGroup result;
 
     /**
@@ -105,8 +98,12 @@ public class Difference extends AbstractProcess {
                         for (Property clipFeatureProperty : clipFeature.getProperties()) {
                             if (clipFeatureProperty.getDescriptor() instanceof GeometryDescriptor) {
                                 final Geometry diffGeometry = 
-                                        VectorProcessUtils.testDifference(resultGeometry,(Geometry) clipFeatureProperty.getValue());
+                                        VectorProcessUtils.difference(resultGeometry,(Geometry) clipFeatureProperty.getValue());
 
+                                /*
+                                 * If diffGeometry return null, it's because the result geomerty
+                                 * is contained into another Geometry. So we stop the loop and return null.
+                                 */
                                 if (diffGeometry != null) {
                                    resultGeometry = diffGeometry;
                                 }else{

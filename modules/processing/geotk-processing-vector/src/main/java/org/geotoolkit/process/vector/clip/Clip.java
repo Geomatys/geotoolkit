@@ -30,7 +30,6 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
-import org.geotoolkit.process.vector.clipgeometry.ClipGeometry;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -102,7 +101,7 @@ public class Clip extends AbstractProcess {
                         final Feature clipFeature = clipIterator.next();
                         for (Property clipFeatureProperty : clipFeature.getProperties()) {
                             if (clipFeatureProperty.getDescriptor() instanceof GeometryDescriptor) {
-                                final Geometry interGeometry = VectorProcessUtils.testClipping((Geometry) property.getValue(),
+                                final Geometry interGeometry = VectorProcessUtils.clipping((Geometry) property.getValue(),
                                                                             (Geometry) clipFeatureProperty.getValue());
 
                                 //if an intersection geometry exist, store it into a buffer Collection
