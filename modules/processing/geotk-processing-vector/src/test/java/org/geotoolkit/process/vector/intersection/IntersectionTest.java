@@ -59,15 +59,8 @@ public class IntersectionTest {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
-        System.out.println("############################################################################################################ INPUT");
-        for (Feature feature : featureList) {
-            System.out.println(feature);
-        }
+        
         final FeatureCollection<?> featureInterList = buildFeatureInterList();
-        System.out.println("############################################################################################################ INPUT INTER");
-        for (Feature feature : featureInterList) {
-            System.out.println(feature);
-        }
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "intersection");
         org.geotoolkit.process.Process proc = desc.createProcess();
@@ -83,18 +76,10 @@ public class IntersectionTest {
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-        System.out.println("############################################################################################################ OUTPUT");
-        for (Feature feature : featureListOut) {
-            System.out.println(feature);
-        }
 
 
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
-        System.out.println("############################################################################################################ EXPECTED");
-        for (Feature feature : featureListResult) {
-            System.out.println(feature);
-        }
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
         assertEquals(featureListOut.size(), featureListResult.size());
