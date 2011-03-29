@@ -276,5 +276,4 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
         return new GenericTransformFeatureCollection(original, transformer);
     }
 
-
 }

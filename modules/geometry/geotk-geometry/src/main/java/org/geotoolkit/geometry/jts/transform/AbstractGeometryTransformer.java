@@ -21,6 +21,7 @@ import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
@@ -83,6 +84,8 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
             return transform((Polygon)geom);
         }else if(geom instanceof MultiPolygon){
             return transform((MultiPolygon)geom);
+        }else if(geom instanceof GeometryCollection){
+            return transform((GeometryCollection)geom);
         }else{
             throw new IllegalArgumentException("Geometry type is unknowed or null : " + geom);
         }
@@ -156,6 +159,18 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
             subs[i] = transform((Polygon)geom.getGeometryN(i));
         }
         return gf.createMultiPolygon(subs);
+    }
+
+    /**
+     * Sub classes may override this method is they wish to remove some of the sub geometries
+     * if they are too small.
+     */
+    protected GeometryCollection transform(final GeometryCollection geom) throws TransformException{
+        final Geometry[] subs = new Geometry[geom.getNumGeometries()];
+        for(int i=0; i<subs.length; i++){
+            subs[i] = transform(geom.getGeometryN(i));
+        }
+        return gf.createGeometryCollection(subs);
     }
 
 }

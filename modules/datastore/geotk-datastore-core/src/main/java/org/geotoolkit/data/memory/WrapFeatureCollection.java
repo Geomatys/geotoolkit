@@ -39,7 +39,6 @@ import org.opengis.filter.Filter;
 public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Feature> {
 
     private final FeatureCollection<?> originalFC;
-    private final FeatureType featureType;
 
     /**
      * Connect to the original FeatureConnection
@@ -48,7 +47,6 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
     public WrapFeatureCollection(final FeatureCollection<?> originalFC) {
         super(originalFC.getID(), originalFC.getSource());
         this.originalFC = originalFC;
-        this.featureType = originalFC.getFeatureType();
     }
 
     /**
@@ -71,7 +69,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
      */
     @Override
     public FeatureType getFeatureType() {
-        return featureType;
+        return originalFC.getFeatureType();
     }
 
     /**

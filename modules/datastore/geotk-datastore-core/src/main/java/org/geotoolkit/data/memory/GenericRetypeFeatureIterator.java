@@ -302,7 +302,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         public FeatureIterator iterator(final Hints hints) throws DataStoreRuntimeException {
             FeatureIterator ite = getOriginalFeatureCollection().iterator(hints);
             if(!(ite instanceof FeatureReader)){
-                ite = GenericWrapFeatureIterator.wrapToReader(ite, getFeatureType());
+                ite = GenericWrapFeatureIterator.wrapToReader(ite, getOriginalFeatureCollection().getFeatureType());
             }
             return wrap((FeatureReader)ite, mask, hints);
         }
