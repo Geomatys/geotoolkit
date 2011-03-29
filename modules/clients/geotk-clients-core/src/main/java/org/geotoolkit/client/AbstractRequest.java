@@ -26,6 +26,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.zip.GZIPInputStream;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.StringUtilities;
 
@@ -196,7 +197,11 @@ public abstract class AbstractRequest implements Request {
 
     protected InputStream openRichException(final URLConnection cnx) throws IOException {
         try {
-            return cnx.getInputStream();
+            if ("gzip".equalsIgnoreCase(cnx.getContentEncoding())) {
+                return new GZIPInputStream(cnx.getInputStream());
+            } else {
+                return cnx.getInputStream();
+            }
         } catch(IOException ex) {
             final StringWriter writer = new StringWriter();
             final TableWriter tablewriter = new TableWriter(writer);
