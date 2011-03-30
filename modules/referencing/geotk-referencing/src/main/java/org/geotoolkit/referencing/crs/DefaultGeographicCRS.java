@@ -129,8 +129,9 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      * increasing towards the East and latitude values increasing towards the North. The angular
      * units are decimal degrees and the prime meridian is Greenwich.
      *
-     * {@note This datum is close, but not identical, to the geographic CRS based on GRS 1980
-     *        Authalic Sphere (EPSG:4047).}
+     * {@note This CRS is close, but not identical, to the geographic CRS based on the <cite>GRS
+     *        1980 Authalic Sphere</cite> (EPSG:4047). This CRS uses a sphere radius of 6371000
+     *        metres, while the GRS 1980 Authalic Sphere uses a sphere radius of 6371007 metres.}
      *
      * @see DefaultGeodeticDatum#SPHERE
      *

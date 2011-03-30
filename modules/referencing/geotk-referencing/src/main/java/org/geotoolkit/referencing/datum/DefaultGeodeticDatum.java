@@ -122,8 +122,9 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
      * Default spherical datum.
      * Prime meridian is {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}.
      *
-     * {@note This datum is close, but not identical, to the datum based on GRS 1980
-     *        Authalic Sphere (EPSG:6047).}
+     * {@note This datum is close, but not identical, to the datum based on <cite>GRS 1980
+     *        Authalic Sphere</cite> (EPSG:6047). This datum uses a sphere radius of 6371000
+     *        metres, while the GRS 1980 Authalic Sphere uses a sphere radius of 6371007 metres.}
      *
      * @see DefaultEllipsoid#SPHERE
      * @see org.geotoolkit.referencing.crs.DefaultGeographicCRS#SPHERE

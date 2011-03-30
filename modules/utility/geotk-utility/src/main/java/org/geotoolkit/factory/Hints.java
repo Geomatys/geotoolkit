@@ -18,6 +18,7 @@
 package org.geotoolkit.factory;
 
 import java.awt.RenderingHints;
+import javax.swing.event.ChangeListener; // For javadoc
 import java.io.File;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
@@ -743,12 +744,12 @@ public class Hints extends RenderingHints {
      * {@code putSystemDefault} and not yet {@linkplain #removeSystemDefault removed}.
      * <p>
      * If the given value is different than the previous one, then this method notifies
-     * every listeners registered with {@link Factories#addChangeListener}.
+     * every listeners registered with {@link Factories#addChangeListener(ChangeListener)}.
      *
      * @param  key   The hint key.
      * @param  value The hint value to be used as the system-wide default for the given key.
      * @return The previous value for the given key, or {@code null} if none.
-     * @throws IllegalArgumentException if {@link Hints.Key#isCompatibleValue}
+     * @throws IllegalArgumentException if {@link Hints.Key#isCompatibleValue(Object)}
      *         returns {@code false} for the given value.
      *
      * @since 2.4
@@ -769,7 +770,7 @@ public class Hints extends RenderingHints {
     /**
      * Removes the specified hints from the set of system default values.
      * If the a value was present for the given key, then this method notifies
-     * every listeners registered with {@link Factories#addChangeListener}.
+     * every listeners registered with {@link Factories#addChangeListener(ChangeListener)}.
      *
      * @param  key The hints key that needs to be removed.
      * @return The value to which the key had previously been mapped,
@@ -1076,7 +1077,7 @@ public class Hints extends RenderingHints {
          * method checks if the specified value is non-null and is one of the following:
          * <p>
          * <ul>
-         *   <li>An instance of the {@linkplain #getValueClass expected value class}.</li>
+         *   <li>An instance of the {@linkplain #getValueClass() expected value class}.</li>
          *   <li>A {@link Class} assignable to the expected value class.</li>
          *   <li>An array of {@code Class} objects assignable to the expected value class.</li>
          * </ul>

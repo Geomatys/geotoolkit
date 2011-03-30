@@ -21,6 +21,7 @@ import java.util.Locale;
 import java.util.Collection;
 import java.io.Writer;
 import java.io.IOException;
+import java.awt.RenderingHints; // For javadoc
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 import javax.swing.event.EventListenerList;
@@ -71,10 +72,10 @@ public final class Factories {
      * {@linkplain ChangeEvent change event} are:
      * <p>
      * <ul>
-     *   <li>{@link Hints#putSystemDefault}</li>
-     *   <li>{@link Hints#removeSystemDefault}</li>
-     *   <li>{@link #addFactoryIteratorProvider}</li>
-     *   <li>{@link #removeFactoryIteratorProvider}</li>
+     *   <li>{@link Hints#putSystemDefault(RenderingHints.Key, Object)}</li>
+     *   <li>{@link Hints#removeSystemDefault(RenderingHints.Key)}</li>
+     *   <li>{@link #addFactoryIteratorProvider(FactoryIteratorProvider)}</li>
+     *   <li>{@link #removeFactoryIteratorProvider(FactoryIteratorProvider)}</li>
      * </ul>
      *
      * @param listener The listener to add.
@@ -102,7 +103,7 @@ public final class Factories {
      * Informs every listeners that a system-wide configuration changed.
      * This method is invoked by the static methods that are annotated
      * with {@link Configuration}. Users should not need to invoke this
-     * method themself.
+     * method themselves.
      *
      * @param source The source of this event.
      */
@@ -125,7 +126,7 @@ public final class Factories {
      * <a href="http://www.springframework.org/">Spring framework</a>.
      * <p>
      * If the given provider was not already registered, then this method notifies
-     * every listeners registered with {@link #addChangeListener}.
+     * every listeners registered with {@link #addChangeListener(ChangeListener)}.
      *
      * @param provider A new provider for factory iterators.
      *
@@ -143,8 +144,8 @@ public final class Factories {
      * Note that factories already obtained from the specified provider will not be
      * {@linkplain FactoryRegistry#deregisterServiceProvider deregistered} by this method.
      * <p>
-     * If the given provider was found, then this method notifies
-     * every listeners registered with {@link #addChangeListener}.
+     * If the given provider was found, then this method notifies every listeners
+     * registered with {@link #addChangeListener(ChangeListener)}.
      *
      * @param provider The provider to remove.
      *
