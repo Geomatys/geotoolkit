@@ -16,13 +16,13 @@
  */
 package org.geotoolkit.wrs.xml.v090;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -115,4 +115,42 @@ public class GeometryType extends WRSExtrinsicObjectType {
         this.srid = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (dimension != null) {
+            sb.append("dimension:").append(dimension).append('\n');
+        }
+        if (geometryType != null) {
+            sb.append("geometryType:").append(geometryType).append('\n');
+        }
+        if (srid != null) {
+            sb.append("srid:").append(srid).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof GeometryType && super.equals(obj)) {
+            final GeometryType that = (GeometryType) obj;
+            return Utilities.equals(this.dimension,    that.dimension) &&
+                   Utilities.equals(this.geometryType, that.geometryType) &&
+                   Utilities.equals(this.srid,         that.srid);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + super.hashCode();
+        hash = 37 * hash + (this.dimension != null ? this.dimension.hashCode() : 0);
+        hash = 37 * hash + (this.geometryType != null ? this.geometryType.hashCode() : 0);
+        hash = 37 * hash + (this.srid != null ? this.srid.hashCode() : 0);
+        return hash;
+    }
 }

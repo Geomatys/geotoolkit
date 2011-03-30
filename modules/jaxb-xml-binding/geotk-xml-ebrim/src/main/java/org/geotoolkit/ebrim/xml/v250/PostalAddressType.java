@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -189,4 +190,64 @@ public class PostalAddressType {
         this.streetNumber = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[PostalAddressType]\n");
+        if (city != null) {
+            sb.append("city:").append(city).append('\n');
+        }
+        if (country != null) {
+            sb.append("country:").append(country).append('\n');
+        }
+        if (slot != null) {
+            sb.append("slot:\n");
+            for (SlotType p : slot) {
+                sb.append(p).append('\n');
+            }
+        }
+        if (postalCode != null) {
+            sb.append("postalCode:").append(postalCode).append('\n');
+        }
+        if (stateOrProvince != null) {
+            sb.append("stateOrProvince:").append(stateOrProvince).append('\n');
+        }
+        if (street != null) {
+            sb.append("street:").append(street).append('\n');
+        }
+        if (streetNumber != null) {
+            sb.append("streetNumber:").append(streetNumber).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof PostalAddressType) {
+            final PostalAddressType that = (PostalAddressType) obj;
+            return Utilities.equals(this.city,            that.city) &&
+                   Utilities.equals(this.country,         that.country) &&
+                   Utilities.equals(this.postalCode,      that.postalCode) &&
+                   Utilities.equals(this.slot,            that.slot) &&
+                   Utilities.equals(this.stateOrProvince, that.stateOrProvince) &&
+                   Utilities.equals(this.street,          that.street) &&
+                   Utilities.equals(this.streetNumber,    that.streetNumber) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + (this.slot != null ? this.slot.hashCode() : 0);
+        hash = 67 * hash + (this.city != null ? this.city.hashCode() : 0);
+        hash = 67 * hash + (this.country != null ? this.country.hashCode() : 0);
+        hash = 67 * hash + (this.postalCode != null ? this.postalCode.hashCode() : 0);
+        hash = 67 * hash + (this.stateOrProvince != null ? this.stateOrProvince.hashCode() : 0);
+        hash = 67 * hash + (this.street != null ? this.street.hashCode() : 0);
+        hash = 67 * hash + (this.streetNumber != null ? this.streetNumber.hashCode() : 0);
+        return hash;
+    }
 }

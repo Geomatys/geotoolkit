@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -114,4 +115,42 @@ public class RegistryObjectListType {
         this.objectRef.add(objectRef);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[RegistryObjectListType]\n");
+        if (objectRef != null) {
+            sb.append("objectRef:\n");
+            for (ObjectRefType o : objectRef) {
+                sb.append(o).append('\n');
+            }
+        }
+        if (registryObject != null) {
+            sb.append("registryObject:\n");
+            for (RegistryObjectType o : registryObject) {
+                sb.append(o).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof RegistryObjectListType) {
+            final RegistryObjectListType that = (RegistryObjectListType) obj;
+            return Utilities.equals(this.objectRef,      that.objectRef) &&
+                   Utilities.equals(this.registryObject, that.registryObject) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + (this.registryObject != null ? this.registryObject.hashCode() : 0);
+        hash = 97 * hash + (this.objectRef != null ? this.objectRef.hashCode() : 0);
+        return hash;
+    }
 }

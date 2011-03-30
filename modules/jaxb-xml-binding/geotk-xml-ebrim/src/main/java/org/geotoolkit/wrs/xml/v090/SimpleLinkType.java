@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -171,4 +172,61 @@ public class SimpleLinkType {
         this.actuate = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[SimpleLinkType]\n");
+        if (actuate != null) {
+            sb.append("actuate:").append(actuate).append('\n');
+        }
+        if (arcrole != null) {
+            sb.append("arcrole:").append(arcrole).append('\n');
+        }
+        if (href != null) {
+            sb.append("href:").append(href).append('\n');
+        }
+        if (role != null) {
+            sb.append("role:").append(role).append('\n');
+        }
+        if (show != null) {
+            sb.append("show:").append(show).append('\n');
+        }
+        if (title != null) {
+            sb.append("title:").append(title).append('\n');
+        }
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof SimpleLinkType) {
+            final SimpleLinkType that = (SimpleLinkType) obj;
+            return Utilities.equals(this.actuate, that.actuate) &&
+                   Utilities.equals(this.arcrole, that.arcrole) &&
+                   Utilities.equals(this.href,    that.href) &&
+                   Utilities.equals(this.role,    that.role) &&
+                   Utilities.equals(this.show,    that.show) &&
+                   Utilities.equals(this.title,   that.title) &&
+                   Utilities.equals(this.type,    that.type);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 13 * hash + (this.type != null ? this.type.hashCode() : 0);
+        hash = 13 * hash + (this.href != null ? this.href.hashCode() : 0);
+        hash = 13 * hash + (this.role != null ? this.role.hashCode() : 0);
+        hash = 13 * hash + (this.arcrole != null ? this.arcrole.hashCode() : 0);
+        hash = 13 * hash + (this.title != null ? this.title.hashCode() : 0);
+        hash = 13 * hash + (this.show != null ? this.show.hashCode() : 0);
+        hash = 13 * hash + (this.actuate != null ? this.actuate.hashCode() : 0);
+        return hash;
+    }
 }

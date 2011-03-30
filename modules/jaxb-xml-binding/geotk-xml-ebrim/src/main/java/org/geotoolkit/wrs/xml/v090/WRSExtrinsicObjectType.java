@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ebrim.xml.v250.ExtrinsicObjectType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -78,4 +79,32 @@ public class WRSExtrinsicObjectType extends ExtrinsicObjectType {
         this.content = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (content != null) {
+            sb.append("content:").append(content).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof WRSExtrinsicObjectType && super.equals(obj)) {
+            final WRSExtrinsicObjectType that = (WRSExtrinsicObjectType) obj;
+            return Utilities.equals(this.content, that.content);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 73 * hash + super.hashCode();
+        hash = 73 * hash + (this.content != null ? this.content.hashCode() : 0);
+        return hash;
+    }
 }

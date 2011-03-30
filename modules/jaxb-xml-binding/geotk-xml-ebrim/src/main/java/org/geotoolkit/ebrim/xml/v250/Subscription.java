@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -158,4 +159,55 @@ public class Subscription extends RegistryObjectType {
         this.notificationInterval = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (endDate != null) {
+            sb.append("endDate:").append(endDate).append('\n');
+        }
+        if (notificationInterval != null) {
+            sb.append("notificationInterval:").append(notificationInterval).append('\n');
+        }
+        if (selector != null) {
+            sb.append("selector:").append(selector).append('\n');
+        }
+        if (startDate != null) {
+            sb.append("startDate:").append(startDate).append('\n');
+        }
+        if (action != null) {
+            sb.append("action:\n");
+            for (ActionType ac : action) {
+                sb.append(ac).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof Subscription && super.equals(obj)) {
+            final Subscription that = (Subscription) obj;
+            return Utilities.equals(this.action,               that.action) &&
+                   Utilities.equals(this.endDate,              that.endDate) &&
+                   Utilities.equals(this.notificationInterval, that.notificationInterval) &&
+                   Utilities.equals(this.selector,             that.selector) &&
+                   Utilities.equals(this.startDate,            that.startDate);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 53 * hash + super.hashCode();
+        hash = 53 * hash + (this.action != null ? this.action.hashCode() : 0);
+        hash = 53 * hash + (this.selector != null ? this.selector.hashCode() : 0);
+        hash = 53 * hash + (this.startDate != null ? this.startDate.hashCode() : 0);
+        hash = 53 * hash + (this.endDate != null ? this.endDate.hashCode() : 0);
+        hash = 53 * hash + (this.notificationInterval != null ? this.notificationInterval.hashCode() : 0);
+        return hash;
+    }
 }

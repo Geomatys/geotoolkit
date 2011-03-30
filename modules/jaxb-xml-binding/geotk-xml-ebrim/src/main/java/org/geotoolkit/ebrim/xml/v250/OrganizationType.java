@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -173,4 +174,58 @@ public class OrganizationType extends RegistryObjectType {
         this.primaryContact = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (address != null) {
+            sb.append("address:").append(address).append('\n');
+        }
+        if (parent != null) {
+            sb.append("parent:").append(parent).append('\n');
+        }
+        if (primaryContact != null) {
+            sb.append("primaryContact:").append(primaryContact).append('\n');
+        }
+        if (emailAddress != null) {
+            sb.append("emailAddress:\n");
+            for (EmailAddressType em : emailAddress) {
+                sb.append(em).append('\n');
+            }
+        }
+        if (telephoneNumber != null) {
+            sb.append("telephoneNumber:\n");
+            for (TelephoneNumberType em : telephoneNumber) {
+                sb.append(em).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof OrganizationType && super.equals(obj)) {
+            final OrganizationType that = (OrganizationType) obj;
+            return Utilities.equals(this.address,         that.address) &&
+                   Utilities.equals(this.emailAddress,    that.emailAddress) &&
+                   Utilities.equals(this.parent,          that.parent) &&
+                   Utilities.equals(this.primaryContact,  that.primaryContact) &&
+                   Utilities.equals(this.telephoneNumber, that.telephoneNumber);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + super.hashCode();
+        hash = 97 * hash + (this.address != null ? this.address.hashCode() : 0);
+        hash = 97 * hash + (this.telephoneNumber != null ? this.telephoneNumber.hashCode() : 0);
+        hash = 97 * hash + (this.emailAddress != null ? this.emailAddress.hashCode() : 0);
+        hash = 97 * hash + (this.parent != null ? this.parent.hashCode() : 0);
+        hash = 97 * hash + (this.primaryContact != null ? this.primaryContact.hashCode() : 0);
+        return hash;
+    }
 }

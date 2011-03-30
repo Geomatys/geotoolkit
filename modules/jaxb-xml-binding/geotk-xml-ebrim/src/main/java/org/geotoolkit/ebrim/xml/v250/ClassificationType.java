@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -129,4 +130,47 @@ public class ClassificationType extends RegistryObjectType {
         this.nodeRepresentation = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (classificationNode != null) {
+            sb.append("classificationNode:").append(classificationNode).append('\n');
+        }
+        if (classificationScheme != null) {
+            sb.append("classificationScheme:").append(classificationScheme).append('\n');
+        }
+        if (classifiedObject != null) {
+            sb.append("classifiedObject:").append(classifiedObject).append('\n');
+        }
+        if (nodeRepresentation != null) {
+            sb.append("nodeRepresentation:").append(nodeRepresentation).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ClassificationType && super.equals(obj)) {
+            final ClassificationType that = (ClassificationType) obj;
+            return Utilities.equals(this.classificationNode,   that.classificationNode) &&
+                   Utilities.equals(this.classificationScheme, that.classificationScheme) &&
+                   Utilities.equals(this.classifiedObject,     that.classifiedObject) &&
+                   Utilities.equals(this.nodeRepresentation,   that.nodeRepresentation);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + super.hashCode();
+        hash = 41 * hash + (this.classificationScheme != null ? this.classificationScheme.hashCode() : 0);
+        hash = 41 * hash + (this.classifiedObject != null ? this.classifiedObject.hashCode() : 0);
+        hash = 41 * hash + (this.classificationNode != null ? this.classificationNode.hashCode() : 0);
+        hash = 41 * hash + (this.nodeRepresentation != null ? this.nodeRepresentation.hashCode() : 0);
+        return hash;
+    }
 }

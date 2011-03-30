@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -146,4 +147,49 @@ public class ClassificationNodeType extends RegistryObjectType {
         this.path = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (code != null) {
+            sb.append("code:").append(code).append('\n');
+        }
+        if (parent != null) {
+            sb.append("parent:").append(parent).append('\n');
+        }
+        if (path != null) {
+            sb.append("path:").append(path).append('\n');
+        }
+        if (classificationNode != null) {
+            sb.append("classificationNode:\n");
+            for (ClassificationNodeType p : classificationNode) {
+                sb.append(p).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ClassificationNodeType && super.equals(obj)) {
+            final ClassificationNodeType that = (ClassificationNodeType) obj;
+            return Utilities.equals(this.classificationNode, that.classificationNode) &&
+                   Utilities.equals(this.code,               that.code) &&
+                   Utilities.equals(this.parent,             that.parent) &&
+                   Utilities.equals(this.path,               that.path);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.classificationNode != null ? this.classificationNode.hashCode() : 0);
+        hash = 79 * hash + (this.parent != null ? this.parent.hashCode() : 0);
+        hash = 79 * hash + (this.code != null ? this.code.hashCode() : 0);
+        hash = 79 * hash + (this.path != null ? this.path.hashCode() : 0);
+        return hash;
+    }
 }

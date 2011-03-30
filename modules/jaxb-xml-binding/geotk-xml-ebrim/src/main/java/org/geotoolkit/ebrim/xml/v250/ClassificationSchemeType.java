@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -145,4 +146,44 @@ public class ClassificationSchemeType extends RegistryEntryType {
         this.nodeType = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        sb.append("isInternal:").append(isInternal).append('\n');
+        
+        if (nodeType != null) {
+            sb.append("nodeType:").append(nodeType).append('\n');
+        }
+        if (classificationNode != null) {
+            sb.append("classificationNode:\n");
+            for (ClassificationNodeType cn : classificationNode) {
+                sb.append(cn).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ClassificationSchemeType && super.equals(obj)) {
+            final ClassificationSchemeType that = (ClassificationSchemeType) obj;
+            return Utilities.equals(this.classificationNode, that.classificationNode) &&
+                   Utilities.equals(this.isInternal,         that.isInternal) &&
+                   Utilities.equals(this.nodeType,           that.nodeType);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + super.hashCode();
+        hash = 97 * hash + (this.classificationNode != null ? this.classificationNode.hashCode() : 0);
+        hash = 97 * hash + (this.isInternal ? 1 : 0);
+        hash = 97 * hash + (this.nodeType != null ? this.nodeType.hashCode() : 0);
+        return hash;
+    }
 }

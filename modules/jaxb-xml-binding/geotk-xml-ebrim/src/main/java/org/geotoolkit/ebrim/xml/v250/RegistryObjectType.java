@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.ebrim.xml.RegistryObject;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -304,6 +305,83 @@ public class RegistryObjectType implements RegistryObject {
      */
     public void setStatus(final String value) {
         this.status = value;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[").append(getClass().getSimpleName()).append("]\n");
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (home != null) {
+            sb.append("home:").append(home).append('\n');
+        }
+        if (objectType != null) {
+            sb.append("objectType:").append(objectType).append('\n');
+        }
+        if (status != null) {
+            sb.append("status:").append(status).append('\n');
+        }
+        if (description != null) {
+            sb.append("description:").append(description).append('\n');
+        }
+        if (classification != null) {
+            sb.append("classification:\n");
+            for (ClassificationType cl : classification) {
+                sb.append(cl).append('\n');
+            }
+        }
+        if (externalIdentifier != null) {
+            sb.append("externalIdentifier:\n");
+            for (ExternalIdentifierType ei : externalIdentifier) {
+                sb.append(ei).append('\n');
+            }
+        }
+        if (slot != null) {
+            sb.append("slot:\n");
+            for (SlotType sl : slot) {
+                sb.append(sl).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof RegistryObjectType) {
+            final RegistryObjectType that = (RegistryObjectType) obj;
+            return Utilities.equals(this.classification,     that.classification) &&
+                   Utilities.equals(this.description,        that.description) &&
+                   Utilities.equals(this.externalIdentifier, that.externalIdentifier) &&
+                   Utilities.equals(this.home,               that.home) &&
+                   Utilities.equals(this.id,                 that.id) &&
+                   Utilities.equals(this.name,               that.name) &&
+                   Utilities.equals(this.objectType,         that.objectType) &&
+                   Utilities.equals(this.slot,               that.slot) &&
+                   Utilities.equals(this.status,             that.status);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 23 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 23 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 23 * hash + (this.slot != null ? this.slot.hashCode() : 0);
+        hash = 23 * hash + (this.classification != null ? this.classification.hashCode() : 0);
+        hash = 23 * hash + (this.externalIdentifier != null ? this.externalIdentifier.hashCode() : 0);
+        hash = 23 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 23 * hash + (this.home != null ? this.home.hashCode() : 0);
+        hash = 23 * hash + (this.objectType != null ? this.objectType.hashCode() : 0);
+        hash = 23 * hash + (this.status != null ? this.status.hashCode() : 0);
+        return hash;
     }
 
 }

@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -90,4 +91,37 @@ public class FederationType extends RegistryEntryType {
         this.replicationSyncLatency = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (members != null) {
+            sb.append("members:").append(members).append('\n');
+        }
+        if (replicationSyncLatency != null) {
+            sb.append("replicationSyncLatency:").append(replicationSyncLatency).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof FederationType && super.equals(obj)) {
+            final FederationType that = (FederationType) obj;
+            return Utilities.equals(this.members,                that.members) &&
+                   Utilities.equals(this.replicationSyncLatency, that.replicationSyncLatency);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 97 * hash + super.hashCode();
+        hash = 97 * hash + (this.members != null ? this.members.hashCode() : 0);
+        hash = 97 * hash + (this.replicationSyncLatency != null ? this.replicationSyncLatency.hashCode() : 0);
+        return hash;
+    }
 }

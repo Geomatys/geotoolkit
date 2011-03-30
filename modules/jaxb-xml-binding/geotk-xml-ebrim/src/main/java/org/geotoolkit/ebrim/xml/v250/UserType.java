@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -186,4 +187,60 @@ public class UserType extends RegistryObjectType {
         this.url = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (url != null) {
+            sb.append("url:").append(url).append('\n');
+        }
+        if (personName != null) {
+            sb.append("personName:").append(personName).append('\n');
+        }
+        if (address != null) {
+            sb.append("address:\n");
+            for (PostalAddressType p : address) {
+                sb.append(p).append('\n');
+            }
+        }
+        if (emailAddress != null) {
+            sb.append("emailAddress:\n");
+            for (EmailAddressType p : emailAddress) {
+                sb.append(p).append('\n');
+            }
+        }
+        if (telephoneNumber != null) {
+            sb.append("telephoneNumber:\n");
+            for (TelephoneNumberType p : telephoneNumber) {
+                sb.append(p).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof UserType && super.equals(obj)) {
+            final UserType that = (UserType) obj;
+            return Utilities.equals(this.address,         that.address) &&
+                   Utilities.equals(this.emailAddress,    that.emailAddress) &&
+                   Utilities.equals(this.personName,      that.personName) &&
+                   Utilities.equals(this.url,             that.url) &&
+                   Utilities.equals(this.telephoneNumber, that.telephoneNumber);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + (this.address != null ? this.address.hashCode() : 0);
+        hash = 67 * hash + (this.personName != null ? this.personName.hashCode() : 0);
+        hash = 67 * hash + (this.telephoneNumber != null ? this.telephoneNumber.hashCode() : 0);
+        hash = 67 * hash + (this.emailAddress != null ? this.emailAddress.hashCode() : 0);
+        hash = 67 * hash + (this.url != null ? this.url.hashCode() : 0);
+        return hash;
+    }
 }

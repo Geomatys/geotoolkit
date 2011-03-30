@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -160,4 +161,52 @@ public class RegistryEntryType extends RegistryObjectType {
         this.userVersion = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (expiration != null) {
+            sb.append("expiration:").append(expiration).append('\n');
+        }
+        if (majorVersion != null) {
+            sb.append("majorVersion:").append(majorVersion).append('\n');
+        }
+        if (minorVersion != null) {
+            sb.append("minorVersion:").append(minorVersion).append('\n');
+        }
+        if (stability != null) {
+            sb.append("stability:").append(stability).append('\n');
+        }
+        if (userVersion != null) {
+            sb.append("userVersion:").append(userVersion).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof RegistryEntryType && super.equals(obj)) {
+            final RegistryEntryType that = (RegistryEntryType) obj;
+            return Utilities.equals(this.expiration,         that.expiration) &&
+                   Utilities.equals(this.majorVersion,    that.majorVersion) &&
+                   Utilities.equals(this.minorVersion,          that.minorVersion) &&
+                   Utilities.equals(this.stability,  that.stability) &&
+                   Utilities.equals(this.userVersion, that.userVersion);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + super.hashCode();
+        hash = 79 * hash + (this.expiration != null ? this.expiration.hashCode() : 0);
+        hash = 79 * hash + (this.majorVersion != null ? this.majorVersion.hashCode() : 0);
+        hash = 79 * hash + (this.minorVersion != null ? this.minorVersion.hashCode() : 0);
+        hash = 79 * hash + (this.stability != null ? this.stability.hashCode() : 0);
+        hash = 79 * hash + (this.userVersion != null ? this.userVersion.hashCode() : 0);
+        return hash;
+    }
 }

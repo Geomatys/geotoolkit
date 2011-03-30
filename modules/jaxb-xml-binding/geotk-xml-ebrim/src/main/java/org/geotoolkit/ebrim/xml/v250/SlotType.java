@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -98,6 +99,44 @@ public class SlotType {
      */
     public void setSlotType(final String value) {
         this.slotType = value;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[SlotType]\n");
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (slotType != null) {
+            sb.append("slotType:").append(slotType).append('\n');
+        }
+        if (valueList != null) {
+            sb.append("valueList:").append(valueList).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof SlotType) {
+            final SlotType that = (SlotType) obj;
+            return Utilities.equals(this.slotType,  that.slotType) &&
+                   Utilities.equals(this.name,      that.name) &&
+                   Utilities.equals(this.valueList, that.valueList);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 59 * hash + (this.valueList != null ? this.valueList.hashCode() : 0);
+        hash = 59 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 59 * hash + (this.slotType != null ? this.slotType.hashCode() : 0);
+        return hash;
     }
 
 }

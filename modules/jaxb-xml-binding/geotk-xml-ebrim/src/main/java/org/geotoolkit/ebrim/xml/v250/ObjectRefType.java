@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -109,4 +110,41 @@ public class ObjectRefType {
         this.createReplica = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[ObjectRefType]\n");
+        if (createReplica != null) {
+            sb.append("createReplica:").append(createReplica).append('\n');
+        }
+        if (home != null) {
+            sb.append("home:").append(home).append('\n');
+        }
+        if (id != null) {
+            sb.append("id:").append(id).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ObjectRefType) {
+            final ObjectRefType that = (ObjectRefType) obj;
+            return Utilities.equals(this.createReplica, that.createReplica) &&
+                   Utilities.equals(this.id,            that.id) &&
+                   Utilities.equals(this.home,          that.home) ;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 89 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 89 * hash + (this.home != null ? this.home.hashCode() : 0);
+        hash = 89 * hash + (this.createReplica != null ? this.createReplica.hashCode() : 0);
+        return hash;
+    }
 }

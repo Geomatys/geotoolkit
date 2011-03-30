@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -146,4 +147,51 @@ public class AssociationType extends RegistryObjectType {
         this.isConfirmedByTargetOwner = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (associationType != null) {
+            sb.append("associationType:").append(associationType).append('\n');
+        }
+        if (sourceObject != null) {
+            sb.append("sourceObject:").append(sourceObject).append('\n');
+        }
+        if (targetObject != null) {
+            sb.append("targetObject:").append(targetObject).append('\n');
+        }
+        if (isConfirmedBySourceOwner != null) {
+            sb.append("isConfirmedBySourceOwner:").append(isConfirmedBySourceOwner).append('\n');
+        }
+        if (isConfirmedByTargetOwner != null) {
+            sb.append("isConfirmedByTargetOwner:").append(isConfirmedByTargetOwner).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof AssociationType && super.equals(obj)) {
+            final AssociationType that = (AssociationType) obj;
+            return Utilities.equals(this.associationType,          that.associationType) &&
+                   Utilities.equals(this.isConfirmedBySourceOwner, that.isConfirmedBySourceOwner) &&
+                   Utilities.equals(this.isConfirmedByTargetOwner, that.isConfirmedByTargetOwner) &&
+                   Utilities.equals(this.targetObject,             that.targetObject) &&
+                   Utilities.equals(this.sourceObject,             that.sourceObject);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 79 * hash + (this.associationType != null ? this.associationType.hashCode() : 0);
+        hash = 79 * hash + (this.sourceObject != null ? this.sourceObject.hashCode() : 0);
+        hash = 79 * hash + (this.targetObject != null ? this.targetObject.hashCode() : 0);
+        hash = 79 * hash + (this.isConfirmedBySourceOwner != null ? this.isConfirmedBySourceOwner.hashCode() : 0);
+        hash = 79 * hash + (this.isConfirmedByTargetOwner != null ? this.isConfirmedByTargetOwner.hashCode() : 0);
+        return hash;
+    }
 }

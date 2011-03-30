@@ -23,12 +23,11 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.csw.xml.v200.AbstractQueryType;
-import org.geotoolkit.csw.xml.v200.ObjectFactory;
 import org.geotoolkit.csw.xml.v200.QueryType;
 import org.geotoolkit.ebrim.xml.v250.RegistryPackageType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -52,7 +51,8 @@ import org.geotoolkit.ebrim.xml.v250.RegistryPackageType;
  * &lt;/complexType>
  * </pre>
  * 
- * 
+ * @TODO this class seemes to have a lot of error, we must review it
+ *
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -65,8 +65,6 @@ public class ApplicationModuleType extends RegistryPackageType {
     @XmlElementRef(name = "AbstractQuery", namespace = "http://www.opengis.net/cat/csw", type = JAXBElement.class)
     private List<AbstractQueryType> abstractQuery;
 
-    @XmlTransient
-    private static ObjectFactory cswFactory = new ObjectFactory();
     /**
      * Gets the value of the abstractQuery property.
      */
@@ -95,4 +93,35 @@ public class ApplicationModuleType extends RegistryPackageType {
             this.abstractQuery.add(abstractQuery);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (abstractQuery != null) {
+            sb.append("abstractQuery:\n");
+            for (AbstractQueryType aq : abstractQuery) {
+                sb.append(aq).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ApplicationModuleType && super.equals(obj)) {
+            final ApplicationModuleType that = (ApplicationModuleType) obj;
+            return Utilities.equals(this.abstractQuery, that.abstractQuery);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + super.hashCode();
+        hash = 79 * hash + (this.abstractQuery != null ? this.abstractQuery.hashCode() : 0);
+        return hash;
+    }
 }

@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.wrs.xml.v090.WRSExtrinsicObjectType;
 
 
@@ -98,4 +99,37 @@ public class ExtrinsicObjectType extends RegistryEntryType {
         this.isOpaque = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (mimeType != null) {
+            sb.append("mimeType:").append(mimeType).append('\n');
+        }
+        if (isOpaque != null) {
+            sb.append("isOpaque:").append(isOpaque).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ExtrinsicObjectType && super.equals(obj)) {
+            final ExtrinsicObjectType that = (ExtrinsicObjectType) obj;
+            return Utilities.equals(this.isOpaque, that.isOpaque) &&
+                   Utilities.equals(this.getMimeType(), that.getMimeType());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + super.hashCode();
+        hash = 47 * hash + (this.getMimeType() != null ? this.getMimeType().hashCode() : 0);
+        hash = 47 * hash + (this.isOpaque != null ? this.isOpaque.hashCode() : 0);
+        return hash;
+    }
 }

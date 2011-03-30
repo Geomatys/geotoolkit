@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -205,4 +206,67 @@ public class RegistryType extends RegistryEntryType {
         this.objectRelocationSupported = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (eventNotificationSupported != null) {
+            sb.append("eventNotificationSupported:").append(eventNotificationSupported).append('\n');
+        }
+        if (objectRelocationSupported != null) {
+            sb.append("objectRelocationSupported:").append(objectRelocationSupported).append('\n');
+        }
+        if (objectReplicationSupported != null) {
+            sb.append("objectReplicationSupported:").append(objectReplicationSupported).append('\n');
+        }
+        if (sqlQuerySupported != null) {
+            sb.append("sqlQuerySupported:").append(sqlQuerySupported).append('\n');
+        }
+        if (catalogingLatency != null) {
+            sb.append("catalogingLatency:").append(catalogingLatency).append('\n');
+        }
+        if (operator != null) {
+            sb.append("operator:").append(operator).append('\n');
+        }
+        if (replicationSyncLatency != null) {
+            sb.append("replicationSyncLatency:").append(replicationSyncLatency).append('\n');
+        }
+        if (specificationVersion != null) {
+            sb.append("specificationVersion:").append(specificationVersion).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof RegistryType && super.equals(obj)) {
+            final RegistryType that = (RegistryType) obj;
+            return Utilities.equals(this.catalogingLatency,          that.catalogingLatency) &&
+                   Utilities.equals(this.eventNotificationSupported, that.eventNotificationSupported) &&
+                   Utilities.equals(this.objectRelocationSupported,  that.objectRelocationSupported) &&
+                   Utilities.equals(this.objectReplicationSupported, that.objectReplicationSupported) &&
+                   Utilities.equals(this.operator,                   that.operator) &&
+                   Utilities.equals(this.replicationSyncLatency,     that.replicationSyncLatency) &&
+                   Utilities.equals(this.specificationVersion,       that.specificationVersion) &&
+                   Utilities.equals(this.sqlQuerySupported,          that.sqlQuerySupported);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 73 * hash + super.hashCode();
+        hash = 73 * hash + (this.operator != null ? this.operator.hashCode() : 0);
+        hash = 73 * hash + (this.specificationVersion != null ? this.specificationVersion.hashCode() : 0);
+        hash = 73 * hash + (this.replicationSyncLatency != null ? this.replicationSyncLatency.hashCode() : 0);
+        hash = 73 * hash + (this.catalogingLatency != null ? this.catalogingLatency.hashCode() : 0);
+        hash = 73 * hash + (this.sqlQuerySupported != null ? this.sqlQuerySupported.hashCode() : 0);
+        hash = 73 * hash + (this.eventNotificationSupported != null ? this.eventNotificationSupported.hashCode() : 0);
+        hash = 73 * hash + (this.objectReplicationSupported != null ? this.objectReplicationSupported.hashCode() : 0);
+        hash = 73 * hash + (this.objectRelocationSupported != null ? this.objectRelocationSupported.hashCode() : 0);
+        return hash;
+    }
 }

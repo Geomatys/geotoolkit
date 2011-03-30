@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.ebrim.xml.LocalizedString;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -111,4 +112,43 @@ public class LocalizedStringType implements LocalizedString {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[LocalizedStringType]\n");
+        if (charset != null) {
+            sb.append("charset:").append(charset).append('\n');
+        }
+        if (lang != null) {
+            sb.append("lang:").append(lang).append('\n');
+        }
+        if (value != null) {
+            sb.append("value:").append(value).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof LocalizedStringType) {
+            final LocalizedStringType that = (LocalizedStringType) obj;
+            return Utilities.equals(this.getCharset(), that.getCharset()) &&
+                   Utilities.equals(this.getLang(), that.getLang()) &&
+                   Utilities.equals(this.value,   that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + (this.getLang() != null ? this.getLang().hashCode() : 0);
+        hash = 17 * hash + (this.getCharset() != null ? this.getCharset().hashCode() : 0);
+        hash = 17 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
 }
+
+    

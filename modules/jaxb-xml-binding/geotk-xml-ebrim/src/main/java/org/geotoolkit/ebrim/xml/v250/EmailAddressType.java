@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -117,6 +118,47 @@ public class EmailAddressType {
     */
     public void setType(final String value) {
         this.type = value;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[EmailAddressType]\n");
+        if (address != null) {
+            sb.append("address:").append(address).append('\n');
+        }
+        if (type != null) {
+            sb.append("type:").append(type).append('\n');
+        }
+        if (slot != null) {
+            sb.append("slot:\n");
+            for (SlotType p : slot) {
+                sb.append(p).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof EmailAddressType) {
+            final EmailAddressType that = (EmailAddressType) obj;
+            return Utilities.equals(this.address, that.address) &&
+                   Utilities.equals(this.type,    that.type) &&
+                   Utilities.equals(this.slot,    that.slot);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 97 * hash + (this.slot != null ? this.slot.hashCode() : 0);
+        hash = 97 * hash + (this.address != null ? this.address.hashCode() : 0);
+        hash = 97 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
     }
 
 }
