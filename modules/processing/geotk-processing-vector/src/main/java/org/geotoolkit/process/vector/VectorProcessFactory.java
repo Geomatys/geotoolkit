@@ -26,6 +26,8 @@ import org.geotoolkit.process.AbstractProcessFactory;
 import org.geotoolkit.process.vector.buffer.BufferDescriptor;
 import org.geotoolkit.process.vector.clip.ClipDescriptor;
 import org.geotoolkit.process.vector.clipgeometry.ClipGeometryDescriptor;
+import org.geotoolkit.process.vector.convexhull.ConvexHull;
+import org.geotoolkit.process.vector.convexhull.ConvexHullDescriptor;
 import org.geotoolkit.process.vector.difference.DifferenceDescriptor;
 import org.geotoolkit.process.vector.differencegeometry.DifferenceGeometryDescriptor;
 import org.geotoolkit.process.vector.douglaspeucker.DouglasPeuckerDescriptor;
@@ -47,7 +49,7 @@ public class VectorProcessFactory extends AbstractProcessFactory {
 
     /**Factory name*/
     public static final String NAME = "vector";
-    static final DefaultServiceIdentification IDENTIFICATION;
+    public static final DefaultServiceIdentification IDENTIFICATION;
 
     static {
         IDENTIFICATION = new DefaultServiceIdentification();
@@ -64,7 +66,7 @@ public class VectorProcessFactory extends AbstractProcessFactory {
         super(CentroidDescriptor.INSTANCE, ClipGeometryDescriptor.INSTANCE, ClipDescriptor.INSTANCE,
                 DouglasPeuckerDescriptor.INSTANCE, BufferDescriptor.INSTANCE, IntersectDescriptor.INSTANCE,
                 NearestDescriptor.INSTANCE, SpacialJoinDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE,
-                DifferenceGeometryDescriptor.INSTANCE, IntersectionDescriptor.INSTANCE);
+                DifferenceGeometryDescriptor.INSTANCE, IntersectionDescriptor.INSTANCE, ConvexHullDescriptor.INSTANCE);
     }
 
     /**

@@ -26,17 +26,24 @@ import java.util.List;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
+import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Process to clip a FeatureCollection using another FeatureCollection
@@ -85,8 +92,12 @@ public class Clip extends AbstractProcess {
      * @param newType the new FeatureType for the Feature
      * @param featureClippingList FeatureCollection used to clip
      * @return Feature
+     * @throws FactoryException
+     * @throws MismatchedDimensionException
+     * @throws TransformException
      */
-    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList) {
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList) 
+            throws FactoryException, MismatchedDimensionException, TransformException {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
@@ -94,6 +105,10 @@ public class Clip extends AbstractProcess {
             
             //for each Geometry in the oldFeature
             if (property.getDescriptor() instanceof GeometryDescriptor) {
+
+                final Geometry inputGeom = (Geometry) property.getValue();
+                final GeometryDescriptor inputGeomDesc = (GeometryDescriptor) property.getDescriptor();
+                final CoordinateReferenceSystem inputGeomCRS = inputGeomDesc.getCoordinateReferenceSystem();
 
                 //loop and test intersection between each geometry of each clipping feature from
                 //clipping FeatureCollection
@@ -104,8 +119,18 @@ public class Clip extends AbstractProcess {
                         final Feature clipFeature = clipIterator.next();
                         for (Property clipFeatureProperty : clipFeature.getProperties()) {
                             if (clipFeatureProperty.getDescriptor() instanceof GeometryDescriptor) {
-                                final Geometry interGeometry = VectorProcessUtils.clipping((Geometry) property.getValue(),
-                                                                            (Geometry) clipFeatureProperty.getValue());
+                                
+                                Geometry clipGeom = (Geometry) clipFeatureProperty.getValue();
+                                final GeometryDescriptor clipGeomDesc = (GeometryDescriptor) clipFeatureProperty.getDescriptor();
+                                final CoordinateReferenceSystem clipGeomCRS = clipGeomDesc.getCoordinateReferenceSystem();
+
+                                //re-project clipping geometry into input Feature geometry CRS
+                                if(!(clipGeomCRS.equals(inputGeomCRS))){
+                                    final MathTransform transform = CRS.findMathTransform(clipGeomCRS, inputGeomCRS);
+                                    clipGeom = JTS.transform(clipGeom, transform);
+                                }
+
+                                final Geometry interGeometry = VectorProcessUtils.clipping(inputGeom, clipGeom);
 
                                 //if an intersection geometry exist, store it into a buffer Collection
                                 if (interGeometry != null) {

@@ -21,9 +21,6 @@ import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -36,7 +33,6 @@ import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.parameter.ParameterValueGroup;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
 
 import org.junit.Test;
@@ -57,7 +53,7 @@ public class NearestTest {
      * Test nearest process
      */
     @Test
-    public void testNearest() {
+    public void testNearest() throws FactoryException {
 
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
@@ -86,7 +82,7 @@ public class NearestTest {
         assertTrue(featureListOut.containsAll(featureListResult));
     }
 
-    private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
+    private static SimpleFeatureType createSimpleType() throws  FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
         ftb.add("name", String.class);
@@ -97,15 +93,10 @@ public class NearestTest {
         return sft;
     }
 
-    private static FeatureCollection<?> buildFeatureList() {
+    private static FeatureCollection<?> buildFeatureList() throws FactoryException {
 
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(NearestTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(NearestTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        type = createSimpleType();
+        
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("nearest", type);
 
@@ -147,17 +138,10 @@ public class NearestTest {
         return featureList;
     }
 
-    private static FeatureCollection<?> buildResultList() {
+    private static FeatureCollection<?> buildResultList() throws FactoryException {
 
-
-        try {
-            type = createSimpleType();
-        } catch (NoSuchAuthorityCodeException ex) {
-            Logger.getLogger(NearestTest.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (FactoryException ex) {
-            Logger.getLogger(NearestTest.class.getName()).log(Level.SEVERE, null, ex);
-        }
-
+        type = createSimpleType();
+      
         final FeatureCollection<Feature> featureList = DataUtilities.collection("nearest", type);
 
         final Feature feature4 = FeatureUtilities.defaultFeature(type, "id-4");
@@ -173,7 +157,7 @@ public class NearestTest {
         return featureList;
     }
 
-    private Geometry buildIntersectionGeometry() {
+    private Geometry buildIntersectionGeometry() throws FactoryException {
 
         LinearRing ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
@@ -184,6 +168,8 @@ public class NearestTest {
                     new Coordinate(4.0, 2.0)
                 });
 
-        return geometryFactory.createPolygon(ring, null);
+        Geometry geom = geometryFactory.createPolygon(ring, null);
+        geom.setUserData(CRS.decode("EPSG:3395"));
+        return geom;
     }
 }

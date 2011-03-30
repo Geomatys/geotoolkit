@@ -21,17 +21,24 @@ import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
 import org.geotoolkit.process.vector.VectorProcessUtils;
+import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * Process to compute difference between two FeatureCollection
@@ -80,8 +87,12 @@ public class Difference extends AbstractProcess {
      * @param newType the new FeatureType for the Feature
      * @param featureClippingList FeatureCollection used to compute the difference
      * @return Feature
+     * @throws MismatchedDimensionException
+     * @throws TransformException
+     * @throws FactoryException
      */
-    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList) {
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList) 
+            throws MismatchedDimensionException, TransformException, FactoryException {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
@@ -89,6 +100,9 @@ public class Difference extends AbstractProcess {
             
             //for each Geometry in the oldFeature
             if (property.getDescriptor() instanceof GeometryDescriptor) {
+
+                final GeometryDescriptor inputGeomDesc = (GeometryDescriptor) property.getDescriptor();
+                final CoordinateReferenceSystem inputGeomCRS = inputGeomDesc.getCoordinateReferenceSystem();
 
                 //loop and test intersection between each geometry of each clipping feature from
                 //clipping FeatureCollection
@@ -100,8 +114,20 @@ public class Difference extends AbstractProcess {
                         final Feature clipFeature = clipIterator.next();
                         for (Property clipFeatureProperty : clipFeature.getProperties()) {
                             if (clipFeatureProperty.getDescriptor() instanceof GeometryDescriptor) {
+
+                                Geometry diffGeom = (Geometry) clipFeatureProperty.getValue();
+                                final GeometryDescriptor diffGeomDesc = (GeometryDescriptor) clipFeatureProperty.getDescriptor();
+                                final CoordinateReferenceSystem diffGeomCRS = diffGeomDesc.getCoordinateReferenceSystem();
+
+                                //re-project clipping geometry into input Feature geometry CRS
+                                if(!(diffGeomCRS.equals(inputGeomCRS))){
+                                    final MathTransform transform = CRS.findMathTransform(diffGeomCRS , inputGeomCRS);
+                                    diffGeom = JTS.transform(diffGeom, transform);
+                                }
+
+
                                 final Geometry diffGeometry = 
-                                        VectorProcessUtils.difference(resultGeometry,(Geometry) clipFeatureProperty.getValue());
+                                        VectorProcessUtils.difference(resultGeometry,diffGeom);
 
                                 /*
                                  * If diffGeometry return null, it's because the result geomerty

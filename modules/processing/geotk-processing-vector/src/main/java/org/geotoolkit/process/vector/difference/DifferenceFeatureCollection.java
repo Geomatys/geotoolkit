@@ -17,12 +17,18 @@
 package org.geotoolkit.process.vector.difference;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * FeatureCollection for Difference process
@@ -59,6 +65,15 @@ public class DifferenceFeatureCollection extends WrapFeatureCollection {
      */
     @Override
     protected Feature modify(final Feature original) {
-        return Difference.clipFeature(original, newFeatureType, clippingList);
+        try {
+            return Difference.clipFeature(original, newFeatureType, clippingList);
+            
+        } catch (MismatchedDimensionException ex) {
+            throw new DataStoreRuntimeException(ex);
+        } catch (TransformException ex) {
+            throw new DataStoreRuntimeException(ex);
+        } catch (FactoryException ex) {
+            throw new DataStoreRuntimeException(ex);
+        }
     }
 }

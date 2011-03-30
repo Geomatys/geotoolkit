@@ -27,6 +27,7 @@ import org.geotoolkit.feature.AttributeDescriptorBuilder;
 import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
+import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -45,6 +46,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Process return the target FeatureCollection with source FeatureCollection attributes.
@@ -119,11 +121,14 @@ public class SpacialJoin extends AbstractProcess {
         ParameterValueGroup in;
         ArrayList<Feature> featureOutArray;
 
-        //for each feature geometry
+        //for each target feature geometry
         for (Property property : target.getProperties()) {
             if (property.getDescriptor() instanceof GeometryDescriptor) {
                 final Geometry targetGeometry = (Geometry) property.getValue();
+                final GeometryDescriptor geomDesc = (GeometryDescriptor) property.getDescriptor();
+                final CoordinateReferenceSystem geomCRS = geomDesc.getCoordinateReferenceSystem();
 
+                JTS.setCRS(targetGeometry, geomCRS);//add CRS to the user data geometry
                 //use intersect method
                 if (method) {
                     desc = ProcessFinder.getProcessDescriptor(VectorProcessFactory.NAME, IntersectDescriptor.NAME);

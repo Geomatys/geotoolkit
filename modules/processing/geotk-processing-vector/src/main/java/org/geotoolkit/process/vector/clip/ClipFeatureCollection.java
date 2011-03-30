@@ -17,12 +17,18 @@
 package org.geotoolkit.process.vector.clip;
 
 import com.vividsolutions.jts.geom.Geometry;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 import org.geotoolkit.process.vector.VectorProcessUtils;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.geometry.MismatchedDimensionException;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
 
 /**
  * FeatureCollection for Clip process
@@ -59,6 +65,16 @@ public class ClipFeatureCollection extends WrapFeatureCollection {
      */
     @Override
     protected Feature modify(final Feature original) {
-        return Clip.clipFeature(original, newFeatureType, clippingList);
+        try {
+            
+            return Clip.clipFeature(original, newFeatureType, clippingList);
+
+        } catch (FactoryException ex) {
+            throw new DataStoreRuntimeException(ex);
+        } catch (MismatchedDimensionException ex) {
+            throw new DataStoreRuntimeException(ex);
+        } catch (TransformException ex) {
+            throw new DataStoreRuntimeException(ex);
+        }
     }
 }

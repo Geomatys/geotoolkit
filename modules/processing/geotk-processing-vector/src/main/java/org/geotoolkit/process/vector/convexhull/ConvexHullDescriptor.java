@@ -14,14 +14,17 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.intersection;
+package org.geotoolkit.process.vector.convexhull;
 
+import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.vector.VectorDescriptor;
+import org.geotoolkit.process.vector.VectorProcessFactory;
+import org.geotoolkit.util.SimpleInternationalString;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.GeneralParameterDescriptor;
@@ -29,56 +32,56 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * Parameters description of Intersection process.
- * name of the process : "intersection"
+ * Parameters description of ConvexHull process.
+ * name of the process : "convexhull"
  * inputs :
  * <ul>
  *     <li>FEATURE_IN "feature_in" FeatureCollection source</li>
- *     <li>FEATURE_INTER "feature_inter" FeatureCollection for intersection</li>
+ *     <li>GEOMETRY_NAME "geometry_name"  GeometryAttribute name used to compute convex hull</li>
  * </ul>
  * outputs :
  * <ul>
- *     <li>FEATURE_OUT "feature_out" resulting FeatureCollection</li>
+ *     <li>GEOMETRY_OUT "geometry_out" convex hull Geometry</li>
  * </ul>
  * @author Quentin Boileau
  * @module pending
  */
-public final class IntersectionDescriptor extends VectorDescriptor {
+public final class ConvexHullDescriptor extends AbstractProcessDescriptor {
 
-    /**Process name : intersection */
-    public static final String NAME = "intersection";
-
+    /**Process name : convexhull */
+    public static final String NAME = "convexhull";
     /**
-     * Mandatory - Feature Collection for clipping
+     * Mandatory - Feature Collection
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_INTER =
-            new DefaultParameterDescriptor("feature_inter", "Inpute FeatureCollection for the intersection", FeatureCollection.class, null, true);
-
+    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_IN =
+            new DefaultParameterDescriptor("feature_in", "Inpute Feature", FeatureCollection.class, null, true);
     /**
-     * Optional - Geometry property name. Refer to the geometry to use for the intersection process
+     * Optional - GeometryAttribute name used to compute convex hull
      */
     public static final ParameterDescriptor<String> GEOMETRY_NAME =
-            new DefaultParameterDescriptor("geometry_name", "Geometry property name", String.class, null, false);
-
+            new DefaultParameterDescriptor("geometry_name", "Geometry used", String.class, null, false);
+    
+    public static final ParameterDescriptor<Geometry> GEOMETRY_OUT =
+            new DefaultParameterDescriptor("geometry_out", "Convex Hull geometry", Geometry.class, null, false);
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, FEATURE_INTER,GEOMETRY_NAME});
-
+            new GeneralParameterDescriptor[]{FEATURE_IN, GEOMETRY_NAME});
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_OUT});
-    
+            new GeneralParameterDescriptor[]{GEOMETRY_OUT});
     /** Instance */
-    public static final ProcessDescriptor INSTANCE = new IntersectionDescriptor();
+    public static final ProcessDescriptor INSTANCE = new ConvexHullDescriptor();
 
     /**
      * Default constructor
      */
-    private IntersectionDescriptor() {
-        super(NAME, "Return a new FeatureCollection where each Feature is "
-                + "create from an intersection Geometry", INPUT_DESC, OUTPUT_DESC);
+    protected ConvexHullDescriptor() {
+
+        super(NAME, VectorProcessFactory.IDENTIFICATION,
+                new SimpleInternationalString("Return the convex hull based on FeatureCollection geometries"),
+                INPUT_DESC, OUTPUT_DESC);
     }
 
     /**
@@ -86,6 +89,6 @@ public final class IntersectionDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess() {
-        return new Intersection();
+        return new ConvexHull();
     }
 }

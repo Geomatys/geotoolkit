@@ -48,6 +48,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -86,18 +87,18 @@ public class Nearest extends AbstractProcess {
             getMonitor().started(new ProcessEvent(this,0,null,null));
             final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
             Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
-            final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(interGeom);
-
-            /* 
-             * If geometry crs is null, we consider that the geometry and FeatureCollection are
-             * in the same projection.
-             */
-            if (crs != null) {
-                if (crs != inputFeatureList.getFeatureType().getCoordinateReferenceSystem()) {
-                    interGeom = JTS.transform(interGeom,
-                            CRS.findMathTransform(crs, inputFeatureList.getFeatureType().getCoordinateReferenceSystem()));
-                }
-            }
+//            final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(interGeom);
+//
+//            /*
+//             * If geometry crs is null, we consider that the geometry and FeatureCollection are
+//             * in the same projection.
+//             */
+//            if (crs != null) {
+//                if (crs != inputFeatureList.getFeatureType().getCoordinateReferenceSystem()) {
+//                    interGeom = JTS.transform(interGeom,
+//                            CRS.findMathTransform(crs, inputFeatureList.getFeatureType().getCoordinateReferenceSystem()));
+//                }
+//            }
 
             final NearestFeatureCollection resultFeatureList =
                     new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
@@ -105,7 +106,7 @@ public class Nearest extends AbstractProcess {
             result = super.getOutput();
             result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
             getMonitor().ended(new ProcessEvent(this,100,null,null));
-            
+
         } catch (NoSuchAuthorityCodeException ex) {
             getMonitor().failed(new ProcessEvent(this, 0, null, ex));
         } catch (FactoryException ex) {
@@ -125,7 +126,14 @@ public class Nearest extends AbstractProcess {
      * @param geom
      * @return nearest query filter
      */
-    private Query nearestQuery(final FeatureCollection<Feature> original, final Geometry geom) {
+    private Query nearestQuery(final FeatureCollection<Feature> original, Geometry geom) 
+            throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException, TransformException {
+
+        CoordinateReferenceSystem geomCrs = JTS.findCoordinateReferenceSystem(geom);
+
+        if (geomCrs == null) {
+               geomCrs = original.getFeatureType().getCoordinateReferenceSystem();
+        }
 
         double dist = Double.POSITIVE_INFINITY;
         final Collection<Identifier> listID = new ArrayList<Identifier>();
@@ -136,6 +144,16 @@ public class Nearest extends AbstractProcess {
                 final Feature feature = iter.next();
                 for (Property property : feature.getProperties()) {
                     if (property.getDescriptor() instanceof GeometryDescriptor) {
+
+                        Geometry featureGeom = (Geometry) property.getValue();
+                        final GeometryDescriptor geomDesc = (GeometryDescriptor) property.getDescriptor();
+                        final CoordinateReferenceSystem featureGeomCRS = geomDesc.getCoordinateReferenceSystem();
+
+                        //re-project feature geometry into input geometry CRS
+                        if(!(featureGeomCRS.equals(geomCrs))){
+                            final MathTransform transform = CRS.findMathTransform(featureGeomCRS , geomCrs);
+                            featureGeom = JTS.transform(featureGeom, transform);
+                        }
 
                         final double computedDist = geom.distance((Geometry) property.getValue());
 

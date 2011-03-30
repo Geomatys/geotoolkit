@@ -243,7 +243,7 @@ public final class VectorProcessUtils {
      */
     public static Collection<Geometry> getGeometries(Geometry inputGeom) {
 
-        Collection<Geometry> listGeom = new ArrayList<Geometry>();
+        final Collection<Geometry> listGeom = new ArrayList<Geometry>();
 
         //if geometry is a primary type
         if (inputGeom instanceof Polygon || inputGeom instanceof Point
@@ -370,21 +370,21 @@ public final class VectorProcessUtils {
                     //get the next Feature which intersect the inputFeature
                     final Feature outFeature = ite.next();
 
-                    Map<Geometry, CoordinateReferenceSystem> mapGeomCRS = new HashMap<Geometry, CoordinateReferenceSystem>();
+                    final Map<Geometry, CoordinateReferenceSystem> mapGeomCRS = new HashMap<Geometry, CoordinateReferenceSystem>();
 
                     //generate a map with all feature geometry and geometry CRS
                     for (Property outProperty : outFeature.getProperties()) {
                         if (outProperty.getDescriptor() instanceof GeometryDescriptor) {
 
-                            Geometry outGeom = (Geometry) outProperty.getValue();
+                            final Geometry outGeom = (Geometry) outProperty.getValue();
                             final GeometryDescriptor geomDescOut = (GeometryDescriptor) outProperty.getDescriptor();
-                            CoordinateReferenceSystem outputCRS = geomDescOut.getCoordinateReferenceSystem();
+                            final CoordinateReferenceSystem outputCRS = geomDescOut.getCoordinateReferenceSystem();
                             mapGeomCRS.put(outGeom, outputCRS);
                         }
                     }
 
                     //get the first geometry CRS in the map. It'll be used to homogenize the Feature geometries CRS
-                    CoordinateReferenceSystem outputBaseCRS = mapGeomCRS.entrySet().iterator().next().getValue();
+                    final CoordinateReferenceSystem outputBaseCRS = mapGeomCRS.entrySet().iterator().next().getValue();
 
                     Geometry interGeom = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
                     Geometry interGeomBuffer = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
@@ -399,7 +399,7 @@ public final class VectorProcessUtils {
                         if (geom != null) {
                             //re projection into the first geometry CRS found if different
                             if (!(geomCRS.equals(outputBaseCRS))) {
-                                final MathTransform transform = CRS.findMathTransform(outputBaseCRS, geomCRS);
+                                final MathTransform transform = CRS.findMathTransform(geomCRS, outputBaseCRS);
                                 geom = JTS.transform(geom, transform);
                             }
 
@@ -411,7 +411,7 @@ public final class VectorProcessUtils {
                                 //if geometry CRS is different of inputGeometry CRS
                                 if (!(outputBaseCRS.equals(inputCRS))) {
                                     //re-projection into the inputGeometry CRS
-                                    final MathTransform transformToOriginal = CRS.findMathTransform(inputCRS, outputBaseCRS);
+                                    final MathTransform transformToOriginal = CRS.findMathTransform(outputBaseCRS, inputCRS );
                                     aGeometry = JTS.transform(aGeometry, transformToOriginal);
                                 }
                                 //concatenate all intersections between this geometry and the inputGeometry

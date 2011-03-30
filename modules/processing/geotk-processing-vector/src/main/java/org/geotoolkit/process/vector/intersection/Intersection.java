@@ -31,7 +31,8 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
- * Process to clip a FeatureCollection using another FeatureCollection
+ * Generate a FeatureCollection where each Feature are the intersections of the two input
+ * FeatureCollection's geometries.
  * @author Quentin Boileau
  * @module pending
  */
@@ -81,6 +82,7 @@ public class Intersection extends AbstractProcess {
     public static FeatureCollection intersetFeature(final Feature oldFeature, final FeatureType newType,
             final FeatureCollection<Feature> featureClippingList, final String geometryName)
             throws FactoryException, MismatchedDimensionException, TransformException {
+        
         return VectorProcessUtils.intersection(oldFeature, featureClippingList, geometryName);
     }
 }
