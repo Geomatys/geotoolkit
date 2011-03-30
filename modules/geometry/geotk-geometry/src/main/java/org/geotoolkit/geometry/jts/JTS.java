@@ -57,6 +57,7 @@ import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.factory.HintsPending;
+import org.geotoolkit.util.ArgumentChecks;
 
 /**
  * JTS Geometry utility methods, bringing GeotoolKit to JTS.
@@ -660,6 +661,37 @@ public final class JTS {
                 throw new ProjectionException(c[i].y + " outside of (" + y.getMinimumValue() + "," + y.getMaximumValue() + ")");
             }
         }
+    }
+
+    /**
+     * Set a crs to a geometry.
+     * 1 - if user data is a CRS, set with the crs
+     * 2 - if user data is a Map, add an entry with the crs
+     * @param geom, should not be null
+     * @param crs, if null method has no effect
+     */
+    public static void setCRS(Geometry geom, final CoordinateReferenceSystem crs){
+        ArgumentChecks.ensureNonNull("geommetry", geom);
+
+        if(crs == null){
+            return;
+        }
+        
+        Object userData = geom.getUserData();
+        if(userData instanceof CoordinateReferenceSystem){
+            userData = crs;
+        }else {
+            if(userData instanceof Map){
+                Map values = (Map) userData;
+                values.put(HintsPending.JTS_GEOMETRY_CRS, crs);
+                userData = values;
+            }
+        }
+        if(userData == null){
+            userData = crs;
+        }
+
+        geom.setUserData(userData);
     }
 
     /**
