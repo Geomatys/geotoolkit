@@ -32,7 +32,7 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.filter.Filter;
 
 /**
- *  FeatureCollection for vector process
+ * Encapsulate FeatureCollection 
  * @author Quentin Boileau
  * @module pending
  */
@@ -50,7 +50,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
     }
 
     /**
-     * Return the feature modify by the process
+     * Return the feature modify on the fly
      * @param original Feature
      */
     protected abstract Feature modify(Feature original) throws DataStoreRuntimeException;
@@ -124,7 +124,7 @@ public abstract class WrapFeatureCollection extends AbstractFeatureCollection<Fe
     }
 
     /**
-     * Implementation of FeatureIterator for BufferFeatureCollection
+     * Implementation of WarpFeatureIterator
      * @author Quentin Boileau
      * @module pending
      */
