@@ -50,6 +50,7 @@ import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.DefaultMathTransformFactory;
 import org.geotoolkit.util.collection.WeakHashSet;
+import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -131,7 +132,7 @@ public class ReferencingObjectFactory extends ReferencingFactory
     public ReferencingObjectFactory(final Hints hints) {
         pool = WeakHashSet.newInstance(IdentifiedObject.class);
         parser = new ThreadLocal<ReferencingParser>();
-        if (hints != null && !hints.isEmpty()) {
+        if (!XCollections.isNullOrEmpty(hints)) {
             /*
              * Creates the dependencies (MathTransform factory, WKT parser...) now because
              * we need to process user's hints. Then, we will keep only the relevant hints.

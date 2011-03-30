@@ -20,6 +20,7 @@ package org.geotoolkit.internal.rmi;
 import java.util.List;
 import java.util.ArrayList;
 import java.rmi.RemoteException;
+import java.util.logging.Level;
 
 import org.geotoolkit.lang.ThreadSafe;
 
@@ -129,7 +130,8 @@ class RemoteExecutor extends RemoteService implements TaskExecutor {
          * the slave will not be registered. So this is a way to test the connection
          * before doing the actual registration.
          */
-        logger().info((available ? "Register" : "Shutdown") + " \"" + slave.name() + "\" node.");
+        logger().log(Level.INFO, "{0} \"{1}\" node.", new Object[] {
+                available ? "Register" : "Shutdown", slave.name()});
         if (available) {
             slaves.add(slave);
         } else {

@@ -34,6 +34,7 @@ import org.opengis.referencing.cs.AxisDirection;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.internal.image.io.Warnings;
 
 import static org.geotoolkit.image.io.DimensionSlice.API;
@@ -151,9 +152,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
      */
     @Override
     public void clear() {
-        if (identifiersMap != null) {
-            identifiersMap.clear();
-        }
+        XCollections.clear(identifiersMap);
         dimensions = null;
     }
 
@@ -176,7 +175,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
      */
     @Override
     public boolean isEmpty() {
-        return (identifiersMap == null) || identifiersMap.isEmpty();
+        return XCollections.isNullOrEmpty(identifiersMap);
     }
 
     /**

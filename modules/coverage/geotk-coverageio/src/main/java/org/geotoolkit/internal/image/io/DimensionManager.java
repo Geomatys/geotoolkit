@@ -30,6 +30,7 @@ import org.geotoolkit.image.io.MultidimensionalImageStore;
 import org.geotoolkit.image.io.IllegalImageDimensionException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 
@@ -89,9 +90,7 @@ public final class DimensionManager extends DimensionSet {
     @Override
     public void clear() {
         super.clear();
-        if (bandNames != null) {
-            bandNames.clear();
-        }
+        XCollections.clear(bandNames);
         variableNames = null;
     }
 

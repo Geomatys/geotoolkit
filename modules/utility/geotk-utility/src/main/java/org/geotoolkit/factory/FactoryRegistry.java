@@ -28,6 +28,7 @@ import org.opengis.metadata.quality.ConformanceResult;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 
@@ -606,7 +607,7 @@ public class FactoryRegistry extends ServiceRegistry {
          */
         if (candidate instanceof Factory) {
             final Factory factory = (Factory) candidate;
-            if (hints != null && !hints.isEmpty()) {
+            if (!XCollections.isNullOrEmpty(hints)) {
                 /*
                  * Ask for implementation hints with special care against infinite recursivity.
                  * Some implementations use deferred algorithms fetching dependencies only when

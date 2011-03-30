@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.HashMap;
 import java.util.Collections;
 import java.util.concurrent.CancellationException;
 import java.util.logging.Level;
@@ -69,6 +70,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.CheckedImageInputStream;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.BackingStoreException;
 import org.geotoolkit.referencing.crs.DefaultImageCRS;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
@@ -117,7 +119,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 3.09 (derived from 2.2)
  * @module
@@ -196,7 +198,7 @@ public class ImageCoverageReader extends GridCoverageReader {
     /**
      * The value returned by {@link #getGridGeometry(int)}, computed when first needed.
      */
-    private transient GridGeometry2D gridGeometry;
+    private transient Map<Integer,GridGeometry2D> gridGeometries;
 
     /**
      * The value returned by {@link #getSampleDimensions(int)}, computed when first needed. By
@@ -205,7 +207,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      * shall returns {@code null}. We use this convention because a coverage having zero bands
      * should not be valid.
      */
-    private transient List<GridSampleDimension> sampleDimensions;
+    private transient Map<Integer,List<GridSampleDimension>> sampleDimensions;
 
     /**
      * Helper utilities for parsing metadata. Created only when needed.
@@ -557,6 +559,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public GridGeometry2D getGridGeometry(final int index) throws CoverageStoreException {
+        GridGeometry2D gridGeometry = getCached(gridGeometries, index);
         if (gridGeometry == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
@@ -614,8 +617,42 @@ public class ImageCoverageReader extends GridCoverageReader {
             upper[Y_DIMENSION] = height;
             final GeneralGridEnvelope gridRange = new GeneralGridEnvelope(lower, upper, false);
             gridGeometry = new GridGeometry2D(gridRange, pointInPixel, gridToCRS, crs, null);
+            Map.Entry<Map<Integer,GridGeometry2D>,GridGeometry2D> entry =
+                    setCached(gridGeometry, gridGeometries, index);
+            gridGeometries = entry.getKey();
+            gridGeometry = entry.getValue();
         }
         return gridGeometry;
+    }
+
+    /**
+     * Gets the element at the given index in the given map if the map is non null and the
+     * index is valid, or returns {@code null} otherwise. This method is used for fetching
+     * a value that may or may not have been cached in a previous method call.
+     */
+    private static <T> T getCached(final Map<Integer,T> cache, final int index) {
+        return (cache != null) ? cache.get(index) : null;
+    }
+
+    /**
+     * Sets the cached value to the given element. The cache is returned together with the value.
+     * Both of them may be different than the given arguments. We use {@code Map.Entry} only as a
+     * lazy way to emulate multi return values.
+     */
+    private static <T> Map.Entry<Map<Integer,T>,T> setCached(T value, Map<Integer,T> cache, final int index) {
+        if (value != null) {
+            if (cache == null) {
+                cache = new HashMap<Integer,T>();
+            }
+            for (final T current : cache.values()) {
+                if (current.equals(value)) {
+                    value = current;
+                    break;
+                }
+            }
+            cache.put(index, value);
+        }
+        return new HashMap.SimpleEntry<Map<Integer,T>,T>(cache, value);
     }
 
     /**
@@ -623,7 +660,8 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     @Override
     public List<GridSampleDimension> getSampleDimensions(final int index) throws CoverageStoreException {
-        if (sampleDimensions == null) {
+        List<GridSampleDimension> sd = getCached(sampleDimensions, index);
+        if (sd == null) {
             final ImageReader imageReader = this.imageReader; // Protect from changes.
             if (imageReader == null) {
                 throw new IllegalStateException(formatErrorMessage(Errors.Keys.NO_IMAGE_INPUT));
@@ -643,23 +681,27 @@ public class ImageCoverageReader extends GridCoverageReader {
             }
             if (isNullOrEmpty(bands)) {
                 // See the convention documented below.
-                sampleDimensions = Collections.emptyList();
+                sd = Collections.emptyList();
             } else try {
                 // MetadataHelper default implementation returns an unmodifiable list.
-                sampleDimensions = getMetadataHelper().getGridSampleDimensions(bands);
+                sd = getMetadataHelper().getGridSampleDimensions(bands);
             } catch (ImageMetadataException e) {
                 throw new CoverageStoreException(e);
             }
+            Map.Entry<Map<Integer,List<GridSampleDimension>>,List<GridSampleDimension>> entry =
+                    setCached(sd, sampleDimensions, index);
+            sampleDimensions = entry.getKey();
+            sd = entry.getValue();
         }
         /*
          * By convention, an empty list means that we already checked for sample dimensions
          * and didn't found any. This is not the same than a coverage having no bands, which
          * should not be valid.
          */
-        if (sampleDimensions.isEmpty()) {
+        if (sd.isEmpty()) {
             return null;
         }
-        return sampleDimensions;
+        return sd;
     }
 
     /**
@@ -1006,10 +1048,10 @@ public class ImageCoverageReader extends GridCoverageReader {
      */
     private void close() throws IOException {
         final Object oldInput = input;
-        coverageNames    = null;
-        gridGeometry     = null;
-        sampleDimensions = null;
-        input            = null; // Clear now in case the code below fails.
+        input = null; // Clear now in case the code below fails.
+        coverageNames = null;
+        XCollections.clear(gridGeometries);
+        XCollections.clear(sampleDimensions);
         final ImageReader imageReader = this.imageReader; // Protect from changes.
         if (imageReader != null) {
             if (imageReader.getInput() != oldInput) {

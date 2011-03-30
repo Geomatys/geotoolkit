@@ -22,6 +22,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Queue;
+import java.util.Map;
 import java.util.Set;
 import java.util.SortedSet;
 
@@ -47,6 +48,34 @@ public final class XCollections {
     }
 
     /**
+     * Clears the given collection, if non-null. If the collection is null, then this method does
+     * nothing. This is a convenience method when a null collection is a synonymous of empty.
+     *
+     * @param collection The collection to clear, or {@code null}.
+     *
+     * @since 3.18
+     */
+    public static void clear(final Collection<?> collection) {
+        if (collection != null) {
+            collection.clear();
+        }
+    }
+
+    /**
+     * Clears the given map, if non-null. If the map is null, then this method does nothing.
+     * This is a convenience method when a null map is a synonymous of empty.
+     *
+     * @param map The map to clear, or {@code null}.
+     *
+     * @since 3.18
+     */
+    public static void clear(final Map<?,?> map) {
+        if (map != null) {
+            map.clear();
+        }
+    }
+
+    /**
      * Returns {@code true} if the given collection is either null or
      * {@linkplain Collection#isEmpty() empty}. If this method returns {@code false},
      * then the given collection is guaranteed to be non-null and to contain at least
@@ -59,6 +88,20 @@ public final class XCollections {
      */
     public static boolean isNullOrEmpty(final Collection<?> collection) {
         return (collection == null) || collection.isEmpty();
+    }
+
+    /**
+     * Returns {@code true} if the given map is either null or {@linkplain Map#isEmpty() empty}.
+     * If this method returns {@code false}, then the given map is guaranteed to be non-null and
+     * to contain at least one element.
+     *
+     * @param map The map to test, or {@code null}.
+     * @return {@code true} if the given map is null or empty, or {@code false} otherwise.
+     *
+     * @since 3.18
+     */
+    public static boolean isNullOrEmpty(final Map<?,?> map) {
+        return (map == null) || map.isEmpty();
     }
 
     /**

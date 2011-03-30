@@ -30,6 +30,7 @@ import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.LineWrapWriter;
 import org.geotoolkit.io.IndentedLineWriter;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;
 
@@ -365,9 +366,9 @@ final class HelpAction {
     /**
      * Prints examples.
      */
-    private final void examples(final String command) {
+    private void examples(final String command) {
         final Map<String,String> examples = cmd.examples();
-        if (examples == null || examples.isEmpty()) {
+        if (XCollections.isNullOrEmpty(examples)) {
             return;
         }
         /*

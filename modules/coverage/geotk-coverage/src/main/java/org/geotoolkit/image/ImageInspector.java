@@ -35,6 +35,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.image.ColorModels;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
+import org.geotoolkit.util.collection.XCollections;
 
 import static java.awt.image.DataBuffer.TYPE_BYTE;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -134,7 +135,7 @@ public class ImageInspector {
      */
     ImageInspector(final ImageInspector base) {
         this(base.image);
-        if (base.commonHints!=null && !base.commonHints.isEmpty()) {
+        if (!XCollections.isNullOrEmpty(base.commonHints)) {
             commonHints = new RenderingHints(null);
             commonHints.add(base.commonHints);
         }

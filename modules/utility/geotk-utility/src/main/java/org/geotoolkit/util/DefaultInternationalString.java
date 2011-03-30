@@ -33,6 +33,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
+import org.geotoolkit.util.collection.XCollections;
 
 import static org.geotoolkit.resources.Locales.unique;
 
@@ -104,7 +105,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      * @since 3.00
      */
     public DefaultInternationalString(final Map<Locale,String> strings) {
-        if (strings == null || strings.isEmpty()) {
+        if (XCollections.isNullOrEmpty(strings)) {
             localeMap = Collections.emptyMap();
         } else {
             final Iterator<Map.Entry<Locale,String>> it = strings.entrySet().iterator();
