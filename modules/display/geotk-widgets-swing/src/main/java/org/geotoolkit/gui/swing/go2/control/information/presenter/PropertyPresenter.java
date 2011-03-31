@@ -22,6 +22,7 @@ import javax.swing.JComponent;
 import javax.swing.JScrollPane;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
+import org.geotoolkit.display2d.primitive.ProjectedFeature;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.opengis.feature.Property;
@@ -37,17 +38,23 @@ public class PropertyPresenter implements InformationPresenter{
     @Override
     public JComponent createComponent(Object graphic, RenderingContext2D context, SearchAreaJ2D area) {
 
-         if (graphic instanceof GraphicJ2D){
+        final Object candidate;
+        if (graphic instanceof ProjectedFeature) {
+            final ProjectedFeature gra = (ProjectedFeature) graphic;
+            candidate = gra.getCandidate();
+        } else if (graphic instanceof GraphicJ2D) {
             final GraphicJ2D gra = (GraphicJ2D) graphic;
-            final Object userObj = gra.getUserObject();
+            candidate = gra.getUserObject();
+        } else {
+            candidate = null;
+        }
 
-            if(userObj instanceof Property){
-                final JFeatureOutLine outline = new JFeatureOutLine();
-                outline.setEdited((Property) userObj);
-                final JScrollPane pane = new JScrollPane(outline);
-                pane.setBorder(null);
-                return pane;
-            }
+        if (candidate != null && candidate instanceof Property) {
+            final JFeatureOutLine outline = new JFeatureOutLine();
+            outline.setEdited((Property) candidate);
+            final JScrollPane pane = new JScrollPane(outline);
+            pane.setBorder(null);
+            return pane;
         }
 
         return null;
