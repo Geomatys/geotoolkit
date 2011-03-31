@@ -687,8 +687,8 @@ public final class MetadataStandard {
         final PropertyAccessor accessor = getAccessor(target.getClass());
         if (!accessor.type.isInstance(source)) {
             ensureNonNull("source", source);
-            throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
-                    source.getClass(), accessor.type));
+            throw new ClassCastException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$3,
+                    "source", source.getClass(), accessor.type));
         }
         if (!accessor.shallowCopy(source, target, skipNulls)) {
             throw new UnmodifiableMetadataException(Errors.format(Errors.Keys.UNMODIFIABLE_METADATA));

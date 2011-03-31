@@ -100,7 +100,7 @@ public class TileManagerFactory extends Factory {
             managers = create(c);
         } else {
             throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, tiles.getClass(), TileManager.class));
+                    Errors.Keys.ILLEGAL_CLASS_$3, "tiles", tiles.getClass(), TileManager.class));
         }
         if (managers != null) {
             for (int i=0; i<managers.length; i++) {

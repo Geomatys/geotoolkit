@@ -44,6 +44,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
 
 
 /**
@@ -264,9 +265,9 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         this.maximum      = cached(maximum);
         this.unit         = unit;
         ensureNonNull("valueClass", valueClass);
-        AbstractParameter.ensureValidClass(valueClass, defaultValue);
-        AbstractParameter.ensureValidClass(valueClass, minimum);
-        AbstractParameter.ensureValidClass(valueClass, maximum);
+        ensureCanCast("defaultValue", valueClass, defaultValue);
+        ensureCanCast("minimum",      valueClass, minimum);
+        ensureCanCast("maximum",      valueClass, maximum);
         if (minimum!=null && maximum!=null) {
             if (minimum.compareTo(valueClass.cast(maximum)) > 0) {
                 throw new IllegalArgumentException(Errors.format(
@@ -277,7 +278,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
             final Set<T> valids = new HashSet<T>(Math.max(XCollections.hashMapCapacity(validValues.length), 8));
             for (int i=0; i<validValues.length; i++) {
                 final T value = cached(validValues[i]);
-                AbstractParameter.ensureValidClass(valueClass, value);
+                ensureCanCast("validValues", valueClass, value);
                 valids.add(value);
             }
             this.validValues = Collections.unmodifiableSet(valids);

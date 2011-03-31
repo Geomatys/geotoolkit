@@ -440,6 +440,12 @@ public final class Errors extends IndexedResourceBundle {
         public static final int ILLEGAL_CLASS_$2 = 76;
 
         /**
+         * Argument ‘{0}’ can not be an instance of ‘{1}’. Expected an instance of ‘{2}’ or derived
+         * type.
+         */
+        public static final int ILLEGAL_CLASS_$3 = 256;
+
+        /**
          * Illegal coordinate reference system.
          */
         public static final int ILLEGAL_COORDINATE_REFERENCE_SYSTEM = 77;

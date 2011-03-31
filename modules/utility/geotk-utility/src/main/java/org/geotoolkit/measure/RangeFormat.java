@@ -346,7 +346,7 @@ public class RangeFormat extends Format {
             if (range == null) {
                 message = Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "range");
             } else {
-                message = Errors.format(Errors.Keys.ILLEGAL_CLASS_$2, range.getClass(), Range.class);
+                message = Errors.format(Errors.Keys.ILLEGAL_CLASS_$3, "range", range.getClass(), Range.class);
             }
             throw new IllegalArgumentException(message);
         }

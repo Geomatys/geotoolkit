@@ -43,6 +43,7 @@ import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.converter.Classes.*;
+import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
 
 
 /**
@@ -256,10 +257,7 @@ public class RangeSet<T extends Comparable<? super T>> extends AbstractSet<Range
         if (value == null) {
             throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, name));
         }
-        if (!(isNumeric ? Number.class : elementClass).isInstance(value)) {
-            throw new IllegalArgumentException(Errors.format(
-                    Errors.Keys.ILLEGAL_CLASS_$2, value.getClass(), elementClass));
-        }
+        ensureCanCast("value", isNumeric ? Number.class : elementClass, value);
         if (converter == null) {
             return value;
         }

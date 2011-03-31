@@ -46,7 +46,7 @@ import org.geotoolkit.resources.Errors;
  * in the {@linkplain java.util.Locale#getDefault() default locale} if the check failed.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.17
  * @module
@@ -93,6 +93,41 @@ public final class ArgumentChecks {
         if (array[index] == null) {
             throw new NullArgumentException(Errors.format(
                     Errors.Keys.NULL_ARGUMENT_$1, name + '[' + index + ']'));
+        }
+    }
+
+    /**
+     * Ensures that the specified value is null or an instance assignable to the given type.
+     * If this method does not thrown an exception, then the value can be casted to the class
+     * represented by {@code expectedType} without throwing a {@link ClassCastException}.
+     *
+     * @param  <T> The compile-time type of the value.
+     * @param  name The name of the argument to be checked, used only if an exception is thrown.
+     *         Can be {@code null} if the name is unknown.
+     * @param  expectedType the expected type (class or interface).
+     * @param  value The value to check, or {@code null}.
+     * @throws IllegalArgumentException if {@code value} is non-null and is not assignable
+     *         to the given type.
+     *
+     * @since 3.18
+     */
+    public static <T> void ensureCanCast(final String name, final Class<? extends T> expectedType, final T value)
+            throws IllegalArgumentException
+    {
+        if (value != null) {
+            final Class<?> valueClass = value.getClass();
+            if (!expectedType.isAssignableFrom(valueClass)) {
+                final int key;
+                final Object[] args;
+                if (name != null) {
+                    key = Errors.Keys.ILLEGAL_CLASS_$3;
+                    args = new Object[] {name, valueClass, expectedType};
+                } else {
+                    key = Errors.Keys.ILLEGAL_CLASS_$2;
+                    args = new Object[] {valueClass, expectedType};
+                }
+                throw new IllegalArgumentException(Errors.format(key, args));
+            }
         }
     }
 

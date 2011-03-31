@@ -23,6 +23,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
+import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
 import static org.geotoolkit.util.converter.Classes.finestClass;
 import static org.geotoolkit.util.converter.Classes.widestClass;
 
@@ -513,7 +514,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
         if (value == null) {
             return false;
         }
-        ensureNumberClass(value.getClass());
+        ensureCanCast("value", Number.class, value);
         /*
          * Suppress warning because we checked the class in the line just above, so we are safe.
          * We could have used Class.cast(Object) but we want an IllegalArgumentException with a

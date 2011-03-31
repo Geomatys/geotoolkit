@@ -167,7 +167,7 @@ public class OperationJAI extends Operation2D {
      * @param descriptor The OGC parameters descriptor.
      */
     protected OperationJAI(final OperationDescriptor operation,
-                                       final ParameterDescriptorGroup descriptor)
+                           final ParameterDescriptorGroup descriptor)
     {
         super(descriptor);
         this.operation = operation;
@@ -222,9 +222,7 @@ public class OperationJAI extends Operation2D {
     /**
      * Ensures that the specified class is assignable to {@link RenderedImage}.
      */
-    private static void ensureRenderedImage(final Class<?> classe)
-            throws IllegalArgumentException
-    {
+    private static void ensureRenderedImage(final Class<?> classe) throws IllegalArgumentException {
         if (!RenderedImage.class.isAssignableFrom(classe)) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_CLASS_$2, classe, RenderedImage.class));

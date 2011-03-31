@@ -578,8 +578,8 @@ public class TreeFormat extends Format {
             } else if (tree instanceof Iterable<?>) {
                 format((Iterable<?>) tree, toAppendTo);
             } else {
-                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$2,
-                        Classes.getClass(tree), TreeModel.class));
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_CLASS_$3,
+                        "tree", Classes.getClass(tree), TreeModel.class));
             }
         } catch (IOException e) {
             // Should never happen when writing into a StringBuffer.
