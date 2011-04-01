@@ -65,7 +65,7 @@ public class Intersection extends AbstractProcess {
         final FeatureCollection<Feature> inputFeatureIntersectionList = Parameters.value(IntersectionDescriptor.FEATURE_INTER, inputParameters);
         final String inputGeometryName = Parameters.value(IntersectionDescriptor.GEOMETRY_NAME, inputParameters);
 
-        final IntersectionFeatureCollection resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
+        final FeatureCollection resultFeatureList = new IntersectionFeatureCollection(inputFeatureList, inputFeatureIntersectionList, inputGeometryName);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);

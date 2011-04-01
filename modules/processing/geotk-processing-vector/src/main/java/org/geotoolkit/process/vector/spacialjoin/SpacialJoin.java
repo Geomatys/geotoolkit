@@ -83,7 +83,7 @@ public class SpacialJoin extends AbstractProcess {
         final FeatureCollection<Feature> targetFeatureList = Parameters.value(SpacialJoinDescriptor.FEATURE_TARGET, inputParameters);
         final boolean method = Parameters.value(SpacialJoinDescriptor.INTERSECT, inputParameters);
 
-        final SpacialJoinFeatureCollection resultFeatureList =
+        final FeatureCollection resultFeatureList =
                 new SpacialJoinFeatureCollection(sourceFeatureList, targetFeatureList, method);
 
         result = super.getOutput();

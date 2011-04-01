@@ -88,7 +88,7 @@ public class Nearest extends AbstractProcess {
             final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
             final Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
 
-            final NearestFeatureCollection resultFeatureList =
+            final FeatureCollection resultFeatureList =
                     new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
 
             result = super.getOutput();

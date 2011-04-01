@@ -14,11 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.intersect;
-
-import com.vividsolutions.jts.geom.Geometry;
+package org.geotoolkit.process.vector.reproject;
 
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.data.memory.GenericReprojectFeatureIterator;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
@@ -26,21 +25,22 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 
 import org.opengis.feature.Feature;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * This process return all Features from a FeatureCollection that intersect a geometry.
+ * Re-project a FeatureCollection into a target CoordinateReferenceSystem
  * @author Quentin Boileau
  * @module pending
  */
-public class Intersect extends AbstractProcess {
+public class Reproject extends AbstractProcess {
 
     ParameterValueGroup result;
 
     /**
      * Default constructor
      */
-    public Intersect() {
-        super(IntersectDescriptor.INSTANCE);
+    public Reproject() {
+        super(ReprojectDescriptor.INSTANCE);
     }
 
     /**
@@ -57,10 +57,10 @@ public class Intersect extends AbstractProcess {
     @Override
     public void run() {
         getMonitor().started(new ProcessEvent(this,0,null,null));
-        final FeatureCollection<Feature> inputFeatureList = Parameters.value(IntersectDescriptor.FEATURE_IN, inputParameters);
-        final Geometry interGeom = Parameters.value(IntersectDescriptor.GEOMETRY_IN, inputParameters);
+        final FeatureCollection<Feature> inputFeatureList = Parameters.value(ReprojectDescriptor.FEATURE_IN, inputParameters);
+        final CoordinateReferenceSystem targetCRS = Parameters.value(ReprojectDescriptor.CRS_IN, inputParameters);
 
-        final FeatureCollection resultFeatureList = new IntersectFeatureCollection(inputFeatureList, interGeom);
+        final FeatureCollection resultFeatureList = GenericReprojectFeatureIterator.wrap(inputFeatureList, targetCRS);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);

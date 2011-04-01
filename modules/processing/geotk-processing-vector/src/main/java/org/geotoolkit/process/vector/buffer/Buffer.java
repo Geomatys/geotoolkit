@@ -88,7 +88,7 @@ public class Buffer extends AbstractProcess {
         final Unit<Length> inputUnit = Parameters.value(BufferDescriptor.UNIT_IN, inputParameters);
         final boolean inputLenient = Parameters.value(BufferDescriptor.LENIENT_TRANSFORM_IN, inputParameters);
 
-        final BufferFeatureCollection resultFeatureList =
+        final FeatureCollection resultFeatureList =
                 new BufferFeatureCollection(inputFeatureList, inputDistance, inputUnit, inputLenient);
 
         result = super.getOutput();

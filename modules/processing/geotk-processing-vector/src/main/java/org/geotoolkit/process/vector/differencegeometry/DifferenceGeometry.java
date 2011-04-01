@@ -65,7 +65,7 @@ public class DifferenceGeometry extends AbstractProcess {
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceGeometryDescriptor.FEATURE_IN, inputParameters);
         final Geometry inputDifferenceGeometry = Parameters.value(DifferenceGeometryDescriptor.DIFF_GEOMETRY_IN, inputParameters);
 
-        final DifferenceGeometryFeatureCollection resultFeatureList = 
+        final FeatureCollection resultFeatureList = 
                 new DifferenceGeometryFeatureCollection(inputFeatureList,inputDifferenceGeometry);
 
         result = super.getOutput();

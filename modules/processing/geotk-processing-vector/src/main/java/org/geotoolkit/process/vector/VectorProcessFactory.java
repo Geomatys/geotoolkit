@@ -27,7 +27,6 @@ import org.geotoolkit.process.vector.affinetransform.AffineTransformDescriptor;
 import org.geotoolkit.process.vector.buffer.BufferDescriptor;
 import org.geotoolkit.process.vector.clip.ClipDescriptor;
 import org.geotoolkit.process.vector.clipgeometry.ClipGeometryDescriptor;
-import org.geotoolkit.process.vector.convexhull.ConvexHull;
 import org.geotoolkit.process.vector.convexhull.ConvexHullDescriptor;
 import org.geotoolkit.process.vector.difference.DifferenceDescriptor;
 import org.geotoolkit.process.vector.differencegeometry.DifferenceGeometryDescriptor;
@@ -36,6 +35,7 @@ import org.geotoolkit.process.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.process.vector.intersection.IntersectionDescriptor;
 import org.geotoolkit.process.vector.nearest.NearestDescriptor;
 import org.geotoolkit.process.vector.regroup.RegroupDescriptor;
+import org.geotoolkit.process.vector.reproject.ReprojectDescriptor;
 import org.geotoolkit.process.vector.spacialjoin.SpacialJoinDescriptor;
 
 import org.opengis.metadata.Identifier;
@@ -69,7 +69,7 @@ public class VectorProcessFactory extends AbstractProcessFactory {
                 DouglasPeuckerDescriptor.INSTANCE, BufferDescriptor.INSTANCE, IntersectDescriptor.INSTANCE,
                 NearestDescriptor.INSTANCE, SpacialJoinDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE,
                 DifferenceGeometryDescriptor.INSTANCE, IntersectionDescriptor.INSTANCE, ConvexHullDescriptor.INSTANCE,
-                RegroupDescriptor.INSTANCE, AffineTransformDescriptor.INSTANCE);
+                RegroupDescriptor.INSTANCE, AffineTransformDescriptor.INSTANCE, ReprojectDescriptor.INSTANCE);
     }
 
     /**

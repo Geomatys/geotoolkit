@@ -84,7 +84,7 @@ public class DouglasPeucker extends AbstractProcess {
         final boolean inputBehavior = Parameters.value(DouglasPeuckerDescriptor.DEL_SMALL_GEO_IN, inputParameters);
         final boolean inputLenient = Parameters.value(DouglasPeuckerDescriptor.LENIENT_TRANSFORM_IN, inputParameters);
 
-        final DouglasPeuckerFeatureCollection resultFeatureList =
+        final FeatureCollection resultFeatureList =
                 new DouglasPeuckerFeatureCollection(inputFeatureList,inputAccuracy,inputUnit,inputBehavior,inputLenient);
 
         result = super.getOutput();

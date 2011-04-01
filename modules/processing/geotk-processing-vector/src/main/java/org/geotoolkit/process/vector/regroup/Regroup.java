@@ -79,7 +79,7 @@ public class Regroup extends AbstractProcess {
         final String inputAttributeName = Parameters.value(RegroupDescriptor.REGROUP_ATTRIBUTE, inputParameters);
         final String inputGeometryName = Parameters.value(RegroupDescriptor.GEOMETRY_NAME, inputParameters);
 
-        final RegroupFeatureCollection resultFeatureList = new RegroupFeatureCollection(inputFeatureList, inputAttributeName, inputGeometryName);
+        final FeatureCollection resultFeatureList = new RegroupFeatureCollection(inputFeatureList, inputAttributeName, inputGeometryName);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);

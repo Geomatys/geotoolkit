@@ -20,13 +20,11 @@ import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
-import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
-import org.opengis.filter.FilterFactory2;
 
 /**
  * FeatureCollection for AffineTransform process
@@ -35,8 +33,6 @@ import org.opengis.filter.FilterFactory2;
  */
 public class AffineTransformFeatureCollection extends WrapFeatureCollection {
 
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-            new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     private final FeatureType newFeatureType;
     private final java.awt.geom.AffineTransform transform;
 

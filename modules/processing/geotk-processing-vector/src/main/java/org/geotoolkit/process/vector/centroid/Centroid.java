@@ -63,7 +63,7 @@ public class Centroid extends AbstractProcess {
         getMonitor().started(new ProcessEvent(this,0,null,null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(CentroidDescriptor.FEATURE_IN, inputParameters);
 
-        final CentroidFeatureCollection resultFeatureList = new CentroidFeatureCollection(inputFeatureList);
+        final FeatureCollection resultFeatureList = new CentroidFeatureCollection(inputFeatureList);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
