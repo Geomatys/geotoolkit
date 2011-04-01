@@ -93,24 +93,17 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
 
     protected Point transform(final Point geom) throws TransformException{
         CoordinateSequence coord = geom.getCoordinateSequence();
-        coord = transform(coord, 1);
-        return gf.createPoint(coord);
+        return gf.createPoint(transform(coord, 1));
     }
 
     protected MultiPoint transform(final MultiPoint geom) throws TransformException{
         final int nbGeom = geom.getNumGeometries();
 
-        if(nbGeom == 1){
-            return gf.createMultiPoint(transform((Point)geom.getGeometryN(0)).getCoordinateSequence());
-        }else{
-            final LiteCoordinateSequence cs = new LiteCoordinateSequence(nbGeom, 2);
-            for(int i=0;i<nbGeom;i++){
-                final Coordinate coord = geom.getGeometryN(i).getCoordinate();
-                cs.setX(i, coord.x);
-                cs.setY(i, coord.y);
-            }
-            return gf.createMultiPoint(transform(cs,1));
+        final Point[] subs = new Point[geom.getNumGeometries()];
+        for(int i = 0; i<nbGeom ; i++){
+            subs[i] = transform((Point)geom.getGeometryN(i));
         }
+        return gf.createMultiPoint(subs);
     }
 
     protected LineString transform(final LineString geom) throws TransformException{
