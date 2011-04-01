@@ -17,6 +17,9 @@
 
 package org.geotoolkit.geometry.jts.transform;
 
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.CoordinateSequence;
 import com.vividsolutions.jts.geom.CoordinateSequenceFactory;
 import com.vividsolutions.jts.geom.Geometry;
@@ -633,6 +636,30 @@ public class GeometryClipTransformer extends AbstractGeometryTransformer{
         }
         border[borderLength++] = x0;
         border[borderLength++] = y0;
+    }
+
+    @Override
+    public Point transform(final Point geom) throws TransformException{
+        //nothing to decimate
+        return geom;
+    }
+
+    @Override
+    protected MultiPoint transform(final MultiPoint geom) throws TransformException{
+        final int nbGeom = geom.getNumGeometries();
+
+        if(nbGeom == 1){
+            //nothing to decimate
+            return geom;
+        }else{
+            final LiteCoordinateSequence cs = new LiteCoordinateSequence(nbGeom, 2);
+            for(int i=0;i<nbGeom;i++){
+                final Coordinate coord = geom.getGeometryN(i).getCoordinate();
+                cs.setX(i, coord.x);
+                cs.setY(i, coord.y);
+            }
+            return gf.createMultiPoint(transform(cs,1));
+        }
     }
 
 }

@@ -92,16 +92,16 @@ public abstract class AbstractGeometryTransformer implements GeometryTransformer
     }
 
     protected Point transform(final Point geom) throws TransformException{
-        //nothing to decimate
-        return geom;
+        CoordinateSequence coord = geom.getCoordinateSequence();
+        coord = transform(coord, 1);
+        return gf.createPoint(coord);
     }
 
     protected MultiPoint transform(final MultiPoint geom) throws TransformException{
         final int nbGeom = geom.getNumGeometries();
 
         if(nbGeom == 1){
-            //nothing to decimate
-            return geom;
+            return gf.createMultiPoint(transform((Point)geom.getGeometryN(0)).getCoordinateSequence());
         }else{
             final LiteCoordinateSequence cs = new LiteCoordinateSequence(nbGeom, 2);
             for(int i=0;i<nbGeom;i++){
