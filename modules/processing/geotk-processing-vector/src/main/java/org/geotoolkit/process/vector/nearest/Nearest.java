@@ -84,28 +84,16 @@ public class Nearest extends AbstractProcess {
     @Override
     public void run() {
         try {
-            getMonitor().started(new ProcessEvent(this,0,null,null));
+            getMonitor().started(new ProcessEvent(this, 0, null, null));
             final FeatureCollection<Feature> inputFeatureList = Parameters.value(NearestDescriptor.FEATURE_IN, inputParameters);
-            Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
-//            final CoordinateReferenceSystem crs = JTS.findCoordinateReferenceSystem(interGeom);
-//
-//            /*
-//             * If geometry crs is null, we consider that the geometry and FeatureCollection are
-//             * in the same projection.
-//             */
-//            if (crs != null) {
-//                if (crs != inputFeatureList.getFeatureType().getCoordinateReferenceSystem()) {
-//                    interGeom = JTS.transform(interGeom,
-//                            CRS.findMathTransform(crs, inputFeatureList.getFeatureType().getCoordinateReferenceSystem()));
-//                }
-//            }
+            final Geometry interGeom = Parameters.value(NearestDescriptor.GEOMETRY_IN, inputParameters);
 
             final NearestFeatureCollection resultFeatureList =
                     new NearestFeatureCollection(inputFeatureList.subCollection(nearestQuery(inputFeatureList, interGeom)));
 
             result = super.getOutput();
             result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-            getMonitor().ended(new ProcessEvent(this,100,null,null));
+            getMonitor().ended(new ProcessEvent(this, 100, null, null));
 
         } catch (NoSuchAuthorityCodeException ex) {
             getMonitor().failed(new ProcessEvent(this, 0, null, ex));
@@ -126,20 +114,20 @@ public class Nearest extends AbstractProcess {
      * @param geom
      * @return nearest query filter
      */
-    private Query nearestQuery(final FeatureCollection<Feature> original, Geometry geom) 
-            throws NoSuchAuthorityCodeException, FactoryException, MismatchedDimensionException, TransformException {
+    private Query nearestQuery(final FeatureCollection<Feature> original, final Geometry geom)
+            throws FactoryException, MismatchedDimensionException, TransformException {
 
         CoordinateReferenceSystem geomCrs = JTS.findCoordinateReferenceSystem(geom);
 
         if (geomCrs == null) {
-               geomCrs = original.getFeatureType().getCoordinateReferenceSystem();
+            geomCrs = original.getFeatureType().getCoordinateReferenceSystem();
         }
 
         double dist = Double.POSITIVE_INFINITY;
         final Collection<Identifier> listID = new ArrayList<Identifier>();
 
         final FeatureIterator<Feature> iter = original.iterator(null);
-        try{
+        try {
             while (iter.hasNext()) {
                 final Feature feature = iter.next();
                 for (Property property : feature.getProperties()) {
@@ -150,8 +138,8 @@ public class Nearest extends AbstractProcess {
                         final CoordinateReferenceSystem featureGeomCRS = geomDesc.getCoordinateReferenceSystem();
 
                         //re-project feature geometry into input geometry CRS
-                        if(!(featureGeomCRS.equals(geomCrs))){
-                            final MathTransform transform = CRS.findMathTransform(featureGeomCRS , geomCrs);
+                        if (!(featureGeomCRS.equals(geomCrs))) {
+                            final MathTransform transform = CRS.findMathTransform(featureGeomCRS, geomCrs);
                             featureGeom = JTS.transform(featureGeom, transform);
                         }
 
@@ -170,7 +158,7 @@ public class Nearest extends AbstractProcess {
                     }
                 }
             }
-        }finally{
+        } finally {
             iter.close();
         }
 

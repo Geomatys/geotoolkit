@@ -96,7 +96,7 @@ public class ConvexHull extends AbstractProcess {
                 for (Property property : feature.getProperties()) {
                     if (property.getDescriptor() instanceof GeometryDescriptor) {
                         if (property.getName().getLocalPart().equals(geometryName)) {
-                            Geometry tmpGeom = (Geometry) property.getValue();
+                            final Geometry tmpGeom = (Geometry) property.getValue();
                             convexHull = convexHull.union(tmpGeom);
                             convexHull = convexHull.convexHull();
                         }

@@ -17,8 +17,6 @@
 package org.geotoolkit.process.vector.difference;
 
 import com.vividsolutions.jts.geom.Geometry;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.geotoolkit.data.DataStoreRuntimeException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.memory.WrapFeatureCollection;

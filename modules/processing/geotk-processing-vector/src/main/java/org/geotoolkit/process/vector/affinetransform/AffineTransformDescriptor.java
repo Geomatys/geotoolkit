@@ -14,28 +14,25 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.intersection;
+package org.geotoolkit.process.vector.affinetransform;
 
-import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.vector.VectorDescriptor;
 
-import org.opengis.feature.Feature;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * Parameters description of Intersection process.
- * name of the process : "intersection"
+ * Parameters description of AffineTransform process.
+ * name of the process : "affinetransform"
  * inputs :
  * <ul>
  *     <li>FEATURE_IN "feature_in" FeatureCollection source</li>
- *     <li>FEATURE_INTER "feature_inter" FeatureCollection for intersection</li>
- *     <li>GEOMETRY_NAME "regroup_attribute" Geometry property name. Optional</li>
+ *     <li>TRANSFORM_IN "transform_in" AffineTransform</li>
  * </ul>
  * outputs :
  * <ul>
@@ -44,27 +41,22 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * @author Quentin Boileau
  * @module pending
  */
-public final class IntersectionDescriptor extends VectorDescriptor {
+public final class AffineTransformDescriptor extends VectorDescriptor {
 
-    /**Process name : intersection */
-    public static final String NAME = "intersection";
+    /**Process name : affinetransform */
+    public static final String NAME = "affinetransform";
 
     /**
      * Mandatory - Feature Collection for clipping
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_INTER =
-            new DefaultParameterDescriptor("feature_inter", "Inpute FeatureCollection for the intersection", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<java.awt.geom.AffineTransform> TRANSFORM_IN =
+            new DefaultParameterDescriptor("transform_in", "The affine transformation to apply on Features geometries", java.awt.geom.AffineTransform.class, null, true);
 
-    /**
-     * Optional - Geometry property name. Refer to the geometry to use for the intersection process
-     */
-    public static final ParameterDescriptor<String> GEOMETRY_NAME =
-            new DefaultParameterDescriptor("geometry_name", "Geometry property name", String.class, null, false);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, FEATURE_INTER,GEOMETRY_NAME});
+            new GeneralParameterDescriptor[]{FEATURE_IN, TRANSFORM_IN});
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
@@ -72,14 +64,13 @@ public final class IntersectionDescriptor extends VectorDescriptor {
             new GeneralParameterDescriptor[]{FEATURE_OUT});
     
     /** Instance */
-    public static final ProcessDescriptor INSTANCE = new IntersectionDescriptor();
+    public static final ProcessDescriptor INSTANCE = new AffineTransformDescriptor();
 
     /**
      * Default constructor
      */
-    private IntersectionDescriptor() {
-        super(NAME, "Return a new FeatureCollection where each Feature is "
-                + "create from an intersection Geometry", INPUT_DESC, OUTPUT_DESC);
+    private AffineTransformDescriptor() {
+        super(NAME, "Apply an affine transformation in Features geometries", INPUT_DESC, OUTPUT_DESC);
     }
 
     /**
@@ -87,6 +78,6 @@ public final class IntersectionDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess() {
-        return new Intersection();
+        return new AffineTransform();
     }
 }

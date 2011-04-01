@@ -14,8 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.intersection;
+package org.geotoolkit.process.vector.regroup;
 
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import org.geotoolkit.data.DataStoreRuntimeException;
@@ -23,36 +25,43 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
-import org.geotoolkit.process.vector.VectorProcessUtils;
+import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.feature.DefaultName;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.filter.Filter;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
 /**
- * FeatureCollection for Intersection process
+ * FeatureCollection for Regroup process
  * @author Quentin Boileau
  * @module pending
  */
-public class IntersectionFeatureCollection extends WrapFeatureCollection {
+public class RegroupFeatureCollection extends WrapFeatureCollection {
 
     private final FeatureType newFeatureType;
-    private final FeatureCollection<Feature> intersList;
+    private final String regroupAttribute;
     private final String geometryName;
 
     /**
      * Connect to the original FeatureConnection
      * @param originalFC FeatureCollection
      * @param intersList FeatureCollection
+     * @param geometryName String
      */
-    public IntersectionFeatureCollection(final FeatureCollection<Feature> originalFC, final FeatureCollection<Feature> intersList,
+    public RegroupFeatureCollection(final FeatureCollection<Feature> originalFC, final String regroupAttribute,
             final String geometryName) {
         super(originalFC);
-        this.intersList = intersList;
+        this.regroupAttribute = regroupAttribute;
         this.geometryName = geometryName;
-        this.newFeatureType = VectorProcessUtils.oneGeometryFeatureType(originalFC.getFeatureType(), geometryName);
+        this.newFeatureType = Regroup.regroupFeatureType(originalFC.getFeatureType(), geometryName, regroupAttribute);
     }
 
     /**
@@ -72,10 +81,17 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
         throw new UnsupportedOperationException("Function didn't used");
     }
 
-    private FeatureCollection modify2(final Feature original) {
-
+    /**
+     * Run the process algorithm to generate a Feature from an attribute Value
+     * @param attributeValue Object
+     * @return a Feature
+     */
+    private Feature modify2(final Object attributeValue) {
         try {
-            return Intersection.intersetFeature(original, newFeatureType, intersList, geometryName);
+
+            final FeatureCollection<Feature> fiteredFC = (FeatureCollection<Feature>) super.getOriginalFeatureCollection().subCollection(filter(attributeValue));
+            int toto = fiteredFC.size();
+            return Regroup.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
 
         } catch (FactoryException ex) {
             throw new DataStoreRuntimeException(ex);
@@ -83,7 +99,17 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
             throw new DataStoreRuntimeException(ex);
         } catch (TransformException ex) {
             throw new DataStoreRuntimeException(ex);
+        } catch (DataStoreException ex) {
+            throw new DataStoreRuntimeException(ex);
         }
+    }
+
+    /**
+     * Call the getAttributesValues()
+     * @return a Collection of Objects
+     */
+    private Collection<Object> getAttributeValues() {
+        return Regroup.getAttributeValues(regroupAttribute, (FeatureCollection<Feature>) super.getOriginalFeatureCollection());
     }
 
     /**
@@ -91,7 +117,18 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
      */
     @Override
     public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
-        return new IntersectionFeatureIterator(getOriginalFeatureCollection().iterator());
+        return new RegroupFeatureIterator(getOriginalFeatureCollection().iterator());
+    }
+
+    private Query filter(Object attributeValue)
+            throws FactoryException, MismatchedDimensionException, TransformException {
+
+        final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
+                new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+
+        final Filter filter = FF.equals(FF.property(regroupAttribute), FF.literal(attributeValue));
+        return QueryBuilder.filtered(new DefaultName("filter"), filter);
+
     }
 
     /**
@@ -99,22 +136,25 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
      * @author Quentin Boileau
      * @module pending
      */
-    private class IntersectionFeatureIterator implements FeatureIterator<Feature> {
+    private class RegroupFeatureIterator implements FeatureIterator<Feature> {
 
         private final FeatureIterator<?> originalFI;
         private Feature nextFeature;
-        private FeatureCollection<Feature> nextFC;
-        private FeatureIterator<Feature> ite;
+        private Collection<Object> attributeValues;
+        private Object nextValue;
+        private Iterator<Object> attributeIterator;
 
         /**
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
-        public IntersectionFeatureIterator(final FeatureIterator<?> originalFI) {
+        public RegroupFeatureIterator(final FeatureIterator<?> originalFI) {
             this.originalFI = originalFI;
+
             nextFeature = null;
-            nextFC = null;
-            ite = null;
+            attributeValues = getAttributeValues();
+            attributeIterator = attributeValues.iterator();
+            nextValue = null;
         }
 
         /**
@@ -163,30 +203,15 @@ public class IntersectionFeatureCollection extends WrapFeatureCollection {
          * Find the next feature 
          */
         private void findNext() {
+
             if (nextFeature != null) {
                 return;
             }
 
-            while (nextFeature == null) {
-
-                if (nextFC != null) {
-                    if (ite.hasNext()) {
-                        nextFeature = ite.next();
-                        continue;
-                    } else {
-                        nextFC = null;
-                        ite = null;
-                    }
-                } else {
-                    if (originalFI.hasNext()) {
-                        nextFC = modify2(originalFI.next());
-                        ite = nextFC.iterator();
-                    } else {
-                        break;
-                    }
-                }
+            while (nextFeature == null && attributeIterator.hasNext()) {
+                nextValue = attributeIterator.next();
+                nextFeature = modify2(nextValue);
             }
-
         }
     }
 }

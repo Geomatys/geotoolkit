@@ -241,7 +241,7 @@ public final class VectorProcessUtils {
      * @param inputGeom
      * @return a collection of primary geometries
      */
-    public static Collection<Geometry> getGeometries(Geometry inputGeom) {
+    public static Collection<Geometry> getGeometries(final Geometry inputGeom) {
 
         final Collection<Geometry> listGeom = new ArrayList<Geometry>();
 

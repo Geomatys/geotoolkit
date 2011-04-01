@@ -47,7 +47,7 @@ import org.opengis.util.FactoryException;
  * @module pending
  */
 public class Difference extends AbstractProcess {
-    
+
     ParameterValueGroup result;
 
     /**
@@ -70,15 +70,15 @@ public class Difference extends AbstractProcess {
      */
     @Override
     public void run() {
-        getMonitor().started(new ProcessEvent(this,0,null,null));
+        getMonitor().started(new ProcessEvent(this, 0, null, null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(DifferenceDescriptor.FEATURE_IN, inputParameters);
         final FeatureCollection<Feature> inputFeatureClippingList = Parameters.value(DifferenceDescriptor.FEATURE_DIFF, inputParameters);
 
-        final DifferenceFeatureCollection resultFeatureList = new DifferenceFeatureCollection(inputFeatureList,inputFeatureClippingList);
+        final DifferenceFeatureCollection resultFeatureList = new DifferenceFeatureCollection(inputFeatureList, inputFeatureClippingList);
 
         result = super.getOutput();
         result.parameter(VectorDescriptor.FEATURE_OUT.getName().getCode()).setValue(resultFeatureList);
-        getMonitor().ended(new ProcessEvent(this,100,null,null));
+        getMonitor().ended(new ProcessEvent(this, 100, null, null));
     }
 
     /**
@@ -91,13 +91,13 @@ public class Difference extends AbstractProcess {
      * @throws TransformException
      * @throws FactoryException
      */
-    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList) 
+    public static Feature clipFeature(final Feature oldFeature, final FeatureType newType, final FeatureCollection<Feature> featureClippingList)
             throws MismatchedDimensionException, TransformException, FactoryException {
 
         final Feature resultFeature = FeatureUtilities.defaultFeature(newType, oldFeature.getIdentifier().getID());
 
         for (Property property : oldFeature.getProperties()) {
-            
+
             //for each Geometry in the oldFeature
             if (property.getDescriptor() instanceof GeometryDescriptor) {
 
@@ -106,11 +106,10 @@ public class Difference extends AbstractProcess {
 
                 //loop and test intersection between each geometry of each clipping feature from
                 //clipping FeatureCollection
-                //final List<Geometry> bufferInterGeometries = new ArrayList<Geometry>();
                 Geometry resultGeometry = (Geometry) property.getValue();
                 final FeatureIterator<Feature> clipIterator = featureClippingList.iterator();
-                try{
-                    while(clipIterator.hasNext()){
+                try {
+                    while (clipIterator.hasNext()) {
                         final Feature clipFeature = clipIterator.next();
                         for (Property clipFeatureProperty : clipFeature.getProperties()) {
                             if (clipFeatureProperty.getDescriptor() instanceof GeometryDescriptor) {
@@ -120,34 +119,33 @@ public class Difference extends AbstractProcess {
                                 final CoordinateReferenceSystem diffGeomCRS = diffGeomDesc.getCoordinateReferenceSystem();
 
                                 //re-project clipping geometry into input Feature geometry CRS
-                                if(!(diffGeomCRS.equals(inputGeomCRS))){
-                                    final MathTransform transform = CRS.findMathTransform(diffGeomCRS , inputGeomCRS);
+                                if (!(diffGeomCRS.equals(inputGeomCRS))) {
+                                    final MathTransform transform = CRS.findMathTransform(diffGeomCRS, inputGeomCRS);
                                     diffGeom = JTS.transform(diffGeom, transform);
                                 }
 
 
-                                final Geometry diffGeometry = 
-                                        VectorProcessUtils.difference(resultGeometry,diffGeom);
+                                final Geometry diffGeometry =
+                                        VectorProcessUtils.difference(resultGeometry, diffGeom);
 
                                 /*
                                  * If diffGeometry return null, it's because the result geomerty
                                  * is contained into another Geometry. So we stop the loop and return null.
                                  */
                                 if (diffGeometry != null) {
-                                   resultGeometry = diffGeometry;
-                                }else{
+                                    resultGeometry = diffGeometry;
+                                } else {
                                     return null;
                                 }
                             }
                         }
-                    }  
-                }
-                finally{
+                    }
+                } finally {
                     clipIterator.close();
                 }
-              
+
                 resultFeature.getProperty(property.getName()).setValue(resultGeometry);
-                
+
             } else {
                 //others properties (no geometry)
                 resultFeature.getProperty(property.getName()).setValue(property.getValue());
