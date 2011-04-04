@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -78,6 +79,40 @@ public class EmailAddressType {
      */
     public void setType(final String value) {
         this.type = value;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (address != null) {
+            s.append("address:\n").append(address).append('\n');
+        }
+        if (type != null) {
+            s.append("type:\n").append(type).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof EmailAddressType) {
+            final EmailAddressType that = (EmailAddressType) obj;
+            return Utilities.equals(this.address, that.address) &&
+                   Utilities.equals(this.type,    that.type);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 31 * hash + (this.address != null ? this.address.hashCode() : 0);
+        hash = 31 * hash + (this.type != null ? this.type.hashCode() : 0);
+        return hash;
     }
 
 }

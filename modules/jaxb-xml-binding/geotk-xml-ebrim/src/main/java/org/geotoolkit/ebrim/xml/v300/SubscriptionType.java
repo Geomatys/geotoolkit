@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -163,5 +164,71 @@ public class SubscriptionType extends RegistryObjectType {
     public void setNotificationInterval(final Duration value) {
         this.notificationInterval = value;
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (endTime != null) {
+            sb.append("endTime:").append(endTime).append('\n');
+        }
+        if (notificationInterval != null) {
+            sb.append("notificationInterval:").append(notificationInterval).append('\n');
+        }
+        if (selector != null) {
+            sb.append("selector:").append(selector).append('\n');
+        }
+        if (startTime != null) {
+            sb.append("startTime:").append(startTime).append('\n');
+        }
+        if (action != null) {
+            sb.append("action:\n");
+            for (JAXBElement<? extends ActionType> cl : action) {
+                sb.append(cl).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof SubscriptionType && super.equals(obj)) {
+            final SubscriptionType that = (SubscriptionType) obj;
+            boolean eq = false;
+            if (this.action == null && that.action == null) {
+                eq = true;
+            } else if (this.action != null && that.action != null) {
+                if (this.action.size() == that.action.size()) {
+                    eq = true;
+                    for (int i = 0; i < this.action.size(); i++) {
+                        if (!this.action.get(i).getValue().equals(that.action.get(i).getValue())) {
+                            eq = false;
+                        }
+                    }
+                }
+            }
+            return Utilities.equals(this.endTime,              that.endTime) &&
+                   Utilities.equals(this.notificationInterval, that.notificationInterval) &&
+                   Utilities.equals(this.selector,             that.selector) &&
+                   Utilities.equals(this.startTime,            that.startTime) &&
+                   eq;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 29 * hash + super.hashCode();
+        hash = 29 * hash + (this.action != null ? this.action.hashCode() : 0);
+        hash = 29 * hash + (this.selector != null ? this.selector.hashCode() : 0);
+        hash = 29 * hash + (this.startTime != null ? this.startTime.hashCode() : 0);
+        hash = 29 * hash + (this.endTime != null ? this.endTime.hashCode() : 0);
+        hash = 29 * hash + (this.notificationInterval != null ? this.notificationInterval.hashCode() : 0);
+        return hash;
+    }
+
 
 }

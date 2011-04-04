@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -82,4 +83,28 @@ public class AnyValueType {
         this.content.add(content);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (content != null) {
+            s.append("content:\n");
+            for (Object obj : content) {
+                s.append(obj).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof AnyValueType) {
+            final AnyValueType that = (AnyValueType) obj;
+            return Utilities.equals(this.content,  that.content);
+        }
+        return false;
+    }
 }

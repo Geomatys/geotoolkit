@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -148,4 +149,57 @@ public class PostalAddressType {
         this.streetNumber = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (city != null) {
+            s.append("city:").append(city).append('\n');
+        }
+        if (country != null) {
+            s.append("country:").append(country).append('\n');
+        }
+        if (postalCode != null) {
+            s.append("postalCode:").append(postalCode).append('\n');
+        }
+        if (stateOrProvince != null) {
+            s.append("stateOrProvince:").append(stateOrProvince).append('\n');
+        }
+        if (street != null) {
+            s.append("street:").append(street).append('\n');
+        }
+        if (streetNumber != null) {
+            s.append("streetNumber:").append(streetNumber).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof PostalAddressType) {
+            final PostalAddressType that = (PostalAddressType) obj;
+            return Utilities.equals(this.city,             that.city) &&
+                    Utilities.equals(this.country,         that.country) &&
+                    Utilities.equals(this.postalCode,      that.postalCode) &&
+                    Utilities.equals(this.stateOrProvince, that.stateOrProvince) &&
+                    Utilities.equals(this.street,          that.street) &&
+                   Utilities.equals(this.streetNumber,     that.streetNumber);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.city != null ? this.city.hashCode() : 0);
+        hash = 37 * hash + (this.country != null ? this.country.hashCode() : 0);
+        hash = 37 * hash + (this.postalCode != null ? this.postalCode.hashCode() : 0);
+        hash = 37 * hash + (this.stateOrProvince != null ? this.stateOrProvince.hashCode() : 0);
+        hash = 37 * hash + (this.street != null ? this.street.hashCode() : 0);
+        hash = 37 * hash + (this.streetNumber != null ? this.streetNumber.hashCode() : 0);
+        return hash;
+    }
 }

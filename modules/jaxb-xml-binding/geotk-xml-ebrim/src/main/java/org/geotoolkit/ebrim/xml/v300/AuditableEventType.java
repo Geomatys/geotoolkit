@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -139,4 +140,52 @@ public class AuditableEventType extends RegistryObjectType {
         this.requestId = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (affectedObjects != null) {
+            sb.append("affectedObjects:").append(affectedObjects).append('\n');
+        }
+        if (eventType != null) {
+            sb.append("eventType:").append(eventType).append('\n');
+        }
+        if (requestId != null) {
+            sb.append("requestId:").append(requestId).append('\n');
+        }
+        if (timestamp != null) {
+            sb.append("timestamp:").append(timestamp).append('\n');
+        }
+        if (user != null) {
+            sb.append("user:").append(user).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof AuditableEventType && super.equals(obj)) {
+            final AuditableEventType that = (AuditableEventType) obj;
+            return Utilities.equals(this.affectedObjects, that.affectedObjects) &&
+                   Utilities.equals(this.eventType,       that.eventType) &&
+                   Utilities.equals(this.requestId,       that.requestId) &&
+                   Utilities.equals(this.timestamp,       that.timestamp) &&
+                   Utilities.equals(this.user,            that.user);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 89 * hash + super.hashCode();
+        hash = 89 * hash + (this.affectedObjects != null ? this.affectedObjects.hashCode() : 0);
+        hash = 89 * hash + (this.eventType != null ? this.eventType.hashCode() : 0);
+        hash = 89 * hash + (this.timestamp != null ? this.timestamp.hashCode() : 0);
+        hash = 89 * hash + (this.user != null ? this.user.hashCode() : 0);
+        hash = 89 * hash + (this.requestId != null ? this.requestId.hashCode() : 0);
+        return hash;
+    }
 }

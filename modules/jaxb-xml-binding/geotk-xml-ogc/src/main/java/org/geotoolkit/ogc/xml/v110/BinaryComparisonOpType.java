@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.BinaryComparisonOperator;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.Expression;
@@ -182,8 +183,9 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Expression getExpression1() {
-        for (JAXBElement<?> elem : expression) {
+        for (JAXBElement<?> elem : getExpression()) {
             final Object value = elem.getValue();
             if (value instanceof String) {
                 return new PropertyNameType((String) value);
@@ -195,8 +197,9 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
         return null;
     }
 
+    @Override
     public Expression getExpression2() {
-        for (JAXBElement<?> elem : expression) {
+        for (JAXBElement<?> elem : getExpression()) {
             if (elem.getValue() instanceof LiteralType) {
                 return (LiteralType)elem.getValue();
             }
@@ -205,7 +208,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
     }
 
     public LiteralType getLiteral() {
-        for (JAXBElement<?> elem : expression) {
+        for (JAXBElement<?> elem : getExpression()) {
             if (elem.getValue() instanceof LiteralType) {
                 return (LiteralType)elem.getValue();
             }
@@ -214,11 +217,11 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
     }
 
     public void setLiteral(final LiteralType literal) {
-        this.expression.add(FACTORY.createLiteral(literal));
+        this.getExpression().add(FACTORY.createLiteral(literal));
     }
 
     public ExpressionType getExpressionType() {
-        for (JAXBElement<?> elem : expression) {
+        for (JAXBElement<?> elem : getExpression()) {
             if (elem.getValue() instanceof ExpressionType) {
                 return (ExpressionType)elem.getValue();
             }
@@ -227,11 +230,11 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
     }
 
     public void setExpressionType(final ExpressionType expression) {
-        this.expression.add(FACTORY.createExpression(expression));
+        this.getExpression().add(FACTORY.createExpression(expression));
     }
 
     public String getPropertyName() {
-        for (JAXBElement<?> elem : expression) {
+        for (JAXBElement<?> elem : getExpression()) {
             final Object value = elem.getValue();
             if (value instanceof String) {
                 return (String) value;
@@ -251,7 +254,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
     }
 
     public void setPropertyName(final String propertyName) {
-        expression.add(FACTORY.createPropertyName(new PropertyNameType(propertyName)));
+        getExpression().add(FACTORY.createPropertyName(new PropertyNameType(propertyName)));
     }
 
     @Override
@@ -268,4 +271,26 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
         return s.toString();
     }
 
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + (this.expression != null ? this.expression.hashCode() : 0);
+        hash = 67 * hash + (this.matchCase != null ? this.matchCase.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof BinaryComparisonOpType) {
+            BinaryComparisonOpType that = (BinaryComparisonOpType) obj;
+            return Utilities.equals(this.matchCase, that.matchCase) &&
+                   Utilities.equals(this.getLiteral(), that.getLiteral()) &&
+                   Utilities.equals(this.getPropertyName(), that.getPropertyName()) &&
+                   Utilities.equals(this.getExpressionType(), that.getExpressionType());
+        }
+        return false;
+    }
 }

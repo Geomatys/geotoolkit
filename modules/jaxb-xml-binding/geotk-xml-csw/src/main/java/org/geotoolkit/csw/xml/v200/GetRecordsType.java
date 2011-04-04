@@ -333,13 +333,13 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
             final GetRecordsType that = (GetRecordsType) object;
             return Utilities.equals(this.abstractQuery,  that.abstractQuery)   &&
                    Utilities.equals(this.distributedSearch,  that.distributedSearch)   &&
-                   Utilities.equals(this.maxRecords,  that.maxRecords)   &&
-                   Utilities.equals(this.outputFormat,  that.outputFormat)   &&
+                   Utilities.equals(this.getMaxRecords(),  that.getMaxRecords())   &&
                    Utilities.equals(this.outputSchema,  that.outputSchema)   &&
+                   Utilities.equals(this.getOutputFormat(),  that.getOutputFormat())   &&
                    Utilities.equals(this.requestId,  that.requestId)   &&
                    Utilities.equals(this.responseHandler,  that.responseHandler)   &&
-                   Utilities.equals(this.resultType,  that.resultType)   &&
-                   Utilities.equals(this.startPosition,  that.startPosition)   &&
+                   Utilities.equals(this.getResultType(),  that.getResultType())   &&
+                   Utilities.equals(this.getStartPosition(),  that.getStartPosition())   &&
                    Utilities.equals(this.any ,  that.any);
         }
         return false;
@@ -353,11 +353,11 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
         hash = 79 * hash + (this.abstractQuery != null ? this.abstractQuery.hashCode() : 0);
         hash = 79 * hash + (this.any != null ? this.any.hashCode() : 0);
         hash = 79 * hash + (this.requestId != null ? this.requestId.hashCode() : 0);
-        hash = 79 * hash + (this.resultType != null ? this.resultType.hashCode() : 0);
-        hash = 79 * hash + (this.outputFormat != null ? this.outputFormat.hashCode() : 0);
+        hash = 79 * hash + (this.getResultType() != null ? this.getResultType().hashCode() : 0);
+        hash = 79 * hash + (this.getOutputFormat() != null ? this.getOutputFormat().hashCode() : 0);
         hash = 79 * hash + (this.outputSchema != null ? this.outputSchema.hashCode() : 0);
-        hash = 79 * hash + (this.startPosition != null ? this.startPosition.hashCode() : 0);
-        hash = 79 * hash + (this.maxRecords != null ? this.maxRecords.hashCode() : 0);
+        hash = 79 * hash + (this.getStartPosition() != null ? this.getStartPosition().hashCode() : 0);
+        hash = 79 * hash + (this.getMaxRecords() != null ? this.getMaxRecords().hashCode() : 0);
         return hash;
     }
 

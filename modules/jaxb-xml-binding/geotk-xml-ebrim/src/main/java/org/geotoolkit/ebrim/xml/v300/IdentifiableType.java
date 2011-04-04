@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -131,7 +132,7 @@ public class IdentifiableType {
     
     @Override
     public String toString() {
-        StringBuilder s = new StringBuilder();
+        final StringBuilder s = new StringBuilder();
         s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
         s.append("id:").append(id).append('\n');
         if (home != null) {
@@ -145,6 +146,29 @@ public class IdentifiableType {
             }
         }
         return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof IdentifiableType) {
+            final IdentifiableType that = (IdentifiableType) obj;
+            return Utilities.equals(this.home, that.home) &&
+                   Utilities.equals(this.id,   that.id)   &&
+                   Utilities.equals(this.slot, that.slot);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 37 * hash + (this.slot != null ? this.slot.hashCode() : 0);
+        hash = 37 * hash + (this.id != null ? this.id.hashCode() : 0);
+        hash = 37 * hash + (this.home != null ? this.home.hashCode() : 0);
+        return hash;
     }
 
 }

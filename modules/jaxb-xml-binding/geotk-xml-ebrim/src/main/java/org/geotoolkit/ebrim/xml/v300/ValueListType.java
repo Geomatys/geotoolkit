@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -88,10 +89,30 @@ public class ValueListType {
     public String toString() {
         final StringBuilder sb = new StringBuilder();
         sb.append('[').append(this.getClass().getSimpleName()).append("] values:\n");
-        for (String v : value) {
-            sb.append(v).append('\n');
+        if (value != null) {
+            for (String v : value) {
+                sb.append(v).append('\n');
+            }
         }
         return sb.toString();
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ValueListType) {
+            final ValueListType that = (ValueListType) obj;
+            return Utilities.equals(this.value,             that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
 }

@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -137,4 +138,50 @@ public class SpecificationLinkType extends RegistryObjectType {
         this.specificationObject = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (serviceBinding != null) {
+            s.append("serviceBinding:").append(serviceBinding).append('\n');
+        }
+        if (specificationObject != null) {
+            s.append("specificationObject:").append(specificationObject).append('\n');
+        }
+        if (usageDescription != null) {
+            s.append("usageDescription:").append(usageDescription).append('\n');
+        }
+        if (usageParameter != null) {
+            s.append("usageParameter:\n");
+            for (String up : usageParameter) {
+                s.append(up).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof SpecificationLinkType) {
+            final SpecificationLinkType that = (SpecificationLinkType) obj;
+            return Utilities.equals(this.serviceBinding,      that.serviceBinding) &&
+                   Utilities.equals(this.specificationObject, that.specificationObject) &&
+                   Utilities.equals(this.usageDescription,    that.usageDescription) &&
+                   Utilities.equals(this.usageParameter,      that.usageParameter);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 23 * hash + (this.usageDescription != null ? this.usageDescription.hashCode() : 0);
+        hash = 23 * hash + (this.usageParameter != null ? this.usageParameter.hashCode() : 0);
+        hash = 23 * hash + (this.serviceBinding != null ? this.serviceBinding.hashCode() : 0);
+        hash = 23 * hash + (this.specificationObject != null ? this.specificationObject.hashCode() : 0);
+        return hash;
+    }
 }

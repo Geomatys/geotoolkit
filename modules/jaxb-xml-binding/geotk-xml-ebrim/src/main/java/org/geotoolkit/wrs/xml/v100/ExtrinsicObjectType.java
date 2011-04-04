@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlMimeType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -90,4 +91,36 @@ public class ExtrinsicObjectType extends org.geotoolkit.ebrim.xml.v300.Extrinsic
         this.repositoryItem = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (repositoryItem != null) {
+            sb.append("repositoryItem:").append(repositoryItem).append('\n');
+        }
+        if (repositoryItemRef != null) {
+            sb.append("repositoryItemRef:").append(repositoryItemRef).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ExtrinsicObjectType && super.equals(obj)) {
+            final ExtrinsicObjectType that = (ExtrinsicObjectType) obj;
+            return Utilities.equals(this.repositoryItem,    that.repositoryItem) &&
+                   Utilities.equals(this.repositoryItemRef, that.repositoryItemRef);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + (this.repositoryItemRef != null ? this.repositoryItemRef.hashCode() : 0);
+        hash = 31 * hash + (this.repositoryItem != null ? this.repositoryItem.hashCode() : 0);
+        return hash;
+    }
 }

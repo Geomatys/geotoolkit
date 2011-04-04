@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -101,4 +102,42 @@ public class ExternalIdentifierType extends RegistryObjectType {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (identificationScheme != null) {
+            sb.append("identificationScheme:").append(identificationScheme).append('\n');
+        }
+        if (registryObject != null) {
+            sb.append("registryObject:").append(registryObject).append('\n');
+        }
+        if (value != null) {
+            sb.append("value:").append(value).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ExternalIdentifierType && super.equals(obj)) {
+            final ExternalIdentifierType that = (ExternalIdentifierType) obj;
+            return Utilities.equals(this.identificationScheme, that.identificationScheme) &&
+                   Utilities.equals(this.registryObject,       that.registryObject) &&
+                   Utilities.equals(this.value,                that.value);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + super.hashCode();
+        hash = 67 * hash + (this.registryObject != null ? this.registryObject.hashCode() : 0);
+        hash = 67 * hash + (this.identificationScheme != null ? this.identificationScheme.hashCode() : 0);
+        hash = 67 * hash + (this.value != null ? this.value.hashCode() : 0);
+        return hash;
+    }
 }

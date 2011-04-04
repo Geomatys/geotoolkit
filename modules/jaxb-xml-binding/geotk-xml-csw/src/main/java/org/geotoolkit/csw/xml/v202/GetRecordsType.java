@@ -324,13 +324,13 @@ public class GetRecordsType extends RequestBaseType implements GetRecordsRequest
             final GetRecordsType that = (GetRecordsType) object;
             return Utilities.equals(this.abstractQuery,  that.abstractQuery)   &&
                    Utilities.equals(this.distributedSearch,  that.distributedSearch)   &&
-                   Utilities.equals(this.maxRecords,  that.maxRecords)   &&
+                   Utilities.equals(this.getMaxRecords(),  that.getMaxRecords())   &&
                    Utilities.equals(this.outputFormat,  that.outputFormat)   &&
                    Utilities.equals(this.outputSchema,  that.outputSchema)   &&
                    Utilities.equals(this.requestId,  that.requestId)   &&
                    Utilities.equals(this.responseHandler,  that.responseHandler)   &&
-                   Utilities.equals(this.resultType,  that.resultType)   &&
-                   Utilities.equals(this.startPosition,  that.startPosition)   &&
+                   Utilities.equals(this.getResultType(),  that.getResultType())   &&
+                   Utilities.equals(this.getStartPosition(),  that.getStartPosition())   &&
                    Utilities.equals(this.any ,  that.any);
         }
         return false;

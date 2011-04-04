@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -70,4 +71,32 @@ public class ExternalLinkType extends RegistryObjectType {
         this.externalURI = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (externalURI != null) {
+            sb.append("externalURI:").append(externalURI).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ExternalLinkType && super.equals(obj)) {
+            final ExternalLinkType that = (ExternalLinkType) obj;
+            return Utilities.equals(this.externalURI, that.externalURI);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + super.hashCode();
+        hash = 17 * hash + (this.externalURI != null ? this.externalURI.hashCode() : 0);
+        return hash;
+    }
 }

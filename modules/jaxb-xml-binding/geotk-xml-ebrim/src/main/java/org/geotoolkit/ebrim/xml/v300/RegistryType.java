@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import javax.xml.datatype.Duration;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -146,6 +147,54 @@ public class RegistryType extends RegistryObjectType {
      */
     public void setConformanceProfile(final String value) {
         this.conformanceProfile = value;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (catalogingLatency != null) {
+            sb.append("catalogingLatency:").append(catalogingLatency).append('\n');
+        }
+        if (conformanceProfile != null) {
+            sb.append("conformanceProfile:").append(conformanceProfile).append('\n');
+        }
+        if (operator != null) {
+            sb.append("operator:").append(operator).append('\n');
+        }
+        if (replicationSyncLatency != null) {
+            sb.append("replicationSyncLatency:").append(replicationSyncLatency).append('\n');
+        }
+        if (specificationVersion != null) {
+            sb.append("specificationVersion:").append(specificationVersion).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof RegistryType && super.equals(obj)) {
+            final RegistryType that = (RegistryType) obj;
+            return Utilities.equals(this.catalogingLatency,      that.catalogingLatency) &&
+                   Utilities.equals(this.conformanceProfile,     that.conformanceProfile) &&
+                   Utilities.equals(this.operator,               that.operator) &&
+                   Utilities.equals(this.replicationSyncLatency, that.replicationSyncLatency) &&
+                   Utilities.equals(this.specificationVersion,   that.specificationVersion);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 79 * hash + (this.operator != null ? this.operator.hashCode() : 0);
+        hash = 79 * hash + (this.specificationVersion != null ? this.specificationVersion.hashCode() : 0);
+        hash = 79 * hash + (this.replicationSyncLatency != null ? this.replicationSyncLatency.hashCode() : 0);
+        hash = 79 * hash + (this.catalogingLatency != null ? this.catalogingLatency.hashCode() : 0);
+        hash = 79 * hash + (this.conformanceProfile != null ? this.conformanceProfile.hashCode() : 0);
+        return hash;
     }
 
 }

@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -131,4 +132,52 @@ public class TelephoneNumberType {
         this.phoneType = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (areaCode != null) {
+            s.append("areaCode:").append(areaCode).append('\n');
+        }
+        if (countryCode != null) {
+            s.append("countryCode:").append(countryCode).append('\n');
+        }
+        if (extension != null) {
+            s.append("extension:").append(extension).append('\n');
+        }
+        if (number != null) {
+            s.append("number:").append(number).append('\n');
+        }
+        if (phoneType != null) {
+            s.append("phoneType:").append(phoneType).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof TelephoneNumberType) {
+            final TelephoneNumberType that = (TelephoneNumberType) obj;
+            return Utilities.equals(this.areaCode,    that.areaCode) &&
+                   Utilities.equals(this.countryCode, that.countryCode) &&
+                   Utilities.equals(this.extension,   that.extension) &&
+                   Utilities.equals(this.number,      that.number) &&
+                   Utilities.equals(this.phoneType,   that.phoneType);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 59 * hash + (this.areaCode != null ? this.areaCode.hashCode() : 0);
+        hash = 59 * hash + (this.countryCode != null ? this.countryCode.hashCode() : 0);
+        hash = 59 * hash + (this.extension != null ? this.extension.hashCode() : 0);
+        hash = 59 * hash + (this.number != null ? this.number.hashCode() : 0);
+        hash = 59 * hash + (this.phoneType != null ? this.phoneType.hashCode() : 0);
+        return hash;
+    }
 }

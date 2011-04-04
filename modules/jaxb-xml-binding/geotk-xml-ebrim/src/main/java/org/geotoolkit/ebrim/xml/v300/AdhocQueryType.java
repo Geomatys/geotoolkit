@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -71,4 +72,32 @@ public class AdhocQueryType extends RegistryObjectType {
         this.queryExpression = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (queryExpression != null) {
+            sb.append("queryExpression:").append(queryExpression).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof AdhocQueryType && super.equals(obj)) {
+            final AdhocQueryType that = (AdhocQueryType) obj;
+            return Utilities.equals(this.queryExpression, that.queryExpression);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 47 * hash + super.hashCode();
+        hash = 47 * hash + (this.queryExpression != null ? this.queryExpression.hashCode() : 0);
+        return hash;
+    }
 }

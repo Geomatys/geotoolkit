@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -70,4 +71,32 @@ public class ObjectRefType extends IdentifiableType {
         this.createReplica = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (createReplica != null) {
+            sb.append("createReplica:").append(createReplica).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ObjectRefType && super.equals(obj)) {
+            final ObjectRefType that = (ObjectRefType) obj;
+            return Utilities.equals(this.createReplica, that.createReplica);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + super.hashCode();
+        hash = 29 * hash + (this.createReplica != null ? this.createReplica.hashCode() : 0);
+        return hash;
+    }
 }

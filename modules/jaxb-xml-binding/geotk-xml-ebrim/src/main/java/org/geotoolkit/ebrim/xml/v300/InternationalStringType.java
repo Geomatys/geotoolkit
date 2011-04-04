@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ebrim.xml.EbrimInternationalString;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -100,4 +101,35 @@ public class InternationalStringType implements EbrimInternationalString {
         this.localizedString.add(localizedString);
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (localizedString != null) {
+            s.append("localizedString:\n");
+            for (LocalizedStringType sl: localizedString) {
+                s.append(sl).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof InternationalStringType) {
+            final InternationalStringType that = (InternationalStringType) obj;
+            return Utilities.equals(this.localizedString, that.localizedString);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.localizedString != null ? this.localizedString.hashCode() : 0);
+        return hash;
+    }
 }

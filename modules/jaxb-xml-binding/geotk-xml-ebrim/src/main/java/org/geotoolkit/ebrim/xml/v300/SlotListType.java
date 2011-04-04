@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -80,4 +81,35 @@ public class SlotListType {
         this.slot = slot;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (slot != null) {
+            s.append("slot:\n");
+            for (SlotType t : slot) {
+                s.append(t).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof SlotListType) {
+            final SlotListType that = (SlotListType) obj;
+            return Utilities.equals(this.slot, that.slot);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (this.slot != null ? this.slot.hashCode() : 0);
+        return hash;
+    }
 }

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -136,4 +137,50 @@ public class ServiceBindingType extends RegistryObjectType {
         this.targetBinding = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (accessURI != null) {
+            sb.append("accessURI:").append(accessURI).append('\n');
+        }
+        if (service != null) {
+            sb.append("service:").append(service).append('\n');
+        }
+        if (targetBinding != null) {
+            sb.append("targetBinding:").append(targetBinding).append('\n');
+        }
+        if (specificationLink != null) {
+            sb.append("specificationLink:\n");
+            for (SpecificationLinkType cl : specificationLink) {
+                sb.append(cl).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ServiceBindingType && super.equals(obj)) {
+            final ServiceBindingType that = (ServiceBindingType) obj;
+            return Utilities.equals(this.accessURI,         that.accessURI) &&
+                   Utilities.equals(this.service,           that.service) &&
+                   Utilities.equals(this.specificationLink, that.specificationLink) &&
+                   Utilities.equals(this.targetBinding,     that.targetBinding);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + super.hashCode();
+        hash = 67 * hash + (this.specificationLink != null ? this.specificationLink.hashCode() : 0);
+        hash = 67 * hash + (this.service != null ? this.service.hashCode() : 0);
+        hash = 67 * hash + (this.accessURI != null ? this.accessURI.hashCode() : 0);
+        hash = 67 * hash + (this.targetBinding != null ? this.targetBinding.hashCode() : 0);
+        return hash;
+    }
 }

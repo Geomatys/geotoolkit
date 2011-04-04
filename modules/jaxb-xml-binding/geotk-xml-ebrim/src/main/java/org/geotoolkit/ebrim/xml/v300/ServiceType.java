@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -80,6 +81,38 @@ public class ServiceType extends RegistryObjectType {
      */
     public void setServiceBinding(final List<ServiceBindingType> serviceBinding) {
         this.serviceBinding = serviceBinding;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (serviceBinding != null) {
+            sb.append("serviceBinding:\n");
+            for (ServiceBindingType cl : serviceBinding) {
+                sb.append(cl).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ServiceType && super.equals(obj)) {
+            final ServiceType that = (ServiceType) obj;
+            return Utilities.equals(this.serviceBinding,     that.serviceBinding);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 79 * hash + super.hashCode();
+        hash = 79 * hash + (this.serviceBinding != null ? this.serviceBinding.hashCode() : 0);
+        return hash;
     }
 
 }

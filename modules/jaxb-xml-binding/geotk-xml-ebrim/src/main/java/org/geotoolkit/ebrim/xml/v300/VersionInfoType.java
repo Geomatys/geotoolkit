@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -82,4 +83,37 @@ public class VersionInfoType {
         this.comment = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (comment != null) {
+            s.append("comment:\n").append(comment).append('\n');
+        }
+        if (versionName != null) {
+            s.append("versionName:\n").append(versionName).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof VersionInfoType) {
+            final VersionInfoType that = (VersionInfoType) obj;
+            return Utilities.equals(this.getVersionName(), that.getVersionName()) &&
+                   Utilities.equals(this.comment,    that.comment);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 53 * hash + (this.getVersionName() != null ? this.getVersionName().hashCode() : 0);
+        hash = 53 * hash + (this.comment != null ? this.comment.hashCode() : 0);
+        return hash;
+    }
 }

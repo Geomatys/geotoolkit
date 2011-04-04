@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -116,6 +117,45 @@ public class ExtrinsicObjectType extends RegistryObjectType {
      */
     public void setIsOpaque(final Boolean value) {
         this.isOpaque = value;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (contentVersionInfo != null) {
+            sb.append("contentVersionInfo:").append(contentVersionInfo).append('\n');
+        }
+        if (isOpaque != null) {
+            sb.append("isOpaque:").append(isOpaque).append('\n');
+        }
+        if (mimeType != null) {
+            sb.append("mimeType:").append(mimeType).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ExtrinsicObjectType && super.equals(obj)) {
+            final ExtrinsicObjectType that = (ExtrinsicObjectType) obj;
+            return Utilities.equals(this.contentVersionInfo, that.contentVersionInfo) &&
+                   Utilities.equals(this.isOpaque,           that.isOpaque) &&
+                   Utilities.equals(this.getMimeType(),           that.getMimeType());
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 67 * hash + super.hashCode();
+        hash = 67 * hash + (this.contentVersionInfo != null ? this.contentVersionInfo.hashCode() : 0);
+        hash = 67 * hash + (this.getMimeType() != null ? this.getMimeType().hashCode() : 0);
+        hash = 67 * hash + (this.isOpaque != null ? this.isOpaque.hashCode() : 0);
+        return hash;
     }
 
 }

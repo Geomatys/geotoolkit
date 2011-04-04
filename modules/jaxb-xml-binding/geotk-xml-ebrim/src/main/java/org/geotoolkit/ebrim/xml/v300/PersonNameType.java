@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -95,6 +96,45 @@ public class PersonNameType {
      */
     public void setLastName(final String value) {
         this.lastName = value;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (firstName != null) {
+            s.append("firstName:").append(firstName).append('\n');
+        }
+        if (lastName != null) {
+            s.append("lastName:").append(lastName).append('\n');
+        }
+        if (middleName != null) {
+            s.append("middleName:").append(middleName).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof PersonNameType) {
+            final PersonNameType that = (PersonNameType) obj;
+            return Utilities.equals(this.firstName,  that.firstName) &&
+                   Utilities.equals(this.lastName,   that.lastName) &&
+                   Utilities.equals(this.middleName, that.middleName);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.firstName != null ? this.firstName.hashCode() : 0);
+        hash = 97 * hash + (this.middleName != null ? this.middleName.hashCode() : 0);
+        hash = 97 * hash + (this.lastName != null ? this.lastName.hashCode() : 0);
+        return hash;
     }
 
 }

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -86,4 +87,37 @@ public class NotifyActionType extends ActionType {
         this.endPoint = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (endPoint != null) {
+            s.append("endPoint:\n").append(endPoint).append('\n');
+        }
+        if (notificationOption != null) {
+            s.append("notificationOption:\n").append(notificationOption).append('\n');
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof NotifyActionType) {
+            final NotifyActionType that = (NotifyActionType) obj;
+            return Utilities.equals(this.endPoint,           that.endPoint) &&
+                   Utilities.equals(this.notificationOption, that.notificationOption);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + (this.notificationOption != null ? this.notificationOption.hashCode() : 0);
+        hash = 29 * hash + (this.endPoint != null ? this.endPoint.hashCode() : 0);
+        return hash;
+    }
 }

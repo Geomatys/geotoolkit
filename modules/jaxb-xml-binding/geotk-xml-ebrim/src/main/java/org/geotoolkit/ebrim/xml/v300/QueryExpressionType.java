@@ -17,13 +17,16 @@
 package org.geotoolkit.ebrim.xml.v300;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -100,4 +103,65 @@ public class QueryExpressionType {
         this.queryLanguage = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (queryLanguage != null) {
+            s.append("queryLanguage:").append(queryLanguage).append('\n');
+        }
+        if (content != null) {
+            s.append("content:\n");
+            for (Object obj : content) {
+                if (obj instanceof JAXBElement) {
+                    obj = ((JAXBElement)obj).getValue();
+                }
+                s.append(obj).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof QueryExpressionType) {
+            final QueryExpressionType that = (QueryExpressionType) obj;
+            boolean eq = false;
+            if (this.content == null && that.content == null) {
+                eq = true;
+            } else if (this.content != null && this.content != null) {
+                if (this.content.size() == that.content.size()) {
+                    Iterator thisIt = this.content.iterator();
+                    Iterator thatIt = that.content.iterator();
+                    while (thisIt.hasNext()) {
+                        Object thisCont = thisIt.next();
+                        Object thatCont = thatIt.next();
+                        if (thisCont instanceof JAXBElement) {
+                            thisCont = ((JAXBElement)thisCont).getValue();
+                        }
+                        if (thatCont instanceof JAXBElement) {
+                            thatCont = ((JAXBElement)thatCont).getValue();
+                        }
+                        if (!Utilities.equals(thisCont, thatCont)) {
+                            return false;
+                        }
+                    }
+                    eq = true;
+                }
+            }
+            return eq && Utilities.equals(this.queryLanguage,   that.queryLanguage);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 41 * hash + (this.content != null ? this.content.hashCode() : 0);
+        hash = 41 * hash + (this.queryLanguage != null ? this.queryLanguage.hashCode() : 0);
+        return hash;
+    }
 }

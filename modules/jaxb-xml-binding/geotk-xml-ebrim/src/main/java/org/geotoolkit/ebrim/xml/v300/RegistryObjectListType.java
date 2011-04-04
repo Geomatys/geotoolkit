@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -149,6 +150,51 @@ public class RegistryObjectListType {
         } else {
             throw new IllegalArgumentException("unexpected type in registryObjectListType");
         }
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (identifiable != null) {
+            s.append("identifiable:\n");
+            for (JAXBElement<? extends IdentifiableType> jb : identifiable) {
+                s.append(jb.getValue()).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof RegistryObjectListType) {
+            final RegistryObjectListType that = (RegistryObjectListType) obj;
+
+            if (this.identifiable == null && that.identifiable == null) {
+                return true;
+            } else if (this.identifiable != null && that.identifiable != null) {
+                if (this.identifiable.size() == that.identifiable.size()) {
+                    for (int i = 0; i < this.identifiable.size(); i++) {
+                        if (!this.identifiable.get(i).getValue().equals(that.identifiable.get(i).getValue())) {
+                            return false;
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + (this.identifiable != null ? this.identifiable.hashCode() : 0);
+        return hash;
     }
 
 }

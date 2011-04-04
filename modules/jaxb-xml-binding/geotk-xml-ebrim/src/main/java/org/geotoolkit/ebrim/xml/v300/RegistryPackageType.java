@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -72,4 +73,31 @@ public class RegistryPackageType extends RegistryObjectType {
         this.registryObjectList = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (registryObjectList != null) {
+            sb.append("registryObjectList:").append(registryObjectList).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof RegistryPackageType && super.equals(obj)) {
+            final RegistryPackageType that = (RegistryPackageType) obj;
+            return Utilities.equals(this.registryObjectList, that.registryObjectList);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + (this.registryObjectList != null ? this.registryObjectList.hashCode() : 0);
+        return hash;
+    }
 }

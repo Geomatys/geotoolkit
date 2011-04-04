@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -81,4 +82,35 @@ public class ObjectRefListType {
         this.objectRef = ref;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder s = new StringBuilder();
+        s.append('[').append(this.getClass().getSimpleName()).append(']').append('\n');
+        if (objectRef != null) {
+            s.append("objectRef:\n");
+            for (ObjectRefType o : objectRef) {
+                s.append(o).append('\n');
+            }
+        }
+        return s.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof ObjectRefListType) {
+            final ObjectRefListType that = (ObjectRefListType) obj;
+            return Utilities.equals(this.objectRef, that.objectRef);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 37 * hash + (this.objectRef != null ? this.objectRef.hashCode() : 0);
+        return hash;
+    }
 }

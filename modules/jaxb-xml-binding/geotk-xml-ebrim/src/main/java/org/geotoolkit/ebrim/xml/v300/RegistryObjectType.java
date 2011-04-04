@@ -26,8 +26,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+
 import org.geotoolkit.csw.xml.Settable;
 import org.geotoolkit.ebrim.xml.RegistryObject;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -273,6 +275,76 @@ public class RegistryObjectType extends IdentifiableType implements RegistryObje
         summary.setName(name);
         summary.setDescription(description);
         return summary;
+    }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (name != null) {
+            sb.append("name:").append(name).append('\n');
+        }
+        if (description != null) {
+            sb.append("description:").append(description).append('\n');
+        }
+        if (lid != null) {
+            sb.append("lid:").append(lid).append('\n');
+        }
+        if (objectType != null) {
+            sb.append("objectType:").append(objectType).append('\n');
+        }
+        if (status != null) {
+            sb.append("status:").append(status).append('\n');
+        }
+        if (versionInfo != null) {
+            sb.append("versionInfo:").append(versionInfo).append('\n');
+        }
+        if (classification != null) {
+            sb.append("classification:\n");
+            for (ClassificationType cl : classification) {
+                sb.append(cl).append('\n');
+            }
+        }
+        if (externalIdentifier != null) {
+            sb.append("externalIdentifier:\n");
+            for (ExternalIdentifierType cl : externalIdentifier) {
+                sb.append(cl).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof RegistryObjectType && super.equals(obj)) {
+            final RegistryObjectType that = (RegistryObjectType) obj;
+            return Utilities.equals(this.classification,     that.classification) &&
+                   Utilities.equals(this.description,        that.description) && 
+                   Utilities.equals(this.externalIdentifier, that.externalIdentifier) && 
+                   Utilities.equals(this.lid,                that.lid) && 
+                   Utilities.equals(this.name,               that.name) && 
+                   Utilities.equals(this.objectType,         that.objectType) && 
+                   Utilities.equals(this.status,             that.status) &&
+                   Utilities.equals(this.versionInfo,        that.versionInfo);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + super.hashCode();
+        hash = 67 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 67 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 67 * hash + (this.versionInfo != null ? this.versionInfo.hashCode() : 0);
+        hash = 67 * hash + (this.classification != null ? this.classification.hashCode() : 0);
+        hash = 67 * hash + (this.externalIdentifier != null ? this.externalIdentifier.hashCode() : 0);
+        hash = 67 * hash + (this.lid != null ? this.lid.hashCode() : 0);
+        hash = 67 * hash + (this.objectType != null ? this.objectType.hashCode() : 0);
+        hash = 67 * hash + (this.status != null ? this.status.hashCode() : 0);
+        return hash;
     }
 
 }

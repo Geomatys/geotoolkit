@@ -134,7 +134,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
         }
         if (object instanceof RequestBaseType) {
             final RequestBaseType that = (RequestBaseType) object;
-            return Utilities.equals(this.service,  that.service) &&
+            return Utilities.equals(this.getService(),  that.getService()) &&
                    Utilities.equals(this.version,  that.version);
         }
         return false;
@@ -143,7 +143,7 @@ public abstract class RequestBaseType implements RequestBase, AbstractCswRequest
     @Override
     public int hashCode() {
         int hash = 3;
-        hash = 59 * hash + (this.service != null ? this.service.hashCode() : 0);
+        hash = 59 * hash + (this.getService() != null ? this.getService().hashCode() : 0);
         hash = 59 * hash + (this.version != null ? this.version.hashCode() : 0);
         return hash;
     }

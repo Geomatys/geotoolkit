@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -88,4 +89,37 @@ public class NotificationType extends RegistryObjectType {
         this.subscription = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (registryObjectList != null) {
+            sb.append("registryObjectList:").append(registryObjectList).append('\n');
+        }
+        if (subscription != null) {
+            sb.append("subscription:").append(subscription).append('\n');
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof NotificationType && super.equals(obj)) {
+            final NotificationType that = (NotificationType) obj;
+            return Utilities.equals(this.registryObjectList, that.registryObjectList) &&
+                   Utilities.equals(this.subscription,       that.subscription);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + super.hashCode();
+        hash = 31 * hash + (this.registryObjectList != null ? this.registryObjectList.hashCode() : 0);
+        hash = 31 * hash + (this.subscription != null ? this.subscription.hashCode() : 0);
+        return hash;
+    }
 }

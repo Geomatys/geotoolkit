@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.filter.BinaryLogicOperator;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterVisitor;
@@ -208,5 +209,71 @@ public class BinaryLogicOpType extends LogicOpsType implements BinaryLogicOperat
             this.logicOps = new ArrayList<JAXBElement<? extends LogicOpsType>>();
         }
         this.logicOps.add(FilterType.createLogicOps(logicOp));
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (obj == this) {
+            return true;
+        }
+        if (obj instanceof BinaryLogicOpType) {
+            BinaryLogicOpType that = (BinaryLogicOpType) obj;
+            boolean logic = false;
+            if (this.logicOps == null && that.logicOps == null) {
+                logic = true;
+            } else if (this.logicOps != null && that.logicOps != null) {
+                if (this.logicOps.size() == that.logicOps.size()) {
+                    for (int i = 0; i < this.logicOps.size(); i++) {
+                        Object thisExp = ((JAXBElement)this.logicOps.get(i)).getValue();
+                        Object thatExp = ((JAXBElement)that.logicOps.get(i)).getValue();
+                        if (!Utilities.equals(thisExp, thatExp)) {
+                            return false;
+                        }
+                    }
+                    logic = true;
+                }
+            }
+            boolean compa = false;
+            if (this.comparisonOps == null && that.comparisonOps == null) {
+                compa = true;
+            } else if (this.comparisonOps != null && that.comparisonOps != null) {
+                if (this.comparisonOps.size() == that.comparisonOps.size()) {
+                    for (int i = 0; i < this.comparisonOps.size(); i++) {
+                        Object thisExp = ((JAXBElement)this.comparisonOps.get(i)).getValue();
+                        Object thatExp = ((JAXBElement)that.comparisonOps.get(i)).getValue();
+                        if (!Utilities.equals(thisExp, thatExp)) {
+                            return false;
+                        }
+                    }
+                    compa = true;
+                }
+            }
+            boolean spa = false;
+            if (this.spatialOps == null && that.spatialOps == null) {
+                spa = true;
+            } else if (this.spatialOps != null && that.spatialOps != null) {
+                if (this.spatialOps.size() == that.spatialOps.size()) {
+                    for (int i = 0; i < this.spatialOps.size(); i++) {
+                        Object thisExp = ((JAXBElement)this.spatialOps.get(i)).getValue();
+                        Object thatExp = ((JAXBElement)that.spatialOps.get(i)).getValue();
+                        if (!Utilities.equals(thisExp, thatExp)) {
+                            return false;
+                        }
+                    }
+                    spa = true;
+                }
+            }
+            return logic && compa && spa;
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + (this.comparisonOps != null ? this.comparisonOps.hashCode() : 0);
+        hash = 37 * hash + (this.spatialOps != null ? this.spatialOps.hashCode() : 0);
+        hash = 37 * hash + (this.logicOps != null ? this.logicOps.hashCode() : 0);
+        return hash;
     }
 }
