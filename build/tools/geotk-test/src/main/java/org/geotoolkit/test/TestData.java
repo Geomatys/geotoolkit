@@ -103,7 +103,8 @@ public class TestData implements Runnable {
      * exists.
      *
      * @param  caller Calling class or object used to locate {@code test-data}.
-     * @param  name Resource name in {@code test-data} directory.
+     * @param  name Name of the resource to find in the {@code test-data} directory,
+     *         or (@code null} for the {@code test-data} directory itself.
      * @return URL or {@code null} if the named test-data could not be found.
      *
      * @see #url
@@ -129,7 +130,8 @@ public class TestData implements Runnable {
      * reason than the infamous {@link NullPointerException}.
      *
      * @param  caller Calling class or object used to locate {@code test-data}.
-     * @param  path Path to file in {@code test-data}.
+     * @param  path Path to the resource to find in the {@code test-data} directory,
+     *         or (@code null} for the {@code test-data} directory itself.
      * @return The URL to the {@code test-data} resource.
      * @throws FileNotFoundException if the resource is not found.
      *
@@ -152,7 +154,8 @@ public class TestData implements Runnable {
      * }
      *
      * @param  caller Calling class or object used to locate {@code test-data}.
-     * @param  path Path to file in {@code test-data}.
+     * @param  path Path to the resource to find in the {@code test-data} directory,
+     *         or (@code null} for the {@code test-data} directory itself.
      * @return The file to the {@code test-data} resource.
      * @throws FileNotFoundException if the file is not found.
      * @throws IOException if the resource can't be fetched for an other reason.

@@ -467,6 +467,8 @@ public class Tile implements Comparable<Tile>, Serializable {
      * @throws IOException
      *          If no {@code ".tfw} or {@code ".jgw"} file (depending on the extension of the
      *          input file) is found, or if an error occurred while reading that file.
+     *
+     * @see TileManagerFactory#listTiles(ImageReaderSpi, File[])
      */
     public Tile(final ImageReaderSpi provider, final File input, final int imageIndex) throws IOException {
         this(provider, input, imageIndex, null, SupportFiles.parseTFW(input));
@@ -613,6 +615,18 @@ public class Tile implements Comparable<Tile>, Serializable {
                                          final boolean ignoreMetadata)
             throws IOException
     {
+        return getImageReader(mosaic != null ? mosaic.readers : null, seekForwardOnly, ignoreMetadata);
+    }
+
+    /**
+     * Implementation of {@link #getImageReader(MosaicImageReader, boolean, boolean)}. Given that
+     * only the cache is needed, this implementation works directly with {@link TileReaderPool}.
+     */
+    final ImageReader getImageReader(final TileReaderPool mosaic,
+                                     final boolean seekForwardOnly,
+                                     final boolean ignoreMetadata)
+            throws IOException
+    {
         final ImageReaderSpi provider = getImageReaderSpi();
         final ImageReader reader;
         final Object currentInput;
@@ -695,7 +709,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * @throws IOException if the image reader can't be initialized.
      */
     public ImageReader getImageReader() throws IOException {
-        return getImageReader(null, true, true);
+        return getImageReader((MosaicImageReader) null, true, true);
     }
 
     /**

@@ -947,7 +947,7 @@ public class MosaicBuilder implements LogProducer {
                 if (inputTiles.length > inputIndex && (policy != null && !policy.includeEmpty)) {
                     input = inputTiles[inputIndex];
                 }
-                reader = mosaic.getTileReader();
+                reader = mosaic.readers.getTileReader();
             }
             /*
              * Now set the MosaicBuilder properties:

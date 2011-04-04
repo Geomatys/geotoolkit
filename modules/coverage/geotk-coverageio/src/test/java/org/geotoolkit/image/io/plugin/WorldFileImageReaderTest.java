@@ -27,7 +27,6 @@ import javax.imageio.stream.ImageInputStream;
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.TestData;
 import org.geotoolkit.image.io.XImageIO;
-import org.geotoolkit.image.io.mosaic.TileTest;
 import org.geotoolkit.image.io.TextImageReaderTestBase;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
 import org.geotoolkit.image.io.metadata.SpatialMetadataFormat;
@@ -145,7 +144,7 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
     @Test
     public void testImageIO() throws IOException {
         final Locale locale = Locale.getDefault();
-        File file = TestData.file(TileTest.class, "A2.png");
+        File file = TestData.file(org.geotoolkit.image.ImageInspector.class, "Contour.png");
         WorldFileImageReader.Spi.registerDefaults(null);
         Locale.setDefault(Locale.US);
         try {
@@ -153,7 +152,7 @@ public final class WorldFileImageReaderTest extends TextImageReaderTestBase {
             /*
              * When using the XImageIO methods, the WorldFileImageReader plugin
              * should be selected if the input is a file except if there is no
-             * PGW (or TFW) and no PRJ file. This is the case of A2.png.
+             * PGW (or TFW) and no PRJ file. This is the case of Contour.png.
              */
             ImageReader reader = XImageIO.getReaderBySuffix(file, true, null);
             assertFalse(reader instanceof WorldFileImageReader);

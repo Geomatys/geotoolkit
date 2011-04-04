@@ -120,7 +120,7 @@ public class MosaicImageReadParam extends ImageReadParam {
     protected MosaicImageReadParam(final MosaicImageReader reader) {
         readers = new WeakHashMap<ImageReader,ImageReadParam>();
         if (reader != null) {
-            for (final ImageReader tileReader : reader.getTileReaders()) {
+            for (final ImageReader tileReader : reader.readers.getTileReaders()) {
                 readers.put(tileReader, null);
             }
         }

@@ -18,6 +18,9 @@
 package org.geotoolkit.image.io.mosaic;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -31,6 +34,7 @@ import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import javax.imageio.ImageIO;
+import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.factory.Hints;
@@ -49,7 +53,7 @@ import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
  * Creates {@link TileManager} instances from a collection or a directory of tiles.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -59,6 +63,14 @@ public class TileManagerFactory extends Factory {
      * The default instance.
      */
     public static final TileManagerFactory DEFAULT = new TileManagerFactory(EMPTY_HINTS);
+
+    /**
+     * Some special filenames to exclude when they are followed by the {@code ".txt"}
+     * suffix or no suffix.
+     *
+     * @since 3.18
+     */
+    private static final String[] EXCLUDES = {"readme", "credits", "license"};
 
     /**
      * Creates a new factory from the specified hints.
@@ -160,9 +172,13 @@ public class TileManagerFactory extends Factory {
      * Creates tile managers from the files found in the given directory. This method scans
      * also the sub-directories recursively if the given file filter accepts directories.
      * <p>
-     * Each image file in the given directory shall have a
+     * First, this method fetches the list of all filtered files in the directory and sub-directories.
+     * Then this method invokes the {@link #listTiles(ImageReaderSpi, File[])} method for converting
+     * the list of files into a list of {@link Tile} instances. Note that in current implementation,
+     * this implies that each image file in the given directory shall have a
      * <a href="http://fr.wikipedia.org/wiki/World_file">World File</a> of the same name,
-     * typically with the {@code ".tfw"} extension.
+     * typically with the {@code ".tfw"} extension. Finally this method builds the tiles manager
+     * using the {@link #create(Collection)} method.
      * <p>
      * If the file filter is null, a default file filter will be created from the given SPI.
      * If the given SPI is null, a SPI will be inferred automatically for each image files
@@ -192,17 +208,28 @@ public class TileManagerFactory extends Factory {
                         if (pathname.isDirectory()) {
                             return true;
                         }
-                        String suffix = pathname.getName();
-                        final int s = suffix.lastIndexOf('.');
-                        suffix = (s >= 0) ? suffix.substring(s + 1) : "";
-                        return XArrays.containsIgnoreCase(suffixes, suffix);
+                        String filename = pathname.getName();
+                        final int s = filename.lastIndexOf('.');
+                        final String suffix = (s >= 0) ? filename.substring(s + 1) : "";
+                        if (XArrays.containsIgnoreCase(suffixes, suffix)) {
+                            // Found a file having the expected suffix. However we still have a
+                            // few special cases to exclude, namely the readme and license files.
+                            if (suffix.length() == 0 || suffix.equalsIgnoreCase("txt")) {
+                                if (s >= 0) {
+                                    filename = filename.substring(0, s);
+                                }
+                                return !XArrays.containsIgnoreCase(EXCLUDES, filename);
+                            }
+                            return true;
+                        }
+                        return false;
                     }
                 };
             }
         }
-        final ArrayList<Tile> tiles = new ArrayList<Tile>();
-        createTilesFromFiles(directory, filter, spi, 0, tiles);
-        return setSourceFile(create(tiles), directory);
+        final ArrayList<File> files = new ArrayList<File>();
+        listFiles(directory, filter, files);
+        return setSourceFile(create(listTiles(spi, files.toArray(new File[files.size()]))), directory);
     }
 
     /**
@@ -217,31 +244,28 @@ public class TileManagerFactory extends Factory {
     }
 
     /**
-     * Fills the given tiles collection with all tiles found in the given directory and
-     * sub-directories which are accepted by the given optional file filter.
+     * Gets the files in the given directory and all sub-directories.
      *
-     * @param directory  The directory to scan.
-     * @param filter     An optional file filter, or {@code null}.
-     * @param spi        An optional image provider, or {@code null} for auto-detect.
-     * @param imageIndex The image index (usually 0).
-     * @param tiles      The collection to fill with new tiles.
+     * @param  directory  The directory to scan.
+     * @param  filter     An optional file filter, or {@code null}.
+     * @param  files      The collection to fill with new files.
+     * @return The files.
      *
      * @since 3.15
      */
-    private static void createTilesFromFiles(final File directory, final FileFilter filter,
-            final ImageReaderSpi spi, final int imageIndex, final ArrayList<Tile> tiles)
-            throws IOException
+    private static void listFiles(final File directory, final FileFilter filter,
+            final ArrayList<File> files) throws IOException
     {
-        final File[] files = directory.listFiles(filter);
-        if (files == null) {
+        final File[] list = directory.listFiles(filter);
+        if (list == null) {
             throw new IOException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_$1, directory));
         }
-        tiles.ensureCapacity(tiles.size() + files.length);
-        for (final File file : files) {
+        files.ensureCapacity(files.size() + list.length);
+        for (final File file : list) {
             if (file.isDirectory()) {
-                createTilesFromFiles(file, filter, spi, imageIndex, tiles);
+                listFiles(file, filter, files);
             } else {
-                tiles.add(new Tile(spi, file, imageIndex));
+                files.add(file);
             }
         }
     }
@@ -402,5 +426,93 @@ public class TileManagerFactory extends Factory {
         // Intentional side effect: use ComparedTileManager only if assertions are enabled.
         assert (manager = new ComparedTileManager(manager, new TreeTileManager(tiles))) != null;
         return manager;
+    }
+
+    /**
+     * Returns a list of tiles constructed from the given array of files. Every file in the given
+     * array must exist, be a valid image and have a valid <cite>World File</cite>, i.e. a file of
+     * the same name in the same directory then the image file, but with an extension like
+     * {@code ".tfw"} (for TIFF images) or {@code ".jgw"} (for JPEG images).
+     * <p>
+     * This method loads the World Files and fetches the image sizes immediately. The world file
+     * applies to the first image in the file. If the file contains more than one image, then each
+     * additional image is assumed to represent the same data than the first image at a different
+     * resolution.
+     *
+     * {@section Customization}
+     * If the files contain many images but those images are <strong>not</strong> overviews of
+     * the first image at different resolution, then subclasses can use only a specific image
+     * by overriding this method as below, where {@code imageIndex} is the index of the image
+     * to use (typically 0):
+     *
+     * {@preformat java
+     *     public List<Tile> listTiles(final ImageReaderSpi provider, final File... inputs) throws IOException {
+     *         final List<Tile> tiles = new ArrayList<Tile>(inputs.length);
+     *         for (final File input : inputs) {
+     *             tiles.add(new Tile(provider, input, imageIndex));
+     *         }
+     *         return tiles;
+     *     }
+     * }
+     *
+     * This method is invoked by {@link #create(File, FileFilter, ImageReaderSpi)}, so it can be
+     * overridden for controlling the tiles to be built when {@code TileManagerFactory} scans a
+     * directory.
+     *
+     * @param  provider The image reader provider to use. If {@code null}, the provider will be
+     *         inferred from each input. If it can't be inferred, then an exception is thrown.
+     * @param  inputs The image files.
+     * @return The tiles constructed from the image files.
+     * @throws IOException If no <cite>World File</cite> were found for a given image file, or
+     *         if an error occurred while reading a file.
+     *
+     * @see Tile#Tile(ImageReaderSpi, File, int)
+     *
+     * @since 3.18
+     */
+    public List<Tile> listTiles(final ImageReaderSpi provider, final File... inputs) throws IOException {
+        final TileReaderPool readers = new TileReaderPool();
+        final Set<ImageReaderSpi> providers = new HashSet<ImageReaderSpi>();
+        final List<Tile> tiles = new ArrayList<Tile>(inputs.length);
+        final AffineTransform scaledGridToCRS = new AffineTransform();
+        for (final File input : inputs) {
+            // Creates the tile for the first image, which usually have the maximal resolution.
+            // The Tile constructor will read the TFW file and infer a provider if the given
+            // 'provider' argument is null. If this is a new provider, then we need to declare
+            // it to the pool of image readers before to use it.
+            final Tile root = new Tile(provider, input, 0);
+            if (providers.add(root.getImageReaderSpi())) {
+                readers.setProviders(providers);
+            }
+            final AffineTransform gridToCRS = root.getPendingGridToCRS(false);
+            final ImageReader reader = root.getImageReader(readers, true, true);
+            final int numImages = reader.getNumImages(false); // Result may be -1.
+            for (int index=0; index != numImages; index++) {  // Intentional use of !=, not <.
+                final int width, height;
+                try {
+                    width  = reader.getWidth(index);
+                    height = reader.getHeight(index);
+                } catch (IndexOutOfBoundsException e) {
+                    // As explained in ImageReader javadoc, this approach is sometime
+                    // more efficient than invoking reader.getNumImages(true) first.
+                    break;
+                }
+                final Tile tile;
+                if (index == 0) {
+                    tile = root;
+                } else {
+                    final Rectangle region = root.getRegion();
+                    scaledGridToCRS.setTransform(new AffineTransform(gridToCRS));
+                    scaledGridToCRS.scale(region.width  / (double) width,
+                                          region.height / (double) height);
+                    tile = new Tile(root.getImageReaderSpi(), input, index, region, scaledGridToCRS);
+                }
+                tile.setSize(width, height);
+                tiles.add(tile);
+            }
+        }
+        readers.close();
+        readers.dispose();
+        return tiles;
     }
 }

@@ -275,13 +275,17 @@ public class MosaicTableModel extends ListTableModel<Tile> {
      * same name in the same directory with {@code ".tfw"} extension (for TIFF images) or
      * {@code ".jgw"} extension (for JPEG images).
      * <p>
-     * This method loads the World Files and fetches the image sizes immediately. Consequently
-     * it may be slow and should be invoked in a background thread. After having built the
-     * collection of tiles, this method invokes {@link #add(Collection)} in the Swing thread,
+     * This method loads the World Files and fetches the image sizes immediately. The world file
+     * applies to the first image in the file. If the file contains more than one image, then each
+     * additional image is assumed to represent the same data than the first image at a different
+     * resolution.
+     * <p>
+     * This method may be slow and should be invoked in a background thread. After having built
+     * the collection of tiles, this method invokes {@link #add(Collection)} in the Swing thread,
      * {@linkplain #removeDuplicates removes duplicates} and {@linkplain #sort sorts} the result.
      * <p>
      * On success, this method returns {@code null}. If this method failed to constructs some
-     * tiles, then the sucessful tiles are added as explained above and the unused files are
+     * tiles, then the successful tiles are added as explained above and the unused files are
      * returned in a new table model.
      *
      * @param  provider The image reader provider to use for reading image data, or {@code null}
@@ -304,11 +308,9 @@ public class MosaicTableModel extends ListTableModel<Tile> {
         DefaultTableModel failures = null;
         for (int i=0; i<files.length; i++) {
             final File file = files[i];
-            final Tile tile;
-            final Dimension size;
+            final List<Tile> tiles;
             try {
-                tile = new Tile(provider, file, 0);
-                size = tile.getSize(); // This is mostly for forcing immediate loading of image header.
+                tiles = TileManagerFactory.DEFAULT.listTiles(provider, file);
             } catch (Exception e) {
                 if (progress != null) {
                     /*
@@ -351,9 +353,7 @@ public class MosaicTableModel extends ListTableModel<Tile> {
             /*
              * Adds the tile to the list of tile to be added.
              */
-            if (size.width != 0 && size.height != 0) {
-                toAdd.add(tile);
-            }
+            toAdd.addAll(tiles);
             if (progress != null) {
                 progress.progress(100f * i/files.length);
                 if (progress.isCanceled()) {
