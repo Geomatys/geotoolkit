@@ -32,7 +32,7 @@ import org.opengis.util.FactoryException;
 
 /**
  * Generate a FeatureCollection where each Feature are the intersections of the two input
- * FeatureCollection's geometries.
+ * FeatureCollection's geometries.It is usually called "Spatial AND".
  * @author Quentin Boileau
  * @module pending
  */

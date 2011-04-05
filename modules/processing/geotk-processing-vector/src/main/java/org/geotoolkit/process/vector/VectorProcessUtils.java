@@ -308,7 +308,8 @@ public final class VectorProcessUtils {
 
     /**
      * Compute the intersection between a Feature and a FeatureCollection and return a FeatureCollection
-     * where each Feature contained  the intersection geometry as default geometry.
+     * where each Feature contained  the intersection geometry as default geometry and other none geometry
+     * attributes form input Feature.
      * If a feature have many geometries, we concatenate them before compute intersection.
      * @param inputFeature
      * @param featureList

@@ -14,64 +14,68 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.difference;
+package org.geotoolkit.process.vector.merge;
+
+import java.util.Collection;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
-import org.geotoolkit.process.vector.VectorDescriptor;
+import org.geotoolkit.process.vector.VectorProcessFactory;
+import org.geotoolkit.util.SimpleInternationalString;
 
-import org.opengis.feature.Feature;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
- * Parameters description of Difference process.
- * name of the process : "difference"
+ * Parameters description for Merge process.
+ * name of the process : "merge"
  * inputs :
  * <ul>
- *     <li>FEATURE_IN "feature_in" FeatureCollection source </li>
- *     <li>FEATURE_DIFF "feature_diff" FeatureCollection used for compute the difference</li>
+ *     <li>FEATURES_IN "features_in"  Collection of FeatureCollection</li>
  * </ul>
  * outputs :
  * <ul>
- *     <li>FEATURE_OUT "feature_out" the result FeatureCollection </li>
+ *     <li>FEATURE_OUT "feature_out" FeatureCollection intersected</li>
  * </ul>
  * @author Quentin Boileau
  * @module pending
  */
-public final class DifferenceDescriptor extends VectorDescriptor {
+public final class MergeDescriptor extends AbstractProcessDescriptor {
 
-    /**Process name : difference */
-    public static final String NAME = "difference";
-
+   /**Process name : merge */
+    public static final String NAME = "merge";
     /**
-     * Mandatory - Feature Collection for clipping
+     * Mandatory - FeatureCollection of Collection
      */
-    public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_DIFF =
-            new DefaultParameterDescriptor("feature_diff", "Input FeatureCollection used for compute the difference", FeatureCollection.class, null, true);
+    public static final ParameterDescriptor<Collection<FeatureCollection>> FEATURES_IN =
+            new DefaultParameterDescriptor("features_in", "Inpute collection of FeatureCollection", Collection.class, null, true);
 
+    public static final ParameterDescriptor<FeatureCollection> FEATURE_OUT =
+            new DefaultParameterDescriptor("feature_out", "The merged FeatureCollection", FeatureCollection.class, null, false);
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, FEATURE_DIFF});
-
+            new GeneralParameterDescriptor[]{FEATURES_IN});
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup("OutputParameters",
             new GeneralParameterDescriptor[]{FEATURE_OUT});
-    
     /** Instance */
-    public static final ProcessDescriptor INSTANCE = new DifferenceDescriptor();
+    public static final ProcessDescriptor INSTANCE = new MergeDescriptor();
 
     /**
      * Default constructor
      */
-    private DifferenceDescriptor() {
-        super(NAME, "Return the result FeatureCollection of Difference process", INPUT_DESC, OUTPUT_DESC);
+    protected MergeDescriptor() {
+
+        super(NAME, VectorProcessFactory.IDENTIFICATION,
+                new SimpleInternationalString("Merged many FeatureCollection"),
+                INPUT_DESC, OUTPUT_DESC);
     }
 
     /**
@@ -79,6 +83,6 @@ public final class DifferenceDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess() {
-        return new Difference();
+        return new Merge();
     }
 }

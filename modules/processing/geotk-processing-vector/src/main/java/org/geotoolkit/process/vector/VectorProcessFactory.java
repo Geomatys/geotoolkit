@@ -33,6 +33,7 @@ import org.geotoolkit.process.vector.differencegeometry.DifferenceGeometryDescri
 import org.geotoolkit.process.vector.douglaspeucker.DouglasPeuckerDescriptor;
 import org.geotoolkit.process.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.process.vector.intersection.IntersectionDescriptor;
+import org.geotoolkit.process.vector.merge.MergeDescriptor;
 import org.geotoolkit.process.vector.nearest.NearestDescriptor;
 import org.geotoolkit.process.vector.regroup.RegroupDescriptor;
 import org.geotoolkit.process.vector.reproject.ReprojectDescriptor;
@@ -69,7 +70,8 @@ public class VectorProcessFactory extends AbstractProcessFactory {
                 DouglasPeuckerDescriptor.INSTANCE, BufferDescriptor.INSTANCE, IntersectDescriptor.INSTANCE,
                 NearestDescriptor.INSTANCE, SpacialJoinDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE,
                 DifferenceGeometryDescriptor.INSTANCE, IntersectionDescriptor.INSTANCE, ConvexHullDescriptor.INSTANCE,
-                RegroupDescriptor.INSTANCE, AffineTransformDescriptor.INSTANCE, ReprojectDescriptor.INSTANCE);
+                RegroupDescriptor.INSTANCE, AffineTransformDescriptor.INSTANCE, ReprojectDescriptor.INSTANCE,
+                MergeDescriptor.INSTANCE);
     }
 
     /**
