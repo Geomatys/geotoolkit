@@ -273,7 +273,7 @@ public class AbstractIndexSearcher extends IndexLucene {
             }
 
             final String field       = "title";
-            final QueryParser parser = new QueryParser(Version.LUCENE_CURRENT, field, analyzer);
+            final QueryParser parser = new QueryParser(Version.LUCENE_30, field, analyzer);
             parser.setDefaultOperator(Operator.AND);
 
             // we enable the leading wildcard mode if the first character of the query is a '*'
@@ -281,6 +281,12 @@ public class AbstractIndexSearcher extends IndexLucene {
              || spatialQuery.getQuery().indexOf(":(+*") != -1 || spatialQuery.getQuery().indexOf(":+*") != -1) {
                 parser.setAllowLeadingWildcard(true);
                 BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
+            }
+
+            //we set off the mecanism setting all the character to lower case
+            // we do that for range queries only for now. TODO see if we need to set it every time
+            if (spatialQuery.getQuery().contains(" TO ")) {
+                parser.setLowercaseExpandedTerms(false);
             }
             final Query query   = parser.parse(spatialQuery.getQuery());
             final Filter filter = spatialQuery.getSpatialFilter();
