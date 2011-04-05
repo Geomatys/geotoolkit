@@ -33,7 +33,10 @@ import com.vividsolutions.jts.geom.Polygon;
  * @author Quentin Boileau
  * @module pending
  */
-public class MappingUtils {
+public final class MappingUtils {
+
+
+     private MappingUtils(){}
 
 
      public static Geometry convertType(final Geometry geom, final Class targetClass){
