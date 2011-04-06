@@ -30,6 +30,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
@@ -46,11 +47,16 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class ClipGeometryTest {
+public class ClipGeometryTest extends AbstractProcessTest{
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static SimpleFeatureType type;
+
+    public ClipGeometryTest() {
+        super("clipGeometry");
+    }
+
 
     @Test
     public void testClipGeometry() {

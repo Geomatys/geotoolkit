@@ -33,6 +33,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -51,11 +52,16 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class DouglasPeuckerTest {
+public class DouglasPeuckerTest extends AbstractProcessTest{
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static SimpleFeatureType type;
+
+    public DouglasPeuckerTest() {
+        super("douglasPeucker");
+    }
+
 
     /**
      * Test DouglasPeucker process with in input two Feature into a FeatureCollection

@@ -14,8 +14,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.reproject;
+package org.geotoolkit.process.vector.extendfeature;
 
+import org.geotoolkit.data.memory.GenericExtendFeatureIterator.FeatureExtend;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -25,38 +27,44 @@ import org.geotoolkit.process.vector.VectorDescriptor;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Parameter description of Reproject process.
- * name of the process : "reproject"
+ * Parameter description of ExtendFeature process.
+ * name of the process : "extendfeature"
  * inputs :
  * <ul>
  *     <li>FEATURE_IN "feature_in" FeatureCollection </li>
- *     <li>CRS_IN "crs_in" target CRS</li>
+ *     <li>EXTEND_IN "extend_in" FeatureExtend</li>
+ *     <li>HINTS_IN "hint_in" Hints</li>
  * </ul>
  * outputs :
  * <ul>
- *     <li>FEATURE_OUT "feature_out" FeatureCollection re-projected</li>
+ *     <li>FEATURE_OUT "feature_out" FeatureCollection</li>
  * </ul>
  * @author Quentin Boileau
  * @module pending
  */
-public final class ReprojectDescriptor extends VectorDescriptor {
+public final class ExtendFeatureDescriptor extends VectorDescriptor {
 
-    /**Process name : reproject */
-    public static final String NAME = "reproject";
+    /**Process name : extendfeature */
+    public static final String NAME = "extendfeature";
 
     /**
-     * Mandatory - New CoordinateReferenceSystem
+     * Mandatory - Feature Extend
      */
-    public static final ParameterDescriptor<CoordinateReferenceSystem> CRS_IN =
-            new DefaultParameterDescriptor("crs_in", "The target CRS", CoordinateReferenceSystem.class, null, true);
+    public static final ParameterDescriptor<FeatureExtend> EXTEND_IN =
+            new DefaultParameterDescriptor("extend_in", "Feature extension", FeatureExtend.class, null, true);
+
+    /**
+     * Mandatory - Hints
+     */
+    public static final ParameterDescriptor<Hints> HINTS_IN =
+            new DefaultParameterDescriptor("hint_in", "Hints", Hints.class, null, true);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, CRS_IN});
+            new GeneralParameterDescriptor[]{FEATURE_IN, EXTEND_IN});
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
@@ -64,13 +72,13 @@ public final class ReprojectDescriptor extends VectorDescriptor {
             new GeneralParameterDescriptor[]{FEATURE_OUT});
     
     /** Instance */
-    public static final ProcessDescriptor INSTANCE = new ReprojectDescriptor();
+    public static final ProcessDescriptor INSTANCE = new ExtendFeatureDescriptor();
 
     /**
      * Default constructor
      */
-    private ReprojectDescriptor() {
-        super(NAME, "Return a FeatureCollection re-project into the target CRS", INPUT_DESC, OUTPUT_DESC);
+    private ExtendFeatureDescriptor() {
+        super(NAME, "Adding on the fly attributes of Feature contents", INPUT_DESC, OUTPUT_DESC);
     }
 
     /**
@@ -78,6 +86,6 @@ public final class ReprojectDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess() {
-        return new Reproject();
+        return new ExtendFeature();
     }
 }

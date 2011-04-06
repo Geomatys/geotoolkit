@@ -28,6 +28,7 @@ import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.Feature;
@@ -43,11 +44,16 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class NearestTest {
+public class NearestTest extends AbstractProcessTest{
 
     private static SimpleFeatureBuilder sfb;
     private static final GeometryFactory geometryFactory = new GeometryFactory();
     private static SimpleFeatureType type;
+
+    public NearestTest() {
+        super("nearest");
+    }
+
 
     /**
      * Test nearest process

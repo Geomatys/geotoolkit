@@ -34,6 +34,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeatureType;
@@ -52,12 +53,17 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class BufferTest {
+public class BufferTest extends AbstractProcessTest{
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static SimpleFeatureType type;
     private static final Double distance = new Double(5);
+
+    public BufferTest() {
+        super("buffer");
+    }
+
 
     /**
      * Test Buffer process

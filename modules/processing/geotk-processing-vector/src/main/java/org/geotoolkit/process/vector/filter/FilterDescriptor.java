@@ -14,49 +14,48 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.process.vector.reproject;
+package org.geotoolkit.process.vector.filter;
 
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.vector.VectorDescriptor;
-
+import org.opengis.filter.Filter;
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
- * Parameter description of Reproject process.
- * name of the process : "reproject"
+ * Parameter description of Filter process.
+ * name of the process : "filter"
  * inputs :
  * <ul>
  *     <li>FEATURE_IN "feature_in" FeatureCollection </li>
- *     <li>CRS_IN "crs_in" target CRS</li>
+ *     <li>FILTER_IN "filter_in" FeatureExtend</li>
  * </ul>
  * outputs :
  * <ul>
- *     <li>FEATURE_OUT "feature_out" FeatureCollection re-projected</li>
+ *     <li>FEATURE_OUT "feature_out" FeatureCollection</li>
  * </ul>
  * @author Quentin Boileau
  * @module pending
  */
-public final class ReprojectDescriptor extends VectorDescriptor {
+public final class FilterDescriptor extends VectorDescriptor {
 
-    /**Process name : reproject */
-    public static final String NAME = "reproject";
+    /**Process name : filter */
+    public static final String NAME = "filter";
 
     /**
-     * Mandatory - New CoordinateReferenceSystem
+     * Mandatory - Filter
      */
-    public static final ParameterDescriptor<CoordinateReferenceSystem> CRS_IN =
-            new DefaultParameterDescriptor("crs_in", "The target CRS", CoordinateReferenceSystem.class, null, true);
+    public static final ParameterDescriptor<Filter> FILTER_IN =
+            new DefaultParameterDescriptor("filter_in", "Filter", org.opengis.filter.Filter.class, null, true);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup("InputParameters",
-            new GeneralParameterDescriptor[]{FEATURE_IN, CRS_IN});
+            new GeneralParameterDescriptor[]{FEATURE_IN, FILTER_IN});
 
     /** Ouput Parameters */
     public static final ParameterDescriptorGroup OUTPUT_DESC =
@@ -64,13 +63,13 @@ public final class ReprojectDescriptor extends VectorDescriptor {
             new GeneralParameterDescriptor[]{FEATURE_OUT});
     
     /** Instance */
-    public static final ProcessDescriptor INSTANCE = new ReprojectDescriptor();
+    public static final ProcessDescriptor INSTANCE = new FilterDescriptor();
 
     /**
      * Default constructor
      */
-    private ReprojectDescriptor() {
-        super(NAME, "Return a FeatureCollection re-project into the target CRS", INPUT_DESC, OUTPUT_DESC);
+    private FilterDescriptor() {
+        super(NAME, "Apply a filter to a FeatureCollection", INPUT_DESC, OUTPUT_DESC);
     }
 
     /**
@@ -78,6 +77,6 @@ public final class ReprojectDescriptor extends VectorDescriptor {
      */
     @Override
     public Process createProcess() {
-        return new Reproject();
+        return new org.geotoolkit.process.vector.filter.Filter();
     }
 }

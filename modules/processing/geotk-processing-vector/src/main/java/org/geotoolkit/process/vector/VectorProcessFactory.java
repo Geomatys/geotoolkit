@@ -23,6 +23,7 @@ import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.process.AbstractProcessFactory;
+
 import org.geotoolkit.process.vector.affinetransform.AffineTransformDescriptor;
 import org.geotoolkit.process.vector.buffer.BufferDescriptor;
 import org.geotoolkit.process.vector.clip.ClipDescriptor;
@@ -31,6 +32,8 @@ import org.geotoolkit.process.vector.convexhull.ConvexHullDescriptor;
 import org.geotoolkit.process.vector.difference.DifferenceDescriptor;
 import org.geotoolkit.process.vector.differencegeometry.DifferenceGeometryDescriptor;
 import org.geotoolkit.process.vector.douglaspeucker.DouglasPeuckerDescriptor;
+import org.geotoolkit.process.vector.extendfeature.ExtendFeatureDescriptor;
+import org.geotoolkit.process.vector.filter.FilterDescriptor;
 import org.geotoolkit.process.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.process.vector.intersection.IntersectionDescriptor;
 import org.geotoolkit.process.vector.merge.MergeDescriptor;
@@ -67,12 +70,13 @@ public class VectorProcessFactory extends AbstractProcessFactory {
      * Default constructor 
      */
     public VectorProcessFactory() {
-        super(CentroidDescriptor.INSTANCE, ClipGeometryDescriptor.INSTANCE, ClipDescriptor.INSTANCE,
-                DouglasPeuckerDescriptor.INSTANCE, BufferDescriptor.INSTANCE, IntersectDescriptor.INSTANCE,
-                NearestDescriptor.INSTANCE, SpacialJoinDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE,
-                DifferenceGeometryDescriptor.INSTANCE, IntersectionDescriptor.INSTANCE, ConvexHullDescriptor.INSTANCE,
-                RegroupDescriptor.INSTANCE, AffineTransformDescriptor.INSTANCE, ReprojectDescriptor.INSTANCE,
-                MergeDescriptor.INSTANCE, UnionDescriptor.INSTANCE);
+        super(  CentroidDescriptor.INSTANCE,            ClipGeometryDescriptor.INSTANCE,    ClipDescriptor.INSTANCE,
+                DouglasPeuckerDescriptor.INSTANCE,      BufferDescriptor.INSTANCE,          IntersectDescriptor.INSTANCE,
+                NearestDescriptor.INSTANCE,             SpacialJoinDescriptor.INSTANCE,     DifferenceDescriptor.INSTANCE,
+                DifferenceGeometryDescriptor.INSTANCE,  IntersectionDescriptor.INSTANCE,    ConvexHullDescriptor.INSTANCE,
+                RegroupDescriptor.INSTANCE,             AffineTransformDescriptor.INSTANCE, ReprojectDescriptor.INSTANCE,
+                MergeDescriptor.INSTANCE,               UnionDescriptor.INSTANCE,           ExtendFeatureDescriptor.INSTANCE,
+                FilterDescriptor.INSTANCE);
     }
 
     /**

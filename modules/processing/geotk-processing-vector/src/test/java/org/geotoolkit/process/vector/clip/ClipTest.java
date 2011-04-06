@@ -32,6 +32,7 @@ import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.vector.AbstractProcessTest;
 import org.geotoolkit.referencing.CRS;
 
 import org.junit.Test;
@@ -48,11 +49,16 @@ import static org.junit.Assert.*;
  * @author Quentin Boileau
  * @module pending
  */
-public class ClipTest {
+public class ClipTest extends AbstractProcessTest{
 
     private static SimpleFeatureBuilder sfb;
     private static GeometryFactory geometryFactory;
     private static SimpleFeatureType type;
+
+    public ClipTest() {
+        super("clip");
+    }
+
 
     @Test
     public void testClip() {
