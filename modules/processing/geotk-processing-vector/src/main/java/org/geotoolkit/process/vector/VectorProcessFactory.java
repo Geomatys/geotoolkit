@@ -38,6 +38,7 @@ import org.geotoolkit.process.vector.nearest.NearestDescriptor;
 import org.geotoolkit.process.vector.regroup.RegroupDescriptor;
 import org.geotoolkit.process.vector.reproject.ReprojectDescriptor;
 import org.geotoolkit.process.vector.spacialjoin.SpacialJoinDescriptor;
+import org.geotoolkit.process.vector.union.UnionDescriptor;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.identification.Identification;
@@ -71,7 +72,7 @@ public class VectorProcessFactory extends AbstractProcessFactory {
                 NearestDescriptor.INSTANCE, SpacialJoinDescriptor.INSTANCE, DifferenceDescriptor.INSTANCE,
                 DifferenceGeometryDescriptor.INSTANCE, IntersectionDescriptor.INSTANCE, ConvexHullDescriptor.INSTANCE,
                 RegroupDescriptor.INSTANCE, AffineTransformDescriptor.INSTANCE, ReprojectDescriptor.INSTANCE,
-                MergeDescriptor.INSTANCE);
+                MergeDescriptor.INSTANCE, UnionDescriptor.INSTANCE);
     }
 
     /**

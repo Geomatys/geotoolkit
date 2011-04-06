@@ -61,7 +61,6 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.GeometryType;
 import org.opengis.feature.type.PropertyDescriptor;
-import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
@@ -306,6 +305,59 @@ public final class VectorProcessUtils {
         }
     }
 
+    
+    /**
+     * Compute the intersection geometry between two Features.
+     * To determinate which Geometry used from Feature, we use the sourceGeomName and
+     * targetGeomName parameters. If input Geometry CRS is different than target one,
+     * a conversion into input CRS is done.
+     * @param sourceFeature
+     * @param targetFeature
+     * @param sourceGeomName
+     * @param targetGeomName
+     * @return the intersection Geometry.
+     * @throws FactoryException
+     * @throws TransformException
+     */
+    public static Geometry intersect(final Feature sourceFeature, final Feature targetFeature,
+            final String sourceGeomName, final String targetGeomName) throws FactoryException, TransformException {
+
+        Geometry sourceGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+        CoordinateReferenceSystem sourceCRS = null;
+
+        // found used input geometry with CRS
+        for (Property inputProperty : sourceFeature.getProperties()) {
+            if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
+                if (inputProperty.getName().getLocalPart().equals(sourceGeomName)) {
+                    sourceGeometry = (Geometry) inputProperty.getValue();
+                    final GeometryDescriptor geomDesc = (GeometryDescriptor) inputProperty.getDescriptor();
+                    sourceCRS = geomDesc.getCoordinateReferenceSystem();
+                }
+            }
+        }
+
+        Geometry targetGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
+        CoordinateReferenceSystem targetCRS = null;
+
+        // found used target geometry with CRS
+        for (Property inputProperty : targetFeature.getProperties()) {
+            if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
+                if (inputProperty.getName().getLocalPart().equals(targetGeomName)) {
+                    targetGeometry = (Geometry) inputProperty.getValue();
+                    final GeometryDescriptor geomDesc = (GeometryDescriptor) inputProperty.getDescriptor();
+                    targetCRS = geomDesc.getCoordinateReferenceSystem();
+                }
+            }
+        }
+
+        if (!(targetCRS.equals(sourceCRS))) {
+            final MathTransform transform = CRS.findMathTransform(targetCRS, sourceCRS);
+            targetGeometry = JTS.transform(targetGeometry, transform);
+        }
+
+        return sourceGeometry.intersection(targetGeometry);
+    }
+
     /**
      * Compute the intersection between a Feature and a FeatureCollection and return a FeatureCollection
      * where each Feature contained  the intersection geometry as default geometry and other none geometry
@@ -316,10 +368,12 @@ public final class VectorProcessUtils {
      * @param geometryName the geometry name in inputFeature to compute the intersection
      * @return a FeatureCollection of intersection Geometry. The FeatureCollection ID is "inputFeatureID-intersection"
      * The Feature returned ID will look like "inputFeatureID<->intersectionFeatureID"
+     * @throws FactoryException
+     * @throws TransformException
      */
     public static FeatureCollection<Feature> intersection(final Feature inputFeature,
             final FeatureCollection<Feature> featureList, String geometryName)
-            throws FactoryException, MismatchedDimensionException, TransformException {
+            throws FactoryException, TransformException {
 
         //if the wanted feature geometry is null, we use the default geometry
         if (geometryName == null) {
@@ -335,7 +389,8 @@ public final class VectorProcessUtils {
 
         Geometry inputGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
         CoordinateReferenceSystem inputCRS = null;
-        // concat all inputFeature geometries
+
+        // found used input geometry with CRS
         for (Property inputProperty : inputFeature.getProperties()) {
             if (inputProperty.getDescriptor() instanceof GeometryDescriptor) {
                 if (inputProperty.getName().getLocalPart().equals(geometryName)) {
@@ -412,7 +467,7 @@ public final class VectorProcessUtils {
                                 //if geometry CRS is different of inputGeometry CRS
                                 if (!(outputBaseCRS.equals(inputCRS))) {
                                     //re-projection into the inputGeometry CRS
-                                    final MathTransform transformToOriginal = CRS.findMathTransform(outputBaseCRS, inputCRS );
+                                    final MathTransform transformToOriginal = CRS.findMathTransform(outputBaseCRS, inputCRS);
                                     aGeometry = JTS.transform(aGeometry, transformToOriginal);
                                 }
                                 //concatenate all intersections between this geometry and the inputGeometry
