@@ -228,7 +228,7 @@ public class PeriodUtilities {
                 //we get the end position
                 slash = dates.indexOf('/');
                 final String end = dates.substring(0, slash);
-                final Date last = (dateFormat == null) ? dateParser.parseToDate(begin) :  dateFormat.parse(end);
+                final Date last = (dateFormat == null) ? dateParser.parseToDate(end) :  dateFormat.parse(end);
                     dates = dates.substring(slash+1);
                     
                 //then we get the period Description
