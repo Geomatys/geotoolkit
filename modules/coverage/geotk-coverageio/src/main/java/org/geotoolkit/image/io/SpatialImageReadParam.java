@@ -524,11 +524,12 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      * The closing bracket is missing from the buffer, in order to allow callers
      * to add more elements.
      */
-    static StringBuilder toStringBegining(final IIOParam param,
-            final Rectangle sourceRegion, final Point destinationOffset,
-            final int sourceXSubsampling, final int sourceYSubsampling,
-            final int[] sourceBands)
-    {
+    static StringBuilder toStringBegining(final IIOParam param) {
+        final Rectangle sourceRegion  = param.getSourceRegion();
+        final Point destinationOffset = param.getDestinationOffset();
+        final int  sourceXSubsampling = param.getSourceXSubsampling();
+        final int  sourceYSubsampling = param.getSourceYSubsampling();
+        final int[]       sourceBands = param.getSourceBands();
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(param));
         buffer.append('[');
         if (sourceRegion != null) {
@@ -566,9 +567,7 @@ public class SpatialImageReadParam extends ImageReadParam implements WarningProd
      */
     @Override
     public String toString() {
-        final StringBuilder buffer = toStringBegining(this,
-                sourceRegion, destinationOffset,
-                sourceXSubsampling, sourceYSubsampling, sourceBands);
+        final StringBuilder buffer = toStringBegining(this);
         if (paletteName != null) {
             buffer.append("palette=\"").append(paletteName).append('"');
         }

@@ -89,7 +89,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * fill the metadata information.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.18
  *
  * @see ImageWriterAdapter
  *
@@ -628,6 +628,31 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     }
 
     /**
+     * Returns a default parameter object appropriate for this format.
+     */
+    @Override
+    public SpatialImageReadParam getDefaultReadParam() {
+        final ImageReadParam param = main.getDefaultReadParam();
+        if (param instanceof SpatialImageReadParam) {
+            return (SpatialImageReadParam) param;
+        }
+        return new ImageReadParamAdapter(this, param);
+    }
+
+    /**
+     * If the given parameter object is an instance of {@link ImageReadParamAdapter},
+     * returns the wrapped parameters.
+     *
+     * @since 3.18
+     */
+    private static ImageReadParam unwrap(ImageReadParam param) {
+        if (param instanceof ImageReadParamAdapter) {
+            param = ((ImageReadParamAdapter) param).param;
+        }
+        return param;
+    }
+
+    /**
      * Reads the image indexed by {@code imageIndex} using a default {@link ImageReadParam}.
      * The default implementation delegates to the {@linkplain #main} image reader. Note that
      * the {@linkplain #main} reader is indirectly initialized by an implicit call to
@@ -650,7 +675,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     @Override
     public BufferedImage read(final int imageIndex, final ImageReadParam param) throws IOException {
         checkImageIndex(imageIndex);
-        final BufferedImage image = main.read(imageIndex, param);
+        final BufferedImage image = main.read(imageIndex, unwrap(param));
         sync();
         return image;
     }
@@ -664,7 +689,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     @Override
     public RenderedImage readAsRenderedImage(int imageIndex, ImageReadParam param) throws IOException {
         checkImageIndex(imageIndex);
-        final RenderedImage image = main.readAsRenderedImage(imageIndex, param);
+        final RenderedImage image = main.readAsRenderedImage(imageIndex, unwrap(param));
         sync();
         return image;
     }
@@ -696,7 +721,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
     @Override
     public Raster readRaster(final int imageIndex, final ImageReadParam param) throws IOException {
         checkImageIndex(imageIndex);
-        final Raster image = main.readRaster(imageIndex, param);
+        final Raster image = main.readRaster(imageIndex, unwrap(param));
         sync();
         return image;
     }

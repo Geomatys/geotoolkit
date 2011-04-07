@@ -31,6 +31,7 @@ import javax.imageio.ImageWriteParam;
 import javax.imageio.IIOException;
 
 import org.opengis.coverage.grid.RectifiedGrid;
+import org.opengis.referencing.crs.ImageCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.io.wkt.PrjFiles;
@@ -170,8 +171,13 @@ public class WorldFileImageWriter extends ImageWriterAdapter {
                     out.close();
                 }
             }
+            /*
+             * Write the CRS if non-null and not an instance of ImageCRS. The ImageCRS case is
+             * excluded because it is the default CRS assigned by WorldFileImageReader when no
+             * ".prj" file were found.
+             */
             final CoordinateReferenceSystem crs = md.getInstanceForType(CoordinateReferenceSystem.class);
-            if (crs != null) {
+            if (crs != null && !(crs instanceof ImageCRS)) {
                 final Object path = createOutput("prj");
                 if (path != null) {
                     final OutputStream out = IOUtilities.openWrite(path);

@@ -85,7 +85,7 @@ import static org.geotoolkit.image.io.ImageReaderAdapter.Spi.addSpatialFormat;
  * the {@link SpatialMetadata} object given to the {@link #write(IIOImage)} method in this class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.18
  *
  * @see ImageReaderAdapter
  *
@@ -233,6 +233,31 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     }
 
     /**
+     * Returns a default parameter object appropriate for this format.
+     */
+    @Override
+    public SpatialImageWriteParam getDefaultWriteParam() {
+        final ImageWriteParam param = main.getDefaultWriteParam();
+        if (param instanceof SpatialImageWriteParam) {
+            return (SpatialImageWriteParam) param;
+        }
+        return new ImageWriteParamAdapter(this, main.getDefaultWriteParam());
+    }
+
+    /**
+     * If the given parameter object is an instance of {@link ImageWriteParamAdapter},
+     * returns the wrapped parameters.
+     *
+     * @since 3.18
+     */
+    private static ImageWriteParam unwrap(ImageWriteParam param) {
+        if (param instanceof ImageWriteParamAdapter) {
+            param = ((ImageWriteParamAdapter) param).param;
+        }
+        return param;
+    }
+
+    /**
      * Returns a metadata object containing default values for encoding a stream of images.
      * The default implementation returns the union of the metadata formats declared by the
      * {@linkplain #main} writer, and the Geotk {@link SpatialMetadataFormat#STREAM STREAM}
@@ -244,7 +269,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     @Override
     public SpatialMetadata getDefaultStreamMetadata(final ImageWriteParam param) {
         return new SpatialMetadata(SpatialMetadataFormat.STREAM, this,
-                main.getDefaultStreamMetadata(param));
+                main.getDefaultStreamMetadata(unwrap(param)));
     }
 
     /**
@@ -260,7 +285,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
                                                    final ImageWriteParam    param)
     {
         return new SpatialMetadata(SpatialMetadataFormat.IMAGE, this,
-                main.getDefaultImageMetadata(imageType, param));
+                main.getDefaultImageMetadata(imageType, unwrap(param)));
     }
 
     /**
@@ -319,7 +344,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
         ensureOutputInitialized();
         writeStreamMetadata(streamMetadata);
         writeImageMetadata(image.getMetadata(), 0, param);
-        main.write(streamMetadata, image, param);
+        main.write(streamMetadata, image, unwrap(param));
     }
 
     /**
@@ -374,7 +399,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     @Override
     public void writeToSequence(IIOImage image, ImageWriteParam param) throws IOException {
         writeImageMetadata(image.getMetadata(), imageIndex, param);
-        main.writeToSequence(image, param);
+        main.writeToSequence(image, unwrap(param));
         imageIndex++;
     }
 
@@ -417,7 +442,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      */
     @Override
     public void replacePixels(RenderedImage image, ImageWriteParam param) throws IOException {
-        main.replacePixels(image, param);
+        main.replacePixels(image, unwrap(param));
     }
 
     /**
@@ -426,7 +451,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
      */
     @Override
     public void replacePixels(Raster raster, ImageWriteParam param) throws IOException {
-        main.replacePixels(raster, param);
+        main.replacePixels(raster, unwrap(param));
     }
 
     /**
@@ -447,7 +472,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     public int getNumThumbnailsSupported(ImageTypeSpecifier imageType, ImageWriteParam param,
             IIOMetadata streamMetadata, IIOMetadata imageMetadata)
     {
-        return main.getNumThumbnailsSupported(imageType, param, streamMetadata, imageMetadata);
+        return main.getNumThumbnailsSupported(imageType, unwrap(param), streamMetadata, imageMetadata);
     }
 
     /**
@@ -459,7 +484,7 @@ public abstract class ImageWriterAdapter extends SpatialImageWriter {
     public Dimension[] getPreferredThumbnailSizes(ImageTypeSpecifier imageType,
             ImageWriteParam param, IIOMetadata streamMetadata, IIOMetadata imageMetadata)
     {
-        return main.getPreferredThumbnailSizes(imageType, param, streamMetadata, imageMetadata);
+        return main.getPreferredThumbnailSizes(imageType, unwrap(param), streamMetadata, imageMetadata);
     }
 
     /**

@@ -81,9 +81,7 @@ public class SpatialImageWriteParam extends ImageWriteParam implements WarningPr
      */
     @Override
     public String toString() {
-        final StringBuilder buffer = SpatialImageReadParam.toStringBegining(this,
-                sourceRegion, destinationOffset,
-                sourceXSubsampling, sourceYSubsampling, sourceBands);
+        final StringBuilder buffer = SpatialImageReadParam.toStringBegining(this);
         return SpatialImageReadParam.toStringEnd(buffer, null);
     }
 }
