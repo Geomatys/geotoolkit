@@ -164,9 +164,9 @@ Downloading Geotoolkit.org Binaries
   <<<geotk-bundle-referencing-3.17.pack.gz>>> archive for download. Once downloaded, the archive
   can then be expanded with the following command:
 
------------------------------------------------------------------------------------
-unpack200 geotk-bundle-referencing-3.17.pack.gz geotk-bundle-referencing.jar
------------------------------------------------------------------------------------
+-----------------------------------------------------------------------------------------------
+unpack200 --remove-pack-file geotk-bundle-referencing-3.17.pack.gz geotk-bundle-referencing.jar
+-----------------------------------------------------------------------------------------------
 
   where the name of the target file, <<<geotk-bundle-referencing.jar>>> in this example, can be any
   name the user wishes.

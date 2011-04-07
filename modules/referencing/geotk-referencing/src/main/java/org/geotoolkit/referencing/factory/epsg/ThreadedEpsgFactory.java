@@ -582,6 +582,13 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
                 factory = new HsqlDialectEpsgFactory(hints, connection);
                 break;
             }
+            case ORACLE: {
+                if (toANSI != null) {
+                    return new OracleDialectEpsgFactory(hints, connection, toANSI);
+                }
+                factory = new OracleDialectEpsgFactory(hints, connection);
+                break;
+            }
         }
         if (schema != null) {
             factory.setSchema(schema, metadata.getIdentifierQuoteString(), true);

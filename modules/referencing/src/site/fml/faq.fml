@@ -450,4 +450,24 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
       </answer>
     </faq>
   </part>
+  <part id="setup">
+    <title>Configuration</title>
+    <faq id="datasource">
+      <question>
+        How do I specify connection parameters to my own database?
+      </question>
+      <answer>
+        <p>The easiest way is to specify the connection parameters using the Swing widget provided
+        by the <code><a href="../utility/geotk-setup/index.html">geotk-setup</a></code> module.
+        Alternatively, the connection parameters can also be specified programmatically in
+        database-specific implementation of <code>javax.sql.DataSource</code> (for example
+        <code>org.postgresql.ds.PGSimpleDataSource</code> for PostgreSQL database). Then, put
+        the following code at some application initialization point, before any Geotk
+        referencing code is invoked:</p>
+
+<blockquote><pre>DataSource ds = new ...;
+Hints.putSystemDefault(Hints.EPSG_DATA_SOURCE, ds);</pre></blockquote>
+      </answer>
+    </faq>
+  </part>
 </faqs>

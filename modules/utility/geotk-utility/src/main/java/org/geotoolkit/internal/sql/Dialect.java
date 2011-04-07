@@ -31,7 +31,7 @@ import org.geotoolkit.util.XArrays;
  * The SQL dialect used by a connection.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -77,6 +77,13 @@ public enum Dialect {
             return metadata.getDatabaseMajorVersion() < 9;
         }
     },
+
+    /**
+     * The database uses Oracle syntax. This is ANSI, but without {@code "AS"} keyword.
+     *
+     * @since 3.18
+     */
+    ORACLE("oracle.jdbc.driver.", "jdbc:oracle:"),
 
     /**
      * The database uses Access SQL syntax.
