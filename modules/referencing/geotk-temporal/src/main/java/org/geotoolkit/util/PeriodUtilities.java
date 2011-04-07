@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util;
 
+import org.geotoolkit.temporal.object.FastDateParser;
 import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.text.ParseException;
@@ -40,6 +41,12 @@ public class PeriodUtilities {
      * The format of the dates. 
      */
     private DateFormat dateFormat;
+    
+    /**
+     * The date parser. 
+     */
+    private FastDateParser dateParser = new FastDateParser();
+    
     
     /**
      * Build a new period worker with the specified DateFormat 
@@ -210,20 +217,20 @@ public class PeriodUtilities {
             int slash = dates.indexOf('/');
 
             if (slash == -1) {
-                response.add(dateFormat.parse(dates));
+                response.add((dateFormat == null) ? dateParser.parseToDate(dates) :  dateFormat.parse(dates));
             } else {
 
                 //we get the begin position
                 final String begin = dates.substring(0, slash);
-                final Date first = dateFormat.parse(begin);
+                final Date first = (dateFormat == null) ? dateParser.parseToDate(begin) :  dateFormat.parse(begin);                
                 dates = dates.substring(slash+1);
-
+                
                 //we get the end position
                 slash = dates.indexOf('/');
                 final String end = dates.substring(0, slash);
-                final Date last = dateFormat.parse(end);
-                dates = dates.substring(slash+1);
-
+                final Date last = (dateFormat == null) ? dateParser.parseToDate(begin) :  dateFormat.parse(end);
+                    dates = dates.substring(slash+1);
+                    
                 //then we get the period Description
                 final long gap = getTimeFromPeriodDescription(dates);
 

@@ -42,8 +42,15 @@ import org.geotoolkit.util.collection.UnSynchronizedCache;
  * yyyy-MM-dd'T'HH:mm:ss.SSS
  * yyyy-MM-dd'T'HH:mm:ss.SSSZ
  * yyyy-MM-dd'T'HH:mm:ss.SSS'Z'
- *
+ * yyyyMM
+ * yyyyMMZ
+ * yyyyMM'Z'
+ * yyyyMMdd
+ * yyyyMMddZ
+ * yyyyMMdd'Z'
+ * 
  * @author Johann Sorel (Geomatys)
+ * @author Olivier Terral (Geomatys)
  * @module pending
  */
 public class FastDateParser {
@@ -85,21 +92,73 @@ public class FastDateParser {
 
         //skip the first character in case we have a negative year
         if((index1 = date.indexOf('-',1)) < 0){
-            //date is like :
-            // yyyy
-            // yyyyZ
-            // yyyy'Z'
-
+            
             //start at 1, avoid potential -yyyy
             index1 = searchTimeZone(date, 1, bufferTZ); 
-
-            year = XInteger.parseIntSigned(date, 0, index1);
-            month = 1; // a -1 occures at the end.
-            day = 1;
-            hour = 0;
-            min = 0;
-            sec = 0;
-            mil = 0;
+            
+            if (index1 <= 5) {
+                //date is like :
+                // -yyyy
+                // yyyy
+                // yyyyZ
+                // yyyy'Z'
+                year = XInteger.parseIntSigned(date, 0, index1);
+            
+                month = 1; // a -1 occures at the end.
+                day = 1;
+                hour = 0;
+                min = 0;
+                sec = 0;
+                mil = 0;
+            
+            } else {
+                //date is like :
+                // -yyyyMM
+                // yyyyMM
+                // yyyyMMZ
+                // yyyyMM'Z'
+                int idxNegative = 0;
+                if (date.indexOf('-') == 0)
+                    idxNegative = 1;
+                
+                year = XInteger.parseIntSigned(date, 0, idxNegative + 4);      
+                
+                if (index1 <= 7) {
+                    month = XInteger.parseIntSigned(date, idxNegative + 4, index1);
+                    
+                    day = 1;
+                    hour = 0;
+                    min = 0;
+                    sec = 0;
+                    mil = 0;
+                    
+                } else {
+                    //date is like :
+                    // yyyyMMdd
+                    // yyyyMMddZ
+                    // yyyyMMdd'Z'
+                    month = XInteger.parseIntSigned(date, idxNegative + 4, idxNegative + 6);     
+                    
+                    if (index1 <= 9) {
+                        day = XInteger.parseIntSigned(date, idxNegative + 6, index1);
+                        
+                    } else {                  
+                        //date is like :
+                        // yyyyMMdd
+                        // yyyyMMddZ
+                        // yyyyMMdd'Z'    
+                        day = XInteger.parseIntSigned(date, idxNegative + 6, idxNegative + 8); 
+                        
+                        //@TODO Manage hour,min,sec,mill cases
+                    }
+                    
+                    hour = 0;
+                    min = 0;
+                    sec = 0;
+                    mil = 0;       
+                }                
+            }
+            
         }else{
             year = XInteger.parseIntSigned(date, 0, index1);
             index1++;
@@ -118,6 +177,7 @@ public class FastDateParser {
                 min = 0;
                 sec = 0;
                 mil = 0;
+                
             }else{
                 month = XInteger.parseIntUnsigned(date, index1, index2);
                 index2++;
