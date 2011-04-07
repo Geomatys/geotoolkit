@@ -32,8 +32,7 @@ import org.opengis.referencing.operation.TransformException;
  */
 public class AffineTransformGeometryTransformer extends AbstractGeometryTransformer{
 
-    private static GeometryFactory GF = new GeometryFactory();
-    private java.awt.geom.AffineTransform transform;
+    private final java.awt.geom.AffineTransform transform;
     
     /**
      * Constructor
@@ -51,11 +50,11 @@ public class AffineTransformGeometryTransformer extends AbstractGeometryTransfor
      * @throws TransformException
      */
     @Override
-    public CoordinateSequence transform(CoordinateSequence sequence, int minpoints) throws TransformException {
+    public CoordinateSequence transform(final CoordinateSequence sequence, final int minpoints) throws TransformException {
 
         final int dim = sequence.getDimension();
 
-        CoordinateSequence tranformCoord = new CoordinateArraySequence(sequence.size());
+        final CoordinateSequence tranformCoord = new CoordinateArraySequence(sequence.size());
 
         final double[] val = new double[dim];
         final double[] resultVal = new double[dim];

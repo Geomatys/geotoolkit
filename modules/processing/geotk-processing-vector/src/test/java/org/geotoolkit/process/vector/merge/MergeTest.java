@@ -48,7 +48,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of merge process
+ * JUnit test of merge process
  * @author Quentin Boileau
  * @module pending
  */

@@ -40,7 +40,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of nearest process
+ * JUnit test of nearest process
  * @author Quentin Boileau
  * @module pending
  */

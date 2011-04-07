@@ -70,7 +70,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
             geometryCRS = inputFC.getFeatureType().getGeometryDescriptor().getCoordinateReferenceSystem();
         } else {
             this.inputGeomName = inputGeomName;
-            GeometryDescriptor buffDesc = (GeometryDescriptor) inputFC.getFeatureType().getDescriptor(inputGeomName);
+            final GeometryDescriptor buffDesc = (GeometryDescriptor) inputFC.getFeatureType().getDescriptor(inputGeomName);
             geometryCRS = buffDesc.getCoordinateReferenceSystem();
         }
 
@@ -103,7 +103,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
         throw new UnsupportedOperationException("Function didn't used");
     }
 
-    private FeatureCollection modify2(final Feature original, final boolean firstPass, Set<String> featureList) {
+    private FeatureCollection modify2(final Feature original, final boolean firstPass, final Set<String> featureList) {
         try {
             if (firstPass) {
                 return Union.unionFeatureToFC(original, newFeatureType, unionFC, inputGeomName, unionGeomName, firstPass, featureList);
@@ -150,7 +150,7 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
          * This Set contain all features already created, it is used in order to remove
          * duplicates features during the second pass
          */
-        private Set<String> featureList;
+        private final Set<String> featureList;
 
         /**
          * Connect to the original FeatureIterator

@@ -93,7 +93,7 @@ public class Regroup extends AbstractProcess {
      * @param regroupAttribute
      * @return a FeatureType
      */
-    static FeatureType regroupFeatureType(FeatureType oldFeatureType, String geometryName, String regroupAttribute) {
+    static FeatureType regroupFeatureType(final FeatureType oldFeatureType, String geometryName, final String regroupAttribute) {
 
         AttributeDescriptorBuilder descBuilder;
         AttributeTypeBuilder typeBuilder;
@@ -163,7 +163,7 @@ public class Regroup extends AbstractProcess {
 
         Geometry regroupGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
 
-        FeatureIterator<Feature> featureIter = filtredList.iterator();
+        final FeatureIterator<Feature> featureIter = filtredList.iterator();
         try {
             while (featureIter.hasNext()) {
                 final Feature feature = featureIter.next();
@@ -202,7 +202,7 @@ public class Regroup extends AbstractProcess {
 
         final Collection<Object> values = new ArrayList<Object>();
 
-        FeatureIterator<Feature> featureIter = featureList.iterator();
+        final FeatureIterator<Feature> featureIter = featureList.iterator();
         try {
             while (featureIter.hasNext()) {
                 final Feature feature = featureIter.next();

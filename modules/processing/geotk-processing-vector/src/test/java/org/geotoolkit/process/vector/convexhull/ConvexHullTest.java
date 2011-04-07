@@ -45,7 +45,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of ConvexHull process
+ * JUnit test of ConvexHull process
  * @author Quentin Boileau
  * @module pending
  */

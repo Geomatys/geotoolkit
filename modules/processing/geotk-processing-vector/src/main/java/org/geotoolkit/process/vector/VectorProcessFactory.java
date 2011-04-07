@@ -36,11 +36,15 @@ import org.geotoolkit.process.vector.extendfeature.ExtendFeatureDescriptor;
 import org.geotoolkit.process.vector.filter.FilterDescriptor;
 import org.geotoolkit.process.vector.intersect.IntersectDescriptor;
 import org.geotoolkit.process.vector.intersection.IntersectionDescriptor;
+import org.geotoolkit.process.vector.maxlimit.MaxLimitDescriptor;
 import org.geotoolkit.process.vector.merge.MergeDescriptor;
 import org.geotoolkit.process.vector.nearest.NearestDescriptor;
 import org.geotoolkit.process.vector.regroup.RegroupDescriptor;
 import org.geotoolkit.process.vector.reproject.ReprojectDescriptor;
+import org.geotoolkit.process.vector.retype.RetypeDescriptor;
+import org.geotoolkit.process.vector.sort.SortByDescriptor;
 import org.geotoolkit.process.vector.spacialjoin.SpacialJoinDescriptor;
+import org.geotoolkit.process.vector.startoffset.StartOffsetDescriptor;
 import org.geotoolkit.process.vector.union.UnionDescriptor;
 
 import org.opengis.metadata.Identifier;
@@ -76,7 +80,8 @@ public class VectorProcessFactory extends AbstractProcessFactory {
                 DifferenceGeometryDescriptor.INSTANCE,  IntersectionDescriptor.INSTANCE,    ConvexHullDescriptor.INSTANCE,
                 RegroupDescriptor.INSTANCE,             AffineTransformDescriptor.INSTANCE, ReprojectDescriptor.INSTANCE,
                 MergeDescriptor.INSTANCE,               UnionDescriptor.INSTANCE,           ExtendFeatureDescriptor.INSTANCE,
-                FilterDescriptor.INSTANCE);
+                FilterDescriptor.INSTANCE,              MaxLimitDescriptor.INSTANCE,        RetypeDescriptor.INSTANCE,
+                SortByDescriptor.INSTANCE,              StartOffsetDescriptor.INSTANCE);
     }
 
     /**

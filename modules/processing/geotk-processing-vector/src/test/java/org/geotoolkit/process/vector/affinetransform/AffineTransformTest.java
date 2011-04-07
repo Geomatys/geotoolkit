@@ -46,7 +46,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of AffineTransform process
+ * JUnit test of AffineTransform process
  * @author Quentin Boileau
  * @module pending
  */

@@ -14,32 +14,21 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+package org.geotoolkit.process.vector.startoffset;
 
-package org.geotoolkit.process.vector;
-
-import org.geotoolkit.process.ProcessDescriptor;
-import org.geotoolkit.process.ProcessFinder;
+import org.geotoolkit.process.vector.AbstractProcessTest;
 
 import org.junit.Test;
 import static org.junit.Assert.*;
 /**
- * Abstract JUnit test for vector process
+ * JUnit test of StartOffset process
  * @author Quentin Boileau
  * @module pending
  */
-public abstract class AbstractProcessTest {
+public class StartOffsetTest extends AbstractProcessTest{
 
-    private static final String factory = "vector";
-    private String process;
-
-
-    protected AbstractProcessTest(final String process){
-        this.process = process;
+    public StartOffsetTest() {
+        super("startoffset");
     }
 
-    @Test
-    public void findProcessTest(){
-        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor(factory, process);
-        assertNotNull(desc);
-    }
 }

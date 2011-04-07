@@ -43,7 +43,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of clip with a geometry process
+ * JUnit test of clip with a geometry process
  * @author Quentin Boileau
  * @module pending
  */

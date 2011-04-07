@@ -43,7 +43,7 @@ import org.opengis.util.FactoryException;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of clip with a FeatureCollection process
+ * JUnit test of clip with a FeatureCollection process
  * @author Quentin Boileau
  * @module pending
  */

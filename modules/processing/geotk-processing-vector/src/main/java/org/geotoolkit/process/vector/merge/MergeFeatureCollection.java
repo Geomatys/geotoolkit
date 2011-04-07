@@ -41,7 +41,7 @@ import org.opengis.feature.type.Name;
 public class MergeFeatureCollection extends WrapFeatureCollection {
 
 
-    private final Collection<FeatureCollection> FCList;
+    private final Collection<FeatureCollection> fcList;
     private final FeatureType newFeatureType;
 
     /**
@@ -49,9 +49,9 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
      * @param originalFC FeatureCollection
      * @param clippingList 
      */
-    public MergeFeatureCollection(final Collection<FeatureCollection> FCList, FeatureCollection firstFC) {
+    public MergeFeatureCollection(final Collection<FeatureCollection> fcList, final FeatureCollection firstFC) {
         super(firstFC);
-        this.FCList = FCList;
+        this.fcList = fcList;
         this.newFeatureType = firstFC.getFeatureType();
     }
 
@@ -87,9 +87,9 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
     }
 
      @Override
-    public FeatureIterator<Feature> iterator(Hints hints) throws DataStoreRuntimeException {
+    public FeatureIterator<Feature> iterator(final Hints hints) throws DataStoreRuntimeException {
         try {
-            return new MergeFeatureIterator(FCList, newFeatureType);
+            return new MergeFeatureIterator(fcList.iterator());
         } catch (NonconvertibleObjectException ex) {
            throw new DataStoreRuntimeException(ex);
         }
@@ -103,28 +103,24 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
      */
     private class MergeFeatureIterator implements FeatureIterator<Feature> {
 
-        private final Collection<FeatureCollection> FCList;
-        private final Iterator<FeatureCollection> FCIter;
+        private final Iterator<FeatureCollection> fcIter;
         
         private FeatureCollection<Feature> nextFC;
         private FeatureIterator<Feature> ite;
 
         private Feature nextFeature;
         private Map<Name,ObjectConverter> conversionMap;
-        private final FeatureType wantedFeatureType ;
 
         /**
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
          */
-        public MergeFeatureIterator(final Collection<FeatureCollection> FCList, final FeatureType wantedFeatureType) throws NonconvertibleObjectException {
+        public MergeFeatureIterator(final Iterator<FeatureCollection> fcListIter) throws NonconvertibleObjectException {
 
-            this.wantedFeatureType = wantedFeatureType;
-            this.FCList = FCList;
-            this.FCIter = FCList.iterator();
+            this.fcIter = fcListIter;
             
-            if(FCIter.hasNext()){
-                nextFC = FCIter.next();
+            if(fcIter.hasNext()){
+                nextFC = fcIter.next();
                 ite = nextFC.iterator();
                 conversionMap = Merge.createConversionMap(newFeatureType, nextFC.getFeatureType());
             }else{
@@ -196,9 +192,9 @@ public class MergeFeatureCollection extends WrapFeatureCollection {
                         //ite = null;
                     }
                 } else {
-                    if (FCIter.hasNext()) {
+                    if (fcIter.hasNext()) {
                         try {
-                            nextFC = FCIter.next();
+                            nextFC = fcIter.next();
                             ite = nextFC.iterator();
                             conversionMap = Merge.createConversionMap(newFeatureType, nextFC.getFeatureType());
                         } catch (NonconvertibleObjectException ex) {

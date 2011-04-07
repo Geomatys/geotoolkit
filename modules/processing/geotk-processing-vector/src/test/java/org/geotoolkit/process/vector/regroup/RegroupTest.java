@@ -48,7 +48,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of Regroup process
+ * JUnit test of Regroup process
  * @author Quentin Boileau
  * @module pending
  */

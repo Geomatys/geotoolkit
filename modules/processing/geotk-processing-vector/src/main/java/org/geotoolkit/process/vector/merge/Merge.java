@@ -124,12 +124,12 @@ public class Merge extends AbstractProcess {
     * @return map<Name, ObjectConverter>. Return null if input FeatureType are equals
     * @throws NonconvertibleObjectException
     */
-    static Map<Name, ObjectConverter> createConversionMap (FeatureType input, FeatureType toConvert) throws NonconvertibleObjectException{
+    static Map<Name, ObjectConverter> createConversionMap (final FeatureType input, final FeatureType toConvert) throws NonconvertibleObjectException{
 
         if(input.equals(toConvert)){
             return null;
         }
-        Map<Name, ObjectConverter> map = new HashMap<Name, ObjectConverter>();
+        final Map<Name, ObjectConverter> map = new HashMap<Name, ObjectConverter>();
 
         for (PropertyDescriptor toConvertDesc : toConvert.getDescriptors()) {
             for(PropertyDescriptor inputDesc : input.getDescriptors()){
@@ -137,8 +137,8 @@ public class Merge extends AbstractProcess {
                 //same property name
                 if(toConvertDesc.getName().equals(inputDesc.getName())){
 
-                    Class inputClass = inputDesc.getType().getBinding();
-                    Class toConvertClass = toConvertDesc.getType().getBinding();
+                    final Class inputClass = inputDesc.getType().getBinding();
+                    final Class toConvertClass = toConvertDesc.getType().getBinding();
                     if(toConvertClass.equals(inputClass)){
                         //same name and same type
                         map.put(toConvertDesc.getName(), null);
@@ -162,7 +162,7 @@ public class Merge extends AbstractProcess {
     * @author Quentin Boileau
     * @module pending
     */
-    private static class GeomConverter implements ObjectConverter<Object, Object>{
+    private static class GeomConverter implements ObjectConverter<Object, Object> {
 
         private final Class sourceClass;
         private final Class targetClass;
@@ -198,7 +198,7 @@ public class Merge extends AbstractProcess {
         }
 
         @Override
-        public Object convert(Object s) throws NonconvertibleObjectException {
+        public Object convert(final Object s) throws NonconvertibleObjectException {
             return MappingUtils.convertType((Geometry)s, getTargetClass());
         }
 

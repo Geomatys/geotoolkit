@@ -90,7 +90,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
         try {
 
             final FeatureCollection<Feature> fiteredFC = (FeatureCollection<Feature>) super.getOriginalFeatureCollection().subCollection(filter(attributeValue));
-            int toto = fiteredFC.size();
+            
             return Regroup.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
 
         } catch (FactoryException ex) {
@@ -120,13 +120,13 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
         return new RegroupFeatureIterator(getOriginalFeatureCollection().iterator());
     }
 
-    private Query filter(Object attributeValue)
+    private Query filter(final Object attributeValue)
             throws FactoryException, MismatchedDimensionException, TransformException {
 
-        final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
+        final FilterFactory2 ff = (FilterFactory2) FactoryFinder.getFilterFactory(
                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
 
-        final Filter filter = FF.equals(FF.property(regroupAttribute), FF.literal(attributeValue));
+        final Filter filter = ff.equals(ff.property(regroupAttribute), ff.literal(attributeValue));
         return QueryBuilder.filtered(new DefaultName("filter"), filter);
 
     }
@@ -140,9 +140,9 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
 
         private final FeatureIterator<?> originalFI;
         private Feature nextFeature;
-        private Collection<Object> attributeValues;
+        private final Collection<Object> attributeValues;
         private Object nextValue;
-        private Iterator<Object> attributeIterator;
+        private final Iterator<Object> attributeIterator;
 
         /**
          * Connect to the original FeatureIterator

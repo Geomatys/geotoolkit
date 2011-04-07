@@ -22,7 +22,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of ExtendFeature process
+ * JUnit test of ExtendFeature process
  * @author Quentin Boileau
  * @module pending
  */

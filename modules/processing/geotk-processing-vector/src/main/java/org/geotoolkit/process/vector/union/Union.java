@@ -110,7 +110,7 @@ public class Union extends AbstractProcess {
      * @throws FactoryException
      */
     static FeatureCollection unionFeatureToFC(final Feature inputFeature, final FeatureType newFeatureType, final FeatureCollection unionFC,
-            final String inputGeomName, final String unionGeomName, final boolean firstPass, Set<String> featureList)
+            final String inputGeomName, final String unionGeomName, final boolean firstPass, final Set<String> featureList)
             throws TransformException, FactoryException {
 
         final FeatureCollection<Feature> resultFeatureList =

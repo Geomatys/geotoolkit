@@ -100,9 +100,9 @@ public class DouglasPeucker extends AbstractProcess {
      * @param oldFeature
      * @param accuracy
      * @param unit
-     * @param behavior
-     * @param lenient
-     * @return
+     * @param behavior - boolean to set the process behavior with small geometries
+     * @param lenient - boolean used to set the lenient parameter during CRS change
+     * @return the simplified Feature
      * @throws NoSuchAuthorityCodeException
      * @throws FactoryException
      * @throws MismatchedDimensionException
@@ -159,5 +159,4 @@ public class DouglasPeucker extends AbstractProcess {
         return resultFeature;
     }
 
-    
 }

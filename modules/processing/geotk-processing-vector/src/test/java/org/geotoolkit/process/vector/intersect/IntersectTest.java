@@ -45,7 +45,7 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of intersect process
+ * JUnit test of intersect process
  * @author Quentin Boileau
  * @module pending
  */

@@ -42,7 +42,7 @@ import org.opengis.util.FactoryException;
 import static org.junit.Assert.*;
 
 /**
- * Junit test of Centroid process
+ * JUnit test of Centroid process
  * @author Quentin Boileau
  * @module pending
  */

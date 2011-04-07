@@ -49,7 +49,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 import static org.junit.Assert.*;
 
 /**
- * Junit test douglas peucker simplification on FeatureCollection
+ * JUnit test douglas peucker simplification on FeatureCollection
  * @author Quentin Boileau
  * @module pending
  */
