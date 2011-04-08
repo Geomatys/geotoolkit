@@ -309,7 +309,7 @@ public final class Trees {
      *
      * @since 3.02
      *
-     * @deprecated Moved to {@link TreeFormat#parse(String)
+     * @deprecated Moved to {@link TreeFormat#parse(String)}
      */
     @Deprecated
     public static MutableTreeNode parse(final String text) throws IllegalArgumentException {
@@ -334,7 +334,7 @@ public final class Trees {
      *
      * @since 3.02
      *
-     * @deprecated Moved to {@link TreeFormat#parse(LineReader)
+     * @deprecated Moved to {@link TreeFormat#parse(LineReader)}
      */
     @Deprecated
     public static MutableTreeNode parse(final LineReader input) throws IOException {
@@ -351,7 +351,7 @@ public final class Trees {
      *
      * @since 2.5
      *
-     * @deprecated Moved to {@link TreeFormat#format(TreeModel, Appendable)
+     * @deprecated Moved to {@link TreeFormat#format(TreeModel, Appendable)}
      */
     @Deprecated
     public static void format(final TreeModel tree, final Appendable buffer, String lineSeparator)
@@ -374,7 +374,7 @@ public final class Trees {
      *
      * @since 2.5
      *
-     * @deprecated Moved to {@link TreeFormat#format(TreeNode, Appendable)
+     * @deprecated Moved to {@link TreeFormat#format(TreeNode, Appendable)}
      */
     @Deprecated
     public static void format(final TreeNode node, final Appendable buffer, String lineSeparator)

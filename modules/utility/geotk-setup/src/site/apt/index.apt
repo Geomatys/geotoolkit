@@ -20,8 +20,8 @@ Geotoolkit.org installer
   "<<<Application Data>>>" on Windows, "<<<Library>>>" on MacOS and the home directory on Linux.
 
   The <<<Geotoolkit.org>>> directory can be modified at user convenience through a graphical user
-  interface provided by this module. To launch the application, run the following command from a
-  directory which contain at least the following JAR files (omitting version numbers):
+  interface provided by this module. To launch the application, first create a directory which
+  contain at least the following JAR files (omitting version numbers):
 
     * <<<geotk-setup.jar>>>
 
@@ -42,8 +42,11 @@ Geotoolkit.org installer
     * One or many of <<<derby.jar>>>, <<<hsqldb.jar>>> and <<<postgresql.jar>>>
 
 
+  Then run the following command where <<<$GEOTK_HOME>>> is the directory containing
+  the above JAR files:
+
 +----------------------------------------
-java -jar geotk-setup.jar
+java -jar $GEOTK_HOME/geotk-setup.jar
 +----------------------------------------
 
 

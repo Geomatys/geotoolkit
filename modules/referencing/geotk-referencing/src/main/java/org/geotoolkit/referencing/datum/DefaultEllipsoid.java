@@ -99,8 +99,10 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     }
 
     /**
-     * WGS 1984 ellipsoid (EPSG:7030) with axis in {@linkplain SI#METRE metres}. This ellipsoid
-     * is used in GPS systems and is the default for most {@code org.geotoolkit} packages.
+     * WGS 1984 ellipsoid (EPSG:7030) used in GPS systems.
+     * The semi-major and semi-minor axis length are approximatively 6378137 and 6356752
+     * {@linkplain SI#METRE metres} respectively.
+     * This is the default ellipsoid for most {@code org.geotoolkit} packages.
      *
      * @see DefaultGeodeticDatum#WGS84
      */
@@ -108,7 +110,9 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             properties("WGS84", 7030, "WGS 1984"), 6378137.0, 298.257223563, SI.METRE);
 
     /**
-     * WGS 1972 ellipsoid (EPSG:7043) with axis in {@linkplain SI#METRE metres}.
+     * WGS 1972 ellipsoid (EPSG:7043).
+     * The semi-major and semi-minor axis length are approximatively 6378135 and 6356751
+     * {@linkplain SI#METRE metres} respectively.
      *
      * @see DefaultGeodeticDatum#WGS72
      *
@@ -118,9 +122,15 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             properties("WGS72", 7043, "WGS 1972"), 6378135.0, 298.26, SI.METRE);
 
     /**
-     * GRS 1980 ellipsoid (EPSG:7019) with axis in {@linkplain SI#METRE metres}.
+     * GRS 1980 ellipsoid (EPSG:7019), also called "<cite>International 1979</cite>".
+     * The semi-major and semi-minor axis length are approximatively 6378137 and 6356752
+     * {@linkplain SI#METRE metres} respectively. This ellipsoid is very close, but not
+     * identical, to {@linkplain #WGS84}.
      *
-     * {@note This is also called "<cite>International 1979</cite>".}
+     * {@note The <cite>NAD83</cite> ellipsoid uses the same semi-axis length and units.
+     *        The <cite>Web Map Server</cite> <code>"CRS:83"</code> authority code uses that
+     *        NAD83 ellipsoid. The <code>"IGNF:MILLER"</code> authority code uses the GRS80
+     *        ellipsoid.}
      *
      * @since 2.2
      */
@@ -129,7 +139,9 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             6378137.0, 298.257222101, SI.METRE);
 
     /**
-     * International 1924 ellipsoid (EPSG:7022) with axis in {@linkplain SI#METRE metres}.
+     * International 1924 ellipsoid (EPSG:7022).
+     * The semi-major and semi-minor axis length are approximatively 6378388 and 6356912
+     * {@linkplain SI#METRE metres} respectively.
      *
      * {@note The <cite>European Datum 1950</cite> ellipsoid uses the same
      *        semi-axis length and units.}
@@ -138,12 +150,18 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             properties("International 1924", 7022, null), 6378388.0, 297.0, SI.METRE);
 
     /**
-     * Clarke 1866 ellipsoid (EPSG:7008) with axis in {@linkplain SI#METRE metres}.
+     * Clarke 1866 ellipsoid (EPSG:7008).
+     * The semi-major and semi-minor axis length are approximatively 6378206 and 6356584
+     * {@linkplain SI#METRE metres} respectively.
+     *
+     * {@note The <cite>NAD27</cite> ellipsoid uses the same semi-axis length and units.
+     *        The <cite>Web Map Server</cite> <code>"CRS:27"</code> authority code uses that
+     *        NAD27 ellipsoid.}
      *
      * @since 2.2
      */
     public static final DefaultEllipsoid CLARKE_1866 = createEllipsoid(
-            properties("Clarke 1866", 7008, null), 6378206.4, 6356583.8 , SI.METRE);
+            properties("Clarke 1866", 7008, null), 6378206.4, 6356583.8, SI.METRE);
 
     /**
      * A sphere with a radius of 6371000 {@linkplain SI#METRE metres}. Spheres use a simpler

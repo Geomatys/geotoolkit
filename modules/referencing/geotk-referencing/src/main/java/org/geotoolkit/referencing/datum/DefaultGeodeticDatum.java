@@ -75,6 +75,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
     /**
      * Default WGS 1984 datum (EPSG:6326).
      * Prime meridian is {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}.
+     * This datum is used in GPS systems and is the default for most {@code org.geotoolkit} packages.
      *
      * @see DefaultEllipsoid#WGS84
      * @see org.geotoolkit.referencing.crs.DefaultGeographicCRS#WGS84
@@ -100,6 +101,9 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
     /**
      * Default WGS 1972 datum (EPSG:6322).
      * Prime meridian is {@linkplain DefaultPrimeMeridian#GREENWICH Greenwich}.
+     * This datum is used, together with {@linkplain #WGS84}, in
+     * {@linkplain org.geotoolkit.referencing.operation.transform.EarthGravitationalModel
+     * Earth Gravitational Model}.
      *
      * @see DefaultEllipsoid#WGS72
      *

@@ -469,5 +469,19 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
 Hints.putSystemDefault(Hints.EPSG_DATA_SOURCE, ds);</pre></blockquote>
       </answer>
     </faq>
+    <faq id="indexes">
+      <question>
+        Queries against my EPSG database are very slow.
+      </question>
+      <answer>
+        <p>For better performance, Geotk requires some database indexes in addition to the ones
+        created by the EPSG SQL scripts. If the EPSG database has been created by direct execution
+        of those SQL scripts rather than by the Geotk
+        <code><a href="../../apidocs/org/geotoolkit/referencing/factory/epsg/EpsgInstaller.html">EpsgInstaller</a></code>, then the Geotk
+        <a href="http://hg.geotoolkit.org/geotoolkit/raw-file/tip/modules/referencing/geotk-epsg/src/main/resources/org/geotoolkit/referencing/factory/epsg/Indexes.sql">Indexes.sql</a>
+        script needs to be executed after the database installation. Note that this is done
+        automatically if the EPSG database has been created by the above-cited <code>EpsgInstaller</code></p>
+      </answer>
+    </faq>
   </part>
 </faqs>
