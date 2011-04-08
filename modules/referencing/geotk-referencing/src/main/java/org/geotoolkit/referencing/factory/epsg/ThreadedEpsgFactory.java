@@ -91,7 +91,7 @@ import org.geotoolkit.lang.ThreadSafe;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.00
+ * @version 3.18
  *
  * @see DirectEpsgFactory
  * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
@@ -205,18 +205,28 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     /**
      * The map used for adapting the SQL statements to a particular dialect. This map is
      * initialized by {@link AnsiDialectEpsgFactory} and saved here only in order to avoid
-     * querying the database metadata everytime a new backing store factory is created.
+     * querying the database metadata every time a new backing store factory is created.
      */
     private transient Map<String,String> toANSI;
 
     /**
      * Constructs an authority factory using the default set of factories. The instance
-     * created by this method will use the connection parameters specified in the
-     * {@value #CONFIGURATION_FILE} if such file is found.
+     * created by this method will use the first of the following possibilities:
+     * <p>
+     * <ul>
+     *   <li>The {@linkplain DataSource data source} specified by {@link Hints#EPSG_DATA_SOURCE}
+     *       in the {@linkplain Hints#getSystemDefault system default hints}, if any.</li>
+     *   <li>The connection parameters specified in the {@value #CONFIGURATION_FILE} if such file
+     *       is found.</li>
+     *   <li>The JavaDB (a.k.a. Derby) embedded database if the Derby JDBC driver is found on
+     *       the classpath.</li>
+     *   <li>The HSQL embedded database if the HSQL JDBC driver is found on the classpath.</li>
+     * </ul>
      */
     public ThreadedEpsgFactory() {
         this(EMPTY_HINTS);
-        hints.put(Hints.EPSG_DATA_SOURCE, null);
+        // See http://jira.geotoolkit.org/browse/GEOTK-159
+        hints.put(Hints.EPSG_DATA_SOURCE, Hints.getSystemDefault(Hints.EPSG_DATA_SOURCE));
     }
 
     /**

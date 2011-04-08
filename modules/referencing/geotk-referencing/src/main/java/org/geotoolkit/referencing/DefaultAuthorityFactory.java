@@ -98,6 +98,9 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
          * don't want to supply the full set of hints  because it would prevent the obtention
          * of factories that don't exist yet but could be derived from existing ones (see the
          * next comment block below).
+         *
+         * Note that EPSG_DATA_SOURCE is handled specially by the ThreadedEpsgFactory
+         * constructor (see http://jira.geotoolkit.org/browse/GEOTK-159).
          */
         final Hints systemHints = new Hints(); // Initialized to the system default.
         Hints hints = EMPTY_HINTS.clone();     // Initialized to an empty map.
