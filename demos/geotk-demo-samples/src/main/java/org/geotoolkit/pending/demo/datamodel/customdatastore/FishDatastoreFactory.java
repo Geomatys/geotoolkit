@@ -4,11 +4,12 @@ package org.geotoolkit.pending.demo.datamodel.customdatastore;
 
 import java.net.URISyntaxException;
 import java.net.URL;
+
 import org.geotoolkit.data.AbstractFileDataStoreFactory;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
-import org.opengis.parameter.GeneralParameterDescriptor;
+
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -16,7 +17,7 @@ public class FishDatastoreFactory extends AbstractFileDataStoreFactory{
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("FishParameters",
-                new GeneralParameterDescriptor[]{URLP,NAMESPACE});
+                URLP,NAMESPACE);
 
     @Override
     public String getDescription() {

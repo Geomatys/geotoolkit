@@ -28,7 +28,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -43,17 +43,17 @@ public class WFSDataStoreFactory extends AbstractDataStoreFactory{
     /**
      * Mandatory - server uri
      */
-    public static final GeneralParameterDescriptor SERVER_URI =
-            new DefaultParameterDescriptor("server uri","server uri",URI.class,null,true);
+    public static final ParameterDescriptor<URI> SERVER_URI =
+            new DefaultParameterDescriptor<URI>("server uri","server uri",URI.class,null,true);
     /**
      * Optional -post request
      */
-    public static final GeneralParameterDescriptor POST_REQUEST =
-            new DefaultParameterDescriptor("post request","post request",Boolean.class,false,false);
+    public static final ParameterDescriptor<Boolean> POST_REQUEST =
+            new DefaultParameterDescriptor<Boolean>("post request","post request",Boolean.class,false,false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("WFSParameters",
-                new GeneralParameterDescriptor[]{SERVER_URI, POST_REQUEST});
+                SERVER_URI, POST_REQUEST);
 
     private static final WeakHashMap<URI,WFSDataStore> STORES = new WeakHashMap<URI, WFSDataStore>();
 

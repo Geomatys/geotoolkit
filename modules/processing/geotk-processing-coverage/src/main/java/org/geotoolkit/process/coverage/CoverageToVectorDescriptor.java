@@ -27,7 +27,7 @@ import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.SimpleInternationalString;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 /**
@@ -43,35 +43,35 @@ public final class CoverageToVectorDescriptor extends AbstractProcessDescriptor{
     /**
      * Mandatory - Coverage to process
      */
-    public static final GeneralParameterDescriptor COVERAGE =
-            new DefaultParameterDescriptor("coverage","Coverage to process.",GridCoverage2D.class,null,true);
+    public static final ParameterDescriptor<GridCoverage2D> COVERAGE =
+            new DefaultParameterDescriptor<GridCoverage2D>("coverage","Coverage to process.",GridCoverage2D.class,null,true);
 
     /**
      * Optional - Ranges to regroup
      */
-    public static final GeneralParameterDescriptor RANGES =
-            new DefaultParameterDescriptor("ranges","Ranges to regroup.",NumberRange[].class,null,false);
+    public static final ParameterDescriptor<NumberRange[]> RANGES =
+            new DefaultParameterDescriptor<NumberRange[]>("ranges","Ranges to regroup.",NumberRange[].class,null,false);
 
     /**
      * Optional - selected band, default 0
      */
-    public static final GeneralParameterDescriptor BAND =
-            new DefaultParameterDescriptor("band","Band to transform",Integer.class,0,false);
+    public static final ParameterDescriptor<Integer> BAND =
+            new DefaultParameterDescriptor<Integer>("band","Band to transform",Integer.class,0,false);
 
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                new GeneralParameterDescriptor[]{COVERAGE,RANGES,BAND});
+                COVERAGE,RANGES,BAND);
 
     /**
      * Mandatory - Result of vectorisation
      */
-    public static final GeneralParameterDescriptor GEOMETRIES =
-            new DefaultParameterDescriptor("geometries","Result of vectorisation.",Geometry[].class,null,true);
+    public static final ParameterDescriptor<Geometry[]> GEOMETRIES =
+            new DefaultParameterDescriptor<Geometry[]>("geometries","Result of vectorisation.",Geometry[].class,null,true);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"OutputParameters",
-                new GeneralParameterDescriptor[]{GEOMETRIES});
+                GEOMETRIES);
     
     public static final ProcessDescriptor INSTANCE = new CoverageToVectorDescriptor();
 

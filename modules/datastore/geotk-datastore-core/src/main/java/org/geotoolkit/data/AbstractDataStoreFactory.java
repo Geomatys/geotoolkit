@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.data;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -29,8 +28,8 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.storage.DataStoreException;
 
 import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.InvalidParameterValueException;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -53,8 +52,8 @@ import org.opengis.parameter.ParameterValueGroup;
 public abstract class AbstractDataStoreFactory extends Factory implements DataStoreFactory {
 
     /** parameter for namespace of the datastore */
-    public static final GeneralParameterDescriptor NAMESPACE =
-            new DefaultParameterDescriptor("namespace","Namespace prefix",String.class,null,false);
+    public static final ParameterDescriptor<String> NAMESPACE =
+             new DefaultParameterDescriptor<String>("namespace","Namespace prefix",String.class,null,false);
 
 
     /** Default Implementation abuses the naming convention.

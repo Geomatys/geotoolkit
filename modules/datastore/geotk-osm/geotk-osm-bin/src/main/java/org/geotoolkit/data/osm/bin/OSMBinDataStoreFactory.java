@@ -22,7 +22,6 @@ import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -37,8 +36,7 @@ public class OSMBinDataStoreFactory extends AbstractFileDataStoreFactory{
     private static final String[] EXTENSIONS = new String[]{".obm"};
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
-            new DefaultParameterDescriptorGroup("OSMBinParameters",
-                new GeneralParameterDescriptor[]{URLP,NAMESPACE});
+            new DefaultParameterDescriptorGroup("OSMBinParameters",URLP,NAMESPACE);
 
     /**
      * {@inheritDoc }

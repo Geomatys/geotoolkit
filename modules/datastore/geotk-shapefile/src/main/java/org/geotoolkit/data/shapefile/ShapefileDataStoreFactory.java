@@ -36,7 +36,7 @@ import org.geotoolkit.data.shapefile.indexed.IndexType;
 import com.vividsolutions.jts.geom.Geometry;
 
 import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -66,31 +66,31 @@ public class ShapefileDataStoreFactory extends AbstractFileDataStoreFactory impl
     /**
      * Optional - enable/disable the use of memory-mapped io
      */
-    public static final GeneralParameterDescriptor MEMORY_MAPPED =
+    public static final ParameterDescriptor<Boolean> MEMORY_MAPPED =
             new DefaultParameterDescriptor("memory mapped buffer","enable/disable the use of memory-mapped io",Boolean.class,null,false);
 
     /**
      * Optional - Enable/disable the automatic creation of spatial index
      */
-    public static final GeneralParameterDescriptor CREATE_SPATIAL_INDEX =
+    public static final ParameterDescriptor<Boolean> CREATE_SPATIAL_INDEX =
             new DefaultParameterDescriptor("create spatial index","enable/disable the automatic creation of spatial index",Boolean.class,null,false);
 
     /**
      * Optional - character used to decode strings from the DBF file
      */
-    public static final GeneralParameterDescriptor DBFCHARSET =
+    public static final ParameterDescriptor<Charset> DBFCHARSET =
             new DefaultParameterDescriptor("charset","character used to decode strings from the DBF file",Charset.class,Charset.forName("ISO-8859-1"),false);
 
     /**
      * Optional - load in memory the quadtree if exist.
      */
-    public static final GeneralParameterDescriptor LOAD_QIX =
+    public static final ParameterDescriptor<Boolean> LOAD_QIX =
             new DefaultParameterDescriptor("load qix","Load in memory the quadtree if exist.",Boolean.class,Boolean.FALSE,false);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("ShapefileParameters",
-                new GeneralParameterDescriptor[]{URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX});
+                URLP,NAMESPACE,MEMORY_MAPPED,CREATE_SPATIAL_INDEX,DBFCHARSET,LOAD_QIX);
 
     public ShapefileDataStoreFactory(){
     }

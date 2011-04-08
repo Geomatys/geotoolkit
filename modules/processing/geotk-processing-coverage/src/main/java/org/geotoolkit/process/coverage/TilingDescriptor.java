@@ -25,8 +25,8 @@ import org.geotoolkit.process.AbstractProcessDescriptor;
 import org.geotoolkit.process.Process;
 import org.geotoolkit.process.ProcessDescriptor;
 import org.geotoolkit.util.SimpleInternationalString;
+import org.opengis.parameter.ParameterDescriptor;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -43,36 +43,36 @@ public final class TilingDescriptor extends AbstractProcessDescriptor{
     /**
      * Mandatory - Coverage to process
      */
-    public static final GeneralParameterDescriptor IN_SOURCE_FILE =
-            new DefaultParameterDescriptor("source","Coverage to tyle.",File.class,null,true);
+    public static final ParameterDescriptor<File> IN_SOURCE_FILE =
+            new DefaultParameterDescriptor<File>("source","Coverage to tyle.",File.class,null,true);
 
     /**
      * Mandatory - Output folder
      */
-    public static final GeneralParameterDescriptor IN_TILES_FOLDER =
-            new DefaultParameterDescriptor("target","Folder where tiles will be stored.",File.class,null,true);
+    public static final ParameterDescriptor<File> IN_TILES_FOLDER =
+            new DefaultParameterDescriptor<File>("target","Folder where tiles will be stored.",File.class,null,true);
 
 
     public static final ParameterDescriptorGroup INPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"InputParameters",
-                new GeneralParameterDescriptor[]{IN_SOURCE_FILE,IN_TILES_FOLDER});
+                IN_SOURCE_FILE,IN_TILES_FOLDER);
 
     /**
      * Mandatory - Resulting tile manager
      */
-    public static final GeneralParameterDescriptor OUT_TILE_MANAGER =
-            new DefaultParameterDescriptor("manager","Tile manager.",TileManager.class,null,true);
+    public static final ParameterDescriptor<TileManager> OUT_TILE_MANAGER =
+            new DefaultParameterDescriptor<TileManager>("manager","Tile manager.",TileManager.class,null,true);
 
     /**
      * Optional - Coordinate Reference system of the tyle manager.
      */
-    public static final GeneralParameterDescriptor OUT_CRS =
-            new DefaultParameterDescriptor("crs","Tile manager's coordinate reference system.",CoordinateReferenceSystem.class,null,false);
+    public static final ParameterDescriptor<CoordinateReferenceSystem> OUT_CRS =
+            new DefaultParameterDescriptor<CoordinateReferenceSystem>("crs","Tile manager's coordinate reference system.",CoordinateReferenceSystem.class,null,false);
 
 
     public static final ParameterDescriptorGroup OUTPUT_DESC =
             new DefaultParameterDescriptorGroup(NAME+"OutputParameters",
-                new GeneralParameterDescriptor[]{OUT_TILE_MANAGER,OUT_CRS});
+                OUT_TILE_MANAGER,OUT_CRS);
     
     public static final ProcessDescriptor INSTANCE = new TilingDescriptor();
 

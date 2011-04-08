@@ -25,7 +25,7 @@ import org.geotoolkit.jdbc.dialect.SQLDialect;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -33,26 +33,26 @@ public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
     /**
      * Parameter for namespace of the datastore
      */
-    public static final GeneralParameterDescriptor LOOSEBBOX =
-            new DefaultParameterDescriptor("Loose bbox","Perform only primary filter on bbox",Boolean.class,true,false);
+    public static final ParameterDescriptor<Boolean> LOOSEBBOX =
+             new DefaultParameterDescriptor<Boolean>("Loose bbox","Perform only primary filter on bbox",Boolean.class,true,false);
 
     /**
      * Parameter for database port
      */
-    public static final GeneralParameterDescriptor PORT =
-            new DefaultParameterDescriptor("port","Port",Integer.class,5432,true);
+    public static final ParameterDescriptor<Integer> PORT =
+             new DefaultParameterDescriptor<Integer>("port","Port",Integer.class,5432,true);
 
     /**
      * Wheter a prepared statements based dialect should be used, or not
      */
-    public static final GeneralParameterDescriptor PREPARED_STATEMENTS =
-            new DefaultParameterDescriptor("preparedStatements","Use prepared statements",Boolean.class,false,false);
+    public static final ParameterDescriptor<Boolean> PREPARED_STATEMENTS =
+             new DefaultParameterDescriptor<Boolean>("preparedStatements","Use prepared statements",Boolean.class,false,false);
 
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("PostGISParameters",
-                new GeneralParameterDescriptor[]{DBTYPE,HOST,PORT,DATABASE,SCHEMA,USER,PASSWD,NAMESPACE,
-                DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,LOOSEBBOX,PREPARED_STATEMENTS});
+                DBTYPE,HOST,PORT,DATABASE,SCHEMA,USER,PASSWD,NAMESPACE,
+                DATASOURCE,MAXCONN,MINCONN,VALIDATECONN,FETCHSIZE,MAXWAIT,LOOSEBBOX,PREPARED_STATEMENTS);
 
     @Override
     protected SQLDialect createSQLDialect(final JDBCDataStore dataStore) {

@@ -27,7 +27,7 @@ import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.storage.DataStoreException;
 
-import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
@@ -42,12 +42,12 @@ public class CSVDataStoreFactory extends AbstractFileDataStoreFactory {
     /**
      * Optional - the separator character
      */
-    public static final GeneralParameterDescriptor SEPARATOR =
-            new DefaultParameterDescriptor("separator","spécify the separator",Character.class,';',false);
+    public static final ParameterDescriptor<Character> SEPARATOR =
+            new DefaultParameterDescriptor<Character>("separator","spécify the separator",Character.class,';',false);
 
     public static final ParameterDescriptorGroup PARAMETERS_DESCRIPTOR =
             new DefaultParameterDescriptorGroup("CSVParameters",
-                new GeneralParameterDescriptor[]{URLP,NAMESPACE,SEPARATOR});
+                URLP,NAMESPACE,SEPARATOR);
 
     @Override
     public String getDescription() {

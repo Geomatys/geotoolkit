@@ -34,7 +34,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 
 import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.parameter.GeneralParameterDescriptor;
+import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 
@@ -50,56 +50,56 @@ import org.opengis.parameter.ParameterValueGroup;
 public abstract class JDBCDataStoreFactory extends AbstractDataStoreFactory {
 
     /** parameter for database type */
-    public static final GeneralParameterDescriptor DBTYPE =
-            new DefaultParameterDescriptor("dbtype","Type",String.class,null,true);
+    public static final ParameterDescriptor<String> DBTYPE =
+             new DefaultParameterDescriptor<String>("dbtype","Type",String.class,null,true);
 
     /** parameter for database host */
-    public static final GeneralParameterDescriptor HOST =
-            new DefaultParameterDescriptor("host","Host",String.class,"localhost",true);
+    public static final ParameterDescriptor<String> HOST =
+             new DefaultParameterDescriptor<String>("host","Host",String.class,"localhost",true);
 
     /** parameter for database port */
-    public static final GeneralParameterDescriptor PORT =
-            new DefaultParameterDescriptor("port","Port",Integer.class,null,true);
+    public static final ParameterDescriptor<Integer> PORT =
+             new DefaultParameterDescriptor<Integer>("port","Port",Integer.class,null,true);
 
     /** parameter for database instance */
-    public static final GeneralParameterDescriptor DATABASE =
-            new DefaultParameterDescriptor("database","Database",String.class,null,false);
+    public static final ParameterDescriptor<String> DATABASE =
+             new DefaultParameterDescriptor<String>("database","Database",String.class,null,false);
 
     /** parameter for database schema */
-    public static final GeneralParameterDescriptor SCHEMA =
-            new DefaultParameterDescriptor("schema","Schema",String.class,null,false);
+    public static final ParameterDescriptor<String> SCHEMA =
+             new DefaultParameterDescriptor<String>("schema","Schema",String.class,null,false);
 
     /** parameter for database user */
-    public static final GeneralParameterDescriptor USER =
-            new DefaultParameterDescriptor("user","user name to login as",String.class,null,true);
+    public static final ParameterDescriptor<String> USER =
+             new DefaultParameterDescriptor<String>("user","user name to login as",String.class,null,true);
 
     /** parameter for database password */
-    public static final GeneralParameterDescriptor PASSWD =
-            new DefaultParameterDescriptor("passwd","password used to login",String.class,null,true);
+    public static final ParameterDescriptor<String> PASSWD =
+             new DefaultParameterDescriptor<String>("passwd","password used to login",String.class,null,true);
 
     /** parameter for data source */
-    public static final GeneralParameterDescriptor DATASOURCE =
-            new DefaultParameterDescriptor("Data Source","Data Source",DataSource.class,null,false);
+    public static final ParameterDescriptor<DataSource> DATASOURCE =
+             new DefaultParameterDescriptor<DataSource>("Data Source","Data Source",DataSource.class,null,false);
 
     /** Maximum number of connections in the connection pool */
-    public static final GeneralParameterDescriptor MAXCONN =
-            new DefaultParameterDescriptor("max connections","maximum number of open connections",Integer.class,10,false);
+    public static final ParameterDescriptor<Integer> MAXCONN =
+             new DefaultParameterDescriptor<Integer>("max connections","maximum number of open connections",Integer.class,10,false);
 
     /** Minimum number of connections in the connection pool */
-    public static final GeneralParameterDescriptor MINCONN =
-            new DefaultParameterDescriptor("min connections","minimum number of pooled connection",Integer.class,1,false);
+    public static final ParameterDescriptor<Integer> MINCONN =
+             new DefaultParameterDescriptor<Integer>("min connections","minimum number of pooled connection",Integer.class,1,false);
 
     /** If connections should be validated before using them */
-    public static final GeneralParameterDescriptor VALIDATECONN =
-            new DefaultParameterDescriptor("validate connections","check connection is alive before using it",Boolean.class,false,false);
+    public static final ParameterDescriptor<Boolean> VALIDATECONN =
+             new DefaultParameterDescriptor<Boolean>("validate connections","check connection is alive before using it",Boolean.class,false,false);
 
     /** If connections should be validated before using them */
-    public static final GeneralParameterDescriptor FETCHSIZE =
-            new DefaultParameterDescriptor("fetch size","number of records read with each iteraction with the dbms",Integer.class,1000,false);
+    public static final ParameterDescriptor<Integer> FETCHSIZE =
+             new DefaultParameterDescriptor<Integer>("fetch size","number of records read with each iteraction with the dbms",Integer.class,1000,false);
     
     /** Maximum amount of time the pool will wait when trying to grab a new connection **/
-    public static final GeneralParameterDescriptor MAXWAIT =
-            new DefaultParameterDescriptor("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
+    public static final ParameterDescriptor<Integer> MAXWAIT =
+             new DefaultParameterDescriptor<Integer>("Connection timeout","number of seconds the connection pool wait for login",Integer.class,20,false);
 
     @Override
     public String getDisplayName() {
