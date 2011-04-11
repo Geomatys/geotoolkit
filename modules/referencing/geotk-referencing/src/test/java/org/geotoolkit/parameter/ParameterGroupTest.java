@@ -395,6 +395,24 @@ public final class ParameterGroupTest {
     }
 
     /**
+     * Test the addGroup method. Ensure the descriptor is found and the new value
+     * correctly insert.
+     */
+    @Test
+    public void testAddGroup(){
+        final ParameterDescriptorGroup subGroupDesc = new DefaultParameterDescriptorGroup(
+                Collections.singletonMap("name", "cxparam"),0,10);
+        final ParameterDescriptorGroup groupDesc = new DefaultParameterDescriptorGroup(
+                "config", new GeneralParameterDescriptor[]{subGroupDesc});
+
+        final ParameterValueGroup values = groupDesc.createValue();
+        final ParameterValueGroup sub = values.addGroup("cxparam");
+        assertNotNull(sub);
+        assertEquals(1,values.values().size());
+        assertEquals(values.values().get(0), sub);
+    }
+
+    /**
      * Ensures that the specified objects are not equals.
      */
     private static void assertNotEquals(final String message, final Object o1, final Object o2) {

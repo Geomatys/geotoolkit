@@ -274,11 +274,12 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
         List<GeneralParameterDescriptor> parameters = descriptors();
         while (parameters != null) {
             for (final GeneralParameterDescriptor param : parameters) {
-                if (param instanceof ParameterDescriptor<?>) {
-                    if (nameMatches(param, name)) {
-                        return (ParameterDescriptor<?>) param;
-                    }
-                } else if (param instanceof DefaultParameterDescriptorGroup) {
+
+                if (nameMatches(param, name)) {
+                    return param;
+                }
+
+                if (param instanceof DefaultParameterDescriptorGroup) {
                     if (subgroups == null) {
                         subgroups = new LinkedList<DefaultParameterDescriptorGroup>();
                     }
