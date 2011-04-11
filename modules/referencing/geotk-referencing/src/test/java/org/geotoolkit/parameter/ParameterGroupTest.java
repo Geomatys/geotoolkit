@@ -31,7 +31,8 @@ import static org.opengis.test.Validators.*;
  * Tests the {@link ParameterGroup} class.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Johann Sorel (Geomatys)
+ * @version 3.18
  *
  * @since 2.1
  */
@@ -395,20 +396,22 @@ public final class ParameterGroupTest {
     }
 
     /**
-     * Test the addGroup method. Ensure the descriptor is found and the new value
-     * correctly insert.
+     * Tests the {@link DefaultParameterValueGroup#addGroup} method. Ensures the descriptor is
+     * found and the new value correctly insert.
+     *
+     * @since 3.18
      */
     @Test
     public void testAddGroup(){
         final ParameterDescriptorGroup subGroupDesc = new DefaultParameterDescriptorGroup(
-                Collections.singletonMap("name", "cxparam"),0,10);
+                Collections.singletonMap("name", "cxparam"), 0, 10);
         final ParameterDescriptorGroup groupDesc = new DefaultParameterDescriptorGroup(
-                "config", new GeneralParameterDescriptor[]{subGroupDesc});
+                "config", new GeneralParameterDescriptor[] {subGroupDesc});
 
         final ParameterValueGroup values = groupDesc.createValue();
         final ParameterValueGroup sub = values.addGroup("cxparam");
         assertNotNull(sub);
-        assertEquals(1,values.values().size());
+        assertEquals(1, values.values().size());
         assertEquals(values.values().get(0), sub);
     }
 

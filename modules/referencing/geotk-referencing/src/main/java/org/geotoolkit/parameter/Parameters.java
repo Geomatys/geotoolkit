@@ -70,14 +70,14 @@ import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
  *       {@link ParameterValueGroup} implementations. This is against GeoAPI's inter-operability goal.</p></li>
  * </ul>
  *
- * When a method expects a full {@code ParameterDescriptor} object as argument (for example
- * {@link #value value}), the {@linkplain ParameterDescriptor#getName descriptor name} and
- * alias are used for the search - this class do <strong>not</strong> looks for strictly
- * equals {@code ParameterDescriptor} objects.
+ * When a method in this class expects a full {@code ParameterDescriptor} object in argument
+ * (for example {@link #value(ParameterDescriptor, ParameterValueGroup)}), the
+ * {@linkplain ParameterDescriptor#getName descriptor name} and alias are used for the search - this
+ * class does <strong>not</strong> look for strictly equal {@code ParameterDescriptor} objects.
  *
  * @author Jody Garnett (Refractions)
- * @author Martin Desruisseaux (IRD)
- * @version 3.05
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -118,10 +118,11 @@ public final class Parameters {
      * @return The descriptor casted to the given type, or {@code null} if the given descriptor was null.
      * @throws ClassCastException if the given descriptor doesn't have the expected value class.
      *
+     * @category verification
      * @since 2.5
      */
     @SuppressWarnings("unchecked")
-    public static <T> ParameterDescriptor<T> cast(ParameterDescriptor<?> descriptor, Class<T> type)
+    public static <T> ParameterDescriptor<T> cast(final ParameterDescriptor<?> descriptor, final Class<T> type)
             throws ClassCastException
     {
         if (descriptor != null) {
@@ -147,6 +148,7 @@ public final class Parameters {
      * @return The value casted to the given type, or {@code null} if the given value was null.
      * @throws ClassCastException if the given value doesn't have the expected value class.
      *
+     * @category verification
      * @since 2.5
      */
     @SuppressWarnings("unchecked")
@@ -179,11 +181,13 @@ public final class Parameters {
      * parameter failed and why, use the
      * {@link #isValid(GeneralParameterValue, GeneralParameterDescriptor)} method instead.
      *
-     * @param parameter The parameter to test.
+     * @param value The parameter to test.
      * @return {@code true} if the given parameter is valid.
+     *
+     * @category verification
      */
-    public static boolean isValid(final ParameterValue<?> parameter) {
-        return isValidValue(parameter.getDescriptor(), parameter.getValue(), false) == null;
+    public static boolean isValid(final ParameterValue<?> value) {
+        return isValidValue(value.getDescriptor(), value.getValue(), false) == null;
     }
 
     /**
@@ -254,7 +258,7 @@ public final class Parameters {
      * If this method is an instance of {@link ParameterValueGroup}, then the check
      * is applied recursively for every parameter in this group.
      *
-     * @param  parameter The parameter to test.
+     * @param  value The parameter to test.
      * @param  descriptor The descriptor to use for fetching the conditions.
      * @return A conformance result having the attribute <code>{@linkplain ConformanceResult#pass()
      *         pass}=true</code> if the parameter is valid. If the parameter is not valid, then
@@ -262,8 +266,9 @@ public final class Parameters {
      *         raison.
      *
      * @since 3.05
+     * @category verification
      */
-    public static ConformanceResult isValid(final GeneralParameterValue parameter,
+    public static ConformanceResult isValid(final GeneralParameterValue value,
             final GeneralParameterDescriptor descriptor)
     {
         /*
@@ -271,7 +276,7 @@ public final class Parameters {
          */
         final DefaultConformanceResult result = new DefaultConformanceResult(
                 descriptor.getName().getAuthority(), EXPLAIN, true);
-        final GeneralParameterValue failure = isValid(parameter, descriptor, result);
+        final GeneralParameterValue failure = isValid(value, descriptor, result);
         /*
          * If the validity test failed, update the conformance result accordingly.
          */
@@ -291,12 +296,12 @@ public final class Parameters {
      * with the cause, and this method returns the descriptor of the parameter that failed
      * the check.
      *
-     * @param  parameter  The parameter to test.
+     * @param  value      The parameter to test.
      * @param  descriptor The descriptor to use for fetching the conditions.
      * @param  result     The conformance result to update in case of failure.
      * @return {@code null} in case of success, or the faulty parameter in case of failure.
      */
-    private static GeneralParameterValue isValid(final GeneralParameterValue parameter,
+    private static GeneralParameterValue isValid(final GeneralParameterValue value,
             final GeneralParameterDescriptor descriptor, final DefaultConformanceResult result)
     {
         if (descriptor instanceof ParameterDescriptor<?>) {
@@ -305,12 +310,12 @@ public final class Parameters {
              * of ParameterValue. If it is not, then the error message will be formatted at
              * the end of this method.
              */
-            if (parameter instanceof ParameterValue<?>) {
+            if (value instanceof ParameterValue<?>) {
                 final InternationalString failure = isValidValue((ParameterDescriptor<?>) descriptor,
-                        ((ParameterValue<?>) parameter).getValue(), true);
+                        ((ParameterValue<?>) value).getValue(), true);
                 if (failure != null) {
                     result.setExplanation(failure);
-                    return parameter;
+                    return value;
                 }
                 return null; // The test pass.
             }
@@ -319,10 +324,10 @@ public final class Parameters {
              * For a group, the value shall be an instance of ParameterValueGroup. If it
              * is not, then the error message will be formatted at the end of this method.
              */
-            if (parameter instanceof ParameterValueGroup) {
+            if (value instanceof ParameterValueGroup) {
                 final Map<GeneralParameterDescriptor,Integer> count = new HashMap<GeneralParameterDescriptor,Integer>();
                 final ParameterDescriptorGroup group = (ParameterDescriptorGroup) descriptor;
-                for (final GeneralParameterValue element : ((ParameterValueGroup) parameter).values()) {
+                for (final GeneralParameterValue element : ((ParameterValueGroup) value).values()) {
                     final String name = getName(element.getDescriptor(), group);
                     final GeneralParameterDescriptor desc;
                     try {
@@ -330,7 +335,7 @@ public final class Parameters {
                     } catch (ParameterNotFoundException e) {
                         result.setExplanation(Errors.formatInternational(
                                 Errors.Keys.UNEXPECTED_PARAMETER_$1, name));
-                        return parameter;
+                        return value;
                     }
                     final GeneralParameterValue failure = isValid(element, desc, result);
                     if (failure != null) {
@@ -363,7 +368,7 @@ public final class Parameters {
                             param = new Object[] {name, nw, min, max};
                         }
                         result.setExplanation(Errors.formatInternational(key, param));
-                        return parameter;
+                        return value;
                     }
                 }
                 return null; // The test pass.
@@ -374,31 +379,31 @@ public final class Parameters {
          * with the type of the descriptor. Format the error message.
          */
         final Class<? extends GeneralParameterValue> type;
-        if (parameter instanceof ParameterValue<?>) {
+        if (value instanceof ParameterValue<?>) {
             type = ParameterValue.class;
-        } else if (parameter instanceof ParameterValueGroup) {
+        } else if (value instanceof ParameterValueGroup) {
             type = ParameterValueGroup.class;
         } else {
             type = GeneralParameterValue.class;
         }
         result.setExplanation(Errors.formatInternational(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, type));
-        return parameter;
+        return value;
     }
 
     /**
      * Returns the name of the given parameter, using the authority code space expected by
      * the given group if possible.
      *
-     * @param  param The parameter for which the name is wanted.
+     * @param  parameter The parameter for which the name is wanted.
      * @param  group The group to use for determining the authority code space.
      * @return The name of the given parameter.
      *
      * @since 3.05
      */
-    private static String getName(final GeneralParameterDescriptor param, final ParameterDescriptorGroup group) {
-        String name = AbstractIdentifiedObject.getName(param, group.getName().getAuthority());
+    private static String getName(final GeneralParameterDescriptor parameter, final ParameterDescriptorGroup group) {
+        String name = AbstractIdentifiedObject.getName(parameter, group.getName().getAuthority());
         if (name == null) {
-            name = param.getName().getCode();
+            name = parameter.getName().getCode();
         }
         return name;
     }
@@ -406,14 +411,13 @@ public final class Parameters {
     /**
      * Returns the parameter value for the specified operation parameter.
      *
-     * @param  param The parameter to look for.
+     * @param  parameter The parameter to look for.
      * @param  group The parameter value group to search into.
      * @return The requested parameter value.
      * @throws ParameterNotFoundException if the parameter is not found.
      */
-    private static <T> ParameterValue<T> getParameter(final ParameterDescriptor<T> param,
-                                                      final ParameterValueGroup    group)
-            throws ParameterNotFoundException
+    private static <T> ParameterValue<T> getParameter(final ParameterDescriptor<T> parameter,
+            final ParameterValueGroup group) throws ParameterNotFoundException
     {
         /*
          * Searches for an identifier matching the group's authority, if any.
@@ -421,13 +425,13 @@ public final class Parameters {
          * EPSG database for example: we need to use the EPSG names instead
          * of the OGC ones.
          */
-        final String name = getName(param, group.getDescriptor());
-        if (param.getMinimumOccurs() != 0) {
-            return cast(group.parameter(name), param.getValueClass());
+        final String name = getName(parameter, group.getDescriptor());
+        if (parameter.getMinimumOccurs() != 0) {
+            return cast(group.parameter(name), parameter.getValueClass());
         }
         /*
          * The parameter is optional. We don't want to invokes 'parameter(name)', because we don't
-         * want to create a new parameter is the user didn't supplied one. Search the parameter
+         * want to create a new parameter if the user didn't supplied one. Search the parameter
          * ourself (so we don't create any), and returns null if we don't find any.
          *
          * TODO: A simpler solution would be to add a 'isDefined' method in GeoAPI,
@@ -438,7 +442,7 @@ public final class Parameters {
         if (search instanceof ParameterDescriptor<?>) {
             for (final GeneralParameterValue candidate : group.values()) {
                 if (search.equals(candidate.getDescriptor())) {
-                    return cast((ParameterValue<?>) candidate, param.getValueClass());
+                    return cast((ParameterValue<?>) candidate, parameter.getValueClass());
                 }
             }
         }
@@ -446,84 +450,192 @@ public final class Parameters {
     }
 
     /**
-     * Returns the parameter value as an object for the given descriptor.
+     * Returns the value of the given parameter in the given group if defined, or create a
+     * default parameter otherwise. This method is equivalent to:
      *
-     * @param  <T> The type of parameter value.
-     * @param  param The parameter to look for.
+     * {@preformat
+     *     return cast(group.parameter(parameter.getName().getCode()));
+     * }
+     *
+     * except that this method tries to use an identifier of the same authority than the
+     * given {@code group} if possible.
+     *
+     * @param  <T> The type of the parameter value.
+     * @param  parameter The parameter to look for.
+     * @param  group The parameter value group to search into.
+     * @return The requested parameter object.
+     * @throws ParameterNotFoundException if the parameter is not valid for the given group.
+     *
+     * @since 3.18
+     * @category query
+     */
+    public static <T> ParameterValue<T> getOrCreate(final ParameterDescriptor<T> parameter,
+            final ParameterValueGroup group) throws ParameterNotFoundException
+    {
+        return cast(group.parameter(getName(parameter, group.getDescriptor())), parameter.getValueClass());
+    }
+
+    /**
+     * Returns the parameter value as an object for the given descriptor.
+     * The method uses the {@link ParameterValue#getValue()} method for fetching the value.
+     *
+     * @param  <T> The type of the parameter value.
+     * @param  parameter The parameter to look for.
      * @param  group The parameter value group to search into.
      * @return The requested parameter value, or {@code null} if the parameter
      *         is optional and the user didn't provided any value.
      * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
      *
      * @since 3.00
+     * @category query
      */
-    public static <T> T value(final ParameterDescriptor<T> param,
-                              final ParameterValueGroup    group)
+    public static <T> T value(final ParameterDescriptor<T> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final ParameterValue<T> value = getParameter(param, group);
+        final ParameterValue<T> value = getParameter(parameter, group);
         return (value != null) ? value.getValue() : null;
     }
 
     /**
      * Returns the parameter value as a string for the given descriptor.
+     * This method uses the {@link ParameterValue#stringValue()} method for fetching the value.
+     * Note that the result may be different than the above {@link #value value} method if the
+     * {@code ParameterValue} implementation performs string conversions.
      *
-     * @param  param The parameter to look for.
+     * @param  parameter The parameter to look for.
      * @param  group The parameter value group to search into.
      * @return The requested parameter value, or {@code null} if the parameter
      *         is optional and the user didn't provided any value.
      * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
      *
+     * @category query
      * @since 3.00
      */
-    public static String stringValue(final ParameterDescriptor<?> param,
-                                     final ParameterValueGroup    group)
+    public static String stringValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final ParameterValue<?> value = getParameter(param, group);
+        final ParameterValue<?> value = getParameter(parameter, group);
         return (value != null) ? value.stringValue() : null;
     }
 
     /**
-     * Returns the parameter value as an integer for the given descriptor.
+     * Returns the parameter value as a boolean for the given descriptor.
+     * This method uses the {@link ParameterValue#booleanValue()} method for fetching the value.
+     * Note that the result may be different than the above {@link #value value} method if the
+     * {@code ParameterValue} implementation performs numeric conversions.
      *
-     * @param  param The parameter to look for.
+     * @param  parameter The parameter to look for.
      * @param  group The parameter value group to search into.
      * @return The requested parameter value, or {@code null} if the parameter
      *         is optional and the user didn't provided any value.
      * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
      *
-     * @since 3.00
+     * @category query
+     * @since 3.18
      */
-    public static Integer integerValue(final ParameterDescriptor<?> param,
-                                       final ParameterValueGroup    group)
+    public static Boolean booleanValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final ParameterValue<?> value = getParameter(param, group);
+        final ParameterValue<?> value = getParameter(parameter, group);
+        return (value != null) ? value.booleanValue() : null;
+    }
+
+    /**
+     * Returns the parameter value as an integer for the given descriptor.
+     * This method uses the {@link ParameterValue#intValue()} method for fetching the value.
+     * Note that the result may be different than the above {@link #value value} method if the
+     * {@code ParameterValue} implementation performs numeric conversions.
+     *
+     * @param  parameter The parameter to look for.
+     * @param  group The parameter value group to search into.
+     * @return The requested parameter value, or {@code null} if the parameter
+     *         is optional and the user didn't provided any value.
+     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
+     *
+     * @category query
+     * @since 3.00
+     */
+    public static Integer integerValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
+            throws ParameterNotFoundException
+    {
+        final ParameterValue<?> value = getParameter(parameter, group);
         return (value != null) ? value.intValue() : null;
+    }
+
+    /**
+     * Returns the parameter value as a list of integers for the given descriptor.
+     * This method uses the {@link ParameterValue#intValueList()} method for fetching the values.
+     * Note that the result may be different than the above {@link #value value} method if the
+     * {@code ParameterValue} implementation performs numeric conversions.
+     *
+     * @param  parameter The parameter to look for.
+     * @param  group The parameter value group to search into.
+     * @return The requested parameter value, or {@code null} if the parameter
+     *         is optional and the user didn't provided any value.
+     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
+     *
+     * @category query
+     * @since 3.18
+     */
+    public static int[] integerValueList(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
+            throws ParameterNotFoundException
+    {
+        final ParameterValue<?> value = getParameter(parameter, group);
+        return (value != null) ? value.intValueList() : null;
     }
 
     /**
      * Returns the parameter value as a floating point number for the given descriptor.
      * Values are automatically converted into the standard units specified by the
      * supplied {@code param} argument.
+     * <p>
+     * This method uses the {@link ParameterValue#doubleValue(Unit)} method for fetching the value.
+     * Note that the result may be different than the above {@link #value value} method if the
+     * {@code ParameterValue} implementation performs numeric conversions.
      *
-     * @param  param The parameter to look for.
+     * @param  parameter The parameter to look for.
      * @param  group The parameter value group to search into.
      * @return The requested parameter value, or {@code NaN} if the parameter
      *         is optional and the user didn't provided any value.
      * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
      *
+     * @category query
      * @since 3.00
      */
-    public static double doubleValue(final ParameterDescriptor<?> param,
-                                     final ParameterValueGroup    group)
+    public static double doubleValue(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final Unit<?> unit = param.getUnit();
-        final ParameterValue<?> value = getParameter(param, group);
+        final Unit<?> unit = parameter.getUnit();
+        final ParameterValue<?> value = getParameter(parameter, group);
         return (value == null) ? Double.NaN :
                 (unit != null) ? value.doubleValue(unit) : value.doubleValue();
+    }
+
+    /**
+     * Returns the parameter value as a list of floating point numbers for the given descriptor.
+     * Values are automatically converted into the standard units specified by the
+     * supplied {@code param} argument.
+     * <p>
+     * This method uses the {@link ParameterValue#doubleValueList(Unit)} method for fetching the
+     * values. Note that the result may be different than the above {@link #value value} method
+     * if the {@code ParameterValue} implementation performs numeric conversions.
+     *
+     * @param  parameter The parameter to look for.
+     * @param  group The parameter value group to search into.
+     * @return The requested parameter value, or {@code null} if the parameter
+     *         is optional and the user didn't provided any value.
+     * @throws ParameterNotFoundException if the parameter is mandatory and not found in the group.
+     *
+     * @category query
+     * @since 3.18
+     */
+    public static double[] doubleValueList(final ParameterDescriptor<?> parameter, final ParameterValueGroup group)
+            throws ParameterNotFoundException
+    {
+        final Unit<?> unit = parameter.getUnit();
+        final ParameterValue<?> value = getParameter(parameter, group);
+        return (value == null) ? null :
+                (unit != null) ? value.doubleValueList(unit) : value.doubleValueList();
     }
 
     /**
@@ -545,57 +657,37 @@ public final class Parameters {
      *       example if parameters graph contains cyclic entries.</li>
      * </ul>
      *
-     * @param  param The parameter to inspect.
+     * @param  parameter The parameter to inspect.
      * @param  name  The name of the parameter to search for. See the
      *               <a href="#skip-navbar_top">class javadoc</a> for a rational about the usage
      *               of name as a key instead of {@linkplain ParameterDescriptor descriptor}.
      * @param maxDepth The maximal depth while descending down the parameter tree.
      * @return The set (possibly empty) of parameters with the given name.
+     *
+     * @category query
      */
-    public static List<GeneralParameterValue> search(final GeneralParameterValue param,
+    public static List<GeneralParameterValue> search(final GeneralParameterValue parameter,
             final String name, int maxDepth)
     {
         final List<GeneralParameterValue> list = new ArrayList<GeneralParameterValue>();
-        search(param, name, maxDepth, list);
+        search(parameter, name, maxDepth, list);
         return list;
     }
 
     /**
      * Implementation of the search algorithm. The result is stored in the supplied set.
      */
-    private static void search(final GeneralParameterValue param, final String name,
-                               final int maxDepth, final Collection<GeneralParameterValue> list)
+    private static void search(final GeneralParameterValue parameter, final String name,
+            final int maxDepth, final Collection<GeneralParameterValue> list)
     {
         if (maxDepth >= 0) {
-            if (AbstractIdentifiedObject.nameMatches(param.getDescriptor(), name)) {
-                list.add(param);
+            if (AbstractIdentifiedObject.nameMatches(parameter.getDescriptor(), name)) {
+                list.add(parameter);
             }
-            if ((maxDepth != 0) && (param instanceof ParameterValueGroup)) {
-                for (final GeneralParameterValue value : ((ParameterValueGroup) param).values()) {
+            if ((maxDepth != 0) && (parameter instanceof ParameterValueGroup)) {
+                for (final GeneralParameterValue value : ((ParameterValueGroup) parameter).values()) {
                     search(value, name, maxDepth-1, list);
                 }
-            }
-        }
-    }
-
-    /**
-     * Copies all parameter values from {@code source} to {@code target}. A typical usage of
-     * this method is for transfering values from an arbitrary implementation to some specific
-     * implementation (e.g. a parameter group implementation backed by a
-     * {@link java.awt.image.renderable.ParameterBlock} for image processing operations).
-     *
-     * @param source The parameters to copy.
-     * @param target Where to copy the source parameters.
-     *
-     * @since 2.2
-     */
-    public static void copy(final ParameterValueGroup source, final ParameterValueGroup target) {
-        for (final GeneralParameterValue param : source.values()) {
-            final String name = param.getDescriptor().getName().getCode();
-            if (param instanceof ParameterValueGroup) {
-                copy((ParameterValueGroup) param, target.addGroup(name));
-            } else {
-                target.parameter(name).setValue(((ParameterValue<?>) param).getValue());
             }
         }
     }
@@ -610,9 +702,11 @@ public final class Parameters {
      * @param  parameters  The parameters to extract values from.
      * @param  destination The destination map, or {@code null} for a default one.
      * @return {@code destination}, or a new map if {@code destination} was null.
+     *
+     * @category query
      */
     public static Map<String,Object> toNameValueMap(final GeneralParameterValue parameters,
-                                                    Map<String,Object> destination)
+            Map<String,Object> destination)
     {
         if (destination == null) {
             destination = new LinkedHashMap<String,Object>();
@@ -637,6 +731,29 @@ public final class Parameters {
     }
 
     /**
+     * Copies all parameter values from {@code source} to {@code target}. A typical usage of
+     * this method is for transferring values from an arbitrary implementation to some specific
+     * implementation (e.g. a parameter group implementation backed by a
+     * {@link java.awt.image.renderable.ParameterBlock} for image processing operations).
+     *
+     * @param source The parameters to copy.
+     * @param target Where to copy the source parameters.
+     *
+     * @category update
+     * @since 2.2
+     */
+    public static void copy(final ParameterValueGroup source, final ParameterValueGroup target) {
+        for (final GeneralParameterValue param : source.values()) {
+            final String name = param.getDescriptor().getName().getCode();
+            if (param instanceof ParameterValueGroup) {
+                copy((ParameterValueGroup) param, target.addGroup(name));
+            } else {
+                target.parameter(name).setValue(((ParameterValue<?>) param).getValue());
+            }
+        }
+    }
+
+    /**
      * Ensures that the specified parameter is set. The {@code value} is set if and only if
      * no value were already set by the user for the given {@code name}.
      * <p>
@@ -654,10 +771,11 @@ public final class Parameters {
      *                   is case of mismatch.
      * @return {@code true} if the were a mismatch, or {@code false} if the parameters can be
      *         used with no change.
+     *
+     * @category update
      */
     public static boolean ensureSet(final ParameterValueGroup parameters,
-                                    final String name, final double value, final Unit<?> unit,
-                                    final boolean force)
+            final String name, final double value, final Unit<?> unit, final boolean force)
     {
         final ParameterValue<?> parameter;
         try {

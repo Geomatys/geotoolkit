@@ -54,7 +54,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @see ParameterGroup
  * @see DefaultParameterDescriptor
@@ -274,11 +274,9 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
         List<GeneralParameterDescriptor> parameters = descriptors();
         while (parameters != null) {
             for (final GeneralParameterDescriptor param : parameters) {
-
                 if (nameMatches(param, name)) {
                     return param;
                 }
-
                 if (param instanceof DefaultParameterDescriptorGroup) {
                     if (subgroups == null) {
                         subgroups = new LinkedList<DefaultParameterDescriptorGroup>();
