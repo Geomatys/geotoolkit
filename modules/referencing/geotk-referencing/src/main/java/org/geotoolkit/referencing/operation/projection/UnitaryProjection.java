@@ -61,6 +61,7 @@ import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.math.XMath.xorSign;
 import static org.geotoolkit.internal.referencing.Identifiers.*;
+import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.referencing.operation.provider.MapProjection.SEMI_MAJOR;
 import static org.geotoolkit.referencing.operation.provider.MapProjection.SEMI_MINOR;
 import static org.geotoolkit.referencing.operation.provider.MapProjection.ROLL_LONGITUDE;
@@ -1155,10 +1156,10 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
             final ParameterDescriptorGroup descriptor = getParameterDescriptors();
             final ParameterValueGroup values = descriptor.createValue();
             final Collection<GeneralParameterDescriptor> expected = descriptor.descriptors();
-            values.parameter(SEMI_MAJOR.getName().getCode()).setValue(semiMajor);
-            values.parameter(SEMI_MINOR.getName().getCode()).setValue(semiMinor);
+            getOrCreate(SEMI_MAJOR, values).setValue(semiMajor);
+            getOrCreate(SEMI_MINOR, values).setValue(semiMinor);
             if (rollLongitude != null) {
-                values.parameter(ROLL_LONGITUDE.getName().getCode()).setValue(rollLongitude);
+                getOrCreate(ROLL_LONGITUDE, values).setValue(rollLongitude);
             }
             set(expected, AZIMUTH,            values, azimuth         );
             set(expected, CENTRAL_MERIDIAN,   values, centralMeridian );
@@ -1366,7 +1367,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                     }
                 }
             }
-            group.parameter(descriptor.getName().getCode()).setValue(value);
+            getOrCreate(descriptor, group).setValue(value);
         }
     }
 
@@ -1405,21 +1406,9 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     public ParameterValueGroup getParameterValues() {
         final ParameterDescriptorGroup descriptor = getParameterDescriptors();
         final ParameterValueGroup values = descriptor.createValue();
-        setValue(SEMI_MAJOR, values, 1.0);
-        setValue(SEMI_MINOR, values, sqrt(1 - excentricitySquared));
+        getOrCreate(SEMI_MAJOR, values).setValue(1.0);
+        getOrCreate(SEMI_MINOR, values).setValue(sqrt(1 - excentricitySquared));
         return values;
-    }
-
-    /**
-     * Sets a value in a group of parameters. This is a convenience
-     * method for {@link #getParameterValues} implementations only.
-     *
-     * @param parameter Identifies the parameter to set.
-     * @param values    The group of parameter where to set the value.
-     * @param value     The value to set.
-     */
-    static void setValue(ParameterDescriptor<Double> parameter, ParameterValueGroup values, double value) {
-        values.parameter(parameter.getName().getCode()).setValue(value);
     }
 
     /**

@@ -25,6 +25,7 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.parameter.Parameters;
 import static org.geotoolkit.referencing.operation.provider.NTv2.*;
 
 
@@ -125,7 +126,7 @@ public class NTv2Transform extends GridTransform2D {
     @Override
     public ParameterValueGroup getParameterValues() {
         final ParameterValueGroup parameters = getParameterDescriptors().createValue();
-        parameters.parameter(DIFFERENCE_FILE.getName().getCode()).setValue(gridFile);
+        Parameters.getOrCreate(DIFFERENCE_FILE, parameters).setValue(gridFile);
         return parameters;
     }
 }

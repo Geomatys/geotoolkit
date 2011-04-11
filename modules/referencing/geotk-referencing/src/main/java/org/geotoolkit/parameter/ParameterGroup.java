@@ -276,6 +276,8 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
      * @return The parameter value for the given identifier code.
      * @throws ParameterNotFoundException if there is no parameter value for the given identifier
      *         code.
+     *
+     * @see Parameters#getOrCreate(ParameterDescriptor, ParameterValueGroup)
      */
     @Override
     public ParameterValue<?> parameter(String name) throws ParameterNotFoundException {

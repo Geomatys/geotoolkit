@@ -371,8 +371,8 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
             return ((MatrixParameters) parameters).getMatrix();
         }
         // Fallback on the general case (others implementations)
-        final ParameterValue<?> numRowParam = parameters.parameter(numRow.getName().toString());
-        final ParameterValue<?> numColParam = parameters.parameter(numCol.getName().toString());
+        final ParameterValue<?> numRowParam = Parameters.getOrCreate(numRow, parameters);
+        final ParameterValue<?> numColParam = Parameters.getOrCreate(numCol, parameters);
         final int numRow = numRowParam.intValue();
         final int numCol = numColParam.intValue();
         final Matrix matrix = MatrixFactory.create(numRow, numCol);

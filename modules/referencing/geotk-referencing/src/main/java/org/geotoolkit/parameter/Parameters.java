@@ -416,7 +416,7 @@ public final class Parameters {
      * @return The requested parameter value.
      * @throws ParameterNotFoundException if the parameter is not found.
      */
-    private static <T> ParameterValue<T> getParameter(final ParameterDescriptor<T> parameter,
+    private static ParameterValue<?> getParameter(final ParameterDescriptor<?> parameter,
             final ParameterValueGroup group) throws ParameterNotFoundException
     {
         /*
@@ -427,7 +427,7 @@ public final class Parameters {
          */
         final String name = getName(parameter, group.getDescriptor());
         if (parameter.getMinimumOccurs() != 0) {
-            return cast(group.parameter(name), parameter.getValueClass());
+            return group.parameter(name);
         }
         /*
          * The parameter is optional. We don't want to invokes 'parameter(name)', because we don't
@@ -442,7 +442,7 @@ public final class Parameters {
         if (search instanceof ParameterDescriptor<?>) {
             for (final GeneralParameterValue candidate : group.values()) {
                 if (search.equals(candidate.getDescriptor())) {
-                    return cast((ParameterValue<?>) candidate, parameter.getValueClass());
+                    return (ParameterValue<?>) candidate;
                 }
             }
         }
@@ -460,16 +460,17 @@ public final class Parameters {
      * except that this method tries to use an identifier of the same authority than the
      * given {@code group} if possible.
      *
-     * @param  <T> The type of the parameter value.
      * @param  parameter The parameter to look for.
      * @param  group The parameter value group to search into.
      * @return The requested parameter object.
      * @throws ParameterNotFoundException if the parameter is not valid for the given group.
      *
+     * @see ParameterValueGroup#parameter(String)
+     *
      * @since 3.18
      * @category query
      */
-    public static <T> ParameterValue<T> getOrCreate(final ParameterDescriptor<T> parameter,
+    public static ParameterValue<?> getOrCreate(final ParameterDescriptor<?> parameter,
             final ParameterValueGroup group) throws ParameterNotFoundException
     {
         return cast(group.parameter(getName(parameter, group.getDescriptor())), parameter.getValueClass());
@@ -492,8 +493,8 @@ public final class Parameters {
     public static <T> T value(final ParameterDescriptor<T> parameter, final ParameterValueGroup group)
             throws ParameterNotFoundException
     {
-        final ParameterValue<T> value = getParameter(parameter, group);
-        return (value != null) ? value.getValue() : null;
+        final ParameterValue<?> value = getParameter(parameter, group);
+        return (value != null) ? parameter.getValueClass().cast(value.getValue()) : null;
     }
 
     /**

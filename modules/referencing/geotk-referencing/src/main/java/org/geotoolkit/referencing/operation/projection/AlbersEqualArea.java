@@ -34,6 +34,7 @@ import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.internal.referencing.Identifiers.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
@@ -238,9 +239,9 @@ public class AlbersEqualArea extends UnitaryProjection {
         final double phi1 = (n != 0) ? standardParallels[0] : phi0;
         final double phi2 = (n >= 2) ? standardParallels[1] : phi1;
         final ParameterValueGroup values = super.getParameterValues();
-        setValue(LATITUDE_OF_ORIGIN,  values, parameters.latitudeOfOrigin);
-        setValue(STANDARD_PARALLEL_1, values, phi1);
-        setValue(STANDARD_PARALLEL_2, values, phi2);
+        getOrCreate(LATITUDE_OF_ORIGIN,  values).setValue(parameters.latitudeOfOrigin);
+        getOrCreate(STANDARD_PARALLEL_1, values).setValue(phi1);
+        getOrCreate(STANDARD_PARALLEL_2, values).setValue(phi2);
         return values;
     }
 

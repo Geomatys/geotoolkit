@@ -25,6 +25,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.parameter.Parameters;
 
 import static org.geotoolkit.referencing.operation.provider.NADCON.*;
 
@@ -169,8 +170,8 @@ public class NadconTransform extends GridTransform2D {
     @Override
     public ParameterValueGroup getParameterValues() {
         final ParameterValueGroup parameters = getParameterDescriptors().createValue();
-        parameters.parameter(LAT_DIFF_FILE .getName().getCode()).setValue(latitudeGridFile);
-        parameters.parameter(LONG_DIFF_FILE.getName().getCode()).setValue(longitudeGridFile);
+        Parameters.getOrCreate(LAT_DIFF_FILE,  parameters).setValue(latitudeGridFile);
+        Parameters.getOrCreate(LONG_DIFF_FILE, parameters).setValue(longitudeGridFile);
         return parameters;
     }
 }

@@ -40,6 +40,7 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
 import org.geotoolkit.referencing.operation.provider.LambertConformal2SP;
 
+import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.internal.referencing.Identifiers.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;
 
@@ -268,8 +269,8 @@ public class LambertConformal extends UnitaryProjection {
         final double phi1 = (n != 0) ? standardParallels[0] : phi0;
         final double phi2 = (n >= 2) ? standardParallels[1] : phi1;
         final ParameterValueGroup values = super.getParameterValues();
-        setValue(STANDARD_PARALLEL_1, values, phi1);
-        setValue(STANDARD_PARALLEL_2, values, phi2);
+        getOrCreate(STANDARD_PARALLEL_1, values).setValue(phi1);
+        getOrCreate(STANDARD_PARALLEL_2, values).setValue(phi2);
         return values;
     }
 
