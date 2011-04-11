@@ -26,12 +26,21 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.Arrays;
+import java.util.Collection;
 import org.geotoolkit.util.StringUtilities;
 import org.opengis.metadata.Identifier;
 import java.util.Iterator;
 import javax.measure.unit.Unit;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.lang.Setup;
+import org.geotoolkit.process.converters.StringToAffineTransformConverter;
+import org.geotoolkit.process.converters.StringToCRSConverter;
+import org.geotoolkit.process.converters.StringToFeatureCollectionConverter;
+import org.geotoolkit.process.converters.StringToFeatureTypeConverter;
+import org.geotoolkit.process.converters.StringToFilterConverter;
+import org.geotoolkit.process.converters.StringToGeometryConverter;
+import org.geotoolkit.process.converters.StringToSortByConverter;
+import org.geotoolkit.process.converters.StringToUnitConverter;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.ObjectConverter;
@@ -45,7 +54,7 @@ import org.opengis.util.InternationalString;
 import static org.geotoolkit.io.X364.*;
 
 /**
- * Runnable class which dynamicly run processes available in the registry.
+ * Runnable class which dynamically run processes available in the registry.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
@@ -53,8 +62,20 @@ import static org.geotoolkit.io.X364.*;
 public final class ProcessConsole {
 
     private static final boolean X364_SUPPORTED = X364.isSupported();
+    private static final Collection<ObjectConverter> listConverter = new ArrayList<ObjectConverter>();
+
 
     public static void main(String[] args) {
+
+        // Initialize the converter list 
+        listConverter.add(StringToFeatureCollectionConverter.getInstance());
+        listConverter.add(StringToUnitConverter.getInstance());
+        listConverter.add(StringToGeometryConverter.getInstance());
+        listConverter.add(StringToCRSConverter.getInstance());
+        listConverter.add(StringToFeatureTypeConverter.getInstance());
+        listConverter.add(StringToAffineTransformConverter.getInstance());
+        listConverter.add(StringToFilterConverter.getInstance());
+        listConverter.add(StringToSortByConverter.getInstance());
 
         Setup.initialize(null);
 
@@ -281,7 +302,20 @@ public final class ProcessConsole {
     private static <T> Object toValue(final List<String> values, final Class<T> binding) throws NonconvertibleObjectException{
         final int size = values.size();
 
-        final ObjectConverter<String,T> converter = ConverterRegistry.system().converter(String.class, binding);
+        ObjectConverter<String,T> converter = null;
+        try{
+            converter = ConverterRegistry.system().converter(String.class, binding);
+        }catch(NonconvertibleObjectException ex){
+            for(ObjectConverter conv : listConverter){
+                if(conv.getTargetClass().equals(binding)){
+                    converter = conv;
+                }
+            }
+
+            if(converter == null){
+                throw ex;
+            }
+        }
 
         if(size == 0 && binding == Boolean.class){
             //if there is no values after this parameter, it means we set it to true

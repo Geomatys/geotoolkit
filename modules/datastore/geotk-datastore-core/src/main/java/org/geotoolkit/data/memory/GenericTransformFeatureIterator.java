@@ -260,7 +260,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
                 //default behavior, make separate features
                 return new GenericTransformFeatureReader(reader,transformer);
             }else{
-                //reuse same feature
+                //re-use same feature
                 return new GenericReuseTransformFeatureReader(reader, transformer);
             }
             

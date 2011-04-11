@@ -183,7 +183,7 @@ public class RandomStyleFactory extends Factory {
         } else if (cla.equals(Point.class) || cla.equals(MultiPoint.class)) {
             ps = createPointSymbolizer();
         } else{
-            ps = SF.polygonSymbolizer();
+            ps = createPolygonSymbolizer();
         }
 
         final MutableStyle style = SF.style();
