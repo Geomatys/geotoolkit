@@ -87,7 +87,7 @@ public class DifferenceGeometry extends AbstractProcess {
 
         for (Property property : oldFeature.getProperties()) {
             if (property.getDescriptor() instanceof GeometryDescriptor) {
-                final Geometry diffGeometry = VectorProcessUtils.difference((Geometry) property.getValue(), geometry);
+                final Geometry diffGeometry = VectorProcessUtils.geometryDifference((Geometry) property.getValue(), geometry);
 
                 if(diffGeometry != null){
                     resultFeature.getProperty(property.getName()).setValue(diffGeometry);

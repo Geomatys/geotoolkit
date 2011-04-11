@@ -22,6 +22,7 @@ import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.data.memory.WrapFeatureCollection;
+import org.geotoolkit.internal.jaxb.referencing.RS_Identifier.ToString;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
@@ -76,4 +77,14 @@ public class AffineTransformFeatureCollection extends WrapFeatureCollection {
     protected Feature modify(final Feature original) {
         return null;
     }
+
+    @Override
+    public String toString() {
+        StringBuilder build = new StringBuilder();
+        build.append(getFeatureType().toString());
+        build.append(this.size());
+        return build.toString();
+    }
+
+
 }

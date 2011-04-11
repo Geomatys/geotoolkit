@@ -74,10 +74,9 @@ public class Merge extends AbstractProcess {
     @Override
     public void run() {
         getMonitor().started(new ProcessEvent(this, 0, null, null));
-        final Collection<FeatureCollection> inputFeaturesList = Parameters.value(MergeDescriptor.FEATURES_IN, inputParameters);
+        final FeatureCollection[] inputFeaturesList = Parameters.value(MergeDescriptor.FEATURES_IN, inputParameters);
         
-        final ArrayList<FeatureCollection> buffFeatures = new ArrayList<FeatureCollection>(inputFeaturesList);
-        final FeatureCollection firstFC = buffFeatures.get(0);
+        final FeatureCollection firstFC = inputFeaturesList[0];
 
         final FeatureCollection resultFeatureList = new MergeFeatureCollection(inputFeaturesList,firstFC);
 
@@ -159,6 +158,7 @@ public class Merge extends AbstractProcess {
 
     /**
     * Implementation of ObjectConverter for JTS Geometry using the MappingUtils class.
+    * This class is use to Convert from a JTS Geometry to an other giving an ObjectConverter object.
     * @author Quentin Boileau
     * @module pending
     */
@@ -167,6 +167,11 @@ public class Merge extends AbstractProcess {
         private final Class sourceClass;
         private final Class targetClass;
 
+        /**
+         * GeomConverter constructor
+         * @param source
+         * @param target
+         */
         public GeomConverter(final Class source, final Class target){
             sourceClass = source;
             targetClass = target;
@@ -201,7 +206,6 @@ public class Merge extends AbstractProcess {
         public Object convert(final Object s) throws NonconvertibleObjectException {
             return MappingUtils.convertType((Geometry)s, getTargetClass());
         }
-
     }
 
 }

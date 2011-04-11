@@ -83,6 +83,6 @@ public class Intersection extends AbstractProcess {
             final FeatureCollection<Feature> featureClippingList, final String geometryName)
             throws FactoryException, MismatchedDimensionException, TransformException {
         
-        return VectorProcessUtils.intersection(oldFeature, featureClippingList, geometryName);
+        return VectorProcessUtils.intersectionFeatureToColl(oldFeature, featureClippingList, geometryName);
     }
 }

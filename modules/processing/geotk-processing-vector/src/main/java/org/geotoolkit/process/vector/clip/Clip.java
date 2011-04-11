@@ -125,12 +125,9 @@ public class Clip extends AbstractProcess {
                                 final CoordinateReferenceSystem clipGeomCRS = clipGeomDesc.getCoordinateReferenceSystem();
 
                                 //re-project clipping geometry into input Feature geometry CRS
-                                if(!(clipGeomCRS.equals(inputGeomCRS))){
-                                    final MathTransform transform = CRS.findMathTransform(clipGeomCRS, inputGeomCRS);
-                                    clipGeom = JTS.transform(clipGeom, transform);
-                                }
+                                clipGeom = VectorProcessUtils.repojectGeometry(inputGeomCRS, clipGeomCRS, clipGeom);
 
-                                final Geometry interGeometry = VectorProcessUtils.clipping(inputGeom, clipGeom);
+                                final Geometry interGeometry = VectorProcessUtils.geometryIntersection(inputGeom, clipGeom);
 
                                 //if an intersection geometry exist, store it into a buffer Collection
                                 if (interGeometry != null) {

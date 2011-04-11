@@ -36,7 +36,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
  * name of the process : "merge"
  * inputs :
  * <ul>
- *     <li>FEATURES_IN "features_in"  Collection of FeatureCollection</li>
+ *     <li>FEATURES_IN "features_in"   Array of FeatureCollection</li>
  * </ul>
  * outputs :
  * <ul>
@@ -50,10 +50,10 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
    /**Process name : merge */
     public static final String NAME = "merge";
     /**
-     * Mandatory - FeatureCollection of Collection
+     * Mandatory - Array of FeatureCollection
      */
-    public static final ParameterDescriptor<Collection<FeatureCollection>> FEATURES_IN =
-            new DefaultParameterDescriptor("features_in", "Inpute collection of FeatureCollection", Collection.class, null, true);
+    public static final ParameterDescriptor<FeatureCollection[]> FEATURES_IN =
+            new DefaultParameterDescriptor("features_in", "Inpute array of FeatureCollection", FeatureCollection[].class, null, true);
 
     public static final ParameterDescriptor<FeatureCollection> FEATURE_OUT =
             new DefaultParameterDescriptor("feature_out", "The merged FeatureCollection", FeatureCollection.class, null, false);

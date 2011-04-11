@@ -71,7 +71,7 @@ public class MergeTest extends AbstractProcessTest{
      * 4 - FeatureCollection with none attribute like base
      */
     @Test
-    public void testIntersection() {
+    public void testMerge() {
 
         // Inputs
         final FeatureCollection<?> featureList1 = buildFeatureList1();
@@ -79,11 +79,11 @@ public class MergeTest extends AbstractProcessTest{
         final FeatureCollection<?> featureList3 = buildFeatureList3();
         final FeatureCollection<?> featureList4 = buildFeatureList4();
         
-        Collection<FeatureCollection> FCList = new ArrayList<FeatureCollection>();
-        FCList.add(featureList1);
-        FCList.add(featureList2);
-        FCList.add(featureList3);
-        FCList.add(featureList4);
+        FeatureCollection[] FCList = new FeatureCollection[4];
+        FCList[0] = featureList1;
+        FCList[1] = featureList2;
+        FCList[2] = featureList3;
+        FCList[3] = featureList4;
 
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "merge");
@@ -96,7 +96,6 @@ public class MergeTest extends AbstractProcessTest{
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());

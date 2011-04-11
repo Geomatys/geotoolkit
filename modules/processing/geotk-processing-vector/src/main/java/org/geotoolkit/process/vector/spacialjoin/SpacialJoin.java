@@ -201,8 +201,8 @@ public class SpacialJoin extends AbstractProcess {
         //copy source Feature except geometry descriptor
         for (Property sourceProperty : source.getProperties()) {
             if (!(sourceProperty.getDescriptor() instanceof GeometryDescriptor)) {
-
-                resultFeature.getProperty(sourceProperty.getName().getLocalPart() + "_" + source.getType().getName().getLocalPart()).setValue(sourceProperty.getValue());
+                resultFeature.getProperty(sourceProperty.getName().getLocalPart() + "_"
+                        + source.getType().getName().getLocalPart()).setValue(sourceProperty.getValue());
             }
         }
 

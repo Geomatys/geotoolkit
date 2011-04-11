@@ -35,6 +35,7 @@ import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
 import org.geotoolkit.process.vector.VectorDescriptor;
+import org.geotoolkit.process.vector.VectorProcessUtils;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.storage.DataStoreException;
 
@@ -138,11 +139,8 @@ public class Nearest extends AbstractProcess {
                         final CoordinateReferenceSystem featureGeomCRS = geomDesc.getCoordinateReferenceSystem();
 
                         //re-project feature geometry into input geometry CRS
-                        if (!(featureGeomCRS.equals(geomCrs))) {
-                            final MathTransform transform = CRS.findMathTransform(featureGeomCRS, geomCrs);
-                            featureGeom = JTS.transform(featureGeom, transform);
-                        }
-
+                        featureGeom = VectorProcessUtils.repojectGeometry(geomCrs, featureGeomCRS, featureGeom);
+                        
                         final double computedDist = geom.distance((Geometry) property.getValue());
 
                         if (computedDist < dist) {

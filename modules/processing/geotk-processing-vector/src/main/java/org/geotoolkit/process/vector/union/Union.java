@@ -217,7 +217,7 @@ public class Union extends AbstractProcess {
             final String inputGeomName, final String unionGeomName, final String featureID, final boolean firstPass) throws FactoryException,
             TransformException {
 
-        final Geometry intersectGeometry = VectorProcessUtils.intersect(inputFeature, unionFeature, inputGeomName, unionGeomName);
+        final Geometry intersectGeometry = VectorProcessUtils.intersectionFeatureToFeature(inputFeature, unionFeature, inputGeomName, unionGeomName);
         if (!intersectGeometry.isEmpty()) {
 
             final Feature resultFeature = FeatureUtilities.defaultFeature(newFeatureType, featureID);

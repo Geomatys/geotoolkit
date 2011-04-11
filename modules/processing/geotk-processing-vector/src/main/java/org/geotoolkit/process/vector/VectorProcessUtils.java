@@ -121,7 +121,8 @@ public final class VectorProcessUtils {
     }
 
     /**
-     * Create a copy of a FeatureType in keeping only one geometry
+     * Create a copy of a FeatureType in keeping only one geometry.
+     * if keepingGeometry is null, the keeped one will be the default Geometry
      * @param oldFeatureType
      * @param keepedGeometry
      * @return the new FeatureType
@@ -169,7 +170,6 @@ public final class VectorProcessUtils {
         for (String delPropertyDesc : listToRemove) {
             ftb.remove(delPropertyDesc);
         }
-
 
         return ftb.buildFeatureType();
     }
@@ -263,13 +263,13 @@ public final class VectorProcessUtils {
     }
 
     /**
-     * Compute clipping between the feature geometry and the clipping geometry
+     * Compute geometryIntersection between the feature geometry and the clipping geometry
      * @param featureGeometry Geometry
      * @param clippingGeometry Geometry
      * @return the intersection Geometry
      * If featureGeometry didn't intersect clippingGeometry the function return null;
      */
-    public static Geometry clipping(final Geometry featureGeometry, final Geometry clippingGeometry) {
+    public static Geometry geometryIntersection(final Geometry featureGeometry, final Geometry clippingGeometry) {
         if (featureGeometry == null || clippingGeometry == null) {
             return null;
         }
@@ -289,7 +289,7 @@ public final class VectorProcessUtils {
      * between geometries. And return null if the featureGeometry is contained into
      * the diffGeometry
      */
-    public static Geometry difference(final Geometry featureGeometry, final Geometry diffGeometry) {
+    public static Geometry geometryDifference(final Geometry featureGeometry, final Geometry diffGeometry) {
         if (featureGeometry == null || diffGeometry == null) {
             return null;
         }
@@ -305,6 +305,26 @@ public final class VectorProcessUtils {
         }
     }
 
+    /**
+     * Re-project a geometry from geometryCRS to wandedCRS. If geometryCRS and wantedCRS are equals,
+     * the input geometry will be returned.
+     * @param sourceCRS
+     * @param targetCRS
+     * @param inputGeom
+     * @return the re-projected Geometry
+     * @throws TransformException
+     * @throws FactoryException
+     */
+    public static Geometry repojectGeometry (final CoordinateReferenceSystem wantedCRS, final CoordinateReferenceSystem geometryCRS,
+            final Geometry inputGeom) throws TransformException, FactoryException{
+
+        if (!(wantedCRS.equals(geometryCRS))) {
+            final MathTransform transform = CRS.findMathTransform(wantedCRS, geometryCRS);
+            return JTS.transform(inputGeom, transform);
+        }else{
+            return inputGeom;
+        }
+    }
     
     /**
      * Compute the intersection geometry between two Features.
@@ -313,13 +333,13 @@ public final class VectorProcessUtils {
      * a conversion into input CRS is done.
      * @param sourceFeature
      * @param targetFeature
-     * @param sourceGeomName
-     * @param targetGeomName
+     * @param sourceGeomName - geometry attribute name to use in sourceFeature
+     * @param targetGeomName - geometry attribute name to use in targetFeature
      * @return the intersection Geometry.
      * @throws FactoryException
      * @throws TransformException
      */
-    public static Geometry intersect(final Feature sourceFeature, final Feature targetFeature,
+    public static Geometry intersectionFeatureToFeature(final Feature sourceFeature, final Feature targetFeature,
             final String sourceGeomName, final String targetGeomName) throws FactoryException, TransformException {
 
         Geometry sourceGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
@@ -350,10 +370,7 @@ public final class VectorProcessUtils {
             }
         }
 
-        if (!(targetCRS.equals(sourceCRS))) {
-            final MathTransform transform = CRS.findMathTransform(targetCRS, sourceCRS);
-            targetGeometry = JTS.transform(targetGeometry, transform);
-        }
+        targetGeometry = repojectGeometry(sourceCRS, targetCRS, targetGeometry);
 
         return sourceGeometry.intersection(targetGeometry);
     }
@@ -362,7 +379,7 @@ public final class VectorProcessUtils {
      * Compute the intersection between a Feature and a FeatureCollection and return a FeatureCollection
      * where each Feature contained  the intersection geometry as default geometry and other none geometry
      * attributes form input Feature.
-     * If a feature have many geometries, we concatenate them before compute intersection.
+     * If a Feature from featureList have many geometries, we concatenate them before compute intersection.
      * @param inputFeature
      * @param featureList
      * @param geometryName the geometry name in inputFeature to compute the intersection
@@ -371,7 +388,7 @@ public final class VectorProcessUtils {
      * @throws FactoryException
      * @throws TransformException
      */
-    public static FeatureCollection<Feature> intersection(final Feature inputFeature,
+    public static FeatureCollection<Feature> intersectionFeatureToColl(final Feature inputFeature,
             final FeatureCollection<Feature> featureList, String geometryName)
             throws FactoryException, TransformException {
 
@@ -411,7 +428,8 @@ public final class VectorProcessUtils {
         proc.run();
 
         //get all Features which intersects the intput Feature geometry
-        final FeatureCollection<Feature> featuresOut = (FeatureCollection<Feature>) proc.getOutput().parameter(IntersectDescriptor.FEATURE_OUT.getName().getCode()).getValue();
+        final FeatureCollection<Feature> featuresOut = (FeatureCollection<Feature>) proc.getOutput().parameter(
+                IntersectDescriptor.FEATURE_OUT.getName().getCode()).getValue();
 
         if (featuresOut.isEmpty()) {
             //return an empty FeatureCollection
@@ -453,23 +471,17 @@ public final class VectorProcessUtils {
 
                         //if geometry is not null
                         if (geom != null) {
-                            //re projection into the first geometry CRS found if different
-                            if (!(geomCRS.equals(outputBaseCRS))) {
-                                final MathTransform transform = CRS.findMathTransform(geomCRS, outputBaseCRS);
-                                geom = JTS.transform(geom, transform);
-                            }
-
+                            //reproject geom into outputBaseCRS
+                            geom = repojectGeometry(outputBaseCRS, geomCRS, geom);
+                            
                             //get all geometries recursively
                             final Collection<Geometry> subGeometry = getGeometries(geom);
 
                             //each sub geometries
                             for (Geometry aGeometry : subGeometry) {
-                                //if geometry CRS is different of inputGeometry CRS
-                                if (!(outputBaseCRS.equals(inputCRS))) {
-                                    //re-projection into the inputGeometry CRS
-                                    final MathTransform transformToOriginal = CRS.findMathTransform(outputBaseCRS, inputCRS);
-                                    aGeometry = JTS.transform(aGeometry, transformToOriginal);
-                                }
+                                //reproject aGeometry into inputCRS
+                                aGeometry = repojectGeometry(inputCRS, outputBaseCRS, aGeometry);
+
                                 //concatenate all intersections between this geometry and the inputGeometry
                                 interGeomBuffer = interGeomBuffer.union(inputGeometry.intersection(aGeometry));
                             }

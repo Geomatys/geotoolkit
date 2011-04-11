@@ -119,14 +119,10 @@ public class Difference extends AbstractProcess {
                                 final CoordinateReferenceSystem diffGeomCRS = diffGeomDesc.getCoordinateReferenceSystem();
 
                                 //re-project clipping geometry into input Feature geometry CRS
-                                if (!(diffGeomCRS.equals(inputGeomCRS))) {
-                                    final MathTransform transform = CRS.findMathTransform(diffGeomCRS, inputGeomCRS);
-                                    diffGeom = JTS.transform(diffGeom, transform);
-                                }
-
-
+                                diffGeom = VectorProcessUtils.repojectGeometry(inputGeomCRS, diffGeomCRS, diffGeom);
+                                
                                 final Geometry diffGeometry =
-                                        VectorProcessUtils.difference(resultGeometry, diffGeom);
+                                        VectorProcessUtils.geometryDifference(resultGeometry, diffGeom);
 
                                 /*
                                  * If diffGeometry return null, it's because the result geomerty

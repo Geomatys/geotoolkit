@@ -18,7 +18,6 @@
 package org.geotoolkit.process.vector.affinetransform;
 
 import com.vividsolutions.jts.geom.CoordinateSequence;
-import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.impl.CoordinateArraySequence;
 
 import org.geotoolkit.geometry.jts.transform.AbstractGeometryTransformer;
