@@ -19,20 +19,19 @@ package org.geotoolkit.process;
 
 import java.lang.reflect.Array;
 import java.util.AbstractMap.SimpleEntry;
-import org.geotoolkit.util.converter.NonconvertibleObjectException;
-import org.opengis.parameter.ParameterDescriptor;
+
 import java.util.Map.Entry;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Set;
 import java.util.Arrays;
-import java.util.Collection;
-import org.geotoolkit.util.StringUtilities;
-import org.opengis.metadata.Identifier;
 import java.util.Iterator;
 import javax.measure.unit.Unit;
+
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.lang.Setup;
+import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.process.converters.StringToAffineTransformConverter;
 import org.geotoolkit.process.converters.StringToCRSConverter;
 import org.geotoolkit.process.converters.StringToFeatureCollectionConverter;
@@ -41,17 +40,22 @@ import org.geotoolkit.process.converters.StringToFilterConverter;
 import org.geotoolkit.process.converters.StringToGeometryConverter;
 import org.geotoolkit.process.converters.StringToSortByConverter;
 import org.geotoolkit.process.converters.StringToUnitConverter;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.ObjectConverter;
+
+import static org.geotoolkit.io.X364.*;
+
 import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.util.InternationalString;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.metadata.Identifier;
 
-import static org.geotoolkit.io.X364.*;
 
 /**
  * Runnable class which dynamically run processes available in the registry.
@@ -62,20 +66,18 @@ import static org.geotoolkit.io.X364.*;
 public final class ProcessConsole {
 
     private static final boolean X364_SUPPORTED = X364.isSupported();
-    private static final Collection<ObjectConverter> listConverter = new ArrayList<ObjectConverter>();
+    private static final List listConverter = UnmodifiableArrayList.wrap(
+                StringToFeatureCollectionConverter.getInstance(),
+                StringToUnitConverter.getInstance(),
+                StringToGeometryConverter.getInstance(),
+                StringToCRSConverter.getInstance(),
+                StringToFeatureTypeConverter.getInstance(),
+                StringToAffineTransformConverter.getInstance(),
+                StringToFilterConverter.getInstance(),
+                StringToSortByConverter.getInstance());
 
 
     public static void main(String[] args) {
-
-        // Initialize the converter list 
-        listConverter.add(StringToFeatureCollectionConverter.getInstance());
-        listConverter.add(StringToUnitConverter.getInstance());
-        listConverter.add(StringToGeometryConverter.getInstance());
-        listConverter.add(StringToCRSConverter.getInstance());
-        listConverter.add(StringToFeatureTypeConverter.getInstance());
-        listConverter.add(StringToAffineTransformConverter.getInstance());
-        listConverter.add(StringToFilterConverter.getInstance());
-        listConverter.add(StringToSortByConverter.getInstance());
 
         Setup.initialize(null);
 
@@ -306,7 +308,7 @@ public final class ProcessConsole {
         try{
             converter = ConverterRegistry.system().converter(String.class, binding);
         }catch(NonconvertibleObjectException ex){
-            for(ObjectConverter conv : listConverter){
+            for(ObjectConverter conv : (List<ObjectConverter>)listConverter){
                 if(conv.getTargetClass().equals(binding)){
                     converter = conv;
                 }

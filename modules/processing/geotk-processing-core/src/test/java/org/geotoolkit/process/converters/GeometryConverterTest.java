@@ -45,9 +45,8 @@ public class GeometryConverterTest {
         
         String inputString = "POLYGON ((20 20, 20 100, 120 100, 140 20, 20 20))";
         Geometry convertedGeom = converter.convert(inputString);
-        System.out.println(convertedGeom);
         Geometry expectedGeom = buildResultGeom();
-        System.out.println(expectedGeom);
+        
         Coordinate[] expCoords = expectedGeom.getCoordinates();
         Coordinate[] convCoords = convertedGeom.getCoordinates();
 
