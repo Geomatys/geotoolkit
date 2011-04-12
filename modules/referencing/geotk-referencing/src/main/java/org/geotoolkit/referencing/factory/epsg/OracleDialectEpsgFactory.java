@@ -19,7 +19,6 @@ package org.geotoolkit.referencing.factory.epsg;
 
 import java.util.Map;
 import java.sql.Connection;
-import java.util.regex.Pattern;
 
 import org.geotoolkit.factory.Hints;
 
@@ -36,11 +35,6 @@ import org.geotoolkit.factory.Hints;
  * @module
  */
 final class OracleDialectEpsgFactory extends AnsiDialectEpsgFactory {
-    /**
-     * The pattern to use for removing "{@code AS}" elements from the SQL statements.
-     */
-    private final Pattern pattern = Pattern.compile("\\sAS\\s");
-
     /**
      * Constructs an authority factory using the given connection.
      */
@@ -65,6 +59,6 @@ final class OracleDialectEpsgFactory extends AnsiDialectEpsgFactory {
      */
     @Override
     protected String adaptSQL(final String statement) {
-        return pattern.matcher(super.adaptSQL(statement)).replaceAll(" ");
+        return statement.replace(" AS ", " ");
     }
 }
