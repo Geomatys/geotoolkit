@@ -18,6 +18,7 @@
 package org.geotoolkit.data.sml;
 
 import java.io.IOException;
+import java.util.Collections;
 
 import org.apache.commons.dbcp.BasicDataSource;
 
@@ -29,6 +30,7 @@ import org.geotoolkit.jdbc.ManageableDataSource;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
+import org.geotoolkit.parameter.Parameters;
 
 import org.opengis.metadata.quality.ConformanceResult;
 import org.opengis.parameter.ParameterDescriptor;
@@ -53,13 +55,14 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
      * Parameter identifying the OM datastore
      */
     public static final ParameterDescriptor<String> DBTYPE =
-            new DefaultParameterDescriptor<String>("dbtype","DbType",String.class, null,true);
+            new DefaultParameterDescriptor<String>("dbtype","DbType",String.class, "SML",true);
 
     /**
      * Parameter for database type (postgres, derby, ...)
      */
     public static final ParameterDescriptor<String> SGBDTYPE =
-            new DefaultParameterDescriptor<String>("sgbdtype","SGBDType",String.class, "postgres",true);
+            new DefaultParameterDescriptor<String>(Collections.singletonMap("name", "sgbdtype"),
+            String.class, new String[]{"derby","postgres"},null,null,null,null,true);
 
     /**
      * Parameter for database url for derby database
@@ -116,8 +119,17 @@ public class SMLDataStoreFactory extends AbstractDataStoreFactory {
         boolean valid = super.canProcess(params);
         if(valid){
             Object value = params.parameter(DBTYPE.getName().toString()).getValue();
-            if(value != null && value instanceof String){
-                return value.toString().equals("SML");
+            if("SML".equals(value)){
+                Object sgbdtype = Parameters.value(SGBDTYPE, params);
+
+                if("derby".equals(sgbdtype)){
+                    //check the url is set
+                    Object derbyurl = Parameters.value(DERBYURL, params);
+                    return derbyurl != null;
+                }else{
+                    return true;
+                }
+
             }else{
                 return false;
             }

@@ -30,6 +30,11 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
 public class PostgisNGDataStoreFactory extends JDBCDataStoreFactory {
+
+    /** parameter for database type */
+    public static final ParameterDescriptor<String> DBTYPE =
+             new DefaultParameterDescriptor<String>("dbtype","Type",String.class,"postgisng",true);
+
     /**
      * Parameter for namespace of the datastore
      */

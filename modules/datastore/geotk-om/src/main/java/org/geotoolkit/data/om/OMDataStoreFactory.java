@@ -17,6 +17,8 @@
 
 package org.geotoolkit.data.om;
 
+import java.util.Collections;
+import org.geotoolkit.parameter.Parameters;
 import org.opengis.parameter.ParameterDescriptor;
 import org.apache.commons.dbcp.BasicDataSource;
 
@@ -56,13 +58,14 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
      * Parameter identifying the OM datastore
      */
     public static final ParameterDescriptor<String> DBTYPE =
-             new DefaultParameterDescriptor<String>("dbtype","DbType",String.class, null, true);
+             new DefaultParameterDescriptor<String>("dbtype","DbType",String.class, "OM", true);
 
     /**
      * Parameter for database type (postgres, derby, ...)
      */
     public static final ParameterDescriptor<String> SGBDTYPE =
-             new DefaultParameterDescriptor<String>("sgbdtype","SGBDType",String.class, "postgres",true);
+             new DefaultParameterDescriptor<String>(Collections.singletonMap("name", "sgbdtype"),
+            String.class, new String[]{"derby","postgres"},null,null,null,null,true);
 
     /**
      * Parameter for database url for derby database
@@ -121,8 +124,17 @@ public class OMDataStoreFactory extends AbstractDataStoreFactory {
         boolean valid = super.canProcess(params);
         if(valid){
             Object value = params.parameter(DBTYPE.getName().toString()).getValue();
-            if(value != null && value instanceof String){
-                return value.toString().equals("OM");
+            if("OM".equals(value)){
+                Object sgbdtype = Parameters.value(SGBDTYPE, params);
+
+                if("derby".equals(sgbdtype)){
+                    //check the url is set
+                    Object derbyurl = Parameters.value(DERBYURL, params);
+                    return derbyurl != null;
+                }else{
+                    return true;
+                }
+
             }else{
                 return false;
             }
