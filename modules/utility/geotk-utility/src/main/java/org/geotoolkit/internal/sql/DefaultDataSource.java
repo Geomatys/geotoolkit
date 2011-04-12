@@ -29,18 +29,19 @@ import java.sql.SQLException;
 import java.sql.DatabaseMetaData;
 import javax.sql.DataSource;
 
-import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.util.Utilities;
 
 
 /**
  * A data source which get the connection from a {@link DriverManager}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.11
+ * @author Guilhem Legal (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -60,6 +61,7 @@ public class DefaultDataSource implements DataSource {
 
     /**
      * The URL to use for connecting to the database.
+     * This field can not be {@code null}.
      */
     public final String url;
 
@@ -69,10 +71,8 @@ public class DefaultDataSource implements DataSource {
      * @param url The URL to use for connecting to the database.
      */
     public DefaultDataSource(final String url) {
+        ArgumentChecks.ensureNonNull("url", url);
         this.url = url;
-        if (url == null) {
-            throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "URL"));
-        }
     }
 
     /**
@@ -216,6 +216,38 @@ public class DefaultDataSource implements DataSource {
         } catch (SQLException e) {
             // This is the expected exception.
         }
+    }
+
+    /**
+     * Compares this data source with the given object for equality.
+     *
+     * @param other The object to compare with this data source.
+     * @return {@code true} if both objects are equal.
+     *
+     * @since 3.18
+     */
+    @Override
+    public boolean equals(final Object other) {
+        if (other == this) {
+            return true;
+        }
+        if (other != null && other.getClass().equals(getClass())) {
+            final DefaultDataSource that = (DefaultDataSource) other;
+            return Utilities.equals(this.url, that.url);
+        }
+        return false;
+    }
+
+    /**
+     * Returns a hash code value for this data source.
+     *
+     * @return A hash code value for this data source.
+     *
+     * @since 3.18
+     */
+    @Override
+    public int hashCode() {
+        return url.hashCode() ^ 335483867;
     }
 
     /**
