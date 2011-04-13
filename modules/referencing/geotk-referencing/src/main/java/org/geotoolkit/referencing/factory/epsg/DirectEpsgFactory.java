@@ -117,7 +117,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @author Rueben Schulz (UBC)
  * @author Matthias Basler
  * @author Andrea Aime (TOPP)
- * @version 3.16
+ * @version 3.18
  *
  * @see ThreadedEpsgFactory
  * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
@@ -352,7 +352,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
      * Cache for axis numbers. This service is not provided by {@link CachingAuthorityFactory}
      * since the number of axis is used internally in this class.
      *
-     * @see #getDimensionForCRS
+     * @see #getDimensionForCS
      */
     private final Map<String,Integer> axisCounts = new HashMap<String,Integer>();
 
@@ -2309,12 +2309,13 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
 
     /**
      * Returns the source and target dimensions for the specified method, provided that
-     * they are the same for every operation using that method. The returned array is
-     * never null, but some elements in that array may be null.
+     * they are the same for all operations using that method. The returned array has
+     * a length of 2 and is never null, but some elements in that array may be null.
      */
     private Integer[] getDimensionsForMethod(final String code) throws NoSuchIdentifierException, SQLException {
         final Integer[] dimensions = new Integer[2];
         final boolean[] differents = new boolean[2];
+        int numDifferences = 0;
         boolean projections = false;
         do {
             /*
@@ -2323,44 +2324,46 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
              * mostly to coordinate transformations, since those fields are typically empty in
              * the case of projected CRS.
              *
-             * In the second execution, we will look for the for the base geographic CRS and
-             * the resulting projected CRS that use the given operation method. This allows
-             * us to handle the case of projected CRS (typically 2).
+             * In the second execution, we will look for the base geographic CRS and
+             * the resulting projected CRS that use the given operation method. This
+             * allows us to handle the case of projected CRS (typically 2 dimensional).
              */
             final String key, sql;
             if (!projections) {
                 key = "MethodDimensions";
-                sql = "SELECT SOURCE_CRS_CODE," +
-                            " TARGET_CRS_CODE" +
-                      " FROM [Coordinate_Operation]" +
-                      " WHERE COORD_OP_METHOD_CODE = ?" +
-                        " AND SOURCE_CRS_CODE IS NOT NULL" +
-                        " AND TARGET_CRS_CODE IS NOT NULL" +
-                        " AND DEPRECATED = 0";
+                sql = "SELECT DISTINCT SRC.COORD_SYS_CODE," +
+                                     " TGT.COORD_SYS_CODE" +
+                      " FROM [Coordinate_Operation] AS CO" +
+                " INNER JOIN [Coordinate Reference System] AS SRC ON SRC.COORD_REF_SYS_CODE = CO.SOURCE_CRS_CODE" +
+                " INNER JOIN [Coordinate Reference System] AS TGT ON TGT.COORD_REF_SYS_CODE = CO.TARGET_CRS_CODE" +
+                      " WHERE CO.DEPRECATED = 0 AND COORD_OP_METHOD_CODE = ?";
             } else {
                 key = "DerivedDimensions";
-                sql = "SELECT SOURCE_GEOGCRS_CODE," + // Source CRS
-                            " COORD_REF_SYS_CODE" +   // Target CRS
-                      " FROM [Coordinate Reference System] AS CRS" +
-                " INNER JOIN [Coordinate_Operation] AS CO" +
-                        " ON CRS.PROJECTION_CONV_CODE = CO.COORD_OP_CODE" +
-                     " WHERE COORD_OP_METHOD_CODE = ?" +
-                       " AND SOURCE_GEOGCRS_CODE IS NOT NULL" +
-                       " AND COORD_REF_SYS_CODE IS NOT NULL" +
-                       " AND CO.DEPRECATED = 0";
+                sql = "SELECT DISTINCT SRC.COORD_SYS_CODE," +
+                                     " TGT.COORD_SYS_CODE" +
+                      " FROM [Coordinate Reference System] AS TGT" +
+                " INNER JOIN [Coordinate Reference System] AS SRC ON TGT.SOURCE_GEOGCRS_CODE = SRC.COORD_REF_SYS_CODE" +
+                " INNER JOIN [Coordinate_Operation] AS CO ON TGT.PROJECTION_CONV_CODE = CO.COORD_OP_CODE" +
+                      " WHERE CO.DEPRECATED = 0 AND COORD_OP_METHOD_CODE = ?";
             }
             final PreparedStatement stmt = prepareStatement(key, sql);
             final ResultSet result = executeQuery(stmt, code);
             while (result.next()) {
                 for (int i=0; i<dimensions.length; i++) {
                     if (!differents[i]) { // Note worth to test heterogenous dimensions.
-                        Integer dim = getDimensionForCRS(result.getString(i + 1));
+                        final Integer dim = getDimensionForCS(result.getString(i + 1));
                         if (dim != null) {
-                            if (dimensions[i] != null && !dim.equals(dimensions[i])) {
+                            if (dimensions[i] == null) {
+                                dimensions[i] = dim;
+                            } else if (!dim.equals(dimensions[i])) {
+                                dimensions[i] = null;
                                 differents[i] = true;
-                                dim = null;
+                                if (++numDifferences == differents.length) {
+                                    // All dimensions has been set to null.
+                                    result.close();
+                                    return dimensions;
+                                }
                             }
-                            dimensions[i] = dim;
                         }
                     }
                 }
@@ -2371,18 +2374,16 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     }
 
     /**
-     * Returns the dimension of the specified CRS, or {@code null} if not found.
+     * Returns the dimension of the specified Coordinate System, or {@code null} if not found.
      */
-    private Integer getDimensionForCRS(final String code) throws NoSuchIdentifierException, SQLException {
-        final PreparedStatement stmt;
+    private Integer getDimensionForCS(final String code) throws NoSuchIdentifierException, SQLException {
         Integer dimension = axisCounts.get(code);
         if (dimension == null) {
+            final PreparedStatement stmt;
             stmt = prepareStatement("Dimension",
                     " SELECT COUNT(COORD_AXIS_CODE)" +
                      " FROM [Coordinate Axis]" +
-                     " WHERE COORD_SYS_CODE = (SELECT COORD_SYS_CODE " +
-                     " FROM [Coordinate Reference System]" +
-                     " WHERE COORD_REF_SYS_CODE = ?)");
+                     " WHERE COORD_SYS_CODE = ?");
             final ResultSet result = executeQuery(stmt, code);
             dimension = Integer.valueOf(result.next() ? result.getInt(1) : 0);
             axisCounts.put(code, dimension);
