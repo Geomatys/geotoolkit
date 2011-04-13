@@ -126,7 +126,11 @@ public class ParameterValueReader extends StaxStreamReader {
             throws XMLStreamException{
 
         final GeneralParameterValue result;
-        final GeneralParameterDescriptor desc = this.descriptors.get(eName.replace('_', ' '));
+        GeneralParameterDescriptor desc = this.descriptors.get(eName);
+
+        if(desc == null){
+            desc = this.descriptors.get(eName.replace('_', ' '));
+        }
 
         if(desc == null){
             throw new NullPointerException("No descriptor found whose name code is "+eName);
