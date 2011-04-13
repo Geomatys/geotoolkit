@@ -104,7 +104,7 @@ import static org.geotoolkit.image.io.mosaic.Tile.LOGGER;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -258,7 +258,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
         /*
          * We could check for 'output' before to create the temporary file in order to avoid
          * creating the file if we are going to fail anyway,  but we don't because users are
-         * allowed to override the 'filter' methods and set the output there (undocumented
+         * allowed to override the 'filter' method and set the output there (undocumented
          * but possible, and TileBuilder do something like that).
          *
          * Uses the PNG format, which is lossless and bundled in standard Java distributions.
@@ -1288,87 +1288,15 @@ search: for (final Tile tile : tiles) {
     }
 
     /**
-     * A mosaic image reader using the temporary files created by {@link #getImageReader}.
-     *
-     * @author Martin Desruisseaux (Geomatys)
-     * @version 3.01
-     *
-     * @since 3.01
-     * @module
-     */
-    private static class CachingReader extends MosaicImageReader {
-        /**
-         * The temporary files created for each input tile.
-         * This map will not be modified by this class.
-         */
-        private final Map<Tile,RawFile> temporaryFiles;
-
-        /**
-         * The raw image reader.
-         */
-        private ImageReader reader;
-
-        /**
-         * Constructs an image reader using the given cached files. The given map is retained
-         * by direct reference - it must not be cloned, because its content will actually be
-         * determined a little bit later (but before the read operation begin).
-         */
-        public CachingReader(final Map<Tile,RawFile> temporaryFiles) {
-            this.temporaryFiles = temporaryFiles;
-        }
-
-        /**
-         * Returns the reader to use for reading the given tile,
-         * which will use the cached file if possible.
-         */
-        @Override
-        ImageReader getTileReader(final Tile tile) throws IOException {
-            final RawFile raw = temporaryFiles.get(tile);
-            if (raw == null) {
-                return super.getTileReader(tile);
-            }
-            if (reader == null) {
-                final Iterator<ImageReader> it = ImageIO.getImageReadersByFormatName("raw");
-                while (it.hasNext()) {
-                    reader = it.next();
-                    if (!reader.getClass().getName().startsWith("org.geotoolkit.")) {
-                        break;
-                    }
-                    // The Geotk implementation is oriented toward one-banded values.
-                    // Prefer an other implementation (typically JAI) if one is found.
-                }
-                if (reader == null) {
-                    throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER));
-                }
-            }
-            IOUtilities.close(reader.getInput());
-            reader.setInput(raw.getImageInputStream());
-            return reader;
-        }
-
-        /**
-         * Disposes this reader.
-         */
-        @Override
-        public void dispose() {
-            if (reader != null) {
-                try {
-                    IOUtilities.close(reader.getInput());
-                } catch (IOException e) {
-                    Logging.unexpectedException(LOGGER, Tile.class, "close", e);
-                }
-                reader.dispose();
-                reader = null;
-            }
-            super.dispose();
-        }
-    }
-
-    /**
      * Gets and initializes an {@linkplain ImageReader image reader} that can decode the specified
      * input. The returned reader has its {@linkplain ImageReader#setInput input} already set. If
      * the reader input is different than the specified one, then it is probably an {@linkplain
      * ImageInputStream image input stream} and closing it is caller's responsibility.
+     * <p>
+     * This method partially duplicates the work of
+     * {@link org.geotoolkit.image.io.XImageIO#getReader(Object, Boolean, Boolean)} except for the
+     * special handling of mosaic input (which may use the internal {@link CachingMosaicReader})
+     * and the calls to the user-overrideable {@link #filter(ImageReader)} method.
      *
      * @param  input The input to read.
      * @return The image reader that seems to be the most appropriated (never {@code null}).
@@ -1384,13 +1312,13 @@ search: for (final Tile tile : tiles) {
          */
         for (final Class<?> type : MosaicImageReader.Spi.INPUT_TYPES) {
             if (type.isInstance(input)) {
-                // Creates an instance of CachingReader unconditionally, even if the
-                // map of temporary files is empty, because it may be filled later.
-                final ImageReader reader = new CachingReader(temporaryFiles);
-                reader.setInput(input);
+                // Creates an instance of CachingMosaicReader unconditionally, even if
+                // the map of temporary files is empty, because it may be filled later.
+                final ImageReader reader = new CachingMosaicReader(temporaryFiles, input);
                 if (filter(reader)) {
                     return reader;
                 }
+                reader.dispose();
                 break;
             }
         }
@@ -1426,7 +1354,26 @@ search: for (final Tile tile : tiles) {
         if (stream != null) {
             stream.close();
         }
-        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER));
+        /*
+         * Before to give up, if the input is a file or a directory, try to open it has a mosaic.
+         */
+        Exception cause = null;
+        if (input instanceof File) {
+            TileManager[] managers = null;
+            try {
+                managers = TileManagerFactory.DEFAULT.create((File) input);
+            } catch (Exception e) { // Catch: IOException and RuntimeException
+                cause = e;
+            }
+            if (managers != null) {
+                final ImageReader reader = new CachingMosaicReader(temporaryFiles, managers);
+                if (filter(reader)) {
+                    return reader;
+                }
+                reader.dispose();
+            }
+        }
+        throw new UnsupportedImageFormatException(Errors.format(Errors.Keys.NO_IMAGE_READER), cause);
     }
 
     /**

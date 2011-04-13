@@ -514,7 +514,7 @@ public class MosaicBuilder implements LogProducer {
                 nx = (untiledBounds.width  - 1) / tileSize.width  + 1;
                 ny = (untiledBounds.height - 1) / tileSize.height + 1;
             }
-            final int[] sub = new int[Integer.SIZE - Integer.numberOfLeadingZeros(Math.max(nx, ny) - 1)];
+            final int[] sub = new int[Math.max(1, Integer.SIZE - Integer.numberOfLeadingZeros(Math.max(nx, ny) - 1))];
             for (int i=0, s=1; i<sub.length; i++, s <<= 1) {
                 sub[i] = s;
             }
@@ -699,28 +699,14 @@ public class MosaicBuilder implements LogProducer {
      * @throws IOException if an I/O operation was requested and failed.
      */
     private TileManager createFromInput(final boolean constantArea, final boolean usePattern,
-                                        final TileManager input)
-            throws IOException
+            final TileManager input) throws IOException
     {
         final Dimension tileSize      = this.tileSize;      // Paranoiac compile-time safety against
         final Rectangle untiledBounds = this.untiledBounds; // unwanted reference assignments.
         final Rectangle imageBounds   = new Rectangle(untiledBounds);
         final Rectangle tileBounds    = new Rectangle(tileSize);
         Dimension[] subsamplings = getSubsamplings();
-        if (subsamplings == null) {
-            final int n;
-            if (constantArea) {
-                n = Math.max(tileBounds.width, tileBounds.height) / MIN_TILE_SIZE;
-            } else {
-                n = Math.max(imageBounds.width  / tileBounds.width,
-                             imageBounds.height / tileBounds.height);
-            }
-            subsamplings = new Dimension[n];
-            for (int i=1; i<=n; i++) {
-                subsamplings[i-1] = new Dimension(i,i);
-            }
-        }
-        if (subsamplings.length == 0) {
+        if (subsamplings == null || subsamplings.length == 0) {
             throw new IllegalStateException(Errors.format(Errors.Keys.MISSING_PARAMETER_VALUE_$1,
                     Vocabulary.format(Vocabulary.Keys.SUBSAMPLING)));
         }

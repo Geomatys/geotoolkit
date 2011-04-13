@@ -79,6 +79,11 @@ public final class MosaicReadWriteTest extends ImageTestBase {
     };
 
     /**
+     * Potential checksums of the whole image.
+     */
+    public static final long[] IMAGE_CHECKSUMS = {1800014439L, 2327013649L, 3333171052L};
+
+    /**
      * The source mosaic.
      */
     private TileManager sourceMosaic;
@@ -180,7 +185,8 @@ public final class MosaicReadWriteTest extends ImageTestBase {
         image = reader.read(0);
         assertEquals("Width",    4*S, image.getWidth ());
         assertEquals("Height",   2*S, image.getHeight());
-        assertEquals("Checksum", 1800014439L, Commons.checksum(image));
+        showCurrentImage("testInputMosaic()");
+        assertCurrentChecksumEquals("testInputMosaic", IMAGE_CHECKSUMS);
         for (int i=0,y=0; y<2; y++) {
             for (int x=0; x<4; x++) {
                 ImageReadParam param = reader.getDefaultReadParam();
@@ -199,6 +205,7 @@ public final class MosaicReadWriteTest extends ImageTestBase {
         ImageReadParam param = reader.getDefaultReadParam();
         param.setSourceSubsampling(4, 2, 0, 0);
         image = reader.read(0, param);
+        showCurrentImage("testInputMosaic() - subsampling");
         assertEquals("Width",  S, image.getWidth ());
         assertEquals("Height", S, image.getHeight());
         assertEquals("Checksum", 329430756L, Commons.checksum(image));
@@ -208,6 +215,7 @@ public final class MosaicReadWriteTest extends ImageTestBase {
         param = reader.getDefaultReadParam();
         param.setSourceRegion(new Rectangle(S/2, S/4, 3*S, S+S/2));
         image = reader.read(0, param);
+        showCurrentImage("testInputMosaic() - subregion");
         assertEquals("Width",  3*S,   image.getWidth ());
         assertEquals("Height", S+S/2, image.getHeight());
         assertEquals("Checksum", 4259662989L, Commons.checksum(image));
@@ -330,7 +338,7 @@ public final class MosaicReadWriteTest extends ImageTestBase {
         reader.dispose();
         assertEquals(4, image.getSampleModel().getNumBands());
         assertEquals(Transparency.TRANSLUCENT, image.getColorModel().getTransparency());
-        assertEquals(3333171052L, Commons.checksum(image));
+        assertCurrentChecksumEquals("testTransparency", IMAGE_CHECKSUMS);
         /*
          * Visual test (if enabled).
          */

@@ -26,11 +26,13 @@ import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.mosaic.TileManager;
+import org.geotoolkit.image.io.mosaic.TileManagerFactory;
 import org.geotoolkit.image.io.mosaic.MosaicBuilder;
 import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.image.io.mosaic.MosaicImageWriteParam;
 import org.geotoolkit.internal.image.io.SupportFiles;
 import org.geotoolkit.coverage.grid.GridGeometry2D;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.resources.Errors;
 
@@ -51,6 +53,17 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  */
 final class MosaicCoverageReader extends ImageCoverageReader {
     /**
+     * The extension to give to the directory which will contain the cached tiles.
+     */
+    static final String CACHE_EXTENSION = ".tiles";
+
+    /**
+     * {@code true} if this reader has been built from a pre-existing cache.
+     * This is used only for debugging and testing purpose.
+     */
+    final boolean cached;
+
+    /**
      * The coordinate reference system of the mosaic.
      */
     private final CoordinateReferenceSystem crs;
@@ -64,7 +77,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * Creates a mosaic reader using a cache of tiles at different resolutions. Tiles will be
      * created the first time this constructor is invoked for a given input. The tiles will be
      * created in a sub-directory having the same name than the given input, with an additional
-     * {@code ".tiles"} extension.
+     * {@value #CACHE_EXTENSION} extension.
      * <p>
      * This method will fetch the {@linkplain CoordinateReferenceSystem Coordinate Reference System}
      * from a file having the same name than the given {@code input} file but with the {@code ".prj"}
@@ -87,10 +100,29 @@ final class MosaicCoverageReader extends ImageCoverageReader {
             throw new CoverageStoreException(e);
         }
         /*
+         * If a serialized TileManager exists, reuse it.
+         */
+        directory = new File(directory, input.getName() + CACHE_EXTENSION);
+        final File serialized = new File(directory, TileManager.SERIALIZED_FILENAME);
+        if (serialized.exists()) {
+            TileManager[] managers = null;
+            try {
+                managers = TileManagerFactory.DEFAULT.create(serialized);
+            } catch (Exception e) { // Catch IOException and various RuntimeExceptions.
+                // Ignore, we will try to rebuild the manager using the code below.
+                // Declare the public CoverageIO.createMosaicReader(...) method in the log record.
+                Logging.recoverableException(GridCoverageStore.LOGGER, CoverageIO.class, "createMosaicReader", e);
+            }
+            if (managers != null && managers.length == 1) {
+                setInput(managers[0]);
+                cached = true;
+                return;
+            }
+        }
+        /*
          * Creates (if it does not already exist) the directory which will contain the tiles.
          */
         final TileWritingPolicy policy;
-        directory = new File(directory, input.getName() + ".tiles");
         if (directory.exists()) {
             if (!directory.isDirectory()) {
                 throw new CoverageStoreException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_$1, directory));
@@ -113,8 +145,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
         final TileManager manager;
         try {
             manager = builder.writeFromInput(input, params);
-            final ObjectOutputStream out = new ObjectOutputStream(
-                    new FileOutputStream(new File(directory, TileManager.SERIALIZED_FILENAME)));
+            final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialized));
             out.writeObject(manager);
             out.writeObject(crs);
             out.close();
@@ -122,6 +153,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
             throw new CoverageStoreException(e);
         }
         setInput(manager);
+        cached = false;
     }
 
     /**
@@ -172,5 +204,13 @@ final class MosaicCoverageReader extends ImageCoverageReader {
                     new GridGeometry2D(gg.getGridRange(), gg.getGridToCRS(), crs);
         }
         return gridGeometry;
+    }
+
+    /**
+     * Returns a string representation for debugging purpose.
+     */
+    @Override
+    public String toString() {
+        return "MosaicCoverageReader[cached=" + cached + ']';
     }
 }

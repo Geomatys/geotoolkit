@@ -135,7 +135,7 @@ public class TileManagerFactory extends Factory {
      *   <li>If the given argument {@linkplain File#isDirectory() is a directory}, then this
      *       method delegates to {@link #create(File, FileFilter, ImageReaderSpi)} which scan
      *       all image files found in the directory.</li>
-     *   <li>Otherwise an exception is thrown.</li>
+     *   <li>Otherwise an {@link IOException} is thrown.</li>
      * </ul>
      *
      * @param  file The serialized file or the directory to scan.

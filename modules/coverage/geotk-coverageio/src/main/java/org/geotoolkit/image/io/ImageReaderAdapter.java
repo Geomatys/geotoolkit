@@ -1177,7 +1177,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
                     }
                     if (acceptStream) {
                         final ImageInputStream in = Formats.createUncachedImageInputStream(source);
-                        try {
+                        if (in != null) try {
                             return main.canDecodeInput(in);
                         } finally {
                             in.close();
