@@ -146,7 +146,7 @@ public final class GridCoverageReaders {
      * size and it's format. The creation time can go from a few seconds to several
      * minuts or even hours if you give him an image like the full resolution BlueMarble.
      *
-     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#createMosaicReader}.
+     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#testWriteOrReuseMosaic}.
      */
     @Deprecated
     public static GridCoverageReader createMosaicReader(final File input) throws IOException, CoverageStoreException{
@@ -204,7 +204,10 @@ public final class GridCoverageReaders {
      * @return Entry<TileManager,CoordinateReferenceSystem>
      * @throws IOException
      * @throws CoverageStoreException
+     *
+     * @deprecated Partially replaced by {@link TileManagerFactory#create(File)} and {@link PrjFiles#read(File)}.
      */
+    @Deprecated
     public static Entry<TileManager,CoordinateReferenceSystem> openTileManager(final File file) throws IOException, CoverageStoreException{
         TileManager manager = null;
         final CoordinateReferenceSystem crs;
@@ -282,7 +285,10 @@ public final class GridCoverageReaders {
      * @param crs
      * @return
      * @throws CoverageStoreException
+     *
+     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#createMosaicReader}.
      */
+    @Deprecated
     public static GridCoverageReader toCoverageReader(final TileManager tm,
             final CoordinateReferenceSystem crs) throws CoverageStoreException{
 
@@ -311,7 +317,10 @@ public final class GridCoverageReaders {
      * @return GridCoverageReader
      * @throws IOException
      * @throws CoverageStoreException
+     *
+     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#createMosaicReader}.
      */
+    @Deprecated
     public static GridCoverageReader openMosaic(final File file) throws IOException, CoverageStoreException{
         final Entry<TileManager,CoordinateReferenceSystem> entry = openTileManager(file);
         return toCoverageReader(entry.getKey(), entry.getValue());
