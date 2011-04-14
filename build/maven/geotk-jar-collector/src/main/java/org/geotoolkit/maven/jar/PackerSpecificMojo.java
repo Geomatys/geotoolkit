@@ -99,7 +99,7 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "geotk-storage-"           + VERSION + ".jar",
                     "jai_imageio-*.jar",
                     "netcdf-*.jar",
-                    "unidatacommon-*.jar",
+                    "unidataCommon-*.jar",
                     "jcip-annotations-*.jar",
                     "opendap-*.jar",
                     "grib-*.jar",
