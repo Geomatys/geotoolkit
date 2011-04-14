@@ -18,10 +18,8 @@
 package org.geotoolkit.gui.swing.go2.control.navigation;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -29,19 +27,10 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @author johann sorel (Puzzle-GIS)
  * @module pending
  */
-public class PanAction extends AbstractAction {
-
-    private static final ImageIcon ICON_ZOOM_PAN_16 = IconBundle.getIcon("16_zoom_pan");
-    private static final ImageIcon ICON_ZOOM_PAN_24 = IconBundle.getIcon("24_zoom_pan");
-
-    private JMap2D map = null;
+public class PanAction extends AbstractMapAction {
 
     public PanAction() {
-        this(false);
-    }
-
-    public PanAction(final boolean big) {
-        super("",(big) ? ICON_ZOOM_PAN_24 : ICON_ZOOM_PAN_16);
+        putValue(SMALL_ICON, IconBundle.getIcon("16_zoom_pan"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_pan"));
     }
 
@@ -55,12 +44,4 @@ public class PanAction extends AbstractAction {
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
-    public void setMap(final JMap2D map) {
-        this.map = map;
-        setEnabled(map != null);
-    }
 }

@@ -18,15 +18,12 @@
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.event.ActionEvent;
-
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.AbstractAction;
 
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser;
 import org.geotoolkit.gui.swing.crschooser.JCRSChooser.ACTION;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.opengis.referencing.operation.TransformException;
 
 /**
@@ -34,11 +31,17 @@ import org.opengis.referencing.operation.TransformException;
  * @author johann sorel
  * @module pending
  */
-public class CRSAction extends AbstractAction {
+public class CRSAction extends AbstractMapAction {
 
-    private static final Logger LOGGER = Logging.getLogger(CRSAction.class);
+    public CRSAction(){
+        this(null);
+    }
 
-    private JMap2D map = null;
+    public CRSAction(final JMap2D map){
+        super(map);
+        putValue(NAME, "CRS");
+        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_crs"));
+    }
 
     @Override
     public void actionPerformed(final ActionEvent arg0) {
@@ -51,18 +54,10 @@ public class CRSAction extends AbstractAction {
                 try {
                     map.getCanvas().setObjectiveCRS(chooser.getCRS());
                 } catch (TransformException ex) {
-                    LOGGER.log(Level.WARNING, null, ex);
+                    getLogger().log(Level.WARNING, null, ex);
                 }
             }
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
-    public void setMap(final JMap2D map) {
-        this.map = map;
-        setEnabled(map != null);
-    }
 }

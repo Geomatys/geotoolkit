@@ -20,7 +20,6 @@ import java.awt.BorderLayout;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.JComponent;
 import javax.swing.JEditorPane;
 import javax.swing.JPanel;
@@ -32,6 +31,8 @@ import org.geotoolkit.display2d.primitive.GraphicProbe;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.AbstractMapDecoration;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
+import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.util.StringUtilities;
 
 /**
@@ -42,10 +43,19 @@ import org.geotoolkit.util.StringUtilities;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class DebugAction extends AbstractAction {
+public class DebugAction extends AbstractMapAction {
 
     private final DebugDecoration deco = new DebugDecoration();
-    private JMap2D map = null;
+
+    public DebugAction() {
+        this(null);
+    }
+
+    public DebugAction(final JMap2D map) {
+        super("config", IconBundle.getIcon("16_deco_debug"),map);
+        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_debug"));
+        setMap(map);
+    }
 
     @Override
     public void actionPerformed(final ActionEvent arg0) {
@@ -60,10 +70,7 @@ public class DebugAction extends AbstractAction {
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
+    @Override
     public void setMap(final JMap2D map) {
         if (map == this.map) {
             return;

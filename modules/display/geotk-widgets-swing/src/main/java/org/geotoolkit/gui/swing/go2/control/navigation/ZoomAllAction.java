@@ -20,14 +20,10 @@ package org.geotoolkit.gui.swing.go2.control.navigation;
 import java.awt.event.ActionEvent;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.operation.TransformException;
@@ -37,46 +33,27 @@ import org.opengis.referencing.operation.TransformException;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class ZoomAllAction extends AbstractAction {
-
-    private static final Logger LOGGER = Logging.getLogger(ZoomAllAction.class);
-
-    private static final ImageIcon ICON_ZOOM_ALL_16 = IconBundle.getIcon("16_zoom_all");
-    private static final ImageIcon ICON_ZOOM_ALL_24 = IconBundle.getIcon("24_zoom_all");
+public class ZoomAllAction extends AbstractMapAction {
 
     public ZoomAllAction() {
-        this(false);
-    }
-
-    public ZoomAllAction(final boolean big) {
-        super("",(big)? ICON_ZOOM_ALL_24 : ICON_ZOOM_ALL_16);
+        putValue(SMALL_ICON, IconBundle.getIcon("16_zoom_all"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_all"));
     }
-
-    private JMap2D map = null;
 
     @Override
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null) {
-            Envelope rect = map.getCanvas().getContainer().getGraphicsEnvelope();
+            final Envelope rect = map.getCanvas().getContainer().getGraphicsEnvelope();
             try {
                 map.getCanvas().getController().setVisibleArea(rect);
             } catch (TransformException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             } catch (IllegalArgumentException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             } catch (NoninvertibleTransformException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             } 
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
-    public void setMap(final JMap2D map) {
-        this.map = map;
-        setEnabled(map != null);
-    }
 }

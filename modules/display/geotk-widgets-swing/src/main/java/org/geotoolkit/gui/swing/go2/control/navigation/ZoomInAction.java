@@ -18,32 +18,20 @@
 package org.geotoolkit.gui.swing.go2.control.navigation;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-
 
 /**
  *
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class ZoomInAction extends AbstractAction {
-
-    private static final ImageIcon ICON_ZOOM_IN_16 = IconBundle.getIcon("16_zoom_in");
-    private static final ImageIcon ICON_ZOOM_IN_24 = IconBundle.getIcon("24_zoom_in");
-
-    private JMap2D map = null;
+public class ZoomInAction extends AbstractMapAction {
 
     public ZoomInAction() {
-        this(false);
-    }
-
-    public ZoomInAction(final boolean big) {
-        super("",(big)?ICON_ZOOM_IN_24 : ICON_ZOOM_IN_16);
+        putValue(SMALL_ICON, IconBundle.getIcon("16_zoom_in"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_in"));
     }
 
@@ -54,16 +42,7 @@ public class ZoomInAction extends AbstractAction {
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
             map.setHandler(new ZoomInHandler(map));
-//            map.getCanvas().getController().scale(2);
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
-    public void setMap(final JMap2D map) {
-        this.map = map;
-        setEnabled(map != null);
-    }
 }

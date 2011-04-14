@@ -19,31 +19,19 @@ package org.geotoolkit.gui.swing.go2.control.information;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class MesureLenghtAction extends AbstractAction {
-
-    private static final ImageIcon ICON_LENGHT_16 = IconBundle.getIcon("16_mesure_lenght");
-    private static final ImageIcon ICON_LENGHT_24 = IconBundle.getIcon("24_mesure_lenght");
-
-    private JMap2D map = null;
+public class MesureLenghtAction extends AbstractMapAction {
 
     public MesureLenghtAction(){
-        this(false);
-    }
-
-    public MesureLenghtAction(final boolean big){
-        super("",(big)?ICON_LENGHT_24 :ICON_LENGHT_16);
+        putValue(SMALL_ICON, IconBundle.getIcon("16_mesure_lenght"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_measure_lenght"));
     }
 
@@ -54,12 +42,4 @@ public class MesureLenghtAction extends AbstractAction {
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
-    public void setMap(final JMap2D map) {
-        this.map = map;
-        setEnabled(map != null);
-    }
 }

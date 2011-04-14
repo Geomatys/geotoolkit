@@ -17,12 +17,10 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import javax.swing.ImageIcon;
 import javax.swing.JButton;
-import javax.swing.JToolBar;
+
 import org.geotoolkit.display.container.AbstractContainer2D;
 import org.geotoolkit.display2d.container.ContextContainer2D;
 import org.geotoolkit.gui.swing.go2.JMap2D;
@@ -35,37 +33,16 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JEditionBar extends JToolBar implements MapControlBar{
+public class JEditionBar extends AbstractMapControlBar implements ActionListener{
 
-    private static final ImageIcon ICON_EDIT = IconBundle.getIcon("16_edit_geom");
-
-    private final JButton guiEdit = new JButton(ICON_EDIT);
-
-    private JMap2D map = null;
-
+    private final JButton guiEdit = new JButton(IconBundle.getIcon("16_edit_geom"));
     private final DefaultEditionHandler handler = new DefaultEditionHandler(map);
-
-    private final ActionListener listener = new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(map == null) return;
-
-            handler.setMap(map);
-            map.setHandler(handler);
-            
-        }
-    };
-
 
     /**
      * Creates a new instance of JMap2DControlBar
      */
     public JEditionBar() {
         this(null);
-
-        guiEdit.setToolTipText(MessageBundle.getString("map_edit"));
-
     }
 
     /**
@@ -74,41 +51,32 @@ public class JEditionBar extends JToolBar implements MapControlBar{
      */
     public JEditionBar(final JMap2D map) {
         setMap(map);
-
-        guiEdit.addActionListener(listener);
+        guiEdit.setToolTipText(MessageBundle.getString("map_edit"));
+        guiEdit.addActionListener(this);
         add(guiEdit);
     }
-
     
-    /**
-     * set the related Map2D
-     * @param map2d : related Map2D
-     */
     @Override
     public void setMap(final JMap2D map2d) {
-        map = map2d;
+        super.setMap(map2d);
 
         guiEdit.setEnabled(false);
 
         if(map != null){
-            AbstractContainer2D container = map.getCanvas().getContainer();
+            final AbstractContainer2D container = map.getCanvas().getContainer();
             if(container instanceof ContextContainer2D){
                 guiEdit.setEnabled(true);
-            }else{
             }
         }
 
         handler.setMap(map);
-
     }
 
     @Override
-    public JMap2D getMap() {
-        return map;
+    public void actionPerformed(ActionEvent e) {
+        if(map == null) return;
+        handler.setMap(map);
+        map.setHandler(handler);
     }
 
-    @Override
-    public Component getComponent() {
-        return this;
-    }
 }

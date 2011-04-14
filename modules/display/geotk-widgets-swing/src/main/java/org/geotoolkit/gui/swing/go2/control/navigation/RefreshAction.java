@@ -18,10 +18,8 @@
 package org.geotoolkit.gui.swing.go2.control.navigation;
 
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -30,19 +28,10 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class RefreshAction extends AbstractAction {
-
-    private static final ImageIcon ICON_REFRESH_16 = IconBundle.getIcon("16_data_reload");
-    private static final ImageIcon ICON_REFRESH_24 = IconBundle.getIcon("24_data_reload");
-
-    private JMap2D map = null;
+public class RefreshAction extends AbstractMapAction {
 
     public RefreshAction() {
-        this(false);
-    }
-
-    public RefreshAction(final boolean big) {
-        super("",(big)?ICON_REFRESH_24 : ICON_REFRESH_16);
+        putValue(SMALL_ICON, IconBundle.getIcon("16_data_reload"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_refresh"));
     }
 
@@ -56,12 +45,4 @@ public class RefreshAction extends AbstractAction {
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
-    public void setMap(final JMap2D map) {
-        this.map = map;
-        setEnabled(map != null);
-    }
 }

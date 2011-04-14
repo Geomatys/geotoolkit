@@ -17,12 +17,10 @@
  */
 package org.geotoolkit.gui.swing.go2.control.information;
 
-import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
 import java.awt.event.ActionEvent;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.information.presenter.InformationPresenter;
+import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 
@@ -31,20 +29,12 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class InformationAction extends AbstractAction {
+public class InformationAction extends AbstractMapAction {
 
-    private static final ImageIcon ICON_INFO_16 = IconBundle.getIcon("16_deco_info");
-    private static final ImageIcon ICON_INFO_24 = IconBundle.getIcon("24_deco_info");
-
-    private JMap2D map = null;
     private InformationPresenter presenter = null;
 
     public InformationAction(){
-        this(false);
-    }
-
-    public InformationAction(final boolean big){
-        super("",(big) ? ICON_INFO_24 : ICON_INFO_16);
+        putValue(SMALL_ICON, IconBundle.getIcon("16_deco_info"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_information"));
     }
 
@@ -67,12 +57,4 @@ public class InformationAction extends AbstractAction {
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
-    public void setMap(final JMap2D map) {
-        this.map = map;
-        setEnabled(map != null);
-    }
 }

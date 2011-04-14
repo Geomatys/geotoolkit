@@ -19,35 +19,37 @@ package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.event.ActionEvent;
 
-import javax.swing.AbstractAction;
 import javax.swing.JDialog;
-import org.geotoolkit.gui.swing.go2.JMap2D;
 
+import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ConfigAction extends AbstractAction {
+public class ConfigAction extends AbstractMapAction {
 
-    private JMap2D map = null;
+    public ConfigAction() {
+        this(null);
+    }
+
+    public ConfigAction(final JMap2D map) {
+        super(map);
+        putValue(SMALL_ICON, IconBundle.getIcon("16_map2d_optimize"));
+        putValue(NAME, "config");
+        putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_config"));
+    }
 
     @Override
     public void actionPerformed(final ActionEvent arg0) {
         if (map != null ) {
-            JDialog dia = new JConfigDialog(null, map);
+            final JDialog dia = new JConfigDialog(null, map);
             dia.setLocationRelativeTo(null);
             dia.setVisible(true);
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
-    public void setMap(final JMap2D map) {
-        this.map = map;
-        setEnabled(map != null);
-    }
 }

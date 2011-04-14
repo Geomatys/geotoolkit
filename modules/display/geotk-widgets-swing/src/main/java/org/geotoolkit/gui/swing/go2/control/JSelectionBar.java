@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
-import java.awt.Component;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
@@ -29,7 +28,6 @@ import javax.swing.JLabel;
 import javax.swing.JPopupMenu;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
-import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
 import org.geotoolkit.gui.swing.go2.JMap2D;
@@ -42,7 +40,7 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JSelectionBar extends JToolBar implements MapControlBar{
+public class JSelectionBar extends AbstractMapControlBar implements ActionListener{
 
     private static final ImageIcon ICON_SELECT = IconBundle.getIcon("16_select");
     private static final ImageIcon ICON_CONFIG = IconBundle.getIcon("16_vertical_next");
@@ -67,24 +65,6 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
     private final JRadioButtonMenuItem guiVisual = new JRadioButtonMenuItem(MessageBundle.getString("select_visual"),ICON_VISUAL);
 
     private final DefaultSelectionHandler handler = new DefaultSelectionHandler();
-
-    private final ActionListener listener = new ActionListener() {
-
-        @Override
-        public void actionPerformed(ActionEvent e) {
-            if(map == null) return;
-
-            handler.setMap(map);
-            handler.setGeographicArea(guiGeographic.isSelected());
-            handler.setSquareArea(guiSquare.isSelected());
-            handler.setWithinArea(guiWithin.isSelected());
-
-            map.setHandler(handler);
-        }
-    };
-
-        
-    private JMap2D map = null;
 
     /**
      * Creates a new instance of JMap2DControlBar
@@ -143,40 +123,32 @@ public class JSelectionBar extends JToolBar implements MapControlBar{
         groupVisit.add(guiVisual);
         groupVisit.add(guiGeographic);
 
-        guiSelect.addActionListener(listener);
-        guiIntersect.addActionListener(listener);
-        guiWithin.addActionListener(listener);
-        guiLasso.addActionListener(listener);
-        guiSquare.addActionListener(listener);
-        guiGeographic.addActionListener(listener);
-        guiVisual.addActionListener(listener);
+        guiSelect.addActionListener(this);
+        guiIntersect.addActionListener(this);
+        guiWithin.addActionListener(this);
+        guiLasso.addActionListener(this);
+        guiSquare.addActionListener(this);
+        guiGeographic.addActionListener(this);
+        guiVisual.addActionListener(this);
 
         add(guiSelect);
         add(guiConfig);
-
     }
 
     @Override
     public void setMap(final JMap2D map2d) {
-        map = map2d;
-
-        if(map != null){
-            guiSelect.setEnabled(true);
-            guiSelect.setEnabled(true);
-        }else{
-            guiSelect.setEnabled(false);
-            guiSelect.setEnabled(false);
-        }
-
+        super.setMap(map2d);
+        guiSelect.setEnabled(map != null);
     }
 
     @Override
-    public JMap2D getMap() {
-        return map;
+    public void actionPerformed(ActionEvent e) {
+        if(map == null) return;
+        handler.setMap(map);
+        handler.setGeographicArea(guiGeographic.isSelected());
+        handler.setSquareArea(guiSquare.isSelected());
+        handler.setWithinArea(guiWithin.isSelected());
+        map.setHandler(handler);
     }
 
-    @Override
-    public Component getComponent() {
-        return this;
-    }
 }

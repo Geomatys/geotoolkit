@@ -17,10 +17,6 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
-
-import java.awt.Component;
-import javax.swing.JToolBar;
-
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.information.InformationAction;
 import org.geotoolkit.gui.swing.go2.control.information.MesureAreaAction;
@@ -32,12 +28,11 @@ import org.geotoolkit.gui.swing.go2.control.information.MesureLenghtAction;
  * @author johann sorel (Puzzle-GIS)
  * @module pending
  */
-public class JInformationBar extends JToolBar implements MapControlBar{
+public class JInformationBar extends AbstractMapControlBar{
 
     private final MesureLenghtAction actionLenght;
     private final MesureAreaAction actionArea;
     private final InformationAction actionInfo;
-    private JMap2D map = null;
 
     public JInformationBar() {
         this(null);
@@ -48,14 +43,10 @@ public class JInformationBar extends JToolBar implements MapControlBar{
      * @param pane : related Map2D or null
      */
     public JInformationBar(final JMap2D pane) {
-        this(pane,false);
-    }
 
-    public JInformationBar(final JMap2D pane,final boolean bigIcons) {
-
-        actionLenght = new MesureLenghtAction(bigIcons);
-        actionArea = new MesureAreaAction(bigIcons);
-        actionInfo = new InformationAction(bigIcons);
+        actionLenght = new MesureLenghtAction();
+        actionArea = new MesureAreaAction();
+        actionInfo = new InformationAction();
 
         add(actionLenght);
         add(actionArea);
@@ -67,20 +58,12 @@ public class JInformationBar extends JToolBar implements MapControlBar{
      * set the related Map2D
      * @param map2d : related Map2D
      */
+    @Override
     public void setMap(final JMap2D map2d) {
-        map = map2d;
+        super.setMap(map2d);
         actionLenght.setMap(map);
         actionArea.setMap(map);
         actionInfo.setMap(map);
     }
 
-    @Override
-    public JMap2D getMap() {
-        return map;
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
-    }
 }

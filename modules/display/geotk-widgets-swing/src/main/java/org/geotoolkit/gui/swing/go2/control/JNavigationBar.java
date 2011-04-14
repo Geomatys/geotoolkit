@@ -17,9 +17,6 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
-import java.awt.Component;
-import javax.swing.JToolBar;
-
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.ZoomAllAction;
 import org.geotoolkit.gui.swing.go2.control.navigation.ZoomInAction;
@@ -34,15 +31,13 @@ import org.geotoolkit.gui.swing.go2.control.navigation.RefreshAction;
  * @author johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JNavigationBar extends JToolBar implements MapControlBar{
+public class JNavigationBar extends AbstractMapControlBar{
 
     private final ZoomAllAction actionZoomAll;
     private final ZoomInAction actionZoomIn;
     private final ZoomOutAction actionZoomOut;
     private final PanAction actionZoomPan;
     private final RefreshAction actionRefresh;
-
-    private JMap2D map = null;
 
     /**
      * Creates a new instance of JMap2DControlBar
@@ -56,15 +51,11 @@ public class JNavigationBar extends JToolBar implements MapControlBar{
      * @param pane : related Map2D or null
      */
     public JNavigationBar(final JMap2D pane) {
-        this(pane,false);
-    }
-
-    public JNavigationBar(final JMap2D pane, final boolean bigIcons) {
-        actionZoomAll = new ZoomAllAction(bigIcons);
-        actionZoomIn = new ZoomInAction(bigIcons);
-        actionZoomOut = new ZoomOutAction(bigIcons);
-        actionZoomPan = new PanAction(bigIcons);
-        actionRefresh = new RefreshAction(bigIcons);
+        actionZoomAll = new ZoomAllAction();
+        actionZoomIn = new ZoomInAction();
+        actionZoomOut = new ZoomOutAction();
+        actionZoomPan = new PanAction();
+        actionRefresh = new RefreshAction();
 
         add(actionZoomAll);
         add(actionRefresh);
@@ -78,8 +69,9 @@ public class JNavigationBar extends JToolBar implements MapControlBar{
      * set the related Map2D
      * @param map2d : related Map2D
      */
+    @Override
     public void setMap(final JMap2D map2d) {
-        map = map2d;
+        super.setMap(map2d);
         actionRefresh.setMap(map);
         actionZoomAll.setMap(map);
         actionZoomIn.setMap(map);
@@ -87,13 +79,4 @@ public class JNavigationBar extends JToolBar implements MapControlBar{
         actionZoomPan.setMap(map);
     }
 
-    @Override
-    public JMap2D getMap() {
-        return map;
-    }
-
-    @Override
-    public Component getComponent() {
-        return this;
-    }
 }

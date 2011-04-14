@@ -3,7 +3,8 @@
  *    http://www.geotoolkit.org
  *
  *    (C) 2007 - 2008, Open Source Geospatial Foundation (OSGeo)
- *    (C) 2008 - 2009, Johann Sorel
+ *    (C) 2008 - 2011, Johann Sorel
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -15,33 +16,43 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
+
 package org.geotoolkit.gui.swing.go2.control;
 
 import java.awt.Component;
+import javax.swing.JToolBar;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 
 /**
  *
- * @author eclesia
+ * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public interface MapControlBar {
+public abstract class AbstractMapControlBar extends JToolBar implements MapControlBar{
 
-    /**
-     * set the related Map2D
-     * @param map2d : related Map2D
-     */
-    void setMap(JMap2D map);
+    protected JMap2D map = null;
 
-    /**
-     * Get the related Map this tool bar is working on.
-     * @return JMap2D or null
-     */
-    JMap2D getMap();
+    protected AbstractMapControlBar(){
+        this(null);
+    }
 
-    /**
-     * @return the tool bar itself
-     */
-    Component getComponent();
+    protected AbstractMapControlBar(final JMap2D map){
+        this.map = map;
+    }
+
+    @Override
+    public void setMap(final JMap2D map2d) {
+        map = map2d;
+    }
+
+    @Override
+    public JMap2D getMap() {
+        return map;
+    }
+
+    @Override
+    public Component getComponent() {
+        return this;
+    }
 
 }

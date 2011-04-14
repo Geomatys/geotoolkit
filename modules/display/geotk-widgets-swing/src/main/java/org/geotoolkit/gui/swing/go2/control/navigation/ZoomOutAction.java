@@ -20,34 +20,20 @@ package org.geotoolkit.gui.swing.go2.control.navigation;
 import java.awt.event.ActionEvent;
 import java.awt.geom.NoninvertibleTransformException;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.swing.AbstractAction;
-import javax.swing.ImageIcon;
 
-import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.go2.control.AbstractMapAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
-import org.geotoolkit.util.logging.Logging;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class ZoomOutAction extends AbstractAction {
-
-    private static final Logger LOGGER = Logging.getLogger(ZoomOutAction.class);
-
-    private static final ImageIcon ICON_ZOOM_OUT_16 = IconBundle.getIcon("16_zoom_out");
-    private static final ImageIcon ICON_ZOOM_OUT_24 = IconBundle.getIcon("24_zoom_out");
-
-    private JMap2D map = null;
+public class ZoomOutAction extends AbstractMapAction {
 
     public ZoomOutAction() {
-        this(false);
-    }
-    public ZoomOutAction(final boolean big) {
-        super("",(big)? ICON_ZOOM_OUT_24 : ICON_ZOOM_OUT_16);
+        putValue(SMALL_ICON, IconBundle.getIcon("16_zoom_out"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("map_zoom_out"));
     }
 
@@ -60,17 +46,9 @@ public class ZoomOutAction extends AbstractAction {
             try {
                 map.getCanvas().getController().scale(0.5d);
             } catch (NoninvertibleTransformException ex) {
-                LOGGER.log(Level.WARNING, null, ex);
+                getLogger().log(Level.WARNING, null, ex);
             } 
         }
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
-    public void setMap(final JMap2D map) {
-        this.map = map;
-        setEnabled(map != null);
-    }
 }

@@ -48,7 +48,6 @@ import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
-import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
 import org.geotoolkit.display2d.GO2Hints;
@@ -69,7 +68,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JCoordinateBar extends JToolBar {
+public class JCoordinateBar extends AbstractMapControlBar {
 
     private static final ImageIcon ICON_HINT = addHorizontalMargin(IconBundle.getIcon("16_hint"),2);
     private static final ImageIcon ICON_TEMPORAL = addHorizontalMargin(IconBundle.getIcon("16_temporal"),2);
@@ -78,7 +77,6 @@ public class JCoordinateBar extends JToolBar {
     private static final NumberFormat NUMBER_FORMAT = NumberFormat.getNumberInstance();
 
     private final myListener listener = new myListener();
-    private JMap2D map = null;
     private String error = MessageBundle.getString("map_control_coord_error");
 
     private final JButton guiHint = new JButton(ICON_HINT);
@@ -369,11 +367,9 @@ public class JCoordinateBar extends JToolBar {
         setMap(candidate);
     }
 
-    public JMap2D getMap() {
-        return map;
-    }
-
+    @Override
     public void setMap(final JMap2D map) {
+        super.setMap(map);
         guiCombo.setMap(map);
         guiTimeLine.setMap(map);
         guiElevationLine.setMap(map);

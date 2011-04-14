@@ -17,17 +17,7 @@
  */
 package org.geotoolkit.gui.swing.go2.control;
 
-import java.awt.Dimension;
-
-import javax.swing.Action;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JToolBar;
-import javax.swing.border.EmptyBorder;
-
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.gui.swing.resource.IconBundle;
-import org.geotoolkit.gui.swing.resource.MessageBundle;
 
 /**
  * JMap2DControlBar is a JPanel to handle Navigation decoration and debugging panel
@@ -35,18 +25,10 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @author johann sorel
  * @module pending
  */
-public class JConfigBar extends JToolBar {
-
-    private static final ImageIcon ICON_CONFIG = IconBundle.getIcon("16_map2d_optimize");
-    private static final ImageIcon ICON_DEBUG = IconBundle.getIcon("16_deco_debug");
+public class JConfigBar extends AbstractMapControlBar {
 
     private final ConfigAction ACTION_CONFIG = new ConfigAction();
     private final DebugAction ACTION_DEBUG = new DebugAction();
-
-    private JMap2D map = null;
-    private final JButton gui_config = buildButton(ICON_CONFIG, ACTION_CONFIG, MessageBundle.getString("map_config"));
-    private final JButton gui_debug = buildButton(ICON_DEBUG, ACTION_DEBUG, MessageBundle.getString("map_debug"));
-    private final int largeur = 2;
 
     /**
      * Creates a new instance of JMap2DControlBar
@@ -60,35 +42,18 @@ public class JConfigBar extends JToolBar {
      * @param pane : related Map2D or null
      */
     public JConfigBar(final JMap2D pane) {
+        add(ACTION_CONFIG);
+        add(ACTION_DEBUG);
         setMap(pane);
-        init();
     }
-
-    private void init() {
-        add(gui_config);
-        add(gui_debug);
-    }
-
-
-    private JButton buildButton(final ImageIcon img,final Action action, final String tooltip) {
-        JButton but = new JButton(action);
-        but.setIcon(img);
-        but.setBorder(new EmptyBorder(largeur, largeur, largeur, largeur));
-        but.setBorderPainted(false);
-        but.setContentAreaFilled(false);
-        but.setPreferredSize(new Dimension(25, 25));
-        but.setOpaque(false);
-        but.setToolTipText(tooltip);
-        return but;
-    }
-
 
     /**
      * set the related Map2D
      * @param map2d : related Map2D
      */
+    @Override
     public void setMap(final JMap2D map2d) {
-        map = map2d;
+        super.setMap(map2d);
         ACTION_CONFIG.setMap(map);
         ACTION_DEBUG.setMap(map);
     }
