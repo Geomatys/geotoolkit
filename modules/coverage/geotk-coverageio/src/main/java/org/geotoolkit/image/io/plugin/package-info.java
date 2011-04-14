@@ -31,38 +31,38 @@
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.AsciiGridReader}&nbsp;</td>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.AsciiGridWriter}&nbsp;</td>
- *     <td>&nbsp;{@code "ascii-grid"}&nbsp;</td>
- *     <td>&nbsp;text/plain&nbsp;</td>
+ *     <td>&nbsp;{@code ascii-grid}&nbsp;</td>
+ *     <td>&nbsp;{@code text/plain}&nbsp;</td>
  *     <td>&nbsp;US locale and ASCII encoding.&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.NetcdfImageReader}&nbsp;</td>
  *     <td>&nbsp;&nbsp;&nbsp;</td>
- *     <td>&nbsp;{@code "netcdf"}&nbsp;</td>
- *     <td>&nbsp;</td>
+ *     <td>&nbsp;{@code netcdf}&nbsp;</td>
+ *     <td>&nbsp;{@code application/netcdf}&nbsp;</td>
  *     <td>&nbsp;Assume <A HREF="http://www.cfconventions.org/">CF Metadata conventions</A>.&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.RawImageReader}&nbsp;</td>
  *     <td>&nbsp;</td>
- *     <td>&nbsp;{@code "raw"}&nbsp;</td>
+ *     <td>&nbsp;{@code raw}&nbsp;</td>
  *     <td>&nbsp;</td>
  *     <td>&nbsp;Require {@link com.sun.media.imageio.stream.RawImageInputStream}.&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.RawTiffImageReader}&nbsp;</td>
  *     <td>&nbsp;</td>
- *     <td>&nbsp;{@code "tiff"}&nbsp;</td>
- *     <td>&nbsp;</td>
+ *     <td>&nbsp;{@code tiff}&nbsp;</td>
+ *     <td>&nbsp;{@code image/tiff}&nbsp;</td>
  *     <td>&nbsp;For uncompressed TIFF images only.&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageReader}&nbsp;</td>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextMatrixImageWriter}&nbsp;</td>
- *     <td>&nbsp;{@code "matrix"}&nbsp;</td>
- *     <td>&nbsp;text/plain&nbsp;</td>
+ *     <td>&nbsp;{@code matrix}&nbsp;</td>
+ *     <td>&nbsp;{@code text/plain}&nbsp;</td>
  *     <td>&nbsp;Locale sensitive.&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.TextRecordImageReader}&nbsp;</td>
  *     <td>&nbsp;</td>
- *     <td>&nbsp;{@code "records"}&nbsp;</td>
- *     <td>&nbsp;text/plain&nbsp;</td>
+ *     <td>&nbsp;{@code records}&nbsp;</td>
+ *     <td>&nbsp;{@code text/plain}&nbsp;</td>
  *     <td>&nbsp;Locale sensitive.&nbsp;</td>
  *   </tr><tr>
  *     <td>&nbsp;{@link org.geotoolkit.image.io.plugin.WorldFileImageReader}&nbsp;</td>
@@ -71,6 +71,12 @@
  *     <td>&nbsp;</td>
  *     <td>&nbsp;Require {@linkplain org.geotoolkit.image.io.plugin.WorldFileImageReader.Spi#registerDefaults
  *         explicit registration}.&nbsp;</td>
+ *   </tr><tr>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.mosaic.MosaicImageReader}&nbsp;</td>
+ *     <td>&nbsp;{@link org.geotoolkit.image.io.mosaic.MosaicImageWriter}&nbsp;</td>
+ *     <td>&nbsp;{@code mosaic}&nbsp;</td>
+ *     <td>&nbsp;</td>
+ *     <td>&nbsp;See {@link org.geotoolkit.image.io.mosaic}.&nbsp;</td>
  *   </tr>
  * </table>
  *
@@ -82,48 +88,10 @@
  * format from a locale sensitive one. See the
  * {@link org.geotoolkit.image.io.plugin.TextMatrixImageReader.Spi} javadoc for an example.
  *
- * {@section Reformating to integer sample values}
- * By default, {@link org.geotoolkit.image.io.StreamImageReader} creates images backed by floating
- * point values ({@link java.awt.image.DataBuffer#TYPE_FLOAT}) and using a grayscale color space.
- * This politic produces images matching closely the original data, involving as few transformations
- * as possible. However displaying floating-point images is usually very slow. Users are strongly
- * encouraged to use <a href="http://java.sun.com/products/java-media/jai/">Java Advanced Imaging</a>
- * operations after reading in order to scale data as they see fit. The example below reformats the
- * {@link java.awt.image.DataBuffer#TYPE_FLOAT TYPE_FLOAT} data into
- * {@link java.awt.image.DataBuffer#TYPE_BYTE TYPE_BYTE} and changes the grayscale colors to an
- * indexed color model.
- *
- * {@preformat java
- *     import java.awt.RenderingHints;
- *     import java.awt.image.DataBuffer;
- *     import java.awt.image.IndexColorModel;
- *     import java.awt.image.renderable.ParameterBlock;
- *     import javax.media.jai.operator.FormatDescriptor;
- *     import javax.media.jai.operator.RescaleDescriptor;
- *
- *     public class Example {
- *         public static RenderedImage reformat(RenderedImage image) {
- *             // Prepare the indexed color model. Arrays
- *             // R, G and B should contains 256 RGB values.
- *             final byte[] R = ...
- *             final byte[] G = ...
- *             final byte[] B = ...
- *             final IndexColorModel colors = new IndexColorModel(8, 256, R, G, B);
- *             final ImageLayout     layout = new ImageLayout().setColorModel(colorModel);
- *             final RenderingHints   hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
- *
- *             // Rescale the image.   First, all pixels values are transformed using
- *             // the equation pi=CO+C1*p. Then, type float is clamp to type byte and
- *             // the new index color model is set.   Displaying such an image should
- *             // be much faster.
- *             final double C0 = ...
- *             final double C1 = ...
- *             image = RescaleDescriptor.create(image, new double[] {C1}, new double[] {C0}, null);
- *             image = FormatDescriptor .create(image, DataBuffer.TYPE_BYTE, null);
- *             return image;
- *         }
- *     }
- * }
+ * {@section System initialization}
+ * <b>Remainder:</b> while not mandatory, it is recommended to invoke some initialization methods
+ * at least once before to use the Geotk library. See {@link org.geotoolkit.image.io} for more
+ * information.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Antoine Hnawia (IRD)

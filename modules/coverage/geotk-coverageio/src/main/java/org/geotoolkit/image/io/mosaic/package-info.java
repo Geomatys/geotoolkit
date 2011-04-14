@@ -219,7 +219,7 @@
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.18
  *
  * @since 2.5
  * @module

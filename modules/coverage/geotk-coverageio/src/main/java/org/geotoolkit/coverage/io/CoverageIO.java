@@ -21,6 +21,8 @@ import java.net.URL;
 import java.io.File;
 
 import org.opengis.coverage.grid.GridCoverage;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+
 import org.geotoolkit.lang.Static;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
@@ -36,7 +38,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * In the simplest case, this class just creates an {@link ImageCoverageReader} instance with
  * the input set to the given object (typically a {@link File} or {@link URL}). However if the
  * image is very large and is not encoded in a format that support natively tiling, it may be
- * more efficient to create a mosaic of tiles first. The {@link #createMosaicReader(File)}
+ * more efficient to create a mosaic of tiles first. The {@link #writeOrReuseMosaic(File)}
  * method is provided for this purpose.
  *
  * {@section Writers}
@@ -130,6 +132,33 @@ public final class CoverageIO {
     }
 
     /**
+     * Creates a mosaic reader using the given tiles, which must exist. The input argument can
+     * be an instance of {@link org.geotoolkit.image.io.mosaic.TileManager}, a {@link File} to
+     * a serialized instance of (@code TileManager}, a directory, or an array or collection of
+     * {@link org.geotoolkit.image.io.mosaic.Tile} instances.
+     * <p>
+     * The {@code crs} argument is optional if the input is a {@link File}, in which case this
+     * method will attempt to parse a file of the same name with the {@code ".prj"} extension
+     * using {@link org.geotoolkit.io.wkt.PrjFiles}. For all other cases, the CRS argument is
+     * mandatory.
+     *
+     * @param  input The file, tiles or tile manager to use a input.
+     * @param  crs The coordinate reference system of the mosaic image.
+     * @return A mosaic reader for the given tiles and CRS.
+     * @throws CoverageStoreException If the reader can not be created for the given tiles.
+     */
+    public static GridCoverageReader createMosaicReader(final Object input,
+            final CoordinateReferenceSystem crs) throws CoverageStoreException
+    {
+        ensureNonNull("input", input);
+        if (crs == null && input instanceof File) {
+            return new MosaicCoverageReader((File) input, false);
+        }
+        ensureNonNull("crs", crs);
+        return new MosaicCoverageReader(input, crs);
+    }
+
+    /**
      * Creates a mosaic reader using a cache of tiles at different resolutions. Tiles will be
      * created the first time this method is invoked for a given input. The tiles creation time
      * depends on the available memory, the image size and its format. The creation time can
@@ -142,8 +171,8 @@ public final class CoverageIO {
      * @return A coverage reader for the given file.
      * @throws CoverageStoreException If the reader can not be created for the given file.
      */
-    public static GridCoverageReader createMosaicReader(final File input) throws CoverageStoreException {
+    public static GridCoverageReader writeOrReuseMosaic(final File input) throws CoverageStoreException {
         ensureNonNull("input", input);
-        return new MosaicCoverageReader(input);
+        return new MosaicCoverageReader(input, true);
     }
 }

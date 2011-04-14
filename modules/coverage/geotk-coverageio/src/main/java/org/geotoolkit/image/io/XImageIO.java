@@ -41,6 +41,7 @@ import java.awt.image.RenderedImage;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.collection.FrequencySortedSet;
+import org.geotoolkit.image.io.mosaic.MosaicImageReader;
 import org.geotoolkit.image.io.plugin.WorldFileImageReader;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
@@ -315,7 +316,8 @@ public final class XImageIO {
             } else {
                 /*
                  * The stream can not be created. It may be because the file doesn't exist.
-                 * Try to build a helpful error message.
+                 * From this point we consider that the operation failed, but we need to
+                 * build an error message as helpful as possible.
                  */
                 if (input instanceof File) {
                     File file = (File) input;
@@ -336,7 +338,7 @@ public final class XImageIO {
                         messageKey = Errors.Keys.UNKNOWN_TYPE_$1;
                         argument = input.getClass();
                     }
-                    throw new IOException(Errors.format(messageKey, argument));
+                    throw new IIOException(Errors.format(messageKey, argument));
                 }
             }
         }
@@ -422,6 +424,9 @@ public final class XImageIO {
             final Boolean seekForwardOnly, final Boolean ignoreMetadata) throws IOException
     {
         ensureNonNull("input", input);
+        if (MosaicImageReader.Spi.DEFAULT.canDecodeInput(input)) {
+            return createReaderInstance(MosaicImageReader.Spi.DEFAULT, input, seekForwardOnly, ignoreMetadata);
+        }
         return getReader(0, null, input, seekForwardOnly, ignoreMetadata);
     }
 

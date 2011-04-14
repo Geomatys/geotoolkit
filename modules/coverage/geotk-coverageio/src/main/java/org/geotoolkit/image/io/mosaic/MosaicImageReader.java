@@ -1364,10 +1364,12 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
     }
 
     /**
-     * Service provider for {@link MosaicImageReader}.
+     * Service provider for {@link MosaicImageReader}. This service provider is not strictly
+     * compliant with the Image I/O specification since it cant not work with
+     * {@link javax.imageio.stream.ImageInputStream}.
      *
      * @author Martin Desruisseaux (Geomatys)
-     * @version 3.00
+     * @version 3.18
      *
      * @since 2.5
      * @module
@@ -1381,41 +1383,93 @@ public class MosaicImageReader extends ImageReader implements LogProducer, Close
         };
 
         /**
-         * The input types. This array is shared with {@link MosaicImageWriter.Spi}.
-         */
-        static final Class<?>[] INPUT_TYPES = new Class<?>[] {
-            TileManager[].class,
-            TileManager.class,
-            Tile[].class,
-            Collection.class
-        };
-
-        /**
-         * The default instance.
+         * The default instance. There is no instance of this provider registered in the
+         * standard {@link javax.imageio.spi.IIORegistry}, because this provider is not
+         * strictly compliant with the Image I/O requirement (in particular, the Mosaic
+         * Image Reader does not accept {@link javax.imageio.stream.ImageInputStream}).
+         * This constant can be used as a replacement.
          */
         public static final Spi DEFAULT = new Spi();
 
         /**
-         * Creates a default provider.
+         * Creates a default provider. This constructor does not set the {@link #inputTypes}
+         * field in order to delay loading of {@link Tile} and {@link TileManager} classes
+         * as much as possible.
          */
         public Spi() {
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             names           = NAMES;
-            inputTypes      = INPUT_TYPES;
             pluginClassName = "org.geotoolkit.image.io.mosaic.MosaicImageReader";
         }
 
         /**
+         * Returns the types of objects that may be used as arguments to the
+         * {@link MosaicImageReader#setInput(Object)} method. This method
+         * initializes the {@link #inputTypes} field when first needed.
+         * <p>
+         * The types that {@link MosaicImageReader} can accept are the types that
+         * {@link TileManagerFactory#createFromObject(Object)} can process.
+         *
+         * @since 3.18
+         */
+        @Override
+        public synchronized Class<?>[] getInputTypes() {
+            if (inputTypes == null) {
+                // Initializes the field only when first needed in order to
+                // delay the class loading of TileManager and Tile classes.
+                inputTypes = new Class<?>[] {
+                    TileManager[].class, // Preferred type.
+                    TileManager.class,
+                    Tile[].class,
+                    Collection.class,
+                    File.class // Not present in MosaicImageWriter.Spi.getOutputTypes()
+                };
+            }
+            return super.getInputTypes();
+        }
+
+        /**
          * Returns {@code true} if the image reader can decode the given input. The default
-         * implementation returns {@code true} if the given object is non-null and an instance
-         * of an {@linkplain #inputTypes input types}, or {@code false} otherwise.
+         * implementation returns {@code true} if the given object is an instance assignable
+         * to one of the types returned by the {@linkplain #getInputTypes()} implementation
+         * of this {@code Spi} class, and other type-specific restrictions are meet (e.g.
+         * {@link Collection} contains only instances of {@link Tile}, <i>etc.</i>).
          *
          * @throws IOException If an I/O operation was required and failed.
          */
         @Override
         public boolean canDecodeInput(final Object source) throws IOException {
-            return (source != null) && Classes.isAssignableTo(source.getClass(), inputTypes);
+            if (source instanceof TileManager || source instanceof TileManager[] || source instanceof Tile[]) {
+                return true;
+            }
+            if (source instanceof Collection<?>) {
+                for (final Object element : (Collection<?>) source) {
+                    if (!(element instanceof Tile)) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            if (source instanceof File) {
+                File file = (File) source;
+                if (file.canRead()) {
+                    if (file.isFile()) {
+                        // Maybe a future version could perform a deeper check.
+                        return TileManager.SERIALIZED_FILENAME.equals(file.getName());
+                    } else if (file.isDirectory()) {
+                        file = new File(file, TileManager.SERIALIZED_FILENAME);
+                        return file.isFile() && file.canRead();
+                        /*
+                         * While MosaicImageReader can work with a directory containing only
+                         * the tiles with their TFW files (without "TileManager.serialized"),
+                         * conservatively return 'false' since scanning the directory may be
+                         * costly.
+                         */
+                    }
+                }
+            }
+            return false;
         }
 
         /**

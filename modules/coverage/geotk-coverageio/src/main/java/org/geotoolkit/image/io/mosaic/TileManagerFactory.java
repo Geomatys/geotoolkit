@@ -33,14 +33,12 @@ import java.io.InvalidClassException;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
-import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.coverage.grid.ImageGeometry;
@@ -65,14 +63,6 @@ public class TileManagerFactory extends Factory {
     public static final TileManagerFactory DEFAULT = new TileManagerFactory(EMPTY_HINTS);
 
     /**
-     * Some special filenames to exclude when they are followed by the {@code ".txt"}
-     * suffix or no suffix.
-     *
-     * @since 3.18
-     */
-    private static final String[] EXCLUDES = {"readme", "credits", "license"};
-
-    /**
      * Creates a new factory from the specified hints.
      *
      * @param hints Optional hints, or {@code null} if none.
@@ -91,6 +81,8 @@ public class TileManagerFactory extends Factory {
      * @throws IllegalArgumentException if {@code tiles} is not an instance of a valid class,
      *         or if it is an array or a collection containing null elements.
      * @throws IOException If an I/O operation was required and failed.
+     *
+     * @see MosaicImageReader.Spi#getInputTypes()
      */
     public TileManager[] createFromObject(final Object tiles)
             throws IOException, IllegalArgumentException
@@ -196,36 +188,7 @@ public class TileManagerFactory extends Factory {
             throws IOException
     {
         if (filter == null) {
-            final String[] suffixes;
-            if (spi != null) {
-                suffixes = spi.getFileSuffixes();
-            } else {
-                suffixes = ImageIO.getReaderFileSuffixes();
-            }
-            if (suffixes != null) {
-                filter = new FileFilter() {
-                    @Override public boolean accept(final File pathname) {
-                        if (pathname.isDirectory()) {
-                            return true;
-                        }
-                        String filename = pathname.getName();
-                        final int s = filename.lastIndexOf('.');
-                        final String suffix = (s >= 0) ? filename.substring(s + 1) : "";
-                        if (XArrays.containsIgnoreCase(suffixes, suffix)) {
-                            // Found a file having the expected suffix. However we still have a
-                            // few special cases to exclude, namely the readme and license files.
-                            if (suffix.length() == 0 || suffix.equalsIgnoreCase("txt")) {
-                                if (s >= 0) {
-                                    filename = filename.substring(0, s);
-                                }
-                                return !XArrays.containsIgnoreCase(EXCLUDES, filename);
-                            }
-                            return true;
-                        }
-                        return false;
-                    }
-                };
-            }
+            filter = new ImageFileFilter(spi);
         }
         final ArrayList<File> files = new ArrayList<File>();
         listFiles(directory, filter, files);

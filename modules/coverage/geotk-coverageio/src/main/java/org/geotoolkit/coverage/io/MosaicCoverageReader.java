@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.ObjectOutputStream;
 
 import org.opengis.coverage.grid.GridGeometry;
+import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.image.io.mosaic.TileManager;
@@ -58,10 +59,10 @@ final class MosaicCoverageReader extends ImageCoverageReader {
     static final String CACHE_EXTENSION = ".tiles";
 
     /**
-     * {@code true} if this reader has been built from a pre-existing cache.
+     * {@code true} if this reader has created a new mosaic.
      * This is used only for debugging and testing purpose.
      */
-    final boolean cached;
+    boolean saved;
 
     /**
      * The coordinate reference system of the mosaic.
@@ -74,6 +75,20 @@ final class MosaicCoverageReader extends ImageCoverageReader {
     private transient GridGeometry2D gridGeometry;
 
     /**
+     * Creates a new reader for the given tiles and CRS.
+     *
+     * @param  tiles The tiles.
+     * @param  crs   The coordinate reference system.
+     * @throws CoverageStoreException If the reader can not be created for the given input.
+     */
+    public MosaicCoverageReader(final Object tiles, final CoordinateReferenceSystem crs)
+            throws CoverageStoreException
+    {
+        this.crs = crs;
+        setInput(tiles);
+    }
+
+    /**
      * Creates a mosaic reader using a cache of tiles at different resolutions. Tiles will be
      * created the first time this constructor is invoked for a given input. The tiles will be
      * created in a sub-directory having the same name than the given input, with an additional
@@ -84,9 +99,11 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      * suffix.
      *
      * @param  input The input to read.
+     * @param  generate If {@code true}, this constructor is allowed to generate its own mosaic
+     *         from the given input.
      * @throws CoverageStoreException If the reader can not be created for the given file.
      */
-    public MosaicCoverageReader(final File input) throws CoverageStoreException {
+    public MosaicCoverageReader(final File input, final boolean generate) throws CoverageStoreException {
         File directory = input.getParentFile(); // May be null.
         if (directory != null && !directory.isDirectory()) {
             throw new CoverageStoreException(Errors.format(Errors.Keys.NOT_A_DIRECTORY_$1, directory));
@@ -115,12 +132,21 @@ final class MosaicCoverageReader extends ImageCoverageReader {
             }
             if (managers != null && managers.length == 1) {
                 setInput(managers[0]);
-                cached = true;
                 return;
             }
         }
         /*
+         * If we are not allowed to generate a new mosaic, create
+         * a TileManager from the content of the given directory.
+         */
+        if (!generate) {
+            setInput(input);
+            return;
+        }
+        /*
          * Creates (if it does not already exist) the directory which will contain the tiles.
+         * If the directory already exists, we will let it untouched and assume that it has
+         * been created by a previous execution of this constructor.
          */
         final TileWritingPolicy policy;
         if (directory.exists()) {
@@ -137,34 +163,49 @@ final class MosaicCoverageReader extends ImageCoverageReader {
         final MosaicBuilder builder = new MosaicBuilder();
         builder.setTileDirectory(directory);
         /*
-         * Process to the creation of tiles, and serialize the tile manager for
-         * faster access next time.
+         * Process to the tile generation and serialize the tile manager for faster access
+         * next time the mosaic will be required.
          */
         final MosaicImageWriteParam params = new MosaicImageWriteParam();
         params.setTileWritingPolicy(policy);
         final TileManager manager;
         try {
             manager = builder.writeFromInput(input, params);
-            final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialized));
-            out.writeObject(manager);
-            out.writeObject(crs);
-            out.close();
+            if (policy == TileWritingPolicy.OVERWRITE) {
+                final ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(serialized));
+                out.writeObject(manager);
+                out.writeObject(crs);
+                out.close();
+            }
         } catch (IOException e) {
             throw new CoverageStoreException(e);
         }
         setInput(manager);
-        cached = false;
+        saved = true;
     }
 
     /**
-     * Sets the input, which must be an instance of {@link TileManager}.
+     * Sets the input, which shall be an instance of {@link TileManager}. Other types
+     * will be processed by {@link TileManagerFactory#createFromObject(Object)}.
      *
      * @param  input The {@code TileManager} to use as input, or {@code null}.
      * @throws IllegalArgumentException if input is not a {@code TileManager} instance.
      * @throws CoverageStoreException if the input can not be set.
      */
     @Override
-    public void setInput(final Object input) throws CoverageStoreException {
+    public void setInput(Object input) throws CoverageStoreException {
+        if (input != null && !(input instanceof TileManager)) {
+            // Attempt a TileManager creation.
+            final TileManager[] managers;
+            try {
+                managers = TileManagerFactory.DEFAULT.createFromObject(input);
+            } catch (IOException e) {
+                throw new CoverageStoreException(e);
+            }
+            if (managers != null && managers.length == 1) {
+                input = managers[0];
+            }
+        }
         ensureCanCast("input", TileManager.class, input);
         super.setInput(input);
     }
@@ -201,7 +242,7 @@ final class MosaicCoverageReader extends ImageCoverageReader {
                 throw new CoverageStoreException(formatErrorMessage(e), e);
             }
             gridGeometry = (gg == null) ? super.getGridGeometry(index) :
-                    new GridGeometry2D(gg.getGridRange(), gg.getGridToCRS(), crs);
+                    new GridGeometry2D(gg.getGridRange(), PixelInCell.CELL_CORNER, gg.getGridToCRS(), crs, null);
         }
         return gridGeometry;
     }
@@ -211,6 +252,6 @@ final class MosaicCoverageReader extends ImageCoverageReader {
      */
     @Override
     public String toString() {
-        return "MosaicCoverageReader[cached=" + cached + ']';
+        return "MosaicCoverageReader[saved=" + saved + ']';
     }
 }

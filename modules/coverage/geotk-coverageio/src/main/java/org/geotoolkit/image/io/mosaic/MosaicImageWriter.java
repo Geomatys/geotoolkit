@@ -55,7 +55,6 @@ import org.geotoolkit.util.Version;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.logging.LogProducer;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.logging.PerformanceLevel;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
@@ -1305,22 +1304,18 @@ search: for (final Tile tile : tiles) {
      */
     private ImageReader getImageReader(final Object input) throws IOException {
         /*
-         * First check if the input type is one of those accepted by MosaicImageReader.  We
-         * perform this check in a dedicaced code since MosaicImageReader is not registered
-         * as a SPI, because it does not comply to Image I/O contract which requires that
-         * readers accept ImageInputStream.
+         * First check if the input type is one of those accepted by MosaicImageReader.
+         * We perform this check in a dedicaced code because we replace the default reader
+         * by our custom CachingMosaicReader.
          */
-        for (final Class<?> type : MosaicImageReader.Spi.INPUT_TYPES) {
-            if (type.isInstance(input)) {
-                // Creates an instance of CachingMosaicReader unconditionally, even if
-                // the map of temporary files is empty, because it may be filled later.
-                final ImageReader reader = new CachingMosaicReader(temporaryFiles, input);
-                if (filter(reader)) {
-                    return reader;
-                }
-                reader.dispose();
-                break;
+        if (MosaicImageReader.Spi.DEFAULT.canDecodeInput(input)) {
+            // Creates an instance of CachingMosaicReader unconditionally, even if
+            // the map of temporary files is empty, because it may be filled later.
+            final ImageReader reader = new CachingMosaicReader(temporaryFiles, input);
+            if (filter(reader)) {
+                return reader;
             }
+            reader.dispose();
         }
         ImageInputStream stream = null;
         boolean createStream = false;
@@ -1680,36 +1675,69 @@ search: for (final Tile tile : tiles) {
     // already invokes shutdown() in its own finalize() method.
 
     /**
-     * Service provider for {@link MosaicImageWriter}.
+     * Service provider for {@link MosaicImageWriter}. This service provider is not strictly
+     * compliant with the Image I/O specification since it cant not work with
+     * {@link javax.imageio.stream.ImageOutputStream}.
      *
      * @author Martin Desruisseaux (Geomatys)
      * @author Cédric Briançon (Geomatys)
-     * @version 3.14
+     * @version 3.18
      *
      * @since 2.5
      * @module
      */
     public static class Spi extends ImageWriterSpi {
         /**
-         * The default instance.
+         * The default instance. There is no instance of this provider registered in the
+         * standard {@link javax.imageio.spi.IIORegistry}, because this provider is not
+         * strictly compliant with the Image I/O requirement (in particular, the Mosaic
+         * Image Writer does not accept {@link javax.imageio.stream.ImageOutputStream}).
+         * This constant can be used as a replacement.
          */
         public static final Spi DEFAULT = new Spi();
 
         /**
-         * Creates a default provider.
+         * Creates a default provider. This constructor does not set the {@link #outputTypes}
+         * field in order to delay loading of {@link Tile} and {@link TileManager} classes
+         * as much as possible.
          */
         public Spi() {
             vendorName      = "Geotoolkit.org";
             version         = Version.GEOTOOLKIT.toString();
             names           = MosaicImageReader.Spi.NAMES;
-            outputTypes     = MosaicImageReader.Spi.INPUT_TYPES;
             pluginClassName = "org.geotoolkit.image.io.mosaic.MosaicImageWriter";
         }
 
         /**
+         * Returns the types of objects that may be used as arguments to the
+         * {@link MosaicImageWriter#setOutput(Object)} method. This method
+         * initializes the {@link #outputTypes} field when first needed.
+         *
+         * @since 3.18
+         */
+        @Override
+        public synchronized Class<?>[] getOutputTypes() {
+            if (outputTypes == null) {
+                // Initializes the field only when first needed in order to
+                // delay the class loading of TileManager and Tile classes.
+                outputTypes = new Class<?>[] {
+                    TileManager[].class, // Preferred type.
+                    TileManager.class,
+                    Tile[].class,
+                    Collection.class
+                    // No File type, because directories of tiles are not expected to exist
+                    // (after all, this is MosaicImageWriter job to create it!).
+                };
+            }
+            return super.getOutputTypes();
+        }
+
+        /**
          * Returns {@code true} if the image writer can encode the given output. The default
-         * implementation returns {@code true} if the given object is non-null and an instance
-         * of an {@linkplain #outputTypes output types}, or {@code false} otherwise.
+         * implementation returns {@code true} if the given object is an instance assignable
+         * to one of the types returned by the {@linkplain #getOutputTypes()} implementation
+         * of this {@code Spi} class, and other type-specific restrictions are meet (e.g.
+         * {@link Collection} contains only instances of {@link Tile}, <i>etc.</i>).
          *
          * @param  destination The output to be encoded.
          * @return {@code true} If the image writer can encode the given output.
@@ -1718,7 +1746,7 @@ search: for (final Tile tile : tiles) {
          * @since 3.14
          */
         public boolean canEncodeOutput(final Object destination) throws IOException {
-            return (destination != null) && Classes.isAssignableTo(destination.getClass(), outputTypes);
+            return MosaicImageReader.Spi.DEFAULT.canDecodeInput(destination);
         }
 
         /**

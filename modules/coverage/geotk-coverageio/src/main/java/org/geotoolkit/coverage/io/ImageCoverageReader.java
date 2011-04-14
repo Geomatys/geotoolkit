@@ -453,9 +453,7 @@ public class ImageCoverageReader extends GridCoverageReader {
      *         while creating it.
      */
     protected ImageReader createImageReader(final Object input) throws IOException {
-        if (MosaicImageReader.Spi.DEFAULT.canDecodeInput(input)) {
-            return MosaicImageReader.Spi.DEFAULT.createReaderInstance();
-        }
+        // No need to check for MosaicImageReader inputs, because XImageIO does this check.
         return XImageIO.getReaderBySuffix(input, seekForwardOnly, ignoreMetadata);
     }
 
