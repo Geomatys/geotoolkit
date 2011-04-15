@@ -68,11 +68,11 @@ public final class ScriptTest extends ReferencingTestBase {
         final ScriptRunner test = new ScriptRunner(in);
         test.run();
         in.close();
-        if (verbose) {
-            System.out.println(filename);
+        if (out != null) {
+            out.println(filename);
             test.printStatistics();
-            System.out.println();
-            System.out.flush();
+            out.println();
+            out.flush();
         }
         if (test.firstError != null) {
             throw test.firstError;

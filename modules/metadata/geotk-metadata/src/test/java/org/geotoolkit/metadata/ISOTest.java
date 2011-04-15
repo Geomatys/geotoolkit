@@ -200,8 +200,8 @@ public final class ISOTest extends TestBase {
             }
             assertSetters(new PropertyAccessor(impl, type), done);
         }
-        if (verbose) {
-            System.out.println(done);
+        if (out != null) {
+            out.println(done);
         }
     }
 

@@ -86,8 +86,8 @@ public final class FallbackAuthorityFactoryTest extends ReferencingTestBase {
         boolean foundExtra = false;
         for (final CRSAuthorityFactory factory : factories) {
             final Class<? extends CRSAuthorityFactory> type = factory.getClass();
-            if (verbose) {
-                System.out.println(type);
+            if (out != null) {
+                out.println(type);
             }
             if (type.equals(ExtraEpsgFactory.class)) {
                 foundExtra = true;

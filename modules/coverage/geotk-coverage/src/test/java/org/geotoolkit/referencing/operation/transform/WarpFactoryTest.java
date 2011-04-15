@@ -164,7 +164,7 @@ public final class WarpFactoryTest extends ReferencingTestBase {
                 sy.add(dy);
             }
         }
-        if (verbose) {
+        if (out != null) {
             final TableWriter table = new TableWriter(null, TableWriter.SINGLE_VERTICAL_LINE);
             table.setMultiLinesCells(true);
             table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
@@ -173,10 +173,9 @@ public final class WarpFactoryTest extends ReferencingTestBase {
             table.write(sy.toString());
             table.nextLine();
             table.nextLine(TableWriter.SINGLE_HORIZONTAL_LINE);
-            System.out.println(name);
-            System.out.println(table);
-            System.out.println();
-            System.out.flush();
+            out.println(name);
+            out.println(table);
+            out.println();
         }
     }
 

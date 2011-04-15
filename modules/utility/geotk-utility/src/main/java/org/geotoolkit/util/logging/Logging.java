@@ -53,7 +53,7 @@ import org.geotoolkit.util.converter.Classes;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.18
  *
  * @since 2.4
  * @module
@@ -493,6 +493,28 @@ search:     while (configs.hasMoreElements()) try {
                     logger.setLevel(level);
                 }
             }
+        }
+    }
+
+    /**
+     * Flushes all {@linkplain Handler handlers} used by this logger. If this logger
+     * {@linkplain Logger#getUseParentHandlers() uses parent handlers}, then those
+     * handlers will be flushed as well.
+     *
+     * @since 3.18
+     *
+     * @see Handler#flush()
+     */
+    public void flush() {
+        Logger logger = getLogger(name);
+        while (logger != null) {
+            for (final Handler handler : logger.getHandlers()) {
+                handler.flush();
+            }
+            if (!logger.getUseParentHandlers()) {
+                break;
+            }
+            logger = logger.getParent();
         }
     }
 

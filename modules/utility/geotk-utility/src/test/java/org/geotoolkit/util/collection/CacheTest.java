@@ -24,7 +24,7 @@ import java.util.Collections;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.math.Statistics;
@@ -205,16 +205,16 @@ public final class CacheTest extends TestBase {
         assertEquals("There is failures in some background thread.", 0, failures.get());
         assertTrue("Should not have more entries than what we put in.", cache.size() <= count);
         assertFalse("Some entries should be retained by strong references.", cache.isEmpty());
-        if (verbose) {
-            final PrintStream out = System.out;
+        final PrintWriter out = CacheTest.out;
+        if (out != null) {
             out.println();
             out.println("The numbers below are for tuning the test only. The output is somewhat");
             out.println("random so we can not check it in a test suite.  However if the test is");
             out.println("properly tuned, most values should be non-zero.");
             for (int i=0; i<threads.length;) {
                 final String n = String.valueOf(threads[i++].hit);
-                System.out.print(Strings.spaces(6 - n.length()));
-                System.out.print(n);
+                out.print(Strings.spaces(6 - n.length()));
+                out.print(n);
                 if ((i % 10) == 0) {
                     out.println();
                 }
@@ -222,8 +222,8 @@ public final class CacheTest extends TestBase {
             out.println();
             out.println("Now observe how the background thread cleans the cache.");
             for (int i=0; i<10; i++) {
-                System.out.print("Cache size: ");
-                System.out.println(cache.size());
+                out.print("Cache size: ");
+                out.println(cache.size());
                 Thread.sleep(250);
                 if (i >= 2) {
                     System.gc();
@@ -244,8 +244,7 @@ public final class CacheTest extends TestBase {
         }
         assertTrue("Number of entries should not increase while we are not writing in the cache.",
                 afterGC.count() <= beforeGC.count());
-        if (verbose) {
-            final PrintStream out = System.out;
+        if (out != null) {
             out.println("Statistics on the keys before garbage collection:");
             out.println(beforeGC);
             out.println("Statistics on the keys after garbage collection.");

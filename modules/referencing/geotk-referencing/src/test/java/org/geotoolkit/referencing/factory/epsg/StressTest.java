@@ -19,7 +19,7 @@ package org.geotoolkit.referencing.factory.epsg;
 
 import java.io.File;
 import java.io.FileWriter;
-import java.io.PrintStream;
+import java.io.PrintWriter;
 import java.io.BufferedWriter;
 import java.awt.geom.Point2D;
 import java.util.concurrent.CountDownLatch;
@@ -122,13 +122,13 @@ public final class StressTest extends EpsgFactoryTestBase {
         /*
          * Reports the metric.
          */
-        if (verbose) {
+        final PrintWriter out = StressTest.out;
+        if (out != null) {
             final int cumulativeIteration = statistics.count();
             final double averageTime    = statistics.mean() / 1E+6;
             final double throughput     = 1000 / averageTime;
             final double minTime        = statistics.minimum() / 1E+6;
             final double maxTime        = statistics.maximum() / 1E+6;
-            final PrintStream out       = System.out;
             out.println("Number of clients: " + RUNNER_COUNT);
             out.println("Number of workers: " + MAX_WORKERS);
             out.println("Iterations/thread: " + ITERATIONS);

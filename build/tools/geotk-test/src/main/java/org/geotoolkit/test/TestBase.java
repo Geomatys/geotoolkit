@@ -24,6 +24,10 @@ import java.util.logging.Level;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.io.Console;
+import java.io.PrintStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -34,23 +38,72 @@ import static org.junit.Assert.*;
  * are commons to all subclasses.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.16
  */
 public abstract class TestBase {
     /**
-     * {@code true} if {@link #loggingSetup()} has been invoked.
+     * The separator characters used for reporting the verbose output.
      */
-    private static boolean initialized;
+    private static final String SEPARATOR = "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬";
 
     /**
-     * Set to {@code true} for sending debugging information to the standard output stream.
-     * It is up to subclasses to use this field. If {@code true}, the {@linkplain System#out
-     * standard output stream} shall be used for better integration with Maven output at build
-     * time.
+     * The name of a system property for setting whatever the tests should provide verbose output.
+     * If the value returned by the following is {@code true}, then the {@link #out} field will be
+     * set to a non-null value:
+     *
+     * {@preformat java
+     *     Boolean.getBoolean(VERBOSE_KEY);
+     * }
+     *
+     * The value of this property key is {@value}.
+     *
+     * @see org.geotoolkit.test.gui.SwingTestBase#SHOW_PROPERTY_KEY
+     *
+     * @since 3.18
      */
-    protected boolean verbose = false;
+    public static final String VERBOSE_KEY = "org.geotoolkit.test.verbose";
+
+    /**
+     * If verbose output are enabled, the output stream where to print the output.
+     * Otherwise {@code null}.
+     *
+     * @since 3.18
+     */
+    protected static final PrintWriter out;
+
+    /**
+     * The buffer which is backing the {@linkplain #out} stream, or {@code null} if none.
+     */
+    private static final StringWriter buffer;
+
+    /**
+     * Invokes a method of {@link org.geotoolkit.util.logging.Logging#GEOTOOLKIT}.
+     */
+    static void invokeLogging(final String method, final Class<?>[] argTypes, final Object[] argValues) {
+        try {
+            final Class<?> logging = Class.forName("org.geotoolkit.util.logging.Logging");
+            logging.getMethod(method, argTypes).invoke(logging.getField("GEOTOOLKIT").get(null), argValues);
+        } catch (Exception e) {
+            System.err.println(e);
+        }
+    }
+
+    /**
+     * Configures the logging handler and the logging level to use for the test suite.
+     * This method uses reflection for installing the handler provided in Geotk.
+     */
+    static {
+        invokeLogging("forceMonolineConsoleOutput", new Class<?>[] {Level.class}, new Object[] {
+                Boolean.getBoolean(VERBOSE_KEY) ? Level.FINE : null});
+        if (Boolean.getBoolean(VERBOSE_KEY)) {
+            out = new PrintWriter(buffer = new StringWriter());
+        } else {
+            buffer = null;
+            out = null;
+        }
+    }
 
     /**
      * Date parser, created when first needed.
@@ -64,19 +117,33 @@ public abstract class TestBase {
     }
 
     /**
-     * Configures the logging handler and the logging level to use for the test suite.
-     * This method uses reflection for installing the handler provided in Geotk.
-     * This method is invoked automatically by JUnit and doesn't need to be invoked explicitely.
+     * If verbose output were enabled, flush the {@link #out} stream to the console.
+     * This method is invoked automatically by JUnit and doesn't need to be invoked
+     * explicitely.
      */
-    @BeforeClass
-    public static synchronized void loggingSetup() {
-        if (!initialized) try {
-            initialized = true; // Initialize only once even in case of failure.
-            final Class<?> logging = Class.forName("org.geotoolkit.util.logging.Logging");
-            logging.getMethod("forceMonolineConsoleOutput", Level.class).invoke(
-                    logging.getField("GEOTOOLKIT").get(null), new Object[] {null});
-        } catch (Exception e) {
-            System.err.println(e);
+    @AfterClass
+    public static void flushVerboseOutput() {
+        invokeLogging("flush", null, null);
+        System.out.flush();
+        System.err.flush();
+        if (out != null) {
+            out.flush();
+            final String content = buffer.toString();
+            if (content.length() != 0) {
+                final Console console = System.console();
+                if (console != null) {
+                    final PrintWriter w = console.writer();
+                    w.println(SEPARATOR);
+                    w.println(content);
+                    w.println(SEPARATOR);
+                } else {
+                    final PrintStream w = System.out;
+                    w.println(SEPARATOR);
+                    w.println(content);
+                    w.println(SEPARATOR);
+                }
+                buffer.getBuffer().setLength(0);
+            }
         }
     }
 

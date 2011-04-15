@@ -62,8 +62,10 @@ public abstract class SwingTestBase<T extends JComponent> {
      * }
      *
      * The value of this property key is {@value}.
+     *
+     * @see org.geotoolkit.test.TestBase#VERBOSE_KEY
      */
-    public static final String SHOW_PROPERTY_KEY = "org.geotoolkit.showWidgetTests";
+    public static final String SHOW_PROPERTY_KEY = "org.geotoolkit.test.gui.show";
 
     /**
      * The desktop which contain the internal frame for each widget. Will be created only if

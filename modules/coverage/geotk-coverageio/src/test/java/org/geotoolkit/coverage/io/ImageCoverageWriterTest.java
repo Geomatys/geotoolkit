@@ -179,8 +179,8 @@ public final class ImageCoverageWriterTest extends ImageTestBase {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, null);
-        if (verbose) {
-            System.out.println(writer);
+        if (out != null) {
+            out.println(writer);
         }
         writer.assertNoDifference();
         writer.assertRectifiedGridEquals(1000, -1000, -10000, 21000);
@@ -206,8 +206,8 @@ public final class ImageCoverageWriterTest extends ImageTestBase {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (verbose) {
-            System.out.println(writer);
+        if (out != null) {
+            out.println(writer);
         }
         writer.assertNoDifference();
         writer.assertRectifiedGridEquals(1000, -1000, -1000, 12000);
@@ -249,8 +249,8 @@ public final class ImageCoverageWriterTest extends ImageTestBase {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (verbose) {
-            System.out.println(writer);
+        if (out != null) {
+            out.println(writer);
         }
         writer.assertNoDifference();
         writer.assertRectifiedGridEquals(2000, -3000, -1000, 12000);
@@ -284,8 +284,8 @@ public final class ImageCoverageWriterTest extends ImageTestBase {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (verbose) {
-            System.out.println(writer);
+        if (out != null) {
+            out.println(writer);
         }
         writer.assertDifferenceEqualsScale(1.0 / 2, 1.0 / 3);
         writer.assertRectifiedGridEquals(500, -1000.0 / 3, 4000, 4000);
@@ -347,8 +347,8 @@ public final class ImageCoverageWriterTest extends ImageTestBase {
         final StringWriter buffer = new StringWriter();
         writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (verbose) {
-            System.out.println(writer);
+        if (out != null) {
+            out.println(writer);
         }
         writer.assertDifferenceEqualsTranslation(-2, -3);
         writer.assertRectifiedGridEquals(1000, -1000, -12000, 24000);
@@ -386,32 +386,32 @@ public final class ImageCoverageWriterTest extends ImageTestBase {
         final GridCoverage2D coverage = reader.read(0, null);
         reader.dispose();
 
-        final ByteArrayOutputStream out = new ByteArrayOutputStream(8192);
-        assertEquals("Expected an initially empty stream.", 0, out.size());
+        final ByteArrayOutputStream buffer = new ByteArrayOutputStream(8192);
+        assertEquals("Expected an initially empty stream.", 0, buffer.size());
         final GridCoverageWriteParam param = new GridCoverageWriteParam();
         param.setFormatName("PNG");
 
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeTwice");
-        writer.setOutput(out);
+        writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (verbose) {
-            System.out.println(writer);
+        if (out != null) {
+            out.println(writer);
         }
         writer.assertNoDifference();
-        final long length = out.size();
+        final long length = buffer.size();
         assertTrue("Empty file.", length > 0);
 
-        out.reset();
-        assertEquals("Expected an initially empty stream.", 0, out.size());
+        buffer.reset();
+        assertEquals("Expected an initially empty stream.", 0, buffer.size());
         param.setEnvelope(new Envelope2D(null, 100, 50, 800, 1200));
         param.setResolution(20, 30);
-        writer.setOutput(out);
+        writer.setOutput(buffer);
         writer.write(coverage, param);
-        if (verbose) {
-            System.out.println(writer);
+        if (out != null) {
+            out.println(writer);
         }
-        assertTrue("Expected a smaller file", out.size() < length);
+        assertTrue("Expected a smaller file", buffer.size() < length);
         writer.dispose();
-        out.close(); // As a matter of principle.
+        buffer.close(); // As a matter of principle.
     }
 }

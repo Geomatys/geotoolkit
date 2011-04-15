@@ -112,8 +112,8 @@ public final class CategoryListTest extends TestBase {
             new CategoryList(categories, null);
             fail("Argument check");
         } catch (IllegalArgumentException exception) {
-            if (verbose) {
-                System.out.println(exception.getLocalizedMessage());
+            if (out != null) {
+                out.println(exception.getLocalizedMessage());
                 // This is the expected exception.
             }
         }
@@ -126,8 +126,8 @@ public final class CategoryListTest extends TestBase {
             new CategoryList(categories, null);
             fail("Argument check");
         } catch (IllegalArgumentException exception) {
-            if (verbose) {
-                System.out.println(exception.getLocalizedMessage());
+            if (out != null) {
+                out.println(exception.getLocalizedMessage());
                 // This is the expected exception.
             }
         }

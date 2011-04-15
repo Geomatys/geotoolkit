@@ -151,8 +151,8 @@ public final class ImageCoverageReaderTest extends ImageTestBase {
          * rendered image. The grid geometry should be equivalent to the one checked above.
          */
         final GridCoverage2D gridCoverage = reader.read(0, null);
-        if (verbose) {
-            System.out.println(reader);
+        if (out != null) {
+            out.println(reader);
         }
         assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         final RenderedImage image = gridCoverage.getRenderedImage();
@@ -198,8 +198,8 @@ public final class ImageCoverageReaderTest extends ImageTestBase {
         final GridCoverageReadParam param = new GridCoverageReadParam();
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
         final GridCoverage2D gridCoverage = reader.read(0, param);
-        if (verbose) {
-            System.out.println(reader);
+        if (out != null) {
+            out.println(reader);
         }
         assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         final RenderedImage image = gridCoverage.getRenderedImage();
@@ -247,8 +247,8 @@ public final class ImageCoverageReaderTest extends ImageTestBase {
         param.setEnvelope(new Envelope2D(null, -1000, -2000, 8000 - -1000, 12000 - -2000));
         param.setResolution(2000, 3000);
         final GridCoverage2D gridCoverage = reader.read(0, param);
-        if (verbose) {
-            System.out.println(reader);
+        if (out != null) {
+            out.println(reader);
         }
         assertTrue("No transformation expected.", reader.getReadMatchesRequest());
         final RenderedImage image = gridCoverage.getRenderedImage();
@@ -291,14 +291,14 @@ public final class ImageCoverageReaderTest extends ImageTestBase {
         final File file = TestData.file(SampleModels.class, "Contour.png");
         reader.setInput(file);
         assertNotNull(reader.read(0, null));
-        if (verbose) {
-            System.out.println(reader);
+        if (out != null) {
+            out.println(reader);
         }
         reader.reset();
         reader.setInput(file);
         assertNotNull(reader.read(0, null));
-        if (verbose) {
-            System.out.println(reader);
+        if (out != null) {
+            out.println(reader);
         }
         reader.dispose();
     }

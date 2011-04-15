@@ -762,8 +762,8 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
                 valid++;
             }
         }
-        if (verbose) {
-            final PrintStream out = System.out;
+        final PrintWriter out = this.out;
+        if (out != null) {
             out.print("Number of coordinate operations:    "); out.println(identifiers.size());
             out.print("Number of tested operations:        "); out.println(count);
             out.print("Number of recognized operations:    "); out.println(created);
