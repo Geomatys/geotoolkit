@@ -21,7 +21,7 @@ import java.util.logging.Level;
 
 import java.util.logging.Logger;
 import org.apache.lucene.analysis.Analyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
+import org.apache.lucene.analysis.standard.ClassicAnalyzer;
         
 import org.apache.lucene.store.RAMDirectory;
 import org.apache.lucene.util.Version;
@@ -66,19 +66,19 @@ public abstract class IndexLucene {
     
    /**
     * Creates a new Lucene Index.
-    * Analyser field is set to default value StandardAnalyzer.
+    * Analyzer field is set to default value ClassicAnalyzer.
     */
     public IndexLucene() {
-        analyzer = new StandardAnalyzer(Version.LUCENE_30);
+        analyzer = new ClassicAnalyzer(Version.LUCENE_31);
     }
 
     /**
      * Creates a new Lucene Index with the specified Analyzer.
-     * If the analyzer is null it will be set to default value StandardAnalyzer.
+     * If the analyzer is null it will be set to default value {@link ClassicAnalyzer}.
      */
     public IndexLucene(final Analyzer analyzer) {
         if (analyzer == null)
-            this.analyzer = new StandardAnalyzer(Version.LUCENE_30);
+            this.analyzer = new ClassicAnalyzer(Version.LUCENE_31);
         else
             this.analyzer = analyzer;
     }

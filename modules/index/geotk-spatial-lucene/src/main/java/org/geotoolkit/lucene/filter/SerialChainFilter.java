@@ -213,7 +213,7 @@ public class SerialChainFilter extends Filter {
      */
     @Override
     public int hashCode() {
-      if (chain.size() == 0)
+      if (chain.isEmpty())
     	  return 0;
 
       int h = chain.get(0).hashCode() ^ Integer.valueOf(actionType[0]).hashCode();
@@ -255,7 +255,7 @@ public class SerialChainFilter extends Filter {
                 }
                 buf.append('\n');
                 if (chain.size() > i + 1)
-                    buf.append('\t').append(" " + chain.get(i + 1).toString()).append('\n');
+                    buf.append('\t').append(" ").append(chain.get(i + 1)).append('\n');
             }
         }
         buf.append('\n');

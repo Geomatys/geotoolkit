@@ -28,7 +28,6 @@ import java.util.logging.Level;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.CorruptIndexException;
-import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queryParser.ParseException;
 import org.apache.lucene.queryParser.QueryParser;
@@ -93,7 +92,7 @@ public class AbstractIndexSearcher extends IndexLucene {
      *
      * @param configDir The configuration directory where to build the index directory.
      * @param serviceID the "ID" of the service (allow multiple index in the same directory). The value "" is allowed.
-     * @param analyzer  A lucene Analyzer (Default is StandardAnalyzer)
+     * @param analyzer  A lucene Analyzer (Default is ClassicAnalyzer)
      */
     public AbstractIndexSearcher(final File configDir, final String serviceID, final Analyzer analyzer) throws IndexingException {
         super(analyzer);
@@ -273,13 +272,14 @@ public class AbstractIndexSearcher extends IndexLucene {
             }
 
             final String field       = "title";
-            final QueryParser parser = new QueryParser(Version.LUCENE_30, field, analyzer);
+            final QueryParser parser = new QueryParser(Version.LUCENE_31, field, analyzer);
             parser.setDefaultOperator(Operator.AND);
 
             // we enable the leading wildcard mode if the first character of the query is a '*'
             if (spatialQuery.getQuery().indexOf(":*") != -1 || spatialQuery.getQuery().indexOf(":?") != -1 || spatialQuery.getQuery().indexOf(":(*") != -1
              || spatialQuery.getQuery().indexOf(":(+*") != -1 || spatialQuery.getQuery().indexOf(":+*") != -1) {
                 parser.setAllowLeadingWildcard(true);
+                LOGGER.log(logLevel, "Allowing leading wildChar");
                 BooleanQuery.setMaxClauseCount(Integer.MAX_VALUE);
             }
 
@@ -289,6 +289,7 @@ public class AbstractIndexSearcher extends IndexLucene {
                 parser.setLowercaseExpandedTerms(false);
             }
             final Query query   = parser.parse(spatialQuery.getQuery());
+            LOGGER.log(logLevel, "QueryType:{0}", query.getClass().getName());
             final Filter filter = spatialQuery.getSpatialFilter();
             final int operator  = spatialQuery.getLogicalOperator();
             final Sort sort     = spatialQuery.getSort();

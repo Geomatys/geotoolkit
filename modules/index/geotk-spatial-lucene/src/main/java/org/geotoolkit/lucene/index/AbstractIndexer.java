@@ -38,11 +38,12 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.index.CorruptIndexException;
 import org.apache.lucene.index.IndexWriter;
-import org.apache.lucene.index.IndexWriter.MaxFieldLength;
+import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.search.TermQuery;
 
 import org.apache.lucene.store.SimpleFSDirectory;
+import org.apache.lucene.util.Version;
 import org.geotoolkit.io.wkb.WKBUtils;
 import org.geotoolkit.lucene.IndexingException;
 import org.geotoolkit.lucene.filter.LuceneOGCFilter;
@@ -190,7 +191,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void indexDocument(final E meta) {
         try {
-            final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), analyzer, false,IndexWriter.MaxFieldLength.UNLIMITED);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_31, analyzer);
+            final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), config);
 
             //adding the document in a specific model. in this case we use a MDwebDocument.
             writer.addDocument(createDocument(meta));
@@ -228,7 +230,8 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      */
     public void removeDocument(final String identifier) {
         try {
-            final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), analyzer, false, MaxFieldLength.UNLIMITED);
+            final IndexWriterConfig config = new IndexWriterConfig(Version.LUCENE_31, analyzer);
+            final IndexWriter writer = new IndexWriter(new SimpleFSDirectory(getFileDirectory()), config);
 
             final Term t          = new Term("id", identifier);
             final TermQuery query = new TermQuery(t);
@@ -379,7 +382,7 @@ public abstract class AbstractIndexer<E> extends IndexLucene {
      * @param geom A geometry byte encoded.
      */
     public static void addGeometry(final Document doc, final byte[] geom) {
-        doc.add(new Field(LuceneOGCFilter.GEOMETRY_FIELD_NAME,geom,Field.Store.YES));
+        doc.add(new Field(LuceneOGCFilter.GEOMETRY_FIELD_NAME,geom));
     }
 
     /**

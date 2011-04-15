@@ -67,7 +67,7 @@ public class TypeNames {
     /**
      * some QName for ebrim 3.0 types
      */
-    public static final QName EXTRINSIC_OBJECT_QNAME      = new QName("urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", "ExtrinsicObject");
+    public static final  QName EXTRINSIC_OBJECT_QNAME      = new QName("urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", "ExtrinsicObject");
     public static final  QName REGISTRY_PACKAGE_QNAME      = new QName("urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", "RegistryPackage");
     public static final  QName SPECIFICATION_LINK_QNAME    = new QName("urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", "SpecificationLink");
     public static final  QName REGISTRY_OBJECT_QNAME       = new QName("urn:oasis:names:tc:ebxml-regrep:xsd:rim:3.0", "RegistryObject");
@@ -94,7 +94,7 @@ public class TypeNames {
     /**
      * some QName for ebrim 2.5 types
      */
-    public static final QName EXTRINSIC_OBJECT_25_QNAME     = new QName("urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5", "ExtrinsicObject");
+    public static final  QName EXTRINSIC_OBJECT_25_QNAME     = new QName("urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5", "ExtrinsicObject");
     public static final  QName FEDERATION25_QNAME            = new QName("urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5", "Federation");
     public static final  QName EXTERNAL_LINK25_QNAME         = new QName("urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5", "ExternalLink");
     public static final  QName CLASSIFICATION_NODE25_QNAME   = new QName("urn:oasis:names:tc:ebxml-regrep:rim:xsd:2.5", "ClassificationNode");
