@@ -6,8 +6,8 @@
 Geotoolkit.org History
 
   Geotk originates from several projects going back to 1995. Along the way, the GeoTools
-  and Seagis projects joined forces to develop a Java library for geospatial applications. More
-  recently, Geotk has emerged as an independent fork of GeoTools.
+  and Seagis projects joined forces to develop a Java library for geospatial applications.
+  In 2009, Geotk has emerged as an independent fork of GeoTools.
 
 * History of GeoTools 1 (1996 - 2003)
 
@@ -112,32 +112,21 @@ Geotoolkit.org History
   participants were welcomed to the project and quickly given rights to commit to the code
   repository. This development let to a large code base of heterogeneous quality, with duplicate
   functionality, and with many unmaintained modules. In an effort to tackle these changes, a new
-  category of modules was even created, the <<<unsupported>>> modules. This chaos grew to the point
-  that it became difficult to build the full project since the javadocs could not be generated and
-  the library would even fail to compile on more recent versions of the Java language.
+  category of modules was even created, the <<<unsupported>>> modules. It became difficult to build
+  the full project, generate the javadocs and compile on more recent versions of the Java language.
 
-  The governance of GeoTools also evolved. Where the PMC had originally tried to reach consensus and
-  stay out of technical decisions, the PMC members increasingly asserted their authority by
-  submitting issues to their own vote. The PMC expanded the <Change Proposal> process, which was
+  The governance of GeoTools also evolved. The PMC expanded the <Change Proposal> process, which was
   initially started to ensure that changes to the maintainerless <<<main>>> module were well
   considered, to assert their right to control the evolution of all modules in the core library.
   Meanwhile the PMC also came to be dominated by developers working primarily on the GeoServer
   project so that decisions related to the GeoTools library were subsumed to the needs of the
   GeoServer project: GeoTools has not been transitioning to newer versions of the Java language as
-  originally intended and GeoTools releases were only being made when needed for a new version of
-  GeoServer.
-
-  While the GeoTools project was considered as a success by some, it did not gain wide adoption.
-  The project successfully provided the functionalities needed by the GeoServer and uDig projects,
-  which were the main driver of GeoTools development. While a few projects adopted GeoTools, the
-  library failed to become widely used by external (non-contributing) projects which might have
-  been expected to use it. In informal communications, some of those projects explicitly cited
-  their lack of confidence in the quality of the code as the main reason for not adopting GeoTools.
+  originally intended and GeoTools releases were being made when needed for a new version of GeoServer.
 
 
 * The Geotidy proposal (2008 -2009)
 
-  In response to the deteriorating quality of the GeoTools code base, Martin Desruisseaux embarked
+  In response to the deteriorating quality of some GeoTools code base, Martin Desruisseaux embarked
   on a major cleanup effort. In July 2008, Martin created a new, initially empty, source code
   repository and proceeded to copy the GeoTools classes to this new repository one-by-one, cleaning
   and harmonizing them in the process. The project was codenamed "Geotidy" and intended to be
@@ -154,24 +143,19 @@ Geotoolkit.org History
   that not anyone will agree with every technical decision, the Geotidy code was hosted on a
   <Distributed Versioning System> ({{{http://hg-scm.org/}Mercurial}}) from the beginning, as
   opposed to the <Central Versioning System> ({{{http://subversion.tigris.org/}Subversion}})
-  used by GeoTools. Martin also offered to help GeoServer with the initial backport of this new
-  code to Java\ 5. By the end of March\ 2009, Martin had finished his cleanup work and began the
+  used by GeoTools. By the end of March\ 2009, Martin had finished his cleanup work and began the
   discussion on the merge.
 
   During this discussion, it immediately became clear that the PMC was going to require a formal
   proposal and demand a vote over each change in this cleanup effort. The proposal to experiment
   various clones of the code repository (a Distributed Versioning System paradigm) did not get
-  momentum. Rather than submitting his changes to the vote of developers who are not familiar with
-  the internal of his modules, Martin decided to start a new project more closely aligned with the
-  original GeoTools\ 2 effort.
+  momentum. Consequently Geotidy developers decided to go their own way.
 
 
 * The start of Geotoolkit.org (2009)
 
-  On March\ 27,\ 2009, Martin along with several other developers, decided to launch the Geotk
-  project with the same stated goals as the GeoTools\ 2 project but with a different way of working.
-
-  The project was started as a formal fork of the GeoTools\ 2 project on the basis of the newly
+  On March\ 27,\ 2009, the Geotoolkit.org project was started as a formal fork of the GeoTools\ 2
+  project on the basis of the newly
   cleaned and homogenized code from the Geotidy effort. All the <<<org.geotools>>> packages in the
   Geotidy code base were renamed <<<org.geotoolkit>>> and the {{{http://www.geotoolkit.org/}Geotoolkit.org}}
   web site and source code repository were created. The original Seagis
@@ -189,26 +173,6 @@ Geotoolkit.org History
   example, it would be very easy to maintain a version of the library which runs on the older
   Java\ 5 runtime and base library.
 
-  Geotk has returned to the old governance model where decisions are reached by consensus
-  rather than by vote and module maintainers are defered to for technical decisions. It is also
-  expected that contributions will be heavily reviewed before being integrated into the library and
+  It is expected that contributions will be heavily reviewed before being integrated into the library and
   that new contributors will need to spend time working with the library before being given leading
   roles in the project.
-
-
-* Migrating from GeoTools
-
-  As of the middle of 2009, Geotk provides a core API essentially identical to that provided by
-  the GeoTools\ 2 project but differing in the names of the available packages and classes and the
-  removal of all deprecated code. Applications which run on GeoTools\ 2 should therefore be able to
-  be ported to Geotk with relatively little difficulty, especially if the application focused
-  on the methods in GeoAPI and avoided using deprecated classes and methods.
-
-  The {{{build/tools/geotk-migrate/index.html}geotk-migrate}} module of Geotk provides a tool to
-  automatically rename the Java <<<import>>> statements and other references to all the classes
-  which have been renamed in Geotk. Applications which depend directly on low-level API of
-  GeoTools, such as the <<<MapProjection>>> classes, may require more work to use Geotk. The
-  {{{build/tools/geotk-migrate/changes.html}changes page}} summarizes the changes between GeoTools\ 2
-  and Geotk and should help in any porting effort.
-
-  --July, 2009
