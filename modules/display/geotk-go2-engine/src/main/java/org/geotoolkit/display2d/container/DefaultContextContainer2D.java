@@ -63,6 +63,8 @@ public class DefaultContextContainer2D extends ContextContainer2D{
             }
         }
 
+        final MapContext oldcontext = this.context;
+
         //dispose previous context graphics
         for(final GraphicJ2D graphic : contextGraphics){
             graphic.dispose();
@@ -81,6 +83,8 @@ public class DefaultContextContainer2D extends ContextContainer2D{
                 add(graphic);
             }
         }
+
+        support.firePropertyChange(CONTEXT_PROPERTY, oldcontext, this.context);
 
     }
 

@@ -206,7 +206,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
         removeItemListener(listener);
     }
 
-    protected void fireLayerChange(final int type, final MapLayer layer, final NumberRange<Integer> range, final EventObject orig) {
+    protected void updateTree(final int type, final MapLayer layer, final NumberRange<Integer> range, final EventObject orig) {
 
         //update the tree
         final List<MapLayer> list = Collections.singletonList(layer);
@@ -217,13 +217,6 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
             }else if(type == CollectionChangeEvent.ITEM_REMOVED){
                 updateItemRemove(startIndex+i);
             }
-        }
-
-        //fire the event
-        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this, layer, type, range, orig);
-        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
-        for (ContextListener listener : lists) {
-            listener.layerChange(event);
         }
 
     }
@@ -242,6 +235,27 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     private void updateItemRemove(final int index){
         findAndRemoveForLayerNumber(this, index, new AtomicInteger(-1));
     }
+
+    protected void fireLayerChange(final int type, final MapLayer layer, final NumberRange<Integer> range, final EventObject orig) {
+
+        //fire the event
+        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this, layer, type, range, orig);
+        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
+        for (ContextListener listener : lists) {
+            listener.layerChange(event);
+        }
+    }
+
+    protected void fireLayerChange(final int type, final Collection<MapLayer> layers, final NumberRange<Integer> range, final EventObject orig) {
+
+        //fire the event
+        final CollectionChangeEvent<MapLayer> event = new CollectionChangeEvent<MapLayer>(this, layers, type, range, orig);
+        final ContextListener[] lists = listeners.getListeners(ContextListener.class);
+        for (ContextListener listener : lists) {
+            listener.layerChange(event);
+        }
+    }
+
 
     private MapItem findParentForLayerNumber(final MapItem root, final int wishedNumber, final AtomicInteger inc){
 
@@ -308,18 +322,7 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     }
 
     @Override
-    public void propertyChange(final PropertyChangeEvent event) {
-        super.propertyChange(event);
-        if(event.getSource() instanceof MapLayer){
-            final int number = layers.indexOf((MapLayer)event.getSource());
-            fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, (MapLayer)event.getSource(), NumberRange.create(number,number),event);
-        }
-    }
-
-    @Override
     public void styleChange(final MapLayer source, final EventObject event) {
-        final int number = layers.indexOf(source);
-        fireLayerChange(CollectionChangeEvent.ITEM_CHANGED, source, NumberRange.create(number,number),event);
     }
 
     //--------------------------------------------------------------------------
@@ -327,15 +330,50 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
     //--------------------------------------------------------------------------
 
     @Override
-    protected void fireItemChange(final int type, final Collection<? extends MapItem> item, final NumberRange<Integer> range) {
-        super.fireItemChange(type, item, range);
+    protected void fireItemChange(final int type, final Collection<? extends MapItem> items, final NumberRange<Integer> range) {
+        super.fireItemChange(type, items, range);
+
+        final Collection<MapLayer> candidates = new ArrayList<MapLayer>();
+        final MapItem[] array = items.toArray(new MapItem[items.size()]);
+        int from = -1;
+        int to = -1;
+        for(MapItem it : array){
+            if(it instanceof MapLayer){
+                candidates.add((MapLayer) it);
+                final int index = layers.indexOf(it);
+                if(from == -1){
+                    from = index;
+                    to = index;
+                }else{
+                    from = Math.min(index, from);
+                    to = Math.max(index, to);
+                }
+            }
+        }
+
         layers.clearCache();
+
+        if(!candidates.isEmpty()){
+            fireLayerChange(type, candidates, NumberRange.create(from, to), null);
+        }
     }
 
     @Override
     protected void fireItemChange(final int type, final MapItem item, final NumberRange<Integer> range, final EventObject orig) {
         super.fireItemChange(type, item, range, orig);
+
+        //forward event a MapLayer event if necessary
+
+        int index =-1;
+        if(item instanceof MapLayer){
+            index = layers.indexOf(item);
+        }
+
         layers.clearCache();
+
+        if(item instanceof MapLayer){
+            fireLayerChange(type, (MapLayer) item, NumberRange.create(index, index), orig);
+        }
     }
 
     private List<MapLayer> createLayerList(final MapItem item, final List<MapLayer> buffer){
@@ -382,13 +420,13 @@ final class DefaultMapContext extends DefaultMapItem implements MapContext, Laye
 
         @Override
         public void add(final int index, final MapLayer element) {
-            fireLayerChange(CollectionChangeEvent.ITEM_ADDED, element, NumberRange.create(index, index), null);
+            updateTree(CollectionChangeEvent.ITEM_ADDED, element, NumberRange.create(index, index), null);
         }
 
         @Override
         public MapLayer remove(final int index) {
             final MapLayer[] array = getCache();
-            fireLayerChange(CollectionChangeEvent.ITEM_REMOVED, array[index], NumberRange.create(index, index), null);
+            updateTree(CollectionChangeEvent.ITEM_REMOVED, array[index], NumberRange.create(index, index), null);
             final MapLayer removed = array[index];
             return removed;
         }

@@ -19,6 +19,8 @@ package org.geotoolkit.display2d.container;
 
 import java.awt.Color;
 import java.awt.geom.Rectangle2D;
+import java.beans.PropertyChangeListener;
+import java.beans.PropertyChangeSupport;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,6 +66,8 @@ import org.opengis.style.Symbolizer;
  * @module pending
  */
 public abstract  class ContextContainer2D extends AbstractContainer2D{
+
+    public static final String CONTEXT_PROPERTY = "context";
 
     private static final Logger LOGGER = Logging.getLogger(ContextContainer2D.class);
 
@@ -129,7 +133,8 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
 //        return DEFAULT_SELECTION_STYLE;
 //    }
 
-
+    protected final PropertyChangeSupport support = new PropertyChangeSupport(this);
+    
     /**
      * CreContextContainer2D with no particular hints.
      */
@@ -241,5 +246,13 @@ public abstract  class ContextContainer2D extends AbstractContainer2D{
      * @return Mapcontext or null
      */
     public abstract MapContext getContext();
+
+    public void addPropertyChangeListener(final PropertyChangeListener listener){
+        support.addPropertyChangeListener(listener);
+    }
+
+    public void removePropertyChangeListener(final PropertyChangeListener listener){
+        support.removePropertyChangeListener(listener);
+    }
 
 }

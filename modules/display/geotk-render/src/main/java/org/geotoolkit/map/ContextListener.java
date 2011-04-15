@@ -76,6 +76,15 @@ public interface ContextListener extends ItemListener {
             source.removeContextListener(this);
         }
 
+        /**
+         * Unregister this listener from all it's sources.
+         */
+        public synchronized void unregisterAll(){
+            for(final MapContext mc : sources.toArray(new MapContext[sources.size()])){
+                unregisterSource(mc);
+            }
+        }
+
         @Override
         public synchronized void dispose() {
             for(MapContext source : sources){
