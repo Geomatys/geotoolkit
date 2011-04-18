@@ -26,7 +26,10 @@ import java.util.Date;
 import javax.swing.AbstractCellEditor;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JDialog;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.ListSelectionModel;
 import javax.swing.table.TableCellEditor;
@@ -399,4 +402,14 @@ public class JFeatureOutLine extends Outline{
         return new JLabel();
     }
 
+    public static void show(final Property candidate){
+        final JDialog dialog = new JDialog();
+        final JFeatureOutLine outline = new JFeatureOutLine();
+        outline.setEdited(candidate);
+        dialog.setContentPane(new JScrollPane(outline));
+        dialog.setSize(600, 600);
+        dialog.setLocationRelativeTo(null);
+        dialog.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        dialog.setVisible(true);
+    }
 }

@@ -109,7 +109,7 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
     }
 
     @Override
-    public JComponent geComponent() {
+    public JComponent getComponent() {
         return this;
     }
 

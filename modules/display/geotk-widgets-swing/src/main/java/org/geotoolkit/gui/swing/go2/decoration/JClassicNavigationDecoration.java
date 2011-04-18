@@ -580,7 +580,7 @@ public class JClassicNavigationDecoration extends JComponent implements MapDecor
     }
 
     @Override
-    public JComponent geComponent() {
+    public JComponent getComponent() {
         return this;
     }
 }

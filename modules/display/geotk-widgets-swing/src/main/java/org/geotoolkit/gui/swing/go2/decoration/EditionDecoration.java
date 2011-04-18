@@ -79,7 +79,7 @@ public class EditionDecoration extends JComponent implements MapDecoration{
         repaint();
     }
 
-    public JComponent geComponent() {
+    public JComponent getComponent() {
         return this;
     }
     

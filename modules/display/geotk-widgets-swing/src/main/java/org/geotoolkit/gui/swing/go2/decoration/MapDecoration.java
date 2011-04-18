@@ -59,6 +59,6 @@ public interface MapDecoration {
      * 
      * @return JComponent, the component which will be added at the map2D 
      */
-    public JComponent geComponent();
+    public JComponent getComponent();
     
 }

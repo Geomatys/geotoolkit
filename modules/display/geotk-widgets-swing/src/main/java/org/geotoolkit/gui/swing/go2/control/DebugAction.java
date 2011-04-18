@@ -115,7 +115,7 @@ public class DebugAction extends AbstractMapAction {
         }
 
         @Override
-        public JComponent geComponent() {
+        public JComponent getComponent() {
             return pan;
         }
 

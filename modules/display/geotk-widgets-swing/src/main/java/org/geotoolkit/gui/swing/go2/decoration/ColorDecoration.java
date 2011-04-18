@@ -45,7 +45,7 @@ public class ColorDecoration extends JPanel implements MapDecoration{
     }
 
     @Override
-    public JComponent geComponent() {
+    public JComponent getComponent() {
         return this;
     }
 

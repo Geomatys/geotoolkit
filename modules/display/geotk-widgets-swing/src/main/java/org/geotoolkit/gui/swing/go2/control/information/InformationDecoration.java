@@ -178,7 +178,7 @@ public class InformationDecoration extends JLayeredPane implements MapDecoration
      * {@inheritDoc }
      */
     @Override
-    public JComponent geComponent() {
+    public JComponent getComponent() {
         return this;
     }
 

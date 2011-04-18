@@ -88,7 +88,7 @@ public class JMap2D extends JPanel{
         mapDecorationPane.setLayout(new BufferLayout());
         userDecorationPane.setLayout(new BufferLayout());
         mainDecorationPane.setLayout(new BufferLayout());
-        mainDecorationPane.add(informationDecoration.geComponent(), Integer.valueOf(3));
+        mainDecorationPane.add(informationDecoration.getComponent(), Integer.valueOf(3));
         mainDecorationPane.add(userDecorationPane, Integer.valueOf(2));
         mainDecorationPane.add(mapDecorationPane, Integer.valueOf(1));
 
@@ -212,9 +212,9 @@ public class JMap2D extends JPanel{
     public void setInformationDecoration(final InformationDecoration info) {
         ensureNonNull("info decoration", info);
 
-        mainDecorationPane.remove(informationDecoration.geComponent());
+        mainDecorationPane.remove(informationDecoration.getComponent());
         informationDecoration = info;
-        mainDecorationPane.add(informationDecoration.geComponent(), Integer.valueOf(3));
+        mainDecorationPane.add(informationDecoration.getComponent(), Integer.valueOf(3));
 
         mainDecorationPane.revalidate();
         mainDecorationPane.repaint();
@@ -235,9 +235,9 @@ public class JMap2D extends JPanel{
     public void setBackgroundDecoration(final MapDecoration back) {
         ensureNonNull("background decoration", back);
 
-        mainDecorationPane.remove(backDecoration.geComponent());
+        mainDecorationPane.remove(backDecoration.getComponent());
         backDecoration = back;
-        mainDecorationPane.add(backDecoration.geComponent(), Integer.valueOf(0));
+        mainDecorationPane.add(backDecoration.getComponent(), Integer.valueOf(0));
 
         mainDecorationPane.revalidate();
         mainDecorationPane.repaint();
@@ -260,7 +260,7 @@ public class JMap2D extends JPanel{
         if (deco != null && !userDecorations.contains(deco)) {
             deco.setMap2D(this);
             userDecorations.add(deco);
-            userDecorationPane.add(deco.geComponent(), Integer.valueOf(userDecorations.indexOf(deco)));
+            userDecorationPane.add(deco.getComponent(), Integer.valueOf(userDecorations.indexOf(deco)));
             userDecorationPane.revalidate();
             userDecorationPane.repaint();
         }
@@ -276,7 +276,7 @@ public class JMap2D extends JPanel{
         if (deco != null && !userDecorations.contains(deco)) {
             deco.setMap2D(this);
             userDecorations.add(index, deco);
-            userDecorationPane.add(deco.geComponent(), Integer.valueOf(userDecorations.indexOf(deco)));
+            userDecorationPane.add(deco.getComponent(), Integer.valueOf(userDecorations.indexOf(deco)));
             userDecorationPane.revalidate();
             userDecorationPane.repaint();
         }
@@ -301,7 +301,7 @@ public class JMap2D extends JPanel{
             deco.setMap2D(null);
             deco.dispose();
             userDecorations.remove(deco);
-            userDecorationPane.remove(deco.geComponent());
+            userDecorationPane.remove(deco.getComponent());
             userDecorationPane.revalidate();
             userDecorationPane.repaint();
         }
@@ -322,7 +322,7 @@ public class JMap2D extends JPanel{
      * @param deco : MapDecoration to add
      */
     protected void addMapDecoration(final MapDecoration deco) {
-        mapDecorationPane.add(deco.geComponent(), Integer.valueOf(nextMapDecorationIndex));
+        mapDecorationPane.add(deco.getComponent(), Integer.valueOf(nextMapDecorationIndex));
         nextMapDecorationIndex++;
     }
 

@@ -105,7 +105,7 @@ public class JScaleBarDecoration extends JComponent implements MapDecoration{
      * {@inheritDoc }
      */
     @Override
-    public JComponent geComponent() {
+    public JComponent getComponent() {
         return this;
     }
 

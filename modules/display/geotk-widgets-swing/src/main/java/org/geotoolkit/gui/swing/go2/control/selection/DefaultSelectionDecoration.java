@@ -119,7 +119,7 @@ public class DefaultSelectionDecoration extends JComponent implements MapDecorat
     }
 
     @Override
-    public JComponent geComponent() {
+    public JComponent getComponent() {
         return this;
     }
     

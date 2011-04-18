@@ -84,10 +84,13 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
     private void updateHandler(){
         if(map == null) return;
 
+        final Object candidate = guiLayers.getSelectedItem();
+        if(candidate == null) return;
+
         final EditionTool tool = guiTools.getSelectedItem();
         if(tool == null) return;
 
-        final EditionDelegate delegate = tool.createDelegate(map);
+        final EditionDelegate delegate = tool.createDelegate(map,candidate);
         if(delegate == null) return;
 
         final EditionHandler handler = new EditionHandler(map,delegate);

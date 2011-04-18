@@ -2,7 +2,8 @@
  *    Geotoolkit - An Open Source Java GIS Toolkit
  *    http://www.geotoolkit.org
  *
- *    (C) 2009, Johann Sorel
+ *    (C) 2009-2011, Johann Sorel
+ *    (C) 2011, Geomatys
  *
  *    This library is free software; you can redistribute it and/or
  *    modify it under the terms of the GNU Lesser General Public
@@ -14,8 +15,10 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.gui.swing.go2.control.creation;
+package org.geotoolkit.gui.swing.go2.control.edition;
 
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.Feature;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -32,9 +35,9 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,17 +47,15 @@ import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
-import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.propertyedit.JFeatureOutLine;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
 import org.geotoolkit.util.logging.Logging;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
@@ -74,10 +75,15 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  */
 public class EditionHelper {
 
+    private static final Logger LOGGER = Logging.getLogger(EditionHelper.class);
+    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
+    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
+                                                new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
+    public static final Coordinate[] EMPTY_COORDINATE_ARRAY = new Coordinate[0];
     
 
     public static class EditionContext{
-        public SimpleFeature feature = null;
+        public Feature feature = null;
         public Geometry geometry = null;
         public final List<Geometry> subGeometries =  new ArrayList<Geometry>();
         public int subGeometryIndex = -1;
@@ -98,26 +104,22 @@ public class EditionHelper {
         }
     }
 
-    private static final Logger LOGGER = Logging.getLogger(DefaultEditionDecoration.class);
-    private static final GeometryFactory GEOMETRY_FACTORY = new GeometryFactory();
-    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
-                                                new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
-    public static final Coordinate[] EMPTY_COORDINATE_ARRAY = new Coordinate[0];
+    private final JMap2D map;
+    private final FeatureMapLayer editedLayer;
 
-    private final DefaultEditionHandler handler;
-
-    EditionHelper(final DefaultEditionHandler handler) {
-        this.handler = handler;
+    EditionHelper(final JMap2D map, final FeatureMapLayer editedLayer) {
+        this.map = map;
+        this.editedLayer = editedLayer;
     }
 
     /**
-     * transform a mouse coordinate in JTS Geometry using the CRS of the mapcontext
+     * transform a mouse coordinate in JTS Geometry using the CRS of the map context
      * @param mx : x coordinate of the mouse on the map (in pixel)
      * @param my : y coordinate of the mouse on the map (in pixel)
      * @return JTS geometry (corresponding to a square of 6x6 pixel around mouse coordinate)
      */
     public Polygon mousePositionToGeometry(final int mx, final int my) throws NoninvertibleTransformException {
-        Coordinate[] coord = new Coordinate[5];
+        final Coordinate[] coord = new Coordinate[5];
         int taille = 4;
 
         coord[0] = toCoord(mx - taille, my - taille);
@@ -126,18 +128,18 @@ public class EditionHelper {
         coord[3] = toCoord(mx + taille, my - taille);
         coord[4] = coord[0];
 
-        LinearRing lr1 = GEOMETRY_FACTORY.createLinearRing(coord);
+        final LinearRing lr1 = GEOMETRY_FACTORY.createLinearRing(coord);
         return GEOMETRY_FACTORY.createPolygon(lr1, null);
     }
 
     public Point toJTS(final int x, final int y){
-        Coordinate coord = toCoord(x, y);
-        Point geom = GEOMETRY_FACTORY.createPoint(coord);
+        final Coordinate coord = toCoord(x, y);
+        final Point geom = GEOMETRY_FACTORY.createPoint(coord);
         return geom;
     }
 
     public Coordinate toCoord(final int x, final int y){
-        AffineTransform2D trs = handler.getMap().getCanvas().getController().getTransform();
+        final AffineTransform2D trs = map.getCanvas().getController().getTransform();
         AffineTransform dispToObj;
         try {
             dispToObj = trs.createInverse();
@@ -145,34 +147,32 @@ public class EditionHelper {
             dispToObj = new AffineTransform();
             LOGGER.log(Level.WARNING, null, ex);
         }
-        double[] crds = new double[]{x,y};
+        final double[] crds = new double[]{x,y};
         dispToObj.transform(crds, 0, crds, 0, 1);
         return new Coordinate(crds[0], crds[1]);
     }
 
-    public SimpleFeature grabFeature(final int mx, final int my, final boolean style) {
+    public Feature grabFeature(final int mx, final int my, final boolean style) {
 
-        final FeatureMapLayer layer = handler.getEditedLayer();
+        if(editedLayer == null) return null;
 
-        if(layer == null) return null;
+        Feature candidate = null;
 
-        SimpleFeature candidate = null;
-
-        FeatureCollection<SimpleFeature> editgeoms = null;
-        FeatureIterator<SimpleFeature> fi = null;
+        FeatureCollection<Feature> editgeoms = null;
+        FeatureIterator<Feature> fi = null;
         try {
             final Polygon geo = mousePositionToGeometry(mx, my);
-            final Filter flt = toFilter(geo, layer);
-            editgeoms = (FeatureCollection<SimpleFeature>) layer.getCollection().subCollection(
-                    QueryBuilder.filtered(layer.getCollection().getFeatureType().getName(), flt));
+            final Filter flt = toFilter(geo, editedLayer);
+            editgeoms = (FeatureCollection<Feature>) editedLayer.getCollection().subCollection(
+                    QueryBuilder.filtered(editedLayer.getCollection().getFeatureType().getName(), flt));
 
             fi = editgeoms.iterator();
             if (fi.hasNext()) {
-                SimpleFeature sf = fi.next();
+                Feature sf = fi.next();
                 return sf;
             }
         }catch(Exception ex){
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }finally{
             if(fi != null){
                 fi.close();
@@ -188,7 +188,7 @@ public class EditionHelper {
             final Geometry mouseGeo = mousePositionToGeometry(mx, my);
             return pt.intersects(mouseGeo);
         }catch(Exception ex){
-            ex.printStackTrace();
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             return false;
         }
     }
@@ -235,8 +235,8 @@ public class EditionHelper {
                 }
 
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
 
         return indexes;
@@ -272,8 +272,8 @@ public class EditionHelper {
     public void moveGeometry(final Geometry geo, final int dx, final int dy) {
 
         try{
-            final Point2D pt0 = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
-            final Point2D pt = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(dx, dy), null);
+            final Point2D pt0 = map.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
+            final Point2D pt = map.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(dx, dy), null);
             pt.setLocation(pt.getX()-pt0.getX(), pt.getY()-pt0.getY());
 
             for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
@@ -287,8 +287,8 @@ public class EditionHelper {
                 }
                 subgeo.geometryChanged();
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
         geo.geometryChanged();
 
@@ -297,8 +297,8 @@ public class EditionHelper {
     public void moveSubGeometry(final Geometry geo, final int indice, final int dx, final int dy) {
 
         try{
-            final Point2D pt0 = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
-            final Point2D pt = handler.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(dx, dy), null);
+            final Point2D pt0 = map.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(0, 0), null);
+            final Point2D pt = map.getCanvas().getController().getTransform().inverseTransform(new Point2D.Double(dx, dy), null);
             pt.setLocation(pt.getX()-pt0.getX(), pt.getY()-pt0.getY());
 
             final Geometry subgeo = geo.getGeometryN(indice);
@@ -311,8 +311,8 @@ public class EditionHelper {
             }
             subgeo.geometryChanged();
 
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
         geo.geometryChanged();
 
@@ -351,8 +351,8 @@ public class EditionHelper {
                     }
                 }
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
 
         return geo;
@@ -390,8 +390,8 @@ public class EditionHelper {
                     }
                 }
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
 
         return geo;
@@ -457,8 +457,8 @@ public class EditionHelper {
                 }
 
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
 
         return geo;
@@ -494,8 +494,8 @@ public class EditionHelper {
                     }
                 }
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
 
         return geo;
@@ -531,8 +531,8 @@ public class EditionHelper {
                     }
                 }
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
 
         return geo;
@@ -592,8 +592,8 @@ public class EditionHelper {
                 }
 
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
 
         return geo;
@@ -630,31 +630,29 @@ public class EditionHelper {
                 }
 
             }
-        }catch(Exception ex){
-            ex.printStackTrace();
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
         }
 
         return geo;
     }
 
 
-    public Geometry toObjectiveCRS(final SimpleFeature sf){
-        final FeatureMapLayer layer = handler.getEditedLayer();
-        final Object obj = sf.getDefaultGeometry();
+    public Geometry toObjectiveCRS(final Feature sf){
+        final Object obj = sf.getDefaultGeometryProperty().getValue();
 
         if (obj instanceof Geometry) {
             try{
                 Geometry geom = (Geometry) obj;
 
-                MathTransform trs = CRS.findMathTransform(
-                        layer.getCollection().getFeatureType().getCoordinateReferenceSystem(),
-                        handler.getMap().getCanvas().getObjectiveCRS(),
-                        true);
+                final MathTransform trs = CRS.findMathTransform(
+                        editedLayer.getCollection().getFeatureType().getCoordinateReferenceSystem(),
+                        map.getCanvas().getObjectiveCRS(), true);
 
                 geom = JTS.transform(geom, trs);
                 return geom;
-            }catch(Exception ex){
-                ex.printStackTrace();
+            }catch(final Exception ex){
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }
         }
         return null;
@@ -673,7 +671,7 @@ public class EditionHelper {
 
         final CoordinateReferenceSystem dataCrs = fl.getCollection().getFeatureType().getCoordinateReferenceSystem();
 
-        final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(handler.getMap().getCanvas().getObjectiveCRS(), dataCrs,true));
+        final Geometry dataPoly = JTS.transform(poly, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
         dataPoly.setSRID(SRIDGenerator.toSRID(dataCrs, SRIDGenerator.Version.V1));
 
         final Expression geomData = FF.literal(dataPoly);
@@ -687,16 +685,11 @@ public class EditionHelper {
 
     public void sourceAddGeometry(Geometry geom) {
 
-        final FeatureMapLayer editionLayer = handler.getEditedLayer();
-        final JMap2D map = handler.getMap();
+        if (editedLayer != null) {
 
-        if (editionLayer != null) {
-
-            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getCollection().getFeatureType();
-            final Collection collection = new ArrayList();
-            final Object[] values = new Object[featureType.getAttributeCount()];
-            final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
+            final FeatureType featureType = (FeatureType) editedLayer.getCollection().getFeatureType();
             final CoordinateReferenceSystem dataCrs = featureType.getCoordinateReferenceSystem();
+            final Feature feature = FeatureUtilities.defaultFeature(featureType, UUID.randomUUID().toString());
 
             try {
                 geom = JTS.transform(geom, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs, true));
@@ -704,29 +697,14 @@ public class EditionHelper {
                 LOGGER.log(Level.WARNING, null, ex);
             }
 
-            final List<AttributeDescriptor> lst = featureType.getAttributeDescriptors();
-            for (int i = 0,  n = lst.size(); i < n; i++) {
-                final AttributeDescriptor desc = lst.get(i);
+            feature.getDefaultGeometryProperty().setValue(geom);
+            JFeatureOutLine.show(feature);
 
-                if (desc.equals(geomAttribut)) {
-                    values[i] = geom;
-                } else {
-                    values[i] = desc.getDefaultValue();
-                }
-                if(values[i] == null){
-                    values[i] = FeatureUtilities.defaultValue(desc.getType().getBinding());
-                }
-            }
-
-            SimpleFeature sf = SimpleFeatureBuilder.build(featureType, values, null);
-            sf = JFeatureAttributPane.configure(sf);
-            collection.add(sf);
-
-            if(editionLayer.getCollection().isWritable()){
+            if(editedLayer.getCollection().isWritable()){
                 try {
-                    editionLayer.getCollection().addAll(collection);
-                } catch (Exception eek) {
-                    eek.printStackTrace();
+                    ((FeatureCollection)editedLayer.getCollection()).add(feature);
+                } catch (Exception ex) {
+                    LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
                 }
             }
 
@@ -735,29 +713,26 @@ public class EditionHelper {
 
     }
 
-    public void sourceModifyFeature(final SimpleFeature feature, final Geometry geo){
+    public void sourceModifyFeature(final Feature feature, final Geometry geo){
 
-        final String ID = feature.getID();
+        final String ID = feature.getIdentifier().getID();
 
         ensureNonNull("geometry", geo);
         ensureNonNull("id", ID);
 
-        final FeatureMapLayer editionLayer = handler.getEditedLayer();
-        final JMap2D map = handler.getMap();
-
-        if (editionLayer != null && editionLayer.getCollection().isWritable()) {
+        if (editedLayer != null && editedLayer.getCollection().isWritable()) {
 
             final Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
-            final SimpleFeatureType featureType = (SimpleFeatureType) editionLayer.getCollection().getFeatureType();
+            final FeatureType featureType = editedLayer.getCollection().getFeatureType();
             final AttributeDescriptor geomAttribut = featureType.getGeometryDescriptor();
             final CoordinateReferenceSystem dataCrs = featureType.getCoordinateReferenceSystem();
 
             try {
                 final Geometry geom = JTS.transform(geo, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
                 
-                editionLayer.getCollection().update(filter, geomAttribut,geom);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                editedLayer.getCollection().update(filter, geomAttribut,geom);
+            } catch (final Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             } finally {
                 map.getCanvas().getController().repaint();
             }
@@ -766,24 +741,21 @@ public class EditionHelper {
 
     }
 
-    public void sourceRemoveFeature(final SimpleFeature feature){
-        sourceRemoveFeature(feature.getID());
+    public void sourceRemoveFeature(final Feature feature){
+        sourceRemoveFeature(feature.getIdentifier().getID());
     }
 
     public void sourceRemoveFeature(final String ID) {
         ensureNonNull("id", ID);
 
-        final FeatureMapLayer editionLayer = handler.getEditedLayer();
-        final JMap2D map = handler.getMap();
-
-        if (editionLayer != null && editionLayer.getCollection().isWritable()) {
+        if (editedLayer != null && editedLayer.getCollection().isWritable()) {
 
             Filter filter = FF.id(Collections.singleton(FF.featureId(ID)));
 
             try {
-                editionLayer.getCollection().remove(filter);
-            } catch (Exception ex) {
-                ex.printStackTrace();
+                editedLayer.getCollection().remove(filter);
+            } catch (final Exception ex) {
+                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
             }
 
             map.getCanvas().getController().repaint();

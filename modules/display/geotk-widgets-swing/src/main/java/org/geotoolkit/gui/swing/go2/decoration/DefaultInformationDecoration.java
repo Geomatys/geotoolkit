@@ -62,7 +62,7 @@ public class DefaultInformationDecoration extends JPanel implements InformationD
     }
 
     @Override
-    public JComponent geComponent() {
+    public JComponent getComponent() {
         return this;
     }
 
