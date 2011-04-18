@@ -44,7 +44,7 @@ public class SessionRollbackAction extends AbstractAction implements StorageList
 
     public SessionRollbackAction(final FeatureMapLayer layer) {
         putValue(SMALL_ICON, IconBundle.getIcon("16_session_rollback"));
-        putValue(NAME, "sessionRollback");
+        putValue(NAME, MessageBundle.getString("sessionRollback"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("sessionRollback"));
         setLayer(layer);
     }

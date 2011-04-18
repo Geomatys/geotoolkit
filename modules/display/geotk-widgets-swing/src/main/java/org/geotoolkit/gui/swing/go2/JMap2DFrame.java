@@ -69,6 +69,8 @@ import org.geotoolkit.gui.swing.contexttree.menu.LayerFeatureItem;
 import org.geotoolkit.gui.swing.contexttree.menu.LayerPropertyItem;
 import org.geotoolkit.gui.swing.contexttree.menu.NewGroupItem;
 import org.geotoolkit.gui.swing.contexttree.menu.SeparatorItem;
+import org.geotoolkit.gui.swing.contexttree.menu.SessionCommitItem;
+import org.geotoolkit.gui.swing.contexttree.menu.SessionRollbackItem;
 import org.geotoolkit.gui.swing.contexttree.menu.ZoomToLayerItem;
 import org.geotoolkit.gui.swing.go2.decoration.JClassicNavigationDecoration;
 import org.geotoolkit.gui.swing.propertyedit.ClearSelectionAction;
@@ -147,6 +149,9 @@ public class JMap2DFrame extends javax.swing.JFrame {
         tree.controls().add(item);
         tree.controls().add(new NewGroupItem());
         tree.controls().add(new ZoomToLayerItem());
+        tree.controls().add(new SeparatorItem());
+        tree.controls().add(new SessionCommitItem());
+        tree.controls().add(new SessionRollbackItem());
         tree.controls().add(new SeparatorItem());
         tree.controls().add(new DeleteItem());
         tree.controls().add(new SeparatorItem());

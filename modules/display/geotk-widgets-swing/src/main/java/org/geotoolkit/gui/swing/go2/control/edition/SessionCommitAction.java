@@ -50,7 +50,7 @@ public class SessionCommitAction extends AbstractAction implements StorageListen
 
     public SessionCommitAction(final FeatureMapLayer layer) {
         putValue(SMALL_ICON, IconBundle.getIcon("16_session_commit"));
-        putValue(NAME, "sessionCommit");
+        putValue(NAME, MessageBundle.getString("sessionCommit"));
         putValue(SHORT_DESCRIPTION, MessageBundle.getString("sessionCommit"));
         setLayer(layer);
     }

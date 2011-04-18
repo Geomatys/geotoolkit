@@ -26,6 +26,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import org.geotoolkit.data.StorageContentEvent;
+import org.geotoolkit.data.StorageManagementEvent;
 
 import org.geotoolkit.display2d.container.stateless.StatelessCollectionLayerJ2D.RenderingIterator;
 import org.geotoolkit.storage.DataStoreException;
@@ -53,8 +55,10 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.geometry.DefaultBoundingBox;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.StorageListener;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.display2d.container.statefull.StatefullCachedRule;
@@ -89,14 +93,33 @@ import static org.geotoolkit.display2d.GO2Utilities.*;
  * @author johann sorel (Geomatys)
  * @module pending
  */
-public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<FeatureMapLayer>{
+public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<FeatureMapLayer> implements StorageListener{
+
+    protected StorageListener.Weak weakSessionListener = new StorageListener.Weak(this);
 
     protected Query currentQuery = null;
 
 
     public StatelessFeatureLayerJ2D(final J2DCanvas canvas, final FeatureMapLayer layer){
         super(canvas, layer);
+        final Session session = layer.getCollection().getSession();
+        weakSessionListener.registerSource(session);
     }
+
+    @Override
+    public void structureChanged(StorageManagementEvent event) {
+    }
+
+    @Override
+    public void contentChanged(StorageContentEvent event) {
+        if(event.getType() == StorageContentEvent.Type.SESSION){
+            if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
+                //TODO should call a repaint only on this graphic
+                getCanvas().getController().repaint();
+            }
+        }
+    }
+
 
     /**
      * {@inheritDoc }
@@ -511,7 +534,7 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
         qb.setHints(queryHints);
         return qb.buildQuery();
     }
-    
+
     private static class GraphicIterator implements RenderingIterator{
 
         private final FeatureIterator<? extends Feature> ite;
