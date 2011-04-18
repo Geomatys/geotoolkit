@@ -29,8 +29,11 @@ import org.geotoolkit.gui.swing.go2.control.edition.EditionDelegate;
 import org.geotoolkit.gui.swing.go2.control.edition.EditionHandler;
 import org.geotoolkit.gui.swing.go2.control.edition.EditionTool;
 import org.geotoolkit.gui.swing.go2.control.edition.JEditionToolComboBox;
+import org.geotoolkit.gui.swing.go2.control.edition.SessionCommitAction;
+import org.geotoolkit.gui.swing.go2.control.edition.SessionRollbackAction;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.geotoolkit.map.FeatureMapLayer;
 
 /**
  * 
@@ -38,6 +41,9 @@ import org.geotoolkit.gui.swing.resource.MessageBundle;
  * @module pending
  */
 public class JEditionBar extends AbstractMapControlBar implements ActionListener,ItemListener{
+
+    private final SessionCommitAction commitAction = new SessionCommitAction();
+    private final SessionRollbackAction rollbackAction = new SessionRollbackAction();
 
     private final JButton guiEdit = new JButton(IconBundle.getIcon("16_edit_geom"));
     private final JEditionToolComboBox guiTools = new JEditionToolComboBox();
@@ -61,6 +67,8 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         add(guiEdit);
         add(guiTools);
         add(guiLayers);
+        add(commitAction);
+        add(rollbackAction);
 
         guiTools.addItemListener(this);
         guiLayers.addItemListener(this);
@@ -100,7 +108,17 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
     @Override
     public void itemStateChanged(final ItemEvent e) {
         if(e.getSource() == guiLayers){
-            guiTools.setEdited(guiLayers.getSelectedItem());
+            final Object candidate = guiLayers.getSelectedItem();
+            guiTools.setEdited(candidate);
+            
+            if(candidate instanceof FeatureMapLayer){
+                commitAction.setLayer((FeatureMapLayer) candidate);
+                rollbackAction.setLayer((FeatureMapLayer) candidate);
+            }else{
+                commitAction.setLayer(null);
+                rollbackAction.setLayer(null);
+            }
+
         }else if(e.getSource() == guiTools){
             //tool changed
             updateHandler();

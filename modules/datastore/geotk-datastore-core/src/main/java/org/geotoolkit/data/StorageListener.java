@@ -100,6 +100,15 @@ public interface StorageListener extends EventListener{
             remove(source);
         }
 
+        /**
+         * Unregister this listener from all it's sources.
+         */
+        public synchronized void unregisterAll(){
+            for(final Object mc : sources.toArray(new Object[sources.size()])){
+                unregisterSource(mc);
+            }
+        }
+
         private synchronized void remove(final Object source){
             try {
                 final Method method = source.getClass().getMethod("removeStorageListener", StorageListener.class);

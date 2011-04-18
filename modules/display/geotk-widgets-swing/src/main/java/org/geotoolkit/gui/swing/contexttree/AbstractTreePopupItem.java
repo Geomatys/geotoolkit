@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.gui.swing.contexttree;
 
+import javax.swing.Action;
 import javax.swing.JMenuItem;
 import javax.swing.tree.DefaultMutableTreeNode;
 import javax.swing.tree.TreePath;
@@ -37,6 +38,10 @@ public abstract class AbstractTreePopupItem extends JMenuItem implements TreePop
 
     public AbstractTreePopupItem(final String str) {
         super(str);
+    }
+
+    public AbstractTreePopupItem(final Action action) {
+        super(action);
     }
 
     @Override
