@@ -17,16 +17,12 @@
  */
 package org.geotoolkit.gui.swing.misc;
 
-import java.awt.Color;
 import java.awt.Component;
 
-import javax.swing.BorderFactory;
 import javax.swing.DefaultListCellRenderer;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JList;
-import javax.swing.ListCellRenderer;
-import javax.swing.border.Border;
 
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.map.MapLayer;
@@ -39,10 +35,7 @@ import org.geotoolkit.map.MapLayer;
  */
 public class LayerListRenderer extends DefaultListCellRenderer {
 
-    private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getIcon("16_maplayer_visible");
-    private final Border border = BorderFactory.createLineBorder(Color.LIGHT_GRAY,1);
-    private final Border nullborder = BorderFactory.createEmptyBorder(1,1,1,1);
-    
+    private static final ImageIcon ICON_LAYER_VISIBLE = IconBundle.getIcon("16_maplayer_visible");    
     
     @Override
     public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
@@ -51,24 +44,10 @@ public class LayerListRenderer extends DefaultListCellRenderer {
         if(value instanceof MapLayer){
             MapLayer layer = (MapLayer) value;
             lbl.setText(layer.getDescription().getTitle().toString());
-            lbl.setIcon(getIcon(layer));
+            lbl.setIcon(ICON_LAYER_VISIBLE);
         }
                         
         return lbl;
-    }
-    
-    private ImageIcon getIcon(final MapLayer layer){
-//        DataStore ds = (DataStore) layer.getFeatureSource().getDataStore();
-//
-//        if (layer.getFeatureSource().getSchema().getName().getLocalPart().equals("GridCoverage")) {
-//            return ICON_LAYER_FILE_RASTER_VISIBLE ;
-//        } else if (AbstractFileDataStore.class.isAssignableFrom(ds.getClass())) {
-//            return ICON_LAYER_FILE_VECTOR_VISIBLE ;
-//        } else if (JDBC1DataStore.class.isAssignableFrom(ds.getClass())) {
-//            return ICON_LAYER_DB_VISIBLE;
-//        } else {
-            return ICON_LAYER_VISIBLE;
-//        }
     }
 
 }

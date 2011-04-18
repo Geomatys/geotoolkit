@@ -28,6 +28,7 @@ import java.awt.geom.Rectangle2D;
 import javax.swing.event.MouseInputListener;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.decoration.InformationDecoration.LEVEL;
+import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
 
 /**
  * Listener to handle mouse drag, move zoom.
@@ -67,6 +68,10 @@ public class MouseNavigatonListener implements MouseInputListener, MouseWheelLis
 
     public int getPanButton() {
         return panButton;
+    }
+
+    protected MapDecoration getDecoration(){
+        return decorationPane;
     }
 
     public void install(final Component component){
