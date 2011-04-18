@@ -62,7 +62,6 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
     private int[] selection = new int[]{-1,-1,-1};
     private final List<Coordinate> coords = new ArrayList<Coordinate>();
     private boolean modified = false;
-    private boolean added = false;
     private boolean draggingAll = false;
     private boolean justCreated = false;
 
@@ -77,7 +76,6 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
         subGeometries.clear();
         selection = new int[]{-1,-1,-1};
         modified = false;
-        added = false;
         draggingAll = false;
         coords.clear();
         justCreated = false;
@@ -138,7 +136,6 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
                     }
                     subGeometries.add(candidate);
                     geometry = EditionHelper.createMultiPolygon(subGeometries);
-                    added = true;
                     decoration.setGeometries(Collections.singleton(geometry));
                     break;
                 case NODE_MOVE :
@@ -212,7 +209,6 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
                         }
                         subGeometries.add(cdt2);
                         geometry = EditionHelper.createMultiPolygon(subGeometries);
-                        added = true;
                         decoration.setGeometries(Collections.singleton(geometry));
                     }
                     break;
@@ -471,7 +467,6 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
                     }
                     subGeometries.add(candidate);
                     geometry = EditionHelper.createMultiPolygon(subGeometries);
-                    added = true;
                     decoration.setGeometries(Collections.singleton(geometry));
                     return;
                 }

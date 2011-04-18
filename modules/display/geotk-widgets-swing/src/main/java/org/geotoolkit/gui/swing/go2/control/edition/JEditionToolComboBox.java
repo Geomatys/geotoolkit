@@ -17,9 +17,13 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import java.awt.Component;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.DefaultListCellRenderer;
 import javax.swing.JComboBox;
+import javax.swing.JLabel;
+import javax.swing.JList;
 import org.jdesktop.swingx.combobox.ListComboBoxModel;
 
 /**
@@ -32,6 +36,7 @@ public class JEditionToolComboBox extends JComboBox {
     private Object edited = null;
 
     public JEditionToolComboBox() {
+        setRenderer(new ToolRenderer());
     }
 
     public Object getEdited() {
@@ -59,6 +64,23 @@ public class JEditionToolComboBox extends JComboBox {
         }
 
         setModel(new ListComboBoxModel(validTools));
+    }
+
+    public class ToolRenderer extends DefaultListCellRenderer {
+
+        @Override
+        public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
+            final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
+
+            if(value instanceof EditionTool){
+                final EditionTool tool = (EditionTool) value;
+                lbl.setText(tool.getTitle().toString());
+                lbl.setToolTipText(tool.getAbstract().toString());
+            }
+
+            return lbl;
+        }
+
     }
 
 }

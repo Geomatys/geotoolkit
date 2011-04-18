@@ -1,2 +1,3 @@
 org.geotoolkit.gui.swing.go2.control.edition.PointCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.MultiPolygonCreationTool
+org.geotoolkit.gui.swing.go2.control.edition.GeometryMoveTool

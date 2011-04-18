@@ -18,9 +18,12 @@
 package org.geotoolkit.gui.swing.go2.control.edition;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
+
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
+
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 
@@ -32,7 +35,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class MultiPolygonCreationTool extends AbstractEditionTool {
 
     public MultiPolygonCreationTool() {
-        super("multipolygonCreation",new SimpleInternationalString("Create multi-polygon"),
+        super("multipolygonCreation",MessageBundle.getI18NString("create"),
              new SimpleInternationalString("Tool for creating multi-polygons."), FeatureMapLayer.class);
     }
 

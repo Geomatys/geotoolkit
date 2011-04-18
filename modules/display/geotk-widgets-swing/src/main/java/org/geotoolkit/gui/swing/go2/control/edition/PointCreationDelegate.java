@@ -30,7 +30,6 @@ import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.map.FeatureMapLayer;
 
 import static org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionDecoration.*;
-import static java.awt.event.MouseEvent.*;
 
 /**
  * Point creation delegate.
@@ -45,22 +44,14 @@ public class PointCreationDelegate extends AbstractFeatureEditionDelegate{
         super(map,candidate);
     }
 
-    private enum ACTION{
-        ADD,
-        MOVE
-    }
-
-    private ACTION currentAction = ACTION.MOVE;
     private Feature feature = null;
     private Point geometry = null;
     private boolean modified = false;
-    private boolean coordSelected = false;
 
     private void reset(){
         feature = null;
         geometry = null;
         modified = false;
-        coordSelected = false;
         decoration.setGeometries(null);
     }
 
@@ -80,15 +71,9 @@ public class PointCreationDelegate extends AbstractFeatureEditionDelegate{
         final int button = e.getButton();
 
         if(button == MouseEvent.BUTTON1){
-            switch(currentAction){
-                case ADD:
-                    if(this.geometry == null){
-                        final Point geo = helper.toJTS(e.getX(), e.getY());
-                        helper.sourceAddGeometry(geo);
-                    }
-                    break;
-                case MOVE:
-                    setCurrentFeature(helper.grabFeature(e.getX(), e.getY(), false));
+            if(this.geometry == null){
+                final Point geo = helper.toJTS(e.getX(), e.getY());
+                helper.sourceAddGeometry(geo);
             }
         }else if(button == MouseEvent.BUTTON3){
             //save changes if we had some
@@ -105,46 +90,16 @@ public class PointCreationDelegate extends AbstractFeatureEditionDelegate{
     @Override
     public void mousePressed(final MouseEvent e) {
         pressed = e.getButton();
-        switch(currentAction){
-            case MOVE:
-                if(this.geometry != null && e.getButton() == BUTTON1){
-                    //start dragging mode
-                    coordSelected = helper.grabGeometrynode(geometry, e.getX(), e.getY());
-                    return;
-                }
-                break;
-        }
         super.mousePressed(e);
     }
 
     @Override
     public void mouseReleased(final MouseEvent e) {
-        switch(currentAction){
-            case MOVE:
-                if(coordSelected && e.getButton() == BUTTON1){
-                    //we were dragging a node
-                    this.modified = true;
-                    this.geometry = helper.toJTS(e.getX(), e.getY());
-                    decoration.setGeometries(Collections.singleton(this.geometry));
-                    return;
-                }
-                break;
-        }
         super.mouseReleased(e);
     }
 
     @Override
     public void mouseDragged(final MouseEvent e) {
-        switch(currentAction){
-            case MOVE:
-                if(coordSelected && pressed == BUTTON1){
-                    this.modified = true;
-                    this.geometry = helper.toJTS(e.getX(), e.getY());
-                    decoration.setGeometries(Collections.singleton(this.geometry));
-                    return;
-                }
-
-        }
         super.mouseDragged(e);
     }
 

@@ -17,7 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
-import com.vividsolutions.jts.geom.Point;
+import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -30,11 +30,11 @@ import org.opengis.feature.type.GeometryDescriptor;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class PointCreationTool extends AbstractEditionTool {
+public class GeometryMoveTool extends AbstractEditionTool {
 
-    public PointCreationTool() {
-        super("pointCreation",MessageBundle.getI18NString("create"),
-             new SimpleInternationalString("Tool for creating points."), FeatureMapLayer.class);
+    public GeometryMoveTool() {
+        super("geometryMove", MessageBundle.getI18NString("move"),
+             new SimpleInternationalString("Tool for moving geometry around."), FeatureMapLayer.class);
     }
 
     @Override
@@ -53,12 +53,12 @@ public class PointCreationTool extends AbstractEditionTool {
             return false;
         }
 
-        return Point.class.isAssignableFrom(desc.getType().getBinding());
+        return Geometry.class.isAssignableFrom(desc.getType().getBinding());
     }
 
     @Override
     public EditionDelegate createDelegate(final JMap2D map, final Object candidate) {
-        return new PointCreationDelegate(map, (FeatureMapLayer) candidate);
+        return new GeometryMoveDelegate(map, (FeatureMapLayer) candidate);
     }
 
 }
