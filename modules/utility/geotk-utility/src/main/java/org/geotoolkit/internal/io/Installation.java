@@ -113,7 +113,7 @@ public enum Installation {
 
     /**
      * Whatever we are allowed to check for system preferences. This can be set to {@code false}
-     * for avoiding the "<cite>can not flush sytem preferences in {@code /etc/.java/}</cite>"
+     * for avoiding the "<cite>can not flush system preferences in {@code /etc/.java/}</cite>"
      * warning on Linux.
      * <p>
      * Note that this field applies only to read operations. Write operations

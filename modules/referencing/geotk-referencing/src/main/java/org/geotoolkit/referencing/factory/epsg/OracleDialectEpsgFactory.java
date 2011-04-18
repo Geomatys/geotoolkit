@@ -59,6 +59,6 @@ final class OracleDialectEpsgFactory extends AnsiDialectEpsgFactory {
      */
     @Override
     protected String adaptSQL(final String statement) {
-        return statement.replace(" AS ", " ");
+        return super.adaptSQL(statement).replace(" AS ", " ");
     }
 }
