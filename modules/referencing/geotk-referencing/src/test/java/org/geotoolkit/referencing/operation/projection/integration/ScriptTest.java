@@ -72,7 +72,6 @@ public final class ScriptTest extends ReferencingTestBase {
             out.println(filename);
             test.printStatistics();
             out.println();
-            out.flush();
         }
         if (test.firstError != null) {
             throw test.firstError;

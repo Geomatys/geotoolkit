@@ -32,6 +32,7 @@ import java.util.logging.*;
 import org.geotoolkit.io.X364;
 import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.ExpandedTabWriter;
+import org.geotoolkit.internal.OS;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.lang.ThreadSafe;
@@ -140,6 +141,12 @@ public class MonolineFormatter extends Formatter {
      * The colors to apply, or {@code null} if none.
      */
     private SortedMap<Level,X364> colors;
+
+    /**
+     * {@code true} if the faint X.364 code is supported.
+     * On MacOS, faint colors produce bad output.
+     */
+    private final boolean faintSupported;
 
     /**
      * Numerical values of levels for which to apply colors in increasing order.
@@ -284,6 +291,7 @@ loop:   for (int i=0; ; i++) {
             colors.put(Level.SEVERE,  X364.BACKGROUND_RED);
             colors.put(PerformanceLevel.PERFORMANCE, X364.BACKGROUND_CYAN);
         }
+        faintSupported = !OS.MAC_OS.equals(OS.current());
     }
 
     /**
@@ -449,7 +457,7 @@ loop:   for (int i=0; ; i++) {
     public synchronized String format(final LogRecord record) {
         final Level level = record.getLevel();
         final boolean colors  = (this.colors != null);
-        final boolean emphase = (level.intValue() >= LEVEL_THRESHOLD.intValue());
+        final boolean emphase = !faintSupported || (level.intValue() >= LEVEL_THRESHOLD.intValue());
         final StringBuffer buffer = this.buffer;
         buffer.setLength(MARGIN.length());
         /*
@@ -542,10 +550,10 @@ loop:   for (int i=0; ; i++) {
         }
         printer.flush();
         buffer.setLength(trim(buffer));
-        buffer.append(lineSeparator);
         if (colors && !emphase) {
             buffer.append(X364.NORMAL.sequence());
         }
+        buffer.append(lineSeparator);
         return buffer.toString();
     }
 

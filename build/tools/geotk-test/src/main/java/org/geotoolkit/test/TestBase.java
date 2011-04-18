@@ -21,13 +21,17 @@ import java.util.Date;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.Handler;
+import java.util.logging.ConsoleHandler;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.io.Console;
-import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.OutputStreamWriter;
+import java.io.UnsupportedEncodingException;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -66,6 +70,16 @@ public abstract class TestBase {
     public static final String VERBOSE_KEY = "org.geotoolkit.test.verbose";
 
     /**
+     * The name of a system property for setting the encoding of test output.
+     * This property is used only if the {@link #VERBOSE_KEY} property is set
+     * to "{@code true}". If this property is not set, then the system encoding
+     * will be used.
+     *
+     * @since 3.18
+     */
+    public static final String ENCODING_KEY = "org.geotoolkit.test.encoding";
+
+    /**
      * If verbose output are enabled, the output stream where to print the output.
      * Otherwise {@code null}.
      *
@@ -81,7 +95,7 @@ public abstract class TestBase {
     /**
      * Invokes a method of {@link org.geotoolkit.util.logging.Logging#GEOTOOLKIT}.
      */
-    static void invokeLogging(final String method, final Class<?>[] argTypes, final Object[] argValues) {
+    private static void invokeLogging(final String method, final Class<?>[] argTypes, final Object[] argValues) {
         try {
             final Class<?> logging = Class.forName("org.geotoolkit.util.logging.Logging");
             logging.getMethod(method, argTypes).invoke(logging.getField("GEOTOOLKIT").get(null), argValues);
@@ -102,6 +116,29 @@ public abstract class TestBase {
         } else {
             buffer = null;
             out = null;
+        }
+        /*
+         * Now set the encoding of console output, if it was specified. Note that we look
+         * specifically for ConsoleHandler; we do not generalize to StreamHandler because
+         * the log files may not be intended for being show in the console.
+         *
+         * In case of failure to use the given encoding, we will just print a short error
+         * message and left the encoding unchanged.
+         */
+        final String encoding = System.getProperty(ENCODING_KEY);
+        if (encoding != null) try {
+            for (Logger logger=Logger.getLogger("org.geotoolkit"); logger!=null; logger=logger.getParent()) {
+                for (final Handler handler : logger.getHandlers()) {
+                    if (handler instanceof ConsoleHandler) {
+                        ((ConsoleHandler) handler).setEncoding(encoding);
+                    }
+                }
+                if (!logger.getUseParentHandlers()) {
+                    break;
+                }
+            }
+        } catch (UnsupportedEncodingException e) {
+            System.err.println(e);
         }
     }
 
@@ -128,22 +165,41 @@ public abstract class TestBase {
         System.err.flush();
         if (out != null) {
             out.flush();
-            final String content = buffer.toString();
-            if (content.length() != 0) {
+            /*
+             * Get the text content and remove the trailing spaces
+             * (including line feeds), if any.
+             */
+            String content = buffer.toString();
+            int length = content.length();
+            do if (length == 0) return;
+            while (Character.isWhitespace(content.charAt(--length)));
+            content = content.substring(0, ++length);
+            /*
+             * Get the output writer, using the specified encoding if any.
+             */
+            PrintWriter writer = null;
+            final String encoding = System.getProperty(ENCODING_KEY);
+            if (encoding == null) {
                 final Console console = System.console();
                 if (console != null) {
-                    final PrintWriter w = console.writer();
-                    w.println(SEPARATOR);
-                    w.println(content);
-                    w.println(SEPARATOR);
-                } else {
-                    final PrintStream w = System.out;
-                    w.println(SEPARATOR);
-                    w.println(content);
-                    w.println(SEPARATOR);
+                    writer = console.writer();
                 }
-                buffer.getBuffer().setLength(0);
             }
+            if (writer == null) {
+                if (encoding != null) try {
+                    writer = new PrintWriter(new OutputStreamWriter(System.out, encoding));
+                } catch (UnsupportedEncodingException e) {
+                    // Ignore. We will use the default encoding.
+                }
+                if (writer == null) {
+                    writer = new PrintWriter(System.out);
+                }
+            }
+            writer.println(SEPARATOR);
+            writer.println(content);
+            writer.println(SEPARATOR);
+            writer.flush();
+            buffer.getBuffer().setLength(0);
         }
     }
 

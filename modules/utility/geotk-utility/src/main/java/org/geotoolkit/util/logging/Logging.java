@@ -42,15 +42,31 @@ import org.geotoolkit.util.converter.Classes;
 
 
 /**
- * A set of utilities method for configuring loggings in Geotk.
+ * A set of utilities method for configuring loggings in Geotk. Library implementors shall fetch
+ * their logger using the {@link #getLogger(Class)} static method provided in this class rather
+ * than {@link Logger#getLogger(String)}, in order to give Geotk a chance to redirect the logging
+ * to an other framework like <A HREF="http://commons.apache.org/logging/">Commons-logging</A> or
+ * <A HREF="http://logging.apache.org/log4j">Log4J</A>.
  * <p>
- * <b>Example:</b> In order to redirect every Geotk log events to
- * <A HREF="http://jakarta.apache.org/commons/logging/">commons-logging</A>,
- * invoke the following once at application startup:
+ * This method provides also a {@link #log(Class, LogRecord)} convenience static method, which
+ * {@linkplain LogRecord#setLoggerName set the logger name} of the given record before to log it.
+ * An other worthy static method is {@link #unexpectedException(Class, String, Throwable)}, for
+ * reporting an anomalous but nevertheless non-fatal exception.
+ *
+ * {@section Configuration}
+ * The log records can be redirected explicitly to an other logging framework using the
+ * following method call (replace {@link LoggerFactory#COMMONS_LOGGING} by
+ * {@link LoggerFactory#LOG4J} or an other framework if desired):
  *
  * {@preformat java
- *     Logging.GEOTOOLKIT.setLoggerFactory("org.geotoolkit.util.logging.CommonsLoggerFactory");
+ *     Logging.GEOTOOLKIT.setLoggerFactory(LoggerFactory.COMMONS_LOGGING);
  * }
+ *
+ * Note however that the above method invocation is performed automatically if the
+ * {@code geotk-logging-commons.jar} or the {@code geotk-logging-log4j.jar} file is
+ * found on the classpath, so it usually doesn't need to be invoked explicitely.
+ * See the {@link #scanLoggerFactory()} method for more details on automatic logger
+ * factory registration.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.18
@@ -186,7 +202,7 @@ public final class Logging {
      * Returns a logger for the specified name. If a {@linkplain LoggerFactory logger factory} has
      * been set, then this method first {@linkplain LoggerFactory#getLogger ask to the factory}.
      * It gives Geotk a chance to redirect logging events to
-     * <A HREF="http://jakarta.apache.org/commons/logging/">commons-logging</A>
+     * <A HREF="http://commons.apache.org/logging/">commons-logging</A>
      * or some equivalent framework.
      * <p>
      * If no factory was found or if the factory choose to not redirect the loggings, then this
@@ -497,24 +513,26 @@ search:     while (configs.hasMoreElements()) try {
     }
 
     /**
-     * Flushes all {@linkplain Handler handlers} used by this logger. If this logger
-     * {@linkplain Logger#getUseParentHandlers() uses parent handlers}, then those
-     * handlers will be flushed as well.
+     * Flushes all {@linkplain Handler handlers} used by the logger named {@link #name}.
+     * If that logger {@linkplain Logger#getUseParentHandlers() uses parent handlers},
+     * then those handlers will be flushed as well.
+     * <p>
+     * If the log records seem to be interleaved with the content of {@link System#out}
+     * or {@link System#err}, invoking this method before to write to the standard streams
+     * may help.
      *
      * @since 3.18
      *
      * @see Handler#flush()
      */
     public void flush() {
-        Logger logger = getLogger(name);
-        while (logger != null) {
+        for (Logger logger=getLogger(name); logger!=null; logger=logger.getParent()) {
             for (final Handler handler : logger.getHandlers()) {
                 handler.flush();
             }
             if (!logger.getUseParentHandlers()) {
                 break;
             }
-            logger = logger.getParent();
         }
     }
 

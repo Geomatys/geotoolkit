@@ -24,8 +24,8 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
 
 /**
  * A factory for Java {@link Logger} wrapping an other logging framework. This factory is used
- * only when wanting to log to an other framework than Java logging. The {@link #getLogger}
- * method returns some subclass of {@link Logger} (typicallly {@link LoggerAdapter}) that
+ * only when wanting to log to an other framework than Java logging. The {@link #getLogger(String)}
+ * method returns some subclass of {@link Logger} (typically {@link LoggerAdapter}) that
  * forward directly all log methods to an other framework.
  *
  * @param <L> The type of loggers used for the implementation backend. This is the type
@@ -44,7 +44,7 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
 @ThreadSafe
 public abstract class LoggerFactory<L> {
     /**
-     * The Apache's <A HREF="http://jakarta.apache.org/commons/logging/">Commons-logging</A> framework.
+     * The Apache's <A HREF="http://commons.apache.org/logging/">Commons-logging</A> framework.
      * This value can be given to {@link Logging#setLoggerFactory(String)} in order to force explicitly
      * usage of this logging framework. Note that this is usually not needed, since this framework is
      * selected automatically if {@code geotk-logging-commons.jar} is found on the classpath.
