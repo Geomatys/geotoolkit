@@ -22,6 +22,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import javax.swing.JButton;
+import org.geotoolkit.gui.swing.go2.CanvasHandler;
 
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.edition.JLayerComboBox;
@@ -86,10 +87,15 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
 
     @Override
     public void actionPerformed(final ActionEvent e) {
-        updateHandler();
+        updateHandler(true);
     }
 
-    private void updateHandler(){
+    /**
+     *
+     * @param set : if true will replace whatever handler is present
+     * otherwise will replace it only if it's an edition handler.
+     */
+    private void updateHandler(boolean set){
         if(map == null) return;
 
         final Object candidate = guiLayers.getSelectedItem();
@@ -101,8 +107,11 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         final EditionDelegate delegate = tool.createDelegate(map,candidate);
         if(delegate == null) return;
 
-        final EditionHandler handler = new EditionHandler(map,delegate);
-        map.setHandler(handler);
+        final CanvasHandler before = map.getHandler();
+        if(set || before instanceof EditionHandler){
+            final EditionHandler handler = new EditionHandler(map,delegate);
+            map.setHandler(handler);
+        }
     }
 
     @Override
@@ -119,9 +128,12 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
                 rollbackAction.setLayer(null);
             }
 
+            //tool changed
+            updateHandler(false);
+
         }else if(e.getSource() == guiTools){
             //tool changed
-            updateHandler();
+            updateHandler(false);
         }
     }
 
