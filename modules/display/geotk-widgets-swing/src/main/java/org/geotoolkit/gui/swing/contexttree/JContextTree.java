@@ -61,11 +61,16 @@ import javax.swing.tree.TreeCellEditor;
 import javax.swing.tree.TreePath;
 import javax.swing.tree.TreeSelectionModel;
 
+import org.geotoolkit.data.StorageContentEvent;
+import org.geotoolkit.data.StorageListener;
+import org.geotoolkit.data.StorageManagementEvent;
+import org.geotoolkit.data.session.Session;
 import org.geotoolkit.display.exception.PortrayalException;
 import org.geotoolkit.display2d.primitive.GraphicJ2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.display2d.service.DefaultGlyphService;
 import org.geotoolkit.gui.swing.style.JOpacitySlider;
+import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.map.GraphicBuilder;
 import org.geotoolkit.map.ItemListener;
 import org.geotoolkit.map.MapContext;
@@ -375,6 +380,14 @@ public class JContextTree extends JScrollPane {
                     panel.add(label);
                 }
 
+                if(layer instanceof FeatureMapLayer){
+                    final FeatureMapLayer fml = (FeatureMapLayer) layer;
+                    final Session session = fml.getCollection().getSession();
+                    if(session != null && session.hasPendingChanges()){
+                        this.label.setText(label.getText()+"*");
+                    }
+                }
+
             } else if (obj instanceof MapItem) {
                 final MapItem item = (MapItem) obj;
                 
@@ -626,12 +639,17 @@ public class JContextTree extends JScrollPane {
         }
     }
 
-    private class MapItemTreeNode extends DefaultMutableTreeNode implements ItemListener{
+    private class MapItemTreeNode extends DefaultMutableTreeNode implements ItemListener, StorageListener{
 
         private MapItemTreeNode(final MapItem item){
             super(item);
             ensureNonNull("item", item);
             item.addItemListener(new ItemListener.Weak(item, MapItemTreeNode.this));
+
+            if(item instanceof FeatureMapLayer){
+                final FeatureMapLayer fml = (FeatureMapLayer) item;
+                fml.getCollection().getSession().addStorageListener(new StorageListener.Weak(this));
+            }
 
             resetStructure();
         }
@@ -747,6 +765,19 @@ public class JContextTree extends JScrollPane {
                     }
                 }
 
+            }
+        }
+
+        @Override
+        public void structureChanged(StorageManagementEvent event) {
+        }
+
+        @Override
+        public void contentChanged(StorageContentEvent event) {
+            if(event.getType() == StorageContentEvent.Type.SESSION){
+                //pending changes, refresh node to add a small * to specify
+                //some changes are made
+                ((DefaultTreeModel)tree.getModel()).nodeChanged(this);
             }
         }
 

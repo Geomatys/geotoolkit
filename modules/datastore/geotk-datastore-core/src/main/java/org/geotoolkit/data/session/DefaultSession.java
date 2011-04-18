@@ -116,6 +116,7 @@ public class DefaultSession extends AbstractSession {
 
         if(async){
             diff.add(new AddDelta(this, groupName, newFeatures));
+            fireSessionChanged();
         }else{
             store.addFeatures(groupName, newFeatures);
         }
@@ -162,6 +163,7 @@ public class DefaultSession extends AbstractSession {
             }
 
             diff.add(new ModifyDelta(this, groupName, modified, values));
+            fireSessionChanged();
         }else{
             store.updateFeatures(groupName, filter, values);
         }
@@ -202,6 +204,7 @@ public class DefaultSession extends AbstractSession {
             }
 
             diff.add(new RemoveDelta(this, groupName, removed));
+            fireSessionChanged();
         }else{
             store.removeFeatures(groupName, filter);
         }
@@ -221,6 +224,7 @@ public class DefaultSession extends AbstractSession {
     @Override
     public void commit() throws DataStoreException {
         diff.commit(store);
+        fireSessionChanged();
     }
 
     /**
@@ -229,6 +233,7 @@ public class DefaultSession extends AbstractSession {
     @Override
     public void rollback() {
         diff.rollback();
+        fireSessionChanged();
     }
 
     /**

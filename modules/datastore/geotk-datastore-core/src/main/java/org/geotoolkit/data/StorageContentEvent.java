@@ -35,7 +35,11 @@ public class StorageContentEvent extends EventObject{
     public static enum Type{
         ADD,
         UPDATE,
-        DELETE
+        DELETE,
+        /**
+         * When a modification on the session has been made, new pending changes.
+         */
+        SESSION
     };
 
     private final Type type;
@@ -87,6 +91,10 @@ public class StorageContentEvent extends EventObject{
 
     public static StorageContentEvent createDeleteEvent(final Object source, final Name name, final Id ids){
         return new StorageContentEvent(source, Type.DELETE, name, ids);
+    }
+
+    public static StorageContentEvent createSessionEvent(final Object source){
+        return new StorageContentEvent(source, Type.SESSION, null, null);
     }
 
     public static StorageContentEvent resetSource(final Object source, final StorageContentEvent event){

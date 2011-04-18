@@ -150,6 +150,13 @@ public abstract class AbstractSession implements Session, StorageListener{
     }
 
     /**
+     * Fires a session event. when new pending changes are added.
+     */
+    protected void fireSessionChanged(){
+        sendEvent(StorageContentEvent.createSessionEvent(this));
+    }
+
+    /**
      * Forward a features event to all listeners.
      * @param event , event to send to listeners.
      */
