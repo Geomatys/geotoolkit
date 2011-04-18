@@ -21,31 +21,29 @@ import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.MultiLineString;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-
 import static org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionDecoration.*;
 
 /**
- * multipolygon creation handler
+ * multi-line creation handler
  * 
  * @author Johann Sorel
  * @module pending
  */
-public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate {
+public class MultiLineCreationDelegate extends AbstractFeatureEditionDelegate {
 
     private int nbRighClick = 0;
-    private MultiPolygon geometry = null;
+    private MultiLineString geometry = null;
     private final List<Geometry> subGeometries =  new ArrayList<Geometry>();
     private final List<Coordinate> coords = new ArrayList<Coordinate>();
-    private boolean justCreated = false;
 
 
-    public MultiPolygonCreationDelegate(final JMap2D map, final FeatureMapLayer candidate) {
+    public MultiLineCreationDelegate(final JMap2D map, final FeatureMapLayer candidate) {
         super(map,candidate);
     }
 
@@ -53,57 +51,41 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
         geometry = null;
         subGeometries.clear();
         coords.clear();
-        justCreated = false;
         nbRighClick = 0;
         decoration.setGeometries(null);
     }
-    
+
     @Override
     public void mouseClicked(final MouseEvent e) {
 
         final int button = e.getButton();
 
-        if(button == MouseEvent.BUTTON1){
+        if(button == MouseEvent.BUTTON1){            
             nbRighClick = 0;
-
-            if(justCreated){
-                justCreated = false;
-                //we must modify the second point since two point where added at the start
-                coords.remove(2);
-                coords.remove(1);
-                coords.add(helper.toCoord(e.getX(), e.getY()));
-                coords.add(helper.toCoord(e.getX(), e.getY()));
-
-            }else if(coords.size() == 0){
-                justCreated = true;
+            coords.add(helper.toCoord(e.getX(), e.getY()));
+            if(coords.size() == 1){
                 //this is the first point of the geometry we create
-                //add 3 points that will be used when moving the mouse around
+                //add another point that will be used when moving the mouse around
                 coords.add(helper.toCoord(e.getX(), e.getY()));
-                coords.add(helper.toCoord(e.getX(), e.getY()));
-                coords.add(helper.toCoord(e.getX(), e.getY()));
-                Geometry candidate = EditionHelper.createPolygon(coords);
+                Geometry candidate = EditionHelper.createGeometry(coords);
                 subGeometries.add(candidate);
-            }else{
-                justCreated = false;
-                coords.add(helper.toCoord(e.getX(), e.getY()));
             }
-
-            Geometry candidate = EditionHelper.createPolygon(coords);
+            Geometry candidate = EditionHelper.createGeometry(coords);
             if (subGeometries.size() > 0) {
                 subGeometries.remove(subGeometries.size() - 1);
             }
             subGeometries.add(candidate);
-            geometry = EditionHelper.createMultiPolygon(subGeometries);
+            geometry = EditionHelper.createMultiLine(subGeometries);
             decoration.setGeometries(Collections.singleton(geometry));
+                    
         }else if(button == MouseEvent.BUTTON3){            
-            justCreated = false;
             nbRighClick++;
             if (nbRighClick == 1) {
-                if (coords.size() > 2) {
+                if (coords.size() > 1) {
                     if (subGeometries.size() > 0) {
                         subGeometries.remove(subGeometries.size() - 1);
                     }
-                    Geometry geo = EditionHelper.createPolygon(coords);
+                    Geometry geo = EditionHelper.createLine(coords);
                     subGeometries.add(geo);
                 } else if (coords.size() > 0) {
                     if (subGeometries.size() > 0) {
@@ -112,7 +94,7 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
                 }
             } else {
                 if (subGeometries.size() > 0) {
-                    Geometry geo = EditionHelper.createMultiPolygon(subGeometries);
+                    Geometry geo = EditionHelper.createMultiLine(subGeometries);
                     helper.sourceAddGeometry(geo);
                     nbRighClick = 0;
                     reset();
@@ -131,7 +113,7 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
     public void mousePressed(final MouseEvent e) {
         pressed = e.getButton();
         lastX = e.getX();
-        lastY = e.getY();        
+        lastY = e.getY();
         super.mousePressed(e);
     }
 
@@ -147,22 +129,15 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
 
     @Override
     public void mouseMoved(final MouseEvent e) {
-        if(coords.size() > 2){
-            if(justCreated){
-                coords.remove(coords.size()-1);
-                coords.remove(coords.size()-1);
-                coords.add(helper.toCoord(e.getX(), e.getY()));
-                coords.add(helper.toCoord(e.getX(), e.getY()));
-            }else{
-                coords.remove(coords.size()-1);
-                coords.add(helper.toCoord(e.getX(), e.getY()));
-            }
-            Geometry candidate = EditionHelper.createPolygon(coords);
+        if(coords.size() > 1){
+            coords.remove(coords.size()-1);
+            coords.add(helper.toCoord(e.getX(), e.getY()));
+            Geometry candidate = EditionHelper.createGeometry(coords);
             if (subGeometries.size() > 0) {
                 subGeometries.remove(subGeometries.size() - 1);
             }
             subGeometries.add(candidate);
-            geometry = EditionHelper.createMultiPolygon(subGeometries);
+            geometry = EditionHelper.createMultiLine(subGeometries);
             decoration.setGeometries(Collections.singleton(geometry));
             return;
         }

@@ -1,3 +1,9 @@
+# Creation tools ###############################################################
 org.geotoolkit.gui.swing.go2.control.edition.PointCreationTool
+org.geotoolkit.gui.swing.go2.control.edition.LineCreationTool
+org.geotoolkit.gui.swing.go2.control.edition.PolygonCreationTool
+org.geotoolkit.gui.swing.go2.control.edition.MultiPointCreationTool
+org.geotoolkit.gui.swing.go2.control.edition.MultiLineCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.MultiPolygonCreationTool
+# Other tools ##################################################################
 org.geotoolkit.gui.swing.go2.control.edition.GeometryMoveTool

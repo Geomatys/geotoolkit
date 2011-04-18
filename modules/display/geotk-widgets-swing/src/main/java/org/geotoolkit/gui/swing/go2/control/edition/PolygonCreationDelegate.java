@@ -20,8 +20,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.MultiPolygon;
+import com.vividsolutions.jts.geom.Polygon;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -31,41 +30,35 @@ import java.util.List;
 import static org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionDecoration.*;
 
 /**
- * multipolygon creation handler
- * 
+ * Polygon creation handler
+ *
  * @author Johann Sorel
  * @module pending
  */
-public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate {
+public class PolygonCreationDelegate extends AbstractFeatureEditionDelegate {
 
-    private int nbRighClick = 0;
-    private MultiPolygon geometry = null;
-    private final List<Geometry> subGeometries =  new ArrayList<Geometry>();
+    private Polygon geometry = null;
     private final List<Coordinate> coords = new ArrayList<Coordinate>();
     private boolean justCreated = false;
 
-
-    public MultiPolygonCreationDelegate(final JMap2D map, final FeatureMapLayer candidate) {
+    public PolygonCreationDelegate(final JMap2D map, final FeatureMapLayer candidate) {
         super(map,candidate);
     }
 
     private void reset(){
         geometry = null;
-        subGeometries.clear();
         coords.clear();
         justCreated = false;
-        nbRighClick = 0;
         decoration.setGeometries(null);
     }
-    
+
     @Override
     public void mouseClicked(final MouseEvent e) {
 
         final int button = e.getButton();
 
         if(button == MouseEvent.BUTTON1){
-            nbRighClick = 0;
-
+            
             if(justCreated){
                 justCreated = false;
                 //we must modify the second point since two point where added at the start
@@ -74,51 +67,27 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
                 coords.add(helper.toCoord(e.getX(), e.getY()));
                 coords.add(helper.toCoord(e.getX(), e.getY()));
 
-            }else if(coords.size() == 0){
+            }else if(coords.isEmpty()){
                 justCreated = true;
                 //this is the first point of the geometry we create
                 //add 3 points that will be used when moving the mouse around
                 coords.add(helper.toCoord(e.getX(), e.getY()));
                 coords.add(helper.toCoord(e.getX(), e.getY()));
                 coords.add(helper.toCoord(e.getX(), e.getY()));
-                Geometry candidate = EditionHelper.createPolygon(coords);
-                subGeometries.add(candidate);
             }else{
                 justCreated = false;
                 coords.add(helper.toCoord(e.getX(), e.getY()));
             }
 
-            Geometry candidate = EditionHelper.createPolygon(coords);
-            if (subGeometries.size() > 0) {
-                subGeometries.remove(subGeometries.size() - 1);
-            }
-            subGeometries.add(candidate);
-            geometry = EditionHelper.createMultiPolygon(subGeometries);
+            geometry = EditionHelper.createPolygon(coords);
             decoration.setGeometries(Collections.singleton(geometry));
-        }else if(button == MouseEvent.BUTTON3){            
+                    
+        }else if(button == MouseEvent.BUTTON3){
+            
             justCreated = false;
-            nbRighClick++;
-            if (nbRighClick == 1) {
-                if (coords.size() > 2) {
-                    if (subGeometries.size() > 0) {
-                        subGeometries.remove(subGeometries.size() - 1);
-                    }
-                    Geometry geo = EditionHelper.createPolygon(coords);
-                    subGeometries.add(geo);
-                } else if (coords.size() > 0) {
-                    if (subGeometries.size() > 0) {
-                        subGeometries.remove(subGeometries.size() - 1);
-                    }
-                }
-            } else {
-                if (subGeometries.size() > 0) {
-                    Geometry geo = EditionHelper.createMultiPolygon(subGeometries);
-                    helper.sourceAddGeometry(geo);
-                    nbRighClick = 0;
-                    reset();
-                }
-                decoration.setGeometries(null);
-            }
+            helper.sourceAddGeometry(geometry);
+            reset();
+            decoration.setGeometries(null);
             coords.clear();
         }
     }
@@ -131,7 +100,7 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
     public void mousePressed(final MouseEvent e) {
         pressed = e.getButton();
         lastX = e.getX();
-        lastY = e.getY();        
+        lastY = e.getY();
         super.mousePressed(e);
     }
 
@@ -157,12 +126,7 @@ public class MultiPolygonCreationDelegate extends AbstractFeatureEditionDelegate
                 coords.remove(coords.size()-1);
                 coords.add(helper.toCoord(e.getX(), e.getY()));
             }
-            Geometry candidate = EditionHelper.createPolygon(coords);
-            if (subGeometries.size() > 0) {
-                subGeometries.remove(subGeometries.size() - 1);
-            }
-            subGeometries.add(candidate);
-            geometry = EditionHelper.createMultiPolygon(subGeometries);
+            geometry = EditionHelper.createPolygon(coords);
             decoration.setGeometries(Collections.singleton(geometry));
             return;
         }
