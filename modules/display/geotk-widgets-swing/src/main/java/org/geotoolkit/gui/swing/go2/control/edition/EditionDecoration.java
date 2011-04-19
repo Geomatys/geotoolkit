@@ -85,6 +85,11 @@ public final class EditionDecoration extends AbstractGeometryDecoration {
         if(nodeSelection == null) return;
         if(nodeSelection.numSubGeom < 0) return;
 
+        if(nodeSelection.numSubGeom >= nodeSelection.geometry.getNumGeometries()){
+            //invalid selection
+            return;
+        }
+
         final Geometry geo = nodeSelection.geometry.getGeometryN(nodeSelection.numSubGeom);
 
         if(nodeSelection.selectedNode[0] < 0) return;
