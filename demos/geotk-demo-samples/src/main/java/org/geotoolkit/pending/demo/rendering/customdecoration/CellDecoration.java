@@ -89,7 +89,7 @@ public class CellDecoration extends AbstractMapDecoration{
     }
 
     @Override
-    public JComponent geComponent() {
+    public JComponent getComponent() {
         return panel;
     }
 
