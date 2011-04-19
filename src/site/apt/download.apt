@@ -108,23 +108,24 @@ Downloading Geotoolkit.org Binaries
 *----------------------------------------+------------------------------------+-------------------------------+
 || File                                  || Content                           || Prerequites                 ||
 *----------------------------------------+------------------------------------+-------------------------------+
-| <<<geotk-bundle-referencing.pack.gz>>> | \u2022 vecmath.jar                 | \u2022 Java 6                 |
+| <<<geotk-bundle-referencing.pack.gz>>> | \u2022 geoapi.jar                  | \u2022 Java 6                 |
 |                                        | \u2022 jsr-275.jar                 | \u2022 JavaDB (<optional>)    |
-|                                        | \u2022 geoapi-pending.jar          |                               |
+|                                        | \u2022 vecmath.jar                 |                               |
+|                                        | \u2022 jcip-annotations.jar        |                               |
 |                                        | \u2022 geotk-utility.jar           |                               |
 |                                        | \u2022 geotk-metadata.jar          |                               |
 |                                        | \u2022 geotk-referencing.jar       |                               |
 |                                        | \u2022 geotk-epsg.jar              |                               |
 *----------------------------------------+------------------------------------+-------------------------------+
 | <<<geotk-bundle-coverage.pack.gz>>>    | <All the referencing pack plus:>   | \u2022 Java 6                 |
-|                                        | \u2022 geotk-coverage.jar          | \u2022 Java Advanced Imaging  |
-|                                        | \u2022 geotk-coverageio.jar        | \u2022 JavaDB (<optional>)    |
+|                                        | \u2022 geoapi-pending.jar          | \u2022 Java Advanced Imaging  |
+|                                        | \u2022 geotk-coverage.jar          | \u2022 JavaDB (<optional>)    |
+|                                        | \u2022 geotk-coverageio.jar        |                               |
 |                                        | \u2022 geotk-coverageio-netcdf.jar |                               |
 |                                        | \u2022 geotk-storage.jar           |                               |
 |                                        | \u2022 jai_imageio.jar             |                               |
 |                                        | \u2022 netcdf.jar                  |                               |
 |                                        | \u2022 unidataCommon.jar           |                               |
-|                                        | \u2022 jcip-annotations.jar        |                               |
 |                                        | \u2022 opendap.jar                 |                               |
 |                                        | \u2022 grib.jar                    |                               |
 |                                        | \u2022 jdom.jar                    |                               |
@@ -132,7 +133,6 @@ Downloading Geotoolkit.org Binaries
 |                                        | \u2022 commons-codec.jar           |                               |
 |                                        | \u2022 commons-httpclient.jar      |                               |
 |                                        | \u2022 commons-logging.jar         |                               |
-|                                        | \u2022 log4j.jar                   |                               |
 |                                        | \u2022 slf4j-api.jar               |                               |
 |                                        | \u2022 slf4j-jdk14.jar             |                               |
 *----------------------------------------+------------------------------------+-------------------------------+
