@@ -73,8 +73,13 @@
     <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>netcdf</artifactId>
-      <!-- The version number is specified in the parent POM. -->
     </dependency>
+    <dependency>
+      <groupId>edu.ucar</groupId>
+      <artifactId>unidataCommon</artifactId>
+    </dependency>
+
+    <!-- Optional modules used as plugins by the main NetCDF artifact. -->
     <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>opendap</artifactId>
@@ -83,6 +88,36 @@
     <dependency>
       <groupId>edu.ucar</groupId>
       <artifactId>grib</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+
+    <!-- Following are dependencies declared in the 'netcdf.pom' file with "provided" scope,
+         or their transitive dependencies. They were declared as "provided" because they are
+         used by optional modules. Since we included those modules in the above declarations,
+         we need to include their dependencies as well. -->
+    <dependency>
+      <groupId>org.jdom</groupId>
+      <artifactId>jdom</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>javax.servlet</groupId>
+      <artifactId>servlet-api</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>commons-codec</groupId>
+      <artifactId>commons-codec</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
       <scope>runtime</scope>
     </dependency>
     <dependency>

@@ -33,8 +33,8 @@ import org.apache.maven.artifact.Artifact;
  * Copies <code>.jar</code> files in a single directory. Dependencies are copied as well,
  * except if already presents.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.2
  *
@@ -68,14 +68,6 @@ public class Collector extends AbstractMojo {
      * @required
      */
     private String jarName;
-
-    /**
-     * Project dependencies.
-     *
-     * @parameter expression="${project.artifacts}"
-     * @required
-     */
-    private Set<Artifact> dependencies;
 
     /**
      * The Maven project running this plugin.
@@ -154,6 +146,7 @@ public class Collector extends AbstractMojo {
             }
         }
         copyFileToDirectory(jarFile, collect);
+        final Set<Artifact> dependencies = project.getDependencyArtifacts();
         if (dependencies != null) {
             for (final Artifact artifact : dependencies) {
                 final String scope = artifact.getScope();

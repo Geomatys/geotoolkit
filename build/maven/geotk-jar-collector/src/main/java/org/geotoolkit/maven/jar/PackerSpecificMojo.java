@@ -108,7 +108,6 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "commons-codec-*.jar",
                     "commons-httpclient-*.jar",
                     "commons-logging-*.jar",
-                    "log4j-*.jar",
                     "slf4j-api-*.jar",
                     "slf4j-jdk14-*.jar"
             });
