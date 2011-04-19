@@ -148,7 +148,7 @@ public class ParameterValueReader extends StaxStreamReader {
     }
 
     /**
-     * <p>This method rads a value group</p>
+     * <p>This method reads a value group</p>
      *
      * @param desc
      * @return
@@ -177,8 +177,26 @@ public class ParameterValueReader extends StaxStreamReader {
 
         }
 
-        return  new ParameterGroup(
-                desc, values.toArray(new GeneralParameterValue[values.size()]));
-    }
+        //try to fill missing parameters
+        for(GeneralParameterDescriptor candidate : desc.descriptors()){
+            final int minOcc = candidate.getMinimumOccurs();
+            if(minOcc == 0) continue;
 
-}
+            int count = 0;
+            for(GeneralParameterValue val : values){
+                if(val.getDescriptor().equals(candidate)){
+                    count++;
+                }
+            }
+
+            //create missing values
+            for(;count<minOcc;count++){
+                values.add(candidate.createValue());
+            }
+        }
+
+        return new ParameterGroup(
+                desc, values.toArray(new GeneralParameterValue[values.size()]));
+        }
+
+    }
