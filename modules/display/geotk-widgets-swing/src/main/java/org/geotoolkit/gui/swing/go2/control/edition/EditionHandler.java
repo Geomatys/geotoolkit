@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.go2.control.edition;
 
 import java.awt.Component;
+import java.awt.Cursor;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -56,6 +57,7 @@ public final class EditionHandler implements CanvasHandler, MouseInputListener,K
 
     @Override
     public void install(final Component component) {
+        map.setCursor(Cursor.getPredefinedCursor(Cursor.CROSSHAIR_CURSOR));
         if(delegateDecoration != null){
             map.addDecoration(0,delegateDecoration);
         }
@@ -67,6 +69,7 @@ public final class EditionHandler implements CanvasHandler, MouseInputListener,K
 
     @Override
     public void uninstall(final Component component) {
+        map.setCursor(Cursor.getDefaultCursor());
         if(delegateDecoration != null){
             map.removeDecoration(delegateDecoration);
         }
@@ -99,6 +102,7 @@ public final class EditionHandler implements CanvasHandler, MouseInputListener,K
 
     @Override
     public void mouseEntered(final MouseEvent e) {
+        map.getComponent().requestFocus();
         //handle grid and geometry snapping
         delegate.mouseEntered(e);
     }

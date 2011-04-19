@@ -64,6 +64,10 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
         setOpaque(false);
     }
 
+    public static Logger getLogger() {
+        return LOGGER;
+    }
+    
     protected double[] toDisplay(final Coordinate coord){
         double[] coords = new double[]{coord.x,coord.y};
         objToDisp.transform(coords, 0, coords, 0, 1);
@@ -133,6 +137,12 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
 
         final Graphics2D g2 = context.getGraphics();
 
+        paintComponent(g2, context, objToDisp);
+    }
+
+    protected void paintComponent(final Graphics2D g2, final DefaultRenderingContext2D context,
+            final AffineTransform objToDisp){
+
         //prepare datas for geometry painting
         for(final Geometry geo : geometries){
             if(geo == null) continue;
@@ -144,7 +154,6 @@ public abstract class AbstractGeometryDecoration extends JPanel implements MapDe
                 LOGGER.log(Level.WARNING, null, ex);
             }
         }
-
     }
     
     protected abstract void paintGeometry(Graphics2D g2, RenderingContext2D context, ProjectedGeometry geom) throws TransformException;

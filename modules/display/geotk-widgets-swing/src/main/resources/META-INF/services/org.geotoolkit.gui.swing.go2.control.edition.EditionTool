@@ -7,3 +7,4 @@ org.geotoolkit.gui.swing.go2.control.edition.MultiLineCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.MultiPolygonCreationTool
 # Other tools ##################################################################
 org.geotoolkit.gui.swing.go2.control.edition.GeometryMoveTool
+org.geotoolkit.gui.swing.go2.control.edition.GeometryNodeTool
