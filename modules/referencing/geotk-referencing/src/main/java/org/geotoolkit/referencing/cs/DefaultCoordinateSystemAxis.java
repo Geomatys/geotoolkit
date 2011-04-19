@@ -31,13 +31,13 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.referencing.cs.RangeMeaning;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.internal.referencing.AxisDirections;

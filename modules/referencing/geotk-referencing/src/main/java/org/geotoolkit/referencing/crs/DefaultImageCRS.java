@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Collections;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AffineCS;
 import org.opengis.referencing.cs.CartesianCS;
@@ -31,7 +32,6 @@ import org.opengis.referencing.datum.ImageDatum;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.crs.ImageCRS;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.datum.DefaultImageDatum;

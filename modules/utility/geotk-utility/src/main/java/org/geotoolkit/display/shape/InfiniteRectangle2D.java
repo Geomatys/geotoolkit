@@ -22,7 +22,7 @@ import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 import static java.lang.Double.NaN;
 import static java.lang.Double.POSITIVE_INFINITY;

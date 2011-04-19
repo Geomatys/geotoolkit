@@ -17,9 +17,8 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import net.jcip.annotations.Immutable;
 import org.opengis.referencing.operation.MathTransform2D;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

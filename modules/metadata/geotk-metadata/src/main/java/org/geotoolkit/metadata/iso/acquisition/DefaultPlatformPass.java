@@ -24,13 +24,13 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.geometry.Geometry;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.acquisition.Event;
 import org.opengis.metadata.acquisition.PlatformPass;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 

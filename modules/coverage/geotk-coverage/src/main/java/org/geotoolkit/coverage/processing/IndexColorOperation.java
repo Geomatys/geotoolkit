@@ -27,6 +27,8 @@ import javax.media.jai.OpImage;
 import javax.media.jai.ImageLayout;
 import javax.media.jai.NullOpImage;
 
+import net.jcip.annotations.Immutable;
+
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.parameter.ParameterValueGroup;
@@ -39,7 +41,6 @@ import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.Classes;
 
 

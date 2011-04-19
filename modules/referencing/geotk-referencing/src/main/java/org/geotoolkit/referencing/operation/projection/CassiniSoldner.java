@@ -21,11 +21,11 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import net.jcip.annotations.Immutable;
+
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
-
-import org.geotoolkit.lang.Immutable;
 
 import static java.lang.Math.*;
 

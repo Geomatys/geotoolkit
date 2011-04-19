@@ -23,12 +23,12 @@ package org.geotoolkit.referencing;
 import java.util.Map;
 import java.util.HashMap;
 import javax.xml.bind.annotation.XmlElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.ReferenceSystem;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 
 

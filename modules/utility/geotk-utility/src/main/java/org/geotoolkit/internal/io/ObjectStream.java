@@ -23,8 +23,7 @@ import java.io.IOException;
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**

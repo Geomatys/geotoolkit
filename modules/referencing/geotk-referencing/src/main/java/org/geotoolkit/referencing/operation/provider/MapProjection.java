@@ -21,6 +21,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.NonSI;
 import java.util.NoSuchElementException;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.GenericName;
 import org.opengis.metadata.citation.Citation;
@@ -32,7 +33,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.Projection;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;

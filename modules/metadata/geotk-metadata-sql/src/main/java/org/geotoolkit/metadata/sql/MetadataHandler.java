@@ -21,8 +21,8 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.sql.SQLException;
 import java.util.Collection;
+import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 

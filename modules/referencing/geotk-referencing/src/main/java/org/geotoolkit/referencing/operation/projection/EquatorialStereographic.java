@@ -21,7 +21,7 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 import static java.lang.Math.*;
 

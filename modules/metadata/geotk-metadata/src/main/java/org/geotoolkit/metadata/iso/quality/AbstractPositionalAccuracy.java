@@ -23,12 +23,12 @@ package org.geotoolkit.metadata.iso.quality;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.PositionalAccuracy;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 

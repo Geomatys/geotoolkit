@@ -18,11 +18,11 @@
 package org.geotoolkit.coverage.processing.operation;
 
 import java.awt.Color;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.GridSampleDimension;
 import org.geotoolkit.coverage.processing.ColorMap;
 import org.geotoolkit.coverage.processing.IndexColorOperation;

@@ -17,11 +17,11 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import net.jcip.annotations.Immutable;
+
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

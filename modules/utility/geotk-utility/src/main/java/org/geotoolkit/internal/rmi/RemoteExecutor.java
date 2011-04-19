@@ -21,8 +21,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.rmi.RemoteException;
 import java.util.logging.Level;
-
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**

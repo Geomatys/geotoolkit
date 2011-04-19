@@ -31,12 +31,12 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.InvalidObjectException;
 import java.io.NotSerializableException;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;

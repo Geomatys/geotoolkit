@@ -29,8 +29,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.internal.jaxb.RegisterableTypes;
 import org.geotoolkit.internal.jaxb.RegisterableAdapter;

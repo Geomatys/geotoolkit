@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.coverage.io;
 
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**

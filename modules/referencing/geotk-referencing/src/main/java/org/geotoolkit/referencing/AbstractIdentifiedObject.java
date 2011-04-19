@@ -59,8 +59,8 @@ import org.geotoolkit.internal.jaxb.referencing.RS_Identifier;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.ThreadSafe;
+import net.jcip.annotations.Immutable;
 import org.geotoolkit.xml.Namespaces;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -89,7 +89,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @Immutable
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 @XmlType(propOrder={
     "identifier",
     "name"

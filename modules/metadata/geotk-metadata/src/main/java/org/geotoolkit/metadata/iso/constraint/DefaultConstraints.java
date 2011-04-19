@@ -26,11 +26,11 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.constraint.Constraints;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 

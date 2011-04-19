@@ -21,10 +21,10 @@
 package org.geotoolkit.metadata.iso.lineage;
 
 import java.util.Collection;
-
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -32,7 +32,6 @@ import org.opengis.metadata.lineage.Algorithm;
 import org.opengis.metadata.lineage.Processing;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.xml.Namespaces;
 

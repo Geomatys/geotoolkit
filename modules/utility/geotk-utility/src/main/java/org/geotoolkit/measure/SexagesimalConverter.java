@@ -21,8 +21,7 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.io.ObjectStreamException;
 import javax.measure.converter.UnitConverter;
-
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

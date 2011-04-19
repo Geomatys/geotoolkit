@@ -23,8 +23,7 @@ import java.util.ListIterator;
 import java.util.concurrent.ExecutionException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
-
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**

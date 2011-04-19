@@ -18,8 +18,8 @@
 package org.geotoolkit.internal.sql.table;
 
 import java.io.Serializable;
+import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.Utilities;

@@ -22,11 +22,10 @@ import java.io.Serializable;
 import java.awt.RenderingHints;
 import java.beans.PropertyChangeSupport;
 import java.beans.PropertyChangeListener;
-
 import javax.measure.unit.Unit;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 

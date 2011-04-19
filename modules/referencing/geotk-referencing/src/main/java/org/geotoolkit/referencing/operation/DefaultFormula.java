@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.operation;
 
 import java.io.Serializable;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
@@ -28,7 +29,6 @@ import org.opengis.referencing.operation.Formula;
 
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

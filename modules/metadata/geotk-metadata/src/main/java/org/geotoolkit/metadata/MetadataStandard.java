@@ -27,10 +27,10 @@ import java.util.MissingResourceException;
 import javax.swing.tree.TreeNode;
 import javax.swing.tree.TreeModel;
 import javax.swing.tree.DefaultTreeModel;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.annotation.UML;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;

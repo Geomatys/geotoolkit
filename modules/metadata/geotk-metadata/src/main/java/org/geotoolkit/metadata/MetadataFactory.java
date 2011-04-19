@@ -22,13 +22,13 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 

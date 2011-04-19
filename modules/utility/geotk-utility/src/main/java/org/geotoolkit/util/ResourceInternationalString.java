@@ -22,8 +22,8 @@ import java.util.Locale;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.opengis.util.InternationalString;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;

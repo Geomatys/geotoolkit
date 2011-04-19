@@ -27,10 +27,10 @@ import java.util.LinkedHashMap;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.Locale;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.util.collection.XCollections;

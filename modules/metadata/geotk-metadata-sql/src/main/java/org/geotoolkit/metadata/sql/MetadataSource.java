@@ -29,11 +29,11 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.annotation.UML;
 import org.opengis.util.CodeList;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.sql.SQLBuilder;

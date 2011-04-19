@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.factory;
 
 import java.util.*;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;
@@ -28,7 +29,6 @@ import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.factory.FactoryRegistryException;

@@ -22,6 +22,7 @@ package org.geotoolkit.referencing.datum;
 
 import java.util.Collections;
 import java.util.Map;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.VerticalDatum;
 import org.opengis.referencing.datum.VerticalDatumType;
@@ -32,7 +33,6 @@ import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import javax.measure.unit.SI;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -28,7 +29,6 @@ import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.operation.MathTransformProvider;
 import org.geotoolkit.referencing.operation.transform.GeocentricTransform;
 import org.geotoolkit.internal.referencing.MathTransformDecorator;

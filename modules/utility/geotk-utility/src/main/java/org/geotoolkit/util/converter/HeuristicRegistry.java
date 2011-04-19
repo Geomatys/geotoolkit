@@ -18,7 +18,7 @@
 package org.geotoolkit.util.converter;
 
 import org.opengis.util.CodeList;
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**

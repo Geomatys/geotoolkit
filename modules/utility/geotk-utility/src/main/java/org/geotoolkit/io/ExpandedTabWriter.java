@@ -20,10 +20,10 @@ package org.geotoolkit.io;
 import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

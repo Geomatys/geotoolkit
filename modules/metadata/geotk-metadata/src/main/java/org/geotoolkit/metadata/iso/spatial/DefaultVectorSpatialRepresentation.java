@@ -24,12 +24,11 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.spatial.GeometricObjects;
 import org.opengis.metadata.spatial.TopologyLevel;
 import org.opengis.metadata.spatial.VectorSpatialRepresentation;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

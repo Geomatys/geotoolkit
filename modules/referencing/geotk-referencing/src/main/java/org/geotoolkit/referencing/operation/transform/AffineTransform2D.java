@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation.transform;
 import java.awt.Shape;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -29,7 +30,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Symbols;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.Formattable;

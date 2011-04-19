@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.operation.projection;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -30,7 +31,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.Mercator1SP;

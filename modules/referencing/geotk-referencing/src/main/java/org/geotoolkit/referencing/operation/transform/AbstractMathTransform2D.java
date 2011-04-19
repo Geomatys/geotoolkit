@@ -21,6 +21,7 @@ import java.util.List;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -35,7 +36,6 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
-import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransform.IDENTITY_TOLERANCE;
 
@@ -51,7 +51,7 @@ import static org.geotoolkit.referencing.operation.transform.ConcatenatedTransfo
  * @since 2.0
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public abstract class AbstractMathTransform2D extends AbstractMathTransform implements MathTransform2D {
     /**
      * Constructs a default math transform.

@@ -35,10 +35,10 @@ import java.net.URL;
 import java.util.Collections;
 import javax.imageio.ImageReader;
 import javax.imageio.spi.ImageReaderSpi;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.spatial.PixelOrientation;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.coverage.grid.ImageGeometry;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;

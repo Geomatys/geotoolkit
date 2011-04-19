@@ -23,10 +23,9 @@ package org.geotoolkit.metadata.iso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.FeatureTypeList;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

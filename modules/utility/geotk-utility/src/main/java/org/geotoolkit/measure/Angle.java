@@ -21,8 +21,8 @@ import java.io.Serializable;
 import java.text.Format;
 import java.text.ParseException;
 import java.util.Locale;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.SimpleConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;

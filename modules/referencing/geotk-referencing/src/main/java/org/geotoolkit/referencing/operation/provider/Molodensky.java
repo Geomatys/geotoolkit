@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import java.util.Collection;
 import javax.measure.unit.SI;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.GenericName;
 import org.opengis.parameter.ParameterValueGroup;
@@ -32,7 +33,6 @@ import org.opengis.referencing.crs.GeographicCRS;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;

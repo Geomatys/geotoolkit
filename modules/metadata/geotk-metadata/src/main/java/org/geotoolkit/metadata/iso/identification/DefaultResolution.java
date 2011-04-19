@@ -24,11 +24,11 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.identification.RepresentativeFraction;
 import org.opengis.metadata.identification.Resolution;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.internal.jaxb.gco.GO_Distance;
 import org.geotoolkit.metadata.iso.MetadataEntity;

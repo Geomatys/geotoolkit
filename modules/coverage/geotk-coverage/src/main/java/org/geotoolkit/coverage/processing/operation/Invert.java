@@ -18,8 +18,8 @@
 package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.InvertDescriptor;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 

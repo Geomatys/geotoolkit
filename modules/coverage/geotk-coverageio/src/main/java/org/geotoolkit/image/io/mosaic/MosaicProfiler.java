@@ -21,8 +21,8 @@ import java.util.Random;
 import java.awt.Dimension;
 import java.awt.Rectangle;
 import java.io.IOException;
+import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.math.Statistics;
 import org.geotoolkit.resources.Errors;
 
@@ -33,7 +33,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
  * Profiles the loading of random rectangular regions using a given {@link TileManager}.
  * The images to load while have random locations and random sizes, constrained between
  * a {@linkplain #getMinSize() minimal} and {@linkplain #getMaxSize() maximal size}. A
- * random subsampling will be requested, contrained between a {@linkplain #getMinSubsampling()
+ * random subsampling will be requested, constrained between a {@linkplain #getMinSubsampling()
  * minimum} and {@linkplain #getMaxSubsampling() maximum subsampling}.
  * <p>
  * More details on the algorithm used by this class are defined in the following methods:

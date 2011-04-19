@@ -23,11 +23,11 @@ import javax.media.jai.KernelJAI;
 import javax.media.jai.ParameterList;
 import javax.media.jai.operator.GradientMagnitudeDescriptor;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.operation.MathTransform2D;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.GridCoverage2D;

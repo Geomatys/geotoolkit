@@ -26,16 +26,16 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
-import org.opengis.metadata.spatial.GeolocationInformation;
 import org.opengis.util.Record;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.CellGeometry;
 import org.opengis.metadata.spatial.Georeferenceable;
+import org.opengis.metadata.spatial.GeolocationInformation;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.xml.Namespaces;
 
 

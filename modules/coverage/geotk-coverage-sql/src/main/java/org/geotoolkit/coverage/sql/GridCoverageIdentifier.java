@@ -21,9 +21,9 @@ import java.io.File;
 import java.io.Serializable;
 import java.net.URI;
 import java.net.URISyntaxException;
-import org.geotoolkit.coverage.io.CoverageStoreException;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
+import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.sql.table.MultiColumnIdentifier;
 import org.geotoolkit.resources.Errors;
 

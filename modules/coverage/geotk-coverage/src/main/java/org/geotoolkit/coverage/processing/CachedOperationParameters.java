@@ -21,12 +21,12 @@ import java.util.Map;
 import java.util.Locale;
 import java.util.Arrays;
 import java.util.TreeMap;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.coverage.CoverageReferences;

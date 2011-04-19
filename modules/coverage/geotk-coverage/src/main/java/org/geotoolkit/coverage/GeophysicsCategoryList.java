@@ -21,8 +21,8 @@ import java.text.FieldPosition;
 import java.text.NumberFormat;
 import java.util.Locale;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 
 

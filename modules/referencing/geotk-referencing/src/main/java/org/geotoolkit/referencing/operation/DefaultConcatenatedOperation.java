@@ -28,6 +28,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.quality.PositionalAccuracy;
@@ -46,7 +47,6 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;

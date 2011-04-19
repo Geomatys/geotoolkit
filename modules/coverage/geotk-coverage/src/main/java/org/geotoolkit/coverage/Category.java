@@ -20,12 +20,12 @@ package org.geotoolkit.coverage;
 import java.awt.Color;
 import java.util.Arrays;
 import java.io.Serializable;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;

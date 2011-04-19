@@ -27,6 +27,7 @@ import java.text.ParseException;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
 import javax.measure.converter.ConversionException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Identifier;
@@ -65,7 +66,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR;
 

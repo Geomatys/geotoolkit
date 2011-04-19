@@ -26,13 +26,13 @@ import java.io.ObjectStreamException;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;

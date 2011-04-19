@@ -27,6 +27,7 @@ import java.util.Collection;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.geom.AffineTransform;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -41,7 +42,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.measure.Latitude;

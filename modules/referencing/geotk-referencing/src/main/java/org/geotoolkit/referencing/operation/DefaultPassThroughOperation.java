@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.MathTransform;
@@ -28,7 +29,6 @@ import org.opengis.referencing.operation.MathTransformFactory;
 import org.opengis.referencing.operation.PassThroughOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;

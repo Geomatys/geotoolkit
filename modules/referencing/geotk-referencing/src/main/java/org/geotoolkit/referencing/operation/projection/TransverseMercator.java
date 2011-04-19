@@ -22,18 +22,18 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import java.awt.geom.Point2D;
-import static java.lang.Math.*;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.opengis.parameter.ParameterNotFoundException;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
+import static java.lang.Math.*;
 import static org.geotoolkit.referencing.operation.provider.TransverseMercator.*;
 
 

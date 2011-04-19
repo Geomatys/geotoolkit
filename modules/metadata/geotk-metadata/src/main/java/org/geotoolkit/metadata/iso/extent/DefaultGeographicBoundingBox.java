@@ -26,13 +26,13 @@ import java.awt.geom.Rectangle2D;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.measure.Latitude;

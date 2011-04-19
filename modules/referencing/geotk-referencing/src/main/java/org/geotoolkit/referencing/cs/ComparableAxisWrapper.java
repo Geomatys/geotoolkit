@@ -18,10 +18,10 @@
 package org.geotoolkit.referencing.cs;
 
 import java.util.Arrays;
+import net.jcip.annotations.Immutable;
+
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

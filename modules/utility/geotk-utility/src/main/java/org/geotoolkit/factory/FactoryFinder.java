@@ -24,6 +24,7 @@ import java.util.Collections;
 import javax.imageio.spi.ServiceRegistry;
 import java.io.IOException;
 import java.io.Writer;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.Factory;
 import org.opengis.util.NameFactory;
@@ -52,7 +53,6 @@ import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.internal.LazySet;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -107,7 +107,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @module
  */
 @Static
-@ThreadSafe(concurrent = false)
+@ThreadSafe
 public class FactoryFinder {
     /**
      * The key for a special hints specifying an additional

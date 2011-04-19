@@ -28,6 +28,7 @@ import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.PrimeMeridian;
 
@@ -37,7 +38,6 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Units;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;

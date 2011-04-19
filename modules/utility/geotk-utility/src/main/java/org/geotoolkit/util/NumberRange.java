@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.util;
 
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;

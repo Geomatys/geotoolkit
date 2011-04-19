@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.AuthorityFactory;
@@ -40,7 +41,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.FactoryUtilities;
-import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 

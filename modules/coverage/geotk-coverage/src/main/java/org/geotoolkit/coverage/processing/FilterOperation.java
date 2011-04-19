@@ -17,9 +17,8 @@
  */
 package org.geotoolkit.coverage.processing;
 
+import net.jcip.annotations.Immutable;
 import org.opengis.coverage.processing.OperationNotFoundException;
-
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.GridSampleDimension;
 
 

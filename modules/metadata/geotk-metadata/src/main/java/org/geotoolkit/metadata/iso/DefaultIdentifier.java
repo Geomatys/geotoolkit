@@ -23,11 +23,10 @@ package org.geotoolkit.metadata.iso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

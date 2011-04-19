@@ -18,13 +18,12 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.awt.geom.Point2D;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 

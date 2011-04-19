@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;

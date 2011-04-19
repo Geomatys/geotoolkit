@@ -27,6 +27,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.crs.CompoundCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -42,7 +43,6 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

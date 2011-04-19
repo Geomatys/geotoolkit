@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.operation;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.OperationMethod;
@@ -26,7 +28,6 @@ import org.opengis.referencing.operation.OperationNotFoundException;
 
 import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
@@ -54,7 +55,7 @@ import org.geotoolkit.util.Utilities;
  * @module
  */
 @Buffered
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 @Decorator(CoordinateOperationFactory.class)
 public class CachingCoordinateOperationFactory extends AbstractCoordinateOperationFactory {
     /**

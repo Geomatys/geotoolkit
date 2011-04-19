@@ -24,6 +24,7 @@ import java.net.URI;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.citation.Role;
 import org.opengis.metadata.citation.Contact;
@@ -32,7 +33,6 @@ import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.util.SimpleInternationalString;
 

@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.List;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
@@ -42,7 +43,6 @@ import org.geotoolkit.naming.DefaultNameFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

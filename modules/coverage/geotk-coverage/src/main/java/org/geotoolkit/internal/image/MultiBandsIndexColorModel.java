@@ -25,8 +25,7 @@ import java.awt.image.WritableRaster;
 import java.awt.image.IndexColorModel;
 import java.awt.image.BandedSampleModel;
 import java.awt.image.ComponentSampleModel;
-
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

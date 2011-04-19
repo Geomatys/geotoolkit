@@ -21,8 +21,7 @@ import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.net.MalformedURLException;
 import java.net.URI;
-
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

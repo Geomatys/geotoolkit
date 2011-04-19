@@ -17,12 +17,13 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import net.jcip.annotations.Immutable;
+
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.NamedIdentifier;

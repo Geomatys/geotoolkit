@@ -19,7 +19,8 @@ package org.geotoolkit.internal.rmi;
 
 import java.io.Serializable;
 import java.io.ObjectStreamException;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
+
 import org.geotoolkit.internal.io.ObjectStream;
 
 

@@ -20,8 +20,8 @@ package org.geotoolkit.coverage.io;
 import java.io.IOException;
 import java.awt.image.ColorModel;
 import javax.imageio.ImageTypeSpecifier;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.image.io.Palette;
 import org.geotoolkit.image.io.PaletteFactory;

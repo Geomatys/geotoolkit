@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.util.converter;
 
+import net.jcip.annotations.NotThreadSafe;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -39,6 +40,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 3.04
  * @module
  */
+@NotThreadSafe
 public class AnyConverter {
     /**
      * The converter registry, or {@code null} for the default one.

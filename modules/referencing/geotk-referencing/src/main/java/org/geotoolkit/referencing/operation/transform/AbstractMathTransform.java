@@ -31,6 +31,7 @@ import java.awt.geom.QuadCurve2D;
 import java.awt.geom.PathIterator;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.IllegalPathStateException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.operation.Matrix;
@@ -54,7 +55,6 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 
@@ -84,7 +84,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * @since 1.2
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public abstract class AbstractMathTransform extends FormattableObject
         implements MathTransform, Parameterized
 {

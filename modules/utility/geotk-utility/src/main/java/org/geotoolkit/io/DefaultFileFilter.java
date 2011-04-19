@@ -21,7 +21,7 @@ import java.io.File;
 import java.io.FileFilter;
 import java.io.FilenameFilter;
 import java.util.regex.Pattern;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

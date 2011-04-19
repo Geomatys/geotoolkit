@@ -19,8 +19,8 @@ package org.geotoolkit.coverage.grid;
 
 import java.awt.Rectangle;
 import org.opengis.coverage.grid.GridEnvelope;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Cloneable;
 
 

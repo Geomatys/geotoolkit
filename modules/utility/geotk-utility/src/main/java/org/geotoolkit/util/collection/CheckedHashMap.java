@@ -20,9 +20,9 @@ package org.geotoolkit.util.collection;
 import java.util.Map;
 import java.util.Collections;
 import java.util.LinkedHashMap;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;

@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage;
 
 import javax.media.jai.PropertySource;
+import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
@@ -38,7 +39,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
 /**
  * A coverage wrapping an other one with a different coordinate reference system. The coordinate
  * transformation is applied on the fly every time an {@code evaluate} method is invoked. It may
- * be efficient if few points are queried, but become ineficient if a large amount of points is
+ * be efficient if few points are queried, but become inefficient if a large amount of points is
  * queried. In the later case, consider reprojecting the whole grid coverage instead.
  *
  * {@section Synchronization}
@@ -51,6 +52,7 @@ import org.geotoolkit.geometry.GeneralEnvelope;
  * @since 2.1
  * @module
  */
+@NotThreadSafe
 @Decorator(Coverage.class)
 public class TransformedCoverage extends AbstractCoverage {
     /**
@@ -97,7 +99,7 @@ public class TransformedCoverage extends AbstractCoverage {
      * it is returned unchanged.
      *
      * @param  name     The name for this new coverage.
-     * @param  crs      The crs for this coverage.
+     * @param  crs      The CRS for this coverage.
      * @param  coverage The coverage to wraps.
      * @return A coverage using the specified CRS.
      * @throws FactoryException if no transformation can be found from the coverage CRS to the
@@ -148,7 +150,7 @@ public class TransformedCoverage extends AbstractCoverage {
      *
      * @todo Provides a localized message.
      */
-    private final CannotEvaluateException transformationFailed(final TransformException cause) {
+    private CannotEvaluateException transformationFailed(final TransformException cause) {
         return new CannotEvaluateException("Transformation failed", cause);
     }
 

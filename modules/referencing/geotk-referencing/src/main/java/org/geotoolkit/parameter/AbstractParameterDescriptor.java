@@ -21,12 +21,12 @@
 package org.geotoolkit.parameter;
 
 import java.util.Map;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.GeneralParameterValue;
 import org.opengis.parameter.GeneralParameterDescriptor;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.ComparisonMode;

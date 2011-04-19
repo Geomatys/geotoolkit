@@ -25,6 +25,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Datatype;
 import org.opengis.metadata.Obligation;
@@ -32,7 +33,6 @@ import org.opengis.metadata.citation.ResponsibleParty;
 import org.opengis.metadata.ExtendedElementInformation;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 
 

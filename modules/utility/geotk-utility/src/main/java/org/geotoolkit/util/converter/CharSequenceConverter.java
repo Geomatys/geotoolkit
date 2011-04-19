@@ -18,7 +18,7 @@
 package org.geotoolkit.util.converter;
 
 import java.io.Serializable;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

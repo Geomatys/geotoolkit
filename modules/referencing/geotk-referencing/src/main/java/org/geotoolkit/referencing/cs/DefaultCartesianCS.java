@@ -24,13 +24,13 @@ import java.util.Map;
 import javax.measure.unit.Unit;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;

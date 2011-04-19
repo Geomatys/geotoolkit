@@ -25,10 +25,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.WildcardType;
 import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.InvocationTargetException;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 
-import org.geotoolkit.lang.Immutable;
 
 
 /**

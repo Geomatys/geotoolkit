@@ -52,7 +52,10 @@ import java.lang.annotation.RetentionPolicy;
  *
  * @since 3.00
  * @module
+ *
+ * @deprecated Replaced by {@link net.jcip.annotations.ThreadSafe} from {@code net.jcip}.
  */
+@Deprecated
 @Inherited
 @Documented
 @Target(ElementType.TYPE)

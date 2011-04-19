@@ -27,13 +27,14 @@ import javax.media.jai.WarpOpImage;
 import javax.media.jai.WarpPolynomial;
 import javax.media.jai.operator.WarpDescriptor;
 
+import net.jcip.annotations.Immutable;
+
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;

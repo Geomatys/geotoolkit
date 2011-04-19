@@ -24,13 +24,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.DimensionNameType;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.internal.jaxb.gco.GO_Measure;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 
 

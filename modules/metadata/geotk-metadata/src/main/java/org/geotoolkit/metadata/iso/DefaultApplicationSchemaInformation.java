@@ -25,11 +25,10 @@ import java.net.URI;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.ApplicationSchemaInformation;
 import org.opengis.metadata.citation.Citation;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

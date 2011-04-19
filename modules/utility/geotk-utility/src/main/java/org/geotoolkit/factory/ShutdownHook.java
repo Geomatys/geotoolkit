@@ -20,8 +20,8 @@ package org.geotoolkit.factory;
 import java.util.Arrays;
 import java.util.Iterator;
 import javax.imageio.spi.ServiceRegistry;
+import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.TemporaryFile;
 

@@ -20,8 +20,8 @@ package org.geotoolkit.io;
 import java.io.Writer;
 import java.io.FilterWriter;
 import java.io.IOException;
+import net.jcip.annotations.ThreadSafe;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
 

@@ -19,7 +19,7 @@ package org.geotoolkit.util;
 
 import java.io.Serializable;
 import java.util.StringTokenizer;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

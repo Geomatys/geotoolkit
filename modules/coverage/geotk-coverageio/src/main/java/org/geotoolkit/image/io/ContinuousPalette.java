@@ -22,8 +22,8 @@ import java.awt.image.DataBuffer;
 import java.awt.image.ColorModel;
 import java.awt.color.ColorSpace;
 import javax.imageio.ImageTypeSpecifier;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.image.ScaledColorSpace;
 

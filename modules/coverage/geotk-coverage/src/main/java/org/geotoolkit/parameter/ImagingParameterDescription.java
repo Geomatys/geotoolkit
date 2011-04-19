@@ -21,10 +21,9 @@ import java.util.Locale;
 import java.util.ResourceBundle;
 import java.util.MissingResourceException;
 import java.io.Serializable;
-
 import javax.media.jai.OperationDescriptor;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.AbstractInternationalString;
 

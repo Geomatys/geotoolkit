@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.datum.Datum;
@@ -41,7 +42,6 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

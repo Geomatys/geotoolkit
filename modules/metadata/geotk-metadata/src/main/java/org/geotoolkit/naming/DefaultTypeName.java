@@ -21,12 +21,11 @@
 package org.geotoolkit.naming;
 
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.TypeName;
 import org.opengis.util.NameSpace;
 import org.opengis.util.MemberName;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

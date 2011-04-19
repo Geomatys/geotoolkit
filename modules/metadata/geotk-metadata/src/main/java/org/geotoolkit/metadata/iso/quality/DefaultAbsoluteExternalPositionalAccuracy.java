@@ -22,11 +22,10 @@ package org.geotoolkit.metadata.iso.quality;
 
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

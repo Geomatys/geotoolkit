@@ -36,7 +36,8 @@ import javax.media.jai.EnumeratedParameter;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.ParameterListDescriptor;
 import javax.media.jai.RegistryElementDescriptor;
-import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
+
+import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Role;
@@ -53,7 +54,6 @@ import org.opengis.util.GenericName;
 import org.opengis.util.NameFactory;
 import org.opengis.util.NameSpace;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
@@ -68,6 +68,8 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 import org.geotoolkit.util.NullArgumentException;
+
+import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
 
 
 /**

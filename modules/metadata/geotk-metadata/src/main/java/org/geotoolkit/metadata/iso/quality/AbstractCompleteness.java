@@ -23,10 +23,9 @@ package org.geotoolkit.metadata.iso.quality;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.quality.Completeness;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

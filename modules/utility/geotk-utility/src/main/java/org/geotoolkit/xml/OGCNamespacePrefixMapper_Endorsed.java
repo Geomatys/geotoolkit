@@ -18,7 +18,7 @@
 package org.geotoolkit.xml;
 
 import com.sun.xml.bind.marshaller.NamespacePrefixMapper;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

@@ -19,8 +19,8 @@ package org.geotoolkit.internal.image.jai;
 
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.image.jai.Hysteresis;
 import static org.geotoolkit.image.jai.Hysteresis.OPERATION_NAME;
 

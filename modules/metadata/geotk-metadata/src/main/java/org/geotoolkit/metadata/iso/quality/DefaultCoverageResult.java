@@ -23,6 +23,7 @@ package org.geotoolkit.metadata.iso.quality;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.distribution.Format;
@@ -31,7 +32,6 @@ import org.opengis.metadata.distribution.DataFile;
 import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.xml.Namespaces;
 
 

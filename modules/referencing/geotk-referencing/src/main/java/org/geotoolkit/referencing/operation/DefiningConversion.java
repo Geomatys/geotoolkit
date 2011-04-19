@@ -22,13 +22,13 @@ package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
 import java.util.Collections;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;

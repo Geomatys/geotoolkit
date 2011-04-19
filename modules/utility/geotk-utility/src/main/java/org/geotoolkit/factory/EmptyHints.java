@@ -19,7 +19,7 @@ package org.geotoolkit.factory;
 
 import java.util.Map;
 import java.awt.RenderingHints;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

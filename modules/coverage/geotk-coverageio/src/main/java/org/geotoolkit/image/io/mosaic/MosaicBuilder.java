@@ -32,12 +32,12 @@ import javax.imageio.ImageWriter;
 import javax.imageio.ImageWriteParam;
 import javax.imageio.spi.IIORegistry;
 import javax.imageio.spi.ImageReaderSpi;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.math.Fraction;
 import org.geotoolkit.util.logging.LogProducer;
 import org.geotoolkit.util.logging.PerformanceLevel;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.coverage.grid.ImageGeometry;

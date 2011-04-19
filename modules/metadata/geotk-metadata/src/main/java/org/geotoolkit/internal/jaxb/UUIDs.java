@@ -22,8 +22,8 @@ import java.util.UUID;
 import java.util.HashMap;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 import org.geotoolkit.util.Disposable;

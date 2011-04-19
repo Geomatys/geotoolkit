@@ -34,6 +34,7 @@ import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.OperationRegistry;
 import javax.media.jai.OperationDescriptor;
 import javax.media.jai.registry.RenderedRegistryMode;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.OperationNotFoundException;
@@ -70,7 +71,6 @@ import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.AbstractInternationalString;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

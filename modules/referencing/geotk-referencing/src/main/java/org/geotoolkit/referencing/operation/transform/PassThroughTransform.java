@@ -17,8 +17,9 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import java.io.Serializable;
 import java.util.Arrays;
+import java.io.Serializable;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
@@ -27,7 +28,6 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;

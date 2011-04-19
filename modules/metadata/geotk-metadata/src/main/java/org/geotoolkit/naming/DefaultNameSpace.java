@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
@@ -31,7 +32,6 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;

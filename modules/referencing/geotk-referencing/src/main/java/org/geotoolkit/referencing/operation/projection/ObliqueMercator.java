@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.operation.projection;
 
 import java.util.Collection;
 import java.awt.geom.AffineTransform;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -34,7 +35,6 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;

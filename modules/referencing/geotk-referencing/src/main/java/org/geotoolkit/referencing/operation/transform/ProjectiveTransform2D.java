@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;

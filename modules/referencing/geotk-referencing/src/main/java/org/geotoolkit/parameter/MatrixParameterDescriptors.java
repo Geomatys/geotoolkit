@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.List;
 import java.util.Collections;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -31,7 +32,6 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.referencing.operation.Matrix;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.ComparisonMode;

@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -26,7 +27,6 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform1D;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.operation.MathTransformProvider;

@@ -26,6 +26,7 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.Type;
 import org.opengis.util.Record;
@@ -35,7 +36,6 @@ import org.opengis.util.TypeName;
 import org.opengis.util.MemberName;
 import org.opengis.util.NameSpace;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.internal.CollectionUtilities;
 

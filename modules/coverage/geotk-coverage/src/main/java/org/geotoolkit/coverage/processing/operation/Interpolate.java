@@ -19,13 +19,13 @@ package org.geotoolkit.coverage.processing.operation;
 
 import java.lang.reflect.Array;
 import javax.media.jai.Interpolation;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;

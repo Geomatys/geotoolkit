@@ -21,8 +21,7 @@ import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.net.URISyntaxException;
 import java.net.URL;
-
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

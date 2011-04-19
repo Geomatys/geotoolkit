@@ -25,12 +25,12 @@ import java.util.Iterator;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.logging.Logger;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
 

@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.datum.Datum;
@@ -37,7 +38,6 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.jaxb.gco.DateAsLongAdapter;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

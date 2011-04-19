@@ -31,6 +31,7 @@ import java.awt.RenderingHints;
 import javax.media.jai.JAI;
 import javax.media.jai.TileCache;
 import javax.media.jai.Interpolation;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
@@ -40,7 +41,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.GeneralParameterValue;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.Interpolator2D;

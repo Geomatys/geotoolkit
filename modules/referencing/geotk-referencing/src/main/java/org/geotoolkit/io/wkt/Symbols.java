@@ -20,8 +20,8 @@ package org.geotoolkit.io.wkt;
 import java.util.Locale;
 import java.io.Serializable;
 import java.text.NumberFormat;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.StringUtilities;
 
 

@@ -20,10 +20,10 @@ package org.geotoolkit.metadata.iso.citation;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.io.InvalidObjectException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.citation.ResponsibleParty;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.util.SimpleInternationalString;
 

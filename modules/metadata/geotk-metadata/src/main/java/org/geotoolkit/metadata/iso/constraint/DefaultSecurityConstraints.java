@@ -23,12 +23,11 @@ package org.geotoolkit.metadata.iso.constraint;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.constraint.Classification;
 import org.opengis.metadata.constraint.SecurityConstraints;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

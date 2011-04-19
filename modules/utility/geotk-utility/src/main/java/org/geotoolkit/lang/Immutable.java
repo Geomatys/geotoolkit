@@ -42,7 +42,10 @@ import java.lang.annotation.RetentionPolicy;
  *
  * @since 3.03
  * @module
+ *
+ * @deprecated Replaced by {@link net.jcip.annotations.Immutable} from {@code net.jcip}.
  */
+@Deprecated
 @Inherited
 @Documented
 @Target(ElementType.TYPE)

@@ -21,9 +21,9 @@ import java.io.FilterWriter;
 import java.io.IOException;
 import java.io.Writer;
 import java.util.Arrays;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.NullArgumentException;
 
 

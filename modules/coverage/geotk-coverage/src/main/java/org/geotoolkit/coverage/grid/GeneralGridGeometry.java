@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.grid;
 
 import java.io.Serializable;
 import java.awt.image.RenderedImage;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridGeometry;
@@ -40,7 +41,6 @@ import org.geotoolkit.metadata.iso.spatial.PixelTranslation;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
 import org.geotoolkit.referencing.operation.builder.GridToEnvelopeMapper;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

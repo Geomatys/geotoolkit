@@ -18,8 +18,8 @@
 package org.geotoolkit.internal.sql.table;
 
 import java.util.Arrays;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.Classes;
 
 
@@ -27,7 +27,7 @@ import org.geotoolkit.util.converter.Classes;
  * An identifier which is built from more than one column. An instance of this class can be
  * given to the {@link SingletonTable} methods which expect a {@link Comparable} argument type.
  * Instances of this object are also used as keys for caching entries. Instances are required
- * to be immutables.
+ * to be immutable.
  *
  * @param <T> The type of this class.
  *

@@ -23,11 +23,11 @@ package org.geotoolkit.metadata.iso.spatial;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.spatial.GeometricObjects;
 import org.opengis.metadata.spatial.GeometricObjectType;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 

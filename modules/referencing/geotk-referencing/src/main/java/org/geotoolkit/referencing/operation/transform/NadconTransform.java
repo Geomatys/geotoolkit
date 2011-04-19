@@ -19,12 +19,12 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.net.URL;
 import java.io.File;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.parameter.ParameterValueGroup;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.Parameters;
 
 import static org.geotoolkit.referencing.operation.provider.NADCON.*;

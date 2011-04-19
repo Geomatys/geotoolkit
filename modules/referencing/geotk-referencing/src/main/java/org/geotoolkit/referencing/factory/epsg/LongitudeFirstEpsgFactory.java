@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -27,7 +29,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.referencing.factory.OrderedAxisAuthorityFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

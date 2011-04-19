@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.ApplicationSchemaInformation;
@@ -48,7 +49,6 @@ import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.referencing.ReferenceSystem;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.gmd.LanguageCode;
 import org.geotoolkit.internal.jaxb.gmd.PT_Locale;

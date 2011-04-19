@@ -24,6 +24,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.text.ParseException;
 import java.awt.RenderingHints;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
@@ -52,7 +53,6 @@ import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.XArrays;
 
 
@@ -90,7 +90,7 @@ import org.geotoolkit.util.XArrays;
  * @since 3.10 (derived from 3.00)
  * @module
  */
-@ThreadSafe(concurrent = false)
+@ThreadSafe
 public class WKTParsingAuthorityFactory extends DirectAuthorityFactory {
     /**
      * The authority for this factory. Will be computed by

@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.operation;
 import java.util.Map;
 import java.util.HashMap;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -38,7 +39,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.operation.SingleOperation;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.io.wkt.Formatter;

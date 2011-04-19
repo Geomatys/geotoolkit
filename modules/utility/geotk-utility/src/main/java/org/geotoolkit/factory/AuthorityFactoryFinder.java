@@ -21,6 +21,7 @@ import java.util.Set;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import javax.imageio.spi.ServiceRegistry;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -31,7 +32,6 @@ import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.internal.Citations;
 
@@ -57,7 +57,7 @@ import org.geotoolkit.internal.Citations;
  * @module
  */
 @Static
-@ThreadSafe(concurrent = false)
+@ThreadSafe
 public final class AuthorityFactoryFinder extends FactoryFinder {
     /**
      * The authority names. Will be created only when first needed.

@@ -18,9 +18,9 @@
 package org.geotoolkit.image.io;
 
 import java.awt.image.Raster;
+import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.math.XMath;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.Classes;
 
 

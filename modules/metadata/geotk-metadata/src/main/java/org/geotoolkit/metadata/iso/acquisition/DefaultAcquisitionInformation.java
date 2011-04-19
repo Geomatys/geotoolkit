@@ -24,6 +24,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.opengis.metadata.acquisition.EnvironmentalRecord;
@@ -34,7 +35,6 @@ import org.opengis.metadata.acquisition.Plan;
 import org.opengis.metadata.acquisition.Platform;
 import org.opengis.metadata.acquisition.Requirement;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 

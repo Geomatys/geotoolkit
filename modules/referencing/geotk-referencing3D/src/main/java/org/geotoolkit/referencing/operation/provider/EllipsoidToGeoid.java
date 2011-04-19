@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.util.Collections;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -27,7 +28,6 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.MathTransformProvider;

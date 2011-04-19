@@ -26,10 +26,10 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.CodeList;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.XCollections;

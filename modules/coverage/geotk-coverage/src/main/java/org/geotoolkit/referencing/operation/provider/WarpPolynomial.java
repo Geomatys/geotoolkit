@@ -22,6 +22,7 @@ import javax.media.jai.WarpCubic;
 import javax.media.jai.WarpAffine;
 import javax.media.jai.WarpQuadratic;
 import javax.media.jai.WarpGeneralPolynomial;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -30,7 +31,6 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.NamedIdentifier;

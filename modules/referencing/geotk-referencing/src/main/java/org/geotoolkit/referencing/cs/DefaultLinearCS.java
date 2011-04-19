@@ -21,11 +21,12 @@
 package org.geotoolkit.referencing.cs;
 
 import java.util.Map;
+import net.jcip.annotations.Immutable;
+
 import org.opengis.referencing.cs.LinearCS;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Measure;
 
 

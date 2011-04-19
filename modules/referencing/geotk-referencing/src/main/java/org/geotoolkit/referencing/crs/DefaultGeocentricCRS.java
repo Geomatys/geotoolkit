@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.SphericalCS;
@@ -39,7 +40,6 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.internal.referencing.WktUtilities;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

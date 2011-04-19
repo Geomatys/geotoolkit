@@ -18,11 +18,11 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.io.Serializable;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 
 

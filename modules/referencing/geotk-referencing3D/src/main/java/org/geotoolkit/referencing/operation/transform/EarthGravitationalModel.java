@@ -25,13 +25,13 @@ import java.io.InputStream;
 import java.io.DataInputStream;
 import java.io.BufferedInputStream;
 import java.io.FileNotFoundException;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.datum.GeodeticDatum;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameter;

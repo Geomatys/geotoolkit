@@ -22,10 +22,10 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.Writer;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

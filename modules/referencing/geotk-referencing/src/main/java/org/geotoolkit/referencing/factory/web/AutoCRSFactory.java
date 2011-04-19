@@ -22,6 +22,7 @@ import java.util.Map;
 import java.util.TreeMap;
 import java.util.Collections;
 import java.util.LinkedHashSet;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.util.InternationalString;
@@ -33,7 +34,6 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.ProjectedCRS;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -98,7 +98,7 @@ import org.geotoolkit.referencing.operation.projection.TransverseMercator;
  * @since 2.0
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public class AutoCRSFactory extends DirectAuthorityFactory implements CRSAuthorityFactory {
     /**
      * The authority code. We use the {@code AUTO2} title, but merge the identifiers from

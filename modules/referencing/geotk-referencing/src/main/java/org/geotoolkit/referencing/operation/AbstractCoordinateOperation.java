@@ -27,6 +27,7 @@ import java.util.Collections;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.quality.Result;
@@ -38,7 +39,6 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;

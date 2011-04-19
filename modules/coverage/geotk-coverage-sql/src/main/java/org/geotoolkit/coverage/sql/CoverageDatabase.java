@@ -36,13 +36,13 @@ import java.lang.ref.WeakReference;
 import java.lang.ref.Reference;
 import javax.sql.DataSource;
 import java.sql.SQLException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
@@ -80,7 +80,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.10
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public class CoverageDatabase implements Localized {
     /**
      * Maximal amount of concurrent threads which can be running. Note that higher values are

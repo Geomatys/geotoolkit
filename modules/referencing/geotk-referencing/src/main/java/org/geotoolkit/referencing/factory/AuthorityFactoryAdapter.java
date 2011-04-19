@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.awt.RenderingHints;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -51,7 +52,6 @@ import org.geotoolkit.internal.Citations;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Decorator;
 
 import static org.geotoolkit.internal.FactoryUtilities.ATTEMPTS_DELAY;

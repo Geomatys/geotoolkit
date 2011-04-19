@@ -22,11 +22,11 @@ import java.awt.geom.Rectangle2D;
 import java.awt.geom.AffineTransform;
 import java.awt.image.RenderedImage;
 import java.io.Serializable;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.metadata.spatial.PixelOrientation;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;

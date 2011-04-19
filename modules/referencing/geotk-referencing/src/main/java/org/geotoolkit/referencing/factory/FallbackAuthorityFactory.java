@@ -27,6 +27,7 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -41,7 +42,6 @@ import org.opengis.util.InternationalString;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.collection.WeakValueHashMap;

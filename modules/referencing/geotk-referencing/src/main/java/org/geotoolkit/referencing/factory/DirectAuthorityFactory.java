@@ -25,11 +25,11 @@ import java.util.Set;
 import java.util.LinkedHashSet;
 import java.util.Collection;
 import java.awt.RenderingHints;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.*;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

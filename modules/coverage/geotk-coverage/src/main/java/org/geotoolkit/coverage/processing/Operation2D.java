@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.processing;
 import java.util.Set;
 import java.util.Map;
 import java.util.HashMap;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.parameter.ParameterValueGroup;
@@ -29,7 +30,6 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.grid.GridCoverageFactory;

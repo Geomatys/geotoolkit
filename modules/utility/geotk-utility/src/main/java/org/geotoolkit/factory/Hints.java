@@ -32,6 +32,7 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import javax.naming.Name;
 import javax.sql.DataSource;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
@@ -45,7 +46,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.GeographicCRS;
 
 import org.geotoolkit.lang.Configuration;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;

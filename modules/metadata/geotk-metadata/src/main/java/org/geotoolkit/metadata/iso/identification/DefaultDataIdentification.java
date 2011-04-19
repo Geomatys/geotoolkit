@@ -22,10 +22,10 @@ package org.geotoolkit.metadata.iso.identification;
 
 import java.util.Collection;
 import java.util.Locale;
-
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.metadata.citation.Citation;
@@ -35,8 +35,6 @@ import org.opengis.metadata.identification.TopicCategory;
 import org.opengis.metadata.identification.DataIdentification;
 import org.opengis.metadata.spatial.SpatialRepresentationType;
 import org.opengis.util.InternationalString;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

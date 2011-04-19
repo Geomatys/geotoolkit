@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.Locale;
 import javax.media.jai.JAI;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.ColorInterpretation;
 import org.opengis.coverage.PaletteInterpretation;
@@ -46,7 +47,6 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 

@@ -26,13 +26,13 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.content.Band;
 import org.opengis.metadata.content.BandDefinition;
 import org.opengis.metadata.content.PolarizationOrientation;
 import org.opengis.metadata.content.TransferFunctionType;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.xml.Namespaces;
 

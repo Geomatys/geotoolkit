@@ -20,8 +20,8 @@ package org.geotoolkit.internal.image.jai;
 import javax.media.jai.util.Range;
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.image.jai.NodataFilter;
 import static org.geotoolkit.image.jai.NodataFilter.OPERATION_NAME;
 

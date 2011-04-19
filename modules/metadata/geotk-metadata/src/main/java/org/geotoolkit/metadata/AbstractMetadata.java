@@ -21,8 +21,8 @@ import java.util.Map;
 import java.util.logging.Logger;
 import java.text.ParseException;
 import javax.swing.tree.TreeModel;
+import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.logging.Logging;
 
 

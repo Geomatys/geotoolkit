@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.HashMap;
 import java.util.Properties;
 import javax.sql.DataSource;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.SingleCRS;
@@ -33,7 +34,6 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.datum.PixelInCell;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -59,7 +59,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @since 3.10 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public class SpatialDatabase extends Database {
     /**
      * The horizontal SRID of {@link #horizontalCRS}, as declared in the PostGIS geometry column.

@@ -23,9 +23,8 @@ package org.geotoolkit.referencing.datum;
 import java.util.Map;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
+import net.jcip.annotations.Immutable;
 import static java.lang.Math.*;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

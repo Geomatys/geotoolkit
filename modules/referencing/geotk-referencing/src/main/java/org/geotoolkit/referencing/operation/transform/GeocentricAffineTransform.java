@@ -17,12 +17,13 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import net.jcip.annotations.Immutable;
+
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.crs.GeocentricCRS;
 import org.opengis.referencing.operation.Matrix;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;

@@ -33,6 +33,7 @@ import java.util.Arrays;
 import java.util.concurrent.CancellationException;
 import java.lang.ref.Reference;
 import java.lang.ref.SoftReference;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.metadata.extent.GeographicBoundingBox;
@@ -40,7 +41,6 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.Matrix;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.mosaic.TileManager;
 import org.geotoolkit.coverage.GridSampleDimension;

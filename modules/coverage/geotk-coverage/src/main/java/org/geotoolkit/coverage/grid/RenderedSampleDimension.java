@@ -27,12 +27,12 @@ import java.awt.image.SampleModel;
 import javax.measure.unit.Unit;
 import javax.media.jai.iterator.RectIter;
 import javax.media.jai.iterator.RectIterFactory;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.InternationalString;
 import org.opengis.coverage.SampleDimensionType;
 import org.opengis.coverage.ColorInterpretation;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.coverage.TypeMap;
 import org.geotoolkit.coverage.Category;

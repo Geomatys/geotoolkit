@@ -20,12 +20,12 @@ package org.geotoolkit.referencing.factory.web;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.util.Version;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;

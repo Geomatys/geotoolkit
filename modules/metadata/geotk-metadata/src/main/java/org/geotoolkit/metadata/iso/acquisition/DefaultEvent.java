@@ -25,6 +25,7 @@ import java.util.Date;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.acquisition.Context;
@@ -35,7 +36,6 @@ import org.opengis.metadata.acquisition.PlatformPass;
 import org.opengis.metadata.acquisition.Sequence;
 import org.opengis.metadata.acquisition.Trigger;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 

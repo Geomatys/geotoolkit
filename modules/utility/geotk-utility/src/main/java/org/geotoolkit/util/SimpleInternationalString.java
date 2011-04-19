@@ -22,8 +22,8 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.util.Locale;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.opengis.util.InternationalString;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;

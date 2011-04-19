@@ -25,6 +25,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.spi.ServiceRegistry;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.util.FactoryException;
@@ -44,7 +45,6 @@ import org.geotoolkit.internal.referencing.factory.ImplementationHints;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -63,7 +63,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @since 2.3
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 final class DefaultAuthorityFactory extends CachingAuthorityFactory implements CRSAuthorityFactory {
     /**
      * List of codes without authority space. We can not defines them in an ordinary

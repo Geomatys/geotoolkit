@@ -24,12 +24,12 @@ import java.util.Set;
 import java.util.Arrays;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.*;
 import org.opengis.referencing.crs.*;
 import org.opengis.util.FactoryException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 

@@ -24,13 +24,13 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.AbstractMap;
 import java.util.Collections;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.Datum;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.operation.CoordinateOperation;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
 

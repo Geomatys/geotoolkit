@@ -19,10 +19,10 @@ package org.geotoolkit.coverage.processing;
 
 import java.util.Arrays;
 import javax.media.jai.operator.BinarizeDescriptor;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.processing.OperationNotFoundException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.GridSampleDimension;
 

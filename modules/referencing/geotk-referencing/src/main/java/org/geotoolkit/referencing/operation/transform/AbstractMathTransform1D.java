@@ -17,9 +17,9 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
+import net.jcip.annotations.ThreadSafe;
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -33,7 +33,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @since 3.17
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public abstract class AbstractMathTransform1D extends AbstractMathTransform implements MathTransform1D {
     /**
      * Constructs a default math transform.

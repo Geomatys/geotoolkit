@@ -23,13 +23,13 @@ package org.geotoolkit.referencing.datum;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Map;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.TemporalDatum;
 
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

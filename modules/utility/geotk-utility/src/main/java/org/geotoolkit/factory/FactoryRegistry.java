@@ -22,6 +22,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import javax.imageio.spi.ServiceRegistry;
+import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.metadata.quality.ConformanceResult;
 
@@ -45,7 +46,7 @@ import org.geotoolkit.resources.Loggings;
  *   the {@linkplain ClassLoader#getSystemClassLoader system class loader}.</p></li>
  *
  *   <li><p>When more than one implementation is available for the same {@link Factory} subclass,
- *   an optional set of {@linkplain Hints hints} can specifies the criterions that the desired
+ *   an optional set of {@linkplain Hints hints} can specifies the criterion that the desired
  *   implementation must meets. If a factory implementation depends on other factories, the
  *   dependencies hints are checked recursively.</p></li>
  *
@@ -59,7 +60,7 @@ import org.geotoolkit.resources.Loggings;
  * matches the hints (including the common case where the user doesn't provide any hint at all), then
  * ordering matter.
  * <p>
- * <strong>NOTE: This class is not thread safe</strong>. Users are responsable
+ * <strong>NOTE: This class is not thread safe</strong>. Users are responsible
  * for synchronization. This is usually done in an utility class wrapping this
  * service registry (e.g. {@link org.geotoolkit.factory.FactoryFinder}).
  *
@@ -74,6 +75,7 @@ import org.geotoolkit.resources.Loggings;
  * @since 2.1
  * @module
  */
+@NotThreadSafe
 public class FactoryRegistry extends ServiceRegistry {
     /**
      * The logger for all events related to factory registry.

@@ -23,13 +23,13 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.concurrent.RejectedExecutionException;
 import java.awt.RenderingHints;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 
@@ -55,7 +55,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
  * @since 2.1
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public abstract class ThreadedAuthorityFactory extends CachingAuthorityFactory {
     /**
      * A backing store used by {@link ThreadedAuthorityFactory}. A new instance is created

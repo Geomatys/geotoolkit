@@ -18,7 +18,7 @@
 package org.geotoolkit.util.logging;
 
 import java.util.logging.Logger;
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 import org.geotoolkit.util.collection.WeakValueHashMap;
 
 

@@ -18,7 +18,7 @@
 package org.geotoolkit.util.collection;
 
 import java.util.Iterator;
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**

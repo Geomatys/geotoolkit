@@ -20,10 +20,10 @@ package org.geotoolkit.referencing.cs;
 import java.io.Serializable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AxisDirection;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.referencing.AxisDirections;
 

@@ -22,6 +22,7 @@ import java.awt.geom.AffineTransform;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
 import java.util.Locale;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -46,7 +47,6 @@ import org.geotoolkit.referencing.operation.transform.DimensionFilter;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

@@ -23,6 +23,7 @@ import java.util.LinkedHashMap;
 import java.sql.Connection;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+import net.jcip.annotations.NotThreadSafe;
 
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.util.logging.Logging;
@@ -80,6 +81,7 @@ import org.geotoolkit.util.collection.XCollections;
  * @since 3.03
  * @module
  */
+@NotThreadSafe
 @SuppressWarnings("serial")
 public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V> implements Runnable {
     /**

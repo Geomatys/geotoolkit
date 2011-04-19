@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.processing.operation;
 import javax.media.jai.Interpolation;
 import javax.media.jai.operator.WarpDescriptor;
 import javax.media.jai.operator.AffineDescriptor;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.Coverage;
@@ -48,7 +49,6 @@ import org.geotoolkit.coverage.processing.CannotReprojectException;
 import org.geotoolkit.internal.coverage.CoverageUtilities;
 import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

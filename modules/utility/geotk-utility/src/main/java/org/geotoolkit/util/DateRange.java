@@ -21,8 +21,8 @@ import java.util.Date;
 import javax.measure.unit.Unit;
 import javax.measure.converter.UnitConverter;
 import javax.measure.converter.ConversionException;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 

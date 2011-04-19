@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.content.CoverageContentType;
 import org.opengis.metadata.content.CoverageDescription;
@@ -32,7 +33,6 @@ import org.opengis.metadata.content.RangeDimension;
 import org.opengis.metadata.content.RangeElementDescription;
 import org.opengis.util.RecordType;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.xml.Namespaces;
 
 

@@ -20,6 +20,7 @@ package org.geotoolkit.metadata;
 import java.util.Set;
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.annotation.UML;
 import org.opengis.annotation.Obligation;
@@ -28,7 +29,6 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
 

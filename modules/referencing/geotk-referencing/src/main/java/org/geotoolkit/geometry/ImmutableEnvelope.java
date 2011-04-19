@@ -17,13 +17,13 @@
  */
 package org.geotoolkit.geometry;
 
+import net.jcip.annotations.Immutable;
+
 import org.opengis.geometry.Envelope;
+import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
-import org.opengis.geometry.MismatchedDimensionException;
-
 import static org.geotoolkit.util.ArgumentChecks.*;
 
 

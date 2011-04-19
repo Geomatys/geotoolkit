@@ -23,13 +23,13 @@ package org.geotoolkit.referencing.factory;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Logger;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.Factory;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.InvalidParameterValueException;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;

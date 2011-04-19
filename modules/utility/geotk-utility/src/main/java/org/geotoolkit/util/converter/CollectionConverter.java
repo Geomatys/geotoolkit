@@ -22,7 +22,7 @@ import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

@@ -23,11 +23,11 @@ package org.geotoolkit.referencing.cs;
 import java.util.List;
 import java.util.Arrays;
 import java.util.Collections;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 

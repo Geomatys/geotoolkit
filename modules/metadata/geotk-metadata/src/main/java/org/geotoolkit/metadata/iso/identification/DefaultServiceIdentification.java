@@ -22,10 +22,9 @@ package org.geotoolkit.metadata.iso.identification;
 
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.identification.ServiceIdentification;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

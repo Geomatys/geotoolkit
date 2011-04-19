@@ -21,10 +21,10 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import static java.lang.Math.*;
-
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 import org.geotoolkit.resources.Errors;
+
+import static java.lang.Math.*;
 
 
 /**

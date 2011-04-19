@@ -19,12 +19,12 @@ package org.geotoolkit.metadata.fra;
 
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.ReferenceSystem;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 

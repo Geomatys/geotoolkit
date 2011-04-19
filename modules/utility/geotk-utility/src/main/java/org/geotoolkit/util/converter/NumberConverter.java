@@ -19,7 +19,7 @@ package org.geotoolkit.util.converter;
 
 import java.io.Serializable;
 import java.io.ObjectStreamException;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

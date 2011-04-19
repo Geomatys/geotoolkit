@@ -25,6 +25,7 @@ import java.util.Iterator;
 import java.util.Comparator;
 import java.util.LinkedHashSet;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -47,7 +48,6 @@ import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Decorator;
 
 

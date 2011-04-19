@@ -21,14 +21,13 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.OperationMethod;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

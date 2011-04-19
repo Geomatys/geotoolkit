@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.factory;
 
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -32,7 +33,6 @@ import org.opengis.metadata.extent.Extent;
 import org.opengis.util.FactoryException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

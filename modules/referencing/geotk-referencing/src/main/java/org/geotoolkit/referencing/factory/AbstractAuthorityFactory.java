@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.factory;
 import java.util.Set;
 import java.util.Collections;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;
@@ -42,7 +43,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

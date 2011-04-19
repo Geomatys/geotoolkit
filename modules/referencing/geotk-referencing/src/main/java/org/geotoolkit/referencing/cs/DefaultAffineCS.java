@@ -23,12 +23,12 @@ package org.geotoolkit.referencing.cs;
 import java.util.Map;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AffineCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
 

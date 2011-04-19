@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.operation.transform;
 import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.Matrix;
@@ -31,7 +32,6 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;

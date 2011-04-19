@@ -19,8 +19,8 @@ package org.geotoolkit.metadata.iso;
 
 import java.io.Serializable;
 import java.util.Collection;
+import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.metadata.MetadataStandard;

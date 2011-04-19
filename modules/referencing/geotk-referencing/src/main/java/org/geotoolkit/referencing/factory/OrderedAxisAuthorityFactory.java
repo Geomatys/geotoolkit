@@ -22,6 +22,7 @@ import java.util.Comparator;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
@@ -33,7 +34,6 @@ import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

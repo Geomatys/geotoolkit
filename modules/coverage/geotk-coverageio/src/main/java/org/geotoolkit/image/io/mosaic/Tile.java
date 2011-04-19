@@ -35,10 +35,10 @@ import javax.imageio.spi.ImageReaderSpi;
 import javax.imageio.spi.ImageWriterSpi;
 import javax.imageio.stream.ImageInputStream;
 import javax.imageio.stream.FileImageInputStream;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.spatial.PixelOrientation;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;

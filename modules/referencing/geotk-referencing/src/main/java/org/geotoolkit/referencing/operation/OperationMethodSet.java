@@ -20,11 +20,10 @@ package org.geotoolkit.referencing.operation;
 import java.util.Iterator;
 import java.util.AbstractSet;
 import java.util.NoSuchElementException;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.operation.OperationMethod;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

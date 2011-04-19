@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.operation.Conversion;
@@ -42,7 +43,6 @@ import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.UnsupportedImplementationException;
 

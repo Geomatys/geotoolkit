@@ -17,13 +17,14 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import net.jcip.annotations.Immutable;
+
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.internal.referencing.Identifiers;

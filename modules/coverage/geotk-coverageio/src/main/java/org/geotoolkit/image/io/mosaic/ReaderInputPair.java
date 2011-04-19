@@ -20,9 +20,9 @@ package org.geotoolkit.image.io.mosaic;
 import javax.imageio.ImageReader;
 import javax.imageio.ImageWriter;
 import javax.imageio.spi.ImageReaderSpi;
+import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

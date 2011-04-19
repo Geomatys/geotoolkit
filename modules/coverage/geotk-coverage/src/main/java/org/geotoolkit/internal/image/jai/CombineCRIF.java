@@ -17,15 +17,14 @@
  */
 package org.geotoolkit.internal.image.jai;
 
+import java.util.List;
+import java.util.Vector;
 import javax.media.jai.CRIFImpl;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.awt.RenderingHints;
+import net.jcip.annotations.Immutable;
 
-import java.util.List;
-import java.util.Vector;
-
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.image.jai.Combine;
 

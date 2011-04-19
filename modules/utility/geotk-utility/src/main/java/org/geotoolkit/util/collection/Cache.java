@@ -29,9 +29,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.lang.ref.SoftReference;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.util.Disposable;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.ReferenceQueueConsumer;
 
@@ -138,7 +138,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * @since 3.00
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public class Cache<K,V> extends AbstractMap<K,V> {
     /**
      * The map that contains the cached values. If a value is under the process of being

@@ -31,6 +31,7 @@ import javax.measure.unit.Unit;
 import java.lang.ref.WeakReference;
 import java.awt.RenderingHints;
 import java.io.PrintWriter;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -49,7 +50,6 @@ import org.opengis.parameter.ParameterDescriptor;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
@@ -80,7 +80,7 @@ import org.geotoolkit.util.collection.Cache;
  * @module
  */
 @Buffered
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 @Decorator(AbstractAuthorityFactory.class)
 public class CachingAuthorityFactory extends AbstractAuthorityFactory {
     /**

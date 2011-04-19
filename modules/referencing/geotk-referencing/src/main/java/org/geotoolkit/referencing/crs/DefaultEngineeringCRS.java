@@ -25,6 +25,7 @@ import java.util.Map;
 import javax.measure.unit.SI;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.EngineeringCRS;
@@ -39,7 +40,6 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

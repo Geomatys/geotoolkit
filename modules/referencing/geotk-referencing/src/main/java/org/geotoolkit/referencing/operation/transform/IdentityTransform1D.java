@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.transform;
 
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

@@ -32,6 +32,7 @@ import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Length;
 import javax.measure.converter.UnitConverter;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
@@ -43,7 +44,6 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.DirectPosition;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.FloatParameter;

@@ -22,8 +22,8 @@ import java.io.ObjectStreamException;
 import java.nio.charset.UnsupportedCharsetException;
 import java.net.URISyntaxException;
 import java.net.MalformedURLException;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.internal.CodeLists;

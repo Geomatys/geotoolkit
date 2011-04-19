@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.transform;
 
 import java.io.Serializable;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
@@ -26,7 +27,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;

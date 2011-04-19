@@ -19,8 +19,7 @@ package org.geotoolkit.internal.rmi;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
-
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**

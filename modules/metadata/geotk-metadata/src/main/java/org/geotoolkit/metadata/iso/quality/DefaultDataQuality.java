@@ -24,13 +24,13 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.lineage.Lineage;
 import org.opengis.metadata.quality.DataQuality;
 import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.quality.Scope;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
 

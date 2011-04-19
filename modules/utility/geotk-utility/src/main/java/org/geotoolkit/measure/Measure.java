@@ -18,8 +18,8 @@
 package org.geotoolkit.measure;
 
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

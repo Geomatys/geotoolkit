@@ -27,13 +27,13 @@ import javax.measure.quantity.Duration;
 import javax.measure.converter.UnitConverter;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.TimeCS;
 import org.opengis.referencing.crs.TemporalCRS;
 import org.opengis.referencing.datum.TemporalDatum;
 
 import org.geotoolkit.measure.Units;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.cs.DefaultTimeCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;

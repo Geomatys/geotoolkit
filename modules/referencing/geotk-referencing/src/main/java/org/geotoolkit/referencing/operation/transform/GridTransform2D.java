@@ -23,6 +23,7 @@ import java.awt.geom.Rectangle2D;
 import java.awt.image.DataBuffer;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
@@ -31,7 +32,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.geometry.DirectPosition2D;
 

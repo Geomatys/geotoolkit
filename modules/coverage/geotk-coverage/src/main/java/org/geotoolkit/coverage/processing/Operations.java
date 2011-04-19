@@ -19,6 +19,7 @@ package org.geotoolkit.coverage.processing;
 
 import javax.media.jai.KernelJAI;
 import javax.media.jai.Interpolation;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.Coverage;
@@ -36,7 +37,6 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.CoverageFactoryFinder;
 import org.geotoolkit.coverage.processing.operation.Resample;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

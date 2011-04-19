@@ -17,9 +17,8 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import net.jcip.annotations.Immutable;
 import org.opengis.metadata.citation.Citation;
-
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.NamedIdentifier;
 
 

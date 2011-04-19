@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.cs.CSAuthorityFactory;
@@ -41,7 +42,6 @@ import org.geotoolkit.io.wkt.Symbols;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -66,7 +66,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @since 3.10 (derived from 2.1)
  * @module
  */
-@ThreadSafe(concurrent = false)
+@ThreadSafe
 public class PropertyAuthorityFactory extends WKTParsingAuthorityFactory
         implements CRSAuthorityFactory, CSAuthorityFactory, DatumAuthorityFactory
 {

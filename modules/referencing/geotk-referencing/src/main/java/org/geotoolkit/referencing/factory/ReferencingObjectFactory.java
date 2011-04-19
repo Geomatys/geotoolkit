@@ -28,6 +28,7 @@ import java.text.ParseException;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.*;
 import org.opengis.referencing.cs.*;
@@ -42,7 +43,6 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.io.wkt.ReferencingParser;
 import org.geotoolkit.io.wkt.Symbols;
 import org.geotoolkit.lang.Buffered;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.referencing.cs.*;
 import org.geotoolkit.referencing.crs.*;
 import org.geotoolkit.referencing.datum.*;

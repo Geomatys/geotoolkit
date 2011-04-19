@@ -27,6 +27,7 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.EllipsoidalCS;
 import org.opengis.referencing.cs.AxisDirection;
@@ -34,7 +35,6 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.measure.Units;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.AxisDirections;

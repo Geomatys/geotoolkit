@@ -18,6 +18,7 @@
 package org.geotoolkit.coverage;
 
 import java.awt.Color;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
@@ -28,7 +29,6 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

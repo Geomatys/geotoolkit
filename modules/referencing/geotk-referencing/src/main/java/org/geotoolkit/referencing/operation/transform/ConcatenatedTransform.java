@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.ArrayList;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
@@ -32,7 +33,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.internal.referencing.Semaphores;

@@ -19,11 +19,10 @@ package org.geotoolkit.metadata;
 
 import java.util.Comparator;
 import java.lang.reflect.Method;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.annotation.UML;
 import org.opengis.annotation.Obligation;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

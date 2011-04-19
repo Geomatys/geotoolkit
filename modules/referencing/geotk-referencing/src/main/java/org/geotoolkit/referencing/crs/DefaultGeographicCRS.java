@@ -28,6 +28,7 @@ import javax.measure.unit.NonSI;
 import javax.measure.quantity.Angle;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -47,7 +48,6 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Units;
 
 

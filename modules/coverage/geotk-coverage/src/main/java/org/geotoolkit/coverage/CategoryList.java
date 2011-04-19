@@ -29,6 +29,7 @@ import java.util.Comparator;
 import java.util.Locale;
 import javax.measure.unit.Unit;
 import javax.media.jai.iterator.WritableRectIter;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.Matrix;
@@ -46,7 +47,6 @@ import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.AbstractInternationalString;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

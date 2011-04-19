@@ -19,14 +19,13 @@ package org.geotoolkit.referencing.operation.transform;
 
 import java.util.Arrays;
 import java.io.Serializable;
-import static java.lang.Math.*;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -34,6 +33,8 @@ import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
+
+import static java.lang.Math.*;
 
 
 /**

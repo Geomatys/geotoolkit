@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.factory.web;
 
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -26,8 +27,6 @@ import org.opengis.referencing.operation.*;
 import org.opengis.referencing.AuthorityFactory;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterValueGroup;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

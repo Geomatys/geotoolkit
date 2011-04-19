@@ -28,6 +28,7 @@ import java.io.Serializable;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
@@ -45,7 +46,6 @@ import org.geotoolkit.internal.jaxb.metadata.ReferenceSystemMetadata;
 import org.geotoolkit.internal.jaxb.gco.StringAdapter;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.opengis.referencing.IdentifiedObject.NAME_KEY;

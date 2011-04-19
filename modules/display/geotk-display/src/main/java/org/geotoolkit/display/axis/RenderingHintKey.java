@@ -18,12 +18,11 @@
 package org.geotoolkit.display.axis;
 
 import java.awt.RenderingHints;
-
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**
- * Rendering hints for tick's graduation.
+ * Rendering hints for tick graduation.
  *
  * @author Martin Desruisseaux (MPO, IRD)
  * @version 3.00

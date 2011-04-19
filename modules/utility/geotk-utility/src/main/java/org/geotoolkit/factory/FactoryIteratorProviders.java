@@ -19,8 +19,9 @@ package org.geotoolkit.factory;
 
 import java.util.Set;
 import java.util.LinkedHashSet;
+import net.jcip.annotations.ThreadSafe;
+
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

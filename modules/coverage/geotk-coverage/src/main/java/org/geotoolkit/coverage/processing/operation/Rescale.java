@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.coverage.processing.operation;
 
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.coverage.processing.OperationJAI;
 

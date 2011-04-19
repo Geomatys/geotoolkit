@@ -17,10 +17,9 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
-
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.referencing.datum.BursaWolfParameters;
 
 

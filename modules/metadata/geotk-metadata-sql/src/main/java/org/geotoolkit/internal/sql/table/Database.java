@@ -40,8 +40,9 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.logging.Logger;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Errors;
@@ -66,7 +67,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @since 3.09 (derived from Seagis)
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public class Database implements Localized {
     /**
      * The timeout (in minutes) for acquirying a write lock.

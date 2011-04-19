@@ -26,6 +26,7 @@ import java.awt.image.DataBuffer;
 import java.awt.image.DataBufferDouble;
 import java.util.Arrays;
 import java.io.Serializable;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.operation.Matrix;
@@ -40,7 +41,6 @@ import org.geotoolkit.referencing.operation.transform.IterationStrategy;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 
 
 /**

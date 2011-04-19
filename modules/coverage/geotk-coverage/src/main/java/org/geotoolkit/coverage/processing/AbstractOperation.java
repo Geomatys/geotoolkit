@@ -22,6 +22,7 @@ package org.geotoolkit.coverage.processing;
 
 import java.io.Serializable;
 import java.awt.RenderingHints;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.processing.Operation;
@@ -32,7 +33,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 

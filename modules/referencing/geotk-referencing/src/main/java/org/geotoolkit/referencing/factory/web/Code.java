@@ -18,11 +18,11 @@
 package org.geotoolkit.referencing.factory.web;
 
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;

@@ -21,9 +21,9 @@ import java.util.Iterator;
 import java.io.Closeable;
 import java.io.IOException;
 import java.lang.reflect.UndeclaredThrowableException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.internal.io.ObjectStream;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

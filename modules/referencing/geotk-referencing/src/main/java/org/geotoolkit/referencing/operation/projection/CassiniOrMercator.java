@@ -22,8 +22,8 @@
 package org.geotoolkit.referencing.operation.projection;
 
 import java.awt.geom.AffineTransform;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;

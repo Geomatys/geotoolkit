@@ -17,6 +17,8 @@
  */
 package org.geotoolkit.referencing.factory.web;
 
+import net.jcip.annotations.ThreadSafe;
+
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.referencing.IdentifiedObject;
@@ -28,7 +30,6 @@ import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -40,7 +41,7 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 
 /**
  * Wraps {@linkplain AllAuthoritiesFactory all factories} in a {@code "http://www.opengis.net/"}
- * name space. Exemple of complete URL:
+ * name space. Example of complete URL:
  *
  * {@preformat text
  *     http://www.opengis.net/gml/srs/epsg.xml#4326

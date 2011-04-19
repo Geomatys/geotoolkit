@@ -17,10 +17,11 @@
  */
 package org.geotoolkit.referencing.operation.provider;
 
+import net.jcip.annotations.Immutable;
+
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;

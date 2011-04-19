@@ -24,6 +24,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.lineage.Source;
@@ -31,7 +32,6 @@ import org.opengis.metadata.lineage.Lineage;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.opengis.metadata.maintenance.ScopeCode;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.metadata.iso.quality.DefaultScope;
 

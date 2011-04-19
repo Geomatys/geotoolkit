@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
@@ -31,7 +32,6 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 
 import org.geotoolkit.measure.Units;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;

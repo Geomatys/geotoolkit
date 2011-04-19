@@ -29,6 +29,7 @@ import java.util.logging.Logger;
 import java.util.logging.LogRecord;
 import java.io.IOException;
 import java.io.Writer;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimensionType;
@@ -49,7 +50,6 @@ import org.geotoolkit.internal.image.ImageUtilities;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.Localized;
 
 

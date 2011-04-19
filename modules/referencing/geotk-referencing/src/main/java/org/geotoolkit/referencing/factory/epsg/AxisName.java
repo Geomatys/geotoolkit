@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 import org.geotoolkit.util.Utilities;
 
 

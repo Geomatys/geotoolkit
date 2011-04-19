@@ -21,8 +21,8 @@ import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import javax.media.jai.OperationDescriptorImpl;
 import javax.media.jai.registry.RenderedRegistryMode;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.image.jai.Combine;

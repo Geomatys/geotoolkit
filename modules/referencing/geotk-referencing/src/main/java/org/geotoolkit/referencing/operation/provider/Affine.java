@@ -19,6 +19,7 @@ package org.geotoolkit.referencing.operation.provider;
 
 import java.util.Map;
 import java.util.HashMap;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -28,7 +29,6 @@ import org.opengis.referencing.operation.Conversion;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.parameter.MatrixParameterDescriptors;

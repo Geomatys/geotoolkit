@@ -31,13 +31,13 @@ import java.util.NoSuchElementException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

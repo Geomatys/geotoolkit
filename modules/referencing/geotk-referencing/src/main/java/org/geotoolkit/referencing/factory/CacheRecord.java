@@ -27,12 +27,12 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Collection;
 import java.io.PrintWriter;
-import org.geotoolkit.internal.StringUtilities;
 
 import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.internal.io.IOUtilities;
+import org.geotoolkit.internal.StringUtilities;
 
 
 /**

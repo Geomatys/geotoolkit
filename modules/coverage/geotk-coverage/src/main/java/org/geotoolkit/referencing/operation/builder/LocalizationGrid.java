@@ -23,6 +23,7 @@ import java.awt.Rectangle;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import java.util.Arrays;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.referencing.operation.MathTransform2D;
@@ -30,7 +31,6 @@ import org.opengis.referencing.operation.MathTransform2D;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.referencing.operation.transform.WarpTransform2D;
 import org.geotoolkit.referencing.operation.transform.ProjectiveTransform;
-import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureBetween;
 

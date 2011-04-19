@@ -32,6 +32,7 @@ import javax.imageio.ImageReader;
 import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOReadProgressListener;
 import javax.media.jai.InterpolationNearest;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.SampleDimension;
@@ -64,7 +65,6 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.image.io.IIOListeners;
 import org.geotoolkit.image.io.IIOReadProgressAdapter;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.resources.Vocabulary;

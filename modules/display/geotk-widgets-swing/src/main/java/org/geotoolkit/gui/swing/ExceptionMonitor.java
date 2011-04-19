@@ -36,15 +36,14 @@ import javax.swing.JTabbedPane;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.AbstractButton;
-
 import java.awt.event.ActionListener;
 import java.awt.event.ActionEvent;
 import java.awt.EventQueue;
 
+import net.jcip.annotations.ThreadSafe;
 import org.jdesktop.swingx.JXLabel;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.Exceptions;
 import org.geotoolkit.util.converter.Classes;

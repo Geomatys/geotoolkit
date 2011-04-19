@@ -21,21 +21,20 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.SQLNonTransientException;
-
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**
  * Checks the existence of identifiers (usually primary keys) in a set of tables.
- * This class implements a very naive algorithm and is used only when some raisonably
- * meanful ID are wanted. If "meanful" ID is not a requirement, then it is much more
- * efficient to rely on the ID numbers generated automatically by the database.
+ * This class implements a very naive algorithm and is used only when some reasonably
+ * meaningful ID are wanted. If "meaningful" ID is not a requirement, then it is much
+ * more efficient to rely on the ID numbers generated automatically by the database.
  * <p>
  * This class checks if a given identifier exists in the database. If it exists, then
  * it searches for an unused {@code "proposal-n"} identifier, where {@code "proposal"}
  * is the given identifier and {@code "n"} is a number. The algorithm in this class
  * takes advantage of the fact that alphabetical order is not the same than numerical
- * order for scaning a slightly smaller amount of records (however the advantage is
+ * order for scanning a slightly smaller amount of records (however the advantage is
  * significant only in some special cases - generally speaking this class is not for
  * table having thousands of identifier beginning with the given prefix). However the
  * selected numbers are not guaranteed to be in increasing order if there is "holes"
@@ -149,7 +148,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
      * @param  column The name of the identifier (primary key) column. If the name should be quoted,
      *         then the {@link #quoteColumn()} method shall be overridden. This class does not
      *         add the quotes by itself, because some applications really want unquoted identifiers.
-     * @throws SQLException If the connection to the database can not be etablished.
+     * @throws SQLException If the connection to the database can not be established.
      */
     public IdentifierGenerator(final StatementPool<? super K, V> pool, final String column) throws SQLException {
         this(pool, column, new SQLBuilder(pool.connection().getMetaData()));

@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.operation;
 import java.util.Map;
 import java.util.HashMap;
 import java.util.Collections;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.Formula;
@@ -35,7 +36,6 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.metadata.citation.Citation;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.ComparisonMode;

@@ -21,11 +21,10 @@
 package org.geotoolkit.referencing.operation;
 
 import java.util.Map;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.*; // We use almost all of them.
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-
-import org.geotoolkit.lang.Immutable;
 
 
 /**

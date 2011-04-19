@@ -22,13 +22,13 @@ import java.io.Serializable;
 import java.awt.Rectangle;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.coverage.grid.GridEnvelope;
 import org.opengis.coverage.grid.GridCoordinates;
 import org.opengis.referencing.datum.PixelInCell;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.metadata.iso.spatial.PixelTranslation;

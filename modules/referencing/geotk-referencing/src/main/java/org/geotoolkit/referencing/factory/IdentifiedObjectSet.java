@@ -31,6 +31,7 @@ import java.util.NoSuchElementException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.logging.LogRecord;
+import net.jcip.annotations.NotThreadSafe;
 
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.AuthorityFactory;
@@ -84,6 +85,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * @since 2.2
  * @module
  */
+@NotThreadSafe
 public class IdentifiedObjectSet<T extends IdentifiedObject> extends AbstractSet<T> implements Serializable {
     /**
      * For cross-version compatibility during serialisation.

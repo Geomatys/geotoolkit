@@ -23,8 +23,8 @@ import javax.media.jai.ImageLayout;
 import java.awt.image.RenderedImage;
 import java.awt.image.renderable.ParameterBlock;
 import java.awt.RenderingHints;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.image.jai.NodataFilter;
 
 

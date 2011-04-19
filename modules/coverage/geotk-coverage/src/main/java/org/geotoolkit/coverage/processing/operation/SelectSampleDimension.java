@@ -18,13 +18,13 @@
 package org.geotoolkit.coverage.processing.operation;
 
 import javax.media.jai.operator.BandSelectDescriptor;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptor;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.coverage.grid.ViewType;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.processing.Operation2D;

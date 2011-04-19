@@ -28,6 +28,7 @@ import java.util.TreeMap;
 import java.util.SortedMap;
 import java.util.Comparator;
 import java.util.logging.*;
+import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.io.X364;
 import org.geotoolkit.io.LineWriter;
@@ -35,7 +36,6 @@ import org.geotoolkit.io.ExpandedTabWriter;
 import org.geotoolkit.internal.OS;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

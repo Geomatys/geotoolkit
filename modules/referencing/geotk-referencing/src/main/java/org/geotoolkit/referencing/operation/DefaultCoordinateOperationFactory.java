@@ -27,6 +27,7 @@ import javax.measure.quantity.Angle;
 import javax.measure.quantity.Duration;
 import javax.measure.quantity.Length;
 import javax.vecmath.SingularMatrixException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -38,7 +39,6 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
@@ -76,7 +76,7 @@ import static org.geotoolkit.referencing.AbstractIdentifiedObject.nameMatches;
  * @since 1.2
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperationFactory {
     /**
      * The operation to use by {@link #createTransformationStep(GeographicCRS,GeographicCRS)} for

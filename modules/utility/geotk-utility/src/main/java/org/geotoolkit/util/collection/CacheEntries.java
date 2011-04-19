@@ -25,7 +25,7 @@ import java.util.AbstractMap.SimpleEntry;
 import java.util.NoSuchElementException;
 import java.lang.ref.Reference;
 
-import org.geotoolkit.lang.ThreadSafe;
+import net.jcip.annotations.ThreadSafe;
 
 
 /**

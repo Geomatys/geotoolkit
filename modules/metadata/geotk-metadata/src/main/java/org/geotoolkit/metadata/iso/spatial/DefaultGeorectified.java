@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.spatial.Dimension;
 import org.opengis.metadata.spatial.GCP;
@@ -35,7 +36,6 @@ import org.opengis.metadata.spatial.PixelOrientation;
 import org.opengis.geometry.primitive.Point;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.xml.Namespaces;
 
 

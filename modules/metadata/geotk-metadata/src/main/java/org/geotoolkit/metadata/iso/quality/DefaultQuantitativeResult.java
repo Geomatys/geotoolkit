@@ -26,13 +26,12 @@ import javax.measure.unit.Unit;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.quality.QuantitativeResult;
 import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 import org.opengis.util.RecordType;
-
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

@@ -18,6 +18,7 @@
 package org.geotoolkit.referencing.operation.provider;
 
 import java.io.IOException;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterDescriptor;
@@ -27,7 +28,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.metadata.iso.citation.Citations;

@@ -21,6 +21,7 @@
 package org.geotoolkit.referencing.crs;
 
 import java.util.Map;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.operation.*;
 import org.opengis.referencing.datum.Datum;
@@ -43,7 +44,6 @@ import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

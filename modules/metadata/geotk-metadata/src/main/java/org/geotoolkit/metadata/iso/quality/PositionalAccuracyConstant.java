@@ -23,12 +23,12 @@ package org.geotoolkit.metadata.iso.quality;
 import java.util.Collections;
 import java.io.ObjectStreamException;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.metadata.iso.citation.Citations;
 

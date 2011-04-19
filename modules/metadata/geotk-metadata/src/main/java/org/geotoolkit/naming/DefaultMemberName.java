@@ -22,10 +22,11 @@ package org.geotoolkit.naming;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.Immutable;
+
 import org.opengis.util.MemberName;
 import org.opengis.util.NameSpace;
 import org.opengis.util.TypeName;
-import org.geotoolkit.lang.Immutable;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 

@@ -19,8 +19,8 @@ package org.geotoolkit.util;
 
 import java.io.Serializable;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
 

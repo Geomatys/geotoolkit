@@ -21,16 +21,16 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import static java.lang.Math.*;
-import static java.lang.Double.*;
 import java.awt.geom.AffineTransform;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
-import org.geotoolkit.lang.Immutable;
+import static java.lang.Math.*;
+import static java.lang.Double.*;
 
 
 /**

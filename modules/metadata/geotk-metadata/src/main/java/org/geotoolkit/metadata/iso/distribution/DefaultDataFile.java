@@ -24,12 +24,12 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.distribution.Format;
 import org.opengis.metadata.distribution.DataFile;
 import org.opengis.util.LocalName;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 

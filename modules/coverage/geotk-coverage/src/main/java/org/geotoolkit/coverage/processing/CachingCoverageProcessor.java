@@ -20,6 +20,7 @@ package org.geotoolkit.coverage.processing;
 import java.util.Collection;
 import java.awt.image.RenderedImage;
 import javax.media.jai.PlanarImage;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.Coverage;
 import org.opengis.coverage.grid.GridCoverage;
@@ -30,7 +31,6 @@ import org.opengis.parameter.ParameterValueGroup;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.lang.Buffered;
 import org.geotoolkit.lang.Decorator;
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.collection.Cache;
 import org.geotoolkit.coverage.grid.RenderedCoverage;
 
@@ -51,7 +51,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @module
  */
 @Buffered
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 @Decorator(AbstractCoverageProcessor.class)
 public class CachingCoverageProcessor extends AbstractCoverageProcessor {
     /**

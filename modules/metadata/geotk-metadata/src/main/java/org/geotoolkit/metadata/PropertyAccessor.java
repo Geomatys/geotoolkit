@@ -29,10 +29,10 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.annotation.UML;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
@@ -58,7 +58,7 @@ import org.geotoolkit.internal.StringUtilities;
  * @since 2.4
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 final class PropertyAccessor {
     /**
      * The locale to use for changing the case of characters.

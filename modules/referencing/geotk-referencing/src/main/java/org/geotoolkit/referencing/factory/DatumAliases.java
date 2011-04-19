@@ -27,6 +27,7 @@ import java.io.InputStreamReader;
 import javax.measure.unit.Unit;
 import javax.measure.quantity.Angle;
 import javax.measure.quantity.Length;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
@@ -43,7 +44,6 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Loggings;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**

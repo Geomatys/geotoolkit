@@ -17,13 +17,13 @@
  */
 package org.geotoolkit.referencing.factory.epsg;
 
-import java.io.PrintWriter;
-import java.io.IOException;
-
 import java.util.Set;
 import java.util.Map;
 import java.util.TreeSet;
 import java.util.TreeMap;
+import java.io.PrintWriter;
+import java.io.IOException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.citation.Citation;
@@ -39,7 +39,6 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.IndentedLineWriter;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -118,7 +117,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @since 2.1
  * @module
  */
-@ThreadSafe(concurrent = false)
+@ThreadSafe
 public class PropertyEpsgFactory extends PropertyAuthorityFactory implements CRSAuthorityFactory {
     /**
      * The default filename to read, which is {@value}. The default

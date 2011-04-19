@@ -22,11 +22,11 @@ package org.geotoolkit.metadata.iso.lineage;
 
 import java.util.Date;
 import java.util.Collection;
-
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.lineage.ProcessStepReport;
 import org.opengis.metadata.lineage.Processing;
@@ -35,7 +35,6 @@ import org.opengis.metadata.lineage.Source;
 import org.opengis.metadata.lineage.ProcessStep;
 import org.opengis.metadata.citation.ResponsibleParty;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.xml.Namespaces;
 

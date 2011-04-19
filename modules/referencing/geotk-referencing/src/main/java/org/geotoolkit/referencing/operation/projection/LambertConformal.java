@@ -23,9 +23,7 @@ package org.geotoolkit.referencing.operation.projection;
 
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
-
-import static java.lang.Math.*;
-import static java.lang.Double.*;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
@@ -33,13 +31,14 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
 import org.geotoolkit.referencing.operation.provider.LambertConformal2SP;
 
+import static java.lang.Math.*;
+import static java.lang.Double.*;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.internal.referencing.Identifiers.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.ensureLatitudeInRange;

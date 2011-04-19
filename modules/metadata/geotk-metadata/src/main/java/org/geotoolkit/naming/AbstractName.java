@@ -25,6 +25,7 @@ import java.util.Locale;
 import java.util.Iterator;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlType;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.NameSpace;
 import org.opengis.util.LocalName;
@@ -32,7 +33,6 @@ import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.SimpleInternationalString;
 

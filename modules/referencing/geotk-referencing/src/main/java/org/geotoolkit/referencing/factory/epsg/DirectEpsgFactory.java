@@ -37,6 +37,7 @@ import javax.measure.quantity.Angle;
 import javax.measure.unit.NonSI;
 import javax.measure.unit.Unit;
 import javax.measure.unit.SI;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.parameter.*;
 import org.opengis.referencing.*;
@@ -89,7 +90,6 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Version;
-import org.geotoolkit.lang.ThreadSafe;
 
 
 /**
@@ -125,7 +125,7 @@ import org.geotoolkit.lang.ThreadSafe;
  * @since 1.2
  * @module
  */
-@ThreadSafe(concurrent = false)
+@ThreadSafe
 @ImplementationHints(forceLongitudeFirst=false)
 public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuthorityFactory,
         CSAuthorityFactory, DatumAuthorityFactory, CoordinateOperationAuthorityFactory

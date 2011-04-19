@@ -24,8 +24,8 @@ import java.lang.ref.WeakReference;
 import java.io.IOException;
 import java.io.FileNotFoundException;
 import javax.imageio.ImageTypeSpecifier;
+import net.jcip.annotations.Immutable;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;

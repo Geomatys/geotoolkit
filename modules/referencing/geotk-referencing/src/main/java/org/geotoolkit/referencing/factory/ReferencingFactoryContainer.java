@@ -23,6 +23,7 @@ import javax.measure.converter.ConversionException;
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
 import javax.measure.unit.SI;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.referencing.cs.*;
 import org.opengis.referencing.crs.*;
@@ -48,7 +49,6 @@ import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
 
 import static org.geotoolkit.internal.FactoryUtilities.addImplementationHints;
 

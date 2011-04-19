@@ -20,6 +20,7 @@ package org.geotoolkit.referencing.factory.web;
 import java.util.Collections;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.FactoryException;
 import org.opengis.parameter.ParameterValueGroup;
@@ -27,7 +28,6 @@ import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.crs.ProjectedCRS;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;

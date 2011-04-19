@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.measure;
 
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

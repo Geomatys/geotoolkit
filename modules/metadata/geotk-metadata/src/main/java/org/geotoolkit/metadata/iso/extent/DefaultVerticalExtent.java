@@ -23,13 +23,13 @@ package org.geotoolkit.metadata.iso.extent;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.geometry.Envelope;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.metadata.extent.VerticalExtent;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.internal.referencing.ProxyForMetadata;
 

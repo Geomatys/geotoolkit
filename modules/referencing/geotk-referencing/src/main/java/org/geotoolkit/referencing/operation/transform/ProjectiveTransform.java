@@ -24,6 +24,7 @@ import java.util.Arrays;
 import java.io.Serializable;
 import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.geometry.DirectPosition;
 import org.opengis.parameter.ParameterValueGroup;
@@ -33,7 +34,6 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.parameter.MatrixParameters;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;

@@ -23,6 +23,7 @@ package org.geotoolkit.referencing.crs;
 import java.util.Map;
 import java.util.HashMap;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -37,7 +38,6 @@ import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.resources.Vocabulary;
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.NullReferencingObject;
 

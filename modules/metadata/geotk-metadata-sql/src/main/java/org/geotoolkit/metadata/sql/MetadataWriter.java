@@ -28,13 +28,13 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import javax.sql.DataSource;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.CodeList;
 import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.citation.ResponsibleParty;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.internal.Citations;

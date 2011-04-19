@@ -24,12 +24,12 @@ import java.util.Map;
 import java.util.Collections;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.VerticalCS;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.datum.VerticalDatum;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.cs.DefaultVerticalCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;

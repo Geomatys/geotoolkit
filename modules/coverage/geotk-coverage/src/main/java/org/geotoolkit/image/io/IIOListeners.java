@@ -27,8 +27,8 @@ import javax.imageio.event.IIOReadWarningListener;
 import javax.imageio.event.IIOReadProgressListener;
 import javax.imageio.event.IIOWriteWarningListener;
 import javax.imageio.event.IIOWriteProgressListener;
+import net.jcip.annotations.ThreadSafe;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.util.XArrays;
 
 

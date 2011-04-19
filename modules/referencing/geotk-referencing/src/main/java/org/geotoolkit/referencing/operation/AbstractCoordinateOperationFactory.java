@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.awt.RenderingHints;
 import javax.measure.converter.ConversionException;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.FactoryException;
 import org.opengis.metadata.quality.PositionalAccuracy;
@@ -48,7 +49,6 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.lang.ThreadSafe;
 
 import static java.util.Collections.singletonMap;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;

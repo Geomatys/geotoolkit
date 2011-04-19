@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.HashMap;
 import java.util.Collections;
 import javax.measure.unit.Unit;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.util.CodeList;
 import org.opengis.util.InternationalString;
@@ -33,7 +34,6 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;

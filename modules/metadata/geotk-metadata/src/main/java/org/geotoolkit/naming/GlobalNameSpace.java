@@ -21,7 +21,7 @@
 package org.geotoolkit.naming;
 
 import java.io.ObjectStreamException;
-import org.geotoolkit.lang.Immutable;
+import net.jcip.annotations.Immutable;
 
 
 /**

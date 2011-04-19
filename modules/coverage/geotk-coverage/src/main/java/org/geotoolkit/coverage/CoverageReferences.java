@@ -21,10 +21,10 @@ import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentHashMap;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.coverage.Coverage;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.NullArgumentException;
@@ -68,7 +68,7 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * @since 2.1
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public class CoverageReferences {
     /**
      * The default, system-wide weak references for {@linkplain Coverage coverages}.

@@ -31,6 +31,7 @@ import javax.measure.converter.UnitConverter;
 import javax.measure.converter.LinearConverter;
 import javax.measure.converter.ConversionException;
 import javax.xml.bind.annotation.XmlElement;
+import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystem;
@@ -39,7 +40,6 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.lang.Immutable;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.measure.Units;

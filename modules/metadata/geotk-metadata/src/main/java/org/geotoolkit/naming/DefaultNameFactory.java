@@ -23,6 +23,7 @@ import java.util.Arrays;
 import java.util.Locale;
 import java.util.ArrayList;
 import java.util.Collection;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.TypeName;
 import org.opengis.util.NameSpace;
@@ -33,7 +34,6 @@ import org.opengis.util.NameFactory;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.Identifier;
 
-import org.geotoolkit.lang.ThreadSafe;
 import org.geotoolkit.factory.Factory;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
@@ -54,7 +54,7 @@ import static org.geotoolkit.naming.DefaultNameSpace.DEFAULT_SEPARATOR_STRING;
  * @since 2.1
  * @module
  */
-@ThreadSafe(concurrent = true)
+@ThreadSafe
 public class DefaultNameFactory extends Factory implements NameFactory {
     /**
      * Creates a new factory. Users should not invoke this constructor directly.
