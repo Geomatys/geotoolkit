@@ -32,8 +32,6 @@ import org.opengis.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 
-
-import static org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionDecoration.*;
 import static java.awt.event.MouseEvent.*;
 
 /**

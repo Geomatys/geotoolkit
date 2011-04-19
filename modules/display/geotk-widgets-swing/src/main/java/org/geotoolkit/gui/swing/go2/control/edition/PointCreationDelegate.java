@@ -29,8 +29,6 @@ import org.opengis.feature.Feature;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.map.FeatureMapLayer;
 
-import static org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionDecoration.*;
-
 /**
  * Point creation delegate.
  *

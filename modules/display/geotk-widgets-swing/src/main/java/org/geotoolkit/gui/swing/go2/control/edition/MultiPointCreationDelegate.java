@@ -26,8 +26,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import static org.geotoolkit.gui.swing.go2.control.creation.DefaultEditionDecoration.*;
-
 /**
  * multi-point creation handler
  *
