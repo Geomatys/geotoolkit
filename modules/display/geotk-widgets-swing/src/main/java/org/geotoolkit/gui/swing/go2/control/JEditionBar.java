@@ -62,7 +62,6 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
      * @param pane : related Map2D or null
      */
     public JEditionBar(final JMap2D map) {
-        setMap(map);
         guiEdit.setToolTipText(MessageBundle.getString("map_edit"));
         guiEdit.addActionListener(this);
         add(guiEdit);
@@ -73,6 +72,7 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
 
         guiTools.addItemListener(this);
         guiLayers.addItemListener(this);
+        setMap(map);
     }
     
     @Override
@@ -83,6 +83,16 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
         guiEdit.setEnabled(map != null);
         guiTools.setEnabled(map != null);
         guiLayers.setEnabled(map != null);
+
+        final Object candidate = guiLayers.getSelectedItem();
+        guiTools.setEdited(candidate);
+        if(candidate instanceof FeatureMapLayer){
+            commitAction.setLayer((FeatureMapLayer) candidate);
+            rollbackAction.setLayer((FeatureMapLayer) candidate);
+        }else{
+            commitAction.setLayer(null);
+            rollbackAction.setLayer(null);
+        }
     }
 
     @Override

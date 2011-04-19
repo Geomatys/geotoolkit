@@ -335,6 +335,12 @@ public class EditionHelper {
 
     public void grabGeometryNode(final Geometry mouseGeo, final EditionGeometry edited) {
 
+        //reset selection
+        edited.numSubGeom = -1;
+        edited.numHole = -1;
+        edited.selectedNode[0] = -1;
+        edited.selectedNode[1] = -1;
+
         for (int i=0,n=edited.geometry.getNumGeometries(); i<n; i++) {
             final Geometry subgeo = edited.geometry.getGeometryN(i);
 
