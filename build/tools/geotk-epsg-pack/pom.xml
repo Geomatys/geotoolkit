@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.geotoolkit.project</groupId>
     <artifactId>tools</artifactId>
-    <version>SNAPSHOT</version>
+    <version>3.x-SNAPSHOT</version>
   </parent>
 
 
@@ -29,7 +29,7 @@
   <description>
     Pack the EPSG data script file. This module is used only when the geotk-epsg module
     needs to be updated for a new release of the EPSG database. It can be run from the
-    command line with "java -jar geotk-epsg-pack-SNAPSHOT.jar".
+    command line with "java -jar geotk-epsg-pack-3.x-SNAPSHOT.jar".
   </description>
 
 

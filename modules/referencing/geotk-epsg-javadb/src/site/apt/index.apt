@@ -19,9 +19,9 @@ EPSG database on JavaDB
   put the JavaDB driver on the classpath ({{{http://jira.geotoolkit.org/browse/GEOTK-41}GEOTK-41}}).
   Use the following for more information:
 
----------------------------------------------
-java -jar geotk-epsg-javadb-SNAPSHOT.jar help
----------------------------------------------
+-------------------------------------------------
+java -jar geotk-epsg-javadb-3.x-SNAPSHOT.jar help
+-------------------------------------------------
 
 
 * Interaction with Glassfish or Tomcat

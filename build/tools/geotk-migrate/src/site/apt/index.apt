@@ -37,7 +37,7 @@ Migrate from GeoTools to Geotoolkit
 * Usage
 
   The latest JAR is available from the
-  {{{http://maven.geotoolkit.org/org/geotoolkit/geotk-migrate/SNAPSHOT/geotk-migrate-SNAPSHOT.jar}Maven repository}}.
+  {{{http://maven.geotoolkit.org/org/geotoolkit/geotk-migrate/3.x-SNAPSHOT/geotk-migrate-3.x-SNAPSHOT.jar}Maven repository}}.
   It can be saved in any directory. Once downloaded, the migration tools is launched as below:
 
 +---------------------------------------------------

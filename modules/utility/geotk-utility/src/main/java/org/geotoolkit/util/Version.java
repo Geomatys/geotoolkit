@@ -28,7 +28,7 @@ import net.jcip.annotations.Immutable;
  * {@linkplain #getMinor minor} and {@linkplain #getRevision revision}. For example an
  * EPSG database version code, such as {@code "6.11.2"}, will have major number 6, minor
  * number 11 and revision number 2. Alternatively a Maven version code, such as
- * {@code "3.00-SNAPSHOT"}, will have major version number 3, minor version number 0
+ * {@code "3.18-SNAPSHOT"}, will have major version number 3, minor version number 18
  * and revision string "SNAPSHOT".
  * <p>
  * This class provides methods for performing comparisons of {@code Version} objects where

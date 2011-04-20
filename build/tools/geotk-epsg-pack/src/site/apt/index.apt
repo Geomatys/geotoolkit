@@ -55,10 +55,10 @@ cp $EPSG_SCRIPTS/EPSG_v7_6.mdb_FKeys_MySQL.sql  FKeys.sql
   [[7]] Run the following command-lines (replace "7.6" by the appropriate version number to the files
         in the EPSG directory):
 
-------------------------------------------------------------------------------------------------------------------------------
-cp -i $GEOTK_HOME/build/tools/geotk-epsg-pack/target/geotk-epsg-pack-SNAPSHOT.jar $GEOTK_HOME/target/binaries/
-java -jar $GEOTK_HOME/target/binaries/geotk-epsg-pack-SNAPSHOT.jar compact $EPSG_SCRIPTS/EPSG_v7_6.mdb_Data_MySQL.sql Data.sql
-------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------
+cp -i $GEOTK_HOME/build/tools/geotk-epsg-pack/target/geotk-epsg-pack-3.x-SNAPSHOT.jar $GEOTK_HOME/target/binaries/
+java -jar $GEOTK_HOME/target/binaries/geotk-epsg-pack-3.x-SNAPSHOT.jar compact $EPSG_SCRIPTS/EPSG_v7_6.mdb_Data_MySQL.sql Data.sql
+----------------------------------------------------------------------------------------------------------------------------------
 
   [[8]] Upgrade the <<<VERSION>>> value defined in the <<<ThreadedEpsgFactory>>> class,
         and the <<<EPSG_VERSION>>> value defined in the <<<org.geotoolkit.test.Commons>>>

@@ -9,7 +9,7 @@
 
           - package      Performs additional packaging process like
                          generating a JAR file for source code and the
-                         openoffice add-in (geotk-SNAPSHOT.oxt file).
+                         openoffice add-in (geotk-3.x-SNAPSHOT.oxt file).
           - javadoc-all  Includes the internal classes in the javadoc.
                          This is sometime useful only to Geotk developers,
                          since users should not depend on any internal API.
@@ -32,7 +32,7 @@
   <groupId>org.geotoolkit</groupId>
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
-  <version>SNAPSHOT</version>
+  <version>3.x-SNAPSHOT</version>
   <name>Geotoolkit.org</name>
   <url>http://www.geotoolkit.org/</url>
 

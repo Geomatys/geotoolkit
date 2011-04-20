@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.geotoolkit</groupId>
     <artifactId>coverage</artifactId>
-    <version>SNAPSHOT</version>
+    <version>3.x-SNAPSHOT</version>
   </parent>
 
 
