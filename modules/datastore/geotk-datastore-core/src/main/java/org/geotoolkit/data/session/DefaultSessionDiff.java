@@ -19,6 +19,7 @@ package org.geotoolkit.data.session;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -92,9 +93,18 @@ class DefaultSessionDiff{
     public void commit(final DataStore store) throws DataStoreException{
         writeLock.lock();
         try{
-            for(final Delta alt : deltas){
-                alt.commit(store);
+            for(int i=0,n=deltas.size();i<n;i++){
+                final Delta alt = deltas.get(i);
+                final Map<String,String> updates = alt.commit(store);
                 alt.dispose();
+
+                //update next deltas
+                if(updates != null){
+                    for(int j=i+1;j<n;j++){
+                        final Delta next = deltas.get(j);
+                        next.update(updates);
+                    }
+                }
             }
             deltas.clear();
             readCopy = null;

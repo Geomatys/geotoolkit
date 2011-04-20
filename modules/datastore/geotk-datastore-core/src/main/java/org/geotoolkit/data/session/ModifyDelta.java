@@ -17,6 +17,9 @@
 
 package org.geotoolkit.data.session;
 
+import java.util.HashSet;
+import org.opengis.filter.identity.Identifier;
+import java.util.Set;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
@@ -35,12 +38,10 @@ import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.NullArgumentException;
 
 import org.opengis.feature.Feature;
-import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
-import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
 import org.opengis.util.FactoryException;
@@ -57,12 +58,11 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  */
 class ModifyDelta extends AbstractDelta{
 
-    private final Name type;
-    private final Id filter;
     private final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
+    private Id filter;
 
     ModifyDelta(final Session session, final Name typeName, final Id filter, final Map<? extends AttributeDescriptor,? extends Object> values){
-        super(session);
+        super(session,typeName);
         ensureNonNull("type name", typeName);
         if(filter == null){
             throw new NullArgumentException("Filter can not be null. Did you mean Filter.INCLUDE ?");
@@ -71,9 +71,32 @@ class ModifyDelta extends AbstractDelta{
             throw new IllegalArgumentException("Modified values can not be null or empty. A modify delta is useless in this case.");
         }
 
-        this.type = typeName;
         this.filter = filter;
         this.values.putAll(values);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void update(Map<String, String> idUpdates) {
+        if(idUpdates == null || idUpdates.isEmpty())return;
+
+        final Set<Identifier> ids = filter.getIdentifiers();
+        final Set<Identifier> newIds = new HashSet<Identifier>();
+
+        for(final Identifier id : ids){
+            String newId = idUpdates.get(id.getID().toString());
+            if(newId != null){
+                //id has change
+                newIds.add(FF.featureId(newId));
+            }else{
+                //this id did not change
+                newIds.add(id);
+            }
+        }
+
+        filter = FF.id(newIds);
     }
 
     /**
@@ -176,8 +199,9 @@ class ModifyDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public void commit(final DataStore store) throws DataStoreException {
+    public Map<String,String> commit(final DataStore store) throws DataStoreException {
         store.updateFeatures(type, filter, values);
+        return null;
     }
 
     /**

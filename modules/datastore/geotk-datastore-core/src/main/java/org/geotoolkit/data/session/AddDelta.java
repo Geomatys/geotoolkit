@@ -17,10 +17,14 @@
 
 package org.geotoolkit.data.session;
 
+import org.opengis.filter.identity.FeatureId;
+import java.util.List;
 import java.io.Closeable;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -30,6 +34,7 @@ import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.logging.Logging;
@@ -37,6 +42,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.opengis.feature.Feature;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
+import org.opengis.filter.Filter;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.geometry.Envelope;
 
@@ -51,7 +57,6 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  */
 class AddDelta extends AbstractDelta{
 
-    private final Name type;
     private final FeatureCollection<Feature> features;
 
     /**
@@ -64,11 +69,9 @@ class AddDelta extends AbstractDelta{
      * this features from the given collection will be copied.
      */
     AddDelta(final Session session, final Name typeName, final Collection<Feature> features){
-        super(session);
+        super(session,typeName);
         ensureNonNull("type name", typeName);
         ensureNonNull("features", features);
-
-        this.type = typeName;
 
         FeatureType ft;
         try {
@@ -117,7 +120,13 @@ class AddDelta extends AbstractDelta{
     public FeatureIterator modify(final Query query, final FeatureIterator reader) throws DataStoreException {
         if(!query.getTypeName().equals(type)) return reader;
 
-        final FeatureIterator affected = features.subCollection(query).iterator();
+        //remove the filter, it is handle at the end by the session
+        //we can not filter here since some modify operation can follow
+        //and change the filter result
+        final QueryBuilder qb = new QueryBuilder(query);
+        qb.setFilter(Filter.INCLUDE);
+
+        final FeatureIterator affected = features.subCollection(qb.buildQuery()).iterator();
 
         final SortBy[] sort = query.getSortBy();
         if(sort != null && sort.length > 0){
@@ -157,9 +166,26 @@ class AddDelta extends AbstractDelta{
      * {@inheritDoc }
      */
     @Override
-    public void commit(final DataStore store) throws DataStoreException {
-        store.addFeatures(type, features);
+    public Map<String, String> commit(final DataStore store) throws DataStoreException {
+        final List<FeatureId> createdIds = store.addFeatures(type, features);
+
+        //iterator and list should have the same size
+        final Map<String,String> updates = new HashMap<String, String>();
+        final FeatureIterator ite = features.iterator();
+        int i=0;
+        try{
+            while(ite.hasNext()){
+                final Feature f = ite.next();
+                final String id = f.getIdentifier().getID();
+                updates.put(id, createdIds.get(i).getID());
+                i++;
+            }
+        }finally{
+            ite.close();
+        }
+
         features.clear();
+        return updates;
     }
 
     /**
@@ -168,6 +194,11 @@ class AddDelta extends AbstractDelta{
     @Override
     public void dispose() {
         features.clear();
+    }
+
+    @Override
+    public void update(Map<String, String> idUpdates) {
+        //nothing to update
     }
 
 }

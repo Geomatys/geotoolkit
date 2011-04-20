@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.session;
 
+import org.opengis.feature.type.Name;
 import java.util.logging.Logger;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
@@ -38,10 +39,18 @@ abstract class AbstractDelta implements Delta{
     private static final Logger LOGGER = Logging.getLogger(AbstractDelta.class);
 
     protected final Session session;
+    protected final Name type;
 
-    public AbstractDelta(final Session session){
+    public AbstractDelta(final Session session,final Name type){
         ensureNonNull("session", session);
+        ensureNonNull("name", type);
         this.session = session;
+        this.type = type;
+    }
+
+    @Override
+    public Name getType() {
+        return type;
     }
 
     protected Logger getLogger(){

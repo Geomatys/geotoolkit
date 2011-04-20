@@ -17,10 +17,12 @@
 
 package org.geotoolkit.data.session;
 
+import java.util.Map;
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.Query;
+import org.opengis.feature.type.Name;
 
 import org.opengis.geometry.Envelope;
 
@@ -31,6 +33,19 @@ import org.opengis.geometry.Envelope;
  */
 interface Delta {
 
+    /**
+     * 
+     * @return the type affected by this delta
+     */
+    Name getType();
+
+    /**
+     * Whenever a previous delta is commited, new or updated features
+     * can have their id changed. id changed are given in this map.
+     * @param idUpdates
+     */
+    void update(Map<String,String> idUpdates);
+
     Query modify(Query query);
 
     FeatureIterator modify(Query query, FeatureIterator iterator) throws DataStoreException;
@@ -39,7 +54,12 @@ interface Delta {
 
     Envelope modify(Query query, Envelope env) throws DataStoreException;
 
-    void commit(DataStore store) throws DataStoreException;
+    /**
+     * @param store
+     * @return Map of potentiel id changes once the commit is done
+     * @throws DataStoreException
+     */
+    Map<String,String> commit(DataStore store) throws DataStoreException;
 
     void dispose();
 
