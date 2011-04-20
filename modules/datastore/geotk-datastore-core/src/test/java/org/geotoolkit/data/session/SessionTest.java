@@ -18,7 +18,6 @@
 
 package org.geotoolkit.data.session;
 
-import org.geotoolkit.referencing.CRS;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.Point;
@@ -37,6 +36,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.storage.DataStoreException;
 
@@ -49,14 +50,14 @@ import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
-import org.opengis.filter.FilterFactory;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
-
-import static org.junit.Assert.*;
+import org.opengis.filter.FilterFactory2;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.util.FactoryException;
+
+import static org.junit.Assert.*;
 
 /**
  *
@@ -68,7 +69,7 @@ public class SessionTest{
 
     private static final GeometryFactory GF = new GeometryFactory();
 
-    private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(null);
 
     private MemoryDataStore store = new MemoryDataStore();
 
@@ -521,6 +522,101 @@ public class SessionTest{
 //        assertTrue(session.hasPendingChanges());
 
 
+
+    }
+
+    @Test
+    public void testSessionModifyDeltaFilter() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
+        final Name name = store.getNames().iterator().next();
+        final QueryBuilder qb = new QueryBuilder();
+        Query query;
+
+        //create an asynchrone session
+        final Session session = store.createSession(true);
+        final Point newPt = GF.createPoint(new Coordinate(50, 1));
+        final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
+        values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("geom"), newPt);
+
+        session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
+
+        //check we have a modification in data crs -----------------------------
+        DefaultBoundingBox bbox = new DefaultBoundingBox(DefaultGeographicCRS.WGS84);
+        bbox.setRange(0, 49, 51);
+        bbox.setRange(1, 0, 2);
+        qb.reset();
+        qb.setTypeName(name);
+        qb.setFilter(FF.bbox(FF.property("geom"), bbox));
+        query = qb.buildQuery();
+
+        assertEquals(0,store.getCount(query));
+        assertEquals(1,session.getCount(query));
+        assertTrue(session.hasPendingChanges());
+
+        //check the geometry is changed
+        FeatureIterator ite = session.getFeatureIterator(query);
+        boolean found = false;
+        while(ite.hasNext()){
+            Feature f = ite.next();
+            if(f.getProperty("double").getValue().equals(2d)){
+                found = true;
+                final Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                //we expect axes the same way
+                assertEquals(newPt.getCoordinate().x, pt.getCoordinate().x,TOLERANCE);
+                assertEquals(newPt.getCoordinate().y, pt.getCoordinate().y,TOLERANCE);
+            }
+        }
+        ite.close();
+        if(!found){
+            fail("modified feature not found.");
+        }
+
+
+        //check we have a modification in another crs --------------------------
+        bbox = new DefaultBoundingBox(CRS.decode("EPSG:4326"));
+        bbox.setRange(1, 49, 51);
+        bbox.setRange(0, 0, 2);
+        qb.reset();
+        qb.setTypeName(name);
+        qb.setFilter(FF.bbox(FF.property("geom"), bbox));
+        query = qb.buildQuery();
+
+        //check the geometry is changed
+        ite = session.getFeatureIterator(query);
+        found = false;
+        while(ite.hasNext()){
+            Feature f = ite.next();
+            if(f.getProperty("double").getValue().equals(2d)){
+                found = true;
+                final Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                //we expect axes the same way
+                assertEquals(newPt.getCoordinate().x, pt.getCoordinate().x, TOLERANCE);
+                assertEquals(newPt.getCoordinate().y, pt.getCoordinate().y, TOLERANCE);
+            }
+        }
+        ite.close();
+        if(!found){
+            fail("modified feature not found.");
+        }
+
+        session.commit();
+
+        //check valid once in the datastore-------------------------------------
+        ite = session.getFeatureIterator(query);
+        found = false;
+        while(ite.hasNext()){
+            Feature f = ite.next();
+            if(f.getProperty("double").getValue().equals(2d)){
+                found = true;
+                final Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                //we expect axes the same way
+                assertEquals(newPt.getCoordinate().x, pt.getCoordinate().x, TOLERANCE);
+                assertEquals(newPt.getCoordinate().y, pt.getCoordinate().y, TOLERANCE);
+            }
+        }
+        ite.close();
+        if(!found){
+            fail("modified feature not found.");
+        }
 
     }
 

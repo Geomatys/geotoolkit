@@ -17,19 +17,23 @@
  */
 package org.geotoolkit.filter.binaryspatial;
 
+import org.opengis.feature.Feature;
+import java.util.logging.Level;
 import com.vividsolutions.jts.geom.Geometry;
 
 import java.io.Serializable;
+import java.util.logging.Logger;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.geometry.jts.JTS;
-import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.util.logging.Logging;
+import org.opengis.feature.ComplexAttribute;
 
 import org.opengis.filter.expression.Expression;
+import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BinarySpatialOperator;
 import org.opengis.util.FactoryException;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
@@ -50,6 +54,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
 public abstract class AbstractBinarySpatialOperator<E extends Expression,F extends Expression> 
                                                 implements BinarySpatialOperator,Serializable {
 
+    protected static final Logger LOGGER = Logging.getLogger(AbstractBinarySpatialOperator.class);
     protected static final CoordinateReferenceSystem MERCATOR;
 
     static{
@@ -97,20 +102,17 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
     protected static Geometry[] toSameCRS(final Geometry leftGeom, final Geometry rightGeom)
             throws NoSuchAuthorityCodeException, FactoryException, TransformException{
 
-        final int srid1 = leftGeom.getSRID();
-        final int srid2 = rightGeom.getSRID();
+        final CoordinateReferenceSystem leftCRS = JTS.findCoordinateReferenceSystem(leftGeom);
+        final CoordinateReferenceSystem rightCRS = JTS.findCoordinateReferenceSystem(rightGeom);
 
-        if(srid1 == 0 || srid2 == 0){
+        if(leftCRS == null || rightCRS == null){
             //one or bother geometries doesn't have a defined SRID, we assume that both
             //are in the same CRS
             return new Geometry[]{leftGeom, rightGeom};
-        }else if(srid1 == srid2){
+        }else if(CRS.equalsIgnoreMetadata(leftCRS, rightCRS)){
             //both are in the same CRS, nothing to reproject
             return new Geometry[]{leftGeom, rightGeom};
         }
-
-        final CoordinateReferenceSystem leftCRS = CRS.decode(SRIDGenerator.toSRS(srid1, Version.V1));
-        final CoordinateReferenceSystem rightCRS = CRS.decode(SRIDGenerator.toSRS(srid2, Version.V1));
 
         //we choose to reproject the right operand.
         //there is no special reason to make this choice but we must make one.
@@ -128,18 +130,17 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
     protected static Object[] toSameCRS(final Geometry leftGeom, final Geometry rightGeom, final Unit unit)
             throws NoSuchAuthorityCodeException, FactoryException, TransformException{
 
-        final int srid1 = leftGeom.getSRID();
-        final int srid2 = rightGeom.getSRID();
+        final CoordinateReferenceSystem leftCRS = JTS.findCoordinateReferenceSystem(leftGeom);
+        final CoordinateReferenceSystem rightCRS = JTS.findCoordinateReferenceSystem(rightGeom);
 
-        if(srid1 == 0 && srid2 == 0){
+        if(leftCRS == null && rightCRS == null){
             //bother geometries doesn't have a defined SRID, we assume that both
             //are in the same CRS
             return new Object[]{leftGeom, rightGeom, null};
-        }else if(srid1 == srid2 || srid1 == 0 || srid2 == 0){
+        }else if(leftCRS == null || rightCRS == null || CRS.equalsIgnoreMetadata(leftCRS, rightCRS) ){
             //both are in the same CRS
 
-            final CoordinateReferenceSystem geomCRS = CRS.decode(
-                    SRIDGenerator.toSRS((srid1 == 0)? srid2 : srid1, Version.V1));
+            final CoordinateReferenceSystem geomCRS = (leftCRS == null) ? rightCRS : leftCRS;
 
             if(geomCRS.getCoordinateSystem().getAxis(0).getUnit().isCompatible(unit)){
                 //the geometries crs is compatible with the requested unit, nothing to reproject
@@ -163,8 +164,6 @@ public abstract class AbstractBinarySpatialOperator<E extends Expression,F exten
 
         }else{
             //both have different CRS, try to find the most appropriate crs amoung both
-            final CoordinateReferenceSystem leftCRS = CRS.decode(SRIDGenerator.toSRS(srid1, Version.V1));
-            final CoordinateReferenceSystem rightCRS = CRS.decode(SRIDGenerator.toSRS(srid2, Version.V1));
 
             final CoordinateReferenceSystem matchingCRS;
             final Geometry leftMatch;

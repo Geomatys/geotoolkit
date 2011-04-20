@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStore;
+import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
@@ -265,26 +266,12 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public long getCount(Query original) throws DataStoreException {
-        original = forceCRS(original,false);
-        final List<Delta> deltas = diff.getDeltas();
-
-        //we must store the modified queries to iterate on them in reverse order.
-        final List<Query> modifieds = new ArrayList<Query>(deltas.size());
-        Query modified = original;
-        for(int i=0,n=deltas.size(); i<n; i++){
-            final Delta delta = deltas.get(i);
-            modifieds.add(modified); //store before modification
-            modified = delta.modify(modified);
+    public long getCount(final Query original) throws DataStoreException {
+        if(hasPendingChanges()){
+            return DataUtilities.calculateCount(getFeatureIterator(original));
+        }else{
+            return store.getCount(original);
         }
-
-        long count = store.getCount(modified);
-
-        for(int i=deltas.size()-1; i>=0; i--){
-            final Delta delta = deltas.get(i);
-            count = delta.modify(modifieds.get(i),count);
-        }
-        return count;
     }
 
     /**
@@ -292,25 +279,11 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public Envelope getEnvelope(Query original) throws DataStoreException {
-        original = forceCRS(original,false);
-        final List<Delta> deltas = diff.getDeltas();
-
-        //we must store the modified queries to iterate on them in reverse order.
-        final List<Query> modifieds = new ArrayList<Query>(deltas.size());
-        Query modified = original;
-        for(int i=0,n=deltas.size(); i<n; i++){
-            final Delta delta = deltas.get(i);
-            modifieds.add(modified); //store before modification
-            modified = delta.modify(modified);
+        if(hasPendingChanges()){
+            return DataUtilities.calculateEnvelope(getFeatureIterator(original));
+        }else{
+            return store.getEnvelope(original);
         }
-
-        Envelope env = store.getEnvelope(modified);
-
-        for(int i=deltas.size()-1; i>=0; i--){
-            final Delta delta = deltas.get(i);
-            env = delta.modify(modifieds.get(i),env);
-        }
-        return env;
     }
 
     private Query forceCRS(final Query query, boolean replace) throws DataStoreException{

@@ -18,16 +18,18 @@
 package org.geotoolkit.filter.binaryspatial;
 
 import com.vividsolutions.jts.geom.Geometry;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.geometry.jts.JTS;
 import org.geotoolkit.referencing.CRS;
+
 import org.opengis.feature.Feature;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.MismatchedDimensionException;
-import org.opengis.referencing.NoSuchAuthorityCodeException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
@@ -62,23 +64,14 @@ public class LooseBBox extends DefaultBBox{
         }
 
         //we don't know in which crs it is, try to find it
-        CoordinateReferenceSystem crs = null;
-        try{
-            crs = JTS.findCoordinateReferenceSystem(candidate);
-        }catch(IllegalArgumentException ex){
-            Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-        }catch(NoSuchAuthorityCodeException ex){
-            Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-        }catch(FactoryException ex){
-            Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-        }
+        final CoordinateReferenceSystem candidateCrs = findCRS(object, candidate);
 
         //if we don't know the crs, we will assume it's the objective crs already
-        if(crs != null){
+        if(candidateCrs != null){
             //reproject in objective crs if needed
-            if(!CRS.equalsIgnoreMetadata(this.crs,crs)){
+            if(!CRS.equalsIgnoreMetadata(this.crs,candidateCrs)){
                 try {
-                    candidate = JTS.transform(candidate, CRS.findMathTransform(crs, this.crs));
+                    candidate = JTS.transform(candidate, CRS.findMathTransform(candidateCrs, this.crs));
                 } catch (MismatchedDimensionException ex) {
                     Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
                     return false;

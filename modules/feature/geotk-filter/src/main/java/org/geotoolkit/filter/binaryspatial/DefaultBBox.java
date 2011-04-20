@@ -23,8 +23,10 @@ import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.prep.PreparedGeometry;
 import com.vividsolutions.jts.geom.prep.PreparedGeometryFactory;
+
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import org.geotoolkit.filter.DefaultLiteral;
 import org.geotoolkit.filter.DefaultPropertyName;
 import org.geotoolkit.geometry.jts.JTS;
@@ -32,7 +34,10 @@ import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.StringUtilities;
+
 import org.opengis.feature.Feature;
+import org.opengis.feature.type.GeometryDescriptor;
+import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.expression.PropertyName;
 import org.opengis.filter.spatial.BBOX;
@@ -85,6 +90,37 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
         if (proper == null)
             return new DefaultPropertyName("");
         return proper;
+    }
+
+
+    protected CoordinateReferenceSystem findCRS(final Object base, final Geometry candidate){
+        //we don't know in which crs it is, try to find it
+        CoordinateReferenceSystem crs = null;
+        try{
+            crs = JTS.findCoordinateReferenceSystem(candidate);
+        }catch(IllegalArgumentException ex){
+            LOGGER.log(Level.WARNING, null, ex);
+        }catch(NoSuchAuthorityCodeException ex){
+            LOGGER.log(Level.WARNING, null, ex);
+        }catch(FactoryException ex){
+            LOGGER.log(Level.WARNING, null, ex);
+        }
+
+        if(crs == null && base instanceof Feature){
+            //try to find it on the base
+            final Feature att = (Feature) base;
+            final String propertyName = left.getPropertyName();
+            if (propertyName.isEmpty()) {
+                crs = att.getType().getCoordinateReferenceSystem();
+            } else {
+                final PropertyDescriptor desc = att.getType().getDescriptor(propertyName);
+                if(desc instanceof GeometryDescriptor){
+                    crs = ((GeometryDescriptor)desc).getCoordinateReferenceSystem();
+                }
+            }
+        }
+
+        return crs;
     }
 
     /**
@@ -153,23 +189,14 @@ public class DefaultBBox extends AbstractBinarySpatialOperator<PropertyName,Defa
 
 
         //we don't know in which crs it is, try to find it
-        CoordinateReferenceSystem crs = null;
-        try{
-            crs = JTS.findCoordinateReferenceSystem(candidate);
-        }catch(IllegalArgumentException ex){
-            Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-        }catch(NoSuchAuthorityCodeException ex){
-            Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-        }catch(FactoryException ex){
-            Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
-        }
+        final CoordinateReferenceSystem candidateCrs = findCRS(object, candidate);
 
         //if we don't know the crs, we will assume it's the objective crs already
-        if(crs != null){
+        if(candidateCrs != null){
             //reproject in objective crs if needed
-            if(!CRS.equalsIgnoreMetadata(this.crs,crs)){
+            if(!CRS.equalsIgnoreMetadata(this.crs,candidateCrs)){
                 try {
-                    candidate = JTS.transform(candidate, CRS.findMathTransform(crs, this.crs));
+                    candidate = JTS.transform(candidate, CRS.findMathTransform(candidateCrs, this.crs));
                 } catch (MismatchedDimensionException ex) {
                     Logger.getLogger(DefaultBBox.class.getName()).log(Level.WARNING, null, ex);
                     return false;
