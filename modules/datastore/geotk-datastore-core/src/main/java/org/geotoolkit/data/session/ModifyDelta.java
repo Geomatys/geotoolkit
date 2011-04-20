@@ -110,14 +110,7 @@ class ModifyDelta extends AbstractDelta{
                 //modify the feature
                 feature = GenericModifyFeatureIterator.apply(feature, values);
                 try {
-                    final Filter filter = query.getFilter();
                     final CoordinateReferenceSystem crs = query.getCoordinateSystemReproject();
-
-                    //wrap filter ----------------------------------------------------------
-                    if(filter != null && !filter.evaluate(feature)){
-                        //feature doesn't match
-                        return null;
-                    }
 
                     //wrap reprojection ----------------------------------------------------
                     if(crs != null){
@@ -137,11 +130,11 @@ class ModifyDelta extends AbstractDelta{
                                 final CoordinateSequenceMathTransformer trs =
                                         new CoordinateSequenceMathTransformer(CRS.findMathTransform(originalCRS, crs, true));
                                 GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
+                                transformer.setCoordinateReferenceSystem(crs);
                                 feature = GenericTransformFeatureIterator.apply(feature, transformer);
                             }
                         }
                     }
-
 
                 } catch (DataStoreException ex) {
                     getLogger().log(Level.WARNING, null, ex);

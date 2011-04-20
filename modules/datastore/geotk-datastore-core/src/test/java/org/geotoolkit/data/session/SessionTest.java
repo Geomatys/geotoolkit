@@ -353,14 +353,14 @@ public class SessionTest{
         //----------------------------------------------------------------------
         //test modifying feature------------------------------------------------
         //----------------------------------------------------------------------
-        final Point newPt = GF.createPoint(new Coordinate(5, 50));
-        final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
+        Point newPt = GF.createPoint(new Coordinate(5, 50));
+        Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
         values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("double"), 15d);
         values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("geom"), newPt);
 
         session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
 
-        //check we have a modification
+        //check we have a modification -----------------------------------------
         qb.reset();
         qb.setTypeName(name);
         query = qb.buildQuery();
@@ -384,7 +384,7 @@ public class SessionTest{
             fail("modified feature not found.");
         }
 
-        //check the query modified feature is correctly reprojected
+        //check the query modified feature is correctly reprojected ------------
         qb.reset();
         qb.setCRS(CRS.decode("EPSG:4326"));
         qb.setTypeName(name);
@@ -410,6 +410,37 @@ public class SessionTest{
         if(!found){
             fail("modified feature not found.");
         }
+
+        //make a second change on the same feature -----------------------------
+        newPt = GF.createPoint(new Coordinate(9, 90));
+        values = new HashMap<AttributeDescriptor, Object>();
+        values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("geom"), newPt);
+        session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(15d)), values);
+
+        qb.reset();
+        qb.setCRS(CRS.decode("EPSG:4326"));
+        qb.setTypeName(name);
+        query = qb.buildQuery();
+
+        //check the geometry is changed
+        ite = session.getFeatureIterator(query);
+        found = false;
+        while(ite.hasNext()){
+            Feature f = ite.next();
+            if(f.getProperty("double").getValue().equals(15d)){
+                found = true;
+                Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                assertEquals(90d, pt.getCoordinate().x, TOLERANCE);
+                assertEquals(9d, pt.getCoordinate().y, TOLERANCE);
+            }
+        }
+        ite.close();
+        if(!found){
+            fail("modified feature not found.");
+        }
+
+
+
 
 
 

@@ -696,7 +696,7 @@ public class DefaultFilterFactory2 implements FilterFactory2{
      */
     @Override
     public Literal literal(final Object obj) {
-        if(obj instanceof Envelope){
+        if(obj instanceof Envelope && !(obj instanceof BoundingBox) ){
             //special case for envelopes to change them in JTS geometries
             return new DefaultEnvelopeLiteral((Envelope) obj);
         }else{

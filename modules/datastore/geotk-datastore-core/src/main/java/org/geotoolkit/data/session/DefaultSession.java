@@ -17,30 +17,45 @@
 
 package org.geotoolkit.data.session;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.data.query.QueryUtilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.filter.visitor.DuplicatingFilterVisitor;
+import org.geotoolkit.geometry.DefaultBoundingBox;
+import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.referencing.CRS;
 
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
+import org.opengis.filter.FilterVisitor;
 import org.opengis.filter.Id;
+import org.opengis.filter.expression.Literal;
 import org.opengis.filter.identity.Identifier;
+import org.opengis.geometry.BoundingBox;
 import org.opengis.geometry.Envelope;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.MathTransform;
+import org.opengis.referencing.operation.TransformException;
 
 /**
  *
@@ -51,7 +66,6 @@ public class DefaultSession extends AbstractSession {
 
     protected static final FilterFactory2 FF = (FilterFactory2)
             FactoryFinder.getFilterFactory(new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
-
     
     private final DefaultSessionDiff diff;
     private final boolean async;
@@ -62,8 +76,6 @@ public class DefaultSession extends AbstractSession {
         this.diff = new DefaultSessionDiff();
         this.async = async;
     }
-
-    
 
     /**
      * {@inheritDoc }
@@ -85,7 +97,14 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public FeatureIterator getFeatureIterator(final Query original) throws DataStoreException {
+    public FeatureIterator getFeatureIterator(Query original) throws DataStoreException {
+
+        //quick check to bypass deltas
+        if(!hasPendingChanges()){
+            return store.getFeatureReader(original);
+        }
+
+        original = forceCRS(original,false);
         final List<Delta> deltas = diff.getDeltas();
 
         //we must store the modified queries to iterate on them in reverse order.
@@ -99,10 +118,16 @@ public class DefaultSession extends AbstractSession {
 
         FeatureIterator reader = store.getFeatureReader(modified);
 
-        for(int i=deltas.size()-1; i>=0; i--){
+        for(int i=0,n=deltas.size(); i<n; i++){
             final Delta delta = deltas.get(i);
             reader = delta.modify(modifieds.get(i),reader);
         }
+
+        //we must preserve the original filter after all thoses modifications
+        Filter originalFilter = original.getFilter();
+        originalFilter = forceCRS(originalFilter, original.getCoordinateSystemReproject(), true);
+        reader = GenericFilterFeatureIterator.wrap(reader, originalFilter);
+
         return reader;
     }
 
@@ -215,7 +240,7 @@ public class DefaultSession extends AbstractSession {
      */
     @Override
     public boolean hasPendingChanges() {
-        return diff.getDeltas().size() != 0;
+        return !diff.getDeltas().isEmpty();
     }
 
     /**
@@ -240,7 +265,8 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public long getCount(final Query original) throws DataStoreException {
+    public long getCount(Query original) throws DataStoreException {
+        original = forceCRS(original,false);
         final List<Delta> deltas = diff.getDeltas();
 
         //we must store the modified queries to iterate on them in reverse order.
@@ -265,7 +291,8 @@ public class DefaultSession extends AbstractSession {
      * {@inheritDoc }
      */
     @Override
-    public Envelope getEnvelope(final Query original) throws DataStoreException {
+    public Envelope getEnvelope(Query original) throws DataStoreException {
+        original = forceCRS(original,false);
         final List<Delta> deltas = diff.getDeltas();
 
         //we must store the modified queries to iterate on them in reverse order.
@@ -285,5 +312,81 @@ public class DefaultSession extends AbstractSession {
         }
         return env;
     }
+
+    private Query forceCRS(final Query query, boolean replace) throws DataStoreException{
+        final FeatureType ft = store.getFeatureType(query.getTypeName());
+        final CoordinateReferenceSystem crs = ft.getCoordinateReferenceSystem();
+
+        if(crs == null){
+            return query;
+        }
+
+        final QueryBuilder qb = new QueryBuilder(query);
+        qb.setFilter(forceCRS(qb.getFilter(), crs,replace));
+        return qb.buildQuery();
+    }
+
+    private static Filter forceCRS(final Filter filter, final CoordinateReferenceSystem crs, final boolean replace){
+
+        if(crs == null) return filter;
+
+        final FilterVisitor visitor = new DuplicatingFilterVisitor(){
+
+            @Override
+            public Object visit(final Literal expression, final Object extraData) {
+
+                final Object obj = expression.getValue();
+
+                if(obj instanceof BoundingBox){
+                    BoundingBox bb = (BoundingBox) obj;
+                    if(bb.getCoordinateReferenceSystem() == null){
+                        //force crs definition
+                        bb = new DefaultBoundingBox(bb, crs);
+                        return FF.literal(bb);
+                    }else if(replace){
+                        try {
+                            //reproject bbox
+                            final Envelope env = CRS.transform(bb, crs);
+                            bb = new DefaultBoundingBox(env);
+                            return FF.literal(bb);
+                        } catch (TransformException ex) {
+                            Logger.getLogger(DefaultSession.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                    }
+                    return expression;
+                }else if(obj instanceof Geometry){
+                    Geometry geom = (Geometry) obj;
+                    try {
+                        CoordinateReferenceSystem cdtcrs = JTS.findCoordinateReferenceSystem(geom);
+                        if(cdtcrs == null){
+                            geom = (Geometry) geom.clone();
+                            JTS.setCRS(geom, crs);
+                            return FF.literal(geom);
+                        }else if(replace){
+                            //reproject geometry
+                            final MathTransform trs = CRS.findMathTransform(cdtcrs, crs);
+                            geom = JTS.transform(geom, trs);
+                            JTS.setCRS(geom, crs);
+                            return FF.literal(geom);
+                        }
+                    } catch (Exception ex) {
+                        Logger.getLogger(DefaultSession.class.getName()).log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                        geom = (Geometry) geom.clone();
+                        JTS.setCRS(geom, crs);
+                        return FF.literal(geom);
+                    }
+
+                    return expression;
+                }else{
+                    return super.visit(expression, extraData);
+                }
+
+            }
+
+        };
+
+        return (Filter) filter.accept(visitor, null);
+    }
+
 
 }

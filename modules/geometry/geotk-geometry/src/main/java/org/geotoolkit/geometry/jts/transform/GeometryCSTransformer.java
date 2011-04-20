@@ -28,6 +28,7 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import org.geotoolkit.geometry.jts.JTS;
 
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
@@ -124,11 +125,9 @@ public class GeometryCSTransformer implements GeometryTransformer{
         //copy over user data, do a special check for coordinate reference systeme
         transformed.setUserData(g.getUserData());
 
-        if ((g.getUserData() == null) || g.getUserData() instanceof CoordinateReferenceSystem) {
-            //set the new one to be the target crs
-            if (crs != null) {
-                transformed.setUserData(crs);
-            }
+        //set the new one to be the target crs
+        if (crs != null) {
+            JTS.setCRS(g, crs);
         }
         
         return transformed;

@@ -233,7 +233,7 @@ public class DuplicatingFilterVisitor implements FilterVisitor, ExpressionVisito
             throw new IllegalArgumentException("Illegal BBOX filter, "
                     + "second expression should have been a literal with a boundingBox value: \n" + filter);
         }else{
-            final Literal l = (Literal) exp2;
+            Literal l = (Literal)visit(exp2,extraData);
             final Object obj = l.getValue();
             if(obj instanceof BoundingBox){
                 if(filter instanceof LooseBBox){
