@@ -18,9 +18,9 @@
   </parent>
 
 
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Module Description
+       =========================================================== -->
   <groupId>org.geotoolkit.project</groupId>
   <artifactId>maven</artifactId>
   <packaging>pom</packaging>
@@ -30,9 +30,9 @@
   </description>
 
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Developers and Contributors
+       =========================================================== -->
   <developers>
     <developer>
       <name>Martin Desruisseaux</name>
@@ -48,11 +48,12 @@
   </developers>
 
 
-  <!-- =========================================================== -->
-  <!--     Dependency Management                                   -->
-  <!-- TODO: avoid hard-coded version when the following is fixed: -->
-  <!-- http://jira.codehaus.org/browse/MNG-4112                    -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Dependency Management
+
+       TODO: avoid hard-coded version when the following is fixed:
+       http://jira.codehaus.org/browse/MNG-4112
+       =========================================================== -->
   <dependencies>
     <dependency>
       <groupId>org.apache.maven</groupId>
@@ -62,21 +63,21 @@
   </dependencies>
 
 
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!--                                                             -->
-  <!--     Those modules will be excluded when generating the      -->
-  <!--     web site because aggregated javadoc cause failures      -->
-  <!--     during Maven plugins build.                             -->
-  <!--                                                             -->
-  <!--     See http://jira.codehaus.org/browse/MJAVADOC-145        -->
-  <!--                                                             -->
-  <!--     For testing if the bug has been fixed:                  -->
-  <!--                                                             -->
-  <!--     mvn site -Pno-site                                      -->
-  <!--                                                             -->
-  <!--     Check that the list of modules includes those below.    -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Modules included in the build
+
+           Those modules will be excluded when generating the
+           web site because aggregated javadoc cause failures
+           during Maven plugins build.
+
+           See http://jira.codehaus.org/browse/MJAVADOC-145
+
+           For testing if the bug has been fixed:
+
+           mvn site -Pno-site
+
+           Check that the list of modules includes those below.
+       =========================================================== -->
   <profiles>
     <profile>
       <id>no-site</id>
@@ -92,6 +93,4 @@
       </modules>
     </profile>
   </profiles>
-
-
 </project>

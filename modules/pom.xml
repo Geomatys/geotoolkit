@@ -18,9 +18,9 @@
   </parent>
 
 
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Module Description
+       =========================================================== -->
   <groupId>org.geotoolkit</groupId>
   <artifactId>modules</artifactId>
   <packaging>pom</packaging>
@@ -31,9 +31,9 @@
   </description>
 
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Developers and Contributors
+       =========================================================== -->
   <developers>
     <developer>
       <name>Martin Desruisseaux</name>
@@ -49,9 +49,9 @@
   </developers>
 
 
-  <!-- =========================================================== -->
-  <!--     Dependencies to be inherited by all modules.            -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Dependencies to be inherited by all modules
+       =========================================================== -->
   <dependencies>
     <dependency>
       <groupId>net.jcip</groupId>
@@ -70,11 +70,11 @@
   </dependencies>
 
 
-  <!-- =========================================================== -->
-  <!--     Build Configuration                                     -->
-  <!--         compile the UTF resources files,                    -->
-  <!--         copies all JARs in a single directory.              -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Build Configuration
+               compile the UTF resources files,
+               copies all JARs in a single directory.
+       =========================================================== -->
   <build>
     <plugins>
       <plugin>
@@ -105,9 +105,9 @@
   </build>
 
 
-  <!-- =========================================================== -->
-  <!--     Modules for the build in approximate dependency order   -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Modules for the build in approximate dependency order
+       =========================================================== -->
   <modules>
     <module>utility</module>
     <module>metadata</module>
@@ -117,6 +117,4 @@
     <module>display</module>
     <module>analytics</module>
   </modules>
-
-
 </project>

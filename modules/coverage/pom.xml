@@ -18,9 +18,9 @@
   </parent>
 
 
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Module Description
+       =========================================================== -->
   <groupId>org.geotoolkit</groupId>
   <artifactId>coverage</artifactId>
   <packaging>pom</packaging>
@@ -31,9 +31,9 @@
   </description>
 
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Developers and Contributors
+       =========================================================== -->
   <developers>
     <developer>
       <name>Martin Desruisseaux</name>
@@ -49,9 +49,9 @@
   </developers>
 
 
-  <!-- =========================================================== -->
-  <!--     Dependencies to be inherited by all modules.            -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Dependencies to be inherited by all modules
+       =========================================================== -->
   <dependencies>
     <dependency>
       <groupId>org.opengis</groupId>
@@ -80,14 +80,13 @@
   </dependencies>
 
 
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Modules included in the build
+       =========================================================== -->
   <modules>
     <module>geotk-coverage</module>
     <module>geotk-coverageio</module>
     <module>geotk-coverageio-netcdf</module>
     <module>geotk-coverage-sql</module>
   </modules>
-
 </project>

@@ -18,9 +18,9 @@
   </parent>
 
 
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Module Description
+       =========================================================== -->
   <groupId>org.geotoolkit</groupId>
   <artifactId>geotk-coverage-sql</artifactId>
   <packaging>jar</packaging>
@@ -31,9 +31,9 @@
   </description>
 
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Developers and Contributors
+       =========================================================== -->
   <developers>
     <developer>
       <name>Martin Desruisseaux</name>
@@ -62,9 +62,9 @@
   </contributors>
 
 
-  <!-- =========================================================== -->
-  <!--     Dependency Management                                   -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Dependency Management
+       =========================================================== -->
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit</groupId>
@@ -101,12 +101,12 @@
   </dependencies>
 
 
-  <!-- ===================================================== -->
-  <!--     Resources management                              -->
-  <!--                                                       -->
-  <!--     Exclude a resource file which is not in wide use. -->
-  <!--     Reuse some test files from the coverage module.   -->
-  <!-- ===================================================== -->
+  <!-- =====================================================
+           Resources management
+
+           Exclude a resource file which is not in wide use.
+           Reuse some test files from the coverage module.
+       ===================================================== -->
   <build>
     <resources>
       <resource>
@@ -117,7 +117,6 @@
         </excludes>
       </resource>
     </resources>
-
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
@@ -143,5 +142,4 @@
       </plugin>
     </plugins>
   </build>
-
 </project>

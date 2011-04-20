@@ -18,9 +18,9 @@
   </parent>
 
 
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Module Description
+       =========================================================== -->
   <groupId>org.geotoolkit.project</groupId>
   <artifactId>tools</artifactId>
   <packaging>pom</packaging>
@@ -31,9 +31,9 @@
   </description>
 
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Developers and Contributors
+       =========================================================== -->
   <developers>
     <developer>
       <name>Martin Desruisseaux</name>
@@ -49,20 +49,20 @@
   </developers>
 
 
-  <!-- =========================================================== -->
-  <!--     Modules included in the build                           -->
-  <!--                                                             -->
-  <!-- We don't include "geotk-provided" in the list because we    -->
-  <!-- don't want it to be processed in the aggregated javadoc.    -->
-  <!-- We can't use the javadoc "exclude package" option since     -->
-  <!-- we don't want to exclude the real classes defined in an     -->
-  <!-- other module. Concequently "geotk-provided" needs to be     -->
-  <!-- deployed manually. Hopefully the changes in that module     -->
-  <!-- are exceptional enough.                                     -->
-  <!--                                                             -->
-  <!-- See: http://jira.codehaus.org/browse/MJAVADOC-134           -->
-  <!--      http://jira.codehaus.org/browse/MJAVADOC-227           -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Modules included in the build
+
+       We don't include "geotk-provided" in the list because we
+       don't want it to be processed in the aggregated javadoc.
+       We can't use the javadoc "exclude package" option since
+       we don't want to exclude the real classes defined in an
+       other module. Concequently "geotk-provided" needs to be
+       deployed manually. Hopefully the changes in that module
+       are exceptional enough.
+
+       See: http://jira.codehaus.org/browse/MJAVADOC-134
+            http://jira.codehaus.org/browse/MJAVADOC-227
+       =========================================================== -->
   <modules>
     <module>geotk-test</module>
     <module>geotk-stressor</module>
@@ -86,6 +86,4 @@
       </modules>
     </profile>
   </profiles>
-
-
 </project>

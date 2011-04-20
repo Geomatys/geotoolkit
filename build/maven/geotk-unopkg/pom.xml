@@ -18,9 +18,9 @@
   </parent>
   
 
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Module Description
+       =========================================================== -->
   <groupId>org.geotoolkit.project</groupId>
   <artifactId>geotk-unopkg</artifactId>
   <packaging>maven-plugin</packaging>
@@ -31,9 +31,9 @@
   </description>
 
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Developers and Contributors
+       =========================================================== -->
   <developers>
     <developer>
       <name>Martin Desruisseaux</name>
@@ -47,5 +47,4 @@
       </roles>
     </developer>
   </developers>
-
 </project>

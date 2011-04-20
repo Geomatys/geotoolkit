@@ -18,9 +18,9 @@
   </parent>
 
 
-  <!-- =========================================================== -->
-  <!--     Module Description                                      -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Module Description
+       =========================================================== -->
   <groupId>org.geotoolkit</groupId>
   <artifactId>geotk-widgets-swing</artifactId>
   <packaging>jar</packaging>
@@ -32,9 +32,9 @@
   </description>
 
 
-  <!-- =========================================================== -->
-  <!--     Developers and Contributors                             -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Developers and Contributors
+       =========================================================== -->
   <developers>
     <developer>
       <name>Martin Desruisseaux</name>
@@ -72,9 +72,9 @@
   </contributors>
 
 
-  <!-- =========================================================== -->
-  <!--     Dependencies                                            -->
-  <!-- =========================================================== -->
+  <!-- ===========================================================
+           Dependencies
+       =========================================================== -->
   <dependencies>
     <dependency>
       <groupId>org.geotoolkit</groupId>
@@ -122,10 +122,9 @@
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
-      <!-- For desktop applications, this is usually not needed.  -->
-      <!-- For server applications, this is already part of J2EE. -->
+      <!-- For desktop applications, this is usually not needed.
+           For server applications, this is already part of J2EE. -->
       <scope>provided</scope>
     </dependency>
   </dependencies>
-
 </project>
