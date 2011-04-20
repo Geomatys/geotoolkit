@@ -159,6 +159,10 @@
           </Constraints>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JToolBar$Separator" name="jSeparator1">
+            </Component>
+          </SubComponents>
         </Container>
         <Container class="org.geotoolkit.gui.swing.go2.control.JInformationBar" name="guiInfoBar">
           <Properties>
@@ -172,6 +176,10 @@
           </Constraints>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JToolBar$Separator" name="jSeparator2">
+            </Component>
+          </SubComponents>
         </Container>
         <Container class="org.geotoolkit.gui.swing.go2.control.JSelectionBar" name="guiSelectionBar">
           <Properties>
@@ -185,6 +193,10 @@
           </Constraints>
 
           <Layout class="org.netbeans.modules.form.compat2.layouts.DesignBoxLayout"/>
+          <SubComponents>
+            <Component class="javax.swing.JToolBar$Separator" name="jSeparator3">
+            </Component>
+          </SubComponents>
         </Container>
         <Container class="org.geotoolkit.gui.swing.go2.control.JEditionBar" name="guiEditBar">
           <Properties>

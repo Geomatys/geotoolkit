@@ -42,8 +42,10 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JSeparator;
 import javax.swing.JSplitPane;
 import javax.swing.JToolBar;
+import javax.swing.JToolBar.Separator;
 import javax.swing.SwingConstants;
 import javax.swing.WindowConstants;
 
@@ -201,8 +203,11 @@ public class JMap2DFrame extends javax.swing.JFrame {
         jToolBar1 = new JToolBar();
         jButton3 = new JButton();
         guiNavBar = new JNavigationBar();
+        jSeparator1 = new Separator();
         guiInfoBar = new JInformationBar();
+        jSeparator2 = new Separator();
         guiSelectionBar = new JSelectionBar();
+        jSeparator3 = new Separator();
         guiEditBar = new JEditionBar();
         guiConfigBar = new JConfigBar();
         jMenuBar1 = new JMenuBar();
@@ -253,18 +258,24 @@ public class JMap2DFrame extends javax.swing.JFrame {
 
         guiNavBar.setFloatable(false);
         guiNavBar.setRollover(true);
+        guiNavBar.add(jSeparator1);
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         jPanel1.add(guiNavBar, gridBagConstraints);
 
         guiInfoBar.setFloatable(false);
         guiInfoBar.setRollover(true);
+        guiInfoBar.add(jSeparator2);
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         jPanel1.add(guiInfoBar, gridBagConstraints);
 
         guiSelectionBar.setFloatable(false);
         guiSelectionBar.setRollover(true);
+        guiSelectionBar.add(jSeparator3);
+
         gridBagConstraints = new GridBagConstraints();
         gridBagConstraints.fill = GridBagConstraints.BOTH;
         jPanel1.add(guiSelectionBar, gridBagConstraints);
@@ -401,6 +412,9 @@ private void jButton3ActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_j
     private JMenuItem jMenuItem1;
     private JPanel jPanel1;
     private JScrollPane jScrollPane1;
+    private JSeparator jSeparator1;
+    private Separator jSeparator2;
+    private Separator jSeparator3;
     private JSplitPane jSplitPane1;
     private JToolBar jToolBar1;
     private JPanel panGeneral;
