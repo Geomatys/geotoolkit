@@ -81,7 +81,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      *
      * @throws IllegalArgumentException if unable to provide a mapping
      */
-    protected PropertyDescriptor[] typeAttributes(final FeatureType original, final FeatureType target) {
+    protected static PropertyDescriptor[] typeAttributes(final FeatureType original, final FeatureType target) {
 
         if (target.equals(original)) {
             throw new IllegalArgumentException("FeatureReader already produces contents with the correct schema");
@@ -123,7 +123,7 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
      *
      * @throws IllegalArgumentException if unable to provide a mapping
      */
-    protected int[] typeIndexes(final SimpleFeatureType original, final SimpleFeatureType target) {
+    protected static int[] typeIndexes(final SimpleFeatureType original, final SimpleFeatureType target) {
 
         if (target.equals(original)) {
             throw new IllegalArgumentException("FeatureReader already produces contents with the correct schema");
@@ -345,4 +345,14 @@ public abstract class GenericRetypeFeatureIterator<F extends Feature, R extends 
         return new GenericRetypeFeatureCollection(original, mask);
     }
 
+    public static Feature apply(Feature candidate, final FeatureType mask){
+        final PropertyDescriptor[] types = typeAttributes(candidate.getType(), mask);
+
+        final Collection<Property> properties = new ArrayList<Property>();
+        for(final PropertyDescriptor prop : types){
+            properties.addAll(candidate.getProperties(prop.getName()));
+        }
+        return FF.createFeature(properties, mask, candidate.getIdentifier().getID());
+
+    }
 }

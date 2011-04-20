@@ -136,4 +136,21 @@ public class GenericModifyFeatureIterator<F extends Feature, R extends FeatureIt
         return new GenericModifyFeatureIterator(reader, filter, values);
     }
 
+    public static Feature apply(Feature candidate, final Map<? extends PropertyDescriptor, ? extends Object> values){
+
+        candidate = FeatureUtilities.copy(candidate);
+        //must modify this feature
+        for(final Entry<? extends PropertyDescriptor,? extends Object> entry : values.entrySet()){
+            final Property prop = candidate.getProperty(entry.getKey().getName());
+            if(prop != null){
+                //the property might be null if the query didn't ask for this
+                //dont raise an error, that's normal
+                prop.setValue(entry.getValue());
+            }
+
+        }
+
+        return candidate;
+    }
+
 }

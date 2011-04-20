@@ -19,21 +19,32 @@ package org.geotoolkit.data.session;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Level;
 
 import org.geotoolkit.data.DataStore;
 import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.data.FeatureIterator;
-import org.geotoolkit.data.memory.GenericFilterFeatureIterator;
 import org.geotoolkit.data.memory.GenericModifyFeatureIterator;
+import org.geotoolkit.data.memory.GenericTransformFeatureIterator;
+import org.geotoolkit.data.memory.WrapFeatureIterator;
 import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.geotoolkit.geometry.jts.transform.GeometryCSTransformer;
+import org.geotoolkit.geometry.jts.transform.CoordinateSequenceMathTransformer;
+import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.NullArgumentException;
 
+import org.opengis.feature.Feature;
+import org.opengis.feature.GeometryAttribute;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.filter.Filter;
 import org.opengis.filter.Id;
 import org.opengis.geometry.Envelope;
+import org.opengis.util.FactoryException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import static org.geotoolkit.util.ArgumentChecks.*;
 
@@ -87,14 +98,65 @@ class ModifyDelta extends AbstractDelta{
     @Override
     public FeatureIterator modify(final Query query, final FeatureIterator reader) throws DataStoreException {
 
-        //modify the features that match the filter
-        final FeatureIterator modified = GenericModifyFeatureIterator.wrap(reader, filter, values);
+        final FeatureIterator wrap = new WrapFeatureIterator(reader) {
 
-        //ensure that the modified feature still match the original request
-        final Filter alterationFilter = FF.or(FF.not(filter), FF.and(filter, query.getFilter()));
-        final FeatureIterator secondCheck = GenericFilterFeatureIterator.wrap(modified, alterationFilter);
+            @Override
+            protected Feature modify(Feature feature) {
 
-        return secondCheck;
+                if(!filter.evaluate(feature)){
+                    return feature;
+                }
+
+                //modify the feature
+                feature = GenericModifyFeatureIterator.apply(feature, values);
+                try {
+                    final Filter filter = query.getFilter();
+                    final CoordinateReferenceSystem crs = query.getCoordinateSystemReproject();
+
+                    //wrap filter ----------------------------------------------------------
+                    if(filter != null && !filter.evaluate(feature)){
+                        //feature doesn't match
+                        return null;
+                    }
+
+                    //wrap reprojection ----------------------------------------------------
+                    if(crs != null){
+                        //check we have a geometry modification
+                        boolean hasgeoModified = false;
+                        for(AttributeDescriptor desc : values.keySet()){
+                            if(desc instanceof GeometryDescriptor){
+                                hasgeoModified = true;
+                                break;
+                            }
+                        }
+                        
+                        if(hasgeoModified){
+                            final FeatureType original = session.getDataStore().getFeatureType(feature.getType().getName());
+                            final CoordinateReferenceSystem originalCRS = original.getCoordinateReferenceSystem();
+                            if(!CRS.equalsIgnoreMetadata(originalCRS,crs)){
+                                final CoordinateSequenceMathTransformer trs =
+                                        new CoordinateSequenceMathTransformer(CRS.findMathTransform(originalCRS, crs, true));
+                                GeometryCSTransformer transformer = new GeometryCSTransformer(trs);
+                                feature = GenericTransformFeatureIterator.apply(feature, transformer);
+                            }
+                        }
+                    }
+
+
+                } catch (DataStoreException ex) {
+                    getLogger().log(Level.WARNING, null, ex);
+                    feature = null;
+                } catch (FactoryException ex) {
+                    getLogger().log(Level.WARNING, null, ex);
+                    feature = null;
+                }
+
+                return feature;
+            }
+
+        };
+
+        return wrap;
     }
 
     /**

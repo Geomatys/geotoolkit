@@ -18,11 +18,14 @@
 
 package org.geotoolkit.data.session;
 
+import org.geotoolkit.referencing.CRS;
+import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.Point;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import junit.framework.TestCase;
 
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.FeatureReader;
@@ -34,78 +37,80 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.feature.FeatureTypeBuilder;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.storage.DataStoreException;
 
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
-import org.opengis.feature.Feature;
 
+import org.opengis.feature.Feature;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.opengis.feature.type.Name;
-import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory;
-import org.opengis.filter.expression.Expression;
 import org.opengis.filter.identity.FeatureId;
 import org.opengis.filter.sort.SortBy;
 import org.opengis.filter.sort.SortOrder;
+
+import static org.junit.Assert.*;
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.util.FactoryException;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  */
-public class SessionTest extends TestCase{
+public class SessionTest{
+
+    private static final double TOLERANCE = 1e-7;
+
+    private static final GeometryFactory GF = new GeometryFactory();
 
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
 
-    final MemoryDataStore store = new MemoryDataStore();
+    private MemoryDataStore store = new MemoryDataStore();
 
 
     public SessionTest() {
     }
 
-    @BeforeClass
-    public static void setUpClass() throws Exception {
-    }
-
-    @AfterClass
-    public static void tearDownClass() throws Exception {
-    }
-
     @Before
     public void setUp() throws Exception {
+        store = new MemoryDataStore();
         final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
         //create the schema
         final Name name = new DefaultName("http://test.com", "TestSchema1");
         builder.reset();
         builder.setName(name);
+        builder.add("geom", Point.class, DefaultGeographicCRS.WGS84);
         builder.add("string", String.class);
         builder.add("double", Double.class);
         builder.add("date", Date.class);
         final SimpleFeatureType type = builder.buildSimpleFeatureType();
         store.createSchema(name,type);
-        final QueryBuilder qb = new QueryBuilder(name);
 
         //create a few features
         FeatureWriter writer = store.getFeatureWriterAppend(name);
         try{
             SimpleFeature f = (SimpleFeature) writer.next();
+            f.setAttribute("geom", GF.createPoint(new Coordinate(3, 30)));
             f.setAttribute("string", "hop3");
             f.setAttribute("double", 3d);
             f.setAttribute("date", new Date(1000L));
             writer.write();
 
             f = (SimpleFeature) writer.next();
+            f.setAttribute("geom", GF.createPoint(new Coordinate(1, 10)));
             f.setAttribute("string", "hop1");
             f.setAttribute("double", 1d);
             f.setAttribute("date", new Date(100000L));
             writer.write();
 
             f = (SimpleFeature) writer.next();
+            f.setAttribute("geom", GF.createPoint(new Coordinate(2, 20)));
             f.setAttribute("string", "hop2");
             f.setAttribute("double", 2d);
             f.setAttribute("date", new Date(10000L));
@@ -267,19 +272,30 @@ public class SessionTest extends TestCase{
             reader.close();
         }
 
+    }
+
+    @Test
+    public void testSessionRemoveDelta() throws DataStoreException{
+        final Name name = store.getNames().iterator().next();
+        final QueryBuilder qb = new QueryBuilder();
+        Query query;
+
+        //create an asynchrone session
+        final Session session = store.createSession(true);
+
         //----------------------------------------------------------------------
         //test removing feature-------------------------------------------------
         //----------------------------------------------------------------------
 
         //check that the feature exist
-        reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop4"), FF.property("string"))));
+        FeatureIterator reader = session.getFeatureIterator(QueryBuilder.filtered(name, FF.equals(FF.literal("hop3"), FF.property("string"))));
         try{
             SimpleFeature sf;
             reader.hasNext();
             sf = (SimpleFeature) reader.next();
-            assertEquals(sf.getAttribute("string"),"hop4");
-            assertEquals(sf.getAttribute("double"),2.5d);
-            assertEquals(sf.getAttribute("date"),new Date(100L));
+            assertEquals(sf.getAttribute("string"),"hop3");
+            assertEquals(sf.getAttribute("double"),3d);
+            assertEquals(sf.getAttribute("date"),new Date(1000L));
 
             assertFalse(reader.hasNext());
         }finally{
@@ -289,20 +305,20 @@ public class SessionTest extends TestCase{
         assertFalse(session.hasPendingChanges());
 
         //remove the feature
-        session.removeFeatures(name, FF.equals(FF.literal("hop4"), FF.property("string")));
+        session.removeFeatures(name, FF.equals(FF.literal("hop3"), FF.property("string")));
 
         //check that the feature is removed in the session but not in the datastore
         qb.reset();
         qb.setTypeName(name);
         query = qb.buildQuery();
 
-        assertEquals(store.getCount(query),4);
-        assertEquals(session.getCount(query),3);
+        assertEquals(store.getCount(query),3);
+        assertEquals(session.getCount(query),2);
         assertTrue(session.hasPendingChanges());
 
         qb.reset();
         qb.setTypeName(name);
-        qb.setFilter(FF.equals(FF.literal("hop4"), FF.property("string")));
+        qb.setFilter(FF.equals(FF.literal("hop3"), FF.property("string")));
         query = qb.buildQuery();
 
         assertEquals(1,store.getCount(query));
@@ -320,16 +336,27 @@ public class SessionTest extends TestCase{
         qb.setTypeName(name);
         query = qb.buildQuery();
 
-        assertEquals(3,store.getCount(query));
-        assertEquals(3,session.getCount(query));
+        assertEquals(2,store.getCount(query));
+        assertEquals(2,session.getCount(query));
         assertFalse(session.hasPendingChanges());
+    }
 
+    @Test
+    public void testSessionModifyDelta() throws DataStoreException, NoSuchAuthorityCodeException, FactoryException{
+        final Name name = store.getNames().iterator().next();
+        final QueryBuilder qb = new QueryBuilder();
+        Query query;
+
+        //create an asynchrone session
+        final Session session = store.createSession(true);
 
         //----------------------------------------------------------------------
         //test modifying feature------------------------------------------------
         //----------------------------------------------------------------------
+        final Point newPt = GF.createPoint(new Coordinate(5, 50));
         final Map<AttributeDescriptor,Object> values = new HashMap<AttributeDescriptor, Object>();
         values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("double"), 15d);
+        values.put( ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("geom"), newPt);
 
         session.updateFeatures(name, FF.equals(FF.property("double"), FF.literal(2d)), values);
 
@@ -342,6 +369,50 @@ public class SessionTest extends TestCase{
         assertEquals(session.getCount(query),3);
         assertTrue(session.hasPendingChanges());
 
+        //check the geometry is changed
+        FeatureIterator ite = session.getFeatureIterator(query);
+        boolean found = false;
+        while(ite.hasNext()){
+            Feature f = ite.next();
+            if(f.getProperty("double").getValue().equals(15d)){
+                found = true;
+                assertTrue(newPt.getCoordinate().equals2D( ((Point)f.getDefaultGeometryProperty().getValue()).getCoordinate() ));
+            }
+        }
+        ite.close();
+        if(!found){
+            fail("modified feature not found.");
+        }
+
+        //check the query modified feature is correctly reprojected
+        qb.reset();
+        qb.setCRS(CRS.decode("EPSG:4326"));
+        qb.setTypeName(name);
+        query = qb.buildQuery();
+
+        assertEquals(store.getCount(query),3);
+        assertEquals(session.getCount(query),3);
+        assertTrue(session.hasPendingChanges());
+
+        //check the geometry is changed
+        ite = session.getFeatureIterator(query);
+        found = false;
+        while(ite.hasNext()){
+            Feature f = ite.next();
+            if(f.getProperty("double").getValue().equals(15d)){
+                found = true;
+                Point pt = ((Point)f.getDefaultGeometryProperty().getValue());
+                assertEquals(50d, pt.getCoordinate().x, TOLERANCE);
+                assertEquals(5d, pt.getCoordinate().y, TOLERANCE);
+            }
+        }
+        ite.close();
+        if(!found){
+            fail("modified feature not found.");
+        }
+
+
+
         session.rollback();
         assertFalse(session.hasPendingChanges());
 
@@ -352,7 +423,7 @@ public class SessionTest extends TestCase{
         query = qb.buildQuery();
         AttributeDescriptor desc = ((SimpleFeatureType)store.getFeatureType(name)).getDescriptor("double");
 
-        FeatureIterator ite = session.getFeatureIterator(query);
+        ite = session.getFeatureIterator(query);
         FeatureId id1 = ite.next().getIdentifier();
         FeatureId id2 = ite.next().getIdentifier();
         ite.close();
@@ -417,6 +488,8 @@ public class SessionTest extends TestCase{
 //        assertEquals(store.getCount(query),1);
 //        assertEquals(session.getCount(query),0);
 //        assertTrue(session.hasPendingChanges());
+
+
 
     }
 

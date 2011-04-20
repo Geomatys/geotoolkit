@@ -276,4 +276,28 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
         return new GenericTransformFeatureCollection(original, transformer);
     }
 
+    public static Feature apply(Feature candidate, final GeometryTransformer transformer){
+        final Collection<Property> properties = new ArrayList<Property>();
+        for(Property prop : candidate.getProperties()){
+            if(prop instanceof GeometryAttribute){
+                Object value = prop.getValue();
+                if(value != null){
+                    //create a new property with the transformed geometry
+                    prop = FF.createGeometryAttribute(value,
+                            (GeometryDescriptor)prop.getDescriptor(), null, null);
+
+                    try {
+                        //transform the geometry
+                        prop.setValue(transformer.transform((Geometry) value));
+                    } catch (TransformException e) {
+                        throw new DataStoreRuntimeException("A transformation exception occurred while reprojecting data on the fly", e);
+                    }
+
+                }
+            }
+            properties.add(prop);
+        }
+        return FF.createFeature(properties, candidate.getType(), candidate.getIdentifier().getID());
+    }
+
 }
