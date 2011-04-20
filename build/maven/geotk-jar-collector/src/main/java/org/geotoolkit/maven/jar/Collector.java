@@ -145,7 +145,7 @@ public class Collector extends AbstractMojo {
                 throw new MojoExecutionException("Failed to create binaries directory.");
             }
         }
-        copyFileToDirectory(jarFile, collect);
+        copyFileToDirectory(jarFile, new File(collect, jarFile.getName()));
         final Set<Artifact> dependencies = project.getDependencyArtifacts();
         if (dependencies != null) {
             for (final Artifact artifact : dependencies) {
@@ -155,8 +155,8 @@ public class Collector extends AbstractMojo {
                     scope.equalsIgnoreCase(Artifact.SCOPE_RUNTIME)))
                 {
                     final File file = artifact.getFile();
+                    final File copy = new File(collect, getFinalName(file, artifact));
                     if (!artifact.getGroupId().startsWith("org.geotoolkit")) {
-                        final File copy = new File(collect, file.getName());
                         if (copy.exists()) {
                             /*
                              * Copies the dependency only if it was not already copied. Note that
@@ -168,18 +168,43 @@ public class Collector extends AbstractMojo {
                             continue;
                         }
                     }
-                    copyFileToDirectory(file, collect);
+                    copyFileToDirectory(file, copy);
                 }
             }
         }
     }
 
     /**
-     * Copies the given file to the given directory.
+     * Returns name of the given name. If the given file is a snapshot, then the
+     * {@code "SNAPSHOT"} will be replaced by the timestamp if possible.
+     *
+     * @param  file     The file from which to get the filename.
+     * @param  artifact The artifact that produced the given file.
+     * @return The filename to use.
+     *
+     * @since 3.18
      */
-    private static void copyFileToDirectory(final File file, final File directory) throws IOException {
+    private static String getFinalName(final File file, final Artifact artifact) {
+        String filename = file.getName();
+        final String baseVersion = artifact.getBaseVersion();
+        if (baseVersion != null) {
+            final int pos = filename.lastIndexOf(baseVersion);
+            if (pos >= 0) {
+                final String version = artifact.getVersion();
+                if (version != null && !baseVersion.equals(version)) {
+                    filename = filename.substring(0, pos) + version + filename.substring(pos + baseVersion.length());
+                }
+            }
+        }
+        return filename;
+    }
+
+    /**
+     * Copies the given file to the given target file.
+     */
+    private static void copyFileToDirectory(final File file, final File copy) throws IOException {
         final FileInputStream in = new FileInputStream(file);
-        final FileOutputStream out = new FileOutputStream(new File(directory, file.getName()));
+        final FileOutputStream out = new FileOutputStream(copy);
         final byte[] buffer = new byte[4096];
         int c;
         while ((c = in.read(buffer)) >= 0) {
