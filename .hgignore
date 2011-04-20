@@ -2,13 +2,24 @@
 # works better than glob with NetBeans.
 syntax: regexp
 
-\.svn$
 \.project$
 \.classpath$
 \.settings$
 \.DS_Store
-target$
 ^tmp$
+.log
+
+# old svn files
+\.svn$
+
+# Maven files
+target$
+
+# Netbeans files
 nbactions.xml
 nbproject
-.log
+
+# Intellij files
+.iml
+.ipr
+.iws
