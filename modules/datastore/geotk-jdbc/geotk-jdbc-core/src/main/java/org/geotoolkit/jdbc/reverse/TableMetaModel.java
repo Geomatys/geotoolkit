@@ -19,8 +19,8 @@ package org.geotoolkit.jdbc.reverse;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.jdbc.fid.PrimaryKey;
-import org.geotoolkit.util.StringUtilities;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.ComplexType;
 import org.opengis.feature.type.FeatureType;
@@ -76,12 +76,10 @@ public class TableMetaModel {
     public String toString() {
         final StringBuilder sb = new StringBuilder(name);
         if (!importedKeys.isEmpty()) {
-            sb.append("\n Imported Keys \n");
-            sb.append(StringUtilities.toStringTree(importedKeys));
+            sb.append(Trees.toString("\n Imported Keys", importedKeys));
         }
         if (!exportedKeys.isEmpty()) {
-            sb.append("\n Exported Keys \n");
-            sb.append(StringUtilities.toStringTree(exportedKeys));
+            sb.append(Trees.toString("\n Exported Keys", exportedKeys));
         }
         return sb.toString();
     }

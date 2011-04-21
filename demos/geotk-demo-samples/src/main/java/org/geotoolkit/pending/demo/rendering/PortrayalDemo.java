@@ -12,6 +12,7 @@ import java.util.Map;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import org.geotoolkit.coverage.io.CoverageIO;
 
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.coverage.io.GridCoverageReader;
@@ -103,7 +104,7 @@ public class PortrayalDemo {
 
     private static GridCoverageReader openWorldFile() throws CoverageStoreException {
         WorldFileImageReader.Spi.registerDefaults(null);
-        return GridCoverageReaders.createSimpleReader(new File("data/clouds.jpg"));
+        return CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
     }
 
 }

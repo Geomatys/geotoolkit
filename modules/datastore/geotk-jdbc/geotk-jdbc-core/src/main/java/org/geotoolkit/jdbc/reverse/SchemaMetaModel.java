@@ -19,6 +19,7 @@ package org.geotoolkit.jdbc.reverse;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.StringUtilities;
 
 /**
@@ -49,8 +50,6 @@ public class SchemaMetaModel {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder(name).append('\n');
-        sb.append(StringUtilities.toStringTree(tables.values()));
-        return sb.toString();
+        return Trees.toString(name, tables.values());
     }
 }

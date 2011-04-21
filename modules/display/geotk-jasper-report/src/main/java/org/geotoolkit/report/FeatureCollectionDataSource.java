@@ -74,7 +74,7 @@ public class FeatureCollectionDataSource implements JRDataSource {
     public Object getFieldValue(final JRField jrf) throws JRException {
         
         //search for special fields
-        final Collection<JRFieldRenderer> renderers = JRMappingUtils.getFieldRenderers();
+        final Collection<JRFieldRenderer> renderers = JasperReportService.getFieldRenderers();
         for(JRFieldRenderer r : renderers){
             if(r.canHandle(jrf)){
                 return r.createValue(jrf,feature);

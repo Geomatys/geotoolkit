@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
+import org.geotoolkit.coverage.io.CoverageIO;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReaders;
 import org.geotoolkit.data.DataStore;
@@ -82,7 +83,7 @@ public class MapContextDemo {
     }
 
     private static GridCoverageReader openWorldFile() throws Exception{
-        return GridCoverageReaders.createSimpleReader(new File("data/clouds.jpg"));
+        return CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
     }
 
 

@@ -17,6 +17,9 @@
 
 package org.geotoolkit.report;
 
+import java.util.List;
+import java.util.ArrayList;
+import java.util.ServiceLoader;
 import java.io.File;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -44,6 +47,7 @@ import org.geotoolkit.display2d.service.OutputDef;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Converters;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -59,8 +63,19 @@ import static org.geotoolkit.util.ArgumentChecks.*;
 @Static
 public final class JasperReportService {
 
+    private static final Collection<JRFieldRenderer> RENDERERS;
+    
     public static final String MIME_PDF = "application/pdf";
     public static final String MIME_HTML = "text/html";
+    
+    static {
+        final ServiceLoader<JRFieldRenderer> service = ServiceLoader.load(JRFieldRenderer.class);
+        final List<JRFieldRenderer> renderers = new ArrayList<JRFieldRenderer>();
+        for(final JRFieldRenderer r : service){
+            renderers.add(r);
+        }
+        RENDERERS = UnmodifiableArrayList.wrap(renderers.toArray(new JRFieldRenderer[renderers.size()]));
+    }
 
     private JasperReportService(){}
 
@@ -180,7 +195,7 @@ public final class JasperReportService {
         ftb.setName(design.getName());
 
         //find a description for each field
-        final Collection<JRFieldRenderer> renderers = JRMappingUtils.getFieldRenderers();
+        final Collection<JRFieldRenderer> renderers = JasperReportService.getFieldRenderers();
 
         fields:
         for(final JRField field : design.getFields()){
@@ -224,4 +239,8 @@ public final class JasperReportService {
         return map;
     }
 
+    public static Collection<JRFieldRenderer> getFieldRenderers(){
+        return RENDERERS;
+    }
+    
 }

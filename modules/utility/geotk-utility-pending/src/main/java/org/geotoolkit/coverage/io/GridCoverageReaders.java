@@ -33,7 +33,6 @@ import javax.imageio.ImageReader;
 import javax.imageio.metadata.IIOMetadata;
 import javax.imageio.spi.ImageReaderSpi;
 
-import org.geotoolkit.coverage.grid.GridGeometry2D;
 import org.geotoolkit.image.io.XImageIO;
 import org.geotoolkit.image.io.metadata.MetadataHelper;
 import org.geotoolkit.image.io.metadata.SpatialMetadata;
@@ -47,24 +46,12 @@ import org.geotoolkit.image.io.mosaic.TileWritingPolicy;
 import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.io.wkt.PrjFiles;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.metadata.iso.DefaultMetadata;
-import org.geotoolkit.metadata.iso.extent.DefaultExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.util.logging.Logging;
 
-import org.opengis.coverage.grid.GridGeometry;
 import org.opengis.coverage.grid.RectifiedGrid;
-import org.opengis.geometry.Envelope;
-import org.opengis.metadata.acquisition.AcquisitionInformation;
-import org.opengis.metadata.content.ImageDescription;
-import org.opengis.metadata.identification.DataIdentification;
-import org.opengis.metadata.quality.DataQuality;
-import org.opengis.metadata.spatial.Georectified;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * Utility class to aquiere a coverage reader from a file.
@@ -80,80 +67,6 @@ public final class GridCoverageReaders {
     private static final File TILE_CACHE_FOLDER = new File(System.getProperty("java.io.tmpdir") + File.separator + "imageTiles");
 
     private GridCoverageReaders(){}
-
-    /**
-     * Fill the given Metadata object with informations from reader coverage metadata and stream metadata.
-     * Since there is no one to one relation between ISO 19115 and image metadata,
-     * the returned metadata returned is a best effort relation.
-     *
-     * @param reader
-     * @param metadata : metadata to fill, if null it will create one.
-     * @return Metadata, never null
-     *
-     * @deprecated Replaced by {@link GridCoverageReader#getMetadata()}.
-     */
-    @Deprecated
-    public static DefaultMetadata fillMetadata(final GridCoverageReader reader, DefaultMetadata metadata) 
-            throws CoverageStoreException, TransformException{
-        if(metadata == null){
-            metadata = new DefaultMetadata();
-        }
-
-        final SpatialMetadata coverageMetadata = reader.getCoverageMetadata(0);
-        final SpatialMetadata streamMetadata = reader.getStreamMetadata();
-
-        final DataIdentification dataIdent      = streamMetadata.getInstanceForType(DataIdentification.class);
-        final AcquisitionInformation acqInfo    = streamMetadata.getInstanceForType(AcquisitionInformation.class);
-        final DataQuality dataQuality           = streamMetadata.getInstanceForType(DataQuality.class);
-        final ImageDescription imgDesc          = coverageMetadata.getInstanceForType(ImageDescription.class);
-        final Georectified georect              = coverageMetadata.getInstanceForType(Georectified.class);
-        //There is no place in metadata where we can add this
-        //final RectifiedGrid rectGrid            = coverageMetadata.getInstanceForType(RectifiedGrid.class);
-
-        //Set the envelope
-        final Envelope env = reader.getGridGeometry(0).getEnvelope();
-        final DefaultDataIdentification id = new DefaultDataIdentification(dataIdent);
-        final DefaultExtent extent = new DefaultExtent();
-        extent.getGeographicElements().add(new DefaultGeographicBoundingBox(env));
-        id.getExtents().clear();
-        id.getExtents().add(extent);
-
-        metadata.getIdentificationInfo().add(id);
-        metadata.getAcquisitionInformation().add(acqInfo);
-        metadata.getDataQualityInfo().add(dataQuality);
-        metadata.getContentInfo().add(imgDesc);
-        metadata.getSpatialRepresentationInfo().add(georect);
-
-        return metadata;
-    }
-
-    /**
-     * Create a simple reader which doesnt use any pyramid or mosaic tiling.
-     * Use this reader if you know you have a small image.
-     *
-     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#createSimpleReader}.
-     */
-    @Deprecated
-    public static GridCoverageReader createSimpleReader(final File input) throws CoverageStoreException{
-        final ImageCoverageReader ic = new ImageCoverageReader();
-        ic.setInput(input);
-        return ic;
-    }
-
-    /**
-     * Create a mosaic reader which will create a cache of tiles at different
-     * resolutions. Tiles creation time depends on the available memory, the image
-     * size and it's format. The creation time can go from a few seconds to several
-     * minuts or even hours if you give him an image like the full resolution BlueMarble.
-     *
-     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#testWriteOrReuseMosaic}.
-     */
-    @Deprecated
-    public static GridCoverageReader createMosaicReader(final File input) throws IOException, CoverageStoreException{
-        final int tileSize = 512;
-        final File tileFolder = getTempFolder(input,tileSize);
-        return createMosaicReader(input, tileSize, tileFolder);
-    }
 
     /**
      * Create a mosaic reader which will create a cache of tiles at different
@@ -279,54 +192,6 @@ public final class GridCoverageReaders {
     }
 
     /**
-     * Convert a tile manager and a crs to a grid coverage reader.
-     *
-     * @param tm
-     * @param crs
-     * @return
-     * @throws CoverageStoreException
-     *
-     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#createMosaicReader}.
-     */
-    @Deprecated
-    public static GridCoverageReader toCoverageReader(final TileManager tm,
-            final CoordinateReferenceSystem crs) throws CoverageStoreException{
-
-        final ImageCoverageReader reader = new ImageCoverageReader() {
-            @Override
-            public GridGeometry2D getGridGeometry(int index) throws CoverageStoreException {
-                //override the CRS
-                final GridGeometry gridGeom;
-                try {
-                    gridGeom = tm.getGridGeometry();
-                } catch (IOException ex) {
-                    throw new CoverageStoreException(ex);
-                }
-                return new GridGeometry2D(gridGeom.getGridRange(), gridGeom.getGridToCRS(), crs);
-            }
-        };
-
-        reader.setInput(tm);
-        return reader;
-    }
-
-    /**
-     * Open an already existing mosaic.
-     *
-     * @param file : File folder where all tiles are stored or a serialized TileManager
-     * @return GridCoverageReader
-     * @throws IOException
-     * @throws CoverageStoreException
-     *
-     * @deprecated Replaced by {@link org.geotoolkit.coverage.io.CoverageIO#createMosaicReader}.
-     */
-    @Deprecated
-    public static GridCoverageReader openMosaic(final File file) throws IOException, CoverageStoreException{
-        final Entry<TileManager,CoordinateReferenceSystem> entry = openTileManager(file);
-        return toCoverageReader(entry.getKey(), entry.getValue());
-    }
-
-    /**
      * Visit all files and directories contained in the directory specified.
      *
      * @param file The starting file or folder.
@@ -440,14 +305,6 @@ public final class GridCoverageReaders {
         return manager;
     }
 
-
-    /**
-     * Get or create a temp folder to store the mosaic. the folder is based on the
-     * file name, so tiles can be find again if the file name hasn't change.
-     */
-    private static File getTempFolder(final File input,final int tileSize) {
-        return getTempFolder(input.getName(), tileSize);
-    }
 
     /**
      * Get or create a temp folder to store the mosaic. the folder is based on the

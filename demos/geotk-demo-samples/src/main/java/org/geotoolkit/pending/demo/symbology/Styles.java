@@ -2,6 +2,7 @@
 package org.geotoolkit.pending.demo.symbology;
 
 
+import org.geotoolkit.coverage.io.CoverageIO;
 import java.awt.Color;
 import java.util.ArrayList;
 import java.util.List;
@@ -613,7 +614,7 @@ public class Styles {
         context.setName("demo context");
         context.setDescription(SF.description("demo context", ""));
    
-        final GridCoverageReader reader = GridCoverageReaders.createSimpleReader(new File("data/clouds.jpg"));
+        final GridCoverageReader reader = CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
         final MapLayer layer = MapBuilder.createCoverageLayer(reader, style, "world");
         layer.setDescription(SF.description("raster", ""));
         layer.setName("raster");

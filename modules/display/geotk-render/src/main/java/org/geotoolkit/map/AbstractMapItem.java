@@ -27,6 +27,7 @@ import java.util.logging.Logger;
 import javax.swing.event.EventListenerList;
 
 import org.geotoolkit.style.StyleConstants;
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
@@ -232,8 +233,7 @@ public abstract class AbstractMapItem implements MapItem {
         }
         final List<MapItem> items = items();
         if(!items.isEmpty()){
-            buf.append('\n');
-            buf.append( StringUtilities.toStringTree(items) );
+            buf.append( Trees.toString("", items) );
         }
         return buf.toString();
     }

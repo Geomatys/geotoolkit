@@ -22,10 +22,10 @@ import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;
 
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
 import org.geotoolkit.util.converter.Classes;
@@ -413,8 +413,7 @@ class DefaultMutableSLD implements MutableStyledLayerDescriptor{
         builder.append(']');
 
         if(!layers.isEmpty()){
-            builder.append('\n');
-            builder.append(StringUtilities.toStringTree(layers));
+            builder.append(Trees.toString("", layers));
         }
 
         return builder.toString();

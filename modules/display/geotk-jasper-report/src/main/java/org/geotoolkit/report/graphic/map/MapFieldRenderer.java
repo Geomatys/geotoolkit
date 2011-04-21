@@ -31,8 +31,8 @@ import org.geotoolkit.feature.AttributeTypeBuilder;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.type.DefaultAttributeDescriptor;
 import org.geotoolkit.report.JRFieldRenderer;
-import org.geotoolkit.report.JRMappingUtils;
 import org.geotoolkit.report.graphic.EmptyRenderable;
+import org.geotoolkit.util.logging.Logging;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -84,7 +84,7 @@ public class MapFieldRenderer implements JRFieldRenderer{
             try {
                 DefaultPortrayalService.prepareCanvas(renderable, canvasDef, sceneDef, viewDef);
             } catch (PortrayalException ex) {
-                JRMappingUtils.LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
+                Logging.getLogger(MapFieldRenderer.class).log(Level.WARNING, ex.getLocalizedMessage(), ex);
             }
             map.setDelegate(renderable);
         }

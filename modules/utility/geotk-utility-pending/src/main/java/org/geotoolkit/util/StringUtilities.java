@@ -26,6 +26,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import org.geotoolkit.gui.swing.tree.Trees;
 
 
 /**
@@ -231,25 +232,6 @@ public final class StringUtilities {
     }
 
     /**
-     * This method returns a number of occurences occ in the string s.
-     *
-     * @param s : String to search in
-     * @param occ : Occurence to search
-     * @return number of occurence
-     *
-     * @deprecated Moved to {@link org.geotoolkit.util.Strings#count(String, String)}.
-     */
-    @Deprecated
-    public static int getOccurence(final String s, final String occ) {
-        int cnt = 0;
-        int pos = s.indexOf(occ);
-        for(; pos >= 0; pos = s.indexOf(occ, pos+1)){
-            cnt++;
-        }
-        return cnt;
-    }
-
-    /**
      * Convert the given string into a string recognize by HTML.
      *
      * @param text The string to convert.
@@ -325,29 +307,6 @@ public final class StringUtilities {
             s = s.substring(i + 1, s.length());
         }
         return s;
-    }
-
-    /**
-     * This method sort alphabeticely a list of String
-     *
-     * @param toSort
-     * @return
-     *
-     * @deprecated Use {@link java.util.Collections#sort(List)} instead.
-     */
-    @Deprecated
-    public static List<String> sortStringList(final List<String> toSort) {
-        final int elements = toSort.size();
-        for (int i = (elements - 1); i > 0; i--) {
-            for (int j = 0; j < i; j++) {
-                if (toSort.get(j).compareTo(toSort.get(j + 1)) > 0) {
-                    final String inter = toSort.get(j);
-                    toSort.set(j, toSort.get(j + 1));
-                    toSort.set(j + 1,inter);
-                }
-            }
-        }
-        return toSort;
     }
 
     /**
@@ -460,38 +419,7 @@ public final class StringUtilities {
     }
 
     public static String toStringTree(final Object ... objects){
-        return toStringTree(Arrays.asList(objects));
-    }
-
-    /**
-     * @deprecated Replaced by {@link org.geotoolkit.gui.swing.tree.Trees#toString(String, Iterable)}.
-     */
-    @Deprecated
-    public static String toStringTree(final Collection<?> objects){
-        final StringBuilder sb = new StringBuilder();
-
-        final int size = objects.size();
-
-        final Iterator<?> ite = objects.iterator();
-        int i=1;
-        while(ite.hasNext()){
-            String sub = ite.next().toString();
-
-            if(i==size){
-                sb.append(TREE_END);
-                //move text to the right
-                sub = sub.replaceAll("\n", "\n"+TREE_BLANK);
-                sb.append(sub);
-            }else{
-                sb.append(TREE_CROSS);
-                //move text to the right
-                sub = sub.replaceAll("\n", "\n"+TREE_LINE);
-                sb.append(sub);
-                sb.append('\n');
-            }
-            i++;
-        }
-        return sb.toString();
+        return Trees.toString("", Arrays.asList(objects));
     }
 
 }

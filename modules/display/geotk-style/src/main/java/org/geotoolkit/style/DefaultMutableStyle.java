@@ -23,8 +23,8 @@ import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;
 
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -232,8 +232,7 @@ public class DefaultMutableStyle implements MutableStyle,FeatureTypeStyleListene
         builder.append(']');
 
         if(!fts.isEmpty()){
-            builder.append('\n');
-            builder.append(StringUtilities.toStringTree(fts));
+            builder.append(Trees.toString("", fts));
         }
 
         return builder.toString();

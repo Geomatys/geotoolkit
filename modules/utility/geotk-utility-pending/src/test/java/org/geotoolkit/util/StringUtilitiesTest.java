@@ -28,30 +28,6 @@ import static org.junit.Assert.*;
 public class StringUtilitiesTest {
 
     @Test
-    public void occurenceTest(){
-        String str;
-        int nb;
-
-        str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = Strings.count(str, '-');
-        assertEquals(0, nb);
-
-
-        str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = Strings.count(str, '-');
-        assertEquals(5, nb);
-
-        str = "gredgfdgdfhdkljgfdhvndkvfduhnfjfiodj";
-        nb = StringUtilities.getOccurence(str, "-");
-        assertEquals(0, nb);
-
-
-        str = "-gredgfdg-dfhdkljgfdh-vndkvfduhnfjf-iodj-";
-        nb = StringUtilities.getOccurence(str, "-");
-        assertEquals(5, nb);
-    }
-
-    @Test
     public void positionsTest(){
         String str;
         int[] nb;

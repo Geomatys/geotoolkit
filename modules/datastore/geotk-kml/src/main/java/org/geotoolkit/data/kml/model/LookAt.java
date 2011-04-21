@@ -126,7 +126,7 @@ public interface LookAt extends AbstractView {
      * <p>Specific setter for 2.1 Kml version.</p>
      *
      * @param tilt
-     * @deprecated
+     * @deprecatedz
      */
     @Deprecated
     void setTilt_v2_1(double tilt);

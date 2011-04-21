@@ -24,8 +24,8 @@ import java.util.List;
 import java.util.Set;
 import javax.swing.event.EventListenerList;
 
+import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.NotifiedCheckedList;
@@ -301,8 +301,7 @@ public class DefaultMutableFeatureTypeStyle implements MutableFeatureTypeStyle, 
         builder.append(']');
 
         if(!rules.isEmpty()){
-            builder.append('\n');
-            builder.append(StringUtilities.toStringTree(rules));
+            builder.append(Trees.toString("", rules));
         }
 
         return builder.toString();

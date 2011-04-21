@@ -16,27 +16,8 @@
  */
 package org.geotoolkit.shptest.test;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.LineNumberReader;
-import java.io.OutputStream;
-import java.io.RandomAccessFile;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.channels.Channels;
-import java.nio.channels.ReadableByteChannel;
-import java.util.Enumeration;
-import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.logging.Logger;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipFile;
 
 
 /**
@@ -175,33 +156,6 @@ public class UtilTestData extends org.geotoolkit.test.TestData {
      */
     public static boolean isInteractiveTest() {
         return getBoolean(INTERACTIVE_TEST_KEY);
-    }
-
-    /**
-     * Provides a {@link java.io.BufferedReader} for named test data.
-     * It is the caller responsability to close this reader after usage.
-     *
-     * @param  caller The class of the object associated with named data.
-     * @param  name of test data to load.
-     * @return The reader, or {@code null} if the named test data are not found.
-     * @throws IOException if an error occurs during an input operation.
-     *
-     * @deprecated Use {@link #openReader} instead. The {@code openReader} method throws an
-     *  exception if the resource is not found, instead of returning null. This make debugging
-     *  easier, since it replaces infamous {@link NullPointerException} by a more explicit error
-     *  message during tests. Furthermore, the {@code openReader} name make it more obvious that
-     *  the stream is not closed automatically and is also consistent with other method names in
-     *  this class.
-     */
-    @Deprecated
-    public static BufferedReader getReader(final Object caller, final String name)
-            throws IOException
-    {
-        final URL url = getResource(caller, name);
-        if (url == null) {
-            return null; // echo handling of getResource( ... )
-        }
-        return new BufferedReader(new InputStreamReader(url.openStream()));
     }
 
     /**

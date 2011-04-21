@@ -21,6 +21,7 @@ import java.util.Collection;
 import java.util.EventObject;
 import java.util.List;
 import javax.swing.event.EventListenerList;
+import org.geotoolkit.gui.swing.tree.Trees;
 
 import org.geotoolkit.util.collection.CollectionChangeEvent;
 import org.geotoolkit.util.collection.CollectionChangeListener;
@@ -341,8 +342,7 @@ class DefaultMutableNamedLayer implements MutableNamedLayer,StyleListener{
         builder.append(']');
 
         if(!styles.isEmpty()){
-            builder.append('\n');
-            builder.append(StringUtilities.toStringTree(styles));
+            builder.append(Trees.toString("", styles));
         }
 
         return builder.toString();

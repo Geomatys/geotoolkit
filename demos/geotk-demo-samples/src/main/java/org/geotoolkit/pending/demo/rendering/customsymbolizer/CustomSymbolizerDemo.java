@@ -8,6 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import org.geotoolkit.coverage.io.CoverageIO;
 
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.GridCoverageReaders;
@@ -63,7 +64,7 @@ public class CustomSymbolizerDemo {
         final MapContext context = MapBuilder.createContext();
 
         //create a coverage layer
-        final GridCoverageReader reader = GridCoverageReaders.createSimpleReader(new File("data/clouds.jpg"));
+        final GridCoverageReader reader = CoverageIO.createSimpleReader(new File("data/clouds.jpg"));
         final MutableStyle coverageStyle = SF.style(new CrystallizeSymbolizer(2));
         final CoverageMapLayer coverageLayer = MapBuilder.createCoverageLayer(reader, coverageStyle,"background");
       

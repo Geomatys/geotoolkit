@@ -163,7 +163,6 @@ public final class ProcessConsole {
             for(final Identifier id : factory.getIdentification().getCitation().getIdentifiers()){
                 print(BOLD,id.getCode()," ",RESET);
             }
-            print("\n");
             print(StringUtilities.toStringTree(Arrays.asList(factory.getNames())));
             print("\n");
         }
