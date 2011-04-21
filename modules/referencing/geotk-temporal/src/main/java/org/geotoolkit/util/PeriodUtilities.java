@@ -17,7 +17,7 @@
  */
 package org.geotoolkit.util;
 
-import org.geotoolkit.temporal.object.FastDateParser;
+import org.geotoolkit.temporal.object.ISODateParser;
 import java.text.DateFormat;
 import java.text.FieldPosition;
 import java.text.ParseException;
@@ -45,7 +45,7 @@ public class PeriodUtilities {
     /**
      * The date parser. 
      */
-    private FastDateParser dateParser = new FastDateParser();
+    private ISODateParser dateParser = new ISODateParser();
     
     
     /**

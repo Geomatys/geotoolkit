@@ -43,7 +43,7 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.LenientFeatureFactory;
-import org.geotoolkit.temporal.object.FastDateParser;
+import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.After;
@@ -69,7 +69,7 @@ public class TimePrimitivesTest {
     private static final String pathToTestFile = "src/test/resources/org/geotoolkit/data/gx/timePrimitives.kml";
     private static final FeatureFactory FF = FactoryFinder.getFeatureFactory(
             new Hints(Hints.FEATURE_FACTORY, LenientFeatureFactory.class));
-    private final FastDateParser du = new FastDateParser();
+    private final ISODateParser du = new ISODateParser();
 
     public TimePrimitivesTest() {
     }

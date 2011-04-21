@@ -45,7 +45,7 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.LenientFeatureFactory;
-import org.geotoolkit.temporal.object.FastDateParser;
+import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.After;
@@ -121,7 +121,7 @@ public class TrackTest {
         String when0 = "2010-05-28T02:02:09Z";
         String when1 = "2010-05-28T02:02:35Z";
 
-        FastDateParser du = new FastDateParser();
+        ISODateParser du = new ISODateParser();
         Calendar cal = du.getCalendar(when0);
         assertEquals(cal, track.getWhens().get(0));
         cal = du.getCalendar(when1);
@@ -157,7 +157,7 @@ public class TrackTest {
         final GxFactory gxFactory = DefaultGxFactory.getInstance();
         final KmlFactory kmlFactory = DefaultKmlFactory.getInstance();
 
-        final FastDateParser du = new FastDateParser();
+        final ISODateParser du = new ISODateParser();
         final Calendar when0 = (Calendar) du.getCalendar("2010-05-28T02:02:09Z").clone();
         final Calendar when1 = (Calendar) du.getCalendar("2010-05-28T02:02:35Z").clone();
 

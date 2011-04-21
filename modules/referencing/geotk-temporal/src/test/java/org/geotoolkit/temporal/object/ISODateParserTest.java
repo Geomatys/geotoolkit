@@ -35,9 +35,9 @@ import static java.util.Calendar.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class FastDateParserTest {
+public class ISODateParserTest {
 
-    public FastDateParserTest() {
+    public ISODateParserTest() {
     }
 
     @BeforeClass
@@ -58,7 +58,7 @@ public class FastDateParserTest {
 
     @Test
     public void testConformance() throws ParseException {
-        final FastDateParser fdp = new FastDateParser();
+        final ISODateParser fdp = new ISODateParser();
 
         String str;
         Calendar calendar = Calendar.getInstance();
@@ -411,7 +411,7 @@ public class FastDateParserTest {
 
         final SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'");
         sdf.setTimeZone(TimeZone.getTimeZone("GMT+0"));
-        final FastDateParser fdp = new FastDateParser();
+        final ISODateParser fdp = new ISODateParser();
 
         //complete date --------------------------------------------------------
 

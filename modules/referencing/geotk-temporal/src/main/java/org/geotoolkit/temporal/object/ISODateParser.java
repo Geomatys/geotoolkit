@@ -26,7 +26,7 @@ import org.geotoolkit.util.XInteger;
 import org.geotoolkit.util.collection.UnSynchronizedCache;
 
 /**
- * Fast parser for date that match the patterns :
+ * ISO-8601 parser for date that match the patterns :
  * yyyy
  * yyyyZ
  * yyyy'Z'
@@ -53,7 +53,7 @@ import org.geotoolkit.util.collection.UnSynchronizedCache;
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
-public class FastDateParser {
+public class ISODateParser {
 
     private static final TimeZone GMT0 = TimeZone.getTimeZone("GMT+0");
     private final Calendar calendar = Calendar.getInstance();
@@ -71,7 +71,7 @@ public class FastDateParser {
         }
     };
 
-    public FastDateParser() {
+    public ISODateParser() {
         calendar.setTimeZone(GMT0);
         calendar.set(0, 0, 1, 0, 0, 0);
         calendar.set(Calendar.MILLISECOND, 0);

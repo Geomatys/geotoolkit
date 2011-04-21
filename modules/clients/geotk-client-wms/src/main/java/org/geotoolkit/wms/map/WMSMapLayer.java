@@ -38,7 +38,7 @@ import org.geotoolkit.map.AbstractMapLayer;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
 import org.geotoolkit.style.DefaultStyleFactory;
-import org.geotoolkit.temporal.object.FastDateParser;
+import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.wms.GetFeatureInfoRequest;
 import org.geotoolkit.wms.GetMapRequest;
@@ -675,7 +675,7 @@ public class WMSMapLayer extends AbstractMapLayer {
             for(AbstractDimension dim : layer.getAbstractDimension()){
                 if("time".equalsIgnoreCase(dim.getName())){
                     //we found the temporal dimension
-                    final FastDateParser parser = new FastDateParser();
+                    final ISODateParser parser = new ISODateParser();
                     final String[] dates = dim.getValue().split(",");
 
                     final long d = date;

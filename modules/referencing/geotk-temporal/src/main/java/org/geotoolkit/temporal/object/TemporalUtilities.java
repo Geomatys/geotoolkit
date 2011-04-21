@@ -669,7 +669,7 @@ public final class TemporalUtilities {
             }
 
             try {
-                final FastDateParser fp = new FastDateParser();
+                final ISODateParser fp = new ISODateParser();
                 final java.util.Date resultDate = fp.parseToDate(date);
                 if (resultDate != null) {
                     return resultDate;

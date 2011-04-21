@@ -34,7 +34,7 @@ import org.geotoolkit.data.kml.xml.KmlWriter;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.LenientFeatureFactory;
-import org.geotoolkit.temporal.object.FastDateParser;
+import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.xml.DomCompare;
 
 import org.junit.After;
@@ -97,7 +97,7 @@ public class TimeStampTest {
         TimeStamp timeStamp = (TimeStamp) placemark.getProperty(KmlModelConstants.ATT_TIME_PRIMITIVE.getName()).getValue();
         String when = "1876-08-02T22:31:54.543+01:00";
 
-        FastDateParser du = new FastDateParser();
+        ISODateParser du = new ISODateParser();
         Calendar calendarWhen = du.getCalendar(when);
         assertEquals(calendarWhen, timeStamp.getWhen());
         assertEquals(when, KmlUtilities.getXMLFormatedCalendar(calendarWhen,false));

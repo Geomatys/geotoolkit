@@ -37,7 +37,7 @@ import org.geotoolkit.data.osm.model.Transaction;
 import org.geotoolkit.data.osm.model.TransactionType;
 import org.geotoolkit.data.osm.model.User;
 import org.geotoolkit.data.osm.model.Way;
-import org.geotoolkit.temporal.object.FastDateParser;
+import org.geotoolkit.temporal.object.ISODateParser;
 import org.geotoolkit.temporal.object.TemporalUtilities;
 import org.geotoolkit.xml.StaxStreamReader;
 
@@ -54,7 +54,7 @@ import static org.geotoolkit.data.osm.xml.OSMXMLConstants.*;
  */
 public class OSMXMLReader extends StaxStreamReader{
 
-    private final FastDateParser dateParser = new FastDateParser();
+    private final ISODateParser dateParser = new ISODateParser();
     private Envelope envelope;
 
     /**
