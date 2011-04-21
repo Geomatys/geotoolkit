@@ -83,7 +83,7 @@ import org.geotoolkit.util.Utilities;
  * }
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.16
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -136,6 +136,16 @@ public class MonolineFormatter extends Formatter {
             return 0;
         }
     };
+
+    /**
+     * Minimal number of stack trace elements to print before and after the "interesting".
+     * elements. The "interesting" elements are the first stack trace elements, and the
+     * element which point to the method that produced the log record.
+     *
+     * @see #printAbridged
+     * @since 3.18
+     */
+    private static final int CONTEXT_STACK_TRACE_ELEMENTS = 2;
 
     /**
      * The colors to apply, or {@code null} if none.
@@ -540,10 +550,15 @@ loop:   for (int i=0; ; i++) {
         if (exception != null) {
             // If there is no message, print directly the exception.
             if (message != null) {
-                printer.print(message);
-                printer.print('\n'); // Automatically replaced by 'bodyLineSeparator'.
+                printer.println(message);
+                printer.print("Caused by: ");
             }
-            exception.printStackTrace(printer);
+            if (level.intValue() >= LEVEL_THRESHOLD.intValue()) {
+                exception.printStackTrace(printer);
+            } else {
+                printAbridged(exception, printer, record.getLoggerName(),
+                        record.getSourceClassName(), record.getSourceMethodName());
+            }
         } else {
             // If there is no message, print "null".
             printer.print(message);
@@ -555,6 +570,104 @@ loop:   for (int i=0; ; i++) {
         }
         buffer.append(lineSeparator);
         return buffer.toString();
+    }
+
+    /**
+     * Prints an abridged stack trace. This method is invoked when the record is logged at
+     * at low logging level (typically less than {@link Level#INFO}).
+     *
+     * @param exception         The exception to be logged.
+     * @param printer           Where to print the stack trace.
+     * @param loggerName        The name of the logger when the log will be sent.
+     * @param sourceClassName   The name of the class that emitted the log.
+     * @param sourceMethodName  The name of the method that emitted the log.
+     *
+     * @since 3.18
+     */
+    private static void printAbridged(Throwable exception, final PrintWriter printer,
+            final String loggerName, final String sourceClassName, final String sourceMethodName)
+    {
+        StackTraceElement previous = null;
+        // Arbitrary limit of 10 causes to format.
+        for (int numCauses=0; numCauses<10; numCauses++) {
+            final StackTraceElement[] trace = exception.getStackTrace();
+            /*
+             * Find the index of the stack trace element where the log has been produced.
+             * If no exact match is found, some heuristic is applied (the first element
+             * from the same class, or the first element from the logger package). If no
+             * approximative match is found, then the default value is the last element.
+             */
+            int logProducer = trace.length;
+            boolean useLoggerName = true, useClassName = true;
+            for (int i=0; i<trace.length; i++) {
+                final StackTraceElement element = trace[i];
+                final String classname = element.getClassName();
+                if (classname != null) {
+                    if (useLoggerName && classname.startsWith(loggerName)) {
+                        logProducer = i;
+                        useLoggerName = false;
+                    }
+                    if (classname.contains(sourceClassName)) {
+                        final String m = element.getMethodName();
+                        if (m != null && m.equals(sourceMethodName)) {
+                            logProducer = i;
+                            break;
+                        }
+                        if (useClassName) {
+                            logProducer = i;
+                            useClassName = false;
+                        }
+                        useLoggerName = false;
+                    }
+                }
+            }
+            /*
+             * If the stack trace element pointed by 'logProducer' is the same one than
+             * during the previous iteration, it is not worth to print those elements again.
+             */
+            int stopIndex = trace.length;
+            if (logProducer < stopIndex) {
+                final StackTraceElement element = trace[logProducer];
+                if (element.equals(previous)) {
+                    stopIndex = CONTEXT_STACK_TRACE_ELEMENTS;
+                }
+                previous = element;
+            }
+            stopIndex = Math.min(logProducer + (CONTEXT_STACK_TRACE_ELEMENTS + 1), stopIndex);
+            /*
+             * Now format the exception, then redo the loop for the cause (if any).
+             */
+            printer.println(exception);
+            for (int i=0; i<stopIndex; i++) {
+                if (i == CONTEXT_STACK_TRACE_ELEMENTS) {
+                    final int numToSkip = (logProducer - 2*CONTEXT_STACK_TRACE_ELEMENTS);
+                    if (numToSkip > 1) {
+                        more(printer, numToSkip);
+                        i += numToSkip;
+                    }
+                }
+                if (i == logProducer) {
+                    printer.print("  \u2192"); // Right arrow
+                }
+                printer.print("\tat ");
+                printer.println(trace[i]);
+            }
+            more(printer, trace.length - stopIndex);
+            exception = exception.getCause();
+            if (exception == null) break;
+            printer.print("Caused by: ");
+        }
+    }
+
+    /**
+     * Formats the number of stack trace elements that where skipped.
+     */
+    private static void more(final PrintWriter printer, final int numToSkip) {
+        if (numToSkip > 0) {
+            printer.print("... ");
+            printer.print(numToSkip);
+            printer.println(" more");
+        }
     }
 
     /**

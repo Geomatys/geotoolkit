@@ -70,7 +70,7 @@ public final class ScriptTest extends ReferencingTestBase {
         in.close();
         if (out != null) {
             out.println(filename);
-            test.printStatistics();
+            test.printStatistics(out);
             out.println();
         }
         if (test.firstError != null) {

@@ -200,9 +200,6 @@ public final class ISOTest extends TestBase {
             }
             assertSetters(new PropertyAccessor(impl, type), done);
         }
-        if (out != null) {
-            out.println(done);
-        }
     }
 
     /**

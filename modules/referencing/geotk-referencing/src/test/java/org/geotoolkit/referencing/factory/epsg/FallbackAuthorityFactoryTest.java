@@ -84,9 +84,14 @@ public final class FallbackAuthorityFactoryTest extends ReferencingTestBase {
         final Set<CRSAuthorityFactory> factories = AuthorityFactoryFinder.getCRSAuthorityFactories(null);
         boolean foundWkt = false;
         boolean foundExtra = false;
+        if (out != null) {
+            out.println("List of CRSAuthorityFactories in iteration order:");
+            out.println("ExtraEpsgFactory should be after ThreadedEpsgFactory (if present) but before PropertyEpsgFactory.");
+        }
         for (final CRSAuthorityFactory factory : factories) {
             final Class<? extends CRSAuthorityFactory> type = factory.getClass();
             if (out != null) {
+                out.print("  \u2022 ");
                 out.println(type);
             }
             if (type.equals(ExtraEpsgFactory.class)) {

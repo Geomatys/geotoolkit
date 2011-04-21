@@ -180,6 +180,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int CANT_CONVERT_FROM_TYPE_$1 = 24;
 
         /**
+         * Can’t convert from type ‘{0}’ to type ‘{1}’.
+         */
+        public static final int CANT_CONVERT_FROM_TYPE_$2 = 257;
+
+        /**
          * Can’t create directory “{0}”.
          */
         public static final int CANT_CREATE_DIRECTORY_$1 = 25;

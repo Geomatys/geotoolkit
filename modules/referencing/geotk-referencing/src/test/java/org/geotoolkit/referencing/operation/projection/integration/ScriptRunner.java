@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.referencing.operation.projection.integration;
 
+import java.io.Writer;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.LineNumberReader;
@@ -88,7 +89,7 @@ public final class ScriptRunner extends ReferencingConsole {
     /**
      * Prints the number of tests executed, the number of errors and the success rate.
      */
-    final void printStatistics() throws IOException {
+    final void printStatistics(final Writer out) throws IOException {
         NumberFormat f = NumberFormat.getNumberInstance();
         final TableWriter table = new TableWriter(out, 1);
         table.setMultiLinesCells(true);
@@ -135,7 +136,7 @@ public final class ScriptRunner extends ReferencingConsole {
             test.out.write(lineSeparator);
             test.out.flush();
             test.run();
-            test.printStatistics();
+            test.printStatistics(test.out);
             test.out.write(lineSeparator);
             test.out.flush();
             in.close();

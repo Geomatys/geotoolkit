@@ -119,9 +119,15 @@ public class CoordinateOperationFactoryTest extends TransformTestBase {
 
     /**
      * Creates a new test suite which does <strong>not</strong> use {@link AuthorityBackedFactory}.
+     *
+     * @todo We should not need to specify any {@code Hints.DATUM_SHIFT_METHOD} in order to ensure
+     *       that the default is really {@code Molodensky}. Unfortunately letting the default
+     *       factory cause random test failure if a factory using a different method has been
+     *       used previously and still in the cache. We need to see if this problem can be
+     *       avoid after we switch to JSR-330.
      */
     public CoordinateOperationFactoryTest() {
-        this(new Hints(FactoryFinder.FILTER_KEY, FILTER));
+        this(new Hints(FactoryFinder.FILTER_KEY, FILTER, Hints.DATUM_SHIFT_METHOD, "Molodensky"));
     }
 
     /**

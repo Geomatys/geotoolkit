@@ -68,7 +68,7 @@ public final class MonolineFormatterTest extends LocaleDependantTestBase {
         String formatted = formatter.format(record);
         assertMultilinesEquals(
                 "ATTENTION   An exception occured.\n" +
-                "            java.lang.Exception\n" +
+                "            Caused by: java.lang.Exception\n" +
                 "                at org.geotoolkit.NonExistent.foo(NonExistent.java:10)\n" +
                 "                at org.junit.WhoKnows.main(WhoKnows.java:20)\n", formatted);
         /*

@@ -68,6 +68,8 @@ public final class Exceptions {
      * <p>
      * {@link SQLException} is handled especially in order to process the
      * {@linkplain SQLException#getNextException() next exception} instead than the cause.
+     * <p>
+     * This method does not format the stack trace.
      *
      * @param  header The message to insert on the first line, or {@code null} if none.
      * @param  cause  The exception, or {@code null} if none.
@@ -126,8 +128,9 @@ public final class Exceptions {
     }
 
     /**
-     * Returns the exception trace as a string. Tabulation characters will have been
-     * replaced by 4 white spaces.
+     * Returns the exception trace as a string. This method get the stack trace using the
+     * {@link Throwable#printStackTrace(PrintWriter)} method, then replaces the tabulation
+     * characters by 4 white spaces.
      *
      * @param exception The exception to format.
      * @return A string representation of the given exception.

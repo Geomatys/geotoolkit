@@ -366,7 +366,7 @@ public class ConverterRegistry {
         if (target.isAssignableFrom(source)) {
             return key.cast(IdentityConverter.create(source));
         }
-        throw new NonconvertibleObjectException(Errors.format(Errors.Keys.CANT_CONVERT_FROM_TYPE_$1, key.sourceClass));
+        throw new NonconvertibleObjectException(Errors.format(Errors.Keys.CANT_CONVERT_FROM_TYPE_$2, source, target));
     }
 
     /**
