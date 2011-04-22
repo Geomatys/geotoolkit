@@ -124,7 +124,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
      */
     private Object read() throws XMLStreamException {
         while (reader.hasNext()) {
-            final int event = reader.next();
+            final int event = reader.getEventType();
 
             //we are looking for the root mark
             if (event == START_ELEMENT) {
@@ -144,7 +144,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         if (ft.getName().equals(name)) {
                             return readFeature(id, ft);
                         }
-                        expectedFeatureType.append(name).append('\n');
+                        expectedFeatureType.append(ft.getName()).append('\n');
                     }
                 }
 
@@ -152,6 +152,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                                                    "Expected: " + expectedFeatureType.toString() + '\n' +
                                                    "But was: "  + name);
             }
+            reader.next();
         }
         return null;
     }
@@ -263,7 +264,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         if (msg == null && ex.getLinkedException() != null) {
                             msg = ex.getLinkedException().getMessage();
                         }
-                        throw new IllegalArgumentException("JAXB exception while reading the feature geometry: " + msg);
+                        throw new IllegalArgumentException("JAXB exception while reading the feature geometry: " + msg, ex);
                     }
 
                 } else {

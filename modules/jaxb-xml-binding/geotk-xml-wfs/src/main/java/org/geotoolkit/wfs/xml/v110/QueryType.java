@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.ogc.xml.v110.FilterType;
 import org.geotoolkit.ogc.xml.v110.FunctionType;
 import org.geotoolkit.ogc.xml.v110.SortByType;
@@ -254,4 +256,68 @@ public class QueryType {
         this.srsName = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[QueryType]\n");
+        if (featureVersion != null) {
+            sb.append("featureVersion").append(featureVersion).append('\n');
+        }
+        if (filter != null) {
+            sb.append("filter").append(filter).append('\n');
+        }
+        if (handle != null) {
+            sb.append("handle").append(handle).append('\n');
+        }
+        if (sortBy != null) {
+            sb.append("sortBy").append(sortBy).append('\n');
+        }
+        if (srsName != null) {
+            sb.append("srsName").append(srsName).append('\n');
+        }
+        if (typeName != null) {
+            sb.append("typeName:\n");
+            for (QName q : typeName) {
+                sb.append(q).append('\n');
+            }
+        }
+        if (propertyNameOrXlinkPropertyNameOrFunction != null) {
+            sb.append("propertyNameOrXlinkPropertyNameOrFunction:\n");
+            for (Object q : propertyNameOrXlinkPropertyNameOrFunction) {
+                sb.append(q).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + (this.propertyNameOrXlinkPropertyNameOrFunction != null ? this.propertyNameOrXlinkPropertyNameOrFunction.hashCode() : 0);
+        hash = 29 * hash + (this.filter != null ? this.filter.hashCode() : 0);
+        hash = 29 * hash + (this.sortBy != null ? this.sortBy.hashCode() : 0);
+        hash = 29 * hash + (this.handle != null ? this.handle.hashCode() : 0);
+        hash = 29 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
+        hash = 29 * hash + (this.featureVersion != null ? this.featureVersion.hashCode() : 0);
+        hash = 29 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (obj instanceof QueryType) {
+            QueryType that = (QueryType) obj;
+            return Utilities.equals(this.featureVersion, that.featureVersion) &&
+                   Utilities.equals(this.filter, that.filter) &&
+                   Utilities.equals(this.handle, that.handle) &&
+                   Utilities.equals(this.propertyNameOrXlinkPropertyNameOrFunction, that.propertyNameOrXlinkPropertyNameOrFunction) &&
+                   Utilities.equals(this.sortBy, that.sortBy) &&
+                   Utilities.equals(this.srsName, that.srsName) &&
+                   Utilities.equals(this.typeName, that.typeName);
+        }
+        return false;
+    }
 }

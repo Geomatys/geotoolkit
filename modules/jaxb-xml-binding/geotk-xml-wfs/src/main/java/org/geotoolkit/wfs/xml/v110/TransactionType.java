@@ -93,6 +93,24 @@ public class TransactionType extends BaseRequestType {
         }
     }
     
+    public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final InsertElementType insert) {
+        super(service, version, handle);
+        this.releaseAction = releaseAction;
+        this.insertOrUpdateOrDelete = new ArrayList<Object>();
+        if (insert != null) {
+            this.insertOrUpdateOrDelete.add(insert);
+        }
+    }
+    
+    public TransactionType(final String service, final String version, final String handle, final AllSomeType releaseAction, final UpdateElementType udpate) {
+        super(service, version, handle);
+        this.releaseAction = releaseAction;
+        this.insertOrUpdateOrDelete = new ArrayList<Object>();
+        if (udpate != null) {
+            this.insertOrUpdateOrDelete.add(udpate);
+        }
+    }
+    
     /**
      * 
      * In order for a client application to operate upon locked feature instances,

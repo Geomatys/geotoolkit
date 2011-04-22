@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
+import org.geotoolkit.util.Utilities;
 
 /**
  * A GetFeature element contains one or more Query elements that describe a query operation on one feature type.  
@@ -271,4 +272,65 @@ public class GetFeatureType extends BaseRequestType {
         this.featureId = featureId;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (featureId != null) {
+            sb.append("featureId").append(featureId).append('\n');
+        }
+        if (maxFeatures != null) {
+            sb.append("maxFeatures").append(maxFeatures).append('\n');
+        }
+        if (outputFormat != null) {
+            sb.append("outputFormat").append(outputFormat).append('\n');
+        }
+        if (resultType != null) {
+            sb.append("resultType").append(resultType).append('\n');
+        }
+        if (traverseXlinkDepth != null) {
+            sb.append("traverseXlinkDepth").append(traverseXlinkDepth).append('\n');
+        }
+        if (traverseXlinkExpiry != null) {
+            sb.append("traverseXlinkExpiry").append(traverseXlinkExpiry).append('\n');
+        }
+        if (query != null) {
+            sb.append("query:\n");
+            for (QueryType q : query) {
+                sb.append(q).append('\n');
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 17 * hash + (this.query != null ? this.query.hashCode() : 0);
+        hash = 17 * hash + (this.resultType != null ? this.resultType.hashCode() : 0);
+        hash = 17 * hash + (this.outputFormat != null ? this.outputFormat.hashCode() : 0);
+        hash = 17 * hash + (this.maxFeatures != null ? this.maxFeatures.hashCode() : 0);
+        hash = 17 * hash + (this.traverseXlinkDepth != null ? this.traverseXlinkDepth.hashCode() : 0);
+        hash = 17 * hash + (this.traverseXlinkExpiry != null ? this.traverseXlinkExpiry.hashCode() : 0);
+        hash = 17 * hash + (this.featureId != null ? this.featureId.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (obj instanceof GetFeatureType && super.equals(obj)) {
+            GetFeatureType that = (GetFeatureType) obj;
+            return Utilities.equals(this.featureId, that.featureId) &&
+                   Utilities.equals(this.maxFeatures, that.maxFeatures) &&
+                   Utilities.equals(this.outputFormat, that.outputFormat) &&
+                   Utilities.equals(this.query, that.query) &&
+                   Utilities.equals(this.resultType, that.resultType) &&
+                   Utilities.equals(this.traverseXlinkDepth, that.traverseXlinkDepth) &&
+                   Utilities.equals(this.traverseXlinkExpiry, that.traverseXlinkExpiry);
+        }
+        return false;
+    }
 }

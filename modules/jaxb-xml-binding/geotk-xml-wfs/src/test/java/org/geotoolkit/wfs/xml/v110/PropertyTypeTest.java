@@ -80,7 +80,7 @@ public class PropertyTypeTest {
         "    </wfs:Update>"                                                                             + '\n' +
         "</wfs:Transaction>"+ '\n';
 
-        TransactionType result = (TransactionType) ((JAXBElement<TransactionType>)unmarshaller.unmarshal(new StringReader(xml))).getValue();
+        TransactionType result = (TransactionType) unmarshaller.unmarshal(new StringReader(xml));
 
         assertTrue(result.getInsertOrUpdateOrDelete().size() == 1);
         assertTrue(result.getInsertOrUpdateOrDelete().get(0) instanceof UpdateElementType);
@@ -104,7 +104,7 @@ public class PropertyTypeTest {
         "    </wfs:Update>"                                                                          + '\n' +
         "</wfs:Transaction>"+ '\n';
 
-        result = (TransactionType) ((JAXBElement<TransactionType>)unmarshaller.unmarshal(new StringReader(xml))).getValue();
+        result = (TransactionType) unmarshaller.unmarshal(new StringReader(xml));
 
         assertTrue(result.getInsertOrUpdateOrDelete().size() == 1);
         assertTrue(result.getInsertOrUpdateOrDelete().get(0) instanceof UpdateElementType);
@@ -141,7 +141,7 @@ public class PropertyTypeTest {
         "    </wfs:Update>"                                                                             + '\n' +
         "</wfs:Transaction>"                                                                            + '\n';
 
-        TransactionType result = (TransactionType) ((JAXBElement<TransactionType>)unmarshaller.unmarshal(new StringReader(xml))).getValue();
+        TransactionType result = (TransactionType) unmarshaller.unmarshal(new StringReader(xml));
 
         assertTrue(result.getInsertOrUpdateOrDelete().size() == 1);
         assertTrue(result.getInsertOrUpdateOrDelete().get(0) instanceof UpdateElementType);
@@ -175,7 +175,7 @@ public class PropertyTypeTest {
 
         Object result  = unmarshaller.unmarshal(new StringReader(sw.toString()));
 
-        assertEquals(transac, ((JAXBElement)result).getValue());
+        assertEquals(transac, result);
 
         transac = new TransactionType();
         prop = new PropertyType(new QName("something"), new ValueType("jane"));
@@ -186,6 +186,6 @@ public class PropertyTypeTest {
 
         result  = unmarshaller.unmarshal(new StringReader(sw.toString()));
 
-        assertEquals(transac, ((JAXBElement)result).getValue());
+        assertEquals(transac, result);
     }
 }

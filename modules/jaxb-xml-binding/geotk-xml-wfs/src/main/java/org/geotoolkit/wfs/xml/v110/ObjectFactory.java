@@ -40,7 +40,6 @@ import javax.xml.namespace.QName;
 @XmlRegistry
 public class ObjectFactory {
 
-    private static final QName _GetFeature_QNAME = new QName("http://www.opengis.net/wfs", "GetFeature");
     private static final QName _Property_QNAME = new QName("http://www.opengis.net/wfs", "Property");
     private static final QName _Value_QNAME = new QName("http://www.opengis.net/wfs", "Value");
     private static final QName _DescribeFeatureType_QNAME = new QName("http://www.opengis.net/wfs", "DescribeFeatureType");
@@ -58,7 +57,6 @@ public class ObjectFactory {
     private static final QName _LockId_QNAME = new QName("http://www.opengis.net/wfs", "LockId");
     private static final QName _SupportsGMLObjectTypeList_QNAME = new QName("http://www.opengis.net/wfs", "SupportsGMLObjectTypeList");
     private static final QName _Insert_QNAME = new QName("http://www.opengis.net/wfs", "Insert");
-    private static final QName _Transaction_QNAME = new QName("http://www.opengis.net/wfs", "Transaction");
     private static final QName _Query_QNAME = new QName("http://www.opengis.net/wfs", "Query");
     private static final QName _GetFeatureWithLock_QNAME = new QName("http://www.opengis.net/wfs", "GetFeatureWithLock");
     private static final QName _Delete_QNAME = new QName("http://www.opengis.net/wfs", "Delete");
@@ -344,15 +342,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link GetFeatureType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "GetFeature")
-    public JAXBElement<GetFeatureType> createGetFeature(final GetFeatureType value) {
-        return new JAXBElement<GetFeatureType>(_GetFeature_QNAME, GetFeatureType.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link PropertyType }{@code >}}
      * 
      */
@@ -497,15 +486,6 @@ public class ObjectFactory {
     }
 
     /**
-     * Create an instance of {@link JAXBElement }{@code <}{@link TransactionType }{@code >}}
-     * 
-     */
-    @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Transaction")
-    public JAXBElement<TransactionType> createTransaction(final TransactionType value) {
-        return new JAXBElement<TransactionType>(_Transaction_QNAME, TransactionType.class, null, value);
-    }
-
-    /**
      * Create an instance of {@link JAXBElement }{@code <}{@link QueryType }{@code >}}
      * 
      */
@@ -525,7 +505,7 @@ public class ObjectFactory {
 
     /**
      * Create an instance of {@link JAXBElement }{@code <}{@link DeleteElementType }{@code >}}
-     * 
+     *
      */
     @XmlElementDecl(namespace = "http://www.opengis.net/wfs", name = "Delete")
     public JAXBElement<DeleteElementType> createDelete(final DeleteElementType value) {

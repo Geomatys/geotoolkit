@@ -25,7 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 
-
+import org.geotoolkit.util.Utilities;
 
 /**
  * An Insert element may contain a feature collection or one or more feature instances to be inserted into the 
@@ -200,4 +200,55 @@ public class InsertElementType {
         this.srsName = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[InsertElementType]\n");
+        if (idgen != null) {
+            sb.append("idgen").append(idgen).append('\n');
+        }
+        if (inputFormat != null) {
+            sb.append("inputFormat").append(inputFormat).append('\n');
+        }
+        if (handle != null) {
+            sb.append("handle").append(handle).append('\n');
+        }
+        if (srsName != null) {
+            sb.append("srsName").append(srsName).append('\n');
+        }
+        if (feature != null) {
+            sb.append("feature:\n");
+            for (Object q : feature) {
+                sb.append(q).append("\nclass:").append(q.getClass().getName());
+            }
+        }
+        return sb.toString();
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (obj instanceof InsertElementType) {
+            InsertElementType that = (InsertElementType) obj;
+            return Utilities.equals(this.feature, that.feature) &&
+                   Utilities.equals(this.idgen, that.idgen) &&
+                   Utilities.equals(this.handle, that.handle) &&
+                   Utilities.equals(this.inputFormat, that.inputFormat) &&
+                   Utilities.equals(this.srsName, that.srsName);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.feature != null ? this.feature.hashCode() : 0);
+        hash = 17 * hash + (this.idgen != null ? this.idgen.hashCode() : 0);
+        hash = 17 * hash + (this.handle != null ? this.handle.hashCode() : 0);
+        hash = 17 * hash + (this.inputFormat != null ? this.inputFormat.hashCode() : 0);
+        hash = 17 * hash + (this.srsName != null ? this.srsName.hashCode() : 0);
+        return hash;
+    }
 }

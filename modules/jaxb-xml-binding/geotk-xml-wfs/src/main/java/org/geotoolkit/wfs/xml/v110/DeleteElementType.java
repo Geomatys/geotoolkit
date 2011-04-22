@@ -22,8 +22,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.geotoolkit.ogc.xml.v110.FilterType;
 
+import org.geotoolkit.ogc.xml.v110.FilterType;
+import org.geotoolkit.util.Utilities;
 
 /**
  * <p>Java class for DeleteElementType complex type.
@@ -154,4 +155,42 @@ public class DeleteElementType {
         this.typeName = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("[DeleteElementType]\n");
+        if (filter != null) {
+            sb.append("filter").append(filter).append('\n');
+        }
+        if (handle != null) {
+            sb.append("handle").append(handle).append('\n');
+        }
+        if (typeName != null) {
+            sb.append("typeName").append(typeName).append('\n');
+        }
+        return sb.toString();
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        
+        if (obj instanceof DeleteElementType) {
+            DeleteElementType that = (DeleteElementType) obj;
+            return Utilities.equals(this.filter, that.filter) &&
+                   Utilities.equals(this.typeName, that.typeName) &&
+                   Utilities.equals(this.handle, that.handle);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 13 * hash + (this.filter != null ? this.filter.hashCode() : 0);
+        hash = 13 * hash + (this.handle != null ? this.handle.hashCode() : 0);
+        hash = 13 * hash + (this.typeName != null ? this.typeName.hashCode() : 0);
+        return hash;
+    }
 }

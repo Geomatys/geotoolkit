@@ -16,8 +16,10 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import org.apache.xerces.dom.ElementNSImpl;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -110,7 +112,46 @@ public class WfsXMLBindingTest {
         result = WFSBindingUtilities.unmarshall(is, WFSVersion.v110);
         assertEquals(expResult.getFeatureTypeList().getFeatureType(), result.getFeatureTypeList().getFeatureType());
         assertEquals(expResult.getFeatureTypeList(), result.getFeatureTypeList());
+        
+        String xml = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
+                "<wfs:Transaction version=\"1.1.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" " + '\n' +
+                "          xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\">" + '\n' +
+                "    <wfs:Insert idgen=\"UseExisting\">" + '\n' +
+                "    </wfs:Insert>" + '\n' +
+                "</wfs:Transaction>";
 
+        unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
+        
+        assertTrue(unmarshalled instanceof TransactionType);
+        TransactionType resultT = (TransactionType) unmarshalled;
+        
+        InsertElementType ins = new InsertElementType();
+        ins.setIdgen(IdentifierGenerationOptionType.USE_EXISTING);
+        TransactionType expResultT = new TransactionType("WFS", "1.1.0", null, null, ins);
+        
+        assertEquals(expResultT, resultT);
+        
+        xml = 
+                "<?xml version=\"1.0\" encoding=\"UTF-8\"?>" + '\n' +
+                "<wfs:Transaction version=\"1.1.0\" service=\"WFS\" xmlns:gml=\"http://www.opengis.net/gml\" xmlns:ogc=\"http://www.opengis.net/ogc\" " + '\n' +
+                "          xmlns:wfs=\"http://www.opengis.net/wfs\" xmlns:sampling=\"http://www.opengis.net/sampling/1.0\">" + '\n' +
+                "    <wfs:Delete typeName=\"gml:test\">" + '\n' +
+                "    </wfs:Delete>" + '\n' +
+                "</wfs:Transaction>";
+
+        unmarshalled = unmarshaller.unmarshal(new StringReader(xml));
+        
+        assertTrue(unmarshalled instanceof TransactionType);
+        resultT = (TransactionType) unmarshalled;
+        
+        DeleteElementType del = new DeleteElementType();
+        del.setTypeName(new QName("http://www.opengis.net/gml", "test"));
+        expResultT = new TransactionType("WFS", "1.1.0", null, null, del);
+        
+        assertEquals(expResultT, resultT);
+        
+        
     }
 
     @Test
@@ -129,7 +170,8 @@ public class WfsXMLBindingTest {
         marshaller.marshal(capa, sw);
 
 
-        TransactionType transac = new TransactionType("WFS", "1.1.0", null, AllSomeType.ALL, null);
+        DeleteElementType del = null;
+        TransactionType transac = new TransactionType("WFS", "1.1.0", null, AllSomeType.ALL, del);
         PropertyIsLikeType pis = new PropertyIsLikeType("NAME", "Ashton", "*", "?", "\\");
         FilterType filter = new FilterType(pis);
         DirectPositionType dp = new DirectPositionType(21400.0,2001368.0);
