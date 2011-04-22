@@ -98,25 +98,4 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-
-  <!-- ===========================================================
-           Publishes source code
-       =========================================================== -->
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-site-plugin</artifactId>
-        <configuration>
-          <reportPlugins>
-            <plugin>
-              <groupId>org.apache.maven.plugins</groupId>
-              <artifactId>maven-jxr-plugin</artifactId>
-            </plugin>
-          </reportPlugins>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
 </project>

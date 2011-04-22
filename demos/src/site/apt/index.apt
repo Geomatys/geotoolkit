@@ -50,14 +50,12 @@ Geotoolkit.org demos
 
   * Referencing demonstration
 
-    * <<<{{{./geotk-simples/xref/org/geotoolkit/demo/referencing/CoordinateConversion.html}CoordinateConversion}}>>>
-      ({{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}raw}})
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}CoordinateConversion}}>>>
       shows how to convert a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
 
   * Coverage demonstration
 
-    * <<<{{{./geotk-simples/xref/org/geotoolkit/demo/coverage/FloatRaster.html}FloatRaster}}>>>
-      ({{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}raw}})
+    * <<<{{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}FloatRaster}}>>>
       shows how to create an image from a matrix of floating point values.
 
 
