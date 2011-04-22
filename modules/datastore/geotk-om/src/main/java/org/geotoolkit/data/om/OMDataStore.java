@@ -99,6 +99,7 @@ public class OMDataStore extends AbstractDataStore {
     private static final String SQL_ALL_SAMPLING_POINT = "SELECT * FROM \"observation\".\"sampling_points\"";
     private static final String SQL_WRITE_SAMPLING_POINT = "INSERT INTO \"observation\".\"sampling_points\" VALUES(?,?,?,?,?,?,?,?,?)";
     private static final String SQL_GET_LAST_ID = "SELECT COUNT(*) FROM \"observation\".\"sampling_points\"";
+    private static final String SQL_DELETE_SAMPLING_POINT = "DELETE FROM \"observation\".\"sampling_points\" WHERE \"id\" = ?";
 
 
     public OMDataStore(final ManageableDataSource source) {
@@ -139,6 +140,27 @@ public class OMDataStore extends AbstractDataStore {
      * {@inheritDoc }
      */
     @Override
+    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
+        return handleWriterAppend(typeName);
+    }
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
+        final FeatureType sft = getFeatureType(typeName);
+        try {
+            return handleRemaining(new OMWriter(sft), filter);
+        } catch (SQLException ex) {
+            throw new DataStoreException(ex);
+        }
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
     public void dispose() {
         super.dispose();
         try {
@@ -147,15 +169,7 @@ public class OMDataStore extends AbstractDataStore {
             getLogger().info("SQL Exception while closing O&M datastore");
         }
     }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureWriter getFeatureWriterAppend(final Name typeName) throws DataStoreException {
-        return handleWriterAppend(typeName);
-    }
-
+    
     /**
      * {@inheritDoc }
      */
@@ -179,14 +193,6 @@ public class OMDataStore extends AbstractDataStore {
     @Override
     public QueryCapabilities getQueryCapabilities() {
         return capabilities;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public FeatureWriter getFeatureWriter(final Name typeName, final Filter filter) throws DataStoreException {
-        return handleWriter(typeName, filter);
     }
 
     /**
@@ -342,7 +348,7 @@ public class OMDataStore extends AbstractDataStore {
      */
     @Override
     public void removeFeatures(final Name groupName, final Filter filter) throws DataStoreException {
-        throw new DataStoreException("Not supported.");
+        handleRemoveWithFeatureWriter(groupName, filter);
     }
 
 
@@ -350,13 +356,13 @@ public class OMDataStore extends AbstractDataStore {
     // Feature Reader //////////////////////////////////////////////////////////
     ////////////////////////////////////////////////////////////////////////////
 
-    private class OMReader implements FeatureReader{
+    private class OMReader implements FeatureReader {
 
-        private final Connection cnx;
+        protected final Connection cnx;
         private boolean firstCRS = true;
-        private final FeatureType type;
+        protected final FeatureType type;
         private final ResultSet result;
-        private Feature current = null;
+        protected Feature current = null;
 
         private OMReader(final FeatureType type) throws SQLException{
             this.type = type;
@@ -392,7 +398,7 @@ public class OMDataStore extends AbstractDataStore {
             return current != null;
         }
 
-        private void read() throws Exception{
+        protected void read() throws Exception{
             if(current != null) return;
 
             if(!result.next()){
@@ -447,4 +453,56 @@ public class OMDataStore extends AbstractDataStore {
 
     }
 
+    private class OMWriter extends OMReader implements FeatureWriter {
+
+        protected Feature candidate = null;
+        
+        private OMWriter(final FeatureType type) throws SQLException{
+            super(type);
+        }
+        
+        @Override
+        public Feature next() throws DataStoreRuntimeException {
+            try {
+                read();
+            } catch (Exception ex) {
+                throw new DataStoreRuntimeException(ex);
+            }
+            candidate = current;
+            current = null;
+            return candidate;
+        }
+        
+        @Override
+        public void remove() throws DataStoreRuntimeException{
+            
+            if (candidate == null) {
+                return;
+            }
+            
+            PreparedStatement stmtDelete = null;
+            try {
+                stmtDelete = cnx.prepareStatement(SQL_DELETE_SAMPLING_POINT);
+                stmtDelete.setString(1, candidate.getIdentifier().getID());
+                stmtDelete.executeUpdate();
+                
+            } catch (SQLException ex) {
+                LOGGER.log(Level.WARNING, SQL_WRITE_SAMPLING_POINT, ex);
+            } finally {
+                if (stmtDelete != null) {
+                    try {
+                        stmtDelete.close();
+                    } catch (SQLException ex) {
+                        LOGGER.log(Level.WARNING, null, ex);
+                    }
+                }
+            }
+            
+        }
+        
+        @Override
+        public void write() throws DataStoreRuntimeException {
+            throw new DataStoreRuntimeException("Not supported.");
+        }
+    }
 }
