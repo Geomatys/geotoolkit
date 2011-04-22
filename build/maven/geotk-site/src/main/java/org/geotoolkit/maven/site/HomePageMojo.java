@@ -30,6 +30,9 @@ import org.apache.maven.project.MavenProject;
  *
  * <blockquote><code>mvn org.geotoolkit.project:geotk-site:home --non-recursive</code></blockquote>
  *
+ * This Mojo is very specific to the way the Geotk home page is formatted and is absolutely not
+ * for a general usage.
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00
  *
@@ -71,8 +74,14 @@ public class HomePageMojo extends AbstractMojo {
      * Modifies the given home page. This method searches for the two first
      * {@code <div class="section">} strings. A {@code <table>} with a single
      * cell is opened after the first section and closed before the second section.
-     * The purpose of the table is to prevent the second question to be layout at
+     * The purpose of the table is to prevent the second section to be layout at
      * the right side of the image.
+     * <p>
+     * Note there is no expected {@code </div>} strings between the two first
+     * {@code <div class="section">}, because the first {@code <div>} is for
+     * a section of level 1 while the second {@code <div>} is for a section of
+     * level 2. The section of level 1 will be closed only later. This is very
+     * specific to the way the Geotk home page is formatted.
      *
      * @param file The file to the home page to modify.
      * @throws IOException If an error occurred while reading or writing the page.
@@ -83,23 +92,35 @@ public class HomePageMojo extends AbstractMojo {
         int section = 0; // The count of sections.
         String line;
         while ((line = in.readLine()) != null) {
-            final String tl = line.trim();
-            if (tl.length() == 0) {
+            if ((line = line.trim()).length() == 0) {
                 // Skip empty lines (Maven put a lot of them...).
                 continue;
             }
-            if (tl.startsWith("<div class=\"section\">")) {
+            int s = 0;
+            while ((s = line.indexOf("<div class=\"section\">", s)) >= 0) {
+                buffer.append(line.substring(0, s).trim()).append('\n');
+                line = line.substring(s);
                 switch (++section) {
                     case 1: {
-                        buffer.append(line).append('\n');
-                        line = "<table><tr><td><img src=\"images/logos/Troll.jpg\" align=\"left\"/>";
-                        break;
+                        s = line.indexOf("<p>");
+                        if (s < 0) {
+                            // We didn't found the paragraph at the begining of the section.
+                            // Maybe the format changed? Cancel everything; we will not put
+                            // any mascot.
+                            in.close();
+                            return;
+                        }
+                        buffer.append(line.substring(0, s).trim())
+                              .append("\n<table><tr><td><img src=\"images/logos/Troll.jpg\" align=\"left\"/>\n");
+                        line = line.substring(s);
+                        break; // Continue the while loop since the next <div> may be on the same line.
                     }
                     case 2: {
-                        buffer.append("</td></tr></table>").append('\n');
+                        buffer.append("</td></tr></table>\n");
                         break;
                     }
                 }
+                s = 1; // The current line starts with <div...>, but we want to find the next one.
             }
             buffer.append(line).append('\n');
         }

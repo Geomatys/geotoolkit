@@ -150,4 +150,4 @@ RenderedImage ri = covinterpol.getRenderedImage();
   with coordinate and time values rather than forcing us to create the appropriate <<<DirectPosition>>>
   argument.
 
-  Next section: {{{operation.html}Operations on a Grid Coverage}}.
+  Next section: {{{./operation.html}Operations on a Grid Coverage}}.

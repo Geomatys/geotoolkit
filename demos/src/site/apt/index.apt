@@ -29,19 +29,19 @@ Geotoolkit.org demos
   <<<{{{../../modules/display/geotk-widgets-swing/index.html}geotk-widgets-swing}}>>>
   module.
 
-*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
-| {{{geotk-simples/applet/CoordinateChooser.html}CoordinateChooser}}                   | Specify a spatial bounding box, a temporal extent and optionally a spatial resolution. |
-*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
-| {{{geotk-simples/applet/GradientKernelEditor.html}GradientKernelEditor}}             | Select the kernels to use for computing gradient magnitudes in a raster.               |
-*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
-| {{{geotk-simples/applet/IIOMetadataPanel.html}IIOMetadataPanel}}                     | Display the structure of Geotk Image I/O metadata (subsets of ISO 19115-2).            |
-*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
-| {{{geotk-simples/applet/Plot2D.html}Plot2D}}                                         | Display a graph.                                                                       |
-*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
-| {{{geotk-simples/applet/RegisteredOperationBrowser.html}RegisteredOperationBrowser}} | Display the JAI operations registered on the host machine.                             |
-*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
-| {{{geotk-simples/applet/ZoomPane.html}ZoomPane}}                                     | Display a component providing zoom and rotation capabilities.                          |
-*--------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+*----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{./geotk-simples/applet/CoordinateChooser.html}CoordinateChooser}}                   | Specify a spatial bounding box, a temporal extent and optionally a spatial resolution. |
+*----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{./geotk-simples/applet/GradientKernelEditor.html}GradientKernelEditor}}             | Select the kernels to use for computing gradient magnitudes in a raster.               |
+*----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{./geotk-simples/applet/IIOMetadataPanel.html}IIOMetadataPanel}}                     | Display the structure of Geotk Image I/O metadata (subsets of ISO 19115-2).            |
+*----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{./geotk-simples/applet/Plot2D.html}Plot2D}}                                         | Display a graph.                                                                       |
+*----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{./geotk-simples/applet/RegisteredOperationBrowser.html}RegisteredOperationBrowser}} | Display the JAI operations registered on the host machine.                             |
+*----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
+| {{{./geotk-simples/applet/ZoomPane.html}ZoomPane}}                                     | Display a component providing zoom and rotation capabilities.                          |
+*----------------------------------------------------------------------------------------+----------------------------------------------------------------------------------------+
 
 
 * Demonstration code in Java
@@ -50,13 +50,13 @@ Geotoolkit.org demos
 
   * Referencing demonstration
 
-    * <<<{{{geotk-simples/xref/org/geotoolkit/demo/referencing/CoordinateConversion.html}CoordinateConversion}}>>>
+    * <<<{{{./geotk-simples/xref/org/geotoolkit/demo/referencing/CoordinateConversion.html}CoordinateConversion}}>>>
       ({{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/referencing/CoordinateConversion.java}raw}})
       shows how to convert a coordinate from a <Geocentric> CRS to a <Projected> CRS (a World Mercator projection).
 
   * Coverage demonstration
 
-    * <<<{{{geotk-simples/xref/org/geotoolkit/demo/coverage/FloatRaster.html}FloatRaster}}>>>
+    * <<<{{{./geotk-simples/xref/org/geotoolkit/demo/coverage/FloatRaster.html}FloatRaster}}>>>
       ({{{http://hg.geotoolkit.org/geotoolkit/raw-file/tip/demos/geotk-simples/src/main/java/org/geotoolkit/demo/coverage/FloatRaster.java}raw}})
       shows how to create an image from a matrix of floating point values.
 

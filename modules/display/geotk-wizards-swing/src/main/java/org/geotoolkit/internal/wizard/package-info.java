@@ -19,8 +19,7 @@
 /**
  * Wizards build from the widgets provided in {@link org.geotoolkit.gui.swing} packages.
  * <p>
- * Wizard API is available on
- * <a href="https://wizard.dev.java.net/nonav/javadoc/index.html">wizard.dev.java.net</a>.
+ * The Wizard project is available on <a href="http://wizard.dev.java.net/">wizard.dev.java.net</a>.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.01

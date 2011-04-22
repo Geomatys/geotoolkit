@@ -7,8 +7,12 @@ Running Geotoolkit.org
 
   Geotk requires Java 6. No extension is required for the referencing and metadata
   modules. However if the coverage module is also used, then Geotk requires also the
-  {{{https://jai.dev.java.net/binary-builds.html}Java Advanced Imaging}} library.
+  {{{http://jai.dev.java.net/}Java Advanced Imaging}} library
+  ({{{http://download.java.net/media/jai/builds/release/}download}}).
   Note that this library is pre-installed on MacOS X.
+
+  While not mandatory, installation of the {{{http://jai-imageio-core.dev.java.net/}Image I/O for JAI}}
+  library is also recommended ({{{http://download.java.net/media/jai-imageio/builds/release/}download}}).
 
 
 * EPSG database
@@ -26,7 +30,7 @@ Running Geotoolkit.org
   application directory. This is always a sub-directory of the user home directory, but
   the complete path is platform-dependent ("<Application Data>" on Windows, "<Library>"
   on MacOS, the home directory on Linux). The directory can be changed by running the
-  graphical application provided in the {{{modules/utility/geotk-setup/index.html}geotk-setup}}
+  graphical application provided in the {{{./modules/utility/geotk-setup/index.html}geotk-setup}}
   module.
 
   The above-cited Setup application can also create the EPSG database on PostgreSQL,

@@ -8,11 +8,11 @@ OpenOffice add-in
   Provides some Geotk's fonctionalities as OpenOffice add-ins. For example, the add-in
   provides coordinate operation services as formulas inside the Calc spreadsheet.
 
-  * {{{fr/index.html}Installation and usage instructions (French)}}
+  * {{{./fr/index.html}Installation and usage instructions (French)}}
 
 
 * Links for developers
 
-  * {{{build.html}Build instructions}}
+  * {{{./build.html}Build instructions}}
 
   * {{{http://download.openoffice.org/sdk}OpenOffice SDK}}

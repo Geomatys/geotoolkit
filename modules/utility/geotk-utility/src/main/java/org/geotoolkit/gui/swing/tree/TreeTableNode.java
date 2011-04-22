@@ -22,7 +22,7 @@ package org.geotoolkit.gui.swing.tree;
  * Defines the requirements for an object that can be used as a tree node in a
  * {@link org.jdesktop.swingx.treetable.JXTreeTable}. This interface is used as a
  * placeholder for the {@link org.jdesktop.swingx.treetable.TreeTableNode} interface
- * defined in <a href="https://swingx.dev.java.net/">SwingX</a>, in order to identify
+ * defined in <a href="http://swingx.dev.java.net/">SwingX</a>, in order to identify
  * the code where we would use the later interface if we were allowed to introduce
  * <cite>SwingX</cite> dependencies.
  * <p>

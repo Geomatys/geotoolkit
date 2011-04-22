@@ -642,7 +642,7 @@ loop:   for (int i=0; ; i++) {
                 if (i == CONTEXT_STACK_TRACE_ELEMENTS) {
                     final int numToSkip = (logProducer - 2*CONTEXT_STACK_TRACE_ELEMENTS);
                     if (numToSkip > 1) {
-                        more(printer, numToSkip);
+                        more(printer, numToSkip, true);
                         i += numToSkip;
                     }
                 }
@@ -652,7 +652,7 @@ loop:   for (int i=0; ; i++) {
                 printer.print("\tat ");
                 printer.println(trace[i]);
             }
-            more(printer, trace.length - stopIndex);
+            more(printer, trace.length - stopIndex, false);
             exception = exception.getCause();
             if (exception == null) break;
             printer.print("Caused by: ");
@@ -662,11 +662,15 @@ loop:   for (int i=0; ; i++) {
     /**
      * Formats the number of stack trace elements that where skipped.
      */
-    private static void more(final PrintWriter printer, final int numToSkip) {
+    private static void more(final PrintWriter printer, final int numToSkip, final boolean con) {
         if (numToSkip > 0) {
             printer.print("... ");
             printer.print(numToSkip);
-            printer.println(" more");
+            printer.print(" more");
+            if (con) {
+                printer.print(" ...");
+            }
+            printer.println();
         }
     }
 

@@ -21,12 +21,12 @@ java -jar geotk.jar
 
   Available wizards are:
 
-  * <<{{{MosaicWizard.html}Mosaic wizard}}>> for creating a mosaic and a pyramid of images from a
+  * <<{{{./MosaicWizard.html}Mosaic wizard}}>> for creating a mosaic and a pyramid of images from a
     single image or an other mosaic.
 
-  * <<{{{CoverageDatabaseInstaller.html}Coverage database installer}}>> for creating the schema
+  * <<{{{./CoverageDatabaseInstaller.html}Coverage database installer}}>> for creating the schema
     required by the {{{../../coverage/geotk-coverage-sql/index.html}coverage-sql module}} in
     an initially empty PostgreSQL database.
 
-  * <<{{{AddCoverages.html}Coverages browser}}>> for browsing and adding coverages in a
+  * <<{{{./AddCoverages.html}Coverages browser}}>> for browsing and adding coverages in a
     database created by the {{{../../coverage/geotk-coverage-sql/index.html}coverage-sql module}}.

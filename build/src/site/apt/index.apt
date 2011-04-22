@@ -10,7 +10,7 @@ Building Geotoolkit.org
   both on the Maven repository and on the {{{http://download.geotoolkit.org}download area}}. If
   nevertheless there is a need to build Geotk on a local machine, then this page describes the steps.
 
-  Project administrators may be interested in the {{{release/index.html}release page}} instead.
+  Project administrators may be interested in the {{{./release/index.html}release page}} instead.
 
 
 * Requirements
@@ -19,9 +19,14 @@ Building Geotoolkit.org
 
     * Java Development Kit (JDK) version 6.
 
-    * {{{https://jai.dev.java.net/binary-builds.html}Java Advanced Imaging}} (JAI) version 1.1.3 or later.
+    * {{{http://jai.dev.java.net/}Java Advanced Imaging}} (JAI) version 1.1.3 or later
+      ({{{http://download.java.net/media/jai/builds/release/}download}}).
 
-    * {{{http://maven.apache.org}Maven 2.1}} or later.
+    * {{{http://jai-imageio-core.dev.java.net/}Image I/O for JAI}} version 1.1 or later
+      ({{{http://download.java.net/media/jai-imageio/builds/release/}download}}).
+      This installation is actually optional but recommended.
+
+    * {{{http://maven.apache.org}Maven 3.0.3}} or later.
 
     * {{{http://mercurial.selenic.com}Mercurial}} (if Geotk is going to be fetched from the source code repository).
 

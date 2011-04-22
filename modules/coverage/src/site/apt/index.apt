@@ -9,11 +9,11 @@ Coverage
   (in <<<geotk-coverage>>>) and various extensions. See the "Modules" links on the left side for
   information about each individual component.
 
-  * {{{create.html}Create a Grid Coverage}}
+  * {{{./create.html}Create a Grid Coverage}}
 
-  * {{{use.html}Use a Grid Coverage}}
+  * {{{./use.html}Use a Grid Coverage}}
 
-  * {{{operation.html}Operations on a Grid Coverage}}
+  * {{{./operation.html}Operations on a Grid Coverage}}
 
 
 * Overview of Coverage handling in Geotk
@@ -97,7 +97,7 @@ Coverage
   georeferenced space of the real world for the resultant <<<GridCoverage>>>. This approach allows
   for rotated imagery, axis order switching and other more complex transforms.
 
-  For more details, see {{{create.html}Create a Grid Coverage}}.
+  For more details, see {{{./create.html}Create a Grid Coverage}}.
 
 
 *** GridCoverage views

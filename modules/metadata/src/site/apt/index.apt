@@ -11,7 +11,7 @@ Metadata
 
   * Getting started
 
-  * {{{faq.html}Frequently Asked Questions}}
+  * {{{./faq.html}Frequently Asked Questions}}
 
 
 * Overview of Metadata handling in Geotoolkit.org
@@ -62,7 +62,7 @@ Metadata
   * The implementation is not required to exist as source code. They can be generated
     on the fly with <<<java.lang.reflect.Proxy>>>. This is the approach taken by the
     <<<org.geotoolkit.metadata.sql>>> package for generating metadata implementations
-    backed by the content of a database (see also the {{{faq.html#proxy}FAQ entry}}).
+    backed by the content of a database (see also the {{{./faq.html#proxy}FAQ entry}}).
 
 
 ** How Metadata are handled

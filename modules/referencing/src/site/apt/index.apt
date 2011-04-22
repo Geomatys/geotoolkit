@@ -11,9 +11,9 @@ Referencing
 
   * Getting started
 
-  * {{{faq.html}Frequently Asked Questions}}
+  * {{{./faq.html}Frequently Asked Questions}}
 
-  * {{{supported-codes.html}List of authority codes}}
+  * {{{./supported-codes.html}List of authority codes}}
 
   * {{{../../apidocs/org/geotoolkit/referencing/operation/provider/package-summary.html}List of supported transforms}}
 

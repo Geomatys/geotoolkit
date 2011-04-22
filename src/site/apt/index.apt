@@ -43,7 +43,7 @@ The Geotoolkit.org library
 * License
 
   Geotk is free software, distributed to all under the license terms of the GNU Lesser
-  General Public license version 2.1. See the {{{license.html}license}} page for details.
+  General Public license version 2.1. See the {{{./license.html}license}} page for details.
 
 
 
@@ -53,11 +53,11 @@ The Geotoolkit.org library
   newer. That is the only requirement for the base modules up to and including the Referencing
   module. To use the coverage module, Geotk also requires the Java Advanced Imaging\ (JAI)
   libraries available from Sun Microsystems. The module currently requires JAI version 1.1.3 or
-  greater. The JAI libraries can be obtained from {{{https://jai.dev.java.net/binary-builds.html}the
-  JAI website}}. When installed, the JAI download will place a JAR file and some native code into
-  the Java Runtime Environment.
+  greater. The JAI libraries can be obtained from {{{http://jai.dev.java.net/}the JAI website}}
+  ({{{http://download.java.net/media/jai/builds/release/}download}}). When installed, the JAI
+  download will place a JAR file and some native code into the Java Runtime Environment.
 
-  The {{{download.html}download page}} explains in detail how to obtain pre-compiled binaries of
+  The {{{./download.html}download page}} explains in detail how to obtain pre-compiled binaries of
   Geotk either from the {{{http://maven.geotoolkit.org/}Maven\ 2 repository}} or from the
   {{{http://hudson.geomatys.com/job/Geotoolkit/}automated build page}}. The
   Maven\ 2 repository enables projects which use that built tool to declare a dependency on
@@ -67,7 +67,7 @@ The Geotoolkit.org library
   providing the full functionality of the library. Other bundles are provided which contain
   different subsets of the project. A source bundle and a Javadoc bundle are also available.
 
-  The {{{use.html}Introduction to Geotoolkit.org}} provides a brief explanation of how to create
+  The {{{./use.html}Introduction to Geotoolkit.org}} provides a brief explanation of how to create
   applications which use the library.
 
 
@@ -98,7 +98,7 @@ mvn install
    connection. {{{http://maven.apache.org/}Maven}} provides a powerful build tool for the
    management of Java language projects.
 
-   The {{{develop.html}Developing Geotoolkit.org}} page explains the basics of how to write code which
+   The {{{./develop.html}Developing Geotoolkit.org}} page explains the basics of how to write code which
    is coherently integrated into the Geotk system.
 
 
@@ -110,7 +110,7 @@ mvn install
   maintain high quality standards and evolve systematically with improvements in the Java language
   and with new technical visions of its contributors.
 
-  The {{{project.html}Geotoolkit.org Project}} page provides more information on the Geotk project.
+  The {{{./project.html}Geotoolkit.org Project}} page provides more information on the Geotk project.
 
 
 ~~** History
@@ -122,4 +122,4 @@ mvn install
   GeoTools\ 2 project with the intent to clean the code base, remove duplicate functionality, reduce
   dependencies, fully document the javadoc API, and ensure that the code could be built daily.
 
-  The {{{history.html}Geotoolkit.org History}} page provides a more complete history of the project.
+  The {{{./history.html}Geotoolkit.org History}} page provides a more complete history of the project.

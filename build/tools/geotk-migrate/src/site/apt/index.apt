@@ -59,7 +59,7 @@ java -jar [PATH TO THE JAR]/geotk-migrate.jar [OPTION]
 
 * Notable changes.
 
-  See the {{{changes.html}summary of changes since GeoTools}} for an overview of conceptual changes.
+  See the {{{./changes.html}summary of changes since GeoTools}} for an overview of conceptual changes.
 
-  See the {{{errors.html}common compiler errors}} for changes that can not be performed by
+  See the {{{./errors.html}common compiler errors}} for changes that can not be performed by
   the automatic tools. Those changes need to be applied manually.

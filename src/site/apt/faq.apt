@@ -9,23 +9,23 @@ Frequently Asked Questions
 
   So far, the questions which have been asked focus on the Referencing group of modules:
 
-  * {{{modules/display/faq.html}Display FAQ}}
+  * {{{./modules/display/faq.html}Display FAQ}}
 
-  * {{{modules/coverage/faq.html}Coverage FAQ}}
+  * {{{./modules/coverage/faq.html}Coverage FAQ}}
 
-  * {{{modules/referencing/faq.html}Referencing FAQ}}
+  * {{{./modules/referencing/faq.html}Referencing FAQ}}
 
-  * {{{modules/metadata/faq.html}Metadata FAQ}}
+  * {{{./modules/metadata/faq.html}Metadata FAQ}}
 
 
 Other resources
 
-  * {{{build/tools/geotk-migrate/changes.html}Summary of changes compared to GeoTools 2.6}}
+  * {{{./build/tools/geotk-migrate/changes.html}Summary of changes compared to GeoTools 2.6}}
 
 
 Getting help
 
-  * {{{mail-lists.html}Geotoolkit.org mailing list}} (English)
+  * {{{./mail-lists.html}Geotoolkit.org mailing list}} (English)
 
   * {{{http://www.developpez.net/forums/f1254/applications/sig-systeme-dinformation-geographique/}<Système
     d'information géographique> forum}} (French, various libraries including Geotoolkit.org)

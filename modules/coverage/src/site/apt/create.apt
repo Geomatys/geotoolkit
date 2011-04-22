@@ -8,7 +8,7 @@ Create a Grid Coverage
   The process of creating a <<<GridCoverage>>> starts with creating an <<<ImageReader>>> to access
   the contents of the original data in some source, such as a file on disk. This <<<ImageReader>>>
   will need to provide both a <<<RenderedImage>>> and an object which extends <<<IIOMetadata>>>.
-  See the {{{geotk-coverageio/index.html}geotk-coverageio}} module for more information on this topic.
+  See the {{{./geotk-coverageio/index.html}geotk-coverageio}} module for more information on this topic.
 
 
 * Create GridCoverage2D objects
@@ -105,4 +105,4 @@ GridCoverage2D myGridCoverage = fac.create("Paris Elevation", img, env, sampdims
 
   These steps can all be wrapped up into the builder class.
 
-  Next section: {{{use.html}Use a Grid Coverage}}.
+  Next section: {{{./use.html}Use a Grid Coverage}}.
