@@ -21,15 +21,18 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
+import java.awt.geom.Point2D;
 import java.awt.geom.AffineTransform;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.referencing.operation.matrix.Matrix2;
 
 import static java.lang.Math.*;
 
@@ -60,7 +63,8 @@ import static java.lang.Math.*;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -289,5 +293,46 @@ public class Orthographic extends UnitaryProjection {
             // All other fields are derived from the latitude of origin.
         }
         return false;
+    }
+
+    /**
+     * Gets the derivative of this transform at a point.
+     *
+     * @param  point The coordinate point where to evaluate the derivative.
+     * @return The derivative at the specified point as a 2&times;2 matrix.
+     * @throws ProjectionException if the derivative can't be evaluated at the specified point.
+     *
+     * @since 3.18
+     */
+    @Override
+    public Matrix derivative(final Point2D point) throws ProjectionException {
+        final double λ = rollLongitude(point.getX());
+        final double φ = point.getY();
+        final double sinλ = sin(λ);
+        final double cosλ = cos(λ);
+        final double sinφ = sin(φ);
+        final double cosφ = cos(φ);
+        final double m00, m01, m10, m11;
+
+        m00 =  cosφ * cosλ;
+        m01 = -sinφ * sinλ;
+        switch (type) {
+            default: { // Oblique
+                m10 = sinphi0 * cosφ * sinλ;
+                m11 = cosphi0 * cosφ + sinphi0*cosλ*sinφ;
+                break;
+            }
+            case 0: { // Equatorial
+                m10 = 0;
+                m11 = cosφ;
+                break;
+            }
+            case 1: { // Polar (South case, applicable to North because of (de)normalize transforms)
+                m10 = -cosφ * sinλ;
+                m11 = -sinφ * cosλ;
+                break;
+            }
+        }
+        return new Matrix2(m00, m01, m10, m11);
     }
 }

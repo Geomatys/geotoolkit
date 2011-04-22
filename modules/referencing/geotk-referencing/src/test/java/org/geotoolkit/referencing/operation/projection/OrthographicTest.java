@@ -17,11 +17,14 @@
  */
 package org.geotoolkit.referencing.operation.projection;
 
-import org.junit.*;
+import java.awt.geom.Point2D;
+
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.referencing.operation.transform.CoordinateDomain;
+
+import org.junit.*;
 
 import static org.junit.Assert.*;
 import static org.geotoolkit.referencing.operation.provider.Orthographic.PARAMETERS;
@@ -31,7 +34,8 @@ import static org.geotoolkit.referencing.operation.provider.Orthographic.PARAMET
  * Tests the {@link Orthographic} class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @author Rémi Maréchal (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  */
@@ -40,7 +44,7 @@ public class OrthographicTest extends ProjectionTestBase {
     /**
      * Tolerance level for comparing floating point numbers.
      */
-    private static final double TOLERANCE = 1E-11;
+    private static final double TOLERANCE = 1E-11, DERIVATIVE_TOLERANCE = 1E-9;
 
     /**
      * Creates a default test suite.
@@ -75,6 +79,14 @@ public class OrthographicTest extends ProjectionTestBase {
         validate();
         assertTrue(isSpherical());
         stress(CoordinateDomain.GEOGRAPHIC_RADIANS_HALF, 209067359);
+
+        // Test the derivative on the same MathTransform than above.
+        tolerance = DERIVATIVE_TOLERANCE;
+        final double delta = Math.toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final Point2D.Double point = new Point2D.Double();
+        point.x = Math.toRadians(5);
+        point.y = Math.toRadians(3);
+        checkDerivative2D(point, delta);
     }
 
     /**
@@ -96,7 +108,35 @@ public class OrthographicTest extends ProjectionTestBase {
              * result is equivalent to using positive latitudes in the first place.
              */
             stress(CoordinateDomain.GEOGRAPHIC_RADIANS_NORTH, 753524735);
+
+            // Test the derivative on the same MathTransform than above.
+            tolerance = DERIVATIVE_TOLERANCE;
+            final double delta = Math.toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+            final Point2D.Double point = new Point2D.Double();
+            point.x = Math.toRadians(5);
+            point.y = Math.toRadians(85);
+            checkDerivative2D(point, delta);
         } while ((south = !south) == true);
+    }
+
+    /**
+     * Tests the unitary oblique projection on a sphere.
+     *
+     * @throws TransformException Should never happen.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testDerivative() throws TransformException {
+        tolerance = DERIVATIVE_TOLERANCE;
+        transform = create(10, 60);
+        validate();
+
+        final double delta = Math.toRadians(1.0 / 60) / 1852; // Approximatively one metre.
+        final Point2D.Double point = new Point2D.Double();
+        point.x = Math.toRadians(5);
+        point.y = Math.toRadians(30);
+        checkDerivative2D(point, delta);
     }
 
     /**
