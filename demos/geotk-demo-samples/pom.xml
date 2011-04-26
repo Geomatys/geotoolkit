@@ -5,15 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
-        <groupId>org.geotoolkit.demo</groupId>
+        <groupId>org.geotoolkit.pending.demo</groupId>
         <artifactId>demos</artifactId>
-        <version>SNAPSHOT</version>
+        <version>3.x-SNAPSHOT</version>
     </parent>
 
-    <groupId>org.geotoolkit.demo</groupId>
+    <groupId>org.geotoolkit.pending.demo</groupId>
     <artifactId>geotk-demo-samples</artifactId>
     <packaging>jar</packaging>
-    <version>SNAPSHOT</version>
     <name>Demo : samples</name>
     <url>http://www.geotoolkit.org</url>
 

@@ -15,7 +15,7 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geometry</artifactId>
-    <version>SNAPSHOT</version>
+    <version>3.x-SNAPSHOT</version>
   </parent>
 
 

@@ -14,7 +14,7 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>osm</artifactId>
-    <version>SNAPSHOT</version>
+    <version>3.x-SNAPSHOT</version>
   </parent>
 
 
@@ -86,7 +86,6 @@
                   <artifactId>stax-api</artifactId>
               </exclusion>
           </exclusions>
-          <version>4.0.6</version>
       </dependency>
   </dependencies>
 

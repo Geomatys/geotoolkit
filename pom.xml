@@ -16,7 +16,7 @@
   <modelVersion>4.0.0</modelVersion>
 
   <prerequisites>
-    <maven>2.0.9</maven>
+    <maven>3.0.2</maven>
   </prerequisites>
 
 
@@ -27,7 +27,7 @@
   <groupId>org.geotoolkit.pending</groupId>
   <artifactId>geotoolkit</artifactId>
   <packaging>pom</packaging>
-  <version>SNAPSHOT</version>
+  <version>3.x-SNAPSHOT</version>
   <name>Geotoolkit-pending</name>
   <url>http://pending.geotoolkit.org/</url>
 
@@ -120,7 +120,7 @@
   <!-- =========================================================== -->
 
   <properties>
-    <geotoolkit.version>SNAPSHOT</geotoolkit.version>
+    <geotoolkit.version>3.x-SNAPSHOT</geotoolkit.version>
   </properties>
 
   <dependencyManagement>
@@ -234,72 +234,30 @@
       </dependency>
 
       <!-- GeotoolKit -->
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-referencing</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-utility</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-metadata</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-metadata-fra</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-metadata-sql</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-coverage</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-coverageio</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-display</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-test</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-widgets-swing</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit.project</groupId>
-        <artifactId>geotk-provided</artifactId>
-	    <version>${geotoolkit.version}</version>      
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-epsg</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.geotoolkit</groupId>
-        <artifactId>geotk-storage</artifactId>
-        <version>${geotoolkit.version}</version>
-      </dependency>
-
+      <dependency><groupId>org.geotoolkit.project</groupId><artifactId>geotk-test</artifactId>      <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit.project</groupId><artifactId>geotk-provided</artifactId>  <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-analytics</artifactId>         <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-clustering</artifactId>        <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverage</artifactId>          <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverage-sql</artifactId>      <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverageio</artifactId>        <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-coverageio-netcdf</artifactId> <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-display</artifactId>           <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-epsg</artifactId>              <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-epsg-javadb</artifactId>       <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-metadata</artifactId>          <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-metadata-fra</artifactId>      <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-metadata-sql</artifactId>      <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-nature</artifactId>            <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-openoffice</artifactId>        <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-referencing</artifactId>       <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-referencing3D</artifactId>     <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-setup</artifactId>             <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-storage</artifactId>           <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-utility</artifactId>           <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-widgets-swing</artifactId>     <version>${geotoolkit.version}</version></dependency>
+      <dependency><groupId>org.geotoolkit</groupId><artifactId>geotk-wizards-swing</artifactId>     <version>${geotoolkit.version}</version></dependency>
+      
       <!-- Batik SVG -->
       <dependency>
         <groupId>org.apache.xmlgraphics</groupId>
@@ -344,13 +302,18 @@
       <dependency>
         <groupId>org.netbeans.api</groupId>
         <artifactId>org-netbeans-swing-outline</artifactId>
-        <version>RELEASE691</version>
+        <version>RELEASE70</version>
       </dependency>
 
       <dependency>
         <groupId>xerces</groupId>
         <artifactId>xercesImpl</artifactId>
         <version>2.7.1</version>
+      </dependency>
+      <dependency>
+          <groupId>org.codehaus.woodstox</groupId>
+          <artifactId>wstx-lgpl</artifactId>
+          <version>4.0.6</version>
       </dependency>
 
       <dependency>
@@ -378,7 +341,7 @@
         <version>1.1.2</version>
       </dependency>
       
-      <!-- woddstox, for fast and extended stax xml support -->
+      <!-- woodstox, for fast and extended stax xml support -->
       <dependency>
           <groupId>org.codehaus.woodstox</groupId>
           <artifactId>woodstox-core-lgpl</artifactId>
@@ -437,6 +400,30 @@
   <!-- ======================================================= -->
   <!-- sourceEncoding>UTF-8</sourceEncoding -->
   <build>
+      <pluginManagement>
+          <plugins>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-dependency-plugin</artifactId>
+              <version>2.2</version>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-compiler-plugin</artifactId>
+              <version>2.3.2</version>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-resources-plugin</artifactId>
+              <version>2.5</version>
+            </plugin>
+            <plugin>
+              <groupId>org.apache.maven.plugins</groupId>
+              <artifactId>maven-jar-plugin</artifactId>
+              <version>2.3.1</version>
+            </plugin>
+          </plugins>
+      </pluginManagement>
     <plugins>
       <!-- ======================================================= -->
       <!--     Compilation.                                        -->
@@ -448,7 +435,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
-        <version>2.0.2</version>
         <configuration>
           <source>1.6</source>       <!-- The -source argument for the Java compiler.   -->
           <target>1.6</target>       <!-- The -target argument for the Java compiler.   -->
@@ -466,7 +452,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
-        <version>2.5</version>
         <configuration>
           <encoding>UTF-8</encoding>
           <nonFilteredFileExtensions>
@@ -484,7 +469,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-jar-plugin</artifactId>
-        <version>2.3.1</version>
         <executions>
           <execution>
             <phase>package</phase>
@@ -812,6 +796,7 @@
   <!--     Modules for the build in approximate dependency order   -->
   <!-- =========================================================== -->
   <modules>
+    <module>build</module>
     <module>modules</module>
     <module>demos</module>
   </modules>

@@ -15,7 +15,7 @@
     <parent>
         <groupId>org.geotoolkit.pending</groupId>
         <artifactId>coverage</artifactId>
-        <version>SNAPSHOT</version>
+        <version>3.x-SNAPSHOT</version>
     </parent>
 
 

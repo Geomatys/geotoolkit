@@ -14,17 +14,17 @@
   <parent>
     <groupId>org.geotoolkit.pending</groupId>
     <artifactId>geotoolkit</artifactId>
-    <version>SNAPSHOT</version>
+    <version>3.x-SNAPSHOT</version>
   </parent>
 
 
   <!-- =========================================================== -->
   <!--     Module Description                                      -->
   <!-- =========================================================== -->
-  <groupId>org.geotoolkit.demo</groupId>
+  <groupId>org.geotoolkit.pending.demo</groupId>
   <artifactId>demos</artifactId>
   <packaging>pom</packaging>
-  <name>Geotoolkit-pending demos</name>
+  <name>Demos</name>
 
   <description>
     Demonstrations of the Geotoolkit.org pending library.

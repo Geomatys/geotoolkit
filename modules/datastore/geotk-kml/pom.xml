@@ -7,7 +7,7 @@
     <parent>
         <groupId>org.geotoolkit.pending</groupId>
         <artifactId>datastore</artifactId>
-        <version>SNAPSHOT</version>
+        <version>3.x-SNAPSHOT</version>
     </parent>
 
 
@@ -129,7 +129,7 @@
         <dependency>
             <groupId>org.geotoolkit.pending</groupId>
             <artifactId>geotk-temporal</artifactId>
-            <version>SNAPSHOT</version>
+            <version>${project.version}</version>
             <type>jar</type>
         </dependency>
     </dependencies>
