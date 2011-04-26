@@ -6,6 +6,8 @@
       title="Referencing FAQ" toplink="false">
   <part id="intro">
     <title>Getting started</title>
+
+
     <faq id="demos">
       <question>
         How do I transform a coordinate?
@@ -14,6 +16,8 @@
         <p>See the referencing section in the <a href="../../demos/index.html">demos</a> page.</p>
       </answer>
     </faq>
+
+
     <faq id="supportedCodes">
       <question>
         Which EPSG codes are supported?
@@ -22,6 +26,8 @@
         <p>See the <a href="supported-codes.html">Authority codes for Coordinate Reference Systems</a> page.</p>
       </answer>
     </faq>
+
+
     <faq id="axisOrder">
       <question>
         What is the <cite>axis order issue</cite> and how is it addressed?
@@ -56,7 +62,7 @@
         Text</cite> (WKT) specification</a> is part of an older OGC standard. According that widely-used standard, CRS created by calls to the
         <code><a href="../../apidocs/org/geotoolkit/referencing/CRS.html#parseWKT(java.lang.String)">CRS.parseWKT(String)</a></code>
         method will have (<var>longitude</var>, <var>latitude</var>) or (<var>x</var>,<var>y</var>) axis order
-        by default if no <code>AXIS[...]</code> elements were explicitly specified in the WKT.</p>
+        by default if no <code>AXIS[…]</code> elements were explicitly specified in the WKT.</p>
 
         <p>For any CRS identified by an EPSG code, the official axis order can be checked on the
         <a href="http://www.epsg-registry.org">http://www.epsg-registry.org</a> web site: Click on
@@ -66,7 +72,6 @@
     </faq>
   </part>
 
-  <!-- ======================================================================================== -->
 
   <part id="crs">
     <title>Coordinate Reference Systems</title>
@@ -112,6 +117,8 @@ CoordinateReferenceSystem crs = CRS.decode("AUTO:42001," + centralMeridian + ","
         class, and build a <code>DefaultProjectedCRS</code> instance using it.</p>
       </answer>
     </faq>
+
+
     <faq id="Google">
       <question>
         How do I instantiate a Google projection?
@@ -143,56 +150,36 @@ CoordinateReferenceSystem crs = CRS.decode("AUTO:42001," + centralMeridian + ","
         Visualisation Pseudo Mercator</cite>".</p>
       </answer>
     </faq>
-    <faq id="JavaDB">
+
+
+    <faq id="projectionKind">
       <question>
-        How to fix the "No suitable driver found for jdbc:derby" exception?
+        How can I identify the projection kind of a CRS?
       </question>
       <answer>
-        <p>If you are developing a desktop application with Maven, make sure that your project declares
-        a dependency to the <code>derby</code> artifact from the <code>org.apache.derby</code> group.
-        This is not done automatically by Geotk (except the <a href="geotk-epsg-javadb">geotk-epsg-javadb</a>
-        convenience module) because the choice of the database engine (Access, PostgreSQL, <i>etc.</i>)
-        is left to the users.</p>
+      <p>The "kind of projection" (<cite>Mercator</cite>, <cite>Lambert Conformal</cite>, <i>etc.</i>)
+      is called <cite>Operation Method</cite> in ISO 19111 terminology. A good implementation independent
+      approach is to check the value of <code>OperationMethod.getName()</code>. The operation method names
+      are somewhat standardized in various ways. Some reliable names are the "<cite>OGC WKT Name</cite>"
+      listed in the <a href="http://www.remotesensing.org/geotiff/proj_list/">remotesensing.org</a> web
+      site.</p>
 
-        <p>If you are developing a desktop application without Maven, make sure that the
-        <code>derby.jar</code> file is presents on the classpath.</p>
+      <p>For each projection supported by Geotk, the various operation method names are available
+      (indirectly) in the <code>PARAMETERS</code> constant defined in each class of the
+      <a href="../../apidocs/org/geotoolkit/referencing/operation/provider/package-summary.html">providers</a>
+      package. The example below uses the constant defined in the <code>AlbersEqualArea</code> class in order
+      to verify if the name of the given operation method is any name or alias known to be associated to the
+      <cite>Albers Equal Area</cite> projection:</p>
 
-        <p>If you are developing a server application to be deployed in a container like
-        Glassfish or Tomcat, make sure that the Derby dependency does <strong>not</strong> appear
-        in the WAR file. <strong>This is the opposite of what one may intuitively think</strong>.
-        See the <a href="geotk-epsg-javadb">geotk-epsg-javadb</a> module for more explanation.</p>
+<blockquote><pre>ProjectedCRS crs = ...;
+OperationMethod method = crs.getConversionFromBase().getMethod();
+if (AbstractIdentifiedObject.nameMatches(method, AlbersEqualArea.PARAMETERS)) {
+    // Do some stuff here...
+}</pre></blockquote>
       </answer>
     </faq>
-    <faq id="embedded">
-      <question>
-        Can I embed a small EPSG factory in my application without the need for JavaDB?
-      </question>
-      <answer>
-        <p>Yes. The GeoTools project was used to provide a <code>gt-epsg-wkt</code> module, which
-        contain a plain text file listing various CRS in their <cite>Well Known Text</cite> (WKT)
-        format. This text file is not provided in Geotk because it contained only a subset of the
-        EPSG database, and the CRS defined in that file are not fully compliant with EPSG (especially
-        regarding axis order). However Geotk provides the factory class that exploit this file, but it
-        is up to the user to provide the file itself with the CRS of his choice. The only required
-        action is to make that file available in the classpath (typically inside a JAR file) under
-        the following directory and name:</p>
 
-<blockquote><pre>org/geotoolkit/referencing/factory/epsg/epsg.properties</pre></blockquote>
 
-        <p>No coding is required to make it works, unless you wish to search for the
-        <code>epsg.properties</code> file in an other directory (see
-        <code><a href="../../apidocs/org/geotoolkit/referencing/factory/epsg/PropertyEpsgFactory.html">PropertyEpsgFactory</a></code>
-        for more information). In order to create a <code>epsg.properties</code> file, the resources provided in the GeoTools
-        <code><a href="https://svn.osgeo.org/geotools/trunk/modules/plugin/epsg-wkt">gt-epsg-wkt</a></code>
-        module can be used as a starting point</p>
-
-        <p>Note that if a connection to an EPSG database is found, then that database will have
-        precedence over the CRS defined in the properties file. If the properties file seems to
-        be ignored when it should not, the code snippet provided in the
-        <code><a href="../../apidocs/org/geotoolkit/referencing/factory/FactoryDependencies.html">FactoryDependencies</a></code>
-        javadoc may provide useful informations for debugging purpose.</p>
-      </answer>
-    </faq>
     <faq id="lookupIdentifier">
       <question>
         How do I get the EPSG code of an existing CRS?
@@ -210,7 +197,7 @@ CoordinateReferenceSystem crs = CRS.decode("AUTO:42001," + centralMeridian + ","
 
         <p>If the collection of identifiers is empty, the most effective fix is to make sure that
         the WKT contains an <code>AUTHORITY</code> declaration. If this is not possible, then the
-        <code>org.geotoolkit.referencing.CRS</code> class contains some <code>lookupIdentifier(...)</code>
+        <code>org.geotoolkit.referencing.CRS</code> class contains some <code>lookupIdentifier(…)</code>
         convenience methods which may help. Example:</p>
 
 <blockquote><pre>CoordinateReferenceSystem myCRS = ...;
@@ -228,9 +215,11 @@ if (identifier != null) {
         longitude axis to appear first.</p>
       </answer>
     </faq>
+
+
     <faq id="lookupURN">
       <question>
-        How do I get the URN of an existing CRS?
+        How do I get the "<code>urn:ogc:def:crs:…</code>" URN of an existing CRS?
       </question>
       <answer>
         <p>OGC defines URN for CRS identifiers, for example <code>"urn:ogc:def:crs:epsg:7.1:4326"</code>
@@ -247,18 +236,19 @@ if (identifier != null) {
       <code>"http://www.opengis.net/gml/srs/epsg.xml#4326"</code>.</p>
       </answer>
     </faq>
+
+
     <faq id="lookupReliability">
       <question>
-        Can I rely on <code>CRS.lookupEpsgCode(...)</code> to work correctly as the inverse of
-        <code>CRS.decode(...)</code>?
+        Can I rely on <code>CRS.lookupEpsgCode(…)</code> to work correctly as the inverse of <code>CRS.decode(…)</code>?
       </question>
       <answer>
         <p>For CRS created from the EPSG database, usually yes. Note however that
-        <code>CRS.getDeclaredIdentifier(...)</code> is cheaper and insensitive to the details of
+        <code>CRS.getDeclaredIdentifier(…)</code> is cheaper and insensitive to the details of
         CRS definition, since it never query the database. But it works only if the CRS declares
         explicitly its code, which is the case for CRS created from the EPSG database or parsed
         from a <cite>Well Known Text</cite> (WKT) having an <code>AUTHORITY</code> element. The
-        <code>lookupEpsgCode(...)</code> method on the other hand is robust to erroneous code
+        <code>lookupEpsgCode(…)</code> method on the other hand is robust to erroneous code
         declaration, since it always compares the CRS with the database content. But it fails
         if there is slight mistmatch (for example rounding errors in projection parameters)
         between the supplied CRS and the CRS found in the database.</p>
@@ -283,6 +273,8 @@ if (identifier != null) {
         Object)</a></code>.</p>
       </answer>
     </faq>
+
+
     <faq id="hashCode">
       <question>
         Are CRS objects safe for use as keys in <code>HashMap</code>?
@@ -300,7 +292,6 @@ if (identifier != null) {
     </faq>
   </part>
 
-  <!-- ======================================================================================== -->
 
   <part id="transforms">
     <title>Coordinate transformations</title>
@@ -336,11 +327,12 @@ if (identifier != null) {
           <li><p>If the transform is created from the <code>CoordinateOperationFactory</code>
               interface, then use the following code snippet:</p>
 
-<blockquote><pre>Hints hints = new Hints(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
-factory = FactoryFinder.getCoordinateOperationFactory(hints);</pre></blockquote></li>
+<pre>Hints hints = new Hints(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
+factory = FactoryFinder.getCoordinateOperationFactory(hints);</pre></li>
         </ul>
       </answer>
     </faq>
+
 
     <faq id="axisOrderInTransforms">
       <question>
@@ -383,11 +375,13 @@ System.out.println(targetCRS);</pre></blockquote>
           <li><p>If CRS are created from the <code>AuthorityFactory</code> interface, then use the
               following code snippet (assuming that the EPSG authority is wanted):</p>
 
-<blockquote><pre>Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></blockquote></li>
+<pre>Hints hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></li>
         </ul>
       </answer>
     </faq>
+
+
     <faq id="projectionName">
       <question>
         I have correct axis order but my transformed coordinates are still wrong.
@@ -412,6 +406,8 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
         elements in Well Known Text (WKT) format.</p>
       </answer>
     </faq>
+
+
     <faq id="slightDifferences">
       <question>
         I get slightly different results depending on the environment I’m running in.
@@ -433,25 +429,83 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
         (the later requires manual installation of EPSG database).</p>
       </answer>
     </faq>
+
+
     <faq id="toWGS84">
       <question>
         Can I always expect a transform from an arbitrary CRS to WGS84 to succeed?
       </question>
       <answer>
         <p>For 2D horizontal CRS created from the EPSG database, calls to
-        <code>CRS.findMathTransform(..., true)</code> - where the <code>true</code> argument is
+        <code>CRS.findMathTransform(…, true)</code> - where the <code>true</code> argument is
         for <cite>lenient datum shift</cite> - should generally succeed. For 3D CRS having any
         kind of height different than <cite>ellipsoid height</cite>, or for a 2D CRS of type
         <code>EngineeringCRS</code>, it may fail.</p>
 
-        <p>Note however that even if the call to <code>CRS.findMathTransform(...)</code> succeed,
-        the call to <code>MathTransform.transform(...)</code> may fail or produce <code>NaN</code>
+        <p>Note however that even if the call to <code>CRS.findMathTransform(…)</code> succeed,
+        the call to <code>MathTransform.transform(…)</code> may fail or produce <code>NaN</code>
         or infinity values if the coordinate to transform is far from the projection area of validity.</p>
       </answer>
     </faq>
   </part>
+
+
   <part id="setup">
     <title>Configuration</title>
+    <faq id="JavaDB">
+      <question>
+        How to fix the "<cite>No suitable driver found for jdbc:derby</cite>" exception?
+      </question>
+      <answer>
+        <p>If you are developing a desktop application with Maven, make sure that your project declares
+        a dependency to the <code>derby</code> artifact from the <code>org.apache.derby</code> group.
+        This is not done automatically by Geotk (except the <a href="geotk-epsg-javadb">geotk-epsg-javadb</a>
+        convenience module) because the choice of the database engine (Access, PostgreSQL, <i>etc.</i>)
+        is left to the users.</p>
+
+        <p>If you are developing a desktop application without Maven, make sure that the
+        <code>derby.jar</code> file is presents on the classpath.</p>
+
+        <p>If you are developing a server application to be deployed in a container like
+        Glassfish or Tomcat, make sure that the Derby dependency does <strong>not</strong> appear
+        in the WAR file. <strong>This is the opposite of what one may intuitively think</strong>.
+        See the <a href="geotk-epsg-javadb">geotk-epsg-javadb</a> module for more explanation.</p>
+      </answer>
+    </faq>
+
+
+    <faq id="embedded">
+      <question>
+        Can I embed a small EPSG factory in my application without the need for JavaDB?
+      </question>
+      <answer>
+        <p>Yes. The GeoTools project was used to provide a <code>gt-epsg-wkt</code> module, which
+        contain a plain text file listing various CRS in their <cite>Well Known Text</cite> (WKT)
+        format. This text file is not provided in Geotk because it contained only a subset of the
+        EPSG database, and the CRS defined in that file are not fully compliant with EPSG (especially
+        regarding axis order). However Geotk provides the factory class that exploit this file, but it
+        is up to the user to provide the file itself with the CRS of his choice. The only required
+        action is to make that file available in the classpath (typically inside a JAR file) under
+        the following directory and name:</p>
+
+<blockquote><pre>org/geotoolkit/referencing/factory/epsg/epsg.properties</pre></blockquote>
+
+        <p>No coding is required to make it works, unless you wish to search for the
+        <code>epsg.properties</code> file in an other directory (see
+        <code><a href="../../apidocs/org/geotoolkit/referencing/factory/epsg/PropertyEpsgFactory.html">PropertyEpsgFactory</a></code>
+        for more information). In order to create a <code>epsg.properties</code> file, the resources provided in the GeoTools
+        <code><a href="https://svn.osgeo.org/geotools/trunk/modules/plugin/epsg-wkt">gt-epsg-wkt</a></code>
+        module can be used as a starting point</p>
+
+        <p>Note that if a connection to an EPSG database is found, then that database will have
+        precedence over the CRS defined in the properties file. If the properties file seems to
+        be ignored when it should not, the code snippet provided in the
+        <code><a href="../../apidocs/org/geotoolkit/referencing/factory/FactoryDependencies.html">FactoryDependencies</a></code>
+        javadoc may provide useful informations for debugging purpose.</p>
+      </answer>
+    </faq>
+
+
     <faq id="datasource">
       <question>
         How do I specify connection parameters to my own database?
@@ -465,13 +519,13 @@ factory = AuthorityFactoryFinder.getCRSAuthorityFactory("EPSG", hints);</pre></b
         the following code at some application initialization point, before any Geotk
         referencing code is invoked:</p>
 
-<blockquote><pre>DataSource ds = new ...;
+<blockquote><pre>DataSource ds = new MyDataSource(…);
 Hints.putSystemDefault(Hints.EPSG_DATA_SOURCE, ds);</pre></blockquote>
       </answer>
     </faq>
     <faq id="indexes">
       <question>
-        Queries against my EPSG database are very slow.
+        Queries against my EPSG database are slow.
       </question>
       <answer>
         <p>For better performance, Geotk requires some database indexes in addition to the ones
