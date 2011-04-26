@@ -155,6 +155,14 @@ public class Collector extends AbstractMojo {
                     scope.equalsIgnoreCase(Artifact.SCOPE_RUNTIME)))
                 {
                     final File file = artifact.getFile();
+                    if (file == null) {
+                        /*
+                         * Not sure why the file is sometime null... Maybe we should get the
+                         * file in a different way, but for now I don't know what to do here.
+                         * So wkip the file for now, may revisit later.
+                         */
+                        continue;
+                    }
                     final File copy = new File(collect, getFinalName(file, artifact));
                     if (!artifact.getGroupId().startsWith("org.geotoolkit")) {
                         if (copy.exists()) {
