@@ -43,7 +43,7 @@ zip -d grib-5.1.03.jar ucar/unidata/io/*
 #
 # Remove entry that duplicates geotk-coverage-SNAPSHOT.jar
 #
-zip -d geotk-go2-SNAPSHOT.jar META-INF/registryFile.jai
+zip -d geotk-go2-3.x-SNAPSHOT.jar META-INF/registryFile.jai
 
 #
 # Remove duplicate entries
