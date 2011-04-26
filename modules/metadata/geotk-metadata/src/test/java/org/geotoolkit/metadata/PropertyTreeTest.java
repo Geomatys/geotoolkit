@@ -34,6 +34,7 @@ import org.geotoolkit.gui.swing.tree.TreeFormat;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.metadata.iso.lineage.DefaultProcessing;
 
 import org.junit.*;
 import static org.geotoolkit.test.Assert.*;
@@ -164,5 +165,36 @@ public final class PropertyTreeTest {
         newCitation = new DefaultCitation();
         newCitation.parse(tree);
         assertEquals(citation, newCitation);
+    }
+
+    /**
+     * Tests a tree of metadata in which no {@link CharSequence} can be found for
+     * generating the node label. The {@link PropertyTree#getTitle} method should
+     * fallback on the code list.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testUntitled() {
+        final DefaultCitation   titled = new DefaultCitation("Some specification");
+        final DefaultCitation untitled = new DefaultCitation();
+        titled  .getPresentationForms().add(PresentationForm.DOCUMENT_HARDCOPY);
+        untitled.getPresentationForms().add(PresentationForm.IMAGE_HARDCOPY);
+        final DefaultProcessing processing = new DefaultProcessing();
+        processing.getDocumentations().add(  titled);
+        processing.getDocumentations().add(untitled);
+
+        TreeModel tree = processing.asTree();
+        assertMultilinesEquals(
+            "Processing\n" +
+            "└───Documentations\n" +
+            "    ├───[1] Some specification\n" +
+            "    │   ├───Title\n" +
+            "    │   │   └───Some specification\n" +
+            "    │   └───Presentation Forms\n" +
+            "    │       └───document hardcopy\n" +
+            "    └───[2] Image hardcopy\n" +
+            "        └───Presentation Forms\n" +
+            "            └───image hardcopy\n", Trees.toString(tree));
     }
 }

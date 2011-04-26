@@ -17,12 +17,18 @@
  */
 package org.geotoolkit.internal;
 
+import java.util.Locale;
+import java.util.ResourceBundle;
+import java.util.MissingResourceException;
 import java.lang.reflect.Array;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.UndeclaredThrowableException;
 
 import org.opengis.util.CodeList;
+import org.opengis.annotation.UML;
+
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.logging.Logging;
 
 
 /**
@@ -33,7 +39,7 @@ import org.geotoolkit.lang.Static;
  * and treats the {@code '_'} character like whitespace.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -59,6 +65,31 @@ public final class CodeLists implements CodeList.Filter {
     }
 
     /**
+     * Returns the classname of the given code list. This method use the {@link UML} annotation
+     * if it exists, or fallback on the {@linkplain Class#getSimpleName() simple class name}
+     * otherwise.
+     *
+     * @param  code The code from which to get the class name, or {@code null}.
+     * @return The class name, or {@code null} if the given code null.
+     *
+     * @since 3.18
+     */
+    public static String classname(final CodeList<?> code) {
+        if (code == null) {
+            return null;
+        }
+        final Class<?> type = code.getClass();
+        final UML uml = type.getAnnotation(UML.class);
+        if (uml != null) {
+            String id = uml.identifier();
+            if (id != null && (id = id.trim()).length() != 0) {
+                return id;
+            }
+        }
+        return type.getSimpleName();
+    }
+
+    /**
      * Returns the UML identifier for the given code. If the code has no UML identifier,
      * then the programmatic name is used as a fallback.
      *
@@ -72,8 +103,12 @@ public final class CodeLists implements CodeList.Filter {
         if (code == null) {
             return null;
         }
-        final String id = code.identifier();
-        return (id != null) ? id : code.name();
+        String id = code.identifier();
+        if (id == null || (id = id.trim()).length() == 0) {
+            // Fallback if no UML identifier were found.
+            id = code.name();
+        }
+        return id;
     }
 
     /**
@@ -93,6 +128,57 @@ public final class CodeLists implements CodeList.Filter {
             ids[i] = identifier(codes[i]);
         }
         return ids;
+    }
+
+    /**
+     * Returns the most descriptive sentence of the given code, excluding the field name. This is
+     * usually the UML name except for {@link org.opengis.metadata.identification.CharacterSet}
+     * in which case it is a string like {@code "UTF-8"}.
+     *
+     * @param  code The code from which to construct a sentence, or {@code null}.
+     * @return A unlocalized sentence for the given code, or {@code null} if the given code null.
+     *
+     * @since 3.18
+     */
+    public static String sentence(final CodeList<?> code) {
+        if (code == null) {
+            return null;
+        }
+        String id = code.identifier();
+        final String name = code.name();
+        for (final String candidate : code.names()) {
+            if (!candidate.equals(name) && candidate.length() >= id.length()) {
+                id = candidate;
+            }
+        }
+        return StringUtilities.makeSentence(id);
+    }
+
+    /**
+     * Returns the localized name of the given code, if possible.
+     * <p>
+     * <b>Note:</b> This code is partially duplicated by
+     * {@link org.geotoolkit.internal.jaxb.code.CodeListProxy#CodeListProxy(CodeList)}.
+     *
+     * @param  code   The code for which to get the localized name, or {@code null}.
+     * @param  locale The local, or {@code null} if none.
+     * @return The localized (if possible) sentence, or {@code null} if the given code null.
+     *
+     * @since 3.18
+     */
+    public static String localize(final CodeList<?> code, final Locale locale) {
+        if (code == null) {
+            return null;
+        }
+        if (locale != null) {
+            final String key = classname(code) + '.' + identifier(code);
+            try {
+                return ResourceBundle.getBundle("org.opengis.metadata.CodeLists", locale).getString(key);
+            } catch (MissingResourceException e) {
+                Logging.recoverableException(CodeLists.class, "localize", e);
+            }
+        }
+        return sentence(code);
     }
 
     /**

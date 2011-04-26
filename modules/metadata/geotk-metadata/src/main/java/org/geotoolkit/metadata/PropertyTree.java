@@ -40,6 +40,7 @@ import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.Trees;
+import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 
@@ -397,8 +398,15 @@ final class PropertyTree {
         DefaultMutableTreeNode addTo = branch;
         if (number != 0) {
             // String formatted below must comply with the isCollectionElement(...) condition.
-            final String title = appendTitle(asMap.values(),
-                    new StringBuilder("[").append(format(number)).append("] ")).toString();
+            final StringBuilder buffer = new StringBuilder(32);
+            buffer.append('[').append(format(number)).append("] ");
+            String title = getTitle(asMap.values());
+            if (title != null) {
+                buffer.append(title);
+            } else {
+                buffer.append('(').append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED)).append(')');
+            }
+            title = buffer.toString();
             assert isCollectionElement(title) : title;
             addTo = new NamedTreeNode(title, value, true);
             branch.add(addTo);
@@ -446,13 +454,13 @@ final class PropertyTree {
     /**
      * Tries to figure out a title for the given metadata (represented as a the values
      * of a Map) and appends that title to the given buffer. If no title can be found,
-     * a <cite>"(untitled)"</cite> text is appended.
+     * return {@code null}.
      *
      * @param  values The values of the metadata for which to append a title.
-     * @param  appendTo The buffer where to append the title.
-     * @return The buffer, returned for method invocation chaining.
+     * @return The title, or {@code null} if none were found.
      */
-    private StringBuilder appendTitle(final Collection<?> values, final StringBuilder appendTo) {
+    private String getTitle(final Collection<?> values) {
+        CodeList<?> codeList = null;
         for (final Object element : values) {
             if (element instanceof CharSequence) {
                 String name;
@@ -462,11 +470,34 @@ final class PropertyTree {
                     name = element.toString();
                 }
                 if ((name = name.trim()).length() != 0) {
-                    return appendTo.append(name);
+                    return name;
+                }
+            }
+            if (element instanceof CodeList<?> && codeList == null) {
+                // To be used as a fallback if no text is found.
+                codeList = (CodeList<?>) element;
+            }
+        }
+        /*
+         * No character string found. Use the code list if any.
+         */
+        if (codeList != null) {
+            return CodeLists.localize(codeList, locale);
+        }
+        /*
+         * If no title were found, search if any element is a collection and search again in
+         * collection elements and return the first suitable element found, if any. We do this
+         * check after the above loop because we want singleton element to have precedence.
+         */
+        for (final Object element : values) {
+            if (element instanceof Collection<?>) {
+                final String title = getTitle((Collection<?>) element);
+                if (title != null) {
+                    return title;
                 }
             }
         }
-        return appendTo.append('(').append(Vocabulary.getResources(locale).getString(Vocabulary.Keys.UNTITLED)).append(')');
+        return null;
     }
 
     /**

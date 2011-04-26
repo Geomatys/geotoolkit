@@ -24,11 +24,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
-import org.opengis.annotation.UML;
 import org.opengis.util.CodeList;
 
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.resources.Locales;
 
@@ -146,48 +145,28 @@ public final class CodeListProxy {
      * @param code The code list to wrap.
      */
     public CodeListProxy(final CodeList<?> code) {
-        // Get the class identifier.
-        final Class<?> type = code.getClass();
-        final UML uml = type.getAnnotation(UML.class);
-        String classID = null;
-        if (uml != null) {
-            classID = uml.identifier();
-        }
-        if (classID == null || (classID = classID.trim()).length() == 0) {
-            classID = type.getSimpleName();
-        }
+        final String classID = CodeLists.classname(code);
+        final String fieldID = CodeLists.identifier(code);
         codeList = schemaURL("gmxCodelists.xml", classID);
 
-        // Get the field identifier.
-        String fieldID = code.identifier();
-        if (fieldID == null || (fieldID = fieldID.trim()).length() == 0) {
-            fieldID = code.name();
+        // Get the localized name of the field identifier, if possible.
+        // This code partially duplicates the CodeLists.localize(code) method.
+        Locale locale = MarshalContext.getLocale();
+        if (locale != null) {
+            final String key = classID + '.' + fieldID;
+            try {
+                value = ResourceBundle.getBundle("org.opengis.metadata.CodeLists", locale).getString(key);
+            } catch (MissingResourceException e) {
+                Logging.recoverableException(CodeListAdapter.class, "marshal", e);
+            }
+        }
+        if (value != null) {
+            codeSpace = Locales.getLanguage(locale);
         } else {
-            // Get the localized name of the field identifier, if possible.
-            Locale locale = MarshalContext.getLocale();
-            if (locale != null) {
-                final String key = classID + '.' + fieldID;
-                try {
-                    value = ResourceBundle.getBundle("org.opengis.metadata.CodeLists", locale).getString(key);
-                } catch (MissingResourceException e) {
-                    Logging.recoverableException(CodeListAdapter.class, "marshal", e);
-                }
-            }
-            if (value != null) {
-                codeSpace = Locales.getLanguage(locale);
-            } else {
-                // Fallback when the no value is defined for the code list. Build a value from the
-                // most descriptive name (excluding the field name), which is usually the UML name
-                // except for CharacterSet in which case it is a string like "UTF-8".
-                String id = fieldID;
-                final String fieldName = code.name();
-                for (final String candidate : code.names()) {
-                    if (!candidate.equals(fieldName) && candidate.length() >= id.length()) {
-                        id = candidate;
-                    }
-                }
-                value = StringUtilities.makeSentence(id);
-            }
+            // Fallback when no value is defined for the code list. Build a value from the
+            // most descriptive name (excluding the field name), which is usually the UML
+            // name except for CharacterSet in which case it is a string like "UTF-8".
+            value = CodeLists.sentence(code);
         }
         codeListValue = fieldID;
     }
