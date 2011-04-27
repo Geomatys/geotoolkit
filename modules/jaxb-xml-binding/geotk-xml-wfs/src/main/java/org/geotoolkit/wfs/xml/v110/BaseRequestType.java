@@ -16,10 +16,12 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
+import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Version;
@@ -67,6 +69,9 @@ public abstract class BaseRequestType implements RequestBase {
     private String version;
     @XmlAttribute
     private String handle;
+    
+    @XmlTransient
+    private Map<String, String> prefixMapping;
 
     public BaseRequestType() {
 
@@ -156,7 +161,21 @@ public abstract class BaseRequestType implements RequestBase {
     public void setHandle(final String value) {
         this.handle = value;
     }
+    
+    /**
+     * @return the prefixMapping
+     */
+    public Map<String, String> getPrefixMapping() {
+        return prefixMapping;
+    }
 
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
+    }
+    
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder("[").append(this.getClass().getSimpleName()).append(']');

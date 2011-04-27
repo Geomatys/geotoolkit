@@ -17,6 +17,15 @@
 
 package org.geotoolkit.xml;
 
+import java.io.ByteArrayInputStream;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.Result;
+import javax.xml.transform.stream.StreamResult;
+import java.io.ByteArrayOutputStream;
+import javax.xml.transform.dom.DOMSource;
+import org.w3c.dom.Node;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -29,6 +38,7 @@ import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
 
 import static javax.xml.stream.XMLStreamReader.*;
 
@@ -163,19 +173,35 @@ public abstract class StaxStreamReader {
      * @throws XMLStreamException if the input is not handled
      */
     private static final XMLStreamReader toReader(final Object input)
-            throws XMLStreamException{
+            throws XMLStreamException {
         final XMLInputFactory XMLfactory = XMLInputFactory.newInstance();
         XMLfactory.setProperty("http://java.sun.com/xml/stream/properties/report-cdata-event", Boolean.TRUE);
         XMLfactory.setProperty(XMLInputFactory.IS_COALESCING, Boolean.FALSE);
 
-        if(input instanceof InputStream){
-            return XMLfactory.createXMLStreamReader((InputStream)input);
-        }else if(input instanceof Source){
-            return XMLfactory.createXMLStreamReader((Source)input);
-        }else if(input instanceof Reader){
-            return XMLfactory.createXMLStreamReader((Reader)input);
-        }else{
-            throw new XMLStreamException("Input type is not supported : "+ input);
+        if (input instanceof InputStream) {
+            return XMLfactory.createXMLStreamReader((InputStream) input);
+        } else if (input instanceof Source) {
+            return XMLfactory.createXMLStreamReader((Source) input);
+        } else if (input instanceof Node) {
+            
+            /* here we can think that we can use a DOMSource and pass it directly to the
+             * method XMLfactory.createXMLStreamReader(Source) but it lead to a NPE
+             * during the geometry unmarshall.
+             */
+            try {
+                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+                Result outputTarget = new StreamResult(outputStream);
+                Transformer t = TransformerFactory.newInstance().newTransformer();
+                t.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+                t.transform(new DOMSource((Node) input), outputTarget);
+                return XMLfactory.createXMLStreamReader(new ByteArrayInputStream(outputStream.toByteArray()));
+            } catch (TransformerException ex) {
+                throw new XMLStreamException(ex);
+            }
+        } else if (input instanceof Reader) {
+            return XMLfactory.createXMLStreamReader((Reader) input);
+        } else {
+            throw new XMLStreamException("Input type is not supported : " + input);
         }
     }
 
