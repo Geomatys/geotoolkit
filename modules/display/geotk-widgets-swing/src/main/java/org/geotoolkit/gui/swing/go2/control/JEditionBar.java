@@ -21,6 +21,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.beans.PropertyChangeEvent;
+import java.beans.PropertyChangeListener;
 import javax.swing.JButton;
 import org.geotoolkit.gui.swing.go2.CanvasHandler;
 
@@ -41,7 +43,7 @@ import org.geotoolkit.map.FeatureMapLayer;
  * @author Johann Sorel (Puzzle-GIS)
  * @module pending
  */
-public class JEditionBar extends AbstractMapControlBar implements ActionListener,ItemListener{
+public class JEditionBar extends AbstractMapControlBar implements ActionListener,ItemListener,PropertyChangeListener{
 
     private final SessionCommitAction commitAction = new SessionCommitAction();
     private final SessionRollbackAction rollbackAction = new SessionRollbackAction();
@@ -72,6 +74,7 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
 
         guiTools.addItemListener(this);
         guiLayers.addItemListener(this);
+        guiLayers.addPropertyChangeListener("model", this);
         setMap(map);
     }
     
@@ -142,6 +145,26 @@ public class JEditionBar extends AbstractMapControlBar implements ActionListener
             updateHandler(false);
 
         }else if(e.getSource() == guiTools){
+            //tool changed
+            updateHandler(false);
+        }
+    }
+
+    @Override
+    public void propertyChange(PropertyChangeEvent e) {
+        
+        if(e.getSource() == guiLayers){
+            final Object candidate = guiLayers.getSelectedItem();
+            guiTools.setEdited(candidate);
+            
+            if(candidate instanceof FeatureMapLayer){
+                commitAction.setLayer((FeatureMapLayer) candidate);
+                rollbackAction.setLayer((FeatureMapLayer) candidate);
+            }else{
+                commitAction.setLayer(null);
+                rollbackAction.setLayer(null);
+            }
+
             //tool changed
             updateHandler(false);
         }

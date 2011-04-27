@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.util.InternationalString;
 
 /**
@@ -56,7 +57,16 @@ public abstract class AbstractEditionTool implements EditionTool{
 
     @Override
     public boolean canHandle(Object candidate) {
-        return clazz.isInstance(candidate);
+        
+        if(clazz.isInstance(candidate)){
+            if(candidate instanceof FeatureMapLayer){
+                final FeatureMapLayer fml = (FeatureMapLayer) candidate;
+                return fml.getCollection().isWritable();
+            }
+            return true;
+        }
+        
+        return false;
     }
 
     @Override

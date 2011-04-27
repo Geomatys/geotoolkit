@@ -19,6 +19,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import java.awt.event.ItemEvent;
 import java.beans.PropertyChangeEvent;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,7 +88,6 @@ public class JLayerComboBox extends JComboBox implements ContextListener{
     private MapContext getContext(){
         if(map != null){
             final ContextContainer2D cc = map.getContainer();
-            cc.addPropertyChangeListener(weaklistener);
             if(cc != null){
                 return cc.getContext();
             }
@@ -124,7 +124,9 @@ public class JLayerComboBox extends JComboBox implements ContextListener{
     public void propertyChange(PropertyChangeEvent evt) {
         if(ContextContainer2D.CONTEXT_PROPERTY.equals(evt.getPropertyName())){
             //map context changed
+            unregisterListener();
             reloadModel();
+            registerListener();
         }
     }
 
