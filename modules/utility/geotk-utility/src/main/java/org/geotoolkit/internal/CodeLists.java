@@ -70,7 +70,7 @@ public final class CodeLists implements CodeList.Filter {
      * otherwise.
      *
      * @param  code The code from which to get the class name, or {@code null}.
-     * @return The class name, or {@code null} if the given code null.
+     * @return The class name, or {@code null} if the given code is null.
      *
      * @since 3.18
      */
@@ -95,7 +95,7 @@ public final class CodeLists implements CodeList.Filter {
      *
      * @param  code The code for which to get the UML identifier, or {@code null}.
      * @return The UML identifiers or programmatic name for the given code,
-     *         or {@code null} if the given code null.
+     *         or {@code null} if the given code is null.
      *
      * @since 3.06
      */
@@ -136,7 +136,7 @@ public final class CodeLists implements CodeList.Filter {
      * in which case it is a string like {@code "UTF-8"}.
      *
      * @param  code The code from which to construct a sentence, or {@code null}.
-     * @return A unlocalized sentence for the given code, or {@code null} if the given code null.
+     * @return A unlocalized sentence for the given code, or {@code null} if the given code is null.
      *
      * @since 3.18
      */
@@ -146,6 +146,9 @@ public final class CodeLists implements CodeList.Filter {
         }
         String id = code.identifier();
         final String name = code.name();
+        if (id == null) {
+            id = name;
+        }
         for (final String candidate : code.names()) {
             if (!candidate.equals(name) && candidate.length() >= id.length()) {
                 id = candidate;
@@ -162,7 +165,7 @@ public final class CodeLists implements CodeList.Filter {
      *
      * @param  code   The code for which to get the localized name, or {@code null}.
      * @param  locale The local, or {@code null} if none.
-     * @return The localized (if possible) sentence, or {@code null} if the given code null.
+     * @return The localized (if possible) sentence, or {@code null} if the given code is null.
      *
      * @since 3.18
      */
