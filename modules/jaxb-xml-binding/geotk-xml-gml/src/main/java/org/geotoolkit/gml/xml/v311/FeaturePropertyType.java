@@ -19,6 +19,7 @@ package org.geotoolkit.gml.xml.v311;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -52,13 +53,17 @@ import org.geotoolkit.util.Utilities;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "FeaturePropertyType", propOrder = {
-    "abstractFeature"
+    "abstractFeature",
+    "unknowFeature"
 })
 public class FeaturePropertyType {
 
     @XmlElementRef(name = "AbstractFeature", namespace = "http://www.opengis.net/gml", type = JAXBElement.class)
     private JAXBElement<? extends AbstractFeatureType> abstractFeature;
 
+    @XmlAnyElement(lax = true)
+    private Object unknowFeature;
+            
     /**
      * Allow to record the feature when its in href mode
      */
@@ -423,6 +428,20 @@ public class FeaturePropertyType {
             s.append("title=").append(title).append('\n');
         }
         return s.toString();
+    }
+
+    /**
+     * @return the unknowFeature
+     */
+    public Object getUnknowFeature() {
+        return unknowFeature;
+    }
+
+    /**
+     * @param unknowFeature the unknowFeature to set
+     */
+    public void setUnknowFeature(Object unknowFeature) {
+        this.unknowFeature = unknowFeature;
     }
 
 }

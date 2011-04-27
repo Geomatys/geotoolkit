@@ -18,6 +18,7 @@ package org.geotoolkit.ogc.xml.v110;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -72,6 +73,9 @@ public class FilterType implements Filter {
     @XmlElementRef(name = "_Id", namespace = "http://www.opengis.net/ogc", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractIdType>> id;
 
+    @XmlTransient
+    private Map<String, String> prefixMapping;
+    
     /**
      * a transient factory to build JAXBelement
      */
@@ -217,7 +221,7 @@ public class FilterType implements Filter {
             s.append("id:").append('\n');
             int i = 0;
             for (JAXBElement<? extends AbstractIdType> jb: id) {
-                s.append("id " + i + ": ").append(jb.getValue().toString()).append('\n');
+                s.append("id ").append(i).append(": ").append(jb.getValue().toString()).append('\n');
                 i++;
             }
         }
@@ -301,6 +305,20 @@ public class FilterType implements Filter {
         }
     }
 
+    /**
+     * @return the prefixMapping
+     */
+    public Map<String, String> getPrefixMapping() {
+        return prefixMapping;
+    }
+
+    /**
+     * @param prefixMapping the prefixMapping to set
+     */
+    public void setPrefixMapping(Map<String, String> prefixMapping) {
+        this.prefixMapping = prefixMapping;
+    }
+    
     public static JAXBElement<? extends AbstractIdType> createIdOps(final AbstractIdType operator) {
 
         if (operator instanceof FeatureIdType) {
