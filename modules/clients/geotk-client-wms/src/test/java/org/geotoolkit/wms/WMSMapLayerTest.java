@@ -17,6 +17,7 @@
 
 package org.geotoolkit.wms;
 
+import org.junit.Ignore;
 import java.awt.geom.NoninvertibleTransformException;
 import java.net.URL;
 import java.awt.Dimension;
@@ -60,7 +61,7 @@ public class WMSMapLayerTest {
      * since EPSG:4326 in 1.1.1 is actually a CRS:84 .
      */
     @Test
-    public void test_v110_GetMap_CRS84() throws TransformException, MalformedURLException, FactoryException{
+    public void test_v111_GetMap_CRS84() throws TransformException, MalformedURLException, FactoryException{
         final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "BlueMarble");
 
         final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
@@ -77,7 +78,7 @@ public class WMSMapLayerTest {
      * the URL BBOX Coordinate must be inverted .
      */
     @Test
-    public void test_v110_GetMap_EPSG4326() throws MalformedURLException, TransformException, FactoryException {
+    public void test_v111_GetMap_EPSG4326() throws MalformedURLException, TransformException, FactoryException {
 
         final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "BlueMarble");
 
@@ -89,6 +90,25 @@ public class WMSMapLayerTest {
         final String query = layer.query(env, new Dimension(800, 600)).toString();
         assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:4326"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
+    }
+    
+    /**
+     * This test checks that in the case we use EPSG:32761 in WMS 1.1.1
+     */
+    @Test
+    @Ignore
+    public void test_v111_GetMap_EPSG32761() throws MalformedURLException, TransformException, FactoryException {
+
+        final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "BlueMarble");
+
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:32761"));
+        env.setRange(0, -882900.0, 844300.0); // Lat
+        env.setRange(1, 1974600.0, 3701800.0); // Lon
+
+        final String query = layer.query(env, new Dimension(800, 600)).toString();
+        assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:32761"));
+        assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=1974600.0,-882900.0,3701800.0,844300.0"));
     }
     
     /**
@@ -127,6 +147,25 @@ public class WMSMapLayerTest {
         final String query = layer.query(env, new Dimension(800, 600)).toString();
         assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG:4326"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-90.0,-180.0,90.0,180.0"));
+    }
+    
+    /**
+     * This test checks that in the case we use EPSG:32761 in WMS 1.3.0
+     */
+    @Test
+    @Ignore
+    public void test_v130_GetMap_EPSG32761() throws MalformedURLException, TransformException, FactoryException {
+
+        final WMSMapLayer layer = new WMSMapLayer(SERVER_130, "BlueMarble");
+
+
+        final GeneralEnvelope env = new GeneralEnvelope(CRS.decode("EPSG:32761"));
+        env.setRange(0, -882900.0, 844300.0); // Lat
+        env.setRange(1, 1974600.0, 3701800.0); // Lon
+
+        final String query = layer.query(env, new Dimension(800, 600)).toString();
+        assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:32761"));
+        assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-882900.0,1974600.0,844300.0,3701800.0"));
     }
     
     /**
