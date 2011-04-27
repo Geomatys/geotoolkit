@@ -727,7 +727,8 @@ public final class GO2Utilities {
                 //can't change anything if it's only one axis
                 return crs;
             }
-
+                     
+            
             //find the east axis
             int eastAxis = -1;
             for(int i=0; i<dimension; i++){
@@ -738,7 +739,7 @@ public final class GO2Utilities {
                 }
             }
 
-            if(eastAxis == -1 || eastAxis == 0){
+            if(eastAxis == 0){
                 //the crs is already in the correct order or does not have any east axis
                 return singlecrs;
             }

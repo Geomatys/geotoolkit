@@ -331,7 +331,7 @@ public class WMSMapLayer extends AbstractMapLayer {
                 final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(crs, EPSG_4326);
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
                 fakeEnv.setEnvelope(trsEnv);
-            }else if ((server.getVersion() == WMSVersion.v111) && isGeographic(crs2D)) {
+            }else if (server.getVersion() == WMSVersion.v111) {
                 //in case we are asking for a WMS in 1.1.0 and a geographic crs
                 //we must set longitude coordinates first but preserve the crs
                 final CoordinateReferenceSystem lfcrs = GO2Utilities.setLongitudeFirst(crs2D);
@@ -354,7 +354,7 @@ public class WMSMapLayer extends AbstractMapLayer {
                 final CoordinateReferenceSystem fakeCrs = GO2Utilities.change2DComponent(crs, EPSG_4326);
                 trsEnv.setCoordinateReferenceSystem(fakeCrs);
                 fakeEnv.setEnvelope(trsEnv);
-            } else if ((server.getVersion() == WMSVersion.v111) && isGeographic(crs2D)) {
+            } else if (server.getVersion() == WMSVersion.v111) {
                 //in case we are asking for a WMS in 1.1.0 and a geographic crs
                 //we must set longitude coordinates first but preserve the crs
                 final GeneralEnvelope trsEnv = new GeneralEnvelope(GO2Utilities.setLongitudeFirst(env));
@@ -630,10 +630,6 @@ public class WMSMapLayer extends AbstractMapLayer {
         }
 
         return false;
-    }
-
-    private boolean isGeographic(CoordinateReferenceSystem crs){
-        return crs instanceof GeographicCRS;
     }
 
     /**

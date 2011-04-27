@@ -17,7 +17,6 @@
 
 package org.geotoolkit.wms;
 
-import org.junit.Ignore;
 import java.awt.geom.NoninvertibleTransformException;
 import java.net.URL;
 import java.awt.Dimension;
@@ -91,12 +90,11 @@ public class WMSMapLayerTest {
         assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:4326"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-180.0,-90.0,180.0,90.0"));
     }
-    
+        
     /**
      * This test checks that in the case we use EPSG:32761 in WMS 1.1.1
      */
     @Test
-    @Ignore
     public void test_v111_GetMap_EPSG32761() throws MalformedURLException, TransformException, FactoryException {
 
         final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "BlueMarble");
@@ -153,7 +151,6 @@ public class WMSMapLayerTest {
      * This test checks that in the case we use EPSG:32761 in WMS 1.3.0
      */
     @Test
-    @Ignore
     public void test_v130_GetMap_EPSG32761() throws MalformedURLException, TransformException, FactoryException {
 
         final WMSMapLayer layer = new WMSMapLayer(SERVER_130, "BlueMarble");
@@ -164,7 +161,7 @@ public class WMSMapLayerTest {
         env.setRange(1, 1974600.0, 3701800.0); // Lon
 
         final String query = layer.query(env, new Dimension(800, 600)).toString();
-        assertTrue( query.substring(query.indexOf("SRS")).startsWith("SRS=EPSG:32761"));
+        assertTrue( query.substring(query.indexOf("CRS")).startsWith("CRS=EPSG:32761"));
         assertTrue( query.substring(query.indexOf("BBOX")).startsWith("BBOX=-882900.0,1974600.0,844300.0,3701800.0"));
     }
     
