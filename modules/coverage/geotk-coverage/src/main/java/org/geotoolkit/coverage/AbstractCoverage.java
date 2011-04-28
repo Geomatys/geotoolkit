@@ -1141,7 +1141,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      * @since 2.3
      */
     public void show(String title, final int xAxis, final int yAxis) {
-        if (title == null || (title = title.trim()).length() == 0) {
+        if (title == null || (title = title.trim()).isEmpty()) {
             title = String.valueOf(getName());
         }
         // In the following line, the constructor display immediately the viewer.
@@ -1154,7 +1154,7 @@ public abstract class AbstractCoverage extends PropertySourceImpl implements Cov
      * <p>
      * <strong>Implementation note:</strong>
      * We use AWT Frame, not Swing JFrame, because {@link ScrollingImagePane} is an AWT
-     * component. Swing is an overhead in this context without clear benefict. Note also
+     * component. Swing is an overhead in this context without clear benefic. Note also
      * that {@code ScrollingImagePanel} includes the scroll bar, so there is no need to
      * put this component in an other {@code JScrollPane}.
      */

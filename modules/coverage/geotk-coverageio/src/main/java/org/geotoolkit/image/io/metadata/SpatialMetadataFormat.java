@@ -910,7 +910,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @since 3.06
      */
     static String toElementName(String elementName) {
-        if (elementName != null && (elementName = elementName.trim()).length() != 0) {
+        if (elementName != null && !(elementName = elementName.trim()).isEmpty()) {
             final char c = elementName.charAt(0);
             final char u = Character.toUpperCase(c);
             if (c != u) {

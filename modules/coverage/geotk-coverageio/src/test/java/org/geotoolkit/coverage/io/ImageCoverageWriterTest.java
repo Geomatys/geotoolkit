@@ -112,7 +112,7 @@ public final class ImageCoverageWriterTest extends ImageTestBase {
         String line;
         while ((line = expected.readLine()) != null) {
             line = line.trim();
-            if (line.length() == 0 || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
             final String actualLine = actual.readLine();

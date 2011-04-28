@@ -50,7 +50,7 @@ public final class SetupTest {
          * when the GridSampleDimension class is initialized. Create a dummy instance just
          * for making sure that this class has been initialized.
          */
-        assertTrue(new GridSampleDimension("Dummy").toString().length() != 0);
+        assertFalse(new GridSampleDimension("Dummy").toString().isEmpty());
         assertTrue(countGeotkOperations() != 0);
         final Setup setup = new Setup();
         setup.shutdown();
@@ -67,7 +67,7 @@ public final class SetupTest {
      */
     @Test
     public void testPublic() {
-        assertTrue(new GridSampleDimension("Dummy").toString().length() != 0);
+        assertFalse(new GridSampleDimension("Dummy").toString().isEmpty());
         org.geotoolkit.lang.Setup.initialize(null);
         assertTrue(countGeotkOperations() != 0);
         org.geotoolkit.lang.Setup.shutdown();

@@ -314,7 +314,7 @@ skip:   while (it.hasNext()) {
             String[] suffix = spi.getFileSuffixes();
             for (int i=suffix.length; --i >= 0;) {
                 final String s = suffix[i].trim();
-                if (s.length() != 0) {
+                if (!s.isEmpty()) {
                     suffixDone.put(s.toLowerCase(locale), s);
                 }
             }
@@ -407,7 +407,7 @@ skip:   while (it.hasNext()) {
                     final BufferedReader in = new BufferedReader(new FileReader(list));
                     String line; while ((line = in.readLine()) != null) {
                         line = line.trim();
-                        if (line.length() != 0 && line.charAt(0) != '#') {
+                        if (!line.isEmpty() && line.charAt(0) != '#') {
                             File file = new File(line);
                             if (!file.isAbsolute()) {
                                 file = new File(directory, line);

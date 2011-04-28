@@ -238,7 +238,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                 this.values = values = new String[input.readInt()];
                 for (int i=0; i<values.length; i++) {
                     values[i] = input.readUTF();
-                    if (values[i].length() == 0)
+                    if (values[i].isEmpty())
                         values[i] = null;
                 }
                 input.close();
@@ -253,7 +253,7 @@ public class IndexedResourceBundle extends ResourceBundle {
                 if (rl != null) {
                     language = rl.getDisplayName(Locale.US);
                 }
-                if (language == null || language.length() == 0) {
+                if (language == null || language.isEmpty()) {
                     language = "<default>";
                 }
                 record.setParameters(new String[] {language, getClass().getCanonicalName()});

@@ -161,7 +161,7 @@ final class HelpAction {
                     continue;
                 }
                 String name = action.name().trim();
-                if (name.length() == 0) {
+                if (name.isEmpty()) {
                     name = method.getName();
                 }
                 if (actions.containsKey(name)) {
@@ -191,7 +191,7 @@ final class HelpAction {
                  * keep the sub-class definition untouched.
                  */
                 String name = option.name().trim();
-                if (name.length() == 0) {
+                if (name.isEmpty()) {
                     name = field.getName();
                 }
                 if (options.containsKey(name)) {

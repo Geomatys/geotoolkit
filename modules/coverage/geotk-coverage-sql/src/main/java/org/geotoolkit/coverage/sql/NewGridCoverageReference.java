@@ -429,7 +429,7 @@ public final class NewGridCoverageReference {
         if (imageFormat == null) {
             imageFormat = IOUtilities.extension(inputFile);
         }
-        if (imageFormat.length() == 0) {
+        if (imageFormat.isEmpty()) {
             throw new IOException(Errors.format(Errors.Keys.UNDEFINED_FORMAT));
         }
         final MetadataHelper helper = (metadata != null) ? new MetadataHelper(

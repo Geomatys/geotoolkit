@@ -335,7 +335,7 @@ public class AsciiGridReader extends TextImageReader {
      * @throws IIOException If the given value was null.
      */
     private String ensureDefined(final String name, final String value) throws IIOException {
-        if (value == null || value.length() == 0) {
+        if (value == null || value.isEmpty()) {
             throw new ImageMetadataException(Warnings.message(this, Errors.Keys.MISSING_PARAMETER_$1, name));
         }
         return value;
@@ -421,7 +421,7 @@ readLine:   while (true) {
             // At this point, a line has been read. Add it to the buffer.
             String line = stbuff.toString().trim();
             stbuff.setLength(0);
-            if (line.length() != 0 && !isComment(line)) {
+            if (!line.isEmpty() && !isComment(line)) {
                 String key = line;
                 String value = null;
                 final int length = line.length();

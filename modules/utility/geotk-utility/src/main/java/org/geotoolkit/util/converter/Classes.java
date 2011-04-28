@@ -1129,7 +1129,7 @@ compare:for (int i=0; i<c1.length; i++) {
              * lenient about the parsing as well, and throwing a NumberFormatException
              * for those would not be appropriate.
              */
-            return (T) Character.valueOf(value.length() != 0 ? value.charAt(0) : 0);
+            return (T) Character.valueOf(value.isEmpty() ? 0 : value.charAt(0));
         }
         if (String.class.equals(type)) {
             return (T) value;

@@ -162,7 +162,7 @@ final class CategoryTable extends Table {
                 Color[] colors = null;
                 if (colorID != null) {
                     final String id = colorID.trim();
-                    if (id.length() != 0) try {
+                    if (!id.isEmpty()) try {
                         if (colorID.charAt(0) == '#') {
                             colors = new Color[] {Color.decode(id)};
                          } else {

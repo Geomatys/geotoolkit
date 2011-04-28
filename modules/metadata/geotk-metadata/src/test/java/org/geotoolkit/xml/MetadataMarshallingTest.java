@@ -243,7 +243,7 @@ public final class MetadataMarshallingTest extends LocaleDependantTestBase {
          * Unmarshall and compare again.
          */
         final String xml = XML.marshal(metadata);
-        assertFalse("Nothing to write.", xml.length() == 0);
+        assertFalse("Nothing to write.", xml.isEmpty());
         assertDomEquals(TestData.url(MetadataMarshallingTest.class, "Metadata.xml"),
                 xml, "xmlns:*", "xsi:schemaLocation");
 
@@ -282,7 +282,7 @@ public final class MetadataMarshallingTest extends LocaleDependantTestBase {
          * XML marshalling.
          */
         final String xml = XML.marshal(process);
-        assertFalse("Empty XML.", xml.length() == 0);
+        assertFalse("Empty XML.", xml.isEmpty());
         assertDomEquals(TestData.url(MetadataMarshallingTest.class, "ProcessStep.xml"),
                 xml, "xmlns:*", "xsi:schemaLocation");
         /*

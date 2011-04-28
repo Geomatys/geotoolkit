@@ -208,7 +208,7 @@ public class ReferencingConsole extends InteractiveConsole {
         String line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
-            if (line.length() == 0 || line.startsWith("//") || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("//") || line.startsWith("#")) {
                 continue;
             }
             String name=line, value=null;

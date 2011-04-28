@@ -123,7 +123,7 @@ public class ObjectConverters {
      * @since 3.17
      */
     public Locale toLocale(String value) throws IllegalArgumentException {
-        if (value != null && (value = value.trim()).length() != 0) try {
+        if (value != null && !(value = value.trim()).isEmpty()) try {
             return Locales.parse(value);
         } catch (IllegalArgumentException e) {
             if (!exceptionOccured(value, String.class, Locale.class, e)) {
@@ -150,7 +150,7 @@ public class ObjectConverters {
      * @see Units#valueOf(String)
      */
     public Unit<?> toUnit(String value) throws IllegalArgumentException {
-        if (value != null && (value = value.trim()).length() != 0) try {
+        if (value != null && !(value = value.trim()).isEmpty()) try {
             return Units.valueOf(value);
         } catch (IllegalArgumentException e) {
             if (!exceptionOccured(value, String.class, Unit.class, e)) {
@@ -179,7 +179,7 @@ public class ObjectConverters {
      * @since 3.13
      */
     public UUID toUUID(String value) throws IllegalArgumentException {
-        if (value != null && (value = value.trim()).length() != 0) try {
+        if (value != null && !(value = value.trim()).isEmpty()) try {
             return UUID.fromString(value);
         } catch (RuntimeException e) { // Multi-catch: IllegalArgumentException & NumberFormatException
             if (!exceptionOccured(value, String.class, UUID.class, e)) {
@@ -207,7 +207,7 @@ public class ObjectConverters {
      * @see URI#URI(String)
      */
     public URI toURI(String value) throws URISyntaxException {
-        if (value != null && (value = value.trim()).length() != 0) try {
+        if (value != null && !(value = value.trim()).isEmpty()) try {
             return new URI(IOUtilities.encodeURI(value));
         } catch (URISyntaxException e) {
             if (!exceptionOccured(value, String.class, URI.class, e)) {

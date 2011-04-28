@@ -202,7 +202,7 @@ public class ParameterEditor extends JComponent {
         String text = description.getText();
         if (text != null) {
             text = text.trim();
-            if (text.length() == 0) {
+            if (text.isEmpty()) {
                 text = null;
             }
         }
@@ -217,7 +217,7 @@ public class ParameterEditor extends JComponent {
      * @param description The description to be shown.
      */
     public void setDescription(String description) {
-        if (description == null || description.length() == 0) {
+        if (description == null || description.isEmpty()) {
             description = " ";
         }
         this.description.setText(description);

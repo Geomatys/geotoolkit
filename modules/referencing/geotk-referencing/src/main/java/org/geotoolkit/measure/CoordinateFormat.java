@@ -318,7 +318,7 @@ public class CoordinateFormat extends Format {
              */
             if (unit != null) {
                 final String symbol = getUnitFormat().format(unit).trim();
-                if (symbol.length() != 0) {
+                if (!symbol.isEmpty()) {
                     if (unitSymbols == null) {
                         unitSymbols = new String[dimension];
                     }

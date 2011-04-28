@@ -469,7 +469,7 @@ abstract class DatabasePanel extends JComponent implements ActionListener {
     private static void setProperty(final Properties settings, final String key, final Object value) {
         if (value != null) {
             final String text = value.toString().trim();
-            if (text.length() != 0) {
+            if (!text.isEmpty()) {
                 settings.setProperty(key, text);
                 return;
             }

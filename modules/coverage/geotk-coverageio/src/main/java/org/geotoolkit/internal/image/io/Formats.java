@@ -120,7 +120,7 @@ public final class Formats {
          * We will try the ImageReader for that suffix before to try any other readers.
          */
         final String suffix = IOUtilities.extension(input);
-        boolean useSuffix = (suffix != null && suffix.length() != 0);
+        boolean useSuffix = (suffix != null && !suffix.isEmpty());
         int nextProviderForSuffix = 0; // Used for sorting first the providers for the suffix.
         /*
          * The list of providers that we have found during the first execution of the

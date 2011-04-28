@@ -205,7 +205,7 @@ final class CoverageDatabaseCreator extends DeferredWizardResult implements Runn
     private static void setProperty(final Properties properties, final ConfigurationKey key, String value) {
         if (value != null) {
             value = value.trim();
-            if (value.length() != 0) {
+            if (!value.isEmpty()) {
                 properties.setProperty(key.key, value);
             }
         }

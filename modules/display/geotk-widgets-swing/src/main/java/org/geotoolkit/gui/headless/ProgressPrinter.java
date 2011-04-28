@@ -370,7 +370,7 @@ public class ProgressPrinter implements ProgressListener, Disposable {
         String second = prefix;
         if (margin != null) {
             margin = trim(margin);
-            if (margin.length() != 0) {
+            if (!margin.isEmpty()) {
                 prefix = prefix + '(' + margin + ") ";
                 second = Strings.spaces(prefix.length());
             }

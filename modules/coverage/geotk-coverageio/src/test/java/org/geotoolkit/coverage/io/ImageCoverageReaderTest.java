@@ -115,7 +115,7 @@ public final class ImageCoverageReaderTest extends ImageTestBase {
         assertEquals(WorldFileImageReader.class, reader.imageReader.getClass());
         final Metadata metadata = reader.getMetadata();
         final String xml = XML.marshal(metadata);
-        assertFalse("Nothing to write.", xml.length() == 0);
+        assertFalse("Nothing to write.", xml.isEmpty());
         assertDomEquals(TestData.url(ImageCoverageReaderTest.class, "MatrixMetadata.xml"),
                 xml, 0.0001, "xmlns:*", "xsi:schemaLocation");
     }

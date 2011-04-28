@@ -119,7 +119,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
     public synchronized String getTitle(final boolean includeSymbol) {
         if (includeSymbol) {
             final String symbol = getSymbol();
-            if (symbol!=null && symbol.length()!=0) {
+            if (symbol != null && !symbol.isEmpty()) {
                 return (title != null) ? title + " (" + symbol + ')' : symbol;
             }
         }

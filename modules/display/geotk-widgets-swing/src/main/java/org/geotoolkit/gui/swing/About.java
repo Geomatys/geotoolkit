@@ -177,7 +177,7 @@ public class About extends JComponent implements Dialog {
             if (dateString != null) {
                 final Date         date = getDateFormat().parse(dateString);
                 final DateFormat format = DateFormat.getDateInstance(DateFormat.LONG);
-                if (version!=null && version.trim().length()!=0) {
+                if (version != null && !version.trim().isEmpty()) {
                     StringBuffer buffer = new StringBuffer(version);
                     buffer.append(" (");
                     buffer = format.format(date, buffer, new FieldPosition(0));
@@ -389,7 +389,7 @@ public class About extends JComponent implements Dialog {
         }
         for (int i=0; i<mimes.length; i++) {
             String name = mimes[i].trim();
-            if (name.length() == 0) {
+            if (name.isEmpty()) {
                 name = resources.getString(Vocabulary.Keys.UNTITLED);
             }
             mimes[i] = name;

@@ -238,11 +238,11 @@ public class DefaultInternationalString extends AbstractInternationalString impl
             final String language = locale.getLanguage();
             final String country  = locale.getCountry ();
             final String variant  = locale.getVariant ();
-            if (variant.length() != 0) {
+            if (!variant.isEmpty()) {
                 locale = new Locale(language, country);
                 continue;
             }
-            if (country.length() != 0) {
+            if (!country.isEmpty()) {
                 locale = new Locale(language);
                 continue;
             }

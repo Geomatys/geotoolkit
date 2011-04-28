@@ -134,8 +134,8 @@ public class DefaultNameFactory extends Factory implements NameFactory {
         if (headSeparator == null) {
             headSeparator = separator;
         }
-        final boolean isEmpty = (separator.length() == 0);
-        if (isEmpty || headSeparator.length() == 0) {
+        final boolean isEmpty = (separator.isEmpty());
+        if (isEmpty || headSeparator.isEmpty()) {
             throw new IllegalArgumentException(Errors.format(
                     Errors.Keys.ILLEGAL_ARGUMENT_$1, isEmpty ? "separator" : "separator.head"));
         }

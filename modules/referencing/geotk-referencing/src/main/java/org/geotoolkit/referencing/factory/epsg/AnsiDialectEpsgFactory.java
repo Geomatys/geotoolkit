@@ -229,7 +229,7 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
      * <p>
      * This method can be invoked at most once, at construction time only.
      *
-     * @param schema The database schema in which the epsg tables are stored.
+     * @param schema The database schema in which the EPSG tables are stored.
      * @param removePrefix {@code true} if the "{@code epsg_}" prefix should be removed from
      *        the table names.
      * @throws SQLException If the schema can not be set.
@@ -243,14 +243,14 @@ public class AnsiDialectEpsgFactory extends DirectEpsgFactory {
     /**
      * Implementation of {@link #setSchema(String, boolean)}.
      *
-     * @param schema The database schema in which the epsg tables are stored.
+     * @param schema The database schema in which the EPSG tables are stored.
      * @param quote  The identifier quotes.
      * @param removePrefix {@code true} if the "{@code epsg_}" prefix should be removed from
      *        the table names.
      */
     final void setSchema(String schema, final String quote, final boolean removePrefix) {
         schema = schema.trim();
-        if (schema.length() == 0) {
+        if (schema.isEmpty()) {
             throw new IllegalArgumentException(schema);
         }
         String old = this.schema;

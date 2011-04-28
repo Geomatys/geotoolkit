@@ -733,7 +733,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
             displayable.show(title, xAxis, yAxis);
             return;
         }
-        if (title == null || (title = title.trim()).length() == 0) {
+        if (title == null || (title = title.trim()).isEmpty()) {
             final StringBuilder buffer = new StringBuilder(String.valueOf(getName()));
             final int visibleBandIndex = CoverageUtilities.getVisibleBand(this);
             final SampleDimension visibleBand = getSampleDimension(visibleBandIndex);

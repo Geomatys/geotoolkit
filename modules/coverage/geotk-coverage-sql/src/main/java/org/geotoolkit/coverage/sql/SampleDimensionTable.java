@@ -150,7 +150,7 @@ final class SampleDimensionTable extends Table {
                 Unit<?> unit = null;
                 if (unitSymbol != null) {
                     unitSymbol = unitSymbol.trim();
-                    if (unitSymbol.length() == 0) {
+                    if (unitSymbol.isEmpty()) {
                         unit = Unit.ONE;
                     } else {
                         try {

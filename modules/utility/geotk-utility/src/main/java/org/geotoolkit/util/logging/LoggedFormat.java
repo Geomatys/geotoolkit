@@ -164,7 +164,7 @@ public class LoggedFormat<T> extends Format {
      * @return The parsed object, or {@code null} if {@code text} was null or can't be parsed.
      */
     public T parse(String text) {
-        if (text == null || (text=text.trim()).length() == 0) {
+        if (text == null || (text=text.trim()).isEmpty()) {
             return null;
         }
         final ParsePosition position = new ParsePosition(0);

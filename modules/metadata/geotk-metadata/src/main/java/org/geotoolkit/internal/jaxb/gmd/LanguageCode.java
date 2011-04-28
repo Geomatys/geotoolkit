@@ -97,7 +97,7 @@ public final class LanguageCode extends XmlAdapter<LanguageCode, Locale> {
      */
     @Override
     public final LanguageCode marshal(final Locale value) {
-        return (value != null && value.getLanguage().length() != 0)
+        return (value != null && !value.getLanguage().isEmpty())
                 ? new LanguageCode(value, Locale.ENGLISH) : null;
     }
 
@@ -112,7 +112,7 @@ public final class LanguageCode extends XmlAdapter<LanguageCode, Locale> {
     public final Locale unmarshal(final LanguageCode value) {
         if (value != null && value.proxy != null) {
             String code = value.proxy.codeListValue;
-            if (code != null && (code = code.trim()).length() != 0) {
+            if (code != null && !(code = code.trim()).isEmpty()) {
                 return Locales.parse(code);
             }
         }

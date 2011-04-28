@@ -113,7 +113,7 @@ public final class Measure {
      * @throws URISyntaxException If the {@code uom} looks like a URI, but can not be parsed.
      */
     public void setUOM(String uom) throws URISyntaxException {
-        if (uom == null || (uom = uom.trim()).length() == 0) {
+        if (uom == null || (uom = uom.trim()).isEmpty()) {
             unit = null;
             return;
         }

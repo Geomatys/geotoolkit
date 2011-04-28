@@ -163,7 +163,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      * If the given value is null or empty, returns the default value.
      */
     private static String ensureNonNull(String value, String defaultValue) {
-        if (value == null || (value = value.trim()).length() == 0) {
+        if (value == null || (value = value.trim()).isEmpty()) {
             value = defaultValue;
         }
         return value;

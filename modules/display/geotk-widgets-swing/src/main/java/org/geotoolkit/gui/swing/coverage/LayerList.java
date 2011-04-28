@@ -782,7 +782,7 @@ public class LayerList extends WindowCreator {
         final String title = resources.getString(Vocabulary.Keys.NEW_LAYER);
         String name = JOptionPane.showInputDialog(this, resources.getLabel(Vocabulary.Keys.NAME),
                 title, JOptionPane.QUESTION_MESSAGE);
-        if (name != null && (name = name.trim()).length() != 0) {
+        if (name != null && !(name = name.trim()).isEmpty()) {
             final FutureQuery<Boolean> result = database.addLayer(name);
             final String layer = name;
             result.invokeAfterCompletion(new Runnable() {

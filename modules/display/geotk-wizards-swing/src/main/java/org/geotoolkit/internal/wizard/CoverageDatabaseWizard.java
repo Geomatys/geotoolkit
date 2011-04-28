@@ -182,7 +182,7 @@ public final class CoverageDatabaseWizard extends AbstractWizard {
                 private final Set<Document> hasText = Collections.newSetFromMap(new IdentityHashMap<Document,Boolean>());
 
                 @Override protected void textChanged(final Document document, final String text) {
-                    if (text.trim().length() != 0 ? hasText.add(document) : hasText.remove(document)) {
+                    if (!text.trim().isEmpty() ? hasText.add(document) : hasText.remove(document)) {
                         final int size = 2 - hasText.size(); // 2 is the amount of fields having this listener.
                         assert size >= 0 : size;
                         controller.setProblem(size == 0 ? null : problem);

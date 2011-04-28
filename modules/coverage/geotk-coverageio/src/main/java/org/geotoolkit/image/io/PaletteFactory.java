@@ -622,7 +622,7 @@ public class PaletteFactory {
         String line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
-            if (line.length() != 0 && line.charAt(0) != '#') {
+            if (!line.isEmpty() && line.charAt(0) != '#') {
                 names.add(line);
             }
         }
@@ -705,7 +705,7 @@ public class PaletteFactory {
         final List<Color> colors = new ArrayList<Color>();
         String line; while ((line=input.readLine()) != null) try {
             line = line.trim();
-            if (line.length() == 0)        continue;
+            if (line.isEmpty())            continue;
             if (line.charAt(0) == '#')     continue;
             if (reader.setLine(line) == 0) continue;
             values = reader.getValues(values);

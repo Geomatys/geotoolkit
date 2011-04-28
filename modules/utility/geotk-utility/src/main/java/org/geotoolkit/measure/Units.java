@@ -402,7 +402,7 @@ public final class Units {
             return null;
         }
         uom = StringUtilities.toASCII(uom.trim()).toString();
-        if (uom.length() == 0) {
+        if (uom.isEmpty()) {
             return Unit.ONE;
         } else if (equalsIgnorePlural(uom, "pixel")) {
             return NonSI.PIXEL;

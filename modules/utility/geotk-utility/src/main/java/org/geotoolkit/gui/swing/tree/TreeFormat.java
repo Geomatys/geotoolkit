@@ -521,7 +521,7 @@ public class TreeFormat extends Format {
                 next   = treeBlank;
             }
             for (final String line : lines) {
-                if (line.length() != 0) {
+                if (!line.isEmpty()) {
                     toAppendTo.append(margin).append(line).append(lineSeparator);
                     margin = next;
                 }

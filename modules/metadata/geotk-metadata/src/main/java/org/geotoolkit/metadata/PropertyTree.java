@@ -469,7 +469,7 @@ final class PropertyTree {
                 } else {
                     name = element.toString();
                 }
-                if ((name = name.trim()).length() != 0) {
+                if (!(name = name.trim()).isEmpty()) {
                     return name;
                 }
             }

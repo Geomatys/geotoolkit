@@ -126,7 +126,7 @@ public final class PT_Locale extends XmlAdapter<PT_Locale, Locale> {
         private Wrapper(final Locale locale) {
             final Locale vl = MarshalContext.getLocale();
             languageCode = new LanguageCode(locale, vl);
-            if (locale.getCountry().length() != 0) {
+            if (!locale.getCountry().isEmpty()) {
                 country = new Country(locale, vl);
             }
             // The characterEncoding field will be initialized at marshalling time

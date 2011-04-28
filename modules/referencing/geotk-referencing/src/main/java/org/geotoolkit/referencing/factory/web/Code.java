@@ -148,7 +148,7 @@ parse:  for (int i=0; i<MAXIMUM_FIELDS; i++) {
             final int end = splitIndices[i+1] - 1;
             if (end > splitAt) {
                 final String field = text.substring(splitAt, end).trim();
-                if (field.length() != 0) try {
+                if (!field.isEmpty()) try {
                     switch (i) {
                         default: throw new AssertionError(i);
                         case 0:  code      = Integer.parseInt  (field); break;

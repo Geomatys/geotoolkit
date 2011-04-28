@@ -401,7 +401,7 @@ public abstract class CommandLine implements Runnable {
                 continue;
             }
             String name = option.name().trim();
-            if (name.length() == 0) {
+            if (name.isEmpty()) {
                 name = field.getName();
             }
             name = OPTION_PREFIX + name;
@@ -509,7 +509,7 @@ public abstract class CommandLine implements Runnable {
                 }
                 if (arg.equalsIgnoreCase(name)) {
                     arguments[i] = null;
-                    if (value.length() != 0) {
+                    if (!value.isEmpty()) {
                         return value;
                     }
                     while (++i < arguments.length) {
@@ -586,7 +586,7 @@ public abstract class CommandLine implements Runnable {
                     continue;
                 }
                 String name = candidate.name().trim();
-                if (name.length() == 0) {
+                if (name.isEmpty()) {
                     name = method.getName();
                 }
                 if (!action.equalsIgnoreCase(name)) {
@@ -684,7 +684,7 @@ public abstract class CommandLine implements Runnable {
                 if (option != null) {
                     String name = action ? ((Action) option).name() : ((Option) option).name();
                     name = name.trim();
-                    if (name.length() == 0) {
+                    if (name.isEmpty()) {
                         name = ((Member) member).getName();
                     }
                     options.add(name);

@@ -145,7 +145,7 @@ public final class PrjFiles {
         String wkt=null, line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
-            if (line.length() != 0) {
+            if (!line.isEmpty()) {
                 if (wkt == null) {
                     wkt = line;
                 } else {

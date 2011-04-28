@@ -940,7 +940,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             properties.put(IdentifiedObject.IDENTIFIERS_KEY,
                     new NamedIdentifier(authority, code.trim(), version));
         }
-        if (remarks!=null && (remarks=remarks.trim()).length()!=0) {
+        if (remarks != null && !(remarks = remarks.trim()).isEmpty()) {
             properties.put(IdentifiedObject.REMARKS_KEY, remarks);
         }
         /*
@@ -1014,11 +1014,11 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
             String area, String scope, String remarks) throws SQLException, FactoryException
     {
         final Map<String,Object> properties = createProperties(table, name, code, remarks);
-        if (area != null  &&  (area=area.trim()).length() != 0) {
+        if (area != null  &&  !(area = area.trim()).isEmpty()) {
             final Extent extent = buffered.createExtent(area);
             properties.put(Datum.DOMAIN_OF_VALIDITY_KEY, extent);
         }
-        if (scope != null &&  (scope=scope.trim()).length() != 0) {
+        if (scope != null &&  !(scope = scope.trim()).isEmpty()) {
             properties.put(Datum.SCOPE_KEY, scope);
         }
         return properties;
@@ -1586,7 +1586,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                 if (anchor != null) {
                     properties.put(Datum.ANCHOR_POINT_KEY, anchor);
                 }
-                if (epoch!=null && epoch.length()!=0) try {
+                if (epoch != null && !epoch.isEmpty()) try {
                     calendar.clear();
                     calendar.set(Integer.parseInt(epoch), 0, 1);
                     properties.put(Datum.REALIZATION_EPOCH_KEY, calendar.getTime());
@@ -2121,7 +2121,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     String element = resultUnits.getString(1);
                     unit = (element!=null) ? buffered.createUnit(element) : null;
                     element = resultUnits.getString(2);
-                    type = (element!=null && element.trim().length()!=0) ? String.class : Double.class;
+                    type = (element != null && !element.trim().isEmpty()) ? String.class : Double.class;
                 } else {
                     unit = null;
                     type = double.class;
@@ -2581,7 +2581,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                  */
                 final Map<String,Object> properties = createProperties("[Coordinate_Operation]",
                         name, epsg, area, scope, remarks);
-                if (version!=null && (version=version.trim()).length()!=0) {
+                if (version!=null && !(version = version.trim()).isEmpty()) {
                     properties.put(CoordinateOperation.OPERATION_VERSION_KEY, version);
                 }
                 if (!Double.isNaN(accuracy)) {

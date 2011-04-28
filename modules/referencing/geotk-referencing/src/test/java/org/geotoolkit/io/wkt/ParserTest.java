@@ -50,7 +50,7 @@ public final class ParserTest {
     /**
      * Parses all elements from the specified file. Parsing creates a set of
      * geographic objects. No special processing are done with them; we just
-     * check if the parsing work without error and produces distincts objects.
+     * check if the parsing work without error and produces distinct objects.
      *
      * @throws FactoryException Should never happen.
      * @throws ParseException Should never happen.
@@ -64,9 +64,9 @@ public final class ParserTest {
         }
         final Collection<Object> pool = new HashSet<Object>();
         String line;
-        while ((line=reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             line = line.trim();
-            if (line.length()==0 || line.startsWith("#")) {
+            if (line.isEmpty() || line.startsWith("#")) {
                 continue;
             }
             /*

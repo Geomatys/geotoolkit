@@ -199,7 +199,7 @@ public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, Ch
                     String key = value.toString();
                     if (key != null) {
                         key = key.trim();
-                        if (key.length() != 0) {
+                        if (!key.isEmpty()) {
                             final Object linkage = anchors.get(key);
                             if (linkage != null) {
                                 if (linkage instanceof URI) {

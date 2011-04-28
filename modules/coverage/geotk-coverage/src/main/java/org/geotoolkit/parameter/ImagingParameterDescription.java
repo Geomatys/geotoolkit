@@ -110,7 +110,7 @@ final class ImagingParameterDescription extends AbstractInternationalString impl
     public boolean exists() {
         try {
             // AbstractInternationalString.toString() never returns null.
-            return toString().length() != 0;
+            return !toString().isEmpty();
         } catch (MissingResourceException exception) {
             return false;
         }

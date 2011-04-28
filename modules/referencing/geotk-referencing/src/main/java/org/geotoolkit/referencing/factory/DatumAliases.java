@@ -239,7 +239,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
     private static String readLine(final BufferedReader in) throws IOException {
         String line;
         do line = in.readLine();
-        while (line != null && ((line = line.trim()).length() == 0 || line.charAt(0) == '#'));
+        while (line != null && ((line = line.trim()).isEmpty() || line.charAt(0) == '#'));
         return line;
     }
 
@@ -289,7 +289,7 @@ public class DatumAliases extends ReferencingFactory implements DatumFactory {
                 st = new StringTokenizer(line, SEPARATORS);
                 while (st.hasMoreTokens()) {
                     String alias = st.nextToken().trim();
-                    if (alias.length() != 0) {
+                    if (!alias.isEmpty()) {
                         final String previous = uniques.put(alias, alias);
                         if (previous != null) {
                             uniques.put(previous, previous);

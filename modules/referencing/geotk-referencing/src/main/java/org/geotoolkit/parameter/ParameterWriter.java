@@ -872,7 +872,7 @@ header: for (int i=0; ; i++) {
                 if (numberFormat instanceof DecimalFormat) {
                     final DecimalFormat decimalFormat = (DecimalFormat) numberFormat;
                     String prefix = decimalFormat.getPositivePrefix();
-                    if (prefix != null && prefix.length() == 0) {
+                    if (prefix != null && prefix.isEmpty()) {
                         prefix = decimalFormat.getNegativePrefix();
                         if ("-".equals(prefix)) {
                             canSetPositivePrefix = true;

@@ -188,7 +188,7 @@ final class Definitions extends AbstractMap<String,String> implements Serializab
         if (!isIdentifier(identifier)) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_IDENTIFIER_$1, identifier));
         }
-        if (value == null || value.trim().length() == 0) {
+        if (value == null || value.trim().isEmpty()) {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.MISSING_WKT_DEFINITION));
         }
         /*

@@ -188,11 +188,11 @@ public abstract class AnnotationsTestBase extends TestBase {
      * @param uml       The {@code @UML} annotation, or {@code null} if none.
      */
     private String getNamespace(final Class<?> type, String namespace, final UML uml) {
-        assertTrue("Missing namespace.", namespace.trim().length() != 0);
+        assertFalse("Missing namespace.", namespace.trim().isEmpty());
         final XmlSchema schema = type.getPackage().getAnnotation(XmlSchema.class);
         assertNotNull("Missing @XmlSchema package annotation.", schema);
         final String schemaNamespace = schema.namespace();
-        assertTrue("Missing namespace in @XmlSchema package annotation.", schemaNamespace.trim().length() != 0);
+        assertFalse("Missing namespace in @XmlSchema package annotation.", schemaNamespace.trim().isEmpty());
         assertFalse("Redundant namespace declaration.", namespace.equals(schemaNamespace));
         if (DEFAULT.equals(namespace)) {
             namespace = schemaNamespace;

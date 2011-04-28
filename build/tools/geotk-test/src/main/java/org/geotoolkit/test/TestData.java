@@ -110,7 +110,7 @@ public class TestData implements Runnable {
      * @see #url
      */
     public static URL getResource(final Object caller, String name) {
-        if (name == null || (name=name.trim()).length() == 0) {
+        if (name == null || (name=name.trim()).isEmpty()) {
             name = DIRECTORY;
         } else {
             name = DIRECTORY + '/' + name;

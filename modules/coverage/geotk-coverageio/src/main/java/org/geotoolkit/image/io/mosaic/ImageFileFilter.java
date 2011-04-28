@@ -90,7 +90,7 @@ final class ImageFileFilter implements FileFilter, FilenameFilter {
         if (XArrays.containsIgnoreCase(suffixes, suffix)) {
             // Found a file having the expected suffix. However we still have a
             // few special cases to exclude, namely the readme and license files.
-            if (suffix.length() == 0 || suffix.equalsIgnoreCase("txt")) {
+            if (suffix.isEmpty() || suffix.equalsIgnoreCase("txt")) {
                 if (s >= 0) {
                     filename = filename.substring(0, s);
                 }

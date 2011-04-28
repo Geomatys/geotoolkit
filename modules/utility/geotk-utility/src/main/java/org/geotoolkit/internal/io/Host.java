@@ -75,13 +75,13 @@ public final class Host {
                     }
                     server = server.substring(0, lower).trim();
                 }
-                if (server.length() != 0) {
+                if (!server.isEmpty()) {
                     host = server;
                 }
             }
             if (upper >= 0) {
                 String p = url.substring(upper).trim();
-                if (p.length() != 0) {
+                if (!p.isEmpty()) {
                     path = p;
                 }
             }

@@ -873,9 +873,9 @@ public class ReferencingBuilder {
             if (s >= 0) {
                 final String authority = name.substring(0, s).trim();
                 name = name.substring(s + 1).trim();
-                if (name.length() == 0) {
+                if (name.isEmpty()) {
                     name = authority;
-                } else if (authority.length() != 0) {
+                } else if (!authority.isEmpty()) {
                     final Map<String,Object> properties = new HashMap<String,Object>(6);
                     properties.put(ReferenceIdentifier.CODESPACE_KEY, authority);
                     properties.put(ReferenceIdentifier.CODE_KEY, name);

@@ -70,7 +70,7 @@ public final class FactoryTest {
         f2.hints.put(key2_reference_f3, f3);
         f1.hints.put(key1_reference_f2, f2);
 
-        assertFalse(f1.toString().length() == 0);
+        assertFalse(f1.toString().isEmpty());
 
         assertEquals(f1, f1);
         assertEquals(f2, f2);

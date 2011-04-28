@@ -541,7 +541,7 @@ public class GeneralMatrix extends GMatrix implements XMatrix {
         int   numData = 0;
         String line;
         while ((line = in.readLine()) != null) {
-            if ((line=line.trim()).length() == 0) {
+            if ((line=line.trim()).isEmpty()) {
                 if (numRow == 0) {
                     continue;
                 } else {

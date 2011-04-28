@@ -507,7 +507,7 @@ public final class Citations {
      *         or empty.
      */
     public static Citation fromName(String title) {
-        if (title == null || ((title = title.trim()).length() == 0)) {
+        if (title == null || ((title = title.trim()).isEmpty())) {
             return null;
         }
         for (int i=0; i<AUTHORITIES.length; i++) {

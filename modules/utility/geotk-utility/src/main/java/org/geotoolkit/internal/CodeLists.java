@@ -82,7 +82,7 @@ public final class CodeLists implements CodeList.Filter {
         final UML uml = type.getAnnotation(UML.class);
         if (uml != null) {
             String id = uml.identifier();
-            if (id != null && (id = id.trim()).length() != 0) {
+            if (id != null && !(id = id.trim()).isEmpty()) {
                 return id;
             }
         }
@@ -104,7 +104,7 @@ public final class CodeLists implements CodeList.Filter {
             return null;
         }
         String id = code.identifier();
-        if (id == null || (id = id.trim()).length() == 0) {
+        if (id == null || (id = id.trim()).isEmpty()) {
             // Fallback if no UML identifier were found.
             id = code.name();
         }
@@ -246,7 +246,7 @@ public final class CodeLists implements CodeList.Filter {
      * @since 3.06
      */
     public static <T extends CodeList<T>> T valueOf(final Class<T> codeType, String name, final boolean canCreate) {
-        if (name == null || (name = name.trim()).length() == 0) {
+        if (name == null || (name = name.trim()).isEmpty()) {
             return null;
         }
         final String typeName = codeType.getName();

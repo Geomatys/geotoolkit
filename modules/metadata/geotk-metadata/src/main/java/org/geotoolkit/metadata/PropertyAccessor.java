@@ -278,7 +278,7 @@ final class PropertyAccessor {
      * overwrite an existing entry with different value.
      */
     private void addMapping(String name, final Integer index) throws IllegalArgumentException {
-        if (name.length() != 0) {
+        if (!name.isEmpty()) {
             String original;
             do {
                 final Integer old = mapping.put(name, index);
@@ -1071,7 +1071,7 @@ final class PropertyAccessor {
     static boolean isEmpty(final Object value) {
         return value == null ||
                 ((value instanceof Collection<?>) && ((Collection<?>) value).isEmpty()) ||
-                ((value instanceof CharSequence) && value.toString().trim().length() == 0) ||
+                ((value instanceof CharSequence) && value.toString().trim().isEmpty()) ||
                 (value.getClass().isArray() && Array.getLength(value) == 0);
     }
 }

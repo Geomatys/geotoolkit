@@ -92,7 +92,7 @@ public final class LocalNameAdapter extends XmlAdapter<String,LocalName> {
      */
     @Override
     public LocalName unmarshal(String value) {
-        if (value == null || ((value = value.trim()).length() == 0)) {
+        if (value == null || ((value = value.trim()).isEmpty())) {
             return null;
         }
         NameFactory factory = this.factory;

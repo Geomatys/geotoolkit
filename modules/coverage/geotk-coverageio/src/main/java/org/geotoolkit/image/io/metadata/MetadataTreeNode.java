@@ -244,7 +244,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
             }
             this.description = description;
         }
-        return description.length() == 0 ? null : description;
+        return description.isEmpty() ? null : description;
     }
 
     /**

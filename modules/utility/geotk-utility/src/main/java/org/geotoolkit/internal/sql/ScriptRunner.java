@@ -385,7 +385,7 @@ public class ScriptRunner implements FilenameFilter {
             int i = buffer.length();
             if (i == 0) {
                 final String trimed = line.trim();
-                if (trimed.length() == 0 || trimed.startsWith(COMMENT)) {
+                if (trimed.isEmpty() || trimed.startsWith(COMMENT)) {
                     // Ignore empty lines and comment lines, but only if they appear before any
                     // other kind of line (i.e. before the begining of the real SQL statement).
                     continue;

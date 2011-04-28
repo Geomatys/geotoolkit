@@ -47,7 +47,7 @@ public final class StringConverter extends XmlAdapter<String,String> {
     public String unmarshal(String value) {
         if (value != null) {
             value = value.trim();
-            if (value.length() == 0) {
+            if (value.isEmpty()) {
                 return null;
             }
         }
@@ -65,7 +65,7 @@ public final class StringConverter extends XmlAdapter<String,String> {
     public String marshal(String value) {
         if (value != null) {
             value = value.trim();
-            if (value.length() == 0) {
+            if (value.isEmpty()) {
                 return null;
             }
         }

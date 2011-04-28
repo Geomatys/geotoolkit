@@ -140,8 +140,8 @@ public class CatalogException extends SQLNonTransientException {
             if (metadata != null) {
                 this.table  = metadata.getTableName (column);
                 this.column = metadata.getColumnName(column);
-                noTable  = (this.table  == null) || (this.table  = this.table .trim()).length() == 0;
-                noColumn = (this.column == null) || (this.column = this.column.trim()).length() == 0;
+                noTable  = (this.table  == null) || (this.table  = this.table .trim()).isEmpty();
+                noColumn = (this.column == null) || (this.column = this.column.trim()).isEmpty();
             }
             results.close();
         }

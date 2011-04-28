@@ -661,7 +661,7 @@ public class ProgressWindow implements ProgressListener, Disposable {
                 String location = values[1];
                 if (location != null) {
                     location = trim(location);
-                    if (location.length() != 0) {
+                    if (!location.isEmpty()) {
                         c.weightx = 0;
                         warningArea.add(new JLabel('(' + location + ')'), c);
                         c.weightx = 1;

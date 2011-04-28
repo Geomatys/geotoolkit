@@ -1086,7 +1086,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         String candidate = currentElement().getAttribute(attribute);
         if (candidate != null) {
             candidate = candidate.trim();
-            if (candidate.length() == 0) {
+            if (candidate.isEmpty()) {
                 candidate = null;
             }
         }
@@ -1536,7 +1536,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                     .getString(Errors.Keys.UNMODIFIABLE_METADATA));
         }
         final Element element = currentElement();
-        if (value == null || (value=value.trim()).length() == 0) {
+        if (value == null || (value=value.trim()).isEmpty()) {
             if (element.hasAttribute(attribute)) {
                 element.removeAttribute(attribute);
             }

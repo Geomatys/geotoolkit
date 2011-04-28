@@ -95,7 +95,7 @@ public final class Country extends XmlAdapter<Country, Locale> {
      */
     @Override
     public final Country marshal(final Locale value) {
-        return (value != null && value.getCountry().length() != 0)
+        return (value != null && !value.getCountry().isEmpty())
                 ? new Country(value, MarshalContext.getLocale()) : null;
     }
 
@@ -110,7 +110,7 @@ public final class Country extends XmlAdapter<Country, Locale> {
     public final Locale unmarshal(final Country value) {
         if (value != null && value.proxy != null) {
             String code = value.proxy.codeListValue;
-            if (code != null && (code = code.trim()).length() != 0) {
+            if (code != null && !(code = code.trim()).isEmpty()) {
                 return Locales.unique(new Locale("", code));
             }
         }

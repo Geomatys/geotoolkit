@@ -419,7 +419,7 @@ public class FormatChooser extends JComponent implements Dialog {
      */
     private boolean applyPattern(final boolean add) {
         String pattern = choices.getSelectedItem().toString();
-        if (pattern.trim().length() == 0) {
+        if (pattern.trim().isEmpty()) {
             update();
             return false;
         }

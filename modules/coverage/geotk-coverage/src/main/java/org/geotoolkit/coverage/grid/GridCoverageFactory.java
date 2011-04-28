@@ -136,7 +136,7 @@ public class GridCoverageFactory extends Factory {
             tileEncoding = (String) userHints.get(Hints.TILE_ENCODING);
             if (tileEncoding != null) {
                 tileEncoding = tileEncoding.trim();
-                if (tileEncoding.length() == 0) {
+                if (tileEncoding.isEmpty()) {
                     tileEncoding = null;
                 }
             }

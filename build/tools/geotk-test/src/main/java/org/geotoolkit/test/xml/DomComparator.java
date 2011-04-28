@@ -460,7 +460,7 @@ public class DomComparator {
                     // For text node, continue the search if the node is empty.
                     case Node.TEXT_NODE: {
                         final String text = node.getTextContent();
-                        if (text == null || text.trim().length() == 0) {
+                        if (text == null || text.trim().isEmpty()) {
                             continue;
                         }
                         break;

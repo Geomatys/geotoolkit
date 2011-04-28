@@ -73,8 +73,8 @@ public class ConsoleDemoTest extends TestBase {
     @After
     public void verifyContent() {
         String content;
-        content = out.toString(); assertTrue(content, content.length() != 0);
-        content = err.toString(); assertTrue(content, content.length() == 0);
+        content = out.toString(); assertTrue(content, !content.isEmpty());
+        content = err.toString(); assertTrue(content,  content.isEmpty());
     }
 
     /**

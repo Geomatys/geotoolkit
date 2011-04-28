@@ -346,7 +346,7 @@ attmpt: for (int caseNumber=0; ; caseNumber++) {
         String line;
         while ((line = in.readLine()) != null) {
             line = line.trim();
-            if (line.length() != 0 && line.charAt(0) != '#') {
+            if (!line.isEmpty() && line.charAt(0) != '#') {
                 if (count >= m.length) {
                     in.close();
                     throw new ContentFormatException(Errors.format(Errors.Keys.FILE_HAS_TOO_MANY_DATA));

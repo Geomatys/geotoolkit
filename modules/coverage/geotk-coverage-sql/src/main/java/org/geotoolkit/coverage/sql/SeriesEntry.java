@@ -193,7 +193,7 @@ final class SeriesEntry extends DefaultEntry {
      * @return The file.
      */
     public File file(String filename) {
-        if (extension != null && extension.length() != 0) {
+        if (extension != null && !extension.isEmpty()) {
             filename = filename + '.' + extension;
         }
         return new File(path, filename);
@@ -221,7 +221,7 @@ final class SeriesEntry extends DefaultEntry {
             buffer.append('/');
         }
         buffer.append(filename);
-        if (extension != null && extension.length() != 0) {
+        if (extension != null && !extension.isEmpty()) {
             buffer.append('.').append(extension);
         }
         return new URI(protocol, host, buffer.toString(), null);

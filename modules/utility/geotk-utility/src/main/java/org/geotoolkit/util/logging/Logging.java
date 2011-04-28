@@ -258,7 +258,7 @@ public final class Logging {
     private static Logging getLogging(final String base, final boolean create) {
         assert Thread.holdsLock(EMPTY);
         Logging logging = ALL;
-        if (base.length() != 0) {
+        if (!base.isEmpty()) {
             int offset = 0;
             do {
                 Logging[] children = logging.children;
@@ -445,7 +445,7 @@ search:     while (configs.hasMoreElements()) try {
                     String line;
                     while ((line = in.readLine()) != null) {
                         line = line.trim();
-                        if (line.length() != 0 && line.charAt(0) != '#') try {
+                        if (!line.isEmpty() && line.charAt(0) != '#') try {
                             setLoggerFactory(line);
                             break search;
                         } catch (ClassNotFoundException e) {

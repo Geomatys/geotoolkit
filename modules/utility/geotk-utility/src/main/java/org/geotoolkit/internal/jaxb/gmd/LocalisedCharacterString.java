@@ -95,7 +95,7 @@ final class LocalisedCharacterString {
     public void setLocale(String localeId) {
         if (localeId != null) {
             localeId = localeId.trim();
-            if (localeId.length() != 0) {
+            if (!localeId.isEmpty()) {
                 locale = Locales.parse(localeId.substring(localeId.indexOf('-') + 1));
                 return;
             }

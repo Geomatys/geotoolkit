@@ -78,7 +78,7 @@ public class GO_CharacterString {
     public final void setCharacterString(String text) {
         if (text != null) {
             text = text.trim();
-            if (text.length() == 0) {
+            if (text.isEmpty()) {
                 text = null;
             }
         }

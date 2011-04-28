@@ -87,7 +87,7 @@ public final class MosaicBuilderTest extends MosaicTestBase {
         final TileManager tileManager = builder.createTileManager(sourceTiles);
         assertEquals(4733, tileManager.getTiles().size());
         final String asText = tileManager.toString();
-        assertFalse(asText.trim().length() == 0);
+        assertFalse(asText.trim().isEmpty());
         assertTrue("Expected tiles created as in setUp()", manager.equals(tileManager));
         // we don't use assertEquals because the message is too long to format in case of failure.
 

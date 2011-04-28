@@ -551,7 +551,7 @@ final class NewGridCoverageDetails extends WindowCreator implements CoverageData
      */
     private static int getSelectedCode(final AuthorityCodesComboBox choices) throws NumberFormatException {
         String code = choices.getSelectedCode();
-        if (code != null && (code = code.trim()).length() != 0) {
+        if (code != null && !(code = code.trim()).isEmpty()) {
             return Integer.parseInt(code);
         }
         return 0;

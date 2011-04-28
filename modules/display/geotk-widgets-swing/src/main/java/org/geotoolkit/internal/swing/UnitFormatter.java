@@ -62,7 +62,7 @@ public final class UnitFormatter extends InternationalFormatter {
      */
     @Override
     public Unit<?> stringToValue(String text) throws ParseException {
-        if (text == null || (text = text.trim()).length() == 0) {
+        if (text == null || (text = text.trim()).isEmpty()) {
             return null;
         }
         Unit<?> unit;

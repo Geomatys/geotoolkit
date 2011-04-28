@@ -1613,7 +1613,7 @@ class MouseReshapeTracker extends MouseInputAdapter implements Shape {
         private void updateText(final JFormattedTextField editor) {
             String text;
             if (!logicalShape.isEmpty() ||
-                ((text = editor.getText()) != null && text.trim().length() != 0))
+                ((text = editor.getText()) != null && !text.trim().isEmpty()))
             {
                 double value;
                 switch (inverseTransform(side)) {

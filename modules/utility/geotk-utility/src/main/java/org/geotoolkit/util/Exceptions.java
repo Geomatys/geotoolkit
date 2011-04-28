@@ -84,12 +84,12 @@ public final class Exceptions {
         StringBuilder buffer = null;
         while (cause != null) {
             String message = cause.getLocalizedMessage();
-            if (message != null && (message = message.trim()).length() != 0) {
+            if (message != null && !(message = message.trim()).isEmpty()) {
                 if (buffer == null) {
                     done = new HashSet<String>();
                     buffer = new StringBuilder();
                     lineSeparator = System.getProperty("line.separator", "\n");
-                    if (header != null && (header = header.trim()).length() != 0) {
+                    if (header != null && !(header = header.trim()).isEmpty()) {
                         buffer.append(header);
                         done.add(header);
                         /*

@@ -288,7 +288,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
             e.initCause(cause);
             throw e;
         }
-        if (authority.length() == 0 || Boolean.TRUE.equals(getAuthorityNames().get(authority))) {
+        if (authority.isEmpty() || Boolean.TRUE.equals(getAuthorityNames().get(authority))) {
             return srid;
         }
         final Integer c;

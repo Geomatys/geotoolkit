@@ -64,7 +64,7 @@ final class OGCNamespacePrefixMapper_Endorsed extends NamespacePrefixMapper {
      */
     @Override
     public String getPreferredPrefix(String namespace, final String suggestion, final boolean required) {
-        if (namespace == null || namespace.length() == 0) {
+        if (namespace == null || namespace.isEmpty()) {
             return defaultPrefix;
         }
         /*
