@@ -75,6 +75,7 @@ import org.geotoolkit.xml.StaxStreamReader;
 
 import org.opengis.feature.Feature;
 import static org.geotoolkit.data.gx.xml.GxConstants.*;
+import static org.geotoolkit.data.kml.KmlUtilities.*;
 
 /**
  *
@@ -223,13 +224,13 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                             snippet = kmlReader.readSnippet();
                         } else if (KmlConstants.TAG_DESCRIPTION.equals(eName)) {
                             description = kmlReader.readElementText();
-                        } else if (kmlReader.isAbstractView(eName)) {
+                        } else if (isAbstractView(eName)) {
                             view = kmlReader.readAbstractView(eName);
-                        } else if (kmlReader.isAbstractTimePrimitive(eName)) {
+                        } else if (isAbstractTimePrimitive(eName)) {
                             timePrimitive = kmlReader.readAbstractTimePrimitive(eName);
                         } else if (KmlConstants.TAG_STYLE_URL.equals(eName)) {
                             styleUrl = new URI(reader.getElementText());
-                        } else if (kmlReader.isAbstractStyleSelector(eName)) {
+                        } else if (isAbstractStyleSelector(eName)) {
                             styleSelector.add(kmlReader.readAbstractStyleSelector(eName));
                         } else if (KmlConstants.TAG_REGION.equals(eName)) {
                             region = kmlReader.readRegion();
@@ -381,7 +382,7 @@ public class GxReader extends StaxStreamReader implements KmlExtensionReader {
                     } 
                     // KML
                     else if (this.kmlReader.getVersionUri().equals(eUri)) {
-                        if (kmlReader.isAbstractView(eName)) {
+                        if (isAbstractView(eName)) {
                             view = this.kmlReader.readAbstractView(eName);
                         }
                     }

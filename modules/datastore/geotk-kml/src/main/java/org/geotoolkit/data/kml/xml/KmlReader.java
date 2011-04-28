@@ -123,6 +123,7 @@ import org.geotoolkit.xml.StaxStreamReader;
 import org.opengis.feature.Feature;
 
 import static org.geotoolkit.data.kml.xml.KmlConstants.*;
+import static org.geotoolkit.data.kml.KmlUtilities.*;
 
 /**
  *
@@ -138,6 +139,8 @@ public class KmlReader extends StaxStreamReader {
     private final ISODateParser fastDateParser = new ISODateParser();
     private final List<KmlExtensionReader> extensionReaders = new ArrayList<KmlExtensionReader>();
     private final List<KmlExtensionReader> dataReaders = new ArrayList<KmlExtensionReader>();
+    //Boolean use to specify if the read document contain namespace or not
+    private boolean useNamespace = true;
 
     public KmlReader() {
         KML_FACTORY = DefaultKmlFactory.getInstance();
@@ -181,7 +184,7 @@ public class KmlReader extends StaxStreamReader {
     public void setInput(Object input, String KmlVersionUri)
             throws IOException, XMLStreamException, KmlException {
         this.setInput(input);
-        if (URI_KML_2_2.equals(KmlVersionUri) || URI_KML_2_1.equals(KmlVersionUri)) {
+        if (checkNamespace(KmlVersionUri)) {
             URI_KML = KmlVersionUri;
         } else {
             throw new KmlException("Bad Kml version Uri. This reader supports 2.1 and 2.2 versions.");
@@ -295,7 +298,7 @@ public class KmlReader extends StaxStreamReader {
      */
     public Kml read()
             throws XMLStreamException, KmlException, URISyntaxException {
-        
+
         Kml root = null;
 
         while (reader.hasNext()) {
@@ -305,8 +308,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML_2_2.equals(eUri)
-                            || URI_KML_2_1.equals(eUri)) {
+                    if (checkNamespace(eUri)) {
                         if (TAG_KML.equals(eName)) {
                             URI_KML = eUri;
 
@@ -318,6 +320,9 @@ public class KmlReader extends StaxStreamReader {
                             }
                             root = this.readKml();
                             root.setExtensionsUris(extensionsUris);
+                            if (!useNamespace) {
+                                URI_KML = URI_KML_2_1;
+                            }
                             root.setVersion(URI_KML);
                         }
                     }
@@ -350,8 +355,9 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
+
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (checkNamespace(eUri)) {
                         if (TAG_NETWORK_LINK_CONTROL.equals(eName)) {
                             networkLinkControl = this.readNetworkLinkControl();
                         } else if (isAbstractFeature(eName)) {
@@ -384,7 +390,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_KML.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -443,7 +449,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         // ABSTRACT FEATURE
                         if (TAG_NAME.equals(eName)) {
                             name = reader.getElementText();
@@ -528,7 +534,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_PLACEMARK.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -570,7 +576,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // REGION
                         if (TAG_LAT_LON_ALT_BOX.equals(eName)) {
@@ -603,7 +609,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_REGION.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -643,7 +649,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // REGION
                         if (TAG_MIN_LOD_PIXELS.equals(eName)) {
@@ -680,7 +686,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LOD.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -714,7 +720,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // EXTENDED DATA
                         if (TAG_DATA.equals(eName)) {
@@ -735,7 +741,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_EXTENDED_DATA.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -776,7 +782,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_META_DATA.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -811,7 +817,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // REGION
                         if (TAG_DISPLAY_NAME.equals(eName)) {
@@ -824,7 +830,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_DATA.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -862,7 +868,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // SCHEMA DATA
                         if (TAG_SIMPLE_DATA.equals(eName)) {
@@ -873,7 +879,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_SCHEMA_DATA.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -926,7 +932,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_MIN_REFRESH_PERIOD.equals(eName)) {
                             minRefreshPeriod = parseDouble(reader.getElementText());
                         }
@@ -981,7 +987,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_NETWORK_LINK_CONTROL.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1016,7 +1022,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_TARGET_HREF.equals(eName)) {
                             targetHref = new URI(reader.getElementText());
                         }
@@ -1038,7 +1044,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_UPDATE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1072,7 +1078,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (isAbstractFeature(eName)) {
                             replace = this.readAbstractFeature(eName);
                         }
@@ -1081,7 +1087,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_REPLACE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1109,7 +1115,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         if (isAbstractContainer(eName)) {
                             containers.add(this.readAbstractContainer(eName));
@@ -1119,7 +1125,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_CREATE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1148,7 +1154,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         if (isAbstractObject(eName)) {
                             features.add(this.readAbstractFeature(eName));
@@ -1171,7 +1177,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_DELETE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1200,7 +1206,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (isAbstractObject(eName)) {
                             objects.add(this.readAbstractObject(eName));
                         }
@@ -1209,7 +1215,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_CHANGE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1423,7 +1429,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         // POLYGON
                         if (TAG_EXTRUDE.equals(eName)) {
                             extrude = parseBoolean(reader.getElementText());
@@ -1469,7 +1475,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_POLYGON.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1505,7 +1511,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // BOUNDARY
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_LINEAR_RING.equals(eName)) {
                             linearRing = this.readLinearRing();
                         }
@@ -1547,7 +1553,7 @@ public class KmlReader extends StaxStreamReader {
                 case XMLStreamConstants.END_ELEMENT:
                     if ((TAG_OUTER_BOUNDARY_IS.equals(reader.getLocalName())
                             || TAG_INNER_BOUNDARY_IS.equals(reader.getLocalName()))
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1595,7 +1601,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // MODEL
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_ALTITUDE_MODE.equals(eName)) {
                             altitudeMode = this.readAltitudeMode();
                         } else if (TAG_LOCATION.equals(eName)) {
@@ -1643,7 +1649,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_MODEL.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1685,7 +1691,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_ALIAS.equals(eName)) {
                             aliases.add(this.readAlias());
                         }
@@ -1714,7 +1720,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_RESOURCE_MAP.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1756,7 +1762,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_TARGET_HREF.equals(eName)) {
                             targetHref = new URI(reader.getElementText());
                         } else if (TAG_SOURCE_HREF.equals(eName)) {
@@ -1787,7 +1793,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_ALIAS.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1830,7 +1836,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // SCALE
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_X.equals(eName)) {
                             x = parseDouble(reader.getElementText());
                         } else if (TAG_Y.equals(eName)) {
@@ -1863,7 +1869,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_SCALE_BIG.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1905,7 +1911,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // LOCATION
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_LONGITUDE.equals(eName)) {
                             longitude = parseDouble(reader.getElementText());
                         } else if (TAG_LATITUDE.equals(eName)) {
@@ -1938,7 +1944,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LOCATION.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -1979,7 +1985,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // ORIENTATION
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_HEADING.equals(eName)) {
                             heading = parseDouble(reader.getElementText());
                         } else if (TAG_TILT.equals(eName)) {
@@ -2012,14 +2018,14 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_ORIENTATION.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
             }
         }
 
-        return KmlReader.KML_FACTORY.createOrientation(objectSimpleExtensions, 
+        return KmlReader.KML_FACTORY.createOrientation(objectSimpleExtensions,
                 idAttributes, heading, tilt, roll, orientationSimpleExtensions,
                 orientationObjectExtensions);
     }
@@ -2059,7 +2065,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // LINEAR RING
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_EXTRUDE.equals(eName)) {
                             extrude = parseBoolean(reader.getElementText());
                         } else if (TAG_TESSELLATE.equals(eName)) {
@@ -2102,7 +2108,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LINEAR_RING.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2150,7 +2156,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // LINE STRING
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_EXTRUDE.equals(eName)) {
                             extrude = parseBoolean(reader.getElementText());
                         } else if (TAG_TESSELLATE.equals(eName)) {
@@ -2193,7 +2199,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LINE_STRING.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2239,7 +2245,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (isAbstractGeometry(eName)) {
                             geometries.add(this.readAbstractGeometry(eName));
                         }
@@ -2276,7 +2282,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_MULTI_GEOMETRY.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2394,7 +2400,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         // ABSTRACT FEATURE
                         if (TAG_NAME.equals(eName)) {
                             name = reader.getElementText();
@@ -2494,7 +2500,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_GROUND_OVERLAY.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2552,7 +2558,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // COMME BASIC LINK
                         if (TAG_HREF.equals(eName)) {
@@ -2602,7 +2608,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (stopName.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2680,7 +2686,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // ABSTRACT LATLONBOX
                         if (TAG_NORTH.equals(eName)) {
@@ -2725,7 +2731,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LAT_LON_BOX.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2774,7 +2780,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // ABSTRACT LATLONBOX
                         if (TAG_NORTH.equals(eName)) {
@@ -2826,7 +2832,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LAT_LON_ALT_BOX.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2869,7 +2875,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // IMAGE PYRAMID
                         if (TAG_TITLE_SIZE.equals(eName)) {
@@ -2906,7 +2912,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_IMAGE_PYRAMID.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -2950,7 +2956,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // VIEW VOLUME
                         if (TAG_LEFT_FOV.equals(eName)) {
@@ -2989,7 +2995,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_VIEW_VOLUME.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3060,7 +3066,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // ABSTRACT FEATURE
                         if (TAG_NAME.equals(eName)) {
@@ -3161,7 +3167,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_PHOTO_OVERLAY.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3235,7 +3241,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // ABSTRACT FEATURE
                         if (TAG_NAME.equals(eName)) {
@@ -3336,7 +3342,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_SCREEN_OVERLAY.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3430,7 +3436,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // LOOK AT
                         if (TAG_LONGITUDE.equals(eName)) {
@@ -3485,7 +3491,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LOOK_AT.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3534,7 +3540,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // CAMERA
                         if (TAG_LONGITUDE.equals(eName)) {
@@ -3585,7 +3591,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_CAMERA.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3649,7 +3655,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // KML
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         // STYLE MAP
                         if (TAG_PAIR.equals(eName)) {
                             pairs.add(this.readPair());
@@ -3683,7 +3689,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_STYLE_MAP.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3724,7 +3730,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // PAIR
                         if (TAG_KEY.equals(eName)) {
@@ -3760,7 +3766,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_PAIR.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3807,7 +3813,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // STYLE
                         if (TAG_ICON_STYLE.equals(eName)) {
@@ -3852,7 +3858,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_STYLE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -3904,7 +3910,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // COLOR STYLE
                         if (TAG_COLOR.equals(eName)) {
@@ -3954,7 +3960,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_ICON_STYLE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4007,7 +4013,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // COLOR STYLE
                         if (TAG_COLOR.equals(eName)) {
@@ -4051,7 +4057,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LABEL_STYLE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4102,7 +4108,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // COLOR STYLE
                         if (TAG_COLOR.equals(eName)) {
@@ -4146,7 +4152,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LINE_STYLE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4197,7 +4203,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         //e COLOR STYLE
                         if (TAG_COLOR.equals(eName)) {
@@ -4243,7 +4249,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_POLY_STYLE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4291,7 +4297,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // BALLOON STYLE
                         if (TAG_BG_COLOR.equals(eName)
@@ -4339,7 +4345,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_BALLOON_STYLE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4415,7 +4421,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // LIST STYLE
                         if (TAG_LIST_ITEM.equals(eName)) {
@@ -4457,7 +4463,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_LIST_STYLE.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4499,7 +4505,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // ITEM ICON
                         if (TAG_STATE.equals(eName)) {
@@ -4533,7 +4539,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_ITEM_ICON.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4593,7 +4599,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_HREF.equals(eName)) {
                             href = reader.getElementText();
                         }
@@ -4622,7 +4628,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (stopTag.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4668,7 +4674,7 @@ public class KmlReader extends StaxStreamReader {
 
             switch (reader.next()) {
                 case XMLStreamConstants.END_ELEMENT:
-                    if (stopTag.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (stopTag.equals(reader.getLocalName()) && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4730,7 +4736,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_BEGIN.equals(eName)) {
                             begin = (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
                         } else if (TAG_END.equals(eName)) {
@@ -4765,7 +4771,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_TIME_SPAN.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4805,7 +4811,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_WHEN.equals(eName)) {
                             when = this.readCalendar();
                         }
@@ -4838,7 +4844,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_TIME_STAMP.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -4937,7 +4943,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // ABSTRACT FEATURE
                         if (TAG_NAME.equals(eName)) {
@@ -5028,7 +5034,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_FOLDER.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -5095,7 +5101,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // ABSTRACT FEATURE
                         if (TAG_NAME.equals(eName)) {
@@ -5188,7 +5194,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_DOCUMENT.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -5227,7 +5233,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // SCHEMA
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_SIMPLE_FIELD.equals(eName)) {
                             simplefields.add(this.readSimpleField());
                         }
@@ -5235,7 +5241,7 @@ public class KmlReader extends StaxStreamReader {
                     break;
 
                 case XMLStreamConstants.END_ELEMENT:
-                    if (TAG_SCHEMA.equals(reader.getLocalName()) && URI_KML.contains(reader.getNamespaceURI())) {
+                    if (TAG_SCHEMA.equals(reader.getLocalName()) && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -5269,7 +5275,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // SIMPLE FIELD
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_DISPLAY_NAME.equals(eName)) {
                             displayName = this.readElementText();
                         }
@@ -5278,7 +5284,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_SIMPLE_FIELD.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -5336,7 +5342,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eName = reader.getLocalName();
                     final String eUri = reader.getNamespaceURI();
 
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
 
                         // ABSTRACT FEATURE
                         if (TAG_NAME.equals(eName)) {
@@ -5424,7 +5430,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_NETWORK_LINK.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -5472,7 +5478,7 @@ public class KmlReader extends StaxStreamReader {
                     final String eUri = reader.getNamespaceURI();
 
                     // POINT
-                    if (URI_KML.equals(eUri)) {
+                    if (equalsNamespace(eUri)) {
                         if (TAG_EXTRUDE.equals(eName)) {
                             extrude = parseBoolean(reader.getElementText());
                         } else if (TAG_ALTITUDE_MODE.equals(eName)) {
@@ -5513,7 +5519,7 @@ public class KmlReader extends StaxStreamReader {
 
                 case XMLStreamConstants.END_ELEMENT:
                     if (TAG_POINT.equals(reader.getLocalName())
-                            && URI_KML.contains(reader.getNamespaceURI())) {
+                            && containsNamespace(reader.getNamespaceURI())) {
                         break boucle;
                     }
                     break;
@@ -5571,143 +5577,6 @@ public class KmlReader extends StaxStreamReader {
         return (Calendar) fastDateParser.getCalendar(reader.getElementText()).clone();
     }
 
-    /*
-     *  METHODES DE TEST SUR LES TYPES ABSTRAITS
-     */
-    /**
-     *
-     * @param eName the tag name.
-     * @return true if the tag name is an AbstractGeometry element.
-     */
-    public boolean isAbstractGeometry(String eName) {
-        return (TAG_MULTI_GEOMETRY.equals(eName)
-                || TAG_LINE_STRING.equals(eName)
-                || TAG_POLYGON.equals(eName)
-                || TAG_POINT.equals(eName)
-                || TAG_LINEAR_RING.equals(eName)
-                || TAG_MODEL.equals(eName));
-    }
-
-    /**
-     *
-     * @param eName the tag name.
-     * @return true if the tag name is an AbstractFeature element.
-     */
-    public boolean isAbstractFeature(String eName) {
-        return (TAG_FOLDER.equals(eName)
-                || TAG_GROUND_OVERLAY.equals(eName)
-                || TAG_PHOTO_OVERLAY.equals(eName)
-                || TAG_NETWORK_LINK.equals(eName)
-                || TAG_DOCUMENT.equals(eName)
-                || TAG_SCREEN_OVERLAY.equals(eName)
-                || TAG_PLACEMARK.equals(eName));
-    }
-
-    /**
-     *
-     * @param eName the tag name.
-     * @return true if the tag name is an AbstractContainer element.
-     */
-    public boolean isAbstractContainer(String eName) {
-        return (TAG_FOLDER.equals(eName)
-                || TAG_DOCUMENT.equals(eName));
-    }
-
-    /**
-     *
-     * @param eName the tag name.
-     * @return true if the tag name is an AbstractOverlay element.
-     */
-    public boolean isAbstractOverlay(String eName) {
-        return (TAG_GROUND_OVERLAY.equals(eName)
-                || TAG_PHOTO_OVERLAY.equals(eName)
-                || TAG_SCREEN_OVERLAY.equals(eName));
-    }
-
-    /**
-     *
-     * @param eName the tag name.
-     * @return true if the tag name is an AbstractView element.
-     */
-    public boolean isAbstractView(String eName) {
-        return (TAG_LOOK_AT.equals(eName)
-                || TAG_CAMERA.equals(eName));
-    }
-
-    /**
-     *
-     * @param eName the tag name.
-     * @return true if the tag name is an AbstractTimePrimitive element.
-     */
-    public boolean isAbstractTimePrimitive(String eName) {
-        return (TAG_TIME_STAMP.equals(eName)
-                || TAG_TIME_SPAN.equals(eName));
-    }
-
-    /**
-     *
-     * @param eName the tag name.
-     * @return true if the tag name is an AbstractStyleSelector element.
-     */
-    public boolean isAbstractStyleSelector(String eName) {
-        return (TAG_STYLE.equals(eName)
-                || TAG_STYLE_MAP.equals(eName));
-    }
-
-    /**
-     *
-     * @param eName
-     * @return
-     */
-    private boolean isAbstractSubStyle(String eName) {
-        return (TAG_BALLOON_STYLE.equals(eName)
-                || TAG_LIST_STYLE.equals(eName)
-                || isAbstractColorStyle(eName));
-    }
-
-    /**
-     *
-     * @param eName
-     * @return
-     */
-    public boolean isAbstractColorStyle(String eName) {
-        return (TAG_ICON_STYLE.equals(eName)
-                || TAG_LABEL_STYLE.equals(eName)
-                || TAG_POLY_STYLE.equals(eName)
-                || TAG_LINE_STYLE.equals(eName));
-    }
-
-    /**
-     *
-     * @param eName
-     * @return
-     */
-    public boolean isAbstractObject(String eName) {
-        // Traiter le cas particuloer du TAG_ICON qui peut être un basicLink
-        return (isAbstractFeature(eName)
-                || isAbstractGeometry(eName)
-                || isAbstractStyleSelector(eName)
-                || isAbstractSubStyle(eName)
-                || isAbstractView(eName)
-                || TAG_PAIR.equals(eName)
-                || TAG_LINK.equals(eName)
-                || TAG_VIEW_VOLUME.equals(eName)
-                || TAG_REGION.equals(eName)
-                || TAG_LOD.equals(eName)
-                || TAG_ORIENTATION.equals(eName)
-                || TAG_SCHEMA_DATA.equals(eName));
-    }
-
-    /**
-     * 
-     * @param eName
-     * @return
-     */
-    public boolean isAbstractLatLonBox(String eName) {
-        return (TAG_LAT_LON_ALT_BOX.equals(eName)
-                || TAG_LAT_LON_BOX.equals(eName));
-    }
-
     /**
      *
      * @param versions
@@ -5728,6 +5597,71 @@ public class KmlReader extends StaxStreamReader {
      * @return
      */
     public boolean checkVersionSimple(String version) {
+        if (!useNamespace) {
+            return true;
+        }
         return URI_KML.equals(version);
+    }
+
+    /**
+     * say to our reader if we have a namespace or not
+     * @param value
+     */
+    public void setUseNamespace(boolean value) {
+        useNamespace = value;
+    }
+
+    /**
+     *
+     * Check the namespace of our kml document
+     * @param namespaceURI
+     *      the namespace to test
+     * @return
+     *      true if we have (or if we don't use namespace),
+     *      false otherwise
+     */
+    private boolean checkNamespace(String namespaceURI) {
+        //if we hve a valid namespace, return true
+        if (URI_KML_2_2.equals(namespaceURI)
+                || URI_KML_2_1.equals(namespaceURI)) {
+            return true;
+        }
+        if (useNamespace == false) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * check namespace of our document
+     * @param namespaceURI
+     *      the namespace we get
+     * @return
+     *      true if we have a valid namespace (or if we don't use namespace),
+     *      false otherwise
+     */
+    private boolean equalsNamespace(String namespaceURI) {
+        if (!useNamespace) {
+            return true;
+        } else {
+            return (URI_KML.equals(namespaceURI));
+        }
+    }
+
+    /**
+     * check if the namespace of our document contains the string given.
+     *
+     * @param reference
+     *      the string to test
+     * @return
+     *      true if we have a valid namespace (or if we don't use namespace),
+     *      false otherwise
+     */
+    private boolean containsNamespace(String reference) {
+        if (!useNamespace) {
+            return true;
+        } else {
+            return (URI_KML.contains(reference));
+        }
     }
 }

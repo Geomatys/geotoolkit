@@ -25,6 +25,8 @@ import java.util.GregorianCalendar;
 
 import org.geotoolkit.data.kml.model.KmlException;
 
+import static org.geotoolkit.data.kml.xml.KmlConstants.*;
+
 /**
  * <p>This class provides utilities for reading and writting KML files.</p>
  *
@@ -460,5 +462,128 @@ public class KmlUtilities {
         return !Double.isInfinite(d) && !Double.isNaN(d);
     }
 
+    /**
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractGeometry element.
+     */
+    public static boolean isAbstractGeometry(String eName) {
+        return (TAG_MULTI_GEOMETRY.equals(eName)
+                || TAG_LINE_STRING.equals(eName)
+                || TAG_POLYGON.equals(eName)
+                || TAG_POINT.equals(eName)
+                || TAG_LINEAR_RING.equals(eName)
+                || TAG_MODEL.equals(eName));
+    }
+
+    /**
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractFeature element.
+     */
+    public static boolean isAbstractFeature(String eName) {
+        return (TAG_FOLDER.equals(eName)
+                || TAG_GROUND_OVERLAY.equals(eName)
+                || TAG_PHOTO_OVERLAY.equals(eName)
+                || TAG_NETWORK_LINK.equals(eName)
+                || TAG_DOCUMENT.equals(eName)
+                || TAG_SCREEN_OVERLAY.equals(eName)
+                || TAG_PLACEMARK.equals(eName));
+    }
+
+    /**
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractContainer element.
+     */
+    public static boolean isAbstractContainer(String eName) {
+        return (TAG_FOLDER.equals(eName)
+                || TAG_DOCUMENT.equals(eName));
+    }
+
+    /**
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractOverlay element.
+     */
+    public static boolean isAbstractOverlay(String eName) {
+        return (TAG_GROUND_OVERLAY.equals(eName)
+                || TAG_PHOTO_OVERLAY.equals(eName)
+                || TAG_SCREEN_OVERLAY.equals(eName));
+    }
+
+    /**
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractView element.
+     */
+    public static boolean isAbstractView(String eName) {
+        return (TAG_LOOK_AT.equals(eName)
+                || TAG_CAMERA.equals(eName));
+    }
+
+    /**
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractTimePrimitive element.
+     */
+    public static boolean isAbstractTimePrimitive(String eName) {
+        return (TAG_TIME_STAMP.equals(eName)
+                || TAG_TIME_SPAN.equals(eName));
+    }
+
+    /**
+     * @param eName the tag name.
+     * @return true if the tag name is an AbstractStyleSelector element.
+     */
+    public static boolean isAbstractStyleSelector(String eName) {
+        return (TAG_STYLE.equals(eName)
+                || TAG_STYLE_MAP.equals(eName));
+    }
+
+    /**
+     * @param eName
+     * @return
+     */
+    public static boolean isAbstractSubStyle(String eName) {
+        return (TAG_BALLOON_STYLE.equals(eName)
+                || TAG_LIST_STYLE.equals(eName)
+                || isAbstractColorStyle(eName));
+    }
+
+    /**
+     * @param eName
+     * @return
+     */
+    public static boolean isAbstractColorStyle(String eName) {
+        return (TAG_ICON_STYLE.equals(eName)
+                || TAG_LABEL_STYLE.equals(eName)
+                || TAG_POLY_STYLE.equals(eName)
+                || TAG_LINE_STYLE.equals(eName));
+    }
+
+    /**
+     * @param eName
+     * @return
+     */
+    public static boolean isAbstractObject(String eName) {
+        // Traiter le cas particuloer du TAG_ICON qui peut être un basicLink
+        return (isAbstractFeature(eName)
+                || isAbstractGeometry(eName)
+                || isAbstractStyleSelector(eName)
+                || isAbstractSubStyle(eName)
+                || isAbstractView(eName)
+                || TAG_PAIR.equals(eName)
+                || TAG_LINK.equals(eName)
+                || TAG_VIEW_VOLUME.equals(eName)
+                || TAG_REGION.equals(eName)
+                || TAG_LOD.equals(eName)
+                || TAG_ORIENTATION.equals(eName)
+                || TAG_SCHEMA_DATA.equals(eName));
+    }
+
+    /**
+     * @param eName
+     * @return
+     */
+    public static boolean isAbstractLatLonBox(String eName) {
+        return (TAG_LAT_LON_ALT_BOX.equals(eName)
+                || TAG_LAT_LON_BOX.equals(eName));
+    }
+    
     private KmlUtilities(){}
 }
