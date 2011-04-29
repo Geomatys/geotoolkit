@@ -25,6 +25,7 @@ import javax.xml.datatype.Duration;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
+import org.opengis.temporal.Position;
 
 
 /**
@@ -82,9 +83,17 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
     /**
      * Build a new Time period bounded by the begin and end time specified.
      */
-    public TimePeriodType(final TimePositionType beginPosition, final TimePositionType endPosition){
-        this.beginPosition = beginPosition;
-        this.endPosition   = endPosition;
+    public TimePeriodType(final Position beginPosition, final Position endPosition){
+        if (beginPosition instanceof TimePositionType) {
+            this.beginPosition = (TimePositionType) beginPosition;
+        } else if (beginPosition != null) {
+            this.beginPosition = new TimePositionType(beginPosition.getDate());
+        }
+        if (endPosition instanceof TimePositionType) {
+            this.endPosition = (TimePositionType) endPosition;
+        } else if (endPosition != null) {
+            this.endPosition = new TimePositionType(endPosition.getDate());
+        }
     }
 
     /**
@@ -174,6 +183,12 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
         this.beginPosition = new TimePositionType(value);
     }
 
+    public void setBeginPosition(final TimeInstantType value) {
+        if (value != null) {
+            this.beginPosition = value.getTimePosition();
+        }
+    }
+    
     /**
      * Gets the value of the begin property.
      * 
@@ -244,6 +259,12 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implemen
      */
     public void setEndPosition(final TimeIndeterminateValueType value) {
         this.endPosition = new TimePositionType(value);
+    }
+    
+    public void setEndPosition(final TimeInstantType value) {
+        if (value != null) {
+            this.endPosition = value.getTimePosition();
+        }
     }
 
     /**

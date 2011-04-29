@@ -2315,6 +2315,7 @@ public class JTSGeometryBindingTest {
 
         bound1 = new JTSSurfaceBoundary(crs, exterior1, interiors1);
         poly1 = new JTSPolygon(bound1);
+        poly1.setCoordinateReferenceSystem(crs);
 
         expResult = new JTSMultiPrimitive();
         expResult.getElements().add(poly1);

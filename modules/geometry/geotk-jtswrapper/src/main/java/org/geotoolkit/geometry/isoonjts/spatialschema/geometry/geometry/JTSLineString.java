@@ -18,10 +18,11 @@ import java.util.Set;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
-import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSCurveBoundary;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoint;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 
 import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
 import org.geotoolkit.util.Utilities;
@@ -50,7 +51,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  * @module pending
  */
 public class JTSLineString extends AbstractJTSGenericCurve
-	implements LineString, JTSGeometry, Primitive {
+	implements LineString, Primitive {
 
     /**
      * Points comprising this geometry.
@@ -287,7 +288,13 @@ public class JTSLineString extends AbstractJTSGenericCurve
             coords[i] = JTSUtils.directPositionToCoordinate(
                 (DirectPosition) controlPoints.positions().get(i));
         }
-        return JTSUtils.GEOMETRY_FACTORY.createLineString(coords);
+        final com.vividsolutions.jts.geom.LineString result = JTSUtils.GEOMETRY_FACTORY.createLineString(coords);
+        CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+        if (crs != null) {
+            final int srid = SRIDGenerator.toSRID(crs, Version.V1);
+            result.setSRID(srid);
+        }
+        return result;
     }
 
     /**

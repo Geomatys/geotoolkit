@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.util.Utilities;
+import org.opengis.referencing.cs.AxisDirection;
 
 
 /**
@@ -92,7 +93,15 @@ public class CoordinateSystemAxisType extends CoordinateSystemAxisBaseType {
     public CodeType getAxisAbbrev() {
         return axisAbbrev;
     }
-
+    
+    public void setAxisAbbrev(CodeType axisAbbrev) {
+        this.axisAbbrev = axisAbbrev;
+    }
+    
+    public void setAxisAbbrev(String axisAbbrev) {
+        this.axisAbbrev = new CodeType(axisAbbrev);
+    }
+    
     /**
      * Gets the value of the axisDirection property.
      * 
@@ -101,6 +110,18 @@ public class CoordinateSystemAxisType extends CoordinateSystemAxisBaseType {
         return axisDirection;
     }
 
+    public void setAxisDirection(CodeType axisDirection) {
+        this.axisDirection = axisAbbrev;
+    }
+    
+    public void setAxisDirection(String axisDirection) {
+        this.axisDirection = new CodeType(axisDirection);
+    }
+    
+    public void setAxisDirection(AxisDirection axisDirection) {
+        this.axisDirection = new CodeType(axisDirection.identifier());
+    }
+    
     /**
      * Gets the value of the uom property.
      * 

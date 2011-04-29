@@ -65,8 +65,12 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     /**
      * Build a new time instant with the specified timeposition.
      */
-    public TimeInstantType(final TimePositionType timePosition) {
-        this.timePosition = timePosition;
+    public TimeInstantType(final Position timePosition) {
+        if (timePosition instanceof TimePositionType) {
+            this.timePosition = (TimePositionType) timePosition;
+        } else if (timePosition != null) {
+            this.timePosition = new TimePositionType(timePosition.getDate());
+        }
     }
 
     /**

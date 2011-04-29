@@ -157,6 +157,8 @@ public class PolygonType {
         } else {
             interior = new ArrayList<Ring>();
         }
-        return new JTSPolygon(new JTSSurfaceBoundary(coordinateReferenceSystem, exterior, interior));
+        final JTSPolygon result = new JTSPolygon(new JTSSurfaceBoundary(coordinateReferenceSystem, exterior, interior));
+        result.setCoordinateReferenceSystem(coordinateReferenceSystem);
+        return result;
     }
 }

@@ -20,6 +20,8 @@ import java.util.Set;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 
 import org.geotoolkit.util.Utilities;
 import org.opengis.geometry.Geometry;
@@ -58,19 +60,28 @@ public abstract class AbstractJTSAggregate<T extends Geometry> extends AbstractJ
             }
         }
 
+        com.vividsolutions.jts.geom.Geometry result = null;
         // we want a multi geometry event if there is only one geometry
         if (childParts.size() == 1) {
             com.vividsolutions.jts.geom.Geometry geom = childParts.get(0);
             if (geom instanceof LineString) {
-                return JTSUtils.GEOMETRY_FACTORY.createMultiLineString(new LineString[] {(LineString)geom});
+                result =  JTSUtils.GEOMETRY_FACTORY.createMultiLineString(new LineString[] {(LineString)geom});
             } if (geom instanceof Polygon) {
-                return JTSUtils.GEOMETRY_FACTORY.createMultiPolygon(new Polygon[] {(Polygon)geom});
+                result = JTSUtils.GEOMETRY_FACTORY.createMultiPolygon(new Polygon[] {(Polygon)geom});
             } if (geom instanceof Point) {
-                return JTSUtils.GEOMETRY_FACTORY.createMultiPoint(new Point[] {(Point)geom});
+                result = JTSUtils.GEOMETRY_FACTORY.createMultiPoint(new Point[] {(Point)geom});
             }
         }
 
-        return JTSUtils.GEOMETRY_FACTORY.buildGeometry(childParts);
+        if (result == null) {
+            result = JTSUtils.GEOMETRY_FACTORY.buildGeometry(childParts);
+        }
+        CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+        if (crs != null) {
+            final int srid = SRIDGenerator.toSRID(crs, Version.V1);
+            result.setSRID(srid);
+        }
+        return result;
     }
 
     /**

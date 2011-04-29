@@ -37,7 +37,7 @@ import org.geotoolkit.util.Utilities;
  * @module pending
  */
 @XmlAccessorType(XmlAccessType.NONE)
-public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implements SurfacePatch, JTSGeometry {
+public abstract class JTSSurfacePatch extends AbstractJTSGenericSurface implements SurfacePatch {
     private Surface surface;
     private SurfaceInterpolation interpolation;
 

@@ -21,6 +21,8 @@ import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.AbstractJTSGeometry;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.internal.jaxb.DirectPositionAdapter;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
@@ -173,7 +175,13 @@ public class JTSPoint extends AbstractJTSGeometry implements Point {
      */
     @Override
     protected com.vividsolutions.jts.geom.Geometry computeJTSPeer() {
-        return JTSUtils.directPositionToPoint(position);
+        com.vividsolutions.jts.geom.Point result =  JTSUtils.directPositionToPoint(position);
+        CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+        if (crs != null) {
+            final int srid = SRIDGenerator.toSRID(crs, Version.V1);
+            result.setSRID(srid);
+        }
+        return result;
     }
 
     /**

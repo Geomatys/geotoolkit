@@ -20,11 +20,15 @@ import java.util.List;
 
 import java.util.Set;
 import javax.xml.bind.annotation.XmlType;
+
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfacePatch;
-
+import org.geotoolkit.geometry.jts.SRIDGenerator;
+import org.geotoolkit.geometry.jts.SRIDGenerator.Version;
 import org.geotoolkit.util.Utilities;
+
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.complex.Complex;
 import org.opengis.geometry.complex.Composite;
 import org.opengis.geometry.coordinate.Polygon;
@@ -82,10 +86,8 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
         List interiors = boundary.getInteriors();
         com.vividsolutions.jts.geom.Geometry g = ((JTSGeometry) exterior).getJTSGeometry();
         int numHoles = (interiors != null) ? interiors.size() : 0;
-        com.vividsolutions.jts.geom.LinearRing jtsExterior =
-            JTSUtils.GEOMETRY_FACTORY.createLinearRing(g.getCoordinates());
-        com.vividsolutions.jts.geom.LinearRing [] jtsInterior =
-            new com.vividsolutions.jts.geom.LinearRing[numHoles];
+        com.vividsolutions.jts.geom.LinearRing jtsExterior = JTSUtils.GEOMETRY_FACTORY.createLinearRing(g.getCoordinates());
+        com.vividsolutions.jts.geom.LinearRing [] jtsInterior = new com.vividsolutions.jts.geom.LinearRing[numHoles];
         for (int i=0; i<numHoles; i++) {
             com.vividsolutions.jts.geom.Geometry g2 =
                 ((JTSGeometry) interiors.get(i)).getJTSGeometry();
@@ -93,6 +95,11 @@ public class JTSPolygon extends JTSSurfacePatch implements Polygon, Primitive {
         }
         com.vividsolutions.jts.geom.Polygon result =
             JTSUtils.GEOMETRY_FACTORY.createPolygon(jtsExterior, jtsInterior);
+        CoordinateReferenceSystem crs = getCoordinateReferenceSystem();
+        if (crs != null) {
+            final int srid = SRIDGenerator.toSRID(crs, Version.V1);
+            result.setSRID(srid);
+        }
         return result;
     }
 

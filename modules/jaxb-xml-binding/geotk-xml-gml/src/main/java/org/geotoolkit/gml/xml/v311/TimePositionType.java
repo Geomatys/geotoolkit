@@ -137,6 +137,14 @@ public class TimePositionType implements Position {
         return value;
     }
 
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    public void setValue(Date value) {
+        this.value = formatter.format(value);
+    }
+
     /**
      * Gets the value of the frame property.
      * 
@@ -209,10 +217,12 @@ public class TimePositionType implements Position {
         this.indeterminatePosition = value;
     }
 
+    @Override
     public TemporalPosition anyOther() {
         throw new UnsupportedOperationException("Not supported yet.");
     }
 
+    @Override
     public Date getDate() {
         if (value != null && !value.isEmpty()) {
             try {
@@ -224,10 +234,12 @@ public class TimePositionType implements Position {
         return null;
     }
 
+    @Override
     public Time getTime() {
         return Time.valueOf(value);
     }
 
+    @Override
     public InternationalString getDateTime() {
         return new SimpleInternationalString(value);
     }
