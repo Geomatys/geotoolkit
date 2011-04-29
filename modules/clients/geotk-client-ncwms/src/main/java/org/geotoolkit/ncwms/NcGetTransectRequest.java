@@ -24,7 +24,7 @@ import org.geotoolkit.client.Request;
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
-public interface NcGetMetadataRequest extends Request {    
+public interface NcGetTransectRequest extends Request {    
     
     /**
      * Returns the layer name.
@@ -45,7 +45,7 @@ public interface NcGetMetadataRequest extends Request {
      * Sets the id representing which informations you want.    
      * 
      * @param item the id representing which informations you want. Possible values
-     * are 'menu', 'layerDetails', 'timesteps', 'minmax', 'animationTimesteps'
+     * are null,'menu', 'layerDetails', 'timesteps', 'minmax', 'animationTimesteps'
      */
     void setItem(final String item);
     
@@ -79,16 +79,5 @@ public interface NcGetMetadataRequest extends Request {
      * Sets the end date of an animation in ISO8601 format.
      */
     void setEnd(final String end);
-    
-    /**
-     * Returns the Time in ISO8601 format.
-     */
-    String getTime();
-    
-    /**
-     * Sets the Time in ISO8601 format.
-     */
-    void setTime(final String time);
-    
 
 }
