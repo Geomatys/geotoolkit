@@ -18,11 +18,13 @@
 package org.geotoolkit.gui.swing.go2.control.edition;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import javax.imageio.spi.ServiceRegistry;
+import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 /**
  *
@@ -32,21 +34,25 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
 @Static
 public final class EditionTools {
 
-    private static List<EditionTool> TOOLS;
+    private static final FactoryRegistry REGISTRY;
 
     static {
-        final Iterator<EditionTool> ite = ServiceRegistry.lookupProviders(EditionTool.class);
-        final List<EditionTool> cache = new ArrayList<EditionTool>();
-        while(ite.hasNext()){
-            cache.add(ite.next());
-        }
-        TOOLS = UnmodifiableArrayList.wrap(cache.toArray(new EditionTool[cache.size()]));
+        REGISTRY = new FactoryRegistry(EditionTool.class);
     }
 
     private EditionTools() {}
 
     public static List<EditionTool> getTools(){
-        return TOOLS;
+        final Iterator<EditionTool> ite = REGISTRY.getServiceProviders(EditionTool.class, null,null,null);
+        final List<EditionTool> cache = new ArrayList<EditionTool>();
+        while(ite.hasNext()){
+            cache.add(ite.next());
+        }
+        return Collections.unmodifiableList(cache);
     }
 
+    public static ServiceRegistry getRegistry() {
+        return REGISTRY;
+    }
+    
 }

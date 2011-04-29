@@ -18,6 +18,7 @@
 package org.geotoolkit.gui.swing.go2.control.edition;
 
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -53,6 +54,12 @@ public class GeometryNodeTool extends AbstractEditionTool {
             return false;
         }
 
+        if(Point.class.isAssignableFrom(desc.getType().getBinding())){
+            //moving node on a Point type is the same as moving full geometry.
+            //avoid duplicating the same purpose tool.
+            return false;
+        }
+        
         return Geometry.class.isAssignableFrom(desc.getType().getBinding());
     }
 
