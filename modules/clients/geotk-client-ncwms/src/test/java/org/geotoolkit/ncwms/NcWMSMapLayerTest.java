@@ -1,0 +1,161 @@
+/*
+ *    Geotoolkit - An Open Source Java GIS Toolkit
+ *    http://www.geotoolkit.org
+ *
+ *    (C) 2010, Geomatys
+ *
+ *    This library is free software; you can redistribute it and/or
+ *    modify it under the terms of the GNU Lesser General Public
+ *    License as published by the Free Software Foundation;
+ *    version 2.1 of the License.
+ *
+ *    This library is distributed in the hope that it will be useful,
+ *    but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ *    Lesser General Public License for more details.
+ */
+
+package org.geotoolkit.ncwms;
+
+import java.awt.geom.NoninvertibleTransformException;
+import java.net.URL;
+import java.awt.Dimension;
+import java.net.MalformedURLException;
+import javax.xml.bind.JAXBException;
+
+import org.geotoolkit.geometry.GeneralEnvelope;
+import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
+import org.geotoolkit.ncwms.map.NcWMSMapLayer;
+import org.geotoolkit.wms.WebMapServer;
+import org.geotoolkit.wms.xml.WMSVersion;
+import org.geotoolkit.wms.v111.GetFeatureInfo111;
+
+import org.junit.Test;
+
+import org.opengis.referencing.NoSuchAuthorityCodeException;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.opengis.referencing.operation.TransformException;
+import org.opengis.util.FactoryException;
+
+import static org.junit.Assert.*;
+
+/**
+ *
+ * @author Olivier Terral (Geomatys)
+ * @module pending
+ */
+public class NcWMSMapLayerTest {
+
+    private final WebMapServer SERVER_111;
+    private final WebMapServer SERVER_130;
+
+    public NcWMSMapLayerTest() throws MalformedURLException, JAXBException {
+        SERVER_111 = new MockWebMapServer(WMSVersion.v111);
+        SERVER_130 = new MockWebMapServer(WMSVersion.v130);
+    }
+    
+    /**
+     * This test checks if the ncWMS parameters are not added to the get map 
+     * request when they are null
+     */
+    @Test
+    public void test_GetMapWithNullValues() throws TransformException, 
+            MalformedURLException, FactoryException{        
+
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);               
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "BlueMarble");
+        
+        final String query = layer.query(env, new Dimension(800, 600)).toString();        
+        assertFalse(query.contains("OPACITY="));
+        assertFalse(query.contains("COLORSCALERANGE="));
+        assertFalse(query.contains("NUMCOLORBANDS="));
+        assertFalse(query.contains("LOGSCALE="));
+    }
+    
+    /**
+     * This test chacks if the ncWMS parameters are added to the get map request
+     */
+    @Test
+    public void test_GetMap() throws TransformException, MalformedURLException, 
+            FactoryException{        
+
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        layer.setOpacity(new Integer(60));
+        layer.setColorScaleRange("auto");
+        layer.setNumColorBands(125);
+        layer.setLogScale(true);
+        
+        final String query = layer.query(env, new Dimension(800, 600)).toString();
+        assertTrue(query.contains("OPACITY=60"));
+        assertTrue(query.contains("COLORSCALERANGE=auto"));
+        assertTrue(query.contains("NUMCOLORBANDS=125"));
+        assertTrue(query.contains("LOGSCALE=true"));
+    }
+    
+    /**
+     * This test checks if the ncWMS parameters are not added to the get feature 
+     * info request when they are null
+     */
+    @Test
+    public void test_GetFeatureInfoWithNullValues() throws TransformException, 
+            MalformedURLException, FactoryException{
+
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        
+        final String query = layer.queryFeatureInfo(env, new Dimension(360, 180), 140,
+                250, new String[]{"test"}, "gml", 1).toString();
+        assertTrue(query.contains("INFO_FORMAT=gml"));
+        assertTrue(query.contains("QUERY_LAYERS=test"));
+        assertTrue(query.contains("X=140"));
+        assertTrue(query.contains("Y=250"));
+        assertFalse(query.contains("OPACITY=60"));
+        assertFalse(query.contains("COLORSCALERANGE=auto"));
+        assertFalse(query.contains("NUMCOLORBANDS=125"));
+        assertFalse(query.contains("LOGSCALE=true"));
+    }
+    
+    /**
+     * This test checks if the ncWMS parameters are added to the get feature 
+     * info request
+     */
+    @Test
+    public void test_GetFeatureInfo() throws NoSuchAuthorityCodeException,
+            FactoryException, MalformedURLException, TransformException, 
+            NoninvertibleTransformException {
+
+        final GeneralEnvelope env = new GeneralEnvelope(DefaultGeographicCRS.WGS84);
+        env.setRange(0, -180, 180);
+        env.setRange(1, -90, 90);
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        layer.setOpacity(new Integer(60));
+        layer.setColorScaleRange("auto");
+        layer.setNumColorBands(125);
+        layer.setLogScale(true);        
+        
+        final String query = layer.queryFeatureInfo(env, new Dimension(360, 180), 140,
+                250, new String[]{"test"}, "gml", 1).toString();
+        assertTrue(query.contains("INFO_FORMAT=gml"));
+        assertTrue(query.contains("QUERY_LAYERS=test"));
+        assertTrue(query.contains("X=140"));
+        assertTrue(query.contains("Y=250"));
+        assertTrue(query.contains("OPACITY=60"));
+        assertTrue(query.contains("COLORSCALERANGE=auto"));
+        assertTrue(query.contains("NUMCOLORBANDS=125"));
+        assertTrue(query.contains("LOGSCALE=true"));
+    }
+
+
+}

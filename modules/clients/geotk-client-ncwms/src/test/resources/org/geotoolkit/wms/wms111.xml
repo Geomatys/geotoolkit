@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE WMT_MS_Capabilities SYSTEM "http://schemas.opengis.net/wms/1.1.1/WMS_MS_Capabilities.dtd">
+<WMT_MS_Capabilities version="1.1.1">
+    <Service>
+        <Name>OGC:WMS</Name>
+        <Title>MOCK Server</Title>
+        <Abstract>A testing wms server.</Abstract>
+        <KeywordList>
+            <Keyword>WMS</Keyword>
+        </KeywordList>
+        <OnlineResource xlink:type="simple" xlink:href="http://www.geomatys.fr/" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+        <ContactInformation>
+            <ContactPersonPrimary>
+                <ContactPerson>No Body</ContactPerson>
+                <ContactOrganization>GeotoolKit.org</ContactOrganization>
+            </ContactPersonPrimary>
+            <ContactPosition>Project</ContactPosition>
+            <ContactAddress>
+                <AddressType>postal</AddressType>
+                <Address>1 perfect street</Address>
+                <City>Paradis</City>
+                <StateOrProvince>Paradis</StateOrProvince>
+                <PostCode>99999</PostCode>
+                <Country>World</Country>
+            </ContactAddress>
+            <ContactVoiceTelephone>00 00 00 00 00</ContactVoiceTelephone>
+            <ContactElectronicMailAddress>geotoolkit@lists.osgeo.org</ContactElectronicMailAddress>
+        </ContactInformation>
+        <Fees>none</Fees>
+        <AccessConstraints>none</AccessConstraints>
+    </Service>
+    <Capability>
+        <Request>
+            <GetCapabilities>
+                <Format>text/xml</Format>
+                <Format>application/vnd.ogc.wms_xml</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Get>
+                        <Post>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Post>
+                    </HTTP>
+                </DCPType>
+            </GetCapabilities>
+            <GetMap>
+                <Format>image/gif</Format>
+                <Format>image/png</Format>
+                <Format>image/jpeg</Format>
+                <Format>image/bmp</Format>
+                <Format>image/tiff</Format>
+                <Format>image/x-portable-pixmap</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Get>
+                        <Post>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Post>
+                    </HTTP>
+                </DCPType>
+            </GetMap>
+            <GetFeatureInfo>
+                <Format>text/xml</Format>
+                <Format>text/plain</Format>
+                <Format>text/html</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Get>
+                        <Post>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Post>
+                    </HTTP>
+                </DCPType>
+            </GetFeatureInfo>
+            <DescribeLayer>
+                <Format>text/xml</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Get>
+                        <Post>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Post>
+                    </HTTP>
+                </DCPType>
+            </DescribeLayer>
+            <GetLegendGraphic>
+                <Format>image/png</Format>
+                <Format>image/jpeg</Format>
+                <Format>image/gif</Format>
+                <Format>image/tiff</Format>
+                <DCPType>
+                    <HTTP>
+                        <Get>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Get>
+                        <Post>
+                            <OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;" xmlns:xlink="http://www.w3.org/1999/xlink"/>
+                        </Post>
+                    </HTTP>
+                </DCPType>
+            </GetLegendGraphic>
+        </Request>
+        <Exception>
+            <Format>application/vnd.ogc.se_xml</Format>
+            <Format>application/vnd.ogc.se_inimage</Format>
+        </Exception>
+        <UserDefinedSymbolization SupportSLD="1" UserLayer="1" UserStyle="1" RemoteWFS="1"/>
+        <Layer>
+            <Title>Mock Base Layer</Title>
+            <Abstract>description</Abstract>
+            <SRS>EPSG:4326</SRS>
+            <SRS>CRS:84</SRS>
+            <SRS>EPSG:3395</SRS>
+            <SRS>EPSG:27571</SRS>
+            <SRS>EPSG:27572</SRS>
+            <SRS>EPSG:27573</SRS>
+            <SRS>EPSG:27574</SRS>
+            <LatLonBoundingBox minx="-180.0" miny="-90.0" maxx="180.0" maxy="90.0"/>
+            
+            <Layer queryable="1">
+                <Name>layer4D</Name>
+                <Title>layer4D</Title>
+                <Abstract></Abstract>
+                <KeywordList>
+                    <Keyword></Keyword>
+                </KeywordList>
+                <SRS>EPSG:4326</SRS>
+                <SRS>CRS:84</SRS>
+                <SRS>EPSG:3395</SRS>
+                <SRS>EPSG:27571</SRS>
+                <SRS>EPSG:27572</SRS>
+                <SRS>EPSG:27573</SRS>
+                <SRS>EPSG:27574</SRS>
+                <LatLonBoundingBox minx="-179.99999999999784" miny="-77.01047999972037" maxx="180.00000000000225" maxy="77.01048000000112"/>
+                <BoundingBox SRS="EPSG:4326" minx="-179.99999999999784" miny="-77.01047999972037" maxx="180.00000000000225" maxy="77.01048000000112" resx="0.0" resy="0.0"/>
+                <Dimension name="time" units="ISO8601"/>
+                <Dimension name="elevation" units="EPSG:5030"/>
+                <Dimension name="dim_range" units="Cel"/>
+                <Extent name="time" default="2007-06-20T12:00:00Z">2007-06-06T12:00:00Z/2007-06-20T12:00:00Z/P1W</Extent>
+                <Extent name="elevation" default="5.0">5.0,10.0,20.0,30.0,40.0,50.0,60.0,80.0,100.0,120.0,140.0,160.0,180.0,200.0,220.0,240.0,260.0,280.0,300.0,320.0,360.0,400.0,440.0,480.0,520.0,560.0,600.0,640.0,680.0,720.0,760.0,800.0,840.0,880.0,920.0,960.0,1000.0,1040.0,1080.0,1120.0,1160.0,1200.0,1240.0,1280.0,1320.0,1360.0,1400.0,1440.0,1480.0,1520.0,1560.0,1600.0,1650.0,1700.0,1750.0,1800.0,1850.0,1900.0,1950.0</Extent>
+                <Extent name="dim_range" default="-3.0,40.0">-3.0,40.0</Extent>
+            </Layer>
+
+        </Layer>
+    </Capability>
+</WMT_MS_Capabilities>
