@@ -95,7 +95,7 @@ public final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
     public Image getLegend(final MapLayer layer) throws PortrayalException {
         final WMSMapLayer wmslayer = (WMSMapLayer) layer;
 
-        final GetLegendRequest request = wmslayer.getServer().creategetLegend();
+        final GetLegendRequest request = wmslayer.getServer().createGetLegend();
         request.setLayer(wmslayer.getLayerNames()[0]);
 
         final BufferedImage buffer;
@@ -220,7 +220,6 @@ public final class WMSGraphicBuilder implements GraphicBuilder<GraphicJ2D>{
                         (int) center.getOrdinate(1),
                         layer.getLayerNames(),
                         infoFormat,featureCount);
-                System.out.println(url);
 
             return url;
         }

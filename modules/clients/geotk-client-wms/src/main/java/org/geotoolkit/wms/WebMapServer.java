@@ -210,7 +210,7 @@ public class WebMapServer implements Server{
      *
      * @throws IllegalArgumentException if the version requested is not supported.
      */
-    public GetLegendRequest creategetLegend(){
+    public GetLegendRequest createGetLegend(){
         switch (version) {
             case v111:
                 return new GetLegend111(serverURL.toString());

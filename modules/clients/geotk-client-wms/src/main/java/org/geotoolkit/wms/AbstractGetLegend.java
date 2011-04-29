@@ -19,8 +19,11 @@ package org.geotoolkit.wms;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
+import org.geotoolkit.util.StringUtilities;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -48,10 +51,10 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     protected Dimension dimension = null;
     protected String sld = null;
     protected String sldBody = null;
-    protected Boolean transparent = true;
     protected String rule = null;
     protected Double scale = null;
     protected String sldVersion = null;
+    protected final Map<String, String> dims = new HashMap<String, String>();
 
     /**
      * Defines the server url and the service version for this kind of request.
@@ -62,6 +65,14 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
     protected AbstractGetLegend(final String serverURL,final String version){
         super(serverURL);
         this.version = version;
+    }    
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public Map<String, String> dimensions() {
+        return dims;
     }
 
     /**
@@ -229,43 +240,74 @@ public abstract class AbstractGetLegend extends AbstractRequest implements GetLe
      */
     @Override
     public URL getURL() throws MalformedURLException {
-        if (layer == null) {
+        
+        if (layer == null)
             throw new IllegalArgumentException("Layer is not defined");
-        }
-        if (format == null) {
+        
+        
+        if (format == null)
             throw new IllegalArgumentException("Format is not defined");
-        }
-        requestParameters.put("LAYER",      layer);
+        
+        
+        if (version == null)
+            throw new IllegalArgumentException("WMS version is not defined");
+        
+        
+        // Mandatory parameters
         requestParameters.put("SERVICE",    "WMS");
-        requestParameters.put("REQUEST",    "GetLegendGraphic");
         requestParameters.put("VERSION",    version);
-        requestParameters.put("FORMAT",     format);
-        if (exception != null) {
-            requestParameters.put("EXCEPTIONS", exception);
-        }
+        requestParameters.put("REQUEST",    "GetLegendGraphic");
+        requestParameters.put("LAYER",      layer);
+        
+        
+        // Add optional parameters 
+        if (format != null)
+            requestParameters.put("FORMAT",     format);
+        
+        if (exception != null)
+            requestParameters.put("EXCEPTIONS", exception);        
 
         if (dimension != null) {
             requestParameters.put("WIDTH",      String.valueOf(dimension.width));
             requestParameters.put("HEIGHT",     String.valueOf(dimension.height));
         }
-        if (style != null) {
-            requestParameters.put("STYLE", style);
+        
+        
+        // Add one style parameter       
+        String styleParam = null; 
+        String styleValue = null;
+        
+        if (sldBody != null) {
+            styleParam = "SLD_BODY";
+            styleValue = sldBody;
+            
+        } else if (sld != null) {
+            styleParam = "SLD";
+            styleValue = sld;        
+        
+        } else if (style != null ) {
+            styleParam = "STYLE";
+            styleValue = style;                 
         }
-        // SLD_VERSION is mandatory when SLD is given.
-        if (sld != null && sldVersion != null) {
-            requestParameters.put("SLD", sld);
-            requestParameters.put("SLD_VERSION", sldVersion);
-        }
+        
+        if (styleParam != null && styleValue != null)
+            requestParameters.put(styleParam, styleValue);
+        
+        if (sldVersion != null)
+            requestParameters.put("SLD_VERSION", sldVersion);        
+        
         if (rule != null) {
             requestParameters.put("RULE", rule);
         }
         if (scale != null) {
             requestParameters.put("SCALE", scale.toString());
         }
-        if (sldBody != null) {
-            requestParameters.put("SLD_BODY", sldBody);
-        }
 
+        // Add optional dimensions parameters
+        if (dims != null && !dims.isEmpty()) {
+            requestParameters.putAll(dims);
+        }
+        
         return super.getURL();
     }
 

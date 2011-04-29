@@ -584,5 +584,80 @@ public class WMSMapLayerTest {
         assertTrue(sUrl.contains("I=140"));
         assertTrue(sUrl.contains("J=243"));
     }
+    
+    /**
+     * Ensures the {@link GetLegend111#getURL()} method returns a well-built url,
+     * with the parameters given. 
+     */
+    @Test
+    public void test_v111_GetLegendGraphic() throws MalformedURLException {
+        
+        final WMSMapLayer layer = new WMSMapLayer(SERVER_111, "test");
+        layer.setStyles("test");
+        layer.setExceptionsFormat("application/test");
+        layer.setStyles("test");
+        layer.setSldVersion("3.3.3");
+        layer.dimensions().put("TIME", "20-20-20T20:20:20Z");
+        layer.dimensions().put("ELEVATION", "500");
+        layer.dimensions().put("DIMRANGE", "-50,50");
+        
+        final Dimension rect = new Dimension(140, 20);
+        final URL url = layer.queryLegend(rect, "image/gif", "test", 2500.0);
+        final String sUrl = url.toString();
+        assertTrue(sUrl.contains("SERVICE=WMS"));
+        assertTrue(sUrl.contains("VERSION=1.1.1"));
+        assertTrue(sUrl.contains("REQUEST=GetLegendGraphic"));
+        assertTrue(sUrl.contains("FORMAT=image/gif"));
+        assertTrue(sUrl.contains("EXCEPTIONS=application/test"));
+        assertTrue(sUrl.contains("LAYER=test"));
+        assertTrue(sUrl.contains("STYLE=test"));
+        assertTrue(sUrl.contains("WIDTH=140"));
+        assertTrue(sUrl.contains("HEIGHT=20"));
+        assertTrue(sUrl.contains("RULE=test"));
+        assertTrue(sUrl.contains("SCALE=2500"));
+        assertTrue(sUrl.contains("SLD_VERSION=3.3.3"));
+        assertTrue(sUrl.contains("TIME=20-20-20T20:20:20Z"));
+        assertTrue(sUrl.contains("ELEVATION=500"));
+        assertTrue(sUrl.contains("DIMRANGE=-50,50"));
+        
+    }
+    
+    /**
+     * Ensures the {@link GetLegend130#getURL()} method returns a well-built url,
+     * with the parameters given. 
+     */
+    @Test
+    public void test_v130_GetLegendGraphic() throws MalformedURLException {
+        
+        final WMSMapLayer layer = new WMSMapLayer(SERVER_130, "test");
+        layer.setStyles("test");
+        layer.setExceptionsFormat("application/test");
+        layer.setStyles("test");
+        layer.setSldVersion("3.3.3");
+        layer.dimensions().put("TIME", "20-20-20T20:20:20Z");
+        layer.dimensions().put("ELEVATION", "500");
+        layer.dimensions().put("DIMRANGE", "-50,50");
+        
+        final Dimension rect = new Dimension(140, 20);
+        final URL url = layer.queryLegend(rect, "image/gif", "test", 2500.0);
+        final String sUrl = url.toString();
+        assertTrue(sUrl.contains("SERVICE=WMS"));
+        assertTrue(sUrl.contains("VERSION=1.3.0"));
+        assertTrue(sUrl.contains("REQUEST=GetLegendGraphic"));
+        assertTrue(sUrl.contains("FORMAT=image/gif"));
+        assertTrue(sUrl.contains("EXCEPTIONS=application/test"));
+        assertTrue(sUrl.contains("LAYER=test"));
+        assertTrue(sUrl.contains("STYLE=test"));
+        assertTrue(sUrl.contains("WIDTH=140"));
+        assertTrue(sUrl.contains("HEIGHT=20"));
+        assertTrue(sUrl.contains("RULE=test"));
+        assertTrue(sUrl.contains("SCALE=2500"));
+        assertTrue(sUrl.contains("SLD_VERSION=3.3.3"));
+        assertTrue(sUrl.contains("TIME=20-20-20T20:20:20Z"));
+        assertTrue(sUrl.contains("ELEVATION=500"));
+        assertTrue(sUrl.contains("DIMRANGE=-50,50"));
+        
+    }
+     
 
 }

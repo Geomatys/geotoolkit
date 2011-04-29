@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.map;
 
+import org.geotoolkit.wms.GetLegendRequest;
 import java.awt.geom.NoninvertibleTransformException;
 import java.net.MalformedURLException;
 import java.util.logging.Level;
@@ -281,7 +282,7 @@ public class WMSMapLayer extends AbstractMapLayer {
             final String[] queryLayers, final String infoFormat, final int featureCount)
             throws TransformException, FactoryException, MalformedURLException, NoninvertibleTransformException {
 
-        final GetFeatureInfoRequest request = getServer().createGetFeatureInfo();
+        final GetFeatureInfoRequest request = server.createGetFeatureInfo();
         request.setQueryLayers(queryLayers);
         request.setInfoFormat(infoFormat);
         request.setFeatureCount(featureCount);
@@ -297,6 +298,28 @@ public class WMSMapLayer extends AbstractMapLayer {
 
         return request.getURL();
     }
+    
+    public URL queryLegend(final Dimension rect, final String format, final String rule, 
+            final Double scale) throws MalformedURLException {
+        
+        final GetLegendRequest request = server.createGetLegend();
+        request.setDimension(rect);
+        request.setFormat(format);
+        request.setExceptions(exceptionsFormat);
+        request.setLayer(layers[0]);
+        
+        if (styles.length > 0)
+            request.setStyle(styles[0]);
+        
+        request.setSld(sld);
+        request.setSldBody(sldBody);        
+        request.setRule(rule);
+        request.setScale(scale);
+        request.setSldVersion(sldVersion);
+        request.dimensions().putAll(dims);
+        
+        return request.getURL();
+    }
 
     /**
      * Prepare parameters for a getMap query.
@@ -306,7 +329,7 @@ public class WMSMapLayer extends AbstractMapLayer {
      * @param env
      * @param dim
      */
-    void prepareQuery(final GetMapRequest request, final GeneralEnvelope env, final Dimension dim, final Point2D pickCoord) throws TransformException, FactoryException{
+    protected void prepareQuery(final GetMapRequest request, final GeneralEnvelope env, final Dimension dim, final Point2D pickCoord) throws TransformException, FactoryException{
 
         //envelope before any modification
         GeneralEnvelope beforeEnv = new GeneralEnvelope(env);

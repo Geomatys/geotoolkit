@@ -17,6 +17,7 @@
 package org.geotoolkit.wms;
 
 import java.awt.Dimension;
+import java.util.Map;
 import org.geotoolkit.client.Request;
 
 
@@ -27,6 +28,7 @@ import org.geotoolkit.client.Request;
  * @module pending
  */
 public interface GetLegendRequest extends Request {
+        
     /**
      * Returns the layer concerned, never {@code null}.
      */
@@ -128,6 +130,11 @@ public interface GetLegendRequest extends Request {
     /**
      * Sets a sld body to apply.
      */
-    void setSldBody(String sldBody);
+    void setSldBody(String sldBody);       
+    
+    /**
+     * Returns additional dimensions.
+     */
+    Map<String, String> dimensions();
 
 }
