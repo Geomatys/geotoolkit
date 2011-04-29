@@ -70,7 +70,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
- * @version 3.15
+ * @version 3.18
  *
  * @see Factory
  * @see FactoryRegistry
@@ -477,6 +477,25 @@ public class Hints extends RenderingHints {
      * @category Coverage
      */
     public static final Key SAMPLE_DIMENSION_TYPE = new Key("org.opengis.coverage.SampleDimensionType");
+
+
+
+    ////////////////////////////////////////////////////////////////////////
+    ////////                                                        ////////
+    ////////                        Temporal                        ////////
+    ////////                                                        ////////
+    ////////////////////////////////////////////////////////////////////////
+
+    /**
+     * The {@link org.opengis.temporal.TemporalFactory} instance to use.
+     *
+     * @see FactoryFinder#getTemporalFactory(Hints)
+     *
+     * @category Temporal
+     *
+     * @since 3.18
+     */
+    public static final ClassKey TEMPORAL_FACTORY = new ClassKey("org.opengis.temporal.TemporalFactory");
 
 
 

@@ -18,8 +18,6 @@
 package org.geotoolkit.internal.jaxb.referencing;
 
 import java.util.Date;
-import java.util.Iterator;
-import java.util.ServiceLoader;
 import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import javax.xml.bind.annotation.XmlElement;
@@ -30,6 +28,8 @@ import org.opengis.temporal.TemporalFactory;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.factory.FactoryFinder;
+import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
 
@@ -41,23 +41,12 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.18
  *
  * @since 3.00
  * @module
  */
 public final class TM_Primitive extends MetadataAdapter<TM_Primitive, TemporalPrimitive> {
-    /**
-     * The temporal factory, or {@code null} if none.
-     *
-     * @todo Remove after we added a FactoryFinder.getTemporalFactory(Hints) method.
-     */
-    private static final TemporalFactory factory;
-    static {
-        final Iterator<TemporalFactory> it = ServiceLoader.load(TemporalFactory.class).iterator();
-        factory = it.hasNext() ? it.next() : null;
-    }
-
     /**
      * Empty constructor for JAXB.
      */
@@ -124,14 +113,16 @@ public final class TM_Primitive extends MetadataAdapter<TM_Primitive, TemporalPr
                      */
                     record = Errors.getResources(null).getLogRecord(Level.WARNING,
                             Errors.Keys.BAD_RANGE_$2, begin, end);
-                } else if (factory == null) {
-                    record = Errors.getResources(null).getLogRecord(Level.WARNING,
-                            Errors.Keys.MISSING_MODULE_$1, "geotk-temporal");
-                } else {
+                } else try {
+                    final TemporalFactory factory = FactoryFinder.getTemporalFactory(null);
                     metadata = factory.createPeriod(
                                factory.createInstant(factory.createPosition(begin)),
                                factory.createInstant(factory.createPosition(end)));
                     return;
+                } catch (FactoryNotFoundException e) {
+                    record = Errors.getResources(null).getLogRecord(Level.WARNING,
+                            Errors.Keys.MISSING_MODULE_$1, "geotk-temporal");
+                    record.setThrown(e);
                 }
                 record.setSourceClassName(TemporalPrimitive.class.getName());
                 record.setSourceMethodName("setTimePeriod");

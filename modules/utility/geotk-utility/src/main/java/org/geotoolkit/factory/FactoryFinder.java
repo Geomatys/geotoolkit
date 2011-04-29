@@ -48,6 +48,7 @@ import org.opengis.geometry.primitive.PrimitiveFactory;
 import org.opengis.geometry.coordinate.GeometryFactory;
 import org.opengis.geometry.complex.ComplexFactory;
 import org.opengis.geometry.aggregate.AggregateFactory;
+import org.opengis.temporal.TemporalFactory;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Configuration;
@@ -100,7 +101,7 @@ import org.geotoolkit.internal.LazySet;
  * itself is just a convenience wrapper around a {@code FactoryRegistry} instance.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 2.1
  * @level basic
@@ -173,6 +174,7 @@ public class FactoryFinder {
                     CRSFactory.class,
                     MathTransformFactory.class,
                     CoordinateOperationFactory.class,
+                    TemporalFactory.class,
                     PositionFactory.class,
                     PrimitiveFactory.class,
                     GeometryFactory.class,
@@ -473,6 +475,36 @@ public class FactoryFinder {
      */
     public static Set<MathTransformFactory> getMathTransformFactories(final Hints hints) {
         return getFactories(MathTransformFactory.class, hints, Hints.MATH_TRANSFORM_FACTORY);
+    }
+
+    /**
+     * Returns the first implementation of {@link TemporalFactory} matching the specified hints.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return The first temporal factory that matches the supplied hints.
+     * @throws FactoryRegistryException if no implementation was found or can be created for the
+     *         {@link TemporalFactory} interface.
+     *
+     * @since 3.18
+     * @category Temporal
+     *
+     * @see Hints#TEMPORAL_FACTORY
+     */
+    public static TemporalFactory getTemporalFactory(final Hints hints) throws FactoryRegistryException {
+        return getFactory(TemporalFactory.class, hints, Hints.TEMPORAL_FACTORY);
+    }
+
+    /**
+     * Returns a set of all available implementations for the {@link TemporalFactory} interface.
+     *
+     * @param  hints An optional map of hints, or {@code null} for the default ones.
+     * @return Set of available temporal factory implementations.
+     *
+     * @since 3.18
+     * @category Temporal
+     */
+    public static Set<TemporalFactory> getTemporalFactories(final Hints hints) {
+        return getFactories(TemporalFactory.class, hints, Hints.TEMPORAL_FACTORY);
     }
 
     /**
