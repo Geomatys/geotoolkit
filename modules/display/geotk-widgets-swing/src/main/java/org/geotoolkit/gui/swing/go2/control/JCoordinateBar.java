@@ -23,6 +23,7 @@ import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.Insets;
 import java.awt.RenderingHints;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -43,20 +44,20 @@ import javax.swing.JCheckBoxMenuItem;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 import javax.swing.JPopupMenu;
-import javax.swing.JProgressBar;
 import javax.swing.JRadioButtonMenuItem;
 import javax.swing.JSeparator;
 import javax.swing.JTextField;
 import javax.swing.JToggleButton;
+import javax.swing.JToolBar;
 import javax.swing.SwingConstants;
 
 import org.geotoolkit.display2d.GO2Hints;
 import org.geotoolkit.display2d.canvas.J2DCanvas;
 import org.geotoolkit.geometry.DirectPosition2D;
-import org.geotoolkit.gui.swing.BorderCutter;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
+import org.jdesktop.swingx.JXBusyLabel;
 
 import org.opengis.display.canvas.CanvasEvent;
 import org.opengis.display.canvas.CanvasListener;
@@ -83,7 +84,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
     private final JScaleCombo guiCombo = new JScaleCombo();
     private final JTextField guiCoord = new JTextField();
     private final JCRSButton guiCRS = new JCRSButton();
-    private final JProgressBar guiPainting = new JProgressBar();
+    private final JXBusyLabel guiPainting = new JXBusyLabel();
     private final JToggleButton guiElevation = new JToggleButton(ICON_ELEVATION);
     private final JToggleButton guiTemporal = new JToggleButton(ICON_TEMPORAL);
     
@@ -98,8 +99,9 @@ public class JCoordinateBar extends AbstractMapControlBar {
 
     public JCoordinateBar(final JMap2D candidate) {
         setLayout(new BorderLayout(0,1));
-        final JPanel bottom = new JPanel(new GridBagLayout());
-        bottom.setOpaque(false);
+        final JToolBar bottom = new JToolBar();
+        bottom.setFloatable(false);
+        bottom.setLayout(new GridBagLayout());
         add(BorderLayout.SOUTH,bottom);
         add(BorderLayout.CENTER,paneTemp);
 
@@ -295,10 +297,13 @@ public class JCoordinateBar extends AbstractMapControlBar {
         guiCoord.setBorder(null);
         guiCoord.setEditable(false);
         guiCoord.setHorizontalAlignment(SwingConstants.CENTER);
+        
+        final int defaultInsetTop = guiElevation.getMargin().top;
+        final int defaultInsetBottom = guiElevation.getMargin().bottom;
 
-        guiPainting.setPreferredSize(new Dimension(80,5));
-        guiPainting.setString("");
-
+        guiHint.setMargin(new Insets(defaultInsetTop, 0, defaultInsetBottom, 0));
+        
+        guiTemporal.setMargin(new Insets(defaultInsetTop, 0, defaultInsetBottom, 0));
         guiTemporal.setToolTipText(MessageBundle.getString("map_temporal_slider"));
         guiTemporal.addActionListener(new ActionListener() {
 
@@ -308,6 +313,7 @@ public class JCoordinateBar extends AbstractMapControlBar {
             }
         });
 
+        guiElevation.setMargin(new Insets(defaultInsetTop, 0, defaultInsetBottom, 0));
         guiElevation.setToolTipText(MessageBundle.getString("map_elevation_slider"));
         guiElevation.addActionListener(new ActionListener() {
 
@@ -335,34 +341,28 @@ public class JCoordinateBar extends AbstractMapControlBar {
         constraints.gridy = 0;
 
         constraints.gridx = x++;
-        bottom.add(BorderCutter.cut(guiHint,false,false,false,true),constraints);
+        bottom.add(guiHint,constraints);
         constraints.gridx = x++;
-        bottom.add(BorderCutter.cut(guiElevation,false,false,true,true),constraints);
+        bottom.add(guiElevation,constraints);
         constraints.gridx = x++;
-        bottom.add(BorderCutter.cut(guiTemporal,false,false,true,true),constraints);
-        constraints.gridx = x++;
-        constraints.gridx = x++;
-        bottom.add(BorderCutter.cut(guiCRS,false,false,true,false),constraints);
+        bottom.add(guiTemporal,constraints);
 
 
         constraints.fill = GridBagConstraints.BOTH;
-        constraints.anchor = GridBagConstraints.EAST;
-        constraints.gridheight = GridBagConstraints.RELATIVE;
-        constraints.weightx = 1.0;
-        constraints.weighty = 0.9;
-        constraints.gridx = x;
+        constraints.weightx = 1;
+        constraints.gridx = x++;
         bottom.add(guiCoord,constraints);
-        constraints.weighty = 0.1;
-        constraints.gridy = 1;
-        bottom.add(guiPainting,constraints);
-        constraints.gridy = 0;
-        x++;
-
-
-        constraints.gridheight = GridBagConstraints.REMAINDER;
+        
         constraints.weightx = 0.5;
         constraints.gridx = x++;
         bottom.add(guiCombo,constraints);
+        
+        constraints.weightx = 0;
+        constraints.gridx = x++;
+        bottom.add(guiCRS,constraints);
+        
+        constraints.gridx = x++;
+        bottom.add(guiPainting,constraints);
 
         setMap(candidate);
     }
@@ -464,14 +464,11 @@ public class JCoordinateBar extends AbstractMapControlBar {
         public void canvasChanged(final CanvasEvent event) {
 
             if(RenderingState.ON_HOLD.equals(event.getNewRenderingstate())){
-                guiPainting.setStringPainted(false);
-                guiPainting.setIndeterminate(false);
+                guiPainting.setBusy(false);
             }else if(RenderingState.RENDERING.equals(event.getNewRenderingstate())){
-                guiPainting.setStringPainted(true);
-                guiPainting.setIndeterminate(true);
+                guiPainting.setBusy(true);
             }else{
-                guiPainting.setStringPainted(false);
-                guiPainting.setIndeterminate(false);
+                guiPainting.setBusy(false);
             }
         }
 

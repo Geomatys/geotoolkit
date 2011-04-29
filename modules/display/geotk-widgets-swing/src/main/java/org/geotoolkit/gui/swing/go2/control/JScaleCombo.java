@@ -191,7 +191,6 @@ public class JScaleCombo extends JComboBox {
         public ScaleEditor() {
             super(new BorderLayout());
             setOpaque(false);
-            ScaleEditor.this.add(BorderLayout.WEST,new JLabel("  1 : "));
             ScaleEditor.this.add(BorderLayout.CENTER,field);
 
             field.addChangeListener(new ChangeListener() {
