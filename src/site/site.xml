@@ -15,10 +15,10 @@
     <!--     Links to appears just below the right banner     -->
     <!-- ==================================================== -->
     <links>
-      <item name="OGC"     href="http://www.opengeospatial.org/"/>
-      <item name="OSGEO"   href="http://www.osgeo.org/"         />
-      <item name="GeoAPI"  href="http://www.geoapi.org/"/>
-      <item name="Javadoc" href="http://javadoc.geotoolkit.org/"/>
+      <item name="OGC"     href="http://www.opengeospatial.org"/>
+      <item name="OSGEO"   href="http://www.osgeo.org"         />
+      <item name="GeoAPI"  href="http://www.geoapi.org"/>
+      <item name="Javadoc" href="http://javadoc.geotoolkit.org"/>
     </links>
 
     <!-- ==================================================== -->

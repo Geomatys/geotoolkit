@@ -40,7 +40,7 @@ import org.geotoolkit.lang.Static;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
- * @version 3.04
+ * @version 3.18
  *
  * @since 3.04 (derived from 2.2)
  * @module
@@ -188,17 +188,16 @@ public final class Citations {
     public static boolean identifierMatches(final Citation citation, String identifier) {
         identifier = identifier.trim();
         final Collection<? extends Identifier> identifiers = citation.getIdentifiers();
-        for (final Identifier id : identifiers) {
-            final String code = id.getCode().trim();
-            if (identifier.equalsIgnoreCase(code)) {
-                return true;
+        if (identifiers != null && !identifiers.isEmpty()) {
+            for (final Identifier id : identifiers) {
+                final String code = id.getCode().trim();
+                if (identifier.equalsIgnoreCase(code)) {
+                    return true;
+                }
             }
-        }
-        if (identifiers.isEmpty()) {
-            return titleMatches(citation, identifier);
-        } else {
             return false;
         }
+        return titleMatches(citation, identifier);
     }
 
     /**

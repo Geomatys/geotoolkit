@@ -782,9 +782,9 @@
       <url>dav:http://www.geotoolkit.org/</url>
     </site>
     <repository>
-       <id>geotoolkit</id>
-       <name>Geotoolkit.org binaries</name>
-       <url>dav:http://maven.geotoolkit.org/</url>
+      <id>geotoolkit</id>
+      <name>Geotoolkit.org binaries</name>
+      <url>dav:http://maven.geotoolkit.org/</url>
     </repository>
   </distributionManagement>
 
