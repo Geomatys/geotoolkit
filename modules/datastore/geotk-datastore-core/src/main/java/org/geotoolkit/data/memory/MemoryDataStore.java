@@ -17,6 +17,7 @@
 
 package org.geotoolkit.data.memory;
 
+import com.vividsolutions.jts.geom.Geometry;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -40,10 +41,12 @@ import org.geotoolkit.data.query.QueryCapabilities;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.filter.identity.DefaultFeatureId;
+import org.geotoolkit.geometry.jts.JTS;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.FeatureType;
+import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
@@ -331,7 +334,11 @@ public class MemoryDataStore extends AbstractDataStore{
                 final PropertyDescriptor desc = entry.getKey();
                 final Property prop = candidate.getProperty(desc.getName());
                 if(prop != null){
-                    prop.setValue(entry.getValue());
+                    final Object value = entry.getValue();
+                    if(value instanceof Geometry){
+                        JTS.setCRS((Geometry)value, ((GeometryDescriptor)desc).getCoordinateReferenceSystem() );
+                    }                    
+                    prop.setValue(value);
                 }
             }
         }
