@@ -112,11 +112,9 @@ public class StatelessFeatureLayerJ2D extends StatelessCollectionLayerJ2D<Featur
 
     @Override
     public void contentChanged(StorageContentEvent event) {
-        if(event.getType() == StorageContentEvent.Type.SESSION){
-            if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
-                //TODO should call a repaint only on this graphic
-                getCanvas().getController().repaint();
-            }
+        if(item.isVisible() && getCanvas().getController().isAutoRepaint()){
+            //TODO should call a repaint only on this graphic
+            getCanvas().getController().repaint();
         }
     }
 
