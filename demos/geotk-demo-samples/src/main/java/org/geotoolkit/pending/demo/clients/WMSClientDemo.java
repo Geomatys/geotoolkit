@@ -18,7 +18,7 @@ public class WMSClientDemo {
         final WebMapServer wmsServer = new WebMapServer(new URL("http://demo.geomatys.com/constellation/Ws/wms?"), WMSVersion.v130);
         final GetCapabilitiesRequest getCapa = wmsServer.createGetCapabilities();
         final GetMapRequest getMap = wmsServer.createGetMap();
-        final GetLegendRequest getLegend = wmsServer.creategetLegend();
+        final GetLegendRequest getLegend = wmsServer.createGetLegend();
 
         //simplify usage for map layer
         final WMSMapLayer layer = new WMSMapLayer(wmsServer, "BlueMarble");
