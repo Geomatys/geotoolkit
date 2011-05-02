@@ -105,12 +105,13 @@ public class PolygonType {
     }
 
     public JTSPolygon getJTSPolygon() {
-        ((JTSRing)exterior).setCoordinateReferenceSystem(coordinateReferenceSystem);
+        if (exterior != null) {
+            ((JTSRing) exterior).setCoordinateReferenceSystem(coordinateReferenceSystem);
             for (Primitive p : exterior.getElements()) {
                 if (p instanceof JTSCurve) {
                     JTSCurve curve = (JTSCurve) p;
                     curve.setCoordinateReferenceSystem(coordinateReferenceSystem);
-                    for (CurveSegment cv :curve.getSegments()) {
+                    for (CurveSegment cv : curve.getSegments()) {
                         if (cv instanceof JTSLineString) {
                             JTSLineString line = (JTSLineString) cv;
                             line.setCoordinateReferenceSystem(coordinateReferenceSystem);
@@ -118,7 +119,7 @@ public class PolygonType {
                             List<Position> newPositions = new ArrayList<Position>();
                             for (Position pos : pa.positions()) {
                                 if (pos instanceof GeneralDirectPosition) {
-                                    ((GeneralDirectPosition)pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
+                                    ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
                                     newPositions.add(pos);
                                 }
                             }
@@ -128,14 +129,15 @@ public class PolygonType {
                     }
                 }
             }
-         if (interior != null) {
+        }
+        if (interior != null) {
             for (Ring ring : interior) {
-                ((JTSRing)ring).setCoordinateReferenceSystem(coordinateReferenceSystem);
+                ((JTSRing) ring).setCoordinateReferenceSystem(coordinateReferenceSystem);
                 for (Primitive p : ring.getElements()) {
                     if (p instanceof JTSCurve) {
                         JTSCurve curve = (JTSCurve) p;
                         curve.setCoordinateReferenceSystem(coordinateReferenceSystem);
-                        for (CurveSegment cv :curve.getSegments()) {
+                        for (CurveSegment cv : curve.getSegments()) {
                             if (cv instanceof JTSLineString) {
                                 JTSLineString line = (JTSLineString) cv;
                                 line.setCoordinateReferenceSystem(coordinateReferenceSystem);
@@ -143,7 +145,7 @@ public class PolygonType {
                                 List<Position> newPositions = new ArrayList<Position>();
                                 for (Position pos : pa.positions()) {
                                     if (pos instanceof GeneralDirectPosition) {
-                                        ((GeneralDirectPosition)pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
+                                        ((GeneralDirectPosition) pos).setCoordinateReferenceSystem(coordinateReferenceSystem);
                                         newPositions.add(pos);
                                     }
                                 }
