@@ -70,7 +70,7 @@ public final class MD_DataIdentification
     @Override
     @XmlElementRef
     public DefaultDataIdentification getElement() {
-        if (uuidref != null) {
+        if (hasUUIDREF()) {
             return null;
         }
         final DataIdentification metadata = this.metadata;

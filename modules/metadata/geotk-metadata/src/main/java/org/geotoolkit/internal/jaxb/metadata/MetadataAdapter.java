@@ -17,11 +17,8 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-
-import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.UUIDs;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -67,34 +64,8 @@ import org.geotoolkit.internal.jaxb.UUIDs;
  * @module
  */
 public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueType,BoundType>, BoundType>
-        extends XmlAdapter<ValueType,BoundType>
+        extends PropertyType<ValueType,BoundType>
 {
-    /**
-     * The wrapped GeoAPI metadata interface.
-     */
-    protected BoundType metadata;
-
-    /**
-     * An identifier for the metadata, or {@code null} if none. This field is initialized
-     * at construction time to the value registered in {@link UUIDs}, if any.
-     *
-     * @since 3.13
-     */
-    @XmlAttribute(namespace = Namespaces.GCO)
-    protected String uuid;
-
-    /**
-     * A URN to an external resources, or to an other part of a XML document, or an identifier.
-     * The {@code uuidref} attribute is used to refer to an XML element that has a corresponding
-     * {@code uuid} attribute.
-     *
-     * @see <a href="http://www.schemacentral.com/sc/niem21/a-uuidref-1.html">Usage of uuidref</a>
-     *
-     * @since 3.13
-     */
-    @XmlAttribute(namespace = Namespaces.GCO)
-    protected String uuidref;
-
     /**
      * Empty constructor for subclasses only.
      */
@@ -107,69 +78,6 @@ public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueTyp
      * @param metadata The interface to wrap.
      */
     protected MetadataAdapter(final BoundType metadata) {
-        this.metadata = metadata;
-        uuid = UUIDs.DEFAULT.getUUID(metadata);
+        super(metadata);
     }
-
-    /**
-     * Creates a new instance of this class wrapping the given metadata.
-     * This method is invoked by {@link #marshal} after making sure that
-     * {@code value} is not null.
-     *
-     * @param value The GeoAPI interface to wrap.
-     * @return The adapter.
-     */
-    protected abstract ValueType wrap(final BoundType value);
-
-    /**
-     * Converts a GeoAPI interface to the appropriate adapter for the way it will be
-     * marshalled into an XML file or stream. JAXB calls automatically this method at
-     * marshalling time.
-     *
-     * @param value The bound type value, here the interface.
-     * @return The adapter for the given value.
-     */
-    @Override
-    public final ValueType marshal(final BoundType value) {
-        if (value == null) {
-            return null;
-        }
-        return wrap(value);
-    }
-
-    /**
-     * Converts an adapter read from an XML stream to the GeoAPI interface which will
-     * contains this value. JAXB calls automatically this method at unmarshalling time.
-     *
-     * @param value The adapter for a metadata value.
-     * @return An instance of the GeoAPI interface which represents the metadata value.
-     *
-     * @todo We should replace the (BoundType) cast by a call to Class.cast(Object).
-     */
-    @Override
-    @SuppressWarnings("unchecked")
-    public final BoundType unmarshal(final ValueType value) {
-        if (value == null) {
-            return null;
-        }
-        if (value.metadata == null && value.uuidref != null) {
-            value.metadata = (BoundType) UUIDs.DEFAULT.lookup(value.uuidref);
-        }
-        return value.metadata;
-    }
-
-    /**
-     * Returns the Geotk implementation class generated from the metadata value.
-     * This method is systematically called at marshalling time by JAXB.
-     * <p>
-     * The return value is usually an implementation of {@code BoundType}. But in
-     * some situations this is Java type like {@link String}. For this raison the
-     * return type is declared as {@code Object} here, but subclasses shall restrict
-     * that to a more specific type.
-     *
-     * @return The metadata to be marshalled.
-     *
-     * @since 3.05
-     */
-    public abstract Object getElement();
 }
