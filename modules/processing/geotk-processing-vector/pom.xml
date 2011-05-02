@@ -14,7 +14,7 @@
     <parent>
         <groupId>org.geotoolkit.pending</groupId>
         <artifactId>processing</artifactId>
-        <version>SNAPSHOT</version>
+        <version>3.x-SNAPSHOT</version>
     </parent>
 
 
@@ -25,7 +25,6 @@
     <artifactId>geotk-processing-vector</artifactId>
     <packaging>jar</packaging>
     <name>Processing vector</name>
-
     <description>
     Processes for vectors
     </description>
@@ -40,7 +39,7 @@
             <id>kite</id>
             <email>quentin.boileau@gmail.com</email>
             <organization>Geomatys</organization>
-            <organizationUrl>http://www.geomatys.fr/</organizationUrl>
+            <organizationUrl>http://www.geomatys.com/</organizationUrl>
             <timezone>+1</timezone>
             <roles>
                 <role>Developer</role>

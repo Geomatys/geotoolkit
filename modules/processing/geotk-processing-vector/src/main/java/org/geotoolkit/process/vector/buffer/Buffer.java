@@ -25,6 +25,7 @@ import javax.measure.unit.Unit;
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.geometry.jts.JTS;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
@@ -112,7 +113,15 @@ public class Buffer extends AbstractProcess {
     static Feature makeBuffer(final Feature oldFeature, final FeatureType newType, final double distance,
             final Unit<Length> unit, final Boolean lenient) throws FactoryException, MismatchedDimensionException, TransformException {
 
-        final CoordinateReferenceSystem originalCRS = oldFeature.getType().getCoordinateReferenceSystem();
+        final CoordinateReferenceSystem originalCRS;
+        
+        if (oldFeature.getType().getCoordinateReferenceSystem() != null) {
+            originalCRS = oldFeature.getType().getCoordinateReferenceSystem();
+        } else {
+            final Geometry geom = (Geometry) oldFeature.getDefaultGeometryProperty().getValue();
+            originalCRS = JTS.findCoordinateReferenceSystem(geom);
+        }
+        
         final GeographicCRS longLatCRS = DefaultGeographicCRS.WGS84;
         final MathTransform mtToLongLatCRS = CRS.findMathTransform(originalCRS, longLatCRS, lenient);
 

@@ -52,7 +52,7 @@ public final class ClipGeometryDescriptor extends VectorDescriptor {
      * Mandatory - Clipping Geometry
      */
     public static final ParameterDescriptor<Geometry> CLIP_GEOMETRY_IN=
-            new DefaultParameterDescriptor("clip_geometry_in", "Inpute clip geometry", Geometry.class, null, true);
+            new DefaultParameterDescriptor("clip_geometry_in", "Input clip geometry", Geometry.class, null, true);
 
     /**Input parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =

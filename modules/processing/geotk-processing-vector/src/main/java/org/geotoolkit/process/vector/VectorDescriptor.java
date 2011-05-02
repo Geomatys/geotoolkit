@@ -44,12 +44,12 @@ public abstract class VectorDescriptor extends AbstractProcessDescriptor {
      * Mandatory - Feature Collection
      */
     public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_IN =
-            new DefaultParameterDescriptor("feature_in", "Inpute Feature", FeatureCollection.class, null, true);
+            new DefaultParameterDescriptor("feature_in", "Input FeatureCollection", FeatureCollection.class, null, true);
     /**
      * Mandatory - Resulting Feature Collection
      */
     public static final ParameterDescriptor<FeatureCollection<Feature>> FEATURE_OUT =
-            new DefaultParameterDescriptor("feature_out", "Outpute Feature", FeatureCollection.class, null, true);
+            new DefaultParameterDescriptor("feature_out", "Output FeatureFeatureCollection", FeatureCollection.class, null, true);
 
     /**
      * Default constructor

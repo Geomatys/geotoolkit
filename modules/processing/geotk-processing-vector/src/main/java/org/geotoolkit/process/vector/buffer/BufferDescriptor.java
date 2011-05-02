@@ -60,7 +60,7 @@ public final class BufferDescriptor extends VectorDescriptor {
      * Mandatory - Distance unit
      */
     public static final ParameterDescriptor<Unit> UNIT_IN=
-            new DefaultParameterDescriptor("unit_in", "Input simplification unit", Unit.class, null, true);
+            new DefaultParameterDescriptor("unit_in", "Input buffer unit", Unit.class, null, true);
 
   
     public static final ParameterDescriptor<Boolean> LENIENT_TRANSFORM_IN=

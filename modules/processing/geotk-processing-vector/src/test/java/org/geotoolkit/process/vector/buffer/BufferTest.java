@@ -88,7 +88,7 @@ public class BufferTest extends AbstractProcessTest{
         in.parameter("feature_in").setValue(featureList);
         in.parameter("distance_in").setValue(distance);
         in.parameter("unit_in").setValue(unit);
-        in.parameter("lenient_transform_in").setValue(false);
+        in.parameter("lenient_transform_in").setValue(true);
 
         proc.setInput(in);
 
