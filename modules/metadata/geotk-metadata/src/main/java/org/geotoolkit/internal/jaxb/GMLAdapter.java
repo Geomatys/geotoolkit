@@ -68,7 +68,7 @@ public abstract class GMLAdapter {
      * @param wrapped An instance of a GeoAPI interface to be wrapped.
      */
     protected GMLAdapter(final Object wrapped) {
-        id = UUIDs.DEFAULT.getUUID(wrapped);
+        id = UUIDs.DEFAULT.getOrCreateUUID(wrapped);
     }
 
     /**
