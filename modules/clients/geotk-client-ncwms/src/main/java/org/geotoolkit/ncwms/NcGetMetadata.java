@@ -23,7 +23,7 @@ import org.geotoolkit.util.logging.Logging;
 
 
 /**
- * Abstract implementation of {@link NcGetMetadataRequest}, which defines the parameters for
+ * Implementation of {@link NcGetMetadataRequest}, which defines the parameters for
  * a GetMetadata request.
  *
  * @author Olivier Terral (Geomatys)
@@ -195,6 +195,7 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
             throw new IllegalArgumentException("Invalid value for item parameter");             
         }       
         
+        requestParameters.put("request", "GetMetadata");
         requestParameters.put("layerName", layerName);
         requestParameters.put("item", item);
     }

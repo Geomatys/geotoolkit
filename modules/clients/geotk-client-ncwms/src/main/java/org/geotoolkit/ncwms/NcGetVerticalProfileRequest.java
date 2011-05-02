@@ -24,7 +24,7 @@ import org.geotoolkit.client.Request;
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
-public interface NcGetTransectRequest extends Request {    
+public interface NcGetVerticalProfileRequest extends Request {    
     
     /**
      * Returns the layer name.
@@ -47,14 +47,14 @@ public interface NcGetTransectRequest extends Request {
     void setCrs(final String crsCode);
     
     /**
-     * Returns coordinates of a line: x1%y1,x2%y2 ...
+     * Returns the coordinate of a point: x%y.
      */
-    String getLineString();
+    String getPoint();
     
     /**
-     * Sets coordinates of a line: x1%y1,x2%y2 ...
+     * Sets he coordinate of a point: x%y.
      */
-    void setLineString(final String lineString);
+    void setPoint(final String point);
     
     
     /**
@@ -77,15 +77,5 @@ public interface NcGetTransectRequest extends Request {
      */
     void setTime(final String time);
     
-    
-    /**
-     * Returns the Elevation.
-     */
-    String getElevation();
-    
-    /**
-     * Sets the Elevation.
-     */
-    void setElevation(final String elevation);
-    
+
 }
