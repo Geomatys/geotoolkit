@@ -49,4 +49,12 @@ public class DefaultGeometryType extends DefaultAttributeType<AttributeType> imp
         return crs;
     }
     
+    /**
+     * Set the CoordinateReferenceSystem to the GeometryType
+     * @param crs 
+     */
+    public void setCoordinateReferenceSystem(CoordinateReferenceSystem crs) {
+        this.crs = crs;
+    }
+    
 }
