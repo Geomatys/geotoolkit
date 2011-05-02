@@ -118,6 +118,7 @@ public final class TM_Primitive extends MetadataAdapter<TM_Primitive, TemporalPr
                     metadata = factory.createPeriod(
                                factory.createInstant(factory.createPosition(begin)),
                                factory.createInstant(factory.createPosition(end)));
+                    period.copyIdTo(metadata);
                     return;
                 } catch (FactoryNotFoundException e) {
                     record = Errors.getResources(null).getLogRecord(Level.WARNING,

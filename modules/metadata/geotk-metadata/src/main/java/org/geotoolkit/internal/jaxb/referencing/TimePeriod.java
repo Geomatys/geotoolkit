@@ -17,10 +17,8 @@
  */
 package org.geotoolkit.internal.jaxb.referencing;
 
-import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 import org.opengis.temporal.Period;
@@ -28,6 +26,7 @@ import org.opengis.temporal.Instant;
 import org.opengis.temporal.Position;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.GMLAdapter;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.lang.Workaround;
 
@@ -36,7 +35,7 @@ import org.geotoolkit.lang.Workaround;
  * The adapter for {@code "TimePeriod"}. This is an attribute of {@link TM_Primitive}.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -53,7 +52,7 @@ import org.geotoolkit.lang.Workaround;
     "end"
 })
 @Workaround(library="Geotk", version="3.15")
-public final class TimePeriod {
+public final class TimePeriod extends GMLAdapter {
     /**
      * The start time. This element is part of GML 3.1.1 specification.
      * If non-null, then this field has precedence over {@link #begin}.
@@ -94,6 +93,7 @@ public final class TimePeriod {
      * @param period The period to use for initializing this object.
      */
     public TimePeriod(final Period period) {
+        super(period);
         beginPosition = toDate(period.getBeginning());
         endPosition   = toDate(period.getEnding());
     }
@@ -113,17 +113,6 @@ public final class TimePeriod {
     }
 
     /**
-     * The {@code gml:id}, which is mandatory.
-     *
-     * @return The {@code "extent"} ID.
-     */
-    @XmlID
-    @XmlAttribute(name = "id", required = true, namespace = Namespaces.GML)
-    public String getID() {
-        return "extent";
-    }
-
-    /**
      * Returns a string representation for debugging and formatting error message.
      */
     @Override
@@ -133,7 +122,7 @@ public final class TimePeriod {
 
     /**
      * Returns the given position if non-null, or the position extracted from
-     * the given type otherwise. In neither is defined, returns {@code null}.
+     * the given type otherwise. If neither is defined, returns {@code null}.
      */
     static XMLGregorianCalendar select(XMLGregorianCalendar position, final TimeInstantPropertyType type) {
         if (position == null && type != null) {

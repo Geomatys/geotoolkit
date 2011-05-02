@@ -22,7 +22,8 @@ import org.geotoolkit.metadata.iso.DefaultMetadata;
 
 
 /**
- * Declares the classes of objects to be marshalled using a default {@code MarshallerPool}.
+ * Declares the classes of objects to be marshalled using a default {@code MarshallerPool}. This class
+ * is declared in the {@code META-INF/services/org.geotoolkit.internal.jaxb.RegisterableTypes} file.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.00

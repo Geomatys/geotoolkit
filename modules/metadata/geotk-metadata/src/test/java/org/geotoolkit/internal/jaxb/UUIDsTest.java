@@ -28,7 +28,7 @@ import static org.junit.Assert.*;
  * Tests {@link UUIDs}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.18
  *
  * @since 3.13
  */
@@ -38,11 +38,11 @@ public final class UUIDsTest {
      */
     @Test
     public void testGetOrCreateUUID() {
-        final UUIDs map = UUIDs.DEFAULT;
+        final UUIDs<String> map = UUIDs.DEFAULT;
         final Date object = new Date();
         assertNull("The object should have no initial UUID.", map.getUUID(object));
 
-        final UUID uuid = map.getOrCreateUUID(object);
+        final String uuid = map.getOrCreateUUID(object);
         assertNotNull("Should have created a new UUID.", uuid);
         assertSame("Should find the UUID.", uuid, map.getUUID(object));
         assertSame("Should not create another UUID for the same object.", uuid, map.getOrCreateUUID(object));
@@ -58,6 +58,8 @@ public final class UUIDsTest {
         } catch (IllegalArgumentException e) {
             // This is the expected exception.
         }
+        assertEquals("Should be able to remove the UUID.", uuid, map.removeUUID(object));
+        assertNull("The object should have no more UUID.", map.getUUID(object));
     }
 
     /**
@@ -65,11 +67,11 @@ public final class UUIDsTest {
      */
     @Test
     public void testSetUUID() {
-        final UUIDs map = UUIDs.DEFAULT;
+        final UUIDs<String> map = UUIDs.DEFAULT;
         final Date object = new Date();
         assertNull("The object should have no initial UUID.", map.getUUID(object));
 
-        final UUID uuid = UUID.randomUUID();
+        final String uuid = UUID.randomUUID().toString();
         map.setUUID(object, uuid);
         assertSame("Should find the UUID.", uuid, map.getUUID(object));
         assertSame("Should be able to get the object from the UUID.", object, map.lookup(uuid));
@@ -85,5 +87,7 @@ public final class UUIDsTest {
         } catch (IllegalArgumentException e) {
             // This is the expected exception.
         }
+        assertEquals("Should be able to remove the UUID.", uuid, map.removeUUID(object));
+        assertNull("The object should have no more UUID.", map.getUUID(object));
     }
 }

@@ -22,6 +22,7 @@ import java.util.UUID;
 import java.util.HashMap;
 import java.lang.ref.Reference;
 import java.lang.ref.WeakReference;
+import net.jcip.annotations.GuardedBy;
 import net.jcip.annotations.ThreadSafe;
 
 import org.geotoolkit.resources.Errors;
@@ -47,34 +48,43 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *   garbage collected.</p></li>
  * </ul>
  *
- * This class convenient at XML marshalling and unmarshalling time for handling the {@code uuid}
+ * This class is convenient at XML marshalling and unmarshalling time for handling the {@code uuid}
  * and {@code uuidref} attributes. The {@code uuidref} attribute is used to refer to an XML element
  * that has a corresponding {@code uuid} attribute.
  *
+ * @param <T> The type of UUID objects, typically {@link String} or {@link UUID}.
+ *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.18
  *
  * @since 3.13
  * @module
  */
 @ThreadSafe
-public class UUIDs {
+public abstract class UUIDs<T> {
     /**
-     * The system-wide default map of UUIDs.
+     * The system-wide default map of UUIDs. The {@link #createUUID()} method will generate
+     * random strings using <code>{@linkplain UUID#randomUUID()}.toString()</code>.
      */
-    public static final UUIDs DEFAULT = new UUIDs();
+    public static final UUIDs<String> DEFAULT = new UUIDs<String>() {
+        @Override protected String createUUID() {
+            return UUID.randomUUID().toString();
+        }
+    };
 
     /**
      * The objects for which a UUID has been created.
      * Every access to this map must be synchronized on {@code this}.
      */
-    private final Map<UUID,WeakRef> uuidToObject = new HashMap<UUID,WeakRef>();
+    @GuardedBy("this")
+    private final Map<T,WeakRef> uuidToObject = new HashMap<T,WeakRef>();
 
     /**
      * The UUID for existing objects.
      * Every access to this map must be synchronized on {@code this}.
      */
-    private final Map<WeakRef,UUID> objectToUUID = new HashMap<WeakRef,UUID>();
+    @GuardedBy("this")
+    private final Map<WeakRef,T> objectToUUID = new HashMap<WeakRef,T>();
 
     /**
      * Creates a new, initially empty, map of UUIDs.
@@ -85,10 +95,10 @@ public class UUIDs {
     /**
      * Returns the object associated to the given UUID, or {@code null} if none.
      *
-     * @param  uuid The UUID for which to look for an object.
+     * @param  uuid The UUID for which to look for an object (can be {@code null}).
      * @return The object associated to the given UUID, or {@code null} if none.
      */
-    public Object lookup(final UUID uuid) {
+    public Object lookup(final T uuid) {
         final Reference<?> ref;
         synchronized (this) {
             ref = uuidToObject.get(uuid);
@@ -99,10 +109,10 @@ public class UUIDs {
     /**
      * Returns the UUID associated to the given object, or {@code null} if none.
      *
-     * @param  object The object for which to get the UUID.
+     * @param  object The object for which to get the UUID (can be {@code null}).
      * @return The UUID of the given object, or {@code null} if none.
      */
-    public UUID getUUID(final Object object) {
+    public T getUUID(final Object object) {
         final StrongRef check = new StrongRef(object);
         synchronized (this) {
             return objectToUUID.get(check);
@@ -118,8 +128,9 @@ public class UUIDs {
      * @throws IllegalArgumentException If the object is already associated to a UUID,
      *         or if the UUID is already associated to an other object.
      */
-    public void setUUID(final Object object, final UUID uuid) throws IllegalArgumentException {
+    public void setUUID(final Object object, final T uuid) throws IllegalArgumentException {
         ensureNonNull("object", object);
+        ensureNonNull("uuid", uuid);
         final StrongRef check = new StrongRef(object);
         synchronized (this) {
             if (objectToUUID.containsKey(check)) {
@@ -140,21 +151,41 @@ public class UUIDs {
     }
 
     /**
+     * Removes the UUID associated to the given object.
+     *
+     * @param  object The object for which to remove the UUID (can be {@code null}).
+     * @return The removed UUID, or {@code null} if no UUID were associated to the given object.
+     *
+     * @since 3.18
+     */
+    public T removeUUID(final Object object) {
+        final T uuid;
+        final StrongRef check = new StrongRef(object);
+        synchronized (this) {
+            uuid = objectToUUID.remove(check);
+            if (uuid != null && uuidToObject.remove(uuid) == null) {
+                throw new AssertionError(uuid); // Should never happen.
+            }
+        }
+        return uuid;
+    }
+
+    /**
      * Returns the UUID associated to the given object, or {@linkplain UUID#randomUUID()
      * create a random UUID} if the given object does not have one.
      *
      * @param  object The object for which to get the UUID.
      * @return The UUID of the given object.
      */
-    public UUID getOrCreateUUID(final Object object) {
+    public T getOrCreateUUID(final Object object) {
         ensureNonNull("object", object);
         final StrongRef check = new StrongRef(object);
         synchronized (this) {
-            UUID uuid = objectToUUID.get(check);
+            T uuid = objectToUUID.get(check);
             if (uuid == null) {
                 final WeakRef ref = new WeakRef(object);
                 while (true) {
-                    uuid = UUID.randomUUID();
+                    uuid = createUUID();
                     final WeakRef old = uuidToObject.put(uuid, ref);
                     if (old == null) break;
                     // We are very unlikely to get a UUID clash. But if we do,
@@ -170,6 +201,17 @@ public class UUIDs {
     }
 
     /**
+     * Creates a new UUID. This method is invoked by {@link #getOrCreateUUID(Object)} when it
+     * has determined that a new UUID is required. Implementations will typically delegate the
+     * work to some library function like {@link UUID#randomUUID()}.
+     *
+     * @return A new UUID.
+     *
+     * @since 3.18
+     */
+    protected abstract T createUUID();
+
+    /**
      * A weak reference to an object, which remove itself from the maps when the
      * object is garbage collected.
      *
@@ -182,7 +224,7 @@ public class UUIDs {
     private final class WeakRef extends WeakReference<Object> implements Disposable {
         /**
          * The object identity hash code. Must be computed at construction time, because
-         * it must stay valud even after the referent has been garbage collected.
+         * it must stay value even after the referent has been garbage collected.
          */
         private final int hashCode;
 
@@ -202,7 +244,7 @@ public class UUIDs {
          */
         @Override
         public void dispose() {
-            final UUID uuid;
+            final T uuid;
             final WeakRef ref;
             synchronized (UUIDs.this) {
                 uuid = objectToUUID.remove(this);

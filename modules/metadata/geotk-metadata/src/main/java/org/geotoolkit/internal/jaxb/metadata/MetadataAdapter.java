@@ -17,13 +17,11 @@
  */
 package org.geotoolkit.internal.jaxb.metadata;
 
-import java.util.UUID;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.UUIDs;
-import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
@@ -61,7 +59,7 @@ import org.geotoolkit.internal.jaxb.MarshalContext;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.18
  *
  * @see XmlAdapter
  *
@@ -110,10 +108,7 @@ public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueTyp
      */
     protected MetadataAdapter(final BoundType metadata) {
         this.metadata = metadata;
-        final UUID id = UUIDs.DEFAULT.getUUID(metadata);
-        if (id != null) {
-            uuid = id.toString();
-        }
+        uuid = UUIDs.DEFAULT.getUUID(metadata);
     }
 
     /**
@@ -157,9 +152,8 @@ public abstract class MetadataAdapter<ValueType extends MetadataAdapter<ValueTyp
         if (value == null) {
             return null;
         }
-        if (value.metadata == null && uuidref != null) {
-            final UUID uuid = MarshalContext.converters().toUUID(uuidref);
-            value.metadata = (BoundType) UUIDs.DEFAULT.lookup(uuid);
+        if (value.metadata == null && value.uuidref != null) {
+            value.metadata = (BoundType) UUIDs.DEFAULT.lookup(value.uuidref);
         }
         return value.metadata;
     }
