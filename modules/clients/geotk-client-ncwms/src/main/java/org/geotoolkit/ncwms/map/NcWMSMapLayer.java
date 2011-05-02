@@ -24,11 +24,12 @@ import java.awt.geom.Point2D;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.ncwms.NcGetFeatureInfoRequest;
-import org.geotoolkit.wms.GetFeatureInfoRequest;
 import org.geotoolkit.ncwms.NcGetMapRequest;
+import org.geotoolkit.ncwms.NcGetMetadataRequest;
+import org.geotoolkit.ncwms.NcGetTransectRequest;
+import org.geotoolkit.ncwms.NcGetVerticalProfileRequest;
 import org.geotoolkit.ncwms.NcWebMapServer;
 import org.geotoolkit.wms.WebMapServer;
-import org.geotoolkit.wms.map.WMSMapLayer;
 import org.geotoolkit.wms.map.WMSMapLayer;
 
 import org.opengis.geometry.Envelope;
@@ -125,8 +126,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
         
         if (opacity != null)
             setOpacity(opacity.doubleValue());
-    }
-    
+    }    
 
     /**
      * Gets the color scale range.
@@ -207,14 +207,13 @@ public class NcWMSMapLayer extends WMSMapLayer {
         request.setInfoFormat(infoFormat);
         request.setFeatureCount(featureCount);
 
-        final GeneralEnvelope cenv = new GeneralEnvelope(env);
         final Dimension crect = new Dimension(rect);
-
         final Point2D pickCoord = new Point2D.Double(x, y);
+        final GeneralEnvelope cenv = new GeneralEnvelope(env);
 
         prepareQuery(request, cenv, crect, pickCoord);
-        request.setColumnIndex( (int)Math.round(pickCoord.getX()) );
-        request.setRawIndex( (int)Math.round(pickCoord.getY()) );
+        request.setRawIndex((int)Math.round(pickCoord.getY()));
+        request.setColumnIndex((int)Math.round(pickCoord.getX()));
 
         return request.getURL();
     }
@@ -231,5 +230,78 @@ public class NcWMSMapLayer extends WMSMapLayer {
         request.setColorScaleRange(colorScaleRange);
         request.setNumColorBands(numColorBands);
         request.setLogScale(logScale);
+    }    
+    
+    private void prepareQueryMetadata(final NcGetMetadataRequest request, 
+            final String item) {        
+        request.setItem(item);
+        request.setLayerName(getLayerNames()[0]);        
     }
+    
+    public URL queryMetadataLayerDetails() throws MalformedURLException {
+        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
+        prepareQueryMetadata(request, "layerDetails");
+        request.setTime(dimensions().get("TIME"));
+        return request.getURL();
+    }
+    
+    public URL queryMetadataAnimationTimesteps(final String  start, final String end) throws MalformedURLException {
+        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
+        prepareQueryMetadata(request, "animationTimesteps");
+        request.setStart(start);
+        request.setEnd(end);
+        return request.getURL();
+    }
+    
+    public URL queryMetadataTimesteps() throws MalformedURLException {
+        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
+        prepareQueryMetadata(request, "timesteps");
+        request.setDay(dimensions().get("TIME"));
+        return request.getURL();
+    }
+    
+    public URL queryMetadataMenu() throws MalformedURLException {
+        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
+        prepareQueryMetadata(request, "menu");
+        return request.getURL();
+    }
+    
+    public URL queryMetadataMinmax() throws MalformedURLException {
+        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
+        prepareQueryMetadata(request, "minmax");
+        return request.getURL();
+    }
+    
+    public URL queryTransect(final String crsCode, final String lineString, final String outputFormat) throws MalformedURLException {
+        final NcGetTransectRequest request = ((NcWebMapServer) getServer()).createGetTransect();
+        
+        // Mandatory
+        request.setLayer(getLayerNames()[0]);
+        request.setCrs(crsCode);
+        request.setFormat(outputFormat);
+        request.setLineString(lineString);        
+        
+        // Optional
+        request.setTime(dimensions().get("TIME"));
+        request.setElevation(dimensions().get("ELEVATION"));
+        
+        return request.getURL();
+    }
+    
+    public URL queryVerticalProfile(final String crsCode, float x, float y, 
+            final String outputFormat) throws MalformedURLException {
+        final NcGetVerticalProfileRequest request = ((NcWebMapServer) getServer()).createGetVerticalProfile();
+        
+        // Mandatory
+        request.setLayer(getLayerNames()[0]);
+        request.setCrs(crsCode);
+        request.setFormat(outputFormat);
+        request.setPoint(x + "%" + y);        
+        
+        // Optional
+        request.setTime(dimensions().get("TIME"));
+        
+        return request.getURL();
+    }
+    
 }

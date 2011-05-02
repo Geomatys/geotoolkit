@@ -150,7 +150,7 @@ public class NcGetMetadataTest {
         final String sUrl = url.toString();
         assertTrue(sUrl.contains("request=GetMetadata"));
         assertTrue(sUrl.contains("item=menu"));
-        assertTrue(sUrl.contains("layerName=test"));
+        assertFalse(sUrl.contains("layerName=test"));
         assertFalse(sUrl.contains("time=01-01-01T01:00:00Z"));
         assertFalse(sUrl.contains("day=01-01-01T01:00:00Z"));
         assertFalse(sUrl.contains("start=01-01-01T01:00:00Z"));

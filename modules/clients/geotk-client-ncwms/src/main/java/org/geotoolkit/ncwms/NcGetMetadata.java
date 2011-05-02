@@ -168,10 +168,8 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
             
         } else if (item.equals("layerDetails")) {
             
-            if (time == null)
-                throw new IllegalArgumentException("Must provide a time parameter"); 
-            
-            requestParameters.put("time", time);
+            if (time != null)            
+                requestParameters.put("time", time);
             
         } else if (item.equals("animationTimesteps")) {
             
@@ -196,7 +194,9 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
         }       
         
         requestParameters.put("request", "GetMetadata");
-        requestParameters.put("layerName", layerName);
         requestParameters.put("item", item);
+        
+        if (!item.equals("menu"))
+            requestParameters.put("layerName", layerName);
     }
 }

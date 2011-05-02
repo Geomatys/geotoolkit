@@ -18,23 +18,19 @@
 package org.geotoolkit.ncwms;
 
 import java.awt.geom.NoninvertibleTransformException;
-import java.net.URL;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
 import javax.xml.bind.JAXBException;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.ncwms.map.NcWMSMapLayer;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.xml.WMSVersion;
-import org.geotoolkit.wms.v111.GetFeatureInfo111;
 
 import org.junit.Test;
 
 import org.opengis.referencing.NoSuchAuthorityCodeException;
-import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -114,8 +110,8 @@ public class NcWMSMapLayerTest {
         
         final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
         
-        final String query = layer.queryFeatureInfo(env, new Dimension(360, 180), 140,
-                250, new String[]{"test"}, "gml", 1).toString();
+        final String query = layer.queryFeatureInfo(env, new Dimension(360, 180), 
+                140, 250, new String[]{"test"}, "gml", 1).toString();
         assertTrue(query.contains("INFO_FORMAT=gml"));
         assertTrue(query.contains("QUERY_LAYERS=test"));
         assertTrue(query.contains("X=140"));
@@ -145,8 +141,8 @@ public class NcWMSMapLayerTest {
         layer.setNumColorBands(125);
         layer.setLogScale(true);        
         
-        final String query = layer.queryFeatureInfo(env, new Dimension(360, 180), 140,
-                250, new String[]{"test"}, "gml", 1).toString();
+        final String query = layer.queryFeatureInfo(env, new Dimension(360, 180),
+                140, 250, new String[]{"test"}, "gml", 1).toString();
         assertTrue(query.contains("INFO_FORMAT=gml"));
         assertTrue(query.contains("QUERY_LAYERS=test"));
         assertTrue(query.contains("X=140"));
@@ -156,6 +152,151 @@ public class NcWMSMapLayerTest {
         assertTrue(query.contains("NUMCOLORBANDS=125"));
         assertTrue(query.contains("LOGSCALE=true"));
     }
-
-
+    
+    /**
+     * This test checks if the ncWMS parameters are added to the get metadata 
+     * request
+     */
+    @Test
+    public void test_GetMetadataLayerDetails() throws MalformedURLException {
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        
+        // Test mandatory values
+        String query = layer.queryMetadataLayerDetails().toString(); 
+        assertTrue(query.contains("request=GetMetadata"));         
+        assertTrue(query.contains("item=layerDetails"));
+        assertTrue(query.contains("layerName=test"));
+        
+        
+        // Test all values
+        layer.dimensions().put("TIME", "10-10-10T01:00:00Z");        
+        query = layer.queryMetadataLayerDetails().toString();        
+        assertTrue(query.contains("item=layerDetails"));
+        assertTrue(query.contains("layerName=test"));
+        assertTrue(query.contains("time=10-10-10T01:00:00Z"));
+    }
+    
+    /**
+     * This test checks if the ncWMS parameters are added to the get metadata 
+     * request
+     */
+    @Test
+    public void test_GetMetadataAnimationTimesteps() throws MalformedURLException {
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        
+        // Test mandatory values
+        String query = layer.queryMetadataAnimationTimesteps("10-10-10T01:00:00Z",
+                "11-10-10T01:00:00Z").toString();        
+        assertTrue(query.contains("request=GetMetadata"));  
+        assertTrue(query.contains("item=animationTimesteps"));
+        assertTrue(query.contains("layerName=test"));
+        assertTrue(query.contains("start=10-10-10T01:00:00Z"));
+        assertTrue(query.contains("end=11-10-10T01:00:00Z"));
+        
+    }
+    
+    /**
+     * This test checks if the ncWMS parameters are added to the get metadata 
+     * request
+     */
+    @Test
+    public void test_GetMetadataTimesteps() throws MalformedURLException {
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        layer.dimensions().put("TIME", "10-10-10T01:00:00Z"); 
+        
+        // Test mandatory values
+        String query = layer.queryMetadataTimesteps().toString();        
+        assertTrue(query.contains("request=GetMetadata"));   
+        assertTrue(query.contains("item=timesteps"));
+        assertTrue(query.contains("layerName=test"));
+        assertTrue(query.contains("day=10-10-10T01:00:00Z"));        
+    }
+    
+    /**
+     * This test checks if the ncWMS parameters are added to the get metadata 
+     * request
+     */
+    @Test
+    public void test_GetMetadataMenu() throws MalformedURLException {
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        
+        // Test mandatory values
+        String query = layer.queryMetadataMenu().toString();        
+        assertTrue(query.contains("request=GetMetadata"));   
+        assertTrue(query.contains("item=menu"));
+        assertFalse(query.contains("layerName=test"));
+        
+    }
+    /**
+     * This test checks if the ncWMS parameters are added to the get metadata 
+     * request
+     */
+    @Test
+    public void test_GetMetadataMinmax() throws MalformedURLException {
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        
+        // Test mandatory values
+        String query = layer.queryMetadataMinmax().toString();        
+        assertTrue(query.contains("request=GetMetadata"));   
+        assertTrue(query.contains("item=minmax"));
+        assertTrue(query.contains("layerName=test"));
+        
+    }
+    
+    /**
+     * This test checks if the ncWMS parameters are added to the get metadata 
+     * request
+     */
+    @Test
+    public void test_GetTransect() throws MalformedURLException {
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        
+        // Test mandatory values
+        String query = layer.queryTransect("CRS:84", "1%2,3%4", "image/png")
+                .toString();        
+        assertTrue(query.contains("REQUEST=GetTransect"));   
+        assertTrue(query.contains("LAYER=test"));
+        assertTrue(query.contains("CRS=CRS:84"));
+        assertTrue(query.contains("FORMAT=image/png"));
+        assertTrue(query.contains("LINESTRING=1%2,3%4"));
+        
+        // Test optional values
+        layer.dimensions().put("TIME", "10-10-10T10:00:00Z");
+        layer.dimensions().put("ELEVATION", "550");
+        query = layer.queryTransect("CRS:84", "1%2,3%4", "image/png").toString();  
+        assertTrue(query.contains("TIME=10-10-10T10:00:00Z"));
+        assertTrue(query.contains("ELEVATION=550"));
+    }
+    
+    /**
+     * This test checks if the ncWMS parameters are added to the get metadata 
+     * request
+     */
+    @Test
+    public void test_GetVerticalProfile() throws MalformedURLException {
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        
+        // Test mandatory values
+        String query = layer.queryVerticalProfile("CRS:84", 1, 2,  "image/png")
+                .toString();        
+        System.out.println("query = " + query);
+        assertTrue(query.contains("REQUEST=GetVerticalProfile"));   
+        assertTrue(query.contains("LAYER=test"));  
+        assertTrue(query.contains("CRS=CRS:84"));
+        assertTrue(query.contains("FORMAT=image/png")); 
+        assertTrue(query.contains("POINT=1.0%2.0")); 
+        
+        // Test optional values
+        layer.dimensions().put("TIME", "10-10-10T10:00:00Z");
+        query = layer.queryVerticalProfile("CRS:84", 1, 2,  "image/png").toString();  
+        assertTrue(query.contains("TIME=10-10-10T10:00:00Z"));
+        
+    }
 }

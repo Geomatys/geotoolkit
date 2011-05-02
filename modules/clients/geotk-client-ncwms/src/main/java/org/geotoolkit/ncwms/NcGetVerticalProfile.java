@@ -151,9 +151,6 @@ public class NcGetVerticalProfile extends AbstractRequest implements NcGetVertic
         if (point == null)
             throw new IllegalArgumentException("Must provide an POINT parameter");
         
-        if (time == null)
-            throw new IllegalArgumentException("Must provide an TIME parameter");
-        
         if (format == null)
             throw new IllegalArgumentException("Must provide an FORMAT parameter");
         

@@ -32,7 +32,7 @@ import org.geotoolkit.wms.WebMapServer;
 
 
 /**
- * Generates WMS requests objects on a WMS server.
+ * Generates ncWMS requests objects on a ncWMS server.
  *
  * @author Olivier Terral (Geomatys)
  * @module pending
@@ -43,7 +43,7 @@ public class NcWebMapServer extends WebMapServer{
 
     /**
      * {@inheritDoc }
-     */
+     */    
     public NcWebMapServer(final URL serverURL, final String version) {
         super(serverURL, WMSVersion.getVersion(version));
     }
@@ -87,23 +87,7 @@ public class NcWebMapServer extends WebMapServer{
                 throw new IllegalArgumentException("Version was not defined");
         }
     }
-
-//    /**
-//     * Returns the request object, in the version chosen.
-//     *
-//     * @throws IllegalArgumentException if the version requested is not supported.
-//     */
-//    public GetCapabilitiesRequest createGetCapabilities() {
-//        switch (version) {
-//            case v111:
-//                return new GetCapabilities111(serverURL.toString());
-//            case v130:
-//                return new GetCapabilities130(serverURL.toString());
-//            default:
-//                throw new IllegalArgumentException("Version was not defined");
-//        }
-//    }
-//
+    
     /**
      * {@inheritDoc }
      */
@@ -143,21 +127,26 @@ public class NcWebMapServer extends WebMapServer{
         }
     }
     
-//
-//    /**
-//     * Returns the request header map for this server.
-//     * @return
-//     */
-//    public Map<String,String> getRequestHeaderMap() {
-//        return requestHeaderMap;
-//    }
-//
-//    @Override
-//    public String toString() {
-//        final StringBuilder sb = new StringBuilder("WebMapServer[");
-//        sb.append("serverUrl: ").append(serverURL).append(", ")
-//          .append("version: ").append(version).append("]");
-//        return sb.toString();
-//    }
+    
+    /**
+     * Returns the request object. 
+     */
+    public NcGetMetadataRequest createGetMetadata() {
+        return new NcGetMetadata(getURI().toString());
+    }
+    
+    /**
+     * Returns the request object. 
+     */
+    public NcGetTransectRequest createGetTransect() {
+        return new NcGetTransect(getURI().toString());
+    }
+    
+    /**
+     * Returns the request object. 
+     */
+    public NcGetVerticalProfileRequest createGetVerticalProfile() {
+        return new NcGetVerticalProfile(getURI().toString());
+    }
 
 }
