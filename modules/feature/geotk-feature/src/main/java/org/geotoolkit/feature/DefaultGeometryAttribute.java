@@ -34,9 +34,8 @@ import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.MultiLineString;
 import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
+import org.geotoolkit.geometry.jts.JTS;
 
-import org.geotoolkit.geometry.jts.SRIDGenerator;
-import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
 import org.geotoolkit.util.Utilities;
 
@@ -108,15 +107,12 @@ public class DefaultGeometryAttribute extends DefaultAttribute<Object,GeometryDe
             if(crs == null){
                 //the type does not define the crs, then the object value might define it
                 if(val instanceof Geometry){
-                    final int srid = ((Geometry)val).getSRID();
-                    if(srid != -1 && srid != 0){
-                        try {
-                            crs = CRS.decode(SRIDGenerator.toSRS(srid, SRIDGenerator.Version.V1));
-                        } catch (NoSuchAuthorityCodeException ex) {
-                            Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
-                        } catch (FactoryException ex) {
-                            Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
-                        }
+                    try {
+                        crs = JTS.findCoordinateReferenceSystem((Geometry) val);
+                    } catch (NoSuchAuthorityCodeException ex) {
+                        Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
+                    } catch (FactoryException ex) {
+                        Logger.getLogger(DefaultGeometryAttribute.class.getName()).log(Level.WARNING, null, ex);
                     }
                 }else if(val instanceof org.opengis.geometry.Geometry){
                     crs = ((org.opengis.geometry.Geometry)val).getCoordinateReferenceSystem();

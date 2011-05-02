@@ -44,6 +44,14 @@ import java.util.logging.Logger;
 import javax.xml.bind.JAXBException;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.stream.XMLStreamException;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
@@ -79,7 +87,9 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.*;
 import static org.geotoolkit.data.AbstractDataStore.*;
 import org.geotoolkit.data.AbstractFeatureCollection;
+import org.geotoolkit.feature.xml.jaxp.ElementFeatureWriter;
 import org.geotoolkit.util.FileUtilities;
+import org.w3c.dom.Element;
 import org.xml.sax.SAXException;
 
 /**
@@ -102,7 +112,7 @@ public class XmlFeatureTest {
     private final FeatureType complexType;
 
     private static String EPSG_VERSION;
-
+    
     public XmlFeatureTest() throws NoSuchAuthorityCodeException, FactoryException, ParseException {
 
 
@@ -337,6 +347,29 @@ public class XmlFeatureTest {
         expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
         DomCompare.compare(expResult, temp);
     }
+    
+    @Test
+    public void testWriteSimpleFeatureElement() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final ElementFeatureWriter writer = new ElementFeatureWriter();
+        Element result = writer.write(simpleFeatureFull, false);
+        
+        Source source = new DOMSource(result.getOwnerDocument());
+
+        // Prepare the output file
+        Result resultxml = new StreamResult(temp);
+
+        // Write the DOM document to the file
+        Transformer xformer = TransformerFactory.newInstance().newTransformer();
+        xformer.transform(source, resultxml);
+        
+        
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/SimpleFeature.xml"));
+        expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+        DomCompare.compare(expResult, temp);
+    }
 
     @Test
     public void testReadSimpleCollection() throws JAXBException, IOException, XMLStreamException{
@@ -381,6 +414,29 @@ public class XmlFeatureTest {
 
         DomCompare.compare(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"), temp);
+    }
+    
+    @Test
+    public void testWriteSimplCollectionElement() throws JAXBException, IOException, XMLStreamException,
+            DataStoreException, ParserConfigurationException, SAXException, TransformerConfigurationException, TransformerException{
+        final File temp = File.createTempFile("gml", ".xml");
+        temp.deleteOnExit();
+        final ElementFeatureWriter writer = new ElementFeatureWriter();
+        Element result = writer.write(collectionSimple, false);
+        
+        Source source = new DOMSource(result.getOwnerDocument());
+
+        // Prepare the output file
+        Result resultxml = new StreamResult(temp);
+
+        // Write the DOM document to the file
+        Transformer xformer = TransformerFactory.newInstance().newTransformer();
+        xformer.transform(source, resultxml);
+        
+        
+        String expResult = FileUtilities.getStringFromStream(XmlFeatureTest.class.getResourceAsStream("/org/geotoolkit/feature/xml/CollectionSimple.xml"));
+        expResult = expResult.replace("EPSG_VERSION", EPSG_VERSION);
+        DomCompare.compare(expResult, temp);
     }
 
 }
