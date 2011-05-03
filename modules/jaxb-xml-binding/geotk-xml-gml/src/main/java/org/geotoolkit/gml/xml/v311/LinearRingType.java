@@ -220,4 +220,27 @@ public class LinearRingType extends AbstractRingType {
         }
         return false;
     }
+    
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder(super.toString());
+        if (posList != null) {
+            sb.append("posList:").append(posList).append('\n');
+        }
+        if (coordinates != null) {
+            sb.append("coodinates:").append(coordinates).append('\n');
+        }
+        if (coord != null) {
+            for (CoordType c : coord) {
+                sb.append(c).append('\n');
+            }
+        }
+        
+        if (posOrPointPropertyOrPointRep != null) {
+            for (JAXBElement jb : posOrPointPropertyOrPointRep) {
+                sb.append(jb.getValue()).append('\n');
+            }
+        }
+        return sb.toString();
+    }
 }

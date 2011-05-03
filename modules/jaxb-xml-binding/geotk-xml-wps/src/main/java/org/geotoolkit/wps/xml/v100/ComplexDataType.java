@@ -25,10 +25,12 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAnyAttribute;
 import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
+import org.geotoolkit.gml.xml.v311.AbstractGeometryType;
 import org.w3c.dom.Element;
 
 
@@ -59,6 +61,7 @@ import org.w3c.dom.Element;
 public class ComplexDataType {
 
     @XmlMixed
+    @XmlElementRef(name = "AbstractGeometry", namespace = "http://www.opengis.net/gml", type = AbstractGeometryType.class)
     @XmlAnyElement
     protected List<Object> content;
     @XmlAttribute
