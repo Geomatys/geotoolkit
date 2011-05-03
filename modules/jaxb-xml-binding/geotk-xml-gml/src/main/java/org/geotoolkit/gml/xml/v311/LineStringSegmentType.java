@@ -92,6 +92,7 @@ public class LineStringSegmentType extends AbstractCurveSegmentType {
             final CurveInterpolationType interpolation, final List<DirectPosition> positions) {
         super(numDerivativesAtStart, numDerivativesAtEnd, numDerivativeInterior);
         this.interpolation = interpolation;
+        this.pos = new ArrayList<DirectPositionType>();
         for (DirectPosition currentPos : positions) {
             DirectPositionType position = new DirectPositionType(currentPos);
             this.pos.add(position);
