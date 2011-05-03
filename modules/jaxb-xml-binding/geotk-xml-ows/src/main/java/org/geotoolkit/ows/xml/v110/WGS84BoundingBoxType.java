@@ -19,6 +19,7 @@ package org.geotoolkit.ows.xml.v110;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 
 /**
@@ -48,6 +49,7 @@ import javax.xml.bind.annotation.XmlType;
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "WGS84BoundingBoxType")
+@XmlRootElement(name ="WGS84BoundingBox")
 public class WGS84BoundingBoxType extends BoundingBoxType {
     
     WGS84BoundingBoxType(){
