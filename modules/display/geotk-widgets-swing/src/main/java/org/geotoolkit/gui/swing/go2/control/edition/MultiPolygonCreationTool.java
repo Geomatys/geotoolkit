@@ -35,7 +35,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class MultiPolygonCreationTool extends AbstractEditionTool {
 
     public MultiPolygonCreationTool() {
-        super("multipolygonCreation",MessageBundle.getI18NString("create"),
+        super(1300,"multipolygonCreation",MessageBundle.getI18NString("create"),
              new SimpleInternationalString("Tool for creating multi-polygons."), FeatureMapLayer.class);
     }
 

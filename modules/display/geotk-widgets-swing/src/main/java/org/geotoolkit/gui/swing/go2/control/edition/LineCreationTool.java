@@ -33,7 +33,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class LineCreationTool extends AbstractEditionTool {
 
     public LineCreationTool() {
-        super("lineCreation",MessageBundle.getI18NString("create"),
+        super(1000,"lineCreation",MessageBundle.getI18NString("create"),
              new SimpleInternationalString("Tool for creating lines."), FeatureMapLayer.class);
     }
 

@@ -33,7 +33,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class GeometryMoveTool extends AbstractEditionTool {
 
     public GeometryMoveTool() {
-        super("geometryMove", MessageBundle.getI18NString("move"),
+        super(200,"geometryMove", MessageBundle.getI18NString("move"),
              new SimpleInternationalString("Tool for moving geometry around."), FeatureMapLayer.class);
     }
 

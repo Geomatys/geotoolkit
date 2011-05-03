@@ -32,7 +32,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class GeometryFromWKTTool extends AbstractEditionTool {
 
     public GeometryFromWKTTool() {
-        super("geometryFromWKT", MessageBundle.getI18NString("wkt"),
+        super(100,"geometryFromWKT", MessageBundle.getI18NString("wkt"),
              new SimpleInternationalString("Tool for moving editing geometry using WKT."), FeatureMapLayer.class);
     }
 

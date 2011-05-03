@@ -27,19 +27,26 @@ import org.opengis.util.InternationalString;
  */
 public abstract class AbstractEditionTool implements EditionTool{
 
+    private final int priority;
     private final String name;
     private final InternationalString title;
     private final InternationalString desc;
     private final Class clazz;
 
-    public AbstractEditionTool(final String name, final InternationalString title,
+    public AbstractEditionTool(final int priority, final String name, final InternationalString title,
             final InternationalString desc, final Class clazz) {
+        this.priority = priority;
         this.name = name;
         this.title = title;
         this.desc = desc;
         this.clazz = clazz;
     }
 
+    @Override
+    public int getPriority() {
+        return priority;
+    }
+    
     @Override
     public String getName() {
         return name;

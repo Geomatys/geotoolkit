@@ -27,6 +27,11 @@ import org.opengis.util.InternationalString;
  */
 public interface EditionTool {
 
+    /**
+     * @return priority : higher value will move the tool up in the EditionTools list.
+     */
+    int getPriority();
+    
     String getName();
 
     InternationalString getTitle();

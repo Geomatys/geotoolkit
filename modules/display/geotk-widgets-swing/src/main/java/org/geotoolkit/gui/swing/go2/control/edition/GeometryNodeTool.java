@@ -34,7 +34,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class GeometryNodeTool extends AbstractEditionTool {
 
     public GeometryNodeTool() {
-        super("geometryNodes", MessageBundle.getI18NString("editNode"),
+        super(300,"geometryNodes", MessageBundle.getI18NString("editNode"),
              new SimpleInternationalString("Tool for editing geometry nodes."), FeatureMapLayer.class);
     }
 

@@ -34,7 +34,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class PolygonCreationTool extends AbstractEditionTool {
 
     public PolygonCreationTool() {
-        super("polygonCreation",MessageBundle.getI18NString("create"),
+        super(1500,"polygonCreation",MessageBundle.getI18NString("create"),
              new SimpleInternationalString("Tool for creating polygons."), FeatureMapLayer.class);
     }
 

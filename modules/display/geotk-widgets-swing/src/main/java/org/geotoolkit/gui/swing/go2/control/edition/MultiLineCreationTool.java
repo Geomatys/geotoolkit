@@ -33,7 +33,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class MultiLineCreationTool extends AbstractEditionTool {
 
     public MultiLineCreationTool() {
-        super("multilineCreation",MessageBundle.getI18NString("create"),
+        super(1100,"multilineCreation",MessageBundle.getI18NString("create"),
              new SimpleInternationalString("Tool for creating multilines."), FeatureMapLayer.class);
     }
 

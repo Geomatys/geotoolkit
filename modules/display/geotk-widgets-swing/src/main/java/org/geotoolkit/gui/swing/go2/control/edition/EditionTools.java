@@ -18,8 +18,8 @@
 package org.geotoolkit.gui.swing.go2.control.edition;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import javax.imageio.spi.ServiceRegistry;
@@ -48,6 +48,13 @@ public final class EditionTools {
         while(ite.hasNext()){
             cache.add(ite.next());
         }
+        Collections.sort(cache, new Comparator<EditionTool>(){
+            @Override
+            public int compare(final EditionTool o1, final EditionTool o2) {
+                return o2.getPriority() - o1.getPriority();
+            }
+        });
+        
         return Collections.unmodifiableList(cache);
     }
 
