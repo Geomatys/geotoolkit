@@ -63,6 +63,7 @@
     @XmlNs(prefix = "gmx", namespaceURI = Namespaces.GMX)
 })
 @XmlAccessorType(XmlAccessType.NONE)
+@XmlJavaTypeAdapter(InternationalStringConverter.class)
 package org.geotoolkit.internal.jaxb.gco;
 
 import javax.xml.bind.annotation.XmlNs;
@@ -70,4 +71,5 @@ import javax.xml.bind.annotation.XmlNsForm;
 import javax.xml.bind.annotation.XmlSchema;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.xml.Namespaces;

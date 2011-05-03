@@ -21,12 +21,12 @@
  * The XML format is compliant with ISO 19139 specification for metadata, and
  * compliant with GML for referencing objects.
  * <p>
- * The easiest way to use this package is to use the static methods defined in
- * the {@link org.geotoolkit.xml.XML} class. For example the following code:
+ * The main class in this package is {@link org.geotoolkit.xml.XML}, which provides
+ * property keys that can be used for configuring (un)marshallers and convenience
+ * static methods. For example the following code:
  *
  * {@preformat java
- *     String xml = XML.marshal(Citations.OGC);
- *     System.out.println(xml);
+ *     XML.marshal(Citations.OGC, System.out);
  * }
  *
  * will produce a string like below:
@@ -36,16 +36,25 @@
  *   <gmd:CI_Citation xmlns:gmd="http://www.isotc211.org/2005/gmd"
  *                    xmlns:gco="http://www.isotc211.org/2005/gco">
  *     <gmd:title>
- *       <gco:CharacterString>My citation</gco:CharacterString>
+ *       <gco:CharacterString>Open Geospatial Consortium</gco:CharacterString>
  *     </gmd:title>
+ *     ... much more XML below this point ...
  *   </gmd:CI_Citation>
  * }
  *
- * The static methods defined in the {@code XML} class use internaly a shared
- * {@link org.geotoolkit.xml.MarshallerPool}. Developers can instantiate their
- * one {@code MarshallerPool} in order to get more control on the marshalling
- * and unmarshalling processes, including the namespaces to declare and the errors
- * handling.
+ * {@section Customizing the XML}
+ * In order to parse and format ISO 19139 compliant documents, Geotk needs its own
+ * {@link javax.xml.bind.Marshaller} and {@link javax.xml.bind.Unmarshaller} instances
+ * (which are actually wrappers around standard instances). Those instances are created
+ * and cached by {@link org.geotoolkit.xml.MarshallerPool}, which is used internally by
+ * the above-cited {@code XML} class. However developers can instantiate their own
+ * {@code MarshallerPool} in order to get more control on the marshalling and unmarshalling
+ * processes, including the namespace URLs and the errors handling.
+ * <p>
+ * The most common namespace URLs are defined in the {@link org.geotoolkit.xml.Namespaces} class.
+ * The parsing of some objects like {@link java.lang.net.URL} and {@link java.util.UUID}, together
+ * with the behavior in case of parsing error, can be specified by the
+ * {@link org.geotoolkit.xml.ObjectConverters} class.
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
@@ -55,4 +64,18 @@
  * @since 3.00
  * @module
  */
+@XmlSchema(elementFormDefault = XmlNsForm.QUALIFIED, xmlns = {
+    @XmlNs(prefix = "xlink", namespaceURI = Namespaces.XLINK)
+})
+@XmlAccessorType(XmlAccessType.NONE)
+@XmlJavaTypeAdapter(InternationalStringConverter.class)
 package org.geotoolkit.xml;
+
+import javax.xml.bind.annotation.XmlNs;
+import javax.xml.bind.annotation.XmlNsForm;
+import javax.xml.bind.annotation.XmlSchema;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import org.geotoolkit.internal.jaxb.gco.InternationalStringConverter;

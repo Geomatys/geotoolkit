@@ -21,8 +21,10 @@ import java.net.URI;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.UUIDs;
+import org.opengis.util.InternationalString;
 
 
 /**
@@ -211,9 +213,9 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "type", namespace = Namespaces.XLINK)
-    public final String getType() {
+    public final XLink.Type getType() {
         final ObjectReference reference = this.reference;
-        return (reference != null) ? reference.type : null;
+        return (reference != null) ? reference.getType() : null;
     }
 
     /**
@@ -222,8 +224,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @param type The new attribute value.
      * @since 3.18
      */
-    public final void setType(final String type) {
-        reference().type = type;
+    public final void setType(final XLink.Type type) {
+        reference().setType(type);
     }
 
     /**
@@ -235,9 +237,9 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "href", namespace = Namespaces.XLINK)
-    public final URI getHREF() {
+    public final URI getHRef() {
         final ObjectReference reference = this.reference;
-        return (reference != null) ? reference.href : null;
+        return (reference != null) ? reference.getHRef() : null;
     }
 
     /**
@@ -246,8 +248,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @param href The new attribute value.
      * @since 3.18
      */
-    public final void setHREF(final URI href) {
-        reference().href = href;
+    public final void setHRef(final URI href) {
+        reference().setHRef(href);
     }
 
     /**
@@ -259,7 +261,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     @XmlAttribute(name = "role", namespace = Namespaces.XLINK)
     public final URI getRole() {
         final ObjectReference reference = this.reference;
-        return (reference != null) ? reference.role : null;
+        return (reference != null) ? reference.getRole() : null;
     }
 
     /**
@@ -269,7 +271,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     public final void setRole(final URI role) {
-        reference().role = role;
+        reference().setRole(role);
     }
 
     /**
@@ -281,7 +283,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     @XmlAttribute(name = "arcrole", namespace = Namespaces.XLINK)
     public final URI getArcRole() {
         final ObjectReference reference = this.reference;
-        return (reference != null) ? reference.arcrole : null;
+        return (reference != null) ? reference.getArcRole() : null;
     }
 
     /**
@@ -291,7 +293,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     public final void setArcRole(final URI arcrole) {
-        reference().arcrole = arcrole;
+        reference().setArcRole(arcrole);
     }
 
     /**
@@ -302,9 +304,9 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "title", namespace = Namespaces.XLINK)
-    public final String getTitle() {
+    public final InternationalString getTitle() {
         final ObjectReference reference = this.reference;
-        return (reference != null) ? reference.title : null;
+        return (reference != null) ? reference.getTitle() : null;
     }
 
     /**
@@ -313,8 +315,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @param title The new attribute value.
      * @since 3.18
      */
-    public final void setTitle(final String title) {
-        reference().title = title;
+    public final void setTitle(final InternationalString title) {
+        reference().setTitle(title);
     }
 
     /**
@@ -333,9 +335,9 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "show", namespace = Namespaces.XLINK)
-    public final String getShow() {
+    public final XLink.Show getShow() {
         final ObjectReference reference = this.reference;
-        return (reference != null) ? reference.show : null;
+        return (reference != null) ? reference.getShow() : null;
     }
 
     /**
@@ -344,8 +346,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @param show The new attribute value.
      * @since 3.18
      */
-    public final void setShow(final String show) {
-        reference().show = show;
+    public final void setShow(final XLink.Show show) {
+        reference().setShow(show);
     }
 
     /**
@@ -363,9 +365,9 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "actuate", namespace = Namespaces.XLINK)
-    public final String getActuate() {
+    public final XLink.Actuate getActuate() {
         final ObjectReference reference = this.reference;
-        return (reference != null) ? reference.actuate : null;
+        return (reference != null) ? reference.getActuate() : null;
     }
 
     /**
@@ -374,8 +376,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @param actuate The new attribute value.
      * @since 3.18
      */
-    public final void setActuate(final String actuate) {
-        reference().actuate = actuate;
+    public final void setActuate(final XLink.Actuate actuate) {
+        reference().setActuate(actuate);
     }
 
 

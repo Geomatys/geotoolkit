@@ -168,11 +168,9 @@ public final class Namespaces {
     }
 
     /**
-     * Returns the preferred prefix for the given namespace URI, assuming that the namespace is
-     * not {@code null}.
+     * Returns the preferred prefix for the given namespace URI.
      *
-     * @param  namespace  The namespace URI for which the prefix needs to be found.
-     *                    Should not be {@code null}.
+     * @param  namespace  The namespace URI for which the prefix needs to be found. Can not be {@code null}.
      * @param  suggestion The suggested prefix, returned if the given namespace is not recognized.
      * @return The prefix inferred from the namespace URI.
      */

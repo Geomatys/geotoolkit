@@ -18,6 +18,8 @@
 package org.geotoolkit.internal.jaxb.gco;
 
 import javax.xml.bind.annotation.XmlAttribute;
+
+import org.geotoolkit.xml.XLink;
 import org.geotoolkit.util.Utilities;
 
 

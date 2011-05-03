@@ -22,6 +22,8 @@ import java.util.Locale;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.opengis.util.InternationalString;
+
+import org.geotoolkit.xml.XLink;
 import org.geotoolkit.util.Utilities;
 
 
@@ -33,7 +35,7 @@ import org.geotoolkit.util.Utilities;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.13
+ * @version 3.18
  *
  * @see <a href="http://www.xml.com/pub/a/2000/09/xlink/part2.html">XLink introduction</a>
  *
@@ -62,7 +64,7 @@ public final class AnchorType extends XLink implements InternationalString {
      * @param value Often a short textual description of the URN target.
      */
     public AnchorType(final URI href, final String value) {
-        this.href  = href;
+        setHRef(href);
         this.value = value;
     }
 
