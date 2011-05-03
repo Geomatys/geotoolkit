@@ -33,6 +33,7 @@ import org.geotoolkit.xml.Namespaces;
  * @version 3.18 (derived from 3.13)
  *
  * @see <a href="http://www.xml.com/pub/a/2000/09/xlink/part2.html">XLink introduction</a>
+ * @see <a href="https://www.seegrid.csiro.au/wiki/bin/view/AppSchemas/GmlIdentifiers">GML identifiers</a>
  * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-165">GEOTK-165</a>
  *
  * @since 2.5

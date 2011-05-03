@@ -79,6 +79,21 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * An identifier for the metadata, or {@code null} if none. This field is initialized
      * at construction time to the value registered in {@link UUIDs}, if any.
      *
+     * {@section Difference between <code>gmd:uuid</code> and <code>gml:id</code>}
+     * <ul>
+     *   <li>{@code id} is a standard <strong>GML</strong> attribute available on every
+     *       object-with-identity. It has type={@code "xs:ID"} - i.e. it is a fragment
+     *       identifier, unique within document scope only, for internal cross-references.
+     *       It is not useful by itself as a persistent unique identifier.</li>
+     *   <li>{@code uuid} is an optional attribute available on every object-with-identity,
+     *       provided in the <strong>GMD</strong> schemas that implement ISO 19115 in XML.
+     *       May be used as a persistent unique identifier, but only available within GMD
+     *       context.</li>
+     * </ul>
+     *
+     * @see <a href="https://www.seegrid.csiro.au/wiki/bin/view/AppSchemas/GmlIdentifiers">GML identifiers</a>
+     * @see org.geotoolkit.internal.jaxb.GMLAdapter#id
+     *
      * @since 3.13
      */
     @XmlAttribute

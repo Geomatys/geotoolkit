@@ -40,8 +40,31 @@ import org.geotoolkit.xml.Namespaces;
  */
 public abstract class GMLAdapter {
     /**
+     * The GML identifiers associated to the wrapped objects. This is different than the
+     * map of UUIDs maintained by {@link UUIDs#DEFAULT}.
+     *
+     * @see <a href="https://www.seegrid.csiro.au/wiki/bin/view/AppSchemas/GmlIdentifiers">GML identifiers</a>
+     */
+    public static final UUIDs<String> IDs = new UUIDs.AsString();
+
+    /**
      * The period identifier, or {@code null} if undefined.
      * This element is part of GML 3.1.1 specification.
+     *
+     * {@section Difference between <code>gmd:uuid</code> and <code>gml:id</code>}
+     * <ul>
+     *   <li>{@code id} is a standard <strong>GML</strong> attribute available on every
+     *       object-with-identity. It has type={@code "xs:ID"} - i.e. it is a fragment
+     *       identifier, unique within document scope only, for internal cross-references.
+     *       It is not useful by itself as a persistent unique identifier.</li>
+     *   <li>{@code uuid} is an optional attribute available on every object-with-identity,
+     *       provided in the <strong>GMD</strong> schemas that implement ISO 19115 in XML.
+     *       May be used as a persistent unique identifier, but only available within GMD
+     *       context.</li>
+     * </ul>
+     *
+     * @see <a href="https://www.seegrid.csiro.au/wiki/bin/view/AppSchemas/GmlIdentifiers">GML identifiers</a>
+     * @see org.geotoolkit.internal.jaxb.gco.PropertyType#uuid
      */
     @XmlID
     @XmlAttribute(required = true, namespace = Namespaces.GML)
@@ -68,7 +91,7 @@ public abstract class GMLAdapter {
      * @param wrapped An instance of a GeoAPI interface to be wrapped.
      */
     protected GMLAdapter(final Object wrapped) {
-        id = UUIDs.DEFAULT.getOrCreateUUID(wrapped);
+        id = IDs.getOrCreateUUID(wrapped);
     }
 
     /**
@@ -80,7 +103,7 @@ public abstract class GMLAdapter {
      */
     public final void copyIdTo(final Object wrapped) {
         if (id != null) {
-            UUIDs.DEFAULT.setUUID(wrapped, id);
+            IDs.setUUID(wrapped, id);
         }
     }
 }

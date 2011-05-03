@@ -57,6 +57,8 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
+ * @see <a href="https://www.seegrid.csiro.au/wiki/bin/view/AppSchemas/GmlIdentifiers">GML identifiers</a>
+ *
  * @since 3.13
  * @module
  */
@@ -66,11 +68,17 @@ public abstract class UUIDs<T> {
      * The system-wide default map of UUIDs. The {@link #createUUID()} method will generate
      * random strings using <code>{@linkplain UUID#randomUUID()}.toString()</code>.
      */
-    public static final UUIDs<String> DEFAULT = new UUIDs<String>() {
+    public static final UUIDs<String> DEFAULT = new AsString();
+
+    /**
+     * An implementation of {@link UUIDs} using strings.
+     */
+    public static final class AsString extends UUIDs<String> {
+        /** Generates a random UUID. */
         @Override protected String createUUID() {
             return UUID.randomUUID().toString();
         }
-    };
+    }
 
     /**
      * The objects for which a UUID has been created.
