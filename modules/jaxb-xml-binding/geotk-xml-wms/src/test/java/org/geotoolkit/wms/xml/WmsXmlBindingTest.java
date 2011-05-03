@@ -35,6 +35,7 @@ import javax.xml.bind.Unmarshaller;
 import org.geotoolkit.inspire.xml.vs.ExtendedCapabilitiesType;
 import org.geotoolkit.inspire.xml.vs.LanguagesType;
 import org.geotoolkit.inspire.xml.vs.ObjectFactory;
+import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
@@ -128,6 +129,8 @@ public class WmsXmlBindingTest {
         DefaultPeriod period = new DefaultPeriod();
         period.setBegining(new Date(120000000));
         period.setEnding(new Date(120000001));
+        
+        org.geotoolkit.internal.jaxb.GMLAdapter.IDs.setUUID(period, "extent");
         tempExt.setExtent(period);
         extent.setTemporalElements(Arrays.asList(tempExt));
         ext.setTemporalRefererence(extent);
@@ -295,6 +298,8 @@ public class WmsXmlBindingTest {
         "    </inspire_vs:ExtendedCapabilities>" + '\n' +
         "</wms:Capability>" + '\n';
 
+        org.geotoolkit.internal.jaxb.GMLAdapter.IDs.removeUUID(period);
+        
         assertEquals(expResult, result);
 
     }
