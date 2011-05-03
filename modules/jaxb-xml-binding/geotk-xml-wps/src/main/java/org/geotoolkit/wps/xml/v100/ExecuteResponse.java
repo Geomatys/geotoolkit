@@ -72,9 +72,7 @@ import javax.xml.bind.annotation.XmlType;
     "processOutputs"
 })
 @XmlRootElement(name = "ExecuteResponse")
-public class ExecuteResponse
-    extends ResponseBaseType
-{
+public class ExecuteResponse extends ResponseBaseType {
 
     @XmlElement(name = "Process", required = true)
     protected ProcessBriefType process;

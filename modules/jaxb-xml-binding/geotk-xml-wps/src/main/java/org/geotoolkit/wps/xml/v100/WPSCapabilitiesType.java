@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
+import org.geotoolkit.wps.xml.WPSResponse;
 
 
 /**
@@ -57,9 +58,7 @@ import org.geotoolkit.ows.xml.v110.CapabilitiesBaseType;
     "wsdl"
 })
 @XmlRootElement(name = "Capabilities")
-public class WPSCapabilitiesType
-    extends CapabilitiesBaseType
-{
+public class WPSCapabilitiesType extends CapabilitiesBaseType implements WPSResponse {
 
     @XmlElement(name = "ProcessOfferings", required = true)
     protected ProcessOfferings processOfferings;

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wps.xml.WPSResponse;
 
 
 /**
@@ -51,7 +52,7 @@ import javax.xml.bind.annotation.XmlType;
     ProcessDescriptions.class,
     ExecuteResponse.class
 })
-public class ResponseBaseType {
+public class ResponseBaseType implements WPSResponse {
 
     @XmlAttribute(required = true)
     protected String service;
