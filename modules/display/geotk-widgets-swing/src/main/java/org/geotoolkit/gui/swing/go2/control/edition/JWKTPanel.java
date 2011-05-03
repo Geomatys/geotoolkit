@@ -47,6 +47,7 @@ public class JWKTPanel extends javax.swing.JPanel {
         }else{
             guiText.setText("");
         }
+        this.current = null;
     }
     
     public Geometry getGeometry(){

@@ -9,3 +9,4 @@ org.geotoolkit.gui.swing.go2.control.edition.MultiPolygonCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.GeometryMoveTool
 org.geotoolkit.gui.swing.go2.control.edition.GeometryNodeTool
 org.geotoolkit.gui.swing.go2.control.edition.GeometryFromWKTTool
+org.geotoolkit.gui.swing.go2.control.edition.GeometrySimplificationTool
