@@ -846,21 +846,25 @@ public class EditionHelper {
         final Object obj = sf.getDefaultGeometryProperty().getValue();
 
         if (obj instanceof Geometry) {
-            try{
-                Geometry geom = (Geometry) obj;
-
-                final MathTransform trs = CRS.findMathTransform(
-                        editedLayer.getCollection().getFeatureType().getCoordinateReferenceSystem(),
-                        map.getCanvas().getObjectiveCRS(), true);
-
-                geom = JTS.transform(geom, trs);
-                return geom;
-            }catch(final Exception ex){
-                LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
-            }
+            return toObjectiveCRS((Geometry)obj);
         }
         return null;
     }
+    
+    public Geometry toObjectiveCRS(Geometry geom){
+        try{
+            final MathTransform trs = CRS.findMathTransform(
+                    editedLayer.getCollection().getFeatureType().getCoordinateReferenceSystem(),
+                    map.getCanvas().getObjectiveCRS(), true);
+
+            geom = JTS.transform(geom, trs);
+            return geom;
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
+        }
+        return null;
+    }
+    
 
     /**
      *
@@ -917,7 +921,7 @@ public class EditionHelper {
 
     }
 
-    public void sourceModifyFeature(final Feature feature, final Geometry geo){
+    public void sourceModifyFeature(final Feature feature, final Geometry geo, boolean reprojectToDataCRS){
 
         final String ID = feature.getIdentifier().getID();
 
@@ -932,7 +936,13 @@ public class EditionHelper {
             final CoordinateReferenceSystem dataCrs = featureType.getCoordinateReferenceSystem();
 
             try {
-                final Geometry geom = JTS.transform(geo, CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
+                final Geometry geom;
+                if(reprojectToDataCRS){
+                    geom = JTS.transform(geo, 
+                            CRS.findMathTransform(map.getCanvas().getObjectiveCRS(), dataCrs,true));
+                }else{
+                    geom = geo;
+                }
                 
                 editedLayer.getCollection().update(filter, geomAttribut,geom);
             } catch (final Exception ex) {
@@ -943,6 +953,10 @@ public class EditionHelper {
 
         }
 
+    }
+    
+    public void sourceModifyFeature(final Feature feature, final Geometry geo){
+        sourceModifyFeature(feature, geo, true);
     }
 
     public void sourceRemoveFeature(final Feature feature){
