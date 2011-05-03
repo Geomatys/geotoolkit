@@ -40,9 +40,9 @@ import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.data.FeatureIterator;
 import org.geotoolkit.data.query.QueryBuilder;
+import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.And;
@@ -333,7 +333,7 @@ public class IntervalStyleBuilder extends AbstractTableModel{
 
 
         //search the different numeric attributs
-        SimpleFeatureType schema = (SimpleFeatureType) layer.getCollection().getFeatureType();
+        FeatureType schema = layer.getCollection().getFeatureType();
 
         for(PropertyDescriptor desc : schema.getDescriptors()){
             Class<?> type = desc.getType().getBinding();
@@ -382,13 +382,13 @@ public class IntervalStyleBuilder extends AbstractTableModel{
                                                 normalize.getPropertyName()});
         }
 
-        FeatureIterator<SimpleFeature> features = null;
+        FeatureIterator<? extends Feature> features = null;
         try{
-            features = (FeatureIterator<SimpleFeature>) layer.getCollection().subCollection(query.buildQuery()).iterator();
+            features = layer.getCollection().subCollection(query.buildQuery()).iterator();
             List<Double> values = new ArrayList<Double>();
 
             while(features.hasNext()){
-                SimpleFeature sf = features.next();
+                Feature sf = features.next();
                 count++;
 
                 Number classifValue = classification.evaluate(sf, Number.class);

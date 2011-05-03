@@ -24,7 +24,6 @@ import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 
 import java.awt.Color;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -44,9 +43,9 @@ import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyleFactory;
 import org.geotoolkit.style.StyleConstants;
 import org.geotoolkit.style.interval.RandomPalette;
+import org.opengis.feature.Feature;
+import org.opengis.feature.type.FeatureType;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.PropertyDescriptor;
 import org.opengis.filter.Filter;
@@ -113,7 +112,7 @@ public class CategoryStyleBuilder extends Factory {
 
         properties.clear();
         if(layer != null){
-            SimpleFeatureType schema = (SimpleFeatureType) layer.getCollection().getFeatureType();
+            FeatureType schema = layer.getCollection().getFeatureType();
 
             for(PropertyDescriptor desc : schema.getDescriptors()){
                 Class<?> type = desc.getType().getBinding();
@@ -263,11 +262,11 @@ public class CategoryStyleBuilder extends Factory {
         builder.setProperties(new String[]{property.getPropertyName()});
         final Query query = builder.buildQuery();
 
-        FeatureIterator<SimpleFeature> features = null;
+        FeatureIterator<? extends Feature> features = null;
         try{
-            features = (FeatureIterator<SimpleFeature>) layer.getCollection().subCollection(query).iterator();
+            features = layer.getCollection().subCollection(query).iterator();
             while(features.hasNext()){
-                final SimpleFeature feature = features.next();
+                final Feature feature = features.next();
                 differentValues.add(property.evaluate(feature));
             }
         }catch(DataStoreException ex){

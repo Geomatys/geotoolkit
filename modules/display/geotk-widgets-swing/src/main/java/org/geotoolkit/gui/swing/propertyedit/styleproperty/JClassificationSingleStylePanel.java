@@ -137,8 +137,8 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         guiTable.repaint();
         guiOther.setSelected(false);
 
-         guiProperty.setModel(new ListComboBoxModel(builder.getProperties()));
-         guiProperty.setSelectedItem(builder.getCurrentProperty());
+        guiProperty.setModel(new ListComboBoxModel(builder.getProperties()));
+        guiProperty.setSelectedItem(builder.getCurrentProperty());
 
         updateModelGlyph();
         guiTable.revalidate();
@@ -310,8 +310,8 @@ public class JClassificationSingleStylePanel extends JPanel implements PropertyP
         builder.setPalette((RandomPalette) guiPalette.getSelectedItem());
         builder.setOther(guiOther.isSelected());
         builder.setCurrentProperty((PropertyName) guiProperty.getSelectedItem());
-        builder.create();
-
+        builder.create();        
+        model.fireTableDataChanged();
         guiTable.revalidate();
         guiTable.repaint();
 

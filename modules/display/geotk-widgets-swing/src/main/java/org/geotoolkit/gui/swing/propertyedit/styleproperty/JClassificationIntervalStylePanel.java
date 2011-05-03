@@ -172,7 +172,6 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
         guiMethod.setSelectedItem(analyze.getMethod());
         guiClasses.setValue(analyze.getNbClasses());
         
-
         guiTable.revalidate();
         guiTable.repaint();
     }
@@ -412,7 +411,7 @@ public class JClassificationIntervalStylePanel extends JPanel implements Propert
     private void guiGenerateActionPerformed(final ActionEvent evt) {//GEN-FIRST:event_guiGenerateActionPerformed
         model.rules.clear();
         model.rules.addAll(analyze.generateRules((IntervalPalette) guiPalette.getSelectedItem()));
-
+        model.fireTableDataChanged();
         guiTable.revalidate();
         guiTable.repaint();
     }//GEN-LAST:event_guiGenerateActionPerformed
