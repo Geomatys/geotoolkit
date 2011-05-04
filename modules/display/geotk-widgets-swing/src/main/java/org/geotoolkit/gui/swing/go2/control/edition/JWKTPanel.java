@@ -47,6 +47,7 @@ public class JWKTPanel extends javax.swing.JPanel {
         }else{
             guiText.setText("");
         }
+        guiError.setText("");
         this.current = null;
     }
     
@@ -149,6 +150,7 @@ public class JWKTPanel extends javax.swing.JPanel {
     private void guiRollbackActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiRollbackActionPerformed
         if(original != null){
             guiText.setText(writer.write(original));
+            guiError.setText("");
         }
         final Geometry old = getGeometry();
         current = null;

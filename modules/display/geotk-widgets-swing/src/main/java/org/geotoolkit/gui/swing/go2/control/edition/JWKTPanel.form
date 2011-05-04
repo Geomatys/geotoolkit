@@ -26,7 +26,7 @@
           </Group>
           <Group type="102" attributes="0">
               <EmptySpace min="12" pref="12" max="12" attributes="0"/>
-              <Component id="guiError" pref="272" max="32767" attributes="0"/>
+              <Component id="guiError" pref="276" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -39,7 +39,7 @@
                       <EmptySpace max="-2" attributes="0"/>
                       <Component id="guiRollback" min="-2" pref="28" max="-2" attributes="0"/>
                   </Group>
-                  <Component id="jScrollPane1" pref="62" max="32767" attributes="0"/>
+                  <Component id="jScrollPane1" pref="66" max="32767" attributes="0"/>
               </Group>
               <EmptySpace max="-2" attributes="0"/>
               <Component id="guiError" min="-2" max="-2" attributes="0"/>

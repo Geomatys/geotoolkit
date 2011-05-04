@@ -71,7 +71,7 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
         if(feature != null){            
             final Geometry geom = (Geometry) feature.getDefaultGeometryProperty().getValue();
             decoration.setGeometries(Collections.singleton(helper.toObjectiveCRS(geom)));
-            dialogDecoration.simplifyPanel.setGeometry(geom);
+            dialogDecoration.simplifyPanel.setGeometry(feature);
         }else{
             dialogDecoration.simplifyPanel.setGeometry(null);
         }
@@ -105,7 +105,7 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
         public DialogDecoration() {
             setLayout(new BorderLayout());
             
-            simplifyPanel = new JSimplificationPanel();
+            simplifyPanel = new JSimplificationPanel(map);
             simplifyPanel.addPropertyChangeListener(DialogDecoration.this);
             
             frame = new JInternalFrame(MessageBundle.getString("simplification"));
@@ -135,6 +135,12 @@ public class GeometrySimplificationDelegate extends AbstractFeatureEditionDelega
                 }
             }
             
+        }
+        
+        @Override
+        public void setMap2D(JMap2D map) {
+            super.setMap2D(map);
+            dialogDecoration.simplifyPanel.setMap(map);
         }
         
     }
