@@ -305,7 +305,7 @@ public class XmlFeatureTest {
         temp.deleteOnExit();
         final XmlFeatureTypeWriter writer = new JAXBFeatureTypeWriter();
         writer.write(simpleTypeFull, new FileOutputStream(temp));
-
+        
         DomCompare.compare(XmlFeatureTest.class
                 .getResourceAsStream("/org/geotoolkit/feature/xml/SimpleType.xsd"), temp);
     }

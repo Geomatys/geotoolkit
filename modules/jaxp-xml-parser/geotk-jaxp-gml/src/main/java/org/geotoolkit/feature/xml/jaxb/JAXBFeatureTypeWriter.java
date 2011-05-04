@@ -21,24 +21,22 @@ import java.io.OutputStream;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.List;
-import java.util.logging.Level;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.namespace.QName;
 
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureTypeWriter;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.xsd.xml.v2001.ComplexContent;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
 import org.geotoolkit.xsd.xml.v2001.FormChoice;
 import org.geotoolkit.xsd.xml.v2001.Import;
-import org.geotoolkit.xsd.xml.v2001.ObjectFactory;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
+import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.PropertyDescriptor;
@@ -50,22 +48,14 @@ import org.opengis.feature.type.PropertyDescriptor;
  */
 public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
 
-    private static MarshallerPool marshallpool;
-    static {
-        try {
-            marshallpool = new MarshallerPool(ObjectFactory.class, org.geotoolkit.internal.jaxb.ObjectFactory.class);
-        } catch (JAXBException ex) {
-            Logging.getLogger("org.geotoolkit.feature.xml.jaxp")
-                .log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
-        }
-    }
+    private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
-    private static final Import gmlImport = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
+    private static final Import GML_IMPORT = new Import("http://www.opengis.net/gml", "http://schemas.opengis.net/gml/3.1.1/base/gml.xsd");
 
-    private static final QName featureName = new QName("http://www.opengis.net/gml", "_Feature");
+    private static final QName FEATURE_NAME = new QName("http://www.opengis.net/gml", "_Feature");
 
 
-    public JAXBFeatureTypeWriter() throws JAXBException {
+    public JAXBFeatureTypeWriter(){
     }
 
     /**
@@ -86,11 +76,11 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         final Schema schema = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
         try {
-            marshaller = marshallpool.acquireMarshaller();
+            marshaller = POOL.acquireMarshaller();
             marshaller.marshal(schema, writer);
         } finally {
             if (marshaller != null) {
-                marshallpool.release(marshaller);
+                POOL.release(marshaller);
             }
         }
     }
@@ -103,11 +93,11 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         final Schema schema = getSchemaFromFeatureType(feature);
         Marshaller marshaller = null;
         try {
-            marshaller = marshallpool.acquireMarshaller();
+            marshaller = POOL.acquireMarshaller();
             marshaller.marshal(schema, stream);
         } finally {
             if (marshaller != null) {
-                marshallpool.release(marshaller);
+                POOL.release(marshaller);
             }
         }
     }
@@ -127,7 +117,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
                 i++;
             }
             schema.setTargetNamespace(typeNamespace);
-            schema.addImport(gmlImport);
+            schema.addImport(GML_IMPORT);
             for (FeatureType ftype : featureTypes) {
                 fillSchemaWithFeatureType(ftype, schema);
             }
@@ -143,7 +133,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
         if (featureType != null) {
             final String typeNamespace = featureType.getName().getNamespaceURI();
             final Schema schema = new Schema(FormChoice.QUALIFIED, typeNamespace);
-            schema.addImport(gmlImport);
+            schema.addImport(GML_IMPORT);
             fillSchemaWithFeatureType(featureType, schema);
             return schema;
         }
@@ -174,7 +164,7 @@ public class JAXBFeatureTypeWriter implements XmlFeatureTypeWriter {
             sequence.addElement(new TopLevelElement(name, type, minOccurs, maxOcc, nillable));
         }
 
-        final ExtensionType extension = new ExtensionType(featureName, sequence);
+        final ExtensionType extension = new ExtensionType(FEATURE_NAME, sequence);
         final ComplexContent content  = new ComplexContent(extension);
         schema.addComplexType(new TopLevelComplexType(typeName, content));
     }

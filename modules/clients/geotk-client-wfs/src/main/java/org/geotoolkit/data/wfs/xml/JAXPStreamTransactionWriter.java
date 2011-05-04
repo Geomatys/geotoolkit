@@ -22,7 +22,6 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.util.Map.Entry;
 import java.util.concurrent.atomic.AtomicInteger;
-import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 import javax.xml.stream.XMLOutputFactory;
@@ -41,10 +40,12 @@ import org.geotoolkit.data.wfs.TransactionRequest;
 import org.geotoolkit.data.wfs.Update;
 import org.geotoolkit.feature.xml.jaxp.JAXPStreamFeatureWriter;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.sld.xml.XMLUtilities;
+import org.geotoolkit.xml.MarshallerPool;
 
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.feature.type.Name;
@@ -103,23 +104,10 @@ public class JAXPStreamTransactionWriter {
     private static final String TYPE_INTEGER = XS_PREFIX+":int";
     private static final String TYPE_DATE = XS_PREFIX+":date";
 
-    private Marshaller marshaller = null;
-
     private final AtomicInteger inc = new AtomicInteger();
 
-    public Marshaller getMarshaller() throws JAXBException {
-        if(marshaller == null){
-            final JAXBContext context = JAXBContext.newInstance(org.geotoolkit.internal.jaxb.ObjectFactory.class);
-            marshaller = context.createMarshaller();
-            marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
-        }
-
-        return marshaller;
-    }
-
-
-
-
+    private static final MarshallerPool POOL = JTSWrapperMarshallerPool.getInstance();
+    
     public void write(final OutputStream out, final TransactionRequest request) 
             throws XMLStreamException, FactoryException, JAXBException, DataStoreException, IOException{
         final XMLOutputFactory outputFactory = XMLOutputFactory.newInstance();
@@ -340,9 +328,28 @@ public class JAXPStreamTransactionWriter {
                 if(value instanceof Geometry){
                     final GeometryDescriptor desc = (GeometryDescriptor) entry.getKey();
                     value = JTSUtils.toISO( (Geometry)value, desc.getCoordinateReferenceSystem());
-                    getMarshaller().marshal(new ObjectFactory().createValue(value), writer);
+                    Marshaller marshaller = null;
+                    try {
+                        marshaller = POOL.acquireMarshaller();
+                        marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+                        marshaller.marshal(new ObjectFactory().createValue(value), writer);
+                    } finally {
+                        if (marshaller != null) {
+                            POOL.release(marshaller);
+                        }
+                    }
+                    
                 }else if(value instanceof org.opengis.geometry.Geometry){
-                    getMarshaller().marshal(new ObjectFactory().createValue(value), writer);
+                    Marshaller marshaller = null;
+                    try {
+                        marshaller = POOL.acquireMarshaller();
+                        marshaller.setProperty(marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+                        marshaller.marshal(new ObjectFactory().createValue(value), writer);
+                    } finally {
+                        if (marshaller != null) {
+                            POOL.release(marshaller);
+                        }
+                    }
                 }else{
                     writer.writeStartElement(WFS_PREFIX, TAG_VALUE, WFS_NAMESPACE);
                     writer.writeAttribute(XSI_PREFIX, XSI_NAMESPACE, PROP_TYPE, bestType(value));

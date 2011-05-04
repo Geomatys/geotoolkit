@@ -41,6 +41,7 @@ import org.geotoolkit.storage.DataStoreException;
 import org.geotoolkit.xml.MarshallerPool;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.geometry.isoonjts.JTSUtils;
+import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 
 import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
@@ -70,28 +71,12 @@ public class ElementFeatureWriter {
     /**
      * The pool of marshallers used for marshalling geometries.
      */
-    private static MarshallerPool pool;
-    static {
-        try {
-            final Map<String, String> properties = new HashMap<String, String>();
-            properties.put(Marshaller.JAXB_FRAGMENT, "true");
-            properties.put(Marshaller.JAXB_FORMATTED_OUTPUT, "false");
-            pool = new MarshallerPool(properties, ObjectFactory.class);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
-        }
-    }
+    private static final MarshallerPool POOL = JTSWrapperMarshallerPool.getInstance();
 
     /**
      * Object factory to build a geometry.
      */
     private static final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
-
-    /**
-     * The marshaller used by the feature writer. This marshaller must be released to the
-     * {@link #pool} when closing the feature writer in calling {@link #dispose}.
-     */
-    protected final Marshaller marshaller;
 
     protected String schemaLocation;
 
@@ -100,17 +85,10 @@ public class ElementFeatureWriter {
     private final Map<String, String> unknowNamespaces = new HashMap<String, String>();
 
 
-    public ElementFeatureWriter() throws JAXBException  {
-         marshaller = pool.acquireMarshaller();
-         marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+    public ElementFeatureWriter() {
     }
 
-    public ElementFeatureWriter(final Map<String, String> schemaLocations) throws JAXBException {
-         
-        marshaller = pool.acquireMarshaller();
-        marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
-        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
+    public ElementFeatureWriter(final Map<String, String> schemaLocations) {
          
          if (schemaLocations != null && schemaLocations.size() > 0) {
              final StringBuilder sb = new StringBuilder();
@@ -123,18 +101,6 @@ public class ElementFeatureWriter {
              schemaLocation = sb.toString();
          }
     }
-
-    /**
-     * Dispose the allocated resources. <strong>Must</strong> be called when closing the feautre writer.
-     *
-     * @throws IOException
-     * @throws XMLStreamException
-     
-    @Override
-    public void dispose() throws IOException, XMLStreamException{
-        super.dispose();
-        pool.release(marshaller);
-    }*/
 
     /**
      * {@inheritDoc}
@@ -284,10 +250,18 @@ public class ElementFeatureWriter {
                             element.setPrefix(prefix.prefix);
                         }
                         Geometry isoGeometry = JTSUtils.toISO((com.vividsolutions.jts.geom.Geometry) valueA, type.getCoordinateReferenceSystem());
+                        Marshaller marshaller = null;
                         try {
+                            marshaller = POOL.acquireMarshaller();
+                            marshaller.setProperty(Marshaller.JAXB_FRAGMENT, true);
+                            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, false);
                             marshaller.marshal(OBJECT_FACTORY.buildAnyGeometry(isoGeometry), element);
                         } catch (JAXBException ex) {
                             LOGGER.log(Level.WARNING, "JAXB Exception while marshalling the iso geometry: " + ex.getMessage(), ex);
+                        } finally {
+                            if (marshaller != null) {
+                                POOL.release(marshaller);
+                            }
                         }
                         rootElement.appendChild(element);
                     }

@@ -18,6 +18,7 @@
 package org.geotoolkit.xml.binding;
 
 // JUnit dependencies
+import java.util.logging.Level;
 import org.geotoolkit.util.StringUtilities;
 import java.io.File;
 import java.io.IOException;
@@ -34,7 +35,6 @@ import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
-import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSEnvelope;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
@@ -49,6 +49,7 @@ import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPoin
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSPolyhedralSurface;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSRing;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.primitive.JTSSurfaceBoundary;
+import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.internal.jaxb.PolygonType;
 import org.geotoolkit.internal.jaxb.PolyhedralSurfaceType;
@@ -57,7 +58,6 @@ import org.geotoolkit.xml.MarshallerPool;
 import org.junit.*;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.primitive.Ring;
-import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import static org.junit.Assert.*;
 
@@ -92,7 +92,7 @@ public class JTSGeometryBindingTest {
 
     @Before
     public void setUp() throws Exception {
-        pool    = new MarshallerPool(ObjectFactory.class);
+        pool    = JTSWrapperMarshallerPool.getInstance();
         factory = new ObjectFactory();
         un      = pool.acquireUnmarshaller();
         m       = pool.acquireMarshaller();
@@ -139,11 +139,11 @@ public class JTSGeometryBindingTest {
                     final URI uri = url.toURI();
                     result  = scanDir(uri, fileP);
                 } catch (URISyntaxException e) {
-                    LOGGER.severe("URL, " + url + "cannot be converted to a URI");
+                    LOGGER.log(Level.SEVERE, "URL, {0}cannot be converted to a URI", url);
                 }
             }
         } catch (IOException ex) {
-            LOGGER.severe("The resources for the package" + packagee + ", could not be obtained");
+            LOGGER.log(Level.SEVERE, "The resources for the package{0}, could not be obtained", packagee);
         }
 
 

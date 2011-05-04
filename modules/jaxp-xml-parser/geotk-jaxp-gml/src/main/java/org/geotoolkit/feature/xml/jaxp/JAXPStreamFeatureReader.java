@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -46,11 +45,12 @@ import org.geotoolkit.feature.xml.jaxb.JAXBEventHandler;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
+import org.geotoolkit.internal.jaxb.JTSWrapperMarshallerPool;
 import org.geotoolkit.internal.jaxb.LineStringPosListType;
-import org.geotoolkit.internal.jaxb.ObjectFactory;
 import org.geotoolkit.internal.jaxb.PolygonType;
 import org.geotoolkit.util.Converters;
 import org.geotoolkit.xml.MarshallerPool;
+import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.StaxStreamReader;
 
 import org.opengis.feature.Feature;
@@ -76,27 +76,16 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             new Hints(Hints.FEATURE_FACTORY,LenientFeatureFactory.class));
 
     protected static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
-    private static MarshallerPool marshallpool;
+    private static final MarshallerPool POOL = JTSWrapperMarshallerPool.getInstance();
 
-    static {
-        try {
-            marshallpool = new MarshallerPool(ObjectFactory.class);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.SEVERE, "JAXB Exception while initalizing the marshaller pool", ex);
-        }
-    }
     protected List<FeatureType> featureTypes;
-    protected final Unmarshaller unmarshaller;
 
-    public JAXPStreamFeatureReader(final FeatureType featureType) throws JAXBException {
+    public JAXPStreamFeatureReader(final FeatureType featureType) {
         this.featureTypes = Arrays.asList(featureType);
-        this.unmarshaller = marshallpool.acquireUnmarshaller();
-
     }
 
-    public JAXPStreamFeatureReader(final List<FeatureType> featureTypes) throws JAXBException {
+    public JAXPStreamFeatureReader(final List<FeatureType> featureTypes) {
         this.featureTypes = featureTypes;
-        this.unmarshaller = marshallpool.acquireUnmarshaller();
     }
 
     /**
@@ -109,7 +98,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
     @Override
     public void dispose() {
-        marshallpool.release(unmarshaller);
+        // do nothing
     }
 
     @Override
@@ -129,8 +118,11 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             //we are looking for the root mark
             if (event == START_ELEMENT) {
 
+                // we search an embedded featureTypeDescription
+                //TODO
+                
                 final Name name  = Utils.getNameFromQname(reader.getName());
-                final String id  = reader.getAttributeValue(0);
+                final String id  = reader.getAttributeValue(Namespaces.GML, "id");
                 final StringBuilder expectedFeatureType = new StringBuilder();
 
                 if (name.getLocalPart().equals("FeatureCollection")) {
@@ -241,7 +233,9 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                         event = reader.next();
                     }
 
+                    Unmarshaller unmarshaller = null;
                     try {
+                        unmarshaller = POOL.acquireUnmarshaller();
                         unmarshaller.setEventHandler(new JAXBEventHandler());
                         final JTSGeometry isoGeom;
                         final Object geometry = ((JAXBElement) unmarshaller.unmarshal(reader)).getValue();
@@ -265,6 +259,10 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
                             msg = ex.getLinkedException().getMessage();
                         }
                         throw new IllegalArgumentException("JAXB exception while reading the feature geometry: " + msg, ex);
+                    } finally {
+                        if (unmarshaller != null) {
+                            POOL.release(unmarshaller);
+                        }
                     }
 
                 } else {

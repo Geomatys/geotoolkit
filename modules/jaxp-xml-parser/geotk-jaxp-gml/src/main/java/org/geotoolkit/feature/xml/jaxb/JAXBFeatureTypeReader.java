@@ -45,6 +45,7 @@ import org.geotoolkit.xsd.xml.v2001.ObjectFactory;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
+import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
@@ -59,18 +60,11 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
 
     private static final Logger LOGGER = Logger.getLogger("org.geotoolkit.feature.xml.jaxp");
     
-    private static MarshallerPool marshallpool;
-    static {
-        try {
-            marshallpool = new MarshallerPool(ObjectFactory.class);
-        } catch (JAXBException ex) {
-            LOGGER.log(Level.WARNING, "JAXB Exception while initalizing the marshaller pool", ex);
-        }
-    }
+    private static final MarshallerPool POOL = XSDMarshallerPool.getInstance();
 
     private final FeatureTypeBuilder builder = new FeatureTypeBuilder();
 
-    public JAXBFeatureTypeReader() throws JAXBException {
+    public JAXBFeatureTypeReader() {
     }
 
      /**
@@ -79,12 +73,17 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     @Override
     public List<FeatureType> read(final String xml) throws JAXBException {
         builder.reset();
-        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-        final Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
+        Unmarshaller unmarshaller = null;
         try {
+            unmarshaller        = POOL.acquireUnmarshaller();
+            final Schema schema = (Schema) unmarshaller.unmarshal(new StringReader(xml));
             return getAllFeatureTypeFromSchema(schema);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
+        } finally {
+            if (unmarshaller != null) {
+                POOL.release(unmarshaller);
+            }
         }
     }
 
@@ -94,12 +93,17 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     @Override
     public List<FeatureType> read(final InputStream in) throws JAXBException {
         builder.reset();
-        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-        final Schema schema             = (Schema) unmarshaller.unmarshal(in);
+        Unmarshaller unmarshaller = null;
         try {
+            unmarshaller        = POOL.acquireUnmarshaller();
+            final Schema schema = (Schema) unmarshaller.unmarshal(in);
             return getAllFeatureTypeFromSchema(schema);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
+        } finally {
+            if (unmarshaller != null) {
+                POOL.release(unmarshaller);
+            }
         }
     }
 
@@ -109,12 +113,17 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     @Override
     public List<FeatureType> read(final Reader reader) throws JAXBException {
         builder.reset();
-        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-        final Schema schema             = (Schema) unmarshaller.unmarshal(reader);
+        Unmarshaller unmarshaller = null;
         try {
+            unmarshaller         = POOL.acquireUnmarshaller();
+            final Schema schema  = (Schema) unmarshaller.unmarshal(reader);
             return getAllFeatureTypeFromSchema(schema);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
+        } finally {
+            if (unmarshaller != null) {
+                POOL.release(unmarshaller);
+            }
         }
     }
 
@@ -124,12 +133,17 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     @Override
     public FeatureType read(final String xml, final String name) throws JAXBException {
         builder.reset();
-        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-        final Schema schema             = (Schema) unmarshaller.unmarshal(new StringReader(xml));
+        Unmarshaller unmarshaller = null;
         try {
+            unmarshaller        = POOL.acquireUnmarshaller();
+            final Schema schema = (Schema) unmarshaller.unmarshal(new StringReader(xml));
             return getFeatureTypeFromSchema(schema, name);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
+        } finally {
+            if (unmarshaller != null) {
+                POOL.release(unmarshaller);
+            }
         }
     }
 
@@ -139,12 +153,17 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     @Override
     public FeatureType read(final InputStream in, final String name) throws JAXBException {
         builder.reset();
-        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-        final Schema schema             = (Schema) unmarshaller.unmarshal(in);
+        Unmarshaller unmarshaller = null;
         try {
+            unmarshaller        = POOL.acquireUnmarshaller();
+            final Schema schema = (Schema) unmarshaller.unmarshal(in);
             return getFeatureTypeFromSchema(schema, name);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
+        } finally {
+            if (unmarshaller != null) {
+                POOL.release(unmarshaller);
+            }
         }
     }
 
@@ -154,12 +173,17 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     @Override
     public FeatureType read(final Reader reader, final String name) throws JAXBException {
         builder.reset();
-        final Unmarshaller unmarshaller = marshallpool.acquireUnmarshaller();
-        final Schema schema             = (Schema) unmarshaller.unmarshal(reader);
+        Unmarshaller unmarshaller = null;
         try {
+            unmarshaller        = POOL.acquireUnmarshaller();
+            final Schema schema = (Schema) unmarshaller.unmarshal(reader);
             return getFeatureTypeFromSchema(schema, name);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
+        } finally {
+            if (unmarshaller != null) {
+                POOL.release(unmarshaller);
+            }
         }
     }
 

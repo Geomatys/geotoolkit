@@ -475,8 +475,6 @@ public class WFSDataStore extends AbstractDataStore{
 //                throw new IOException("unexpected type : " + result);
             }
 
-        } catch (JAXBException ex) {
-            throw new IOException(ex);
         }catch (XMLStreamException ex) {
             throw new IOException(ex);
         }finally{
