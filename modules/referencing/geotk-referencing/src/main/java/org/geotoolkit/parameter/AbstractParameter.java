@@ -41,6 +41,7 @@ import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.io.wkt.FormattableObject;
+import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.util.converter.Classes;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -220,8 +221,8 @@ public abstract class AbstractParameter extends FormattableObject
     }
 
     /**
-     * Returns a string representation of this parameter. The default implementation
-     * delegates the work to {@link #write}, which should be overridden by subclasses.
+     * Returns a string representation of this parameter. The default implementation delegates
+     * the work to {@link #write(TableWriter) }, which should be overridden by subclasses.
      */
     @Override
     public final String toString() {
@@ -237,9 +238,9 @@ public abstract class AbstractParameter extends FormattableObject
     }
 
     /**
-     * Writes the content of this parameter to the specified table. This method make it easier
-     * to align values properly than overriding the {@link #toString} method. The table columns
-     * are defined as below:
+     * Writes the content of this parameter to the specified table. This method provides a more
+     * convenient way to align the values than overriding the {@link #toString} method. The table
+     * columns are defined as below:
      * <p>
      * <ol>
      *   <li>The parameter name</li>
@@ -280,13 +281,14 @@ public abstract class AbstractParameter extends FormattableObject
              * then the previous block. Reminder: the above 'instanceof' check for interface, not
              * for subclass. This explain why we use it instead of method overriding.
              */
-            table.write(':');
+            table.write(DefaultNameSpace.DEFAULT_SEPARATOR);
             table.nextColumn();
             TableWriter inner = null;
             for (final GeneralParameterValue value : ((ParameterValueGroup) this).values()) {
                 if (value instanceof AbstractParameter) {
                     if (inner == null) {
                         inner = new TableWriter(table, 1);
+                        inner.setMultiLinesCells(true);
                     }
                     ((AbstractParameter) value).write(inner);
                 } else {

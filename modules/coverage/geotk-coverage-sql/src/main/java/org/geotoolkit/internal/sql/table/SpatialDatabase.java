@@ -142,6 +142,10 @@ public class SpatialDatabase extends Database {
     /**
      * Creates a new instance using the provided data source and configuration properties.
      * A default Coordinate Reference System is used.
+     * <p>
+     * If the given properties contains only one entry, and the key for this entry is
+     * {@value org.geotoolkit.internal.sql.table.ConfigurationKey#PARAMETERS}, then the
+     * value will be used as {@link org.opengis.parameter.ParameterValueGroup}.
      *
      * @param  datasource The data source.
      * @param  properties The configuration properties, or {@code null} if none.
@@ -153,6 +157,10 @@ public class SpatialDatabase extends Database {
     /**
      * Creates a new instance using the provided data source, temporal CRS and configuration
      * properties.
+     * <p>
+     * If the given properties contains only one entry, and the key for this entry is
+     * {@value org.geotoolkit.internal.sql.table.ConfigurationKey#PARAMETERS}, then the
+     * value will be used as {@link org.opengis.parameter.ParameterValueGroup}.
      *
      * @param  datasource The data source.
      * @param  properties The configuration properties, or {@code null} if none.
@@ -197,6 +205,10 @@ public class SpatialDatabase extends Database {
     /**
      * Creates a new instance using the provided data source, spatio-temporal CRS and configuration
      * properties.
+     * <p>
+     * If the given properties contains only one entry, and the key for this entry is
+     * {@value org.geotoolkit.internal.sql.table.ConfigurationKey#PARAMETERS}, then the
+     * value will be used as {@link org.opengis.parameter.ParameterValueGroup}.
      *
      * @param  datasource  The data source.
      * @param  properties  The configuration properties, or {@code null} if none.

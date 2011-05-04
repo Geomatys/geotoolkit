@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.parameter;
 
+import java.util.Properties;
 import org.opengis.parameter.*;
 import org.opengis.metadata.quality.ConformanceResult;
 import org.junit.*;
@@ -28,11 +29,11 @@ import static org.junit.Assert.*;
  * Tests the static method in the {@link Parameters} utility class.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.05
+ * @version 3.18
  *
  * @since 3.05
  */
-public final class ParameteresTest {
+public final class ParametersTest {
     /**
      * Tests the {@link Parameters#cast(ParameterDescriptor, Class)} methods.
      */
@@ -122,5 +123,29 @@ public final class ParameteresTest {
         assertFalse(result.pass());
         assertTrue("The error message should contains the name of the extra parameter.",
                 result.getExplanation().toString().contains("Test3"));
+    }
+
+    /**
+     * Tests the {@link Parameters#copy(GeneralParameterValue, Map)} method.
+     */
+    @Test
+    public void testCopyToMap() {
+        final ParameterDescriptorGroup group = new DefaultParameterDescriptorGroup("Group",
+            DefaultParameterDescriptor.create("anInteger", 10, 5, 15),
+            DefaultParameterDescriptor.create("aRealNumber", 0.25, 0.1, 0.5, null),
+            new DefaultParameterDescriptorGroup("SubGroup",
+                DefaultParameterDescriptor.create("anInteger", 2, 1, 4),
+                DefaultParameterDescriptor.create("aRealNumber", 1.25, 0.1, 1.4, null)),
+            DefaultParameterDescriptor.create("anOtherRealNumber", 0.125, 0.1, 0.4, null));
+
+        final ParameterValueGroup values = group.createValue();
+        final Properties properties = new Properties();
+        Parameters.copy(values, properties);
+        assertEquals(Integer.valueOf(10),    properties.remove("anInteger"));
+        assertEquals(Double .valueOf(0.25),  properties.remove("aRealNumber"));
+        assertEquals(Double .valueOf(0.125), properties.remove("anOtherRealNumber"));
+        assertEquals(Integer.valueOf(2),     properties.remove("SubGroup:anInteger"));
+        assertEquals(Double .valueOf(1.25),  properties.remove("SubGroup:aRealNumber"));
+        assertTrue("Unknown properties remaining.", properties.isEmpty());
     }
 }

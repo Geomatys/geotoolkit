@@ -76,7 +76,7 @@ import org.geotoolkit.util.collection.XCollections;
  * @param <V> The type of values.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.12
+ * @version 3.18
  *
  * @since 3.03
  * @module
@@ -133,7 +133,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
     }
 
     /**
-     * Returns the connection to the database, creating a new one if needed. This method should
+     * Returns the connection to the database, creating a new one if needed. This method shall
      * be invoked inside a synchronized block wider than just the scope of this method in order
      * to ensure that the connection is used by only one thread at time. This is also necessary
      * for preventing the background thread to close the connection too early.
@@ -147,6 +147,7 @@ public class StatementPool<K,V extends StatementEntry> extends LinkedHashMap<K,V
         if (c == null) {
             assert isEmpty();
             connection = c = dataSource.getConnection();
+            DefaultDataSource.log(c, StatementPool.class);
             Threads.executor(true).execute(this);
         }
         return c;
@@ -241,7 +242,7 @@ sleep:  while (true) {
             try {
                 monitorExit(false);
             } catch (Throwable e) { // NOSONAR: See above comment.
-                Logging.unexpectedException(Logging.getLogger(StatementPool.class), getClass(), "monitorExit", e);
+                Logging.unexpectedException(DefaultDataSource.LOGGER, getClass(), "monitorExit", e);
             }
             /*
              * Increase the wait time by an arbitrary amount in order to
@@ -278,7 +279,7 @@ sleep:  while (true) {
         if (c != null) try {
             c.close();
         } catch (SQLException e) {
-            Logging.recoverableException(Logging.getLogger(StatementPool.class), Connection.class, "close", e);
+            Logging.recoverableException(DefaultDataSource.LOGGER, Connection.class, "close", e);
         }
         monitorExit(true);
     }

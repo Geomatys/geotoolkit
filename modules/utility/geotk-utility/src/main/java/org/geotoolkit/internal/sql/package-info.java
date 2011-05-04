@@ -24,8 +24,12 @@
  * This package is for internal use by Geotk only. Classes in this package
  * may change in incompatible ways in any future version without notice.
  *
+ * {@section Logging}
+ * A {@code "org.geotoolkit.jdbc"} logger is defined in the
+ * {@link org.geotoolkit.internal.sql.DefaultDataSource#LOGGER} constant.
+ *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.01
+ * @version 3.18
  *
  * @since 3.00
  * @module

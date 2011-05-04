@@ -47,6 +47,7 @@ import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
+import org.geotoolkit.naming.DefaultNameSpace;
 
 
 /**
@@ -705,7 +706,9 @@ public final class Parameters {
      * @return {@code destination}, or a new map if {@code destination} was null.
      *
      * @category query
+     * @deprecated Replaced by {@link #copy(GeneralParameterValue, Map)}.
      */
+    @Deprecated
     public static Map<String,Object> toNameValueMap(final GeneralParameterValue parameters,
             Map<String,Object> destination)
     {
@@ -729,6 +732,78 @@ public final class Parameters {
             }
         }
         return destination;
+    }
+
+    /**
+     * Gets the
+     * {@linkplain ParameterDescriptor#getName name}-{@linkplain ParameterValue#getValue value}
+     * pairs. This method copies all parameter values into the supplied {@code destination} map.
+     * Keys are parameter names as {@link String} objects, and values are parameter values as
+     * arbitrary objects.
+     * <p>
+     * If the given parameters is a group having sub-groups, then all subgroups are extracted
+     * recursively with their keys prefixed by the sub-groups name followed by the
+     * {@linkplain DefaultNameSpace#DEFAULT_SEPARATOR default namespace separator}.
+     * <p>
+     * This map provides a convenient way to copy the content of a {@link ParameterValueGroup}
+     * to a {@link java.util.Properties} instance.
+     *
+     * @param parameters  The parameters to extract values from.
+     * @param destination The destination map.
+     *
+     * @category query
+     * @since 3.18
+     */
+    public static void copy(final GeneralParameterValue parameters, final Map<? super String, Object> destination) {
+        copy(parameters, destination, null, 0, true);
+    }
+
+    /**
+     * Implementation of the public {@link #copy(GeneralParameterValue, Map)} method
+     * for recursive invocations.
+     *
+     * @param parameters  The parameters to extract values from.
+     * @param destination The destination map.
+     * @param buffer      A buffer which contains the prefix of every keys, or {@code null}.
+     * @param base        The number of valid characters in the buffer.
+     * @param isRoot      {@code true} if the group to be added is the root, or {@code false}
+     *                    on recursive invocations.
+     * @return The buffer, which may have been created by some recursive invocation.
+     *
+     * @category query
+     */
+    private static StringBuilder copy(final GeneralParameterValue parameters,
+            final Map<? super String, Object> destination,
+            StringBuilder buffer, int base, final boolean isRoot)
+    {
+        final String name = parameters.getDescriptor().getName().getCode();
+        if (parameters instanceof ParameterValue<?>) {
+            final Object value = ((ParameterValue<?>) parameters).getValue();
+            String key = name;
+            if (base > 0) {
+                buffer.setLength(base);
+                key = buffer.append(name).toString();
+            }
+            final Object old = destination.put(key, value);
+            if (old != null && !old.equals(value)) {
+                // This code will fails to detect if a null value was explicitly supplied
+                // previously. We assume that such case is uncommon and not a big deal.
+                throw new IllegalArgumentException(Errors.format(Errors.Keys.INCONSISTENT_VALUE));
+            }
+        }
+        if (parameters instanceof ParameterValueGroup) {
+            if (!isRoot) {
+                if (buffer == null) {
+                    buffer = new StringBuilder();
+                }
+                buffer.setLength(base);
+                base = buffer.append(name).append(DefaultNameSpace.DEFAULT_SEPARATOR).length();
+            }
+            for (final GeneralParameterValue value : ((ParameterValueGroup) parameters).values()) {
+                buffer = copy(value, destination, buffer, base, false);
+            }
+        }
+        return buffer;
     }
 
     /**

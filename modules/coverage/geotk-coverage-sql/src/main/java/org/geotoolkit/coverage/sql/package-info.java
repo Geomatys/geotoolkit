@@ -39,7 +39,9 @@
  * {@link org.geotoolkit.coverage.sql.CoverageDatabase} constructor.
  * The properties map can contain the following optional entries:
  *
- * <blockquote><table cellspacing="0">
+ * <blockquote><table border="1" cellspacing="0" cellpadding="2">
+ *   <tr bgcolor="lightblue"><th>Key</th><th>Usage</th></tr>
+ *   <tr><td>{@code URL}</td>           <td>&nbsp;The JDBC URL to the database (only if no {@link javax.sql.DataSource} is given).</td></tr>
  *   <tr><td>{@code user}</td>          <td>&nbsp;The user name.</td></tr>
  *   <tr><td>{@code password}</td>      <td>&nbsp;The password.</td></tr>
  *   <tr><td>{@code schema}</td>        <td>&nbsp;The database schema to use. The default is to use the PostgreSQL {@code "search_path"} variable.</td></tr>
@@ -71,7 +73,7 @@
  * {@link org.geotoolkit.coverage.io.GridCoverageReader} API.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.18
  *
  * @since 3.09 (derived from Seagis)
  * @module

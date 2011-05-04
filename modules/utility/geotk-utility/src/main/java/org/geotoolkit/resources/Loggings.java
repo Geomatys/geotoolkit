@@ -127,9 +127,19 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int CHANGED_COORDINATE_REFERENCE_SYSTEM = 14;
 
         /**
+         * Closed the database connection for thread “{0}” after {1} queries.
+         */
+        public static final int CLOSED_DATABASE_FOR_THREAD_$2 = 64;
+
+        /**
          * Closed the EPSG database connection.
          */
         public static final int CLOSED_EPSG_DATABASE = 15;
+
+        /**
+         * Connected thread “{0}” to database “{1}”.
+         */
+        public static final int CONNECTED_DATABASE_FOR_THREAD_$2 = 63;
 
         /**
          * Connected to EPSG database “{0}” on “{1}”.
@@ -161,6 +171,11 @@ public final class Loggings extends IndexedResourceBundle {
          * Created a “{0}” entry in the naming system.
          */
         public static final int CREATED_DATASOURCE_ENTRY_$1 = 18;
+
+        /**
+         * Created a new ‘{0}’ object.
+         */
+        public static final int CREATED_OBJECT_$1 = 65;
 
         /**
          * Created serializable image for coverage “{0}” using the “{1}” codec.
@@ -208,6 +223,11 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int FALLBACK_FACTORY_$1 = 27;
 
         /**
+         * Flush the “{0}” cache.
+         */
+        public static final int FLUSH_CACHE_$1 = 66;
+
+        /**
          * Found {0} reference systems in {1} elements. The most frequent appears {2} time and the less
          * frequent appears {3} times.
          */
@@ -250,7 +270,7 @@ public final class Loggings extends IndexedResourceBundle {
         public static final int MISMATCHED_COORDINATE_OPERATION_FACTORIES_$2 = 34;
 
         /**
-         * The type of the requested object doesn’t match the “{0}” URN type.
+         * The type of the requested object does not match the “{0}” URN type.
          */
         public static final int MISMATCHED_URN_TYPE_$1 = 35;
 

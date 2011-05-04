@@ -92,6 +92,14 @@ public enum ConfigurationKey {
     PASSWORD("password", null);
 
     /**
+     * A key to use for specifying a single {@link org.opengis.parameter.ParameterValueGroup}
+     * value instead than the above-cited property keys.
+     *
+     * @since 3.18
+     */
+    public static final String PARAMETERS = "parameters";
+
+    /**
      * The key used in a property file for storing a value for this enum.
      */
     public final String key;

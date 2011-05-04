@@ -42,11 +42,16 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.crs.CRSAuthorityFactory;
+import org.opengis.parameter.ParameterDescriptorGroup;
+import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.parameter.ParameterValueGroup;
 
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
 import org.geotoolkit.util.NullArgumentException;
+import org.geotoolkit.parameter.DefaultParameterDescriptor;
+import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
 import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -75,7 +80,7 @@ import org.geotoolkit.resources.Errors;
  * in order to have more work executed concurrently.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.10
  * @module
@@ -104,6 +109,24 @@ public class CoverageDatabase implements Localized {
     private static Reference<CoverageDatabase> instance;
 
     /**
+     * A description of the parameters expected by the {@code CoverageDatabase} constructors.
+     * See the {@linkplain org.geotoolkit.coverage.sql package javadoc} for an overview of
+     * those parameters.
+     *
+     * @since 3.18
+     */
+    public static final ParameterDescriptorGroup PARAMETERS;
+    static {
+        final ConfigurationKey[] keys = ConfigurationKey.values();
+        final ParameterDescriptor<?>[] param = new ParameterDescriptor<?>[keys.length];
+        for (int i=0; i<keys.length; i++) {
+            final ConfigurationKey key = keys[i];
+            param[i] = new DefaultParameterDescriptor<String>(key.key, null, String.class, key.defaultValue, false);
+        }
+        PARAMETERS = new DefaultParameterDescriptorGroup("CoverageDatabase", param);
+    }
+
+    /**
      * The object which will manage the connections to the database.
      */
     volatile TableFactory database;
@@ -122,7 +145,7 @@ public class CoverageDatabase implements Localized {
 
     /**
      * The listeners as an array, or {@code null} if it need to be recomputed.
-     * A new array will be created everytime the listener list is changed. We
+     * A new array will be created every time the listener list is changed. We
      * iterate over an array instead than over the list in order to avoid to
      * hold the synchronization lock during the iteration.
      */
@@ -132,6 +155,9 @@ public class CoverageDatabase implements Localized {
      * Creates a new instance using the given properties. The properties shall contains at
      * least an entry for the {@code "URL"} key. The value of this entry shall be a JDBC URL
      * in the form of {@code "jdbc:postgresql://host/database"}.
+     * <p>
+     * See the {@linkplain org.geotoolkit.coverage.sql package javadoc} for the list of
+     * parameters supported by this constructor.
      *
      * @param properties The configuration properties.
      *
@@ -142,13 +168,61 @@ public class CoverageDatabase implements Localized {
     }
 
     /**
-     * Creates a new instance using the given data source.
+     * Creates a new instance using the given parameters. This constructor provides the same
+     * functionality than {@link #CoverageDatabase(Properties)}, but using the ISO 19111
+     * parameters construct instead than the Java properties.
+     * <p>
+     * See the {@linkplain org.geotoolkit.coverage.sql package javadoc} for the list of
+     * parameters supported by this constructor.
+     *
+     * @param parameters The configuration parameters.
+     *
+     * @since 3.18
+     */
+    public CoverageDatabase(final ParameterValueGroup parameters) {
+        this(singleton(parameters));
+    }
+
+    /**
+     * Creates a new instance using the given data source and configuration properties.
+     * See the {@linkplain org.geotoolkit.coverage.sql package javadoc} for the list of
+     * parameters supported by this constructor.
      *
      * @param datasource The data source.
      * @param properties The configuration properties, or {@code null} if none.
      */
     public CoverageDatabase(final DataSource datasource, final Properties properties) {
         this(new TableFactory(datasource, properties));
+    }
+
+    /**
+     * Creates a new instance using the given data source and configuration parameters.
+     * See the {@linkplain org.geotoolkit.coverage.sql package javadoc} for the list of
+     * parameters supported by this constructor.
+     * <p>
+     * This constructor provides the same functionality than
+     * {@link #CoverageDatabase(DataSource, Properties)}, but using the ISO 19111
+     * parameters construct instead than the Java properties.
+     *
+     * @param datasource The data source.
+     * @param parameters The configuration parameters, or {@code null} if none.
+     *
+     * @since 3.18
+     */
+    public CoverageDatabase(final DataSource datasource, final ParameterValueGroup parameters) {
+        this(datasource, singleton(parameters));
+    }
+
+    /**
+     * Wraps the given parameters in a properties object.
+     */
+    private static Properties singleton(final ParameterValueGroup parameters) {
+        if (parameters == null) {
+            return null;
+        }
+        final Properties properties = new Properties();
+        properties.put(ConfigurationKey.PARAMETERS, parameters);
+        return properties;
     }
 
     /**

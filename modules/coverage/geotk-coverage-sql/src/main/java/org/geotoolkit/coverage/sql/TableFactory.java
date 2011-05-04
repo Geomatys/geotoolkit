@@ -18,13 +18,16 @@
 package org.geotoolkit.coverage.sql;
 
 import java.util.Properties;
+import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.logging.LogRecord;
 import javax.sql.DataSource;
 
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.image.io.PaletteFactory;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
+import org.geotoolkit.resources.Loggings;
 
 
 /**
@@ -69,15 +72,22 @@ final class TableFactory extends SpatialDatabase {
      * The new instance will have its own, initially empty, cache.
      *
      * @param toCopy The existing instance to copy.
+     *
+     * @see CoverageDatabase#flush()
      */
     public TableFactory(final TableFactory toCopy) {
         super(toCopy);
         paletteFactory = toCopy.paletteFactory;
+        log("flush", Loggings.Keys.FLUSH_CACHE_$1);
     }
 
     /**
      * Creates a new instance using the provided data source and configuration properties.
      * A default Coordinate Reference System is used.
+     * <p>
+     * If the given properties contains only one entry, and the key for this entry is
+     * {@value org.geotoolkit.internal.sql.table.ConfigurationKey#PARAMETERS}, then the
+     * value will be used as {@link org.opengis.parameter.ParameterValueGroup}.
      *
      * @param  datasource The data source.
      * @param  properties The configuration properties, or {@code null} if none.
@@ -85,6 +95,24 @@ final class TableFactory extends SpatialDatabase {
     public TableFactory(final DataSource datasource, final Properties properties) {
         super(datasource, properties);
         paletteFactory = PaletteFactory.getDefault();
+        log("<init>", Loggings.Keys.CREATED_OBJECT_$1);
+    }
+
+    /**
+     * Logs this object construction. The creation of this {@code TableFactory} means either
+     * that a {@link CoverageDatabase} has been instantiated, or its cache flushed.
+     *
+     * @param method The {@link CoverageDatabase} method which is causing (indirectly)
+     *        this object construction.
+     */
+    private static void log(final String method, final int key) {
+        if (LOGGER.isLoggable(Level.FINE)) {
+            final LogRecord record = Loggings.format(Level.FINE, key, "CoverageDatabase");
+            record.setSourceMethodName(method);
+            record.setSourceClassName("org.geotoolkit.coverage.sql.CoverageDatabase");
+            record.setLoggerName(LOGGER.getName());
+            LOGGER.log(record);
+        }
     }
 
     /**

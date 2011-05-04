@@ -72,7 +72,8 @@ final class CachedOperationParameters {
      * @param parameters The parameters, including source grid coverages.
      */
     CachedOperationParameters(final Operation operation, final ParameterValueGroup parameters) {
-        final Map<String,Object> param = Parameters.toNameValueMap(parameters, new TreeMap<String,Object>());
+        final Map<String,Object> param = new TreeMap<String,Object>();
+        Parameters.copy(parameters, param);
         this.operation = operation;
         this.names     = new String[param.size()];
         this.values    = new Object[names.length];

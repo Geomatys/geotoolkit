@@ -94,7 +94,7 @@ public class StatementEntry {
              * message comme from PreparedStatement.close() which is the closest we can get
              * to a public API.
              */
-            Logging.recoverableException(Logging.getLogger(getClass()), PreparedStatement.class, "close", e);
+            Logging.recoverableException(DefaultDataSource.LOGGER, PreparedStatement.class, "close", e);
         }
     }
 }

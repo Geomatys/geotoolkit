@@ -51,7 +51,7 @@ public class DefaultDataSource implements DataSource {
      * The logger where to report the JDBC driver version. Note that the logger
      * name intentionally hides the {@code "internal"} part of the package name.
      */
-    private static final Logger LOGGER = Logging.getLogger("org.geotoolkit.jdbc");
+    public static final Logger LOGGER = Logging.getLogger("org.geotoolkit.jdbc");
 
     /**
      * The driver names of the connection returned by {@code DefaultDataSource}.
@@ -78,7 +78,7 @@ public class DefaultDataSource implements DataSource {
     /**
      * Logs the driver version if this is the first time we get a connection for that driver.
      */
-    private static Connection log(final Connection connection) throws SQLException {
+    static Connection log(final Connection connection, final Class<?> source) throws SQLException {
         if (LOGGER.isLoggable(Level.CONFIG)) {
             final DatabaseMetaData metadata = connection.getMetaData();
             final String name = metadata.getDriverName();
@@ -90,7 +90,7 @@ public class DefaultDataSource implements DataSource {
                 final LogRecord record = Loggings.format(Level.CONFIG, Loggings.Keys.JDBC_DRIVER_VERSION_$3,
                         name, metadata.getDriverMajorVersion(), metadata.getDriverMinorVersion());
                 record.setLoggerName(LOGGER.getName());
-                record.setSourceClassName(DefaultDataSource.class.getName());
+                record.setSourceClassName(source.getName());
                 record.setSourceMethodName("getConnection");
                 LOGGER.log(record);
             }
@@ -105,7 +105,7 @@ public class DefaultDataSource implements DataSource {
      */
     @Override
     public Connection getConnection() throws SQLException {
-        return log(DriverManager.getConnection(url));
+        return log(DriverManager.getConnection(url), DefaultDataSource.class);
     }
 
     /**
@@ -115,7 +115,7 @@ public class DefaultDataSource implements DataSource {
      */
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
-        return log(DriverManager.getConnection(url, username, password));
+        return log(DriverManager.getConnection(url, username, password), DefaultDataSource.class);
     }
 
     /**
