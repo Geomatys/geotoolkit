@@ -84,7 +84,7 @@ public abstract class IdentifierGenerator<K, V extends StatementEntry> {
          *
          * @param pool   The pool of prepared statements.
          * @param column The name of the identifier (primary key) column.
-         * @throws SQLException If the connection to the database can not be etablished.
+         * @throws SQLException If the connection to the database can not be established.
          */
         public Simple(StatementPool<? super String, StatementEntry> pool, String column) throws SQLException {
             super(pool, column);

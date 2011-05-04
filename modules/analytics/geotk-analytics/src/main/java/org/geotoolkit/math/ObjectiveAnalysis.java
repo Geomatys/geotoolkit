@@ -287,7 +287,7 @@ public class ObjectiveAnalysis {
         ensureInputSet("zp", zp);
         /*
          * Compute a regression plane P of Z(x,y). The object P
-         * will contains internaly the plane's coefficients.
+         * will contains internally the plane's coefficients.
          */
         final Plane P = new Plane();
         P.fit(xp, yp, zp);

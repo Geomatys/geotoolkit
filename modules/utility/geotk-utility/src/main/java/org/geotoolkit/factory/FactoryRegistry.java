@@ -563,7 +563,7 @@ public class FactoryRegistry extends ServiceRegistry {
         /*
          * Note: availability() must be tested before checking the hints, because in current
          * Geotk implementation some hints computation are deferred until a connection to the
-         * database is etablished (which availability() does in order to test the connection).
+         * database is established (which availability() does in order to test the connection).
          */
         ConformanceResult failure = null;
         if (candidate instanceof Factory) {

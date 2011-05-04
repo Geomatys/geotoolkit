@@ -111,7 +111,7 @@ public class MetadataWriter extends MetadataSource {
      *
      * @param  url The URL to the JDBC database.
      * @param  schema The schema were metadata are expected to be found.
-     * @throws SQLException If the connection to the given database can not be etablished.
+     * @throws SQLException If the connection to the given database can not be established.
      */
     public MetadataWriter(final String url, final String schema) throws SQLException {
         this(MetadataStandard.ISO_19115, new DefaultDataSource(url), schema);
@@ -123,7 +123,7 @@ public class MetadataWriter extends MetadataSource {
      * @param  standard The metadata standard to implement.
      * @param  dataSource The source for getting a connection to the database.
      * @param  schema The schema were metadata are expected to be found.
-     * @throws SQLException If the connection to the given database can not be etablished.
+     * @throws SQLException If the connection to the given database can not be established.
      */
     public MetadataWriter(final MetadataStandard standard, final DataSource dataSource, final String schema)
             throws SQLException

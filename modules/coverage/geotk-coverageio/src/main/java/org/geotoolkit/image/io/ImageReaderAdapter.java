@@ -974,7 +974,7 @@ public abstract class ImageReaderAdapter extends SpatialImageReader {
      * fields ({@link #names names}, {@link #suffixes suffixes}, {@link #MIMETypes MIMETypes})
      * are set to the same values than the wrapped provider.
      * <p>
-     * Because the names are the same by default, an ordering needs to be etablished between this
+     * Because the names are the same by default, an ordering needs to be established between this
      * provider and the wrapped one. By default this implementation conservatively gives precedence
      * to the original provider. Subclasses shall override the
      * {@link #onRegistration(ServiceRegistry, Class)} method if they want a different ordering.

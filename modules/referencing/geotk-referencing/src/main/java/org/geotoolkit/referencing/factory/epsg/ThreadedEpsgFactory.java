@@ -163,7 +163,7 @@ public class ThreadedEpsgFactory extends ThreadedAuthorityFactory implements CRS
     private final ReferencingFactoryContainer factories;
 
     /**
-     * The data source, or {@code null} if the connection has not yet been etablished.
+     * The data source, or {@code null} if the connection has not yet been established.
      */
     private DataSource datasource;
 

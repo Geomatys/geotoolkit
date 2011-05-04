@@ -101,7 +101,7 @@ public class DefaultDataSource implements DataSource {
     /**
      * Delegates to {@link DriverManager}.
      *
-     * @throws SQLException If the connection can not be etablished.
+     * @throws SQLException If the connection can not be established.
      */
     @Override
     public Connection getConnection() throws SQLException {
@@ -111,7 +111,7 @@ public class DefaultDataSource implements DataSource {
     /**
      * Delegates to {@link DriverManager}.
      *
-     * @throws SQLException If the connection can not be etablished.
+     * @throws SQLException If the connection can not be established.
      */
     @Override
     public Connection getConnection(String username, String password) throws SQLException {
