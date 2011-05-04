@@ -17,6 +17,8 @@
 
 package org.geotoolkit.feature.xml.jaxp;
 
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.io.IOException;
 import java.io.StringReader;
 import java.util.ArrayList;
@@ -25,6 +27,7 @@ import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
@@ -42,6 +45,7 @@ import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.xml.Utils;
 import org.geotoolkit.feature.xml.XmlFeatureReader;
 import org.geotoolkit.feature.xml.jaxb.JAXBEventHandler;
+import org.geotoolkit.feature.xml.jaxb.JAXBFeatureTypeReader;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.JTSGeometry;
 import org.geotoolkit.geometry.isoonjts.spatialschema.geometry.aggregate.JTSMultiCurve;
 import org.geotoolkit.geometry.jts.JTSEnvelope2D;
@@ -80,6 +84,12 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
     protected List<FeatureType> featureTypes;
 
+    private boolean readEmbeddedFeatureType = false;
+    
+    public JAXPStreamFeatureReader() {
+        this.featureTypes = new ArrayList<FeatureType>();
+    }
+    
     public JAXPStreamFeatureReader(final FeatureType featureType) {
         this.featureTypes = Arrays.asList(featureType);
     }
@@ -118,8 +128,27 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             //we are looking for the root mark
             if (event == START_ELEMENT) {
 
-                // we search an embedded featureTypeDescription
-                //TODO
+                // we search an embedded featureType description
+                final String schemaLocation = reader.getAttributeValue(Namespaces.XSI, "schemaLocation");
+                if (readEmbeddedFeatureType && schemaLocation != null) {
+                    final String fturl = schemaLocation.substring(schemaLocation.indexOf(' ') + 1);
+                    final JAXBFeatureTypeReader featureTypeReader = new JAXBFeatureTypeReader();
+                    try {
+                       final URL url = new URL(fturl);
+                       List<FeatureType> fts = (List<FeatureType>) featureTypeReader.read(url.openStream());
+                       for (FeatureType ft : fts) {
+                           if (!featureTypes.contains(ft)) {
+                                featureTypes.add(ft);
+                           }
+                       }
+                    } catch (MalformedURLException ex) {
+                        LOGGER.log(Level.WARNING, null, ex);
+                    } catch (IOException ex) {
+                        LOGGER.log(Level.WARNING, null, ex);
+                    } catch (JAXBException ex) {
+                        LOGGER.log(Level.WARNING, null, ex);
+                    }
+                }
                 
                 final Name name  = Utils.getNameFromQname(reader.getName());
                 final String id  = reader.getAttributeValue(Namespaces.GML, "id");
@@ -381,7 +410,7 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
             }
             return namespaceMapping;
         } catch (XMLStreamException ex) {
-            LOGGER.severe("XMl stream exception while extracting namespace: " + ex.getMessage());
+            LOGGER.log(Level.SEVERE, "XMl stream exception while extracting namespace: {0}", ex.getMessage());
         }
         return null;
     }
@@ -407,5 +436,19 @@ public class JAXPStreamFeatureReader extends StaxStreamReader implements XmlFeat
 
        }
         return bounds;
+    }
+
+    /**
+     * @return the readEmbeddedFeatureType
+     */
+    public boolean isReadEmbeddedFeatureType() {
+        return readEmbeddedFeatureType;
+    }
+
+    /**
+     * @param readEmbeddedFeatureType the readEmbeddedFeatureType to set
+     */
+    public void setReadEmbeddedFeatureType(boolean readEmbeddedFeatureType) {
+        this.readEmbeddedFeatureType = readEmbeddedFeatureType;
     }
 }
