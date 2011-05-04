@@ -285,7 +285,7 @@ public class DefaultComplexType extends DefaultAttributeType<AttributeType> impl
             for(Map.Entry<Object,Object> param : userDatas.entrySet()){
                 builder.append(param.getKey().toString());
                 builder.append("=");
-                builder.append(param.getValue().toString());
+                builder.append(param.getValue());
                 builder.append("  ");
             }
         }

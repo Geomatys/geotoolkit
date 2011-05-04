@@ -31,6 +31,7 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.AbstractFeature;
 import org.geotoolkit.feature.DefaultFeature;
+import org.geotoolkit.feature.FeatureUtilities;
 import org.geotoolkit.feature.LenientFeatureFactory;
 import org.geotoolkit.feature.simple.DefaultSimpleFeature;
 import org.geotoolkit.geometry.jts.transform.GeometryTransformer;
@@ -117,9 +118,9 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
          */
         @Override
         public F next() throws DataStoreRuntimeException {
-            final Feature next = iterator.next();
+            Feature next = iterator.next();
+            next = FeatureUtilities.deepCopy(next);
 
-            final Collection<Property> properties = new ArrayList<Property>();
             for(Property prop : next.getProperties()){
                 if(prop instanceof GeometryAttribute){
                     Object value = prop.getValue();
@@ -137,9 +138,8 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
 
                     }
                 }
-                properties.add(prop);
             }
-            return (F) FF.createFeature(properties, next.getType(), next.getIdentifier().getID());
+            return (F) next;
         }
 
         /**
@@ -195,6 +195,7 @@ public abstract class GenericTransformFeatureIterator<F extends Feature, R exten
             properties.clear();
             for(Property prop : next.getProperties()){
                 if(prop instanceof GeometryAttribute){
+                    prop = FeatureUtilities.deepCopy(prop);
                     Object value = prop.getValue();
                     if(value != null){
                         try {
