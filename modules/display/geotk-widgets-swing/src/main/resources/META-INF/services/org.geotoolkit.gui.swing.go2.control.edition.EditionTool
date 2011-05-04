@@ -5,6 +5,8 @@ org.geotoolkit.gui.swing.go2.control.edition.PolygonCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.MultiPointCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.MultiLineCreationTool
 org.geotoolkit.gui.swing.go2.control.edition.MultiPolygonCreationTool
+# Geometry collection tools ####################################################
+org.geotoolkit.gui.swing.go2.control.edition.GeometryCollectionPartDeleteTool
 # Other tools ##################################################################
 org.geotoolkit.gui.swing.go2.control.edition.GeometryMoveTool
 org.geotoolkit.gui.swing.go2.control.edition.GeometryNodeTool
