@@ -106,20 +106,21 @@ public class JWKTPanel extends javax.swing.JPanel {
         });
 
         guiError.setForeground(new java.awt.Color(255, 0, 0));
+        guiError.setText(" ");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(this);
         this.setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 236, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 224, Short.MAX_VALUE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(guiApply, javax.swing.GroupLayout.Alignment.TRAILING)
                     .addComponent(guiRollback, javax.swing.GroupLayout.Alignment.TRAILING)))
             .addGroup(layout.createSequentialGroup()
                 .addGap(12, 12, 12)
-                .addComponent(guiError, javax.swing.GroupLayout.DEFAULT_SIZE, 284, Short.MAX_VALUE))
+                .addComponent(guiError, javax.swing.GroupLayout.DEFAULT_SIZE, 272, Short.MAX_VALUE))
         );
 
         layout.linkSize(javax.swing.SwingConstants.HORIZONTAL, new java.awt.Component[] {guiApply, guiRollback});
@@ -139,8 +140,9 @@ public class JWKTPanel extends javax.swing.JPanel {
     }// </editor-fold>//GEN-END:initComponents
 
     private void guiApplyActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_guiApplyActionPerformed
+        final Geometry old = getGeometry();
         if(checkWKT()){
-            firePropertyChange(GEOMETRY_PROPERTY, original, getGeometry());
+            firePropertyChange(GEOMETRY_PROPERTY, old, getGeometry());
         }
     }//GEN-LAST:event_guiApplyActionPerformed
 
@@ -148,7 +150,9 @@ public class JWKTPanel extends javax.swing.JPanel {
         if(original != null){
             guiText.setText(writer.write(original));
         }
-        firePropertyChange(GEOMETRY_PROPERTY, getGeometry(), original);
+        final Geometry old = getGeometry();
+        current = null;
+        firePropertyChange(GEOMETRY_PROPERTY, old, getGeometry());
     }//GEN-LAST:event_guiRollbackActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

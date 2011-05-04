@@ -17,7 +17,7 @@
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
           <Group type="102" alignment="1" attributes="0">
-              <Component id="jScrollPane1" pref="236" max="32767" attributes="1"/>
+              <Component id="jScrollPane1" pref="224" max="32767" attributes="1"/>
               <EmptySpace max="-2" attributes="0"/>
               <Group type="103" groupAlignment="0" attributes="0">
                   <Component id="guiApply" linkSize="1" alignment="1" min="-2" max="-2" attributes="0"/>
@@ -26,7 +26,7 @@
           </Group>
           <Group type="102" attributes="0">
               <EmptySpace min="12" pref="12" max="12" attributes="0"/>
-              <Component id="guiError" pref="284" max="32767" attributes="0"/>
+              <Component id="guiError" pref="272" max="32767" attributes="0"/>
           </Group>
       </Group>
     </DimensionLayout>
@@ -87,6 +87,7 @@
         <Property name="foreground" type="java.awt.Color" editor="org.netbeans.beaninfo.editors.ColorEditor">
           <Color blue="0" green="0" red="ff" type="rgb"/>
         </Property>
+        <Property name="text" type="java.lang.String" value=" "/>
       </Properties>
     </Component>
   </SubComponents>
