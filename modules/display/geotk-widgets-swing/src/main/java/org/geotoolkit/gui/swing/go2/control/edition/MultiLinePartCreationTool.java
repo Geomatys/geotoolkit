@@ -17,7 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
-import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.MultiLineString;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -26,16 +26,16 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 
 /**
- * Edition tool to remove geometry parts in geometry collections.
+ * Edition tool to create multi line parts.
  * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class GeometryCollectionPartDeleteTool extends AbstractEditionTool {
+public class MultiLinePartCreationTool extends AbstractEditionTool {
 
-    public GeometryCollectionPartDeleteTool() {
-        super(950,"geometryCollectionPartDelete", MessageBundle.getI18NString("removePart"),
-             new SimpleInternationalString("Tool to remove geometry collection parts."), FeatureMapLayer.class);
+    public MultiLinePartCreationTool() {
+        super(1050,"multilinePartCreation", MessageBundle.getI18NString("createPart"),
+             new SimpleInternationalString("Tool to create part of a MultiLine."), FeatureMapLayer.class);
     }
 
     @Override
@@ -53,12 +53,12 @@ public class GeometryCollectionPartDeleteTool extends AbstractEditionTool {
             return false;
         }
 
-        return GeometryCollection.class.isAssignableFrom(desc.getType().getBinding());
+        return MultiLineString.class.isAssignableFrom(desc.getType().getBinding());
     }
 
     @Override
     public EditionDelegate createDelegate(final JMap2D map, final Object candidate) {
-        return new GeometryCollectionPartDeleteDelegate(map, (FeatureMapLayer) candidate);
+        return new MultiLinePartCreationDelegate(map, (FeatureMapLayer) candidate);
     }
 
 }

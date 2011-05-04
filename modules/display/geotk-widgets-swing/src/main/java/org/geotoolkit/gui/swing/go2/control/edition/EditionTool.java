@@ -32,14 +32,33 @@ public interface EditionTool {
      */
     int getPriority();
     
+    /**
+     * @return name of tool, can be used as identifier.
+     * If a text is needed for user interface, use title or abstract.
+     */
     String getName();
 
+    /**
+     * @return title of this tool.
+     */
     InternationalString getTitle();
 
+    /**
+     * @return description of the tool.
+     */
     InternationalString getAbstract();
 
+    /**
+     * @param candidate object to test
+     * @return true if the tool can edit the given object. false otherwise
+     */
     boolean canHandle(Object candidate);
 
+    /**
+     * @param map : the map on which the tool will work
+     * @param candidate : the object to edit
+     * @return EditionDelegate : the editor object
+     */
     EditionDelegate createDelegate(JMap2D map, Object candidate);
 
 }

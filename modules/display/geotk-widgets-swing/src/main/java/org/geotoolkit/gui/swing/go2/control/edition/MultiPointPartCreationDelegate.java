@@ -20,10 +20,13 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 
 
 import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.geom.GeometryCollection;
+import com.vividsolutions.jts.geom.MultiPoint;
+import com.vividsolutions.jts.geom.Point;
 
 import java.awt.event.MouseEvent;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 
 import org.opengis.feature.Feature;
 import org.geotoolkit.map.FeatureMapLayer;
@@ -31,35 +34,41 @@ import org.geotoolkit.gui.swing.go2.JMap2D;
 
 
 /**
- * Edition tool to remove geometry parts in geometry collections.
+ * Edition tool to create multi point parts.
  * 
  * @author Johann Sorel
  * @module pending
  */
-public class GeometryCollectionPartDeleteDelegate extends AbstractFeatureEditionDelegate {
+public class MultiPointPartCreationDelegate extends AbstractFeatureEditionDelegate {
 
     private Feature feature = null;
-    private Geometry geometry = null;
+    private MultiPoint geometry = null;
+    private final List<Geometry> subGeometries = new ArrayList<Geometry>();
 
-    public GeometryCollectionPartDeleteDelegate(final JMap2D map, final FeatureMapLayer candidate) {
+    public MultiPointPartCreationDelegate(final JMap2D map, final FeatureMapLayer candidate) {
         super(map,candidate);
     }
 
     private void reset(){
         feature = null;
         geometry = null;
+        subGeometries.clear();
         decoration.setGeometries(null);
     }
     
     private void setCurrentFeature(final Feature feature){
         this.feature = feature;
+        this.geometry = null;
+        this.subGeometries.clear();
+        
         if(feature != null){
-            this.geometry = helper.toObjectiveCRS(feature);
+            this.geometry = (MultiPoint) helper.toObjectiveCRS(feature);
             if(geometry != null){
                 geometry.clone();
+                for(int i=0; i<geometry.getNumGeometries();i++){
+                    subGeometries.add(geometry.getGeometryN(i));
+                }
             }
-        }else{
-            this.geometry = null;
         }
         decoration.setGeometries(Collections.singleton(this.geometry));
     }
@@ -70,13 +79,15 @@ public class GeometryCollectionPartDeleteDelegate extends AbstractFeatureEdition
         final int button = e.getButton();
 
         if (button == MouseEvent.BUTTON1) {
-            if(geometry == null){
+            if (geometry == null) {
                 setCurrentFeature(helper.grabFeature(e.getX(), e.getY(), false));
-            }else if(geometry instanceof GeometryCollection){
-                geometry = helper.deleteSubGeometry((GeometryCollection)geometry, e.getX(), e.getY());
-                decoration.setGeometries(Collections.singleton(this.geometry));
+            } else {
+                final Point cdt2 = helper.toJTS(e.getX(), e.getY());
+                subGeometries.add(cdt2);
+                geometry = EditionHelper.createMultiPoint(subGeometries);
+                decoration.setGeometries(Collections.singleton(geometry));
             }
-        } else if (button == MouseEvent.BUTTON3 && geometry != null) {
+        } else if (button == MouseEvent.BUTTON3 && feature != null) {
             helper.sourceModifyFeature(feature, geometry);
             reset();
         }
