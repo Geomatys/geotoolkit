@@ -89,7 +89,7 @@ final class TableFactory extends SpatialDatabase {
      * {@value org.geotoolkit.internal.sql.table.ConfigurationKey#PARAMETERS}, then the
      * value will be used as {@link org.opengis.parameter.ParameterValueGroup}.
      *
-     * @param  datasource The data source.
+     * @param  datasource The data source, or {@code null} for creating it from the URL.
      * @param  properties The configuration properties, or {@code null} if none.
      */
     public TableFactory(final DataSource datasource, final Properties properties) {

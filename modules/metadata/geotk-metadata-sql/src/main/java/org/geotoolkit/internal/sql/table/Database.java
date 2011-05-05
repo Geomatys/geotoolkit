@@ -353,16 +353,19 @@ public class Database implements Localized {
      * {@value org.geotoolkit.internal.sql.table.ConfigurationKey#PARAMETERS}, then the
      * value will be used as {@link ParameterValueGroup}.
      *
-     * @param  datasource The data source.
+     * @param  datasource The data source, or {@code null} for creating it from the URL.
      * @param  properties The configuration properties, or {@code null} if none.
      */
-    public Database(final DataSource datasource, final Properties properties) {
-        ensureNonNull("datasource", datasource);
+    public Database(DataSource datasource, final Properties properties) {
         Object parameters = properties;
         if (properties != null && properties.size() == 1) {
             parameters = properties.get(ConfigurationKey.PARAMETERS);
         }
         this.properties = parameters; // Must be set before to ask for properties.
+        if (datasource == null) {
+            datasource = new DefaultDataSource(getProperty(ConfigurationKey.URL));
+        }
+        ensureNonNull("datasource", datasource);
         final String username, password, tz;
         username = getProperty(ConfigurationKey.USER);
         password = getProperty(ConfigurationKey.PASSWORD);
@@ -386,7 +389,8 @@ public class Database implements Localized {
             return ((Properties) properties).getProperty(key.key, key.defaultValue);
         }
         if (properties instanceof ParameterValueGroup) {
-            return ((ParameterValueGroup) properties).parameter(key.key).stringValue();
+            final Object value = ((ParameterValueGroup) properties).parameter(key.key).getValue();
+            return (value != null) ? value.toString() : null;
         }
         return key.defaultValue;
     }

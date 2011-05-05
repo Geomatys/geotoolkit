@@ -22,6 +22,8 @@ import java.util.Set;
 import java.util.List;
 import java.util.SortedSet;
 
+import org.opengis.parameter.ParameterValueGroup;
+
 import org.geotoolkit.test.Depend;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.MeasurementRange;
@@ -38,7 +40,7 @@ import static org.geotoolkit.coverage.sql.LayerTableTest.*;
  * Tests {@link CoverageDatabaseTest}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.18
  *
  * @since 3.10
  */
@@ -177,5 +179,25 @@ public final class CoverageDatabaseTest extends CatalogTestBase {
         requireImageData();
         final GridCoverage2D coverage = database.readSlice(query).result();
         GridCoverageLoaderTest.checkTemperatureCoverage(coverage);
+    }
+
+    /**
+     * Tests the creation of a coverage database using a {@link ParameterValueGroup}.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testParameterValueGroup() {
+        ParameterValueGroup param = CoverageDatabase.PARAMETERS.createValue();
+        param.parameter("url").setValue("localhost:5432/coverages");
+        param.parameter("rootDirectory").setValue("/home/someuser/GIS_DATA");
+        param.parameter("schema").setValue("coverages");
+        param.parameter("user").setValue("postgres");
+        param.parameter("password").setValue("postgres");
+
+        final CoverageDatabase db = new CoverageDatabase(param);
+        // Do not test a connection; it will not work. We merely
+        // tested that the construction didn't threw an exception.
+        db.dispose();
     }
 }

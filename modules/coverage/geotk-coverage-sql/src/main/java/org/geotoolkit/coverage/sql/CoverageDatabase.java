@@ -57,7 +57,6 @@ import org.geotoolkit.coverage.io.GridCoverageReader;
 import org.geotoolkit.coverage.io.CoverageStoreException;
 import org.geotoolkit.internal.Threads;
 import org.geotoolkit.internal.io.Installation;
-import org.geotoolkit.internal.sql.DefaultDataSource;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
 import org.geotoolkit.internal.sql.table.TablePool;
 import org.geotoolkit.resources.Errors;
@@ -164,7 +163,7 @@ public class CoverageDatabase implements Localized {
      * @since 3.11
      */
     public CoverageDatabase(final Properties properties) {
-        this(new DefaultDataSource(properties.getProperty(ConfigurationKey.URL.key)), properties);
+        this(null, properties);
     }
 
     /**
@@ -180,7 +179,7 @@ public class CoverageDatabase implements Localized {
      * @since 3.18
      */
     public CoverageDatabase(final ParameterValueGroup parameters) {
-        this(singleton(parameters));
+        this(null, parameters);
     }
 
     /**
@@ -188,7 +187,7 @@ public class CoverageDatabase implements Localized {
      * See the {@linkplain org.geotoolkit.coverage.sql package javadoc} for the list of
      * parameters supported by this constructor.
      *
-     * @param datasource The data source.
+     * @param  datasource The data source, or {@code null} for creating it from the URL.
      * @param properties The configuration properties, or {@code null} if none.
      */
     public CoverageDatabase(final DataSource datasource, final Properties properties) {
@@ -204,7 +203,7 @@ public class CoverageDatabase implements Localized {
      * {@link #CoverageDatabase(DataSource, Properties)}, but using the ISO 19111
      * parameters construct instead than the Java properties.
      *
-     * @param datasource The data source.
+     * @param  datasource The data source, or {@code null} for creating it from the URL.
      * @param parameters The configuration parameters, or {@code null} if none.
      *
      * @since 3.18
@@ -214,7 +213,8 @@ public class CoverageDatabase implements Localized {
     }
 
     /**
-     * Wraps the given parameters in a properties object.
+     * Work around for RFE #4093999 in Sun's bug database
+     * ("Relax constraint on placement of this()/super() call in constructors").
      */
     private static Properties singleton(final ParameterValueGroup parameters) {
         if (parameters == null) {

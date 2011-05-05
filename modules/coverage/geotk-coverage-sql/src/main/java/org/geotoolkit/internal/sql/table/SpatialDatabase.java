@@ -147,7 +147,7 @@ public class SpatialDatabase extends Database {
      * {@value org.geotoolkit.internal.sql.table.ConfigurationKey#PARAMETERS}, then the
      * value will be used as {@link org.opengis.parameter.ParameterValueGroup}.
      *
-     * @param  datasource The data source.
+     * @param  datasource The data source, or {@code null} for creating it from the URL.
      * @param  properties The configuration properties, or {@code null} if none.
      */
     public SpatialDatabase(final DataSource datasource, final Properties properties) {
@@ -162,7 +162,7 @@ public class SpatialDatabase extends Database {
      * {@value org.geotoolkit.internal.sql.table.ConfigurationKey#PARAMETERS}, then the
      * value will be used as {@link org.opengis.parameter.ParameterValueGroup}.
      *
-     * @param  datasource The data source.
+     * @param  datasource The data source, or {@code null} for creating it from the URL.
      * @param  properties The configuration properties, or {@code null} if none.
      * @param  temporalCRS The temporal vertical reference system, or {@code null} if none.
      */
@@ -210,7 +210,7 @@ public class SpatialDatabase extends Database {
      * {@value org.geotoolkit.internal.sql.table.ConfigurationKey#PARAMETERS}, then the
      * value will be used as {@link org.opengis.parameter.ParameterValueGroup}.
      *
-     * @param  datasource  The data source.
+     * @param  datasource The data source, or {@code null} for creating it from the URL.
      * @param  properties  The configuration properties, or {@code null} if none.
      * @param  spatialCRS  The spatial CRS, not including the temporal component.
      * @param  temporalCRS The temporal CRS, or {@code null} if none.
@@ -256,7 +256,7 @@ public class SpatialDatabase extends Database {
         Integer id = CRS.lookupEpsgCode(horizontalCRS, true);
         if (id != null) {
             try {
-                final Connection c = datasource.getConnection();
+                final Connection c = getDataSource(true).getConnection();
                 final DirectPostgisFactory postgis = new DirectPostgisFactory(null, c);
                 id = postgis.getPrimaryKey(CoordinateReferenceSystem.class, id.toString());
                 c.close();
