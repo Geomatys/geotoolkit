@@ -384,15 +384,20 @@ public class Database implements Localized {
      * @return The property value, or {@code null} if none and there is no default value.
      */
     final String getProperty(final ConfigurationKey key) {
+        String value = null;
         if (properties instanceof Properties) {
             // No need to synchronize since 'Properties' is already synchronized.
-            return ((Properties) properties).getProperty(key.key, key.defaultValue);
+            value = ((Properties) properties).getProperty(key.key);
+        } else if (properties instanceof ParameterValueGroup) {
+            final Object obj = ((ParameterValueGroup) properties).parameter(key.key).getValue();
+            if (obj != null) {
+                value = obj.toString();
+            }
         }
-        if (properties instanceof ParameterValueGroup) {
-            final Object value = ((ParameterValueGroup) properties).parameter(key.key).getValue();
-            return (value != null) ? value.toString() : null;
+        if (value == null || (value = value.trim()).isEmpty()) {
+            value = key.defaultValue;
         }
-        return key.defaultValue;
+        return value;
     }
 
     /**
