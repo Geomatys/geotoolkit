@@ -85,6 +85,14 @@ public class OpenStreetMapServer implements Server{
             return null;
         }
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL getURL() {
+        return serverURL;
+    }
 
     public Api getCapabilities(){
         if (capabilities != null) {

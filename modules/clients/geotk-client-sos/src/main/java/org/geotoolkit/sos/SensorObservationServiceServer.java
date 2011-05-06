@@ -69,6 +69,14 @@ public class SensorObservationServiceServer implements Server {
         }
         return null;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL getURL() {
+        return serverURL;
+    }
 
     /**
      * Returns the currently used version for this server

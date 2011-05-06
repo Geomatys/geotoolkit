@@ -43,6 +43,7 @@ import org.geotoolkit.wms.xml.WMSVersion;
 /**
  * Generates WMS requests objects on a WMS server.
  *
+ * @author Olivier Terral (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @author Cédric Briançon (Geomatys)
  * @module pending
@@ -51,8 +52,8 @@ public class WebMapServer implements Server{
 
     private static final Logger LOGGER = Logging.getLogger(WebMapServer.class);
 
-    private final WMSVersion version;
     private final URL serverURL;
+    private final WMSVersion version;
     private AbstractWMSCapabilities capabilities;
 
     /**
@@ -118,6 +119,14 @@ public class WebMapServer implements Server{
             LOGGER.log(Level.WARNING, ex.getLocalizedMessage(), ex);
         }
         return null;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL getURL() {
+        return serverURL;
     }
 
     /**
@@ -252,5 +261,4 @@ public class WebMapServer implements Server{
           .append("version: ").append(version).append("]");
         return sb.toString();
     }
-
 }

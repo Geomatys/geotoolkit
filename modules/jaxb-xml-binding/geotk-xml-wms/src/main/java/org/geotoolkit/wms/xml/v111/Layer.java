@@ -347,6 +347,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the metadataURL property.
      */
+    @Override
     public List<MetadataURL> getMetadataURL() {
         return metadataURL;
     }
@@ -354,6 +355,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the dataURL property.
       */
+    @Override
     public List<DataURL> getDataURL() {
         return dataURL;
     }
@@ -379,6 +381,28 @@ public class Layer extends AbstractLayer {
      */
     public ScaleHint getScaleInt() {
         return scaleHint;
+    }
+    
+    /**
+     * Gets the value of the minScaleDenominator property.
+     */
+    @Override
+    public Double getMinScaleDenominator() {
+        if (getScaleInt() != null && (getScaleInt().getMin() != null) 
+                && (getScaleInt().getMin().isEmpty())) 
+            return (Double.valueOf(getScaleInt().getMin()) * 2525.38136138052696);
+        return null;
+    }
+
+    /**
+     * Gets the value of the maxScaleDenominator property.
+     */
+    @Override
+    public Double getMaxScaleDenominator() {
+        if (getScaleInt() != null && (getScaleInt().getMax() != null) 
+                && (getScaleInt().getMax().isEmpty())) 
+            return (Double.valueOf(getScaleInt().getMax()) * 2525.38136138052696);
+        return null;
     }
 
     /**
@@ -651,5 +675,4 @@ public class Layer extends AbstractLayer {
     public void setFixedHeight(final Integer fixedHeight) {
         this.fixedHeight = fixedHeight;
     }
-    
 }

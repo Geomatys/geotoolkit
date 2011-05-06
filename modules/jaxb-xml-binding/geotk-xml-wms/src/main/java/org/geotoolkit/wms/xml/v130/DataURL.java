@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.wms.xml.AbstractURL;
 
 
 /**
@@ -50,7 +51,7 @@ import javax.xml.bind.annotation.XmlType;
     "onlineResource"
 })
 @XmlRootElement(name = "DataURL")
-public class DataURL {
+public class DataURL extends AbstractURL {
 
     @XmlElement(name = "Format", required = true)
     private String format;

@@ -115,6 +115,14 @@ public class CatalogServicesServer implements Server {
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL getURL() {
+        return serverURL;
+    }
+
+    /**
      * Returns the currently used version for this server
      */
     public CSWVersion getVersion() {

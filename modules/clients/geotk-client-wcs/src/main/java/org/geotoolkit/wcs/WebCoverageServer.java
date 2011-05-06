@@ -116,6 +116,14 @@ public class WebCoverageServer implements Server {
         }
         return null;
     }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL getURL() {
+        return serverURL;
+    }
 
     /**
      * Create a describe coverage request.

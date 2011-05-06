@@ -17,7 +17,6 @@
 
 package org.geotoolkit.wms;
 
-import java.awt.geom.NoninvertibleTransformException;
 import java.net.URL;
 import java.awt.Dimension;
 import java.net.MalformedURLException;
@@ -175,7 +174,7 @@ public class WMSMapLayerTest {
      */
     @Test
     public void test_v111_GetFeatureInfo_EPSG4326() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+            FactoryException, MalformedURLException, TransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
 
@@ -218,7 +217,7 @@ public class WMSMapLayerTest {
      */
     @Test
     public void test_v130_GetFeatureInfo_EPSG4326() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+            FactoryException, MalformedURLException, TransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
 
@@ -261,7 +260,7 @@ public class WMSMapLayerTest {
      */
     @Test
     public void test_v130_GetFeatureInfo_CRS84() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+            FactoryException, MalformedURLException, TransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
 
@@ -304,7 +303,7 @@ public class WMSMapLayerTest {
      */
     @Test
     public void test_v111_GetFeatureInfo_Reproject_EPSG4326_to_CRS84() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+            FactoryException, MalformedURLException, TransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
 
@@ -352,7 +351,7 @@ public class WMSMapLayerTest {
      */
     @Test
     public void test_v130_GetFeatureInfo_Reproject_EPSG4326_to_CRS84() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+            FactoryException, MalformedURLException, TransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
 
@@ -400,7 +399,7 @@ public class WMSMapLayerTest {
      */
     @Test
     public void test_v111_GetFeatureInfo_Reproject_CRS84_to_EPSG3857() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+            FactoryException, MalformedURLException, TransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
 
@@ -450,7 +449,7 @@ public class WMSMapLayerTest {
      */
     @Test
     public void test_v130_GetFeatureInfo_Reproject_CRS84_to_EPSG3857() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+            FactoryException, MalformedURLException, TransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
 
@@ -498,7 +497,7 @@ public class WMSMapLayerTest {
      */
     @Test
     public void test_v111_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+            FactoryException, MalformedURLException, TransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v111);
 
@@ -547,7 +546,7 @@ public class WMSMapLayerTest {
      */
     @Test
     public void test_v130_GetFeatureInfo_Reproject_EPSG4326_to_EPSG3857() throws NoSuchAuthorityCodeException,
-            FactoryException, MalformedURLException, TransformException, NoninvertibleTransformException {
+            FactoryException, MalformedURLException, TransformException {
 
         final WebMapServer server = new WebMapServer(new URL("http://test.com"), WMSVersion.v130);
 

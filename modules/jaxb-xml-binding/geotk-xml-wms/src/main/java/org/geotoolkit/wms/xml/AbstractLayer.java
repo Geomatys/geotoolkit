@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.wms.xml;
 
+import java.net.URL;
 import java.util.List;
 import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.geometry.Envelope;
@@ -98,5 +99,25 @@ public abstract class AbstractLayer {
      * Get the layer boundingboxes
      */
     public abstract List<? extends AbstractBoundingBox> getBoundingBox();
+    
+    /**
+     * Get metadataURLs of the layer
+     */
+    public abstract List<? extends AbstractURL> getMetadataURL();
+    
+    /**
+     * Get dataURLs of the layer
+     */
+    public abstract List<? extends AbstractURL> getDataURL();
+    
+    /**
+     * Get minScaleDenominator of the layer
+     */
+    public abstract Double getMinScaleDenominator();
+    
+    /**
+     * Get maxScaleDenominator of the layer
+     */
+    public abstract Double getMaxScaleDenominator();
 
 }

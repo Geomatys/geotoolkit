@@ -75,6 +75,14 @@ public class WebFeatureServer implements Server{
     }
 
     /**
+     * {@inheritDoc}
+     */
+    @Override
+    public URL getURL() {
+        return serverURL;
+    }
+    
+    /**
      * @return WFSCapabilitiesType : WFS server capabilities
      */
     public WFSCapabilitiesType getCapabilities() {

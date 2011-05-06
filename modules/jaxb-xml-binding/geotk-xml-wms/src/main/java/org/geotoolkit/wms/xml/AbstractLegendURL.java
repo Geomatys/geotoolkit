@@ -22,7 +22,7 @@ package org.geotoolkit.wms.xml;
  *
  * @module pending
  */
-public abstract class AbstractLegendURL {
+public abstract class AbstractLegendURL extends AbstractURL {
     
     /**
      * Gets the value of the format property.

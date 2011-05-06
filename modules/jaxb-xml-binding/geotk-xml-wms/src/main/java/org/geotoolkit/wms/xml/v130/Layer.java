@@ -370,6 +370,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the metadataURL property.
      */
+    @Override
     public List<MetadataURL> getMetadataURL() {
         return metadataURL;
     }
@@ -377,6 +378,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the dataURL property.
       */
+    @Override
     public List<DataURL> getDataURL() {
         return dataURL;
     }
@@ -400,6 +402,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the minScaleDenominator property.
      */
+    @Override
     public Double getMinScaleDenominator() {
         return minScaleDenominator;
     }
@@ -407,6 +410,7 @@ public class Layer extends AbstractLayer {
     /**
      * Gets the value of the maxScaleDenominator property.
      */
+    @Override
     public Double getMaxScaleDenominator() {
         return maxScaleDenominator;
     }
