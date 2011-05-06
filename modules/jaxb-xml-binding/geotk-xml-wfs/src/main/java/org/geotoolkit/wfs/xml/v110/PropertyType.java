@@ -16,17 +16,12 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
-import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
-import javax.xml.bind.annotation.XmlAnyElement;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlMixed;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.namespace.QName;
-import org.apache.xerces.dom.ElementNSImpl;
 import org.geotoolkit.util.Utilities;
-import org.w3c.dom.Node;
 
 /**
  * <p>Java class for PropertyType complex type.

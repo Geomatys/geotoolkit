@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.wfs.xml.v110;
 
-import org.apache.xerces.dom.ElementNSImpl;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.StringReader;

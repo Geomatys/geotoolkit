@@ -53,10 +53,6 @@
   -->
   <dependencies>
     <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-    </dependency>
-    <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-xml-ogc</artifactId>
       <version>${project.version}</version>
