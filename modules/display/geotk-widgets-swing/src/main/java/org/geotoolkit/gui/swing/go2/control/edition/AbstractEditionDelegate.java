@@ -18,9 +18,11 @@
 package org.geotoolkit.gui.swing.go2.control.edition;
 
 import java.awt.event.KeyEvent;
+import java.util.logging.Logger;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.go2.control.navigation.MouseNavigatonListener;
 import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
+import org.geotoolkit.util.logging.Logging;
 
 /**
  *
@@ -29,6 +31,8 @@ import org.geotoolkit.gui.swing.go2.decoration.MapDecoration;
  */
 public class AbstractEditionDelegate extends MouseNavigatonListener implements EditionDelegate{
 
+    protected static final Logger LOGGER = Logging.getLogger(AbstractEditionDelegate.class);
+    
     protected AbstractEditionDelegate(final JMap2D map){
         super(map);
     }
