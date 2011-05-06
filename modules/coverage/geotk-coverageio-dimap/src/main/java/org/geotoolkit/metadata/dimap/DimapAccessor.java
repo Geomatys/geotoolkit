@@ -92,8 +92,7 @@ import static org.geotoolkit.util.DomUtilities.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@Static
-public final class DimapAccessor {
+public final class DimapAccessor extends Static {
 
     private static final Logger LOGGER = Logging.getLogger(DimapAccessor.class);
 
@@ -103,7 +102,7 @@ public final class DimapAccessor {
     /**
      * Read the Coordinate Reference System of the grid.
      * Those informations are provided by the CoordinateReferenceSystem tag.
-     * 
+     *
      * @param doc
      * @return CoordinateReferenceSystem
      * @throws NoSuchAuthorityCodeException
@@ -179,14 +178,14 @@ public final class DimapAccessor {
         }else{
             throw new TransformException("Geopositioning type unknowned.");
         }
-        
+
     }
 
     /**
      * Read the raster dimension from the document. This include number of rows,
      * columns and bands.
      * Those informations are provided by the Raster_dimensions tag.
-     * 
+     *
      * @param doc
      * @return int[] 0:rows, 1:cols, 2:bands
      */
@@ -225,7 +224,7 @@ public final class DimapAccessor {
      * - Image_Interpretation for description and sample to geophysic.
      * - Image_display for special values.
      * - Raster_Encoding for sample model bytes encoding
-     * 
+     *
      * @param doc
      * @return GridSampleDimension
      */
@@ -322,7 +321,7 @@ public final class DimapAccessor {
     }
 
     /**
-     * @return DatasetName from Dataset_ID tag. 
+     * @return DatasetName from Dataset_ID tag.
      */
     public static String readDatasetName(final Element doc){
         final Element datasetID = firstElement(doc, TAG_DATASET_ID);
@@ -361,11 +360,11 @@ public final class DimapAccessor {
 
             final String name = textValueSafe(datasetID, TAG_DATASET_NAME, String.class);
             final String copyright = textValueSafe(datasetID, TAG_DATASET_COPYRIGHT, String.class);
-            
+
             if(name != null){
                 metadata.setFileIdentifier(name);
             }
-            
+
             if(copyright != null){
                 final DefaultLegalConstraints constraints = new DefaultLegalConstraints();
                 final Restriction restric = Restriction.COPYRIGHT;
@@ -441,7 +440,7 @@ public final class DimapAccessor {
                 final String softwareVersion = textValueSafe(facility, TAG_PRODUCTION_FACILITY_SOFTWARE_VERSION, String.class);
                 final String productionCenter = textValueSafe(facility, TAG_PRODUCTION_FACILITY_PROCESSING_CENTER, String.class);
 
-                
+
                 final DefaultCitation softCitation = new DefaultCitation();
                 softCitation.setTitle(new SimpleInternationalString(softwareName));
                 softCitation.setEdition(new SimpleInternationalString(softwareVersion));
@@ -473,7 +472,7 @@ public final class DimapAccessor {
         //<xsd:element minOccurs="0" ref="Coordinate_Reference_System"/> -------
         //has been set from the geotiff informations
         final Element datasetCRS = firstElement(doc, TAG_CRS);
-        if(datasetCRS != null){        
+        if(datasetCRS != null){
             //MAPPING
             //GEO_TABLES            → ( MD_METADATA > MD_ReferenceSystem.referenceSystemIdentifier >  RS_identifier.codeSpace and version )
             //HORIZONTAL_CS_CODE    → Reference Projection Système code (MD_Metadata > referenceSystemInfo > MD_ReferenceSystem.referenceSystemIdentifier > RS_Identifier.codeSpace)
@@ -500,8 +499,8 @@ public final class DimapAccessor {
         final Element datasetGeoposition = firstElement(doc, TAG_GEOPOSITION);
         if(datasetGeoposition != null){
             //MAPPING
-            //ULXMAP    → ? 
-            //ULYMAP    → ? 
+            //ULXMAP    → ?
+            //ULYMAP    → ?
             //XDIM      → X Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
             //YDIM      → Y Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
         }
@@ -560,7 +559,7 @@ public final class DimapAccessor {
 
             final DefaultCitation citation = new DefaultCitation();
             citation.setTitle(new SimpleInternationalString(algoName));
-            
+
             final DefaultAlgorithm algo = new DefaultAlgorithm();
             algo.setDescription(new SimpleInternationalString(algoType));
             algo.setCitation(citation);
@@ -600,8 +599,8 @@ public final class DimapAccessor {
         //has been set from the geotiff informations
         if(imageDisplay != null){
             //MAPPING
-            //ULXMAP    → ? 
-            //ULYMAP    → ? 
+            //ULXMAP    → ?
+            //ULYMAP    → ?
             //XDIM      → X Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
             //YDIM      → Y Resolution (MD_Metadata > spatialRepresentationInfo> MD_GridSpatialRepresentation.axisDimensionsProperties > MD_Dimension.resolution)
         }

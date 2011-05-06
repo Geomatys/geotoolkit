@@ -60,14 +60,13 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@Static
-public final class JasperReportService {
+public final class JasperReportService extends Static {
 
     private static final Collection<JRFieldRenderer> RENDERERS;
-    
+
     public static final String MIME_PDF = "application/pdf";
     public static final String MIME_HTML = "text/html";
-    
+
     static {
         final ServiceLoader<JRFieldRenderer> service = ServiceLoader.load(JRFieldRenderer.class);
         final List<JRFieldRenderer> renderers = new ArrayList<JRFieldRenderer>();
@@ -242,5 +241,5 @@ public final class JasperReportService {
     public static Collection<JRFieldRenderer> getFieldRenderers(){
         return RENDERERS;
     }
-    
+
 }

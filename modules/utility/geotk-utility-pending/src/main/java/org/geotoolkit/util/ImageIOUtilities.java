@@ -44,8 +44,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @author Cédric Briançon (Geomatys)
  * @module pending
  */
-@Static
-public final class ImageIOUtilities {
+public final class ImageIOUtilities extends Static {
 
     private ImageIOUtilities(){}
 

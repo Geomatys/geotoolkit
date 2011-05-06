@@ -60,8 +60,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @module pending
  * @Static
  */
-@Static
-public final class FileUtilities {
+public final class FileUtilities extends Static {
 
     private static final Logger LOGGER = Logging.getLogger(FileUtilities.class);
     private static final int BUFFER = 2048;
@@ -127,7 +126,7 @@ public final class FileUtilities {
 
     /**
      * This method delete recursively a file or a folder.
-     * 
+     *
      * @param file The File or directory to delete.
      */
     public static boolean deleteDirectory(final File dir) {

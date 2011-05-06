@@ -29,8 +29,7 @@ import org.geotoolkit.lang.Static;
  * @author Johann Sorel
  * @module pending
  */
-@Static
-public final class WCSUtilities {
+public final class WCSUtilities extends Static {
 
     private WCSUtilities(){}
 

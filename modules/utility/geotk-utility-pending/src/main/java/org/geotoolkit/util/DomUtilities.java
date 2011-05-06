@@ -57,8 +57,7 @@ import org.xml.sax.SAXException;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@Static
-public final class DomUtilities {
+public final class DomUtilities extends Static {
 
     private DomUtilities(){}
 

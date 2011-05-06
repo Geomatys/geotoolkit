@@ -30,8 +30,7 @@ import org.geotoolkit.lang.Static;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@Static
-public final class GO2Hints {
+public final class GO2Hints extends Static {
 
     private GO2Hints(){}
 
@@ -60,12 +59,12 @@ public final class GO2Hints {
 
 
     }
-        
+
     /**
      * Configure the multithreading support. This usually makes the canvas
      * build several buffered images to render each layer separately.
      * This raises memory concumption.
-     * 
+     *
      * WARNING : experimental
      */
     public static final Key KEY_MULTI_THREAD = new NamedKey(Boolean.class, "GO2 - MultiThread");
@@ -95,7 +94,7 @@ public final class GO2Hints {
      * Default value is False : Feature priority
      */
     public static final Key KEY_SYMBOL_RENDERING_ORDER = new NamedKey(Boolean.class, "GO2 - Symbol rendering order");
-    
+
     /**
      * Configure the label renderer used.
      * The default label renderer is Straight forward and doesn't make any overlaping check or anything,
@@ -127,13 +126,13 @@ public final class GO2Hints {
      * Default value is false.
      */
     public static final Key KEY_COVERAGE_WRITER = new NamedKey(Boolean.class, "GO2 - Coverage writer");
-    
+
     /**
      * When the symbol rendering order is actuvated it requieres several painting
      * pathes to make the image. this can be reduced by used a buffered image for
      * each symbol, this consume N time more memory but can have significant performance
      * benefit.
-     * 
+     *
      * Default value is false.
      */
     public static final Key KEY_PARALLAL_BUFFER = new NamedKey(Boolean.class, "GO2 - Parallal Buffer");
@@ -152,7 +151,7 @@ public final class GO2Hints {
     /**
      * A value of 1.3 looks like the best average generalisation.
      * Values between 1 and 2.5 give a fair rendering.
-     * Going under 1 doesnt bring much more details 
+     * Going under 1 doesnt bring much more details
      * going above 2.5 makes small geometries disapear or look sharp.
      *
      * Factor is adjusted using the DPI value.

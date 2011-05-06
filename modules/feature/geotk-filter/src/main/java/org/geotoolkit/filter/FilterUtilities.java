@@ -27,8 +27,7 @@ import org.opengis.filter.expression.PropertyName;
  *
  * @author Johann Sorel (Geomatys)
  */
-@Static
-public final class FilterUtilities {
+public final class FilterUtilities extends Static {
 
     /**
      * Avoid instanciation.

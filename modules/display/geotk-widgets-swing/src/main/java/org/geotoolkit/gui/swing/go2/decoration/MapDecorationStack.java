@@ -21,14 +21,12 @@ import javax.swing.JComponent;
 import javax.swing.JPanel;
 import org.geotoolkit.gui.swing.BufferLayout;
 import org.geotoolkit.gui.swing.go2.JMap2D;
-import org.geotoolkit.lang.Static;
 
 /**
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@Static
 public final class MapDecorationStack extends AbstractMapDecoration implements MapDecoration{
 
     private final JPanel panel = new JPanel(new BufferLayout());

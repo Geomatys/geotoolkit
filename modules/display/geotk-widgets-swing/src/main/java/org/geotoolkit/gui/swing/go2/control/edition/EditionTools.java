@@ -31,8 +31,7 @@ import org.geotoolkit.lang.Static;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@Static
-public final class EditionTools {
+public final class EditionTools extends Static {
 
     private static final FactoryRegistry REGISTRY;
 
@@ -54,12 +53,12 @@ public final class EditionTools {
                 return o2.getPriority() - o1.getPriority();
             }
         });
-        
+
         return Collections.unmodifiableList(cache);
     }
 
     public static ServiceRegistry getRegistry() {
         return REGISTRY;
     }
-    
+
 }

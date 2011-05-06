@@ -39,13 +39,12 @@ import org.opengis.style.Symbolizer;
 import org.opengis.style.TextSymbolizer;
 
 /**
- * Convinient methods to transform a style in tree.
+ * Convenient methods to transform a style in tree.
  *
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@Static
-public final class StyleUtilities {
+public final class StyleUtilities extends Static {
 
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                             new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));

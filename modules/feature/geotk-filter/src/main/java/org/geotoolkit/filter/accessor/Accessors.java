@@ -32,8 +32,7 @@ import org.geotoolkit.lang.Static;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@Static
-public class Accessors {
+public class Accessors extends Static {
 
     private static final PropertyAccessorFactory[] ACCESSOR_FACTORIES;
 
@@ -74,7 +73,7 @@ public class Accessors {
         }
         return null;
     }
-    
+
     /**
      * Get an array of all property accessor factories in priority order.
      * @return PropertyAccessorFactory[]

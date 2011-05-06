@@ -59,8 +59,7 @@ import org.opengis.referencing.operation.MathTransform;
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-@Static
-public final class GridCoverageReaders {
+public final class GridCoverageReaders extends Static {
 
     private static final Logger LOGGER = Logging.getLogger(GridCoverageReaders.class);
 
@@ -110,9 +109,9 @@ public final class GridCoverageReaders {
 
     /**
      * Open a tile manager or create it from a folder of images.
-     * The tile manager classe is concurrent and can be used by several 
+     * The tile manager classe is concurrent and can be used by several
      * grid coverage reader at the same time.
-     * 
+     *
      * @param file
      * @return Entry<TileManager,CoordinateReferenceSystem>
      * @throws IOException
