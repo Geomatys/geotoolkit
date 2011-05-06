@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.quality.Scope;
 import org.geotoolkit.metadata.iso.quality.DefaultScope;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultScope;
  * @since 3.00
  * @module
  */
-public final class DQ_Scope extends MetadataAdapter<DQ_Scope, Scope> {
+public final class DQ_Scope extends PropertyType<DQ_Scope, Scope> {
     /**
      * Empty constructor for JAXB only.
      */

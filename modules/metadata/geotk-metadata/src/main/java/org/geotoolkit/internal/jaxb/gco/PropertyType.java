@@ -53,7 +53,7 @@ import org.opengis.util.InternationalString;
  * <ul>
  *   <li>the public classes defined in the {@code org.geotoolkit.metadata.iso} packages are defined
  *       as {@code Foo_Type} in ISO 19139, where <var>Foo</var> is the ISO name of a class.</li>
- *   <li>the {@code MetadataAdapter} subclasses are defined as {@code Foo_PropertyType} in
+ *   <li>the {@code PropertyType} subclasses are defined as {@code Foo_PropertyType} in
  *       ISO 19139 schemas.</li>
  * </ul>
  *

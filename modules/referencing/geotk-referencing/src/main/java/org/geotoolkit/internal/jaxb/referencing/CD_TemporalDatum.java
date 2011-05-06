@@ -19,8 +19,8 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.TemporalDatum;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +33,7 @@ import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
  * @since 3.04
  * @module
  */
-public final class CD_TemporalDatum extends MetadataAdapter<CD_TemporalDatum, TemporalDatum> {
+public final class CD_TemporalDatum extends PropertyType<CD_TemporalDatum, TemporalDatum> {
     /**
      * Empty constructor for JAXB only.
      */

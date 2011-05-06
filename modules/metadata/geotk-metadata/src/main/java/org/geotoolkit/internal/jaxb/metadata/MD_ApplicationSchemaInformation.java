@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.ApplicationSchemaInformation;
 import org.geotoolkit.metadata.iso.DefaultApplicationSchemaInformation;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.DefaultApplicationSchemaInformation;
  * @module
  */
 public final class MD_ApplicationSchemaInformation
-        extends MetadataAdapter<MD_ApplicationSchemaInformation, ApplicationSchemaInformation>
+        extends PropertyType<MD_ApplicationSchemaInformation, ApplicationSchemaInformation>
 {
     /**
      * Empty constructor for JAXB only.

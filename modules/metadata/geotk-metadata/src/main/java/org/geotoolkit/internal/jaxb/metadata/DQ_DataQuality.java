@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.quality.DataQuality;
 import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultDataQuality;
  * @since 2.5
  * @module
  */
-public final class DQ_DataQuality extends MetadataAdapter<DQ_DataQuality, DataQuality> {
+public final class DQ_DataQuality extends PropertyType<DQ_DataQuality, DataQuality> {
     /**
      * Empty constructor for JAXB only.
      */

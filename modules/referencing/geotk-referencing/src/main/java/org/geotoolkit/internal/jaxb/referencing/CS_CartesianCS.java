@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.cs.CartesianCS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +33,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.04
  * @module
  */
-public final class CS_CartesianCS extends MetadataAdapter<CS_CartesianCS, CartesianCS> {
+public final class CS_CartesianCS extends PropertyType<CS_CartesianCS, CartesianCS> {
     /**
      * Empty constructor for JAXB only.
      */

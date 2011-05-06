@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.PortrayalCatalogueReference;
 import org.geotoolkit.metadata.iso.DefaultPortrayalCatalogueReference;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.DefaultPortrayalCatalogueReference;
  * @module
  */
 public final class MD_PortrayalCatalogueReference
-        extends MetadataAdapter<MD_PortrayalCatalogueReference, PortrayalCatalogueReference>
+        extends PropertyType<MD_PortrayalCatalogueReference, PortrayalCatalogueReference>
 {
     /**
      * Empty constructor for JAXB only.

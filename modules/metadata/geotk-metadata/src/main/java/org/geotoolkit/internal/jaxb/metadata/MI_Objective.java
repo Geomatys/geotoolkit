@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Objective;
 import org.geotoolkit.metadata.iso.acquisition.DefaultObjective;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.acquisition.DefaultObjective;
  * @since 3.02
  * @module
  */
-public final class MI_Objective extends MetadataAdapter<MI_Objective, Objective> {
+public final class MI_Objective extends PropertyType<MI_Objective, Objective> {
     /**
      * Empty constructor for JAXB only.
      */

@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.Usage;
 import org.geotoolkit.metadata.iso.identification.DefaultUsage;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultUsage;
  * @since 2.5
  * @module
  */
-public final class MD_Usage extends MetadataAdapter<MD_Usage, Usage> {
+public final class MD_Usage extends PropertyType<MD_Usage, Usage> {
     /**
      * Empty constructor for JAXB only.
      */

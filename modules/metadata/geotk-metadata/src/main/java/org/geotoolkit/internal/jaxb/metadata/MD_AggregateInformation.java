@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.AggregateInformation;
 import org.geotoolkit.metadata.iso.identification.DefaultAggregateInformation;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultAggregateInformation;
  * @module
  */
 public final class MD_AggregateInformation extends
-        MetadataAdapter<MD_AggregateInformation, AggregateInformation>
+        PropertyType<MD_AggregateInformation, AggregateInformation>
 {
     /**
      * Empty constructor for JAXB only.

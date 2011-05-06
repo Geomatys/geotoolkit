@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.maintenance.MaintenanceInformation;
 import org.geotoolkit.metadata.iso.maintenance.DefaultMaintenanceInformation;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.maintenance.DefaultMaintenanceInformation;
  * @module
  */
 public final class MD_MaintenanceInformation
-        extends MetadataAdapter<MD_MaintenanceInformation, MaintenanceInformation>
+        extends PropertyType<MD_MaintenanceInformation, MaintenanceInformation>
 {
     /**
      * Empty constructor for JAXB only.

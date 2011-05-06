@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.extent.GeographicBoundingBox;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
  * @module
  */
 public final class EX_GeographicBoundingBox extends
-        MetadataAdapter<EX_GeographicBoundingBox, GeographicBoundingBox>
+        PropertyType<EX_GeographicBoundingBox, GeographicBoundingBox>
 {
     /**
      * Empty constructor for JAXB only.

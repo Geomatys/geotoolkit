@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.StandardOrderProcess;
 import org.geotoolkit.metadata.iso.distribution.DefaultStandardOrderProcess;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultStandardOrderProcess;
  * @module
  */
 public final class MD_StandardOrderProcess
-        extends MetadataAdapter<MD_StandardOrderProcess, StandardOrderProcess>
+        extends PropertyType<MD_StandardOrderProcess, StandardOrderProcess>
 {
     /**
      * Empty constructor for JAXB only.

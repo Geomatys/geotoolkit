@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.Distributor;
 import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultDistributor;
  * @since 2.5
  * @module
  */
-public final class MD_Distributor extends MetadataAdapter<MD_Distributor, Distributor> {
+public final class MD_Distributor extends PropertyType<MD_Distributor, Distributor> {
     /**
      * Empty constructor for JAXB only.
      */

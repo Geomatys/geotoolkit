@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.cs.AffineCS;
 import org.geotoolkit.referencing.cs.DefaultAffineCS;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +33,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.04
  * @module
  */
-public final class CS_AffineCS extends MetadataAdapter<CS_AffineCS, AffineCS> {
+public final class CS_AffineCS extends PropertyType<CS_AffineCS, AffineCS> {
     /**
      * Empty constructor for JAXB only.
      */

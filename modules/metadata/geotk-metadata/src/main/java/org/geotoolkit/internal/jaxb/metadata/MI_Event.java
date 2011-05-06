@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Event;
 import org.geotoolkit.metadata.iso.acquisition.DefaultEvent;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.acquisition.DefaultEvent;
  * @since 3.02
  * @module
  */
-public final class MI_Event extends MetadataAdapter<MI_Event, Event> {
+public final class MI_Event extends PropertyType<MI_Event, Event> {
     /**
      * Empty constructor for JAXB only.
      */

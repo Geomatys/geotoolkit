@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.spatial.Dimension;
 import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultDimension;
  * @since 2.5
  * @module
  */
-public final class MD_Dimension extends MetadataAdapter<MD_Dimension, Dimension> {
+public final class MD_Dimension extends PropertyType<MD_Dimension, Dimension> {
     /**
      * Empty constructor for JAXB only.
      */

@@ -28,6 +28,7 @@ import org.geotoolkit.metadata.iso.extent.AbstractGeographicExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultBoundingPolygon;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicDescription;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -41,7 +42,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultGeographicDescription;
  * @since 2.5
  * @module
  */
-public final class EX_GeographicExtent extends MetadataAdapter<EX_GeographicExtent, GeographicExtent> {
+public final class EX_GeographicExtent extends PropertyType<EX_GeographicExtent, GeographicExtent> {
     /**
      * Empty constructor for JAXB only.
      */

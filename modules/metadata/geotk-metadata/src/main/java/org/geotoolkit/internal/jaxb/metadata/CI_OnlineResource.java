@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.OnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
  * @since 2.5
  * @module
  */
-public final class CI_OnlineResource extends MetadataAdapter<CI_OnlineResource, OnlineResource> {
+public final class CI_OnlineResource extends PropertyType<CI_OnlineResource, OnlineResource> {
     /**
      * Empty constructor for JAXB only.
      */

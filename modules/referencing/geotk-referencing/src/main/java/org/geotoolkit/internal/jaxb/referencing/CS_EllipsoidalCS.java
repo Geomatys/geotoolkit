@@ -18,10 +18,10 @@
 package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlElement;
-import org.geotoolkit.referencing.cs.DefaultCartesianCS;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
-import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.opengis.referencing.cs.EllipsoidalCS;
+import org.geotoolkit.referencing.cs.DefaultCartesianCS;
+import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -34,7 +34,7 @@ import org.opengis.referencing.cs.EllipsoidalCS;
  * @since 3.04
  * @module
  */
-public final class CS_EllipsoidalCS extends MetadataAdapter<CS_EllipsoidalCS, EllipsoidalCS> {
+public final class CS_EllipsoidalCS extends PropertyType<CS_EllipsoidalCS, EllipsoidalCS> {
     /**
      * Empty constructor for JAXB only.
      */

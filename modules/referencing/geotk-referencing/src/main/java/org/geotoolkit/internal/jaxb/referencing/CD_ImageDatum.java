@@ -19,8 +19,8 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.ImageDatum;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
 import org.geotoolkit.referencing.datum.DefaultImageDatum;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +33,7 @@ import org.geotoolkit.referencing.datum.DefaultImageDatum;
  * @since 3.04
  * @module
  */
-public final class CD_ImageDatum extends MetadataAdapter<CD_ImageDatum, ImageDatum> {
+public final class CD_ImageDatum extends PropertyType<CD_ImageDatum, ImageDatum> {
     /**
      * Empty constructor for JAXB only.
      */

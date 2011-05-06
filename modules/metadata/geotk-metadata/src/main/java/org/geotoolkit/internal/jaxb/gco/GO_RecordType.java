@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlElement;
 
 import org.opengis.util.RecordType;
 import org.geotoolkit.naming.DefaultRecordType;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
 
 
 /**
@@ -34,7 +33,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 2.5
  * @module
  */
-public final class GO_RecordType extends MetadataAdapter<GO_RecordType, RecordType> {
+public final class GO_RecordType extends PropertyType<GO_RecordType, RecordType> {
     /**
      * Empty constructor for JAXB only.
      */

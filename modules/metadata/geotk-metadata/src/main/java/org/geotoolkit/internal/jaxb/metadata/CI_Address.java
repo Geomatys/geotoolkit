@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Address;
 import org.geotoolkit.metadata.iso.citation.DefaultAddress;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultAddress;
  * @since 2.5
  * @module
  */
-public final class CI_Address extends MetadataAdapter<CI_Address, Address> {
+public final class CI_Address extends PropertyType<CI_Address, Address> {
     /**
      * Empty constructor for JAXB only.
      */

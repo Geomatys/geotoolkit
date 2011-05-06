@@ -260,7 +260,7 @@ public final class MetadataAnnotationsTest extends AnnotationsTestBase {
         if (type.equals(org.opengis.metadata.Metadata.class)) {
             /*
              * We don't have adapter for Metadata, since it is the root element.
-             * We explicitly exclude it for avoiding confusion with MetadataAdapter,
+             * We explicitly exclude it for avoiding confusion with PropertyType,
              * which is the base class of all other adapters.
              */
             return Void.TYPE;

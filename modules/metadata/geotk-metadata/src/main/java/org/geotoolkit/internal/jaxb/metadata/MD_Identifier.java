@@ -25,6 +25,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -37,7 +38,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
  * @since 2.5
  * @module
  */
-public final class MD_Identifier extends MetadataAdapter<MD_Identifier, Identifier> {
+public final class MD_Identifier extends PropertyType<MD_Identifier, Identifier> {
     /**
      * Empty constructor for JAXB only.
      */

@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.Keywords;
 import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultKeywords;
  * @since 2.5
  * @module
  */
-public final class MD_Keywords extends MetadataAdapter<MD_Keywords, Keywords> {
+public final class MD_Keywords extends PropertyType<MD_Keywords, Keywords> {
     /**
      * Empty constructor for JAXB only.
      */

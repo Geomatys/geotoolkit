@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.VerticalDatum;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
 
 
@@ -33,7 +33,7 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
  * @since 3.00
  * @module
  */
-public final class CD_VerticalDatum extends MetadataAdapter<CD_VerticalDatum, VerticalDatum> {
+public final class CD_VerticalDatum extends PropertyType<CD_VerticalDatum, VerticalDatum> {
     /**
      * Empty constructor for JAXB only.
      */

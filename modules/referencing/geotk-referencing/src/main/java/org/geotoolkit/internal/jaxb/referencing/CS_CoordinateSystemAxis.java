@@ -19,8 +19,8 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -34,7 +34,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
  * @module
  */
 public final class CS_CoordinateSystemAxis extends
-        MetadataAdapter<CS_CoordinateSystemAxis, CoordinateSystemAxis>
+        PropertyType<CS_CoordinateSystemAxis, CoordinateSystemAxis>
 {
     /**
      * Empty constructor for JAXB only.

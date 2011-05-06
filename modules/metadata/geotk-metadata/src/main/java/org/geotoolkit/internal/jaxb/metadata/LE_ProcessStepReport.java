@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.ProcessStepReport;
 import org.geotoolkit.metadata.iso.lineage.DefaultProcessStepReport;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.lineage.DefaultProcessStepReport;
  * @since 3.02
  * @module
  */
-public final class LE_ProcessStepReport extends MetadataAdapter<LE_ProcessStepReport, ProcessStepReport> {
+public final class LE_ProcessStepReport extends PropertyType<LE_ProcessStepReport, ProcessStepReport> {
     /**
      * Empty constructor for JAXB only.
      */

@@ -26,6 +26,7 @@ import org.opengis.metadata.identification.ServiceIdentification;
 import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
 import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -39,7 +40,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
  * @since 2.5
  * @module
  */
-public final class MD_Identification extends MetadataAdapter<MD_Identification, Identification> {
+public final class MD_Identification extends PropertyType<MD_Identification, Identification> {
     /**
      * Empty constructor for JAXB only.
      */

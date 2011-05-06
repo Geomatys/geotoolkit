@@ -26,6 +26,7 @@ import org.opengis.metadata.constraint.SecurityConstraints;
 import org.geotoolkit.metadata.iso.constraint.DefaultConstraints;
 import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
 import org.geotoolkit.metadata.iso.constraint.DefaultSecurityConstraints;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -39,7 +40,7 @@ import org.geotoolkit.metadata.iso.constraint.DefaultSecurityConstraints;
  * @since 2.5
  * @module
  */
-public final class MD_Constraints extends MetadataAdapter<MD_Constraints, Constraints> {
+public final class MD_Constraints extends PropertyType<MD_Constraints, Constraints> {
     /**
      * Empty constructor for JAXB only.
      */

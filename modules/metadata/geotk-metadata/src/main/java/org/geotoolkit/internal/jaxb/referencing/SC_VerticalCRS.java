@@ -20,7 +20,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.crs.VerticalCRS;
 import org.geotoolkit.referencing.crs.DefaultVerticalCRS;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -34,7 +34,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.00
  * @module
  */
-public final class SC_VerticalCRS extends MetadataAdapter<SC_VerticalCRS, VerticalCRS> {
+public final class SC_VerticalCRS extends PropertyType<SC_VerticalCRS, VerticalCRS> {
     /**
      * Empty constructor for JAXB only.
      */

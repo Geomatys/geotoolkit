@@ -28,6 +28,7 @@ import org.geotoolkit.metadata.iso.quality.AbstractResult;
 import org.geotoolkit.metadata.iso.quality.DefaultCoverageResult;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.metadata.iso.quality.DefaultQuantitativeResult;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -41,7 +42,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultQuantitativeResult;
  * @since 3.04
  * @module
  */
-public final class DQ_Result extends MetadataAdapter<DQ_Result, Result> {
+public final class DQ_Result extends PropertyType<DQ_Result, Result> {
     /**
      * Empty constructor for JAXB only.
      */

@@ -27,7 +27,7 @@ import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -40,7 +40,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.05
  * @module
  */
-public final class CD_Ellipsoid extends MetadataAdapter<CD_Ellipsoid, Ellipsoid> {
+public final class CD_Ellipsoid extends PropertyType<CD_Ellipsoid, Ellipsoid> {
     /**
      * Empty constructor for JAXB only.
      */

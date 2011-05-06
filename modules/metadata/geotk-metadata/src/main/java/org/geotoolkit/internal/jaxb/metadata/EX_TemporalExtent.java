@@ -24,6 +24,7 @@ import org.opengis.metadata.extent.SpatialTemporalExtent;
 
 import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
 import org.geotoolkit.metadata.iso.extent.DefaultSpatialTemporalExtent;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -37,7 +38,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultSpatialTemporalExtent;
  * @since 2.5
  * @module
  */
-public final class EX_TemporalExtent extends MetadataAdapter<EX_TemporalExtent, TemporalExtent> {
+public final class EX_TemporalExtent extends PropertyType<EX_TemporalExtent, TemporalExtent> {
     /**
      * Empty constructor for JAXB only.
      */

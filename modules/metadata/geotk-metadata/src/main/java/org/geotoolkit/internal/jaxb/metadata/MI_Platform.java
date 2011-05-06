@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Platform;
 import org.geotoolkit.metadata.iso.acquisition.DefaultPlatform;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.acquisition.DefaultPlatform;
  * @since 3.02
  * @module
  */
-public final class MI_Platform extends MetadataAdapter<MI_Platform, Platform> {
+public final class MI_Platform extends PropertyType<MI_Platform, Platform> {
     /**
      * Empty constructor for JAXB only.
      */

@@ -24,6 +24,7 @@ import org.opengis.metadata.spatial.GeolocationInformation;
 
 import org.geotoolkit.metadata.iso.spatial.DefaultGCPCollection;
 import org.geotoolkit.metadata.iso.spatial.AbstractGeolocationInformation;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -38,7 +39,7 @@ import org.geotoolkit.metadata.iso.spatial.AbstractGeolocationInformation;
  * @module
  */
 public final class MI_GeolocationInformation
-        extends MetadataAdapter<MI_GeolocationInformation, GeolocationInformation>
+        extends PropertyType<MI_GeolocationInformation, GeolocationInformation>
 {
     /**
      * Empty constructor for JAXB only.

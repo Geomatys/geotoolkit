@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.DataFile;
 import org.geotoolkit.metadata.iso.distribution.DefaultDataFile;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultDataFile;
  * @since 3.17
  * @module
  */
-public final class MX_DataFile extends MetadataAdapter<MX_DataFile, DataFile> {
+public final class MX_DataFile extends PropertyType<MX_DataFile, DataFile> {
     /**
      * Empty constructor for JAXB only.
      */

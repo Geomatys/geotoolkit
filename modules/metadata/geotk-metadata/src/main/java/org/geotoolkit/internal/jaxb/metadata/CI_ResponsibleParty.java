@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.ResponsibleParty;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
  * @module
  */
 public final class CI_ResponsibleParty
-        extends MetadataAdapter<CI_ResponsibleParty, ResponsibleParty>
+        extends PropertyType<CI_ResponsibleParty, ResponsibleParty>
 {
     /**
      * Empty constructor for JAXB only.

@@ -19,7 +19,7 @@ package org.geotoolkit.internal.jaxb.referencing;
 
 import javax.xml.bind.annotation.XmlElement;
 import org.opengis.referencing.datum.GeodeticDatum;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 
 
@@ -33,7 +33,7 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
  * @since 3.04
  * @module
  */
-public final class CD_GeodeticDatum extends MetadataAdapter<CD_GeodeticDatum, GeodeticDatum> {
+public final class CD_GeodeticDatum extends PropertyType<CD_GeodeticDatum, GeodeticDatum> {
     /**
      * Empty constructor for JAXB only.
      */

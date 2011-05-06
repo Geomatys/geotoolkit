@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.Plan;
 import org.geotoolkit.metadata.iso.acquisition.DefaultPlan;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.acquisition.DefaultPlan;
  * @since 3.02
  * @module
  */
-public final class MI_Plan extends MetadataAdapter<MI_Plan, Plan> {
+public final class MI_Plan extends PropertyType<MI_Plan, Plan> {
     /**
      * Empty constructor for JAXB only.
      */

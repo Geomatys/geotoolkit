@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.RequestedDate;
 import org.geotoolkit.metadata.iso.acquisition.DefaultRequestedDate;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.acquisition.DefaultRequestedDate;
  * @since 3.02
  * @module
  */
-public final class MI_RequestedDate extends MetadataAdapter<MI_RequestedDate, RequestedDate> {
+public final class MI_RequestedDate extends PropertyType<MI_RequestedDate, RequestedDate> {
     /**
      * Empty constructor for JAXB only.
      */

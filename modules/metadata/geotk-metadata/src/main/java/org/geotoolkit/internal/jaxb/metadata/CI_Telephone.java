@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Telephone;
 import org.geotoolkit.metadata.iso.citation.DefaultTelephone;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultTelephone;
  * @since 2.5
  * @module
  */
-public final class CI_Telephone extends MetadataAdapter<CI_Telephone, Telephone> {
+public final class CI_Telephone extends PropertyType<CI_Telephone, Telephone> {
     /**
      * Empty constructor for JAXB only.
      */

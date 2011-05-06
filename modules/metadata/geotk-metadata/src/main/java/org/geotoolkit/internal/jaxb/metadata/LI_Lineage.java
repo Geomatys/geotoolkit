@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.Lineage;
 import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.lineage.DefaultLineage;
  * @since 2.5
  * @module
  */
-public final class LI_Lineage extends MetadataAdapter<LI_Lineage, Lineage> {
+public final class LI_Lineage extends PropertyType<LI_Lineage, Lineage> {
     /**
      * Empty constructor for JAXB only.
      */

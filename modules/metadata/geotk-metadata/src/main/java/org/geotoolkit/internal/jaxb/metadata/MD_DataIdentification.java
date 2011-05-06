@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.DataIdentification;
 import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
  * @module
  */
 public final class MD_DataIdentification
-        extends MetadataAdapter<MD_DataIdentification, DataIdentification>
+        extends PropertyType<MD_DataIdentification, DataIdentification>
 {
     /**
      * Empty constructor for JAXB only.

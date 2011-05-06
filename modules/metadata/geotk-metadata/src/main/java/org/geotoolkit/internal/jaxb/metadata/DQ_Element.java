@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.quality.*;
 import org.geotoolkit.metadata.iso.quality.*;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.quality.*;
  * @since 3.02
  * @module
  */
-public final class DQ_Element extends MetadataAdapter<DQ_Element, Element> {
+public final class DQ_Element extends PropertyType<DQ_Element, Element> {
     /**
      * Empty constructor for JAXB only.
      */

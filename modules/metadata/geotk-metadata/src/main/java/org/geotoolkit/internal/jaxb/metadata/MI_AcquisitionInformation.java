@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.AcquisitionInformation;
 import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.acquisition.DefaultAcquisitionInformation;
  * @module
  */
 public final class MI_AcquisitionInformation
-        extends MetadataAdapter<MI_AcquisitionInformation, AcquisitionInformation>
+        extends PropertyType<MI_AcquisitionInformation, AcquisitionInformation>
 {
     /**
      * Empty constructor for JAXB only.

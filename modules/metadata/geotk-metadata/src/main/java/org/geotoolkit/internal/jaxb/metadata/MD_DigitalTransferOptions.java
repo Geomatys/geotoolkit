@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.DigitalTransferOptions;
 import org.geotoolkit.metadata.iso.distribution.DefaultDigitalTransferOptions;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultDigitalTransferOptions;
  * @module
  */
 public final class MD_DigitalTransferOptions
-        extends MetadataAdapter<MD_DigitalTransferOptions, DigitalTransferOptions>
+        extends PropertyType<MD_DigitalTransferOptions, DigitalTransferOptions>
 {
     /**
      * Empty constructor for JAXB only.

@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.CitationDate;
 import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
  * @since 2.5
  * @module
  */
-public final class CI_Date extends MetadataAdapter<CI_Date, CitationDate> {
+public final class CI_Date extends PropertyType<CI_Date, CitationDate> {
     /**
      * Empty constructor for JAXB only.
      */

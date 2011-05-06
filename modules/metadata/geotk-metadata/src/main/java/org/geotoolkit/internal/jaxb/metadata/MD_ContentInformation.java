@@ -24,6 +24,7 @@ import org.opengis.metadata.content.CoverageDescription;
 import org.opengis.metadata.content.FeatureCatalogueDescription;
 import org.opengis.metadata.content.ImageDescription;
 
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.internal.jaxb.gmi.MI_ImageDescription;
 import org.geotoolkit.internal.jaxb.gmi.MI_CoverageDescription;
 import org.geotoolkit.metadata.iso.content.AbstractContentInformation;
@@ -42,7 +43,7 @@ import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
  * @module
  */
 public final class MD_ContentInformation
-        extends MetadataAdapter<MD_ContentInformation, ContentInformation>
+        extends PropertyType<MD_ContentInformation, ContentInformation>
 {
     /**
      * Empty constructor for JAXB only.

@@ -31,7 +31,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.FactoryNotFoundException;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
-import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -46,7 +46,7 @@ import org.geotoolkit.internal.jaxb.metadata.MetadataAdapter;
  * @since 3.00
  * @module
  */
-public final class TM_Primitive extends MetadataAdapter<TM_Primitive, TemporalPrimitive> {
+public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimitive> {
     /**
      * Empty constructor for JAXB.
      */

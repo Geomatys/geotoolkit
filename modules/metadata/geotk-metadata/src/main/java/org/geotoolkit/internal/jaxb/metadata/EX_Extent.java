@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.extent.Extent;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.extent.DefaultExtent;
  * @since 2.5
  * @module
  */
-public final class EX_Extent extends MetadataAdapter<EX_Extent, Extent> {
+public final class EX_Extent extends PropertyType<EX_Extent, Extent> {
     /**
      * Empty constructor for JAXB only.
      */

@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.maintenance.ScopeDescription;
 import org.geotoolkit.metadata.iso.maintenance.DefaultScopeDescription;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.maintenance.DefaultScopeDescription;
  * @module
  */
 public final class MD_ScopeDescription
-        extends MetadataAdapter<MD_ScopeDescription, ScopeDescription>
+        extends PropertyType<MD_ScopeDescription, ScopeDescription>
 {
     /**
      * Empty constructor for JAXB only.

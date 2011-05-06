@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.acquisition.PlatformPass;
 import org.geotoolkit.metadata.iso.acquisition.DefaultPlatformPass;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.acquisition.DefaultPlatformPass;
  * @since 3.02
  * @module
  */
-public final class MI_PlatformPass extends MetadataAdapter<MI_PlatformPass, PlatformPass> {
+public final class MI_PlatformPass extends PropertyType<MI_PlatformPass, PlatformPass> {
     /**
      * Empty constructor for JAXB only.
      */

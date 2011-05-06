@@ -23,6 +23,7 @@ import org.opengis.metadata.content.Band;
 import org.opengis.metadata.content.RangeDimension;
 
 import org.geotoolkit.internal.jaxb.gmi.MI_Band;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
 
 
@@ -37,7 +38,7 @@ import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
  * @since 2.5
  * @module
  */
-public final class MD_RangeDimension extends MetadataAdapter<MD_RangeDimension, RangeDimension> {
+public final class MD_RangeDimension extends PropertyType<MD_RangeDimension, RangeDimension> {
     /**
      * Empty constructor for JAXB only.
      */

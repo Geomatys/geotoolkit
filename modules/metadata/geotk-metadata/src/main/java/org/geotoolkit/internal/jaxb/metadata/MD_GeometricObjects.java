@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.spatial.GeometricObjects;
 import org.geotoolkit.metadata.iso.spatial.DefaultGeometricObjects;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultGeometricObjects;
  * @since 2.5
  * @module
  */
-public final class MD_GeometricObjects extends MetadataAdapter<MD_GeometricObjects, GeometricObjects> {
+public final class MD_GeometricObjects extends PropertyType<MD_GeometricObjects, GeometricObjects> {
     /**
      * Empty constructor for JAXB only.
      */

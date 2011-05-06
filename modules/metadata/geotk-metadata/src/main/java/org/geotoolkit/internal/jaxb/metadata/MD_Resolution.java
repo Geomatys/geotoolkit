@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.Resolution;
 import org.geotoolkit.metadata.iso.identification.DefaultResolution;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultResolution;
  * @since 2.5
  * @module
  */
-public final class MD_Resolution extends MetadataAdapter<MD_Resolution, Resolution> {
+public final class MD_Resolution extends PropertyType<MD_Resolution, Resolution> {
     /**
      * Empty constructor for JAXB only.
      */

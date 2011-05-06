@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.identification.BrowseGraphic;
 import org.geotoolkit.metadata.iso.identification.DefaultBrowseGraphic;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.identification.DefaultBrowseGraphic;
  * @since 2.5
  * @module
  */
-public final class MD_BrowseGraphic extends MetadataAdapter<MD_BrowseGraphic, BrowseGraphic> {
+public final class MD_BrowseGraphic extends PropertyType<MD_BrowseGraphic, BrowseGraphic> {
     /**
      * Empty constructor for JAXB only.
      */

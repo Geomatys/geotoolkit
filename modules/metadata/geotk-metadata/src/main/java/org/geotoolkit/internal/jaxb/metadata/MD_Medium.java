@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.Medium;
 import org.geotoolkit.metadata.iso.distribution.DefaultMedium;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultMedium;
  * @since 2.5
  * @module
  */
-public final class MD_Medium extends MetadataAdapter<MD_Medium, Medium> {
+public final class MD_Medium extends PropertyType<MD_Medium, Medium> {
     /**
      * Empty constructor for JAXB only.
      */

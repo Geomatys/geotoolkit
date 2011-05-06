@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.spatial.GCP;
 import org.geotoolkit.metadata.iso.spatial.DefaultGCP;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultGCP;
  * @since 3.02
  * @module
  */
-public final class MI_GCP extends MetadataAdapter<MI_GCP, GCP> {
+public final class MI_GCP extends PropertyType<MI_GCP, GCP> {
     /**
      * Empty constructor for JAXB only.
      */

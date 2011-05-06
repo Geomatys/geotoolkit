@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.lineage.NominalResolution;
 import org.geotoolkit.metadata.iso.lineage.DefaultNominalResolution;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.lineage.DefaultNominalResolution;
  * @since 3.02
  * @module
  */
-public final class LE_NominalResolution extends MetadataAdapter<LE_NominalResolution, NominalResolution> {
+public final class LE_NominalResolution extends PropertyType<LE_NominalResolution, NominalResolution> {
     /**
      * Empty constructor for JAXB only.
      */

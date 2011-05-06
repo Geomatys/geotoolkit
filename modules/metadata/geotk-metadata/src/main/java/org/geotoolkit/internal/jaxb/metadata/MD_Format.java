@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.distribution.Format;
 import org.geotoolkit.metadata.iso.distribution.DefaultFormat;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.distribution.DefaultFormat;
  * @since 2.5
  * @module
  */
-public final class MD_Format extends MetadataAdapter<MD_Format, Format> {
+public final class MD_Format extends PropertyType<MD_Format, Format> {
     /**
      * Empty constructor for JAXB only.
      */

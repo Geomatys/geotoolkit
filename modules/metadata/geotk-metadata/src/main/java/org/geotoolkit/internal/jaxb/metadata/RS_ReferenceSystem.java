@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -34,7 +35,7 @@ import org.geotoolkit.xml.Namespaces;
  * @since 3.00
  * @module
  */
-public class RS_ReferenceSystem extends MetadataAdapter<RS_ReferenceSystem, ReferenceSystem> {
+public class RS_ReferenceSystem extends PropertyType<RS_ReferenceSystem, ReferenceSystem> {
     /**
      * Empty constructor for JAXB only.
      */

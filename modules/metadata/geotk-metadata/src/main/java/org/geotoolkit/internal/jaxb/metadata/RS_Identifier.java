@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.referencing.ReferenceIdentifier;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -38,7 +39,7 @@ import org.geotoolkit.referencing.DefaultReferenceIdentifier;
  * @since 3.00
  * @module
  */
-public final class RS_Identifier extends MetadataAdapter<RS_Identifier, ReferenceIdentifier> {
+public final class RS_Identifier extends PropertyType<RS_Identifier, ReferenceIdentifier> {
     /**
      * Empty constructor for JAXB only.
      */

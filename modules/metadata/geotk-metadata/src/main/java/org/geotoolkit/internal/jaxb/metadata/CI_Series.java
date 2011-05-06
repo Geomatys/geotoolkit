@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.citation.Series;
 import org.geotoolkit.metadata.iso.citation.DefaultSeries;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultSeries;
  * @since 2.5
  * @module
  */
-public final class CI_Series extends MetadataAdapter<CI_Series, Series> {
+public final class CI_Series extends PropertyType<CI_Series, Series> {
     /**
      * Empty constructor for JAXB only.
      */

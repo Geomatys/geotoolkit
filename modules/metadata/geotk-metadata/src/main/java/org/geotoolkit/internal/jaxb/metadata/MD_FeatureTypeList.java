@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.FeatureTypeList;
 import org.geotoolkit.metadata.iso.DefaultFeatureTypeList;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -32,7 +33,7 @@ import org.geotoolkit.metadata.iso.DefaultFeatureTypeList;
  * @since 2.5
  * @module
  */
-public final class MD_FeatureTypeList extends MetadataAdapter<MD_FeatureTypeList, FeatureTypeList> {
+public final class MD_FeatureTypeList extends PropertyType<MD_FeatureTypeList, FeatureTypeList> {
     /**
      * Empty constructor for JAXB only.
      */

@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.content.RangeElementDescription;
 import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
 /**
@@ -33,7 +34,7 @@ import org.geotoolkit.metadata.iso.content.DefaultRangeElementDescription;
  * @module
  */
 public final class MI_RangeElementDescription
-        extends MetadataAdapter<MI_RangeElementDescription, RangeElementDescription>
+        extends PropertyType<MI_RangeElementDescription, RangeElementDescription>
 {
     /**
      * Empty constructor for JAXB only.

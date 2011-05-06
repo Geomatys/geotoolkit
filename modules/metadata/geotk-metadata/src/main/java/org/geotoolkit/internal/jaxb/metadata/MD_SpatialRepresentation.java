@@ -25,6 +25,7 @@ import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.metadata.spatial.GridSpatialRepresentation;
 import org.opengis.metadata.spatial.VectorSpatialRepresentation;
 
+import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.internal.jaxb.gmi.MI_Georectified;
 import org.geotoolkit.internal.jaxb.gmi.MI_Georeferenceable;
 import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
@@ -44,7 +45,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
  * @module
  */
 public final class MD_SpatialRepresentation
-        extends MetadataAdapter<MD_SpatialRepresentation, SpatialRepresentation>
+        extends PropertyType<MD_SpatialRepresentation, SpatialRepresentation>
 {
     /**
      * Empty constructor for JAXB only.
