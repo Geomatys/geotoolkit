@@ -33,8 +33,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 3.07
  * @module
  */
-@Static
-public final class SampleModels {
+public final class SampleModels extends Static {
     /**
      * Do not allow instantiation of this class.
      */

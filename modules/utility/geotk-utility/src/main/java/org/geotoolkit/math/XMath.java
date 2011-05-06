@@ -34,8 +34,7 @@ import org.geotoolkit.resources.Errors;
  * @since 1.0
  * @module
  */
-@Static
-public final class XMath {
+public final class XMath extends Static {
     /**
      * Bit mask to isolate the sign bit of a {@code double}.
      */

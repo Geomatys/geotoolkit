@@ -32,8 +32,7 @@ import org.geotoolkit.lang.Static;
  * @since 3.03
  * @module
  */
-@Static
-public final class VerticalDatumTypes {
+public final class VerticalDatumTypes extends Static {
     /**
      * Do not allow instantiation of this class.
      */

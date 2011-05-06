@@ -51,8 +51,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * @since 3.18
  * @module
  */
-@Static
-public final class CoverageIO {
+public final class CoverageIO extends Static {
     /**
      * Do not allow instantiation of this class.
      */

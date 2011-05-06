@@ -111,8 +111,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.10
  * @module
  */
-@Static
-public final class Setup {
+public final class Setup extends Static {
     /**
      * The setup state.
      * <ul>

@@ -45,8 +45,7 @@ import org.geotoolkit.io.ContentFormatException;
  * @since 3.00
  * @module
  */
-@Static
-public final class IOUtilities {
+public final class IOUtilities extends Static {
     /**
      * Do not allow instantiation of this class.
      */

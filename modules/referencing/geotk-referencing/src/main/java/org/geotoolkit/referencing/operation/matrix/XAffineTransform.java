@@ -27,7 +27,6 @@ import java.awt.geom.RectangularShape;
 import java.awt.geom.NoninvertibleTransformException;
 
 import org.geotoolkit.math.XMath;
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
 import org.opengis.referencing.operation.MathTransform2D; // For Javadoc
 
@@ -51,7 +50,6 @@ import static java.lang.Math.*;
  * @since 1.2
  * @module
  */
-@Static
 public class XAffineTransform extends AffineTransform {
     /**
      * Serial number for inter-operability with different versions.

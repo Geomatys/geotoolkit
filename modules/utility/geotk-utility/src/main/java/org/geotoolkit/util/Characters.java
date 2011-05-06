@@ -29,8 +29,7 @@ import org.geotoolkit.lang.Static;
  * @since 2.1
  * @module
  */
-@Static
-public final class Characters {
+public final class Characters extends Static {
     /**
      * Do not allow instantiation of this class.
      */

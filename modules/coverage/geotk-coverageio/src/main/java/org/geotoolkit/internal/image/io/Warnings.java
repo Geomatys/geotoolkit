@@ -40,8 +40,7 @@ import org.geotoolkit.image.io.WarningProducer;
  * @since 3.08
  * @module
  */
-@Static
-public final class Warnings {
+public final class Warnings extends Static {
     /**
      * Do not allow instantiation of this class.
      */

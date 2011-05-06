@@ -83,8 +83,7 @@ import org.geotoolkit.naming.DefaultNameSpace;
  * @since 2.1
  * @module
  */
-@Static
-public final class Parameters {
+public final class Parameters extends Static {
     /**
      * Small number for floating point comparisons.
      */

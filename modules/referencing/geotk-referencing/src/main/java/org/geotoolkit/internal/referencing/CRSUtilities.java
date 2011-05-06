@@ -57,8 +57,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.0
  * @module
  */
-@Static
-public final class CRSUtilities {
+public final class CRSUtilities extends Static {
     /**
      * Do not allow creation of instances of this class.
      */

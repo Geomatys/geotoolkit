@@ -55,8 +55,7 @@ import static org.geotoolkit.internal.image.Setup.PRODUCT_NAME;
  * @since 2.2
  * @module
  */
-@Static
-public final class Registry {
+public final class Registry extends Static {
     /**
      * Do not allows instantiation of this class.
      */

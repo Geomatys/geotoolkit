@@ -46,8 +46,7 @@ import org.geotoolkit.io.ExpandedTabWriter;
  * @since 2.0
  * @module
  */
-@Static
-public final class Exceptions {
+public final class Exceptions extends Static {
     /**
      * Number of spaces to leave between each tab.
      */

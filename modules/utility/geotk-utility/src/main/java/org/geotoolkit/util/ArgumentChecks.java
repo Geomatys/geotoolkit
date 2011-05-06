@@ -51,8 +51,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.17
  * @module
  */
-@Static
-public final class ArgumentChecks {
+public final class ArgumentChecks extends Static {
     /**
      * Forbid object creation.
      */

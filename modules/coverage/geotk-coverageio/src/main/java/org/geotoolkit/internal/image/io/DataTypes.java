@@ -39,8 +39,7 @@ import org.geotoolkit.util.collection.UnmodifiableArrayList;
  * @since 3.07
  * @module
  */
-@Static
-public final class DataTypes {
+public final class DataTypes extends Static {
     /**
      * Enumeration of valid coordinate reference system types.
      */

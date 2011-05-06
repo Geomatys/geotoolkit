@@ -54,8 +54,7 @@ import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
  * @since 2.5
  * @module
  */
-@Static
-public final class PixelTranslation implements Serializable {
+public final class PixelTranslation extends Static implements Serializable {
     /**
      * For cross-version compatibility.
      */

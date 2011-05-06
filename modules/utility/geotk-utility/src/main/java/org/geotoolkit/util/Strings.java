@@ -45,8 +45,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.09 (derived from 3.00)
  * @module
  */
-@Static
-public final class Strings {
+public final class Strings extends Static {
     /**
      * An array of strings containing only white spaces. String lengths are equal to their
      * index in the {@code spaces} array. For example, {@code spaces[4]} contains a string of

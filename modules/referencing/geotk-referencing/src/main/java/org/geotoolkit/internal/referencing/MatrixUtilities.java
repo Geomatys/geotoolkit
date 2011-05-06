@@ -45,8 +45,7 @@ import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
  * @since 3.00
  * @module
  */
-@Static
-public final class MatrixUtilities {
+public final class MatrixUtilities extends Static {
     /**
      * Do not allow instantiation of this class.
      */

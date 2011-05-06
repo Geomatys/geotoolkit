@@ -25,10 +25,9 @@ import java.lang.annotation.RetentionPolicy;
 
 
 /**
- * Annotates classes that contain only static utility methods. This annotation is for documentation
- * purpose only. The "<cite>Use</cite>" javadoc link above gives a list of all annotated public
- * classes. The list below summarizes the main ones (not all utility methods are mentioned. See
- * the javadoc of individual classes for more details).
+ * Parent of classes that contain only static utility methods. This parent is for documentation
+ * purpose only. The list below summarizes the main utility classes (not all utility methods are
+ * mentioned. See the javadoc of individual classes for more details).
  *
  * <ul>
  *   <li><p>Primitives</p></li>
@@ -116,13 +115,17 @@ import java.lang.annotation.RetentionPolicy;
  * </ul>
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 3.00
  * @module
  */
-@Documented
-@Target(ElementType.TYPE)
-@Retention(RetentionPolicy.SOURCE)
-public @interface Static {
+public class Static {
+    /**
+     * Do not allow instantiation. This construction is defined only in order to allow
+     * subclassing. Subclasses shall declare their own private constructor in order to
+     * prevent instantiation.
+     */
+    protected Static() {
+    }
 }

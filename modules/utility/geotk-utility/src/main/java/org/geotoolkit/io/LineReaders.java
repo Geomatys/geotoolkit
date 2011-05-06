@@ -37,8 +37,7 @@ import org.geotoolkit.util.Strings;
  * @since 3.02
  * @module
  */
-@Static
-public final class LineReaders {
+public final class LineReaders extends Static {
     /**
      * Do not allow instantiation of this class.
      */

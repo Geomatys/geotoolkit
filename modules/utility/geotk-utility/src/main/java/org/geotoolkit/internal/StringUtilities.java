@@ -37,8 +37,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 3.00
  * @module
  */
-@Static
-public final class StringUtilities {
+public final class StringUtilities extends Static {
     /**
      * Letters in the range 00C0 (192) to 00FF (255) inclusive with their accent removed,
      * when possible.

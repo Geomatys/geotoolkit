@@ -107,9 +107,8 @@ import org.geotoolkit.internal.LazySet;
  * @level basic
  * @module
  */
-@Static
 @ThreadSafe
-public class FactoryFinder {
+public class FactoryFinder extends Static {
     /**
      * The key for a special hints specifying an additional
      * {@link javax.imageio.spi.ServiceRegistry.Filter Filter}.

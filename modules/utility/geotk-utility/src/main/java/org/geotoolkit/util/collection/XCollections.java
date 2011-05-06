@@ -39,8 +39,7 @@ import org.geotoolkit.lang.Static;
  * @since 3.10 (derived from 3.00)
  * @module
  */
-@Static
-public final class XCollections {
+public final class XCollections extends Static {
     /**
      * Do not allow instantiation of this class.
      */

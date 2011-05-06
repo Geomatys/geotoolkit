@@ -25,7 +25,6 @@ import java.util.logging.Level;
 import java.util.logging.LogRecord;
 import java.lang.ref.PhantomReference;
 
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Loggings;
@@ -49,7 +48,6 @@ import org.geotoolkit.internal.ReferenceQueueConsumer;
  * @since 3.03
  * @module
  */
-@Static
 public final class TemporaryFile extends PhantomReference<File> implements Disposable {
     /**
      * The temporary files not yet deleted. Keys are the string returned by {@link File#getPath()}.

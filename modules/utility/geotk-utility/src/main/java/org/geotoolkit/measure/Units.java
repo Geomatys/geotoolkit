@@ -47,8 +47,7 @@ import org.geotoolkit.internal.StringUtilities;
  * @since 2.1
  * @module
  */
-@Static
-public final class Units {
+public final class Units extends Static {
     /**
      * Small tolerance factor for the comparisons of floating point values.
      */

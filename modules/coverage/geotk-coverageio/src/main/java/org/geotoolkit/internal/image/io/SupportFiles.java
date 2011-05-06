@@ -40,8 +40,7 @@ import org.geotoolkit.io.ContentFormatException;
  * @since 3.00
  * @module
  */
-@Static
-public final class SupportFiles {
+public final class SupportFiles extends Static {
     /**
      * The encoding of TFW files.
      */

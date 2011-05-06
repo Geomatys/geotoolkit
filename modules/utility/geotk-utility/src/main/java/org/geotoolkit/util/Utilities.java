@@ -60,8 +60,7 @@ import org.geotoolkit.lang.Static;
  * @since 1.2
  * @module
  */
-@Static
-public final class Utilities {
+public final class Utilities extends Static {
     /**
      * A prime number used for hash code computation. Value 31 is often used because
      * some modern compilers can optimize {@code x*31} as {@code (x << 5) - x}

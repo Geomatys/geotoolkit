@@ -39,8 +39,7 @@ import org.geotoolkit.lang.Static;
  * @since 1.1
  * @module
  */
-@Static
-public final class ShapeUtilities {
+public final class ShapeUtilities extends Static {
     /**
      * Valeur limite pour détecter si des points sont
      * colinéaires ou si des coordonnées sont identiques.

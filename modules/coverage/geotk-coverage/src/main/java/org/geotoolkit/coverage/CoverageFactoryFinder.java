@@ -47,8 +47,7 @@ import org.geotoolkit.internal.LazySet;
  * @since 2.4
  * @module
  */
-@Static
-public final class CoverageFactoryFinder {
+public final class CoverageFactoryFinder extends Static {
     /**
      * The service registry for this manager.
      * Will be initialized only when first needed.

@@ -38,8 +38,7 @@ import org.geotoolkit.lang.Static;
  * @since 3.16 (derived from 3.00)
  * @module
  */
-@Static
-public final class IIOUtilities {
+public final class IIOUtilities extends Static {
     /**
      * Do not allow instantiation of this class.
      */

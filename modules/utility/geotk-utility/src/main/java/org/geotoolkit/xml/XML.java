@@ -49,8 +49,7 @@ import org.geotoolkit.lang.Static;
  * @since 3.00
  * @module
  */
-@Static
-public final class XML {
+public final class XML extends Static {
     /**
      * Allows client code to control the behavior of the (un)marshalling process when an element
      * can not be processed, or alter the element values. The value for this property shall be an

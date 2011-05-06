@@ -45,8 +45,7 @@ import org.geotoolkit.lang.Static;
  * @since 1.2
  * @module
  */
-@Static
-public final class ColorUtilities {
+public final class ColorUtilities extends Static {
     /**
      * Small number for rounding errors.
      */

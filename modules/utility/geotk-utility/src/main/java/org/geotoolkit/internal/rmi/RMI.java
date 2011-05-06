@@ -42,8 +42,7 @@ import org.geotoolkit.util.Utilities;
  * @since 3.00
  * @module
  */
-@Static
-public final class RMI {
+public final class RMI extends Static {
     /**
      * The name of a master node where to delegate the tasks, or {@code null} if none.
      * If null (which is the default), then all tasks will be run locally.

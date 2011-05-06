@@ -35,8 +35,7 @@ import org.geotoolkit.util.Utilities;
  * @since 3.00
  * @module
  */
-@Static
-public final class FactoryUtilities {
+public final class FactoryUtilities extends Static {
     /**
      * The minimal delay (in milliseconds) between unsuccessful calls to {@link Factory#availability}.
      * If a first call failed, then all subsequent calls before the end of this delay will returns

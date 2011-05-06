@@ -63,8 +63,7 @@ import org.geotoolkit.util.NumberRange;
  * @since 2.4
  * @module
  */
-@Static
-public final class CoverageUtilities {
+public final class CoverageUtilities extends Static {
     /**
      * Do not allows instantiation of this class.
      */

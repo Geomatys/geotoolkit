@@ -37,8 +37,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 2.4
  * @module
  */
-@Static
-public final class JNDI {
+public final class JNDI extends Static {
     /**
      * The initial context. Will be created only when first needed.
      */

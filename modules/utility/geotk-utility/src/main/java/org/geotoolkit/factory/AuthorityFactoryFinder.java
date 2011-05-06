@@ -31,7 +31,6 @@ import org.opengis.referencing.cs.CSAuthorityFactory;
 import org.opengis.referencing.datum.DatumAuthorityFactory;
 import org.opengis.referencing.operation.CoordinateOperationAuthorityFactory;
 
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Configuration;
 import org.geotoolkit.internal.Citations;
 
@@ -56,7 +55,6 @@ import org.geotoolkit.internal.Citations;
  * @level basic
  * @module
  */
-@Static
 @ThreadSafe
 public final class AuthorityFactoryFinder extends FactoryFinder {
     /**

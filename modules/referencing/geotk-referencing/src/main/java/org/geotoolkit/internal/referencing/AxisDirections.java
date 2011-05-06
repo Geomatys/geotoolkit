@@ -37,8 +37,7 @@ import static org.opengis.referencing.cs.AxisDirection.*;
  * @since 3.13
  * @module
  */
-@Static
-public final class AxisDirections {
+public final class AxisDirections extends Static {
     /**
      * Do not allow instantiation of this class.
      */

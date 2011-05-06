@@ -32,8 +32,7 @@ import org.geotoolkit.util.collection.XCollections;
  * @since 3.00
  * @module
  */
-@Static
-public final class CollectionUtilities {
+public final class CollectionUtilities extends Static {
     /**
      * Do not allow instantiation of this class.
      */

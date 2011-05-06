@@ -66,8 +66,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
  * @since 3.15
  * @module
  */
-@Static
-public final class DiscreteReferencingFactory {
+public final class DiscreteReferencingFactory extends Static {
     /**
      * Do not allow instantiation of this class.
      */

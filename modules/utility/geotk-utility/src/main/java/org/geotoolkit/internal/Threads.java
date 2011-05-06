@@ -26,7 +26,6 @@ import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -41,7 +40,6 @@ import org.geotoolkit.util.logging.Logging;
  * @since 3.03
  * @module
  */
-@Static
 @SuppressWarnings("serial")
 public final class Threads extends AtomicInteger implements ThreadFactory {
     /**

@@ -51,8 +51,7 @@ import org.geotoolkit.lang.Static;
  * @since 2.4
  * @module
  */
-@Static
-public final class Factories {
+public final class Factories extends Static {
     /**
      * Object to inform about hints changes.
      * We use the Swing utility listener list since it is lightweight and thread-safe.

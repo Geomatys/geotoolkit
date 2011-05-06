@@ -44,8 +44,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 3.02
  * @module
  */
-@Static
-public final class CodeLists implements CodeList.Filter {
+public final class CodeLists extends Static implements CodeList.Filter {
     /**
      * The name to compare during filtering operation.
      */

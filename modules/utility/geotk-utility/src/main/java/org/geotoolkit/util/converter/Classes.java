@@ -51,8 +51,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.5
  * @module
  */
-@Static
-public final class Classes {
+public final class Classes extends Static {
     /**
      * Constants to be used in {@code switch} statements.
      */

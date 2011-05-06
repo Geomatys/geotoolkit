@@ -41,8 +41,7 @@ import static java.lang.Math.*;
  * @since 2.0
  * @module
  */
-@Static
-final class LookupTableFactory {
+final class LookupTableFactory extends Static {
     /**
      * The pool of {@link LookupTableJAI} objects already created.
      */

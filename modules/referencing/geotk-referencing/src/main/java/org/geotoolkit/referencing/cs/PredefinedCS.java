@@ -44,8 +44,7 @@ import org.geotoolkit.resources.Errors;
  * @since 2.2
  * @module
  */
-@Static
-final class PredefinedCS implements Comparator<CoordinateSystem> {
+final class PredefinedCS extends Static implements Comparator<CoordinateSystem> {
     /**
      * An instance of {@link PredefinedCS}. Will be created only when first needed.
      */

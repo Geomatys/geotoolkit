@@ -61,8 +61,7 @@ import static org.geotoolkit.coverage.io.GridCoverageStore.fixRoundingError;
  * @since 3.15
  * @module
  */
-@Static
-final class ImageCoverageStore {
+final class ImageCoverageStore extends Static {
     /**
      * Do not allow instantiation of this class.
      */

@@ -52,8 +52,7 @@ import org.geotoolkit.lang.Static;
  * @since 2.5
  * @module
  */
-@Static // NOSONAR: intentionally not final.
-public class Ranks {
+public class Ranks extends Static {
     /**
      * The index in the array before it has been sorted.
      */

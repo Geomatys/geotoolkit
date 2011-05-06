@@ -38,8 +38,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @since 2.0
  * @module
  */
-@Static
-final class Assertions {
+final class Assertions extends Static {
     /**
      * Maximum difference allowed when comparing the result of an inverse projections,
      * in radians. A value of 1E-7 radians is approximatively 0.5 kilometres. Note that

@@ -44,8 +44,7 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
  * @since 2.1
  * @module
  */
-@Static
-final class ColorModelFactory {
+final class ColorModelFactory extends Static {
     /**
      * A pool of color models previously created by {@link #getColorModel}.
      * <p>

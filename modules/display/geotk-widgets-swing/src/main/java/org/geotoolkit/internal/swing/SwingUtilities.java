@@ -53,8 +53,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 3.12 (derived from 2.0)
  * @module
  */
-@Static
-public final class SwingUtilities {
+public final class SwingUtilities extends Static {
     /**
      * Do not allow any instance of this class to be created.
      */

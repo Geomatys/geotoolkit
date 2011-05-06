@@ -34,7 +34,6 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
@@ -69,7 +68,6 @@ import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
  * @since 3.00
  * @module
  */
-@Static
 public final class Identifiers extends DefaultParameterDescriptor<Double> {
     /**
      * For cross-version compatibility. Provided as a safety, however

@@ -30,8 +30,7 @@ import org.geotoolkit.util.Range;
  * @since 3.05
  * @module
  */
-@Static
-public final class Adapters {
+public final class Adapters extends Static {
     /**
      * Do not allow instantiation of this class.
      */

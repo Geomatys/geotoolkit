@@ -39,8 +39,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.07
  * @module
  */
-@Static
-public final class Buffers {
+public final class Buffers extends Static {
     /**
      * Do not allow instantiation of this class.
      */

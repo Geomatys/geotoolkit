@@ -30,8 +30,7 @@ import org.geotoolkit.lang.Static;
  * @since 3.00
  * @module
  */
-@Static
-public final class LookupTables {
+public final class LookupTables extends Static {
     /**
      * Do not allow instantiation of this class.
      */

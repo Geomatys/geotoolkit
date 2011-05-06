@@ -39,8 +39,7 @@ import org.geotoolkit.referencing.operation.transform.LinearTransform;
  * @since 2.2
  * @module
  */
-@Static
-public final class MatrixFactory {
+public final class MatrixFactory extends Static {
     /**
      * Do not allows instantiation of this class.
      */

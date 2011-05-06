@@ -39,8 +39,7 @@ import org.geotoolkit.lang.Static;
  * @since 3.00
  * @module
  */
-@Static
-final class Directions {
+final class Directions extends Static {
     /**
      * Do not allow instantiation of this class.
      */

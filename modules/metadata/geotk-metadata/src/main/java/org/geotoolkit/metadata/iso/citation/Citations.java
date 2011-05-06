@@ -54,8 +54,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @since 2.2
  * @module
  */
-@Static
-public final class Citations {
+public final class Citations extends Static {
     /**
      * Do not allows instantiation of this class.
      */

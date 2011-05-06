@@ -33,8 +33,7 @@ import org.geotoolkit.lang.Static;
  * @since 3.03
  * @module
  */
-@Static
-public final class TypeMapper {
+public final class TypeMapper extends Static {
     /**
      * A list of Java classes to be mapped to SQL types. We don't want to map every SQL types,
      * but only the ones which is of interest for the Geotk metadata implementation. The types

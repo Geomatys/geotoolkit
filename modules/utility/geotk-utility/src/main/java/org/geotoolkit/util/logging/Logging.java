@@ -74,8 +74,7 @@ import org.geotoolkit.util.converter.Classes;
  * @since 2.4
  * @module
  */
-@Static
-public final class Logging {
+public final class Logging extends Static {
     /**
      * Compares {@link Logging} or {@link String} objects for alphabetical order.
      */

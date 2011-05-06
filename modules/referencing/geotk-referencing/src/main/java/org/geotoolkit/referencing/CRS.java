@@ -98,8 +98,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @since 2.1
  * @module
  */
-@Static
-public final class CRS {
+public final class CRS extends Static {
     /**
      * The CRS factory to use for parsing WKT. Will be fetched when first needed
      * are stored for avoiding indirect synchronization lock in {@link #parseWKT}.

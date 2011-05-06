@@ -36,8 +36,7 @@ import org.geotoolkit.lang.Static;
  * @since 2.5
  * @module
  */
-@Static
-public final class Comparators {
+public final class Comparators extends Static {
     /**
      * Do not allows instantiation of this class.
      */

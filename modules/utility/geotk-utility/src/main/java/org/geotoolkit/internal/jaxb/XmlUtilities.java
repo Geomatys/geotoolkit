@@ -41,8 +41,7 @@ import org.geotoolkit.factory.FactoryNotFoundException;
  * @since 3.00
  * @module
  */
-@Static
-public final class XmlUtilities {
+public final class XmlUtilities extends Static {
     /**
      * The factory for creating {@link javax.xml.datatype} objects.
      */

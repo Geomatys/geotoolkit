@@ -33,8 +33,7 @@ import org.geotoolkit.util.logging.Logging;
  * @since 2.0
  * @module
  */
-@Static
-public final class GraphicsUtilities {
+public final class GraphicsUtilities extends Static {
     /**
      * The creation of {@code GraphicsUtilities} class objects is forbidden.
      */

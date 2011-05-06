@@ -45,8 +45,7 @@ import org.geotoolkit.lang.Static;
  * @since 3.04 (derived from 2.2)
  * @module
  */
-@Static
-public final class Citations {
+public final class Citations extends Static {
     /**
      * Do not allows instantiation of this class.
      */

@@ -63,8 +63,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * @since 2.0
  * @module
  */
-@Static
-public final class Trees {
+public final class Trees extends Static {
     /**
      * Do not allows instantiation of this class.
      */

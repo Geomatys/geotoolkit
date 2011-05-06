@@ -138,8 +138,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @since 3.07
  * @module
  */
-@Static
-public final class XImageIO {
+public final class XImageIO extends Static {
     /**
      * Used in {@code switch} statements for selecting the method to invoke
      * for choosing an image reader or writer.
@@ -158,7 +157,7 @@ public final class XImageIO {
      *
      * @param <T>      The compile-time type of the {@code category} argument.
      * @param category Either {@link ImageReaderSpi} or {@link ImageWriterSpi}.
-     * @param mode     Either {@link #NAME}, {@link #SUFFIX} or {@link #MIME}. 
+     * @param mode     Either {@link #NAME}, {@link #SUFFIX} or {@link #MIME}.
      * @param suffix     The name, suffix or MIME type to look for, or {@code null}.
      * @return         An iterator over the requested providers.
      */
@@ -225,7 +224,7 @@ public final class XImageIO {
      * @param  input The input to be given to the new reader instance.
      * @param  seekForwardOnly If {@code true}, images and metadata may only be read in ascending
      *         order from the input source.
-     * @param  ignoreMetadata If {@code true}, metadata may be ignored during reads. 
+     * @param  ignoreMetadata If {@code true}, metadata may be ignored during reads.
      * @return The new image reader instance with its input initialized.
      * @throws IOException If an error occurred while creating the image reader instance.
      */

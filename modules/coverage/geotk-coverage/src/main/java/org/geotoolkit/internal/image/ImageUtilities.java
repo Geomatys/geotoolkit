@@ -56,8 +56,7 @@ import static java.awt.image.DataBuffer.*;
  * @since 1.2
  * @module
  */
-@Static
-public final class ImageUtilities {
+public final class ImageUtilities extends Static {
     /**
      * The default tile size. This default tile size can be
      * overridden with a call to {@link JAI#setDefaultTileSize}.

@@ -42,8 +42,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.05
  * @module
  */
-@Static
-public final class JTables {
+public final class JTables extends Static {
     /**
      * Do not allow instantiation of this class.
      */

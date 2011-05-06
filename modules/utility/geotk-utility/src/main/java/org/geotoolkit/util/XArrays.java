@@ -40,8 +40,7 @@ import org.geotoolkit.lang.Static;
  * @since 2.0
  * @module
  */
-@Static
-public final class XArrays {
+public final class XArrays extends Static {
     /**
      * Do not allow instantiation of this class.
      */

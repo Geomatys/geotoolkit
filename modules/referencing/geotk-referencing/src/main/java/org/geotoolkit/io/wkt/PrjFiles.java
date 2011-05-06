@@ -51,8 +51,7 @@ import org.geotoolkit.io.ContentFormatException;
  * @since 3.05
  * @module
  */
-@Static
-public final class PrjFiles {
+public final class PrjFiles extends Static {
     /**
      * The encoding of PRJ files.
      */

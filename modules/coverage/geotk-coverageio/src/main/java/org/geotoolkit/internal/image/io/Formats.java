@@ -52,8 +52,7 @@ import org.geotoolkit.resources.Vocabulary;
  * @since 3.01
  * @module
  */
-@Static
-public final class Formats {
+public final class Formats extends Static {
     /**
      * Do not allow instantiation of this class.
      */

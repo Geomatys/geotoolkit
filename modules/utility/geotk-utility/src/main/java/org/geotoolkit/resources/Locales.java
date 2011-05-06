@@ -40,8 +40,7 @@ import static org.geotoolkit.util.collection.XCollections.hashMapCapacity;
  * @since 2.4
  * @module
  */
-@Static
-public final class Locales {
+public final class Locales extends Static {
     /**
      * A read-only map for canonicalizing the locales. Filled on class
      * initialization in order to avoid the need for synchronization.

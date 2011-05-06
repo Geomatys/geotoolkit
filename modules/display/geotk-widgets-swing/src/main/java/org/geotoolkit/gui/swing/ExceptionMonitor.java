@@ -70,9 +70,8 @@ import org.geotoolkit.internal.swing.SwingUtilities;
  * @since 1.0
  * @module
  */
-@Static
 @ThreadSafe
-public final class ExceptionMonitor {
+public final class ExceptionMonitor extends Static {
     /**
      * The creation of {@code ExceptionMonitor} class objects is forbidden.
      */

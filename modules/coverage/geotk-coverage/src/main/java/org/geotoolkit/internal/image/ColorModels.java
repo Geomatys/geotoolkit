@@ -40,8 +40,7 @@ import org.geotoolkit.util.collection.WeakHashSet;
  * @since 3.00
  * @module
  */
-@Static
-public final class ColorModels<T extends ColorModel> {
+public final class ColorModels<T extends ColorModel> extends Static {
     /**
      * Pool of shared color models.
      */
