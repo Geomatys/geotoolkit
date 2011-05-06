@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
@@ -26,15 +27,16 @@ import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.type.GeometryDescriptor;
 
 /**
- *
+ * Edition tool to remove holes in polygons.
+ * 
  * @author Johann Sorel (Geomatys)
  * @module pending
  */
-public class PolygonCreationTool extends AbstractEditionTool {
+public class PolygonHoleDeleteTool extends AbstractEditionTool {
 
-    public PolygonCreationTool() {
-        super(1500,"polygonCreation",MessageBundle.getI18NString("create"),
-             new SimpleInternationalString("Tool for creating polygons."), FeatureMapLayer.class);
+    public PolygonHoleDeleteTool() {
+        super(1260,"polygonHoleDelete", MessageBundle.getI18NString("removeHole"),
+             new SimpleInternationalString("Tool to remove polygon holes."), FeatureMapLayer.class);
     }
 
     @Override
@@ -46,19 +48,19 @@ public class PolygonCreationTool extends AbstractEditionTool {
         //check the geometry type is type Point
         final FeatureMapLayer layer = (FeatureMapLayer) candidate;
         final FeatureType ft = layer.getCollection().getFeatureType();
-
         final GeometryDescriptor desc = ft.getGeometryDescriptor();
 
         if(desc == null){
             return false;
         }
 
-        return Polygon.class.isAssignableFrom(desc.getType().getBinding());
+        return MultiPolygon.class.isAssignableFrom(desc.getType().getBinding()) ||
+               Polygon.class.isAssignableFrom(desc.getType().getBinding());
     }
 
     @Override
     public EditionDelegate createDelegate(final JMap2D map, final Object candidate) {
-        return new PolygonCreationDelegate(map, (FeatureMapLayer) candidate);
+        return new PolygonHoleDeleteDelegate(map, (FeatureMapLayer) candidate);
     }
 
 }

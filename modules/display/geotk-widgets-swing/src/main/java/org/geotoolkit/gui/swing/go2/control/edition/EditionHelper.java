@@ -82,7 +82,6 @@ public class EditionHelper {
     private static final FilterFactory2 FF = (FilterFactory2) FactoryFinder.getFilterFactory(
                                                 new Hints(Hints.FILTER_FACTORY, FilterFactory2.class));
     public static final Coordinate[] EMPTY_COORDINATE_ARRAY = new Coordinate[0];
-    
 
     public static class EditionContext{
         public Feature feature = null;
@@ -841,6 +840,69 @@ public class EditionHelper {
         return geo;
     }
 
+    
+    public Geometry deleteHole(final Geometry geo, final int mx, final int my) {
+        if(!(geo instanceof Polygon || geo instanceof MultiPolygon)){
+            //this method only works on polygon or multipolygon
+            return geo;
+        }
+        
+        try{
+            //transform our mouse in a geometry
+            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
+
+            final List<Polygon> subGeometries = new ArrayList<Polygon>();
+            final List<LinearRing> holes = new ArrayList<LinearRing>();
+            
+            for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
+                //subgeo is a Polygon
+                subGeometries.add((Polygon) geo.getGeometryN(i));
+            }
+                        
+            for (int i=0,n=subGeometries.size();i<n;i++) {
+                final Polygon subgeo = subGeometries.get(i);
+                
+                //find the hole to remove
+                int toRemove = -1;                
+                holes.clear();
+                for(int j=0,k=subgeo.getNumInteriorRing(); j<k; j++){
+                    final LinearRing ring = (LinearRing) subgeo.getInteriorRingN(j);
+                    holes.add(ring);
+                    if(toRemove == -1 && ring.intersects(mouseGeo)){
+                        toRemove = j;
+                    }
+                }
+                 
+                if(toRemove != -1){
+                    //remove this ring and return geometry
+                    holes.remove(toRemove);
+
+                    if(geo instanceof Polygon){
+                        return GEOMETRY_FACTORY.createPolygon((LinearRing)subgeo.getExteriorRing(), 
+                                holes.toArray(new LinearRing[holes.size()]));
+                    }else if(geo instanceof MultiPolygon){
+                        //modify the subgeometry
+                        final Polygon poly = GEOMETRY_FACTORY.createPolygon((LinearRing)subgeo.getExteriorRing(), 
+                                holes.toArray(new LinearRing[holes.size()]));
+                        subGeometries.set(i, poly);
+                        //recreate the multipolygon
+                        return createMultiPolygon(subGeometries);
+                    }else{
+                        throw new IllegalStateException("Should not happen, expecting "
+                                + "Polygon or MultiPolygon but was "+ geo.getClass());
+                    }
+
+                }
+                
+            }
+        }catch(final Exception ex){
+            LOGGER.log(Level.WARNING, ex.getLocalizedMessage(),ex);
+        }
+
+        //nothing to remove return original geometry
+        return geo;
+    }
+    
 
     public Geometry toObjectiveCRS(final Feature sf){
         final Object obj = sf.getDefaultGeometryProperty().getValue();
@@ -1039,7 +1101,7 @@ public class EditionHelper {
         return GEOMETRY_FACTORY.createPolygon(ring, holes);
     }
 
-    public static MultiPolygon createMultiPolygon(final List<Geometry> geoms) {
+    public static MultiPolygon createMultiPolygon(final List<? extends Geometry> geoms) {
         List<Polygon> lst = new ArrayList<Polygon>();
         for (Geometry go : geoms) {
             if (go instanceof Polygon) {
@@ -1051,7 +1113,7 @@ public class EditionHelper {
         return GEOMETRY_FACTORY.createMultiPolygon(lst.toArray(new Polygon[lst.size()]));
     }
 
-    public static MultiLineString createMultiLine(final List<Geometry> geoms) {
+    public static MultiLineString createMultiLine(final List<? extends Geometry> geoms) {
         List<LineString> lst = new ArrayList<LineString>();
         for (Geometry go : geoms) {
             if (go instanceof LineString) {
@@ -1060,6 +1122,5 @@ public class EditionHelper {
         }
         return GEOMETRY_FACTORY.createMultiLineString(lst.toArray(new LineString[lst.size()]));
     }
-
 
 }

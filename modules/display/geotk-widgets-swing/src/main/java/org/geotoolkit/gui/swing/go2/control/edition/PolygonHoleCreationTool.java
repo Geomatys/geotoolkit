@@ -35,7 +35,7 @@ import org.opengis.feature.type.GeometryDescriptor;
 public class PolygonHoleCreationTool extends AbstractEditionTool {
 
     public PolygonHoleCreationTool() {
-        super(1250,"polygonHoleCreation", MessageBundle.getI18NString("createHole"),
+        super(1270,"polygonHoleCreation", MessageBundle.getI18NString("createHole"),
              new SimpleInternationalString("Tool to create holes in a Polygon."), FeatureMapLayer.class);
     }
 
