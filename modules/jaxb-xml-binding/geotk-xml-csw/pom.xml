@@ -63,10 +63,10 @@
     in the JARs' list that maven will put in the directory "target/binaries".
   -->
   <dependencies>
-    <dependency>
+    <!--dependency>
       <groupId>xerces</groupId>
       <artifactId>xercesImpl</artifactId>
-    </dependency>
+    </dependency-->
     <dependency>
       <groupId>org.geotoolkit.pending</groupId>
       <artifactId>geotk-xml-feature-catalogue</artifactId>

@@ -22,8 +22,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
 // xerces dependencies
-import org.apache.xerces.dom.ElementNSImpl;
 import org.geotoolkit.util.Utilities;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 
 /**
@@ -79,13 +79,13 @@ public class RecordPropertyType {
      * Gets the value of the value property.
      */
     public Object getValue() {
-        if (value instanceof ElementNSImpl) {
-            value = getXMLFromElementNSImpl((ElementNSImpl)value);
+        if (value instanceof Element) {
+            value = getXMLFromElement((Element)value);
         }
         return value;
     }
 
-    private  String getXMLFromElementNSImpl(final ElementNSImpl elt) {
+    private  String getXMLFromElement(final Element elt) {
         StringBuilder s = new StringBuilder();
         Node node = elt.getFirstChild();
         s.append(getXMLFromNode(node)).toString();
