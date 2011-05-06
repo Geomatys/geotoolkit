@@ -68,6 +68,7 @@ public final class MD_Format extends MetadataAdapter<MD_Format, Format> {
     @Override
     @XmlElementRef
     public DefaultFormat getElement() {
+        if (skip()) return null;
         final Format metadata = this.metadata;
         return (metadata instanceof DefaultFormat) ?
             (DefaultFormat) metadata : new DefaultFormat(metadata);

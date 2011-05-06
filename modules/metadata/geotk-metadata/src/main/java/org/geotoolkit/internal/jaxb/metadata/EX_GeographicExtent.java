@@ -77,6 +77,7 @@ public final class EX_GeographicExtent extends MetadataAdapter<EX_GeographicExte
     @Override
     @XmlElementRef
     public AbstractGeographicExtent getElement() {
+        if (skip()) return null;
         final GeographicExtent metadata = this.metadata;
         if (metadata instanceof AbstractGeographicExtent) {
             return (AbstractGeographicExtent) metadata;

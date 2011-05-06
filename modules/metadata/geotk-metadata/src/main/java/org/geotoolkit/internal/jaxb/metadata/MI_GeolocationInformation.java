@@ -75,6 +75,7 @@ public final class MI_GeolocationInformation
     @Override
     @XmlElementRef
     public AbstractGeolocationInformation getElement() {
+        if (skip()) return null;
         final GeolocationInformation metadata = this.metadata;
         if (metadata instanceof AbstractGeolocationInformation) {
             return (AbstractGeolocationInformation) metadata;

@@ -68,6 +68,7 @@ public final class CI_Contact extends MetadataAdapter<CI_Contact, Contact> {
     @Override
     @XmlElementRef
     public DefaultContact getElement() {
+        if (skip()) return null;
         final Contact metadata = this.metadata;
         return (metadata instanceof DefaultContact) ?
             (DefaultContact) metadata : new DefaultContact(metadata);

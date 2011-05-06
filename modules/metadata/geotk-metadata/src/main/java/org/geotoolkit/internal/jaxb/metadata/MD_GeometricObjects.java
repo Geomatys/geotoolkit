@@ -68,6 +68,7 @@ public final class MD_GeometricObjects extends MetadataAdapter<MD_GeometricObjec
     @Override
     @XmlElementRef
     public DefaultGeometricObjects getElement() {
+        if (skip()) return null;
         final GeometricObjects metadata = this.metadata;
         return (metadata instanceof DefaultGeometricObjects) ?
             (DefaultGeometricObjects) metadata : new DefaultGeometricObjects(metadata);

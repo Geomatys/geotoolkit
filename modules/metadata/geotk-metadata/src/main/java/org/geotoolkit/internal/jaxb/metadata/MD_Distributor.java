@@ -68,6 +68,7 @@ public final class MD_Distributor extends MetadataAdapter<MD_Distributor, Distri
     @Override
     @XmlElementRef
     public DefaultDistributor getElement() {
+        if (skip()) return null;
         final Distributor metadata = this.metadata;
         return (metadata instanceof DefaultDistributor) ?
             (DefaultDistributor) metadata : new DefaultDistributor(metadata);

@@ -68,6 +68,7 @@ public final class MD_BrowseGraphic extends MetadataAdapter<MD_BrowseGraphic, Br
     @Override
     @XmlElementRef
     public DefaultBrowseGraphic getElement() {
+        if (skip()) return null;
         final BrowseGraphic metadata = this.metadata;
         return (metadata instanceof DefaultBrowseGraphic) ?
             (DefaultBrowseGraphic) metadata : new DefaultBrowseGraphic(metadata);

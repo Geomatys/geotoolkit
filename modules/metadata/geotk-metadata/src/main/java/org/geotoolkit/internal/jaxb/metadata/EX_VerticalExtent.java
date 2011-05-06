@@ -68,6 +68,7 @@ public final class EX_VerticalExtent extends MetadataAdapter<EX_VerticalExtent, 
     @Override
     @XmlElementRef
     public DefaultVerticalExtent getElement() {
+        if (skip()) return null;
         final VerticalExtent metadata = this.metadata;
         return (metadata instanceof DefaultVerticalExtent) ?
             (DefaultVerticalExtent) metadata : new DefaultVerticalExtent(metadata);

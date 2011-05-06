@@ -72,6 +72,7 @@ public final class MD_MaintenanceInformation
     @Override
     @XmlElementRef
     public DefaultMaintenanceInformation getElement() {
+        if (skip()) return null;
         final MaintenanceInformation metadata = this.metadata;
         return (metadata instanceof DefaultMaintenanceInformation) ?
             (DefaultMaintenanceInformation) metadata : new DefaultMaintenanceInformation(metadata);

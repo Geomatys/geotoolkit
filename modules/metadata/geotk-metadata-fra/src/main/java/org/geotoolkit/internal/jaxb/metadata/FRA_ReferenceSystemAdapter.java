@@ -90,6 +90,7 @@ public final class FRA_ReferenceSystemAdapter extends RS_ReferenceSystem impleme
      */
     @Override
     public ReferenceSystemMetadata getElement() {
+        if (skip()) return null;
         final ReferenceSystem metadata = this.metadata;
         if (metadata instanceof FRA_DirectReferenceSystem || metadata instanceof FRA_IndirectReferenceSystem) {
             return null;

@@ -68,6 +68,7 @@ public final class MI_Requirement extends MetadataAdapter<MI_Requirement, Requir
     @Override
     @XmlElementRef
     public DefaultRequirement getElement() {
+        if (skip()) return null;
         final Requirement metadata = this.metadata;
         return (metadata instanceof DefaultRequirement) ?
             (DefaultRequirement) metadata : new DefaultRequirement(metadata);

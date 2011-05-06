@@ -69,6 +69,7 @@ public final class CD_VerticalDatum extends MetadataAdapter<CD_VerticalDatum, Ve
     @Override
     @XmlElement(name = "VerticalDatum")
     public DefaultVerticalDatum getElement() {
+        if (skip()) return null;
         final VerticalDatum metadata = this.metadata;
         return (metadata instanceof DefaultVerticalDatum) ?
             (DefaultVerticalDatum) metadata : new DefaultVerticalDatum(metadata);

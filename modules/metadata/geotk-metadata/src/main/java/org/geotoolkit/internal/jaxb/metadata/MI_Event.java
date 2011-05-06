@@ -68,6 +68,7 @@ public final class MI_Event extends MetadataAdapter<MI_Event, Event> {
     @Override
     @XmlElementRef
     public DefaultEvent getElement() {
+        if (skip()) return null;
         final Event metadata = this.metadata;
         return (metadata instanceof DefaultEvent) ?
             (DefaultEvent) metadata : new DefaultEvent(metadata);

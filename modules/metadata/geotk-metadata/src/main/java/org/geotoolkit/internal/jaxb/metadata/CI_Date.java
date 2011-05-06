@@ -68,6 +68,7 @@ public final class CI_Date extends MetadataAdapter<CI_Date, CitationDate> {
     @Override
     @XmlElementRef
     public DefaultCitationDate getElement() {
+        if (skip()) return null;
         final CitationDate metadata = this.metadata;
         return (metadata instanceof DefaultCitationDate) ?
             (DefaultCitationDate) metadata : new DefaultCitationDate(metadata);

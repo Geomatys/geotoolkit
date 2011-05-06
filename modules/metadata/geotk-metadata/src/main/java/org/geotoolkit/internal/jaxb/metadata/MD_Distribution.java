@@ -68,6 +68,7 @@ public final class MD_Distribution extends MetadataAdapter<MD_Distribution, Dist
     @Override
     @XmlElementRef
     public DefaultDistribution getElement() {
+        if (skip()) return null;
         final Distribution metadata = this.metadata;
         return (metadata instanceof DefaultDistribution) ?
             (DefaultDistribution) metadata : new DefaultDistribution(metadata);

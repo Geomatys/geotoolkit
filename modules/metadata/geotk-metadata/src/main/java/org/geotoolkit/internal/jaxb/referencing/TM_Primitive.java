@@ -84,6 +84,7 @@ public final class TM_Primitive extends MetadataAdapter<TM_Primitive, TemporalPr
     @Override
     @XmlElement(name = "TimePeriod")
     public TimePeriod getElement() {
+        if (skip()) return null;
         final TemporalPrimitive metadata = this.metadata;
         if (metadata instanceof Period) {
             return new TimePeriod((Period) metadata);

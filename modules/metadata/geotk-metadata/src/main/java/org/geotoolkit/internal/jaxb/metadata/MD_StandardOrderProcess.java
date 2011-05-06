@@ -71,6 +71,7 @@ public final class MD_StandardOrderProcess
     @Override
     @XmlElementRef
     public DefaultStandardOrderProcess getElement() {
+        if (skip()) return null;
         final StandardOrderProcess metadata = this.metadata;
         return (metadata instanceof DefaultStandardOrderProcess) ?
             (DefaultStandardOrderProcess) metadata : new DefaultStandardOrderProcess(metadata);

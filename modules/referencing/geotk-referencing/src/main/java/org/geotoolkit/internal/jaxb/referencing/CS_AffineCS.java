@@ -69,6 +69,7 @@ public final class CS_AffineCS extends MetadataAdapter<CS_AffineCS, AffineCS> {
     @Override
     @XmlElement(name = "AffineCS")
     public DefaultAffineCS getElement() {
+        if (skip()) return null;
         final AffineCS metadata = this.metadata;
         return (metadata instanceof DefaultAffineCS) ?
             (DefaultAffineCS) metadata : new DefaultAffineCS(metadata);

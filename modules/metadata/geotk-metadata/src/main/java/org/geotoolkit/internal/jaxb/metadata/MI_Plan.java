@@ -68,6 +68,7 @@ public final class MI_Plan extends MetadataAdapter<MI_Plan, Plan> {
     @Override
     @XmlElementRef
     public DefaultPlan getElement() {
+        if (skip()) return null;
         final Plan metadata = this.metadata;
         return (metadata instanceof DefaultPlan) ?
             (DefaultPlan) metadata : new DefaultPlan(metadata);

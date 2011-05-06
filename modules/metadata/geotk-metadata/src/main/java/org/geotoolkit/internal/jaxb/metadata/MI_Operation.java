@@ -68,6 +68,7 @@ public final class MI_Operation extends MetadataAdapter<MI_Operation, Operation>
     @Override
     @XmlElementRef
     public DefaultOperation getElement() {
+        if (skip()) return null;
         final Operation metadata = this.metadata;
         return (metadata instanceof DefaultOperation) ?
             (DefaultOperation) metadata : new DefaultOperation(metadata);

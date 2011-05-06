@@ -68,6 +68,7 @@ public final class LE_ProcessStepReport extends MetadataAdapter<LE_ProcessStepRe
     @Override
     @XmlElementRef
     public DefaultProcessStepReport getElement() {
+        if (skip()) return null;
         final ProcessStepReport metadata = this.metadata;
         return (metadata instanceof DefaultProcessStepReport) ?
             (DefaultProcessStepReport) metadata : new DefaultProcessStepReport(metadata);

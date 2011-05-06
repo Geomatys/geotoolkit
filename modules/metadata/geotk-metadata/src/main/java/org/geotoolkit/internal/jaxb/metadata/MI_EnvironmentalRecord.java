@@ -70,6 +70,7 @@ public final class MI_EnvironmentalRecord
     @Override
     @XmlElementRef
     public DefaultEnvironmentalRecord getElement() {
+        if (skip()) return null;
         final EnvironmentalRecord metadata = this.metadata;
         return (metadata instanceof DefaultEnvironmentalRecord) ?
             (DefaultEnvironmentalRecord) metadata : new DefaultEnvironmentalRecord(metadata);

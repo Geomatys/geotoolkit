@@ -74,6 +74,7 @@ public final class RS_Identifier extends MetadataAdapter<RS_Identifier, Referenc
     @Override
     @XmlElementRef
     public DefaultReferenceIdentifier getElement() {
+        if (skip()) return null;
         final ReferenceIdentifier metadata = this.metadata;
         if (metadata instanceof DefaultReferenceIdentifier) {
             return (DefaultReferenceIdentifier) metadata;

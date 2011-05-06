@@ -68,6 +68,7 @@ public final class MI_GCP extends MetadataAdapter<MI_GCP, GCP> {
     @Override
     @XmlElementRef
     public DefaultGCP getElement() {
+        if (skip()) return null;
         final GCP metadata = this.metadata;
         return (metadata instanceof DefaultGCP) ?
             (DefaultGCP) metadata : new DefaultGCP(metadata);

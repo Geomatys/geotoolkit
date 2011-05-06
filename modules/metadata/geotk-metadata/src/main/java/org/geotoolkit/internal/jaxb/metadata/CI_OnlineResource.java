@@ -68,6 +68,7 @@ public final class CI_OnlineResource extends MetadataAdapter<CI_OnlineResource, 
     @Override
     @XmlElementRef
     public DefaultOnlineResource getElement() {
+        if (skip()) return null;
         final OnlineResource metadata = this.metadata;
         return (metadata instanceof DefaultOnlineResource) ?
             (DefaultOnlineResource) metadata : new DefaultOnlineResource(metadata);

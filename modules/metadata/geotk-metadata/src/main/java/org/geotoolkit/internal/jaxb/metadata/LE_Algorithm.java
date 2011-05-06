@@ -69,6 +69,7 @@ public final class LE_Algorithm extends MetadataAdapter<LE_Algorithm, Algorithm>
     @Override
     @XmlElementRef
     public DefaultAlgorithm getElement() {
+        if (skip()) return null;
         final Algorithm metadata = this.metadata;
         return (metadata instanceof DefaultAlgorithm) ?
             (DefaultAlgorithm) metadata : new DefaultAlgorithm(metadata);

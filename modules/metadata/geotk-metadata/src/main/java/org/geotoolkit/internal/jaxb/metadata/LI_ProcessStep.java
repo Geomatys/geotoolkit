@@ -69,6 +69,7 @@ public final class LI_ProcessStep extends MetadataAdapter<LI_ProcessStep, Proces
     @Override
     @XmlElementRef
     public DefaultProcessStep getElement() {
+        if (skip()) return null;
         return LE_ProcessStep.wrap(metadata);
     }
 

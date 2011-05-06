@@ -68,6 +68,7 @@ public final class LE_Processing extends MetadataAdapter<LE_Processing, Processi
     @Override
     @XmlElementRef
     public DefaultProcessing getElement() {
+        if (skip()) return null;
         final Processing metadata = this.metadata;
         return (metadata instanceof DefaultProcessing) ?
             (DefaultProcessing) metadata : new DefaultProcessing(metadata);

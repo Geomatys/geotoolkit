@@ -73,6 +73,7 @@ public final class EX_TemporalExtent extends MetadataAdapter<EX_TemporalExtent, 
     @Override
     @XmlElementRef
     public DefaultTemporalExtent getElement() {
+        if (skip()) return null;
         final TemporalExtent metadata = this.metadata;
         if (metadata instanceof DefaultTemporalExtent) {
             return (DefaultTemporalExtent) metadata;

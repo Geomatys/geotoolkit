@@ -75,6 +75,7 @@ public final class MD_Identification extends MetadataAdapter<MD_Identification, 
     @Override
     @XmlElementRef
     public AbstractIdentification getElement() {
+        if (skip()) return null;
         final Identification metadata = this.metadata;
         if (metadata instanceof AbstractIdentification) {
             return (AbstractIdentification) metadata;

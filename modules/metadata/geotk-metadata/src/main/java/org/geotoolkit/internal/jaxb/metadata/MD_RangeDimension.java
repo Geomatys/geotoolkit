@@ -73,6 +73,7 @@ public final class MD_RangeDimension extends MetadataAdapter<MD_RangeDimension, 
     @Override
     @XmlElementRef
     public DefaultRangeDimension getElement() {
+        if (skip()) return null;
         final RangeDimension metadata = this.metadata;
         if (metadata instanceof DefaultRangeDimension) {
             return (DefaultRangeDimension) metadata;

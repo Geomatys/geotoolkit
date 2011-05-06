@@ -68,6 +68,7 @@ public final class LI_Lineage extends MetadataAdapter<LI_Lineage, Lineage> {
     @Override
     @XmlElementRef
     public DefaultLineage getElement() {
+        if (skip()) return null;
         final Lineage metadata = this.metadata;
         return (metadata instanceof DefaultLineage) ?
             (DefaultLineage) metadata : new DefaultLineage(metadata);

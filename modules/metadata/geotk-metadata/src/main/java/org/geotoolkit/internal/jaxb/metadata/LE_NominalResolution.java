@@ -68,6 +68,7 @@ public final class LE_NominalResolution extends MetadataAdapter<LE_NominalResolu
     @Override
     @XmlElementRef
     public DefaultNominalResolution getElement() {
+        if (skip()) return null;
         final NominalResolution metadata = this.metadata;
         return (metadata instanceof DefaultNominalResolution) ?
             (DefaultNominalResolution) metadata : new DefaultNominalResolution(metadata);

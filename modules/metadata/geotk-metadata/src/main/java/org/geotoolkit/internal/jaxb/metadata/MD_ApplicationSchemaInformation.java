@@ -72,6 +72,7 @@ public final class MD_ApplicationSchemaInformation
     @Override
     @XmlElementRef
     public DefaultApplicationSchemaInformation getElement() {
+        if (skip()) return null;
         final ApplicationSchemaInformation metadata = this.metadata;
         return (metadata instanceof DefaultApplicationSchemaInformation) ?
             (DefaultApplicationSchemaInformation) metadata :

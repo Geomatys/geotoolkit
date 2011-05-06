@@ -76,6 +76,7 @@ public final class CD_Ellipsoid extends MetadataAdapter<CD_Ellipsoid, Ellipsoid>
     @Override
     @XmlElement(name = "Ellipsoid")
     public DefaultEllipsoid getElement() {
+        if (skip()) return null;
         final Ellipsoid metadata = this.metadata;
         if (metadata instanceof DefaultEllipsoid) {
             return (DefaultEllipsoid) metadata;

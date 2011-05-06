@@ -68,6 +68,7 @@ public final class MD_Keywords extends MetadataAdapter<MD_Keywords, Keywords> {
     @Override
     @XmlElementRef
     public DefaultKeywords getElement() {
+        if (skip()) return null;
         final Keywords metadata = this.metadata;
         return (metadata instanceof DefaultKeywords) ?
             (DefaultKeywords) metadata : new DefaultKeywords(metadata);

@@ -69,6 +69,7 @@ public final class DQ_Element extends MetadataAdapter<DQ_Element, Element> {
     @Override
     @XmlElementRef
     public AbstractElement getElement() {
+        if (skip()) return null;
         final Element metadata = this.metadata;
         if (metadata instanceof AbstractElement) {
             return (AbstractElement) metadata;

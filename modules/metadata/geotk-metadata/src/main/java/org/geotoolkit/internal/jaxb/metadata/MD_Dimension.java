@@ -68,6 +68,7 @@ public final class MD_Dimension extends MetadataAdapter<MD_Dimension, Dimension>
     @Override
     @XmlElementRef
     public DefaultDimension getElement() {
+        if (skip()) return null;
         final Dimension metadata = this.metadata;
         return (metadata instanceof DefaultDimension) ?
             (DefaultDimension) metadata : new DefaultDimension(metadata);

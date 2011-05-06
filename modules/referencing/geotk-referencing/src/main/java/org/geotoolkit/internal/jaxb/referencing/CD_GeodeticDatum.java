@@ -69,6 +69,7 @@ public final class CD_GeodeticDatum extends MetadataAdapter<CD_GeodeticDatum, Ge
     @Override
     @XmlElement(name = "GeodeticDatum")
     public DefaultGeodeticDatum getElement() {
+        if (skip()) return null;
         final GeodeticDatum metadata = this.metadata;
         return (metadata instanceof DefaultGeodeticDatum) ?
             (DefaultGeodeticDatum) metadata : new DefaultGeodeticDatum(metadata);

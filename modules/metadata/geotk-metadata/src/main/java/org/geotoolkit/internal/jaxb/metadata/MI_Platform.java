@@ -68,6 +68,7 @@ public final class MI_Platform extends MetadataAdapter<MI_Platform, Platform> {
     @Override
     @XmlElementRef
     public DefaultPlatform getElement() {
+        if (skip()) return null;
         final Platform metadata = this.metadata;
         return (metadata instanceof DefaultPlatform) ?
             (DefaultPlatform) metadata : new DefaultPlatform(metadata);

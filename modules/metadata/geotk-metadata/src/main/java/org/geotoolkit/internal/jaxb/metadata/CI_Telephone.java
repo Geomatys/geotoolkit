@@ -68,6 +68,7 @@ public final class CI_Telephone extends MetadataAdapter<CI_Telephone, Telephone>
     @Override
     @XmlElementRef
     public DefaultTelephone getElement() {
+        if (skip()) return null;
         final Telephone metadata = this.metadata;
         return (metadata instanceof DefaultTelephone) ?
             (DefaultTelephone) metadata : new DefaultTelephone(metadata);

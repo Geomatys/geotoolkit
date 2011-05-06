@@ -68,6 +68,7 @@ public final class MI_PlatformPass extends MetadataAdapter<MI_PlatformPass, Plat
     @Override
     @XmlElementRef
     public DefaultPlatformPass getElement() {
+        if (skip()) return null;
         final PlatformPass metadata = this.metadata;
         return (metadata instanceof DefaultPlatformPass) ?
             (DefaultPlatformPass) metadata : new DefaultPlatformPass(metadata);

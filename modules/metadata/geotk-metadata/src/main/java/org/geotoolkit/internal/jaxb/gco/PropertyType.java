@@ -157,17 +157,23 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     }
 
     /**
-     * Returns {@code true} if the wrapped metadata has a non-null "{@code uuidref}" attribute.
-     * This method is invoked by subclasses in order to determine if they shall marshall the
-     * metadata itself, or just the UUID.
+     * Returns {@code true} if the wrapped metadata should not be marshalled. It may be because
+     * a non-null "{@code uuidref}" attribute has been specified (in which case the UUID reference
+     * will be marshalled in place of the full metadata), or any other reason that may be added in
+     * future implementations.
      *
-     * @return {@code true} if the wrapped metadata has a "{@code uuidref}" attribute.
-     * @category gco:ObjectReference
+     * @return {@code true} if the wrapped metadata should not be marshalled.
      * @since 3.18
      */
-    protected final boolean hasUUIDREF() {
-        final ObjectReference reference = reference();
-        return (reference != null) && (reference.uuidref != null);
+    protected final boolean skip() {
+        final Object ref = reference;
+        if (ref == null) {
+            return false;
+        }
+        if (!(ref instanceof ObjectReference)) {
+            return true; // A "nilReason" attribute has been specified.
+        }
+        return ((ObjectReference) ref).uuidref != null;
     }
 
     /**
@@ -425,6 +431,22 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * some situations this is Java type like {@link String}. For this raison the
      * return type is declared as {@code Object} here, but subclasses shall restrict
      * that to a more specific type.
+     * <p>
+     * Typical implementation ({@code BoundType} and {@code ValueType} need to be replaced
+     * by the concrete class):
+     *
+     * {@preformat java
+     *   •Override
+     *   •XmlElementRef
+     *   public BoundType getElement() {
+     *       if (skip()) return null;
+     *       final ValueType metadata = this.metadata;
+     *       return (metadata instanceof BoundType) ? (BoundType) metadata : new BoundType(metadata);
+     *   }
+     * }
+     *
+     * The actual implementation may be slightly more complicated than the above if there is
+     * various subclasses to check.
      *
      * @return The metadata to be marshalled.
      *

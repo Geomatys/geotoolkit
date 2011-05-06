@@ -72,6 +72,7 @@ public final class MD_RepresentativeFraction
     @Override
     @XmlElementRef
     public DefaultRepresentativeFraction getElement() {
+        if (skip()) return null;
         final RepresentativeFraction metadata = this.metadata;
         return (metadata instanceof DefaultRepresentativeFraction) ?
             (DefaultRepresentativeFraction) metadata :

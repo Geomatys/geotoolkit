@@ -68,6 +68,7 @@ public final class MI_Objective extends MetadataAdapter<MI_Objective, Objective>
     @Override
     @XmlElementRef
     public DefaultObjective getElement() {
+        if (skip()) return null;
         final Objective metadata = this.metadata;
         return (metadata instanceof DefaultObjective) ?
             (DefaultObjective) metadata : new DefaultObjective(metadata);

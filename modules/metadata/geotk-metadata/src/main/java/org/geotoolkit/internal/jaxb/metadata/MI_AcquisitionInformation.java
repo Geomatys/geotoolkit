@@ -70,6 +70,7 @@ public final class MI_AcquisitionInformation
     @Override
     @XmlElementRef
     public DefaultAcquisitionInformation getElement() {
+        if (skip()) return null;
         final AcquisitionInformation metadata = this.metadata;
         return (metadata instanceof DefaultAcquisitionInformation) ?
             (DefaultAcquisitionInformation) metadata : new DefaultAcquisitionInformation(metadata);

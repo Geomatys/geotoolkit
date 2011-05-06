@@ -70,6 +70,7 @@ public final class CI_ResponsibleParty
     @Override
     @XmlElementRef
     public DefaultResponsibleParty getElement() {
+        if (skip()) return null;
         final ResponsibleParty metadata = this.metadata;
         return (metadata instanceof DefaultResponsibleParty) ?
             (DefaultResponsibleParty) metadata : new DefaultResponsibleParty(metadata);

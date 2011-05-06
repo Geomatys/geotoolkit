@@ -70,6 +70,7 @@ public final class CS_EllipsoidalCS extends MetadataAdapter<CS_EllipsoidalCS, El
     @Override
     @XmlElement(name = "EllipsoidalCS")
     public DefaultEllipsoidalCS getElement() {
+        if (skip()) return null;
         final EllipsoidalCS metadata = this.metadata;
         return (metadata instanceof DefaultEllipsoidalCS) ?
             (DefaultEllipsoidalCS) metadata : new DefaultEllipsoidalCS(metadata);

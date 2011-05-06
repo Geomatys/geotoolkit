@@ -69,6 +69,7 @@ public final class CD_ImageDatum extends MetadataAdapter<CD_ImageDatum, ImageDat
     @Override
     @XmlElement(name = "ImageDatum")
     public DefaultImageDatum getElement() {
+        if (skip()) return null;
         final ImageDatum metadata = this.metadata;
         return (metadata instanceof DefaultImageDatum) ?
             (DefaultImageDatum) metadata : new DefaultImageDatum(metadata);

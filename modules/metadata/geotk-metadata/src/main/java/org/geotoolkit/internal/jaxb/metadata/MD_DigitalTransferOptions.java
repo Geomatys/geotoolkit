@@ -72,6 +72,7 @@ public final class MD_DigitalTransferOptions
     @Override
     @XmlElementRef
     public DefaultDigitalTransferOptions getElement() {
+        if (skip()) return null;
         final DigitalTransferOptions metadata = this.metadata;
         return (metadata instanceof DefaultDigitalTransferOptions) ?
             (DefaultDigitalTransferOptions) metadata : new DefaultDigitalTransferOptions(metadata);

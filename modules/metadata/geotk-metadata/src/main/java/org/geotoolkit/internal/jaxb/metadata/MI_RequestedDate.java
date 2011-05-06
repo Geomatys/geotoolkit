@@ -68,6 +68,7 @@ public final class MI_RequestedDate extends MetadataAdapter<MI_RequestedDate, Re
     @Override
     @XmlElementRef
     public DefaultRequestedDate getElement() {
+        if (skip()) return null;
         final RequestedDate metadata = this.metadata;
         return (metadata instanceof DefaultRequestedDate) ?
             (DefaultRequestedDate) metadata : new DefaultRequestedDate(metadata);

@@ -68,6 +68,7 @@ public final class MD_FeatureTypeList extends MetadataAdapter<MD_FeatureTypeList
     @Override
     @XmlElementRef
     public DefaultFeatureTypeList getElement() {
+        if (skip()) return null;
         final FeatureTypeList metadata = this.metadata;
         return (metadata instanceof DefaultFeatureTypeList) ?
             (DefaultFeatureTypeList) metadata : new DefaultFeatureTypeList(metadata);

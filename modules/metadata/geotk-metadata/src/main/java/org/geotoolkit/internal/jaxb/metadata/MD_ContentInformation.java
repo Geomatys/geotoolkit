@@ -79,6 +79,7 @@ public final class MD_ContentInformation
     @Override
     @XmlElementRef
     public AbstractContentInformation getElement() {
+        if (skip()) return null;
         final ContentInformation metadata = this.metadata;
         if (metadata instanceof AbstractContentInformation) {
             return (AbstractContentInformation) metadata;

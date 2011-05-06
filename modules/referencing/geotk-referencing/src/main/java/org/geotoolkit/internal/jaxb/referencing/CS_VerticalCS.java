@@ -69,6 +69,7 @@ public final class CS_VerticalCS extends MetadataAdapter<CS_VerticalCS, Vertical
     @Override
     @XmlElement(name = "VerticalCS")
     public DefaultVerticalCS getElement() {
+        if (skip()) return null;
         final VerticalCS metadata = this.metadata;
         return (metadata instanceof DefaultVerticalCS) ?
             (DefaultVerticalCS) metadata : new DefaultVerticalCS(metadata);

@@ -69,6 +69,7 @@ public final class CS_TimeCS extends MetadataAdapter<CS_TimeCS, TimeCS> {
     @Override
     @XmlElement(name = "TimeCS")
     public DefaultTimeCS getElement() {
+        if (skip()) return null;
         final TimeCS metadata = this.metadata;
         return (metadata instanceof DefaultTimeCS) ?
             (DefaultTimeCS) metadata : new DefaultTimeCS(metadata);

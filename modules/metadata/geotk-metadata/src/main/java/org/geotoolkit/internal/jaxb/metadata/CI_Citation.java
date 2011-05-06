@@ -68,6 +68,7 @@ public final class CI_Citation extends MetadataAdapter<CI_Citation, Citation> {
     @Override
     @XmlElementRef
     public DefaultCitation getElement() {
+        if (skip()) return null;
         final Citation metadata = this.metadata;
         return (metadata instanceof DefaultCitation) ?
             (DefaultCitation) metadata : new DefaultCitation(metadata);

@@ -68,6 +68,7 @@ public final class MD_Resolution extends MetadataAdapter<MD_Resolution, Resoluti
     @Override
     @XmlElementRef
     public DefaultResolution getElement() {
+        if (skip()) return null;
         final Resolution metadata = this.metadata;
         return (metadata instanceof DefaultResolution) ?
             (DefaultResolution) metadata : new DefaultResolution(metadata);

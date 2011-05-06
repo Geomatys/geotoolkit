@@ -73,9 +73,7 @@ public final class MD_Identifier extends MetadataAdapter<MD_Identifier, Identifi
     @Override
     @XmlElementRef
     public DefaultIdentifier getElement() {
-        if (hasUUIDREF()) {
-            return null;
-        }
+        if (skip()) return null;
         final Identifier metadata = this.metadata;
         if (metadata instanceof ReferenceIdentifier) {
             return null;
@@ -102,9 +100,7 @@ public final class MD_Identifier extends MetadataAdapter<MD_Identifier, Identifi
      */
     @XmlElement(name = "RS_Identifier")
     public DefaultReferenceIdentifier getReferenceIdentifier() {
-        if (hasUUIDREF()) {
-            return null;
-        }
+        if (skip()) return null;
         final Identifier metadata = this.metadata;
         if (!(metadata instanceof ReferenceIdentifier)) {
             return null;

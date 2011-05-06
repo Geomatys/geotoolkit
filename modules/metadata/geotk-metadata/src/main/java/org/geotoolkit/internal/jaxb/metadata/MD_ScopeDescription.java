@@ -70,6 +70,7 @@ public final class MD_ScopeDescription
     @Override
     @XmlElementRef
     public DefaultScopeDescription getElement() {
+        if (skip()) return null;
         final ScopeDescription metadata = this.metadata;
         return (metadata instanceof DefaultScopeDescription) ?
             (DefaultScopeDescription) metadata : new DefaultScopeDescription(metadata);

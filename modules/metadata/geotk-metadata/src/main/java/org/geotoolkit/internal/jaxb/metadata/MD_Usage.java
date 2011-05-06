@@ -68,6 +68,7 @@ public final class MD_Usage extends MetadataAdapter<MD_Usage, Usage> {
     @Override
     @XmlElementRef
     public DefaultUsage getElement() {
+        if (skip()) return null;
         final Usage metadata = this.metadata;
         return (metadata instanceof DefaultUsage) ?
             (DefaultUsage) metadata : new DefaultUsage(metadata);

@@ -75,6 +75,7 @@ public final class MD_Constraints extends MetadataAdapter<MD_Constraints, Constr
     @Override
     @XmlElementRef
     public DefaultConstraints getElement() {
+        if (skip()) return null;
         final Constraints metadata = this.metadata;
         if (metadata instanceof DefaultConstraints) {
             return (DefaultConstraints) metadata;

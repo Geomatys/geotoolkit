@@ -68,6 +68,7 @@ public final class MD_Medium extends MetadataAdapter<MD_Medium, Medium> {
     @Override
     @XmlElementRef
     public DefaultMedium getElement() {
+        if (skip()) return null;
         final Medium metadata = this.metadata;
         return (metadata instanceof DefaultMedium) ?
             (DefaultMedium) metadata : new DefaultMedium(metadata);

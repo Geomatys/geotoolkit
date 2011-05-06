@@ -69,6 +69,7 @@ public final class CD_TemporalDatum extends MetadataAdapter<CD_TemporalDatum, Te
     @Override
     @XmlElement(name = "TemporalDatum")
     public DefaultTemporalDatum getElement() {
+        if (skip()) return null;
         final TemporalDatum metadata = this.metadata;
         return (metadata instanceof DefaultTemporalDatum) ?
             (DefaultTemporalDatum) metadata : new DefaultTemporalDatum(metadata);

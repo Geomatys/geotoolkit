@@ -71,6 +71,7 @@ public final class MD_AggregateInformation extends
     @Override
     @XmlElementRef
     public DefaultAggregateInformation getElement() {
+        if (skip()) return null;
         final AggregateInformation metadata = this.metadata;
         return (metadata instanceof DefaultAggregateInformation) ?
             (DefaultAggregateInformation) metadata : new DefaultAggregateInformation(metadata);

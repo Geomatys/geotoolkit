@@ -70,6 +70,7 @@ public final class MI_RangeElementDescription
     @Override
     @XmlElementRef
     public DefaultRangeElementDescription getElement() {
+        if (skip()) return null;
         final RangeElementDescription metadata = this.metadata;
         return (metadata instanceof DefaultRangeElementDescription) ?
             (DefaultRangeElementDescription) metadata : new DefaultRangeElementDescription(metadata);

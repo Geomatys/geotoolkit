@@ -70,9 +70,7 @@ public final class SC_VerticalCRS extends MetadataAdapter<SC_VerticalCRS, Vertic
     @Override
     @XmlElement(name = "VerticalCRS")
     public DefaultVerticalCRS getElement() {
-        if (hasUUIDREF()) {
-            return null;
-        }
+        if (skip()) return null;
         final VerticalCRS metadata = this.metadata;
         return (metadata instanceof DefaultVerticalCRS) ?
             (DefaultVerticalCRS) metadata : new DefaultVerticalCRS(metadata);

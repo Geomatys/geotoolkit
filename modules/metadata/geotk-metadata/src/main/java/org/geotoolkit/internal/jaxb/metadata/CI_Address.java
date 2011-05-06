@@ -68,6 +68,7 @@ public final class CI_Address extends MetadataAdapter<CI_Address, Address> {
     @Override
     @XmlElementRef
     public DefaultAddress getElement() {
+        if (skip()) return null;
         final Address metadata = this.metadata;
         return (metadata instanceof DefaultAddress) ?
             (DefaultAddress) metadata : new DefaultAddress(metadata);

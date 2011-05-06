@@ -72,6 +72,7 @@ public final class MD_PortrayalCatalogueReference
     @Override
     @XmlElementRef
     public DefaultPortrayalCatalogueReference getElement() {
+        if (skip()) return null;
         final PortrayalCatalogueReference metadata = this.metadata;
         return (metadata instanceof DefaultPortrayalCatalogueReference) ?
             (DefaultPortrayalCatalogueReference) metadata :

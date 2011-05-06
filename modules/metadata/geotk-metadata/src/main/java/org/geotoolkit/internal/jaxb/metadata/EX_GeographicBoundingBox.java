@@ -70,6 +70,7 @@ public final class EX_GeographicBoundingBox extends
     @Override
     @XmlElementRef
     public DefaultGeographicBoundingBox getElement() {
+        if (skip()) return null;
         final GeographicBoundingBox metadata = this.metadata;
         return (metadata instanceof DefaultGeographicBoundingBox) ?
             (DefaultGeographicBoundingBox) metadata : new DefaultGeographicBoundingBox(metadata);

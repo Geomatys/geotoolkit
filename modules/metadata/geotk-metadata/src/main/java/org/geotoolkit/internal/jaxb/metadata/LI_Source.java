@@ -69,6 +69,7 @@ public final class LI_Source extends MetadataAdapter<LI_Source, Source> {
     @Override
     @XmlElementRef
     public DefaultSource getElement() {
+        if (skip()) return null;
         return LE_Source.wrap(metadata);
     }
 

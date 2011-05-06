@@ -82,6 +82,7 @@ public final class MD_SpatialRepresentation
     @Override
     @XmlElementRef
     public AbstractSpatialRepresentation getElement() {
+        if (skip()) return null;
         final SpatialRepresentation metadata = this.metadata;
         if (metadata instanceof AbstractSpatialRepresentation) {
             return (AbstractSpatialRepresentation) metadata;

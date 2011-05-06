@@ -68,6 +68,7 @@ public final class CI_Series extends MetadataAdapter<CI_Series, Series> {
     @Override
     @XmlElementRef
     public DefaultSeries getElement() {
+        if (skip()) return null;
         final Series metadata = this.metadata;
         return (metadata instanceof DefaultSeries) ?
             (DefaultSeries) metadata : new DefaultSeries(metadata);

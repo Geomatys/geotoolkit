@@ -72,6 +72,7 @@ public final class MD_ExtendedElementInformation
     @Override
     @XmlElementRef
     public DefaultExtendedElementInformation getElement() {
+        if (skip()) return null;
         final ExtendedElementInformation metadata = this.metadata;
         return (metadata instanceof DefaultExtendedElementInformation) ?
             (DefaultExtendedElementInformation) metadata : new DefaultExtendedElementInformation(metadata);

@@ -68,6 +68,7 @@ public final class EX_Extent extends MetadataAdapter<EX_Extent, Extent> {
     @Override
     @XmlElementRef
     public DefaultExtent getElement() {
+        if (skip()) return null;
         final Extent metadata = this.metadata;
         return (metadata instanceof DefaultExtent) ?
             (DefaultExtent) metadata : new DefaultExtent(metadata);

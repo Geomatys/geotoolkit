@@ -68,6 +68,7 @@ public final class MI_Instrument extends MetadataAdapter<MI_Instrument, Instrume
     @Override
     @XmlElementRef
     public DefaultInstrument getElement() {
+        if (skip()) return null;
         final Instrument metadata = this.metadata;
         return (metadata instanceof DefaultInstrument) ?
             (DefaultInstrument) metadata : new DefaultInstrument(metadata);

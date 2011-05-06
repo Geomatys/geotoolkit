@@ -68,6 +68,7 @@ public final class DQ_Scope extends MetadataAdapter<DQ_Scope, Scope> {
     @Override
     @XmlElementRef
     public DefaultScope getElement() {
+        if (skip()) return null;
         final Scope metadata = this.metadata;
         return (metadata instanceof DefaultScope) ?
             (DefaultScope) metadata : new DefaultScope(metadata);

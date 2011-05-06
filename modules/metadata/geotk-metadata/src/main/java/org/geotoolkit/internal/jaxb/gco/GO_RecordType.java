@@ -70,6 +70,7 @@ public final class GO_RecordType extends MetadataAdapter<GO_RecordType, RecordTy
     @Override
     @XmlElement(name = "RecordType")
     public DefaultRecordType getElement() {
+        if (skip()) return null;
         final RecordType metadata = this.metadata;
         if (metadata instanceof DefaultRecordType) {
             return (DefaultRecordType) metadata;

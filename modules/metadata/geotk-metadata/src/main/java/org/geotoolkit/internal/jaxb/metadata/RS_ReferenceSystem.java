@@ -70,6 +70,7 @@ public class RS_ReferenceSystem extends MetadataAdapter<RS_ReferenceSystem, Refe
     @Override
     @XmlElementRef
     public ReferenceSystemMetadata getElement() {
+        if (skip()) return null;
         final ReferenceSystem metadata = this.metadata;
         if (metadata instanceof ReferenceSystemMetadata) {
             return (ReferenceSystemMetadata) metadata;

@@ -68,9 +68,7 @@ public final class MX_DataFile extends MetadataAdapter<MX_DataFile, DataFile> {
     @Override
     @XmlElementRef
     public DefaultDataFile getElement() {
-        if (hasUUIDREF()) {
-            return null;
-        }
+        if (skip()) return null;
         final DataFile metadata = this.metadata;
         return (metadata instanceof DefaultDataFile) ?
             (DefaultDataFile) metadata : new DefaultDataFile(metadata);

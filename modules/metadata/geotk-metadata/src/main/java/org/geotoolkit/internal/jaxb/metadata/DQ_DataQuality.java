@@ -68,6 +68,7 @@ public final class DQ_DataQuality extends MetadataAdapter<DQ_DataQuality, DataQu
     @Override
     @XmlElementRef
     public DefaultDataQuality getElement() {
+        if (skip()) return null;
         final DataQuality metadata = this.metadata;
         return (metadata instanceof DefaultDataQuality) ?
             (DefaultDataQuality) metadata : new DefaultDataQuality(metadata);
