@@ -78,38 +78,21 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     protected BoundType metadata;
 
     /**
-     * An identifier for the metadata, or {@code null} if none. This field is initialized
-     * at construction time to the value registered in {@link UUIDs}, if any.
-     *
-     * {@section Difference between <code>gmd:uuid</code> and <code>gml:id</code>}
+     * Either an {@link ObjectReference} or a {@link String}.
+     * <p>
      * <ul>
-     *   <li>{@code id} is a standard <strong>GML</strong> attribute available on every
-     *       object-with-identity. It has type={@code "xs:ID"} - i.e. it is a fragment
-     *       identifier, unique within document scope only, for internal cross-references.
-     *       It is not useful by itself as a persistent unique identifier.</li>
-     *   <li>{@code uuid} is an optional attribute available on every object-with-identity,
-     *       provided in the <strong>GMD</strong> schemas that implement ISO 19115 in XML.
-     *       May be used as a persistent unique identifier, but only available within GMD
-     *       context.</li>
+     *   <li>{@link ObjectReference} defines the {@code uuidref}, {@code type}, {@code xlink:href},
+     *       {@code xlink:role}, {@code xlink:arcrole}, {@code xlink:title}, {@code xlink:show} and
+     *       {@code xlink:actuate} attributes.</li>
+     *   <li>{@link String} defines the {@code nilReason} attribute.</li>
      * </ul>
+     * <p>
+     * Those two properties are exclusive (if the user define an object reference, then the
+     * attribute is not nil).
      *
-     * @see <a href="https://www.seegrid.csiro.au/wiki/bin/view/AppSchemas/GmlIdentifiers">GML identifiers</a>
-     * @see org.geotoolkit.internal.jaxb.GMLAdapter#id
-     *
-     * @since 3.13
+     * @since 3.18 (derived from 3.13)
      */
-    @XmlAttribute
-    protected String uuid;
-
-    /**
-     * The {@code gco:ObjectReference} attributes, if any. Those attributes are
-     * {@code uuidref}, {@code type}, {@code xlink:href}, {@code xlink:role},
-     * {@code xlink:arcrole}, {@code xlink:title}, {@code xlink:show} and
-     * {@code xlink:actuate}.
-     *
-     * @since 3.18
-     */
-    private ObjectReference reference;
+    private Object reference;
 
     /**
      * Empty constructor for subclasses only.
@@ -124,17 +107,53 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     protected PropertyType(final BoundType metadata) {
         this.metadata = metadata;
-        uuid = UUIDs.DEFAULT.getUUID(metadata);
     }
 
     /**
-     * Returns the object reference, which is guaranteed to be non-null.
+     * Returns the object reference, or {@code null} if none.
      */
     private ObjectReference reference() {
-        if (reference == null) {
-            reference = new ObjectReference();
+        final Object ref = reference;
+        return (ref instanceof ObjectReference) ? (ObjectReference) ref : null;
+    }
+
+    /**
+     * Returns the object reference, creating it if needed. Note that if a {@code gco:nilReason}
+     * were defined, then it will be overwritten since the object is not nil.
+     */
+    private ObjectReference referenceNotNull() {
+        Object ref = reference;
+        if (!(ref instanceof ObjectReference)) {
+            reference = ref = new ObjectReference();
         }
-        return reference;
+        return (ObjectReference) ref;
+    }
+
+    /**
+     * The reason why a mandatory attribute if left unspecified.
+     *
+     * @return the current value, or {@code null} if none.
+     * @category gco:PropertyType
+     * @since 3.18
+     */
+    @XmlAttribute(name = "nilReason")
+    public final String getNilReason() {
+        final Object ref = reference;
+        return (reference instanceof String) ? (String) ref : null;
+    }
+
+    /**
+     * Sets the {@code nilReason} attribute value. This method does nothing if reference
+     * is specified, since in such case the object can not be nil.
+     *
+     * @param nilReason The new attribute value.
+     * @category gco:PropertyType
+     * @since 3.18
+     */
+    public final void setNilReason(final String nilReason) {
+        if (!(reference instanceof ObjectReference)) {
+            reference = nilReason;
+        }
     }
 
     /**
@@ -143,11 +162,11 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * metadata itself, or just the UUID.
      *
      * @return {@code true} if the wrapped metadata has a "{@code uuidref}" attribute.
-     *
+     * @category gco:ObjectReference
      * @since 3.18
      */
     protected final boolean hasUUIDREF() {
-        final ObjectReference reference = this.reference;
+        final ObjectReference reference = reference();
         return (reference != null) && (reference.uuidref != null);
     }
 
@@ -157,11 +176,12 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * {@code uuid} attribute.
      *
      * @return the current value, or {@code null} if none.
+     * @category gco:ObjectReference
      * @since 3.18 (derived from 3.13)
      */
     @XmlAttribute(name = "uuidref")
     public final String getUUIDREF() {
-        final ObjectReference reference = this.reference;
+        final ObjectReference reference = reference();
         return (reference != null) ? reference.uuidref : null;
     }
 
@@ -169,63 +189,11 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * Sets the {@code uuidref} attribute value.
      *
      * @param uuidref The new attribute value.
+     * @category gco:ObjectReference
      * @since 3.18
      */
     public final void setUUIDREF(final String uuidref) {
-        reference().uuidref = uuidref;
-    }
-
-    /**
-     * The reason why a mandatory attribute if left unspecified.
-     *
-     * @return the current value, or {@code null} if none.
-     * @since 3.18
-     */
-    @XmlAttribute(name = "nilReason")
-    public final String getNilReason() {
-        final ObjectReference reference = this.reference;
-        return (reference != null) ? reference.nilReason : null;
-    }
-
-    /**
-     * Sets the {@code nilReason} attribute value.
-     *
-     * @param nilReason The new attribute value.
-     * @since 3.18
-     */
-    public final void setNilReason(final String nilReason) {
-        reference().nilReason = nilReason;
-    }
-
-    /**
-     * The type of link. May have one of the following values:
-     * <p>
-     * <ul>
-     *   <li>simple: a simple link</li>
-     *   <li>extended: an extended, possibly multi-resource, link</li>
-     *   <li>locator: a pointer to an external resource</li>
-     *   <li>resource: an internal resource</li>
-     *   <li>arc: a traversal rule between resources</li>
-     *   <li>title: a descriptive title for another linking element</li>
-     * </ul>
-     *
-     * @return the current value, or {@code null} if none.
-     * @since 3.18
-     */
-    @XmlAttribute(name = "type", namespace = Namespaces.XLINK)
-    public final XLink.Type getType() {
-        final ObjectReference reference = this.reference;
-        return (reference != null) ? reference.getType() : null;
-    }
-
-    /**
-     * Sets the {@code type} attribute value.
-     *
-     * @param type The new attribute value.
-     * @since 3.18
-     */
-    public final void setType(final XLink.Type type) {
-        reference().setType(type);
+        referenceNotNull().uuidref = uuidref;
     }
 
     /**
@@ -234,11 +202,12 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * has a corresponding {@code id} attribute.
      *
      * @return the current value, or {@code null} if none.
+     * @category xlink
      * @since 3.18
      */
     @XmlAttribute(name = "href", namespace = Namespaces.XLINK)
     public final URI getHRef() {
-        final ObjectReference reference = this.reference;
+        final ObjectReference reference = reference();
         return (reference != null) ? reference.getHRef() : null;
     }
 
@@ -246,21 +215,23 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * Sets the {@code href} attribute value.
      *
      * @param href The new attribute value.
+     * @category xlink
      * @since 3.18
      */
     public final void setHRef(final URI href) {
-        reference().setHRef(href);
+        referenceNotNull().setHRef(href);
     }
 
     /**
      * A URI reference for some description of the arc role.
      *
      * @return the current value, or {@code null} if none.
+     * @category xlink
      * @since 3.18
      */
     @XmlAttribute(name = "role", namespace = Namespaces.XLINK)
     public final URI getRole() {
-        final ObjectReference reference = this.reference;
+        final ObjectReference reference = reference();
         return (reference != null) ? reference.getRole() : null;
     }
 
@@ -268,21 +239,23 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * Sets the {@code role} attribute value.
      *
      * @param role The new attribute value.
+     * @category xlink
      * @since 3.18
      */
     public final void setRole(final URI role) {
-        reference().setRole(role);
+        referenceNotNull().setRole(role);
     }
 
     /**
      * A URI reference for some description of the arc role.
      *
      * @return the current value, or {@code null} if none.
+     * @category xlink
      * @since 3.18
      */
     @XmlAttribute(name = "arcrole", namespace = Namespaces.XLINK)
     public final URI getArcRole() {
-        final ObjectReference reference = this.reference;
+        final ObjectReference reference = reference();
         return (reference != null) ? reference.getArcRole() : null;
     }
 
@@ -290,10 +263,11 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * Sets the {@code arcrole} attribute value.
      *
      * @param arcrole The new attribute value.
+     * @category xlink
      * @since 3.18
      */
     public final void setArcRole(final URI arcrole) {
-        reference().setArcRole(arcrole);
+        referenceNotNull().setArcRole(arcrole);
     }
 
     /**
@@ -301,11 +275,12 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * for the arc.
      *
      * @return the current value, or {@code null} if none.
+     * @category xlink
      * @since 3.18
      */
     @XmlAttribute(name = "title", namespace = Namespaces.XLINK)
     public final InternationalString getTitle() {
-        final ObjectReference reference = this.reference;
+        final ObjectReference reference = reference();
         return (reference != null) ? reference.getTitle() : null;
     }
 
@@ -313,10 +288,11 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * Sets the {@code title} attribute value.
      *
      * @param title The new attribute value.
+     * @category xlink
      * @since 3.18
      */
     public final void setTitle(final InternationalString title) {
-        reference().setTitle(title);
+        referenceNotNull().setTitle(title);
     }
 
     /**
@@ -332,11 +308,12 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * </ul>
      *
      * @return the current value, or {@code null} if none.
+     * @category xlink
      * @since 3.18
      */
     @XmlAttribute(name = "show", namespace = Namespaces.XLINK)
     public final XLink.Show getShow() {
-        final ObjectReference reference = this.reference;
+        final ObjectReference reference = reference();
         return (reference != null) ? reference.getShow() : null;
     }
 
@@ -344,10 +321,11 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * Sets the {@code show} attribute value.
      *
      * @param show The new attribute value.
+     * @category xlink
      * @since 3.18
      */
     public final void setShow(final XLink.Show show) {
-        reference().setShow(show);
+        referenceNotNull().setShow(show);
     }
 
     /**
@@ -362,11 +340,12 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * </ul>
      *
      * @return the current value, or {@code null} if none.
+     * @category xlink
      * @since 3.18
      */
     @XmlAttribute(name = "actuate", namespace = Namespaces.XLINK)
     public final XLink.Actuate getActuate() {
-        final ObjectReference reference = this.reference;
+        final ObjectReference reference = reference();
         return (reference != null) ? reference.getActuate() : null;
     }
 
@@ -374,11 +353,15 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * Sets the {@code actuate} attribute value.
      *
      * @param actuate The new attribute value.
+     * @category xlink
      * @since 3.18
      */
     public final void setActuate(final XLink.Actuate actuate) {
-        reference().setActuate(actuate);
+        referenceNotNull().setActuate(actuate);
     }
+
+    // Do NOT declare attributes xlink:label, xlink:from and xlink:to,
+    // because they are not part of the xlink:simpleLink group.
 
 
     // ======== XmlAdapter methods ===============================================================

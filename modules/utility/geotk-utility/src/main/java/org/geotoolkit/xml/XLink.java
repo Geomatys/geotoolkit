@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -39,7 +42,7 @@ import org.geotoolkit.util.Utilities;
  * of whether a value is required (R) or optional (O)
  * (Source: <a href="http://www.w3.org/TR/xlink/">W3C</a>):
  *
- * <table border="1" cellspacing="0" cellpadding="2">
+ * <blockquote><table border="1" cellspacing="0" cellpadding="1">
  * <tr bgcolor="lightblue">
  *   <th>&nbsp;</th>
  *   <th width="14%">{@link XLink.Type#SIMPLE simple}</th>
@@ -78,13 +81,14 @@ import org.geotoolkit.util.Utilities;
  * </tr>
  *   <tr align="center"><th align="left">&nbsp;{@link #getTo() to}</th>
  *   <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>O</td><td>&nbsp;</td><td>&nbsp;</td>
- * </tr></table>
+ * </tr></table></blockquote>
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
  * @see <a href="http://www.w3.org/TR/xlink/">XML Linking Language</a>
+ * @see <a href="http://schemas.opengis.net/xlink/1.0.0/xlinks.xsd">OGC schema</a>
  *
  * @since 3.18 (derived from 2.5)
  * @module
@@ -312,7 +316,7 @@ public class XLink implements Serializable {
         final int undefined = ~(defined | 0x1);
         for (final Type candidate : Type.values()) {
             // Test if this XLink instance defines only values allowed by the candidate type.
-            if ((defined & candidate.fieldMask) != 0) {
+            if ((defined & ~candidate.fieldMask) != 0) {
                 continue;
             }
             // Test if this XLink instance defines all mandatory fields.
@@ -336,7 +340,30 @@ public class XLink implements Serializable {
      * @param type The new type of link, or {@code null} for removing explicit setting.
      */
     public void setType(final Type type) {
+        if (type != null && (fieldMask() & ~type.fieldMask) != 0) {
+            throw new IllegalStateException(message(getType()));
+        }
         this.type = type;
+    }
+
+    /**
+     * Checks if the given property can be set.
+     *
+     * @param  field The property code, as documented in {@link XLink.Type#fieldMask}.
+     * @throws IllegalStateException If the given field can not be set.
+     */
+    private void canWrite(final int field) throws IllegalStateException {
+        final Type type = this.type;
+        if (type != null && (type.fieldMask & field) == 0) {
+            throw new IllegalStateException(message(type));
+        }
+    }
+
+    /**
+     * Returns an error message for an illegal operation applied on a link of the given type.
+     */
+    private static String message(final Type type) {
+        return Errors.format(Errors.Keys.ILLEGAL_OPERATION_FOR_VALUE_CLASS_$1, type.name().toLowerCase());
     }
 
     /**
@@ -359,9 +386,13 @@ public class XLink implements Serializable {
      * Sets the URN to a resources.
      *
      * @param href A URN to a resources, or {@code null} if none.
+     * @throws IllegalStateException If the link type {@linkplain #setType has been explicitely set}.
+     *         and that type does not allow the {@code "href"} attribute.
+     *
      * @category locator
      */
-    public void setHRef(final URI href) {
+    public void setHRef(final URI href) throws IllegalStateException {
+        canWrite(0x2);
         this.href = href;
     }
 
@@ -380,9 +411,13 @@ public class XLink implements Serializable {
      * Sets the URI reference for some description of the arc role.
      *
      * @param role A URI reference for some description of the arc role, or {@code null} if none.
+     * @throws IllegalStateException If the link type {@linkplain #setType has been explicitely set}.
+     *         and that type does not allow the {@code "role"} attribute.
+     *
      * @category semantic
      */
-    public void setRole(final URI role) {
+    public void setRole(final URI role) throws IllegalStateException {
+        canWrite(0x4);
         this.role = role;
     }
 
@@ -401,9 +436,13 @@ public class XLink implements Serializable {
      * Sets a URI reference for some description of the arc role.
      *
      * @param arcrole A URI reference for some description of the arc role, or {@code null} if none.
+     * @throws IllegalStateException If the link type {@linkplain #setType has been explicitely set}.
+     *         and that type does not allow the {@code "arcrole"} attribute.
+     *
      * @category semantic
      */
-    public void setArcRole(final URI arcrole) {
+    public void setArcRole(final URI arcrole) throws IllegalStateException {
+        canWrite(0x8);
         this.arcrole = arcrole;
     }
 
@@ -423,9 +462,13 @@ public class XLink implements Serializable {
      *
      * @param title A human-readable string with a short description for the arc,
      *        or {@code null} if none.
+     * @throws IllegalStateException If the link type {@linkplain #setType has been explicitely set}.
+     *         and that type does not allow the {@code "title"} attribute.
+     *
      * @category semantic
      */
-    public void setTitle(final InternationalString title) {
+    public void setTitle(final InternationalString title) throws IllegalStateException {
+        canWrite(0x10);
         this.title = title;
     }
 
@@ -493,9 +536,13 @@ public class XLink implements Serializable {
      * Sets the desired presentation of the ending resource on traversal from the starting resource.
      *
      * @param show The desired presentation of the ending resource, or {@code null} if unspecified.
+     * @throws IllegalStateException If the link type {@linkplain #setType has been explicitely set}.
+     *         and that type does not allow the {@code "show"} attribute.
+     *
      * @category behavior
      */
-    public void setShow(final Show show) {
+    public void setShow(final Show show) throws IllegalStateException {
+        canWrite(0x20);
         this.show = show;
     }
 
@@ -560,9 +607,13 @@ public class XLink implements Serializable {
      *
      * @param actuate The desired timing of traversal from the starting resource to the ending
      *        resource, or {@code null} if unspecified.
+     * @throws IllegalStateException If the link type {@linkplain #setType has been explicitely set}.
+     *         and that type does not allow the {@code "actuate"} attribute.
+     *
      * @category behavior
      */
-    public void setActuate(final Actuate actuate) {
+    public void setActuate(final Actuate actuate) throws IllegalStateException {
+        canWrite(0x40);
         this.actuate = actuate;
     }
 
@@ -581,9 +632,13 @@ public class XLink implements Serializable {
      *
      * @param label An identification of the target of a {@code from} or {@code to} attribute,
      *        or {@code null}.
+     * @throws IllegalStateException If the link type {@linkplain #setType has been explicitely set}.
+     *         and that type does not allow the {@code "label"} attribute.
+     *
      * @category traversal
      */
-    public void setLabel(final String label) {
+    public void setLabel(final String label) throws IllegalStateException {
+        canWrite(0x80);
         this.label = label;
     }
 
@@ -603,9 +658,13 @@ public class XLink implements Serializable {
      * {@code label} attribute.
      *
      * @param from The starting resource, or {@code null}.
+     * @throws IllegalStateException If the link type {@linkplain #setType has been explicitely set}.
+     *         and that type does not allow the {@code "from"} attribute.
+     *
      * @category traversal
      */
-    public void setFrom(final String from) {
+    public void setFrom(final String from) throws IllegalStateException {
+        canWrite(0x100);
         this.from = from;
     }
 
@@ -625,9 +684,13 @@ public class XLink implements Serializable {
      * {@code label} attribute.
      *
      * @param to The ending resource, or {@code null}.
+     * @throws IllegalStateException If the link type {@linkplain #setType has been explicitely set}.
+     *         and that type does not allow the {@code "to"} attribute.
+     *
      * @category traversal
      */
-    public void setTo(final String to) {
+    public void setTo(final String to) throws IllegalStateException {
+        canWrite(0x200);
         this.to = to;
     }
 
@@ -638,6 +701,9 @@ public class XLink implements Serializable {
      */
     @Override
     public boolean equals(final Object object) {
+        if (object == this) {
+            return true;
+        }
         if (object != null && object.getClass().equals(getClass())) {
             final XLink that = (XLink) object;
             return Utilities.equals(this.type,    that.type)    &&
@@ -659,8 +725,7 @@ public class XLink implements Serializable {
      */
     @Override
     public int hashCode() {
-        return Utilities.hash(type,
-               Utilities.hash(href,
+        return Utilities.hash(href,
                Utilities.hash(role,
                Utilities.hash(arcrole,
                Utilities.hash(title,
@@ -668,6 +733,54 @@ public class XLink implements Serializable {
                Utilities.hash(actuate,
                Utilities.hash(label,
                Utilities.hash(from,
-               Utilities.hash(to, (int) serialVersionUID))))))))));
+               Utilities.hash(to, (type != null ? type.hashCode() : 0) ^ (int) serialVersionUID)))))))));
+    }
+
+    /**
+     * Returns a string representation of this object. The default implementation returns the
+     * simple class name followed by non-null attributes, as in the example below:
+     *
+     * {@preformat text
+     *     XLink[type="locator", href="urn:ogc:def:method:EPSG::4326"]
+     * }
+     */
+    @Override
+    public String toString() {
+        final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this)).append('[');
+        append(buffer, "type",    getType());
+        append(buffer, "href",    getHRef());
+        append(buffer, "role",    getRole());
+        append(buffer, "arcrole", getArcRole());
+        append(buffer, "title",   getTitle());
+        append(buffer, "show",    getShow());
+        append(buffer, "actuate", getActuate());
+        append(buffer, "label",   getLabel());
+        append(buffer, "from",    getFrom());
+        append(buffer, "to",      getTo());
+        return buffer.append(']').toString();
+    }
+
+    /**
+     * Appends the given attribute in the given buffer if the attribute value is not null.
+     * If the given value is an attribute, the XML name will be used rather than the Java
+     * field name.
+     */
+    private static void append(final StringBuilder buffer, final String label, Object value) {
+        if (value != null) {
+            if (buffer.charAt(buffer.length() - 1) != '[') {
+                buffer.append(", ");
+            }
+            if (value instanceof Enum<?>) try {
+                final XmlEnumValue xml = value.getClass().getField(((Enum<?>) value).name()).getAnnotation(XmlEnumValue.class);
+                if (xml != null) {
+                    value = xml.value();
+                }
+            } catch (NoSuchFieldException e) {
+                // Should never happen with Enums. But if it
+                // happen anyway, this is not a fatal error.
+                Logging.unexpectedException(XLink.class, "toString", e);
+            }
+            buffer.append(label).append("=\"").append(value).append('"');
+        }
     }
 }

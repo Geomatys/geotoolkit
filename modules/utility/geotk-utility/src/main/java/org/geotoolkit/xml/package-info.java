@@ -52,7 +52,7 @@
  * processes, including the namespace URLs and the errors handling.
  * <p>
  * The most common namespace URLs are defined in the {@link org.geotoolkit.xml.Namespaces} class.
- * The parsing of some objects like {@link java.lang.net.URL} and {@link java.util.UUID}, together
+ * The parsing of some objects like {@link java.net.URL} and {@link java.util.UUID}, together
  * with the behavior in case of parsing error, can be specified by the
  * {@link org.geotoolkit.xml.ObjectConverters} class.
  *

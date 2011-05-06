@@ -24,24 +24,31 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * The {@code gco:ObjectReference} construct, which is inherited (indirectly) by all metadata
- * wrappers defined {@link org.geotoolkit.internal.jaxb.metadata} package. The attributes defined
- * by this class are {@code uuidref}, {@code type}, {@code xlink:href}, {@code xlink:role},
+ * The {@code gco:ObjectReference} XML attribute group is included by all metadata wrappers defined
+ * in the {@link org.geotoolkit.internal.jaxb.metadata} package. The attributes of interest defined
+ * in this group are {@code uuidref}, {@code type}, {@code xlink:href}, {@code xlink:role},
  * {@code xlink:arcrole}, {@code xlink:title}, {@code xlink:show} and {@code xlink:actuate}.
  * <p>
- * This object is complementary to the {@code gco:ObjectIdentification}, which defines the
- * {@code id} and {@code uuid} attributes to be supported by all metadata implementation in
- * the public {@link org.geotoolkit.metadata.iso} package.
+ * This {@code gco:ObjectReference} group is complementary to {@code gco:ObjectIdentification},
+ * which defines the {@code id} and {@code uuid} attributes to be supported by all metadata
+ * implementations in the public {@link org.geotoolkit.metadata.iso} package and sub-packages.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
+ * @see PropertyType
+ * @see <a href="http://schemas.opengis.net/iso/19139/20070417/gco/gcoBase.xsd">OGC schema</a>
  * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-165">GEOTK-165</a>
  *
  * @since 3.18
  * @module
  */
 final class ObjectReference extends XLink {
+    /**
+     * For cross-version compatibility.
+     */
+    private static final long serialVersionUID = 8626892072241872154L;
+
     /**
      * A URN to an external resources, or to an other part of a XML document, or an identifier.
      * The {@code uuidref} attribute is used to refer to an XML element that has a corresponding
@@ -53,17 +60,10 @@ final class ObjectReference extends XLink {
     String uuidref;
 
     /**
-     * The reason why a mandatory attribute if left unspecified. This attribute is actually
-     * not a {@code gco:ObjectReference} attribute, but it still declared here because it
-     * appears in every ISO 19139 metadata.
-     */
-    @XmlAttribute
-    String nilReason;
-
-    /**
-     * Creates a new object reference.
+     * Creates a new object reference of kind {@code xlink:simpleLink}.
      */
     ObjectReference() {
+        setType(Type.SIMPLE);
     }
 
     /**
@@ -78,8 +78,7 @@ final class ObjectReference extends XLink {
         }
         if (super.equals(object)) {
             final ObjectReference that = (ObjectReference) object;
-            return Utilities.equals(this.uuidref,   that.uuidref) &&
-                   Utilities.equals(this.nilReason, that.nilReason);
+            return Utilities.equals(this.uuidref, that.uuidref);
         }
         return false;
     }
@@ -89,6 +88,6 @@ final class ObjectReference extends XLink {
      */
     @Override
     public int hashCode() {
-        return Utilities.hash(uuidref, Utilities.hash(nilReason, super.hashCode()));
+        return Utilities.hash(uuidref, super.hashCode());
     }
 }
