@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.ncwms;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -32,7 +33,7 @@ import org.geotoolkit.wms.WebMapServer;
 
 
 /**
- * Generates ncWMS requests objects on a ncWMS server.
+ * Generates ncWMS requests objects.
  *
  * @author Olivier Terral (Geomatys)
  * @module pending
@@ -67,6 +68,24 @@ public class NcWebMapServer extends WebMapServer{
      */
     public NcWebMapServer(final URL serverURL, final WMSVersion version, final AbstractWMSCapabilities capabilities) {
         super(serverURL, version, capabilities);
+    }
+    
+    /**
+     * Create a NcWebMapServer from a WebMapServer
+     * 
+     * @param wms a WebMapServer
+     */
+    public NcWebMapServer(final WebMapServer wms) {
+        super(wms.getURL(), wms.getVersion());
+    }
+    
+    /**
+     * Create a NcWebMapServer from a WebMapServer and a Getcapabilities
+     * 
+     * @param wms a WebMapServer
+     */
+    public NcWebMapServer(final WebMapServer wms, final AbstractWMSCapabilities cap) {
+        super(wms.getURL(), wms.getVersion(), cap);
     }
    
     /**
@@ -125,14 +144,22 @@ public class NcWebMapServer extends WebMapServer{
             default:
                 throw new IllegalArgumentException("Version was not defined");
         }
-    }
-    
+    }    
     
     /**
      * Returns the request object. 
      */
     public NcGetMetadataRequest createGetMetadata() {
         return new NcGetMetadata(getURI().toString());
+    }
+    
+    /**
+     * Returns the request object. 
+     */
+    public NcGetMetadataRequest createGetMetadataMenu()  {
+        final NcGetMetadataRequest request = createGetMetadata();
+        request.setItem("menu");
+        return request;
     }
     
     /**

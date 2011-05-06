@@ -154,6 +154,32 @@ public class NcWMSMapLayerTest {
     }
     
     /**
+     * This test checks if the ncWMS parameters are added to the GetLegendGraphic 
+     * request
+     */
+    @Test
+    public void test_GetLegend() throws MalformedURLException {
+        
+        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
+        layer.setColorScaleRange("auto");
+        layer.setNumColorBands(125);
+        layer.setLogScale(true);    
+        layer.setStyles("style_name/palette_name");         
+        
+        final String query = layer.queryLegend(new Dimension(360, 180),
+                "image/png", "test", 100.0).toString();
+        assertTrue(query.contains("FORMAT=image/png"));
+        assertTrue(query.contains("WIDTH=360"));
+        assertTrue(query.contains("HEIGHT=180"));
+        assertTrue(query.contains("RULE=test"));
+        assertTrue(query.contains("SCALE=100"));
+        assertTrue(query.contains("PALETTE=palette_name"));
+        assertTrue(query.contains("COLORSCALERANGE=auto"));
+        assertTrue(query.contains("NUMCOLORBANDS=125"));
+        assertTrue(query.contains("LOGSCALE=true"));
+    }
+    
+    /**
      * This test checks if the ncWMS parameters are added to the get metadata 
      * request
      */
@@ -213,24 +239,8 @@ public class NcWMSMapLayerTest {
         assertTrue(query.contains("item=timesteps"));
         assertTrue(query.contains("layerName=test"));
         assertTrue(query.contains("day=10-10-10T01:00:00Z"));        
-    }
+    }    
     
-    /**
-     * This test checks if the ncWMS parameters are added to the get metadata 
-     * request
-     */
-    @Test
-    public void test_GetMetadataMenu() throws MalformedURLException {
-        
-        final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
-        
-        // Test mandatory values
-        String query = layer.queryMetadataMenu().toString();        
-        assertTrue(query.contains("request=GetMetadata"));   
-        assertTrue(query.contains("item=menu"));
-        assertFalse(query.contains("layerName=test"));
-        
-    }
     /**
      * This test checks if the ncWMS parameters are added to the get metadata 
      * request

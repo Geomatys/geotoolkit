@@ -48,6 +48,7 @@ public class NcGetLegendGraphicTest {
         request.setColorScaleRange("-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
+        request.setPalette("test");
         
         final URL url;
         try {
@@ -62,6 +63,7 @@ public class NcGetLegendGraphicTest {
         assertTrue(sUrl.contains("COLORSCALERANGE=-50,50"));
         assertTrue(sUrl.contains("NUMCOLORBANDS=150"));
         assertTrue(sUrl.contains("LOGSCALE=true"));
+        assertTrue(sUrl.contains("PALETTE=test"));
     }
 
     /**
@@ -79,6 +81,7 @@ public class NcGetLegendGraphicTest {
         request.setColorScaleRange("-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
+        request.setPalette("test");
         
         final URL url;
         try {
@@ -94,6 +97,7 @@ public class NcGetLegendGraphicTest {
         assertTrue(sUrl.contains("COLORSCALERANGE=-50,50"));
         assertTrue(sUrl.contains("NUMCOLORBANDS=150"));
         assertTrue(sUrl.contains("LOGSCALE=true"));
+        assertTrue(sUrl.contains("PALETTE=test"));
     }    
     
 }

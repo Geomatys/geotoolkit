@@ -42,6 +42,8 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
     protected Integer numColorBands = null;
     
     protected Boolean logScale = null;
+    
+    protected String palette = null;
 
     /**
      * {@inheritDoc}
@@ -115,6 +117,22 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
     }
     
     /**
+     * {@inheritDoc }
+     */
+    @Override
+    public String getPalette() {
+        return palette;
+    };
+
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public void setPalette(final String palette) {
+        this.palette = palette;
+    };
+    
+    /**
      * {@inheritDoc}
      */
     @Override
@@ -131,7 +149,10 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
             requestParameters.put("NUMCOLORBANDS", String.valueOf(numColorBands));
         
         if (logScale != null)
-            requestParameters.put("LOGSCALE", String.valueOf(logScale));
+            requestParameters.put("LOGSCALE", String.valueOf(logScale));        
+        
+        if (palette != null)
+            requestParameters.put("PALETTE", palette);
 
     }
 

@@ -159,10 +159,7 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
     protected void prepareParameters() {
         super.prepareParameters();
 
-        // Tests if the mandatory parameters are available
-        if (layerName == null)
-            throw new IllegalArgumentException("Must provide a layerName parameter");    
-        
+        // Tests if the mandatory parameters are available          
         if (item == null) {
             throw new IllegalArgumentException("Must provide an item parameter");
             
@@ -196,7 +193,12 @@ public class NcGetMetadata extends AbstractRequest implements NcGetMetadataReque
         requestParameters.put("request", "GetMetadata");
         requestParameters.put("item", item);
         
-        if (!item.equals("menu"))
+        if (!item.equals("menu")) {
+            
+            if (layerName == null)
+                throw new IllegalArgumentException("Must provide a layerName parameter"); 
+            
             requestParameters.put("layerName", layerName);
+        }
     }
 }

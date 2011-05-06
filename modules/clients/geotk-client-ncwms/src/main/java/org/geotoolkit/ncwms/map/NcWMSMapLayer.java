@@ -20,20 +20,20 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.awt.Dimension;
-import java.awt.geom.Point2D;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.ncwms.NcGetFeatureInfoRequest;
+import org.geotoolkit.ncwms.NcGetLegendRequest;
 import org.geotoolkit.ncwms.NcGetMapRequest;
 import org.geotoolkit.ncwms.NcGetMetadataRequest;
 import org.geotoolkit.ncwms.NcGetTransectRequest;
 import org.geotoolkit.ncwms.NcGetVerticalProfileRequest;
+import org.geotoolkit.ncwms.NcWMSCommonRequest;
 import org.geotoolkit.ncwms.NcWebMapServer;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.map.WMSMapLayer;
 
 import org.opengis.geometry.Envelope;
-import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.FactoryException;
 
@@ -182,6 +182,21 @@ public class NcWMSMapLayer extends WMSMapLayer {
         this.logScale = logScale;
     }
     
+    
+    
+    /********************* Queries functions **********************************/
+    
+    /**
+     * Sets ncWMS common request parameters
+     * @param request the current request
+     */
+    private void prepareNcWMSCommonRequest(final NcWMSCommonRequest request) {        
+        request.setOpacity(ncOpacity);        
+        request.setColorScaleRange(colorScaleRange);
+        request.setNumColorBands(numColorBands);
+        request.setLogScale(logScale);
+    }
+    
     /**
      * {@inheritDoc }
      */
@@ -190,47 +205,51 @@ public class NcWMSMapLayer extends WMSMapLayer {
     TransformException, FactoryException {
         final NcGetMapRequest request = ((NcWebMapServer) getServer()).createGetMap();
         prepareQuery(request, new GeneralEnvelope(env), rect, null);    
+        prepareNcWMSCommonRequest(request);       
         return request.getURL();
-    }
-    
+    }    
 
     /**
      * {@inheritDoc }
      */
     @Override
-    public URL queryFeatureInfo(final Envelope env, final Dimension rect, int x, int y,
-            final String[] queryLayers, final String infoFormat, final int featureCount)
-            throws TransformException, FactoryException, MalformedURLException, NoninvertibleTransformException {
-
+    public URL queryFeatureInfo(final Envelope env, final Dimension rect, int x,
+            int y, final String[] queryLayers, final String infoFormat, 
+            final int featureCount) throws TransformException, FactoryException,
+            MalformedURLException {
         final NcGetFeatureInfoRequest request = ((NcWebMapServer) getServer()).createGetFeatureInfo();
-        request.setQueryLayers(queryLayers);
-        request.setInfoFormat(infoFormat);
-        request.setFeatureCount(featureCount);
-
-        final Dimension crect = new Dimension(rect);
-        final Point2D pickCoord = new Point2D.Double(x, y);
-        final GeneralEnvelope cenv = new GeneralEnvelope(env);
-
-        prepareQuery(request, cenv, crect, pickCoord);
-        request.setRawIndex((int)Math.round(pickCoord.getY()));
-        request.setColumnIndex((int)Math.round(pickCoord.getX()));
-
+        prepareGetFeatureInfoRequest(request, env, rect, x, y, queryLayers, infoFormat, featureCount);        
+        prepareNcWMSCommonRequest(request);       
         return request.getURL();
     }
     
     /**
      * {@inheritDoc }
      */
-    void prepareQuery(final NcGetMapRequest request, final GeneralEnvelope env, 
-            final Dimension dim, final Point2D pickCoord) throws TransformException, FactoryException {
-
-        super.prepareQuery(request, env, dim, pickCoord);
+    @Override
+    public URL queryLegend(final Dimension rect, final String format, final String rule, 
+            final Double scale) throws MalformedURLException {
         
-        request.setOpacity(ncOpacity);        
-        request.setColorScaleRange(colorScaleRange);
-        request.setNumColorBands(numColorBands);
-        request.setLogScale(logScale);
-    }    
+        final NcGetLegendRequest request = ((NcWebMapServer) getServer()).createGetLegend();
+        prepareGetLegendRequest(request, rect, format, rule, scale);
+        
+        /*
+         * The STYLES parameter of the Getmap request is defined like this: 
+         * [style_name]/[palette_name] so we split the string and retrieve the value
+         * of the PALETTE parameter.
+         * 
+         */
+        if (getStyles() != null && getStyles().length > 0) {
+            if (getStyles()[0].contains("/") && getStyles()[0].split("/").length == 2) {
+                final String palette = getStyles()[0].split("/")[1];
+                request.setPalette(palette);
+            }            
+        }
+        
+        prepareNcWMSCommonRequest(request);
+        
+        return request.getURL();
+    }
     
     private void prepareQueryMetadata(final NcGetMetadataRequest request, 
             final String item) {        
@@ -257,12 +276,6 @@ public class NcWMSMapLayer extends WMSMapLayer {
         final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
         prepareQueryMetadata(request, "timesteps");
         request.setDay(dimensions().get("TIME"));
-        return request.getURL();
-    }
-    
-    public URL queryMetadataMenu() throws MalformedURLException {
-        final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
-        prepareQueryMetadata(request, "menu");
         return request.getURL();
     }
     
