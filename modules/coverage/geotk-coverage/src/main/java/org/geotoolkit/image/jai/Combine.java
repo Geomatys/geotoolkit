@@ -303,7 +303,7 @@ public class Combine extends PointOpImage {
             final int numSamples = sources.length;
             if (numSamples>this.numSamples || numSamples>bands.length || numSamples>=row.length) {
                 // Should not happen if the constructor checks was right.  We performs this
-                // check unconditionnaly since it is cheap, and in the hope to help the JIT
+                // check unconditionally since it is cheap, and in the hope to help the JIT
                 // to remove some array bound checks later in inner loops.
                 throw new AssertionError(numSamples);
             }

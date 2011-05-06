@@ -336,7 +336,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
         /*
          * If there is no recognized pattern, clears the unused fields and finish immediately
          * this method, so we skip the construction of "pattern used" list (which may be large).
-         * Note that we clears the formatter unconditionnaly because the last pattern guessed
+         * Note that we clears the formatter unconditionally because the last pattern guessed
          * in the 'inputPattern' method may be wrong.
          */
         formatter = null;

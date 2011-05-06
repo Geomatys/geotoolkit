@@ -110,7 +110,7 @@ public class CommentUpdater implements FileFilter {
 
     /**
      * If the specified file is a directory, then process all {@code .java} files in this
-     * directory. Otherwise, unconditionnaly process the specified file a regular file.
+     * directory. Otherwise, unconditionally process the specified file a regular file.
      *
      * @param  file The directory to process.
      * @return The number of file modified.

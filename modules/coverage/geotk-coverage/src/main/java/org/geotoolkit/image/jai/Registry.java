@@ -64,7 +64,7 @@ public final class Registry {
     }
 
     /**
-     * Unconditionnaly registers all JAI operations provided in the {@link org.geotoolkit.image.jai}
+     * Unconditionally registers all JAI operations provided in the {@link org.geotoolkit.image.jai}
      * package. This method usually don't need to be invoked, since JAI should parse automatically
      * the {@code META-INF/registryFile.jai} file at startup time. However, this default mechanism
      * may fail when the Geotk JAR file is unreachable from the JAI class loader, in which case

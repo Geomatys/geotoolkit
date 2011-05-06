@@ -71,7 +71,7 @@ public final class ImageUtilities {
 
     /**
      * Maximum tile width or height before to consider a tile as a stripe. It tile width or height
-     * are smaller or equals than this size, then the image will be retiled. That is done because
+     * are smaller or equals than this size, then the image will be re-tiled. That is done because
      * there are many formats that use stripes as an alternative to tiles, an example is TIFF. A
      * stripe can be a performance issue, users can have stripes as large as 20000 columns x 8
      * rows. If we just want to see a chunk of 512x512, this is a lot of unneeded data to load.

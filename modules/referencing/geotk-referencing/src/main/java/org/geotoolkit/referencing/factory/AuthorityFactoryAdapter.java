@@ -568,7 +568,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     public synchronized ConformanceResult availability() {
         final long currentTime = System.currentTimeMillis();
         if (failedRecently(currentTime)) {
-            // If the last uncessfull attempt was less than some arbitrary time
+            // If the last unsuccessful attempt was less than some arbitrary time
             // before current attempt, assume that the situation didn't changed.
             return new Unavailable(null);
         }
