@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import javax.swing.ImageIcon;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.opengis.util.InternationalString;
 
@@ -32,13 +33,15 @@ public abstract class AbstractEditionTool implements EditionTool{
     private final InternationalString title;
     private final InternationalString desc;
     private final Class clazz;
+    private final ImageIcon icon;
 
     public AbstractEditionTool(final int priority, final String name, final InternationalString title,
-            final InternationalString desc, final Class clazz) {
+            final InternationalString desc, final ImageIcon icon, final Class clazz) {
         this.priority = priority;
         this.name = name;
         this.title = title;
         this.desc = desc;
+        this.icon = icon;
         this.clazz = clazz;
     }
 
@@ -60,6 +63,11 @@ public abstract class AbstractEditionTool implements EditionTool{
     @Override
     public InternationalString getAbstract() {
         return desc;
+    }
+
+    @Override
+    public ImageIcon getIcon() {
+        return icon;
     }
 
     @Override

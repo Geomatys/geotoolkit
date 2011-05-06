@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 
 import com.vividsolutions.jts.geom.Geometry;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -34,7 +35,8 @@ public class GeometryMoveTool extends AbstractEditionTool {
 
     public GeometryMoveTool() {
         super(200,"geometryMove", MessageBundle.getI18NString("move"),
-             new SimpleInternationalString("Tool for moving geometry around."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool for moving geometry around."), 
+             IconBundle.getIcon("16_move"), FeatureMapLayer.class);
     }
 
     @Override

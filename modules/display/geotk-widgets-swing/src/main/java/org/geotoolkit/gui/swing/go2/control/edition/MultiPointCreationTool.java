@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 
 import com.vividsolutions.jts.geom.MultiPoint;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -34,7 +35,8 @@ public class MultiPointCreationTool extends AbstractEditionTool {
 
     public MultiPointCreationTool() {
         super(1200,"multipointCreation",MessageBundle.getI18NString("create"),
-             new SimpleInternationalString("Tool for creating multi-points."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool for creating multi-points."), 
+             IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }
 
     @Override

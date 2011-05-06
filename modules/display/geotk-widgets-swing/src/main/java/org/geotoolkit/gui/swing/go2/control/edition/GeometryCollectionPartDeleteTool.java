@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 
 import com.vividsolutions.jts.geom.GeometryCollection;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -35,7 +36,8 @@ public class GeometryCollectionPartDeleteTool extends AbstractEditionTool {
 
     public GeometryCollectionPartDeleteTool() {
         super(950,"geometryCollectionPartDelete", MessageBundle.getI18NString("removePart"),
-             new SimpleInternationalString("Tool to remove geometry collection parts."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool to remove geometry collection parts."), 
+             IconBundle.getIcon("16_remove_subpolygon"),FeatureMapLayer.class);
     }
 
     @Override

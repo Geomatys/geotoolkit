@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 
 import com.vividsolutions.jts.geom.MultiPolygon;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -35,7 +36,8 @@ public class MultiPolygonPartCreationTool extends AbstractEditionTool {
 
     public MultiPolygonPartCreationTool() {
         super(1250,"multipolygonPartCreation", MessageBundle.getI18NString("createPart"),
-             new SimpleInternationalString("Tool to create part of a MultiPolygon."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool to create part of a MultiPolygon."), 
+             IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }
 
     @Override

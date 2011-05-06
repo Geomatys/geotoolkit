@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -34,7 +35,8 @@ public class PolygonCreationTool extends AbstractEditionTool {
 
     public PolygonCreationTool() {
         super(1500,"polygonCreation",MessageBundle.getI18NString("create"),
-             new SimpleInternationalString("Tool for creating polygons."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool for creating polygons."), 
+             IconBundle.getIcon("16_newgeometry"), FeatureMapLayer.class);
     }
 
     @Override

@@ -71,11 +71,13 @@ public class JEditionToolComboBox extends JComboBox {
         @Override
         public Component getListCellRendererComponent(final JList list, final Object value, final int index, final boolean isSelected, final boolean cellHasFocus) {
             final JLabel lbl = (JLabel) super.getListCellRendererComponent(list, value, index, isSelected, cellHasFocus);
-
+            lbl.setIcon(null);
+            
             if(value instanceof EditionTool){
                 final EditionTool tool = (EditionTool) value;
                 lbl.setText(tool.getTitle().toString());
                 lbl.setToolTipText(tool.getAbstract().toString());
+                lbl.setIcon(tool.getIcon());
             }
 
             return lbl;

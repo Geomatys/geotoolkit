@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -36,7 +37,8 @@ public class PolygonHoleCreationTool extends AbstractEditionTool {
 
     public PolygonHoleCreationTool() {
         super(1270,"polygonHoleCreation", MessageBundle.getI18NString("createHole"),
-             new SimpleInternationalString("Tool to create holes in a Polygon."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool to create holes in a Polygon."), 
+             IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }
 
     @Override

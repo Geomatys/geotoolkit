@@ -17,6 +17,7 @@
 
 package org.geotoolkit.gui.swing.go2.control.edition;
 
+import javax.swing.ImageIcon;
 import org.geotoolkit.gui.swing.go2.JMap2D;
 import org.opengis.util.InternationalString;
 
@@ -47,6 +48,11 @@ public interface EditionTool {
      * @return description of the tool.
      */
     InternationalString getAbstract();
+    
+    /**
+     * @return tool icon, can be null.
+     */
+    ImageIcon getIcon();
 
     /**
      * @param candidate object to test

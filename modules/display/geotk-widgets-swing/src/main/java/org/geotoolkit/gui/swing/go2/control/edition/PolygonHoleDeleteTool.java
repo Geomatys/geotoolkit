@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Polygon;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -36,7 +37,8 @@ public class PolygonHoleDeleteTool extends AbstractEditionTool {
 
     public PolygonHoleDeleteTool() {
         super(1260,"polygonHoleDelete", MessageBundle.getI18NString("removeHole"),
-             new SimpleInternationalString("Tool to remove polygon holes."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool to remove polygon holes."), 
+             IconBundle.getIcon("16_remove_subpolygon"), FeatureMapLayer.class);
     }
 
     @Override

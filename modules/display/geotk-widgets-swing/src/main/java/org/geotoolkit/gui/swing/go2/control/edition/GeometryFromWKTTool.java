@@ -17,6 +17,7 @@
 package org.geotoolkit.gui.swing.go2.control.edition;
 
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -33,7 +34,8 @@ public class GeometryFromWKTTool extends AbstractEditionTool {
 
     public GeometryFromWKTTool() {
         super(100,"geometryFromWKT", MessageBundle.getI18NString("wkt"),
-             new SimpleInternationalString("Tool for moving editing geometry using WKT."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool for moving editing geometry using WKT."), 
+             IconBundle.getIcon("16_wkt"),FeatureMapLayer.class);
     }
 
     @Override

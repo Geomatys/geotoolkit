@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -36,7 +37,8 @@ public class GeometrySimplificationTool extends AbstractEditionTool {
 
     public GeometrySimplificationTool() {
         super(150,"geometrySimplification", MessageBundle.getI18NString("simplification"),
-             new SimpleInternationalString("Tool to simplify geometries."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool to simplify geometries."), 
+             IconBundle.getIcon("16_goto"), FeatureMapLayer.class);
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 
 import com.vividsolutions.jts.geom.MultiLineString;
 import org.geotoolkit.gui.swing.go2.JMap2D;
+import org.geotoolkit.gui.swing.resource.IconBundle;
 import org.geotoolkit.gui.swing.resource.MessageBundle;
 import org.geotoolkit.map.FeatureMapLayer;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -35,7 +36,8 @@ public class MultiLinePartCreationTool extends AbstractEditionTool {
 
     public MultiLinePartCreationTool() {
         super(1050,"multilinePartCreation", MessageBundle.getI18NString("createPart"),
-             new SimpleInternationalString("Tool to create part of a MultiLine."), FeatureMapLayer.class);
+             new SimpleInternationalString("Tool to create part of a MultiLine."), 
+             IconBundle.getIcon("16_add_subpolygon"), FeatureMapLayer.class);
     }
 
     @Override
