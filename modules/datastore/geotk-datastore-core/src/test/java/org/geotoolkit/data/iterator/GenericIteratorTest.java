@@ -48,6 +48,7 @@ import org.geotoolkit.data.query.Query;
 import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.factory.Hints;
+import org.geotoolkit.factory.HintsPending;
 import org.geotoolkit.feature.DefaultName;
 import org.geotoolkit.feature.SchemaException;
 import org.geotoolkit.feature.FeatureTypeBuilder;
@@ -451,12 +452,15 @@ public class GenericIteratorTest extends TestCase{
         FeatureReader reader = collection.getSession().getDataStore().getFeatureReader(query);
         
         //create the decimate reader -------------------------------------------
+        final Hints hints = new Hints();
+        hints.put(HintsPending.FEATURE_DETACHED, Boolean.TRUE);
+        
         GeometryTransformer decim = new GeometryScaleTransformer(10, 10);
-        FeatureReader retyped = GenericTransformFeatureIterator.wrap(reader,decim, new Hints());
+        FeatureReader retyped = GenericTransformFeatureIterator.wrap(reader,decim, hints);
         
         assertTrue(retyped.hasNext());
 
-        final LineString decimated = (LineString) retyped.next().getDefaultGeometryProperty().getValue();
+        LineString decimated = (LineString) retyped.next().getDefaultGeometryProperty().getValue();
 
         assertFalse(retyped.hasNext());
         retyped.close();
@@ -467,6 +471,47 @@ public class GenericIteratorTest extends TestCase{
         assertEquals(geom.getGeometryN(2).getCoordinate(), decimated.getGeometryN(2).getCoordinate());
         assertEquals(geom.getGeometryN(4).getCoordinate(), decimated.getGeometryN(3).getCoordinate());
 
+        
+        //check the original geometry has not been modified
+        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        assertTrue(reader.hasNext());
+
+        LineString notDecimated = (LineString) reader.next().getDefaultGeometryProperty().getValue();
+        assertEquals(6, notDecimated.getNumPoints());
+        assertFalse(reader.hasNext());
+        reader.close();
+        
+        
+        
+        // same test but with reuse hint ---------------------------------------
+        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        hints.put(HintsPending.FEATURE_DETACHED, Boolean.FALSE);
+        
+        decim = new GeometryScaleTransformer(10, 10);
+        retyped = GenericTransformFeatureIterator.wrap(reader,decim, hints);
+        
+        assertTrue(retyped.hasNext());
+
+        decimated = (LineString) retyped.next().getDefaultGeometryProperty().getValue();
+
+        assertFalse(retyped.hasNext());
+        retyped.close();
+
+        assertEquals(4, decimated.getNumPoints());
+        assertEquals(geom.getGeometryN(0).getCoordinate(), decimated.getGeometryN(0).getCoordinate());
+        assertEquals(geom.getGeometryN(1).getCoordinate(), decimated.getGeometryN(1).getCoordinate());
+        assertEquals(geom.getGeometryN(2).getCoordinate(), decimated.getGeometryN(2).getCoordinate());
+        assertEquals(geom.getGeometryN(4).getCoordinate(), decimated.getGeometryN(3).getCoordinate());
+
+        
+        //check the original geometry has not been modified
+        reader = collection.getSession().getDataStore().getFeatureReader(query);
+        assertTrue(reader.hasNext());
+
+        notDecimated = (LineString) reader.next().getDefaultGeometryProperty().getValue();
+        assertEquals(6, notDecimated.getNumPoints());
+        assertFalse(reader.hasNext());
+        reader.close();
     }
 
     @Test
