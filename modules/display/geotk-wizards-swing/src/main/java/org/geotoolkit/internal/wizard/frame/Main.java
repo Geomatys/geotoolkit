@@ -39,11 +39,11 @@ import javax.swing.UIManager;
 import org.netbeans.api.wizard.WizardDisplayer;
 
 import org.geotoolkit.gui.swing.About;
-import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.gui.swing.coverage.LayerList;
 import org.geotoolkit.lang.Setup;
 import org.geotoolkit.internal.GraphicsUtilities;
 import org.geotoolkit.internal.setup.ControlPanel;
+import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.internal.wizard.CoverageDatabaseWizard;
 import org.geotoolkit.internal.wizard.MosaicWizard;
 import org.geotoolkit.coverage.sql.CoverageDatabase;

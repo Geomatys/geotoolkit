@@ -28,7 +28,7 @@ import javax.swing.tree.TreeModel;
 
 import org.geotoolkit.gui.swing.tree.Trees;
 import org.geotoolkit.gui.swing.tree.TreeNodeFilter;
-import org.geotoolkit.util.Comparators;
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.FrequencySortedSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
@@ -148,7 +148,7 @@ final class TreeTileManager extends TileManager implements TreeNodeFilter {
          */
         @SuppressWarnings({"unchecked","rawtypes"})
         final List<Tile>[] asArray = tilesByInput.values().toArray(new List[tilesByInput.size()]);
-        final Comparator<List<Tile>> comparator = Comparators.forLists();
+        final Comparator<List<Tile>> comparator = XCollections.listComparator();
         Arrays.sort(asArray, comparator);
         int numTiles = 0;
         for (final List<Tile> sameInputs : asArray) {

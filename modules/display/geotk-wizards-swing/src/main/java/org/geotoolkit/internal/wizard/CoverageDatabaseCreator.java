@@ -38,8 +38,8 @@ import org.netbeans.spi.wizard.Summary;
 import org.netbeans.spi.wizard.DeferredWizardResult;
 import org.netbeans.spi.wizard.ResultProgressHandle;
 
-import org.geotoolkit.gui.swing.ExceptionMonitor;
 import org.geotoolkit.internal.io.Installation;
+import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.internal.sql.table.ConfigurationKey;
 import org.geotoolkit.internal.sql.CoverageDatabaseInstaller;
 import org.geotoolkit.referencing.factory.epsg.EpsgInstaller;

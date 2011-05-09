@@ -35,7 +35,10 @@ import org.geotoolkit.lang.Static;
  *
  * @since 2.5
  * @module
+ *
+ * @deprecated Moved to {@link org.geotoolkit.util.collection.XCollections}.
  */
+@Deprecated
 public final class Comparators extends Static {
     /**
      * Do not allows instantiation of this class.
@@ -98,6 +101,8 @@ public final class Comparators extends Static {
      *
      * @param <T> The type of elements in both lists.
      * @return The ordering between two lists.
+     *
+     * @deprecated Moved to {@link org.geotoolkit.util.collection.XCollections#listComparator()}.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     public static <T extends Comparable<T>> Comparator<List<T>> forLists() {
@@ -110,6 +115,8 @@ public final class Comparators extends Static {
      *
      * @param <T> The type of elements in both sets.
      * @return The ordering between two sets.
+     *
+     * @deprecated Moved to {@link org.geotoolkit.util.collection.XCollections#sortedSetComparator()}.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     public static <T extends Comparable<T>> Comparator<SortedSet<T>> forSortedSets() {
@@ -125,6 +132,8 @@ public final class Comparators extends Static {
      *
      * @param <T> The type of elements in both collections.
      * @return The ordering between two collections.
+     *
+     * @deprecated Moved to {@link org.geotoolkit.util.collection.XCollections#collectionComparator()}.
      */
     @SuppressWarnings({"unchecked","rawtypes"})
     public static <T extends Comparable<T>> Comparator<Collection<T>> forCollections() {

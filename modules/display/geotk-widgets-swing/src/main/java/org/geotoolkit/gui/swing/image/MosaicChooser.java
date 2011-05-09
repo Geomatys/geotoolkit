@@ -50,8 +50,8 @@ import org.geotoolkit.image.io.ImageReaderAdapter;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.swing.SwingUtilities;
+import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.gui.swing.ProgressWindow;
-import org.geotoolkit.gui.swing.ExceptionMonitor;
 
 
 /**

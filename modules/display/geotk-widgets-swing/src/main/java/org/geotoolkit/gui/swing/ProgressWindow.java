@@ -32,6 +32,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.swing.SwingUtilities;
+import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Disposable;
 import org.geotoolkit.util.Utilities;

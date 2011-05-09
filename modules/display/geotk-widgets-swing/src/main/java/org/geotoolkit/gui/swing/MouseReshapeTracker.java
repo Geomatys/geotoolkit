@@ -56,6 +56,7 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.internal.swing.ExceptionMonitor;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 
 

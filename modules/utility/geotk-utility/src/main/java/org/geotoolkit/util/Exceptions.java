@@ -18,6 +18,7 @@
 package org.geotoolkit.util;
 
 import java.awt.Font;
+import java.awt.Component;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.font.FontRenderContext;
@@ -30,18 +31,28 @@ import java.util.Set;
 import java.util.List;
 import java.util.HashSet;
 import java.util.ArrayList;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.UndeclaredThrowableException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.io.ExpandedTabWriter;
+import org.geotoolkit.resources.Errors;
 
 
 /**
- * Utilities methods for dealing with exceptions.
+ * Utilities methods for dealing with exceptions. Those methods can paint reformat the stack
+ * trace for console output, paint the stack trace in a {@link Graphics2D} handler, or show
+ * the stack trace in a <cite>Swing</cite> component.
+ * <p>
+ * The <cite>Swing</cite> component is available only if the {@code geotk-widgets-swing} module
+ * is available in the classpath. It looks like the following picture:
+ *
+ * <p>&nbsp;</p>
+ * <p align="center"><img src="../gui/swing/doc-files/ExceptionMonitor.png"></p>
+ * <p>&nbsp;</p>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
- *
- * @see org.geotoolkit.gui.swing.ExceptionMonitor
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -196,6 +207,80 @@ public final class Exceptions extends Static {
             final Rectangle2D rect = bounds.get(i);
             ypos += rect.getHeight();
             graphics.drawGlyphVector(line, xpos, ypos);
+        }
+    }
+
+    /**
+     * Displays an error message for the specified exception. Note that this method can
+     * be called from any thread (not necessarily the <cite>Swing</cite> thread).
+     *
+     * @param  owner Component in which the exception is produced, or {@code null} if unknown.
+     * @param  exception Exception which has been thrown and is to be reported to the user.
+     * @throws UnsupportedOperationException If the {@code geotk-widgets-swing} module is
+     *         not found on the classpath.
+     *
+     * @see org.jdesktop.swingx.JXErrorPane
+     * @since 3.18 (derived from 1.0)
+     */
+    public static void show(final Component owner, final Throwable exception) throws UnsupportedOperationException {
+        show(new Object[] {owner, exception});
+    }
+
+    /**
+     * Displays an error message for the specified exception. Note that this method can
+     * be called from any thread (not necessarily the <cite>Swing</cite> thread).
+     *
+     * @param  owner Component in which the exception is produced, or {@code null} if unknown.
+     * @param  exception Exception which has been thrown and is to be reported to the user.
+     * @param  message Message to display. If this parameter is {@code null}, then
+     *         {@link Exception#getLocalizedMessage} will be called to obtain the message.
+     * @throws UnsupportedOperationException If the {@code geotk-widgets-swing} module is
+     *         not found on the classpath.
+     *
+     * @see org.jdesktop.swingx.JXErrorPane
+     * @since 3.18 (derived from 1.0)
+     */
+    public static void show(final Component owner, final Throwable exception, final String message)
+            throws UnsupportedOperationException
+    {
+        show(new Object[] {owner, exception, message});
+    }
+
+    /**
+     * Delegates to the {@code show} method in the {@code geotk-widgets-swing} module, if present.
+     */
+    @SuppressWarnings("fallthrough")
+    private static void show(final Object[] arguments) throws UnsupportedOperationException {
+        final Class<?>[] types = new Class<?>[arguments.length];
+        switch (types.length) {
+            default: types[2] = String.class;
+            case 2:  types[1] = Throwable.class;
+            case 1:  types[0] = Component.class;
+            case 0:  break;
+        }
+        try {
+            Class.forName("org.geotoolkit.internal.swing.ExceptionMonitor").getMethod("show", types).invoke(null, arguments);
+        } catch (ClassNotFoundException e) {
+            // This is the expected exception if the widget module is not available.
+            throw new UnsupportedOperationException(Errors.format(
+                    Errors.Keys.MISSING_MODULE_$1, "geotk-widgets-swing"), e);
+        } catch (NoSuchMethodException e) {
+            // Should never happen, since have control on our implementation.
+            throw new AssertionError(e);
+        } catch (IllegalAccessException e) {
+            // Should never happen, since have control on our implementation.
+            throw new AssertionError(e);
+        } catch (InvocationTargetException e) {
+            final Throwable cause = e.getCause();
+            if (cause instanceof RuntimeException) {
+                throw (RuntimeException) cause;
+            }
+            if (cause instanceof Error) {
+                throw (Error) cause;
+            }
+            // The invoked method does not declare any checked exception,
+            // so if we reach this point we have an unexpected exception.
+            throw new UndeclaredThrowableException(cause);
         }
     }
 }
