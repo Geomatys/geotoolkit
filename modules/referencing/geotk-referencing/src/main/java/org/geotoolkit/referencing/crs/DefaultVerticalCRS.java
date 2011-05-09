@@ -31,6 +31,7 @@ import org.opengis.referencing.crs.VerticalCRS;
 import org.opengis.referencing.datum.VerticalDatum;
 
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.cs.DefaultVerticalCS;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
@@ -78,7 +79,7 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
      * @see DefaultVerticalCS#ELLIPSOIDAL_HEIGHT
      */
     public static final DefaultVerticalCRS ELLIPSOIDAL_HEIGHT = new DefaultVerticalCRS(
-            getProperties(DefaultVerticalCS.ELLIPSOIDAL_HEIGHT),
+            IdentifiedObjects.getProperties(DefaultVerticalCS.ELLIPSOIDAL_HEIGHT),
             DefaultVerticalDatum.ELLIPSOIDAL, DefaultVerticalCS.ELLIPSOIDAL_HEIGHT);
 
     /**
@@ -90,7 +91,7 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
      * @since 2.5
      */
     public static final DefaultVerticalCRS GEOIDAL_HEIGHT = new DefaultVerticalCRS(
-            getProperties(DefaultVerticalCS.GRAVITY_RELATED_HEIGHT),
+            IdentifiedObjects.getProperties(DefaultVerticalCS.GRAVITY_RELATED_HEIGHT),
             DefaultVerticalDatum.GEOIDAL, DefaultVerticalCS.GRAVITY_RELATED_HEIGHT);
 
     /**
@@ -127,7 +128,7 @@ public class DefaultVerticalCRS extends AbstractSingleCRS implements VerticalCRS
      * @since 2.5
      */
     public DefaultVerticalCRS(final VerticalDatum datum, final VerticalCS cs) {
-        this(getProperties(datum), datum, cs);
+        this(IdentifiedObjects.getProperties(datum), datum, cs);
     }
 
     /**

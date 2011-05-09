@@ -108,8 +108,8 @@ public final class CRS_Test extends ReferencingTestBase {
                 + "PRIMEM[\"Greenwich\",0],UNIT[\"Degree\",0.0174532925199433]]");
         assertTrue(crs instanceof DefaultGeographicCRS);
         assertEquals("GCS_WGS_1984", crs.getName().getCode());
-        assertEquals("GCS_WGS_1984", CRS.getDeclaredIdentifier(crs));
-        assertNull(AbstractIdentifiedObject.getIdentifier(crs, Citations.EPSG));
+        assertEquals("GCS_WGS_1984", IdentifiedObjects.getDeclaredIdentifier(crs));
+        assertNull(IdentifiedObjects.getIdentifier(crs, Citations.EPSG));
     }
 
     /**
@@ -255,7 +255,7 @@ public final class CRS_Test extends ReferencingTestBase {
                 "  AXIS[“x”, EAST], \n" +
                 "  AXIS[“y”, NORTH]]"));
 
-        assertEquals("NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001", CRS.getDeclaredIdentifier(crs1));
+        assertEquals("NAD_1983_StatePlane_Massachusetts_Mainland_FIPS_2001", IdentifiedObjects.getDeclaredIdentifier(crs1));
 
         final CoordinateReferenceSystem crs2 = CRS.parseWKT(decodeQuotes(
                 "PROJCS[“NAD83 / Massachusetts Mainland”, \n" +
@@ -281,7 +281,7 @@ public final class CRS_Test extends ReferencingTestBase {
                 "  AXIS[“Northing”, NORTH], \n" +
                 "  AUTHORITY[“EPSG”,“26986”]]"));
 
-        assertEquals("EPSG:26986", CRS.getDeclaredIdentifier(crs2));
+        assertEquals("EPSG:26986", IdentifiedObjects.getDeclaredIdentifier(crs2));
 
         assertTrue(CRS.equalsIgnoreMetadata(crs1, crs2));
     }

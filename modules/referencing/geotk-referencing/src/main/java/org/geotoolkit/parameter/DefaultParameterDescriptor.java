@@ -45,6 +45,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
+import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
 
 
 /**

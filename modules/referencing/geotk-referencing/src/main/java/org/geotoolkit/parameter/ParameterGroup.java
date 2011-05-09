@@ -42,7 +42,7 @@ import org.opengis.parameter.InvalidParameterCardinalityException;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.collection.XCollections;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -285,7 +285,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         name = name.trim();
         for (final GeneralParameterValue value : values) {
             if (value instanceof ParameterValue<?>) {
-                if (AbstractIdentifiedObject.nameMatches(value.getDescriptor(), name)) {
+                if (IdentifiedObjects.nameMatches(value.getDescriptor(), name)) {
                     return (ParameterValue<?>) value;
                 }
             }
@@ -297,7 +297,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
          */
         for (final GeneralParameterDescriptor descriptor : getDescriptor().descriptors()) {
             if (descriptor instanceof ParameterDescriptor<?>) {
-                if (AbstractIdentifiedObject.nameMatches(descriptor, name)) {
+                if (IdentifiedObjects.nameMatches(descriptor, name)) {
                     final ParameterValue<?> value = ((ParameterDescriptor<?>) descriptor).createValue();
                     values.add(value);
                     return value;
@@ -327,7 +327,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
                 new ArrayList<ParameterValueGroup>(Math.min(values.size(), 10));
         for (final GeneralParameterValue value : values) {
             if (value instanceof ParameterValueGroup) {
-                if (AbstractIdentifiedObject.nameMatches(value.getDescriptor(), name)) {
+                if (IdentifiedObjects.nameMatches(value.getDescriptor(), name)) {
                     groups.add((ParameterValueGroup) value);
                 }
             }
@@ -374,7 +374,7 @@ public class ParameterGroup extends AbstractParameter implements ParameterValueG
         }
         int count = 0;
         for (final GeneralParameterValue value : values) {
-            if (AbstractIdentifiedObject.nameMatches(value.getDescriptor(), name)) {
+            if (IdentifiedObjects.nameMatches(value.getDescriptor(), name)) {
                 count++;
             }
         }

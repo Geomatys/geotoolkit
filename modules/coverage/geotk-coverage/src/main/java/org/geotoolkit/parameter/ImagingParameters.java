@@ -43,7 +43,7 @@ import org.opengis.parameter.InvalidParameterNameException;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -241,7 +241,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
             for (int i=0; i<values.length; i++) {
                 if (i != j) {
                     final ParameterDescriptor<?> d = (ParameterDescriptor<?>) values[i].getDescriptor();
-                    if (AbstractIdentifiedObject.nameMatches(d, name)) {
+                    if (IdentifiedObjects.nameMatches(d, name)) {
                         throw new InvalidParameterNameException(Errors.format(
                                 Errors.Keys.PARAMETER_NAME_CLASH_$4,
                                 d.getName().getCode(), j, name, i), name);
@@ -292,7 +292,7 @@ public class ImagingParameters extends AbstractParameter implements ParameterVal
         final int size = values.size();
         for (int i=0; i<size; i++) {
             final ParameterValue<?> value = (ParameterValue<?>) values.get(i);
-            if (AbstractIdentifiedObject.nameMatches(value.getDescriptor(), name)) {
+            if (IdentifiedObjects.nameMatches(value.getDescriptor(), name)) {
                 return value;
             }
         }

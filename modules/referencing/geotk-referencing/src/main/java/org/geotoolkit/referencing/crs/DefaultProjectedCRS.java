@@ -44,6 +44,7 @@ import org.opengis.referencing.operation.Projection;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.DefaultProjection;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.operation.DefaultOperationMethod;
@@ -284,7 +285,9 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
         for (final GeneralParameterValue param : conversionFromBase.getParameterValues().values()) {
             final GeneralParameterDescriptor desc = param.getDescriptor();
             String name;
-            if (nameMatches(desc, name=SEMI_MAJOR) || nameMatches(desc, name=SEMI_MINOR)) {
+            if (IdentifiedObjects.nameMatches(desc, name = SEMI_MAJOR) ||
+                IdentifiedObjects.nameMatches(desc, name = SEMI_MINOR))
+            {
                 /*
                  * Do not format semi-major and semi-minor axis length in most cases,  since those
                  * informations are provided in the ellipsoid. An exception to this rule occurs if

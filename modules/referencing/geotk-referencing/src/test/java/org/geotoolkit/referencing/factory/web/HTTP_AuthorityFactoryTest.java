@@ -25,6 +25,7 @@ import org.opengis.referencing.crs.CRSAuthorityFactory;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactory;
 import org.geotoolkit.referencing.factory.AllAuthoritiesFactoryTest;
@@ -203,7 +204,7 @@ public final class HTTP_AuthorityFactoryTest extends ReferencingTestBase {
                 .getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
         final CoordinateReferenceSystem crs =
                 factory.createCoordinateReferenceSystem("http://www.opengis.net/gml/srs/crs.xml#84");
-        assertEquals("CRS:84", CRS.getDeclaredIdentifier(crs));
+        assertEquals("CRS:84", IdentifiedObjects.getDeclaredIdentifier(crs));
         assertEquals("http://www.opengis.net/gml/srs/crs.xml#84", finder.findIdentifier(crs));
     }
 

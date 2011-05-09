@@ -41,6 +41,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.metadata.iso.extent.DefaultExtent;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.cs.DefaultEllipsoidalCS;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
@@ -138,7 +139,8 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      * @since 3.15
      */
     public static final DefaultGeographicCRS SPHERE = new DefaultGeographicCRS(
-            getProperties(DefaultGeodeticDatum.SPHERE), DefaultGeodeticDatum.SPHERE, DefaultEllipsoidalCS.GEODETIC_2D);
+            IdentifiedObjects.getProperties(DefaultGeodeticDatum.SPHERE),
+            DefaultGeodeticDatum.SPHERE, DefaultEllipsoidalCS.GEODETIC_2D);
 
     /**
      * Constructs a new object in which every attributes are set to a default value.
@@ -174,7 +176,7 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
      * @since 2.5
      */
     public DefaultGeographicCRS(final GeodeticDatum datum, final EllipsoidalCS cs) {
-        this(getProperties(datum), datum, cs);
+        this(IdentifiedObjects.getProperties(datum), datum, cs);
     }
 
     /**

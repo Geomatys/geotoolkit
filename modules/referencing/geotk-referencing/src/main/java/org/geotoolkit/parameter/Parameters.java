@@ -45,7 +45,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
 import org.geotoolkit.naming.DefaultNameSpace;
 
@@ -401,7 +401,7 @@ public final class Parameters extends Static {
      * @since 3.05
      */
     private static String getName(final GeneralParameterDescriptor parameter, final ParameterDescriptorGroup group) {
-        String name = AbstractIdentifiedObject.getName(parameter, group.getName().getAuthority());
+        String name = IdentifiedObjects.getName(parameter, group.getName().getAuthority());
         if (name == null) {
             name = parameter.getName().getCode();
         }
@@ -682,7 +682,7 @@ public final class Parameters extends Static {
             final int maxDepth, final Collection<GeneralParameterValue> list)
     {
         if (maxDepth >= 0) {
-            if (AbstractIdentifiedObject.nameMatches(parameter.getDescriptor(), name)) {
+            if (IdentifiedObjects.nameMatches(parameter.getDescriptor(), name)) {
                 list.add(parameter);
             }
             if ((maxDepth != 0) && (parameter instanceof ParameterValueGroup)) {

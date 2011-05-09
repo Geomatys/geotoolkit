@@ -29,6 +29,7 @@ import org.opengis.referencing.cs.CoordinateSystemAxis;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.measure.Measure;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
 
@@ -118,7 +119,7 @@ public class DefaultVerticalCS extends AbstractCS implements VerticalCS {
      * @since 2.5
      */
     public DefaultVerticalCS(final CoordinateSystemAxis axis) {
-        super(getProperties(axis), axis);
+        super(IdentifiedObjects.getProperties(axis), axis);
     }
 
     /**

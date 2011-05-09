@@ -42,6 +42,7 @@ import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.CoordinateFormat;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.NamedIdentifier;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.Formatter;
@@ -377,12 +378,12 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
             return (DefaultEllipsoid) ellipsoid;
         }
         if (ellipsoid.isIvfDefinitive()) {
-            return createFlattenedSphere(getProperties(ellipsoid),
+            return createFlattenedSphere(IdentifiedObjects.getProperties(ellipsoid),
                                          ellipsoid.getSemiMajorAxis(),
                                          ellipsoid.getInverseFlattening(),
                                          ellipsoid.getAxisUnit());
         } else {
-            return createEllipsoid(getProperties(ellipsoid),
+            return createEllipsoid(IdentifiedObjects.getProperties(ellipsoid),
                                    ellipsoid.getSemiMajorAxis(),
                                    ellipsoid.getSemiMinorAxis(),
                                    ellipsoid.getAxisUnit());

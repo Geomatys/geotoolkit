@@ -41,7 +41,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.ReferencingFactory;
 import org.geotoolkit.referencing.factory.ReferencingFactoryContainer;
 import org.geotoolkit.referencing.operation.provider.Affine;
@@ -498,7 +498,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
              * dimensions in order to avoid mismatch with the method's dimensions.
              */
             final MathTransformFactory mtFactory = getMathTransformFactory();
-            return createFromMathTransform(AbstractIdentifiedObject.getProperties(step),
+            return createFromMathTransform(IdentifiedObjects.getProperties(step),
                    sourceCRS, targetCRS, mtFactory.createConcatenatedTransform(mt1, mt2),
                    ((SingleOperation) step).getMethod(), CoordinateOperation.class);
         }
@@ -563,7 +563,7 @@ public abstract class AbstractCoordinateOperationFactory extends ReferencingFact
     {
         final CoordinateReferenceSystem sourceCRS = operation.getSourceCRS();
         final CoordinateReferenceSystem targetCRS = operation.getTargetCRS();
-        final Map<String,Object> properties = AbstractIdentifiedObject.getProperties(operation, null);
+        final Map<String,Object> properties = IdentifiedObjects.getProperties(operation, null);
         properties.putAll(getTemporaryName(targetCRS, sourceCRS));
         if (operation instanceof ConcatenatedOperation) {
             final LinkedList<CoordinateOperation> inverted = new LinkedList<CoordinateOperation>();

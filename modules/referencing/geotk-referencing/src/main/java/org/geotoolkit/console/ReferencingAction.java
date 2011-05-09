@@ -52,7 +52,7 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
 import org.geotoolkit.referencing.factory.FallbackAuthorityFactory;
-import static org.geotoolkit.referencing.AbstractIdentifiedObject.NAME_COMPARATOR;
+import static org.geotoolkit.referencing.IdentifiedObjects.NAME_COMPARATOR;
 import static org.geotoolkit.console.CommandLine.*;
 
 

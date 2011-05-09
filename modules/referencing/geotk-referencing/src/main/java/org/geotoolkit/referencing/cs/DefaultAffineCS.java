@@ -29,6 +29,7 @@ import org.opengis.referencing.cs.AffineCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
 
@@ -190,6 +191,6 @@ public class DefaultAffineCS extends AbstractCS implements AffineCS {
         if (axis == null) {
             return this;
         }
-        return new DefaultAffineCS(getProperties(this, null), axis);
+        return new DefaultAffineCS(IdentifiedObjects.getProperties(this, null), axis);
     }
 }

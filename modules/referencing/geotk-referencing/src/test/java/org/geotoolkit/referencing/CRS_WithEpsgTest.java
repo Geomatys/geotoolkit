@@ -95,7 +95,7 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
     @Test
     public void testCorrectAxisOrder() throws FactoryException {
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326");
-        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
+        assertEquals("EPSG:4326", IdentifiedObjects.getDeclaredIdentifier(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
 
@@ -114,7 +114,7 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
     @Test
     public void testForcedAxisOrder() throws FactoryException {
         final CoordinateReferenceSystem crs = CRS.decode("EPSG:4326", true);
-        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
+        assertEquals("EPSG:4326", IdentifiedObjects.getDeclaredIdentifier(crs));
         final CoordinateSystem cs = crs.getCoordinateSystem();
         assertEquals(2, cs.getDimension());
 
@@ -235,7 +235,7 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
                  * automatically by PropertyEpsgFactory when needed.
                  */
                 final CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
-                assertEquals("3035", AbstractIdentifiedObject.getIdentifier(crs, Citations.EPSG).getCode());
+                assertEquals("3035", IdentifiedObjects.getIdentifier(crs, Citations.EPSG).getCode());
                 /*
                  * Modifies the configuration depending on the next stage to be tested.
                  */
@@ -414,14 +414,14 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4326");
         assertTrue(crs instanceof GeographicCRS);
-        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(crs));
+        assertEquals("EPSG:4326", IdentifiedObjects.getDeclaredIdentifier(crs));
         assertSame(crs, factory.createObject("EPSG:4326"));
         /*
          * Tests using lower-case code. This is also a test using the CRS.decode(...)
          * convenience method instead than direct use of the factory. The result should
          * be the same, thanks to the caching performed by ReferencingObjectFactory.
          */
-        assertEquals("EPSG:4326", CRS.getDeclaredIdentifier(CRS.decode("epsg:4326")));
+        assertEquals("EPSG:4326", IdentifiedObjects.getDeclaredIdentifier(CRS.decode("epsg:4326")));
         assertSame(crs, CRS.decode("epsg:4326", true));
     }
 
@@ -436,14 +436,14 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:4269");
         assertTrue(crs instanceof GeographicCRS);
-        assertEquals("EPSG:4269", CRS.getDeclaredIdentifier(crs));
+        assertEquals("EPSG:4269", IdentifiedObjects.getDeclaredIdentifier(crs));
         assertSame(crs, factory.createObject("EPSG:4269"));
         /*
          * Tests using lower-case code. This is also a test using the CRS.decode(...)
          * convenience method instead than direct use of the factory. The result should
          * be the same, thanks to the caching performed by ReferencingObjectFactory.
          */
-        assertEquals("EPSG:4269", CRS.getDeclaredIdentifier(CRS.decode("epsg:4269")));
+        assertEquals("EPSG:4269", IdentifiedObjects.getDeclaredIdentifier(CRS.decode("epsg:4269")));
         assertSame(crs, CRS.decode("epsg:4269", true));
         /*
          * The domain of validity is declared in the EPSG:4269 CRS, which declare an x axis
@@ -466,14 +466,14 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
         final CRSAuthorityFactory factory = new OrderedAxisAuthorityFactory("EPSG", null, null);
         final CoordinateReferenceSystem crs = factory.createCoordinateReferenceSystem("EPSG:26910");
         assertTrue(crs instanceof ProjectedCRS);
-        assertEquals("EPSG:26910", CRS.getDeclaredIdentifier(crs));
+        assertEquals("EPSG:26910", IdentifiedObjects.getDeclaredIdentifier(crs));
         assertSame(crs, factory.createObject("EPSG:26910"));
         /*
          * Tests using lower-case code. This is also a test using the CRS.decode(...)
          * convenience method instead than direct use of the factory. The result should
          * be the same, thanks to the caching performed by ReferencingObjectFactory.
          */
-        assertEquals("EPSG:26910", CRS.getDeclaredIdentifier(CRS.decode("epsg:26910")));
+        assertEquals("EPSG:26910", IdentifiedObjects.getDeclaredIdentifier(CRS.decode("epsg:26910")));
         assertSame(crs, CRS.decode("epsg:26910", true));
     }
 
@@ -486,7 +486,7 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
     public void test26986() throws FactoryException {
         CoordinateReferenceSystem crs = CRS.decode("epsg:26986");
         assertTrue(crs instanceof ProjectedCRS);
-        assertEquals("EPSG:26986", CRS.getDeclaredIdentifier(crs));
+        assertEquals("EPSG:26986", IdentifiedObjects.getDeclaredIdentifier(crs));
     }
 
     /**
@@ -499,7 +499,7 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
     public void test26742() throws FactoryException {
         CoordinateReferenceSystem crs = CRS.decode("epsg:26742");
         assertTrue(crs instanceof ProjectedCRS);
-        assertEquals("EPSG:26742", CRS.getDeclaredIdentifier(crs));
+        assertEquals("EPSG:26742", IdentifiedObjects.getDeclaredIdentifier(crs));
     }
 
     /**
@@ -513,7 +513,7 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
     public void test3785() throws FactoryException {
         CoordinateReferenceSystem crs = CRS.decode("epsg:3785");
         assertTrue(crs instanceof ProjectedCRS);
-        assertEquals("EPSG:3785", CRS.getDeclaredIdentifier(crs));
+        assertEquals("EPSG:3785", IdentifiedObjects.getDeclaredIdentifier(crs));
     }
 
     /**
@@ -528,7 +528,7 @@ public final class CRS_WithEpsgTest extends ReferencingTestBase {
     public void test3857() throws FactoryException {
         CoordinateReferenceSystem crs = CRS.decode("epsg:3857");
         assertTrue(crs instanceof ProjectedCRS);
-        assertEquals("EPSG:3857", CRS.getDeclaredIdentifier(crs));
+        assertEquals("EPSG:3857", IdentifiedObjects.getDeclaredIdentifier(crs));
     }
 
     /**

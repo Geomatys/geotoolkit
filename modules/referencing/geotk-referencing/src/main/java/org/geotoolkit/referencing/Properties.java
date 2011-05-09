@@ -99,10 +99,10 @@ final class Properties extends AbstractMap<String,Object> {
                 return info.getName();
             }
             case 1: {
-                return info.getIdentifiers().toArray(AbstractIdentifiedObject.EMPTY_IDENTIFIER_ARRAY);
+                return info.getIdentifiers().toArray(IdentifiedObjects.EMPTY_IDENTIFIER_ARRAY);
             }
             case 2: {
-                return info.getAlias().toArray(AbstractIdentifiedObject.EMPTY_ALIAS_ARRAY);
+                return info.getAlias().toArray(IdentifiedObjects.EMPTY_ALIAS_ARRAY);
             }
             case 3: {
                 return info.getRemarks();

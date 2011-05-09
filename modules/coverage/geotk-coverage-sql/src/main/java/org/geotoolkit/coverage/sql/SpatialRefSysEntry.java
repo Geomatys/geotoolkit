@@ -48,10 +48,10 @@ import org.geotoolkit.coverage.grid.GeneralGridGeometry;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.cs.AbstractCS;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.resources.Errors;
 
 
@@ -221,7 +221,7 @@ final class SpatialRefSysEntry {
             default: {
                 final SingleCRS headCRS = elements[0];
                 elements = XArrays.resize(elements, count);
-                Map<String,?> properties = AbstractIdentifiedObject.getProperties(headCRS);
+                Map<String,?> properties = IdentifiedObjects.getProperties(headCRS);
                 if (verticalCRS != null) {
                     String name = headCRS.getName().getCode();
                     name = name + " + " + verticalCRS.getName().getCode();

@@ -34,6 +34,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.referencing.IdentifiedObjects;
 
 
 /**
@@ -322,6 +323,6 @@ public class DefaultCartesianCS extends DefaultAffineCS implements CartesianCS {
         if (axis == null) {
             return this;
         }
-        return new DefaultCartesianCS(getProperties(this, null), axis);
+        return new DefaultCartesianCS(IdentifiedObjects.getProperties(this, null), axis);
     }
 }

@@ -51,13 +51,16 @@
  *
  * {@section Utility methods in other packages}
  * More public static methods are defined in the packages relevant to their services, for example:
- * {@link org.geotoolkit.math.XMath} for a few additional mathematic functions,
- * {@link org.geotoolkit.referencing.operation.matrix.XAffineTransform} for informations about affine transforms,
- * {@link org.geotoolkit.display.shape.ShapeUtilities} for calculation with <cite>Java2D</cite> lines and curves,
- * {@link org.geotoolkit.gui.swing.tree.Trees} for parsing and formatting <cite>Swing</cite> trees,
- * {@link org.geotoolkit.util.converter.Classes} for conversions of numeric types,
- * {@link org.geotoolkit.referencing.CRS} for methods related to <cite>Coordinate Reference Systems</cite>, and
- * {@link org.geotoolkit.factory.FactoryFinder} for factories of CRS and other objects,
+ * <p><ul>
+ * <li>{@link org.geotoolkit.math.XMath} for a few additional mathematic functions</li>
+ * <li>{@link org.geotoolkit.referencing.operation.matrix.XAffineTransform} for informations about affine transforms</li>
+ * <li>{@link org.geotoolkit.display.shape.ShapeUtilities} for calculation with <cite>Java2D</cite> lines and curves</li>
+ * <li>{@link org.geotoolkit.gui.swing.tree.Trees} for parsing and formatting <cite>Swing</cite> trees</li>
+ * <li>{@link org.geotoolkit.util.converter.Classes} for conversions of numeric types</li>
+ * <li>{@link org.geotoolkit.referencing.CRS} for methods related to <cite>Coordinate Reference Systems</cite></li>
+ * <li>{@link org.geotoolkit.factory.FactoryFinder} for factories of CRS and other objects</li>
+ * </ul><p>
+ * See the {@link org.geotoolkit.lang.Static} class javadoc for a more complete list.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @version 3.17

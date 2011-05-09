@@ -41,8 +41,7 @@ import org.geotoolkit.factory.Factory;
 import org.geotoolkit.factory.FactoryRegistryException;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
-import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.transform.EllipsoidalTransform;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.referencing.factory.OptionalFactoryOperationException;
@@ -303,11 +302,11 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
             final CoordinateOperationAuthorityFactory authorityFactory) throws FactoryException
     {
         final Citation  authority = authorityFactory.getAuthority();
-        final Identifier sourceID = AbstractIdentifiedObject.getIdentifier(sourceCRS, authority);
+        final Identifier sourceID = IdentifiedObjects.getIdentifier(sourceCRS, authority);
         if (sourceID == null) {
             return null;
         }
-        final Identifier targetID = AbstractIdentifiedObject.getIdentifier(targetCRS, authority);
+        final Identifier targetID = IdentifiedObjects.getIdentifier(targetCRS, authority);
         if (targetID == null) {
             return null;
         }
@@ -476,7 +475,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
         if ((prepend == null || prepend.isIdentity()) && (append == null || append.isIdentity())) {
             return operation;
         }
-        final Map<String,?> properties = AbstractIdentifiedObject.getProperties(operation);
+        final Map<String,?> properties = IdentifiedObjects.getProperties(operation);
         /*
          * In the particular case of concatenated operations, we can not prepend or append a math
          * transform to the operation as a whole (the math transform for a concatenated operation
@@ -731,7 +730,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                 type = SingleOperation.class;
                 final StringBuilder buffer = new StringBuilder();
                 for (final SingleOperation step : ((ConcatenatedOperation) operation).getOperations()) {
-                    final String id = CRS.getDeclaredIdentifier(step);
+                    final String id = IdentifiedObjects.getDeclaredIdentifier(step);
                     if (id != null) {
                         if (buffer.length() != 0) {
                             buffer.append(" + ");
@@ -750,7 +749,7 @@ public class AuthorityBackedFactory extends DefaultCoordinateOperationFactory {
                         Descriptions.format(Descriptions.Keys.CONCATENATED_OPERATION_ADAPTED_$1, buffer)),
                         srcDim, tgtDim, null);
             }
-            operation = createFromMathTransform(AbstractIdentifiedObject.getProperties(operation),
+            operation = createFromMathTransform(IdentifiedObjects.getProperties(operation),
                     sourceCRS, targetCRS, transform, method, type);
         }
         return operation;

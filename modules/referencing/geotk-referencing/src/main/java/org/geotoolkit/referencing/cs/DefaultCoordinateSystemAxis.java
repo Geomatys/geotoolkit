@@ -42,6 +42,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
@@ -1201,7 +1202,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             return this;
         }
         if (unit.isCompatible(newUnit)) {
-            return new DefaultCoordinateSystemAxis(getProperties(this, null),
+            return new DefaultCoordinateSystemAxis(IdentifiedObjects.getProperties(this, null),
                        abbreviation, direction, newUnit, minimum, maximum, rangeMeaning);
         }
         throw new IllegalArgumentException(Errors.format(Errors.Keys.INCOMPATIBLE_UNIT_$1, newUnit));
@@ -1304,7 +1305,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
                 // The next line may not, but is tested anyway in case the user overrided
                 // the 'that.nameMatches(...)' method.
                 final String thisName = getName().getCode();
-                if (!nameMatches(that, thisName)) {
+                if (!IdentifiedObjects.nameMatches(that, thisName)) {
                     // For the needs of AbstractCS.axisColinearWith(...), we must stop here.
                     // In addition it may be safer to not test 'nameMatchesXY' when we don't
                     // have the extra-safety of units comparison, because "x" and "y" names

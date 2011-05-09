@@ -35,6 +35,7 @@ import org.opengis.referencing.datum.TemporalDatum;
 
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.referencing.cs.DefaultTimeCS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultTemporalDatum;
 
@@ -183,7 +184,7 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      * @since 2.5
      */
     public DefaultTemporalCRS(final TemporalDatum datum, final TimeCS cs) {
-        this(getProperties(datum), datum, cs);
+        this(IdentifiedObjects.getProperties(datum), datum, cs);
     }
 
     /**

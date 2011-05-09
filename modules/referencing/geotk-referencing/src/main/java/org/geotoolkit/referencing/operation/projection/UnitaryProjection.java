@@ -51,7 +51,7 @@ import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.referencing.Identifiers;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.provider.MapProjection;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
@@ -1035,7 +1035,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
                 if (name instanceof Identifier) {
                     final Identifier identifier = (Identifier) name;
                     if (identifier.getAuthority() != Citations.GEOTOOLKIT &&
-                            AbstractIdentifiedObject.nameMatches(descriptor, identifier.getCode()))
+                            IdentifiedObjects.nameMatches(descriptor, identifier.getCode()))
                     {
                         if (identifier instanceof DefaultReferenceIdentifier &&
                                 ((DefaultReferenceIdentifier) identifier).isDeprecated())

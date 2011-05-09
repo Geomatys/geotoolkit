@@ -26,7 +26,7 @@ import javax.measure.quantity.Length;
 import org.opengis.referencing.datum.Ellipsoid;
 
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
@@ -81,7 +81,7 @@ public final class CD_Ellipsoid extends PropertyType<CD_Ellipsoid, Ellipsoid> {
         if (metadata instanceof DefaultEllipsoid) {
             return (DefaultEllipsoid) metadata;
         }
-        final Map<String,?> properties = AbstractIdentifiedObject.getProperties(metadata);
+        final Map<String,?> properties = IdentifiedObjects.getProperties(metadata);
         final double semiMajor = metadata.getSemiMajorAxis();
         final Unit<Length> unit = metadata.getAxisUnit();
         return metadata.isIvfDefinitive() ?

@@ -37,6 +37,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
 
@@ -340,6 +341,6 @@ public class DefaultEllipsoidalCS extends AbstractCS implements EllipsoidalCS {
         if (axis == null) {
             return this;
         }
-        return new DefaultEllipsoidalCS(getProperties(this, null), axis);
+        return new DefaultEllipsoidalCS(IdentifiedObjects.getProperties(this, null), axis);
     }
 }

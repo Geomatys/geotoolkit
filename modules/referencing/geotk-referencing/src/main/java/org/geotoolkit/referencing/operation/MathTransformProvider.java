@@ -43,6 +43,9 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.io.wkt.Formatter;
 
+import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_ALIAS_ARRAY;
+import static org.geotoolkit.referencing.IdentifiedObjects.EMPTY_IDENTIFIER_ARRAY;
+
 
 /**
  * An {@linkplain DefaultOperationMethod operation method} capable to create a

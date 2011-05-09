@@ -32,7 +32,7 @@ import org.geotoolkit.geometry.DirectPosition2D;
 import org.geotoolkit.parameter.ParameterWriter;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.test.referencing.ReferencingTestBase;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 
 import org.junit.*;
@@ -304,16 +304,16 @@ public final class MathTransformFactoryTest extends ReferencingTestBase {
         setObliqueMercatorParameter(params);
         transform = mtFactory.createParameterizedTransform(params);
         ParameterDescriptorGroup descriptor = ((AbstractMathTransform) transform).getParameterDescriptors();
-        assertTrue (AbstractIdentifiedObject.nameMatches(descriptor, "Oblique Mercator"));
-        assertFalse(AbstractIdentifiedObject.nameMatches(descriptor, "Hotine Oblique Mercator"));
+        assertTrue (IdentifiedObjects.nameMatches(descriptor, "Oblique Mercator"));
+        assertFalse(IdentifiedObjects.nameMatches(descriptor, "Hotine Oblique Mercator"));
         final MathTransform standard = transform;
 
         params = mtFactory.getDefaultParameters("Hotine Oblique Mercator");
         setObliqueMercatorParameter(params);
         transform = mtFactory.createParameterizedTransform(params);
         descriptor = ((AbstractMathTransform) transform).getParameterDescriptors();
-        assertFalse(AbstractIdentifiedObject.nameMatches(descriptor, "Oblique Mercator"));
-        assertTrue (AbstractIdentifiedObject.nameMatches(descriptor, "Hotine Oblique Mercator"));
+        assertFalse(IdentifiedObjects.nameMatches(descriptor, "Oblique Mercator"));
+        assertTrue (IdentifiedObjects.nameMatches(descriptor, "Hotine Oblique Mercator"));
         assertFalse(transform.equals(standard));
     }
 

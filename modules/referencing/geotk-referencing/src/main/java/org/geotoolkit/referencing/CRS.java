@@ -1123,26 +1123,12 @@ compare:    for (final SingleCRS component : actualComponents) {
      *
      * @category information
      * @since 3.06 (derived from 2.5)
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
+    @Deprecated
     public static String getDeclaredIdentifier(final IdentifiedObject object) {
-        if (object != null) {
-            ReferenceIdentifier name = null;
-            final Set<ReferenceIdentifier> identifiers = object.getIdentifiers();
-            if (identifiers != null) {
-                for (final Iterator<ReferenceIdentifier> it=identifiers.iterator(); it.hasNext();) {
-                    if ((name = it.next()) != null) {
-                        break;
-                    }
-                }
-            }
-            if (name == null) {
-                name = object.getName();
-            }
-            if (name != null) {
-                return name.toString();
-            }
-        }
-        return null;
+        return IdentifiedObjects.getDeclaredIdentifier(object);
     }
 
     /**
@@ -1157,8 +1143,8 @@ compare:    for (final SingleCRS component : actualComponents) {
      * authority factory using that identifier and compare it with the given object. If the
      * comparison fails, then this method returns {@code null}. Consequently this method may
      * returns {@code null} even if the given object declares explicitly its identifier. If
-     * the declared identifier is wanted unconditionally, use {@link #getDeclaredIdentifier
-     * getDeclaredIdentifier(...)} instead.
+     * the declared identifier is wanted unconditionally, use
+     * {@link IdentifiedObjects#getDeclaredIdentifier getDeclaredIdentifier(...)} instead.
      *
      * {@section Recommanded alternatives}
      * This convenience method delegates its work to {@link IdentifiedObjectFinder}. If you

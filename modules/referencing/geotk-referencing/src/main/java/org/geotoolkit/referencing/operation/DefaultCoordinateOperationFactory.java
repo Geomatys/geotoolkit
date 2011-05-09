@@ -43,6 +43,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.referencing.ComparisonMode;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
@@ -60,7 +61,7 @@ import static java.util.Collections.singletonList;
 import static javax.measure.unit.NonSI.DEGREE_ANGLE;
 import static org.geotoolkit.measure.Units.MILLISECOND;
 import static org.geotoolkit.referencing.CRS.equalsIgnoreMetadata;
-import static org.geotoolkit.referencing.AbstractIdentifiedObject.nameMatches;
+import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
 
 
 /**
@@ -1409,7 +1410,7 @@ search: for (int j=0; j<targets.size(); j++) {
             if (!(lower == 0 && upper == orderedSourceDim)) {
                 final MathTransform step = getMathTransformFactory()
                         .createPassThroughTransform(lower, subTransform, orderedSourceDim - upper);
-                final Map<String,?> properties = AbstractIdentifiedObject.getProperties(subOperation);
+                final Map<String,?> properties = IdentifiedObjects.getProperties(subOperation);
                 /*
                  * The DefaultPassThroughOperation constuctor expect a SingleOperation.
                  * In most case, the 'subOperation' is already of this kind. However if

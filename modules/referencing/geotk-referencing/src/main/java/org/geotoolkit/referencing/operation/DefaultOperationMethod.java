@@ -39,6 +39,7 @@ import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.referencing.ComparisonMode;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.transform.LinearTransform;
@@ -126,7 +127,7 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
             final Parameterized mt = (Parameterized) transform;
             final ParameterDescriptorGroup parameters = mt.getParameterDescriptors();
             if (parameters != null) {
-                return getProperties(parameters, null);
+                return IdentifiedObjects.getProperties(parameters, null);
             }
         }
         return Collections.singletonMap(NAME_KEY, Vocabulary.format(Vocabulary.Keys.UNKNOWN));

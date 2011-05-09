@@ -38,6 +38,7 @@ import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.ComparisonMode;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.NamedIdentifier;
@@ -136,7 +137,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
      * @since 3.15
      */
     public static final DefaultGeodeticDatum SPHERE = new DefaultGeodeticDatum(
-            getProperties(DefaultEllipsoid.SPHERE), DefaultEllipsoid.SPHERE);
+            IdentifiedObjects.getProperties(DefaultEllipsoid.SPHERE), DefaultEllipsoid.SPHERE);
 
     /**
      * The <code>{@value #BURSA_WOLF_KEY}</code> property for

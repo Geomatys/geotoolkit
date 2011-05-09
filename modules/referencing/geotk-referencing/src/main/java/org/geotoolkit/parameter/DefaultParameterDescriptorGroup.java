@@ -41,6 +41,7 @@ import org.opengis.parameter.InvalidParameterNameException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.NamedIdentifier;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
@@ -179,7 +180,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
             final String name = parameters[i].getName().getCode();
             for (int j=0; j<parameters.length; j++) {
                 if (i != j) {
-                    if (nameMatches(parameters[j], name)) {
+                    if (IdentifiedObjects.nameMatches(parameters[j], name)) {
                         throw new InvalidParameterNameException(Errors.format(
                                 Errors.Keys.PARAMETER_NAME_CLASH_$4,
                                 parameters[j].getName().getCode(), j, name, i), name);
@@ -274,7 +275,7 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
         List<GeneralParameterDescriptor> parameters = descriptors();
         while (parameters != null) {
             for (final GeneralParameterDescriptor param : parameters) {
-                if (nameMatches(param, name)) {
+                if (IdentifiedObjects.nameMatches(param, name)) {
                     return param;
                 }
                 if (param instanceof DefaultParameterDescriptorGroup) {

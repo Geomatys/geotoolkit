@@ -22,7 +22,6 @@ package org.geotoolkit.referencing;
 
 import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collection;
@@ -30,7 +29,6 @@ import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.io.Serializable;
-import java.io.ObjectStreamException;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
@@ -109,8 +107,11 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
      * }
      *
      * @see #getIdentifiers()
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
-    public static final ReferenceIdentifier[] EMPTY_IDENTIFIER_ARRAY = new ReferenceIdentifier[0];
+    @Deprecated
+    public static final ReferenceIdentifier[] EMPTY_IDENTIFIER_ARRAY = IdentifiedObjects.EMPTY_IDENTIFIER_ARRAY;
 
     /**
      * An empty array of alias. This is useful for fetching alias as an array,
@@ -121,96 +122,36 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
      * }
      *
      * @see #getAlias()
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
-    public static final GenericName[] EMPTY_ALIAS_ARRAY = new GenericName[0];
+    @Deprecated
+    public static final GenericName[] EMPTY_ALIAS_ARRAY = IdentifiedObjects.EMPTY_ALIAS_ARRAY;
 
     /**
      * A comparator for sorting identified objects by {@linkplain #getName() name}.
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
-    public static final Comparator<IdentifiedObject> NAME_COMPARATOR = new NameComparator();
-
-    /**
-     * {@link #NAME_COMPARATOR} implementation as a named class (rather than anonymous)
-     * for more predictable serialization.
-     */
-    private static final class NameComparator implements Comparator<IdentifiedObject>, Serializable {
-        /** For cross-version compatibility. */
-        private static final long serialVersionUID = -6605097017814062198L;
-
-        /** Compares the given identified objects for order. */
-        @Override public int compare(final IdentifiedObject o1, final IdentifiedObject o2) {
-            return doCompare(o1.getName().getCode(), o2.getName().getCode());
-        }
-
-        /** Canonicalizes to the singleton on deserialization. */
-        protected Object readResolve() throws ObjectStreamException {
-            return NAME_COMPARATOR;
-        }
-    }
+    @Deprecated
+    public static final Comparator<IdentifiedObject> NAME_COMPARATOR = IdentifiedObjects.NAME_COMPARATOR;
 
     /**
      * A comparator for sorting identified objects by {@linkplain #getIdentifiers identifiers}.
      * Identifiers are compared in their iteration order.
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
-    public static final Comparator<IdentifiedObject> IDENTIFIER_COMPARATOR = new IdentifierComparator();
-
-    /**
-     * {@link #IDENTIFIER_COMPARATOR} implementation as a named class (rather than anonymous)
-     * for more predictable serialization.
-     */
-    private static final class IdentifierComparator implements Comparator<IdentifiedObject>, Serializable {
-        /** For cross-version compatibility. */
-        private static final long serialVersionUID = -7315726806679993522L;
-
-        /** Compares the given identified objects for order. */
-        @Override public int compare(final IdentifiedObject o1, final IdentifiedObject o2) {
-            Collection<ReferenceIdentifier> a1 = o1.getIdentifiers();
-            Collection<ReferenceIdentifier> a2 = o2.getIdentifiers();
-            if (a1 == null) a1 = Collections.emptySet();
-            if (a2 == null) a2 = Collections.emptySet();
-            final Iterator<ReferenceIdentifier> i1 = a1.iterator();
-            final Iterator<ReferenceIdentifier> i2 = a2.iterator();
-            boolean n1, n2;
-            while ((n1 = i1.hasNext()) & (n2 = i2.hasNext())) {  // NOSONAR: Really '&', not '&&'
-                final int c = doCompare(i1.next().getCode(), i2.next().getCode());
-                if (c != 0) {
-                    return c;
-                }
-            }
-            if (n1) return +1;
-            if (n2) return -1;
-            return 0;
-        }
-
-        /** Canonicalizes to the singleton on deserialization. */
-        protected Object readResolve() throws ObjectStreamException {
-            return IDENTIFIER_COMPARATOR;
-        }
-    }
+    @Deprecated
+    public static final Comparator<IdentifiedObject> IDENTIFIER_COMPARATOR = IdentifiedObjects.IDENTIFIER_COMPARATOR;
 
     /**
      * A comparator for sorting identified objects by {@linkplain #getRemarks remarks}.
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
-    public static final Comparator<IdentifiedObject> REMARKS_COMPARATOR = new RemarksComparator();
-
-    /**
-     * {@link #REMARKS_COMPARATOR} implementation as a named class (rather than anonymous)
-     * for more predictable serialization.
-     */
-    private static final class RemarksComparator implements Comparator<IdentifiedObject>, Serializable {
-        /** For cross-version compatibility. */
-        private static final long serialVersionUID = -6675419613224162715L;
-
-        /** Compares the given identified objects for order. */
-        @Override public int compare(final IdentifiedObject o1, final IdentifiedObject o2) {
-            return doCompare(o1.getRemarks(), o2.getRemarks());
-        }
-
-        /** Canonicalizes to the singleton on deserialization. */
-        protected Object readResolve() throws ObjectStreamException {
-            return REMARKS_COMPARATOR;
-        }
-    }
+    @Deprecated
+    public static final Comparator<IdentifiedObject> REMARKS_COMPARATOR = IdentifiedObjects.REMARKS_COMPARATOR;
 
     /**
      * The name for this object or code. Should never be {@code null}.
@@ -662,10 +603,12 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *
      * @param  info The identified object to view as a properties map.
      * @return An view of the identified object as an immutable map.
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
+    @Deprecated
     public static Map<String,?> getProperties(final IdentifiedObject info) {
-        ensureNonNull("info", info);
-        return new Properties(info);
+        return IdentifiedObjects.getProperties(info);
     }
 
     /**
@@ -688,12 +631,12 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @param  authority The new authority for the object to be created, or {@code null} if it
      *         is not going to have any declared authority.
      * @return An view of the identified object as a mutable map.
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
+    @Deprecated
     public static Map<String,Object> getProperties(final IdentifiedObject info, final Citation authority) {
-        final Map<String,Object> properties = new HashMap<String,Object>(getProperties(info));
-        properties.put(NAME_KEY, new NamedIdentifier(authority, info.getName().getCode()));
-        properties.remove(IDENTIFIERS_KEY);
-        return properties;
+        return IdentifiedObjects.getProperties(info, authority);
     }
 
     /**
@@ -708,10 +651,12 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @return The object's identifier, or {@code null} if no identifier matching the specified
      *         authority was found.
      *
+     * @see IdentifiedObjects#getIdentifier(IdentifiedObject, Citation)
+     *
      * @since 2.2
      */
     public ReferenceIdentifier getIdentifier(final Citation authority) {
-        return identifier(this, authority);
+        return IdentifiedObjects.identifier(this, authority);
     }
 
     /**
@@ -725,42 +670,16 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *         authority was found.
      *
      * @since 2.2
-     */
-    public static ReferenceIdentifier getIdentifier(final IdentifiedObject info, final Citation authority) {
-        if (info instanceof AbstractIdentifiedObject) {
-            // Gives a chances to subclasses to get their overridden method invoked.
-            return ((AbstractIdentifiedObject) info).getIdentifier(authority);
-        }
-        return identifier(info, authority);
-    }
-
-    /**
-     * Returns an identifier according the given authority.
      *
-     * @param  info The object to get the identifier from.
-     * @param  authority The authority for the identifier to return, or {@code null}.
-     * @return The object's identifier, or {@code null} if none.
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
-    private static ReferenceIdentifier identifier(final IdentifiedObject info, final Citation authority) {
-        if (info == null) {
-            return null;
-        }
-        for (final ReferenceIdentifier identifier : info.getIdentifiers()) {
-            if (authority == null) {
-                return identifier;
-            }
-            final Citation infoAuthority = identifier.getAuthority();
-            if (infoAuthority != null) {
-                if (Citations.identifierMatches(authority, infoAuthority)) {
-                    return identifier;
-                }
-            }
-        }
-        return (authority == null) ? info.getName() : null;
+    @Deprecated
+    public static ReferenceIdentifier getIdentifier(final IdentifiedObject info, final Citation authority) {
+        return IdentifiedObjects.identifier(info, authority);
     }
 
     /**
-     * Returns this object's name according the given authority. This method checks first the
+     * Returns this object name according the given authority. This method checks first the
      * {@linkplain #getName() primary name}, then all {@linkplain #getAlias() alias} in their
      * iteration order.
      *
@@ -790,11 +709,12 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *
      * @see #getName()
      * @see #getAlias()
+     * @see IdentifiedObjects#getName(IdentifiedObject, Citation)
      *
      * @since 2.2
      */
     public String getName(final Citation authority) {
-        return name(this, authority);
+        return IdentifiedObjects.name(this, authority);
     }
 
     /**
@@ -808,58 +728,11 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *         specified authority was found.
      *
      * @since 2.2
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
     public static String getName(final IdentifiedObject info, final Citation authority) {
-        if (info instanceof AbstractIdentifiedObject) {
-            // Gives a chances to subclasses to get their overridden method invoked.
-            return ((AbstractIdentifiedObject) info).getName(authority);
-        }
-        return name(info, authority);
-    }
-
-    /**
-     * Returns an object's name according the given authority.
-     *
-     * @param  info The object to get the name from.
-     * @param  authority The authority for the name to return, or {@code null} for any authority.
-     * @return The object's name (either a {@linkplain ReferenceIdentifier#getCode code} or a
-     *         {@linkplain GenericName#tip name tip}), or {@code null} if no name matching the
-     *         specified authority was found.
-     */
-    private static String name(final IdentifiedObject info, final Citation authority) {
-        Identifier identifier = info.getName();
-        if (authority == null) {
-            return identifier.getCode();
-        }
-        String name = null;
-        Citation infoAuthority = identifier.getAuthority();
-        if (infoAuthority != null) {
-            if (Citations.identifierMatches(authority, infoAuthority)) {
-                name = identifier.getCode();
-            } else {
-                for (final GenericName alias : info.getAlias()) {
-                    if (alias instanceof Identifier) {
-                        identifier = (Identifier) alias;
-                        infoAuthority = identifier.getAuthority();
-                        if (infoAuthority != null) {
-                            if (Citations.identifierMatches(authority, infoAuthority)) {
-                                name = identifier.getCode();
-                                break;
-                            }
-                        }
-                    } else {
-                        final GenericName scope = alias.scope().name();
-                        if (scope != null) {
-                            if (Citations.identifierMatches(authority, scope.toString())) {
-                                name = alias.toString();
-                                break;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return name;
+        return IdentifiedObjects.name(info, authority);
     }
 
     /**
@@ -876,9 +749,11 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @param  name The name to compare.
      * @return {@code true} if the primary name of at least one alias
      *         matches the specified {@code name}.
+     *
+     * @see IdentifiedObjects#nameMatches(IdentifiedObject, String)
      */
     public boolean nameMatches(final String name) {
-        return nameMatches(this, alias, name);
+        return IdentifiedObjects.nameMatches(this, alias, name);
     }
 
     /**
@@ -891,13 +766,12 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @param  name The name.
      * @return {@code true} if the primary name of at least one alias
      *         matches the specified {@code name}.
+     *
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
+    @Deprecated
     public static boolean nameMatches(final IdentifiedObject object, final String name) {
-        if (object instanceof AbstractIdentifiedObject) {
-            return ((AbstractIdentifiedObject) object).nameMatches(name);
-        } else {
-            return nameMatches(object, object.getAlias(), name);
-        }
+        return IdentifiedObjects.nameMatches(object, name);
     }
 
     /**
@@ -909,45 +783,12 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @return {@code true} if both objects have a common name.
      *
      * @since 2.4
-     */
-    public static boolean nameMatches(final IdentifiedObject o1, final IdentifiedObject o2) {
-        return nameMatches(o1, o2.getName().getCode()) ||
-               nameMatches(o2, o1.getName().getCode());
-    }
-
-    /**
-     * Returns {@code true} if the {@linkplain #getName() primary name} of the given object
-     * or one of the given alias matches the given name.
      *
-     * @param  object The object to check.
-     * @param  alias  The list of alias in {@code object} (may be {@code null}).
-     *                This method will never modify this list. Consequently, it
-     *                may be a direct reference to an internal array.
-     * @param  name   The name for which to check for equality.
-     * @return {@code true} if the primary name or at least one alias matches the given {@code name}.
+     * @deprecated Moved to {@link IdentifiedObjects}.
      */
-    private static boolean nameMatches(final IdentifiedObject object,
-                                       final Collection<GenericName> alias, String name)
-    {
-        name = name.trim();
-        if (name.equalsIgnoreCase(object.getName().getCode().trim())) {
-            return true;
-        }
-        if (alias != null) {
-            for (GenericName asName : alias) {
-                asName = asName.toFullyQualifiedName();
-                while (asName != null) {
-                    if (name.equalsIgnoreCase(asName.toString().trim())) {
-                        return true;
-                    }
-                    if (!(asName instanceof ScopedName)) {
-                        break;
-                    }
-                    asName = ((ScopedName) asName).tail();
-                }
-            }
-        }
-        return false;
+    @Deprecated
+    public static boolean nameMatches(final IdentifiedObject o1, final IdentifiedObject o2) {
+        return IdentifiedObjects.nameMatches(o1, o2);
     }
 
     /**
@@ -1093,20 +934,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
             }
         }
         return !it2.hasNext();
-    }
-
-    /**
-     * Compares two objects for order. Any object may be null. This method is
-     * used for implementation of {@link #NAME_COMPARATOR} and its friends.
-     */
-    private static <E extends Comparable<E>> int doCompare(final E c1, final E c2) {
-        if (c1 == null) {
-            return (c2 == null) ? 0 : -1;
-        }
-        if (c2 == null) {
-            return +1;
-        }
-        return c1.compareTo(c2);
     }
 
     /**

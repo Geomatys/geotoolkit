@@ -61,6 +61,7 @@ import org.geotoolkit.measure.AngleFormat;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.GeodeticCalculator;
 import org.geotoolkit.referencing.operation.AbstractCoordinateOperation;
 import org.geotoolkit.geometry.GeneralDirectPosition;
@@ -387,9 +388,9 @@ public final class Referencing extends Formulas implements XReferencing {
         if (logger.isLoggable(Level.FINER)) {
             final LogRecord record = Loggings.format(Level.FINER,
                     Loggings.Keys.CREATED_COORDINATE_OPERATION_$3,
-                    CRS.getDeclaredIdentifier(operation),
-                    CRS.getDeclaredIdentifier(sourceCRS),
-                    CRS.getDeclaredIdentifier(targetCRS));
+                    IdentifiedObjects.getDeclaredIdentifier(operation),
+                    IdentifiedObjects.getDeclaredIdentifier(sourceCRS),
+                    IdentifiedObjects.getDeclaredIdentifier(targetCRS));
             record.setSourceClassName(Referencing.class.getName());
             record.setSourceMethodName(method);
             logger.log(record);

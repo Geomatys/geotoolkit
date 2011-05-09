@@ -32,7 +32,7 @@ import org.opengis.referencing.operation.OperationMethod;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.FactoryFinder;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -291,7 +291,7 @@ public class MathTransformParser extends Parser {
              */
             if (classification != null) {
                 for (final OperationMethod method : mtFactory.getAvailableMethods(SingleOperation.class)) {
-                    if (AbstractIdentifiedObject.nameMatches(method, classification)) {
+                    if (IdentifiedObjects.nameMatches(method, classification)) {
                         lastMethod = method;
                         break;
                     }

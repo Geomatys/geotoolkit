@@ -41,7 +41,7 @@ import org.geotoolkit.factory.FactoryRegistry;
 import org.geotoolkit.factory.DynamicFactoryRegistry;
 import org.geotoolkit.internal.referencing.Identifier3D;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.DefaultReferenceIdentifier;
 import org.geotoolkit.referencing.operation.DefiningConversion;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
@@ -326,7 +326,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
                     final Unit<Length> units = ((GeodeticDatum) crs.getDatum()).getEllipsoid().getAxisUnit();
                     if (!SI.METRE.equals(units)) {
                         vertical = getCSFactory().createCoordinateSystemAxis(
-                                AbstractIdentifiedObject.getProperties(vertical),
+                                IdentifiedObjects.getProperties(vertical),
                                 vertical.getAbbreviation(), vertical.getDirection(), units);
                     }
                     crs = toGeodetic3D(null, crs, vertical, true);
@@ -412,7 +412,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         } else if (r == count) {
             return crs;
         } else {
-            return getCRSFactory().createCompoundCRS(AbstractIdentifiedObject.getProperties(crs),
+            return getCRSFactory().createCompoundCRS(IdentifiedObjects.getProperties(crs),
                     components.toArray(new SingleCRS[components.size()]));
         }
     }
@@ -446,8 +446,8 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
         axis[xyFirst ? 2 : 0] = vertical;
         Map<String,?> csName, crsName;
         if (crs != null) {
-            csName  = AbstractIdentifiedObject.getProperties(crs.getCoordinateSystem());
-            crsName = AbstractIdentifiedObject.getProperties(crs);
+            csName  = IdentifiedObjects.getProperties(crs.getCoordinateSystem());
+            crsName = IdentifiedObjects.getProperties(crs);
         } else {
             csName  = getTemporaryName(cs);
             crsName = getTemporaryName(horizontal);
@@ -487,7 +487,7 @@ public class ReferencingFactoryContainer extends ReferencingFactory {
                      mtFactory.createConcatenatedTransform(
                      mtFactory.createAffineTransform(prepend), mt),
                      mtFactory.createAffineTransform(append));
-                projection = new DefiningConversion(AbstractCS.getProperties(projection),
+                projection = new DefiningConversion(IdentifiedObjects.getProperties(projection),
                                                     projection.getMethod(), mt);
             }
             return crsFactory.createProjectedCRS(crsName, base3D, projection, targetCS);
