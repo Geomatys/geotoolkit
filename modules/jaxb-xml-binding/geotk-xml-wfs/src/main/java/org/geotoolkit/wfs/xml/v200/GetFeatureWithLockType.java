@@ -18,7 +18,6 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -52,7 +51,7 @@ public class GetFeatureWithLockType
 
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger expiry;
+    private int expiry = 300;
     @XmlAttribute
     private AllSomeType lockAction;
 
@@ -61,15 +60,11 @@ public class GetFeatureWithLockType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getExpiry() {
-        if (expiry == null) {
-            return new BigInteger("300");
-        } else {
-            return expiry;
-        }
+    public int getExpiry() {
+        return expiry;
     }
 
     /**
@@ -77,10 +72,10 @@ public class GetFeatureWithLockType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setExpiry(BigInteger value) {
+    public void setExpiry(int value) {
         this.expiry = value;
     }
 

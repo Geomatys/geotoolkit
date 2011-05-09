@@ -18,7 +18,6 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -57,9 +56,7 @@ import org.geotoolkit.ogc.xml.v200.AbstractQueryExpressionType;
 @XmlType(name = "LockFeatureType", propOrder = {
     "abstractQueryExpression"
 })
-public class LockFeatureType
-    extends BaseRequestType
-{
+public class LockFeatureType extends BaseRequestType {
 
     @XmlElementRef(name = "AbstractQueryExpression", namespace = "http://www.opengis.net/fes/2.0", type = JAXBElement.class)
     private List<JAXBElement<? extends AbstractQueryExpressionType>> abstractQueryExpression;
@@ -67,7 +64,7 @@ public class LockFeatureType
     private String lockId;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger expiry;
+    private int expiry = 300;
     @XmlAttribute
     private AllSomeType lockAction;
 
@@ -132,15 +129,11 @@ public class LockFeatureType
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getExpiry() {
-        if (expiry == null) {
-            return new BigInteger("300");
-        } else {
-            return expiry;
-        }
+    public int getExpiry() {
+        return expiry;
     }
 
     /**
@@ -148,10 +141,10 @@ public class LockFeatureType
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setExpiry(BigInteger value) {
+    public void setExpiry(int value) {
         this.expiry = value;
     }
 

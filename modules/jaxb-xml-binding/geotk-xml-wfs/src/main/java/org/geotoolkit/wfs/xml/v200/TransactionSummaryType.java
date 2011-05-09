@@ -18,7 +18,6 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSchemaType;
@@ -57,23 +56,23 @@ import javax.xml.bind.annotation.XmlType;
 public class TransactionSummaryType {
 
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalInserted;
+    private int totalInserted;
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalUpdated;
+    private int totalUpdated;
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalReplaced;
+    private int totalReplaced;
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger totalDeleted;
+    private int totalDeleted;
 
     /**
      * Gets the value of the totalInserted property.
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getTotalInserted() {
+    public int getTotalInserted() {
         return totalInserted;
     }
 
@@ -82,10 +81,10 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setTotalInserted(BigInteger value) {
+    public void setTotalInserted(int value) {
         this.totalInserted = value;
     }
 
@@ -94,10 +93,10 @@ public class TransactionSummaryType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getTotalUpdated() {
+    public int getTotalUpdated() {
         return totalUpdated;
     }
 
@@ -106,10 +105,10 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setTotalUpdated(BigInteger value) {
+    public void setTotalUpdated(int value) {
         this.totalUpdated = value;
     }
 
@@ -118,10 +117,10 @@ public class TransactionSummaryType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getTotalReplaced() {
+    public int getTotalReplaced() {
         return totalReplaced;
     }
 
@@ -130,10 +129,10 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setTotalReplaced(BigInteger value) {
+    public void setTotalReplaced(int value) {
         this.totalReplaced = value;
     }
 
@@ -142,10 +141,10 @@ public class TransactionSummaryType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getTotalDeleted() {
+    public int getTotalDeleted() {
         return totalDeleted;
     }
 
@@ -154,10 +153,10 @@ public class TransactionSummaryType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setTotalDeleted(BigInteger value) {
+    public void setTotalDeleted(int value) {
         this.totalDeleted = value;
     }
 

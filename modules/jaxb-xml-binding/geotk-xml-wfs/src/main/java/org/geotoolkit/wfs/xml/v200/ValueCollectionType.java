@@ -18,7 +18,6 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -69,7 +68,7 @@ public class ValueCollectionType {
     private String numberMatched;
     @XmlAttribute(required = true)
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger numberReturned;
+    private int numberReturned;
     @XmlAttribute
     @XmlSchemaType(name = "anyURI")
     private String next;
@@ -207,10 +206,10 @@ public class ValueCollectionType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getNumberReturned() {
+    public int getNumberReturned() {
         return numberReturned;
     }
 
@@ -219,10 +218,10 @@ public class ValueCollectionType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setNumberReturned(BigInteger value) {
+    public void setNumberReturned(int value) {
         this.numberReturned = value;
     }
 

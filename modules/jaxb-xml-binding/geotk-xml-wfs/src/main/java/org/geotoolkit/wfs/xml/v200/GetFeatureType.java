@@ -18,7 +18,6 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.bind.JAXBElement;
@@ -67,10 +66,10 @@ public class GetFeatureType extends BaseRequestType {
     private List<JAXBElement<? extends AbstractQueryExpressionType>> abstractQueryExpression;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger startIndex;
+    private int startIndex;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger count;
+    private int count;
     @XmlAttribute
     private ResultTypeType resultType;
     @XmlAttribute
@@ -81,7 +80,7 @@ public class GetFeatureType extends BaseRequestType {
     private String resolveDepth;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger resolveTimeout;
+    private int resolveTimeout = 300;
 
     /**
      * Gets the value of the abstractQueryExpression property.
@@ -120,15 +119,11 @@ public class GetFeatureType extends BaseRequestType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getStartIndex() {
-        if (startIndex == null) {
-            return new BigInteger("0");
-        } else {
-            return startIndex;
-        }
+    public int getStartIndex() {
+        return startIndex;
     }
 
     /**
@@ -136,10 +131,10 @@ public class GetFeatureType extends BaseRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setStartIndex(BigInteger value) {
+    public void setStartIndex(int value) {
         this.startIndex = value;
     }
 
@@ -148,10 +143,10 @@ public class GetFeatureType extends BaseRequestType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getCount() {
+    public int getCount() {
         return count;
     }
 
@@ -160,10 +155,10 @@ public class GetFeatureType extends BaseRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setCount(BigInteger value) {
+    public void setCount(int value) {
         this.count = value;
     }
 
@@ -284,15 +279,11 @@ public class GetFeatureType extends BaseRequestType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getResolveTimeout() {
-        if (resolveTimeout == null) {
-            return new BigInteger("300");
-        } else {
-            return resolveTimeout;
-        }
+    public int getResolveTimeout() {
+        return resolveTimeout;
     }
 
     /**
@@ -300,10 +291,10 @@ public class GetFeatureType extends BaseRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setResolveTimeout(BigInteger value) {
+    public void setResolveTimeout(int value) {
         this.resolveTimeout = value;
     }
 

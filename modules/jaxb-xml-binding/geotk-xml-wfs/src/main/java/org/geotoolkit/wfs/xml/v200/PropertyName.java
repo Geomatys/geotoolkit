@@ -18,7 +18,6 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import java.math.BigInteger;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -62,7 +61,7 @@ public class PropertyName {
     private String resolveDepth;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger resolveTimeout;
+    private int resolveTimeout = 300;
 
     /**
      * Gets the value of the value property.
@@ -173,15 +172,11 @@ public class PropertyName {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getResolveTimeout() {
-        if (resolveTimeout == null) {
-            return new BigInteger("300");
-        } else {
-            return resolveTimeout;
-        }
+    public int getResolveTimeout() {
+        return resolveTimeout;
     }
 
     /**
@@ -189,10 +184,10 @@ public class PropertyName {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setResolveTimeout(BigInteger value) {
+    public void setResolveTimeout(int value) {
         this.resolveTimeout = value;
     }
 

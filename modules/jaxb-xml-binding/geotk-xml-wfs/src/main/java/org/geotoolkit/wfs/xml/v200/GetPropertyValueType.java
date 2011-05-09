@@ -18,7 +18,6 @@
 
 package org.geotoolkit.wfs.xml.v200;
 
-import java.math.BigInteger;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -69,13 +68,13 @@ public class GetPropertyValueType extends BaseRequestType {
     private String resolveDepth;
     @XmlAttribute
     @XmlSchemaType(name = "positiveInteger")
-    private BigInteger resolveTimeout;
+    private int resolveTimeout = 300;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger startIndex;
+    private int startIndex = 0;
     @XmlAttribute
     @XmlSchemaType(name = "nonNegativeInteger")
-    private BigInteger count;
+    private int count;
     @XmlAttribute
     private ResultTypeType resultType;
     @XmlAttribute
@@ -220,15 +219,11 @@ public class GetPropertyValueType extends BaseRequestType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getResolveTimeout() {
-        if (resolveTimeout == null) {
-            return new BigInteger("300");
-        } else {
-            return resolveTimeout;
-        }
+    public int getResolveTimeout() {
+        return resolveTimeout;
     }
 
     /**
@@ -236,10 +231,10 @@ public class GetPropertyValueType extends BaseRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setResolveTimeout(BigInteger value) {
+    public void setResolveTimeout(int value) {
         this.resolveTimeout = value;
     }
 
@@ -248,15 +243,11 @@ public class GetPropertyValueType extends BaseRequestType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getStartIndex() {
-        if (startIndex == null) {
-            return new BigInteger("0");
-        } else {
-            return startIndex;
-        }
+    public int getStartIndex() {
+        return startIndex;
     }
 
     /**
@@ -264,10 +255,10 @@ public class GetPropertyValueType extends BaseRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setStartIndex(BigInteger value) {
+    public void setStartIndex(int value) {
         this.startIndex = value;
     }
 
@@ -276,10 +267,10 @@ public class GetPropertyValueType extends BaseRequestType {
      * 
      * @return
      *     possible object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public BigInteger getCount() {
+    public int getCount() {
         return count;
     }
 
@@ -288,10 +279,10 @@ public class GetPropertyValueType extends BaseRequestType {
      * 
      * @param value
      *     allowed object is
-     *     {@link BigInteger }
+     *     {@link int }
      *     
      */
-    public void setCount(BigInteger value) {
+    public void setCount(int value) {
         this.count = value;
     }
 
