@@ -22,7 +22,7 @@ import org.geotoolkit.wms.AbstractGetLegend;
 
 
 /**
- * Abstract implementation of {@link GetLegendRequest}, which defines the
+ * Abstract implementation of {@link NcGetLegendRequest}, which defines the
  * parameters for a GetLegendGraphic request.
  *
  * @author olivier Terral (Geomatys)
@@ -31,7 +31,7 @@ import org.geotoolkit.wms.AbstractGetLegend;
 public abstract class AbstractNcGetLegend extends AbstractGetLegend implements NcGetLegendRequest {
     
     /**
-     * Default logger for all GetMap requests.
+     * Default logger for all GetLegendGraphic requests.
      */
     protected static final Logger LOGGER = Logging.getLogger(AbstractNcGetLegend.class);
     

@@ -22,6 +22,7 @@ import org.geotoolkit.ncwms.AbstractNcGetLegend;
 /**
  * Implementation for the GetLegendGraphic request version 1.1.1.
  *
+ * @author Olivier Terral (Geomatys)
  * @author Johann Sorel (Geomatys)
  * @module pending
  */

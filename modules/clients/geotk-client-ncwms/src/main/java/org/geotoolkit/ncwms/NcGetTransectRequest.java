@@ -19,7 +19,8 @@ package org.geotoolkit.ncwms;
 import org.geotoolkit.client.Request;
 
 
-/**
+/** 
+ * Interface for GetTransect requests.
  *
  * @author Olivier Terral (Geomatys)
  * @module pending
@@ -54,8 +55,7 @@ public interface NcGetTransectRequest extends Request {
     /**
      * Sets coordinates of a line: x1%y1,x2%y2 ...
      */
-    void setLineString(final String lineString);
-    
+    void setLineString(final String lineString);    
     
     /**
      * Returns the mimetype of the output format.
@@ -75,8 +75,7 @@ public interface NcGetTransectRequest extends Request {
     /**
      * Sets the Time in ISO8601 format.
      */
-    void setTime(final String time);
-    
+    void setTime(final String time);    
     
     /**
      * Returns the Elevation.

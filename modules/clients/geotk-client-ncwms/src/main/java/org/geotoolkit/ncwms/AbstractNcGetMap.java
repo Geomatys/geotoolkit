@@ -23,7 +23,7 @@ import org.geotoolkit.wms.AbstractGetMap;
 
 
 /**
- * Abstract implementation of {@link GetMapRequest}, which defines the parameters for
+ * Abstract implementation of {@link NcGetMapRequest}, which defines the parameters for
  * a GetMap request.
  *
  * @author Olivier Terral (Geomatys)

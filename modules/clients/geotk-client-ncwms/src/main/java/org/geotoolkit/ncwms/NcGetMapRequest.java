@@ -20,9 +20,9 @@ import org.geotoolkit.wms.GetMapRequest;
 
 
 /**
- *
+ * Interface for GetMap requests
+ * 
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
-public interface NcGetMapRequest extends GetMapRequest, NcWMSCommonRequest {
-}
+public interface NcGetMapRequest extends GetMapRequest, NcWMSCommonRequest {}

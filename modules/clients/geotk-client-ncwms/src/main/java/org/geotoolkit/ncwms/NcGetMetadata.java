@@ -18,7 +18,6 @@ package org.geotoolkit.ncwms;
 
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
-
 import org.geotoolkit.util.logging.Logging;
 
 

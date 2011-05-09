@@ -93,8 +93,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
      * 254. 
      * 
      */
-    private Integer numColorBands = null;
-    
+    private Integer numColorBands = null;    
     
     /**
      * Choose from a linear or logarithmic color scale
@@ -165,7 +164,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
     }
 
     /**
-     * Gets the choice from a linear or logarithmic color scale
+     * Gets the choice from a linear or logarithmic color scale.
      * 
      * @return if we choose a logarithmic color scale or not.
      */
@@ -174,7 +173,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
     }
 
     /**
-     * Sets the choice from a linear or logarithmic color scale
+     * Sets the choice from a linear or logarithmic color scale.
      * 
      * @param logScale The choice of using a logarithmic color scale or not.
      */
@@ -187,8 +186,8 @@ public class NcWMSMapLayer extends WMSMapLayer {
     /********************* Queries functions **********************************/
     
     /**
-     * Sets ncWMS common request parameters
-     * @param request the current request
+     * Sets ncWMS common request parameters.
+     * @param request the current request.
      */
     private void prepareNcWMSCommonRequest(final NcWMSCommonRequest request) {        
         request.setOpacity(ncOpacity);        
@@ -251,12 +250,25 @@ public class NcWMSMapLayer extends WMSMapLayer {
         return request.getURL();
     }
     
+    /**
+     * Add mandatory parameters to the request objects.
+     * 
+     * @param request The GetMetadata request object.
+     * @param item Th type of the request. Possible values
+     * are 'menu', 'layerDetails', 'timesteps', 'minmax', 'animationTimesteps'
+     */
     private void prepareQueryMetadata(final NcGetMetadataRequest request, 
             final String item) {        
         request.setItem(item);
         request.setLayerName(getLayerNames()[0]);        
     }
     
+    /**
+     * Generates a GetMetadata?item=layerDetails URL.
+     * 
+     * @return the request URL.
+     * @throws MalformedURLException 
+     */
     public URL queryMetadataLayerDetails() throws MalformedURLException {
         final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
         prepareQueryMetadata(request, "layerDetails");
@@ -264,6 +276,14 @@ public class NcWMSMapLayer extends WMSMapLayer {
         return request.getURL();
     }
     
+    /**
+     * Generates a GetMetadata?item=animationTimesteps URL.
+     * 
+     * @param start The start date of the animation.
+     * @param end The end date of the animation.
+     * @return the request URL.
+     * @throws MalformedURLException 
+     */
     public URL queryMetadataAnimationTimesteps(final String  start, final String end) throws MalformedURLException {
         final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
         prepareQueryMetadata(request, "animationTimesteps");
@@ -272,6 +292,12 @@ public class NcWMSMapLayer extends WMSMapLayer {
         return request.getURL();
     }
     
+    /**
+     * Generates a GetMetadata?item=timesteps URL.
+     * 
+     * @return the request URL.
+     * @throws MalformedURLException 
+     */
     public URL queryMetadataTimesteps() throws MalformedURLException {
         final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
         prepareQueryMetadata(request, "timesteps");
@@ -279,13 +305,29 @@ public class NcWMSMapLayer extends WMSMapLayer {
         return request.getURL();
     }
     
+    /**
+     * Generates a GetMetadata?item=minmax URL.
+     * 
+     * @return the request URL.
+     * @throws MalformedURLException 
+     */
     public URL queryMetadataMinmax() throws MalformedURLException {
         final NcGetMetadataRequest request = ((NcWebMapServer) getServer()).createGetMetadata();
         prepareQueryMetadata(request, "minmax");
         return request.getURL();
     }
     
-    public URL queryTransect(final String crsCode, final String lineString, final String outputFormat) throws MalformedURLException {
+    /**
+     * Generates a GetTransect URL.
+     * 
+     * @param crsCode           A crs code.
+     * @param lineString        Coordinates of a line: x1%y1,x2%y2 ....
+     * @param outputFormat      The mimetype of the output format. Possible values: image/png, text/xml ...
+     * @return the request URL.
+     * @throws MalformedURLException 
+     */
+    public URL queryTransect(final String crsCode, final String lineString, 
+            final String outputFormat) throws MalformedURLException {
         final NcGetTransectRequest request = ((NcWebMapServer) getServer()).createGetTransect();
         
         // Mandatory
@@ -301,6 +343,16 @@ public class NcWMSMapLayer extends WMSMapLayer {
         return request.getURL();
     }
     
+    /**
+     * Generates a GetVerticalProfile URL.
+     * 
+     * @param crsCode       A crs code.
+     * @param x             The X coordinate of a point
+     * @param y             The Y coordinate of a point
+     * @param outputFormat  The mimetype of the output format.Possible values: image/png ...
+     * @return the request URL.
+     * @throws MalformedURLException 
+     */
     public URL queryVerticalProfile(final String crsCode, float x, float y, 
             final String outputFormat) throws MalformedURLException {
         final NcGetVerticalProfileRequest request = ((NcWebMapServer) getServer()).createGetVerticalProfile();

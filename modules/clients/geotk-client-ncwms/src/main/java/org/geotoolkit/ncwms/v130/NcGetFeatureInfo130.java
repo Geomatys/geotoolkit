@@ -28,7 +28,7 @@ import org.opengis.util.FactoryException;
 
 
 /**
- * Implementation for the nc WMS GetFeatureInfo request version 1.3.0.
+ * Implementation for a GetFeatureInfo request version 1.3.0.
  *
  * @author Olivier Terral (Geomatys)
  * @author Cédric Briançon (Geomatys)

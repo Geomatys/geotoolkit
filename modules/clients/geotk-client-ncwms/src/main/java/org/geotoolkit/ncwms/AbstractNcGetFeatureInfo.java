@@ -22,14 +22,16 @@ import org.geotoolkit.wms.AbstractGetFeatureInfo;
 
 
 /**
- *
+ * Abstract implementation of {@link NcGetFeatureInfoRequest}, which defines the parameters for
+ * a GetFeatureInfo request.
+ * 
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
 public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo implements  NcGetFeatureInfoRequest {
     
     /**
-     * Default logger for all GetMap requests.
+     * Default logger for all GetFeatureInfo requests.
      */
     protected static final Logger LOGGER = Logging.getLogger(AbstractNcGetFeatureInfo.class);
     

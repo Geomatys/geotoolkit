@@ -19,9 +19,9 @@ package org.geotoolkit.ncwms;
 import org.geotoolkit.wms.GetLegendRequest;
 
 
-
 /**
- *
+ * Interface for GetLegendGraphic requests
+ * 
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
@@ -37,7 +37,7 @@ public interface NcGetLegendRequest extends NcWMSCommonRequest, GetLegendRequest
     /**
      * Sets the name of the palette.
      * 
-     * @param palette the name of the palette to set.
+     * @param palette The name of the palette to set.
      */
     void setPalette(final String palette);
 }

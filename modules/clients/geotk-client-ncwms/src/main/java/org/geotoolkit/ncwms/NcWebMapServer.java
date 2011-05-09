@@ -16,7 +16,6 @@
  */
 package org.geotoolkit.ncwms;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.logging.Logger;
 
@@ -147,14 +146,14 @@ public class NcWebMapServer extends WebMapServer{
     }    
     
     /**
-     * Returns the request object. 
+     * Returns the GetMetadata request object. 
      */
     public NcGetMetadataRequest createGetMetadata() {
         return new NcGetMetadata(getURI().toString());
     }
     
     /**
-     * Returns the request object. 
+     * Returns the GetMetadata?item=menu request object. 
      */
     public NcGetMetadataRequest createGetMetadataMenu()  {
         final NcGetMetadataRequest request = createGetMetadata();
@@ -163,14 +162,14 @@ public class NcWebMapServer extends WebMapServer{
     }
     
     /**
-     * Returns the request object. 
+     * Returns the GetTransect request object. 
      */
     public NcGetTransectRequest createGetTransect() {
         return new NcGetTransect(getURI().toString());
     }
     
     /**
-     * Returns the request object. 
+     * Returns the GetVerticalProfile request object. 
      */
     public NcGetVerticalProfileRequest createGetVerticalProfile() {
         return new NcGetVerticalProfile(getURI().toString());

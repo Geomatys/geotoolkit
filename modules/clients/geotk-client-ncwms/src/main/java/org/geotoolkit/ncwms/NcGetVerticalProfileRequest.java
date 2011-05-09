@@ -20,7 +20,7 @@ import org.geotoolkit.client.Request;
 
 
 /**
- *
+ * Interface for GetVerticalProfile requests.
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
@@ -54,8 +54,7 @@ public interface NcGetVerticalProfileRequest extends Request {
     /**
      * Sets he coordinate of a point: x%y.
      */
-    void setPoint(final String point);
-    
+    void setPoint(final String point);    
     
     /**
      * Returns the mimetype of the output format.

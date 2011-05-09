@@ -20,7 +20,8 @@ import org.geotoolkit.client.Request;
 
 
 /**
- *
+ * Interface for GetMetadata requests
+ * 
  * @author Olivier Terral (Geomatys)
  * @module pending
  */
@@ -42,9 +43,9 @@ public interface NcGetMetadataRequest extends Request {
     String getItem();
 
     /**
-     * Sets the id representing which informations you want.    
+     * Sets the type of the GetMetadata request.    
      * 
-     * @param item the id representing which informations you want. Possible values
+     * @param item The type of the GetMetadata request. Possible values
      * are 'menu', 'layerDetails', 'timesteps', 'minmax', 'animationTimesteps'
      */
     void setItem(final String item);
@@ -57,7 +58,7 @@ public interface NcGetMetadataRequest extends Request {
     /**
      * Sets the day in ISO8601 format.
      */
-    void setDay(final String name);
+    void setDay(final String day);
     
     
     /**

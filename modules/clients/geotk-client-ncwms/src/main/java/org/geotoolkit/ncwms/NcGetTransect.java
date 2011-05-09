@@ -18,7 +18,6 @@ package org.geotoolkit.ncwms;
 
 import java.util.logging.Logger;
 import org.geotoolkit.client.AbstractRequest;
-
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -32,7 +31,7 @@ import org.geotoolkit.util.logging.Logging;
 public class NcGetTransect extends AbstractRequest implements NcGetTransectRequest {
     
     /**
-     * Default logger for all GetVerticalProfile requests.
+     * Default logger for all GetTransect requests.
      */
     protected static final Logger LOGGER = Logging.getLogger(NcGetTransect.class);
     
