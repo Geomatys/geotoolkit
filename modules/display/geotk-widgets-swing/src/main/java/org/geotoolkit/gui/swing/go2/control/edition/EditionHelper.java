@@ -20,6 +20,7 @@ package org.geotoolkit.gui.swing.go2.control.edition;
 import org.opengis.feature.type.FeatureType;
 import org.opengis.feature.Feature;
 import com.vividsolutions.jts.geom.Coordinate;
+import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
 import com.vividsolutions.jts.geom.GeometryFactory;
@@ -30,6 +31,8 @@ import com.vividsolutions.jts.geom.MultiPoint;
 import com.vividsolutions.jts.geom.MultiPolygon;
 import com.vividsolutions.jts.geom.Point;
 import com.vividsolutions.jts.geom.Polygon;
+import com.vividsolutions.jts.operation.buffer.BufferParameters;
+import com.vividsolutions.jts.operation.distance.DistanceOp;
 
 import java.awt.geom.AffineTransform;
 import java.awt.geom.NoninvertibleTransformException;
@@ -525,8 +528,8 @@ public class EditionHelper {
     public Geometry insertNode(final Polygon geo, final int mx, final int my) {
         try{
             //transform our mouse in a geometry
-            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
-            final Geometry mousePoint = toJTS(mx, my);
+            final Polygon mouseGeo = mousePositionToGeometry(mx, my);
+            final Point mousePoint = toJTS(mx, my);
 
             if (geo.intersects(mouseGeo)) {
                 //this geometry intersect the mouse
@@ -536,9 +539,9 @@ public class EditionHelper {
                     //find the segment that intersect
                     final Coordinate coo1 = coos[j];
                     final Coordinate coo2 = coos[j+1];
-                    final Geometry segment = createLine(coo1,coo2);
+                    final LineString segment = createLine(coo1,coo2);
 
-                    if(mouseGeo.intersects(segment) && segment.getEnvelope().intersects(mousePoint)){
+                    if(mouseGeo.intersects(segment) && isOnLine(mouseGeo,mousePoint,segment)){
                         //we must add the new node on this segment
 
                         final List<Coordinate> ncs = new ArrayList<Coordinate>();
@@ -564,8 +567,8 @@ public class EditionHelper {
     public Geometry insertNode(final LineString geo, final int mx, final int my) {
         try{
             //transform our mouse in a geometry
-            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
-            final Geometry mousePoint = toJTS(mx, my);
+            final Polygon mouseGeo = mousePositionToGeometry(mx, my);
+            final Point mousePoint = toJTS(mx, my);
 
             if (geo.intersects(mouseGeo)) {
                 //this geometry intersect the mouse
@@ -575,9 +578,9 @@ public class EditionHelper {
                     //find the segment that intersect
                     final Coordinate coo1 = coos[j];
                     final Coordinate coo2 = coos[j+1];
-                    final Geometry segment = createLine(coo1,coo2);
+                    final LineString segment = createLine(coo1,coo2);
 
-                    if(mouseGeo.intersects(segment) && segment.getEnvelope().intersects(mousePoint)){
+                    if(mouseGeo.intersects(segment) && isOnLine(mouseGeo,mousePoint,segment)){
                         //we must add the new node on this segment
 
                         final List<Coordinate> ncs = new ArrayList<Coordinate>();
@@ -600,12 +603,36 @@ public class EditionHelper {
         return geo;
     }
 
+    private static boolean isOnLine(final Polygon candidate, final Point center, final LineString line){
+        final Envelope env = line.getEnvelopeInternal();
+        final Coordinate coord = center.getCoordinate();
+        
+        if(env.contains(coord)){
+            //get the nearest point on the line to avoid deformations
+            final Coordinate[] cnds = DistanceOp.nearestPoints(line, center);
+            coord.setCoordinate(cnds[0]);            
+            return true;
+        }else{
+            //make a more accurate test, envelope might have a width or hight 
+            //of zero which will return false on intersection wit the point
+            final Polygon buffer = (Polygon) line.buffer(candidate.getEnvelopeInternal().getWidth()/2, 10, BufferParameters.CAP_FLAT);
+            if(buffer.contains(center)){
+                //get the nearest point on the line to avoid deformations
+                final Coordinate[] cnds = DistanceOp.nearestPoints(line, center);
+                coord.setCoordinate(cnds[0]);            
+                return true;
+            }else{
+                return false;
+            }
+        }
+        
+    }
 
     public Geometry insertNode(final GeometryCollection geo, final int mx, final int my) {
         try{
             //transform our mouse in a geometry
-            final Geometry mouseGeo = mousePositionToGeometry(mx, my);
-            final Geometry mousePoint = toJTS(mx, my);
+            final Polygon mouseGeo = mousePositionToGeometry(mx, my);
+            final Point mousePoint = toJTS(mx, my);
 
             for (int i=0,n=geo.getNumGeometries(); i<n; i++) {
                 final Geometry subgeo = geo.getGeometryN(i);
@@ -618,9 +645,9 @@ public class EditionHelper {
                         //find the segment that intersect
                         final Coordinate coo1 = coos[j];
                         final Coordinate coo2 = coos[j+1];
-                        final Geometry segment = createLine(coo1,coo2);
+                        final LineString segment = createLine(coo1,coo2);
 
-                        if(mouseGeo.intersects(segment) && segment.getEnvelope().intersects(mousePoint)){
+                        if(mouseGeo.intersects(segment) && isOnLine(mouseGeo,mousePoint,segment)){
                             //we must add the new node on this segment
 
                             final List<Geometry> subs = new ArrayList<Geometry>();
