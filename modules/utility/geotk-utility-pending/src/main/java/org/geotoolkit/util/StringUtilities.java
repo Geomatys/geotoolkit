@@ -44,7 +44,7 @@ public final class StringUtilities {
     public static final String TREE_END   = "\u00A0\u00A0\u2514\u2500";
 
     private static final int[] EMPTY_INT_ARRAY = new int[0];
-    
+
     private StringUtilities() {}
 
     /*
@@ -81,7 +81,10 @@ public final class StringUtilities {
      * This method clean a string encoded in a database LATIN1, this is a performed method.
      * @param str
      * @return
+     *
+     * @deprecated Try to specify the right encoding to {@link java.io.InputStreamReader} instead.
      */
+    @Deprecated
     public static String cleanString(String str) {
         if (str != null) {
             str = str.replaceAll("Ã©", "é");
@@ -314,7 +317,10 @@ public final class StringUtilities {
      * @param string1 the first string
      * @param string2 the second string
      * @return true if <code>string1</code> starts with <code>string2</code>; false otherwise
+     *
+     * @deprecated Replaced by {@link org.geotoolkit.util.Strings#startsWith(CharSequence, CharSequence, boolean)}.
      */
+    @Deprecated
     public static boolean startsWithIgnoreCase(final String string1, final String string2) {
         // this could be optimized, but anyway it doesn't seem to be a performance killer
         return string1.toUpperCase().startsWith(string2.toUpperCase());
@@ -383,7 +389,10 @@ public final class StringUtilities {
      * @param separator The special character on which the given string will be splitted.
      * @return A list of elements that were contained in the string separated by the special
      *         character.
+     *
+     * @deprecated Replaced by {@link org.geotoolkit.util.Strings#split(String)}.
      */
+    @Deprecated
     public static List<String> toStringList(String toSplit, final char separator) {
         if (toSplit == null) {
             return Collections.emptyList();
