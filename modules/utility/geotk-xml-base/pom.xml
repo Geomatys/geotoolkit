@@ -13,7 +13,7 @@
 
   <parent>
     <groupId>org.geotoolkit</groupId>
-    <artifactId>modules</artifactId>
+    <artifactId>utility</artifactId>
     <version>3.x-SNAPSHOT</version>
   </parent>
 
@@ -22,12 +22,13 @@
            Module Description
        =========================================================== -->
   <groupId>org.geotoolkit</groupId>
-  <artifactId>utility</artifactId>
-  <packaging>pom</packaging>
-  <name>Utilities</name>
+  <artifactId>geotk-xml-base</artifactId>
+  <packaging>jar</packaging>
+  <name>XML base</name>
 
   <description>
-    Projects group for miscellaneous utilities.
+    Basic utilities for XML marshalling and unmarshalling. Those utilities are built on
+    top of the JAXB framework.
   </description>
 
 
@@ -38,26 +39,56 @@
     <developer>
       <name>Martin Desruisseaux</name>
       <id>desruisseaux</id>
-      <email>desruisseaux@users.sourceforge.net</email>
+      <email>martin.desruisseaux@geomatys.fr</email>
       <organization>Geomatys</organization>
       <organizationUrl>http://www.geomatys.fr/</organizationUrl>
       <timezone>+1</timezone>
       <roles>
-        <role>Administrator</role>
+        <role>Module Maintainer</role>
+        <role>Java Developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Cédric Briançon</name>
+      <id>cedricbr</id>
+      <email>cedric.briancon@geomatys.fr</email>
+      <organization>Geomatys</organization>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Java developer</role>
+      </roles>
+    </developer>
+    <developer>
+      <name>Guilhem Legal</name>
+      <id>glegal</id>
+      <email>guilhem.legal@geomatys.fr</email>
+      <organization>Geomatys</organization>
+      <timezone>+1</timezone>
+      <roles>
+        <role>Java developer</role>
       </roles>
     </developer>
   </developers>
 
 
   <!-- ===========================================================
-           Modules included in the build
+           Dependency Management
        =========================================================== -->
-  <modules>
-    <module>geotk-utility</module>
-    <module>geotk-xml-base</module>
-    <module>geotk-clustering</module>
-    <module>geotk-logging-commons</module>
-    <module>geotk-logging-log4j</module>
-    <module>geotk-setup</module>
-  </modules>
+  <dependencies>
+    <dependency>
+      <groupId>org.opengis</groupId>
+      <artifactId>geoapi-pending</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit</groupId>
+      <artifactId>geotk-utility</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.geotoolkit.project</groupId>
+      <artifactId>geotk-provided</artifactId>
+      <version>${project.version}</version>
+      <scope>provided</scope>
+    </dependency>
+  </dependencies>
 </project>

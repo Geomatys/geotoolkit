@@ -635,6 +635,10 @@
                 <!-- Separates packages on the overview page into the groups specified. -->
                 <groups>
                   <group>
+                    <title>Display</title>
+                    <packages>org.geotoolkit.display*:org.geotoolkit.gui*</packages>
+                  </group>
+                  <group>
                     <title>Geometry</title>
                     <packages>org.geotoolkit.geometry*:org.geotoolkit.topology*</packages>
                   </group>
@@ -647,11 +651,11 @@
                     <packages>org.geotoolkit.coverage*:org.geotoolkit.image*</packages>
                   </group>
                   <group>
-                    <title>Referencing</title>
+                    <title>Referencing (ISO 19111)</title>
                     <packages>org.geotoolkit.referencing*:org.geotoolkit.parameter*</packages>
                   </group>
                   <group>
-                    <title>Metadata</title>
+                    <title>Metadata (ISO 19115)</title>
                     <packages>org.geotoolkit.metadata*:org.geotoolkit.naming*</packages>
                   </group>
                   <group>
@@ -661,10 +665,6 @@
                   <group>
                     <title>Utilities</title>
                     <packages>org.geotoolkit.factory*:org.geotoolkit.index*:org.geotoolkit.lang*:org.geotoolkit.math*:org.geotoolkit.measure*:org.geotoolkit.nature*:org.geotoolkit.util*</packages>
-                  </group>
-                  <group>
-                    <title>Display</title>
-                    <packages>org.geotoolkit.display*:org.geotoolkit.gui*</packages>
                   </group>
                 </groups>
 

@@ -89,6 +89,7 @@ public class PackerSpecificMojo extends AbstractMojo {
                     "geoapi-pending-*.jar",
                     "geotk-epsg-"        + VERSION + ".jar",
                     "geotk-utility-"     + VERSION + ".jar",
+                    "geotk-xml-base-"    + VERSION + ".jar",
                     "geotk-metadata-"    + VERSION + ".jar",
                     "geotk-referencing-" + VERSION + ".jar" // Last in order to pickup its main class.
             });

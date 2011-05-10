@@ -15,12 +15,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.jaxb.uom;
+package org.geotoolkit.internal.jaxb.gco;
 
 import java.net.URISyntaxException;
 import javax.measure.unit.SI;
 import javax.measure.unit.NonSI;
-import org.geotoolkit.internal.jaxb.gco.Measure;
 
 import org.junit.*;
 import static org.junit.Assert.*;

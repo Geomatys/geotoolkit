@@ -21,10 +21,11 @@ import java.net.URI;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
+import org.opengis.util.InternationalString;
+
 import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.UUIDs;
-import org.opengis.util.InternationalString;
 
 
 /**

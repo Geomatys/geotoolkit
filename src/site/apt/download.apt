@@ -113,6 +113,7 @@ Downloading Geotoolkit.org Binaries
 |                                        | • vecmath.jar\                     |                           |
 |                                        | • jcip-annotations.jar\            |                           |
 |                                        | • geotk-utility.jar\               |                           |
+|                                        | • geotk-xml-base.jar\              |                           |
 |                                        | • geotk-metadata.jar\              |                           |
 |                                        | • geotk-referencing.jar\           |                           |
 |                                        | • geotk-epsg.jar                   |                           |
