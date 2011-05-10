@@ -50,7 +50,6 @@ import org.opengis.metadata.spatial.SpatialRepresentation;
 import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.internal.jaxb.MarshalContext;
-import org.geotoolkit.internal.jaxb.gmd.LanguageCode;
 import org.geotoolkit.internal.jaxb.gmd.PT_Locale;
 import org.geotoolkit.xml.Namespaces;
 
@@ -292,7 +291,6 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      */
     @Override
     @XmlElement(name = "language")
-    @XmlJavaTypeAdapter(LanguageCode.class)
     public synchronized Locale getLanguage() {
         return language;
     }

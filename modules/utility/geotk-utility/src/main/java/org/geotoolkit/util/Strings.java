@@ -37,7 +37,7 @@ import org.geotoolkit.resources.Errors;
  * explicitly documented as throwing a {@link NullPointerException}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @see Arrays#toString(Object[])
  * @see XArrays#containsIgnoreCase(String[], String)
@@ -167,6 +167,52 @@ public final class Strings extends Static {
             }
         }
         return n;
+    }
+
+    /**
+     * Splits a string around the given character. The array returned by this method contains each
+     * substring of the given string that is terminated by the given character or is terminated by
+     * the end of the string. The substrings in the array are in the order in which they occur in
+     * the given string. If the character is not found in the input, then the resulting array has
+     * just one element, namely the given string.
+     * <p>
+     * This method is similar to the standard {@link String#split(String)} method except for the
+     * following:
+     * <p>
+     * <ul>
+     *   <li>It accepts a {@code null} input string, in which case an empty array is returned.</li>
+     *   <li>The separator is a simple character instead than a regular expression.</li>
+     *   <li>The leading and trailing spaces of each substring are {@linkplain String#trim trimmed}.</li>
+     * </ul>
+     *
+     * @param  toSplit   The string to split, or {@code null}.
+     * @param  separator The delimiting character (typically the coma).
+     * @return The array of strings computed by splitting the given string around the given character.
+     *         This is an empty array if {@code toSplit} was null. Otherwise this array is guaranteed
+     *         to contain at least one element.
+     *
+     * @see String#split(String)
+     *
+     * @since 3.18
+     */
+    public static String[] split(final String toSplit, final char separator) {
+        String[] strings = new String[4];
+        int count = 0;
+        if (toSplit != null) {
+            int last = 0;
+            for (int i=toSplit.indexOf(separator); i>=0; i=toSplit.indexOf(separator, i)) {
+                if (count == strings.length) {
+                    strings = Arrays.copyOf(strings, count << 1);
+                }
+                strings[count++] = toSplit.substring(last, i).trim();
+                last = ++i;
+            }
+            if (count == strings.length) {
+                strings = Arrays.copyOf(strings, count + 1);
+            }
+            strings[count++] = toSplit.substring(last).trim();
+        }
+        return XArrays.resize(strings, count);
     }
 
     /**

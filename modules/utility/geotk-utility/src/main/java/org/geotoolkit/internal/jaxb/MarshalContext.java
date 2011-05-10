@@ -28,12 +28,26 @@ import org.geotoolkit.xml.ObjectConverters;
  * Thread-local status of a marshalling or unmarshalling process.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.07
  * @module
  */
 public final class MarshalContext {
+    /**
+     * The bit flag for enabling substitution of language codes by character strings.
+     *
+     * @since 3.18
+     */
+    public static final int SUBSTITUTE_LANGUAGE = 1;
+
+    /**
+     * The bit flag for enabling substitution of country codes by character strings.
+     *
+     * @since 3.18
+     */
+    public static final int SUBSTITUTE_COUNTRY = 2;
+
     /**
      * The thread-local context.
      */
@@ -68,6 +82,13 @@ public final class MarshalContext {
     private TimeZone timezone;
 
     /**
+     * Various boolean attributes determines by the static constants above.
+     *
+     * @since 3.18
+     */
+    private int bitMasks;
+
+    /**
      * {@code true} if a marshalling process is under progress.
      * The value is unchanged for unmarshalling processes.
      */
@@ -98,6 +119,7 @@ public final class MarshalContext {
             schemas       = previous.schemas;
             locale        = previous.locale;
             timezone      = previous.timezone;
+            bitMasks      = previous.bitMasks;
             isMarshalling = previous.isMarshalling;
         }
     }
@@ -228,7 +250,16 @@ public final class MarshalContext {
      * if available, or an implementation-default locale (typically English) otherwise.
      * <p>
      * When this method returns a null locale, callers shall select a default locale as documented
-     * in the {@link org.geotoolkit.util.DefaultInternationalString#toString(Locale)} javadoc.
+     * in the {@link org.geotoolkit.util.DefaultInternationalString#toString(Locale)} javadoc.  As
+     * a matter of rule:
+     * <p>
+     * <ul>
+     *   <li>If the locale is given to an {@code InternationalString.toString(Locale)} method,
+     *       keep the {@code null} value since the international string is already expected to
+     *       returns a "unlocalized" string in such case.</li>
+     *   <li>Otherwise, if a {@code Locale} instance is really needed, use {@link Locale#UK}
+     *       as an approximation (as documented in {@code DefaultInternationalString})</li>
+     * </ul>
      *
      * @return The locale, or {@code null} is unspecified.
      *
@@ -268,6 +299,19 @@ public final class MarshalContext {
     }
 
     /**
+     * Returns the bit masks. The returned value can be tested with the
+     * {@link #SUBSTITUTE_LANGUAGE} and {@link #SUBSTITUTE_COUNTRY} masks.
+     *
+     * @return All bit masks. This is 0 if there is no bit set.
+     *
+     * @since 3.18
+     */
+    public static int getFlags() {
+        final MarshalContext current = CURRENT.get();
+        return (current != null) ? current.bitMasks : 0;
+    }
+
+    /**
      * Invoked when a marshalling or unmarshalling process is about to begin.
      * Must be followed by a call to {@link #finish()} in a {@code finally} block.
      *
@@ -282,18 +326,20 @@ public final class MarshalContext {
      *
      * @param  converters The converters in use.
      * @param  schemas    The schemas root URL, or {@code null} if none.
-     * @param  timezone   The timezone, or {@code null} if unspecified.
      * @param  locale     The locale, or {@code null} if unspecified.
+     * @param  timezone   The timezone, or {@code null} if unspecified.
+     * @param  bitMasks   A combination of {@link #SUBSTITUTE_LANGUAGE}, {@link #SUBSTITUTE_COUNTRY} or others.
      * @return The context on which to invoke {@link #finish()} when the (un)marshalling is finished.
      */
     public static MarshalContext begin(final ObjectConverters converters,
-            final Map<String,String> schemas, final Locale locale, final TimeZone timezone)
+            final Map<String,String> schemas, final Locale locale, final TimeZone timezone, final int bitMasks)
     {
         final MarshalContext current = new MarshalContext();
         current.converters = converters;
         current.schemas    = schemas; // NOSONAR: No clone, because this method is internal.
         current.locale     = locale;
         current.timezone   = timezone;
+        current.bitMasks   = bitMasks;
         return current;
     }
 

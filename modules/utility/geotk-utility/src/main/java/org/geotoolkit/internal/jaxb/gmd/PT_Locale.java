@@ -24,12 +24,12 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import org.geotoolkit.internal.CodeLists;
 
 import org.opengis.metadata.identification.CharacterSet;
 
-import org.geotoolkit.resources.Locales;
 import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.resources.Locales;
+import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.internal.jaxb.code.MD_CharacterSetCode;
 
@@ -61,7 +61,7 @@ import org.geotoolkit.internal.jaxb.code.MD_CharacterSetCode;
  * For an alternative (simpler) format, see {@link org.geotoolkit.internal.jaxb.gco.LocaleAdapter}.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @see LanguageCode
  * @see Country
@@ -80,7 +80,7 @@ public final class PT_Locale extends XmlAdapter<PT_Locale, Locale> {
     /**
      * Wraps the {@code "locale"} attributes in a {@code "PT_Locale"} element.
      */
-    @XmlType(propOrder = { "languageCode", "country", "characterEncoding" })
+    @XmlType(name = "PT_Locale", propOrder = { "languageCode", "country", "characterEncoding" })
     private static final class Wrapper {
         /**
          * Empty constructor for JAXB only.
@@ -123,12 +123,10 @@ public final class PT_Locale extends XmlAdapter<PT_Locale, Locale> {
         /**
          * Creates a new wrapper for the given locale.
          */
-        private Wrapper(final Locale locale) {
-            final Locale vl = MarshalContext.getLocale();
-            languageCode = new LanguageCode(locale, vl);
-            if (!locale.getCountry().isEmpty()) {
-                country = new Country(locale, vl);
-            }
+        Wrapper(final Locale locale) {
+            final Locale marshalLocale = MarshalContext.getLocale();
+            languageCode = LanguageCode.create(locale, marshalLocale, null);
+            country      = Country     .create(locale, marshalLocale, null);
             // The characterEncoding field will be initialized at marshalling time
             // (see the method below).
         }
@@ -191,8 +189,8 @@ public final class PT_Locale extends XmlAdapter<PT_Locale, Locale> {
         if (value != null) {
             final Wrapper element = value.element;
             if (element != null) {
-                Locale language = parse(element.languageCode);
-                Locale country  = parse(element.country);
+                Locale language = LanguageCode.getLocale(element.languageCode, true);
+                Locale country  = Country.getLocale(element.country);
                 if (language == null) {
                     language = country;
                 } else if (country != null) {
@@ -206,14 +204,5 @@ public final class PT_Locale extends XmlAdapter<PT_Locale, Locale> {
             }
         }
         return null;
-    }
-
-    /**
-     * Gets the locale from the given field, or {@code null}.
-     *
-     * @throws Exception Should never happen.
-     */
-    private static <T extends XmlAdapter<T,Locale>> Locale parse(final T adapter) throws Exception {
-        return (adapter != null) ? adapter.unmarshal(adapter) : null;
     }
 }

@@ -207,7 +207,7 @@ public final class Locales extends Static {
             for (Locale locale : Locale.getAvailableLocales()) {
                 String c = (language3) ? locale.getISO3Language() : locale.getLanguage();
                 if (language.equals(c)) {
-                    if (country2 == country) {
+                    if (country2 == country) { // NOSONAR: really identity comparison.
                         // Remember the 2-letters ISO code in an opportunist way.
                         // If the 2-letters ISO code has been set for the country
                         // as well, we will not change the language code because

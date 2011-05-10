@@ -40,11 +40,13 @@ import org.geotoolkit.lang.Static;
  *   <li>{@link #LOCALE} for specifying the locale to use for international strings and code lists.</li>
  *   <li>{@link #TIMEZONE} for specifying the timezone to use for dates and times.</li>
  *   <li>{@link #SCHEMAS} for specifying the root URL of metadata schemas to use.</li>
+ *   <li>{@link #STRING_SUBSTITUTES} for specifying which code lists to replace by simpler
+ *       {@code <gco:CharacterString>} elements.</li>
  * </ul>
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -173,6 +175,34 @@ public final class XML extends Static {
      * @since 3.17
      */
     public static final String SCHEMAS = "org.geotoolkit.xml.schemas";
+
+    /**
+     * Allows marshallers to substitute some code lists by the simpler {@code <gco:CharacterString>}
+     * element. The value for this property shall be a coma-separated list of any of the following
+     * values: "{@code language}", "{@code country}".
+     *
+     * {@section Example}
+     * INSPIRE compliant language code shall be formatted like below:
+     *
+     * {@preformat xml
+     *   <gmd:language>
+     *     <gmd:LanguageCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/ML_gmxCodelists.xml#LanguageCode" codeListValue="fra">French</gmd:LanguageCode>
+     *   </gmd:language>
+     * }
+     *
+     * However if this property contains the "{@code language}" value, then the marshaller will
+     * format the language code like below (which is legal according OGC schemas, but is not
+     * INSPIRE compliant):
+     *
+     * {@preformat xml
+     *   <gmd:language>
+     *     <gco:CharacterString>fra</gco:CharacterString>
+     *   </gmd:language>
+     * }
+     *
+     * @since 3.18
+     */
+    public static final String STRING_SUBSTITUTES = "org.geotoolkit.xml.stringSubstitutes";
 
     /**
      * The pool of marshallers and unmarshallers used by this class.

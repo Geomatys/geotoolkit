@@ -38,8 +38,8 @@ import org.geotoolkit.internal.jaxb.gco.GO_CharacterString;
 import org.geotoolkit.internal.jaxb.gco.CharSequenceAdapter;
 import org.geotoolkit.internal.jaxb.gco.InternationalStringAdapter;
 import org.geotoolkit.internal.jaxb.gco.StringAdapter;
-import org.geotoolkit.internal.jaxb.gco.LocaleAdapter;
 import org.geotoolkit.internal.jaxb.gco.URIAdapter;
+import org.geotoolkit.internal.jaxb.gmd.LocaleAdapter;
 
 
 /**

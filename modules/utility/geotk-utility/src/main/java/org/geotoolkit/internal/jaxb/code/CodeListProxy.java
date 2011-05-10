@@ -151,7 +151,7 @@ public final class CodeListProxy {
 
         // Get the localized name of the field identifier, if possible.
         // This code partially duplicates the CodeLists.localize(code) method.
-        Locale locale = MarshalContext.getLocale();
+        final Locale locale = MarshalContext.getLocale();
         if (locale != null) {
             final String key = classID + '.' + fieldID;
             try {

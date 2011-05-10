@@ -174,7 +174,7 @@
         </gmd:PT_FreeText>
       </gmd:abstract>
       <gmd:language>
-        <gco:CharacterString>fra</gco:CharacterString>
+        <gmd:LanguageCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/ML_gmxCodelists.xml#LanguageCode" codeListValue="fra">French</gmd:LanguageCode>
       </gmd:language>
     </gmd:MD_DataIdentification>
   </gmd:identificationInfo>

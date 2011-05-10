@@ -35,8 +35,6 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Locales;
 import org.geotoolkit.util.collection.XCollections;
 
-import static org.geotoolkit.resources.Locales.unique;
-
 
 /**
  * An {@linkplain InternationalString international string} using a {@linkplain Map map}
@@ -253,8 +251,8 @@ public class DefaultInternationalString extends AbstractInternationalString impl
 
     /**
      * Returns a string in the specified locale. If there is no string for that {@code locale},
-     * then this method search for a locale without the {@linkplain Locale#getVariant variant}
-     * part. If no string are found, then this method search for a locale without the {@linkplain
+     * then this method searches for a locale without the {@linkplain Locale#getVariant variant}
+     * part. If no string are found, then this method searches for a locale without the {@linkplain
      * Locale#getCountry country} part. For example if the {@code "fr_CA"} locale was requested
      * but not found, then this method looks for the {@code "fr"} locale. The {@code null} locale
      * (which stand for unlocalized message) is tried last.
@@ -418,12 +416,12 @@ public class DefaultInternationalString extends AbstractInternationalString impl
         entries = localeMap.entrySet().toArray(entries);
         if (size == 1) {
             final Map.Entry<Locale,String> entry = entries[0];
-            localeMap = Collections.singletonMap(unique(entry.getKey()), entry.getValue());
+            localeMap = Collections.singletonMap(Locales.unique(entry.getKey()), entry.getValue());
         } else {
             localeMap.clear();
             for (int i=0; i<entries.length; i++) {
                 final Map.Entry<Locale,String> entry = entries[i];
-                localeMap.put(unique(entry.getKey()), entry.getValue());
+                localeMap.put(Locales.unique(entry.getKey()), entry.getValue());
             }
         }
     }

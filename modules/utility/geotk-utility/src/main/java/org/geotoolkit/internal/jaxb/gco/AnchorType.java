@@ -44,6 +44,11 @@ import org.geotoolkit.util.Utilities;
  */
 public final class AnchorType extends XLink implements InternationalString {
     /**
+     * Defined as a matter of principle (this class is not expected to be serialized).
+     */
+    private static final long serialVersionUID = -6101324942683322597L;
+
+    /**
      * Often a short textual description of the URN target.
      * This is the value returned by {@link #toString()}.
      */

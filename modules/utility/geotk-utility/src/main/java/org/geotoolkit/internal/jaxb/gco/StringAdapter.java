@@ -59,9 +59,12 @@ public final class StringAdapter extends XmlAdapter<GO_CharacterString, String> 
      * sequence is an instance of {@link InternationalString}, then the locale from
      * the current unmashalling context is used in order to get a string.
      *
+     * @param text The text for which to get a string representation, or {@code null}.
+     * @return The string representation of the given text, or {@code null}.
+     *
      * @since 3.17
      */
-    static String toString(final CharSequence text) {
+    public static String toString(final CharSequence text) {
         if (text != null) {
             if (text instanceof InternationalString) {
                 return ((InternationalString) text).toString(MarshalContext.getLocale());

@@ -17,11 +17,14 @@
  */
 package org.geotoolkit.internal.jaxb.gco;
 
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.gmd.PT_FreeText;
+import org.geotoolkit.internal.jaxb.gmd.LanguageCode;
+import org.geotoolkit.internal.jaxb.gmd.Country;
 
 
 /**
@@ -29,14 +32,15 @@ import org.geotoolkit.internal.jaxb.gmd.PT_FreeText;
  * for ISO-19139 compliance.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.13
+ * @version 3.18
  *
  * @see org.geotoolkit.internal.jaxb.gmd.PT_FreeText
  *
  * @since 2.5
  * @module
  */
-@XmlSeeAlso(PT_FreeText.class)
+@XmlType(name = "CharacterString_PropertyType")
+@XmlSeeAlso({PT_FreeText.class, LanguageCode.class, Country.class})
 public class GO_CharacterString {
     /**
      * The text or anchor value, or {@code null} if none. May be an instance
@@ -45,18 +49,29 @@ public class GO_CharacterString {
     CharSequence text;
 
     /**
-     * Empty constructor for JAXB only.
+     * Empty constructor for JAXB and subclasses.
      */
-    public GO_CharacterString() {
+    protected GO_CharacterString() {
     }
 
     /**
-     * Builds an adapter for the given text.
+     * Builds an wrapper for the given text.
      *
      * @param text The string to marshall, or {@code null} if none.
      */
-    public GO_CharacterString(final CharSequence text) {
+    protected GO_CharacterString(final CharSequence text) {
         this.text = text;
+    }
+
+    /**
+     * Builds an wrapper as a copy of the given one.
+     *
+     * @param text The wrapper to copy, or {@code null} if none.
+     */
+    protected GO_CharacterString(final GO_CharacterString text) {
+        if (text != null) {
+            this.text = text.text;
+        }
     }
 
     /**

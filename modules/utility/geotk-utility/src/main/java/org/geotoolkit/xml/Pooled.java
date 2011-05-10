@@ -28,9 +28,13 @@ import javax.xml.bind.PropertyException;
 import javax.xml.bind.JAXBException;
 import javax.xml.validation.Schema;
 
+import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.XArrays;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.internal.jaxb.MarshalContext;
+
+import static org.geotoolkit.internal.jaxb.MarshalContext.*;
 
 
 /**
@@ -104,6 +108,15 @@ abstract class Pooled {
      * @since 3.17
      */
     private TimeZone timezone;
+
+    /**
+     * Bit masks for various boolean attributes. This include whatever the language codes or the
+     * country codes should be substituted by a simpler character string elements. Those bits are
+     * determined by the {@link XML#STRING_SUBSTITUTES} property.
+     *
+     * @since 3.18
+     */
+    private int bitMasks;
 
     /**
      * Default constructor.
@@ -200,6 +213,14 @@ abstract class Pooled {
                 timezone = (TimeZone) value;
                 return;
             }
+            if (name.equals(XML.STRING_SUBSTITUTES)) {
+                int mask = 0;
+                final String[] substitutes = Strings.split((String) value, ',');
+                if (XArrays.containsIgnoreCase(substitutes, "language")) mask |= SUBSTITUTE_LANGUAGE;
+                if (XArrays.containsIgnoreCase(substitutes, "country"))  mask |= SUBSTITUTE_COUNTRY;
+                bitMasks = mask;
+                return;
+            }
         } catch (ClassCastException e) {
             throw new PropertyException(Errors.format(Errors.Keys.BAD_PROPERTY_TYPE_$2,
                     name, value.getClass()), e);
@@ -227,6 +248,16 @@ abstract class Pooled {
             return locale;
         } else if (name.equals(XML.TIMEZONE)) {
             return timezone;
+        } else if (name.equals(XML.STRING_SUBSTITUTES)) {
+            final StringBuilder buffer = new StringBuilder();
+            if ((bitMasks & SUBSTITUTE_LANGUAGE) != 0) buffer.append("language,");
+            if ((bitMasks & SUBSTITUTE_COUNTRY)  != 0) buffer.append("country,");
+            final int length = buffer.length();
+            if (length != 0) {
+                buffer.setLength(length - 1); // Remove the last coma.
+                return buffer.toString();
+            }
+            return null;
         } else {
             return getStandardProperty(convertPropertyKey(name));
         }
@@ -325,6 +356,6 @@ abstract class Pooled {
      * @since 3.07
      */
     final MarshalContext begin() {
-        return MarshalContext.begin(converters, schemas, locale, timezone);
+        return MarshalContext.begin(converters, schemas, locale, timezone, bitMasks);
     }
 }

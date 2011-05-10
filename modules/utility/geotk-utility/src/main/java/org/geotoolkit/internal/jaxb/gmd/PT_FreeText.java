@@ -31,7 +31,7 @@ import org.geotoolkit.util.SimpleInternationalString;
 
 
 /**
- * JAXB adapter for ISO-19139 {@code <PT_FreeText>} element mapped to {@link InternationalString}.
+ * JAXB wrapper for ISO-19139 {@code <PT_FreeText>} element mapped to {@link InternationalString}.
  * It will be used in order to marshall and unmarshall international strings localized in several
  * language, using the {@link DefaultInternationalString} implementation class. Example:
  *
@@ -118,7 +118,7 @@ public final class PT_FreeText extends GO_CharacterString {
      * Constructs a {@linkplain TextGroup text group} from the given {@link InternationalString}
      * if it contains at least one non-null locale. Otherwise returns {@code null}, meaning that
      * the simpler {@link GO_CharacterString} construct should be used instead.
-     * 
+     *
      * @param  text The international string which may (or may not) have several translations
      *              embedded for the same text.
      * @return A {@code PT_FreeText} instance if the given text has several translations,

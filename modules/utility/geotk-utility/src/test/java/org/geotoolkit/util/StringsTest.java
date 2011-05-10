@@ -28,7 +28,7 @@ import static org.geotoolkit.util.Strings.*;
  *
  * @author Martin Desruisseaux (Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 3.09 (derived from 3.00).
  */
@@ -47,10 +47,21 @@ public final class StringsTest {
      * Tests {@link Strings#count}.
      */
     @Test
-    public void testCount(){
+    public void testCount() {
         assertEquals(0, count("An ordinary sentence.",   '-'));
         assertEquals(4, count("- this one has -dashs--", '-'));
         assertEquals(2, count("An ordinary sentence.",  "en"));
+    }
+
+    /**
+     * Tests {@link Strings#split}.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testSplit() {
+        assertArrayEquals(new String[] {"lundi", "mardi", "mercredi"},
+                Strings.split("lundi , mardi,mercredi ", ','));
     }
 
     /**
