@@ -23,16 +23,19 @@ import java.io.InvalidObjectException;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.citation.ResponsibleParty;
+import org.opengis.metadata.citation.PresentationForm;
 
 import org.geotoolkit.metadata.iso.DefaultIdentifier;
 import org.geotoolkit.util.SimpleInternationalString;
+
+import static java.util.Collections.singleton;
 
 
 /**
  * A citation to be declared as a public static final constant.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.04
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -72,16 +75,28 @@ final class CitationConstant extends DefaultCitation {
     }
 
     /**
-     * Adds the specified identifier as a CRS authority factory. This is used as a convenience
+     * Sets the specified identifier as a CRS authority factory. This is used as a convenience
      * method for the creation of constants, and for making sure that all of them use the same
      * identifier type.
      */
-    final void addAuthority(final String identifier, final boolean asTitle) {
-        if (asTitle) {
-            assert !identifier.equals(getTitle().toString(null)) : identifier;
-            getAlternateTitles().add(new SimpleInternationalString(identifier));
-        }
-        getIdentifiers().add(new DefaultIdentifier(identifier));
+    final void setAuthority(final String identifier) {
+        assert !identifier.equals(getTitle().toString(null)) : identifier;
+        setAlternateTitles(singleton(new SimpleInternationalString(identifier)));
+        setIdentifier(identifier);
+    }
+
+    /**
+     * Sets the identifier. This is used as a convenience method for the creation of constants.
+     */
+    final void setIdentifier(final String identifier) {
+        setIdentifiers(singleton(new DefaultIdentifier(identifier)));
+    }
+
+    /**
+     * Sets the presentation form to the given value. Any previous values are overwritten.
+     */
+    final void setPresentationForm(final PresentationForm form) {
+        setPresentationForms(singleton(form));
     }
 
     /**

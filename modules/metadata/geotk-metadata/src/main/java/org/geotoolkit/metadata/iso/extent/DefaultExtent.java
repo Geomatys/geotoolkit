@@ -21,6 +21,7 @@
 package org.geotoolkit.metadata.iso.extent;
 
 import java.util.Collection;
+import java.util.Collections;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -79,7 +80,7 @@ public class DefaultExtent extends MetadataEntity implements Extent {
     public static final Extent WORLD;
     static {
         final DefaultExtent world = new DefaultExtent();
-        world.getGeographicElements().add(DefaultGeographicBoundingBox.WORLD);
+        world.setGeographicElements(Collections.singleton(DefaultGeographicBoundingBox.WORLD));
         world.freeze();
         WORLD = world;
     }

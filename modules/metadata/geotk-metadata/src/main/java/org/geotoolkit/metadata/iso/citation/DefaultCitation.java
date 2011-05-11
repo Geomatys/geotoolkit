@@ -22,6 +22,7 @@ package org.geotoolkit.metadata.iso.citation;
 
 import java.util.Date;
 import java.util.Collection;
+import java.util.Collections;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -201,7 +202,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
             }
         }
         setTitle(title);
-        getCitedResponsibleParties().add(party);
+        setCitedResponsibleParties(Collections.singleton(party));
     }
 
     /**
