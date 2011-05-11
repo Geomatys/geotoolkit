@@ -70,6 +70,8 @@ public class StringToFeatureCollectionConverter extends SimpleConverter<String, 
             }else{
                 url = "file:"+s;
             }
+            
+            
 
             final Map<String, Serializable> parameters = new HashMap<String, Serializable>();
             parameters.put("url", new URL(url));

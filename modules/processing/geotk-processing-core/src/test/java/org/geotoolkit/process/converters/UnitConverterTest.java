@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.process.converters;
 
+import javax.measure.quantity.Length;
+import javax.measure.quantity.Quantity;
 import javax.measure.unit.SI;
 import javax.measure.unit.Unit;
 import org.geotoolkit.factory.FactoryFinder;
@@ -58,7 +60,7 @@ public class UnitConverterTest {
             //ok
         }
 
-
+        
         inputString = "fail";
         try{
             convertedUnit = converter.convert(inputString);
