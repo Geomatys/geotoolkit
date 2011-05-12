@@ -308,7 +308,7 @@ public final class Trees extends Static {
      *
      * @since 3.02
      *
-     * @deprecated Moved to {@link TreeFormat#parse(String)}
+     * @deprecated Moved to {@link TreeFormat#parseObject(String)}
      */
     @Deprecated
     public static MutableTreeNode parse(final String text) throws IllegalArgumentException {

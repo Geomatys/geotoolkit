@@ -221,7 +221,7 @@ public final class XCollections extends Static {
 
     /**
      * Returns a comparator for sorted sets of comparable elements. The elements are compared in
-     * iteration order as {@linkplain #forLists for lists}.
+     * iteration order as for the {@linkplain #listComparator list comparator}.
      *
      * @param <T> The type of elements in both sets.
      * @return The ordering between two sets.
@@ -235,9 +235,10 @@ public final class XCollections extends Static {
 
     /**
      * Returns a comparator for arbitrary collections of comparable elements. The elements are
-     * compared in iteration order as {@linkplain #forLists for lists}. <strong>This comparator
-     * make sense only for collections having determinist order</strong> like
-     * {@link java.util.TreeSet}, {@link java.util.LinkedHashSet} or queues.
+     * compared in iteration order as for the {@linkplain #listComparator list comparator}.
+     *
+     * <strong>This comparator make sense only for collections having determinist order</strong>
+     * like {@link java.util.TreeSet}, {@link java.util.LinkedHashSet} or queues.
      * Do <strong>not</strong> use it with {@link java.util.HashSet}.
      *
      * @param <T> The type of elements in both collections.

@@ -167,9 +167,8 @@ public class ImageCoverageReader extends GridCoverageReader {
     protected ImageReader imageReader;
 
     /**
-     * Optional parameter to be given (if non-null) to the
-     * <code>{@linkplain #imageReader}.{@linkplain ImageReader#setInput(Object, boolean, boolean)
-     * setInput}(&hellip;, seekForwardOnly, &hellip;)</code> method.
+     * Optional parameter to be given (if non-null) to the image reader
+     * {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      *
      * If {@code TRUE}, images and metadata may only be read in ascending order from the input
      * source. If {@code FALSE}, they may be read in any order. If {@code null}, then this
@@ -179,9 +178,8 @@ public class ImageCoverageReader extends GridCoverageReader {
     protected Boolean seekForwardOnly;
 
     /**
-     * Optional parameter to be given (if non-null) to the
-     * <code>{@linkplain #imageReader}.{@linkplain ImageReader#setInput(Object, boolean, boolean)
-     * setInput}(&hellip;, &hellip;, ignoreMetadata)</code> method.
+     * Optional parameter to be given (if non-null) to the image reader
+     * {@link ImageReader#setInput(Object, boolean, boolean) setInput} method.
      *
      * If {@code TRUE}, metadata may be ignored during reads. If {@code FALSE}, metadata will be
      * parsed. If {@code null}, then this parameter is not given to the {@linkplain #imageReader

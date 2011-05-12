@@ -30,6 +30,7 @@ import java.util.Collections;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 
+import org.opengis.util.LocalName;
 import org.opengis.util.ScopedName;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Identifier;
@@ -353,8 +354,8 @@ public final class IdentifiedObjects extends Static {
     }
 
     /**
-     * Returns {@code true} if either the {@linkplain IdentifiedObject#getName() primary name}
-     * or at least one {@linkplain IdentifiedObject#getAlias alias} matches the specified string.
+     * Returns {@code true} if either the {@linkplain IdentifiedObject#getName() primary name} or
+     * at least one {@linkplain IdentifiedObject#getAlias() alias} matches the specified string.
      * This method performs the search in the following order, regardless of any authority:
      * <p>
      * <ul>
@@ -379,8 +380,9 @@ public final class IdentifiedObjects extends Static {
     }
 
     /**
-     * Returns {@code true} if the {@linkplain #getName() primary name} of an object matches
-     * the primary name or one {@linkplain #getAlias alias} of the other object.
+     * Returns {@code true} if the {@linkplain IdentifiedObject#getName() primary name} of an
+     * object matches the primary name or one {@linkplain IdentifiedObject#getAlias() alias}
+     * of the other object.
      *
      * @param o1 The first object to compare by name.
      * @param o2 The second object to compare by name.

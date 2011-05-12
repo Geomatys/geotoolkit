@@ -196,7 +196,7 @@ public class XLink implements Serializable {
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.18
      *
-     * @see Xlink#getType()
+     * @see XLink#getType()
      *
      * @since 3.18
      * @module
@@ -479,7 +479,7 @@ public class XLink implements Serializable {
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.18
      *
-     * @see Xlink#getShow()
+     * @see XLink#getShow()
      *
      * @since 3.18
      * @module
@@ -553,7 +553,7 @@ public class XLink implements Serializable {
      * @author Martin Desruisseaux (Geomatys)
      * @version 3.18
      *
-     * @see Xlink#getActuate()
+     * @see XLink#getActuate()
      *
      * @since 3.18
      * @module

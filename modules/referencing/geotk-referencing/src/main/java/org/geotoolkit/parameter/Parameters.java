@@ -453,7 +453,7 @@ public final class Parameters extends Static {
      * Returns the value of the given parameter in the given group if defined, or create a
      * default parameter otherwise. This method is equivalent to:
      *
-     * {@preformat
+     * {@preformat java
      *     return cast(group.parameter(parameter.getName().getCode()));
      * }
      *

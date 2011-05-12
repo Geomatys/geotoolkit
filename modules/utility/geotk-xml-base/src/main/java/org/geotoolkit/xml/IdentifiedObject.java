@@ -26,13 +26,13 @@ import org.opengis.metadata.citation.Citation;
 /**
  * The interface for all Geotk objects having identifiers. Identifiers are {@link String} in
  * a namespace identified by a {@link Citation}. The namespace can be some organization like
- * <a href="http://www.epsg.org">EPSG</a> for Coordinate Reference System objects, or an
+ * <a href="http://www.epsg.org">EPSG</a> for Coordinate Reference System objects, or a
  * well-known acronym like ISBN for <cite>International Standard Book Number</cite>.
  * <p>
- * When an identified object is marshalled as an ISO 19139 compliant XML document, some identifiers
- * are handled in a special way: they appear as {@code id}, {@code uuid} or {@code href} attributes
- * of the XML element. Those identifiers can be specified using the {@link IdentifierSpace} enum
- * values as below:
+ * When an identified object is marshalled in a ISO 19139 compliant XML document, some identifiers
+ * are handled in a special way: they appear as {@code gml:id}, {@code gco:uuid} or {@code xlink:href}
+ * attributes of the XML element. Those identifiers can be specified using the {@link IdentifierSpace}
+ * enum values as below:
  *
  * {@preformat java
  *     IdentifiedObject object = ...;
@@ -52,9 +52,10 @@ import org.opengis.metadata.citation.Citation;
  * a way to handle those identifiers.
  * <p>
  * Note that GeoAPI defines a similar interface, namely {@link org.opengis.referencing.IdentifiedObject}.
- * However the GeoAPI interface is not of general use. It target referencing objects (for example the
- * {@link org.opengis.referencing.IdentifiedObject#toWKT() toWKT()} method), and defines additional
- * attributes ({@linkplain org.opengis.referencing.IdentifiedObject#getName() name},
+ * However that GeoAPI interface is not of general use, since it contains methods like
+ * {@link org.opengis.referencing.IdentifiedObject#toWKT() toWKT()} that are specific to referencing
+ * or geometric objects. In addition, the GeiAPI interface defines some attributes
+ * ({@linkplain org.opengis.referencing.IdentifiedObject#getName() name},
  * {@linkplain org.opengis.referencing.IdentifiedObject#getAlias() alias},
  * {@linkplain org.opengis.referencing.IdentifiedObject#getRemarks() remarks}) that are not needed
  * for the purpose of handling XML {@code id}, {@code uuid} or {@code href} attributes.
@@ -80,26 +81,26 @@ public interface IdentifiedObject {
      *
      * @return All identifiers associated to this object, or an empty collection if none.
      *
-     * @see org.opengis.metadata.citation.Citation#getIdentifiers()
-     * @see org.opengis.metadata.acquisition.Objective#getIdentifiers()
-     * @see org.opengis.referencing.IdentifiedObject#getIdentifiers()
+     * @see org.geotoolkit.metadata.iso.citation.DefaultCitation#getIdentifiers()
+     * @see org.geotoolkit.metadata.acquisition.DefaultObjective#getIdentifiers()
+     * @see org.geotoolkit.referencing.AbstractIdentifiedObject#getIdentifiers()
      */
     Collection<? extends Identifier> getIdentifiers();
 
     /**
      * A map view of some or all {@linkplain #getIdentifiers() identifiers}. Each
-     * {@linkplain Map.Entry map entry} is associated to an identifier element, where the
-     * {@linkplain Map.Entry#getKey() key} is the {@linkplain Identifier#getAuthority()
-     * identifier authority} and the {@linkplain Map.Entry#getValue() value} is the
+     * {@linkplain java.util.Map.Entry map entry} is associated to an identifier element, where the
+     * {@linkplain java.util.Map.Entry#getKey() key} is the {@linkplain Identifier#getAuthority()
+     * identifier authority} and the {@linkplain java.util.Map.Entry#getValue() value} is the
      * {@linkplain Identifier#getCode() identifier code}.
      * <p>
      * This view may be incomplete, because the map interface allows only one entry per authority.
-     * If the {@linkplain #getIdentifiers() identifiers} collection contains many identifiers for
+     * If the {@linkplain #getIdentifiers() identifiers collection} contains many identifiers for
      * the same authority, then the element which is view through the {@code Map} interface is the
      * first occurrence.
      * <p>
-     * This view may also contains more elements than the {@linkplain #getIdentifiers() identifiers}
-     * collection. For example the {@link org.opengis.metadata.citation.Citation} interface defines
+     * This view may also contains more elements than the {@linkplain #getIdentifiers() identifiers
+     * collection}. For example the {@link org.opengis.metadata.citation.Citation} interface defines
      * separated attributes for ISBN, ISSN and other identifiers. This map view may choose to unify
      * all those attributes in a single view.
      *
