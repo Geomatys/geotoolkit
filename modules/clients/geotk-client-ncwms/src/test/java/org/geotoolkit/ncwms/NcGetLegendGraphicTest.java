@@ -45,7 +45,7 @@ public class NcGetLegendGraphicTest {
         request.setLayer("test");
         
         request.setOpacity(65);
-        request.setColorScaleRange("-50,50");
+        request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
         request.setPalette("test");
@@ -78,7 +78,7 @@ public class NcGetLegendGraphicTest {
         request.setLayer("test");
         
         request.setOpacity(65);
-        request.setColorScaleRange("-50,50");
+        request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
         request.setPalette("test");

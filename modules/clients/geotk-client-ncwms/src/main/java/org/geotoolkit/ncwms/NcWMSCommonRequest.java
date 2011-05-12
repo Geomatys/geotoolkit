@@ -33,16 +33,6 @@ public interface NcWMSCommonRequest {
      * Sets the opacity of the layer.
      */
     void setOpacity(final Integer opacity);
-    
-    /**
-     * Gets the color scale range.
-     */
-    String getColorScaleRange();
-
-    /**
-     * Sets the color scale range.
-     */
-    void setColorScaleRange(final String colorScaleRange);
 
     /**
      * Gets the number of color bands in the palette.

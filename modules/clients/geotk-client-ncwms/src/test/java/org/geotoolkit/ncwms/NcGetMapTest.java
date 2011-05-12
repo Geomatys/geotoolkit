@@ -57,7 +57,7 @@ public class NcGetMapTest {
         request.setEnvelope(env);
         
         request.setOpacity(65);
-        request.setColorScaleRange("-50,50");
+        request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
         
@@ -98,7 +98,7 @@ public class NcGetMapTest {
         request.setEnvelope(env);
         
         request.setOpacity(65);
-        request.setColorScaleRange("-50,50");
+        request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
         

@@ -40,12 +40,12 @@ public class AbstractNcGetLegendTest {
         legend.setLogScale(true);
         legend.setPalette("test");
         legend.setNumColorBands(125);
-        legend.setColorScaleRange("20,30");
+        legend.dimensions().put("COLORSCALERANGE","20,30");
         
         assertTrue(legend.getOpacity().equals(60));
         assertTrue(legend.isLogScale().equals(true));
         assertTrue(legend.getNumColorBands().equals(125));
-        assertTrue(legend.getColorScaleRange().equals("20,30"));
+        assertTrue(legend.dimensions().get("COLORSCALERANGE").equals("20,30"));
         assertTrue(legend.getPalette().equals("test"));
     }
     
@@ -61,7 +61,7 @@ public class AbstractNcGetLegendTest {
         legend.setLogScale(true);
         legend.setPalette("test");
         legend.setNumColorBands(125);
-        legend.setColorScaleRange("20,30");
+        legend.dimensions().put("COLORSCALERANGE","20,30");
         
         final URL url;
         try {

@@ -37,8 +37,6 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
     
     protected Integer opacity = null;
     
-    protected String colorScaleRange = null;
-    
     protected Integer numColorBands = null;
     
     protected Boolean logScale = null;
@@ -66,22 +64,6 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
     @Override
     public void setOpacity(final Integer opacity) {
         this.opacity = opacity;
-    }
-    
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getColorScaleRange() {
-        return colorScaleRange;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setColorScaleRange(final String colorScaleRange) {
-        this.colorScaleRange = colorScaleRange;
     }
 
     /**
@@ -141,9 +123,6 @@ public abstract class AbstractNcGetLegend extends AbstractGetLegend implements N
         
         if (opacity != null)
             requestParameters.put("OPACITY", String.valueOf(opacity));
-        
-        if (colorScaleRange != null)
-            requestParameters.put("COLORSCALERANGE", colorScaleRange);
         
         if (numColorBands != null)
             requestParameters.put("NUMCOLORBANDS", String.valueOf(numColorBands));

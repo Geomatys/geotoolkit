@@ -37,8 +37,6 @@ public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo im
     
     protected Integer opacity = null;
     
-    protected String colorScaleRange = null;
-    
     protected Integer numColorBands = null;
     
     protected Boolean logScale = null;
@@ -66,22 +64,6 @@ public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo im
         this.opacity = opacity;
     }
     
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public String getColorScaleRange() {
-        return colorScaleRange;
-    }
-
-    /**
-     * {@inheritDoc }
-     */
-    @Override
-    public void setColorScaleRange(final String colorScaleRange) {
-        this.colorScaleRange = colorScaleRange;
-    }
-
     /**
      * {@inheritDoc }
      */
@@ -123,9 +105,6 @@ public abstract class AbstractNcGetFeatureInfo extends AbstractGetFeatureInfo im
         
         if (opacity != null)
             requestParameters.put("OPACITY", String.valueOf(opacity));
-        
-        if (colorScaleRange != null)
-            requestParameters.put("COLORSCALERANGE", colorScaleRange);
         
         if (numColorBands != null)
             requestParameters.put("NUMCOLORBANDS", String.valueOf(numColorBands));

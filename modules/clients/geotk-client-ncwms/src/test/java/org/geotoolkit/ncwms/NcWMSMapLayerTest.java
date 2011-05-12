@@ -85,7 +85,7 @@ public class NcWMSMapLayerTest {
         
         final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
         layer.setOpacity(new Integer(60));
-        layer.setColorScaleRange("auto");
+        layer.dimensions().put("COLORSCALERANGE","auto");
         layer.setNumColorBands(125);
         layer.setLogScale(true);
         
@@ -137,7 +137,7 @@ public class NcWMSMapLayerTest {
         
         final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
         layer.setOpacity(new Integer(60));
-        layer.setColorScaleRange("auto");
+        layer.dimensions().put("COLORSCALERANGE","auto");
         layer.setNumColorBands(125);
         layer.setLogScale(true);        
         
@@ -161,7 +161,7 @@ public class NcWMSMapLayerTest {
     public void test_GetLegend() throws MalformedURLException {
         
         final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
-        layer.setColorScaleRange("auto");
+        layer.dimensions().put("COLORSCALERANGE","auto");
         layer.setNumColorBands(125);
         layer.setLogScale(true);    
         layer.setStyles("style_name/palette_name");         

@@ -79,7 +79,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
      * for more discussion of how ncWMS handles color ranges. 
      * 
      */
-    private String colorScaleRange = null;
+    //private String colorScaleRange = null;
     
     /**
      * The number of color bands in the palette.
@@ -125,25 +125,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
         
         if (opacity != null)
             setOpacity(opacity.doubleValue());
-    }    
-
-    /**
-     * Gets the color scale range.
-     * 
-     * @return the color scale range.
-     */
-    public String getColorScaleRange() {
-        return colorScaleRange;
-    }
-
-    /**
-     * Sets the color scale range.
-     * 
-     * @param colorScaleRange the color scale range to set.
-     */
-    public void setColorScaleRange(String colorScaleRange) {
-        this.colorScaleRange = colorScaleRange;
-    }
+    } 
 
     /**
      * Gets the number of color bands in the palette.
@@ -191,7 +173,6 @@ public class NcWMSMapLayer extends WMSMapLayer {
      */
     private void prepareNcWMSCommonRequest(final NcWMSCommonRequest request) {        
         request.setOpacity(ncOpacity);        
-        request.setColorScaleRange(colorScaleRange);
         request.setNumColorBands(numColorBands);
         request.setLogScale(logScale);
     }

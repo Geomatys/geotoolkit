@@ -66,7 +66,7 @@ public class NcGetFeatureInfoTest {
         request.setRawIndex(40);
         
         request.setOpacity(65);
-        request.setColorScaleRange("-50,50");
+        request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
         
@@ -123,7 +123,7 @@ public class NcGetFeatureInfoTest {
         request.setRawIndex(40);        
         
         request.setOpacity(65);
-        request.setColorScaleRange("-50,50");
+        request.dimensions().put("COLORSCALERANGE","-50,50");
         request.setNumColorBands(150);
         request.setLogScale(true);
         
