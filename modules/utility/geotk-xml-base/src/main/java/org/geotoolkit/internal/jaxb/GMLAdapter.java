@@ -102,7 +102,7 @@ public abstract class GMLAdapter {
      * @param wrapped The GeoAPI implementation for which to assign the ID.
      */
     public final void copyIdTo(final Object wrapped) {
-        if (id != null) {
+        if (false && id != null) { // Temporarily disabled.
             IDs.setUUID(wrapped, id);
         }
     }
