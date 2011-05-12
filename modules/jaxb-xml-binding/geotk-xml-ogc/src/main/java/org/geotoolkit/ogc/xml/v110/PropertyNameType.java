@@ -73,8 +73,9 @@ public class PropertyNameType implements PropertyName {
         if (content != null) {
             if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
                 this.content = content.getNamespaceURI() + ':' + content.getLocalPart();
+            } else {
+                this.content = content.getLocalPart();
             }
-            this.content = content.getLocalPart();
         }
     }
     
