@@ -100,7 +100,7 @@ public class WmsXmlBindingTest {
     @Test
     public void unmarshallingTest() throws JAXBException {
 
-    
+
     }
 
     /**
@@ -129,8 +129,8 @@ public class WmsXmlBindingTest {
         DefaultPeriod period = new DefaultPeriod();
         period.setBegining(new Date(120000000));
         period.setEnding(new Date(120000001));
-        
-        org.geotoolkit.internal.jaxb.GMLAdapter.IDs.setUUID(period, "extent");
+
+        org.geotoolkit.internal.jaxb.gml.GMLAdapter.IDs.setUUID(period, "extent");
         tempExt.setExtent(period);
         extent.setTemporalElements(Arrays.asList(tempExt));
         ext.setTemporalRefererence(extent);
@@ -153,7 +153,7 @@ public class WmsXmlBindingTest {
         ext.setLanguages(languages);
 
         ext.setCurrentLanguage("FR");
-        
+
         JAXBElement<ExtendedCapabilitiesType> jbExtendedCap = factory.createExtendedCapabilities(ext);
         Capability capability = new Capability(null, null, null, jbExtendedCap);
 
@@ -162,7 +162,7 @@ public class WmsXmlBindingTest {
         String result = sw.toString();
 
         //System.out.println("RESULT:" + result);
-        
+
         //we remove the first line
         result = result.substring(result.indexOf("?>") + 3);
         //we remove the xmlmns
@@ -298,8 +298,8 @@ public class WmsXmlBindingTest {
         "    </inspire_vs:ExtendedCapabilities>" + '\n' +
         "</wms:Capability>" + '\n';
 
-        org.geotoolkit.internal.jaxb.GMLAdapter.IDs.removeUUID(period);
-        
+        org.geotoolkit.internal.jaxb.gml.GMLAdapter.IDs.removeUUID(period);
+
         assertEquals(expResult, result);
 
     }
