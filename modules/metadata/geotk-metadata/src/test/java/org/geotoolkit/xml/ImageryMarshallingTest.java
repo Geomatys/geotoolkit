@@ -65,7 +65,7 @@ public final class ImageryMarshallingTest extends TestBase {
             "      </gmd:description>\n" +
             "    </gmd:LI_Source>\n" +
             "  </gmd:source>\n" +
-            "</gmd:LI_Lineage>", actual, "xmlns:*", "xsi:schemaLocation");
+            "</gmd:LI_Lineage>", actual, "xmlns:*");
         /*
          * Now add a ISO 19115-2 specific property. The XML name shall become "gmi:LE_Source".
          */
@@ -87,6 +87,6 @@ public final class ImageryMarshallingTest extends TestBase {
             "      </gmi:processedLevel>\n" +
             "    </gmi:LE_Source>\n" +
             "  </gmd:source>\n" +
-            "</gmd:LI_Lineage>", actual, "xmlns:*", "xsi:schemaLocation");
+            "</gmd:LI_Lineage>", actual, "xmlns:*");
     }
 }

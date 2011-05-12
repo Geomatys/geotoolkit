@@ -25,6 +25,7 @@ import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.internal.jaxb.gmd.PT_FreeText;
 import org.geotoolkit.internal.jaxb.gmd.LanguageCode;
 import org.geotoolkit.internal.jaxb.gmd.Country;
+import org.geotoolkit.internal.jaxb.gmx.Anchor;
 
 
 /**
@@ -44,7 +45,7 @@ import org.geotoolkit.internal.jaxb.gmd.Country;
 public class GO_CharacterString {
     /**
      * The text or anchor value, or {@code null} if none. May be an instance
-     * of {@link AnchorType}, which needs to be handled in a special way.
+     * of {@link Anchor}, which needs to be handled in a special way.
      */
     CharSequence text;
 
@@ -82,7 +83,7 @@ public class GO_CharacterString {
     @XmlElement(name = "CharacterString")
     public final String getCharacterString() {
         final CharSequence text = this.text;
-        return (text == null || text instanceof AnchorType) ? null : text.toString();
+        return (text == null || text instanceof Anchor) ? null : text.toString();
     }
 
     /**
@@ -107,9 +108,9 @@ public class GO_CharacterString {
      * @return The anchor, or {@code null}.
      */
     @XmlElement(name = "Anchor", namespace = Namespaces.GMX)
-    public final AnchorType getAnchor() {
+    public final Anchor getAnchor() {
         final CharSequence text = this.text;
-        return (text instanceof AnchorType) ? (AnchorType) text : null;
+        return (text instanceof Anchor) ? (Anchor) text : null;
     }
 
     /**
@@ -118,7 +119,7 @@ public class GO_CharacterString {
      *
      * @param anchor The new anchor.
      */
-    public final void setAnchor(final AnchorType anchor) {
+    public final void setAnchor(final Anchor anchor) {
         this.text = anchor;
     }
 

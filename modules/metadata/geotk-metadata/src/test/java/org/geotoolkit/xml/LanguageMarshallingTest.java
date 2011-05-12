@@ -91,7 +91,7 @@ public final class LanguageMarshallingTest extends LocaleDependantTestBase {
         /*
          * Reformat and test against the original XML.
          */
-        assertDomEquals(xml, XML.marshal(id), "xmlns:*", "xsi:schemaLocation");
+        assertDomEquals(xml, XML.marshal(id), "xmlns:*");
     }
 
     /**
@@ -107,7 +107,7 @@ public final class LanguageMarshallingTest extends LocaleDependantTestBase {
         /*
          * Reformat and test against the expected XML.
          */
-        assertDomEquals(getDataIdentificationXML(true), XML.marshal(id), "xmlns:*", "xsi:schemaLocation");
+        assertDomEquals(getDataIdentificationXML(true), XML.marshal(id), "xmlns:*");
     }
 
     /**
@@ -127,11 +127,11 @@ public final class LanguageMarshallingTest extends LocaleDependantTestBase {
         final MarshallerPool pool = new MarshallerPool(MarshallerPool.defaultClassesToBeBound());
         final Marshaller marshaller = pool.acquireMarshaller();
         assertNull(marshaller.getProperty(XML.STRING_SUBSTITUTES));
-        assertDomEquals(inspire, marshal(marshaller, id), "xmlns:*", "xsi:schemaLocation");
+        assertDomEquals(inspire, marshal(marshaller, id), "xmlns:*");
 
         marshaller.setProperty(XML.STRING_SUBSTITUTES, "dummy,language,foo");
         assertEquals("language", marshaller.getProperty(XML.STRING_SUBSTITUTES));
-        assertDomEquals(simpler, marshal(marshaller, id), "xmlns:*", "xsi:schemaLocation");
+        assertDomEquals(simpler, marshal(marshaller, id), "xmlns:*");
         pool.release(marshaller);
     }
 

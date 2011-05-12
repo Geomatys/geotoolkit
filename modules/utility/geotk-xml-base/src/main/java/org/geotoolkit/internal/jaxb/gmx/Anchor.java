@@ -15,10 +15,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.jaxb.gco;
+package org.geotoolkit.internal.jaxb.gmx;
 
 import java.net.URI;
 import java.util.Locale;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
 
 import org.opengis.util.InternationalString;
@@ -28,7 +29,7 @@ import org.geotoolkit.util.Utilities;
 
 
 /**
- * The {@code AnchorType} element, which is included in {@code CharacterString} elements.
+ * The {@code Anchor} element, which is included in {@code CharacterString} elements.
  * This class extends {@link InternationalString} in an opportunist way, in order to allow
  * direct usage with public API expecting {@link CharSequence} or {@link InternationalString}
  * object.
@@ -42,7 +43,8 @@ import org.geotoolkit.util.Utilities;
  * @since 2.5
  * @module
  */
-public final class AnchorType extends XLink implements InternationalString {
+@XmlType(name = "AnchorType")
+public final class Anchor extends XLink implements InternationalString {
     /**
      * Defined as a matter of principle (this class is not expected to be serialized).
      */
@@ -56,19 +58,19 @@ public final class AnchorType extends XLink implements InternationalString {
     private String value;
 
     /**
-     * Creates a uninitialized {@code AnchorType}.
+     * Creates a uninitialized {@code Anchor}.
      * This constructor is required by JAXB.
      */
-    public AnchorType() {
+    public Anchor() {
     }
 
     /**
-     * Creates an {@code AnchorType} initialized to the given value.
+     * Creates an {@code Anchor} initialized to the given value.
      *
      * @param href  A URN to an external resources or an identifier.
      * @param value Often a short textual description of the URN target.
      */
-    public AnchorType(final URI href, final String value) {
+    public Anchor(final URI href, final String value) {
         setHRef(href);
         this.value = value;
     }
@@ -130,7 +132,7 @@ public final class AnchorType extends XLink implements InternationalString {
     }
 
     /**
-     * Compares this {@code AnchorType} with the given object for equality.
+     * Compares this {@code Anchor} with the given object for equality.
      *
      * @param object The object to compare with this anchor type.
      */
@@ -140,7 +142,7 @@ public final class AnchorType extends XLink implements InternationalString {
             return true;
         }
         if (super.equals(object)) {
-            final AnchorType that = (AnchorType) object;
+            final Anchor that = (Anchor) object;
             return Utilities.equals(this.value, that.value);
         }
         return false;

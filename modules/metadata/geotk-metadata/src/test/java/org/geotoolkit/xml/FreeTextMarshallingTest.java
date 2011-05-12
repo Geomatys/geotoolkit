@@ -81,7 +81,7 @@ public final class FreeTextMarshallingTest extends TestBase {
         final Citation citation = (Citation) XML.unmarshal(expected);
         assertEquals(getExpectedI18N(), citation.getTitle());
         final String actual = XML.marshal(citation);
-        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+        assertDomEquals(expected, actual, "xmlns:*");
     }
 
     /**

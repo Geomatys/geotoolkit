@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.gco;
 import java.net.URI;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import org.opengis.util.InternationalString;
 
@@ -286,6 +287,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "title", namespace = Namespaces.XLINK)
+    @XmlJavaTypeAdapter(InternationalStringConverter.class)
     public final InternationalString getTitle() {
         final ObjectReference reference = reference();
         return (reference != null) ? reference.getTitle() : null;

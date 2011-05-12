@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.adapters.XmlAdapter;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.internal.jaxb.gmx.Anchor;
 import org.geotoolkit.internal.jaxb.gmd.PT_FreeText;
 
 
@@ -60,11 +61,11 @@ import org.geotoolkit.internal.jaxb.gmd.PT_FreeText;
 public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, CharSequence> {
     /**
      * Binds string labels with URNs or anchors. Values can be either {@link URI} or
-     * {@link AnchorType} instances. The map is initially null and will be created
+     * {@link Anchor} instances. The map is initially null and will be created
      * when first needed.
      *
      * @see #addLinkage(String, URI)
-     * @see #addLinkage(AnchorType)
+     * @see #addLinkage(Anchor)
      */
     private Map<String,Object> anchors;
 
@@ -93,7 +94,7 @@ public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, Ch
      *
      * @since 3.14
      */
-    public void addLinkage(final AnchorType anchor) throws IllegalStateException {
+    public void addLinkage(final Anchor anchor) throws IllegalStateException {
         add(anchor.toString(), anchor);
     }
 
@@ -144,16 +145,12 @@ public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, Ch
             /*
              * Case where the value is an ordinary GO_CharacterString (not a PT_FreeText).
              */
-            final AnchorType anchor = value.getAnchor();
-            if (anchor != null) {
-                return anchor;
-            }
             CharSequence text = value.text;
             if (text != null) {
                 if (text instanceof String) {
                     text = ((String) text).trim();
                 }
-                if (text.length() != 0) {
+                if (text.length() != 0 || text instanceof Anchor) { // Anchor may contain attributes.
                     return text;
                 }
             }
@@ -193,7 +190,7 @@ public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, Ch
         /*
          * Substitute <gco:CharacterString> by <gmx:Anchor> if a linkage is found.
          */
-        if (!(value instanceof AnchorType)) {
+        if (!(value instanceof Anchor)) {
             synchronized (this) {
                 if (anchors != null) {
                     String key = value.toString();
@@ -203,9 +200,9 @@ public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, Ch
                             final Object linkage = anchors.get(key);
                             if (linkage != null) {
                                 if (linkage instanceof URI) {
-                                    value = new AnchorType((URI) linkage, key);
+                                    value = new Anchor((URI) linkage, key);
                                 } else {
-                                    value = (AnchorType) linkage;
+                                    value = (Anchor) linkage;
                                 }
                             }
                         }
@@ -215,7 +212,7 @@ public final class CharSequenceAdapter extends XmlAdapter<GO_CharacterString, Ch
         }
         /*
          * At this stage, the value (typically a String or InternationalString) may
-         * have been replaced by an AnchorType. The output will be one of the following:
+         * have been replaced by an Anchor. The output will be one of the following:
          *
          * ┌──────────────────────────────────────────────────┬────────────────────────────────┐
          * │ <gmd:someElement>                                │ <gmd:someElement>              │

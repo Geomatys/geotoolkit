@@ -95,7 +95,7 @@ public final class CodeListMarshallingTest extends LocaleDependantTestBase {
          * our own MarshallerPool.
          */
         final String actual = XML.marshal(rp);
-        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+        assertDomEquals(expected, actual, "xmlns:*");
     }
 
     /**
@@ -117,7 +117,7 @@ public final class CodeListMarshallingTest extends LocaleDependantTestBase {
                 "http://standards.iso.org/ittf/PubliclyAvailableStandards/ISO_19139_Schemas")); // Intentionally omit trailing '/'.
         final String actual = marshal(marshaller, rp);
         pool.release(marshaller);
-        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+        assertDomEquals(expected, actual, "xmlns:*");
     }
 
     /**
@@ -137,7 +137,7 @@ public final class CodeListMarshallingTest extends LocaleDependantTestBase {
         CitationDate ci = (CitationDate) XML.unmarshal(expected);
         assertEquals(DateType.CREATION, ci.getDateType());
         String actual = marshal(marshaller, ci);
-        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+        assertDomEquals(expected, actual, "xmlns:*");
         /*
          * Tests again using the Englisg locale.
          */
@@ -146,7 +146,7 @@ public final class CodeListMarshallingTest extends LocaleDependantTestBase {
         ci = (CitationDate) XML.unmarshal(expected);
         assertEquals(DateType.CREATION, ci.getDateType());
         actual = marshal(marshaller, ci);
-        assertDomEquals(expected, actual, "xmlns:*", "xsi:schemaLocation");
+        assertDomEquals(expected, actual, "xmlns:*");
 
         pool.release(marshaller);
     }
