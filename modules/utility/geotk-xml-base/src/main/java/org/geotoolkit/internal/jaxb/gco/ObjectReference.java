@@ -43,7 +43,7 @@ import org.geotoolkit.util.Utilities;
  * @since 3.18
  * @module
  */
-final class ObjectReference extends XLink {
+public final class ObjectReference extends XLink {
     /**
      * For cross-version compatibility.
      */
@@ -57,13 +57,25 @@ final class ObjectReference extends XLink {
      * @see <a href="http://www.schemacentral.com/sc/niem21/a-uuidref-1.html">Usage of uuidref</a>
      */
     @XmlAttribute
-    String uuidref;
+    public String uuidref;
 
     /**
      * Creates a new object reference of kind {@code xlink:simpleLink}.
      */
-    ObjectReference() {
+    public ObjectReference() {
         setType(Type.SIMPLE);
+    }
+
+    /**
+     * Creates a new reference as a copy of the given link.
+     *
+     * @param link The link to copy, or {@code null} if none.
+     */
+    public ObjectReference(final XLink link) {
+        super(link);
+        if (link instanceof ObjectReference) {
+            uuidref = ((ObjectReference) link).uuidref;
+        }
     }
 
     /**

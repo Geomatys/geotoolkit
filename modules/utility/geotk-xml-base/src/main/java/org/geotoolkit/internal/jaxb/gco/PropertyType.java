@@ -26,6 +26,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.internal.jaxb.UUIDs;
 
 
@@ -109,26 +110,29 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     protected PropertyType(final BoundType metadata) {
         this.metadata = metadata;
+        if (metadata instanceof IdentifiedObject) {
+            reference = ((IdentifiedObject) metadata).getXLink();
+        }
     }
 
     /**
      * Returns the object reference, or {@code null} if none.
      */
-    private ObjectReference reference() {
+    private XLink reference() {
         final Object ref = reference;
-        return (ref instanceof ObjectReference) ? (ObjectReference) ref : null;
+        return (ref instanceof XLink) ? (XLink) ref : null;
     }
 
     /**
      * Returns the object reference, creating it if needed. Note that if a {@code gco:nilReason}
      * were defined, then it will be overwritten since the object is not nil.
      */
-    private ObjectReference referenceNotNull() {
+    private XLink referenceNotNull() {
         Object ref = reference;
-        if (!(ref instanceof ObjectReference)) {
+        if (!(ref instanceof XLink)) {
             reference = ref = new ObjectReference();
         }
-        return (ObjectReference) ref;
+        return (XLink) ref;
     }
 
     /**
@@ -141,7 +145,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     @XmlAttribute(name = "nilReason")
     public final String getNilReason() {
         final Object ref = reference;
-        return (reference instanceof String) ? (String) ref : null;
+        return (ref instanceof String) ? (String) ref : null;
     }
 
     /**
@@ -189,8 +193,8 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "uuidref")
     public final String getUUIDREF() {
-        final ObjectReference reference = reference();
-        return (reference != null) ? reference.uuidref : null;
+        final Object ref = reference;
+        return (ref instanceof ObjectReference) ? ((ObjectReference) ref).uuidref : null;
     }
 
     /**
@@ -201,7 +205,11 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     public final void setUUIDREF(final String uuidref) {
-        referenceNotNull().uuidref = uuidref;
+        XLink link = referenceNotNull();
+        if (!(link instanceof ObjectReference)) {
+            link = new ObjectReference(link);
+        }
+        ((ObjectReference) link).uuidref = uuidref;
     }
 
     /**
@@ -215,7 +223,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "href", namespace = Namespaces.XLINK)
     public final URI getHRef() {
-        final ObjectReference reference = reference();
+        final XLink reference = reference();
         return (reference != null) ? reference.getHRef() : null;
     }
 
@@ -239,7 +247,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "role", namespace = Namespaces.XLINK)
     public final URI getRole() {
-        final ObjectReference reference = reference();
+        final XLink reference = reference();
         return (reference != null) ? reference.getRole() : null;
     }
 
@@ -263,7 +271,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "arcrole", namespace = Namespaces.XLINK)
     public final URI getArcRole() {
-        final ObjectReference reference = reference();
+        final XLink reference = reference();
         return (reference != null) ? reference.getArcRole() : null;
     }
 
@@ -289,7 +297,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     @XmlAttribute(name = "title", namespace = Namespaces.XLINK)
     @XmlJavaTypeAdapter(InternationalStringConverter.class)
     public final InternationalString getTitle() {
-        final ObjectReference reference = reference();
+        final XLink reference = reference();
         return (reference != null) ? reference.getTitle() : null;
     }
 
@@ -322,7 +330,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "show", namespace = Namespaces.XLINK)
     public final XLink.Show getShow() {
-        final ObjectReference reference = reference();
+        final XLink reference = reference();
         return (reference != null) ? reference.getShow() : null;
     }
 
@@ -354,7 +362,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     @XmlAttribute(name = "actuate", namespace = Namespaces.XLINK)
     public final XLink.Actuate getActuate() {
-        final ObjectReference reference = reference();
+        final XLink reference = reference();
         return (reference != null) ? reference.getActuate() : null;
     }
 
@@ -417,13 +425,20 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
         if (value == null) {
             return null;
         }
-        if (value.metadata == null) {
+        BoundType result = value.metadata;
+        if (result == null) {
             final String uuidref = value.getUUIDREF();
             if (uuidref != null) {
-                value.metadata = (BoundType) UUIDs.DEFAULT.lookup(uuidref);
+                result = (BoundType) UUIDs.DEFAULT.lookup(uuidref);
             }
         }
-        return value.metadata;
+        if (result instanceof IdentifiedObject) {
+            final XLink xlink = value.reference();
+            if (xlink != null) {
+                ((IdentifiedObject) result).setXLink(xlink);
+            }
+        }
+        return result;
     }
 
     /**

@@ -108,4 +108,23 @@ public interface IdentifiedObject {
      *         or an empty map if none.
      */
     Map<Citation,String> getIdentifierMap();
+
+    /**
+     * Returns the XML {@code xlink} attributes associated to this identified object.
+     * This method returns {@code null} if there is no {@code xlink} attributes for
+     * this metadata object.
+     *
+     * @return XML {@code xlink} attributes, or {@code null} if none.
+     */
+    XLink getXLink();
+
+    /**
+     * Sets the XML {@code xlink} attributes for this identified object. Callers should define
+     * one or many {@link XLink} attributes ({@code href}, {@code role}, {@code arcrole},
+     * {@code title}, {@code show} and {@code actuate}) before to invoke this method.
+     *
+     * @param link XML {@code xlink} attributes, or {@code null} if none.
+     * @throws UnsupportedOperationException if this object is unmodifiable.
+     */
+    void setXLink(final XLink link) throws UnsupportedOperationException;
 }

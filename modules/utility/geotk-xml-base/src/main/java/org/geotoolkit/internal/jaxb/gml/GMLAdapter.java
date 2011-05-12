@@ -15,12 +15,11 @@
  *    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
  *    Lesser General Public License for more details.
  */
-package org.geotoolkit.internal.jaxb;
+package org.geotoolkit.internal.jaxb.gml;
 
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlAttribute;
-
-import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.internal.jaxb.UUIDs;
 
 
 /**
@@ -67,7 +66,7 @@ public abstract class GMLAdapter {
      * @see org.geotoolkit.internal.jaxb.gco.PropertyType#uuid
      */
     @XmlID
-    @XmlAttribute(required = true, namespace = Namespaces.GML)
+    @XmlAttribute(required = true)
     private String id;
 
     /**

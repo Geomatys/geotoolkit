@@ -190,6 +190,26 @@ public class XLink implements Serializable {
     }
 
     /**
+     * Creates a new link as a copy of the given link.
+     *
+     * @param link The link to copy, or {@code null} if none.
+     */
+    public XLink(final XLink link) {
+        if (link != null) {
+            type    = link.type;
+            href    = link.href;
+            role    = link.role;
+            arcrole = link.arcrole;
+            title   = link.title;
+            show    = link.show;
+            actuate = link.actuate;
+            label   = link.label;
+            from    = link.from;
+            to      = link.to;
+        }
+    }
+
+    /**
      * The type of a {@code xlink}. This type can be determined from the set of non-null
      * attribute values in an {@link XLink} instance.
      *
@@ -240,7 +260,15 @@ public class XLink implements Serializable {
         /**
          * A descriptive title for another linking element.
          */
-        @XmlEnumValue("title") TITLE(0x1, 0x1);
+        @XmlEnumValue("title") TITLE(0x1, 0x1),
+
+        /**
+         * A special value for computing the type automatically from the {@link XLink} attributes.
+         * After a call to {@code XLink.setType(AUTO)}, any call to {@code XLink.getType()} will
+         * infer the type from the non-null attributes as according the table documented in the
+         * {@link XLink} javadoc.
+         */
+        AUTO(-1, 0);
 
         /**
          * A bitmask which specified the non-null fields expected for a given type.
@@ -300,14 +328,15 @@ public class XLink implements Serializable {
      *   <li><b>title:</b>    a descriptive title for another linking element</li>
      * </ul>
      * <p>
-     * If the {@link #setType(XLink.Type)} method has never been invoked, then this method
-     * will infer a type from the attributes having a non-null value.
+     * The default value is {@code null}. If the {@link #setType(XLink.Type)} method has been
+     * invoked with the {@code AUTO} enum, then this method will infer a type from the attributes
+     * having a non-null value.
      *
      * @return The type of link, or {@code null}.
      */
     @XmlAttribute(name = "type", namespace = Namespaces.XLINK, required = true)
     public Type getType() {
-        if (type != null) {
+        if (!Type.AUTO.equals(type)) {
             return type;
         }
         Type best = null;
@@ -315,8 +344,12 @@ public class XLink implements Serializable {
         final int defined = fieldMask();
         final int undefined = ~(defined | 0x1);
         for (final Type candidate : Type.values()) {
+            final int forbidden = ~candidate.fieldMask;
+            if (forbidden == 0) {
+                continue; // Skip the AUTO enum.
+            }
             // Test if this XLink instance defines only values allowed by the candidate type.
-            if ((defined & ~candidate.fieldMask) != 0) {
+            if ((defined & forbidden) != 0) {
                 continue;
             }
             // Test if this XLink instance defines all mandatory fields.
@@ -334,10 +367,11 @@ public class XLink implements Serializable {
     }
 
     /**
-     * Sets the type of link. A non-null value will overwrite the value inferred automatically
-     * by {@link #getType()}. A {@code null} value will restore the automatic type detection.
+     * Sets the type of link. Any value different than {@link org.geotoolkit.xml.Xlink.Type#AUTO
+     * Type.AUTO} (including {@code null}) will overwrite the value inferred automatically by
+     * {@link #getType()}. A {@code AUTO} value will enable automatic type detection.
      *
-     * @param type The new type of link, or {@code null} for removing explicit setting.
+     * @param type The new type of link, or {@code null} if none.
      */
     public void setType(final Type type) {
         if (type != null && (fieldMask() & ~type.fieldMask) != 0) {

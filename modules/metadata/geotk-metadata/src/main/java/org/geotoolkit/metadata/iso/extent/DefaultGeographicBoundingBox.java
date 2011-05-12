@@ -42,6 +42,8 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.ProxyForMetadata;
 
+import static org.geotoolkit.metadata.iso.extent.DefaultExtent.ensureNonNull;
+
 
 /**
  * Geographic position of the dataset. This is only an approximate so specifying the coordinate

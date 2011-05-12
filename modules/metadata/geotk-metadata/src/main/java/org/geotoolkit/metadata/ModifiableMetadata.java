@@ -37,6 +37,7 @@ import org.geotoolkit.util.collection.CheckedArrayList;
 import org.geotoolkit.util.collection.CheckedHashSet;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.internal.CollectionUtilities;
+import org.geotoolkit.internal.jaxb.MarshalContext;
 
 
 /**
@@ -704,6 +705,26 @@ public abstract class ModifiableMetadata extends AbstractMetadata implements Clo
     protected <E> Class<? extends Collection<E>> collectionType(final Class<E> elementType) {
         return (Class) (CodeList.class.isAssignableFrom(elementType) ||
                             Enum.class.isAssignableFrom(elementType) ? Set.class : List.class);
+    }
+
+    /**
+     * If a XML marshalling is under progress and the given collection is empty, returns
+     * {@code null}. Otherwise returns the collection unchanged. This method is invoked
+     * by implementation having optional elements to omit when empty.
+     *
+     * @param  <E> The type of elements in the given collection.
+     * @param  elements The collection to return.
+     * @return The given collection, or {@code null} if the collection is empty and a marshalling
+     *         is under progress.
+     *
+     * @since 3.18 (derived from 2.5)
+     * @level advanced
+     */
+    protected static <E> Collection<E> xmlOptional(final Collection<E> elements) {
+        if (elements != null && elements.isEmpty() && MarshalContext.isMarshalling()) {
+            return null;
+        }
+        return elements;
     }
 
     /**

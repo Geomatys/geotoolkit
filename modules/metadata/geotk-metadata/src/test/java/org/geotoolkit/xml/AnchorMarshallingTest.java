@@ -21,8 +21,6 @@ import javax.xml.bind.JAXBException;
 
 import org.opengis.metadata.citation.Address;
 import org.opengis.referencing.ReferenceIdentifier;
-
-import org.geotoolkit.test.Depend;
 import org.geotoolkit.test.LocaleDependantTestBase;
 
 import org.junit.*;
@@ -37,7 +35,6 @@ import static org.geotoolkit.test.Assert.*;
  *
  * @since 3.18
  */
-@Depend(XLinkTest.class)
 public final class AnchorMarshallingTest extends LocaleDependantTestBase {
     /**
      * Tests the anchor in an identifier element. Note that the {@code xlink:href}
@@ -101,6 +98,9 @@ public final class AnchorMarshallingTest extends LocaleDependantTestBase {
         final XLink anchor = (XLink) address.getCountry();
         assertEquals("France", anchor.toString());
         assertEquals("SDN:C320:2:FR", anchor.getHRef().toString());
+        assertNull(anchor.getType());
+
+        anchor.setType(XLink.Type.AUTO);
         assertEquals(XLink.Type.LOCATOR, anchor.getType());
 
         final String actual = XML.marshal(address);

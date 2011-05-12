@@ -42,6 +42,8 @@ public final class XLinkTest {
     @Test
     public void testGetType() throws URISyntaxException {
         final XLink link = new XLink();
+        assertNull(link.getType());
+        link.setType(XLink.Type.AUTO);
         assertEquals(XLink.Type.TITLE, link.getType());
         assertEquals("XLink[type=\"title\"]", link.toString());
 

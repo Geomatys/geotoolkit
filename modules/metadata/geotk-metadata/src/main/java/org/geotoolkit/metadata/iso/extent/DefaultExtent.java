@@ -38,7 +38,9 @@ import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
+import org.geotoolkit.metadata.InvalidMetadataException;
 import org.geotoolkit.internal.referencing.ProxyForMetadata;
+import org.geotoolkit.resources.Errors;
 
 
 /**
@@ -287,5 +289,19 @@ public class DefaultExtent extends MetadataEntity implements Extent {
             }
         }
         return candidate;
+    }
+
+    /**
+     * Makes sure that an argument is non-null. This is used for checking if
+     * a mandatory attribute is presents.
+     *
+     * @param  name   Argument name.
+     * @param  object User argument.
+     * @throws InvalidMetadataException if {@code object} is null.
+     */
+    static void ensureNonNull(final String name, final Object object) throws InvalidMetadataException {
+        if (object == null) {
+            throw new InvalidMetadataException(Errors.format(Errors.Keys.NULL_ATTRIBUTE_$1, name));
+        }
     }
 }

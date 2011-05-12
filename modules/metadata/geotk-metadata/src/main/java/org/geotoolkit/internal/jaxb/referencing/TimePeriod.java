@@ -26,7 +26,7 @@ import org.opengis.temporal.Instant;
 import org.opengis.temporal.Position;
 
 import org.geotoolkit.xml.Namespaces;
-import org.geotoolkit.internal.jaxb.GMLAdapter;
+import org.geotoolkit.internal.jaxb.gml.GMLAdapter;
 import org.geotoolkit.internal.jaxb.XmlUtilities;
 import org.geotoolkit.lang.Workaround;
 
