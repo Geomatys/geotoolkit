@@ -25,7 +25,6 @@ import javax.xml.bind.annotation.XmlType;
 import org.opengis.temporal.Duration;
 import org.opengis.temporal.TemporalGeometricPrimitive;
 
-
 /**
  * The abstract supertype for temporal geometric primitives.
  *        A temporal geometry must be associated with a temporal reference system via URI. 
@@ -87,11 +86,10 @@ public abstract class AbstractTimeGeometricPrimitiveType extends AbstractTimePri
     }
 
     public Duration distance(final TemporalGeometricPrimitive tgp) {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     public Duration length() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
-
 }

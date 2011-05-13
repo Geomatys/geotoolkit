@@ -20,6 +20,7 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.metadata.MetadataStandard;
 import org.opengis.temporal.TemporalObject;
 
 
@@ -49,4 +50,9 @@ import org.opengis.temporal.TemporalObject;
     AbstractTimeComplexType.class
 })
 public abstract class AbstractTimeObjectType extends AbstractGMLType implements TemporalObject {
+    
+    @Override
+    public MetadataStandard getStandard() {
+        return new MetadataStandard("org.opengis.temporal");
+    }
 }

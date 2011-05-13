@@ -66,7 +66,7 @@ import org.opengis.temporal.Position;
     "timeInterval"
 })
 @XmlRootElement(name="TimePeriod")
-public class TimePeriodType extends AbstractTimeGeometricPrimitiveType  implements Period {
+public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implements Period {
 
     private TimePositionType beginPosition;
     private TimeInstantPropertyType begin;

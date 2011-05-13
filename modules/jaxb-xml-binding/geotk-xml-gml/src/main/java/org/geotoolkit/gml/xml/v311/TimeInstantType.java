@@ -102,11 +102,11 @@ public class TimeInstantType extends AbstractTimeGeometricPrimitiveType implemen
     }
 
     public Collection<Period> getBegunBy() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     public Collection<Period> getEndedBy() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override

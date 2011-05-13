@@ -30,6 +30,8 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.XmlValue;
+import org.geotoolkit.metadata.AbstractMetadata;
+import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Position;
@@ -219,7 +221,7 @@ public class TimePositionType implements Position {
 
     @Override
     public TemporalPosition anyOther() {
-        throw new UnsupportedOperationException("Not supported yet.");
+        return null;
     }
 
     @Override

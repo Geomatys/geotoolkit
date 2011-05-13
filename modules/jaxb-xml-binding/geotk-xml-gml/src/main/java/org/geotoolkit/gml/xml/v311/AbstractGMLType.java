@@ -27,7 +27,9 @@ import javax.xml.bind.annotation.adapters.CollapsedStringAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.gml.xml.AbstractGML;
 import org.geotoolkit.internal.sql.table.Entry;
+import org.geotoolkit.metadata.AbstractMetadata;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.metadata.MetadataStandard;
 
 
 /**
@@ -71,7 +73,7 @@ import org.geotoolkit.util.Utilities;
     AbstractGeometryType.class,
     AbstractFeatureType.class
 })
-public abstract class AbstractGMLType implements AbstractGML, Serializable, Entry {
+public abstract class AbstractGMLType extends AbstractMetadata implements AbstractGML, Serializable, Entry {
 
     //protected List<MetaDataPropertyType> metaDataProperty;
     private String description;
@@ -115,6 +117,11 @@ public abstract class AbstractGMLType implements AbstractGML, Serializable, Entr
         this.descriptionReference = descriptionReference;
     }
 
+    @Override
+    public MetadataStandard getStandard() {
+        return null;
+    }
+    
     /**
      * Gets the value of the description property.    
      */

@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
 
 
+
 /**
  * A non-abstract generic collection type that can be used as a document element for a homogeneous collection of any GML types - Geometries, Topologies, Features ...
  * 
@@ -49,7 +50,7 @@ import javax.xml.bind.annotation.XmlType;
 })
 public class ArrayType extends AbstractGMLType {
 
-    protected ArrayAssociationType members;
+    private ArrayAssociationType members;
 
     /**
      * Gets the value of the members property.

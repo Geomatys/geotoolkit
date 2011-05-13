@@ -29,6 +29,8 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.metadata.MetadataStandard;
+
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.Envelope;
@@ -41,6 +43,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.TransformException;
+
 
 
 /**
@@ -113,6 +116,10 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
         this.srsName      = srsName;
     }
 
+    @Override
+    public MetadataStandard getStandard() {
+        return new MetadataStandard("org.opengis.geometry");
+    }
     /**
      * Gets the value of the gid property.
      * 
