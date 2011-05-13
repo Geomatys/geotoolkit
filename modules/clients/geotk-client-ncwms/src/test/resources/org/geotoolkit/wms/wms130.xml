@@ -1,0 +1,162 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<wms:WMS_Capabilities version="1.3.0" xsi:schemaLocation="http://www.opengis.net/wms http://schemas.opengis.net/wms/1.3.0/capabilities_1_3_0.xsd" xmlns:ogc="http://www.opengis.net/ogc" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sld="http://www.opengis.net/sld" xmlns:gml="http://www.opengis.net/gml" xmlns:se="http://www.opengis.net/se" xmlns:wms="http://www.opengis.net/wms" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <wms:Service>
+        <wms:Name>OGC:WMS</wms:Name>
+        <wms:Title>MOCK Server</wms:Title>
+        <wms:Abstract>A testing wms server.</wms:Abstract>
+        <wms:KeywordList>
+            <wms:Keyword>WMS</wms:Keyword>
+        </wms:KeywordList>
+        <wms:OnlineResource xlink:type="simple" xlink:href="http://www.geomatys.fr/"/>
+        <wms:ContactInformation>
+            <wms:ContactPersonPrimary>
+                <wms:ContactPerson>No Body</wms:ContactPerson>
+                <wms:ContactOrganization>GeotoolKit.org</wms:ContactOrganization>
+            </wms:ContactPersonPrimary>
+            <wms:ContactPosition>Project</wms:ContactPosition>
+            <wms:ContactAddress>
+                <wms:AddressType>postal</wms:AddressType>
+                <wms:Address>1 perfect street</wms:Address>
+                <wms:City>Paradis</wms:City>
+                <wms:StateOrProvince>Paradis</wms:StateOrProvince>
+                <wms:PostCode>99999 </wms:PostCode>
+                <wms:Country>World</wms:Country>
+            </wms:ContactAddress>
+            <wms:ContactVoiceTelephone>00 00 00 00 00</wms:ContactVoiceTelephone>
+            <wms:ContactElectronicMailAddress>geotoolkit@lists.osgeo.org</wms:ContactElectronicMailAddress>
+        </wms:ContactInformation>
+        <wms:Fees>none</wms:Fees>
+        <wms:AccessConstraints>none</wms:AccessConstraints>
+        <wms:LayerLimit>16</wms:LayerLimit>
+        <wms:MaxWidth>2048</wms:MaxWidth>
+        <wms:MaxHeight>2048</wms:MaxHeight>
+    </wms:Service>
+    <wms:Capability>
+        <wms:Request>
+            <wms:GetCapabilities>
+                <wms:Format>text/xml</wms:Format>
+                <wms:Format>application/vnd.ogc.wms_xml</wms:Format>
+                <wms:DCPType>
+                    <wms:HTTP>
+                        <wms:Get>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Get>
+                        <wms:Post>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Post>
+                    </wms:HTTP>
+                </wms:DCPType>
+            </wms:GetCapabilities>
+            <wms:GetMap>
+                <wms:Format>image/gif</wms:Format>
+                <wms:Format>image/png</wms:Format>
+                <wms:Format>image/jpeg</wms:Format>
+                <wms:Format>image/bmp</wms:Format>
+                <wms:Format>image/tiff</wms:Format>
+                <wms:Format>image/x-portable-pixmap</wms:Format>
+                <wms:DCPType>
+                    <wms:HTTP>
+                        <wms:Get>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Get>
+                        <wms:Post>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Post>
+                    </wms:HTTP>
+                </wms:DCPType>
+            </wms:GetMap>
+            <wms:GetFeatureInfo>
+                <wms:Format>text/xml</wms:Format>
+                <wms:Format>text/plain</wms:Format>
+                <wms:Format>text/html</wms:Format>
+                <wms:DCPType>
+                    <wms:HTTP>
+                        <wms:Get>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Get>
+                        <wms:Post>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Post>
+                    </wms:HTTP>
+                </wms:DCPType>
+            </wms:GetFeatureInfo>
+            <sld:DescribeLayer>
+                <wms:Format>text/xml</wms:Format>
+                <wms:DCPType>
+                    <wms:HTTP>
+                        <wms:Get>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Get>
+                        <wms:Post>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Post>
+                    </wms:HTTP>
+                </wms:DCPType>
+            </sld:DescribeLayer>
+            <sld:GetLegendGraphic>
+                <wms:Format>image/png</wms:Format>
+                <wms:Format>image/jpeg</wms:Format>
+                <wms:Format>image/gif</wms:Format>
+                <wms:Format>image/tiff</wms:Format>
+                <wms:DCPType>
+                    <wms:HTTP>
+                        <wms:Get>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Get>
+                        <wms:Post>
+                            <wms:OnlineResource xlink:type="simple" xlink:href="http://mockserver.com/wms?SERVICE=WMS&amp;"/>
+                        </wms:Post>
+                    </wms:HTTP>
+                </wms:DCPType>
+            </sld:GetLegendGraphic>
+        </wms:Request>
+        <wms:Exception>
+            <wms:Format>XML</wms:Format>
+        </wms:Exception>
+        <sld:UserDefinedSymbolization SupportSLD="1" UserLayer="1" UserStyle="1" InlineFeature="1" RemoteWCS="1"/>
+        <wms:Layer>
+            <wms:Title>Mock Base Layer</wms:Title>
+            <wms:Abstract>description</wms:Abstract>
+            <wms:CRS>EPSG:4326</wms:CRS>
+            <wms:CRS>CRS:84</wms:CRS>
+            <wms:CRS>EPSG:3395</wms:CRS>
+            <wms:CRS>EPSG:27571</wms:CRS>
+            <wms:CRS>EPSG:27572</wms:CRS>
+            <wms:CRS>EPSG:27573</wms:CRS>
+            <wms:CRS>EPSG:27574</wms:CRS>
+            <wms:EX_GeographicBoundingBox>
+                <wms:westBoundLongitude>-180.0</wms:westBoundLongitude>
+                <wms:eastBoundLongitude>180.0</wms:eastBoundLongitude>
+                <wms:southBoundLatitude>-90.0</wms:southBoundLatitude>
+                <wms:northBoundLatitude>90.0</wms:northBoundLatitude>
+            </wms:EX_GeographicBoundingBox>
+            
+            <wms:Layer queryable="1">
+                <wms:Name>layer4D</wms:Name>
+                <wms:Title>layer4D</wms:Title>
+                <wms:Abstract></wms:Abstract>
+                <wms:KeywordList>
+                    <wms:Keyword></wms:Keyword>
+                </wms:KeywordList>
+                <wms:CRS>EPSG:4326</wms:CRS>
+                <wms:CRS>CRS:84</wms:CRS>
+                <wms:CRS>EPSG:3395</wms:CRS>
+                <wms:CRS>EPSG:27571</wms:CRS>
+                <wms:CRS>EPSG:27572</wms:CRS>
+                <wms:CRS>EPSG:27573</wms:CRS>
+                <wms:CRS>EPSG:27574</wms:CRS>
+                <wms:EX_GeographicBoundingBox>
+                    <wms:westBoundLongitude>-179.99999999999784</wms:westBoundLongitude>
+                    <wms:eastBoundLongitude>180.00000000000225</wms:eastBoundLongitude>
+                    <wms:southBoundLatitude>-77.01047999972037</wms:southBoundLatitude>
+                    <wms:northBoundLatitude>77.01048000000112</wms:northBoundLatitude>
+                </wms:EX_GeographicBoundingBox>
+                <wms:BoundingBox CRS="EPSG:4326" minx="-179.99999999999784" miny="-77.01047999972037" maxx="180.00000000000225" maxy="77.01048000000112" resx="0.0" resy="0.0"/>
+                <wms:Dimension name="time" units="ISO8601" default="2007-06-20T12:00:00Z">2007-06-06T12:00:00Z/2007-06-20T12:00:00Z/P1W</wms:Dimension>
+                <wms:Dimension name="elevation" units="EPSG:5030" default="5.0">5.0,10.0,20.0,30.0,40.0,50.0,60.0,80.0,100.0,120.0,140.0,160.0,180.0,200.0,220.0,240.0,260.0,280.0,300.0,320.0,360.0,400.0,440.0,480.0,520.0,560.0,600.0,640.0,680.0,720.0,760.0,800.0,840.0,880.0,920.0,960.0,1000.0,1040.0,1080.0,1120.0,1160.0,1200.0,1240.0,1280.0,1320.0,1360.0,1400.0,1440.0,1480.0,1520.0,1560.0,1600.0,1650.0,1700.0,1750.0,1800.0,1850.0,1900.0,1950.0</wms:Dimension>
+                <wms:Dimension name="dim_range" units="Cel" default="-3.0,40.0">-3.0,40.0</wms:Dimension>
+            </wms:Layer>
+            
+        </wms:Layer>
+    </wms:Capability>
+</wms:WMS_Capabilities>
