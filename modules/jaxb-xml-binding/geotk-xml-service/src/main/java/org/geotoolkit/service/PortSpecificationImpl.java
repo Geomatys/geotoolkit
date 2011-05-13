@@ -7,6 +7,7 @@ import java.net.URL;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.service.PortSpecification;
 
@@ -37,6 +38,7 @@ import org.opengis.service.PortSpecification;
     "binding",
     "address"
 })
+@XmlRootElement(name="SV_PortSpecification")
 public class PortSpecificationImpl implements PortSpecification {
 
     @XmlElement(required = true)

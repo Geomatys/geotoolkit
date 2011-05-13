@@ -9,6 +9,7 @@ import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.service.Operation;
 import org.opengis.service.OperationChain;
@@ -41,6 +42,7 @@ import org.opengis.service.OperationChain;
     "description",
     "operation"
 })
+@XmlRootElement(name="SV_OperationChain")
 public class OperationChainImpl implements OperationChain {
 
     private String name;

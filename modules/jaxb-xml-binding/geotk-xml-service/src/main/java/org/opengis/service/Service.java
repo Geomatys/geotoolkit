@@ -25,7 +25,7 @@ import static org.opengis.annotation.Specification.*;
  * @module pending
  * * @since GeoAPI 2.1
  */
-//@UML(identifier="SV_Service", specification=ISO_19119)
+@UML(identifier="SV_Service", specification=UNSPECIFIED)
 public interface Service {
 
     /**

@@ -26,6 +26,7 @@ import static org.opengis.annotation.Specification.*;
  * @author Guilhem Legal 
  * @module pending
  */
+@UML(identifier="SV_DCPList", specification=UNSPECIFIED)
 public class DCPList extends CodeList<DCPList> {
 
    /**

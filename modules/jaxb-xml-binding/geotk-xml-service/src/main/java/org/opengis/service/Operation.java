@@ -25,7 +25,7 @@ import static org.opengis.annotation.Specification.*;
  * 
  * @module pending
  */
-//@UML(identifier="SV_Operation", specification=ISO_19119)
+@UML(identifier="SV_Operation", specification=UNSPECIFIED)
 public interface Operation {
     
     /**

@@ -22,7 +22,7 @@ import static org.opengis.annotation.Specification.*;
  * @author Guilhem Legal
  * 
  */
-//@UML(identifier="SV_ParameterDirection", specification=ISO_19119)
+@UML(identifier="SV_ParameterDirection", specification=UNSPECIFIED)
 public enum ParameterDirection {
 
     /**

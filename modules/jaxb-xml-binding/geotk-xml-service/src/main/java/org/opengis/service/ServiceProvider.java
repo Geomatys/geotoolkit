@@ -28,7 +28,7 @@ import static org.opengis.annotation.Specification.*;
  * @since GeoAPI 2.1
  * @Deprecated deleted in amd.1:2008  
  */
-//@UML(identifier="SV_ServiceProvider", specification=ISO_19119)
+@UML(identifier="SV_ServiceProvider", specification=UNSPECIFIED)
 @Deprecated
 public interface ServiceProvider {
 

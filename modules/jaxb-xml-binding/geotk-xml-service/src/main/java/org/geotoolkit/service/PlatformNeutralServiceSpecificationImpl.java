@@ -4,6 +4,7 @@
 package org.geotoolkit.service;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.service.PlatformNeutralServiceSpecification;
@@ -39,6 +40,7 @@ import org.opengis.service.ServiceType;
 @XmlSeeAlso({
     PlatformSpecificServiceSpecificationImpl.class
 })
+@XmlRootElement(name="SV_PlatformNeutralServiceSpecification")
 public class PlatformNeutralServiceSpecificationImpl extends ServiceSpecificationImpl implements PlatformNeutralServiceSpecification {
 
     private ServiceType serviceType;

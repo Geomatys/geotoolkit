@@ -3,6 +3,7 @@
 package org.geotoolkit.service;
 
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.service.CoupledResource;
 import org.opengis.util.ScopedName;
@@ -35,6 +36,7 @@ import org.opengis.util.ScopedName;
     "identifier",
     "scopedName"
 })
+@XmlRootElement(name="SV_CoupledResource")
 public class CoupledResourceImpl implements CoupledResource {
 
     private String operationName;

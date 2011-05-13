@@ -25,7 +25,7 @@ import static org.opengis.annotation.Specification.*;
  * 
  * @module pending
  */
-//@UML(identifier="SV_Port", specification=ISO_19119)
+@UML(identifier="SV_Port", specification=UNSPECIFIED)
 public interface Port {
     
     //@UML(identifier="theSV_interface", obligation=OPTIONAL, specification=ISO_19119)

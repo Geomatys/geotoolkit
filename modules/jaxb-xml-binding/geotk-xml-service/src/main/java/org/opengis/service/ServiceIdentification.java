@@ -30,7 +30,7 @@ import static org.opengis.annotation.Specification.*;
  * 
  * @module pending
  */
-//@UML(identifier="SV_ServiceIdentification", specification=ISO_19119)
+@UML(identifier="SV_ServiceIdentification", specification=UNSPECIFIED)
 public interface ServiceIdentification extends Identification {
     
     /**

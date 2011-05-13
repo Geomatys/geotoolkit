@@ -22,7 +22,7 @@ import static org.opengis.annotation.Specification.*;
  * @author Guilhem Legal
  * @module pending
  */
-//@UML(identifier="SV_CoupledResource", specification=ISO_19119)
+@UML(identifier="SV_CoupledResource", specification=UNSPECIFIED)
 public interface CoupledResource {
     
     /**

@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.service.Interface;
 import org.opengis.service.Operation;
@@ -40,6 +41,7 @@ import org.opengis.util.TypeName;
     "theSVPort",
     "operation"
 })
+@XmlRootElement(name="SV_Interface")
 public class InterfaceImpl implements Interface {
 
     private TypeName typeName;

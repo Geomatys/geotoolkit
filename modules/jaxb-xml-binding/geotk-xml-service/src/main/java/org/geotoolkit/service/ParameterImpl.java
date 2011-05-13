@@ -4,6 +4,7 @@ package org.geotoolkit.service;
 
 import org.opengis.service.ParameterDirection;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.service.Parameter;
 import org.opengis.util.MemberName;
@@ -43,6 +44,7 @@ import org.opengis.util.TypeName;
     "repeatability",
     "valueType"
 })
+@XmlRootElement(name="SV_Parameter")
 public class ParameterImpl implements Parameter {
 
     

@@ -11,7 +11,7 @@ import static org.opengis.annotation.Obligation.*;
 import static org.opengis.annotation.Specification.*;
 
 
-//@UML(identifier="SV_CouplingType", specification=ISO_19119)
+@UML(identifier="SV_CouplingType", specification=UNSPECIFIED)
 public class CouplingType  extends CodeList<CouplingType> {
     
     /**

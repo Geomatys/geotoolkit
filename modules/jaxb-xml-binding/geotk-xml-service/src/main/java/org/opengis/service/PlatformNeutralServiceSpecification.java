@@ -24,7 +24,7 @@ import static org.opengis.annotation.Specification.*;
  * @module pending
  * * @since GeoAPI 2.1
  */
-//@UML(identifier="SV_PlatformNeutralServiceSpecification", specification=ISO_19119)
+@UML(identifier="SV_PlatformNeutralServiceSpecification", specification=UNSPECIFIED)
 public interface PlatformNeutralServiceSpecification extends ServiceSpecification {
     
     /**

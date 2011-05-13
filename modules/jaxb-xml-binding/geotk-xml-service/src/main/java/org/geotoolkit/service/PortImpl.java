@@ -7,6 +7,7 @@ import java.util.Collection;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import org.opengis.service.Interface;
 import org.opengis.service.Port;
@@ -36,6 +37,7 @@ import org.opengis.service.Port;
 @XmlType(name = "SV_Port_Type", propOrder = {
     "theSVInterface"
 })
+@XmlRootElement(name="SV_Port")
 public class PortImpl implements Port {
 
     @XmlElement(name = "theSV_Interface")

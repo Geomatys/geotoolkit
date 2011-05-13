@@ -24,7 +24,7 @@ import static org.opengis.annotation.Specification.*;
  * 
  * @module pending
  */
-//@UML(identifier="SV_OperationChainMetadata", specification=ISO_19119)
+@UML(identifier="SV_OperationChainMetadata", specification=UNSPECIFIED)
 public interface OperationChainMetadata {
     
     /**
