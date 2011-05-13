@@ -101,6 +101,7 @@
     <module>geotk-client-wcs</module>
     <module>geotk-client-wfs</module>
     <module>geotk-client-wms</module>
+    <module>geotk-client-ncwms</module>
   </modules>
 
 </project>
