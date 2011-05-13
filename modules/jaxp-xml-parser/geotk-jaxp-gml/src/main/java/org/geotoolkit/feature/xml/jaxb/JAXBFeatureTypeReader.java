@@ -188,7 +188,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     }
 
 
-    private List<FeatureType> getAllFeatureTypeFromSchema(final Schema schema) throws SchemaException {
+    public List<FeatureType> getAllFeatureTypeFromSchema(final Schema schema) throws SchemaException {
         final List<FeatureType> result = new ArrayList<FeatureType>();
         for (TopLevelElement element : schema.getElements()) {
             final QName typeName = element.getType();
@@ -200,7 +200,7 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
     }
     
     
-    private FeatureType getFeatureTypeFromSchema(final Schema schema, final String name) throws SchemaException {
+    public FeatureType getFeatureTypeFromSchema(final Schema schema, final String name) throws SchemaException {
         final TopLevelElement element = schema.getElementByName(name);
         if (element != null) {
             final QName typeName = element.getType();
