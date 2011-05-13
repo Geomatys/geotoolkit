@@ -26,7 +26,7 @@ import com.sun.tools.doclets.formats.html.ConfigurationImpl;
 /**
  * The <code>@preformat</code> tag for inserting a pre-formatted code in a javadoc comment.
  * The first word after the tag must be the format name ("java", "math", "wkt" or "text").
- * The remainding is the text to format.
+ * The remaining is the text to format.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @since 3.00
@@ -226,7 +226,7 @@ all:    while (tk.hasMoreTokens()) {
                     line = line.replace(SPECIAL_CHARS[i++], SPECIAL_CHARS[i++]);
                 }
                 if (java) {
-                    color(line, buffer);
+                    colorJava(line, buffer);
                     continue;
                 }
             }
@@ -254,9 +254,9 @@ all:    while (tk.hasMoreTokens()) {
     })));
 
     /**
-     * Adds syntatic coloration for the given line.
+     * Adds syntactic coloration for the given line.
      */
-    private void color(final String line, final StringBuilder buffer) {
+    private static void colorJava(final String line, final StringBuilder buffer) {
         char quote = 0; // The kind of quoting in progress (" or ').
         final int length = line.length();
         for (int i=0; i<length; i++) {

@@ -182,11 +182,13 @@ public final class XML extends Static {
      * values: "{@code language}", "{@code country}".
      *
      * {@section Example}
-     * INSPIRE compliant language code shall be formatted like below:
+     * INSPIRE compliant language code shall be formatted like below (formatting may vary):
      *
      * {@preformat xml
      *   <gmd:language>
-     *     <gmd:LanguageCode codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/ML_gmxCodelists.xml#LanguageCode" codeListValue="fra">French</gmd:LanguageCode>
+     *     <gmd:LanguageCode
+     *         codeList="http://schemas.opengis.net/iso/19139/20070417/resources/Codelist/ML_gmxCodelists.xml#LanguageCode"
+     *         codeListValue="fra">French</gmd:LanguageCode>
      *   </gmd:language>
      * }
      *

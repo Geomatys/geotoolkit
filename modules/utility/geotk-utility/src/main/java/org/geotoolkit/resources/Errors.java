@@ -395,6 +395,11 @@ public final class Errors extends IndexedResourceBundle {
         public static final int FILE_HAS_TOO_MANY_DATA = 66;
 
         /**
+         * Attribute “{0}” is not allowed for an object of type ‘{1}’.
+         */
+        public static final int FORBIDDEN_ATTRIBUTE_$2 = 259;
+
+        /**
          * Geotoolkit.org extension required for “{0}” operation.
          */
         public static final int GEOTOOLKIT_EXTENSION_REQUIRED_$1 = 67;
@@ -606,6 +611,11 @@ public final class Errors extends IndexedResourceBundle {
          * Malformed envelope
          */
         public static final int MALFORMED_ENVELOPE = 107;
+
+        /**
+         * Attribute “{0}” is mandatory for an object of type ‘{1}’.
+         */
+        public static final int MANDATORY_ATTRIBUTE_$2 = 258;
 
         /**
          * All rows doesn’t have the same length.

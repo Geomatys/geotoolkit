@@ -92,6 +92,7 @@ public final class XLinkTest {
             fail("Should not be allowed to set the label.");
         } catch (IllegalStateException e) {
             // This is the expected exception. The message should contains the type name.
+            assertTrue(e.getMessage().contains("label"));
             assertTrue(e.getMessage().contains("simple"));
         }
         assertEquals("XLink[type=\"simple\", href=\"org:geotoolkit:href\"]", link.toString());
@@ -100,7 +101,7 @@ public final class XLinkTest {
             fail("Should not be allowed to set a type that does not include HREF.");
         } catch (IllegalStateException e) {
             // This is the expected exception. The message should contains the type name.
-            assertTrue(e.getMessage().contains("simple"));
+            assertTrue(e.getMessage().contains("extended"));
         }
         assertEquals("XLink[type=\"simple\", href=\"org:geotoolkit:href\"]", link.toString());
         /*

@@ -20,6 +20,7 @@ package org.geotoolkit.internal.jaxb.gml;
 import javax.xml.bind.annotation.XmlID;
 import javax.xml.bind.annotation.XmlAttribute;
 import org.geotoolkit.internal.jaxb.UUIDs;
+import org.geotoolkit.xml.Namespaces;
 
 
 /**
@@ -66,7 +67,7 @@ public abstract class GMLAdapter {
      * @see org.geotoolkit.internal.jaxb.gco.PropertyType#uuid
      */
     @XmlID
-    @XmlAttribute(required = true)
+    @XmlAttribute(required = true, namespace = Namespaces.GML)
     private String id;
 
     /**
