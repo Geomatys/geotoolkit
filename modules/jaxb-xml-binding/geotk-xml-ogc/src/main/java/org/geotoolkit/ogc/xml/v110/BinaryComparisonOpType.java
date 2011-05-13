@@ -243,7 +243,7 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
                 QName content = (QName) value;
                 if (content.getNamespaceURI() != null && !"".equals(content.getNamespaceURI())) {
                     return content.getNamespaceURI() + ':' + content.getLocalPart();
-                }
+            }
                 return content.getLocalPart();
             }
             if (value instanceof PropertyNameType) {
@@ -255,6 +255,10 @@ public class BinaryComparisonOpType extends ComparisonOpsType  implements Binary
 
     public void setPropertyName(final String propertyName) {
         getExpression().add(FACTORY.createPropertyName(new PropertyNameType(propertyName)));
+    }
+    
+    public void setPropertyName(final PropertyNameType propertyName) {
+        getExpression().add(FACTORY.createPropertyName(propertyName));
     }
 
     @Override
