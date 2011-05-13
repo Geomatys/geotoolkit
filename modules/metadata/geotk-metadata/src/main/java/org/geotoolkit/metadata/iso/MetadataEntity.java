@@ -121,9 +121,19 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
     }
 
     /**
-     * Returns the XML {@code xlink} attributes associated to this metadata object.
-     * This method returns {@code null} if there is no {@code xlink} attributes for
-     * this metadata object.
+     * Returns the XML {@code xlink} attributes associated to this identified object,
+     * or {@code null} if none. If non-null, the {@code xlink} attributes are marshalled
+     * in the outer property element, as in the example below:
+     *
+     * {@preformat xml
+     *   <gmd:CI_Citation>
+     *     <gmd:series xlink:href="http://myReference">
+     *       <gmd:CI_Series>
+     *         <gmd:name>...</gmd:name>
+     *       </gmd:CI_Series>
+     *     </gmd:series>
+     *   </gmd:CI_Citation>
+     * }
      *
      * @return XML {@code xlink} attributes, or {@code null} if none.
      *

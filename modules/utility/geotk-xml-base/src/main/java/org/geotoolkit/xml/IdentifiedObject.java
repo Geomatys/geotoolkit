@@ -54,7 +54,7 @@ import org.opengis.metadata.citation.Citation;
  * Note that GeoAPI defines a similar interface, namely {@link org.opengis.referencing.IdentifiedObject}.
  * However that GeoAPI interface is not of general use, since it contains methods like
  * {@link org.opengis.referencing.IdentifiedObject#toWKT() toWKT()} that are specific to referencing
- * or geometric objects. In addition, the GeiAPI interface defines some attributes
+ * or geometric objects. In addition, the GeoAPI interface defines some attributes
  * ({@linkplain org.opengis.referencing.IdentifiedObject#getName() name},
  * {@linkplain org.opengis.referencing.IdentifiedObject#getAlias() alias},
  * {@linkplain org.opengis.referencing.IdentifiedObject#getRemarks() remarks}) that are not needed
@@ -63,7 +63,7 @@ import org.opengis.metadata.citation.Citation;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
- * @see org.geotoolkit.metadata.iso.citation.Citations
+ * @see org.geotoolkit.metadata.iso.MetadataEntity
  *
  * @since 3.18
  * @module
@@ -78,6 +78,9 @@ public interface IdentifiedObject {
      * <cite>International Standard Book Number</cite> (ISBN), <cite>International Standard
      * Serial Number</cite> (ISSN), <cite>Universally Unique Identifier</cite>
      * ({@linkplain java.util.UUID}) or XML {@linkplain IdentifierSpace#ID ID} attribute.
+     * <p>
+     * Note that XML ID attribute are actually unique only in the scope of the XML document
+     * being processed.
      *
      * @return All identifiers associated to this object, or an empty collection if none.
      *
@@ -88,21 +91,24 @@ public interface IdentifiedObject {
     Collection<? extends Identifier> getIdentifiers();
 
     /**
-     * A map view of some or all {@linkplain #getIdentifiers() identifiers}. Each
-     * {@linkplain java.util.Map.Entry map entry} is associated to an identifier element, where the
+     * A map view of some or all {@linkplain #getIdentifiers() identifiers}.
+     * Each {@linkplain java.util.Map.Entry map entry} is associated to an
+     * element from the identifier collection, where
      * {@linkplain java.util.Map.Entry#getKey() key} is the {@linkplain Identifier#getAuthority()
      * identifier authority} and the {@linkplain java.util.Map.Entry#getValue() value} is the
-     * {@linkplain Identifier#getCode() identifier code}.
-     * <p>
-     * This view may be incomplete, because the map interface allows only one entry per authority.
-     * If the {@linkplain #getIdentifiers() identifiers collection} contains many identifiers for
-     * the same authority, then the element which is view through the {@code Map} interface is the
-     * first occurrence.
-     * <p>
-     * This view may also contains more elements than the {@linkplain #getIdentifiers() identifiers
-     * collection}. For example the {@link org.opengis.metadata.citation.Citation} interface defines
-     * separated attributes for ISBN, ISSN and other identifiers. This map view may choose to unify
-     * all those attributes in a single view.
+     * {@linkplain Identifier#getCode() identifier code}. There is usually a one-to-one relationship
+     * between the map entries and the identifier elements, but not always:
+     * <ul>
+     *   <li><p>The map view may contain less entries, because the map interface allows only one
+     *   entry per authority. If the {@linkplain #getIdentifiers() identifiers collection} contains
+     *   many identifiers for the same authority, then only the first occurrence is visible through
+     *   this {@code Map} view.</p></li>
+     *
+     *   <li><p>The map view may also contain more entries than the {@linkplain #getIdentifiers()
+     *   identifiers collection}. For example the {@link org.opengis.metadata.citation.Citation}
+     *   interface defines separated attributes for ISBN, ISSN and other identifiers. This map
+     *   view may choose to unify all those attributes in a single view.</p></li>
+     * </ul>
      *
      * @return The identifiers as a map of (<var>authority</var>, <var>code</var>) entries,
      *         or an empty map if none.
@@ -110,9 +116,10 @@ public interface IdentifiedObject {
     Map<Citation,String> getIdentifierMap();
 
     /**
-     * Returns the XML {@code xlink} attributes associated to this identified object.
-     * This method returns {@code null} if there is no {@code xlink} attributes for
-     * this metadata object.
+     * Returns the XML {@code xlink} attributes associated to this identified object,
+     * or {@code null} if none. The {@code xlink} attributes are often processed in a
+     * special way. See {@link org.geotoolkit.metadata.iso.MetadataEntity#getXLink()}
+     * for an example applicable to ISO 19139 document.
      *
      * @return XML {@code xlink} attributes, or {@code null} if none.
      */
