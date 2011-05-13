@@ -22,6 +22,7 @@ import java.io.Reader;
 import java.util.List;
 import javax.xml.bind.JAXBException;
 import org.opengis.feature.type.FeatureType;
+import org.w3c.dom.Node;
 
 /**
  *  An interface for feature type XML parsing.
@@ -57,6 +58,8 @@ public interface XmlFeatureTypeReader {
      * @return A Feature type or {@code null}
      */
     public List<FeatureType> read(Reader reader) throws JAXBException;
+    
+    public List<FeatureType> read(Node node) throws JAXBException;
 
     /**
      * Read a feature type from the specified XML  (XSD) reader.
@@ -84,4 +87,6 @@ public interface XmlFeatureTypeReader {
      * @return A Feature type or {@code null}
      */
     public FeatureType read(Reader reader, String name) throws JAXBException;
+    
+    public FeatureType read(Node node, String name) throws JAXBException;
 }

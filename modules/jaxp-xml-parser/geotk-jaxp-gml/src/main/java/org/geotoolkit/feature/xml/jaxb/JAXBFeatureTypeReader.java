@@ -41,7 +41,6 @@ import org.geotoolkit.xsd.xml.v2001.Element;
 import org.geotoolkit.xsd.xml.v2001.ExplicitGroup;
 import org.geotoolkit.xsd.xml.v2001.ExtensionType;
 import org.geotoolkit.xsd.xml.v2001.LocalSimpleType;
-import org.geotoolkit.xsd.xml.v2001.ObjectFactory;
 import org.geotoolkit.xsd.xml.v2001.Schema;
 import org.geotoolkit.xsd.xml.v2001.TopLevelComplexType;
 import org.geotoolkit.xsd.xml.v2001.TopLevelElement;
@@ -49,6 +48,7 @@ import org.geotoolkit.xsd.xml.v2001.XSDMarshallerPool;
 
 import org.opengis.feature.type.FeatureType;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
+import org.w3c.dom.Node;
 
 /**
  *
@@ -126,6 +126,26 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
             }
         }
     }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public List<FeatureType> read(final Node element) throws JAXBException {
+        builder.reset();
+        Unmarshaller unmarshaller = null;
+        try {
+            unmarshaller         = POOL.acquireUnmarshaller();
+            final Schema schema  = (Schema) unmarshaller.unmarshal(element);
+            return getAllFeatureTypeFromSchema(schema);
+        } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        } finally {
+            if (unmarshaller != null) {
+                POOL.release(unmarshaller);
+            }
+        }
+    }
 
      /**
      * {@inheritDoc }
@@ -177,6 +197,26 @@ public class JAXBFeatureTypeReader implements XmlFeatureTypeReader {
         try {
             unmarshaller        = POOL.acquireUnmarshaller();
             final Schema schema = (Schema) unmarshaller.unmarshal(reader);
+            return getFeatureTypeFromSchema(schema, name);
+        } catch (SchemaException ex) {
+            throw new JAXBException(ex);
+        } finally {
+            if (unmarshaller != null) {
+                POOL.release(unmarshaller);
+            }
+        }
+    }
+    
+    /**
+     * {@inheritDoc }
+     */
+    @Override
+    public FeatureType read(final Node node, final String name) throws JAXBException {
+        builder.reset();
+        Unmarshaller unmarshaller = null;
+        try {
+            unmarshaller        = POOL.acquireUnmarshaller();
+            final Schema schema = (Schema) unmarshaller.unmarshal(node);
             return getFeatureTypeFromSchema(schema, name);
         } catch (SchemaException ex) {
             throw new JAXBException(ex);
