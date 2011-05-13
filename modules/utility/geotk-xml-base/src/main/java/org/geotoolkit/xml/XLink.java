@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlEnum;
 import javax.xml.bind.annotation.XmlEnumValue;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlTransient;
+import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 
@@ -94,6 +95,7 @@ import org.geotoolkit.resources.Errors;
  * @since 3.18 (derived from 2.5)
  * @module
  */
+@ThreadSafe
 @XmlTransient
 public class XLink implements Serializable {
     /**
@@ -350,7 +352,7 @@ public class XLink implements Serializable {
      * @return The type of link, or {@code null}.
      */
     @XmlAttribute(name = "type", namespace = Namespaces.XLINK, required = true)
-    public Type getType() {
+    public synchronized Type getType() {
         if (!Type.AUTO.equals(type)) {
             return type;
         }
@@ -382,13 +384,13 @@ public class XLink implements Serializable {
     }
 
     /**
-     * Sets the type of link. Any value different than {@link org.geotoolkit.xml.Xlink.Type#AUTO
+     * Sets the type of link. Any value different than {@link org.geotoolkit.xml.XLink.Type#AUTO
      * Type.AUTO} (including {@code null}) will overwrite the value inferred automatically by
      * {@link #getType()}. A {@code AUTO} value will enable automatic type detection.
      *
      * @param type The new type of link, or {@code null} if none.
      */
-    public void setType(final Type type) {
+    public synchronized void setType(final Type type) {
         canWrite(0x1, "type", "type"); // We want a non-null value in all cases.
         if (type != null && (fieldMask() & ~type.fieldMask) != 0) {
             throw new IllegalStateException(Errors.format(Errors.Keys.INCONSISTENT_PROPERTY_$1, type.identifier()));
@@ -435,7 +437,7 @@ public class XLink implements Serializable {
      * @category locator
      */
     @XmlAttribute(name = "href", namespace = Namespaces.XLINK)
-    public URI getHRef() {
+    public synchronized URI getHRef() {
         return href;
     }
 
@@ -449,7 +451,7 @@ public class XLink implements Serializable {
      *
      * @category locator
      */
-    public void setHRef(final URI href) throws IllegalStateException {
+    public synchronized void setHRef(final URI href) throws IllegalStateException {
         canWrite(0x2, "href", href);
         this.href = href;
     }
@@ -461,7 +463,7 @@ public class XLink implements Serializable {
      * @category semantic
      */
     @XmlAttribute(name = "role", namespace = Namespaces.XLINK)
-    public URI getRole() {
+    public synchronized URI getRole() {
         return role;
     }
 
@@ -475,7 +477,7 @@ public class XLink implements Serializable {
      *
      * @category semantic
      */
-    public void setRole(final URI role) throws IllegalStateException {
+    public synchronized void setRole(final URI role) throws IllegalStateException {
         canWrite(0x4, "role", role);
         this.role = role;
     }
@@ -487,7 +489,7 @@ public class XLink implements Serializable {
      * @category semantic
      */
     @XmlAttribute(name = "arcrole", namespace = Namespaces.XLINK)
-    public URI getArcRole() {
+    public synchronized URI getArcRole() {
         return arcrole;
     }
 
@@ -501,7 +503,7 @@ public class XLink implements Serializable {
      *
      * @category semantic
      */
-    public void setArcRole(final URI arcrole) throws IllegalStateException {
+    public synchronized void setArcRole(final URI arcrole) throws IllegalStateException {
         canWrite(0x8, "arcrole", arcrole);
         this.arcrole = arcrole;
     }
@@ -513,7 +515,7 @@ public class XLink implements Serializable {
      * @category semantic
      */
     @XmlAttribute(name = "title", namespace = Namespaces.XLINK)
-    public InternationalString getTitle() {
+    public synchronized InternationalString getTitle() {
         return title;
     }
 
@@ -528,7 +530,7 @@ public class XLink implements Serializable {
      *
      * @category semantic
      */
-    public void setTitle(final InternationalString title) throws IllegalStateException {
+    public synchronized void setTitle(final InternationalString title) throws IllegalStateException {
         canWrite(0x10, "title", title);
         this.title = title;
     }
@@ -589,7 +591,7 @@ public class XLink implements Serializable {
      * @category behavior
      */
     @XmlAttribute(name = "show", namespace = Namespaces.XLINK)
-    public Show getShow() {
+    public synchronized Show getShow() {
         return show;
     }
 
@@ -603,7 +605,7 @@ public class XLink implements Serializable {
      *
      * @category behavior
      */
-    public void setShow(final Show show) throws IllegalStateException {
+    public synchronized void setShow(final Show show) throws IllegalStateException {
         canWrite(0x20, "show", show);
         this.show = show;
     }
@@ -660,7 +662,7 @@ public class XLink implements Serializable {
      * @category behavior
      */
     @XmlAttribute(name = "actuate", namespace = Namespaces.XLINK)
-    public Actuate getActuate() {
+    public synchronized Actuate getActuate() {
         return actuate;
     }
 
@@ -675,7 +677,7 @@ public class XLink implements Serializable {
      *
      * @category behavior
      */
-    public void setActuate(final Actuate actuate) throws IllegalStateException {
+    public synchronized void setActuate(final Actuate actuate) throws IllegalStateException {
         canWrite(0x40, "actuate", actuate);
         this.actuate = actuate;
     }
@@ -686,7 +688,7 @@ public class XLink implements Serializable {
      * @return An identification of the target of a {@code from} or {@code to} attribute, or {@code null}.
      * @category traversal
      */
-    public String getLabel() {
+    public synchronized String getLabel() {
         return label;
     }
 
@@ -700,7 +702,7 @@ public class XLink implements Serializable {
      *
      * @category traversal
      */
-    public void setLabel(final String label) throws IllegalStateException {
+    public synchronized void setLabel(final String label) throws IllegalStateException {
         canWrite(0x80, "label", label);
         this.label = label;
     }
@@ -712,7 +714,7 @@ public class XLink implements Serializable {
      * @return The starting resource, or {@code null}.
      * @category traversal
      */
-    public String getFrom() {
+    public synchronized String getFrom() {
         return from;
     }
 
@@ -727,7 +729,7 @@ public class XLink implements Serializable {
      *
      * @category traversal
      */
-    public void setFrom(final String from) throws IllegalStateException {
+    public synchronized void setFrom(final String from) throws IllegalStateException {
         canWrite(0x100, "from", from);
         this.from = from;
     }
@@ -739,7 +741,7 @@ public class XLink implements Serializable {
      * @return The ending resource, or {@code null}.
      * @category traversal
      */
-    public String getTo() {
+    public synchronized String getTo() {
         return to;
     }
 
@@ -754,7 +756,7 @@ public class XLink implements Serializable {
      *
      * @category traversal
      */
-    public void setTo(final String to) throws IllegalStateException {
+    public synchronized void setTo(final String to) throws IllegalStateException {
         canWrite(0x200, "to", to);
         this.to = to;
     }
@@ -762,10 +764,12 @@ public class XLink implements Serializable {
     /**
      * Marks this {@code xlink} as unmodifiable. After this method call, any call to a setter
      * method will throw an {@link UnsupportedOperationException}.
+     * <p>
+     * After the first call to this method, any subsequent calls have no effect.
      *
      * @todo We have a hole, since the {@link #getTitle() title} attribute could be modifiable...
      */
-    public void freeze() {
+    public synchronized void freeze() {
         if (hashCode == 0) {
             hashCode = hash();
         }
@@ -777,12 +781,19 @@ public class XLink implements Serializable {
      * @param object The object to compare with this XLink.
      */
     @Override
-    public boolean equals(final Object object) {
+    public synchronized boolean equals(final Object object) {
         if (object == this) {
             return true;
         }
         if (object != null && object.getClass().equals(getClass())) {
             final XLink that = (XLink) object;
+            final int h0 = hashCode;
+            if (h0 != 0) {
+                final int h1 = that.hashCode;
+                if (h1 != 0 && h0 != h1) {
+                    return false; // Slight optimization using the pre-computed hash code values.
+                }
+            }
             return Utilities.equals(this.type,    that.type)    &&
                    Utilities.equals(this.href,    that.href)    &&
                    Utilities.equals(this.role,    that.role)    &&
@@ -801,7 +812,7 @@ public class XLink implements Serializable {
      * Returns a hash code value for this XLink.
      */
     @Override
-    public int hashCode() {
+    public synchronized int hashCode() {
         int hash = hashCode;
         if (hash == 0) {
             hash = hash();
@@ -838,7 +849,7 @@ public class XLink implements Serializable {
      * }
      */
     @Override
-    public String toString() {
+    public synchronized String toString() {
         final StringBuilder buffer = new StringBuilder(Classes.getShortClassName(this)).append('[');
         append(buffer, "type",    getType());
         append(buffer, "href",    getHRef());

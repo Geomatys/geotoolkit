@@ -18,16 +18,16 @@
 package org.geotoolkit.internal.jaxb.gco;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-
-import org.opengis.util.InternationalString;
 
 import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.internal.jaxb.UUIDs;
+import org.geotoolkit.internal.jaxb.MarshalContext;
+import org.geotoolkit.util.SimpleInternationalString;
 
 
 /**
@@ -118,7 +118,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     /**
      * Returns the object reference, or {@code null} if none.
      */
-    private XLink reference() {
+    final XLink reference() {
         final Object ref = reference;
         return (ref instanceof XLink) ? (XLink) ref : null;
     }
@@ -213,6 +213,20 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
     }
 
     /**
+     * Returns the given URI as a string, or returns {@code null} if the given argument is null.
+     */
+    private static String toString(final Object uri) {
+        return (uri != null) ? uri.toString() : null;
+    }
+
+    /**
+     * Parses the given URI, or returns {@code null} if the given argument is null.
+     */
+    private static URI toURI(final String uri) throws URISyntaxException {
+        return (uri != null) ? MarshalContext.converters().toURI(uri) : null;
+    }
+
+    /**
      * A URN to an external resources, or to an other part of a XML document, or an identifier.
      * The {@code idref} attribute allows an XML element to refer to another XML element that
      * has a corresponding {@code id} attribute.
@@ -222,20 +236,21 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "href", namespace = Namespaces.XLINK)
-    public final URI getHRef() {
+    public final String getHRef() {
         final XLink reference = reference();
-        return (reference != null) ? reference.getHRef() : null;
+        return (reference != null) ? toString(reference.getHRef()) : null;
     }
 
     /**
      * Sets the {@code href} attribute value.
      *
      * @param href The new attribute value.
+     * @throws URISyntaxException If th given string can not be parsed as a URI.
      * @category xlink
      * @since 3.18
      */
-    public final void setHRef(final URI href) {
-        referenceNotNull().setHRef(href);
+    public final void setHRef(final String href) throws URISyntaxException {
+        referenceNotNull().setHRef(toURI(href));
     }
 
     /**
@@ -246,20 +261,21 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "role", namespace = Namespaces.XLINK)
-    public final URI getRole() {
+    public final String getRole() {
         final XLink reference = reference();
-        return (reference != null) ? reference.getRole() : null;
+        return (reference != null) ? toString(reference.getRole()) : null;
     }
 
     /**
      * Sets the {@code role} attribute value.
      *
      * @param role The new attribute value.
+     * @throws URISyntaxException If th given string can not be parsed as a URI.
      * @category xlink
      * @since 3.18
      */
-    public final void setRole(final URI role) {
-        referenceNotNull().setRole(role);
+    public final void setRole(final String role) throws URISyntaxException {
+        referenceNotNull().setRole(toURI(role));
     }
 
     /**
@@ -270,20 +286,21 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "arcrole", namespace = Namespaces.XLINK)
-    public final URI getArcRole() {
+    public final String getArcRole() {
         final XLink reference = reference();
-        return (reference != null) ? reference.getArcRole() : null;
+        return (reference != null) ? toString(reference.getArcRole()) : null;
     }
 
     /**
      * Sets the {@code arcrole} attribute value.
      *
      * @param arcrole The new attribute value.
+     * @throws URISyntaxException If th given string can not be parsed as a URI.
      * @category xlink
      * @since 3.18
      */
-    public final void setArcRole(final URI arcrole) {
-        referenceNotNull().setArcRole(arcrole);
+    public final void setArcRole(final String arcrole) throws URISyntaxException {
+        referenceNotNull().setArcRole(toURI(arcrole));
     }
 
     /**
@@ -295,10 +312,9 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     @XmlAttribute(name = "title", namespace = Namespaces.XLINK)
-    @XmlJavaTypeAdapter(InternationalStringConverter.class)
-    public final InternationalString getTitle() {
+    public final String getTitle() {
         final XLink reference = reference();
-        return (reference != null) ? reference.getTitle() : null;
+        return (reference != null) ? toString(reference.getTitle()) : null;
     }
 
     /**
@@ -308,8 +324,10 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @category xlink
      * @since 3.18
      */
-    public final void setTitle(final InternationalString title) {
-        referenceNotNull().setTitle(title);
+    public final void setTitle(final String title) {
+        if (title != null) {
+            referenceNotNull().setTitle(new SimpleInternationalString(title));
+        }
     }
 
     /**

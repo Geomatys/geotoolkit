@@ -82,7 +82,7 @@ public interface IdentifiedObject {
      * @return All identifiers associated to this object, or an empty collection if none.
      *
      * @see org.geotoolkit.metadata.iso.citation.DefaultCitation#getIdentifiers()
-     * @see org.geotoolkit.metadata.acquisition.DefaultObjective#getIdentifiers()
+     * @see org.geotoolkit.metadata.iso.acquisition.DefaultObjective#getIdentifiers()
      * @see org.geotoolkit.referencing.AbstractIdentifiedObject#getIdentifiers()
      */
     Collection<? extends Identifier> getIdentifiers();

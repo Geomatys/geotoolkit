@@ -98,7 +98,7 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      * @return All identifiers associated to this object, or an empty collection if none.
      *
      * @see org.geotoolkit.metadata.iso.citation.DefaultCitation#getIdentifiers()
-     * @see org.geotoolkit.metadata.acquisition.DefaultObjective#getIdentifiers()
+     * @see org.geotoolkit.metadata.iso.acquisition.DefaultObjective#getIdentifiers()
      *
      * @since 3.18
      */
@@ -148,5 +148,19 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
     public synchronized void setXLink(final XLink link) throws UnmodifiableMetadataException {
         checkWritePermission();
         xlink = link;
+    }
+
+    /**
+     * Declares this metadata and all its attributes (including {@linkplain XLink xlink})
+     * as unmodifiable. This method performs the work documented in the
+     * {@linkplain ModifiableMetadata#freeze() super-class}, and additionally
+     * {@linkplain XLink#freeze() freeze the xlink}.
+     */
+    @Override
+    public synchronized void freeze() {
+        super.freeze();
+        if (xlink != null) {
+            xlink.freeze();
+        }
     }
 }
