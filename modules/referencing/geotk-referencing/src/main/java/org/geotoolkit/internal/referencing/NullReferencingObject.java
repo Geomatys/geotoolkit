@@ -32,6 +32,7 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.metadata.extent.Extent;
 
+import org.geotoolkit.internal.EmptyObject;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
@@ -53,7 +54,7 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
 public final class NullReferencingObject implements GeocentricCRS, GeographicCRS, ProjectedCRS,
         DerivedCRS, CompoundCRS, VerticalCRS, TemporalCRS, EngineeringCRS, ImageCRS, UserDefinedCS,
         SphericalCS, EllipsoidalCS, CartesianCS, CylindricalCS, PolarCS, VerticalCS, TimeCS, LinearCS,
-        GeodeticDatum, VerticalDatum, TemporalDatum, EngineeringDatum, ImageDatum, Serializable
+        GeodeticDatum, VerticalDatum, TemporalDatum, EngineeringDatum, ImageDatum, EmptyObject, Serializable
 {
     /**
      * For cross-version compatibility.

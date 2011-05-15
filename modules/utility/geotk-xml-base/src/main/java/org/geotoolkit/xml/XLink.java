@@ -85,6 +85,11 @@ import org.geotoolkit.resources.Errors;
  *   <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>O</td><td>&nbsp;</td><td>&nbsp;</td>
  * </tr></table></blockquote>
  *
+ * When {@code xlink} attributes are found at unmarshalling time instead of an object definition,
+ * those attributes are given to the {@link ObjectLinker#resolve(Class, XLink)} method. Users can
+ * override that method in order to fetch an instance in some catalog for the given {@code xlink}
+ * values.
+ *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18

@@ -79,6 +79,9 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
      */
     protected MetadataEntity(final Object source) throws ClassCastException {
         super(source);
+        if (source instanceof IdentifiedObject) {
+            xlink = ((IdentifiedObject) source).getXLink();
+        }
     }
 
     /**

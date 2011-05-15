@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.GregorianCalendar;
+import org.geotoolkit.xml.ObjectLinker;
 import org.geotoolkit.xml.ObjectConverters;
 
 
@@ -57,6 +58,13 @@ public final class MarshalContext {
      * The object converters currently in use, or {@code null} for {@link ObjectConverters#DEFAULT}.
      */
     private ObjectConverters converters;
+
+    /**
+     * The object linker currently in use, or {@code null} for {@link ObjectLinker#DEFAULT}.
+     *
+     * @since 3.18
+     */
+    private ObjectLinker linker;
 
     /**
      * The base URL of ISO 19139 (or other standards) schemas. The valid values
@@ -116,12 +124,32 @@ public final class MarshalContext {
         final MarshalContext previous = this.previous;
         if (previous != null) {
             converters    = previous.converters;
+            linker        = previous.linker;
             schemas       = previous.schemas;
             locale        = previous.locale;
             timezone      = previous.timezone;
             bitMasks      = previous.bitMasks;
             isMarshalling = previous.isMarshalling;
         }
+    }
+
+    /**
+     * Returns the object linker in use for the current marshalling or unmarshalling process. If
+     * no linker were explicitely set, then this method returns {@link ObjectLinker#DEFAULT}.
+     *
+     * @return The current object linker (never null).
+     *
+     * @since 3.18
+     */
+    public static ObjectLinker linker() {
+        final MarshalContext current = CURRENT.get();
+        if (current != null) {
+            final ObjectLinker linker = current.linker;
+            if (linker != null) {
+                return linker;
+            }
+        }
+        return ObjectLinker.DEFAULT;
     }
 
     /**
@@ -325,17 +353,19 @@ public final class MarshalContext {
      * }
      *
      * @param  converters The converters in use.
+     * @param  linker     The linker in use.
      * @param  schemas    The schemas root URL, or {@code null} if none.
      * @param  locale     The locale, or {@code null} if unspecified.
      * @param  timezone   The timezone, or {@code null} if unspecified.
      * @param  bitMasks   A combination of {@link #SUBSTITUTE_LANGUAGE}, {@link #SUBSTITUTE_COUNTRY} or others.
      * @return The context on which to invoke {@link #finish()} when the (un)marshalling is finished.
      */
-    public static MarshalContext begin(final ObjectConverters converters,
+    public static MarshalContext begin(final ObjectConverters converters, final ObjectLinker linker,
             final Map<String,String> schemas, final Locale locale, final TimeZone timezone, final int bitMasks)
     {
         final MarshalContext current = new MarshalContext();
         current.converters = converters;
+        current.linker     = linker;
         current.schemas    = schemas; // NOSONAR: No clone, because this method is internal.
         current.locale     = locale;
         current.timezone   = timezone;

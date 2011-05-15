@@ -53,56 +53,6 @@ import org.geotoolkit.lang.Static;
  */
 public final class XML extends Static {
     /**
-     * Allows client code to control the behavior of the (un)marshalling process when an element
-     * can not be processed, or alter the element values. The value for this property shall be an
-     * instance of {@link ObjectConverters}.
-     * <p>
-     * If an element in a XML document can not be parsed (for example if a {@linkplain java.net.URL}
-     * string is not valid), the default behavior is to throw an exception which cause the
-     * (un)marshalling of the entire document to fail. This default behavior can be customized by
-     * invoking {@link Marshaller#setProperty(String, Object)} with this {@code CONVERTERS} property
-     * key and a custom {@link ObjectConverters} instance. {@code ObjectConverters} can also be used
-     * for replacing an erroneous URL by a fixed URL. See the {@link ObjectConverters} javadoc for
-     * more details.
-     *
-     * {@section Example}
-     * The following example collect the failures in a list without stopping the (un)marshalling
-     * process.
-     *
-     * {@preformat java
-     *     class Warnings extends ObjectConverters {
-     *         // The warnings collected during (un)marshalling.
-     *         List<String> messages = new ArrayList<String>();
-     *
-     *         // Override the default implementation in order to
-     *         // collect the warnings and allow the process to continue.
-     *         protected <T> boolean exceptionOccured(T value, Class<T> sourceType, Class<T> targetType, Exception e) {
-     *             mesages.add(e.getLocalizedMessage());
-     *             return true;
-     *         }
-     *     }
-     *
-     *     // Unmarshall a XML string, trapping some kind of errors.
-     *     // Not all errors are trapped - see the ObjectConverters
-     *     // javadoc for more details.
-     *     Warnings myWarningList = new Warnings();
-     *     Unmarshaller um = marshallerPool.acquireUnmarshaller();
-     *     um.setProperty(XML.CONVERTERS, myWarningList);
-     *     Object obj = um.unmarshal(xml);
-     *     marshallerPool.release(um);
-     *     if (!myWarningList.isEmpty()) {
-     *         // Report here the warnings to the user.
-     *     }
-     * }
-     *
-     * @see Unmarshaller#setProperty(String, Object)
-     * @see ObjectConverters
-     *
-     * @since 3.17
-     */
-    public static final String CONVERTERS = "org.geotoolkit.xml.converters";
-
-    /**
      * Allows client code to specify the locale to use for marshalling
      * {@link org.opengis.util.InternationalString} and {@link org.opengis.util.CodeList}
      * instances. The value for this property shall be an instance of {@link Locale}.
@@ -175,6 +125,83 @@ public final class XML extends Static {
      * @since 3.17
      */
     public static final String SCHEMAS = "org.geotoolkit.xml.schemas";
+
+    /**
+     * Allows client code to replace {@code xlink} or {@code uuidref} attributes by the actual
+     * object to use. The value for this property shall be an instance of {@link ObjectLinker}.
+     * <p>
+     * If a property in a XML document is defined only by {@code xlink} or {@code uuidref} attributes,
+     * without any concrete definition, then the default behavior is to create an empty element which
+     * contain only the values of the above-cited attributes. This is usually not the right behavior,
+     * since we should use the reference ({@code href} or {@code uuidref} attributes) for fetching
+     * the appropriate object. However doing so require some application knowledge, for example a
+     * catalog where to perform the search, which is left to users. Users can define their search
+     * algorithm by subclassing {@link ObjectLinker} and configure a unmarshaller as below:
+     *
+     * {@preformat java
+     *     ObjectLinker myLinker = ...;
+     *     Unmarshaller um = marshallerPool.acquireUnmarshaller();
+     *     um.setProperty(XML.LINKER, myLinker);
+     *     Object obj = um.unmarshal(xml);
+     *     marshallerPool.release(um);
+     * }
+     *
+     * @see Unmarshaller#setProperty(String, Object)
+     * @see ObjectLinker
+     *
+     * @since 3.18
+     */
+    public static final String LINKER = "org.geotoolkit.xml.linker";
+
+    /**
+     * Allows client code to control the behavior of the (un)marshalling process when an element
+     * can not be processed, or alter the element values. The value for this property shall be an
+     * instance of {@link ObjectConverters}.
+     * <p>
+     * If an element in a XML document can not be parsed (for example if a {@linkplain java.net.URL}
+     * string is not valid), the default behavior is to throw an exception which cause the
+     * (un)marshalling of the entire document to fail. This default behavior can be customized by
+     * invoking {@link Marshaller#setProperty(String, Object)} with this {@code CONVERTERS} property
+     * key and a custom {@link ObjectConverters} instance. {@code ObjectConverters} can also be used
+     * for replacing an erroneous URL by a fixed URL. See the {@link ObjectConverters} javadoc for
+     * more details.
+     *
+     * {@section Example}
+     * The following example collect the failures in a list without stopping the (un)marshalling
+     * process.
+     *
+     * {@preformat java
+     *     class Warnings extends ObjectConverters {
+     *         // The warnings collected during (un)marshalling.
+     *         List<String> messages = new ArrayList<String>();
+     *
+     *         // Override the default implementation in order to
+     *         // collect the warnings and allow the process to continue.
+     *         protected <T> boolean exceptionOccured(T value, Class<T> sourceType, Class<T> targetType, Exception e) {
+     *             mesages.add(e.getLocalizedMessage());
+     *             return true;
+     *         }
+     *     }
+     *
+     *     // Unmarshall a XML string, trapping some kind of errors.
+     *     // Not all errors are trapped - see the ObjectConverters
+     *     // javadoc for more details.
+     *     Warnings myWarningList = new Warnings();
+     *     Unmarshaller um = marshallerPool.acquireUnmarshaller();
+     *     um.setProperty(XML.CONVERTERS, myWarningList);
+     *     Object obj = um.unmarshal(xml);
+     *     marshallerPool.release(um);
+     *     if (!myWarningList.isEmpty()) {
+     *         // Report here the warnings to the user.
+     *     }
+     * }
+     *
+     * @see Unmarshaller#setProperty(String, Object)
+     * @see ObjectConverters
+     *
+     * @since 3.17
+     */
+    public static final String CONVERTERS = "org.geotoolkit.xml.converters";
 
     /**
      * Allows marshallers to substitute some code lists by the simpler {@code <gco:CharacterString>}

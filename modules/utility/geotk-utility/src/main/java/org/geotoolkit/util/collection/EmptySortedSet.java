@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 import java.util.SortedSet;
 
+import org.geotoolkit.internal.EmptyObject;
+
 
 /**
  * An immutable, serializable empty sorted set.
@@ -38,7 +40,7 @@ import java.util.SortedSet;
  * @since 3.10
  * @module
  */
-final class EmptySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, Serializable {
+final class EmptySortedSet<E> extends AbstractSet<E> implements SortedSet<E>, EmptyObject, Serializable {
     /**
      * For cross-version compatibility.
      */

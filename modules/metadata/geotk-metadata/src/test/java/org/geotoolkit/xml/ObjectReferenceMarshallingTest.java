@@ -18,6 +18,7 @@
 package org.geotoolkit.xml;
 
 import javax.xml.bind.JAXBException;
+import org.opengis.metadata.citation.Series;
 import org.opengis.metadata.citation.Citation;
 import org.geotoolkit.test.TestBase;
 
@@ -63,6 +64,44 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
         assertEquals("series", "A series",  citation.getSeries().getName().toString());
         assertEquals("href",   "org:dummy", ((IdentifiedObject) citation.getSeries()).getXLink().getHRef().toString());
 
+        final String actual = XML.marshal(citation);
+        assertDomEquals(expected, actual, "xmlns:*");
+    }
+
+    /**
+     * The same test than {@link #testSimple}, except that the {@code <gmd:CI_Series>}
+     * element is empty, thus forcing the creation of a new, empty, element for storing
+     * the {@code xlink} information.
+     *
+     * @throws JAXBException Should never happen.
+     */
+    @Test
+    public void testEmptyCreation() throws JAXBException {
+        final String expected =
+            "<gmd:CI_Citation xmlns:gmd=\"" + Namespaces.GMD + '"' +
+                            " xmlns:gco=\"" + Namespaces.GCO + '"' +
+                            " xmlns:xlink=\"" + Namespaces.XLINK + "\">\n" +
+            "  <gmd:title>\n" +
+            "    <gco:CharacterString>A title</gco:CharacterString>\n" +
+            "  </gmd:title>\n" +
+            "  <gmd:series xlink:href=\"org:dummy\"/>\n" +
+            "</gmd:CI_Citation>";
+        final Citation citation = (Citation) XML.unmarshal(expected);
+        assertEquals("title",  "A title", citation.getTitle().toString());
+        final Series series = citation.getSeries();
+        assertEquals("href",   "org:dummy", ((IdentifiedObject) series).getXLink().getHRef().toString());
+        assertEquals("Series[ObjectReference[type=\"simple\", href=\"org:dummy\"]]", series.toString());
+        assertNull("All attributes are expected to be null.", series.getName());
+        try {
+            ((IdentifiedObject) series).setXLink(null);
+            fail("The proxy instance should be unmodifiable.");
+        } catch (UnsupportedOperationException e) {
+            // This is the expected exception.
+            assertTrue(e.getMessage().contains("Series"));
+        }
+        /*
+         * Tests marshalling.
+         */
         final String actual = XML.marshal(citation);
         assertDomEquals(expected, actual, "xmlns:*");
     }

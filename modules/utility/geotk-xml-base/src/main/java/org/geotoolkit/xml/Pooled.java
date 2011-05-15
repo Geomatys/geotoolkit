@@ -85,6 +85,14 @@ abstract class Pooled {
     private ObjectConverters converters;
 
     /**
+     * The object linker to use during unmarshalling.
+     * Can be set by the {@link XML#LINKER} property.
+     *
+     * @since 3.18
+     */
+    private ObjectLinker linker;
+
+    /**
      * The base URL of ISO 19139 (or other standards) schemas. It shall be an unmodifiable
      * instance. The valid values are documented in the {@link XML#SCHEMAS} property.
      *
@@ -141,6 +149,7 @@ abstract class Pooled {
         }
         initial.clear();
         converters = null;
+        linker     = null;
         locale     = null;
         timezone   = null;
     }
@@ -201,6 +210,10 @@ abstract class Pooled {
                 converters = (ObjectConverters) value;
                 return;
             }
+            if (name.equals(XML.LINKER)) {
+                linker = (ObjectLinker) value;
+                return;
+            }
             if (name.equals(XML.SCHEMAS)) {
                 schemas = CollectionUtilities.subset((Map<?,?>) value, String.class, "gmd");
                 return;
@@ -242,6 +255,8 @@ abstract class Pooled {
         // TODO: Use strings in switch with JDK 7.
         if (name.equals(XML.CONVERTERS)) {
             return converters;
+        } else if (name.equals(XML.LINKER)) {
+            return linker;
         } else if (name.equals(XML.SCHEMAS)) {
             return schemas;
         } else if (name.equals(XML.LOCALE)) {
@@ -356,6 +371,6 @@ abstract class Pooled {
      * @since 3.07
      */
     final MarshalContext begin() {
-        return MarshalContext.begin(converters, schemas, locale, timezone, bitMasks);
+        return MarshalContext.begin(converters, linker, schemas, locale, timezone, bitMasks);
     }
 }

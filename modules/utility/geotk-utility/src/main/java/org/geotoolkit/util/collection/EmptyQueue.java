@@ -23,6 +23,8 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.Queue;
 
+import org.geotoolkit.internal.EmptyObject;
+
 
 /**
  * An immutable, serializable empty sorted set.
@@ -35,7 +37,7 @@ import java.util.Queue;
  * @since 3.10
  * @module
  */
-final class EmptyQueue<E> extends AbstractQueue<E> implements Serializable {
+final class EmptyQueue<E> extends AbstractQueue<E> implements EmptyObject, Serializable {
     /**
      * For cross-version compatibility.
      */

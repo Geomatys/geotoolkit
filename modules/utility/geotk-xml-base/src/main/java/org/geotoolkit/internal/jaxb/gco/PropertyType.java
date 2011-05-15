@@ -21,10 +21,13 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 import org.geotoolkit.xml.XLink;
 import org.geotoolkit.xml.Namespaces;
 import org.geotoolkit.xml.IdentifiedObject;
+import org.geotoolkit.internal.EmptyObject;
 import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -172,6 +175,9 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @since 3.18
      */
     protected final boolean skip() {
+        if (metadata instanceof EmptyObject) {
+            return true;
+        }
         final Object ref = reference;
         if (ref == null) {
             return false;
@@ -403,6 +409,29 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
 
 
     /**
+     * Returns the bound type, which is typically the GeoAPI interface. This method fetches the
+     * type using reflection, by looking at the second argument in the parameterized types.
+     *
+     * @return The bound type, which is typically the GeoAPI interface.
+     */
+    @SuppressWarnings("unchecked")
+    private Class<BoundType> getBoundType() {
+        Class<?> classe = getClass();
+        do {
+            // Typically executed exactly once, but implemented as a loop anyway as a
+            // safety in case we derive sub-classes from existing direct sub-classes.
+            final Type type = classe.getGenericSuperclass();
+            if (type instanceof ParameterizedType) {
+                final ParameterizedType pt = (ParameterizedType) type;
+                if (PropertyType.class.equals(pt.getRawType())) {
+                    return (Class) pt.getActualTypeArguments()[1];
+                }
+            }
+        } while ((classe = classe.getSuperclass()) != null);
+        throw new AssertionError(getClass()); // Should never happen.
+    }
+
+    /**
      * Creates a new instance of this class wrapping the given metadata.
      * This method is invoked by {@link #marshal} after making sure that
      * {@code value} is not null.
@@ -450,9 +479,11 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
                 result = (BoundType) UUIDs.DEFAULT.lookup(uuidref);
             }
         }
-        if (result instanceof IdentifiedObject) {
-            final XLink xlink = value.reference();
-            if (xlink != null) {
+        final XLink xlink = value.reference();
+        if (xlink != null) {
+            if (result == null) {
+                result = MarshalContext.linker().resolve(getBoundType(), xlink);
+            } else if (result instanceof IdentifiedObject) {
                 ((IdentifiedObject) result).setXLink(xlink);
             }
         }
