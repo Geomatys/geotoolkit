@@ -15,7 +15,7 @@ xmlns = {
 @XmlJavaTypeAdapters({
     // ISO 19115 adapter (metadata module)
     @XmlJavaTypeAdapter(ScopedNameAdapter.class),
-    @XmlJavaTypeAdapter(LocalNameAdapter.class),
+    //@XmlJavaTypeAdapter(LocalNameAdapter.class),
     @XmlJavaTypeAdapter(GO_GenericName.class),
     @XmlJavaTypeAdapter(MD_Constraints.class),
     @XmlJavaTypeAdapter(MD_Keywords.class),
@@ -41,6 +41,8 @@ xmlns = {
     @XmlJavaTypeAdapter(DCPListAdapter.class),
     @XmlJavaTypeAdapter(CouplingTypeAdapter.class),
     // Primitive type handling
+    @XmlJavaTypeAdapter(StringAdapter.class),
+    @XmlJavaTypeAdapter(InternationalStringAdapter.class),
     @XmlJavaTypeAdapter(GO_Decimal.class),
     @XmlJavaTypeAdapter(type=double.class, value=GO_Decimal.class),
     @XmlJavaTypeAdapter(GO_Decimal.AsFloat.class),
