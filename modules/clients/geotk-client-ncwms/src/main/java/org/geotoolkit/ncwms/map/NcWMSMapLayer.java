@@ -20,6 +20,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import java.awt.Dimension;
+import java.awt.geom.Point2D;
 
 import org.geotoolkit.geometry.GeneralEnvelope;
 import org.geotoolkit.ncwms.NcGetFeatureInfoRequest;
@@ -30,6 +31,7 @@ import org.geotoolkit.ncwms.NcGetTransectRequest;
 import org.geotoolkit.ncwms.NcGetVerticalProfileRequest;
 import org.geotoolkit.ncwms.NcWMSCommonRequest;
 import org.geotoolkit.ncwms.NcWebMapServer;
+import org.geotoolkit.wms.GetMapRequest;
 import org.geotoolkit.wms.WebMapServer;
 import org.geotoolkit.wms.map.WMSMapLayer;
 
