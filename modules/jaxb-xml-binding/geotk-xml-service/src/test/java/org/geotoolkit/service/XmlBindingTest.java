@@ -16,6 +16,8 @@
  */
 package org.geotoolkit.service;
 
+import java.io.StringWriter;
+import java.io.StringReader;
 import java.util.Arrays;
 import org.opengis.util.LocalName;
 import org.opengis.util.TypeName;
@@ -63,8 +65,63 @@ public class XmlBindingTest {
      */
     @Test
     public void unmarshallingTest() throws JAXBException {
+        String xml = 
+        "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>" + '\n' +
+        "<srv:SV_ServiceIdentification xmlns:gco=\"http://www.isotc211.org/2005/gco\" xmlns:srv=\"http://www.isotc211.org/2005/srv\">" + '\n' +
+        "    <srv:serviceType>" + '\n' +
+        "        <gco:LocalName>test service Type</gco:LocalName>" + '\n' +
+        "    </srv:serviceType>" + '\n' +
+        "    <srv:containsOperations>" + '\n' +
+        "        <srv:SV_OperationMetadata>" + '\n' +
+        "            <srv:parameters>" + '\n' +
+        "                <srv:SV_Parameter>" + '\n' +
+        "                    <srv:name>" + '\n' +
+        "                        <gco:MemberName>" + '\n' + // this line has to been removed
+        "                            <gco:aName>" + '\n' +
+        "                                <gco:CharacterString>VERSION</gco:CharacterString>" + '\n' +
+        "                            </gco:aName>" + '\n' +
+        "                            <gco:attributeType>" + '\n' +
+        "                            <gco:TypeName>" + '\n' +
+        "                                   <gco:aName>" + '\n' +
+        "                                       <gco:CharacterString>CharacterString</gco:CharacterString>" + '\n' +
+        "                                   </gco:aName>" + '\n' +
+        "                               </gco:TypeName>" + '\n' +
+        "                           </gco:attributeType>" + '\n' +
+        "                        </gco:MemberName>" + '\n' + // this line has to been removed
+        "                    </srv:name>" + '\n' +
+        "                </srv:SV_Parameter>" + '\n' +
+        "            </srv:parameters>" + '\n' +
+        "        </srv:SV_OperationMetadata>" + '\n' +
+        "    </srv:containsOperations>" + '\n' +
+        "</srv:SV_ServiceIdentification>" + '\n';
+        
+        Object obj = unmarshaller.unmarshal(new StringReader(xml));
+        assertTrue(obj instanceof ServiceIdentificationImpl);
+        ServiceIdentificationImpl result = (ServiceIdentificationImpl) obj;
 
-
+        ServiceIdentificationImpl expResult = new ServiceIdentificationImpl();
+        
+        ParameterImpl params = new ParameterImpl();
+        DefaultNameFactory factory = new DefaultNameFactory();
+        TypeName tname = factory.createTypeName(null, "CharacterString");
+        MemberName name = factory.createMemberName(null, "VERSION", tname);
+        params.setName(name);
+        
+        OperationMetadataImpl meta = new OperationMetadataImpl();
+        meta.setParameters(params);
+        expResult.setContainsOperations(Arrays.asList(meta));
+        
+        
+        LocalName loc = factory.createLocalName(null, "test service Type");
+        expResult.setServiceType(loc);
+        
+        assertEquals(expResult.getContainsOperations().iterator().next().getParameters(), result.getContainsOperations().iterator().next().getParameters());
+        assertEquals(expResult.getContainsOperations().iterator().next().getConnectPoint(), result.getContainsOperations().iterator().next().getConnectPoint());
+        assertEquals(expResult.getContainsOperations().iterator().next().getDCP(), result.getContainsOperations().iterator().next().getDCP());
+        assertEquals(expResult.getContainsOperations().iterator().next().getDependsOn(), result.getContainsOperations().iterator().next().getDependsOn());
+        assertEquals(expResult.getContainsOperations().iterator().next(), result.getContainsOperations().iterator().next());
+        assertEquals(expResult.getContainsOperations(), result.getContainsOperations());
+        assertEquals(expResult, result);
     }
 
     /**
@@ -90,6 +147,58 @@ public class XmlBindingTest {
         LocalName loc = factory.createLocalName(null, "test service Type");
         servIdent.setServiceType(loc);
         
-        marshaller.marshal(servIdent, System.out);
+        StringWriter sw = new StringWriter();
+        marshaller.marshal(servIdent, sw);
+        
+        String expResult = 
+        "<srv:SV_ServiceIdentification >" + '\n' +
+        "    <srv:serviceType>" + '\n' +
+        "        <gco:LocalName>test service Type</gco:LocalName>" + '\n' +
+        "    </srv:serviceType>" + '\n' +
+        "    <srv:containsOperations>" + '\n' +
+        "        <srv:SV_OperationMetadata>" + '\n' +
+        "            <srv:parameters>" + '\n' +
+        "                <srv:SV_Parameter>" + '\n' +
+        "                    <srv:name>" + '\n' +
+        "                        <gco:MemberName>" + '\n' + // this line has to been removed
+        "                            <gco:aName>" + '\n' +
+        "                                <gco:CharacterString>VERSION</gco:CharacterString>" + '\n' +
+        "                            </gco:aName>" + '\n' +
+        "                            <gco:attributeType>" + '\n' +
+        "                                <gco:TypeName>" + '\n' +
+        "                                    <gco:aName>" + '\n' +
+        "                                        <gco:CharacterString>CharacterString</gco:CharacterString>" + '\n' +
+        "                                    </gco:aName>" + '\n' +
+        "                                </gco:TypeName>" + '\n' +
+        "                            </gco:attributeType>" + '\n' +
+        "                        </gco:MemberName>" + '\n' + // this line has to been removed
+        "                    </srv:name>" + '\n' +
+        "                </srv:SV_Parameter>" + '\n' +
+        "            </srv:parameters>" + '\n' +
+        "        </srv:SV_OperationMetadata>" + '\n' +
+        "    </srv:containsOperations>" + '\n' +
+        "</srv:SV_ServiceIdentification>" + '\n';
+        
+        String result = sw.toString();
+         //we remove the first line
+        result = result.substring(result.indexOf("?>") + 3);
+        //we remove the xmlmns
+        result = removeXmlns(result);
+        
+        assertEquals(expResult, result);
+    }
+    
+    /**
+     * Remove all the XML namespace declaration.
+     * @param xml
+     * @return
+     */
+    public static String removeXmlns(final String xml) {
+        String s = xml;
+        s = s.replaceAll("xmlns=\"[^\"]*\" ", "");
+        s = s.replaceAll("xmlns=\"[^\"]*\"", "");
+        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\" ", "");
+        s = s.replaceAll("xmlns:[^=]*=\"[^\"]*\"", "");
+        return s;
     }
 }

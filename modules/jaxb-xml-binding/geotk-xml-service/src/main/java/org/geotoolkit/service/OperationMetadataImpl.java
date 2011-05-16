@@ -11,6 +11,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 import org.geotoolkit.internal.jaxb.gco.StringAdapter;
+import org.geotoolkit.util.Utilities;
 import org.opengis.metadata.citation.OnlineResource;
 import org.opengis.service.OperationMetadata;
 import org.opengis.service.Parameter;
@@ -252,7 +253,7 @@ public class OperationMetadataImpl implements OperationMetadata {
     @Override
     public String toString() {
         StringBuilder s = new StringBuilder("[OperationMetadata]").append('\n');
-        s.append("operationName: ").append(operationName);
+        s.append("operationName: ").append(operationName).append('\n');
         if (operationDescription != null)
             s.append("operationDescription: ").append(operationDescription).append('\n');
         if (invocationName != null)
@@ -284,4 +285,34 @@ public class OperationMetadataImpl implements OperationMetadata {
         return s.toString();
     }
 
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof OperationMetadataImpl) {
+            final OperationMetadataImpl that = (OperationMetadataImpl) obj;
+            return Utilities.equals(this.connectPoint, that.connectPoint) &&
+                   Utilities.equals(this.dcp, that.dcp) &&
+                   Utilities.equals(this.dependsOn, that.dependsOn) &&
+                   Utilities.equals(this.invocationName, that.invocationName) &&
+                   Utilities.equals(this.operationDescription, that.operationDescription) &&
+                   Utilities.equals(this.operationName, that.operationName) &&
+                   Utilities.equals(this.parameters, that.parameters);
+        }
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 11 * hash + (this.operationName != null ? this.operationName.hashCode() : 0);
+        hash = 11 * hash + (this.dcp != null ? this.dcp.hashCode() : 0);
+        hash = 11 * hash + (this.operationDescription != null ? this.operationDescription.hashCode() : 0);
+        hash = 11 * hash + (this.invocationName != null ? this.invocationName.hashCode() : 0);
+        hash = 11 * hash + (this.parameters != null ? this.parameters.hashCode() : 0);
+        hash = 11 * hash + (this.connectPoint != null ? this.connectPoint.hashCode() : 0);
+        hash = 11 * hash + (this.dependsOn != null ? this.dependsOn.hashCode() : 0);
+        return hash;
+    }
 }

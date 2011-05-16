@@ -6,6 +6,7 @@ import org.opengis.service.ParameterDirection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import org.geotoolkit.util.Utilities;
 import org.opengis.service.Parameter;
 import org.opengis.util.MemberName;
 import org.opengis.util.TypeName;
@@ -177,4 +178,56 @@ public class ParameterImpl implements Parameter {
         this.valueType = value;
     }
 
+    @Override
+    public String toString() {
+        final StringBuilder builder = new StringBuilder("[ParameterImpl]\n");
+        if (name != null) {
+            builder.append("name:").append(name);
+        }
+        if (description != null) {
+            builder.append("description:").append(description);
+        }
+        if (direction != null) {
+            builder.append("direction:").append(direction);
+        }
+        if (optionality != null) {
+            builder.append("optionality:").append(optionality);
+        }
+        if (repeatability != null) {
+            builder.append("repeatability:").append(repeatability);
+        }
+        if (valueType != null) {
+            builder.append("valueType:").append(valueType);
+        }
+        return builder.toString();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 17 * hash + (this.name != null ? this.name.hashCode() : 0);
+        hash = 17 * hash + (this.direction != null ? this.direction.hashCode() : 0);
+        hash = 17 * hash + (this.description != null ? this.description.hashCode() : 0);
+        hash = 17 * hash + (this.optionality != null ? this.optionality.hashCode() : 0);
+        hash = 17 * hash + (this.repeatability != null ? this.repeatability.hashCode() : 0);
+        hash = 17 * hash + (this.valueType != null ? this.valueType.hashCode() : 0);
+        return hash;
+    }
+    
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj instanceof ParameterImpl) {
+            final ParameterImpl that = (ParameterImpl) obj;
+            return Utilities.equals(this.description, that.description) &&
+                   Utilities.equals(this.direction, that.direction) &&
+                   Utilities.equals(this.name, that.name) &&
+                   Utilities.equals(this.optionality, that.optionality) &&
+                    Utilities.equals(this.valueType, that.valueType) &&
+                   Utilities.equals(this.repeatability, that.repeatability);
+        }
+        return false;
+    }
 }
