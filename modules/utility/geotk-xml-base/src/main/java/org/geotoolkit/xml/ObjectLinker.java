@@ -18,8 +18,8 @@
 package org.geotoolkit.xml;
 
 import java.lang.reflect.Proxy;
+import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ArgumentChecks;
-import org.geotoolkit.internal.EmptyObject;
 
 
 /**
@@ -71,6 +71,9 @@ public class ObjectLinker {
     public <T> T resolve(final Class<T> type, final XLink link) {
         ArgumentChecks.ensureNonNull("type", type);
         ArgumentChecks.ensureNonNull("link", link);
+        if (EmptyObjectHandler.isIgnoredInterface(type)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
+        }
         return (T) Proxy.newProxyInstance(ObjectLinker.class.getClassLoader(),
                 new Class<?>[] {type, IdentifiedObject.class, EmptyObject.class},
                 new EmptyObjectHandler(link));

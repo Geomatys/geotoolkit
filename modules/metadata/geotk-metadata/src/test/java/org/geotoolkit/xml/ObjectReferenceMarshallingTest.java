@@ -66,6 +66,7 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
 
         final String actual = XML.marshal(citation);
         assertDomEquals(expected, actual, "xmlns:*");
+        assertEquals(citation, XML.unmarshal(actual));
     }
 
     /**
@@ -104,5 +105,6 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
          */
         final String actual = XML.marshal(citation);
         assertDomEquals(expected, actual, "xmlns:*");
+        assertEquals(citation, XML.unmarshal(actual));
     }
 }

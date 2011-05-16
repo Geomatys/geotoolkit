@@ -25,9 +25,10 @@ import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 import org.geotoolkit.xml.XLink;
+import org.geotoolkit.xml.NilReason;
 import org.geotoolkit.xml.Namespaces;
+import org.geotoolkit.xml.EmptyObject;
 import org.geotoolkit.xml.IdentifiedObject;
-import org.geotoolkit.internal.EmptyObject;
 import org.geotoolkit.internal.jaxb.UUIDs;
 import org.geotoolkit.internal.jaxb.MarshalContext;
 import org.geotoolkit.util.SimpleInternationalString;
@@ -113,7 +114,14 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     protected PropertyType(final BoundType metadata) {
         this.metadata = metadata;
+        if (metadata instanceof EmptyObject) {
+            final NilReason reason = ((EmptyObject) metadata).getNilReason();
+            if (reason != null) {
+                reference = reason.toString();
+            }
+        }
         if (metadata instanceof IdentifiedObject) {
+            // Intentionally overwrite the nilReason.
             reference = ((IdentifiedObject) metadata).getXLink();
         }
     }

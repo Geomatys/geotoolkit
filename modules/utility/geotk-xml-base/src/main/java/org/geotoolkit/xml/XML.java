@@ -36,10 +36,11 @@ import org.geotoolkit.lang.Static;
  * and {@link Unmarshaller} instances created by {@link PooledMarshaller}:
  * <p>
  * <ul>
- *   <li>{@link #CONVERTERS} for controlling the conversion of URL, UUID, Units or similar objects.</li>
  *   <li>{@link #LOCALE} for specifying the locale to use for international strings and code lists.</li>
  *   <li>{@link #TIMEZONE} for specifying the timezone to use for dates and times.</li>
  *   <li>{@link #SCHEMAS} for specifying the root URL of metadata schemas to use.</li>
+ *   <li>{@link #LINKER} for replacing {@code xlink} or {@code uuidref} attributes by the actual object to use.</li>
+ *   <li>{@link #CONVERTERS} for controlling the conversion of URL, UUID, Units or similar objects.</li>
  *   <li>{@link #STRING_SUBSTITUTES} for specifying which code lists to replace by simpler
  *       {@code <gco:CharacterString>} elements.</li>
  * </ul>

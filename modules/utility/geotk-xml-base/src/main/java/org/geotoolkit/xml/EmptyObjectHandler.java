@@ -52,17 +52,23 @@ final class EmptyObjectHandler implements InvocationHandler {
     }
 
     /**
-     * Returns the interface implemented by the given proxy. If the interface can not be
-     * found, then returns some arbitrary interface as a fallback (should not happen).
-     * This method is used mostly for informative purpose, so it doesn't need to be accurate.
+     * Returns {@code true} if the given type is one of the interfaces ignored by
+     * {@link #getInterface(Object)}.
+     */
+    static boolean isIgnoredInterface(final Class<?> type) {
+        return IdentifiedObject.class.isAssignableFrom(type) || EmptyObject.class.isAssignableFrom(type);
+    }
+
+    /**
+     * Returns the interface implemented by the given proxy.
      */
     private static Class<?> getInterface(final Object proxy) {
         for (final Class<?> type : proxy.getClass().getInterfaces()) {
-            if (!(IdentifiedObject.class.isAssignableFrom(type))) {
+            if (!isIgnoredInterface(type)) {
                 return type;
             }
         }
-        return IdentifiedObject.class;
+        throw new AssertionError(proxy); // Should not happen.
     }
 
     /**
@@ -83,7 +89,7 @@ final class EmptyObjectHandler implements InvocationHandler {
     public Object invoke(final Object proxy, final Method method, final Object[] args) {
         final String name = method.getName();
         if (args == null) {
-            // TODO: Switch in string with JDK 7.
+            // TODO: Strings in switch with JDK 7.
             if (name.equals("getXLink")) {
                 return xlink;
             }
@@ -106,9 +112,16 @@ final class EmptyObjectHandler implements InvocationHandler {
                 }
             }
         } else if (args.length == 1) {
+            // TODO: Strings in switch with JDK 7.
             if (name.startsWith("set")) {
                 throw new UnsupportedOperationException(Errors.format(
                         Errors.Keys.UNMODIFIABLE_OBJECT_$1, getInterface(proxy)));
+            }
+            if (name.equals("equals")) {
+                final Object other = args[0];
+                return (other instanceof IdentifiedObject) && (other instanceof EmptyObject) &&
+                        xlink.equals(((IdentifiedObject) other).getXLink()) &&
+                        getInterface(proxy).isAssignableFrom(other.getClass());
             }
         }
         return null;

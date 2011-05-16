@@ -32,7 +32,8 @@ import org.opengis.referencing.datum.*;
 import org.opengis.referencing.operation.*;
 import org.opengis.metadata.extent.Extent;
 
-import org.geotoolkit.internal.EmptyObject;
+import org.geotoolkit.xml.NilReason;
+import org.geotoolkit.xml.EmptyObject;
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
 import org.geotoolkit.referencing.datum.DefaultPrimeMeridian;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
@@ -46,7 +47,7 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
  * constructor required by JAXB.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -70,6 +71,12 @@ public final class NullReferencingObject implements GeocentricCRS, GeographicCRS
      * Do not allow other instantiation of {@link #INSTANCE}.
      */
     private NullReferencingObject() {
+    }
+
+    /** This object is empty because the value will be provided later. */
+    @Override
+    public NilReason getNilReason() {
+        return NilReason.TEMPLATE;
     }
 
     /** Returns {@code 0} in all cases. */
