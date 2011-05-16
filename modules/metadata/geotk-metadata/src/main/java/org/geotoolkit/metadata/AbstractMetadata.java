@@ -23,6 +23,8 @@ import java.text.ParseException;
 import javax.swing.tree.TreeModel;
 import net.jcip.annotations.ThreadSafe;
 
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
 
 
@@ -34,13 +36,13 @@ import org.geotoolkit.util.logging.Logging;
  * {@link #equals(Object)} and {@link #hashCode()} methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.4
  * @module
  */
 @ThreadSafe
-public abstract class AbstractMetadata {
+public abstract class AbstractMetadata implements LenientComparable {
     /**
      * The logger for metadata implementation.
      */
@@ -193,19 +195,30 @@ public abstract class AbstractMetadata {
      * <p>
      * This method performs a <cite>deep</cite> comparison (i.e. if this metadata contains
      * other metadata, the comparison will walk through the other metadata content as well)
-     * providing that every childs implement the {@link Object#equals} method as well. This
-     * is the case by default if every childs are subclasses of {@code AbstractMetadata}.
+     * providing that every children implement the {@link Object#equals(Object)} method as well.
+     * This is the case by default if every children are subclasses of {@code AbstractMetadata}.
      *
      * @param  object The object to compare with this metadata.
+     * @param  mode The strictness level of the comparison.
      * @return {@code true} if the given object is equal to this metadata.
+     *
+     * @since 3.18
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
-        if (object==null || !object.getClass().equals(getClass())) {
-            return false;
+        if (mode == ComparisonMode.STRICT) {
+            if (object == null || !object.getClass().equals(getClass())) {
+                return false;
+            }
+        }
+        final MetadataStandard standard = getStandard();
+        if (mode != ComparisonMode.STRICT) {
+            if (!standard.getInterface(getClass()).isInstance(object)) {
+                return false;
+            }
         }
         /*
          * Opportunist usage of hash code if they are already computed. If they are not, we will
@@ -213,14 +226,15 @@ public abstract class AbstractMetadata {
          * and hash code could be invalidated later anyway if the object change. Note that we
          * don't need to synchronize since reading int fields are guaranteed to be atomic in Java.
          */
-        final int c0 = hashCode;
-        if (c0 != 0) {
-            final int c1 = ((AbstractMetadata) object).hashCode;
-            if (c1 != 0 && c0 != c1) {
-                return false;
+        if (object instanceof AbstractMetadata) {
+            final int c0 = hashCode;
+            if (c0 != 0) {
+                final int c1 = ((AbstractMetadata) object).hashCode;
+                if (c1 != 0 && c0 != c1) {
+                    return false;
+                }
             }
         }
-        final MetadataStandard standard = getStandard();
         /*
          * DEADLOCK WARNING: A deadlock may occur if the same pair of objects is being compared
          * in an other thread (see http://jira.codehaus.org/browse/GEOT-1777). Ideally we would
@@ -229,7 +243,18 @@ public abstract class AbstractMetadata {
          * guarantee that the caller didn't looked the object himself. For now the safest approach
          * is to not synchronize at all.
          */
-        return standard.shallowEquals(this, object, false);
+        return standard.shallowEquals(this, object, mode, false);
+    }
+
+    /**
+     * Performs a {@linkplain ComparisonMode#STRICT strict} comparison of this metadata with
+     * the given object.
+     *
+     * @param object The object to compare with this metadata for equality.
+     */
+    @Override
+    public final boolean equals(final Object object) {
+        return equals(object, ComparisonMode.STRICT);
     }
 
     /**

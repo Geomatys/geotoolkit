@@ -54,8 +54,8 @@ import org.geotoolkit.lang.Static;
  * class in order to reduce the risk of collision between "empty" instances of different classes.
  * {@linkplain java.io.Serializable} classes can use {@code (int) serialVersionUID} for example.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -221,6 +221,43 @@ public final class Utilities extends Static {
         assert object1 == null || !object1.getClass().isArray() : object1;
         assert object2 == null || !object2.getClass().isArray() : object2;
         return (object1 == object2) || (object1 != null && object1.equals(object2));
+    }
+
+    /**
+     * Convenience method for testing two objects for equality using the given level of strictness.
+     * If at least one of the given objects implement the {@link LenientComparable} interface, then
+     * the comparison is performed using the {@link LenientComparable#equals(Object, ComparisonMode)}
+     * method. Otherwise this method performs the same work than the above {@link #equals(Object, Object)}
+     * convenience method.
+     *
+     * @param object1 The first object to compare, or {@code null}.
+     * @param object2 The second object to compare, or {@code null}.
+     * @param mode The strictness level of the comparison.
+     * @return {@code true} if both objects are equal for the given level of strictness.
+     * @throws AssertionError If assertions are enabled and at least one argument is an array.
+     *
+     * @since 3.18
+     */
+    public static boolean equals(final Object object1, final Object object2, final ComparisonMode mode)
+            throws AssertionError
+    {
+        if (object1 == object2) {
+            return true;
+        }
+        if (object1 == null || object2 == null) {
+            return false;
+        }
+        assert !object1.getClass().isArray() : object1;
+        assert !object2.getClass().isArray() : object2;
+        if (mode != null) {
+            if (object1 instanceof LenientComparable) {
+                return ((LenientComparable) object1).equals(object2, mode);
+            }
+            if (object2 instanceof LenientComparable) {
+                return ((LenientComparable) object2).equals(object1, mode);
+            }
+        }
+        return object1.equals(object2);
     }
 
     /**

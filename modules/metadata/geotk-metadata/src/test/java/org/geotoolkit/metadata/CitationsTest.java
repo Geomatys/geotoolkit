@@ -26,6 +26,8 @@ import java.lang.reflect.Modifier;
 
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.ConformanceResult;
+
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
@@ -39,7 +41,7 @@ import static org.geotoolkit.test.Commons.*;
  * Tests {@link Citations} and related constants.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.02
+ * @version 3.18
  *
  * @since 2.2
  */
@@ -131,5 +133,23 @@ public final class CitationsTest {
         for (final Object constant : constants) {
             assertSame("Deserialization shall give the singleton.", constant, serialize(constant));
         }
+    }
+
+    /**
+     * Ensures that citations are comparable even if they are not the same class.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-48">GEOTK-48</a>
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testEquals() {
+        assertEquals(Citations.EPSG, Citations.EPSG);
+        assertFalse (Citations.EPSG.equals(Citations.OGC));
+        final DefaultCitation copy = new DefaultCitation(Citations.EPSG);
+        assertFalse(copy.equals(Citations.EPSG));
+        assertFalse(copy.equals(Citations.EPSG, ComparisonMode.STRICT));
+        assertTrue (copy.equals(Citations.EPSG, ComparisonMode.BY_CONTRACT));
+        assertTrue (copy.equals(Citations.EPSG, ComparisonMode.IGNORE_METADATA));
     }
 }

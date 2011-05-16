@@ -27,6 +27,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.internal.CollectionUtilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
@@ -189,15 +190,15 @@ public final class PropertyAccessorTest {
     public void testEquals() {
         Citation citation = Citations.EPSG;
         final PropertyAccessor accessor = createPropertyAccessor(citation);
-        assertFalse(accessor.shallowEquals(citation, Citations.GEOTIFF, true ));
-        assertFalse(accessor.shallowEquals(citation, Citations.GEOTIFF, false));
-        assertTrue (accessor.shallowEquals(citation, Citations.EPSG,    false));
+        assertFalse(accessor.shallowEquals(citation, Citations.GEOTIFF, ComparisonMode.STRICT, true ));
+        assertFalse(accessor.shallowEquals(citation, Citations.GEOTIFF, ComparisonMode.STRICT, false));
+        assertTrue (accessor.shallowEquals(citation, Citations.EPSG,    ComparisonMode.STRICT, false));
 
         citation = new DefaultCitation();
-        assertTrue (accessor.shallowCopy  (Citations.EPSG, citation,    true ));
-        assertFalse(accessor.shallowEquals(citation, Citations.GEOTIFF, true ));
-        assertFalse(accessor.shallowEquals(citation, Citations.GEOTIFF, false));
-        assertTrue (accessor.shallowEquals(citation, Citations.EPSG,    false));
+        assertTrue (accessor.shallowCopy  (Citations.EPSG, citation, true));
+        assertFalse(accessor.shallowEquals(citation, Citations.GEOTIFF, ComparisonMode.STRICT, true ));
+        assertFalse(accessor.shallowEquals(citation, Citations.GEOTIFF, ComparisonMode.STRICT, false));
+        assertTrue (accessor.shallowEquals(citation, Citations.EPSG,    ComparisonMode.STRICT, false));
 
         final int index = accessor.indexOf("identifiers");
         final Object source = accessor.get(index, Citations.EPSG);

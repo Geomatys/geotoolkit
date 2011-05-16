@@ -20,6 +20,7 @@ package org.geotoolkit.xml;
 import java.lang.reflect.Proxy;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.ArgumentChecks;
+import org.geotoolkit.util.LenientComparable;
 
 
 /**
@@ -75,7 +76,7 @@ public class ObjectLinker {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
         }
         return (T) Proxy.newProxyInstance(ObjectLinker.class.getClassLoader(),
-                new Class<?>[] {type, IdentifiedObject.class, EmptyObject.class},
+                new Class<?>[] {type, IdentifiedObject.class, EmptyObject.class, LenientComparable.class},
                 new EmptyObjectHandler(link));
     }
 }

@@ -28,6 +28,7 @@ import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.Completeness;
 import org.opengis.coverage.grid.RectifiedGrid;
 
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.quality.AbstractCompleteness;
@@ -42,7 +43,7 @@ import org.geotoolkit.test.Depend;
  * the tests use the {@link MetadataStandard#ISO_19115} constant.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.18
  *
  * @since 2.4
  */
@@ -69,15 +70,15 @@ public final class MetadataStandardTest {
     public void testEquals() {
         final MetadataStandard std = MetadataStandard.ISO_19115;
         Citation citation = Citations.EPSG;
-        assertFalse(std.shallowEquals(citation, Citations.GEOTIFF, true ));
-        assertFalse(std.shallowEquals(citation, Citations.GEOTIFF, false));
-        assertTrue (std.shallowEquals(citation, Citations.EPSG,    false));
+        assertFalse(std.shallowEquals(citation, Citations.GEOTIFF, ComparisonMode.STRICT, true ));
+        assertFalse(std.shallowEquals(citation, Citations.GEOTIFF, ComparisonMode.STRICT, false));
+        assertTrue (std.shallowEquals(citation, Citations.EPSG,    ComparisonMode.STRICT, false));
 
         citation = new DefaultCitation();
         std.shallowCopy(Citations.EPSG, citation, true);
-        assertFalse(std.shallowEquals(citation, Citations.GEOTIFF, true ));
-        assertFalse(std.shallowEquals(citation, Citations.GEOTIFF, false));
-        assertTrue (std.shallowEquals(citation, Citations.EPSG,    false));
+        assertFalse(std.shallowEquals(citation, Citations.GEOTIFF, ComparisonMode.STRICT, true ));
+        assertFalse(std.shallowEquals(citation, Citations.GEOTIFF, ComparisonMode.STRICT, false));
+        assertTrue (std.shallowEquals(citation, Citations.EPSG,    ComparisonMode.STRICT, false));
 
         try {
             std.shallowCopy(citation, Citations.EPSG, true);

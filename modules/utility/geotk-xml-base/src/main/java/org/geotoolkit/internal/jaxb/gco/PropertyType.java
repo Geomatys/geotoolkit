@@ -190,10 +190,10 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
         if (ref == null) {
             return false;
         }
-        if (!(ref instanceof ObjectReference)) {
+        if (ref instanceof String) {
             return true; // A "nilReason" attribute has been specified.
         }
-        return ((ObjectReference) ref).uuidref != null;
+        return (ref instanceof ObjectReference) && ((ObjectReference) ref).uuidref != null;
     }
 
     /**

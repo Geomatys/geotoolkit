@@ -35,6 +35,7 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
 import org.geotoolkit.measure.AngleFormat;
@@ -511,7 +512,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
      * @return {@code true} if the given object is equal to this box.
      */
     @Override
-    public synchronized boolean equals(final Object object) {
+    public synchronized boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
@@ -526,7 +527,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
                    Utilities.equals(this.eastBoundLongitude, that.eastBoundLongitude) &&
                    Utilities.equals(this.westBoundLongitude, that.westBoundLongitude);
         }
-        return super.equals(object);
+        return super.equals(object, mode);
     }
 
     /**

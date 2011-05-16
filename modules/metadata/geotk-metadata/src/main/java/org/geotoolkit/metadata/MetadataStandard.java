@@ -33,6 +33,8 @@ import org.opengis.annotation.UML;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.Strings;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.util.converter.Classes;
@@ -68,7 +70,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * the tree of XML nodes to be associated with raster data.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.15
+ * @version 3.18
  *
  * @since 2.4
  * @module
@@ -697,28 +699,31 @@ public final class MetadataStandard {
 
     /**
      * Compares the two specified metadata objects. The comparison is <cite>shallow</cite>,
-     * i.e. all metadata attributes are compared using the {@link Object#equals} method without
-     * recursive call to this {@code shallowEquals(...)} method for child metadata.
+     * i.e. all metadata attributes are compared using the
+     * {@link LenientComparable#equals(Object, ComparisonMode)} method if possible, or the
+     * {@link Object#equals(Object)} method otherwise, without explicit recursive call to
+     * this {@code shallowEquals(...)} method for child metadata.
      * <p>
-     * This method can optionaly excludes null values from the comparison. In metadata,
+     * This method can optionally excludes null values from the comparison. In metadata,
      * null value often means "don't know", so in some occasion we want to consider two
      * metadata as different only if a property value is know for sure to be different.
      * <p>
      * The first arguments must be an implementation of a metadata interface, otherwise an
-     * exception will be thrown. The two argument do not need to be the same implementation
+     * exception will be thrown. The two arguments do not need to be the same implementation
      * however.
      *
      * @param metadata1 The first metadata object to compare.
      * @param metadata2 The second metadata object to compare.
+     * @param mode The strictness level of the comparison.
      * @param skipNulls If {@code true}, only non-null values will be compared.
      * @return {@code true} if the given metadata objects are equals.
      * @throws ClassCastException if at least one metadata object don't
      *         implements a metadata interface of the expected package.
      *
-     * @see AbstractMetadata#equals
+     * @see AbstractMetadata#equals(Object, ComparisonMode)
      */
-    public boolean shallowEquals(final Object metadata1, final Object metadata2, final boolean skipNulls)
-            throws ClassCastException
+    public boolean shallowEquals(final Object metadata1, final Object metadata2,
+            final ComparisonMode mode, final boolean skipNulls) throws ClassCastException
     {
         if (metadata1 == metadata2) {
             return true;
@@ -730,7 +735,24 @@ public final class MetadataStandard {
         if (!accessor.type.equals(getStandardType(metadata2.getClass()))) {
             return false;
         }
-        return accessor.shallowEquals(metadata1, metadata2, skipNulls);
+        return accessor.shallowEquals(metadata1, metadata2, mode, skipNulls);
+    }
+
+    /**
+     * @deprecated Replaced by {@link #shallowEquals(Object, Object, ComparisonMode, boolean)}.
+     *
+     * @param metadata1 The first metadata object to compare.
+     * @param metadata2 The second metadata object to compare.
+     * @param skipNulls If {@code true}, only non-null values will be compared.
+     * @return {@code true} if the given metadata objects are equals.
+     * @throws ClassCastException if at least one metadata object don't
+     *         implements a metadata interface of the expected package.
+     */
+    @Deprecated
+    public boolean shallowEquals(final Object metadata1, final Object metadata2, final boolean skipNulls)
+            throws ClassCastException
+    {
+        return shallowEquals(metadata1, metadata2, ComparisonMode.STRICT, skipNulls);
     }
 
     /**

@@ -36,6 +36,7 @@ import org.opengis.annotation.UML;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.util.converter.Classes;
@@ -48,12 +49,12 @@ import org.geotoolkit.internal.StringUtilities;
 
 /**
  * The getter methods declared in a GeoAPI interface, together with setter methods (if any)
- * declared in the Geotk implementation. An instace of {@code PropertyAccessor} gives access
+ * declared in the Geotk implementation. An instance of {@code PropertyAccessor} gives access
  * to all public attributes of an instance of a metadata object. It uses reflection for this
  * purpose, a little bit like the <cite>Java Beans</cite> framework.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.06
+ * @version 3.18
  *
  * @since 2.4
  * @module
@@ -913,15 +914,18 @@ final class PropertyAccessor {
      * i.e. all metadata attributes are compared using the {@link Object#equals} method without
      * recursive call to this {@code shallowEquals} method for other metadata.
      * <p>
-     * This method can optionaly excludes null values from the comparison. In metadata,
+     * This method can optionally excludes null values from the comparison. In metadata,
      * null value often means "don't know", so in some occasion we want to consider two
      * metadata as different only if a property value is know for sure to be different.
      *
      * @param metadata1 The first metadata object to compare.
      * @param metadata2 The second metadata object to compare.
+     * @param mode The strictness level of the comparison.
      * @param skipNulls If {@code true}, only non-null values will be compared.
      */
-    public boolean shallowEquals(final Object metadata1, final Object metadata2, final boolean skipNulls) {
+    public boolean shallowEquals(final Object metadata1, final Object metadata2,
+            final ComparisonMode mode, final boolean skipNulls)
+    {
         assert type.isInstance(metadata1) : metadata1;
         assert type.isInstance(metadata2) : metadata2;
         for (int i=0; i<getters.length; i++) {
@@ -933,7 +937,7 @@ final class PropertyAccessor {
             if (empty1 && empty2) {
                 continue;
             }
-            if (!Utilities.equals(value1, value2)) {
+            if (!Utilities.equals(value1, value2, mode)) {
                 if (!skipNulls || (!empty1 && !empty2)) {
                     return false;
                 }
