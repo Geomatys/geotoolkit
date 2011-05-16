@@ -168,6 +168,17 @@ public class NcWMSMapLayer extends WMSMapLayer {
     /********************* Queries functions **********************************/
     
     /**
+     * {@inheritdoc}
+     */
+    @Override
+    protected void prepareQuery(final GetMapRequest request, final GeneralEnvelope env,
+            final Dimension dim, final Point2D pickCoord) throws TransformException,
+            FactoryException{
+        super.prepareQuery(request, env, dim, pickCoord);   
+        prepareNcWMSCommonRequest((NcGetMapRequest) request);       
+    }
+    
+    /**
      * Sets ncWMS common request parameters.
      * @param request the current request.
      */
@@ -184,8 +195,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
     public URL query(final Envelope env, final Dimension rect) throws MalformedURLException, 
     TransformException, FactoryException {
         final NcGetMapRequest request = ((NcWebMapServer) getServer()).createGetMap();
-        prepareQuery(request, new GeneralEnvelope(env), rect, null);    
-        prepareNcWMSCommonRequest(request);       
+        prepareQuery(request, new GeneralEnvelope(env), rect, null);         
         return request.getURL();
     }    
 
@@ -198,8 +208,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
             final int featureCount) throws TransformException, FactoryException,
             MalformedURLException {
         final NcGetFeatureInfoRequest request = ((NcWebMapServer) getServer()).createGetFeatureInfo();
-        prepareGetFeatureInfoRequest(request, env, rect, x, y, queryLayers, infoFormat, featureCount);        
-        prepareNcWMSCommonRequest(request);       
+        prepareGetFeatureInfoRequest(request, env, rect, x, y, queryLayers, infoFormat, featureCount);               
         return request.getURL();
     }
     
