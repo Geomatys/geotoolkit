@@ -91,6 +91,23 @@ public final class NameMarshallingTest extends TestBase {
     }
 
     /**
+     * Tests XML of a local name with {@code &} symbol.
+     *
+     * @throws JAXBException Should not happen.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testLocalNameWithAmp() throws JAXBException {
+        final DefaultNameFactory factory = new DefaultNameFactory();
+        final LocalName name = factory.createLocalName(null, "A name with & and > and <.");
+        assertEquals("A name with & and > and <.", name.toString());
+        final String xml = marshall(name);
+        assertMultilinesEquals(
+            "<gco:LocalName>A name with &amp; and &gt; and &lt;.</gco:LocalName>\n", xml);
+    }
+
+    /**
      * Tests XML of a {@link TypeName}.
      *
      * @throws JAXBException Should not happen.

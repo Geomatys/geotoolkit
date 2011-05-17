@@ -20,6 +20,7 @@ package org.geotoolkit.metadata;
 import java.util.Map;
 import java.util.logging.Logger;
 import java.text.ParseException;
+import java.lang.reflect.Modifier;
 import javax.swing.tree.TreeModel;
 import net.jcip.annotations.ThreadSafe;
 
@@ -210,7 +211,7 @@ public abstract class AbstractMetadata implements LenientComparable {
             return true;
         }
         if (mode == ComparisonMode.STRICT) {
-            if (object == null || !object.getClass().equals(getClass())) {
+            if (object == null || !getClass(object).equals(getClass(this))) {
                 return false;
             }
         }
@@ -244,6 +245,20 @@ public abstract class AbstractMetadata implements LenientComparable {
          * is to not synchronize at all.
          */
         return standard.shallowEquals(this, object, mode, false);
+    }
+
+    /**
+     * Returns the class of the given metadata, ignoring Geotk private classes like
+     * {@link org.geotoolkit.metadata.iso.citation.CitationConstant}.
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-48">GEOTK-48</a>
+     */
+    private static Class<?> getClass(final Object metadata) {
+        Class<?> type = metadata.getClass();
+        if (!Modifier.isPublic(type.getModifiers()) && type.getName().startsWith("org.geotoolkit.metadata.iso.")) {
+            type = type.getSuperclass();
+        }
+        return type;
     }
 
     /**
