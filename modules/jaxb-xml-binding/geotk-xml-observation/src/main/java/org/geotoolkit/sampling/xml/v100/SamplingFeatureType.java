@@ -32,6 +32,7 @@ import org.geotoolkit.gml.xml.v311.AbstractFeatureType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureType;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 // openGis dependencies
@@ -162,7 +163,7 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
      * Vérifie que cette station est identique à l'objet spécifié
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

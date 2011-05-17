@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.CurvePropertyType;
 import org.geotoolkit.gml.xml.v311.FeaturePropertyType;
 import org.geotoolkit.gml.xml.v311.MeasureType;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 
@@ -113,7 +114,7 @@ public class SamplingCurveType extends SpatiallyExtensiveSamplingFeatureType {
      * Vérifie que cette station est identique à l'objet spécifié
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

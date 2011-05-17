@@ -32,6 +32,7 @@ import org.geotoolkit.gml.xml.v311.PointPropertyType;
 import org.geotoolkit.gml.xml.v311.PointType;
 import org.geotoolkit.observation.xml.v100.ObservationType;
 import org.geotoolkit.observation.xml.v100.SurveyProcedureType;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.observation.sampling.SamplingPoint;
 
@@ -140,7 +141,7 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
      * Verify that this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
