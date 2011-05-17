@@ -24,6 +24,7 @@ import org.geotoolkit.sml.xml.AbstractComponent;
 import org.geotoolkit.sml.xml.AbstractInputs;
 import org.geotoolkit.sml.xml.AbstractOutputs;
 import org.geotoolkit.sml.xml.AbstractParameters;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 
@@ -154,7 +155,7 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
