@@ -36,6 +36,7 @@ import org.geotoolkit.gml.xml.v311.ReferenceType;
 import org.geotoolkit.swe.xml.v101.PhenomenonType;
 import org.geotoolkit.swe.xml.v101.PhenomenonPropertyType;
 import org.geotoolkit.swe.xml.v101.TimeGeometricPrimitivePropertyType;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 
@@ -234,7 +235,7 @@ public class ObservationOfferingType extends AbstractFeatureType {
      * Verifie si cette entree est identique a l'objet specifie.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
