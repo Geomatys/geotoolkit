@@ -160,7 +160,7 @@ public abstract class AbstractComponentType extends AbstractDerivableComponentTy
             return true;
         }
 
-        if (object instanceof AbstractComponentType && super.equals(object)) {
+        if (object instanceof AbstractComponentType && super.equals(object, mode)) {
             final AbstractComponentType that = (AbstractComponentType) object;
             return Utilities.equals(this.inputs,     that.inputs)     &&
                    Utilities.equals(this.outputs,    that.outputs)    &&
