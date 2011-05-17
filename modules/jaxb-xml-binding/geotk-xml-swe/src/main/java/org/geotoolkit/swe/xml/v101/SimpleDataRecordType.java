@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.swe.xml.AnyScalar;
 import org.geotoolkit.swe.xml.SimpleDataRecord;
+import org.geotoolkit.util.ComparisonMode;
 
 /**
  * Liste de valeur scalaire ou textuelle utilisé dans le resultat d'une observation.
@@ -164,7 +165,7 @@ public class SimpleDataRecordType extends AbstractDataRecordType implements Simp
      * Verify that the object is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

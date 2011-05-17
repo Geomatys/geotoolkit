@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 // Constellation dependencies
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.DefinitionType;
+import org.geotoolkit.util.ComparisonMode;
 import org.opengis.observation.Phenomenon;
 
 
@@ -109,7 +110,7 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         } else return (object instanceof PhenomenonType && super.equals(object));

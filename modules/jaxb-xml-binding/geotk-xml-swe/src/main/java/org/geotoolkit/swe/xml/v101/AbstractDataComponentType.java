@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.v311.AbstractGMLType;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.swe.xml.AbstractDataComponent;
+import org.geotoolkit.util.ComparisonMode;
 /**
  *
  * @version $Id:
@@ -117,7 +118,7 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
      * Verify that this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
