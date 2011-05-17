@@ -24,9 +24,9 @@ package org.geotoolkit.xml;
  * {@link NilReason} attributes. Those attributes are not part of ISO 19115, but may appear
  * in ISO 19139 XML documents like below:
  *
- * <blockquote><table border="1"><tr>
+ * <blockquote><table border="1"><tr bgcolor="lightblue">
  *   <th>Non-empty <code>Series</code> element</th>
- *   <th>empty <code>Series</code> element</th>
+ *   <th>Empty <code>Series</code> element</th>
  * </tr><tr><td>
  * {@preformat xml
  *   <gmd:CI_Citation>

@@ -43,11 +43,19 @@ public interface LenientComparable {
 
     /**
      * Returns {@code true} if this object is strictly equals to the given object.
-     * Invoking this method is equivalent to invoking
-     * <code>equals(other, {@linkplain ComparisonMode#STRICT})</code>.
+     * This method is typically implemented as below:
+     *
+     * {@preformat
+     *     return equals(other, ComparisonMode.STRICT);
+     * }
+     *
+     * In Geotk implementations, this method is typically {@code final} in order to ensure that
+     * subclasses override the above {@link #equals(Object, ComparisonMode)} method instead.
      *
      * @param  other The object to compare to {@code this}.
      * @return {@code true} if both objects are strictly equal.
+     *
+     * @see ComparisonMode#STRICT
      */
     @Override
     boolean equals(Object other);

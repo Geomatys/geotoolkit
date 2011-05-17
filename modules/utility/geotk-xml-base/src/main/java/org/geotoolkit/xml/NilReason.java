@@ -25,14 +25,14 @@ import org.geotoolkit.util.collection.WeakHashSet;
 
 
 /**
- * Explanation for a void value or other exception. The nil reason can be parsed and formatted as
+ * Explanation for a missing XML element. The nil reason can be parsed and formatted as
  * a string using the {@link #valueOf(String)} and {@link #toString()} methods respectively. The
  * string can be either a {@link URI} or an enumeration value described below. More specifically,
  * {@code NilReason} can be:
  * <p>
  * <ul>
  *   <li>One of the predefined {@link #INAPPLICABLE}, {@link #MISSING}, {@link #TEMPLATE},
- *       {@link #UNKNOWN} or {@link #WITHHELD} enumeration value.</li>
+ *       {@link #UNKNOWN} or {@link #WITHHELD} enumeration values.</li>
  *   <li>The {@link #OTHER} enumeration value, or a new enumeration value formatted as
  *       {@code "other:"} concatenated with a brief textual explanation.</li>
  *   <li>A URI which should refer to a resource which describes the reason for the exception.</li>
@@ -127,12 +127,12 @@ public final class NilReason implements Serializable {
     }
 
     /**
-     * Parse the given nil reason. This method accepts the following cases:
+     * Parses the given nil reason. This method accepts the following cases:
      *
      * <ul>
      *   <li><p>If the given argument is one of the {@code "inapplicable"}, {@code "missing"},
-     *       {@code "template"}, {@code "unknown"} or {@code "withheld"} strings, then the
-     *       corresponding pre-defined constant is returned.</p></li>
+     *       {@code "template"}, {@code "unknown"}, {@code "withheld"} or {@code "other"} strings,
+     *       then the corresponding pre-defined constant is returned.</p></li>
      *   <li><p>Otherwise if the given argument is {@code "other:"} followed by an explanation
      *       text, then a new instance is created and returned for that explanation. Note that
      *       if the given explanation contains any characters that are not
@@ -142,12 +142,12 @@ public final class NilReason implements Serializable {
      *       Such URI should refer to a resource which describes the reason for the exception.</p></li>
      * </ul>
      *
-     * This method return existing instances when possible.
+     * This method returns existing instances when possible.
      *
      * @param  reason The reason why an element is not present.
      * @return The reason as a {@code NilReason} object.
      * @throws URISyntaxException If the given string is not one of the predefined enumeration
-     *         value and can not be parsed as a URI.
+     *         values and can not be parsed as a URI.
      */
     public static NilReason valueOf(final String reason) throws URISyntaxException {
         int i = reason.indexOf(':');
@@ -197,8 +197,11 @@ public final class NilReason implements Serializable {
 
     /**
      * If this {@code NilReason} is an enumeration of kind {@link #OTHER}, returns the explanation
-     * text. Otherwise returns {@code null}. If non-null, the explanation should be a unicode
+     * text. Otherwise returns {@code null}. If non-null, then the explanation is a unicode
      * identifier without white space.
+     * <p>
+     * Note that in the special case where {@code this} nil reason is the {@link #OTHER}
+     * instance itself, then this method returns an empty string.
      *
      * @return The explanation as a unicode identifier, or {@code null} if this {@code NilReason}
      *         is not an enumeration of kind {@link #OTHER}.
@@ -221,7 +224,7 @@ public final class NilReason implements Serializable {
      * If the explanation of this {@code NilReason} is referenced by a URI, returns that URI.
      * Otherwise returns {@code null}.
      *
-     * @return The URI, or {@code null} if this {@code NilReason} in not explanation
+     * @return The URI, or {@code null} if the explanation of this {@code NilReason}
      *         is not referenced by a URI.
      */
     public URI getURI() {

@@ -44,7 +44,7 @@ public enum ComparisonMode {
      * to be compared. The implementation class doesn't need to be the same and some private
      * attributes may be ignored.
      * <p>
-     * Note that this comparison mode does <strong>not</strong> guaranteed {@link Object#hashCode())}
+     * Note that this comparison mode does <strong>not</strong> guaranteed {@link Object#hashCode()}
      * consistency, neither comparison symmetry (i.e. {@code A.equals(B)} and {@code B.equals(A)} may
      * return different results if the {@code equals} methods are implemented differently).
      */
