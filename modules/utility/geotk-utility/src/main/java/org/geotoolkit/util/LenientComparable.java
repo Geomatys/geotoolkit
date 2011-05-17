@@ -38,6 +38,8 @@ public interface LenientComparable {
      * @param  other The object to compare to {@code this}.
      * @param  mode The strictness level of the comparison.
      * @return {@code true} if both objects are equal.
+     *
+     * @see Utilities#deepEquals(Object, Object, ComparisonMode)
      */
     boolean equals(Object other, ComparisonMode mode);
 

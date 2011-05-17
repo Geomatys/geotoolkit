@@ -17,16 +17,19 @@
  */
 package org.geotoolkit.util;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
+
 import org.junit.*;
 import static org.junit.Assert.*;
-import static org.geotoolkit.util.Utilities.*;
 
 
 /**
  * Tests the {@link Utilities} static methods.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  */
@@ -93,5 +96,105 @@ public final class UtilitiesTest {
         assertFalse(Utilities.equals(C1, I2));
         assertFalse(Utilities.equals(C1, S2));
         assertFalse(Utilities.equals(B1, C2));
+    }
+
+    /**
+     * Tests {@link Utilities#deepEquals(Object, Object, ComparisonMode)}.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testDeepEquals() {
+        testDeepEquals(null, true);
+        testDeepEquals(null, false);
+
+        testDeepEquals(ComparisonMode.STRICT, true);
+        testDeepEquals(ComparisonMode.STRICT, false);
+    }
+
+    /**
+     * Tests {@link Utilities#deepEquals(Object, Object, ComparisonMode)} using the given
+     * comparison mode with the given collections.
+     */
+    private static void testDeepEquals(final ComparisonMode mode, final boolean orderIsSignificant) {
+        final DummyLenient e1 = new DummyLenient("Janvier", mode);
+        final DummyLenient e2 = new DummyLenient("Juin",    mode);
+        final DummyLenient e3 = new DummyLenient("Janvier", mode);
+        final DummyLenient e4 = new DummyLenient("Juin",    mode);
+        assertTrue (Utilities.deepEquals(e1, e1, mode));
+        assertFalse(Utilities.deepEquals(e1, e2, mode));
+        assertTrue (Utilities.deepEquals(e1, e3, mode));
+        assertFalse(Utilities.deepEquals(e1, e4, mode));
+        assertFalse(Utilities.deepEquals(e2, e3, mode));
+        assertTrue (Utilities.deepEquals(e2, e4, mode));
+        assertFalse(Utilities.deepEquals(e3, e4, mode));
+
+        final Collection<DummyLenient> c1, c2;
+        if (orderIsSignificant) {
+            c1 = new ArrayList<DummyLenient>();
+            c2 = new ArrayList<DummyLenient>();
+        } else {
+            c1 = new LinkedHashSet<DummyLenient>();
+            c2 = new LinkedHashSet<DummyLenient>();
+        }
+        assertTrue(c1.add(e1)); assertTrue(c1.add(e2));
+        assertTrue(c2.add(e3)); assertTrue(c2.add(e4));
+        assertTrue(Utilities.deepEquals(c1, c2, mode));
+        assertTrue(c2.remove(e3));
+        assertFalse(Utilities.deepEquals(c1, c2, mode));
+        assertTrue(c2.add(e3));
+        assertEquals(!orderIsSignificant, Utilities.deepEquals(c1, c2, mode));
+        if (mode == null) {
+            assertEquals(0, e1.comparisonCount);
+            assertEquals(0, e2.comparisonCount);
+            assertEquals(0, e3.comparisonCount);
+            assertEquals(0, e4.comparisonCount);
+        } else {
+            assertTrue(e1.comparisonCount != 0);
+            assertTrue(e2.comparisonCount != 0);
+            assertTrue(e3.comparisonCount != 0);
+        }
+    }
+
+    /**
+     * For {@link #testDeepEquals()} purpose only.
+     */
+    private static final class DummyLenient implements LenientComparable {
+        /** Label to be used in comparison. */
+        private final String label;
+
+        /** The expected comparison mode. */
+        private final ComparisonMode expected;
+
+        /** Number of comparison performed. */
+        int comparisonCount;
+
+        /** Creates a new instance expecting the given comparison mode. */
+        DummyLenient(final String label, final ComparisonMode expected) {
+            this.label = label;
+            this.expected = expected;
+        }
+
+        /** Compares this object with the given one. */
+        @Override public boolean equals(final Object other, final ComparisonMode mode) {
+            assertEquals(label, expected, mode);
+            comparisonCount++;
+            return equals(other);
+        }
+
+        /** Compares this dummy object with the given object. */
+        @Override public boolean equals(final Object other) {
+            return (other instanceof DummyLenient) && label.equals(((DummyLenient) other).label);
+        }
+
+        /** For consistency with {@link #equals(Object)}. */
+        @Override public int hashCode() {
+            return label.hashCode();
+        }
+
+        /** For debugging purpose only. */
+        @Override public String toString() {
+            return label;
+        }
     }
 }

@@ -937,7 +937,7 @@ final class PropertyAccessor {
             if (empty1 && empty2) {
                 continue;
             }
-            if (!Utilities.equals(value1, value2, mode)) {
+            if (!Utilities.deepEquals(value1, value2, mode)) {
                 if (!skipNulls || (!empty1 && !empty2)) {
                     return false;
                 }
