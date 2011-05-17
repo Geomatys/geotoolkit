@@ -141,8 +141,8 @@ public class UnionFeatureCollection extends WrapFeatureCollection {
 
         /*
          * This boolean if used to do a second pass on the process in inverting FeatureCollection input and union.
-         * During the second pass, we remove duplicates entries and add Features form union FeatureCollection without
-         * intersection with inputFeatureCollection Features and remaining Features.
+         * During the second pass, duplicates entries are removed and Features form union FeatureCollection without
+         * intersection with input FeatureCollection Features and remaining Features are added.
          */
         private boolean firstPass;
 

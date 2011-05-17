@@ -19,6 +19,7 @@ package org.geotoolkit.process.vector.union;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryFactory;
+import com.vividsolutions.jts.geom.LineString;
 import com.vividsolutions.jts.geom.LinearRing;
 import com.vividsolutions.jts.geom.Polygon;
 
@@ -80,9 +81,10 @@ public class UnionTest extends AbstractProcessTest{
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-
+      
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultList();
+        
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.getID(), featureListResult.getID());
         assertEquals(featureListOut.size(), featureListResult.size());
@@ -115,7 +117,7 @@ public class UnionTest extends AbstractProcessTest{
     }
     private static SimpleFeatureType createSimpleResultType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName("UnionTest U UnionTest");
+        ftb.setName("UnionTest-UnionTest");
         ftb.add("name", String.class);
         ftb.add("color", String.class);
         ftb.add("att", Integer.class);
@@ -284,6 +286,23 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("att", 12);
         myFeature4 = sfb.buildFeature("id-14");
         featureList.add(myFeature4);
+        
+        Feature myFeature5;
+        ring = geometryFactory.createLinearRing(
+                new Coordinate[]{
+                    new Coordinate(2.0, 5.0),
+                    new Coordinate(2.0, 6.0),
+                    new Coordinate(3.0, 6.0),
+                    new Coordinate(3.0, 5.0),
+                    new Coordinate(2.0, 5.0)
+                });
+        sfb = new SimpleFeatureBuilder(type);
+        sfb.set("name", "feature15");
+        sfb.set("color", "grey");
+        sfb.set("geom3", geometryFactory.createPolygon(ring, null));
+        sfb.set("att", 12);
+        myFeature5 = sfb.buildFeature("id-15");
+        featureList.add(myFeature5);
 
         return featureList;
     }
@@ -316,12 +335,26 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("color", "red");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
         sfb.set("att",20);
-        myFeature = sfb.buildFeature("id-01 U id-11");
+        myFeature = sfb.buildFeature("id-01-id-11");
+        featureList.add(myFeature);
+        
+        LineString str = geometryFactory.createLineString(
+                new Coordinate[]{
+                    new Coordinate(3, 5),
+                    new Coordinate(3, 6)
+                });
+        sfb = new SimpleFeatureBuilder(type);
+        sfb.set("name", "feature1");
+        sfb.set("color", "grey");
+        sfb.set("geom1", str);
+        sfb.set("att",12);
+        myFeature = sfb.buildFeature("id-01-id-15");
         featureList.add(myFeature);
 
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(3, 5),
+                    new Coordinate(3, 6),
                     new Coordinate(3, 7),
                     new Coordinate(4, 7),
                     new Coordinate(4, 5),
@@ -348,7 +381,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("color", "blue");
         sfb.set("att", 20);
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-03 U id-12");
+        myFeature = sfb.buildFeature("id-03-id-12");
         featureList.add(myFeature);
 
         ring = geometryFactory.createLinearRing(
@@ -364,7 +397,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("color", "red");
         sfb.set("att", 20);
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-03 U id-11");
+        myFeature = sfb.buildFeature("id-03-id-11");
         featureList.add(myFeature);
 
 
@@ -381,7 +414,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("color", "grey");
         sfb.set("att",10);
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-03 U id-13");
+        myFeature = sfb.buildFeature("id-03-id-13");
         featureList.add(myFeature);
 
         ring = geometryFactory.createLinearRing(
@@ -397,7 +430,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("color", "blue");
         sfb.set("att", 20);
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-02 U id-12");
+        myFeature = sfb.buildFeature("id-02-id-12");
         featureList.add(myFeature);
 
         ring = geometryFactory.createLinearRing(
@@ -413,7 +446,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("color", "red");
         sfb.set("att", 20);
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        myFeature = sfb.buildFeature("id-02 U id-11");
+        myFeature = sfb.buildFeature("id-02-id-11");
         featureList.add(myFeature);
 
         ring = geometryFactory.createLinearRing(
@@ -483,7 +516,7 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
         myFeature = sfb.buildFeature("id-14");
         featureList.add(myFeature);
-
+        
         ring = geometryFactory.createLinearRing(
                 new Coordinate[]{
                     new Coordinate(4, 4),
@@ -494,12 +527,12 @@ public class UnionTest extends AbstractProcessTest{
                 });
         LinearRing ring2 = geometryFactory.createLinearRing(
                 new Coordinate[]{
+                    new Coordinate(6, 7),
                     new Coordinate(4, 7),
                     new Coordinate(4, 8),
                     new Coordinate(7, 8),
                     new Coordinate(7, 7),
-                    new Coordinate(6, 7),
-                    new Coordinate(4, 7)
+                    new Coordinate(6, 7)
                 });
         Polygon poly1 = geometryFactory.createPolygon(ring, null);
         Polygon poly2 = geometryFactory.createPolygon(ring2, null);
@@ -510,7 +543,24 @@ public class UnionTest extends AbstractProcessTest{
         sfb.set("geom1", geometryFactory.createMultiPolygon(new Polygon[]{ poly1,poly2}));
         myFeature = sfb.buildFeature("id-11");
         featureList.add(myFeature);
-
+        
+        Feature myFeature5;
+        ring = geometryFactory.createLinearRing(
+                new Coordinate[]{
+                    new Coordinate(2.0, 5.0),
+                    new Coordinate(2.0, 6.0),
+                    new Coordinate(3.0, 6.0),
+                    new Coordinate(3.0, 5.0),
+                    new Coordinate(2.0, 5.0)
+                });
+        sfb = new SimpleFeatureBuilder(type);
+        sfb.set("name", "feature15");
+        sfb.set("color", "grey");
+        sfb.set("geom1", geometryFactory.createPolygon(ring, null));
+        sfb.set("att", 12);
+        myFeature5 = sfb.buildFeature("id-15");
+        featureList.add(myFeature5);
+   
         return featureList;
     }
 }

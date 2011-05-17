@@ -22,6 +22,7 @@ import java.util.Collections;
 
 import org.geotoolkit.data.FeatureCollection;
 import org.geotoolkit.data.FeatureIterator;
+import org.geotoolkit.geometry.jts.SRIDGenerator;
 import org.geotoolkit.parameter.Parameters;
 import org.geotoolkit.process.AbstractProcess;
 import org.geotoolkit.process.ProcessEvent;
@@ -30,6 +31,7 @@ import org.opengis.feature.Feature;
 import org.opengis.feature.Property;
 import org.opengis.feature.type.GeometryDescriptor;
 import org.opengis.parameter.ParameterValueGroup;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * Compute the convex hull from a FeatureCollection. An optional parameter
@@ -83,7 +85,7 @@ public class ConvexHull extends AbstractProcess {
 
 
         Geometry convexHull = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
-
+        CoordinateReferenceSystem crs = null;
         final FeatureIterator<Feature> iter = inputFeatureList.iterator();
         try {
             while (iter.hasNext()) {
@@ -95,7 +97,10 @@ public class ConvexHull extends AbstractProcess {
                 }
                 for (Property property : feature.getProperties()) {
                     if (property.getDescriptor() instanceof GeometryDescriptor) {
-                        if (property.getName().getLocalPart().equals(geometryName)) {
+                        final GeometryDescriptor desc = (GeometryDescriptor) property.getDescriptor();
+                        if (desc.getName().getLocalPart().equals(geometryName)) {
+                            crs = desc.getCoordinateReferenceSystem();
+                            
                             final Geometry tmpGeom = (Geometry) property.getValue();
                             convexHull = convexHull.union(tmpGeom);
                             convexHull = convexHull.convexHull();
@@ -106,6 +111,7 @@ public class ConvexHull extends AbstractProcess {
         } finally {
             iter.close();
         }
+        convexHull.setSRID(SRIDGenerator.toSRID(crs, SRIDGenerator.Version.V1));
         return convexHull;
     }
 }

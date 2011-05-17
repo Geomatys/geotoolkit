@@ -51,7 +51,7 @@ public final class IntersectDescriptor extends VectorDescriptor {
      * Mandatory - Intersection geometry
      */
     public static final ParameterDescriptor<Geometry> GEOMETRY_IN =
-            new DefaultParameterDescriptor("geometry_in", "Input geometry", Geometry.class, null, true);
+            new DefaultParameterDescriptor("geometry_in", "Input geometry used to compute the intersection", Geometry.class, null, true);
 
     /** Input Parameters */
     public static final ParameterDescriptorGroup INPUT_DESC =
@@ -70,8 +70,7 @@ public final class IntersectDescriptor extends VectorDescriptor {
      * Default constructor
      */
     private IntersectDescriptor() {
-        super(NAME, "Return the result FeatureCollection of intersection between a "
-                + "FeatureCollection and a Geometry", INPUT_DESC, OUTPUT_DESC);
+        super(NAME, "Return all Feature witch intersect the input geometry", INPUT_DESC, OUTPUT_DESC);
     }
 
     /**

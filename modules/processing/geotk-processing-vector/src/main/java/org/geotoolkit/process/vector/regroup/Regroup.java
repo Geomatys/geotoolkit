@@ -97,7 +97,7 @@ public class Regroup extends AbstractProcess {
 
         AttributeDescriptorBuilder descBuilder;
         AttributeTypeBuilder typeBuilder;
-
+        
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
 
         ftb.copy(oldFeatureType);
@@ -137,7 +137,7 @@ public class Regroup extends AbstractProcess {
                 }
             }
         }
-
+        
         ftb.setDefaultGeometry(geometryName);
         for (String delPropertyDesc : listToRemove) {
             ftb.remove(delPropertyDesc);

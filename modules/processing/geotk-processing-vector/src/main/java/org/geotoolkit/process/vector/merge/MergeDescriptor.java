@@ -74,7 +74,8 @@ public final class MergeDescriptor extends AbstractProcessDescriptor {
     protected MergeDescriptor() {
 
         super(NAME, VectorProcessFactory.IDENTIFICATION,
-                new SimpleInternationalString("Merged many FeatureCollection"),
+                new SimpleInternationalString("Merge many FeatureCollection in one. The fist FeatureCollection found in "
+                + "the input Collection have his FeatureType preserved. The others will be adapted to this one."),
                 INPUT_DESC, OUTPUT_DESC);
     }
 

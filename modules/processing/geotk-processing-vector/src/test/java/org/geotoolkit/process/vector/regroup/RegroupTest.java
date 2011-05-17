@@ -153,7 +153,7 @@ public class RegroupTest extends AbstractProcessTest{
         return sft;
     }
 
-
+    
     private static FeatureCollection<?> buildFeatureList() {
 
         try {

@@ -57,7 +57,7 @@ public class AffineTransform extends AbstractProcess {
         getMonitor().started(new ProcessEvent(this, 0, null, null));
         final FeatureCollection<Feature> inputFeatureList = Parameters.value(AffineTransformDescriptor.FEATURE_IN, inputParameters);
         final java.awt.geom.AffineTransform transform = Parameters.value(AffineTransformDescriptor.TRANSFORM_IN, inputParameters);
-
+        
         final FeatureCollection<Feature> resultFeatureList = new AffineTransformFeatureCollection(inputFeatureList, transform);
 
         result = super.getOutput();

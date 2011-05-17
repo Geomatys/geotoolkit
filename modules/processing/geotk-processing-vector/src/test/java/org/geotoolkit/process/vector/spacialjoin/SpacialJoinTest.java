@@ -102,7 +102,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
         // Inputs
         final FeatureCollection<?> targetFeatures = buildFeatureListInter1();
         final FeatureCollection<?> sourceFeatures = buildFeatureListInter2();
-
+       
         // Process
         ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "spacialjoin");
         org.geotoolkit.process.Process proc = desc.createProcess();
@@ -118,10 +118,10 @@ public class SpacialJoinTest extends AbstractProcessTest{
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-
+        
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultInter();
-
+        
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
         assertEquals(featureListOut.size(), featureListResult.size());
         assertTrue(featureListOut.containsAll(featureListResult));
@@ -152,7 +152,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
 
         //Features out
         final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
-
+        
         //Expected Features out
         final FeatureCollection<?> featureListResult = buildResultInter2();
         assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
@@ -184,7 +184,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
 
     private static SimpleFeatureType createSimpleTypeResult() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
-        ftb.setName("SJ_Type1+SJ_Type2");
+        ftb.setName("SJ_Type1_SJ_Type2");
         ftb.add("name", String.class);
         ftb.add("age", Integer.class);
         ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
@@ -447,7 +447,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("Target", type);
 
-        final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1");
+        final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-1_id-11");
         feature1.getProperty("name").setValue("Human1");
         feature1.getProperty("age").setValue(20);
         feature1.getProperty("geom1").setValue(geometryFactory.createPoint(new Coordinate(3, 2)));
@@ -455,7 +455,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
         feature1.getProperty("age_SJ_Type2").setValue(220);
         featureList.add(feature1);
 
-        final Feature feature2 = FeatureUtilities.defaultFeature(type, "id-2");
+        final Feature feature2 = FeatureUtilities.defaultFeature(type, "id-2_id-12");
         feature2.getProperty("name").setValue("Human2");
         feature2.getProperty("age").setValue(10);
         feature2.getProperty("geom1").setValue(geometryFactory.createPoint(new Coordinate(3, 5)));
@@ -463,7 +463,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
         feature2.getProperty("age_SJ_Type2").setValue(100);
         featureList.add(feature2);
 
-        final Feature feature3 = FeatureUtilities.defaultFeature(type, "id-3");
+        final Feature feature3 = FeatureUtilities.defaultFeature(type, "id-3_id-13");
         feature3.getProperty("name").setValue("Human3");
         feature3.getProperty("age").setValue(35);
         feature3.getProperty("geom1").setValue(geometryFactory.createPoint(new Coordinate(6, 6)));
@@ -471,7 +471,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
         feature3.getProperty("age_SJ_Type2").setValue(5);
         featureList.add(feature3);
 
-        final Feature feature4 = FeatureUtilities.defaultFeature(type, "id-4");
+        final Feature feature4 = FeatureUtilities.defaultFeature(type, "id-4_id-14");
         feature4.getProperty("name").setValue("Human4");
         feature4.getProperty("age").setValue(40);
         feature4.getProperty("geom1").setValue(geometryFactory.createPoint(new Coordinate(6, 2)));
@@ -479,7 +479,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
         feature4.getProperty("age_SJ_Type2").setValue(40);
         featureList.add(feature4);
 
-        final Feature feature5 = FeatureUtilities.defaultFeature(type, "id-5");
+        final Feature feature5 = FeatureUtilities.defaultFeature(type, "id-5_id-13");
         feature5.getProperty("name").setValue("Human5");
         feature5.getProperty("age").setValue(23);
         feature5.getProperty("geom1").setValue(geometryFactory.createPoint(new Coordinate(7, 4)));
@@ -487,7 +487,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
         feature5.getProperty("age_SJ_Type2").setValue(5);
         featureList.add(feature5);
 
-        final Feature feature6 = FeatureUtilities.defaultFeature(type, "id-6");
+        final Feature feature6 = FeatureUtilities.defaultFeature(type, "id-6_id-16");
         feature6.getProperty("name").setValue("Human6");
         feature6.getProperty("age").setValue(32);
         feature6.getProperty("geom1").setValue(geometryFactory.createPoint(new Coordinate(9, 4)));
@@ -495,7 +495,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
         feature6.getProperty("age_SJ_Type2").setValue(68);
         featureList.add(feature6);
 
-        final Feature feature7 = FeatureUtilities.defaultFeature(type, "id-7");
+        final Feature feature7 = FeatureUtilities.defaultFeature(type, "id-7_id-16");
         feature7.getProperty("name").setValue("Human7");
         feature7.getProperty("age").setValue(28);
         feature7.getProperty("geom1").setValue(geometryFactory.createPoint(new Coordinate(9, 1)));
@@ -518,7 +518,7 @@ public class SpacialJoinTest extends AbstractProcessTest{
 
         final FeatureCollection<Feature> featureList = DataUtilities.collection("source", type);
 
-        final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01");
+        final Feature feature1 = FeatureUtilities.defaultFeature(type, "id-01_id-12");
         feature1.getProperty("name").setValue("Field");
         feature1.getProperty("age").setValue(1);
 

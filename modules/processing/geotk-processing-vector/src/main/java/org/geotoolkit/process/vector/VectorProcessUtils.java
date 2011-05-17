@@ -16,6 +16,7 @@
  */
 package org.geotoolkit.process.vector;
 
+import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.GeometryCollection;
@@ -76,8 +77,10 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module pending
  */
-@Static
+//@Static
 public final class VectorProcessUtils {
+
+ 
 
     private VectorProcessUtils() {
     }
@@ -326,6 +329,30 @@ public final class VectorProcessUtils {
         }
     }
     
+//    
+//    public static Geometry convertToPolygon(Geometry intersectGeom) {
+//        GeometryFactory geomFact = new GeometryFactory();
+//        LinearRing ring;
+//        
+//        if(intersectGeom instanceof Point){
+//            Point pt = (Point) intersectGeom;
+//            ring = geomFact.createLinearRing(new Coordinate[]{
+//                new Coordinate(pt.getX(),              pt.getY()),
+//                new Coordinate(pt.getX(),              pt.getY()+0.0000000001),
+//                new Coordinate(pt.getX()+0.0000000001, pt.getY()+0.0000000001),
+//                new Coordinate(pt.getX()+0.0000000001, pt.getY()),
+//                new Coordinate(pt.getX(),              pt.getY())
+//            });
+//            return geomFact.createPolygon(ring, null);
+//        }else if(intersectGeom instanceof LineString){
+//            LineString line = (LineString) intersectGeom;
+//            
+//            return geomFact.createPolygon(ring, null);
+//        }
+//        
+//    }
+    
+    
     /**
      * Compute the intersection geometry between two Features.
      * To determinate which Geometry used from Feature, we use the sourceGeomName and
@@ -369,9 +396,8 @@ public final class VectorProcessUtils {
                 }
             }
         }
-
+        
         targetGeometry = repojectGeometry(sourceCRS, targetCRS, targetGeometry);
-
         return sourceGeometry.intersection(targetGeometry);
     }
 

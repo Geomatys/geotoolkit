@@ -92,18 +92,23 @@ public class SpacialJoin extends AbstractProcess {
     }
 
     /**
-     * THis function join target Feature with another Feature form source FeatureCollection.
-     * If method is true, the method used is Intersect, else it's Nearest.
+     * This function join target Feature with another Feature form a source FeatureCollection.
+     * 
+     * If boolean <code>method</code> is true, the method used is Intersect, else it's Nearest.
+     * 
      * If there is no Feature which Intersect the target Geometry, the return Feature
      * will have "joined attributes" set to null.
+     * 
      * If there is more than one result for Nearest method
      * (many Feature at the same distance), we use the first returned.
+     * 
      * If there is more than one result for Intersect method , we use the Feature
      * with the biggest intersection area with target Geometry.
+     * 
      * @param target the target Feature
      * @param newType the concatenated FeatureType
      * @param sourceFC the source FeatureCollection
-     * @param method the used method
+     * @param method the used method. True -> Intersect, False -> Nearest
      * @return the joined feature
      */
     static Feature join(final Feature target, final FeatureType newType,
@@ -128,7 +133,7 @@ public class SpacialJoin extends AbstractProcess {
                 final GeometryDescriptor geomDesc = (GeometryDescriptor) property.getDescriptor();
                 final CoordinateReferenceSystem geomCRS = geomDesc.getCoordinateReferenceSystem();
 
-                JTS.setCRS(targetGeometry, geomCRS);//add CRS to the user data geometry
+                JTS.setCRS(targetGeometry, geomCRS);//add CRS to the used data geometry
                 //use intersect method
                 if (method) {
                     desc = ProcessFinder.getProcessDescriptor(VectorProcessFactory.NAME, IntersectDescriptor.NAME);
@@ -151,7 +156,7 @@ public class SpacialJoin extends AbstractProcess {
 
                 final FeatureCollection<Feature> featureOut =
                         (FeatureCollection<Feature>) proc.getOutput().parameter("feature_out").getValue();
-
+                
                 featureOutArray = new ArrayList<Feature>(featureOut);
 
                 if (method) {//intersect method
@@ -191,7 +196,8 @@ public class SpacialJoin extends AbstractProcess {
      */
     static Feature copyAttributes(final Feature target, final Feature source, final FeatureType concatType) {
 
-        final Feature resultFeature = FeatureUtilities.defaultFeature(concatType, target.getIdentifier().getID());
+        final Feature resultFeature = FeatureUtilities.defaultFeature(concatType, target.getIdentifier().getID()+"_"+
+                source.getIdentifier().getID());
 
         //copy target Feature
         for (Property targetProperty : target.getProperties()) {
@@ -265,9 +271,12 @@ public class SpacialJoin extends AbstractProcess {
         AttributeTypeBuilder typeBuilder;
 
 
+        //copy targetType into a FeatureTypeBuilder and change Name to targetName+sourceName
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.copy(targetType);
-        ftb.setName(targetType.getName().getLocalPart() + "+" + sourceType.getName().getLocalPart());
+        ftb.setName(targetType.getName().getLocalPart() + "_" + sourceType.getName().getLocalPart());
+        
+        //each source descriptor
         final Iterator<PropertyDescriptor> iteSource = sourceType.getDescriptors().iterator();
         while (iteSource.hasNext()) {
 
@@ -297,7 +306,7 @@ public class SpacialJoin extends AbstractProcess {
                     descBuilder.setName(newName);
                 }
                 descBuilder.setNillable(true);
-                descBuilder.setType(typeBuilder.buildGeometryType());
+                descBuilder.setType(typeBuilder.buildType());
                 ftb.add(descBuilder.buildDescriptor());
             }
         }

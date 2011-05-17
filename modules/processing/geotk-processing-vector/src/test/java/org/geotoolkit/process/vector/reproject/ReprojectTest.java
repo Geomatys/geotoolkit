@@ -28,6 +28,7 @@ import java.util.logging.Logger;
 
 import org.geotoolkit.data.DataUtilities;
 import org.geotoolkit.data.FeatureCollection;
+import org.geotoolkit.factory.Hints;
 import org.geotoolkit.feature.FeatureTypeBuilder;
 import org.geotoolkit.feature.simple.SimpleFeatureBuilder;
 import org.geotoolkit.process.ProcessDescriptor;
@@ -59,10 +60,10 @@ public class ReprojectTest extends AbstractProcessTest{
         super("reproject");
     }
 
-
+   
     @Test
     public void testReprojection() throws  FactoryException {
-
+        Hints.putSystemDefault(Hints.LENIENT_DATUM_SHIFT, Boolean.TRUE);
         // Inputs
         final FeatureCollection<?> featureList = buildFeatureList();
         // Process
@@ -71,12 +72,13 @@ public class ReprojectTest extends AbstractProcessTest{
 
         ParameterValueGroup in = desc.getInputDescriptor().createValue();
         in.parameter("feature_in").setValue(featureList);
-        in.parameter("crs_in").setValue(CRS.decode("EPSG:4326"));
+        in.parameter("crs_in").setValue(CRS.decode("EPSG:27582"));
         proc.setInput(in);
         proc.run();
 
         //FeatureCollection out
         final FeatureCollection<Feature> resultFC = (FeatureCollection<Feature>) proc.getOutput().parameter("feature_out").getValue();
+       
         assertEquals(featureList.getID(), resultFC.getID());
         assertEquals(resultFC.size(), resultFC.size());
     }
@@ -85,8 +87,8 @@ public class ReprojectTest extends AbstractProcessTest{
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();
         ftb.setName("IntersectTest");
         ftb.add("name", String.class);
-        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:3395"));
-        ftb.add("geom2", Geometry.class, CRS.decode("EPSG:3395"));
+        ftb.add("geom1", Geometry.class, CRS.decode("EPSG:4326"));
+        //ftb.add("geom2", Geometry.class, CRS.decode("EPSG:4326"));
 
         ftb.setDefaultGeometry("geom1");
         final SimpleFeatureType sft = ftb.buildSimpleFeatureType();
@@ -118,7 +120,7 @@ public class ReprojectTest extends AbstractProcessTest{
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature1");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
+        //sfb.set("geom2", geometryFactory.createPoint(new Coordinate(3.5, 3.5)));
         myFeature1 = sfb.buildFeature("id-01");
         featureList.add(myFeature1);
 
@@ -141,7 +143,7 @@ public class ReprojectTest extends AbstractProcessTest{
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature2");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", multPt);
+        //sfb.set("geom2", multPt);
         myFeature2 = sfb.buildFeature("id-02");
         featureList.add(myFeature2);
 
@@ -162,7 +164,7 @@ public class ReprojectTest extends AbstractProcessTest{
         sfb = new SimpleFeatureBuilder(type);
         sfb.set("name", "feature3");
         sfb.set("geom1", geometryFactory.createPolygon(ring, null));
-        sfb.set("geom2", line);
+        //sfb.set("geom2", line);
         myFeature3 = sfb.buildFeature("id-03");
         featureList.add(myFeature3);
 
