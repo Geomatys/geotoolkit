@@ -105,7 +105,7 @@ public class SolidType extends AbstractSolidType {
         if (object == this) {
             return true;
         }
-        if (object instanceof SolidType && super.equals(object)) {
+        if (object instanceof SolidType && super.equals(object, mode)) {
             final SolidType that = (SolidType) object;
             return  Utilities.equals(this.exterior, that.exterior) &&
                     Utilities.equals(this.interior, that.interior);

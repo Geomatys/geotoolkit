@@ -109,7 +109,7 @@ public abstract class CompoundPhenomenonType extends PhenomenonType {
             return true;
         }
         
-        if (object instanceof CompoundPhenomenonType && super.equals(object)) {
+        if (object instanceof CompoundPhenomenonType && super.equals(object, mode)) {
             final CompoundPhenomenonType that = (CompoundPhenomenonType) object;
             
             return Utilities.equals(this.dimension ,that.dimension);

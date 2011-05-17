@@ -136,7 +136,7 @@ public class TimeType extends AbstractDataComponentType implements AbstractTime 
         if (object == this) {
             return true;
         }
-        if (object instanceof TimeType && super.equals(object)) {
+        if (object instanceof TimeType && super.equals(object, mode)) {
             final TimeType that = (TimeType) object;
 
             boolean valueEqorEmpty = Utilities.equals(this.value, that.value);

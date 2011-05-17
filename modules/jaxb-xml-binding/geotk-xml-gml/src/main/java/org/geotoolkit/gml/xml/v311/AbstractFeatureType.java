@@ -190,7 +190,7 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractFeatureType && super.equals(object)) {
+        if (object instanceof AbstractFeatureType && super.equals(object, mode)) {
             final AbstractFeatureType that = (AbstractFeatureType) object;
 
             return Utilities.equals(this.boundedBy, that.boundedBy) &&

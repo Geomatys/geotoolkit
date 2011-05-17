@@ -98,7 +98,7 @@ public class BooleanType extends AbstractDataComponentType  implements AbstractB
         if (object == this) {
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
         final BooleanType that = (BooleanType) object;
         return Utilities.equals(this.referenceFrame, that.referenceFrame) &&
                Utilities.equals(this.axisID,         that.axisID)  &&

@@ -144,7 +144,7 @@ public class MultiPointType extends AbstractGeometricAggregateType {
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiPointType && super.equals(object)) {
+        if (object instanceof MultiPointType && super.equals(object, mode)) {
             final MultiPointType that = (MultiPointType) object;
 
             return Utilities.equals(this.pointMember,  that.pointMember) &&

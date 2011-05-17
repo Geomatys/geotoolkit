@@ -228,7 +228,7 @@ public class PointType extends AbstractGeometricPrimitiveType implements Point {
         if (object == this) {
             return true;
         }
-        if (object instanceof PointType && super.equals(object)) {
+        if (object instanceof PointType && super.equals(object, mode)) {
             final PointType that = (PointType) object;
             return  Utilities.equals(this.pos, that.pos) &&
                     Utilities.equals(this.coordinates, that.coordinates);

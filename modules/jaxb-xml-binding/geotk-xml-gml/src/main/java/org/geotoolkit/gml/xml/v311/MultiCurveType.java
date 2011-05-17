@@ -121,7 +121,7 @@ public class MultiCurveType extends AbstractGeometricAggregateType {
         if (object == this) {
             return true;
         }
-        if (object instanceof MultiCurveType && super.equals(object)) {
+        if (object instanceof MultiCurveType && super.equals(object, mode)) {
             final MultiCurveType that = (MultiCurveType) object;
 
             return Utilities.equals(this.curveMember,  that.curveMember) &&

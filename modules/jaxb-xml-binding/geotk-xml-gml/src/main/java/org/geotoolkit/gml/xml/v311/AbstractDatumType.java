@@ -161,7 +161,7 @@ public abstract class AbstractDatumType extends AbstractDatumBaseType {
             return true;
         }
 
-        if (object instanceof AbstractDatumType && super.equals(object)) {
+        if (object instanceof AbstractDatumType && super.equals(object, mode)) {
             final AbstractDatumType that = (AbstractDatumType) object;
 
             return Utilities.equals(this.scope,     that.scope)     &&

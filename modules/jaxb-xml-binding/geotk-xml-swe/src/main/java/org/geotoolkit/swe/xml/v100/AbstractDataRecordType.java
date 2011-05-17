@@ -82,7 +82,7 @@ public abstract class AbstractDataRecordType extends AbstractDataComponentType i
         if (object == this) {
             return true;
         }
-        return (object instanceof AbstractDataRecordType && super.equals(object));
+        return (object instanceof AbstractDataRecordType && super.equals(object, mode));
     }
 
     @Override

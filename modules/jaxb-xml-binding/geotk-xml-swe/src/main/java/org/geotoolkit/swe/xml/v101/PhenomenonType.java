@@ -113,7 +113,7 @@ public class PhenomenonType extends DefinitionType implements Phenomenon {
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
-        } else return (object instanceof PhenomenonType && super.equals(object));
+        } else return (object instanceof PhenomenonType && super.equals(object, mode));
     }
     
     /**

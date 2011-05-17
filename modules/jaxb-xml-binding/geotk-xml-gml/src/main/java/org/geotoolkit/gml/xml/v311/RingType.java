@@ -126,7 +126,7 @@ public class RingType extends AbstractRingType {
         if (object == this) {
             return true;
         }
-        if (object instanceof RingType && super.equals(object)) {
+        if (object instanceof RingType && super.equals(object, mode)) {
             final RingType that = (RingType) object;
 
             return Utilities.equals(this.curveMember, that.curveMember);

@@ -145,7 +145,7 @@ public class CompositePhenomenonType extends CompoundPhenomenonType implements C
             return true;
         }
         
-        if (object instanceof CompositePhenomenonType && super.equals(object)) {
+        if (object instanceof CompositePhenomenonType && super.equals(object, mode)) {
             final CompositePhenomenonType that = (CompositePhenomenonType) object;
            if ((this.component !=null && that.component == null)||(this.component ==null && that.component != null))
                 return false;

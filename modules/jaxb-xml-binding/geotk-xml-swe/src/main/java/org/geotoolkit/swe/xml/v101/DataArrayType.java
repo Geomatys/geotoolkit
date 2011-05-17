@@ -165,7 +165,7 @@ public class DataArrayType extends AbstractDataArrayType implements DataArray {
         if (object == this) {
             return true;
         }
-        if (object instanceof DataArrayType && super.equals(object)) {
+        if (object instanceof DataArrayType && super.equals(object, mode)) {
             final DataArrayType that = (DataArrayType) object;
             return Utilities.equals(this.elementType,   that.elementType)   &&
                    Utilities.equals(this.encoding,    that.encoding)    &&

@@ -93,7 +93,7 @@ public abstract class AbstractReferenceSystemBaseType extends DefinitionType {
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractReferenceSystemBaseType && super.equals(object)) {
+        if (object instanceof AbstractReferenceSystemBaseType && super.equals(object, mode)) {
             final AbstractReferenceSystemBaseType that = (AbstractReferenceSystemBaseType) object;
             return Utilities.equals(this.srsName, that.srsName);
         }

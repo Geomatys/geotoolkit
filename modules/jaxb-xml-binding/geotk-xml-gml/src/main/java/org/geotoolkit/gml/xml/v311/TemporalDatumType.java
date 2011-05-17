@@ -93,7 +93,7 @@ public class TemporalDatumType extends TemporalDatumBaseType {
             return true;
         }
 
-        if (object instanceof TemporalDatumType && super.equals(object)) {
+        if (object instanceof TemporalDatumType && super.equals(object, mode)) {
             final TemporalDatumType that = (TemporalDatumType) object;
 
             return Utilities.equals(this.origin,     that.origin);

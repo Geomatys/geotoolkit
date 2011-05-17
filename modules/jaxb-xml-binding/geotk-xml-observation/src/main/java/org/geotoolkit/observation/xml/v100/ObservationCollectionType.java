@@ -90,7 +90,7 @@ public class ObservationCollectionType extends AbstractFeatureType implements Ob
         if (object == this) {
             return true;
         }
-        if (super.equals(object) && object instanceof ObservationCollectionType) {
+        if (object instanceof ObservationCollectionType && super.equals(object, mode)) {
             final ObservationCollectionType that = (ObservationCollectionType) object;
             if (this.member != null && that.member != null) {
                 if (this.member.size() != that.member.size())

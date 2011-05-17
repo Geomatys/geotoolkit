@@ -224,7 +224,7 @@ public class Category extends AbstractDataComponentType  implements AbstractCate
         if (object == this) {
             return true;
         }
-        if (object instanceof Category && super.equals(object)) {
+        if (object instanceof Category && super.equals(object, mode)) {
             final Category that = (Category) object;
 
             return Utilities.equals(this.axisID,           that.axisID)         &&

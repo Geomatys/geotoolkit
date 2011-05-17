@@ -122,7 +122,7 @@ public class AbstractDataComponentType extends AbstractGMLType implements Abstra
         if (object == this) {
             return true;
         }
-        if (object instanceof AbstractDataComponentType && super.equals(object)) {
+        if (object instanceof AbstractDataComponentType && super.equals(object, mode)) {
             final AbstractDataComponentType that = (AbstractDataComponentType) object;
             return Utilities.equals(this.definition, that.definition) &&
                    Utilities.equals(this.fixed,      that.fixed);

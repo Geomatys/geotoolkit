@@ -168,7 +168,7 @@ public class SamplingFeatureType extends AbstractFeatureType implements Sampling
             return true;
         }
         
-        if (object instanceof SamplingFeatureType && super.equals(object)) {
+        if (object instanceof SamplingFeatureType && super.equals(object, mode)) {
             final SamplingFeatureType that = (SamplingFeatureType) object;
             return Utilities.equals(this.surveyDetail,           that.surveyDetail)   &&
                    Utilities.equals(this.relatedObservation,     that.relatedObservation) &&

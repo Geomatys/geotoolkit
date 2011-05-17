@@ -183,7 +183,7 @@ public class Count extends AbstractDataComponentType implements AbstractCount {
         if (object == this) {
             return true;
         }
-        if (object instanceof Count && super.equals(object)) {
+        if (object instanceof Count && super.equals(object, mode)) {
             final Count that = (Count) object;
             return Utilities.equals(this.axisID, that.axisID) &&
                     Utilities.equals(this.constraint, that.constraint) &&

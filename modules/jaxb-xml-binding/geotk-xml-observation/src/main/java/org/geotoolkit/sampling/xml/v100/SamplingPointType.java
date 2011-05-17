@@ -145,7 +145,7 @@ public class SamplingPointType extends SamplingFeatureType implements SamplingPo
         if (object == this) {
             return true;
         }
-        if (object instanceof SamplingFeatureType && super.equals(object)) {
+        if (object instanceof SamplingFeatureType && super.equals(object, mode)) {
             final SamplingPointType that = (SamplingPointType) object;
         
             return  Utilities.equals(this.position, that.position);
