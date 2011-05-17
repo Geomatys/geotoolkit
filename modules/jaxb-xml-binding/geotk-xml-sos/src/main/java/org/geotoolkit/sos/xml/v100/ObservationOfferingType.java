@@ -239,7 +239,7 @@ public class ObservationOfferingType extends AbstractFeatureType {
         if (object == this) {
             return true;
         }
-        if (object instanceof ObservationOfferingType && super.equals(object)) {
+        if (object instanceof ObservationOfferingType && super.equals(object, mode)) {
             final ObservationOfferingType that = (ObservationOfferingType) object;
             return Utilities.equals(this.time,                that.time)                &&
                    Utilities.equals(this.featureOfInterest,   that.featureOfInterest)   &&
