@@ -51,8 +51,12 @@ public class DerbySqlScriptRunner extends ScriptRunner {
         String query = sb.toString();
         query        = query.replace("'false'", "'FALSE'");
         query        = query.replace("'true'", "'TRUE'");
+        // use a regex to replace the 2 line above
         query        = query.replace("false", "0");
         query        = query.replace("true", "1");
+        // remove the 2 line under
+        query        = query.replace("'FALSE'", "'false'");
+        query        = query.replace("'TRUE'", "'true'");
 
         if (!query.startsWith("SET check_function_bodies")
                 && !query.startsWith("SET client_min_messages")
