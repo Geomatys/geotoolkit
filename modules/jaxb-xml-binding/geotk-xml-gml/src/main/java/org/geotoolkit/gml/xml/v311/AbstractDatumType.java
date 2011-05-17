@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlSchemaType;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 
@@ -155,7 +156,7 @@ public abstract class AbstractDatumType extends AbstractDatumBaseType {
      * Verify if this entry is identical to specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

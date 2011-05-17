@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.referencing.CRS;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.MetadataStandard;
+import org.geotoolkit.util.ComparisonMode;
 
 import org.opengis.filter.expression.Expression;
 import org.opengis.geometry.DirectPosition;
@@ -380,7 +381,7 @@ public abstract class AbstractGeometryType extends AbstractGMLType implements Ge
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object != null && getClass().equals(object.getClass())) {
             final AbstractGeometryType that = (AbstractGeometryType) object;
 

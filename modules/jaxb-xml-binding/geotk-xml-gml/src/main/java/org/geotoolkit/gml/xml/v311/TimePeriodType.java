@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.Duration;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.opengis.temporal.Instant;
 import org.opengis.temporal.Period;
@@ -361,7 +362,7 @@ public class TimePeriodType extends AbstractTimeGeometricPrimitiveType implement
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

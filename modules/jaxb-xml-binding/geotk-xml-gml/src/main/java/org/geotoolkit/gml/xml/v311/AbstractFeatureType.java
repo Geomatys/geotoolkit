@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.bind.annotation.XmlType;
 import org.geotoolkit.gml.xml.AbstractFeature;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 
@@ -185,7 +186,7 @@ public abstract class AbstractFeatureType extends AbstractGMLType implements Abs
      * Verify if this entry is identical to the specified object.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }

@@ -30,6 +30,7 @@ import org.geotoolkit.internal.sql.table.Entry;
 import org.geotoolkit.metadata.AbstractMetadata;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.metadata.MetadataStandard;
+import org.geotoolkit.util.ComparisonMode;
 
 
 /**
@@ -200,7 +201,7 @@ public abstract class AbstractGMLType extends AbstractMetadata implements Abstra
      * @todo fix the id problem.
      */
     @Override
-    public boolean equals(final Object obj) {
+    public boolean equals(final Object obj, final ComparisonMode mode) {
         if (obj == null) {
             return false;
         }
