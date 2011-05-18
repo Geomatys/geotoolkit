@@ -76,18 +76,16 @@ public class XmlBindingTest {
         "            <srv:parameters>" + '\n' +
         "                <srv:SV_Parameter>" + '\n' +
         "                    <srv:name>" + '\n' +
-        "                        <gco:MemberName>" + '\n' + // this line has to been removed
-        "                            <gco:aName>" + '\n' +
-        "                                <gco:CharacterString>VERSION</gco:CharacterString>" + '\n' +
-        "                            </gco:aName>" + '\n' +
-        "                            <gco:attributeType>" + '\n' +
+        "                        <gco:aName>" + '\n' +
+        "                            <gco:CharacterString>VERSION</gco:CharacterString>" + '\n' +
+        "                        </gco:aName>" + '\n' +
+        "                        <gco:attributeType>" + '\n' +
         "                            <gco:TypeName>" + '\n' +
-        "                                   <gco:aName>" + '\n' +
-        "                                       <gco:CharacterString>CharacterString</gco:CharacterString>" + '\n' +
-        "                                   </gco:aName>" + '\n' +
-        "                               </gco:TypeName>" + '\n' +
-        "                           </gco:attributeType>" + '\n' +
-        "                        </gco:MemberName>" + '\n' + // this line has to been removed
+        "                                <gco:aName>" + '\n' +
+        "                                   <gco:CharacterString>CharacterString</gco:CharacterString>" + '\n' +
+        "                                </gco:aName>" + '\n' +
+        "                           </gco:TypeName>" + '\n' +
+        "                       </gco:attributeType>" + '\n' +
         "                    </srv:name>" + '\n' +
         "                </srv:SV_Parameter>" + '\n' +
         "            </srv:parameters>" + '\n' +
@@ -160,18 +158,16 @@ public class XmlBindingTest {
         "            <srv:parameters>" + '\n' +
         "                <srv:SV_Parameter>" + '\n' +
         "                    <srv:name>" + '\n' +
-        "                        <gco:MemberName>" + '\n' + // this line has to been removed
-        "                            <gco:aName>" + '\n' +
-        "                                <gco:CharacterString>VERSION</gco:CharacterString>" + '\n' +
-        "                            </gco:aName>" + '\n' +
-        "                            <gco:attributeType>" + '\n' +
-        "                                <gco:TypeName>" + '\n' +
-        "                                    <gco:aName>" + '\n' +
-        "                                        <gco:CharacterString>CharacterString</gco:CharacterString>" + '\n' +
-        "                                    </gco:aName>" + '\n' +
-        "                                </gco:TypeName>" + '\n' +
-        "                            </gco:attributeType>" + '\n' +
-        "                        </gco:MemberName>" + '\n' + // this line has to been removed
+        "                        <gco:aName>" + '\n' +
+        "                            <gco:CharacterString>VERSION</gco:CharacterString>" + '\n' +
+        "                        </gco:aName>" + '\n' +
+        "                        <gco:attributeType>" + '\n' +
+        "                            <gco:TypeName>" + '\n' +
+        "                                <gco:aName>" + '\n' +
+        "                                    <gco:CharacterString>CharacterString</gco:CharacterString>" + '\n' +
+        "                                </gco:aName>" + '\n' +
+        "                            </gco:TypeName>" + '\n' +
+        "                        </gco:attributeType>" + '\n' +
         "                    </srv:name>" + '\n' +
         "                </srv:SV_Parameter>" + '\n' +
         "            </srv:parameters>" + '\n' +

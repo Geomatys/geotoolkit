@@ -6,6 +6,8 @@ import org.opengis.service.ParameterDirection;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlType;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+import org.geotoolkit.resources.jaxb.service.MemberNameAdapter;
 import org.geotoolkit.util.Utilities;
 import org.opengis.service.Parameter;
 import org.opengis.util.MemberName;
@@ -80,6 +82,7 @@ public class ParameterImpl implements Parameter {
      * Gets the value of the name property.
      * 
      */
+    @XmlJavaTypeAdapter(MemberNameAdapter.class)
     @XmlElement(required = true)
     public MemberName getName() {
         return name;
