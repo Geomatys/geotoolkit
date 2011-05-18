@@ -35,15 +35,16 @@ import org.opengis.referencing.crs.SingleCRS;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.datum.Datum;
 
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.cs.DefaultCompoundCS;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.collection.CheckedCollection;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -55,7 +56,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * {@link CoordinateReferenceSystem}.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -308,13 +309,21 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final DefaultCompoundCRS that = (DefaultCompoundCRS) object;
-            return equals(this.crs, that.crs, mode);
+            switch (mode) {
+                case STRICT: {
+                    final DefaultCompoundCRS that = (DefaultCompoundCRS) object;
+                    return Utilities.equals(this.crs, that.crs);
+                }
+                default: {
+                    final CompoundCRS that = (CompoundCRS) object;
+                    return deepEquals(getComponents(), that.getComponents(), mode);
+                }
+            }
         }
         return false;
     }

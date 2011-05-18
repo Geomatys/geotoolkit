@@ -20,15 +20,14 @@
  */
 package org.geotoolkit.referencing.datum;
 
-import java.util.Collections;
 import java.util.Map;
+import java.util.Collections;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.EngineeringDatum;
 
-import org.geotoolkit.referencing.ComparisonMode;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 
 
@@ -39,7 +38,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * ship or satellite).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -114,7 +113,7 @@ public class DefaultEngineeringDatum extends AbstractDatum implements Engineerin
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }

@@ -43,9 +43,9 @@ import org.geotoolkit.measure.Units;
 import org.geotoolkit.internal.referencing.AxisDirections;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
@@ -65,7 +65,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * Conversely, these names shall not be used in any other context.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @see AbstractCS
  * @see Unit
@@ -88,7 +88,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
 
     /**
      * Number of items in {@link #PREDEFINED}. Should be considered
-     * as a constant after the class initialisation is completed.
+     * as a constant after the class initialization is completed.
      */
     private static int PREDEFINED_COUNT = 0;
 
@@ -1256,12 +1256,15 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            return equals((DefaultCoordinateSystemAxis) object, mode.equals(ComparisonMode.STRICT), true);
+            return equals(object instanceof DefaultCoordinateSystemAxis ?
+                    (DefaultCoordinateSystemAxis) object :
+                    new DefaultCoordinateSystemAxis((CoordinateSystemAxis) object),
+                    mode != ComparisonMode.IGNORE_METADATA, true);
         }
         return false;
     }
@@ -1330,11 +1333,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      */
     @Override
     public int hashCode() {
-        int code = (int) serialVersionUID;
-        code = code*31 + abbreviation.hashCode();
-        code = code*31 + direction   .hashCode();
-        code = code*31 + unit        .hashCode();
-        return code;
+        return Utilities.hash(unit, Utilities.hash(direction, abbreviation.hashCode())) ^ (int) serialVersionUID;
     }
 
     /**

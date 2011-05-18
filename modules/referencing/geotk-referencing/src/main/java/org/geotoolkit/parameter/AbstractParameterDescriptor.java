@@ -29,7 +29,7 @@ import org.opengis.parameter.GeneralParameterDescriptor;
 
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.referencing.ComparisonMode;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
 
@@ -37,7 +37,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
  * Abstract definition of a parameter or group of parameters used by an operation method.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @see AbstractParameter
  *
@@ -143,10 +143,19 @@ public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObje
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
-            final AbstractParameterDescriptor that = (AbstractParameterDescriptor) object;
-            return this.minimumOccurs == that.minimumOccurs;
+            switch (mode) {
+                case STRICT: {
+                    final AbstractParameterDescriptor that = (AbstractParameterDescriptor) object;
+                    return this.minimumOccurs == that.minimumOccurs;
+                }
+                default: {
+                    final GeneralParameterDescriptor that = (GeneralParameterDescriptor) object;
+                    return getMinimumOccurs() == that.getMinimumOccurs() &&
+                           getMaximumOccurs() == that.getMaximumOccurs();
+                }
+            }
         }
         return false;
     }

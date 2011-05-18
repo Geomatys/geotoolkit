@@ -29,15 +29,19 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.metadata.extent.Extent;
 import org.opengis.referencing.datum.Datum;
+import org.opengis.referencing.IdentifiedObject;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.jaxb.gco.DateAsLongAdapter;
+
+import static org.geotoolkit.util.Utilities.deepEquals;
+import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
 
 
 /**
@@ -57,7 +61,7 @@ import org.geotoolkit.internal.jaxb.gco.DateAsLongAdapter;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @see org.geotoolkit.referencing.cs.AbstractCS
  * @see org.geotoolkit.referencing.crs.AbstractCRS
@@ -140,7 +144,7 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
      * Constructs a datum from a set of properties. The properties given in argument follow
      * the same rules than for the {@linkplain AbstractIdentifiedObject#AbstractIdentifiedObject(Map)
      * super-class constructor}. Additionally, the following properties are understood by this
-     * construtor:
+     * constructor:
      * <p>
      * <table border='1'>
      *   <tr bgcolor="#CCCCFF" class="TableHeadingColor">
@@ -285,23 +289,35 @@ public class AbstractDatum extends AbstractIdentifiedObject implements Datum {
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
-            if (!mode.equals(ComparisonMode.STRICT)) {
-                /*
-                 * Tests for name, since datum with different name have completely
-                 * different meaning. We don't perform this comparison if the user
-                 * asked for metadata comparison, because in such case the names
-                 * have already been compared by the subclass.
-                 */
-                return nameMatches(object.getName().getCode()) ||
-                       object.nameMatches(getName().getCode());
+            switch (mode) {
+                case STRICT: {
+                    final AbstractDatum that = (AbstractDatum) object;
+                    return this.realizationEpoch == that.realizationEpoch &&
+                           Utilities.equals(this.domainOfValidity, that.domainOfValidity) &&
+                           Utilities.equals(this.anchorPoint,      that.anchorPoint) &&
+                           Utilities.equals(this.scope,            that.scope);
+                }
+                case BY_CONTRACT: {
+                    final Datum that = (Datum) object;
+                    return deepEquals(getRealizationEpoch(), that.getRealizationEpoch(), mode) &&
+                           deepEquals(getDomainOfValidity(), that.getDomainOfValidity(), mode) &&
+                           deepEquals(getAnchorPoint(),      that.getAnchorPoint(),      mode) &&
+                           deepEquals(getScope(),            that.getScope(),            mode);
+                }
+                default: {
+                    /*
+                     * Tests for name, since datum with different name have completely
+                     * different meaning. We don't perform this comparison if the user
+                     * asked for metadata comparison, because in such case the names
+                     * have already been compared by the subclass.
+                     */
+                    final IdentifiedObject that = (IdentifiedObject) object;
+                    return nameMatches(that. getName().getCode()) ||
+                           nameMatches(that, getName().getCode());
+                }
             }
-            final AbstractDatum that = (AbstractDatum) object;
-            return this.realizationEpoch == that.realizationEpoch &&
-                   Utilities.equals(this.domainOfValidity, that.domainOfValidity) &&
-                   Utilities.equals(this.anchorPoint,      that.anchorPoint) &&
-                   Utilities.equals(this.scope,            that.scope);
         }
         return false;
     }

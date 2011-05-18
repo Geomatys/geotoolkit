@@ -37,13 +37,15 @@ import org.opengis.referencing.datum.GeodeticDatum;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.NamedIdentifier;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -53,7 +55,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * system centered in this ellipsoid (or sphere).
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.18
  *
  * @see Ellipsoid
  * @see PrimeMeridian
@@ -333,7 +335,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
         if (bursaWolf != null) {
             for (int i=0; i<bursaWolf.length; i++) {
                 final BursaWolfParameters candidate = bursaWolf[i];
-                if (equals(target, candidate.targetDatum, ComparisonMode.IGNORE_METADATA)) {
+                if (deepEquals(target, candidate.targetDatum, ComparisonMode.IGNORE_METADATA)) {
                     return candidate.clone();
                 }
             }
@@ -380,7 +382,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             if (bursaWolf != null) {
                 for (int i=0; i<bursaWolf.length; i++) {
                     final BursaWolfParameters transformation = bursaWolf[i];
-                    if (equals(target, transformation.targetDatum, ComparisonMode.IGNORE_METADATA)) {
+                    if (deepEquals(target, transformation.targetDatum, ComparisonMode.IGNORE_METADATA)) {
                         return transformation.getAffineTransform();
                     }
                 }
@@ -395,7 +397,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
             if (bursaWolf != null) {
                 for (int i=0; i<bursaWolf.length; i++) {
                     final BursaWolfParameters transformation = bursaWolf[i];
-                    if (equals(source, transformation.targetDatum, ComparisonMode.IGNORE_METADATA)) {
+                    if (deepEquals(source, transformation.targetDatum, ComparisonMode.IGNORE_METADATA)) {
                         final XMatrix matrix = transformation.getAffineTransform();
                         matrix.invert();
                         return matrix;
@@ -421,7 +423,7 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
                     sourceStep = sourceParam[i].targetDatum;
                     for (int j=0; j<targetParam.length; j++) {
                         targetStep = targetParam[j].targetDatum;
-                        if (equals(sourceStep, targetStep, ComparisonMode.IGNORE_METADATA)) {
+                        if (deepEquals(sourceStep, targetStep, ComparisonMode.IGNORE_METADATA)) {
                             final XMatrix step1, step2;
                             if (exclusion == null) {
                                 exclusion = new HashSet<GeodeticDatum>();
@@ -481,26 +483,33 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final DefaultGeodeticDatum that = (DefaultGeodeticDatum) object;
-            if (equals(this.ellipsoid,     that.ellipsoid,     mode) &&
-                equals(this.primeMeridian, that.primeMeridian, mode))
-            {
-                /*
-                 * HACK: We do not consider Bursa Wolf parameters as a non-metadata field.
-                 *       This is needed in order to get equalsIgnoreMetadata(...) to returns
-                 *       'true' when comparing the WGS84 constant in this class with a WKT
-                 *       DATUM element with a TOWGS84[0,0,0,0,0,0,0] element. Furthermore,
-                 *       the Bursa Wolf parameters are not part of ISO 19111 specification.
-                 *       We don't want two CRS to be considered as different because one has
-                 *       more of those transformation informations (which is nice, but doesn't
-                 *       change the CRS itself).
-                 */
-                return !mode.equals(ComparisonMode.STRICT) || Arrays.equals(this.bursaWolf, that.bursaWolf);
+            switch (mode) {
+                case STRICT: {
+                    final DefaultGeodeticDatum that = (DefaultGeodeticDatum) object;
+                    return Utilities.equals(this.ellipsoid,     that.ellipsoid)     &&
+                           Utilities.equals(this.primeMeridian, that.primeMeridian) &&
+                              Arrays.equals(this.bursaWolf,     that.bursaWolf);
+                }
+                default: {
+                    final GeodeticDatum that = (GeodeticDatum) object;
+                    return deepEquals(getEllipsoid(),     that.getEllipsoid(),     mode) &&
+                           deepEquals(getPrimeMeridian(), that.getPrimeMeridian(), mode);
+                    /*
+                     * HACK: We do not consider Bursa Wolf parameters as a non-metadata field.
+                     *       This is needed in order to get equalsIgnoreMetadata(...) to returns
+                     *       'true' when comparing the WGS84 constant in this class with a WKT
+                     *       DATUM element with a TOWGS84[0,0,0,0,0,0,0] element. Furthermore,
+                     *       the Bursa Wolf parameters are not part of ISO 19111 specification.
+                     *       We don't want two CRS to be considered as different because one has
+                     *       more of those transformation informations (which is nice, but doesn't
+                     *       change the CRS itself).
+                     */
+                }
             }
         }
         return false;

@@ -39,9 +39,9 @@
  * affine transform in order to avoid potential conflict with an other authority using the same
  * code number.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.01
+ * @version 3.18
  *
  * @see <a href="http://www.geotoolkit.org/modules/referencing/supported-codes.html">List of authority codes</a>
  *

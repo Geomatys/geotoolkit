@@ -37,8 +37,8 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.metadata.citation.Citation;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameters;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
@@ -58,7 +58,7 @@ import static org.geotoolkit.util.ArgumentChecks.*;
  * use none. Each coordinate operation using the method assigns values to these parameters.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @see DefaultSingleOperation
  *
@@ -309,8 +309,9 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
 
     /**
      * Compares this operation method with the specified object for equality.
-     * If {@code compareMetadata} is {@code true}, then all available
-     * properties are compared including {@linkplain #getFormula formula}.
+     * If the {@code mode} argument value is {@link ComparisonMode#STRICT STRICT} or
+     * {@link ComparisonMode#BY_CONTRACT BY_CONTRACT}, then all available properties
+     * are compared including the {@linkplain #getFormula() formula}.
      *
      * @param  object The object to compare to {@code this}.
      * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
@@ -319,17 +320,32 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    @SuppressWarnings("fallthrough")
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final DefaultOperationMethod that = (DefaultOperationMethod) object;
-            if (Utilities.equals(this.sourceDimension, that.sourceDimension) &&
-                Utilities.equals(this.targetDimension, that.targetDimension) &&
-                equals(this.parameters, that.parameters, mode))
-            {
-                return !mode.equals(ComparisonMode.STRICT) || Utilities.equals(this.formula, that.formula);
+            switch (mode) {
+                case BY_CONTRACT: {
+                    if (!Utilities.equals(getFormula(), ((OperationMethod) object).getFormula())) {
+                        return false;
+                    }
+                    // Fall through
+                }
+                default: {
+                    final OperationMethod that = (OperationMethod) object;
+                    return Utilities.equals(getSourceDimensions(), that.getSourceDimensions()) &&
+                           Utilities.equals(getTargetDimensions(), that.getTargetDimensions()) &&
+                           Utilities.deepEquals(getParameters(),   that.getParameters(), mode);
+                }
+                case STRICT: {
+                    final DefaultOperationMethod that = (DefaultOperationMethod) object;
+                    return Utilities.equals(this.formula,         that.formula) &&
+                           Utilities.equals(this.sourceDimension, that.sourceDimension) &&
+                           Utilities.equals(this.targetDimension, that.targetDimension) &&
+                           Utilities.equals(this.parameters,      that.parameters);
+                }
             }
         }
         return false;

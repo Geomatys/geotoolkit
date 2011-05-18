@@ -28,9 +28,9 @@ import net.jcip.annotations.Immutable;
 import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
-import org.geotoolkit.referencing.ComparisonMode;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.util.ComparisonMode;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -44,7 +44,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -150,13 +150,13 @@ public class DefaultCompoundCS extends AbstractCS {
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
-        if (super.equals(object, mode)) {
+        if (object instanceof DefaultCompoundCS && super.equals(object, mode)) {
             final DefaultCompoundCS that = (DefaultCompoundCS) object;
-            return equals(this.cs, that.cs, mode);
+            return deepEquals(this.cs, that.cs, mode);
         }
         return false;
     }

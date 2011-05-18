@@ -33,12 +33,13 @@ import org.opengis.util.InternationalString;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.parameter.ParameterValue;
 import org.opengis.parameter.ParameterDescriptor;
+import org.opengis.referencing.IdentifiedObject;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
@@ -64,7 +65,7 @@ import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Johann Sorel (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @see Parameter
  * @see DefaultParameterDescriptorGroup
@@ -519,32 +520,47 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    @SuppressWarnings("fallthrough")
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
         if (super.equals(object, mode)) {
-            if (!mode.equals(ComparisonMode.STRICT)) {
-                /*
-                 * Tests for name, since parameters with different name have
-                 * completely different meaning. For example there is no difference
-                 * between "semi_major" and "semi_minor" parameters except the name.
-                 * We don't perform this comparison if the user asked for metadata
-                 * comparison, because in such case the names have already been
-                 * compared by the subclass.
-                 */
-                if (!nameMatches(object. getName().getCode()) &&
-                    !nameMatches(object, getName().getCode()))
-                {
-                    return false;
+            switch (mode) {
+                case IGNORE_METADATA: {
+                    /*
+                     * Tests for name, since parameters with different name have
+                     * completely different meaning. For example there is no difference
+                     * between "semi_major" and "semi_minor" parameters except the name.
+                     * We don't perform this comparison if the user asked for metadata
+                     * comparison, because in such case the names have already been
+                     * compared by the subclass.
+                     */
+                    final IdentifiedObject that = (IdentifiedObject) object;
+                    if (!nameMatches(that. getName().getCode()) &&
+                        !nameMatches(that, getName().getCode()))
+                    {
+                        return false;
+                    }
+                    // Fall through
+                }
+                case BY_CONTRACT: {
+                    final ParameterDescriptor<?> that = (ParameterDescriptor<?>) object;
+                    return Utilities.equals(getValidValues(),  that.getValidValues())  &&
+                           Utilities.equals(getDefaultValue(), that.getDefaultValue()) &&
+                           Utilities.equals(getMinimumValue(), that.getMinimumValue()) &&
+                           Utilities.equals(getMaximumValue(), that.getMaximumValue()) &&
+                           Utilities.equals(getUnit(),         that.getUnit());
+                }
+                case STRICT: {
+                    final DefaultParameterDescriptor<?> that = (DefaultParameterDescriptor<?>) object;
+                    return Utilities.equals(this.validValues,  that.validValues)  &&
+                           Utilities.equals(this.defaultValue, that.defaultValue) &&
+                           Utilities.equals(this.minimum,      that.minimum)      &&
+                           Utilities.equals(this.maximum,      that.maximum)      &&
+                           Utilities.equals(this.unit,         that.unit);
                 }
             }
-            final DefaultParameterDescriptor<?> that = (DefaultParameterDescriptor<?>) object;
-            return Utilities.equals(this.validValues,  that.validValues)  &&
-                   Utilities.equals(this.defaultValue, that.defaultValue) &&
-                   Utilities.equals(this.minimum,      that.minimum)      &&
-                   Utilities.equals(this.maximum,      that.maximum)      &&
-                   Utilities.equals(this.unit,         that.unit);
         }
         return false;
     }

@@ -35,8 +35,7 @@ import org.opengis.geometry.Envelope;
 
 import org.geotoolkit.test.referencing.WKT;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.ComparisonMode;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.AbstractCRS;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
@@ -49,6 +48,7 @@ import org.geotoolkit.referencing.factory.ThreadedAuthorityFactory;
 import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
 import org.geotoolkit.factory.AuthorityFactoryFinder;
 import org.geotoolkit.internal.StringUtilities;
+import org.geotoolkit.util.ComparisonMode;
 
 import org.junit.*;
 import static org.junit.Assert.*;
@@ -61,7 +61,7 @@ import static org.geotoolkit.referencing.ReferencingCommons.*;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Vadim Semenov
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.1
  */
@@ -762,7 +762,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
                 valid++;
             }
         }
-        final PrintWriter out = this.out;
+        final PrintWriter out = ThreadedEpsgFactoryTest.out;
         if (out != null) {
             out.print("Number of coordinate operations:    "); out.println(identifiers.size());
             out.print("Number of tested operations:        "); out.println(count);
@@ -816,10 +816,10 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         assertTrue("Should found an object equals (ignoring metadata) to the requested one.",
                    CRS.equalsIgnoreMetadata(crs, find));
         assertEquals("4326",
-                AbstractIdentifiedObject.getIdentifier(find, factory.getAuthority()).getCode());
+                IdentifiedObjects.getIdentifier(find, factory.getAuthority()).getCode());
         finder.setFullScanAllowed(false);
 
-        ReferenceIdentifier foundri = AbstractIdentifiedObject.getIdentifier(find, factory.getAuthority());
+        ReferenceIdentifier foundri = IdentifiedObjects.getIdentifier(find, factory.getAuthority());
 
         if (false) {
             // This is broken because, as we know from above, it is ambiguous,
@@ -872,7 +872,7 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
          * Note that there is also a EPSG:21483 code, but that one is deprecated and should
          * not be selected in this test.
          */
-        final String code = AbstractIdentifiedObject.getIdentifier(find, factory.getAuthority()).getCode();
+        final String code = IdentifiedObjects.getIdentifier(find, factory.getAuthority()).getCode();
         assertEquals("2442", code); // Finder order should be determinist, so 2442 is the selected CRS.
 
         finder.setFullScanAllowed(false);

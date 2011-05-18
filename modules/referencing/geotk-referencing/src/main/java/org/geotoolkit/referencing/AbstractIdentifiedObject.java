@@ -26,7 +26,6 @@ import java.util.Iterator;
 import java.util.Comparator;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedHashSet;
 import java.util.logging.Level;
 import java.io.Serializable;
 import javax.xml.bind.annotation.XmlID;
@@ -48,8 +47,11 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.parameter.InvalidParameterValueException;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.DefaultInternationalString;
+import org.geotoolkit.util.logging.Logging;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.internal.jaxb.gco.StringConverter;
@@ -61,6 +63,7 @@ import net.jcip.annotations.ThreadSafe;
 import net.jcip.annotations.Immutable;
 import org.geotoolkit.xml.Namespaces;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -81,7 +84,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * situation, a plain {@link org.geotoolkit.referencing.cs.AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -92,7 +95,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
     "identifier",
     "name"
 })
-public class AbstractIdentifiedObject extends FormattableObject implements IdentifiedObject, Serializable {
+public class AbstractIdentifiedObject extends FormattableObject implements IdentifiedObject, LenientComparable, Serializable {
     /**
      * Serial number for inter-operability with different versions.
      */
@@ -833,15 +836,38 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      *
      * @since 3.14
      */
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
-        if (object!=null && object.getClass().equals(getClass())) {
-            if (!mode.equals(ComparisonMode.STRICT)) {
-                return true;
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object != null) {
+            final Class<?> thisType = getClass();
+            final Class<?> thatType = object.getClass();
+            if (thisType == thatType || (mode != ComparisonMode.STRICT &&
+                    Classes.implementSameInterfaces(thisType, thatType, IdentifiedObject.class)))
+            {
+                switch (mode) {
+                    case STRICT: {
+                        final AbstractIdentifiedObject that = (AbstractIdentifiedObject) object;
+                        return Utilities.equals(name,        that.name)        &&
+                               Utilities.equals(alias,       that.alias)       &&
+                               Utilities.equals(identifiers, that.identifiers) &&
+                               Utilities.equals(remarks,     that.remarks);
+                    }
+                    case BY_CONTRACT: {
+                        final IdentifiedObject that = (IdentifiedObject) object;
+                        return deepEquals(getName(),        that.getName(),        mode) &&
+                               deepEquals(getAlias(),       that.getAlias(),       mode) &&
+                               deepEquals(getIdentifiers(), that.getIdentifiers(), mode) &&
+                               deepEquals(getRemarks(),     that.getRemarks(),     mode);
+                    }
+                    case IGNORE_METADATA: {
+                        return true;
+                    }
+                    default: {
+                        throw new IllegalArgumentException(Errors.format(
+                                Errors.Keys.ILLEGAL_ARGUMENT_$2, "mode", mode));
+                    }
+                }
             }
-            return Utilities.equals(name,        object.name       ) &&
-                   Utilities.equals(alias,       object.alias      ) &&
-                   Utilities.equals(identifiers, object.identifiers) &&
-                   Utilities.equals(remarks,     object.remarks    );
         }
         return false;
     }
@@ -857,7 +883,10 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @return {@code true} if both objects are equal.
      *
      * @since 3.14
+     *
+     * @deprecated Replaced by {@link Utilities#deepEquals(Object, Object, ComparisonMode)}.
      */
+    @Deprecated
     protected static boolean equals(final IdentifiedObject object1,
                                     final IdentifiedObject object2,
                                     final ComparisonMode mode)
@@ -884,7 +913,10 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @return {@code true} if both arrays are equal.
      *
      * @since 3.14
+     *
+     * @deprecated Replaced by {@link Utilities#deepEquals(Object, Object, ComparisonMode)}.
      */
+    @Deprecated
     protected static boolean equals(final IdentifiedObject[] array1,
                                     final IdentifiedObject[] array2,
                                     final ComparisonMode mode)
@@ -905,7 +937,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     /**
      * Compares two collections of OpenGIS's {@code IdentifiedObject} objects for equality. The
      * comparison take order in account, which make it more appropriate for {@link java.util.List}
-     * or {@link LinkedHashSet} comparisons. This convenience method is provided for
+     * or {@link java.util.LinkedHashSet} comparisons. This convenience method is provided for
      * implementation of {@code equals} method in subclasses.
      *
      * @param  collection1 The first collection to compare (may be {@code null}).
@@ -915,7 +947,10 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      * @return {@code true} if both collections are equal.
      *
      * @since 3.14
+     *
+     * @deprecated Replaced by {@link Utilities#deepEquals(Object, Object, ComparisonMode)}.
      */
+    @Deprecated
     protected static boolean equals(final Collection<? extends IdentifiedObject> collection1,
                                     final Collection<? extends IdentifiedObject> collection2,
                                     final ComparisonMode mode)

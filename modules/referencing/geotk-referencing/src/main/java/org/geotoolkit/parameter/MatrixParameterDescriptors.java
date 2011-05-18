@@ -33,11 +33,11 @@ import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.referencing.operation.Matrix;
 
 import org.geotoolkit.util.Utilities;
-import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.ComparisonMode;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
-import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.resources.Errors;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -63,7 +63,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @see MatrixParameters
  *
@@ -419,10 +419,10 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
-        if (super.equals(object, mode)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object instanceof MatrixParameterDescriptors && super.equals(object, mode)) {
             final MatrixParameterDescriptors that = (MatrixParameterDescriptors) object;
-            return this.separator == that.separator && Utilities.equals(this.prefix, that.prefix);
+            return separator == that.separator && Utilities.equals(prefix, that.prefix);
         }
         return false;
     }

@@ -40,12 +40,12 @@ import org.geotoolkit.internal.jaxb.referencing.SecondDefiningParameter;
 import org.geotoolkit.internal.jaxb.gco.Measure;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.measure.CoordinateFormat;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 
@@ -68,7 +68,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.15
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -710,17 +710,35 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    @SuppressWarnings("fallthrough")
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final DefaultEllipsoid that = (DefaultEllipsoid) object;
-            return (!mode.equals(ComparisonMode.STRICT) || ivfDefinitive == that.ivfDefinitive) &&
-                   Utilities.equals(this.semiMajorAxis,     that.semiMajorAxis)     &&
-                   Utilities.equals(this.semiMinorAxis,     that.semiMinorAxis)     &&
-                   Utilities.equals(this.inverseFlattening, that.inverseFlattening) &&
-                   Utilities.equals(this.unit,              that.unit);
+            switch (mode) {
+                case BY_CONTRACT: {
+                    if (isIvfDefinitive() != ((Ellipsoid) object).isIvfDefinitive()) {
+                        return false;
+                    }
+                    // Fall through
+                }
+                default: {
+                    final Ellipsoid that = (Ellipsoid) object;
+                    return Utilities.equals(getSemiMajorAxis(),     that.getSemiMajorAxis())     &&
+                           Utilities.equals(getSemiMinorAxis(),     that.getSemiMinorAxis())     &&
+                           Utilities.equals(getInverseFlattening(), that.getInverseFlattening()) &&
+                           Utilities.equals(getAxisUnit(),          that.getAxisUnit());
+                }
+                case STRICT: {
+                    final DefaultEllipsoid that = (DefaultEllipsoid) object;
+                    return ivfDefinitive == that.ivfDefinitive &&
+                           Utilities.equals(this.semiMajorAxis,     that.semiMajorAxis)     &&
+                           Utilities.equals(this.semiMinorAxis,     that.semiMinorAxis)     &&
+                           Utilities.equals(this.inverseFlattening, that.inverseFlattening) &&
+                           Utilities.equals(this.unit,              that.unit);
+                }
+            }
         }
         return false;
     }

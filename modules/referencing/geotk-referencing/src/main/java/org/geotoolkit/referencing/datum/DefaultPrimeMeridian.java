@@ -32,11 +32,11 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.PrimeMeridian;
 
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.measure.Units;
 
@@ -51,7 +51,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.15
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -197,24 +197,33 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final DefaultPrimeMeridian that = (DefaultPrimeMeridian) object;
-            if (mode.equals(ComparisonMode.STRICT)) {
-                return Double.doubleToLongBits(this.greenwichLongitude) ==
-                       Double.doubleToLongBits(that.greenwichLongitude) &&
-                       Utilities.equals(this.angularUnit, that.angularUnit);
-            } else {
-                return Double.doubleToLongBits(this.getGreenwichLongitude(NonSI.DEGREE_ANGLE)) ==
-                       Double.doubleToLongBits(that.getGreenwichLongitude(NonSI.DEGREE_ANGLE));
-                /*
-                 * Note: if compareMetadata==false, we relax the unit check because EPSG uses
-                 *       sexagesimal degrees for the Greenwich meridian. Requirying the same
-                 *       unit prevent Geodetic.isWGS84(...) method to recognize EPSG's WGS84.
-                 */
+            switch (mode) {
+                case STRICT: {
+                    final DefaultPrimeMeridian that = (DefaultPrimeMeridian) object;
+                    return Utilities.equals(this.greenwichLongitude, that.greenwichLongitude) &&
+                           Utilities.equals(this.angularUnit,        that.angularUnit);
+                }
+                case BY_CONTRACT: {
+                    final PrimeMeridian that = (PrimeMeridian) object;
+                    return Utilities.equals(getGreenwichLongitude(), that.getGreenwichLongitude()) &&
+                           Utilities.equals(getAngularUnit(),        that.getAngularUnit());
+                }
+                default: {
+                    final DefaultPrimeMeridian that = (object instanceof DefaultPrimeMeridian) ?
+                            (DefaultPrimeMeridian) object : new DefaultPrimeMeridian((PrimeMeridian) object);
+                    return Utilities.equals(this.getGreenwichLongitude(NonSI.DEGREE_ANGLE),
+                                            that.getGreenwichLongitude(NonSI.DEGREE_ANGLE));
+                    /*
+                     * Note: if mode==IGNORE_METADATA, we relax the unit check because EPSG uses
+                     *       sexagesimal degrees for the Greenwich meridian. Requirying the same
+                     *       unit prevent Geodetic.isWGS84(...) method to recognize EPSG's WGS84.
+                     */
+                }
             }
         }
         return false;

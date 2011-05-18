@@ -43,6 +43,8 @@ import org.opengis.util.FactoryException;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.util.Version;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.factory.Hints;
@@ -93,7 +95,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Jody Garnett (Refractions)
  * @author Andrea Aime (TOPP)
- * @version 3.16
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -1220,7 +1222,7 @@ compare:    for (final SingleCRS component : actualComponents) {
         if (crs == null) {
             return null;
         }
-        ReferenceIdentifier id = AbstractIdentifiedObject.getIdentifier(crs, authority);
+        ReferenceIdentifier id = IdentifiedObjects.getIdentifier(crs, authority);
         if (id != null) {
             return id.getCode();
         }
@@ -1301,9 +1303,9 @@ compare:    for (final SingleCRS component : actualComponents) {
      * </ul>
      *
      * {@section Implementation note}
-     * If the given objects are instances of {@link AbstractIdentifiedObject}, then this method
-     * delegates to <code>{@link AbstractIdentifiedObject#equals(AbstractIdentifiedObject,
-     * ComparisonMode) equals}(..., {@linkplain ComparisonMode#IGNORE_METADATA})</code>. Otherwise
+     * If at least one object is an instance of {@link LenientComparable}, then this method
+     * delegates to <code>{@link LenientComparable#equals(Object, ComparisonMode) equals}(...,
+     * {@linkplain ComparisonMode#IGNORE_METADATA})</code>. Otherwise
      * if the given objects are instances of {@link AbstractMathTransform}, then this method delegates to
      * <code>{@link AbstractMathTransform#equivalent(MathTransform,boolean) equivalent}(..., false)</code>.
      * The {@code false} boolean argument value in the later case explains why the comparison of math
@@ -1321,11 +1323,14 @@ compare:    for (final SingleCRS component : actualComponents) {
         if (object1 == object2) {
             return true;
         }
-        if (object1 instanceof AbstractIdentifiedObject &&
-            object2 instanceof AbstractIdentifiedObject)
-        {
-            return ((AbstractIdentifiedObject) object1).equals(
-                   ((AbstractIdentifiedObject) object2), ComparisonMode.IGNORE_METADATA);
+        if (object1 == null || object2 == null) {
+            return false;
+        }
+        if (object1 instanceof LenientComparable) {
+            return ((LenientComparable) object1).equals(object2, ComparisonMode.IGNORE_METADATA);
+        }
+        if (object2 instanceof LenientComparable) {
+            return ((LenientComparable) object2).equals(object1, ComparisonMode.IGNORE_METADATA);
         }
         if (object2 instanceof MathTransform && object1 instanceof AbstractMathTransform) {
             return ((AbstractMathTransform) object1).equivalent((MathTransform) object2, false);
@@ -1335,7 +1340,7 @@ compare:    for (final SingleCRS component : actualComponents) {
              * strictly identical transformed values.
              */
         }
-        return (object1 != null) && object1.equals(object2);
+        return object1.equals(object2);
     }
 
     /**

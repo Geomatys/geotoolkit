@@ -41,17 +41,18 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.measure.Measure;
 import org.geotoolkit.measure.Units;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.internal.referencing.AxisDirections;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -71,7 +72,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * situation, a plain {@code AbstractCS} object may be instantiated.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @see DefaultCoordinateSystemAxis
  * @see javax.measure.unit.Unit
@@ -638,13 +639,29 @@ next:   for (int i=0; i<axis.length; i++) {
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final AbstractCS that = (AbstractCS) object;
-            return equals(this.axis, that.axis, mode);
+            switch (mode) {
+                case STRICT: {
+                    final AbstractCS that = (AbstractCS) object;
+                    return Arrays.equals(this.axis, that.axis);
+                }
+                default: {
+                    final int dimension = getDimension();
+                    final CoordinateSystem that = (CoordinateSystem) object;
+                    if (dimension == that.getDimension()) {
+                        for (int i=0; i<dimension; i++) {
+                            if (!deepEquals(getAxis(i), that.getAxis(i), mode)) {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                }
+            }
         }
         return false;
     }

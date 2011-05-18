@@ -29,11 +29,12 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
 import org.geotoolkit.internal.referencing.NullReferencingObject;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
-import org.geotoolkit.referencing.ComparisonMode;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -60,7 +61,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @see org.geotoolkit.referencing.cs.AbstractCS
  * @see org.geotoolkit.referencing.datum.AbstractDatum
@@ -174,9 +175,10 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
 
     /**
      * Compares this coordinate reference system with the specified object for equality.
-     * If {@code compareMetadata} is {@code true}, then all available properties are
-     * compared including the {@linkplain #getDomainOfValidity domain of validity} and
-     * the {@linkplain #getScope scope}.
+     * If the {@code mode} argument value is {@link ComparisonMode#STRICT STRICT} or
+     * {@link ComparisonMode#BY_CONTRACT BY_CONTRACT}, then all available properties are
+     * compared including the {@linkplain #getDomainOfValidity() domain of validity} and
+     * the {@linkplain #getScope() scope}.
      *
      * @param  object The object to compare to {@code this}.
      * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
@@ -185,10 +187,18 @@ public class AbstractSingleCRS extends AbstractCRS implements SingleCRS {
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
-            final AbstractSingleCRS that = (AbstractSingleCRS) object;
-            return equals(this.datum, that.datum, mode);
+            switch (mode) {
+                case STRICT: {
+                    final AbstractSingleCRS that = (AbstractSingleCRS) object;
+                    return Utilities.equals(this.datum, that.datum);
+                }
+                default: {
+                    final SingleCRS that = (SingleCRS) object;
+                    return deepEquals(getDatum(), that.getDatum(), mode);
+                }
+            }
         }
         return false;
     }

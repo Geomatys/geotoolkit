@@ -39,13 +39,14 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterNameException;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
+import org.geotoolkit.util.ComparisonMode;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
@@ -308,14 +309,23 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
         if (super.equals(object, mode)) {
-            final DefaultParameterDescriptorGroup that = (DefaultParameterDescriptorGroup) object;
-            return Arrays.equals(this.parameters, that.parameters);
+            switch (mode) {
+                case STRICT: {
+                    final DefaultParameterDescriptorGroup that = (DefaultParameterDescriptorGroup) object;
+                    return maximumOccurs == that.maximumOccurs && Arrays.equals(parameters, that.parameters);
+                }
+                default: {
+                    final ParameterDescriptorGroup that = (ParameterDescriptorGroup) object;
+                    return deepEquals(descriptors(), that.descriptors(), mode);
+                    // Note: maximumOccurs is tested by the parent class.
+                }
+            }
         }
         return false;
     }

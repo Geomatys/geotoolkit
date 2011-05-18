@@ -382,12 +382,12 @@ public final class Classes extends Static {
     }
 
     /**
-     * Returns the interface implemented by the given class and assignable to the given base
-     * interface. Example:
-     * <p>
-     * <ul>
-     *   <li>{@code getInterface(ArrayList.class, Collection.class)} returns {@code List.class}.</li>
-     * </ul>
+     * Returns the first interface implemented by the given class and assignable to the given base
+     * interface, or {@code null} if none. If more than one interface extends the given base, only
+     * the first occurrence (in the order declared in source code) is returned.
+     *
+     * {@section Example}
+     * {@code getInterface(ArrayList.class, Collection.class)} returns {@code List.class}.
      *
      * @param  <T>  The type of the {@code baseInterface} class argument.
      * @param  type A class for which the implemented interface is desired.
@@ -572,7 +572,7 @@ public final class Classes extends Static {
     public static <T> boolean implementSameInterfaces(
             final Class<? extends T> object1,
             final Class<? extends T> object2,
-            final Class<T> base)
+            final Class<? extends T> base)
     {
         if (object1 == object2) {
             return true;

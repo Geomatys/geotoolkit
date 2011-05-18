@@ -36,16 +36,17 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.SingleOperation;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
-import org.geotoolkit.referencing.ComparisonMode;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.Parameterized;
 import org.geotoolkit.referencing.operation.transform.PassThroughTransform;
 import org.geotoolkit.internal.referencing.ParameterizedAffine;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.io.wkt.Formatter;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.UnsupportedImplementationException;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -63,7 +64,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * coordinate operation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -240,8 +241,9 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
 
     /**
      * Compares this operation method with the specified object for equality.
-     * If {@code compareMetadata} is {@code true}, then all available properties
-     * are compared including the {@linkplain DefaultOperationMethod#getFormula formula}.
+     * If the {@code mode} argument value is {@link ComparisonMode#STRICT STRICT} or
+     * {@link ComparisonMode#BY_CONTRACT BY_CONTRACT}, then all available properties
+     * are compared including the {@linkplain DefaultOperationMethod#getFormula() formula}.
      *
      * @param  object The object to compare to {@code this}.
      * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
@@ -250,43 +252,51 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
-            final DefaultSingleOperation that = (DefaultSingleOperation) object;
-            if (mode.equals(ComparisonMode.STRICT)) {
-                return equals(this.method, that.method, mode);
+            switch (mode) {
+                case STRICT: {
+                    final DefaultSingleOperation that = (DefaultSingleOperation) object;
+                    return Utilities.equals(this.method, that.method);
+                }
+                case BY_CONTRACT: {
+                    final SingleOperation that = (SingleOperation) object;
+                    return deepEquals(getMethod(), that.getMethod(), mode);
+                }
+                default: {
+                    /*
+                     * We consider the operation method as metadata. We could argue that OperationMethod's
+                     * 'sourceDimension' and 'targetDimension' are not metadata,  but their values should
+                     * be identical to the 'sourceCRS' and 'targetCRS' dimensions, already checked by the
+                     * superclass. We could also argue that 'OperationMethod.parameters' are not metadata,
+                     * but their values should have been taken in account for the MathTransform creation,
+                     * which was compared by the superclass.
+                     *
+                     * Comparing the MathTransforms instead of parameters avoid the problem of implicit
+                     * parameters.  For example in a ProjectedCRS, the "semiMajor" and "semiMinor" axis
+                     * lengths are sometime provided as explicit parameters, and sometime inferred from
+                     * the geodetic datum.  The two cases would be different set of parameters from the
+                     * OperationMethod's point of view, but still result in the creation of identical
+                     * MathTransform.
+                     *
+                     * An other rational for treating OperationMethod as metadata is that Geotk
+                     * MathTransformProvider extends DefaultOperationMethod. Consequently there is
+                     * a wide range of subclasses, which make the comparisons more difficult. For
+                     * example Mercator1SP and Mercator2SP providers are two different ways to describe
+                     * the same projection. The SQL-backed EPSG factory uses yet an other implementation.
+                     *
+                     * NOTE: A previous Geotk implementation made this final check:
+                     *
+                     *     return nameMatches(this.method, that.method);
+                     *
+                     * but it was not strictly necessary since it was redundant with the comparisons of
+                     * MathTransforms. Actually it was preventing to detect that two CRS were equivalent
+                     * despite different method names (e.g. "Mercator (1SP)" and "Mercator (2SP)" when
+                     * the parameters are properly chosen).
+                     */
+                    return true;
+                }
             }
-            /*
-             * We consider the operation method as metadata. We could argue that OperationMethod's
-             * 'sourceDimension' and 'targetDimension' are not metadata,  but their values should
-             * be identical to the 'sourceCRS' and 'targetCRS' dimensions, already checked by the
-             * superclass. We could also argue that 'OperationMethod.parameters' are not metadata,
-             * but their values should have been taken in account for the MathTransform creation,
-             * which was compared by the superclass.
-             *
-             * Comparing the MathTransforms instead of parameters avoid the problem of implicit
-             * parameters.  For example in a ProjectedCRS, the "semiMajor" and "semiMinor" axis
-             * lengths are sometime provided as explicit parameters, and sometime inferred from
-             * the geodetic datum.  The two cases would be different set of parameters from the
-             * OperationMethod's point of view, but still result in the creation of identical
-             * MathTransform.
-             *
-             * An other rational for treating OperationMethod as metadata is that Geotk
-             * MathTransformProvider extends DefaultOperationMethod. Consequently there is
-             * a wide range of subclasses, which make the comparisons more difficult. For
-             * example Mercator1SP and Mercator2SP providers are two different ways to describe
-             * the same projection. The SQL-backed EPSG factory uses yet an other implementation.
-             *
-             * NOTE: A previous Geotk implementation made this final check:
-             *
-             *     return nameMatches(this.method, that.method);
-             *
-             * but it was not strictly necessary since it was redundant with the comparisons of
-             * MathTransforms. Actually it was preventing to detect that two CRS were equivalent
-             * despite different method names (e.g. "Mercator (1SP)" and "Mercator (2SP)" when
-             * the parameters are properly chosen).
-             */
-            return true;
         }
         return false;
     }

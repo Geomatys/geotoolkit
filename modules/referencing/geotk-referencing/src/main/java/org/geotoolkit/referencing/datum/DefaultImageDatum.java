@@ -20,17 +20,16 @@
  */
 package org.geotoolkit.referencing.datum;
 
-import java.util.Collections;
 import java.util.Map;
+import java.util.Collections;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.datum.ImageDatum;
 import org.opengis.referencing.datum.PixelInCell;
 
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -41,7 +40,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * or the corner of the image.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -126,13 +125,21 @@ public class DefaultImageDatum extends AbstractDatum implements ImageDatum {
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final DefaultImageDatum that = (DefaultImageDatum) object;
-            return Utilities.equals(this.pixelInCell, that.pixelInCell);
+            switch (mode) {
+                case STRICT: {
+                    final DefaultImageDatum that = (DefaultImageDatum) object;
+                    return Utilities.equals(this.pixelInCell, that.pixelInCell);
+                }
+                default: {
+                    final ImageDatum that = (ImageDatum) object;
+                    return Utilities.equals(getPixelInCell(), that.getPixelInCell());
+                }
+            }
         }
         return false;
     }

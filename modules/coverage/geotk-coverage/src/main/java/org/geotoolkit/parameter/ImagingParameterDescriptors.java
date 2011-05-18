@@ -56,18 +56,18 @@ import org.opengis.util.NameSpace;
 
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.factory.Factories;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.internal.io.IOUtilities;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultContact;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
-import org.geotoolkit.util.NullArgumentException;
 
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
 
@@ -80,7 +80,7 @@ import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
  * parameters framework.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 2.2
  * @module
@@ -558,12 +558,12 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object, mode)) {
+        if (object instanceof ImagingParameterDescriptors && super.equals(object, mode)) {
             final ImagingParameterDescriptors that = (ImagingParameterDescriptors) object;
             return Utilities.equals(this.operation,  that.operation) &&
                    Utilities.equals(this.descriptor, that.descriptor);

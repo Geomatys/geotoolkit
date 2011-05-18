@@ -40,11 +40,10 @@ import org.opengis.referencing.operation.*;
 
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.IdentifiedObjects;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.DefaultCompoundCRS;
 import org.geotoolkit.referencing.crs.DefaultEngineeringCRS;
 import org.geotoolkit.referencing.cs.DefaultCartesianCS;
@@ -72,7 +71,7 @@ import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
  * override those methods in order to extend the factory capability to some more CRS.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -466,8 +465,8 @@ public class DefaultCoordinateOperationFactory extends AbstractCoordinateOperati
 
         /** Compares this datum with the specified object for equality. */
         @Override
-        public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
-            if (super.equals(object, mode)) {
+        public boolean equals(final Object object, final ComparisonMode mode) {
+            if (object instanceof TemporaryDatum && super.equals(object, mode)) {
                 final GeodeticDatum other = ((TemporaryDatum) object).datum;
                 switch (mode) {
                     case STRICT: return datum.equals(other);

@@ -31,8 +31,6 @@ import org.opengis.referencing.cs.CoordinateSystem;
 import org.opengis.referencing.crs.EngineeringCRS;
 import org.opengis.referencing.datum.EngineeringDatum;
 
-import org.geotoolkit.referencing.ComparisonMode;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.datum.DefaultEngineeringDatum;
 import org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis;
@@ -40,6 +38,7 @@ import org.geotoolkit.referencing.cs.DefaultCartesianCS;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 
 
 /**
@@ -65,7 +64,7 @@ import org.geotoolkit.util.Utilities;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -96,14 +95,19 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
          * equals when metadata are ignored.
          */
         @Override
-        public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+        public boolean equals(final Object object, final ComparisonMode mode) {
             if (super.equals(object, mode)) {
-                if (mode.equals(ComparisonMode.STRICT)) {
-                    // No need to performs the check below if metadata were already compared.
-                    return true;
+                switch (mode) {
+                    case STRICT:
+                    case BY_CONTRACT: {
+                        // No need to performs the check below if metadata were already compared.
+                        return true;
+                    }
+                    default: {
+                        final Cartesian that = (Cartesian) object;
+                        return Utilities.equals(getName().getCode(), that.getName().getCode());
+                    }
                 }
-                final Cartesian that = (Cartesian) object;
-                return Utilities.equals(this.getName().getCode(), that.getName().getCode());
             }
             return false;
         }

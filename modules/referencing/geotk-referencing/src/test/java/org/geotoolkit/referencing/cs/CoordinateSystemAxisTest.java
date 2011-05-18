@@ -23,7 +23,7 @@ import org.opengis.test.Validators;
 import org.opengis.util.InternationalString;
 import org.opengis.referencing.cs.AxisDirection;
 
-import org.geotoolkit.referencing.ComparisonMode;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.referencing.IdentifiedObjectTest;
 import org.geotoolkit.internal.referencing.AxisDirections;
 
@@ -40,7 +40,7 @@ import static org.geotoolkit.referencing.cs.DefaultCoordinateSystemAxis.*;
  * Tests {@link DefaultCoordinateSystemAxis}.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.2
  */

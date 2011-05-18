@@ -31,8 +31,6 @@ import org.opengis.referencing.crs.GeneralDerivedCRS;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.geometry.MismatchedDimensionException;
 
-import org.geotoolkit.referencing.ComparisonMode;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.AbstractReferenceSystem;
 import org.geotoolkit.referencing.operation.DefaultConversion;
 import org.geotoolkit.referencing.operation.DefaultProjection;  // For javadoc
@@ -42,9 +40,11 @@ import org.geotoolkit.referencing.operation.DefaultOperationMethod;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.internal.referencing.Semaphores;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -58,7 +58,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -291,13 +291,15 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final AbstractDerivedCRS that = (AbstractDerivedCRS) object;
-            if (equals(this.baseCRS, that.baseCRS, mode)) {
+            final boolean strict = (mode == ComparisonMode.STRICT);
+            if (deepEquals(strict ? baseCRS : getBaseCRS(),
+                           strict ? ((AbstractDerivedCRS) object).baseCRS
+                                  :  ((GeneralDerivedCRS) object).getBaseCRS(), mode)) {
                 /*
                  * Avoid never-ending recursivity: Conversion has a 'targetCRS' field (inherited from
                  * the AbstractCoordinateOperation super-class) that is set to this AbstractDerivedCRS.
@@ -306,7 +308,9 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
                     return true;
                 }
                 try {
-                    return equals(this.conversionFromBase, that.conversionFromBase, mode);
+                    return deepEquals(strict ? conversionFromBase : getConversionFromBase(),
+                                      strict ? ((AbstractDerivedCRS) object).conversionFromBase
+                                             :  ((GeneralDerivedCRS) object).getConversionFromBase(), mode);
                 } finally {
                     Semaphores.clear(Semaphores.COMPARING);
                 }

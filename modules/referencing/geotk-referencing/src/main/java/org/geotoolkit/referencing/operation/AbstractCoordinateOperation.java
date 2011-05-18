@@ -40,9 +40,9 @@ import org.opengis.util.InternationalString;
 import org.opengis.util.Record;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
-import org.geotoolkit.referencing.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
@@ -50,6 +50,7 @@ import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.measure.Units;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -72,7 +73,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -518,9 +519,10 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
 
     /**
      * Compares this coordinate operation with the specified object for equality.
-     * If {@code compareMetadata} is {@code true}, then all available properties are
-     * compared including {@linkplain #getDomainOfValidity domain of validity} and
-     * {@linkplain #getScope scope}.
+     * If the {@code mode} argument value is {@link ComparisonMode#STRICT STRICT} or
+     * {@link ComparisonMode#BY_CONTRACT BY_CONTRACT}, then all available properties are
+     * compared including the {@linkplain #getDomainOfValidity() domain of validity} and
+     * the {@linkplain #getScope scope}.
      *
      * @param  object The object to compare to {@code this}.
      * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
@@ -529,23 +531,43 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final AbstractCoordinateOperation that = (AbstractCoordinateOperation) object;
-            if (equals(this.sourceCRS, that.sourceCRS, mode)) {
+            switch (mode) {
+                // Do not test targetCRS now - it will be tested later in this method.
                 // See comment in DefaultSingleOperation.equals(...) about why we compare MathTransform.
-                if (mode.equals(ComparisonMode.STRICT)) {
-                    if (!Utilities.equals(transform,                   that.transform)        ||
+                case STRICT: {
+                    final AbstractCoordinateOperation that = (AbstractCoordinateOperation) object;
+                    if (!Utilities.equals(sourceCRS,                   that.sourceCRS)        ||
+                        !Utilities.equals(transform,                   that.transform)        ||
                         !Utilities.equals(domainOfValidity,            that.domainOfValidity) ||
                         !Utilities.equals(scope,                       that.scope)            ||
                         !Utilities.equals(coordinateOperationAccuracy, that.coordinateOperationAccuracy))
                     {
                         return false;
                     }
-                } else {
+                    break;
+                }
+                case BY_CONTRACT: {
+                    final CoordinateOperation that = (CoordinateOperation) object;
+                    if (!deepEquals(getSourceCRS(),                   that.getSourceCRS(),        mode) ||
+                        !deepEquals(getMathTransform(),               that.getMathTransform(),    mode) ||
+                        !deepEquals(getDomainOfValidity(),            that.getDomainOfValidity(), mode) ||
+                        !deepEquals(getScope(),                       that.getScope(),            mode) ||
+                        !deepEquals(getCoordinateOperationAccuracy(), that.getCoordinateOperationAccuracy(), mode))
+                    {
+                        return false;
+                    }
+                    break;
+                }
+                default: {
+                    final CoordinateOperation that = (CoordinateOperation) object;
+                    if (!deepEquals(getSourceCRS(), that.getSourceCRS(), mode)) {
+                        return false;
+                    }
                     final boolean cmp;
                     if (transform instanceof AbstractMathTransform) {
                         /*
@@ -553,26 +575,31 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
                          * small numerical departures, presumed due to rounding errors. Consequently
                          * the two CRS may be only approximatively equal ignoring metadata.
                          */
-                        cmp = ((AbstractMathTransform) transform).equivalent(that.transform, false);
+                        cmp = ((AbstractMathTransform) transform).equivalent(that.getMathTransform(), false);
                     } else {
-                        cmp = Utilities.equals(transform, that.transform);
+                        cmp = Utilities.equals(transform, that.getMathTransform());
                     }
                     if (!cmp) {
                         return false;
                     }
+                    break;
                 }
-                /*
-                 * Avoid never-ending recursivity: AbstractDerivedCRS has a 'conversionFromBase'
-                 * field that is set to this AbstractCoordinateOperation.
-                 */
-                if (Semaphores.queryAndSet(Semaphores.COMPARING)) {
-                    return true;
+            }
+            /*
+             * Avoid never-ending recursivity: AbstractDerivedCRS has a 'conversionFromBase'
+             * field that is set to this AbstractCoordinateOperation.
+             */
+            if (Semaphores.queryAndSet(Semaphores.COMPARING)) {
+                return true;
+            }
+            try {
+                if (mode == ComparisonMode.STRICT) {
+                    return Utilities.equals(targetCRS, ((AbstractCoordinateOperation) object).targetCRS);
+                } else {
+                    return deepEquals(getTargetCRS(), ((CoordinateOperation) object).getTargetCRS(), mode);
                 }
-                try {
-                    return equals(this.targetCRS, that.targetCRS, mode);
-                } finally {
-                    Semaphores.clear(Semaphores.COMPARING);
-                }
+            } finally {
+                Semaphores.clear(Semaphores.COMPARING);
             }
         }
         return false;

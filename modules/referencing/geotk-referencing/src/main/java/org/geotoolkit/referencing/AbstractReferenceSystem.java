@@ -30,6 +30,9 @@ import org.opengis.util.InternationalString;
 import org.opengis.referencing.ReferenceSystem;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
+
+import static org.geotoolkit.util.Utilities.deepEquals;
 
 
 /**
@@ -41,7 +44,7 @@ import org.geotoolkit.util.Utilities;
  * identify the exact type.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -159,9 +162,10 @@ public class AbstractReferenceSystem extends AbstractIdentifiedObject implements
 
     /**
      * Compares this reference system with the specified object for equality.
-     * If {@code compareMetadata} is {@code true}, then all available properties are
-     * compared including the {@linkplain #getDomainOfValidity domain of validity} and
-     * the {@linkplain #getScope scope}.
+     * If the {@code mode} argument value is {@link ComparisonMode#STRICT STRICT} or
+     * {@link ComparisonMode#BY_CONTRACT BY_CONTRACT}, then all available properties are
+     * compared including the {@linkplain #getDomainOfValidity() domain of validity} and
+     * the {@linkplain #getScope() scope}.
      *
      * @param  object The object to compare to {@code this}.
      * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
@@ -170,14 +174,24 @@ public class AbstractReferenceSystem extends AbstractIdentifiedObject implements
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (super.equals(object, mode)) {
-            if (!mode.equals(ComparisonMode.STRICT)) {
-                return true;
+            switch (mode) {
+                case STRICT: {
+                    final AbstractReferenceSystem that = (AbstractReferenceSystem) object;
+                    return Utilities.equals(domainOfValidity, that.domainOfValidity) &&
+                           Utilities.equals(scope,            that.scope);
+                }
+                case BY_CONTRACT: {
+                    final ReferenceSystem that = (ReferenceSystem) object;
+                    return deepEquals(getDomainOfValidity(), that.getDomainOfValidity(), mode) &&
+                           deepEquals(getScope(),            that.getScope(), mode);
+                }
+                default: {
+                    // Domain of validity and scope are metadata, so they can be ignored.
+                    return true;
+                }
             }
-            final AbstractReferenceSystem that = (AbstractReferenceSystem) object;
-            return Utilities.equals(domainOfValidity, that.domainOfValidity) &&
-                   Utilities.equals(scope,            that.scope);
         }
         return false;
     }

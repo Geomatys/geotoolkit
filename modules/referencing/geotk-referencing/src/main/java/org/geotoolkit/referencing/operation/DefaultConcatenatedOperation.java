@@ -40,14 +40,15 @@ import org.opengis.referencing.operation.Transformation;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransformFactory;
 
-import org.geotoolkit.referencing.ComparisonMode;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.transform.ConcatenatedTransform;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 
+import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
@@ -61,7 +62,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  * system associated with the concatenated operation.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -314,9 +315,10 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
 
     /**
      * Compares this concatenated operation with the specified object for equality.
-     * If {@code compareMetadata} is {@code true}, then all available properties are
-     * compared including {@linkplain #getDomainOfValidity domain of validity} and
-     * {@linkplain #getScope scope}.
+     * If the {@code mode} argument value is {@link ComparisonMode#STRICT STRICT} or
+     * {@link ComparisonMode#BY_CONTRACT BY_CONTRACT}, then all available properties are
+     * compared including the {@linkplain #getDomainOfValidity() domain of validity} and
+     * the {@linkplain #getScope() scope}.
      *
      * @param  object The object to compare to {@code this}.
      * @param  mode {@link ComparisonMode#STRICT STRICT} for performing a strict comparison, or
@@ -325,13 +327,21 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
      * @return {@code true} if both objects are equal.
      */
     @Override
-    public boolean equals(final AbstractIdentifiedObject object, final ComparisonMode mode) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            final DefaultConcatenatedOperation that = (DefaultConcatenatedOperation) object;
-            return equals(this.operations, that.operations, mode);
+            switch (mode) {
+                case STRICT: {
+                    final DefaultConcatenatedOperation that = (DefaultConcatenatedOperation) object;
+                    return Utilities.equals(this.operations, that.operations);
+                }
+                default: {
+                    final ConcatenatedOperation that = (ConcatenatedOperation) object;
+                    return deepEquals(getOperations(), that.getOperations(), mode);
+                }
+            }
         }
         return false;
     }
