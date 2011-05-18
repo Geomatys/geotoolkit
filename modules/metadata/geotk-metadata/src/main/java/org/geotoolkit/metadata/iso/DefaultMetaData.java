@@ -68,7 +68,7 @@ import org.geotoolkit.xml.Namespaces;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -158,7 +158,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      * Date that the metadata was created, in milliseconds elapsed since January 1st, 1970.
      * If not defined, then then value is {@link Long#MIN_VALUE}.
      */
-    private long dateStamp = Long.MIN_VALUE;
+    private long dateStamp;
 
     /**
      * Name of the metadata standard (including profile name) used.
@@ -235,6 +235,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      * Creates an initially empty metadata.
      */
     public DefaultMetadata() {
+        dateStamp = Long.MIN_VALUE;
     }
 
     /**
@@ -246,6 +247,12 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      */
     public DefaultMetadata(final Metadata source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (dateStamp == 0 && source.getDateStamp() == null) {
+                dateStamp = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**
@@ -260,6 +267,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
                            final Date             dateStamp,
                            final Identification   identificationInfo)
     {
+        this(); // Initialize the date field.
         setContacts          (Collections.singleton(contact));
         setDateStamp         (dateStamp);
         setIdentificationInfo(Collections.singleton(identificationInfo));
@@ -410,7 +418,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
     @Override
     @XmlElement(name = "dateStamp", required = true)
     public synchronized Date getDateStamp() {
-        return (dateStamp!=Long.MIN_VALUE) ? new Date(dateStamp) : (Date)null;
+        return (dateStamp != Long.MIN_VALUE) ? new Date(dateStamp) : (Date)null;
     }
 
     /**
@@ -420,7 +428,7 @@ public class DefaultMetadata extends MetadataEntity implements Metadata {
      */
     public synchronized void setDateStamp(final Date newValue) {
         checkWritePermission();
-        dateStamp = (newValue!=null) ? newValue.getTime() : Long.MIN_VALUE;
+        dateStamp = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**

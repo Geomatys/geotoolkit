@@ -37,7 +37,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  *
  * @author Martin Desruisseaux (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -55,10 +55,10 @@ public class DefaultCitationDate extends MetadataEntity implements CitationDate 
     private static final long serialVersionUID = -2884791484254008454L;
 
     /**
-     * Reference date for the cited resource in millisecondes elapsed sine January 1st, 1970,
+     * Reference date for the cited resource in milliseconds elapsed sine January 1st, 1970,
      * or {@link Long#MIN_VALUE} if none.
      */
-    private long date = Long.MIN_VALUE;
+    private long date;
 
     /**
      * Event used for reference date.
@@ -69,6 +69,7 @@ public class DefaultCitationDate extends MetadataEntity implements CitationDate 
      * Constructs an initially empty citation date.
      */
     public DefaultCitationDate() {
+        date = Long.MIN_VALUE;
     }
 
     /**
@@ -79,6 +80,12 @@ public class DefaultCitationDate extends MetadataEntity implements CitationDate 
      */
     public DefaultCitationDate(final CitationDate source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (date == 0 && source.getDate() == null) {
+                date = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**
@@ -88,6 +95,7 @@ public class DefaultCitationDate extends MetadataEntity implements CitationDate 
      * @param dateType The event used for reference date.
      */
     public DefaultCitationDate(final Date date, final DateType dateType) {
+        this(); // Initialize the date field.
         setDate    (date);
         setDateType(dateType);
     }
@@ -98,7 +106,7 @@ public class DefaultCitationDate extends MetadataEntity implements CitationDate 
     @Override
     @XmlElement(name = "date", required = true)
     public synchronized Date getDate() {
-        return (date!=Long.MIN_VALUE) ? new Date(date) : null;
+        return (date != Long.MIN_VALUE) ? new Date(date) : null;
     }
 
     /**
@@ -108,7 +116,7 @@ public class DefaultCitationDate extends MetadataEntity implements CitationDate 
      */
     public synchronized void setDate(final Date newValue) {
         checkWritePermission();
-        date = (newValue!=null) ? newValue.getTime() : Long.MIN_VALUE;
+        date = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**

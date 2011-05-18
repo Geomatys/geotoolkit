@@ -47,7 +47,7 @@ public interface LenientComparable {
      * Returns {@code true} if this object is strictly equals to the given object.
      * This method is typically implemented as below:
      *
-     * {@preformat
+     * {@preformat java
      *     return equals(other, ComparisonMode.STRICT);
      * }
      *

@@ -39,7 +39,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -68,7 +68,7 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
      * Date and time when the dataset will be available,
      * in milliseconds elapsed since January 1st, 1970.
      */
-    private long plannedAvailableDateTime = Long.MIN_VALUE;
+    private long plannedAvailableDateTime;
 
     /**
      * General instructions, terms and services provided by the distributor.
@@ -84,6 +84,7 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
      * Constructs an initially empty standard order process.
      */
     public DefaultStandardOrderProcess() {
+        plannedAvailableDateTime = Long.MIN_VALUE;
     }
 
     /**
@@ -95,6 +96,12 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
      */
     public DefaultStandardOrderProcess(final StandardOrderProcess source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (plannedAvailableDateTime == 0 && source.getPlannedAvailableDateTime() == null) {
+                plannedAvailableDateTime = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**
@@ -124,7 +131,7 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
     @Override
     @XmlElement(name = "plannedAvailableDateTime")
     public synchronized Date getPlannedAvailableDateTime() {
-        return (plannedAvailableDateTime!=Long.MIN_VALUE) ?
+        return (plannedAvailableDateTime != Long.MIN_VALUE) ?
                 new Date(plannedAvailableDateTime) : null;
     }
 
@@ -135,7 +142,7 @@ public class DefaultStandardOrderProcess extends MetadataEntity implements Stand
      */
     public synchronized void setPlannedAvailableDateTime(final Date newValue) {
         checkWritePermission();
-        plannedAvailableDateTime = (newValue!=null) ? newValue.getTime() : Long.MIN_VALUE;
+        plannedAvailableDateTime = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**

@@ -45,7 +45,7 @@ import org.geotoolkit.xml.Namespaces;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -130,6 +130,12 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      */
     public DefaultProcessStep(final ProcessStep source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (date == 0 && source.getDate() == null) {
+                date = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**
@@ -138,6 +144,7 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
      * @param description Description of the event, including related parameters or tolerances.
      */
     public DefaultProcessStep(final InternationalString description) {
+        this(); // Initialize the date field.
         setDescription(description);
     }
 

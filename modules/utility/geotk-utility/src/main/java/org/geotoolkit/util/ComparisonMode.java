@@ -25,6 +25,9 @@ package org.geotoolkit.util;
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *
+ * @see LenientComparable#equals(Object, ComparisonMode)
+ * @see Utilities#deepEquals(Object, Object, ComparisonMode)
+ *
  * @since 3.18 (derived from 3.14)
  * @module
  */

@@ -93,6 +93,10 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      */
     public DefaultTemporalExtent(final TemporalExtent source) {
         super(source);
+        /*
+         * The startTime and endTime attributes are not part of GeoAPI interfaces.
+         * Consequently they are not copied by the above super-class constructor.
+         */
     }
 
     /**
@@ -144,7 +148,7 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      */
     public synchronized void setStartTime(final Date newValue) {
         checkWritePermission();
-        startTime = (newValue!=null) ? newValue.getTime() : Long.MIN_VALUE;
+        startTime = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**
@@ -164,7 +168,7 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      */
     public synchronized void setEndTime(final Date newValue) {
         checkWritePermission();
-        endTime = (newValue!=null) ? newValue.getTime() : Long.MIN_VALUE;
+        endTime = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**

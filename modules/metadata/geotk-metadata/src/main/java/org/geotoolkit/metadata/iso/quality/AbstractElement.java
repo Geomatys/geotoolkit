@@ -38,6 +38,7 @@ import org.opengis.metadata.quality.Element;
 import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.util.InternationalString;
 
+import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.metadata.iso.MetadataEntity;
 import org.geotoolkit.resources.Errors;
 
@@ -45,10 +46,10 @@ import org.geotoolkit.resources.Errors;
 /**
  * Type of test applied to the data specified by a data quality scope.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Guilhem Legal (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -110,11 +111,10 @@ public class AbstractElement extends MetadataEntity implements Element {
     private Citation evaluationProcedure;
 
     /**
-     * Date or range of dates on which a data quality measure was applied.
-     * The array length is 1 for a single date, or 2 for a range. Returns
-     * {@code null} if this information is not available.
+     * Start time ({@code date1}) and end time ({@code date2}) on which a data quality measure
+     * was applied. Value is {@link Long#MIN_VALUE} if this information is not available.
      */
-    private long date1 = Long.MIN_VALUE, date2 = Long.MIN_VALUE;
+    private long date1, date2;
 
     /**
      * Value (or set of values) obtained from applying a data quality measure or the out
@@ -127,6 +127,8 @@ public class AbstractElement extends MetadataEntity implements Element {
      * Constructs an initially empty element.
      */
     public AbstractElement() {
+        date1 = Long.MIN_VALUE;
+        date2 = Long.MIN_VALUE;
     }
 
     /**
@@ -138,6 +140,13 @@ public class AbstractElement extends MetadataEntity implements Element {
      */
     public AbstractElement(final Element source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date values (GEOTK-170).
+            if (date1 == 0 && date2 == 0 && XCollections.isNullOrEmpty(source.getDates())) {
+                date1 = Long.MIN_VALUE;
+                date2 = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**
@@ -147,6 +156,7 @@ public class AbstractElement extends MetadataEntity implements Element {
      *               acceptable conformance quality level.
      */
     public AbstractElement(final Result result) {
+        this(); // Initialize date fields.
         setResults(Collections.singleton(result));
     }
 

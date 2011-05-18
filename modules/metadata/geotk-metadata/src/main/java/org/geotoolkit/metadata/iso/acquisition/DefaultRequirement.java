@@ -42,7 +42,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Requirement to be satisfied by the planned data acquisition.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.03
  * @module
@@ -99,7 +99,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      * Date and time after which collection is no longer valid,
      * or {@link Long#MIN_VALUE} if none.
      */
-    private long expiryDate = Long.MIN_VALUE;
+    private long expiryDate;
 
     /**
      * Plan that identifies solution to satisfy the requirement.
@@ -110,6 +110,7 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      * Constructs an initially empty requirement.
      */
     public DefaultRequirement() {
+        expiryDate = Long.MIN_VALUE;
     }
 
     /**
@@ -119,6 +120,12 @@ public class DefaultRequirement extends MetadataEntity implements Requirement {
      */
     public DefaultRequirement(final Requirement source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (expiryDate == 0 && source.getExpiryDate() == null) {
+                expiryDate = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**

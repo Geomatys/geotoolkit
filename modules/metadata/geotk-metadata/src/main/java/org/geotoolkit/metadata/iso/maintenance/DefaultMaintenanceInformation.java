@@ -44,7 +44,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -72,7 +72,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
      * since January 1st, 1970. If there is no such date, then this field
      * is set to the special value {@link Long#MIN_VALUE}.
      */
-    private long dateOfNextUpdate = Long.MIN_VALUE;
+    private long dateOfNextUpdate;
 
     /**
      * Maintenance period other than those defined, in milliseconds.
@@ -104,6 +104,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
      * Creates a an initially empty maintenance information.
      */
     public DefaultMaintenanceInformation() {
+        dateOfNextUpdate = Long.MIN_VALUE;
     }
 
     /**
@@ -115,6 +116,12 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
      */
     public DefaultMaintenanceInformation(final MaintenanceInformation source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (dateOfNextUpdate == 0 && source.getDateOfNextUpdate() == null) {
+                dateOfNextUpdate = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**
@@ -124,6 +131,7 @@ public class DefaultMaintenanceInformation extends MetadataEntity implements Mai
      *          are made to the resource after the initial resource is completed.
      */
     public DefaultMaintenanceInformation(final MaintenanceFrequency maintenanceAndUpdateFrequency) {
+        this(); // Initialize the date field.
         setMaintenanceAndUpdateFrequency(maintenanceAndUpdateFrequency);
     }
 

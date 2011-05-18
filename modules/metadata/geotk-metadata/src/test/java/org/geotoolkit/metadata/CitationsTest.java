@@ -17,6 +17,7 @@
  */
 package org.geotoolkit.metadata;
 
+import java.util.Date;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Collection;
@@ -25,11 +26,14 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 
 import org.opengis.metadata.quality.Result;
+import org.opengis.metadata.citation.DateType;
+import org.opengis.metadata.citation.CitationDate;
 import org.opengis.metadata.quality.ConformanceResult;
 
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.metadata.iso.citation.DefaultCitation;
+import org.geotoolkit.metadata.iso.citation.DefaultCitationDate;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 
 import org.junit.*;
@@ -152,5 +156,24 @@ public final class CitationsTest {
         assertTrue(copy.equals(Citations.EPSG, ComparisonMode.BY_CONTRACT));
         assertTrue(copy.equals(Citations.EPSG, ComparisonMode.IGNORE_METADATA));
         assertEquals(Citations.EPSG.hashCode(), copy.hashCode());
+    }
+
+    /**
+     * Tests the shallow copy (through a constructor).
+     *
+     * @see <a href="http://jira.geotoolkit.org/browse/GEOTK-170">GEOTK-170</a>
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testShallowCopy() {
+        final CitationDate original = new CitationDate() {
+            @Override public Date     getDate()     {return new Date(1305716658508L);}
+            @Override public DateType getDateType() {return DateType.CREATION;}
+        };
+        final DefaultCitationDate copy = new DefaultCitationDate(original);
+        assertEquals(new Date(1305716658508L), copy.getDate());
+        assertTrue(copy.equals(original, ComparisonMode.BY_CONTRACT));
+        assertFalse(copy.equals(original, ComparisonMode.STRICT)); // Opportunist test.
     }
 }

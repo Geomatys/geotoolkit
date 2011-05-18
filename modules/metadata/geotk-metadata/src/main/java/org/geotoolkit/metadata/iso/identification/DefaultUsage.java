@@ -40,7 +40,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * @author Martin Desruisseaux (IRD)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -69,7 +69,7 @@ public class DefaultUsage extends MetadataEntity implements Usage {
      * Values are milliseconds elapsed since January 1st, 1970,
      * or {@link Long#MIN_VALUE} if this value is not set.
      */
-    private long usageDate = Long.MIN_VALUE;
+    private long usageDate;
 
     /**
      * Applications, determined by the user for which the resource and/or resource series
@@ -87,6 +87,7 @@ public class DefaultUsage extends MetadataEntity implements Usage {
      * Constructs an initially empty usage.
      */
     public DefaultUsage() {
+        usageDate = Long.MIN_VALUE;
     }
 
     /**
@@ -98,6 +99,12 @@ public class DefaultUsage extends MetadataEntity implements Usage {
      */
     public DefaultUsage(final Usage source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (usageDate == 0 && source.getUsageDate() == null) {
+                usageDate = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**
@@ -109,6 +116,7 @@ public class DefaultUsage extends MetadataEntity implements Usage {
     public DefaultUsage(final InternationalString specificUsage,
                         final Collection<ResponsibleParty> userContactInfo)
     {
+        this(); // Initialize the date field.
         setSpecificUsage  (specificUsage  );
         setUserContactInfo(userContactInfo);
     }
@@ -139,7 +147,7 @@ public class DefaultUsage extends MetadataEntity implements Usage {
     @Override
     @XmlElement(name = "usageDateTime")
     public synchronized Date getUsageDate() {
-        return (usageDate!=Long.MIN_VALUE) ? new Date(usageDate) : null;
+        return (usageDate != Long.MIN_VALUE) ? new Date(usageDate) : null;
     }
 
     /**
@@ -149,7 +157,7 @@ public class DefaultUsage extends MetadataEntity implements Usage {
      */
     public synchronized void setUsageDate(final Date newValue)  {
         checkWritePermission();
-        usageDate = (newValue!=null) ? newValue.getTime() : Long.MIN_VALUE;
+        usageDate = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**

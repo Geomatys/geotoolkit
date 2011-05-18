@@ -46,7 +46,7 @@ import org.geotoolkit.util.SimpleInternationalString;
  * @author Martin Desruisseaux (IRD)
  * @author Jody Garnett (Refractions)
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -99,7 +99,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * Date of the edition in milliseconds elapsed sine January 1st, 1970,
      * or {@link Long#MIN_VALUE} if none.
      */
-    private long editionDate = Long.MIN_VALUE;
+    private long editionDate;
 
     /**
      * Unique identifier for the resource. Example: Universal Product Code (UPC),
@@ -151,6 +151,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * Constructs an initially empty citation.
      */
     public DefaultCitation() {
+        editionDate = Long.MIN_VALUE;
     }
 
     /**
@@ -162,6 +163,12 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     public DefaultCitation(final Citation source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (editionDate == 0 && source.getEditionDate() == null) {
+                editionDate = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**
@@ -170,6 +177,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * @param title The title, as a {@link String} or an {@link InternationalString} object.
      */
     public DefaultCitation(final CharSequence title) {
+        this(); // Initialize the date field.
         final InternationalString t;
         if (title instanceof InternationalString) {
             t = (InternationalString) title;
@@ -191,6 +199,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      * @since 2.2
      */
     public DefaultCitation(final ResponsibleParty party) {
+        this(); // Initialize the date field.
         InternationalString title = party.getOrganisationName();
         if (title == null) {
             title = party.getPositionName();
@@ -286,7 +295,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
     @Override
     @XmlElement(name = "editionDate")
     public synchronized Date getEditionDate() {
-        return (editionDate!=Long.MIN_VALUE) ? new Date(editionDate) : null;
+        return (editionDate != Long.MIN_VALUE) ? new Date(editionDate) : null;
     }
 
     /**
@@ -298,7 +307,7 @@ public class DefaultCitation extends MetadataEntity implements Citation {
      */
     public synchronized void setEditionDate(final Date newValue) {
         checkWritePermission();
-        editionDate = (newValue!=null) ? newValue.getTime() : Long.MIN_VALUE;
+        editionDate = (newValue != null) ? newValue.getTime() : Long.MIN_VALUE;
     }
 
     /**

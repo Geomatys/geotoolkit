@@ -35,7 +35,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Range of date validity.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.03
  * @module
@@ -68,6 +68,8 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
      * Constructs an initially empty requested date.
      */
     public DefaultRequestedDate() {
+        requestedDateOfCollection = Long.MIN_VALUE;
+        latestAcceptableDate = Long.MIN_VALUE;
     }
 
     /**
@@ -77,6 +79,15 @@ public class DefaultRequestedDate extends MetadataEntity implements RequestedDat
      */
     public DefaultRequestedDate(final RequestedDate source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (requestedDateOfCollection == 0 && source.getRequestedDateOfCollection() == null) {
+                requestedDateOfCollection = Long.MIN_VALUE;
+            }
+            if (latestAcceptableDate == 0 && source.getLatestAcceptableDate() == null) {
+                latestAcceptableDate = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**

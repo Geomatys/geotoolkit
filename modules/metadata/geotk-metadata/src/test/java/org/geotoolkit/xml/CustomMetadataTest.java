@@ -17,7 +17,6 @@
  */
 package org.geotoolkit.xml;
 
-import java.io.StringWriter;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
@@ -26,7 +25,6 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 import javax.xml.bind.JAXBException;
-import javax.xml.bind.Marshaller;
 
 import org.opengis.metadata.Metadata;
 import org.opengis.metadata.identification.*;
@@ -55,7 +53,7 @@ import static org.junit.Assert.*;
  *
  * @author Damiano Albani (for code snippet on the mailing list)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 3.14
  */
@@ -86,15 +84,10 @@ public final class CustomMetadataTest extends TestBase {
          * we can marshall it without an exception being throw.
          */
         data = new DefaultMetadata(data);
-        final StringWriter buffer = new StringWriter();
-        MarshallerPool pool = new MarshallerPool(MarshallerPool.defaultClassesToBeBound());
-        Marshaller marshaller = pool.acquireMarshaller();
-        marshaller.marshal(data, buffer);
-        pool.release(marshaller);
+        final String xml = XML.marshal(data);
         /*
          * A few simple checks.
          */
-        final String xml = buffer.toString();
         assertTrue(xml.contains("getMetadataStandardName"));
         assertTrue(xml.contains("getMetadataStandardVersion"));
     }
@@ -145,15 +138,10 @@ public final class CustomMetadataTest extends TestBase {
         };
         final DefaultMetadata data = new DefaultMetadata();
         assertTrue(data.getIdentificationInfo().add(identification));
-        final StringWriter buffer = new StringWriter();
-        MarshallerPool pool = new MarshallerPool(MarshallerPool.defaultClassesToBeBound());
-        Marshaller marshaller = pool.acquireMarshaller();
-        marshaller.marshal(data, buffer);
-        pool.release(marshaller);
+        final String xml = XML.marshal(data);
         /*
          * A few simple checks.
          */
-        final String xml = buffer.toString();
         assertTrue("Missing Identification attribute.",     xml.contains("Description"));
         assertTrue("Missing DataIdentification attribute.", xml.contains("Environment"));
     }

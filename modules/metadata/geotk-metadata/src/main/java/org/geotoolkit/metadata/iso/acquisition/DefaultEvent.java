@@ -43,7 +43,7 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
  * Identification of a significant collection point within an operation.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.03
  * @module
@@ -110,6 +110,7 @@ public class DefaultEvent extends MetadataEntity implements Event {
      * Constructs an initially empty acquisition information.
      */
     public DefaultEvent() {
+        time = Long.MIN_VALUE;
     }
 
     /**
@@ -119,6 +120,12 @@ public class DefaultEvent extends MetadataEntity implements Event {
      */
     public DefaultEvent(final Event source) {
         super(source);
+        if (source != null) {
+            // Be careful to not overwrite date value (GEOTK-170).
+            if (time == 0 && source.getTime() == null) {
+                time = Long.MIN_VALUE;
+            }
+        }
     }
 
     /**
