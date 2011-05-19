@@ -27,6 +27,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.referencing.operation.MathTransform;
 import org.opengis.geometry.MismatchedDimensionException;
 
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
@@ -39,7 +40,7 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
  * optimizations.
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -263,8 +264,7 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
     }
 
     /**
-     * Returns a hash value for this transform.
-     * This value need not remain consistent between
+     * Returns a hash value for this transform. This value need not remain consistent between
      * different implementations of the same class.
      */
     @Override
@@ -273,16 +273,15 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
     }
 
     /**
-     * Compares the specified object with
-     * this math transform for equality.
+     * Compares the specified object with this math transform for equality.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final IdentityTransform that = (IdentityTransform) object;
             return this.dimension == that.dimension;
         }

@@ -38,6 +38,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 
@@ -524,8 +525,12 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
      * Compares this transform with the specified object for equality.
      */
     @Override
-    public boolean equals(final Object object) {
-        if (super.equals(object)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            // Slight optimization
+            return true;
+        }
+        if (super.equals(object, mode)) {
             final WarpTransform2D that = (WarpTransform2D) object;
             return Utilities.equals(this.warp, that.warp);
         }

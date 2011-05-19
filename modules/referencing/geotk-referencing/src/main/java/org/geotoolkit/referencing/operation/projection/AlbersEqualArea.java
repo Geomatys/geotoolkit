@@ -26,11 +26,11 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ComparisonMode;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
@@ -72,7 +72,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Gerald Evenden (USGS)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @see <A HREF="http://srmwww.gov.bc.ca/gis/bceprojection.html">British Columbia Albers Standard Projection</A>
  *
@@ -457,9 +457,10 @@ public class AlbersEqualArea extends UnitaryProjection {
      * Compares the given object with this transform for equivalence.
      */
     @Override
-    public boolean equivalent(final MathTransform object, final boolean strict) {
-        if (super.equivalent(object, strict)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final AlbersEqualArea that = (AlbersEqualArea) object;
+            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
             return equals(n, that.n, strict) &&
                    equals(c, that.c, strict);
         }

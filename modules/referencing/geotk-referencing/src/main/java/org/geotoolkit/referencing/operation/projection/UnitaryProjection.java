@@ -38,7 +38,6 @@ import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.util.GenericName;
 import org.opengis.metadata.Identifier;
 import org.opengis.referencing.IdentifiedObject;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 import org.opengis.referencing.operation.TransformException;
 
@@ -47,6 +46,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.measure.Longitude;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.internal.referencing.Identifiers;
@@ -60,6 +60,7 @@ import org.geotoolkit.referencing.operation.transform.AbstractMathTransform2D;
 import static java.lang.Math.*;
 import static java.lang.Double.*;
 import static org.geotoolkit.math.XMath.xorSign;
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.referencing.Identifiers.*;
 import static org.geotoolkit.parameter.Parameters.getOrCreate;
 import static org.geotoolkit.referencing.operation.provider.MapProjection.SEMI_MAJOR;
@@ -105,12 +106,12 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.18
  *
  * @see <A HREF="http://mathworld.wolfram.com/MapProjection.html">Map projections on MathWorld</A>
  * @see <A HREF="http://atlas.gc.ca/site/english/learningresources/carto_corner/map_projections.html">Map projections on the atlas of Canada</A>
  *
- * @since 3.00
+ * @since 3.18
  * @module
  */
 @Immutable
@@ -121,8 +122,9 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     private static final long serialVersionUID = 1969740225939106310L;
 
     /**
-     * Maximum difference allowed when comparing parameter values between two projection instances.
-     * This is used in order to determine if two instances are {@linkplain #equivalent equivalent}.
+     * Maximum difference allowed when comparing parameter values between two projection
+     * instances. This is used in order to determine if two instances are
+     * {@linkplain ComparisonMode#APPROXIMATIVE approximatively} equal.
      */
     private static final double PARAMETER_TOLERANCE = 1E-14;
 
@@ -283,7 +285,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * Creates a chain of concatenated transforms from the <cite>normalize</cite> transform,
      * this unitary projection and the <cite>denormalize</cite> transform. This method tries
      * to recycle existing instances of {@code UnitaryProjection} if possible, so subclasses
-     * should be careful to implement their {@link #hashCode} and {@link #equivalent} methods.
+     * should be careful to implement their {@link #hashCode()} and {@link #equals} methods.
      * <p>
      * This method is not public as a safety against user-defined subclasses which may not
      * implement the above methods correctly. User-defined implementations can use the following
@@ -1426,24 +1428,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      */
     @Override
     public int hashCode() {
-        return (parameters.hashCode() + 31*getClass().hashCode()) ^ (int) serialVersionUID;
-    }
-
-    /**
-     * Compares the given object with this transform for equality. The default implementation
-     * return {@code true} if the given object is {@linkplain #equivalent equivalent} and was
-     * created with {@linkplain Parameters projection parameters} equal to the ones used for
-     * this {@code UnitaryProjection}.
-     */
-    @Override
-    public final boolean equals(final Object object) {
-        if (object == this) {
-            return true;
-        }
-        if (object instanceof MathTransform && equivalent((MathTransform) object, true)) {
-            return Utilities.equals(parameters, ((UnitaryProjection) object).parameters);
-        }
-        return false;
+        return hash(parameters, getClass().hashCode()) ^ (int) serialVersionUID;
     }
 
     /**
@@ -1454,7 +1439,9 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * If this method returns {@code true}, then for any given identical source position, the
      * two compared unitary projections shall compute the same target position. Many of the
      * {@linkplain Parameters projection parameters} used for creating the unitary projections
-     * are irrelevant and don't need to be known.
+     * are irrelevant and don't need to be known. Those projection parameters will be compared
+     * only if the comparison mode is {@link ComparisonMode#STRICT STRICT} or
+     * {@link ComparisonMode#BY_CONTRACT BY_CONTRACT}.
      *
      * <blockquote><font size="-1"><b>Example:</b> a {@linkplain Mercator Mercator} projection can
      * be created in the 2SP case with a {@linkplain Parameters#standardParallels standard parallel}
@@ -1465,14 +1452,30 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * efficiently.</font></blockquote>
      *
      * @param object The object to compare with this unitary projection for equivalence.
-     * @param strict If {@code true}, the two transforms must compute exactly the same target
-     *        position. If {@code false}, a small departure it tolerated.
+     * @param mode The strictness level of the comparison. Default to {@link ComparisonMode#STRICT STRICT}.
      * @return {@code true} if the given object is equivalent to this unitary projection.
      */
     @Override
-    public boolean equivalent(final MathTransform object, final boolean strict) {
-        if (object != null && object.getClass().equals(getClass())) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            return true;
+        }
+        if (super.equals(object, mode)) {
             final UnitaryProjection that = (UnitaryProjection) object;
+            boolean strict = true;
+            switch (mode) {
+                case STRICT:
+                case BY_CONTRACT: {
+                    if (!Utilities.equals(parameters, that.parameters)) {
+                        return false;
+                    }
+                    break;
+                }
+                case APPROXIMATIVE: {
+                    strict = false;
+                    break;
+                }
+            }
             // No need to compare "excentricity" since it is computed from "excentricitySquared".
             return equals(excentricitySquared, that.excentricitySquared, strict) &&
                    equals(longitudeRotation,   that.longitudeRotation,   strict) &&
@@ -1482,7 +1485,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     }
 
     /**
-     * Implementations of comparisons of floating point values in {@link #equivalent} methods.
+     * Implementations of comparisons of floating point values in {@link #equals} methods.
      */
     static boolean equals(final double v1, final double v2, final boolean strict) {
         if (!strict) {

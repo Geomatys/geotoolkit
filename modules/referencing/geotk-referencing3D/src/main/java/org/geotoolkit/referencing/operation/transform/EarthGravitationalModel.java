@@ -38,6 +38,7 @@ import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
 import org.geotoolkit.util.collection.WeakValueHashMap;
+import org.geotoolkit.util.ComparisonMode;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.util.ArgumentChecks.*;
@@ -63,7 +64,7 @@ import static org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid.*;
  *
  * @author Pierre Cardinal
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.3
  * @module
@@ -429,8 +430,12 @@ public class EarthGravitationalModel extends VerticalTransform {
      * Compares this transform with the given object for equality.
      */
     @Override
-    public boolean equals(final Object object) {
-        if (object != null && object.getClass().equals(getClass())) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            // Slight optimization
+            return true;
+        }
+        if (super.equals(object, mode)) {
             final EarthGravitationalModel that = (EarthGravitationalModel) object;
             return isWGS84 == that.isWGS84 && nmax == that.nmax;
         }

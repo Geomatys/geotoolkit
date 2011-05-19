@@ -69,7 +69,6 @@ import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.operation.projection.UnitaryProjection;
 import org.geotoolkit.referencing.operation.transform.IdentityTransform;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.referencing.operation.matrix.XAffineTransform;
 import org.geotoolkit.internal.referencing.CRSUtilities;
 import org.geotoolkit.naming.DefaultNameSpace;
@@ -1305,11 +1304,9 @@ compare:    for (final SingleCRS component : actualComponents) {
      * {@section Implementation note}
      * If at least one object is an instance of {@link LenientComparable}, then this method
      * delegates to <code>{@link LenientComparable#equals(Object, ComparisonMode) equals}(...,
-     * {@linkplain ComparisonMode#IGNORE_METADATA})</code>. Otherwise
-     * if the given objects are instances of {@link AbstractMathTransform}, then this method delegates to
-     * <code>{@link AbstractMathTransform#equivalent(MathTransform,boolean) equivalent}(..., false)</code>.
-     * The {@code false} boolean argument value in the later case explains why the comparison of math
-     * transforms is only approximative. <strong>Note that it may change in a future release</strong>
+     * {@linkplain ComparisonMode#APPROXIMATIVE})</code>. The {@code APPROXIMATIVE} boolean
+     * argument value explains why the comparison of math transforms is only approximative.
+     * <strong>Note that it may change in a future release</strong>
      * (see <a href="http://jira.geotoolkit.org/browse/GEOTK-62">GEOTK-62</a>).
      *
      * @param  object1 The first object to compare (may be null).
@@ -1317,7 +1314,7 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @return {@code true} if both objects are equals.
      *
      * @see org.geotoolkit.util.Utilities#deepEquals(Object, Object, ComparisonMode)
-     * @see ComparisonMode#IGNORE_METADATA
+     * @see ComparisonMode#APPROXIMATIVE
      *
      * @category information
      * @since 2.2
@@ -1330,18 +1327,10 @@ compare:    for (final SingleCRS component : actualComponents) {
             return false;
         }
         if (object1 instanceof LenientComparable) {
-            return ((LenientComparable) object1).equals(object2, ComparisonMode.IGNORE_METADATA);
+            return ((LenientComparable) object1).equals(object2, ComparisonMode.APPROXIMATIVE);
         }
         if (object2 instanceof LenientComparable) {
-            return ((LenientComparable) object2).equals(object1, ComparisonMode.IGNORE_METADATA);
-        }
-        if (object2 instanceof MathTransform && object1 instanceof AbstractMathTransform) {
-            return ((AbstractMathTransform) object1).equivalent((MathTransform) object2, false);
-            /*
-             * Note: the 'false' boolean argument causes the comparison to tolerate small numerical
-             * departures, presumed due to rounding errors. Consequently the two MT may not produce
-             * strictly identical transformed values.
-             */
+            return ((LenientComparable) object2).equals(object1, ComparisonMode.APPROXIMATIVE);
         }
         return object1.equals(object2);
     }

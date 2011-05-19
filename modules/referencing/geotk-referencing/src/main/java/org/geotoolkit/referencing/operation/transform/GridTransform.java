@@ -38,6 +38,7 @@ import org.opengis.referencing.operation.Matrix;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
@@ -85,7 +86,7 @@ import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Simon Reynard (Geomatys)
- * @version 3.12
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -591,11 +592,11 @@ public class GridTransform extends AbstractMathTransform implements Serializable
      * <i>etc.</i>) if the values casted to the {@code double} type are equal.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final GridTransform that = (GridTransform) object;
             if (width == that.width && height == that.height &&
                 Utilities.equals(xOrigin, that.xOrigin) &&

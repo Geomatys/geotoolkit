@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
+import org.geotoolkit.util.ComparisonMode;
 
 
 /**
@@ -51,7 +52,7 @@ import org.geotoolkit.referencing.operation.matrix.XMatrix;
  * an {@link java.awt.geom.AffineTransform} for every 2D affine conversions.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.10
+ * @version 3.18
  *
  * @since 3.08
  * @module
@@ -437,12 +438,12 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public final boolean equals(final Object object) {
+    public final boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final CopyTransform that = (CopyTransform) object;
             return srcDim == that.srcDim && Arrays.equals(indices, that.indices);
         }

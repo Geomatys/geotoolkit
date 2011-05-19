@@ -24,6 +24,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 
 
 /**
@@ -35,7 +36,7 @@ import org.geotoolkit.util.Utilities;
  * improve the {@link #concatenate(MathTransform, boolean)} method.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.17
  * @module
@@ -208,12 +209,12 @@ final class PowerTransform1D extends AbstractMathTransform1D implements Serializ
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             return Utilities.equals(this.power, ((PowerTransform1D) object).power);
         }
         return false;

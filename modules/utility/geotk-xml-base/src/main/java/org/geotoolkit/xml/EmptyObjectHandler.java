@@ -153,13 +153,14 @@ final class EmptyObjectHandler implements InvocationHandler {
     private boolean equals(final Object proxy, final Object other, final ComparisonMode mode) throws Throwable {
         if (other == proxy) return true;
         if (other == null) return false;
-        if (proxy.getClass().equals(other.getClass())) {
+        if (proxy.getClass() == other.getClass()) {
             final EmptyObjectHandler h = (EmptyObjectHandler) Proxy.getInvocationHandler(other);
             return xlink.equals(h.xlink);
         }
         switch (mode) {
             case STRICT: return false; // The above test is the only relevant one for this mode.
-            case IGNORE_METADATA: break; // Do not compare the xlink below.
+            case IGNORE_METADATA:      // Do not compare the xlink below.
+            case APPROXIMATIVE: break; // Do not compare the xlink below.
             default: {
                 XLink ox = null;
                 if (other instanceof IdentifiedObject) {
@@ -182,7 +183,7 @@ final class EmptyObjectHandler implements InvocationHandler {
         }
         for (final Method getter : type.getMethods()) {
             // Note: Class.getMethods() on interface does return Object methods.
-            if (!Void.TYPE.equals(getter.getReturnType()) && getter.getParameterTypes().length == 0) {
+            if ((getter.getReturnType() != Void.TYPE) && getter.getParameterTypes().length == 0) {
                 final Object value;
                 try {
                     value = getter.invoke(other, (Object[]) null);

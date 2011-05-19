@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import static org.geotoolkit.referencing.operation.provider.Exponential.*;
@@ -51,7 +52,7 @@ import static java.lang.Double.doubleToLongBits;
  * <blockquote><code>scale</code> &middot; <code>base</code><sup><var>a</var> + <var>b</var>&middot;<var>x</var></sup>
  * &nbsp;=&nbsp; <code>scale</code> &middot; <code>base</code><sup><var>a</var></sup> &middot;
  * (<code>base</code><sup><var>b</var></sup>)<sup><var>x</var></sup></blockquote>
- * 
+ *
  * It is possible to find back the coefficients of the original linear transform by
  * pre-concatenating a logarithmic transform before the exponential one, as below:
  *
@@ -61,7 +62,7 @@ import static java.lang.Double.doubleToLongBits;
  * }
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @see LogarithmicTransform1D
  * @see LinearTransform1D
@@ -347,12 +348,12 @@ public class ExponentialTransform1D extends AbstractMathTransform1D implements S
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final ExponentialTransform1D that = (ExponentialTransform1D) object;
             return Utilities.equals(this.base,  that.base) &&
                    Utilities.equals(this.scale, that.scale);

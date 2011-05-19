@@ -31,6 +31,7 @@ import org.geotoolkit.referencing.datum.BursaWolfParameters;
 import org.geotoolkit.referencing.operation.provider.CoordinateFrameRotation;
 import org.geotoolkit.referencing.operation.provider.GeocentricTranslation;
 import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
+import org.geotoolkit.util.ComparisonMode;
 
 
 /**
@@ -66,7 +67,7 @@ import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.2
  * @module
@@ -212,8 +213,8 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public boolean equals(final Object object) {
-        if (super.equals(object)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final GeocentricAffineTransform that = (GeocentricAffineTransform) object;
             return this.type == that.type;
         }

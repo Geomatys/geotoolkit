@@ -859,7 +859,8 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
                                deepEquals(getIdentifiers(), that.getIdentifiers(), mode) &&
                                deepEquals(getRemarks(),     that.getRemarks(),     mode);
                     }
-                    case IGNORE_METADATA: {
+                    case IGNORE_METADATA:
+                    case APPROXIMATIVE: {
                         return true;
                     }
                     default: {
@@ -985,6 +986,6 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     @Override
     public int hashCode() {
         // Subclasses need to overrides this!!!!
-        return (int)serialVersionUID ^ getClass().hashCode();
+        return getClass().hashCode() ^ (int) serialVersionUID;
     }
 }

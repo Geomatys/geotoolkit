@@ -29,12 +29,14 @@ import org.opengis.geometry.DirectPosition;
 import org.opengis.geometry.MismatchedDimensionException;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
 
 
@@ -46,7 +48,7 @@ import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
  * meters without affecting the latitude and longitude values.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @see DimensionFilter
  *
@@ -544,26 +546,22 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
      */
     @Override
     public int hashCode() {
-        int code = (firstAffectedOrdinate + 31*numTrailingOrdinates) ^ (int) serialVersionUID;
-        if (subTransform != null) {
-            code = code*31 + subTransform.hashCode();
-        }
-        return code;
+        return hash(subTransform, hash(firstAffectedOrdinate, numTrailingOrdinates)) ^ (int) serialVersionUID;
     }
 
     /**
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final PassThroughTransform that = (PassThroughTransform) object;
             return this.firstAffectedOrdinate == that.firstAffectedOrdinate &&
                    this.numTrailingOrdinates  == that.numTrailingOrdinates  &&
-                   Utilities.equals(this.subTransform, that.subTransform);
+                   Utilities.deepEquals(this.subTransform, that.subTransform, mode);
         }
         return false;
     }

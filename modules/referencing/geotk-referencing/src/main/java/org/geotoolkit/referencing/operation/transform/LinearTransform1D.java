@@ -28,6 +28,7 @@ import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.geometry.DirectPosition;
 
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.referencing.operation.matrix.Matrix1;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.Affine;
@@ -55,7 +56,7 @@ import static java.lang.Double.doubleToRawLongBits;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @version 3.18
  *
  * @see LogarithmicTransform1D
  * @see ExponentialTransform1D
@@ -307,12 +308,12 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final LinearTransform1D that = (LinearTransform1D) object;
             return doubleToRawLongBits(this.scale)  == doubleToRawLongBits(that.scale) &&
                    doubleToRawLongBits(this.offset) == doubleToRawLongBits(that.offset);

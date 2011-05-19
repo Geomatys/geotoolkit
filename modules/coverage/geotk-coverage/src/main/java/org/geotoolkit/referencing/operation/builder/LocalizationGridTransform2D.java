@@ -38,8 +38,9 @@ import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.transform.GridType;
 import org.geotoolkit.referencing.operation.transform.GridTransform;
 import org.geotoolkit.referencing.operation.transform.IterationStrategy;
-import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 
 
@@ -51,7 +52,7 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Rémi Eve (IRD)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -625,8 +626,12 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
      * Compares this transform with the specified object for equality.
      */
     @Override
-    public boolean equals(final Object object) {
-        if (super.equals(object)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (object == this) {
+            // Slight optimization
+            return true;
+        }
+        if (super.equals(object, mode)) {
             final LocalizationGridTransform2D that = (LocalizationGridTransform2D) object;
             return Utilities.equals(this.global, that.global);
         }

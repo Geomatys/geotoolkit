@@ -25,10 +25,10 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ComparisonMode;
 
 import static java.lang.Math.*;
 import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic.PARAMETERS;
@@ -134,7 +134,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueStereographic
  * @author André Gosselin (MPO)
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author Rueben Schulz (UBC)
- * @version 3.00
+ * @version 3.18
  *
  * @see <A HREF="http://www.remotesensing.org/geotiff/proj_list/random_issues.html#stereographic">Some Random Stereographic Issues</A>
  *
@@ -161,7 +161,7 @@ public class Stereographic extends UnitaryProjection {
     /**
      * Constants used for the oblique projections. All those constants are completely
      * determined by {@link #phi0}. Consequently, there is no need to test them in
-     * {@link #hashCode} or {@link #equivalent} methods.
+     * {@link #hashCode} or {@link #equals(Object, ComparisonMode)} methods.
      */
     final double sinphi0, cosphi0;
 
@@ -172,9 +172,9 @@ public class Stereographic extends UnitaryProjection {
     private final double chi1;
 
     /**
-     * Constants used for the oblique projections. All those constants are completely
-     * determined by {@link #phi0} and {@link #excentricity}. Consequently, there is
-     * no need to test them in {@link #hashCode} or {@link #equivalent} methods.
+     * Constants used for the oblique projections. All those constants are completely determined
+     * by {@link #phi0} and {@link #excentricity}. Consequently, there is no need to test them in
+     * {@link #hashCode} or {@link #equals(Object, ComparisonMode)} methods.
      */
     private final double sinchi1, coschi1;
 
@@ -458,9 +458,10 @@ public class Stereographic extends UnitaryProjection {
      * Compares the given object with this transform for equivalence.
      */
     @Override
-    public boolean equivalent(final MathTransform object, final boolean strict) {
-        if (super.equivalent(object, strict)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final Stereographic that = (Stereographic) object;
+            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
             return equals(this.phi0, that.phi0, strict);
             // All other fields are derived from the latitude of origin.
         }

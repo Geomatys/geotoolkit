@@ -53,9 +53,12 @@ import org.geotoolkit.geometry.GeneralDirectPosition;
 import org.geotoolkit.display.shape.ShapeUtilities;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.LenientComparable;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 
 
@@ -65,7 +68,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * transform classes can be easily derived. In addition, {@code AbstractMathTransform} implements
  * methods required by the {@link MathTransform2D} interface, but <strong>does not</strong>
  * implements {@code MathTransform2D}. Subclasses must declare {@code implements MathTransform2D}
- * themself if they know to maps two-dimensional coordinate systems.
+ * themselves if they know to map two-dimensional coordinate systems.
  * <p>
  * The simplest way to implement this abstract class is to provide an implementation for the
  * following methods only:
@@ -78,15 +81,15 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * <p>
  * However more performance may be gained by overriding the other {@code transform} method as well.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 1.2
  * @module
  */
 @ThreadSafe
 public abstract class AbstractMathTransform extends FormattableObject
-        implements MathTransform, Parameterized
+        implements MathTransform, Parameterized, LenientComparable
 {
     /**
      * Maximum buffer size when creating temporary arrays. Must not be too big, otherwise the
@@ -1017,60 +1020,59 @@ public abstract class AbstractMathTransform extends FormattableObject
      */
     @Override
     public int hashCode() {
-        return (getSourceDimensions() + 31*getTargetDimensions()) ^ getClass().hashCode();
+        return hash(getClass(), hash(getSourceDimensions(), getTargetDimensions()));
+    }
+
+    /**
+     * Compares the specified object with this math transform for strict equality.
+     * This method is implemented as below:
+     *
+     * {@preformat java
+     *     return equals(other, ComparisonMode.STRICT);
+     * }
+     *
+     * @param  object The object to compare with this transform.
+     * @return {@code true} if the given object is a transform of the same class and using
+     *         the same parameter values.
+     */
+    @Override
+    public final boolean equals(final Object object) {
+        return equals(object, ComparisonMode.STRICT);
     }
 
     /**
      * Compares the specified object with this math transform for equality. The default
-     * implementation checks if {@code object} is an instance of the same class than
-     * {@code this} and uses the same parameter descriptor. Subclasses should override
-     * this method if they need to compare internal fields.
+     * implementation returns {@code true} if the following conditions are meet:
+     * <p>
+     * <ul>
+     *   <li>{@code object} is an instance of the same class than {@code this}. We require the
+     *        same class because there is no interface for the various kinds of transform.</li>
+     *   <li>The {@linkplain #getParameterDescriptors() parameter descriptors} are equal according
+     *       the given comparison mode.</li>
+     * </ul>
+     * <p>
+     * The {@linkplain #getParameterValues() parameter values} are <strong>not</strong> compared
+     * because subclasses can typically compare those values more efficiently by accessing to
+     * their member fields.
      *
-     * @param object The object to compare with this transform.
+     * @param  object The object to compare with this transform.
+     * @param  mode The strictness level of the comparison. Default to {@link ComparisonMode#STRICT STRICT}.
      * @return {@code true} if the given object is a transform of the same class and if, given
      *         identical source position, the {@linkplain #transform(DirectPosition,DirectPosition)
      *         transformed} position would be the equals.
+     *
+     * @since 3.18
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         // Do not check 'object==this' here, since this
         // optimization is usually done in subclasses.
-        if (object != null && getClass().equals(object.getClass())) {
+        if (object != null && getClass() == object.getClass()) {
             final AbstractMathTransform that = (AbstractMathTransform) object;
-            return Utilities.equals(this.getParameterDescriptors(),
-                                    that.getParameterDescriptors());
+            return Utilities.deepEquals(this.getParameterDescriptors(),
+                                        that.getParameterDescriptors(), mode);
         }
         return false;
-    }
-
-    /**
-     * Compares the given object with this transform for equivalence. If this method returns
-     * {@code true}, then for any given identical source position, the two compared transforms
-     * shall compute at least approximatively the same target position.
-     * <p>
-     * The default implementation delegates to {@link #equals(Object)}. Some subclasses may
-     * override this method if the math transform contains metadata that can be ignored. For
-     * example it is possible to define the same Mercator projection in two different ways,
-     * as a {@code "Mercator (1SP)"} or a {@code "Mercator (2SP)"} projection, each having
-     * their own set of parameters. The {@code equals} method will returns {@code true} only
-     * if the parameters are strictly identical, while {@code equivalent} can return {@code true}
-     * if the result would be the same despite difference in the set of parameters.
-     * <p>
-     * If the {@code strict} parameter is {@code false}, a small difference is tolerated between
-     * the target coordinates calculated by the two math transforms. This behavior is specified
-     * as a boolean argument instead if a threashold floating point value because of the
-     * heterogenous nature of math transform parameters accross different implementations.
-     * How small is "small" is implementation dependent.
-     *
-     * @param  object The object to compare with this transform for equivalence.
-     * @param  strict If {@code true}, the two transforms must compute exactly the same target
-     *         position. If {@code false}, a small departure it tolerated.
-     * @return {@code true} if the two objects are equivalent.
-     *
-     * @since 3.00
-     */
-    public boolean equivalent(final MathTransform object, final boolean strict) {
-        return equals(object);
     }
 
     /**
@@ -1133,7 +1135,7 @@ public abstract class AbstractMathTransform extends FormattableObject
     /**
      * Ensures that the specified longitude stay within the [-<var>bound</var> &hellip;
      * <var>bound</var>] range. This method is typically invoked before to project geographic
-     * coordinates. It may add or substract some amount of 2&times;<var>bound</var>
+     * coordinates. It may add or subtract some amount of 2&times;<var>bound</var>
      * from <var>x</var>.
      * <p>
      * The <var>bound</var> value is typically 180 if the longitude is express in degrees,
@@ -1301,29 +1303,17 @@ public abstract class AbstractMathTransform extends FormattableObject
          * than {@code this}, and if so compares their enclosing {@code AbstractMathTransform}.
          */
         @Override
-        public boolean equals(final Object object) {
+        public boolean equals(final Object object, final ComparisonMode mode) {
             if (object == this) {
                 // Slight optimization
                 return true;
             }
-            if (object != null && object.getClass().equals(getClass())) {
+            if (object != null && object.getClass() == getClass()) {
                 final Inverse that = (Inverse) object;
-                return AbstractMathTransform.this.equals(that.enclosing());
+                return AbstractMathTransform.this.equals(that.enclosing(), mode);
             } else {
                 return false;
             }
-        }
-
-        /**
-         * Compares the given object with this transform for equivalence.
-         */
-        @Override
-        public boolean equivalent(final MathTransform object, final boolean strict) {
-            if (object != null && object.getClass().equals(getClass())) {
-                final Inverse that = (Inverse) object;
-                return AbstractMathTransform.this.equivalent(that.enclosing(), strict);
-            }
-            return equals(object);
         }
 
         /**

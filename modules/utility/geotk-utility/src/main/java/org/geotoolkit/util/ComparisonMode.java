@@ -83,13 +83,81 @@ public enum ComparisonMode {
      * are only informative can be ignored. This comparison mode is typically less strict than
      * {@link #BY_CONTRACT}.
      *
-     * {@section Example}
+     * {@section Examples}
      * If the objects being compared are
-     * {@link org.opengis.referencing.operation.MathTransform}, then only the properties relevant
-     * to the coordinate computation shall be compared. Metadata like the identifier or the domain
-     * of validity, which have no impact on the coordinates being calculated, shall be ignored.
+     * {@link org.opengis.referencing.crs.CoordinateReferenceSystem} instances, then only the
+     * properties relevant to the coordinate localization shall be compared. Metadata like the
+     * {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem#getIdentifiers() identifiers}
+     * or the {@linkplain org.opengis.referencing.crs.CoordinateReferenceSystem#getDomainOfValidity()
+     * domain of validity}, which have no impact on the coordinates being calculated, shall be ignored.
+     * <p>
+     * If the objects being compared are {@link org.opengis.referencing.operation.MathTransform}
+     * instances, then two transforms defined in a different way may be considered equivalent.
+     * For example it is possible to define a
+     * {@linkplain org.geotoolkit.referencing.operation.projection.Mercator Mercator} projection
+     * in two different ways, as a {@code "Mercator (1SP)"} or a {@code "Mercator (2SP)"} projection,
+     * each having their own set of parameters. The {@link #STRICT} or {@link #BY_CONTRACT} modes
+     * shall consider two projections as equal only if their
+     * {@linkplain org.geotoolkit.referencing.operation.transform.AbstractMathTransform#getParameterValues()
+     * parameter values} are strictly identical, while the {@code IGNORE_METADATA} mode can consider
+     * those objects as equivalent despite difference in the set of parameters, as long as coordinate
+     * transformations still produce the same results.
+     *
+     * <blockquote><font size="-1"><b>Example:</b> A {@code "Mercator (2SP)"} projection with a
+     * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#standardParallels
+     * standard parallel} value of 60° produces the same results than a {@code "Mercator (1SP)"} projection with a
+     * {@linkplain org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters#scaleFactor scale
+     * factor} value of 0.5.</font></blockquote>
      *
      * @see org.geotoolkit.referencing.CRS#equalsIgnoreMetadata(Object, Object)
      */
-    IGNORE_METADATA
+    IGNORE_METADATA,
+
+    /**
+     * Only the attributes relevant to the object functionality are compared, with some tolerance
+     * threshold on numerical values.
+     *
+     * {@section Application to coordinate transforms}
+     * If two {@link org.opengis.referencing.operation.MathTransform} objects are considered equal
+     * according this mode, then for any given identical source position, the two compared transforms
+     * shall compute at least approximatively the same target position. A small difference is
+     * tolerated between the target coordinates calculated by the two math transforms. How small
+     * is "small" is implementation dependent - the threshold can not be specified in the current
+     * implementation, because of the non-linear nature of map projections.
+     */
+    APPROXIMATIVE;
+
+    /**
+     * If the two given objects are equals according one of the mode enumerated in this class,
+     * then returns that mode. Otherwise returns {@code null}. This method is used mostly for
+     * diagnostic purpose.
+     *
+     * @param  o1 The first object to compare, or {@code null}.
+     * @param  o2 The second object to compare, or {@code null}.
+     * @return The must suitable comparison mode, or {@code null} if the two given objects
+     *         are not equal for any mode in this enumeration.
+     */
+    public static ComparisonMode equalityLevel(final Object o1, Object o2) {
+        if (o1 == o2) {
+            return STRICT;
+        }
+        if (o1 != null && o2 != null) {
+            if (o1.equals(o2)) {
+                return STRICT;
+            }
+            final LenientComparable cp;
+            if (o1 instanceof LenientComparable) {
+                cp = (LenientComparable) o1;
+            } else if (o2 instanceof LenientComparable) {
+                cp = (LenientComparable) o2;
+                o2 = o1;
+            } else {
+                return null;
+            }
+            if (cp.equals(o2, BY_CONTRACT))     return BY_CONTRACT;
+            if (cp.equals(o2, IGNORE_METADATA)) return IGNORE_METADATA;
+            if (cp.equals(o2, APPROXIMATIVE))   return APPROXIMATIVE;
+        }
+        return null;
+    }
 }

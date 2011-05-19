@@ -26,6 +26,7 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
 
@@ -55,7 +56,7 @@ import static java.lang.Double.doubleToLongBits;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @see ExponentialTransform1D
  * @see LinearTransform1D
@@ -421,12 +422,12 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final LogarithmicTransform1D that = (LogarithmicTransform1D) object;
             return Utilities.equals(this.base,   that.base) &&
                    Utilities.equals(this.offset, that.offset);

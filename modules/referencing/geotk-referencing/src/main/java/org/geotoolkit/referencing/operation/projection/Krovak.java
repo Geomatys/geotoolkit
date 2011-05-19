@@ -21,10 +21,10 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.internal.referencing.Identifiers;
 
 import static java.lang.Math.*;
@@ -86,7 +86,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  *
  * @author Jan Jezek (HSRS)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.4
  * @module
@@ -274,9 +274,10 @@ public class Krovak extends UnitaryProjection {
      * Compares the given object with this transform for equivalence.
      */
     @Override
-    public boolean equivalent(final MathTransform object, final boolean strict) {
-        if (super.equivalent(object, strict)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final Krovak that = (Krovak) object;
+            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
             return equals(sinAzim, that.sinAzim, strict) &&
                    equals(cosAzim, that.cosAzim, strict) &&
                    equals(n,       that.n,       strict) &&

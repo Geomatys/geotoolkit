@@ -28,11 +28,11 @@ import net.jcip.annotations.Immutable;
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.Matrix;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
 
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.referencing.operation.matrix.Matrix2;
 import org.geotoolkit.referencing.operation.provider.LambertConformal1SP;
 import org.geotoolkit.referencing.operation.provider.LambertConformal2SP;
@@ -90,7 +90,7 @@ import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.
  * @author Martin Desruisseaux (MPO, IRD, Geomatys)
  * @author André Gosselin (MPO)
  * @author Rueben Schulz (UBC)
- * @version 3.15
+ * @version 3.18
  *
  * @since 1.0
  * @module
@@ -491,9 +491,10 @@ public class LambertConformal extends UnitaryProjection {
      * Compares the given object with this transform for equivalence.
      */
     @Override
-    public boolean equivalent(final MathTransform object, final boolean strict) {
-        if (super.equivalent(object, strict)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final LambertConformal that = (LambertConformal) object;
+            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
             return equals(this.n, that.n, strict);
         }
         return false;

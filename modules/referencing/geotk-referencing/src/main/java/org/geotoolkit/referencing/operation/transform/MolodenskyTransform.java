@@ -27,6 +27,7 @@ import org.opengis.parameter.ParameterDescriptorGroup;
 import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 import org.geotoolkit.parameter.FloatParameter;
@@ -69,7 +70,7 @@ import static java.lang.Math.*;
  *
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.16
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -753,12 +754,12 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public final boolean equals(final Object object) {
+    public final boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final MolodenskyTransform that = (MolodenskyTransform) object;
             return this.type == that.type &&
                    Utilities.equals(this.dx, that.dx) &&

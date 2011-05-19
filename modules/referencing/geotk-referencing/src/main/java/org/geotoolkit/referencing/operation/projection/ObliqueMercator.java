@@ -33,11 +33,11 @@ import org.opengis.parameter.ParameterNotFoundException;
 import org.opengis.parameter.InvalidParameterNameException;
 import org.opengis.parameter.InvalidParameterValueException;
 import org.opengis.referencing.operation.MathTransform2D;
-import org.opengis.referencing.operation.MathTransform;
 
 import org.geotoolkit.measure.Angle;
 import org.geotoolkit.measure.Latitude;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.referencing.operation.provider.HotineObliqueMercator;
 
 import static java.lang.Math.*;
@@ -155,7 +155,7 @@ import static org.geotoolkit.referencing.operation.provider.ObliqueMercator.LONG
  * @author Gerald Evenden (USGS)
  * @author Rueben Schulz (UBC)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @see Mercator
  * @see TransverseMercator
@@ -596,9 +596,10 @@ public class ObliqueMercator extends UnitaryProjection {
      * Compares the given object with this transform for equivalence.
      */
     @Override
-    public boolean equivalent(final MathTransform object, final boolean strict) {
-        if (super.equivalent(object, strict)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final ObliqueMercator that = (ObliqueMercator) object;
+            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
             return equals(this.B, that.B, strict) &&
                    equals(this.E, that.E, strict) &&
                    equals(this.singamma0, that.singamma0, strict) &&

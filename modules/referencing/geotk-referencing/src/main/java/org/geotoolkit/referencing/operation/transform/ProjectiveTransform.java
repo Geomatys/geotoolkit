@@ -34,12 +34,14 @@ import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.NoninvertibleTransformException;
 import org.geotoolkit.internal.referencing.MatrixUtilities;
 
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.MatrixParameters;
 import org.geotoolkit.referencing.operation.provider.Affine;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.matrix.GeneralMatrix;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 
 
@@ -93,7 +95,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.10
+ * @version 3.18
  *
  * @see javax.media.jai.PerspectiveTransform
  * @see java.awt.geom.AffineTransform
@@ -638,19 +640,19 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
      */
     @Override
     public int hashCode() {
-        return (numRow + 31*numCol)*31 + Arrays.hashCode(elt);
+        return hash(hash(numRow, numCol), Arrays.hashCode(elt));
     }
 
     /**
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final ProjectiveTransform that = (ProjectiveTransform) object;
             return this.numRow == that.numRow &&
                    this.numCol == that.numCol &&

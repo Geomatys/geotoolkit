@@ -26,8 +26,9 @@ import net.jcip.annotations.Immutable;
 
 import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.parameter.ParameterDescriptorGroup;
-import org.opengis.referencing.operation.MathTransform;
 import org.opengis.referencing.operation.MathTransform2D;
+
+import org.geotoolkit.util.ComparisonMode;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
@@ -53,7 +54,7 @@ import static java.lang.Double.*;
  * @author Gerald Evenden (USGS)
  * @author Beate Stollberg
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.4
  * @module
@@ -547,9 +548,10 @@ public class LambertAzimuthalEqualArea extends UnitaryProjection {
      * Compares the given object with this transform for equivalence.
      */
     @Override
-    public boolean equivalent(final MathTransform object, final boolean strict) {
-        if (super.equivalent(object, strict)) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
             final LambertAzimuthalEqualArea that = (LambertAzimuthalEqualArea) object;
+            final boolean strict = (mode != ComparisonMode.APPROXIMATIVE);
             return equals(this.latitudeOfOrigin, that.latitudeOfOrigin, strict);
             // All other coefficients are derived from the latitude of origin and excentricity.
         }

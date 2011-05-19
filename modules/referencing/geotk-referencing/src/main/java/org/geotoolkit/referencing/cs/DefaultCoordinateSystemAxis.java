@@ -1264,7 +1264,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             return equals(object instanceof DefaultCoordinateSystemAxis ?
                     (DefaultCoordinateSystemAxis) object :
                     new DefaultCoordinateSystemAxis((CoordinateSystemAxis) object),
-                    mode != ComparisonMode.IGNORE_METADATA, true);
+                    mode.ordinal() < ComparisonMode.IGNORE_METADATA.ordinal(), true);
         }
         return false;
     }

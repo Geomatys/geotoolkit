@@ -45,6 +45,7 @@ import org.opengis.geometry.MismatchedDimensionException;
 import org.opengis.geometry.DirectPosition;
 
 import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
@@ -55,7 +56,7 @@ import org.geotoolkit.referencing.operation.provider.EllipsoidToGeocentric;
 import org.geotoolkit.referencing.operation.provider.GeocentricToEllipsoid;
 
 import static java.lang.Math.*;
-import static java.lang.Double.doubleToLongBits;
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.referencing.MatrixUtilities.invert;
 
 
@@ -73,7 +74,7 @@ import static org.geotoolkit.internal.referencing.MatrixUtilities.invert;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author PROJ4 Project for formulas
- * @version 3.16
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -693,29 +694,20 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
      */
     @Override
     public int hashCode() {
-        final long code = doubleToLongBits( a ) +
-                      31*(doubleToLongBits( b ) +
-                      31*(doubleToLongBits( a2) +
-                      31*(doubleToLongBits( b2) +
-                      31*(doubleToLongBits( e2) +
-                      31*(doubleToLongBits(ep2))))));
-        int c = ((int) code) ^ (int) (code >>> 32);
-        if (hasHeight) {
-            c += 37;
-        }
-        return c ^ (int) serialVersionUID;
+        return hash(a, hash(b, hash(a2, hash(b2, hash(e2, hash(ep2,
+               hasHeight ? 37 : 0)))))) ^ (int) serialVersionUID;
     }
 
     /**
      * Compares the specified object with this math transform for equality.
      */
     @Override
-    public boolean equals(final Object object) {
+    public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             // Slight optimization
             return true;
         }
-        if (super.equals(object)) {
+        if (super.equals(object, mode)) {
             final GeocentricTransform that = (GeocentricTransform) object;
             return this.hasHeight == that.hasHeight    &&
                    Utilities.equals(this.a,   that.a)  &&

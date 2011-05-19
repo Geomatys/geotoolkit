@@ -352,7 +352,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          */
         @Override
         public int hashCode() {
-            return (normalize.hashCode() + 31*denormalize.hashCode()) ^ (int) serialVersionUID;
+            return Utilities.hash(normalize, denormalize.hashCode()) ^ (int) serialVersionUID;
         }
 
         /**
@@ -363,7 +363,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
          */
         @Override
         public boolean equals(final Object object) {
-            if (object != null && object.getClass().equals(getClass())) {
+            if (object != null && object.getClass() == getClass()) {
                 final Parameters that = (Parameters) object;
                 return Utilities.equals(descriptor,  that.descriptor) &&
                        Utilities.equals(normalize,   that.normalize)  &&

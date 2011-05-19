@@ -44,7 +44,6 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
-import org.geotoolkit.referencing.operation.transform.AbstractMathTransform;
 import org.geotoolkit.metadata.iso.quality.AbstractPositionalAccuracy;
 import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.internal.CollectionUtilities;
@@ -531,6 +530,7 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
      * @return {@code true} if both objects are equal.
      */
     @Override
+    @SuppressWarnings("fallthrough")
     public boolean equals(final Object object, final ComparisonMode mode) {
         if (object == this) {
             return true; // Slight optimization.
@@ -553,33 +553,19 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
                 }
                 case BY_CONTRACT: {
                     final CoordinateOperation that = (CoordinateOperation) object;
-                    if (!deepEquals(getSourceCRS(),                   that.getSourceCRS(),        mode) ||
-                        !deepEquals(getMathTransform(),               that.getMathTransform(),    mode) ||
+                    if (!deepEquals(getScope(),                       that.getScope(), mode) ||
                         !deepEquals(getDomainOfValidity(),            that.getDomainOfValidity(), mode) ||
-                        !deepEquals(getScope(),                       that.getScope(),            mode) ||
                         !deepEquals(getCoordinateOperationAccuracy(), that.getCoordinateOperationAccuracy(), mode))
                     {
                         return false;
                     }
-                    break;
+                    // Fall through
                 }
                 default: {
                     final CoordinateOperation that = (CoordinateOperation) object;
-                    if (!deepEquals(getSourceCRS(), that.getSourceCRS(), mode)) {
-                        return false;
-                    }
-                    final boolean cmp;
-                    if (transform instanceof AbstractMathTransform) {
-                        /*
-                         * Note: the 'false' boolean argument causes the comparison to tolerate
-                         * small numerical departures, presumed due to rounding errors. Consequently
-                         * the two CRS may be only approximatively equal ignoring metadata.
-                         */
-                        cmp = ((AbstractMathTransform) transform).equivalent(that.getMathTransform(), false);
-                    } else {
-                        cmp = Utilities.equals(transform, that.getMathTransform());
-                    }
-                    if (!cmp) {
+                    if (!deepEquals(getSourceCRS(),     that.getSourceCRS(), mode) ||
+                        !deepEquals(getMathTransform(), that.getMathTransform(), mode))
+                    {
                         return false;
                     }
                     break;
