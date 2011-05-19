@@ -55,7 +55,7 @@ import org.geotoolkit.io.wkt.Formatter;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.04
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -186,17 +186,6 @@ public class DefaultGeocentricCRS extends AbstractSingleCRS implements Geocentri
      */
     final void setDatum(final GeodeticDatum datum) {
         super.setDatum(datum);
-    }
-
-    /**
-     * Returns a hash value for this geocentric CRS.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
-     */
-    @Override
-    public int hashCode() {
-        return super.hashCode() ^ (int) serialVersionUID;
     }
 
     /**

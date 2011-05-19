@@ -44,6 +44,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -320,20 +321,17 @@ public class AbstractDerivedCRS extends AbstractSingleCRS implements GeneralDeri
     }
 
     /**
-     * Returns a hash value for this derived CRS.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
+    protected int computeHashCode() {
         /*
          * Do not invoke 'conversionFromBase.hashCode()' in order to avoid a never-ending loop.
          * This is because Conversion has a 'sourceCRS' field (in the AbstractCoordinateOperation
          * super-class), which is set to this AbstractDerivedCRS. Checking the identifier should
          * be enough.
          */
-        return (int)serialVersionUID ^ baseCRS.hashCode() ^ conversionFromBase.getName().hashCode();
+        return hash(baseCRS, hash(conversionFromBase.getName(), super.computeHashCode()));
     }
 
     /**

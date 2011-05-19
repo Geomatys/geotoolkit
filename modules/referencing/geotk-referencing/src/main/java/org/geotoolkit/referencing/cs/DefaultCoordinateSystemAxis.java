@@ -48,6 +48,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -1328,12 +1329,11 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     }
 
     /**
-     * Returns a hash value for this axis. This value doesn't need to be the same
-     * in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return Utilities.hash(unit, Utilities.hash(direction, abbreviation.hashCode())) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(unit, hash(direction, hash(abbreviation, super.computeHashCode())));
     }
 
     /**

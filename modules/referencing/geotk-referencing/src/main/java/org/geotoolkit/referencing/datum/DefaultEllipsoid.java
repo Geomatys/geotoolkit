@@ -51,6 +51,7 @@ import org.geotoolkit.resources.Errors;
 
 import static java.lang.Math.*;
 import static java.lang.Double.*;
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -744,24 +745,12 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
     }
 
     /**
-     * Returns a hash value for this ellipsoid. {@linkplain #getName Name},
-     * {@linkplain #getRemarks remarks} and the like are not taken in account.
-     * In other words, two ellipsoids will return the same hash value if they
-     * are equal in the sense of
-     * <code>{@link #equals equals}(AbstractIdentifiedObject, <strong>false</strong>)</code>.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        long longCode = 31 * doubleToLongBits(semiMajorAxis);
-        if (ivfDefinitive) {
-            longCode += inverseFlattening;
-        } else {
-            longCode += semiMinorAxis;
-        }
-        return (((int)(longCode >>> 32)) ^ (int)longCode);
+    protected int computeHashCode() {
+        return hash(ivfDefinitive ? inverseFlattening : semiMinorAxis,
+               hash(semiMajorAxis, super.computeHashCode()));
     }
 
     /**

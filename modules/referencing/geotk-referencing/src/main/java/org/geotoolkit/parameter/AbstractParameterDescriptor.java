@@ -32,6 +32,8 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 
+import static org.geotoolkit.util.Utilities.hash;
+
 
 /**
  * Abstract definition of a parameter or group of parameters used by an operation method.
@@ -161,14 +163,11 @@ public abstract class AbstractParameterDescriptor extends AbstractIdentifiedObje
     }
 
     /**
-     * Returns a hash value for this parameter.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return minimumOccurs ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(minimumOccurs, super.computeHashCode());
     }
 
     /**

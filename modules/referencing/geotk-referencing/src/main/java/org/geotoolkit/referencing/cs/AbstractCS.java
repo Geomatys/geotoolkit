@@ -52,6 +52,7 @@ import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -667,14 +668,11 @@ next:   for (int i=0; i<axis.length; i++) {
     }
 
     /**
-     * Returns a hash value for this coordinate system.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return Arrays.hashCode(axis) + (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(Arrays.hashCode(axis), super.computeHashCode());
     }
 
     /**

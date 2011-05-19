@@ -49,6 +49,7 @@ import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.*;
 
 
@@ -352,21 +353,11 @@ public class DefaultOperationMethod extends AbstractIdentifiedObject implements 
     }
 
     /**
-     * Returns a hash code value for this operation method.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        int code = (int) serialVersionUID;
-        if (sourceDimension != null) {
-            code += sourceDimension;
-        }
-        if (targetDimension != null) {
-            code = code*31 + targetDimension;
-        }
-        if (parameters != null) {
-            code = code*31 + parameters.hashCode();
-        }
-        return code;
+    protected int computeHashCode() {
+        return hash(sourceDimension, hash(targetDimension, hash(parameters, super.computeHashCode())));
     }
 
     /**

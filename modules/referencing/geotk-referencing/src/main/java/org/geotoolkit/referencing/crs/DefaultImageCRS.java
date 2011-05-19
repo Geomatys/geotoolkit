@@ -168,15 +168,4 @@ public class DefaultImageCRS extends AbstractSingleCRS implements ImageCRS {
     final void setDatum(final ImageDatum datum) {
         super.setDatum(datum);
     }
-
-    /**
-     * Returns a hash value for this geographic CRS.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
-     */
-    @Override
-    public int hashCode() {
-        return (int)serialVersionUID ^ super.hashCode();
-    }
 }

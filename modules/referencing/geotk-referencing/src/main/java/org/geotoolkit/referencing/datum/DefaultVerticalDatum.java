@@ -33,6 +33,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.referencing.VerticalDatumTypes;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -231,18 +232,11 @@ public class DefaultVerticalDatum extends AbstractDatum implements VerticalDatum
     }
 
     /**
-     * Returns a hash value for this vertical datum. {@linkplain #getName Name},
-     * {@linkplain #getRemarks remarks} and the like are not taken in account. In
-     * other words, two vertical datums will return the same hash value if they
-     * are equal in the sense of
-     * <code>{@link #equals equals}(AbstractIdentifiedObject, <strong>false</strong>)</code>.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ type.hashCode();
+    protected int computeHashCode() {
+        return hash(type, super.computeHashCode());
     }
 
     /**

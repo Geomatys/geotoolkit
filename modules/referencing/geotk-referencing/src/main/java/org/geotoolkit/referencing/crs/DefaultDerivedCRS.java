@@ -174,15 +174,4 @@ public class DefaultDerivedCRS extends AbstractDerivedCRS implements DerivedCRS 
     {
         super(properties, conversionFromBase, base, baseToDerived, derivedCS);
     }
-
-    /**
-     * Returns a hash value for this derived CRS.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
-     */
-    @Override
-    public int hashCode() {
-        return super.hashCode() ^ (int)serialVersionUID;
-    }
 }

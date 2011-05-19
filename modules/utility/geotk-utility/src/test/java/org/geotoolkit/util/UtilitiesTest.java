@@ -144,16 +144,10 @@ public final class UtilitiesTest {
         assertFalse(Utilities.deepEquals(c1, c2, mode));
         assertTrue(c2.add(e3));
         assertEquals(!orderIsSignificant, Utilities.deepEquals(c1, c2, mode));
-        if (mode == null) {
-            assertEquals(0, e1.comparisonCount);
-            assertEquals(0, e2.comparisonCount);
-            assertEquals(0, e3.comparisonCount);
-            assertEquals(0, e4.comparisonCount);
-        } else {
-            assertTrue(e1.comparisonCount != 0);
-            assertTrue(e2.comparisonCount != 0);
-            assertTrue(e3.comparisonCount != 0);
-        }
+
+        assertTrue(e1.comparisonCount != 0);
+        assertTrue(e2.comparisonCount != 0);
+        assertTrue(e3.comparisonCount != 0);
     }
 
     /**

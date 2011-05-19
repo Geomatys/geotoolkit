@@ -39,6 +39,7 @@ import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -428,13 +429,10 @@ public class MatrixParameterDescriptors extends DefaultParameterDescriptorGroup 
     }
 
     /**
-     * Returns a hash value for this parameter.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return super.hashCode() + prefix.hashCode() + 31*separator;
+    protected int computeHashCode() {
+        return hash(prefix, hash(separator, super.computeHashCode()));
     }
 }

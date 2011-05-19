@@ -313,15 +313,4 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
         }
         return toMillis.inverse().convert(time.getTime() - origin);
     }
-
-    /**
-     * Returns a hash value for this geographic CRS.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
-     */
-    @Override
-    public int hashCode() {
-        return (int) serialVersionUID ^ super.hashCode();
-    }
 }

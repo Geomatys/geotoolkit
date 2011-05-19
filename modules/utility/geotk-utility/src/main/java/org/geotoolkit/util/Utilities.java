@@ -223,8 +223,8 @@ public final class Utilities extends Static {
      * @throws AssertionError If assertions are enabled and at least one argument is an array.
      */
     public static boolean equals(final Object object1, final Object object2) throws AssertionError {
-        assert object1 == null || !object1.getClass().isArray() : object1;
-        assert object2 == null || !object2.getClass().isArray() : object2;
+        assert object1 == null || !object1.getClass().isArray() : name(object1);
+        assert object2 == null || !object2.getClass().isArray() : name(object2);
         return (object1 == object2) || (object1 != null && object1.equals(object2));
     }
 
@@ -254,8 +254,8 @@ public final class Utilities extends Static {
      *
      *   <li>Otherwise if <em>both</em> objects are declared exactly as {@code Object} type and
      *   it is known that they could be arrays, only then invoke this {@code deepEquals} method.
-     *   In such case, make sure that the hash code is computed using {@link #deepHashCode} for
-     *   consistency.</li>
+     *   In such case, make sure that the hash code is computed using {@link #deepHashCode(Object)}
+     *   for consistency.</li>
      * </ul>
      *
      * @param object1 The first object to compare, or {@code null}.
@@ -327,58 +327,57 @@ public final class Utilities extends Static {
      * @since 3.18
      */
     public static boolean deepEquals(final Object object1, final Object object2, final ComparisonMode mode) {
-        if (mode != null) {
-            if (object1 == object2) {
-                return true;
-            }
-            if (object1 == null || object2 == null) {
+        if (object1 == object2) {
+            return true;
+        }
+        if (object1 == null || object2 == null) {
+            return false;
+        }
+        if (object1 instanceof LenientComparable) {
+            return ((LenientComparable) object1).equals(object2, mode);
+        }
+        if (object2 instanceof LenientComparable) {
+            return ((LenientComparable) object2).equals(object1, mode);
+        }
+        if (object1 instanceof Map.Entry<?,?>) {
+            if (!(object2 instanceof Map.Entry<?,?>)) {
                 return false;
             }
-            if (object1 instanceof LenientComparable) {
-                return ((LenientComparable) object1).equals(object2, mode);
+            final Map.Entry<?,?> e1 = (Map.Entry<?,?>) object1;
+            final Map.Entry<?,?> e2 = (Map.Entry<?,?>) object2;
+            return deepEquals(e1.getKey(),   e2.getKey(),   mode) &&
+                   deepEquals(e1.getValue(), e2.getValue(), mode);
+        }
+        if (object1 instanceof Map<?,?>) {
+            return (object2 instanceof Map<?,?>) &&
+                    equals(((Map<?,?>) object1).entrySet(), ((Map<?,?>) object2).entrySet(), mode);
+        }
+        if (object1 instanceof Collection<?>) {
+            return (object2 instanceof Collection<?>) &&
+                    equals((Collection<?>) object1, (Collection<?>) object2, mode);
+        }
+        if (object1 instanceof Object[]) {
+            if (!(object2 instanceof Object[])) {
+                return false;
             }
-            if (object2 instanceof LenientComparable) {
-                return ((LenientComparable) object2).equals(object1, mode);
+            final Object[] array1 = (Object[]) object1;
+            final Object[] array2 = (Object[]) object2;
+            if (array1 instanceof LenientComparable[]) {
+                return equals((LenientComparable[]) array1, array2, mode);
             }
-            if (object1 instanceof Map.Entry<?,?>) {
-                if (!(object2 instanceof Map.Entry<?,?>)) {
+            if (array2 instanceof LenientComparable[]) {
+                return equals((LenientComparable[]) array2, array1, mode);
+            }
+            final int length = array1.length;
+            if (array2.length != length) {
+                return false;
+            }
+            for (int i=0; i<length; i++) {
+                if (!deepEquals(array1[i], array2[i], mode)) {
                     return false;
                 }
-                final Map.Entry<?,?> e1 = (Map.Entry<?,?>) object1;
-                final Map.Entry<?,?> e2 = (Map.Entry<?,?>) object2;
-                return deepEquals(e1.getKey(),   e2.getKey(),   mode) &&
-                       deepEquals(e1.getValue(), e2.getValue(), mode);
             }
-            if (object1 instanceof Map<?,?>) {
-                return (object2 instanceof Map<?,?>) &&
-                        equals(((Map<?,?>) object1).entrySet(), ((Map<?,?>) object2).entrySet(), mode);
-            }
-            if (object1 instanceof Collection<?>) {
-                return (object2 instanceof Collection<?>) &&
-                        equals((Collection<?>) object1, (Collection<?>) object2, mode);
-            }
-            if (object1 instanceof Object[]) {
-                if (!(object2 instanceof Object[])) {
-                    return false;
-                }
-                final Object[] array1 = (Object[]) object1;
-                final Object[] array2 = (Object[]) object2;
-                if (array1 instanceof LenientComparable[]) {
-                    return equals((LenientComparable[]) array1, array2, mode);
-                }
-                if (array2 instanceof LenientComparable[]) {
-                    return equals((LenientComparable[]) array2, array1, mode);
-                }
-                final int length = array1.length;
-                if (array2.length != length) {
-                    return false;
-                }
-                for (int i=0; i<length; i++) {
-                    if (!deepEquals(array1[i], array2[i], mode)) {
-                        return false;
-                    }
-                }
-            }
+            return true;
         }
         return deepEquals(object1, object2);
     }
@@ -551,7 +550,7 @@ public final class Utilities extends Static {
     public static int hash(final Object value, int seed) throws AssertionError {
         seed *= PRIME_NUMBER;
         if (value != null) {
-            assert !value.getClass().isArray() : value;
+            assert !value.getClass().isArray() : name(value);
             seed += value.hashCode();
         }
         return seed;
@@ -659,5 +658,13 @@ public final class Utilities extends Static {
             return Arrays.toString((boolean[]) object);
         }
         return String.valueOf(object);
+    }
+
+    /**
+     * Returns the class name of the given object.
+     * Used in assertions only.
+     */
+    private static String name(final Object object) {
+        return object.getClass().getSimpleName();
     }
 }

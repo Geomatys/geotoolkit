@@ -46,6 +46,7 @@ import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
 import org.geotoolkit.util.ComparisonMode;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
@@ -331,14 +332,11 @@ public class DefaultParameterDescriptorGroup extends AbstractParameterDescriptor
     }
 
     /**
-     * Returns a hash value for this parameter.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ Arrays.hashCode(parameters);
+    protected int computeHashCode() {
+        return hash(Arrays.hashCode(parameters), super.computeHashCode());
     }
 
     /**

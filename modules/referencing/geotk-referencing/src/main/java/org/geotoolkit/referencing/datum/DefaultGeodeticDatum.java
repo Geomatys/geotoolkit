@@ -45,6 +45,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -516,19 +517,11 @@ public class DefaultGeodeticDatum extends AbstractDatum implements GeodeticDatum
     }
 
     /**
-     * Returns a hash value for this geodetic datum. {@linkplain #getName Name},
-     * {@linkplain #getRemarks remarks} and the like are not taken in account. In
-     * other words, two geodetic datums will return the same hash value if they
-     * are equal in the sense of
-     * <code>{@linkplain #equals equals}(AbstractIdentifiedObject, <strong>false</strong>)</code>.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return super.hashCode() + 31*(ellipsoid.hashCode() +
-                31*(primeMeridian.hashCode())) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(ellipsoid, hash(primeMeridian, super.computeHashCode()));
     }
 
     /**

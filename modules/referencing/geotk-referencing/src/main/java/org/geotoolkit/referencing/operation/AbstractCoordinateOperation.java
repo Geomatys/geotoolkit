@@ -49,6 +49,7 @@ import org.geotoolkit.internal.referencing.Semaphores;
 import org.geotoolkit.internal.CollectionUtilities;
 import org.geotoolkit.measure.Units;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -592,15 +593,11 @@ public class AbstractCoordinateOperation extends AbstractIdentifiedObject implem
     }
 
     /**
-     * Returns a hash code value for this coordinate operation.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        int code = (int)serialVersionUID;
-        if (sourceCRS != null) code ^= sourceCRS.hashCode();
-        if (targetCRS != null) code ^= targetCRS.hashCode();
-        if (transform != null) code ^= transform.hashCode();
-        return code;
+    protected int computeHashCode() {
+        return hash(sourceCRS, hash(targetCRS, hash(transform, super.computeHashCode())));
     }
 
     /**

@@ -48,6 +48,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.io.wkt.Formatter;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
@@ -347,11 +348,11 @@ public class DefaultConcatenatedOperation extends AbstractCoordinateOperation
     }
 
     /**
-     * Returns a hash code value for this concatenated operation.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return operations.hashCode() ^ (int)serialVersionUID;
+    protected int computeHashCode() {
+        return hash(operations, super.computeHashCode());
     }
 
     /**

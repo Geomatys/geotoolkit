@@ -411,11 +411,7 @@ final class SpatialRefSysEntry {
     @Override
     public int hashCode() {
         // 100003 is a prime number assumed large enough for avoiding overlapping between SRID.
-        int code = horizontalSRID + 100003*verticalSRID;
-        if (temporalCRS != null) {
-            code ^= temporalCRS.hashCode();
-        }
-        return code;
+        return Utilities.hash(temporalCRS, horizontalSRID + 100003*verticalSRID);
     }
 
     /**

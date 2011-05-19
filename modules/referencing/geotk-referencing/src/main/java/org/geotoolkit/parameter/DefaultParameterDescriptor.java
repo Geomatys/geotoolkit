@@ -44,6 +44,7 @@ import org.geotoolkit.referencing.NamedIdentifier;
 import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.metadata.iso.citation.Citations;
 
+import static org.geotoolkit.util.Utilities.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
 import static org.geotoolkit.referencing.IdentifiedObjects.nameMatches;
@@ -546,19 +547,19 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
                 }
                 case BY_CONTRACT: {
                     final ParameterDescriptor<?> that = (ParameterDescriptor<?>) object;
-                    return Utilities.equals(getValidValues(),  that.getValidValues())  &&
-                           Utilities.equals(getDefaultValue(), that.getDefaultValue()) &&
-                           Utilities.equals(getMinimumValue(), that.getMinimumValue()) &&
-                           Utilities.equals(getMaximumValue(), that.getMaximumValue()) &&
-                           Utilities.equals(getUnit(),         that.getUnit());
+                    return Utilities.    equals(getValidValues(),  that.getValidValues())  &&
+                           Utilities.deepEquals(getDefaultValue(), that.getDefaultValue()) &&
+                           Utilities.    equals(getMinimumValue(), that.getMinimumValue()) &&
+                           Utilities.    equals(getMaximumValue(), that.getMaximumValue()) &&
+                           Utilities.    equals(getUnit(),         that.getUnit());
                 }
                 case STRICT: {
                     final DefaultParameterDescriptor<?> that = (DefaultParameterDescriptor<?>) object;
-                    return Utilities.equals(this.validValues,  that.validValues)  &&
-                           Utilities.equals(this.defaultValue, that.defaultValue) &&
-                           Utilities.equals(this.minimum,      that.minimum)      &&
-                           Utilities.equals(this.maximum,      that.maximum)      &&
-                           Utilities.equals(this.unit,         that.unit);
+                    return Utilities.    equals(this.validValues,  that.validValues)  &&
+                           Utilities.deepEquals(this.defaultValue, that.defaultValue) &&
+                           Utilities.    equals(this.minimum,      that.minimum)      &&
+                           Utilities.    equals(this.maximum,      that.maximum)      &&
+                           Utilities.    equals(this.unit,         that.unit);
                 }
             }
         }
@@ -566,19 +567,12 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
     }
 
     /**
-     * Returns a hash value for this parameter.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        int code = super.hashCode()*31 + valueClass.hashCode();
-        if (defaultValue != null) code = code*31 + defaultValue.hashCode();
-        if (minimum      != null) code = code*31 + minimum     .hashCode();
-        if (maximum      != null) code = code*31 + maximum     .hashCode();
-        if (unit         != null) code = code*31 + unit        .hashCode();
-        return code;
+    protected int computeHashCode() {
+        return hash(valueClass, hash(deepHashCode(defaultValue),
+               hash(minimum, hash(maximum, hash(unit, super.computeHashCode())))));
     }
 
     /**

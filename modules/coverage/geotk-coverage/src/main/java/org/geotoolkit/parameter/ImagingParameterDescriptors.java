@@ -69,6 +69,7 @@ import org.geotoolkit.metadata.iso.citation.DefaultCitation;
 import org.geotoolkit.metadata.iso.citation.DefaultOnlineResource;
 import org.geotoolkit.metadata.iso.citation.DefaultResponsibleParty;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static javax.media.jai.registry.RenderedRegistryMode.MODE_NAME;
 
 
@@ -572,11 +573,10 @@ public class ImagingParameterDescriptors extends DefaultParameterDescriptorGroup
     }
 
     /**
-     * Returns a hash value for this parameter. This value doesn't need
-     * to be the same in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ descriptor.hashCode();
+    protected int computeHashCode() {
+        return hash(descriptor, super.computeHashCode());
     }
 }

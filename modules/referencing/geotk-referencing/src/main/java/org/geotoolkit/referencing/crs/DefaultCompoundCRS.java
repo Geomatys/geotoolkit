@@ -44,6 +44,7 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -329,15 +330,11 @@ public class DefaultCompoundCRS extends AbstractCRS implements CompoundCRS {
     }
 
     /**
-     * Returns a hash value for this compound CRS.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        // Don't call superclass method since 'coordinateSystem' and 'datum' may be null.
-        return crs.hashCode() ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(crs, super.computeHashCode());
     }
 
     /**

@@ -64,7 +64,7 @@ import org.geotoolkit.measure.Units;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.15
+ * @version 3.18
  *
  * @since 1.2
  * @module
@@ -278,17 +278,6 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
                                                  cs.getLatitude (coord1),
                                                  cs.getLongitude(coord2),
                                                  cs.getLatitude (coord2)), e.getAxisUnit());
-    }
-
-    /**
-     * Returns a hash value for this geographic CRS.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
-     */
-    @Override
-    public int hashCode() {
-        return (int)serialVersionUID ^ super.hashCode();
     }
 
     /**

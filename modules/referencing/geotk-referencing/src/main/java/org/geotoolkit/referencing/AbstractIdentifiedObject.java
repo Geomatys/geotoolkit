@@ -180,6 +180,14 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
     private final InternationalString remarks;
 
     /**
+     * The cached hash code value, or 0 if not yet computed.
+     * This is calculated only when first needed.
+     *
+     * @since 3.18
+     */
+    private transient int hashCode;
+
+    /**
      * Constructs a new object in which every attributes are set to a default value.
      * <strong>This is not a valid object.</strong> This constructor is strictly
      * reserved to JAXB, which will assign values to the fields using reflexion.
@@ -802,8 +810,10 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      */
     @Override
     public final boolean equals(final Object object) {
-        return (object instanceof AbstractIdentifiedObject) &&
-                equals((AbstractIdentifiedObject) object, ComparisonMode.STRICT);
+        final boolean eq = equals(object, ComparisonMode.STRICT);
+        // If objects are equal, then they must have the same hash code value.
+        assert !eq || hashCode() == object.hashCode() : this;
+        return eq;
     }
 
     /**
@@ -838,39 +848,52 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      */
     @Override
     public boolean equals(final Object object, final ComparisonMode mode) {
-        if (object != null) {
-            final Class<?> thisType = getClass();
-            final Class<?> thatType = object.getClass();
-            if (thisType == thatType || (mode != ComparisonMode.STRICT &&
-                    Classes.implementSameInterfaces(thisType, thatType, IdentifiedObject.class)))
-            {
-                switch (mode) {
-                    case STRICT: {
-                        final AbstractIdentifiedObject that = (AbstractIdentifiedObject) object;
-                        return Utilities.equals(name,        that.name)        &&
-                               Utilities.equals(alias,       that.alias)       &&
-                               Utilities.equals(identifiers, that.identifiers) &&
-                               Utilities.equals(remarks,     that.remarks);
-                    }
-                    case BY_CONTRACT: {
-                        final IdentifiedObject that = (IdentifiedObject) object;
-                        return deepEquals(getName(),        that.getName(),        mode) &&
-                               deepEquals(getAlias(),       that.getAlias(),       mode) &&
-                               deepEquals(getIdentifiers(), that.getIdentifiers(), mode) &&
-                               deepEquals(getRemarks(),     that.getRemarks(),     mode);
-                    }
-                    case IGNORE_METADATA:
-                    case APPROXIMATIVE: {
-                        return true;
-                    }
-                    default: {
-                        throw new IllegalArgumentException(Errors.format(
-                                Errors.Keys.ILLEGAL_ARGUMENT_$2, "mode", mode));
-                    }
-                }
+        if (object == null) {
+            return false;
+        }
+        final Class<?> thisType = getClass();
+        final Class<?> thatType = object.getClass();
+        if (thisType == thatType) {
+            /*
+             * If the classes are the same, then the hash codes should be computed in the same
+             * way. Since those codes are cached, this is an efficient way to quickly check if
+             * the two objects are different. Note that using the hash codes for comparisons
+             * that ignore metadata is okay only if the implementation note described in the
+             * 'computeHashCode()' javadoc hold (metadata not used in hash code computation).
+             */
+            // TODO: disabled for now
+            if (false && mode != ComparisonMode.APPROXIMATIVE && hashCode() != object.hashCode()) {
+                return false;
+            }
+        } else if (mode == ComparisonMode.STRICT || // Same classes was required for this mode.
+                !Classes.implementSameInterfaces(thisType, thatType, IdentifiedObject.class))
+        {
+            return false;
+        }
+        switch (mode) {
+            case STRICT: {
+                final AbstractIdentifiedObject that = (AbstractIdentifiedObject) object;
+                return Utilities.equals(name,        that.name)        &&
+                       Utilities.equals(alias,       that.alias)       &&
+                       Utilities.equals(identifiers, that.identifiers) &&
+                       Utilities.equals(remarks,     that.remarks);
+            }
+            case BY_CONTRACT: {
+                final IdentifiedObject that = (IdentifiedObject) object;
+                return deepEquals(getName(),        that.getName(),        mode) &&
+                       deepEquals(getAlias(),       that.getAlias(),       mode) &&
+                       deepEquals(getIdentifiers(), that.getIdentifiers(), mode) &&
+                       deepEquals(getRemarks(),     that.getRemarks(),     mode);
+            }
+            case IGNORE_METADATA:
+            case APPROXIMATIVE: {
+                return true;
+            }
+            default: {
+                throw new IllegalArgumentException(Errors.format(
+                        Errors.Keys.ILLEGAL_ARGUMENT_$2, "mode", mode));
             }
         }
-        return false;
     }
 
     /**
@@ -973,19 +996,54 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
     }
 
     /**
-     * Returns a hash value for this identified object. {@linkplain #getName() Name},
-     * {@linkplain #getIdentifiers identifiers} and {@linkplain #getRemarks remarks}
-     * are not taken in account. In other words, two identified objects will return
-     * the same hash value if they are equal in the sense of <code>{@linkplain
-     * #equals(AbstractIdentifiedObject,ComparisonMode) equals}(AbstractIdentifiedObject,
-     * ComparisonMode.<strong>IGNORE_METADATA</strong>)</code>.
+     * Returns a hash value for this identified object. This method invokes {@link #computeHashCode()}
+     * when first needed and caches the value for future invocations. Subclasses should override
+     * {@code computeHashCode()} instead than this method.
      *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
+     * {@section Implementation specific feature}
+     * In the Geotk implementation, the {@linkplain #getName() name}, {@linkplain #getIdentifiers()
+     * identifiers} and {@linkplain #getRemarks() remarks} are not used for hash code computation.
+     * Consequently two identified objects will return the same hash value if they are equal in the
+     * sense of <code>{@linkplain #equals(Object, ComparisonMode) equals}(&hellip;,
+     * {@linkplain ComparisonMode#IGNORE_METADATA})</code>. This feature allows users to
+     * implement metadata-insensitive {@link java.util.HashMap}.
+     *
+     * @return The hash code value. This value may change between different execution of the
+     *         Geotk library.
      */
     @Override
-    public int hashCode() {
+    public final int hashCode() { // No need to synchronize; ok if invoked twice.
+        int hash = hashCode;
+        if (hash == 0) {
+            hash = computeHashCode();
+            if (hash == 0) {
+                hash = -1;
+            }
+            hashCode = hash;
+        }
+        assert hash == -1 || hash == computeHashCode() : this;
+        return hash;
+    }
+
+    /**
+     * Computes a hash value for this identified object. This method is invoked by
+     * {@link #hashCode()} when first needed.
+     *
+     * {@section Implementation specific feature}
+     * In the Geotk implementation, the {@linkplain #getName() name}, {@linkplain #getIdentifiers()
+     * identifiers} and {@linkplain #getRemarks() remarks} are not used for hash code computation.
+     * Consequently two identified objects will return the same hash value if they are equal in the
+     * sense of <code>{@linkplain #equals(Object, ComparisonMode) equals}(&hellip;,
+     * {@linkplain ComparisonMode#IGNORE_METADATA})</code>. This feature allows users to
+     * implement metadata-insensitive {@link java.util.HashMap}.
+     *
+     * @return The hash code value. This value may change between different execution of the
+     *         Geotk library.
+     *
+     * @since 3.18
+     */
+    protected int computeHashCode() {
         // Subclasses need to overrides this!!!!
-        return getClass().hashCode() ^ (int) serialVersionUID;
+        return Classes.getInterface(getClass(), IdentifiedObject.class).hashCode() ^ (int) serialVersionUID;
     }
 }

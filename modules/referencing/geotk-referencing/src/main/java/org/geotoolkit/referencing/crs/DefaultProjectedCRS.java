@@ -252,17 +252,6 @@ public class DefaultProjectedCRS extends AbstractDerivedCRS implements Projected
     }
 
     /**
-     * Returns a hash value for this projected CRS.
-     *
-     * @return The hash code value. This value doesn't need to be the same
-     *         in past or future versions of this class.
-     */
-    @Override
-    public int hashCode() {
-        return (int)serialVersionUID ^ super.hashCode();
-    }
-
-    /**
      * Formats the inner part of a
      * <A HREF="http://www.geoapi.org/snapshot/javadoc/org/opengis/referencing/doc-files/WKT.html#PROJCS"><cite>Well
      * Known Text</cite> (WKT)</A> element.

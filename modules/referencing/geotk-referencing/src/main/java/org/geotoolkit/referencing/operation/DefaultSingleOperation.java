@@ -46,6 +46,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.UnsupportedImplementationException;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.Utilities.deepEquals;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
@@ -302,11 +303,11 @@ public class DefaultSingleOperation extends AbstractCoordinateOperation implemen
     }
 
     /**
-     * Returns a hash code value for this operation method.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ method.hashCode();
+    protected int computeHashCode() {
+        return hash(method, super.computeHashCode());
     }
 
     /**
