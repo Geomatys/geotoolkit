@@ -140,10 +140,8 @@ public class ValueRestriction implements Serializable {
      * @return The restriction, or {@code null} if none.
      */
     static ValueRestriction create(final Obligation obligation, final NumberRange<?> range, final Set<?> validValues) {
-        if (range == null && validValues == null) {
-            if (!Obligation.MANDATORY.equals(obligation) && !Obligation.FORBIDDEN.equals(obligation)) {
-                return null;
-            }
+        if (range == null && validValues == null && obligation != Obligation.MANDATORY && obligation != Obligation.FORBIDDEN) {
+            return null;
         }
         return POOL.unique(new ValueRestriction(obligation, range, validValues));
     }
@@ -201,7 +199,7 @@ public class ValueRestriction implements Serializable {
         /*
          * If the value does not violate the obligation, set the obligation to null.
          */
-        if (!((value == null) ? Obligation.MANDATORY : Obligation.FORBIDDEN).equals(obligation)) {
+        if (obligation != ((value == null) ? Obligation.MANDATORY : Obligation.FORBIDDEN)) {
             obligation = null;
             changed = true;
         }
@@ -230,9 +228,9 @@ public class ValueRestriction implements Serializable {
      */
     @Override
     public boolean equals(final Object other) {
-        if (other!=null && other.getClass().equals(getClass())) {
+        if (other != null && other.getClass() == getClass()) {
             final ValueRestriction that = (ValueRestriction) other;
-            return Utilities.equals(this.obligation,  that.obligation) &&
+            return (this.obligation == that.obligation) &&
                    Utilities.equals(this.range,       that.range) &&
                    Utilities.equals(this.validValues, that.validValues);
         }

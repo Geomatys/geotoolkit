@@ -31,6 +31,8 @@ import org.geotoolkit.xml.IdentifiedObject;
 import org.geotoolkit.metadata.MetadataStandard;
 import org.geotoolkit.metadata.ModifiableMetadata;
 import org.geotoolkit.metadata.UnmodifiableMetadataException;
+import org.geotoolkit.util.ComparisonMode;
+import org.geotoolkit.util.Utilities;
 
 
 /**
@@ -161,6 +163,23 @@ public class MetadataEntity extends ModifiableMetadata implements IdentifiedObje
     public synchronized void setXLink(final XLink link) throws UnmodifiableMetadataException {
         checkWritePermission();
         xlink = link;
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * @since 3.18
+     */
+    @Override
+    public boolean equals(final Object object, final ComparisonMode mode) {
+        if (super.equals(object, mode)) {
+            if (mode != ComparisonMode.STRICT) {
+                return true;
+            }
+            final MetadataEntity that = (MetadataEntity) object;
+            return Utilities.equals(xlink, that.xlink);
+        }
+        return false;
     }
 
     /**

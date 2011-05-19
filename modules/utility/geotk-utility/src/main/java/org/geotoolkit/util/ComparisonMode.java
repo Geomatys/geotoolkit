@@ -20,7 +20,13 @@ package org.geotoolkit.util;
 
 /**
  * Specifies the degree of strictness when comparing two {@link LenientComparable} objects
- * for equality.
+ * for equality. This enumeration is <strong>ordered</strong> from stricter to more lenient
+ * degrees: {@link #STRICT}, {@link #BY_CONTRACT}, {@link #IGNORE_METADATA}.
+ * <p>
+ * if two objects are equal at some degree of strictness <var>E</var>, then they should also
+ * be equal at all degrees listed below <var>E</var> in this page. For example if two objects
+ * are equal at the degree {@link #BY_CONTRACT}, then they should also be equal at the degree
+ * {@link #IGNORE_METADATA} but not necessarily at the degree {@link #STRICT}.
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
@@ -33,23 +39,42 @@ package org.geotoolkit.util;
  */
 public enum ComparisonMode {
     /**
-     * All attributes of the compared objects shall be strictly equal. The contract of
-     * this comparison mode is the same than the {@link Object#equals(Object)} contract.
+     * All attributes of the compared objects shall be strictly equal. This comparison mode
+     * is equivalent to the {@link Object#equals(Object)} method, and must be compliant with
+     * the contract documented in that method. In particular, this comparison mode shall be
+     * consistent with {@link Object#hashCode()} and be symmetric ({@code A.equals(B)} implies
+     * {@code B.equals(A)}).
+     *
+     * {@section Implementation note}
+     * In the Geotk implementation, this comparison mode usually have the following
+     * characteristics (not always, this is only typical):
      * <p>
-     * In the Geotk implementation, this comparison mode usually implies that the objects
-     * being compared are of the same class, in order to ensure {@link Object#hashCode()}
-     * consistency and comparison symmetry ({@code A.equals(B)} implies {@code B.equals(A)}).
+     * <ul>
+     *   <li>The objects being compared need to be the same implementation class.</li>
+     *   <li>Private fields are compared directly instead than invoking public getter methods.</li>
+     * </ul>
+     *
+     * @see Object#equals(Object)
      */
     STRICT,
 
     /**
      * Only the attributes published in some contract (typically a GeoAPI interface) need
-     * to be compared. The implementation class doesn't need to be the same and some private
+     * to be compared. The implementation classes do not need to be the same and some private
      * attributes may be ignored.
      * <p>
      * Note that this comparison mode does <strong>not</strong> guaranteed {@link Object#hashCode()}
      * consistency, neither comparison symmetry (i.e. {@code A.equals(B)} and {@code B.equals(A)} may
      * return different results if the {@code equals} methods are implemented differently).
+     *
+     * {@section Implementation note}
+     * In the Geotk implementation, this comparison mode usually have the following
+     * characteristics (not always, this is only typical):
+     * <p>
+     * <ul>
+     *   <li>The objects being compared need to implement the same GeoAPI interfaces.</li>
+     *   <li>Public getter methods are used (no direct access to private fields).</li>
+     * </ul>
      */
     BY_CONTRACT,
 
@@ -57,8 +82,9 @@ public enum ComparisonMode {
      * Only the attributes relevant to the object functionality are compared. Attributes that
      * are only informative can be ignored. This comparison mode is typically less strict than
      * {@link #BY_CONTRACT}.
-     * <p>
-     * For example if the objects being compared are
+     *
+     * {@section Example}
+     * If the objects being compared are
      * {@link org.opengis.referencing.operation.MathTransform}, then only the properties relevant
      * to the coordinate computation shall be compared. Metadata like the identifier or the domain
      * of validity, which have no impact on the coordinates being calculated, shall be ignored.

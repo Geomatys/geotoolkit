@@ -104,7 +104,7 @@ public class DefaultEngineeringCRS extends AbstractSingleCRS implements Engineer
                         return true;
                     }
                     default: {
-                        final Cartesian that = (Cartesian) object;
+                        final EngineeringCRS that = (EngineeringCRS) object;
                         return Utilities.equals(getName().getCode(), that.getName().getCode());
                     }
                 }

@@ -189,7 +189,7 @@ public class DefaultTemporalDatum extends AbstractDatum implements TemporalDatum
                     return this.origin == that.origin;
                 }
                 default: {
-                    final TemporalDatum that = (DefaultTemporalDatum) object;
+                    final TemporalDatum that = (TemporalDatum) object;
                     return Utilities.equals(getOrigin(), that.getOrigin());
                 }
             }

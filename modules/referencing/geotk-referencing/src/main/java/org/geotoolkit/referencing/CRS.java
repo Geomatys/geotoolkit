@@ -1316,6 +1316,9 @@ compare:    for (final SingleCRS component : actualComponents) {
      * @param  object2 The second object to compare (may be null).
      * @return {@code true} if both objects are equals.
      *
+     * @see org.geotoolkit.util.Utilities#deepEquals(Object, Object, ComparisonMode)
+     * @see ComparisonMode#IGNORE_METADATA
+     *
      * @category information
      * @since 2.2
      */

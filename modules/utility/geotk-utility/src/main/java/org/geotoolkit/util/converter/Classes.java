@@ -158,7 +158,7 @@ public final class Classes extends Static {
             if (dimension < 0) {
                 do element = element.getComponentType();
                 while (element!=null && ++dimension != 0);
-            } else if (!element.equals(Void.TYPE)) {
+            } else if (element != Void.TYPE) {
                 final StringBuilder buffer = new StringBuilder();
                 do buffer.insert(0, '[');
                 while (--dimension != 0);
@@ -559,7 +559,6 @@ public final class Classes extends Static {
      *     }
      * }
      *
-     * @param <T>     A common parent for both objects.
      * @param object1 The first object to check for interfaces.
      * @param object2 The second object to check for interfaces.
      * @param base    The parent of all interfaces to check.
@@ -569,15 +568,11 @@ public final class Classes extends Static {
      * @category type
      * @since 3.01 (derived from 2.5)
      */
-    public static <T> boolean implementSameInterfaces(
-            final Class<? extends T> object1,
-            final Class<? extends T> object2,
-            final Class<? extends T> base)
-    {
+    public static boolean implementSameInterfaces(final Class<?> object1, final Class<?> object2, final Class<?> base) {
         if (object1 == object2) {
             return true;
         }
-        if (object1==null || object2==null) {
+        if (object1 == null || object2 == null) {
             return false;
         }
         final Class<?>[] c1 = object1.getInterfaces();
@@ -602,7 +597,7 @@ compare:for (int i=0; i<c1.length; i++) {
             final Class<?> c = c1[i];
             if (base.isAssignableFrom(c)) {
                 for (int j=0; j<n; j++) {
-                    if (c.equals(c2[j])) {
+                    if (c == c2[j]) {
                         System.arraycopy(c2, j+1, c2, j, --n-j);
                         continue compare;
                     }
@@ -1065,15 +1060,15 @@ compare:for (int i=0; i<c1.length; i++) {
     public static <N extends Number> N cast(final Number n, final Class<N> c)
             throws IllegalArgumentException
     {
-        if (n == null || n.getClass().equals(c)) {
+        if (n == null || n.getClass() == c) {
             return (N) n;
         }
-        if (Byte   .class.equals(c)) return (N) Byte   .valueOf(n.  byteValue());
-        if (Short  .class.equals(c)) return (N) Short  .valueOf(n. shortValue());
-        if (Integer.class.equals(c)) return (N) Integer.valueOf(n.   intValue());
-        if (Long   .class.equals(c)) return (N) Long   .valueOf(n.  longValue());
-        if (Float  .class.equals(c)) return (N) Float  .valueOf(n. floatValue());
-        if (Double .class.equals(c)) return (N) Double .valueOf(n.doubleValue());
+        if (c == Byte   .class) return (N) Byte   .valueOf(n.  byteValue());
+        if (c == Short  .class) return (N) Short  .valueOf(n. shortValue());
+        if (c == Integer.class) return (N) Integer.valueOf(n.   intValue());
+        if (c == Long   .class) return (N) Long   .valueOf(n.  longValue());
+        if (c == Float  .class) return (N) Float  .valueOf(n. floatValue());
+        if (c == Double .class) return (N) Double .valueOf(n.doubleValue());
         throw unknownType(c);
     }
 
@@ -1113,14 +1108,14 @@ compare:for (int i=0; i<c1.length; i++) {
         if (value == null) {
             return null;
         }
-        if (Double .class.equals(type)) return (T) Double .valueOf(value);
-        if (Float  .class.equals(type)) return (T) Float  .valueOf(value);
-        if (Long   .class.equals(type)) return (T) Long   .valueOf(value);
-        if (Integer.class.equals(type)) return (T) Integer.valueOf(value);
-        if (Short  .class.equals(type)) return (T) Short  .valueOf(value);
-        if (Byte   .class.equals(type)) return (T) Byte   .valueOf(value);
-        if (Boolean.class.equals(type)) return (T) Boolean.valueOf(value);
-        if (Character.class.equals(type)) {
+        if (type == Double .class) return (T) Double .valueOf(value);
+        if (type == Float  .class) return (T) Float  .valueOf(value);
+        if (type == Long   .class) return (T) Long   .valueOf(value);
+        if (type == Integer.class) return (T) Integer.valueOf(value);
+        if (type == Short  .class) return (T) Short  .valueOf(value);
+        if (type == Byte   .class) return (T) Byte   .valueOf(value);
+        if (type == Boolean.class) return (T) Boolean.valueOf(value);
+        if (type == Character.class) {
             /*
              * If the string is empty, returns 0 which means "end of string" in C/C++
              * and NULL in Unicode standard. If non-empty, take only the first char.
@@ -1130,7 +1125,7 @@ compare:for (int i=0; i<c1.length; i++) {
              */
             return (T) Character.valueOf(value.isEmpty() ? 0 : value.charAt(0));
         }
-        if (String.class.equals(type)) {
+        if (type == String.class) {
             return (T) value;
         }
         throw unknownType(type);

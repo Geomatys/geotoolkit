@@ -51,6 +51,11 @@ import org.geotoolkit.io.wkt.UnformattableObjectException;
  * @since 3.08
  * @module
  */
+/*
+ * Do NOT implement the LenientComparable interface, because the sublcasses will typically
+ * implement more than one GeoAPI interface.  In such case, determining if the type of two
+ * classes shall be considered equal may be confusing.
+ */
 public abstract class NetcdfIdentifiedObject implements IdentifiedObject, ReferenceIdentifier {
     /**
      * Creates a new {@code NetcdfIdentifiedObject} instance.

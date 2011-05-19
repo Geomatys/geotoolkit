@@ -322,6 +322,8 @@ public final class Utilities extends Static {
      * @param mode The strictness level of the comparison.
      * @return {@code true} if both objects are equal for the given level of strictness.
      *
+     * @see org.geotoolkit.referencing.CRS#equalsIgnoreMetadata(Object, Object)
+     *
      * @since 3.18
      */
     public static boolean deepEquals(final Object object1, final Object object2, final ComparisonMode mode) {

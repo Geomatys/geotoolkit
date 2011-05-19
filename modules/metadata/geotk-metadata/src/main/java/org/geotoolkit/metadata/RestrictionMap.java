@@ -81,7 +81,7 @@ final class RestrictionMap extends MetadataMap<ValueRestriction> {
     @Override
     public int size() {
         final int count = accessor.count();
-        if (NullValuePolicy.ALL.equals(content)) {
+        if (content == NullValuePolicy.ALL) {
             return count;
         }
         int n = 0;

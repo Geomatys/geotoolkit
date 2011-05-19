@@ -336,7 +336,7 @@ public final class MetadataStandard {
                 synchronized (implementations) {
                     Class<?> candidate = implementations.get(type);
                     if (candidate != null) {
-                        return candidate.equals(Void.TYPE) ? type : candidate;
+                        return (candidate != Void.TYPE) ? candidate : type;
                     }
                     /*
                      * Prepares a buffer with a copy of the class name in which the interface
@@ -732,7 +732,7 @@ public final class MetadataStandard {
             return false;
         }
         final PropertyAccessor accessor = getAccessor(metadata1.getClass());
-        if (!accessor.type.equals(getStandardType(metadata2.getClass()))) {
+        if (accessor.type != getStandardType(metadata2.getClass())) {
             return false;
         }
         return accessor.shallowEquals(metadata1, metadata2, mode, skipNulls);

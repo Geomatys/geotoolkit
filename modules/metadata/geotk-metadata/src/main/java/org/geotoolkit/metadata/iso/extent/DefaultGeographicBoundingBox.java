@@ -519,7 +519,7 @@ public class DefaultGeographicBoundingBox extends AbstractGeographicExtent
         // Above code really requires DefaultGeographicBoundingBox.class, not getClass().
         // This code is used only for performance raison. The super-class implementation
         // is generic enough for all other cases.
-        if (object!=null && object.getClass().equals(DefaultGeographicBoundingBox.class)) { // NOSONAR
+        if (object != null && object.getClass() == DefaultGeographicBoundingBox.class) { // NOSONAR
             final DefaultGeographicBoundingBox that = (DefaultGeographicBoundingBox) object;
             return Utilities.equals(this.getInclusion(),     that.getInclusion())     &&
                    Utilities.equals(this.southBoundLatitude, that.southBoundLatitude) &&

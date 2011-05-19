@@ -211,7 +211,7 @@ public abstract class AbstractMetadata implements LenientComparable {
             return true;
         }
         if (mode == ComparisonMode.STRICT) {
-            if (object == null || !getClass(object).equals(getClass(this))) {
+            if (object == null || getClass(object) != getClass(this)) {
                 return false;
             }
         }

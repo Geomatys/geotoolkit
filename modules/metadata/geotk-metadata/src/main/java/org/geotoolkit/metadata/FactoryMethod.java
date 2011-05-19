@@ -102,7 +102,7 @@ final class FactoryMethod {
                  * the Map<String,?> type or the Map<String,Object> one.
                  */
                 final Type mapType = types[0];
-                if (!Map.class.equals(mapType)) {
+                if (mapType != Map.class) {
                     if (!(mapType instanceof ParameterizedType)) {
                         continue;
                     }

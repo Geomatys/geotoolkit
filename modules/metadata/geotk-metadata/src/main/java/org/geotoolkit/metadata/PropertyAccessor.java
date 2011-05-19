@@ -243,7 +243,7 @@ final class PropertyAccessor {
                     // implements the interface where the getter come from.
                     throw new AssertionError(error);
                 }
-                if (!returnType.equals(returnType = getter.getReturnType())) {
+                if (returnType != (returnType = getter.getReturnType())) {
                     arguments[0] = returnType;
                     try {
                         setter = implementation.getMethod(name, arguments);
@@ -379,8 +379,8 @@ final class PropertyAccessor {
                         // Ignores deprecated methods.
                         continue;
                     }
-                    if (!candidate.getReturnType().equals(Void.TYPE) &&
-                         candidate.getParameterTypes().length == 0)
+                    if (candidate.getReturnType() != Void.TYPE &&
+                        candidate.getParameterTypes().length == 0)
                     {
                         /*
                          * We do not require a name starting with "get" or "is" prefix because some
@@ -501,7 +501,7 @@ final class PropertyAccessor {
              * directly the given String instance allow usage of its cached hash code value.
              */
             final String key = name.replace(" ", "").toLowerCase(LOCALE).trim();
-            if (key == name || (index = mapping.get(key)) == null) {
+            if (key == name || (index = mapping.get(key)) == null) { // NOSONAR: identity comparison is okay here.
                 return -1;
             }
         }
@@ -666,7 +666,7 @@ final class PropertyAccessor {
      * @param metadata The metadata object to query.
      */
     private static Object get(final Method method, final Object metadata) {
-        assert !method.getReturnType().equals(Void.TYPE) : method;
+        assert (method.getReturnType() != Void.TYPE) : method;
         try {
             return method.invoke(metadata, (Object[]) null);
         } catch (IllegalAccessException e) {
@@ -805,7 +805,7 @@ final class PropertyAccessor {
                     // cause an exception later. The message should be appropriate.
                 }
                 // Getter type (targetType) shall be the same than the setter type (elementType).
-                assert elementType.equals(Classes.primitiveToWrapper(targetType)) : elementType;
+                assert elementType == Classes.primitiveToWrapper(targetType) : elementType;
                 targetType = elementType; // Ensure that we use primitive wrapper.
             } else {
                 /*

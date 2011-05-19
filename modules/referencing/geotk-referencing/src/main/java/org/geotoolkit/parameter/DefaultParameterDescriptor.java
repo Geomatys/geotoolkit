@@ -527,7 +527,7 @@ public class DefaultParameterDescriptor<T> extends AbstractParameterDescriptor
         }
         if (super.equals(object, mode)) {
             switch (mode) {
-                case IGNORE_METADATA: {
+                default: {
                     /*
                      * Tests for name, since parameters with different name have
                      * completely different meaning. For example there is no difference
