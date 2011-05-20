@@ -448,8 +448,8 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      */
     @Override
     public final Geometry getConvexHull() {
-        com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
-        com.vividsolutions.jts.geom.Geometry jtsHull = jtsGeom.convexHull();
+        final com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
+        final com.vividsolutions.jts.geom.Geometry jtsHull = jtsGeom.convexHull();
         return JTSUtils.toISO(jtsHull, getCoordinateReferenceSystem());
     }
 
@@ -458,8 +458,8 @@ public abstract class AbstractJTSGeometry implements Geometry, Serializable, Clo
      */
     @Override
     public final Geometry getBuffer(final double distance) {
-        com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
-        com.vividsolutions.jts.geom.Geometry jtsBuffer = jtsGeom.buffer(distance);
+        final com.vividsolutions.jts.geom.Geometry jtsGeom = getJTSGeometry();
+        final com.vividsolutions.jts.geom.Geometry jtsBuffer = jtsGeom.buffer(distance);
         return JTSUtils.toISO(jtsBuffer, getCoordinateReferenceSystem());
     }
 

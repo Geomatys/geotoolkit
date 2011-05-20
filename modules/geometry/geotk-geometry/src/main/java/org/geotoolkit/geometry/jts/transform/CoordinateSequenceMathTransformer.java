@@ -79,11 +79,11 @@ public class CoordinateSequenceMathTransformer implements CoordinateSequenceTran
         this.transform =transform;
     }
 
-    public void setTransform(final MathTransform transform) {
+    public synchronized void setTransform(final MathTransform transform) {
         this.transform = transform;
     }
 
-    public MathTransform getTransform() {
+    public synchronized MathTransform getTransform() {
         return transform;
     }
 
@@ -91,7 +91,7 @@ public class CoordinateSequenceMathTransformer implements CoordinateSequenceTran
      * {@inheritDoc}
      */
     @Override
-    public CoordinateSequence transform(final CoordinateSequence sequence, final int minpoints)
+    public synchronized CoordinateSequence transform(final CoordinateSequence sequence, final int minpoints)
             throws TransformException {
         final int sourceDim = transform.getSourceDimensions();
         final int targetDim = transform.getTargetDimensions();
@@ -150,4 +150,12 @@ public class CoordinateSequenceMathTransformer implements CoordinateSequenceTran
 
         return csf.create(tcs);
     }
+
+    @Override
+    public String toString() {
+        final StringBuilder sb = new StringBuilder("CoordinateSequenceTransformer : Mathtransform : ");
+        sb.append(transform);
+        return sb.toString();
+    }
+    
 }

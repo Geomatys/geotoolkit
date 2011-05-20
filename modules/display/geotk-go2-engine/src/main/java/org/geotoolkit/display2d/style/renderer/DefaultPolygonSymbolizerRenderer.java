@@ -24,6 +24,7 @@ import java.awt.geom.Area;
 import java.awt.geom.PathIterator;
 import java.awt.geom.Point2D;
 import java.awt.geom.Rectangle2D;
+import java.util.logging.Level;
 import javax.measure.unit.Unit;
 
 import org.geotoolkit.display.canvas.VisitFilter;
@@ -320,6 +321,7 @@ public class DefaultPolygonSymbolizerRenderer extends AbstractSymbolizerRenderer
             geom = geom.getBuffer(offset);
         }catch(IllegalArgumentException ex){
             //can happen if the geometry has too few points, like a ring of 3points
+            LOGGER.log(Level.FINE, ex.getLocalizedMessage(), ex);
         }
         shape = GO2Utilities.toJava2D(geom);
 

@@ -26,7 +26,6 @@ import com.vividsolutions.jts.geom.Polygon;
 import java.awt.Component;
 import java.awt.Cursor;
 import java.awt.Point;
-import java.awt.Shape;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
@@ -66,8 +65,7 @@ import org.geotoolkit.data.query.QueryBuilder;
 import org.geotoolkit.display2d.canvas.RenderingContext2D;
 import org.geotoolkit.display2d.primitive.SearchAreaJ2D;
 
-import org.opengis.feature.simple.SimpleFeature;
-import org.opengis.feature.simple.SimpleFeatureType;
+import org.opengis.feature.Feature;
 import org.opengis.filter.Filter;
 import org.opengis.filter.FilterFactory2;
 import org.opengis.filter.Id;
@@ -187,17 +185,23 @@ public class DefaultSelectionHandler implements CanvasHandler {
         this.map2D = map2D;
     }
 
-    private Id combine(final Id original, final Set<? extends Identifier> ids){
+    private Id combine(Id original, Set<? extends Identifier> ids){
         final Id f;
 
-        if(key == KeyEvent.VK_CONTROL){
+        if(original == null){
+            original = FF.id(new HashSet<Identifier>());
+        }else if(ids == null){
+            ids = new HashSet<Identifier>();
+        }
+        
+        if(key == KeyEvent.VK_SHIFT){
             //add selection
-            Set<Identifier> in = new HashSet<Identifier>(ids);
+            final Set<Identifier> in = new HashSet<Identifier>(ids);
             in.addAll(((Id)original).getIdentifiers());
             f = FF.id(in);
-        } else if (key == KeyEvent.VK_SHIFT){
+        } else if (key == KeyEvent.VK_CONTROL){
             //remove the commun part selection
-            Set<Identifier> in = new HashSet<Identifier>(((Id)original).getIdentifiers());
+            final Set<Identifier> in = new HashSet<Identifier>(((Id)original).getIdentifiers());
             if(ids != null){
                 in.removeAll(ids);
             }
@@ -215,7 +219,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
 
     private void doSelection(final List<Point> points, final int key) {
         this.key = key;
-
+            
         if (points.size() > 2) {
 
             if(geographicArea){
@@ -261,10 +265,10 @@ public class DefaultSelectionHandler implements CanvasHandler {
                                 builder.setProperties(new String[]{geoStr});
                                 final Query query = builder.buildQuery();
                                 
-                                FeatureCollection<SimpleFeature> fc = (FeatureCollection<SimpleFeature>) fl.getCollection().subCollection(query);
-                                FeatureIterator<SimpleFeature> fi = fc.iterator();
+                                FeatureCollection<Feature> fc = (FeatureCollection<Feature>) fl.getCollection().subCollection(query);
+                                FeatureIterator<Feature> fi = fc.iterator();
                                 while(fi.hasNext()){
-                                    SimpleFeature fea = fi.next();
+                                    Feature fea = fi.next();
                                     ids.add(fea.getIdentifier());
                                 }
                                 fi.close();
@@ -288,7 +292,7 @@ public class DefaultSelectionHandler implements CanvasHandler {
                     Point p = points.get(i);
                     path.lineTo(p.x, p.y);
                 }
-
+                
                 map2D.getCanvas().getGraphicsIn(path, visitor, (withinArea) ? VisitFilter.WITHIN : VisitFilter.INTERSECTS);
             }
             map2D.getCanvas().getController().repaint();

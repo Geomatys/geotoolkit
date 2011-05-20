@@ -318,7 +318,13 @@ public class DefaultLineSymbolizerRenderer extends AbstractSymbolizerRenderer<Ca
 //            if(!hit) return false;
 
             //test real shape
-            Geometry CRSShape = mask.getBuffer(bufferWidth);
+            Geometry CRSShape = mask;
+            try{
+                CRSShape = mask.getBuffer(bufferWidth);
+            }catch(IllegalArgumentException ex){
+                //can happen if the geometry has too few points, like a ring of 3points
+                LOGGER.log(Level.FINE, ex.getLocalizedMessage(), ex);
+            }
             return GO2Utilities.testHit(filter,CRSShape,j2dShape);
 
         }else{            
