@@ -88,10 +88,15 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
      */
     private Feature modify2(final Object attributeValue) {
         try {
-
-            final FeatureCollection<Feature> fiteredFC = (FeatureCollection<Feature>) super.getOriginalFeatureCollection().subCollection(filter(attributeValue));
-            
-            return Regroup.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
+            if(attributeValue != null){
+                final FeatureCollection<Feature> fiteredFC = (FeatureCollection<Feature>) 
+                        super.getOriginalFeatureCollection().subCollection(filter(attributeValue));
+                return Regroup.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, fiteredFC);
+            }else{
+                //In this case the request is Regroup.regroupFeature(null, null, newFeatureType, geometryName, originalFC);
+                return Regroup.regroupFeature(regroupAttribute, attributeValue, newFeatureType, geometryName, 
+                        (FeatureCollection<Feature>)super.getOriginalFeatureCollection());
+            }
 
         } catch (FactoryException ex) {
             throw new DataStoreRuntimeException(ex);
@@ -143,7 +148,7 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
         private final Collection<Object> attributeValues;
         private Object nextValue;
         private final Iterator<Object> attributeIterator;
-
+        private boolean alreadyPass;
         /**
          * Connect to the original FeatureIterator
          * @param originalFI FeatureIterator
@@ -153,8 +158,14 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
 
             nextFeature = null;
             attributeValues = getAttributeValues();
-            attributeIterator = attributeValues.iterator();
+            
+            if(attributeValues.isEmpty()){
+                attributeIterator = null;
+            }else{
+                attributeIterator = attributeValues.iterator();
+            }
             nextValue = null;
+            alreadyPass = false;
         }
 
         /**
@@ -208,9 +219,18 @@ public class RegroupFeatureCollection extends WrapFeatureCollection {
                 return;
             }
 
-            while (nextFeature == null && attributeIterator.hasNext()) {
-                nextValue = attributeIterator.next();
-                nextFeature = modify2(nextValue);
+            if(attributeIterator == null && !alreadyPass ){
+                while(nextFeature == null){
+                    nextFeature = modify2(null);
+                }
+                alreadyPass = true;
+            }
+            
+            if(attributeIterator != null){
+                while (nextFeature == null && attributeIterator.hasNext()) {
+                    nextValue = attributeIterator.next();
+                    nextFeature = modify2(nextValue);
+                }
             }
         }
     }

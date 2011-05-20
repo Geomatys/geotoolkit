@@ -131,8 +131,15 @@ public class Regroup extends AbstractProcess {
                     listToRemove.add(desc.getName().getLocalPart());
                 }
             } else {//other properties
-                //if it's a different property than we wanted
-                if (!(desc.getName().getLocalPart().equals(regroupAttribute))) {
+                
+                if(regroupAttribute != null){
+                     //if it's a different property than we wanted
+                    if (!(desc.getName().getLocalPart().equals(regroupAttribute))) {
+                        listToRemove.add(desc.getName().getLocalPart());
+                    }
+                    
+                // If regroup attribut is null, we return a feature with only one geometry
+                }else{
                     listToRemove.add(desc.getName().getLocalPart());
                 }
             }
@@ -158,7 +165,7 @@ public class Regroup extends AbstractProcess {
      * @param filtredList - the input FeatureCollection filtered on attribute value
      * @return a Feature
      */
-    static Feature regroupFeature(final String regroupAttribute, final Object attrubuteValue,
+    static Feature regroupFeature(final String regroupAttribute, final Object attributeValue,
             final FeatureType newFeatureType, String geometryName, final FeatureCollection<Feature> filtredList) {
 
         Geometry regroupGeometry = new GeometryFactory().buildGeometry(Collections.EMPTY_LIST);
@@ -183,17 +190,25 @@ public class Regroup extends AbstractProcess {
         } finally {
             featureIter.close();
         }
-
-        //result feature
-        final Feature resultFeature = FeatureUtilities.defaultFeature(newFeatureType, regroupAttribute + "-" + attrubuteValue);
-        resultFeature.getProperty(regroupAttribute).setValue(attrubuteValue);
-        resultFeature.getProperty(geometryName).setValue(regroupGeometry);
+        Feature resultFeature = null;
+        //In case
+        if(regroupAttribute == null && attributeValue == null){
+            resultFeature = FeatureUtilities.defaultFeature(newFeatureType, "groupedGeometryFeature");
+            resultFeature.getProperty(geometryName).setValue(regroupGeometry);
+             
+        }else{
+            //result feature
+            resultFeature = FeatureUtilities.defaultFeature(newFeatureType, regroupAttribute + "-" + attributeValue);
+            resultFeature.getProperty(regroupAttribute).setValue(attributeValue);
+            resultFeature.getProperty(geometryName).setValue(regroupGeometry);
+        }
 
         return resultFeature;
     }
 
     /**
      * Browse in input FeatureCollection all different values of the specified attribute
+     * If regroupAttribute is null, we return an empty Collection<Object>.
      * @param regroupAttribute
      * @param featureList
      * @return a collection of Objects
@@ -201,29 +216,32 @@ public class Regroup extends AbstractProcess {
     static Collection<Object> getAttributeValues(final String regroupAttribute, final FeatureCollection<Feature> featureList) {
 
         final Collection<Object> values = new ArrayList<Object>();
+        
+        if(regroupAttribute != null){
+            
+            final FeatureIterator<Feature> featureIter = featureList.iterator();
+            try {
+                while (featureIter.hasNext()) {
+                    final Feature feature = featureIter.next();
 
-        final FeatureIterator<Feature> featureIter = featureList.iterator();
-        try {
-            while (featureIter.hasNext()) {
-                final Feature feature = featureIter.next();
-
-                for (Property property : feature.getProperties()) {
-                    //if property is not a geometry
-                    if (!(property.getDescriptor() instanceof GeometryDescriptor)) {
-                        //it's the property we needed
-                        if (property.getName().getLocalPart().equals(regroupAttribute)) {
-                            //if property value isn't already in our collection, we add it.
-                            if (!values.contains(property.getValue())) {
-                                values.add(property.getValue());
+                    for (Property property : feature.getProperties()) {
+                        //if property is not a geometry
+                        if (!(property.getDescriptor() instanceof GeometryDescriptor)) {
+                            //it's the property we needed
+                            if (property.getName().getLocalPart().equals(regroupAttribute)) {
+                                //if property value isn't already in our collection, we add it.
+                                if (!values.contains(property.getValue())) {
+                                    values.add(property.getValue());
+                                }
                             }
                         }
                     }
                 }
+            } finally {
+                featureIter.close();
             }
-        } finally {
-            featureIter.close();
         }
-
+        
         return values;
     }
 }

@@ -48,10 +48,10 @@ public final class RegroupDescriptor extends VectorDescriptor {
     public static final String NAME = "regroup";
 
     /**
-     * Mandatory - Attribute name to apply the regroup process
+     * Optional - Attribute name to apply the regroup process
      */
     public static final ParameterDescriptor<String> REGROUP_ATTRIBUTE =
-            new DefaultParameterDescriptor("regroup_attribute", "Attribute name used for the regroup process", String.class, null, true);
+            new DefaultParameterDescriptor("regroup_attribute", "Attribute name used for the regroup process", String.class, null, false);
 
     /**
      * Optional - Geometry property name. Refer to the geometry used for the regroup process

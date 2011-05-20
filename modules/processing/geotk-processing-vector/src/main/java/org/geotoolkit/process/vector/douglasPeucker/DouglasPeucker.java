@@ -18,7 +18,9 @@ package org.geotoolkit.process.vector.douglaspeucker;
 
 import com.vividsolutions.jts.geom.Envelope;
 import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.geom.GeometryFactory;
 import com.vividsolutions.jts.simplify.DouglasPeuckerSimplifier;
+import java.util.Collections;
 
 import javax.measure.quantity.Length;
 import javax.measure.unit.Unit;
@@ -135,13 +137,12 @@ public class DouglasPeucker extends AbstractProcess {
 
                  //We compare if the simplification accuracy is more than geometry envelope width or height
                 if (convertEnvelope.getWidth() < accuracy && convertEnvelope.getHeight() < accuracy) {
-                    
                     //In this case, if behavior boolean is true, we return null for the feature
                     //else we set the geometry feature to null
                     if(behavior){
                         return null;
                     }else{
-                        resultFeature.getProperty(property.getName()).setValue(null);
+                        resultFeature.getProperty(property.getName()).setValue(new GeometryFactory().buildGeometry(Collections.EMPTY_LIST));
                     }
                 } else {
                      //simplify geometry

@@ -62,7 +62,36 @@ public class RegroupTest extends AbstractProcessTest{
         super("regroup");
     }
 
+    //No attribut
+    @Test
+    public void testRegroupDefault() {
 
+        // Inputs
+        final FeatureCollection<?> featureList = buildFeatureList();
+        // Process
+        ProcessDescriptor desc = ProcessFinder.getProcessDescriptor("vector", "regroup");
+        org.geotoolkit.process.Process proc = desc.createProcess();
+
+        ParameterValueGroup in = desc.getInputDescriptor().createValue();
+        in.parameter("feature_in").setValue(featureList);
+        in.parameter("geometry_name").setValue("geom1");
+        proc.setInput(in);
+        proc.run();
+
+        //Features out
+        final FeatureCollection<?> featureListOut = (FeatureCollection<?>) proc.getOutput().parameter("feature_out").getValue();
+
+        /*for (Feature feature : featureListOut) {
+            System.out.println(feature);
+        }*/
+        //Expected Features out
+        /*final FeatureCollection<?> featureListResult = buildResultList2();
+        assertEquals(featureListOut.getFeatureType(), featureListResult.getFeatureType());
+        assertEquals(featureListOut.getID(), featureListResult.getID());
+        assertEquals(featureListOut.size(), featureListResult.size());
+        assertTrue(featureListOut.containsAll(featureListResult));*/
+    }
+    
     @Test
     public void testRegroupDefaultGeometry() {
 
@@ -115,6 +144,8 @@ public class RegroupTest extends AbstractProcessTest{
         assertEquals(featureListOut.size(), featureListResult.size());
         assertTrue(featureListOut.containsAll(featureListResult));
     }
+    
+    
 
     private static SimpleFeatureType createSimpleType() throws NoSuchAuthorityCodeException, FactoryException {
         final FeatureTypeBuilder ftb = new FeatureTypeBuilder();

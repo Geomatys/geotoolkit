@@ -19,8 +19,6 @@ package org.geotoolkit.process.vector.merge;
 
 import com.vividsolutions.jts.geom.Geometry;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
