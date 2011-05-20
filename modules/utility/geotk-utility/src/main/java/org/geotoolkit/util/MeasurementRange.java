@@ -23,7 +23,8 @@ import javax.measure.converter.ConversionException;
 import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+
+import static org.geotoolkit.util.converter.Numbers.*;
 
 
 /**
@@ -138,11 +139,11 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
     public static MeasurementRange<?> createBestFit(final Number minimum, final boolean isMinIncluded,
             final Number maximum, final boolean isMaxIncluded, final Unit<?> units)
     {
-        final Class<? extends Number> type = Classes.widestClass(
-                Classes.finestClass(minimum), Classes.finestClass(maximum));
+        final Class<? extends Number> type = widestClass(
+                finestClass(minimum), finestClass(maximum));
         return (type == null) ? null :
-            new MeasurementRange(type, Classes.cast(minimum, type), isMinIncluded,
-                                  Classes.cast(maximum, type), isMaxIncluded, units);
+            new MeasurementRange(type, cast(minimum, type), isMinIncluded,
+                                       cast(maximum, type), isMaxIncluded, units);
     }
 
     /**
@@ -304,8 +305,8 @@ public class MeasurementRange<T extends Number & Comparable<? super T>> extends 
             isMaxIncluded = tb;
         }
         return new MeasurementRange<N>(type,
-                Classes.cast(minimum, type), isMinIncluded,
-                Classes.cast(maximum, type), isMaxIncluded, targetUnits);
+                cast(minimum, type), isMinIncluded,
+                cast(maximum, type), isMaxIncluded, targetUnits);
     }
 
     /**

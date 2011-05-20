@@ -28,6 +28,7 @@ import org.w3c.dom.Node;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.metadata.ValueRestriction;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
@@ -333,7 +334,7 @@ public final class MetadataTreeNode extends NamedTreeNode implements TreeTableNo
                 }
             }
             if (isArray) {
-                type = Classes.changeArrayDimension(Classes.wrapperToPrimitive(type), 1);
+                type = Classes.changeArrayDimension(Numbers.wrapperToPrimitive(type), 1);
             }
             valueType = type;
         }

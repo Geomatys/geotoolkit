@@ -50,7 +50,7 @@ import org.geotoolkit.test.Commons;
 import org.geotoolkit.factory.Hints;
 import org.geotoolkit.factory.FactoryFinder;
 import org.geotoolkit.math.Statistics;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.wkt.FormattableObject;
 import org.geotoolkit.geometry.DirectPosition2D;
@@ -210,7 +210,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
         if (transform instanceof AbstractMathTransform) {
             name = ((AbstractMathTransform) transform).getName();
         } else {
-            name = Classes.getShortClassName(transform);
+            name = getShortClassName(transform);
         }
         final TableWriter table = new TableWriter(out);
         table.setMultiLinesCells(true);
@@ -488,7 +488,7 @@ public abstract class TransformTestBase extends org.opengis.test.referencing.Tra
             if (unit != null) {
                 final double f = e.doubleValue(unit);
                 assertEquals(complete(name), f, a.doubleValue(unit), tolerance(f));
-            } else if (Classes.isFloat(descriptor.getValueClass())) {
+            } else if (Numbers.isFloat(descriptor.getValueClass())) {
                 final double f = e.doubleValue();
                 assertEquals(complete(name), f, a.doubleValue(), tolerance(f));
             } else {

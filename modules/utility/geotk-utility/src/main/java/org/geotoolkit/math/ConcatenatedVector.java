@@ -18,7 +18,7 @@
 package org.geotoolkit.math;
 
 import java.io.Serializable;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 
 
 /**
@@ -63,7 +63,7 @@ final class ConcatenatedVector extends Vector implements Serializable {
      */
     @Override
     public Class<? extends Number> getElementType() {
-        return Classes.widestClass(first.getElementType(), second.getElementType());
+        return Numbers.widestClass(first.getElementType(), second.getElementType());
     }
 
     /**

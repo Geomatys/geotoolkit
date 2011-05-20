@@ -29,6 +29,7 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.math.XMath;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.SimpleInternationalString;
 import org.geotoolkit.resources.Errors;
@@ -507,7 +508,7 @@ public class Category implements Serializable {
      *
      * @todo The algorithm for finding minimum and maximum values is very simple for
      *       now and will not work if the transformation has local extremas. We would
-     *       need some more sophesticated algorithm for the most general cases. Such
+     *       need some more sophisticated algorithm for the most general cases. Such
      *       a general algorithm would be useful in {@link GeophysicsCategory#getRange}
      *       as well.
      */
@@ -581,7 +582,7 @@ public class Category implements Serializable {
          * values as well.  Note: the change is usually applied on sample values, but may be applied
          * on geophysics values instead if sample are floats or geophysics values are integers.
          */
-        final boolean adjustSamples = (Classes.isInteger(sType) && !Classes.isInteger(gType));
+        final boolean adjustSamples = (Numbers.isInteger(sType) && !Numbers.isInteger(gType));
         if ((adjustSamples ? gMinInc : sMinInc) != 0) {
             int swap = sMinInc;
             sMinInc = -gMinInc;
@@ -905,7 +906,7 @@ public class Category implements Serializable {
             buffer.append("NaN(").append(Math.round(inverse.minimum))
                   .append("...") .append(Math.round(inverse.maximum)).append(')');
         } else {
-            if (Classes.isInteger(getRange().getElementClass())) {
+            if (Numbers.isInteger(getRange().getElementClass())) {
                 buffer.append(Math.round(minimum)).append("...")
                       .append(Math.round(maximum)); // Inclusive
             } else {

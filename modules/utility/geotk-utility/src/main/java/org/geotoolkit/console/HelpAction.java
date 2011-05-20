@@ -29,7 +29,7 @@ import org.geotoolkit.io.LineWriter;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.io.LineWrapWriter;
 import org.geotoolkit.io.IndentedLineWriter;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.resources.Vocabulary;
@@ -209,7 +209,7 @@ final class HelpAction {
                 color(X364.NORMAL);
                 Class<?> type = field.getType();
                 if (!Boolean.TYPE.isAssignableFrom(type)) {
-                    type = Classes.primitiveToWrapper(type);
+                    type = Numbers.primitiveToWrapper(type);
                     buffer.append('=');
                     if (Boolean.class.isAssignableFrom(type)) {
                         buffer.append("on|off");

@@ -35,6 +35,7 @@ import org.geotoolkit.io.X364;
 import org.geotoolkit.util.XArrays;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.resources.Descriptions;
@@ -416,7 +417,7 @@ public abstract class CommandLine implements Runnable {
             if (Boolean.TYPE.equals(type)) {
                 value = isEnabled(name);
             } else {
-                type = Classes.primitiveToWrapper(type);
+                type = Numbers.primitiveToWrapper(type);
                 final String text;
                 try {
                     text = valueOf(name);

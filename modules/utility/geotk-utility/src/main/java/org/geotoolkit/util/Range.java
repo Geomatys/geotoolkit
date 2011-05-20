@@ -22,8 +22,8 @@ import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
 
+import static org.geotoolkit.util.converter.Numbers.isInteger;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 
 
@@ -676,7 +676,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
             buffer.append(minValue);
         }
         // Compact representation for integers, more space for real numbers.
-        if (Classes.isInteger(elementClass) && isCompact(minValue, false) && isCompact(maxValue, true)) {
+        if (isInteger(elementClass) && isCompact(minValue, false) && isCompact(maxValue, true)) {
             buffer.append('\u2026');   // "..."
         } else {
             buffer.append(" \u2026 "); // " ... "

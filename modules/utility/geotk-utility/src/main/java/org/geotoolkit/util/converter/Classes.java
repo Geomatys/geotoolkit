@@ -17,9 +17,7 @@
  */
 package org.geotoolkit.util.converter;
 
-import java.util.Map;
 import java.util.Set;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -33,20 +31,13 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 
 import org.geotoolkit.lang.Static;
-import org.geotoolkit.resources.Errors;
 
 
 /**
- * Miscellaneous static methods working on {@link Class} objects. The methods provided in this
- * class can be grouped in two categories:
- * <p>
- * <ul>
- *   <li>Methods specialized for handling the {@link Number} type and its subclasses.</li>
- *   <li>Generic methods for handling any kind of classes or interfaces.</li>
- * </ul>
+ * Miscellaneous static methods working on {@link Class} objects.
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.12
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -54,70 +45,17 @@ import org.geotoolkit.resources.Errors;
 public final class Classes extends Static {
     /**
      * Constants to be used in {@code switch} statements.
+     *
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static final byte
             DOUBLE=8, FLOAT=7, LONG=6, INTEGER=5, SHORT=4, BYTE=3, CHARACTER=2, BOOLEAN=1, OTHER=0;
-    // Note: This class assumes that DOUBLE is the greatest public constant.
 
     /**
-     * Mapping between a primitive type and its wrapper, if any.
+     * Do not allow instantiation of this class.
      */
-    private static final Map<Class<?>,Classes> MAPPING = new HashMap<Class<?>,Classes>(16);
-    static {
-        new Classes(BigDecimal.class, true, false, (byte) (DOUBLE+2)); // Undocumented enum.
-        new Classes(BigInteger.class, false, true, (byte) (DOUBLE+1)); // Undocumented enum.
-        new Classes(Double   .TYPE, Double   .class, true,  false, (byte) Double   .SIZE, DOUBLE,    'D');
-        new Classes(Float    .TYPE, Float    .class, true,  false, (byte) Float    .SIZE, FLOAT,     'F');
-        new Classes(Long     .TYPE, Long     .class, false, true,  (byte) Long     .SIZE, LONG,      'J');
-        new Classes(Integer  .TYPE, Integer  .class, false, true,  (byte) Integer  .SIZE, INTEGER,   'I');
-        new Classes(Short    .TYPE, Short    .class, false, true,  (byte) Short    .SIZE, SHORT,     'S');
-        new Classes(Byte     .TYPE, Byte     .class, false, true,  (byte) Byte     .SIZE, BYTE,      'B');
-        new Classes(Character.TYPE, Character.class, false, false, (byte) Character.SIZE, CHARACTER, 'C');
-        new Classes(Boolean  .TYPE, Boolean  .class, false, false, (byte) 1,              BOOLEAN,   'Z');
-        new Classes(Void     .TYPE, Void     .class, false, false, (byte) 0,              OTHER,     'V');
-    }
-
-    /** The primitive type.                     */ private final Class<?> primitive;
-    /** The wrapper for the primitive type.     */ private final Class<?> wrapper;
-    /** {@code true} for floating point number. */ private final boolean  isFloat;
-    /** {@code true} for integer number.        */ private final boolean  isInteger;
-    /** The size in bytes.                      */ private final byte     size;
-    /** Constant to be used in switch statement.*/ private final byte     ordinal;
-    /** The internal form of the primitive name.*/ private final char     internal;
-
-    /**
-     * Creates an entry for a type which is not a primitive type.
-     */
-    private Classes(final Class<?> type, final boolean isFloat, final boolean isInteger, final byte ordinal) {
-        primitive = wrapper = type;
-        this.isFloat   = isFloat;
-        this.isInteger = isInteger;
-        this.size      = -1;
-        this.ordinal   = ordinal;
-        this.internal  = 'L'; // Defined by Java, and tested elsewhere in this class.
-        if (MAPPING.put(type, this) != null) {
-            throw new AssertionError(); // Should never happen.
-        }
-    }
-
-    /**
-     * Creates a mapping between a primitive type and its wrapper.
-     */
-    private Classes(final Class<?> primitive, final Class<?> wrapper,
-                    final boolean  isFloat,   final boolean  isInteger,
-                    final byte     size,      final byte     ordinal,
-                    final char     internal)
-    {
-        this.primitive = primitive;
-        this.wrapper   = wrapper;
-        this.isFloat   = isFloat;
-        this.isInteger = isInteger;
-        this.size      = size;
-        this.ordinal   = ordinal;
-        this.internal  = internal;
-        if (MAPPING.put(primitive, this) != null || MAPPING.put(wrapper, this) != null) {
-            throw new AssertionError(); // Should never happen.
-        }
+    private Classes() {
     }
 
     /**
@@ -150,7 +88,6 @@ public final class Classes extends Static {
      * @return The type of an array of the given element type augmented by the given
      *         number of dimensions (which may be negative), or {@code null}.
      *
-     * @category type
      * @since 3.03
      */
     public static Class<?> changeArrayDimension(Class<?> element, int dimension) {
@@ -163,7 +100,7 @@ public final class Classes extends Static {
                 do buffer.insert(0, '[');
                 while (--dimension != 0);
                 if (element.isPrimitive()) {
-                    buffer.append(MAPPING.get(element).internal);
+                    buffer.append(Numbers.getInternal(element));
                 } else if (element.isArray()) {
                     buffer.append(element.getName());
                 } else {
@@ -206,8 +143,6 @@ public final class Classes extends Static {
      * @param  field The field for which to obtain the parameterized type.
      * @return The upper bound of parameterized type, or {@code null} if the given field
      *         is not of a parameterized type.
-     *
-     * @category type
      */
     public static Class<?> boundOfParameterizedAttribute(final Field field) {
         return getActualTypeArgument(field.getGenericType());
@@ -227,8 +162,6 @@ public final class Classes extends Static {
      * @param  method The getter or setter method for which to obtain the parameterized type.
      * @return The upper bound of parameterized type, or {@code null} if the given method
      *         do not operate on an object of a parameterized type.
-     *
-     * @category type
      */
     public static Class<?> boundOfParameterizedAttribute(final Method method) {
         Class<?> c = getActualTypeArgument(method.getGenericReturnType());
@@ -245,8 +178,6 @@ public final class Classes extends Static {
      * Delegates to {@link ParameterizedType#getActualTypeArguments} and returns the result as a
      * {@link Class}, provided that every objects are of the expected classes and the result was
      * an array of length 1 (so there is no ambiguity). Otherwise returns {@code null}.
-     *
-     * @category type
      */
     private static Class<?> getActualTypeArgument(Type type) {
         if (type instanceof ParameterizedType) {
@@ -318,8 +249,6 @@ public final class Classes extends Static {
      * @param  <T> The type of the given object.
      * @param  object The object for which to get the class, or {@code null}.
      * @return The class of the given object, or {@code null} if the given object was null.
-     *
-     * @category type
      */
     @SuppressWarnings("unchecked")
     public static <T> Class<? extends T> getClass(final T object) {
@@ -337,7 +266,6 @@ public final class Classes extends Static {
      * @param  objects The collection of objects.
      * @return The set of classes of all objects in the given collection.
      *
-     * @category type
      * @since 3.00
      */
     public static <T> Set<Class<? extends T>> getClasses(final Collection<? extends T> objects) {
@@ -359,19 +287,19 @@ public final class Classes extends Static {
      * @return All implemented interfaces (not including the given {@code type} if it was an
      *         interface), or an empty set if none. Callers can freely modify the returned set.
      *
-     * @category type
      * @since 3.01
      */
-    public static Set<Class<?>> getAllInterfaces(final Class<?> type) {
+    public static Set<Class<?>> getAllInterfaces(Class<?> type) {
         final Set<Class<?>> interfaces = new LinkedHashSet<Class<?>>();
-        getAllInterfaces(type, interfaces);
+        while (type != null) {
+            getAllInterfaces(type, interfaces);
+            type = type.getSuperclass();
+        }
         return interfaces;
     }
 
     /**
      * Adds to the given collection every interfaces implemented by the given class or interface.
-     *
-     * @category type
      */
     private static void getAllInterfaces(final Class<?> type, final Set<Class<?>> interfaces) {
         for (final Class<?> i : type.getInterfaces()) {
@@ -420,7 +348,6 @@ public final class Classes extends Static {
      * @return The most specialized class, or {@code null} if the given collection does not contain
      *         at least one non-null element.
      *
-     * @category type
      * @since 3.01 (derived from 2.5)
      */
     public static Class<?> findSpecializedClass(final Collection<?> objects) {
@@ -450,8 +377,6 @@ public final class Classes extends Static {
      *
      * @param  types The collection where to search for a common parent.
      * @return The common parent, or {@code null} if the given collection is empty.
-     *
-     * @category type
      */
     private static Class<?> common(final Set<Class<?>> types) {
         final Iterator<Class<?>> it = types.iterator();
@@ -477,7 +402,6 @@ public final class Classes extends Static {
      * @return The most specific class common to all supplied objects, or {@code null} if the
      *         given collection does not contain at least one non-null element.
      *
-     * @category type
      * @since 3.01 (derived from 2.5)
      */
     public static Class<?> findCommonClass(final Collection<?> objects) {
@@ -498,7 +422,6 @@ public final class Classes extends Static {
      * @return The most specific class common to the supplied classes, or {@code null}
      *         if both {@code c1} and {@code c2} are null.
      *
-     * @category type
      * @since 3.01 (derived from 3.00)
      */
     public static Class<?> findCommonClass(Class<?> c1, Class<?> c2) {
@@ -528,7 +451,6 @@ public final class Classes extends Static {
      * @return The interfaces common to both classes, or an empty set if none.
      *         Callers can freely modify the returned set.
      *
-     * @category type
      * @since 3.01
      */
     public static Set<Class<?>> findCommonInterfaces(final Class<?> c1, final Class<?> c2) {
@@ -565,7 +487,6 @@ public final class Classes extends Static {
      * @return        {@code true} if both objects implement the same set of interfaces,
      *                considering only sub-interfaces of {@code base}.
      *
-     * @category type
      * @since 3.01 (derived from 2.5)
      */
     public static boolean implementSameInterfaces(final Class<?> object1, final Class<?> object2, final Class<?> base) {
@@ -617,11 +538,11 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #isInteger(Class)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static boolean isFloat(final Class<?> type) {
-        final Classes mapping = MAPPING.get(type);
-        return (mapping != null) && mapping.isFloat;
+        return Numbers.isFloat(type);
     }
 
     /**
@@ -634,28 +555,11 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #isFloat(Class)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static boolean isInteger(final Class<?> type) {
-        final Classes mapping = MAPPING.get(type);
-        return (mapping != null) && mapping.isInteger;
-    }
-
-    /**
-     * Returns {@code true} if the given {@code type} is an integer type. This method performs
-     * the same test than {@link #isPrimitiveInteger}, excluding {@link BigInteger}.
-     *
-     * @param  type The type to test (may be {@code null}).
-     * @return {@code true} if {@code type} is the primitive of wrapper class of
-     *         {@link Long}, {@link Integer}, {@link Short} or {@link Byte}.
-     *
-     * @see #isInteger(Class)
-     *
-     * @category number
-     */
-    private static boolean isPrimitiveInteger(final Class<?> type) {
-        final Classes mapping = MAPPING.get(type);
-        return (mapping != null) && mapping.isInteger && (mapping.internal != 'L');
+        return Numbers.isInteger(type);
     }
 
     /**
@@ -666,20 +570,11 @@ compare:for (int i=0; i<c1.length; i++) {
      * @return The number of bits, or 0 if {@code type} is null.
      * @throws IllegalArgumentException if the given type is unknown.
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static int primitiveBitCount(final Class<?> type) throws IllegalArgumentException {
-        final Classes mapping = MAPPING.get(type);
-        if (mapping != null) {
-            final int size = mapping.size;
-            if (size >= 0) {
-                return size;
-            }
-        }
-        if (type == null) {
-            return 0;
-        }
-        throw unknownType(type);
+        return Numbers.primitiveBitCount(type);
     }
 
     /**
@@ -691,11 +586,11 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #wrapperToPrimitive(Class)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Class<?> primitiveToWrapper(final Class<?> type) {
-        final Classes mapping = MAPPING.get(type);
-        return (mapping != null) ? mapping.wrapper : type;
+        return Numbers.primitiveToWrapper(type);
     }
 
     /**
@@ -707,11 +602,11 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #primitiveToWrapper(Class)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Class<?> wrapperToPrimitive(final Class<?> type) {
-        final Classes mapping = MAPPING.get(type);
-        return (mapping != null) ? mapping.primitive : type;
+        return Numbers.wrapperToPrimitive(type);
     }
 
     /**
@@ -730,13 +625,13 @@ compare:for (int i=0; i<c1.length; i++) {
      * @see #widestClass(Number, Number)
      * @see #finestClass(Number, Number)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Class<? extends Number> widestClass(final Number n1, final Number n2)
             throws IllegalArgumentException
     {
-        return widestClass((n1 != null) ? n1.getClass() : null,
-                           (n2 != null) ? n2.getClass() : null);
+        return Numbers.widestClass(n1, n2);
     }
 
     /**
@@ -763,23 +658,14 @@ compare:for (int i=0; i<c1.length; i++) {
      * @see #widestClass(Class, Class)
      * @see #finestClass(Number, Number)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Class<? extends Number> widestClass(final Class<? extends Number> c1,
                                                       final Class<? extends Number> c2)
             throws IllegalArgumentException
     {
-        final Classes m1 = MAPPING.get(c1);
-        if (m1 == null && c1 != null) {
-            throw unknownType(c1);
-        }
-        final Classes m2 = MAPPING.get(c2);
-        if (m2 == null && c2 != null) {
-            throw unknownType(c2);
-        }
-        if (c1 == null) return c2;
-        if (c2 == null) return c1;
-        return (m1.ordinal >= m2.ordinal) ? c1 : c2;
+        return Numbers.widestClass(c1, c2);
     }
 
     /**
@@ -795,13 +681,13 @@ compare:for (int i=0; i<c1.length; i++) {
      * @see #finestClass(Class, Class)
      * @see #widestClass(Class, Class)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Class<? extends Number> finestClass(final Number n1, final Number n2)
             throws IllegalArgumentException
     {
-        return finestClass((n1 != null) ? n1.getClass() : null,
-                           (n2 != null) ? n2.getClass() : null);
+        return Numbers.finestClass(n1, n2);
     }
 
     /**
@@ -828,23 +714,14 @@ compare:for (int i=0; i<c1.length; i++) {
      * @see #finestClass(Number, Number)
      * @see #widestClass(Class, Class)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Class<? extends Number> finestClass(final Class<? extends Number> c1,
                                                       final Class<? extends Number> c2)
             throws IllegalArgumentException
     {
-        final Classes m1 = MAPPING.get(c1);
-        if (m1 == null && c1 != null) {
-            throw unknownType(c1);
-        }
-        final Classes m2 = MAPPING.get(c2);
-        if (m2 == null && c2 != null) {
-            throw unknownType(c2);
-        }
-        if (c1 == null) return c2;
-        if (c2 == null) return c1;
-        return (m1.ordinal < m2.ordinal) ? c1 : c2;
+        return Numbers.finestClass(c1, c2);
     }
 
     /**
@@ -857,18 +734,13 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #finestNumber(Number)
      *
-     * @category number
      * @since 3.06
+     *
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Class<? extends Number> finestClass(final Number value) {
-        if (value == null) {
-            return null;
-        }
-        if (isPrimitiveInteger(value.getClass())) {
-            return finestClass(value.longValue());
-        } else {
-            return finestClass(value.doubleValue());
-        }
+        return Numbers.finestClass(value);
     }
 
     /**
@@ -880,18 +752,11 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #finestNumber(double)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Class<? extends Number> finestClass(final double value) {
-        final long lg = (long) value;
-        if (value == lg) {
-            return finestClass(lg);
-        }
-        final float fv = (float) value;
-        if (Double.doubleToRawLongBits(value) == Double.doubleToRawLongBits(fv)) {
-            return Float.class;
-        }
-        return Double.class;
+        return Numbers.finestClass(value);
     }
 
     /**
@@ -913,15 +778,13 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #finestNumber(long)
      *
-     * @category number
      * @since 3.00
+     *
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Class<? extends Number> finestClass(final long value) {
-        // Tests MAX_VALUE before MIN_VALUE because it is more likely to fail.
-        if (value <= Byte   .MAX_VALUE  &&  value >= Byte   .MIN_VALUE) return Byte.class;
-        if (value <= Short  .MAX_VALUE  &&  value >= Short  .MIN_VALUE) return Short.class;
-        if (value <= Integer.MAX_VALUE  &&  value >= Integer.MIN_VALUE) return Integer.class;
-        return Long.class;
+        return Numbers.finestClass(value);
     }
 
     /**
@@ -935,21 +798,13 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #finestClass(Number)
      *
-     * @category number
      * @since 3.06
+     *
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Number finestNumber(final Number value) {
-        if (value == null) {
-            return null;
-        }
-        final Number candidate;
-        if (isPrimitiveInteger(value.getClass())) {
-            candidate = finestNumber(value.longValue());
-        } else {
-            candidate = finestNumber(value.doubleValue());
-        }
-        // Keep the existing instance if possible.
-        return value.equals(candidate) ? value : candidate;
+        return Numbers.finestNumber(value);
     }
 
     /**
@@ -961,18 +816,11 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #finestClass(double)
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Number finestNumber(final double value) {
-        final long lg = (long) value;
-        if (value == lg) {
-            return finestNumber(lg);
-        }
-        final float fv = (float) value;
-        if (Double.doubleToRawLongBits(value) == Double.doubleToRawLongBits(fv)) {
-            return Float.valueOf(fv);
-        }
-        return Double.valueOf(value);
+        return Numbers.finestNumber(value);
     }
 
     /**
@@ -994,15 +842,13 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #finestClass(long)
      *
-     * @category number
      * @since 3.00
+     *
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Number finestNumber(final long value) {
-        // Tests MAX_VALUE before MIN_VALUE because it is more likely to fail.
-        if (value <= Byte   .MAX_VALUE  &&  value >= Byte   .MIN_VALUE) return Byte   .valueOf((byte)  value);
-        if (value <= Short  .MAX_VALUE  &&  value >= Short  .MIN_VALUE) return Short  .valueOf((short) value);
-        if (value <= Integer.MAX_VALUE  &&  value >= Integer.MIN_VALUE) return Integer.valueOf((int)   value);
-        return Long.valueOf(value);
+        return Numbers.finestNumber(value);
     }
 
     /**
@@ -1016,19 +862,13 @@ compare:for (int i=0; i<c1.length; i++) {
      * @see #finestNumber(double)
      * @see #finestNumber(long)
      *
-     * @category number
      * @since 3.00
+     *
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static Number finestNumber(String value) throws NumberFormatException {
-        value = value.trim();
-        final int length = value.length();
-        for (int i=0; i<length; i++) {
-            final char c = value.charAt(i);
-            if (c == '.' || c == 'e' || c == 'E') {
-                return finestNumber(Double.parseDouble(value));
-            }
-        }
-        return finestNumber(Long.parseLong(value));
+        return Numbers.finestNumber(value);
     }
 
     /**
@@ -1054,22 +894,14 @@ compare:for (int i=0; i<c1.length; i++) {
      * @return The number casted to the given type.
      * @throws IllegalArgumentException If the given type is unknown.
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static <N extends Number> N cast(final Number n, final Class<N> c)
             throws IllegalArgumentException
     {
-        if (n == null || n.getClass() == c) {
-            return (N) n;
-        }
-        if (c == Byte   .class) return (N) Byte   .valueOf(n.  byteValue());
-        if (c == Short  .class) return (N) Short  .valueOf(n. shortValue());
-        if (c == Integer.class) return (N) Integer.valueOf(n.   intValue());
-        if (c == Long   .class) return (N) Long   .valueOf(n.  longValue());
-        if (c == Float  .class) return (N) Float  .valueOf(n. floatValue());
-        if (c == Double .class) return (N) Double .valueOf(n.doubleValue());
-        throw unknownType(c);
+        return Numbers.cast(n, c);
     }
 
     /**
@@ -1099,36 +931,14 @@ compare:for (int i=0; i<c1.length; i++) {
      * @throws NumberFormatException if {@code type} is a subclass of {@link Number} and the
      *         string value is not parseable as a number of the specified type.
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static <T> T valueOf(final Class<T> type, final String value)
             throws IllegalArgumentException, NumberFormatException
     {
-        if (value == null) {
-            return null;
-        }
-        if (type == Double .class) return (T) Double .valueOf(value);
-        if (type == Float  .class) return (T) Float  .valueOf(value);
-        if (type == Long   .class) return (T) Long   .valueOf(value);
-        if (type == Integer.class) return (T) Integer.valueOf(value);
-        if (type == Short  .class) return (T) Short  .valueOf(value);
-        if (type == Byte   .class) return (T) Byte   .valueOf(value);
-        if (type == Boolean.class) return (T) Boolean.valueOf(value);
-        if (type == Character.class) {
-            /*
-             * If the string is empty, returns 0 which means "end of string" in C/C++
-             * and NULL in Unicode standard. If non-empty, take only the first char.
-             * This is somewhat consistent with Boolean.valueOf(...) which is quite
-             * lenient about the parsing as well, and throwing a NumberFormatException
-             * for those would not be appropriate.
-             */
-            return (T) Character.valueOf(value.isEmpty() ? 0 : value.charAt(0));
-        }
-        if (type == String.class) {
-            return (T) value;
-        }
-        throw unknownType(type);
+        return Numbers.valueOf(type, value);
     }
 
     /**
@@ -1139,17 +949,11 @@ compare:for (int i=0; i<c1.length; i++) {
      * @param type A type (usually either a primitive type or its wrapper).
      * @return The constant for the given type, or {@link #OTHER} if unknown.
      *
-     * @category number
+     * @deprecated Moved to the {@link Numbers} class.
      */
+    @Deprecated
     public static byte getEnumConstant(final Class<?> type) {
-        final Classes mapping = MAPPING.get(type);
-        if (mapping != null) {
-            // Filter out the non-public enum for BigDecimal and BigInteger.
-            if (mapping.size >= 0) {
-                return mapping.ordinal;
-            }
-        }
-        return OTHER;
+        return Numbers.getEnumConstant(type);
     }
 
     /**
@@ -1170,8 +974,6 @@ compare:for (int i=0; i<c1.length; i++) {
      *
      * @see #getShortClassName(Object)
      * @see Class#getSimpleName()
-     *
-     * @category type
      */
     public static String getShortName(Class<?> classe) {
         if (classe == null) {
@@ -1197,8 +999,6 @@ compare:for (int i=0; i<c1.length; i++) {
      * @return A short class name for the specified object.
      *
      * @see #getShortName(Class)
-     *
-     * @category type
      */
     public static String getShortClassName(final Object object) {
         return getShortName(getClass(object));
@@ -1236,12 +1036,5 @@ compare:for (int i=0; i<c1.length; i++) {
             }
         }
         return false;
-    }
-
-    /**
-     * Returns an exception for an unknown type.
-     */
-    private static IllegalArgumentException unknownType(final Class<?> type) {
-        return new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
     }
 }

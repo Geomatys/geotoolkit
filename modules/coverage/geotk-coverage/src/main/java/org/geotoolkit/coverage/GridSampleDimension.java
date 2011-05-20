@@ -38,15 +38,16 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.opengis.referencing.operation.TransformException;
 import org.opengis.util.InternationalString;
 
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.XArrays;
+import org.geotoolkit.util.Utilities;
+import org.geotoolkit.util.NumberRange;
+import org.geotoolkit.util.SimpleInternationalString;
+import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.internal.image.ColorUtilities;
 import org.geotoolkit.referencing.operation.transform.LinearTransform1D;
-import org.geotoolkit.util.SimpleInternationalString;
-import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.Utilities;
 
 import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
 
@@ -468,9 +469,9 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                     min = max;
                     classe = max.getClass();
                 } else {
-                    classe = Classes.widestClass(min, max);
-                    min    = Classes.cast(min, classe);
-                    max    = Classes.cast(max, classe);
+                    classe = Numbers.widestClass(min, max);
+                    min    = Numbers.cast(min, classe);
+                    max    = Numbers.cast(max, classe);
                 }
                 @SuppressWarnings({"unchecked","rawtypes"})
                 final NumberRange<?> range = new NumberRange(classe, min, max);
@@ -556,9 +557,9 @@ public class GridSampleDimension implements SampleDimension, Serializable {
             if (maximum - minimum > (minIncluded && maxIncluded ? 0 : 1)) {
                 Number min = TypeMap.wrapSample(minimum, type, false);
                 Number max = TypeMap.wrapSample(maximum, type, false);
-                final Class<? extends Number> classe = Classes.widestClass(min, max);
-                min = Classes.cast(min, classe);
-                max = Classes.cast(max, classe);
+                final Class<? extends Number> classe = Numbers.widestClass(min, max);
+                min = Numbers.cast(min, classe);
+                max = Numbers.cast(max, classe);
                 @SuppressWarnings({"unchecked","rawtypes"})
                 final NumberRange<?> range = new NumberRange(
                         classe, min, minIncluded, max, maxIncluded);
@@ -923,7 +924,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
                         int lower = (int) min;
                         int upper = (int) max;
                         if (lower!=min || upper!=max ||
-                            !Classes.isInteger(category.getRange().getElementClass()))
+                            !Numbers.isInteger(category.getRange().getElementClass()))
                         {
                             throw new IllegalStateException(Errors.format(
                                     Errors.Keys.NON_INTEGER_CATEGORY));

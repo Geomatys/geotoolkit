@@ -28,7 +28,7 @@ import org.opengis.referencing.operation.MathTransform1D;
 
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.NumberRange;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.coverage.Category;
 import org.geotoolkit.coverage.grid.ViewType;
@@ -206,7 +206,7 @@ final class FormatTable extends SingletonTable<FormatEntry> {
     private static NumberRange<?> getRange(final Category category) {
         NumberRange<?> range = category.geophysics(false).getRange();
         final Class<?> type = range.getElementClass();
-        if (Classes.isInteger(type)) {
+        if (Numbers.isInteger(type)) {
             if (!range.isMaxIncluded() || !range.isMinIncluded() || !Integer.class.equals(type)) {
                 range = new NumberRange<Integer>(Integer.class,
                         (int) Math.floor(range.getMinimum(true)), true,

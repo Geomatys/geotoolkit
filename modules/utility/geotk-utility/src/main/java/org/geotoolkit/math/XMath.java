@@ -21,7 +21,7 @@ import java.util.Arrays;
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.lang.Workaround;
 import org.geotoolkit.util.XArrays;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.resources.Errors;
 
 
@@ -339,7 +339,7 @@ public final class XMath extends Static {
     public static double adjacentForType(final Class<? extends Number> type, double value, int amount)
             throws IllegalArgumentException
     {
-        if (Classes.isInteger(type)) {
+        if (Numbers.isInteger(type)) {
             if (amount == 0) {
                 return Math.rint(value);
             } else if (amount > 0) {

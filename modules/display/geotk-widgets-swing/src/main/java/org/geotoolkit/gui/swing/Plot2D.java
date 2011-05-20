@@ -57,7 +57,7 @@ import org.geotoolkit.display.axis.Axis2D;
 import org.geotoolkit.display.axis.AbstractGraduation;
 import org.geotoolkit.display.shape.TransformedShape;
 import org.geotoolkit.util.collection.UnmodifiableArrayList;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.logging.Logging;
 
 import static java.lang.Math.hypot;
@@ -67,7 +67,7 @@ import static java.lang.Math.hypot;
  * Displays two axes and an arbitrary amount of series with zoom capability.
  * Axes may have arbitrary orientation (they don't need to be perpendicular).
  * It is possible for example to create a plot with a vertical <var>x</var>
- * axis increasing downward, like the ones used in oceanography for ploting
+ * axis increasing downward, like the ones used in oceanography for plotting
  * the data of <cite>Conductivity, Temperature, Depth</cite> (CTD) Sensors.
  * Axes can also be oblique for simulating 3D effects.
  * <p>
@@ -1040,9 +1040,9 @@ public class Plot2D extends ZoomPane {
              * Creates a Path2D of Float type if it is sufficient
              * for the provided data, or of Double tpe otherwise.
              */
-            final Class<?> type = Classes.widestClass(
-                    Classes.primitiveToWrapper(x.getElementType()).asSubclass(Number.class),
-                    Classes.primitiveToWrapper(y.getElementType()).asSubclass(Number.class));
+            final Class<?> type = Numbers.widestClass(
+                    Numbers.primitiveToWrapper(x.getElementType()).asSubclass(Number.class),
+                    Numbers.primitiveToWrapper(y.getElementType()).asSubclass(Number.class));
             if (Double.class.equals(type) || Long.class.equals(type)) {
                 path = new Path2D.Double();
             } else {

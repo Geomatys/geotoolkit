@@ -31,7 +31,6 @@ import org.opengis.util.InternationalString;
 import org.geotoolkit.io.TableWriter;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.Cloneable;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.resources.Descriptions;
 import org.geotoolkit.internal.io.IOUtilities;
 
@@ -39,6 +38,7 @@ import static java.lang.Math.*;
 import static java.lang.Double.NaN;
 import static java.lang.Double.isNaN;
 import static java.lang.Double.doubleToLongBits;
+import static org.geotoolkit.util.converter.Numbers.isInteger;
 
 
 /**
@@ -443,7 +443,7 @@ public class Statistics implements Cloneable, Serializable {
         final String[] values = new String[6];
         for (int i=0; i<values.length; i++) {
             final Number value = value(i);
-            final NumberFormat format = Classes.isInteger(value.getClass()) ? countFormat : valueFormat;
+            final NumberFormat format = isInteger(value.getClass()) ? countFormat : valueFormat;
             values[i] = format.format(value(i));
         }
         String text = toString(locale, values);
@@ -557,7 +557,7 @@ public class Statistics implements Cloneable, Serializable {
                     buffer.append('\t');
                 }
                 final Number value = stats.value(j);
-                final NumberFormat format = Classes.isInteger(value.getClass()) ? countFormat : formats[i];
+                final NumberFormat format = isInteger(value.getClass()) ? countFormat : formats[i];
                 format.format(value, buffer, dummy);
             }
             rows[j] = buffer.toString();

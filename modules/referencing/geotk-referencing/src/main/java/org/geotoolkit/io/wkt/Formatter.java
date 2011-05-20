@@ -51,7 +51,7 @@ import org.geotoolkit.math.XMath;
 import org.geotoolkit.lang.Visitor;
 import org.geotoolkit.measure.Units;
 import org.geotoolkit.util.Strings;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.NullArgumentException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.Errors;
@@ -661,7 +661,7 @@ public class Formatter {
      * Formats an arbitrary number.
      */
     private void format(final Number number) {
-        if (Classes.isInteger(number.getClass())) {
+        if (Numbers.isInteger(number.getClass())) {
             format(number.longValue());
         } else {
             format(number.doubleValue());

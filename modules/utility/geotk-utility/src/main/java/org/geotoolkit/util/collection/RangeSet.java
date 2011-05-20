@@ -42,7 +42,8 @@ import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.resources.Errors;
 
-import static org.geotoolkit.util.converter.Classes.*;
+import static org.geotoolkit.util.converter.Numbers.*;
+import static org.geotoolkit.util.converter.Classes.getShortClassName;
 import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
 
 

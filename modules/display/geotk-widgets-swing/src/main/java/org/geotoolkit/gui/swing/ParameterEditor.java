@@ -57,6 +57,7 @@ import org.geotoolkit.internal.image.Adapters;
 import org.geotoolkit.resources.Vocabulary;
 
 import static java.awt.GridBagConstraints.*;
+import static org.geotoolkit.util.converter.Numbers.*;
 
 
 /**
@@ -703,11 +704,11 @@ public class ParameterEditor extends JComponent {
                     classe = classe.getComponentType();
                 }
                 type = Classes.getShortName(classe);
-                classe = Classes.primitiveToWrapper(classe);
+                classe = primitiveToWrapper(classe);
                 boolean isInteger = false;
-                if (Classes.isFloat(classe) || (isInteger = Classes.isInteger(classe)) == true) {
+                if (isFloat(classe) || (isInteger = isInteger(classe)) == true) {
                     type = Vocabulary.format(isInteger ? Vocabulary.Keys.SIGNED_INTEGER_$1 :
-                            Vocabulary.Keys.REAL_NUMBER_$1, Classes.primitiveBitCount(classe)) +
+                            Vocabulary.Keys.REAL_NUMBER_$1, primitiveBitCount(classe)) +
                             " (" + type + ')';
                 }
             }
@@ -854,7 +855,7 @@ public class ParameterEditor extends JComponent {
         public Class<?> getColumnClass(final int index) {
             if (index == 0) return String.class; // Row headers.
             if (mask  != 0) return Integer.class; // Type used for unsigned values.
-            return Classes.primitiveToWrapper(table[index-1].getClass().getComponentType());
+            return primitiveToWrapper(table[index-1].getClass().getComponentType());
         }
 
         /**
@@ -968,7 +969,7 @@ public class ParameterEditor extends JComponent {
          */
         @Override
         public Class<?> getColumnClass(final int index) {
-            return Classes.primitiveToWrapper(matrix.getClass().getComponentType().getComponentType());
+            return primitiveToWrapper(matrix.getClass().getComponentType().getComponentType());
         }
 
         /**

@@ -71,6 +71,7 @@ import org.opengis.coverage.grid.RectifiedGrid;
 import org.geotoolkit.internal.CodeLists;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.metadata.KeyNamePolicy;
 import org.geotoolkit.metadata.NullValuePolicy;
 import org.geotoolkit.metadata.TypeValuePolicy;
@@ -884,9 +885,9 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * @return The {@code DATATYPE_*} constant for the given class.
      */
     private static int typeOf(Class<?> type) {
-        type = Classes.primitiveToWrapper(type);
+        type = Numbers.primitiveToWrapper(type);
         if (Number.class.isAssignableFrom(type)) {
-            if (Classes.isInteger(type)) {
+            if (Numbers.isInteger(type)) {
                 return IIOMetadataFormat.DATATYPE_INTEGER;
             }
             if (Float.class.isAssignableFrom(type)) {

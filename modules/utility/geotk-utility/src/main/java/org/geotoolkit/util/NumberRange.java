@@ -20,12 +20,10 @@ package org.geotoolkit.util;
 import net.jcip.annotations.Immutable;
 import org.geotoolkit.lang.ValueRange;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
 
+import static org.geotoolkit.util.converter.Numbers.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureNonNull;
 import static org.geotoolkit.util.ArgumentChecks.ensureCanCast;
-import static org.geotoolkit.util.converter.Classes.finestClass;
-import static org.geotoolkit.util.converter.Classes.widestClass;
 
 
 /**
@@ -281,11 +279,11 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     public static NumberRange<?> createBestFit(final Number minimum, final boolean isMinIncluded,
                                                final Number maximum, final boolean isMaxIncluded)
     {
-        final Class<? extends Number> type = Classes.widestClass(
-                Classes.finestClass(minimum), Classes.finestClass(maximum));
+        final Class<? extends Number> type = widestClass(
+                finestClass(minimum), finestClass(maximum));
         return (type == null) ? null :
-            new NumberRange(type, Classes.cast(minimum, type), isMinIncluded,
-                                  Classes.cast(maximum, type), isMaxIncluded);
+            new NumberRange(type, cast(minimum, type), isMinIncluded,
+                                  cast(maximum, type), isMaxIncluded);
     }
 
     /**
@@ -327,8 +325,8 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
      * @since 3.04
      */
     public NumberRange(final Class<T> type, final ValueRange range) {
-        super(type, Classes.cast(valueOf(range.minimum(), Double.NEGATIVE_INFINITY), type), range.isMinIncluded(),
-                    Classes.cast(valueOf(range.maximum(), Double.POSITIVE_INFINITY), type), range.isMaxIncluded());
+        super(type, cast(valueOf(range.minimum(), Double.NEGATIVE_INFINITY), type), range.isMinIncluded(),
+                    cast(valueOf(range.maximum(), Double.POSITIVE_INFINITY), type), range.isMaxIncluded());
     }
 
     /**
@@ -343,8 +341,8 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     NumberRange(final Class<T> type, final Range<? extends Number> range)
             throws IllegalArgumentException
     {
-        this(type, Classes.cast(range.getMinValue(), type), range.isMinIncluded(),
-                   Classes.cast(range.getMaxValue(), type), range.isMaxIncluded());
+        this(type, cast(range.getMinValue(), type), range.isMinIncluded(),
+                   cast(range.getMaxValue(), type), range.isMaxIncluded());
     }
 
     /**
@@ -522,7 +520,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
          */
         Number number = (Number) value;
         final Class<? extends Number> type = widestClass(elementClass, number.getClass());
-        number = Classes.cast(number, type);
+        number = cast(number, type);
         /*
          * The 'type' bounds should actually be <? extends Number & Comparable> since the method
          * signature expect a Comparable and we have additionally casted to a Number.  However I
@@ -681,7 +679,7 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
         if (!up) {
             value = -value;
         }
-        if (Classes.isInteger(type)) {
+        if (isInteger(type)) {
             value++;
         } else if (type.equals(Float.class)) {
             value = Math.nextUp((float) value);

@@ -23,7 +23,7 @@ import java.util.AbstractList;
 import java.util.RandomAccess;
 
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.collection.WeakHashSet;
 import org.geotoolkit.util.collection.CheckedCollection;
 
@@ -96,7 +96,7 @@ public abstract class Vector extends AbstractList<Number> implements CheckedColl
         final Class<?> type = array.getClass();
         Class<?> component = type.getComponentType();
         if (component != null) {
-            component = Classes.primitiveToWrapper(component);
+            component = Numbers.primitiveToWrapper(component);
             if (Number.class.isAssignableFrom(component)) {
                 return new ArrayVector(array);
             }

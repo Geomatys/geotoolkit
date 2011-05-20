@@ -40,6 +40,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.collection.XCollections;
 import org.geotoolkit.util.collection.CheckedCollection;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.converter.ObjectConverter;
 import org.geotoolkit.util.converter.ConverterRegistry;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
@@ -269,7 +270,7 @@ final class PropertyAccessor {
             if (Collection.class.isAssignableFrom(elementType)) {
                 elementType = Classes.boundOfParameterizedAttribute(getter);
             }
-            elementTypes[i] = Classes.primitiveToWrapper(elementType);
+            elementTypes[i] = Numbers.primitiveToWrapper(elementType);
         }
         this.setters = setters;
     }
@@ -805,7 +806,7 @@ final class PropertyAccessor {
                     // cause an exception later. The message should be appropriate.
                 }
                 // Getter type (targetType) shall be the same than the setter type (elementType).
-                assert elementType == Classes.primitiveToWrapper(targetType) : elementType;
+                assert elementType == Numbers.primitiveToWrapper(targetType) : elementType;
                 targetType = elementType; // Ensure that we use primitive wrapper.
             } else {
                 /*

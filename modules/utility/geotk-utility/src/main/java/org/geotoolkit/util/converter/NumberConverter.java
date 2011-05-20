@@ -383,7 +383,7 @@ abstract class NumberConverter<T> extends SimpleConverter<Number,T> implements S
             if (source instanceof java.math.BigInteger) {
                 return new java.math.BigDecimal((java.math.BigInteger) source);
             }
-            if (Classes.isInteger(source.getClass())) {
+            if (Numbers.isInteger(source.getClass())) {
                 return java.math.BigDecimal.valueOf(source.longValue());
             }
             return java.math.BigDecimal.valueOf(source.doubleValue());

@@ -36,6 +36,7 @@ import org.opengis.util.InternationalString;
 
 import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.gui.swing.tree.NamedTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
@@ -509,7 +510,7 @@ final class PropertyTree {
             numberFormat.setMinimumFractionDigits(0);
         }
         int precision = 0;
-        if (!Classes.isInteger(value.getClass())) {
+        if (!Numbers.isInteger(value.getClass())) {
             precision = PRECISION;
             final double v = Math.abs(value.doubleValue());
             if (v > 0) {

@@ -101,7 +101,7 @@ abstract class StringConverter<T> extends SimpleConverter<String,T> implements S
             }
             source = source.trim();
             try {
-                return Classes.finestNumber(source);
+                return Numbers.finestNumber(source);
             } catch (NumberFormatException e) {
                 throw new NonconvertibleObjectException(e);
             }

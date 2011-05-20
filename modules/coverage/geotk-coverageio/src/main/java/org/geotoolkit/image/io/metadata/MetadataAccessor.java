@@ -55,6 +55,7 @@ import org.geotoolkit.util.Strings;
 import org.geotoolkit.util.Localized;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.util.UnsupportedImplementationException;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.resources.IndexedResourceBundle;
@@ -930,11 +931,11 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
             if (String.class.isAssignableFrom(type)) {
                 value = value.toString();
             } else if (Number.class.isAssignableFrom(type)) {
-                value = Classes.valueOf(type, value.toString());
+                value = Numbers.valueOf(type, value.toString());
             } else if (Date.class.isAssignableFrom(type)) {
                 value = XmlUtilities.parseDateTime(value.toString());
             } else if (type.isArray()) {
-                final Class<?> component = Classes.primitiveToWrapper(type.getComponentType());
+                final Class<?> component = Numbers.primitiveToWrapper(type.getComponentType());
                 if (Double.class.equals(component)) {
                     value = parseSequence(value.toString(), Double.TYPE, false, null);
                 } else if (Integer.class.equals(component)) {
@@ -1064,7 +1065,7 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
      */
     private static boolean isFormattable(final Class<?> type) {
         return (type != null) && (CharSequence.class.isAssignableFrom(type) ||
-               Number.class.isAssignableFrom(Classes.primitiveToWrapper(type)));
+               Number.class.isAssignableFrom(Numbers.primitiveToWrapper(type)));
     }
 
     /**
@@ -1420,13 +1421,13 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
         } else {
             values = new ArrayList<Object>();
         }
-        final Class<?> wrapperType = Classes.primitiveToWrapper(type);
+        final Class<?> wrapperType = Numbers.primitiveToWrapper(type);
         final StringTokenizer tokens = new StringTokenizer(sequence);
         while (tokens.hasMoreTokens()) {
             final String token = tokens.nextToken().replace(NBSP, ' ').trim();
             final Object value;
             try {
-                value = Classes.valueOf(wrapperType, token);
+                value = Numbers.valueOf(wrapperType, token);
             } catch (NumberFormatException e) {
                 if (caller == null) {
                     throw e;

@@ -37,11 +37,12 @@ import org.geotoolkit.util.Range;
 import org.geotoolkit.util.DateRange;
 import org.geotoolkit.util.NumberRange;
 import org.geotoolkit.util.MeasurementRange;
-import org.geotoolkit.util.converter.Classes;
 import org.geotoolkit.util.converter.AnyConverter;
 import org.geotoolkit.util.converter.NonconvertibleObjectException;
 import org.geotoolkit.internal.StringUtilities;
 import org.geotoolkit.resources.Errors;
+
+import static org.geotoolkit.util.converter.Numbers.*;
 
 
 /**
@@ -685,9 +686,9 @@ public class RangeFormat extends Format {
             Number min = (Number) minValue;
             Number max = (Number) maxValue;
             if (Number.class.equals(type)) {
-                type = Classes.widestClass(Classes.finestClass(min), Classes.finestClass(max));
-                min  = Classes.cast(min, type);
-                max  = Classes.cast(max, type);
+                type = widestClass(finestClass(min), finestClass(max));
+                min  = cast(min, type);
+                max  = cast(max, type);
             }
             if (min.doubleValue() == Double.NEGATIVE_INFINITY) min = null;
             if (max.doubleValue() == Double.POSITIVE_INFINITY) max = null;

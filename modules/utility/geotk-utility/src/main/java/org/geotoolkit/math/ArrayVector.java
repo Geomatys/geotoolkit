@@ -21,6 +21,7 @@ import java.io.Serializable;
 import java.lang.reflect.Array;
 import org.geotoolkit.resources.Errors;
 import org.geotoolkit.util.converter.Classes;
+import org.geotoolkit.util.converter.Numbers;
 
 
 /**
@@ -59,7 +60,7 @@ final class ArrayVector extends Vector implements Serializable {
      */
     @Override
     public Class<? extends Number> getElementType() {
-        return Classes.primitiveToWrapper(array.getClass().getComponentType()).asSubclass(Number.class);
+        return Numbers.primitiveToWrapper(array.getClass().getComponentType()).asSubclass(Number.class);
     }
 
     /**

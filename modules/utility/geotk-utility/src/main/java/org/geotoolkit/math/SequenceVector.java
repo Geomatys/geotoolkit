@@ -19,8 +19,8 @@ package org.geotoolkit.math;
 
 import java.io.Serializable;
 import org.geotoolkit.resources.Errors;
-import org.geotoolkit.util.converter.Classes;
 
+import static org.geotoolkit.util.converter.Numbers.*;
 import static org.geotoolkit.util.ArgumentChecks.ensureValidIndex;
 
 
@@ -82,9 +82,9 @@ final class SequenceVector extends Vector implements Serializable {
         if (Double.isNaN(first) || Double.isNaN(increment)) {
             type = null;
         } else {
-            Class<? extends Number> t = Classes.finestClass(first);
-            t = Classes.widestClass(t,  Classes.finestClass(first + increment));
-            t = Classes.widestClass(t,  Classes.finestClass(first + increment*(length-1)));
+            Class<? extends Number> t = finestClass(first);
+            t = widestClass(t,  finestClass(first + increment));
+            t = widestClass(t,  finestClass(first + increment*(length-1)));
             type = t;
         }
     }

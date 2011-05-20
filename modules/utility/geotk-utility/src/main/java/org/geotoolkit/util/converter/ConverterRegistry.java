@@ -507,7 +507,7 @@ public class ConverterRegistry {
                     @SuppressWarnings({"unchecked","rawtypes"}) final Class<? extends Number> n1 = (Class) candidate;
                     @SuppressWarnings({"unchecked","rawtypes"}) final Class<? extends Number> n2 = (Class) best;
                     try {
-                        best = Classes.widestClass(n1, n2);
+                        best = Numbers.widestClass(n1, n2);
                         positionFirst = p;
                         continue;
                     } catch (IllegalArgumentException e) {
