@@ -27,6 +27,12 @@ import java.util.Collection;
 import java.util.NavigableSet;
 import java.util.RandomAccess;
 
+import org.opengis.referencing.IdentifiedObject;
+import org.opengis.referencing.crs.SingleCRS;
+import org.opengis.referencing.crs.GeographicCRS;
+import org.opengis.referencing.operation.Transformation;
+import org.opengis.referencing.operation.CoordinateOperation;
+
 import org.junit.*;
 import static org.junit.Assert.*;
 
@@ -35,7 +41,7 @@ import static org.junit.Assert.*;
  * Tests the {@link Classes} static methods.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.5
  */
@@ -76,6 +82,27 @@ public final class ClassesTest {
         assertTrue(interfaces.contains(Serializable.class));
         assertTrue(interfaces.contains(Cloneable   .class));
     }
+
+    /**
+     * Tests {@link Classes#getLeafInterfaces}.
+     *
+     * @since 3.18
+     */
+    @Test
+    public void testGetLeafInterfaces() {
+        assertArrayEquals("TreeSet class", new Class<?>[] {NavigableSet.class},
+                Classes.getLeafInterfaces(TreeSet.class, Collection.class));
+
+        assertArrayEquals("Convolved class", new Class<?>[] {Transformation.class, GeographicCRS.class},
+                Classes.getLeafInterfaces(T3.class, IdentifiedObject.class));
+    }
+
+    /**
+     * Dummy class for {@link #testGetAllInterfaces()}.
+     */
+    private static abstract class T1 implements GeographicCRS {}
+    private static abstract class T2 extends T1 implements SingleCRS, CoordinateOperation {}
+    private static abstract class T3 extends T2 implements Transformation {}
 
     /**
      * Tests {@link Classes#getInterface}.

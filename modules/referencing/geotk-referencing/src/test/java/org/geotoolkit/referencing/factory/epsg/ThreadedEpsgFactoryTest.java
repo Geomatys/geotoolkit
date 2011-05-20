@@ -898,14 +898,18 @@ public final class ThreadedEpsgFactoryTest extends EpsgFactoryTestBase {
         final String      wkt     = epsgCrs.toWKT();
         final AbstractCRS wktCrs  = (AbstractCRS) CRS.parseWKT(wkt);
 
+        assertTrue   ("equals ignore metadata",  epsgCrs.equals(wktCrs, ComparisonMode.APPROXIMATIVE));
         assertTrue   ("equals ignore metadata",  epsgCrs.equals(wktCrs, ComparisonMode.IGNORE_METADATA));
+        assertFalse  ("equals compare metadata", epsgCrs.equals(wktCrs, ComparisonMode.BY_CONTRACT));
         assertFalse  ("equals compare metadata", epsgCrs.equals(wktCrs, ComparisonMode.STRICT));
         assertFalse  ("equals",   epsgCrs.equals(wktCrs));
         assertNotSame("identity", epsgCrs, wktCrs);
 
         // Parsing the same thing twice?
         final AbstractCRS wktCrs2 = (AbstractCRS) CRS.parseWKT(wkt);
+        assertTrue  ("equals ignore metadata",  wktCrs.equals(wktCrs2, ComparisonMode.APPROXIMATIVE));
         assertTrue  ("equals ignore metadata",  wktCrs.equals(wktCrs2, ComparisonMode.IGNORE_METADATA));
+        assertTrue  ("equals compare metadata", wktCrs.equals(wktCrs2, ComparisonMode.BY_CONTRACT));
         assertTrue  ("equals compare metadata", wktCrs.equals(wktCrs2, ComparisonMode.STRICT));
         assertEquals("equals",   wktCrs, wktCrs2);
         assertSame  ("identity", wktCrs, wktCrs2);

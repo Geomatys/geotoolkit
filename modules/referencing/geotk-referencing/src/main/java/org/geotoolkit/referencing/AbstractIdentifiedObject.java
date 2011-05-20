@@ -861,8 +861,7 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
              * that ignore metadata is okay only if the implementation note described in the
              * 'computeHashCode()' javadoc hold (metadata not used in hash code computation).
              */
-            // TODO: disabled for now
-            if (false && mode != ComparisonMode.APPROXIMATIVE && hashCode() != object.hashCode()) {
+            if (mode != ComparisonMode.APPROXIMATIVE && hashCode() != object.hashCode()) {
                 return false;
             }
         } else if (mode == ComparisonMode.STRICT || // Same classes was required for this mode.
@@ -1044,6 +1043,14 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
      */
     protected int computeHashCode() {
         // Subclasses need to overrides this!!!!
-        return Classes.getInterface(getClass(), IdentifiedObject.class).hashCode() ^ (int) serialVersionUID;
+        int code = (int) serialVersionUID;
+        final Class<?>[] types = Classes.getLeafInterfaces(getClass(), IdentifiedObject.class);
+        if (types != null) {
+            for (final Class<?> type : types) {
+                // Use a plain addition in order to be insensitive to array element order.
+                code += type.hashCode();
+            }
+        }
+        return code;
     }
 }

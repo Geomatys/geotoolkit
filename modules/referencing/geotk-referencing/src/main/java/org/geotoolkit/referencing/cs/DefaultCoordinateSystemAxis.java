@@ -1333,7 +1333,7 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
      */
     @Override
     protected int computeHashCode() {
-        return hash(unit, hash(direction, hash(abbreviation, super.computeHashCode())));
+        return hash(unit, hash(direction, super.computeHashCode()));
     }
 
     /**

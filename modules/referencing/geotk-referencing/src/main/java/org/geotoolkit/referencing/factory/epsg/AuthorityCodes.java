@@ -23,9 +23,6 @@ import java.util.AbstractMap;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.logging.LogRecord;
 import java.io.Serializable;
 import java.io.ObjectStreamException;
 import java.sql.ResultSet;
@@ -33,24 +30,24 @@ import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.SQLDataException;
 import java.sql.PreparedStatement;
+import java.sql.Statement;
 
 import org.opengis.referencing.operation.Projection;
 import org.opengis.util.NoSuchIdentifierException;
 
 import org.geotoolkit.util.logging.Logging;
-import org.geotoolkit.resources.Loggings;
 
 
 /**
  * A set of EPSG authority codes. This set requires a living connection to the EPSG database.
- * All {@link #iterator} method call create a new {@link ResultSet} holding the codes. However,
- * call to {@link #contains} map directly to a SQL call.
+ * All {@link #iterator()} method calls create a new {@link ResultSet} holding the codes.
+ * However, calls to {@link #contains(Object)} map directly to a SQL call.
  * <p>
  * Serialization of this class stores a copy of all authority codes. The serialization
  * do not preserve any connection to the database.
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.2
  * @module
@@ -97,12 +94,6 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
      * Used for fetching the description from a code.
      */
     private final String sqlSingle;
-
-    /**
-     * The statement to use for querying all codes.
-     * Will be created only when first needed.
-     */
-    private transient PreparedStatement queryAll;
 
     /**
      * The statement to use for querying a single code.
@@ -169,32 +160,6 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
     }
 
     /**
-     * Returns all codes.
-     */
-    private ResultSet getAll() throws SQLException {
-        assert Thread.holdsLock(this);
-        if (queryAll != null) {
-            try {
-                return queryAll.executeQuery();
-            } catch (SQLException ignore) {
-                /*
-                 * Failed to reuse an existing statement. This problem occurs in some occasions
-                 * with the JDBC-ODBC bridge in Java 6 (the error message is "Invalid handle").
-                 * I'm not sure where the bug come from (didn't noticed it when using HSQL). We
-                 * will try again with a new statement created in the code after this 'catch'
-                 * clause. Note that we set 'queryAll' to null first in case of failure during
-                 * the 'prepareStatement(...)' execution.
-                 */
-                queryAll.close();
-                queryAll = null;
-                recoverableException("getAll", ignore);
-            }
-        }
-        queryAll = connection.prepareStatement(sqlAll);
-        return queryAll.executeQuery();
-    }
-
-    /**
      * Returns a single code, or {@code null} if none.
      */
     private ResultSet getSingle(final Object code) throws SQLException {
@@ -205,8 +170,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
         if (code instanceof Number) {
             querySingle.setInt(1, ((Number) code).intValue());
             return querySingle.executeQuery();
-        }
-        try {
+        } else try {
             return DirectEpsgFactory.executeQuery(querySingle, code.toString());
         } catch (NoSuchIdentifierException e) {
             return null;
@@ -235,7 +199,7 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
      * Returns {@code true} if the code in the specified code is acceptable.
      * This method handle projections in a special way.
      */
-    private boolean isAcceptable(final String code) throws SQLException {
+    final boolean isAcceptable(final String code) throws SQLException {
         if (!isProjection) {
             return true;
         }
@@ -254,24 +218,13 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
      */
     @Override
     public synchronized boolean isEmpty() {
-        if (size != -1) {
-            return size == 0;
-        }
-        boolean empty = true;
-        try {
-            final ResultSet results = getAll();
-            while (results.next()) {
-                if (isAcceptable(results)) {
-                    empty = false;
-                    break;
-                }
+        if (size == -1) {
+            size = count(true);
+            if (size != 0) {
+                size = -2; // Remember that we have not fully counted the elements.
             }
-            results.close();
-        } catch (SQLException exception) {
-            unexpectedException("isEmpty", exception);
         }
-        size = empty ? 0 : -2;
-        return empty;
+        return size == 0;
     }
 
     /**
@@ -279,22 +232,33 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
      */
     @Override
     public synchronized int size() {
-        if (size >= 0) {
-            return size;
+        if (size < 0) {
+            size = count(false);
         }
+        return size;
+    }
+
+    /**
+     * Counts the number of elements in the underlying result set. This method stops after the
+     * first record if the {@code first} argument is {@code true}. This method is used only for
+     * implementation of {@link #isEmpty()} and {@link #size()}.
+     */
+    private int count(final boolean first) {
         int count = 0;
         try {
-            final ResultSet results = getAll();
+            final Statement stmt = connection.createStatement();
+            final ResultSet results = stmt.executeQuery(sqlAll);
             while (results.next()) {
                 if (isAcceptable(results)) {
                     count++;
+                    if (first) break;
                 }
             }
             results.close();
+            stmt.close();
         } catch (SQLException exception) {
-            unexpectedException("size", exception);
+            unexpectedException(first ? "isEmpty" : "size", exception);
         }
-        size = count; // Stores only on success.
         return count;
     }
 
@@ -323,23 +287,15 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
 
     /**
      * Returns an iterator over the codes. The iterator is backed by a living {@link ResultSet},
-     * which will be closed as soon as the iterator reach the last element.
+     * which will be closed as soon as the iterator reaches the last element.
      */
     @Override
     public synchronized java.util.Iterator<String> iterator() {
         try {
-            final Iterator iterator = new Iterator(getAll());
-            /*
-             * Set the statement to null without closing it, in order to force a new statement
-             * creation if getAll() is invoked before the iterator finish its iteration.  This
-             * is needed because only one ResultSet is allowed for each Statement.
-             */
-            queryAll = null;
-            return iterator;
+            return new Iterator(connection.createStatement().executeQuery(sqlAll));
         } catch (SQLException exception) {
             unexpectedException("iterator", exception);
-            final Set<String> empty = Collections.emptySet();
-            return empty.iterator();
+            return Collections.<String>emptySet().iterator();
         }
     }
 
@@ -363,23 +319,17 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
             querySingle.close();
             querySingle = null;
         }
-        if (queryAll != null) {
-            queryAll.close();
-            queryAll = null;
-        }
     }
 
     /**
-     * Invoked when an exception occurred. This method just log a warning.
+     * Invoked when an exception occurred. This method just logs a warning.
      */
-    private static void unexpectedException(final String       method,
-                                            final SQLException exception)
-    {
+    private static void unexpectedException(final String method, final SQLException exception) {
         unexpectedException(AuthorityCodes.class, method, exception);
     }
 
     /**
-     * Invoked when an exception occurred. This method just log a warning.
+     * Invoked when an exception occurred. This method just logs a warning.
      */
     static void unexpectedException(final Class<?>     classe,
                                     final String       method,
@@ -389,22 +339,8 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
     }
 
     /**
-     * Invoked when a recoverable exception occurred.
-     */
-    private static void recoverableException(final String method, final SQLException exception) {
-        // Uses the FINE level instead of WARNING because it may be a recoverable error.
-        LogRecord record = Loggings.format(Level.FINE, Loggings.Keys.UNEXPECTED_EXCEPTION);
-        record.setSourceClassName(AuthorityCodes.class.getName());
-        record.setSourceMethodName(method);
-        record.setThrown(exception);
-        final Logger logger = Logging.getLogger(AuthorityCodes.class);
-        record.setLoggerName(logger.getName());
-        logger.log(record);
-    }
-
-    /**
      * The iterator over the codes. This inner class must kept a reference toward the enclosing
-     * {@link AuthorityCodes} in order to prevent a call to {@link AuthorityCodes#finalize}
+     * {@link AuthorityCodes} in order to prevent a call to {@link AuthorityCodes#finalize()}
      * before the iteration is finished.
      */
     private final class Iterator implements java.util.Iterator<String> {
@@ -448,7 +384,11 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
             try {
                 toNext();
             } catch (SQLException exception) {
-                results = null;
+                try {
+                    finalize();
+                } catch (SQLException e) {
+                    // TODO: use suppressed exceptions with JDK 7.
+                }
                 unexpectedException(Iterator.class, "next", exception);
             }
             return current;
@@ -465,23 +405,10 @@ final class AuthorityCodes extends AbstractSet<String> implements Serializable {
         protected void finalize() throws SQLException {
             next = null;
             if (results != null) {
-                final PreparedStatement owner = (PreparedStatement) results.getStatement();
+                final Statement owner = results.getStatement();
                 results.close();
                 results = null;
-                synchronized (AuthorityCodes.this) {
-                    /*
-                     * We don't need the statement anymore. Gives it back to the enclosing class
-                     * in order to avoid creating a new one when AuthorityCodes.getAll() will be
-                     * invoked again,  or closes the statement if getAll() already created a new
-                     * statement anyway.
-                     */
-                    assert owner != queryAll;
-                    if (queryAll == null) {
-                        queryAll = owner;
-                    } else {
-                        owner.close();
-                    }
-                }
+                owner.close();
             }
         }
     }

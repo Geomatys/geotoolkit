@@ -18,6 +18,7 @@
 package org.geotoolkit.util.converter;
 
 import java.util.Set;
+import java.util.Arrays;
 import java.util.Iterator;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -31,6 +32,7 @@ import java.lang.reflect.GenericArrayType;
 import java.lang.reflect.ParameterizedType;
 
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.util.XArrays;
 
 
 /**
@@ -310,6 +312,62 @@ public final class Classes extends Static {
     }
 
     /**
+     * Returns the interfaces implemented by the given class and assignable to the given base
+     * interface, or {@code null} if none. If more than one interface extends the given base,
+     * then the most specialized interfaces are returned. For example if the given class
+     * implements both the {@link Set} and {@link Collection} interfaces, then the returned
+     * array contains only the {@code Set} interface.
+     *
+     * {@section Example}
+     * {@code getLeafInterfaces(ArrayList.class, Collection.class)} returns an array of length 1
+     * containing {@code List.class}.
+     *
+     * @param  <T>  The type of the {@code baseInterface} class argument.
+     * @param  type A class for which the implemented interface is desired.
+     * @param  baseInterface The base type of the interface to search.
+     * @return The leaf interfaces matching the given criterion, or {@code null} if none.
+     *         If non-null, than the array is guaranteed to contain at least one element.
+     *
+     * @since 3.18
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> Class<? extends T>[] getLeafInterfaces(Class<?> type, final Class<T> baseInterface) {
+        int count = 0;
+        Class<?>[] types = null;
+        while (type != null) {
+            final Class<?>[] candidates = type.getInterfaces();
+next:       for (final Class<?> candidate : candidates) {
+                if (baseInterface == null || baseInterface.isAssignableFrom(candidate)) {
+                    /*
+                     * At this point, we have an interface to be included in the returned array.
+                     * If a more specialized interface existed before 'candidate', forget the
+                     * candidate.
+                     */
+                    for (int i=0; i<count; i++) {
+                        final Class<?> old = types[i];
+                        if (candidate.isAssignableFrom(old)) {
+                            continue next; // A more specialized interface already exists.
+                        }
+                        if (old.isAssignableFrom(candidate)) {
+                            types[i] = candidate; // This interface specializes a previous interface.
+                            continue next;
+                        }
+                    }
+                    if (types == null) {
+                        types = candidates;
+                    }
+                    if (count >= types.length) {
+                        types = Arrays.copyOf(types, types.length + candidates.length);
+                    }
+                    types[count++] = candidate;
+                }
+            }
+            type = type.getSuperclass();
+        }
+        return (Class[]) XArrays.resize(types, count);
+    }
+
+    /**
      * Returns the first interface implemented by the given class and assignable to the given base
      * interface, or {@code null} if none. If more than one interface extends the given base, only
      * the first occurrence (in the order declared in source code) is returned.
@@ -323,7 +381,10 @@ public final class Classes extends Static {
      * @return {@code null} if no interface matching the given criterion is found.
      *
      * @since 3.17
+     *
+     * @deprecated Replaced by {@link #getLeafInterfaces(Class, Class)}.
      */
+    @Deprecated
     @SuppressWarnings("unchecked")
     public static <T> Class<? extends T> getInterface(Class<?> type, final Class<T> baseInterface) {
         while (type != null) {

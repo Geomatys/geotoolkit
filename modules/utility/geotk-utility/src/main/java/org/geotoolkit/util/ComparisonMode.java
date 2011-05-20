@@ -21,7 +21,7 @@ package org.geotoolkit.util;
 /**
  * Specifies the degree of strictness when comparing two {@link LenientComparable} objects
  * for equality. This enumeration is <strong>ordered</strong> from stricter to more lenient
- * degrees: {@link #STRICT}, {@link #BY_CONTRACT}, {@link #IGNORE_METADATA}.
+ * degrees: {@link #STRICT}, {@link #BY_CONTRACT}, {@link #IGNORE_METADATA}, {@link #APPROXIMATIVE}.
  * <p>
  * if two objects are equal at some degree of strictness <var>E</var>, then they should also
  * be equal at all degrees listed below <var>E</var> in this page. For example if two objects

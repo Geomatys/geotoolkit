@@ -68,7 +68,7 @@ import org.geotoolkit.metadata.iso.quality.DefaultAbsoluteExternalPositionalAccu
 import org.geotoolkit.parameter.DefaultParameterDescriptor;
 import org.geotoolkit.parameter.DefaultParameterDescriptorGroup;
 import org.geotoolkit.referencing.NamedIdentifier;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.DirectAuthorityFactory;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
@@ -392,7 +392,10 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
     AbstractAuthorityFactory buffered = this;
 
     /**
-     * The connection to the EPSG database.
+     * The connection to the EPSG database. This connection is specified at
+     * {@linkplain #DirectEpsgFactory(Hints, Connection) construction time}
+     * and closed by the {@link #dispose(boolean)} method, or when this
+     * {@code DirectEpsgFactory} instance if garbage collected.
      */
     protected final Connection connection;
 
@@ -2544,7 +2547,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                      */
                     final String methodName = method.getName().getCode();
                     String methodIdentifier = methodName;
-                    final ReferenceIdentifier mid = AbstractIdentifiedObject.getIdentifier(method, Citations.EPSG);
+                    final ReferenceIdentifier mid = IdentifiedObjects.getIdentifier(method, Citations.EPSG);
                     if (mid != null) {
                         final String codespace = mid.getCodeSpace();
                         if (codespace != null) {
@@ -2913,7 +2916,7 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
                     // Dependency not found.
                     return Collections.emptySet();
                 }
-                Identifier id = AbstractIdentifiedObject.getIdentifier(dependency, getAuthority());
+                Identifier id = IdentifiedObjects.getIdentifier(dependency, getAuthority());
                 if (id == null || (code = id.getCode()) == null) {
                     // Identifier not found (malformed CRS object?).
                     // Conservatively scans all objects.
@@ -3075,12 +3078,9 @@ public class DirectEpsgFactory extends DirectAuthorityFactory implements CRSAuth
 
     /**
      * Invokes {@link #dispose dispose(false)} when this factory is garbage collected.
-     *
-     * @throws Throwable if an error occurred while closing the connection.
      */
     @Override
-    protected final void finalize() throws Throwable {
+    protected final void finalize() {
         dispose(false);
-        super.finalize();
     }
 }

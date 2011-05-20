@@ -183,8 +183,8 @@ public final class Trees extends Static {
             iterator = ((Map<?,?>) object).entrySet().iterator();
         }
         if (iterator != null) {
-            node = new DefaultMutableTreeNode(Classes.getShortName(
-                    Classes.getInterface(object.getClass(), baseInterface)));
+            final Class<?>[] types = Classes.getLeafInterfaces(object.getClass(), baseInterface);
+            node = new DefaultMutableTreeNode(Classes.getShortName(types != null ? types[0] : null));
             while (iterator.hasNext()) {
                 node.add(objectToSwing(iterator.next()));
             }
