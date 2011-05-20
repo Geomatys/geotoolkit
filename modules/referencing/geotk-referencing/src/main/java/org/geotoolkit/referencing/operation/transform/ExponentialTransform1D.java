@@ -29,8 +29,9 @@ import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
+
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.Exponential.*;
-import static java.lang.Double.doubleToLongBits;
 
 
 /**
@@ -335,13 +336,11 @@ public class ExponentialTransform1D extends AbstractMathTransform1D implements S
     }
 
     /**
-     * Returns a hash value for this transform. This value need not remain
-     * consistent between different implementations of the same class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final long code = doubleToLongBits(base)*31 + doubleToLongBits(scale);
-        return ((int) (code >>> 32)) ^ ((int) code) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(base, hash(scale, super.computeHashCode()));
     }
 
     /**

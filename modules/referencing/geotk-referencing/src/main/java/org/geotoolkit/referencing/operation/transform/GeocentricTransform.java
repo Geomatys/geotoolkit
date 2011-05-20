@@ -690,12 +690,13 @@ public class GeocentricTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Returns a hash value for this transform.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return hash(a, hash(b, hash(a2, hash(b2, hash(e2, hash(ep2,
-               hasHeight ? 37 : 0)))))) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        int code = hash(a, hash(b, hash(a2, hash(b2, hash(e2, hash(ep2, super.computeHashCode()))))));
+        if (hasHeight) code += 37;
+        return code;
     }
 
     /**

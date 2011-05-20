@@ -41,6 +41,7 @@ import org.geotoolkit.util.collection.WeakValueHashMap;
 import org.geotoolkit.util.ComparisonMode;
 
 import static java.lang.Math.*;
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.*;
 import static org.geotoolkit.referencing.operation.provider.EllipsoidToGeoid.*;
 
@@ -419,11 +420,11 @@ public class EarthGravitationalModel extends VerticalTransform {
     }
 
     /**
-     * Returns a hash code value for this transform.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return hashCode(isWGS84, nmax);
+    protected int computeHashCode() {
+        return hash(hashCode(isWGS84, nmax), super.computeHashCode());
     }
 
     /**

@@ -44,6 +44,7 @@ import org.geotoolkit.io.wkt.Formattable;
 import org.geotoolkit.io.wkt.Formatter;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.internal.referencing.MatrixUtilities.*;
 import static org.geotoolkit.referencing.operation.matrix.MatrixFactory.*;
 
@@ -950,11 +951,11 @@ public class ConcatenatedTransform extends AbstractMathTransform implements Seri
     }
 
     /**
-     * Returns a hash value for this transform.
+     * {@inheritDoc}
      */
     @Override
-    public final int hashCode() {
-        return getSteps().hashCode() ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(getSteps(), super.computeHashCode());
     }
 
     /**

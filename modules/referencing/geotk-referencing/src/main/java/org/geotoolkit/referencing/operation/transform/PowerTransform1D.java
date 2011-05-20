@@ -26,6 +26,8 @@ import org.opengis.referencing.operation.MathTransform1D;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 
+import static org.geotoolkit.util.Utilities.hash;
+
 
 /**
  * Raises the given value at some fixed power. Current implementation is defined mostly for the
@@ -196,13 +198,11 @@ final class PowerTransform1D extends AbstractMathTransform1D implements Serializ
     }
 
     /**
-     * Returns a hash value for this transform. This value need not remain
-     * consistent between different implementations of the same class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final long code = Double.doubleToLongBits(power);
-        return ((int) (code >>> 32)) ^ ((int) code) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(power, super.computeHashCode());
     }
 
     /**

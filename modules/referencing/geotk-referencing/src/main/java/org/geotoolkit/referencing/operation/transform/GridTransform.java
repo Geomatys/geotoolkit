@@ -43,6 +43,7 @@ import org.geotoolkit.resources.Errors;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.util.ArgumentChecks.ensureStrictlyPositive;
 
 
@@ -571,16 +572,12 @@ public class GridTransform extends AbstractMathTransform implements Serializable
     }
 
     /**
-     * Returns a hash value for this transform.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return Utilities.hash(xOrigin,
-               Utilities.hash(yOrigin,
-               Utilities.hash(scaleX,
-               Utilities.hash(scaleY,
-               Utilities.hash(width,
-               Utilities.hash(height, grid.getNumBanks() ^ (int) serialVersionUID))))));
+    protected int computeHashCode() {
+        return hash(xOrigin, hash(yOrigin, hash(scaleX, hash(scaleY, hash(width, hash(height,
+               hash(grid.getNumBanks(), super.computeHashCode())))))));
     }
 
     /**

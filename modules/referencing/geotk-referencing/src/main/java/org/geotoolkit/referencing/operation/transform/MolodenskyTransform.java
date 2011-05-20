@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.operation.provider.Molodensky;
 import org.geotoolkit.referencing.operation.provider.AbridgedMolodensky;
 
 import static java.lang.Math.*;
+import static org.geotoolkit.util.Utilities.hash;
 
 
 /**
@@ -737,17 +738,11 @@ public class MolodenskyTransform extends AbstractMathTransform implements Ellips
     }
 
     /**
-     * Returns a hash value for this transform.
+     * {@inheritDoc}
      */
     @Override
-    public final int hashCode() {
-        return Utilities.hash(dx,
-               Utilities.hash(dy,
-               Utilities.hash(dz,
-               Utilities.hash(a,
-               Utilities.hash(b,
-               Utilities.hash(da,
-               Utilities.hash(db, type)))))));
+    protected int computeHashCode() {
+        return hash(dx, hash(dy, hash(dz, hash(a, hash(b, hash(da, hash(db, type)))))));
     }
 
     /**

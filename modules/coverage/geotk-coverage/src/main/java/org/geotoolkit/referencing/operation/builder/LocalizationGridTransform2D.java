@@ -43,6 +43,8 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.logging.Logging;
 import org.geotoolkit.resources.Errors;
 
+import static org.geotoolkit.util.Utilities.hash;
+
 
 /**
  * Transforms a set of coordinate points using a grid of localization. This class extends
@@ -615,11 +617,11 @@ final class LocalizationGridTransform2D extends GridTransform implements MathTra
 
 
     /**
-     * Returns a hash value for this transform.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return super.hashCode() ^ global.hashCode() ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(global, super.computeHashCode());
     }
 
     /**

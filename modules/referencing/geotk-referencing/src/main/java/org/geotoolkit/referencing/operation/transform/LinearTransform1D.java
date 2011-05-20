@@ -36,6 +36,7 @@ import org.geotoolkit.referencing.operation.provider.Affine;
 // We really want to use doubleToRawLongBits, not doubleToLongBits, because the
 // coverage module needs the raw bits for differentiating various NaN values.
 import static java.lang.Double.doubleToRawLongBits;
+import static org.geotoolkit.util.Utilities.hash;
 
 
 /**
@@ -295,13 +296,11 @@ public class LinearTransform1D extends AbstractMathTransform1D implements Linear
     }
 
     /**
-     * Returns a hash value for this transform. This value need not remain
-     * consistent between different implementations of the same class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final long code = doubleToRawLongBits(offset)*31 + doubleToRawLongBits(scale);
-        return ((int)(code >>> 32)) ^ ((int) code) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(doubleToRawLongBits(offset), hash(scale, super.computeHashCode()));
     }
 
     /**

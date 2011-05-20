@@ -540,13 +540,13 @@ public class PassThroughTransform extends AbstractMathTransform implements Seria
     }
 
     /**
-     * Returns a hash value for this transform.
-     * This value need not remain consistent between
-     * different implementations of the same class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return hash(subTransform, hash(firstAffectedOrdinate, numTrailingOrdinates)) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        // Note that numTrailingOrdinates is related to source and
+        // target dimensions, which are computed by the super-class.
+        return hash(subTransform, hash(firstAffectedOrdinate, super.computeHashCode()));
     }
 
     /**

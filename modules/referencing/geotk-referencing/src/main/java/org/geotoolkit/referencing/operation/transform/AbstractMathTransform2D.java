@@ -527,6 +527,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
             userDefined.setTransform(parameters.normalize(inverse));
         } else {
             roundIfAlmostInteger(userDefined, false);
+            userDefined.forcePositiveZeros();
             userDefined.mutable = false;
             before = userDefined;
             userDefined = new AffineTransform2D(parameters.normalize(inverse));
@@ -551,6 +552,7 @@ public abstract class AbstractMathTransform2D extends AbstractMathTransform impl
             after = null;
         } else {
             roundIfAlmostInteger(userDefined, true);
+            userDefined.forcePositiveZeros();
             userDefined.mutable = false;
             after = userDefined;
         }

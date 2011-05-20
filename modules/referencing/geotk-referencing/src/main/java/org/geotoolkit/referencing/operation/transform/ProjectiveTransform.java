@@ -635,12 +635,11 @@ public class ProjectiveTransform extends AbstractMathTransform implements Linear
     }
 
     /**
-     * Returns a hash value for this transform. This value need not remain
-     * consistent between different implementations of the same class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return hash(hash(numRow, numCol), Arrays.hashCode(elt));
+    protected int computeHashCode() {
+        return hash(Arrays.hashCode(elt), super.computeHashCode());
     }
 
     /**

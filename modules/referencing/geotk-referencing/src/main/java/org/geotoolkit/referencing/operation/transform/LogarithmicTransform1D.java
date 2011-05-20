@@ -30,8 +30,8 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.FloatParameter;
 import org.geotoolkit.parameter.ParameterGroup;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.Logarithmic.*;
-import static java.lang.Double.doubleToLongBits;
 
 
 /**
@@ -408,14 +408,11 @@ public class LogarithmicTransform1D extends AbstractMathTransform1D implements S
     }
 
     /**
-     * Returns a hash value for this transform.
-     * This value need not remain consistent between
-     * different implementations of the same class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final long code = doubleToLongBits(base)*31 + doubleToLongBits(offset);
-        return ((int) (code >>> 32)) ^ ((int) code) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(base, hash(offset, super.computeHashCode()));
     }
 
     /**

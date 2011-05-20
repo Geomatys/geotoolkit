@@ -38,6 +38,8 @@ import org.geotoolkit.referencing.operation.matrix.MatrixFactory;
 import org.geotoolkit.referencing.operation.matrix.XMatrix;
 import org.geotoolkit.util.ComparisonMode;
 
+import static org.geotoolkit.util.Utilities.hash;
+
 
 /**
  * A transform which copy the ordinates in the source array to different locations in the target
@@ -427,11 +429,11 @@ final class CopyTransform extends AbstractMathTransform implements LinearTransfo
     }
 
     /**
-     * Returns a hash value for this transform.
+     * {@inheritDoc}
      */
     @Override
-    public final int hashCode() {
-        return Arrays.hashCode(indices) + (31*srcDim) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(Arrays.hashCode(indices), super.computeHashCode());
     }
 
     /**

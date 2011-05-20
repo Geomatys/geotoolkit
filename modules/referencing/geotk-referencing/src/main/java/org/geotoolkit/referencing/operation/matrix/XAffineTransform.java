@@ -413,7 +413,7 @@ public class XAffineTransform extends AffineTransform {
      *
      * @param tr The affine transform to be checked for identity.
      * @param tolerance The tolerance value to use when checking for identity.
-     * @return {@code true} if this tranformation is close enough to the
+     * @return {@code true} if this transformation is close enough to the
      *         identity, {@code false} otherwise.
      *
      * @since 2.3.1

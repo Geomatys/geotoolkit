@@ -119,6 +119,14 @@ public abstract class AbstractMathTransform extends FormattableObject
     static final int MAXIMUM_FAILURES = 32;
 
     /**
+     * The cached hash code value, or 0 if not yet computed.
+     * This is calculated only when first needed.
+     *
+     * @since 3.18
+     */
+    private transient int hashCode;
+
+    /**
      * Constructs a math transform.
      */
     protected AbstractMathTransform() {
@@ -1016,16 +1024,43 @@ public abstract class AbstractMathTransform extends FormattableObject
     }
 
     /**
-     * Returns a hash value for this transform.
+     * Returns a hash value for this transform. This method invokes {@link #computeHashCode()}
+     * when first needed and caches the value for future invocations. Subclasses should override
+     * {@code computeHashCode()} instead than this method.
+     *
+     * @return The hash code value. This value may change between different execution of the
+     *         Geotk library.
      */
     @Override
-    public int hashCode() {
+    public final int hashCode() { // No need to synchronize; ok if invoked twice.
+        int hash = hashCode;
+        if (hash == 0) {
+            hash = computeHashCode();
+            if (hash == 0) {
+                hash = -1;
+            }
+            hashCode = hash;
+        }
+        assert hash == -1 || hash == computeHashCode() : this;
+        return hash;
+    }
+
+    /**
+     * Computes a hash value for this transform. This method is invoked by {@link #hashCode()}
+     * when first needed.
+     *
+     * @return The hash code value. This value may change between different execution of the
+     *         Geotk library.
+     *
+     * @since 3.18
+     */
+    protected int computeHashCode() {
         return hash(getClass(), hash(getSourceDimensions(), getTargetDimensions()));
     }
 
     /**
      * Compares the specified object with this math transform for strict equality.
-     * This method is implemented as below:
+     * This method is implemented as below (omitting assertions):
      *
      * {@preformat java
      *     return equals(other, ComparisonMode.STRICT);
@@ -1037,7 +1072,10 @@ public abstract class AbstractMathTransform extends FormattableObject
      */
     @Override
     public final boolean equals(final Object object) {
-        return equals(object, ComparisonMode.STRICT);
+        final boolean eq = equals(object, ComparisonMode.STRICT);
+        // If objects are equal, then they must have the same hash code value.
+        assert !eq || hashCode() == object.hashCode() : this;
+        return eq;
     }
 
     /**
@@ -1068,6 +1106,14 @@ public abstract class AbstractMathTransform extends FormattableObject
         // Do not check 'object==this' here, since this
         // optimization is usually done in subclasses.
         if (object != null && getClass() == object.getClass()) {
+            /*
+             * If the classes are the same, then the hash codes should be computed in the same
+             * way. Since those codes are cached, this is an efficient way to quickly check if
+             * the two objects are different.
+             */
+            if (mode != ComparisonMode.APPROXIMATIVE && hashCode() != object.hashCode()) {
+                return false;
+            }
             final AbstractMathTransform that = (AbstractMathTransform) object;
             return Utilities.deepEquals(this.getParameterDescriptors(),
                                         that.getParameterDescriptors(), mode);
@@ -1290,11 +1336,11 @@ public abstract class AbstractMathTransform extends FormattableObject
         }
 
         /**
-         * Returns a hash code value for this math transform.
+         * {@inheritDoc}
          */
         @Override
-        public int hashCode() {
-            return AbstractMathTransform.this.hashCode() ^ (int) serialVersionUID;
+        protected int computeHashCode() {
+            return hash(AbstractMathTransform.this.hashCode(), super.computeHashCode());
         }
 
         /**

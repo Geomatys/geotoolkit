@@ -1423,12 +1423,12 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     }
 
     /**
-     * Returns a hash code value for this unitary projection. The default implementation
+     * Computes a hash code value for this unitary projection. The default implementation
      * computes a value from the parameters given at construction time.
      */
     @Override
-    public int hashCode() {
-        return hash(parameters, getClass().hashCode()) ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(parameters, super.computeHashCode());
     }
 
     /**

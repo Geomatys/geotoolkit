@@ -804,6 +804,11 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
 
     /**
      * Compares the specified object with this object for equality.
+     * This method is implemented as below (omitting assertions):
+     *
+     * {@preformat java
+     *     return equals(other, ComparisonMode.STRICT);
+     * }
      *
      * @param  object The other object (may be {@code null}).
      * @return {@code true} if both objects are equal.

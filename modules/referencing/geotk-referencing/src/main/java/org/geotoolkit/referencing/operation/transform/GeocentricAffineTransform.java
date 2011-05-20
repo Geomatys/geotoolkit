@@ -33,6 +33,8 @@ import org.geotoolkit.referencing.operation.provider.GeocentricTranslation;
 import org.geotoolkit.referencing.operation.provider.PositionVector7Param;
 import org.geotoolkit.util.ComparisonMode;
 
+import static org.geotoolkit.util.Utilities.hash;
+
 
 /**
  * An affine transform applied on {@linkplain GeocentricCRS geocentric} coordinates.
@@ -201,12 +203,11 @@ public class GeocentricAffineTransform extends ProjectiveTransform {
     }
 
     /**
-     * Returns a hash value for this transform. This value need not remain
-     * consistent between different implementations of the same class.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return super.hashCode()*31 + type;
+    protected int computeHashCode() {
+        return hash(type, super.computeHashCode());
     }
 
     /**

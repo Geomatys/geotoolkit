@@ -106,6 +106,9 @@ public class AffineTransform2D extends XAffineTransform
      */
     public AffineTransform2D(final AffineTransform transform) {
         super(transform);
+        mutable = true;
+        forcePositiveZeros();
+        mutable = false;
     }
 
     /**
@@ -124,7 +127,25 @@ public class AffineTransform2D extends XAffineTransform
      * @since 2.5
      */
     public AffineTransform2D(double m00, double m10, double m01, double m11, double m02, double m12) {
-        super(m00, m10, m01, m11, m02, m12);
+        super(pz(m00), pz(m10), pz(m01), pz(m11), pz(m02), pz(m12));
+    }
+
+    /**
+     * Makes sure that the zero is positive. We do that in order to workaround a JDK 6 bug,
+     * where AffineTransform.hashCode() is inconsistent with AffineTransform.equals(Object)
+     * if there is zeros of opposite sign.
+     */
+    private static double pz(final double value) {
+        return (value != 0) ? value : 0;
+    }
+
+    /**
+     * Ensures that this transform contains only positive zeros.
+     */
+    final void forcePositiveZeros() {
+        super.setTransform(pz(super.getScaleX()),     pz(super.getShearY()),
+                           pz(super.getShearX()),     pz(super.getScaleY()),
+                           pz(super.getTranslateX()), pz(super.getTranslateY()));
     }
 
     /**
@@ -281,6 +302,7 @@ public class AffineTransform2D extends XAffineTransform
                     final AffineTransform2D work = new AffineTransform2D(this);
                     work.mutable = true;
                     work.invert();
+                    work.forcePositiveZeros();
                     work.mutable = false;
                     work.inverse = this;
                     inverse = work; // Set only on success.

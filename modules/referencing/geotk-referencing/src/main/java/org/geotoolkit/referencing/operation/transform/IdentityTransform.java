@@ -264,15 +264,6 @@ public class IdentityTransform extends AbstractMathTransform implements LinearTr
     }
 
     /**
-     * Returns a hash value for this transform. This value need not remain consistent between
-     * different implementations of the same class.
-     */
-    @Override
-    public int hashCode() {
-        return dimension ^ (int) serialVersionUID;
-    }
-
-    /**
      * Compares the specified object with this math transform for equality.
      */
     @Override

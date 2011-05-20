@@ -42,6 +42,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.parameter.Parameter;
 import org.geotoolkit.parameter.ParameterGroup;
 
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
 
 
@@ -66,7 +67,7 @@ import static org.geotoolkit.referencing.operation.provider.WarpPolynomial.*;
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Alessio Fabiani (Geosolutions)
- * @version 3.14
+ * @version 3.18
  *
  * @see org.geotoolkit.referencing.operation.builder.LocalizationGrid#getPolynomialTransform(int)
  * @see Warp
@@ -514,11 +515,11 @@ public class WarpTransform2D extends AbstractMathTransform2D implements Serializ
     }
 
     /**
-     * Returns a hash value for this transform.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        return warp.hashCode() ^ (int) serialVersionUID;
+    protected int computeHashCode() {
+        return hash(warp, super.computeHashCode());
     }
 
     /**

@@ -28,6 +28,7 @@ import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.internal.referencing.Identifiers;
 
 import static java.lang.Math.*;
+import static org.geotoolkit.util.Utilities.hash;
 import static org.geotoolkit.referencing.operation.provider.Krovak.*;
 import static org.geotoolkit.referencing.operation.projection.UnitaryProjection.Parameters.*;
 
@@ -261,13 +262,11 @@ public class Krovak extends UnitaryProjection {
     }
 
     /**
-     * Returns a hash value for this projection.
+     * {@inheritDoc}
      */
     @Override
-    public int hashCode() {
-        final long code = Double.doubleToLongBits(sinAzim) ^
-                          Double.doubleToLongBits(n);
-        return ((int)code ^ (int)(code >>> 32)) + 31*super.hashCode();
+    protected int computeHashCode() {
+        return hash(sinAzim, hash(n, super.computeHashCode()));
     }
 
     /**
