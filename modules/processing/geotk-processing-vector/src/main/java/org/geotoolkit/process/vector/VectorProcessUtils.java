@@ -77,10 +77,7 @@ import org.opengis.util.NoSuchIdentifierException;
  * @author Quentin Boileau
  * @module pending
  */
-//@Static
-public final class VectorProcessUtils {
-
- 
+public final class VectorProcessUtils extends Static {
 
     private VectorProcessUtils() {
     }
