@@ -34,7 +34,8 @@
  * than setting the collection as a whole with {@code setCitations(myCitations)}.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.03
  * @module

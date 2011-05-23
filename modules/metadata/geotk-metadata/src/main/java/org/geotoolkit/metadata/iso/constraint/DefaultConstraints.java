@@ -30,6 +30,8 @@ import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.constraint.Constraints;
+import org.opengis.metadata.constraint.LegalConstraints;
+import org.opengis.metadata.constraint.SecurityConstraints;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
@@ -37,10 +39,10 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 /**
  * Restrictions on the access and use of a resource or metadata.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -81,6 +83,37 @@ public class DefaultConstraints extends MetadataEntity implements Constraints {
      */
     public DefaultConstraints(final Constraints source) {
         super(source);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link LegalConstraints} and {@link SecurityConstraints}
+     * sub-interfaces. If one of those interfaces is found, then this method delegates to
+     * the corresponding {@code wrap} static method. If the given object implements more
+     * than one of the above-cited interfaces, then the {@code wrap} method to be used is
+     * unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultConstraints wrap(final Constraints object) {
+        if (object instanceof LegalConstraints) {
+            return DefaultLegalConstraints.wrap((LegalConstraints) object);
+        }
+        if (object instanceof SecurityConstraints) {
+            return DefaultSecurityConstraints.wrap((SecurityConstraints) object);
+        }
+        return (object == null) || (object instanceof DefaultConstraints)
+                ? (DefaultConstraints) object : new DefaultConstraints(object);
     }
 
     /**

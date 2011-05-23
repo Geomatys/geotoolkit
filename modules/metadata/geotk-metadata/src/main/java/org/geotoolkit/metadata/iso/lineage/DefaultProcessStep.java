@@ -42,7 +42,7 @@ import org.geotoolkit.xml.Namespaces;
 /**
  * Description of the event, including related parameters or tolerances.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
  * @version 3.18
@@ -146,6 +146,25 @@ public class DefaultProcessStep extends MetadataEntity implements ProcessStep {
     public DefaultProcessStep(final InternationalString description) {
         this(); // Initialize the date field.
         setDescription(description);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultProcessStep wrap(final ProcessStep object) {
+        return (object == null) || (object instanceof DefaultProcessStep)
+                ? (DefaultProcessStep) object : new DefaultProcessStep(object);
     }
 
      /**

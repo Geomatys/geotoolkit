@@ -28,7 +28,7 @@ import org.geotoolkit.metadata.iso.content.DefaultBand;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.17
  * @module
@@ -75,10 +75,7 @@ public class MI_Band extends DefaultBand {
             {
                 return new MI_Band(original);
             }
-            if (!(original instanceof DefaultBand)) {
-                return new DefaultBand(original);
-            }
         }
-        return (DefaultBand) original;
+        return DefaultBand.wrap(original);
     }
 }

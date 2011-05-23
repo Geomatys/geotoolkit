@@ -33,10 +33,10 @@
  * an existing collection using code like {@code getCitations().add(myCitation)} instead
  * than setting the collection as a whole with {@code setCitations(myCitations)}.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module

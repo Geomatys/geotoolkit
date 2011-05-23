@@ -26,15 +26,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.quality.ThematicAccuracy;
+import org.opengis.metadata.quality.ThematicClassificationCorrectness;
+import org.opengis.metadata.quality.NonQuantitativeAttributeAccuracy;
+import org.opengis.metadata.quality.QuantitativeAttributeAccuracy;
 
 
 /**
  * Accuracy of quantitative attributes and the correctness of non-quantitative attributes
  * and of the classifications of features and their relationships.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.04
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -68,5 +71,40 @@ public class AbstractThematicAccuracy extends AbstractElement implements Themati
      */
     public AbstractThematicAccuracy(final ThematicAccuracy source) {
         super(source);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link QuantitativeAttributeAccuracy},
+     * {@link NonQuantitativeAttributeAccuracy} and {@link ThematicClassificationCorrectness}
+     * sub-interfaces. If one of those interfaces is found, then this method delegates to
+     * the corresponding {@code wrap} static method. If the given object implements more
+     * than one of the above-cited interfaces, then the {@code wrap} method to be used is
+     * unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static AbstractThematicAccuracy wrap(final ThematicAccuracy object) {
+        if (object instanceof QuantitativeAttributeAccuracy) {
+            return DefaultQuantitativeAttributeAccuracy.wrap((QuantitativeAttributeAccuracy) object);
+        }
+        if (object instanceof NonQuantitativeAttributeAccuracy) {
+            return DefaultNonQuantitativeAttributeAccuracy.wrap((NonQuantitativeAttributeAccuracy) object);
+        }
+        if (object instanceof ThematicClassificationCorrectness) {
+            return DefaultThematicClassificationCorrectness.wrap((ThematicClassificationCorrectness) object);
+        }
+        return (object == null) || (object instanceof AbstractThematicAccuracy)
+                ? (AbstractThematicAccuracy) object : new AbstractThematicAccuracy(object);
     }
 }

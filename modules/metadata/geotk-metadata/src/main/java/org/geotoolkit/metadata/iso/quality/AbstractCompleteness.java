@@ -26,14 +26,16 @@ import javax.xml.bind.annotation.XmlSeeAlso;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.quality.Completeness;
+import org.opengis.metadata.quality.CompletenessOmission;
+import org.opengis.metadata.quality.CompletenessCommission;
 
 
 /**
  * Presence and absence of features, their attributes and their relationships.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.04
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -66,5 +68,36 @@ public class AbstractCompleteness extends AbstractElement implements Completenes
      */
     public AbstractCompleteness(final Completeness source) {
         super(source);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link CompletenessCommission} and {@link CompletenessOmission}
+     * sub-interfaces. If one of those interfaces is found, then this method delegates to
+     * the corresponding {@code wrap} static method. If the given object implements more
+     * than one of the above-cited interfaces, then the {@code wrap} method to be used is
+     * unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static AbstractCompleteness wrap(final Completeness object) {
+        if (object instanceof CompletenessCommission) {
+            return DefaultCompletenessCommission.wrap((CompletenessCommission) object);
+        }
+        if (object instanceof CompletenessOmission) {
+            return DefaultCompletenessOmission.wrap((CompletenessOmission) object);
+        }
+        return (object == null) || (object instanceof AbstractCompleteness)
+                ? (AbstractCompleteness) object : new AbstractCompleteness(object);
     }
 }

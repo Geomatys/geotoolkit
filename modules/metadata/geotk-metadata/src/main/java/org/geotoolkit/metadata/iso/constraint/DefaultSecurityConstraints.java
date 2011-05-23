@@ -33,10 +33,10 @@ import org.opengis.metadata.constraint.SecurityConstraints;
 /**
  * Handling restrictions imposed on the resource for national security or similar security concerns.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -100,6 +100,25 @@ public class DefaultSecurityConstraints extends DefaultConstraints implements Se
      */
     public DefaultSecurityConstraints(final Classification classification) {
         setClassification(classification);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultSecurityConstraints wrap(final SecurityConstraints object) {
+        return (object == null) || (object instanceof DefaultSecurityConstraints)
+                ? (DefaultSecurityConstraints) object : new DefaultSecurityConstraints(object);
     }
 
     /**

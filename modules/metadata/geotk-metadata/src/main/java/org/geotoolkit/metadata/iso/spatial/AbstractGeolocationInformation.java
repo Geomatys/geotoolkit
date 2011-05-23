@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlType;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.quality.DataQuality;
+import org.opengis.metadata.spatial.GCPCollection;
 import org.opengis.metadata.spatial.GeolocationInformation;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
@@ -39,7 +40,8 @@ import org.geotoolkit.xml.Namespaces;
  * Information used to determine geographic location corresponding to image location.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.03
  * @module
@@ -74,6 +76,34 @@ public class AbstractGeolocationInformation extends MetadataEntity implements Ge
      */
     public AbstractGeolocationInformation(final GeolocationInformation source) {
         super(source);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link LegalConstraints} and {@link SecurityConstraints}
+     * sub-interfaces. If one of those interfaces is found, then this method delegates to
+     * the corresponding {@code wrap} static method. If the given object implements more
+     * than one of the above-cited interfaces, then the {@code wrap} method to be used is
+     * unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static AbstractGeolocationInformation wrap(final GeolocationInformation object) {
+        if (object instanceof GCPCollection) {
+            return DefaultGCPCollection.wrap((GCPCollection) object);
+        }
+        return (object == null) || (object instanceof AbstractGeolocationInformation)
+                ? (AbstractGeolocationInformation) object : new AbstractGeolocationInformation(object);
     }
 
     /**

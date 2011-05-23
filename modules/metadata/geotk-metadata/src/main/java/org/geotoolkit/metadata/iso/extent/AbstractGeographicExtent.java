@@ -27,6 +27,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.extent.GeographicExtent;
+import org.opengis.metadata.extent.GeographicBoundingBox;
+import org.opengis.metadata.extent.GeographicDescription;
+import org.opengis.metadata.extent.BoundingPolygon;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
@@ -34,10 +37,10 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 /**
  * Base class for geographic area of the dataset.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.03
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -86,6 +89,40 @@ public class AbstractGeographicExtent extends MetadataEntity implements Geograph
      */
     public AbstractGeographicExtent(final boolean inclusion) {
         setInclusion(Boolean.valueOf(inclusion));
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link BoundingPolygon}, {@link GeographicBoundingBox} and
+     * {@link GeographicDescription} sub-interfaces. If one of those interfaces is found, then
+     * this method delegates to the corresponding {@code wrap} static method. If the given object
+     * implements more than one of the above-cited interfaces, then the {@code wrap} method to be
+     * used is unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static AbstractGeographicExtent wrap(final GeographicExtent object) {
+        if (object instanceof BoundingPolygon) {
+            return DefaultBoundingPolygon.wrap((BoundingPolygon) object);
+        }
+        if (object instanceof GeographicBoundingBox) {
+            return DefaultGeographicBoundingBox.wrap((GeographicBoundingBox) object);
+        }
+        if (object instanceof GeographicDescription) {
+            return DefaultGeographicDescription.wrap((GeographicDescription) object);
+        }
+        return (object == null) || (object instanceof AbstractGeographicExtent)
+                ? (AbstractGeographicExtent) object : new AbstractGeographicExtent(object);
     }
 
     /**

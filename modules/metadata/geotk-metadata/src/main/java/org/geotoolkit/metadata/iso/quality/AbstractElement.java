@@ -35,6 +35,12 @@ import org.opengis.metadata.Identifier;
 import org.opengis.metadata.citation.Citation;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.Element;
+import org.opengis.metadata.quality.Usability;
+import org.opengis.metadata.quality.Completeness;
+import org.opengis.metadata.quality.TemporalAccuracy;
+import org.opengis.metadata.quality.ThematicAccuracy;
+import org.opengis.metadata.quality.PositionalAccuracy;
+import org.opengis.metadata.quality.LogicalConsistency;
 import org.opengis.metadata.quality.EvaluationMethodType;
 import org.opengis.util.InternationalString;
 
@@ -158,6 +164,50 @@ public class AbstractElement extends MetadataEntity implements Element {
     public AbstractElement(final Result result) {
         this(); // Initialize date fields.
         setResults(Collections.singleton(result));
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link Completeness}, {@link LogicalConsistency},
+     * {@link PositionalAccuracy}, {@link ThematicAccuracy}, {@link TemporalAccuracy} and
+     * {@link Usability} sub-interfaces. If one of those interfaces is found, then this method
+     * delegates to the corresponding {@code wrap} static method. If the given object implements
+     * more than one of the above-cited interfaces, then the {@code wrap} method to be used is
+     * unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static AbstractElement wrap(final Element object) {
+        if (object instanceof Completeness) {
+            return AbstractCompleteness.wrap((Completeness) object);
+        }
+        if (object instanceof LogicalConsistency) {
+            return AbstractLogicalConsistency.wrap((LogicalConsistency) object);
+        }
+        if (object instanceof PositionalAccuracy) {
+            return AbstractPositionalAccuracy.wrap((PositionalAccuracy) object);
+        }
+        if (object instanceof ThematicAccuracy) {
+            return AbstractThematicAccuracy.wrap((ThematicAccuracy) object);
+        }
+        if (object instanceof TemporalAccuracy) {
+            return AbstractTemporalAccuracy.wrap((TemporalAccuracy) object);
+        }
+        if (object instanceof Usability) {
+            return DefaultUsability.wrap((Usability) object);
+        }
+        return (object == null) || (object instanceof AbstractElement)
+                ? (AbstractElement) object : new AbstractElement(object);
     }
 
     /**

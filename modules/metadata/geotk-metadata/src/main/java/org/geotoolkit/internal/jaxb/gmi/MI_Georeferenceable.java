@@ -30,7 +30,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.17
  * @module
@@ -72,10 +72,7 @@ public class MI_Georeferenceable  extends DefaultGeoreferenceable {
             if (!isNullOrEmpty(original.getGeolocationInformation())) {
                 return new MI_Georeferenceable(original);
             }
-            if (!(original instanceof DefaultGeoreferenceable)) {
-                return new DefaultGeoreferenceable(original);
-            }
         }
-        return (DefaultGeoreferenceable) original;
+        return DefaultGeoreferenceable.wrap(original);
     }
 }

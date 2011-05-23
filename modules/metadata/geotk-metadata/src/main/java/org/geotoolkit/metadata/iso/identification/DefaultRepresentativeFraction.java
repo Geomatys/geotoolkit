@@ -36,7 +36,8 @@ import org.geotoolkit.resources.Errors;
  *
  * @author Jody Garnett (Refractions)
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.4
  * @module
@@ -62,12 +63,43 @@ public class DefaultRepresentativeFraction extends Number implements Representat
     }
 
     /**
+     * Constructs a metadata entity initialized with the values from the specified metadata.
+     *
+     * @param source The metadata to copy, or {@code null} if none.
+     *
+     * @since 3.18
+     */
+    public DefaultRepresentativeFraction(final RepresentativeFraction source) {
+        if (source != null) {
+            denominator = source.getDenominator();
+        }
+    }
+
+    /**
      * Creates a new representative fraction from the specified denominator.
      *
      * @param denominator The denominator.
      */
     public DefaultRepresentativeFraction(final long denominator) {
         this.denominator = denominator;
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultRepresentativeFraction wrap(final RepresentativeFraction object) {
+        return (object == null) || (object instanceof DefaultRepresentativeFraction)
+                ? (DefaultRepresentativeFraction) object : new DefaultRepresentativeFraction(object);
     }
 
     /**

@@ -30,7 +30,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.17
  * @module
@@ -72,10 +72,7 @@ public class MI_ImageDescription extends DefaultImageDescription {
             if (!isNullOrEmpty(original.getRangeElementDescriptions())) {
                 return new MI_ImageDescription(original);
             }
-            if (!(original instanceof DefaultImageDescription)) {
-                return new DefaultImageDescription(original);
-            }
         }
-        return (DefaultImageDescription) original;
+        return DefaultImageDescription.wrap(original);
     }
 }

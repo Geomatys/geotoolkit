@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.spatial.SpatialRepresentation;
+import org.opengis.metadata.spatial.GridSpatialRepresentation;
+import org.opengis.metadata.spatial.VectorSpatialRepresentation;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
@@ -33,10 +35,10 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 /**
  * Method used to represent geographic information in the dataset.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -69,5 +71,36 @@ public class AbstractSpatialRepresentation extends MetadataEntity implements Spa
      */
     public AbstractSpatialRepresentation(final SpatialRepresentation source) {
         super(source);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link GridSpatialRepresentation} and {@link VectorSpatialRepresentation}
+     * sub-interfaces. If one of those interfaces is found, then this method delegates to
+     * the corresponding {@code wrap} static method. If the given object implements more
+     * than one of the above-cited interfaces, then the {@code wrap} method to be used is
+     * unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static AbstractSpatialRepresentation wrap(final SpatialRepresentation object) {
+        if (object instanceof GridSpatialRepresentation) {
+            return DefaultGridSpatialRepresentation.wrap((GridSpatialRepresentation) object);
+        }
+        if (object instanceof VectorSpatialRepresentation) {
+            return DefaultVectorSpatialRepresentation.wrap((VectorSpatialRepresentation) object);
+        }
+        return (object == null) || (object instanceof AbstractSpatialRepresentation)
+                ? (AbstractSpatialRepresentation) object : new AbstractSpatialRepresentation(object);
     }
 }

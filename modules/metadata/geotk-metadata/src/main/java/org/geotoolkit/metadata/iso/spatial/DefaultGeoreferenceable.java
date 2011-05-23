@@ -44,10 +44,10 @@ import org.geotoolkit.xml.Namespaces;
  * system, whose individual cells can be geolocated using geolocation information
  * supplied with the data but cannot be geolocated from the grid properties alone.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -122,17 +122,17 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
      * @param axisDimensionsProperties Information about spatial-temporal axis properties.
      * @param cellGeometry Identification of grid data as point or cell.
      * @param transformationParameterAvailable Indication of whether or not parameters for
-     *          transformation exists.
+     *        transformation exists.
      * @param controlPointAvailable An indication of whether or not control point(s) exists.
      * @param orientationParameterAvailable An indication of whether or not orientation parameters
-     *          are available.
+     *        are available.
      */
     public DefaultGeoreferenceable(final int numberOfDimensions,
-                                final List<? extends Dimension> axisDimensionsProperties,
-                                final CellGeometry cellGeometry,
-                                final boolean transformationParameterAvailable,
-                                final boolean controlPointAvailable,
-                                final boolean orientationParameterAvailable)
+                                   final List<? extends Dimension> axisDimensionsProperties,
+                                   final CellGeometry cellGeometry,
+                                   final boolean transformationParameterAvailable,
+                                   final boolean controlPointAvailable,
+                                   final boolean orientationParameterAvailable)
     {
         super(numberOfDimensions,
               axisDimensionsProperties,
@@ -140,6 +140,25 @@ public class DefaultGeoreferenceable extends DefaultGridSpatialRepresentation im
               transformationParameterAvailable);
         setControlPointAvailable(controlPointAvailable);
         setOrientationParameterAvailable(orientationParameterAvailable);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultGeoreferenceable wrap(final Georeferenceable object) {
+        return (object == null) || (object instanceof DefaultGeoreferenceable)
+                ? (DefaultGeoreferenceable) object : new DefaultGeoreferenceable(object);
     }
 
     /**

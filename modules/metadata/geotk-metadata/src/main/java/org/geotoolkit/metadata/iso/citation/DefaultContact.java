@@ -37,10 +37,10 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 /**
  * Information required to enable contact with the responsible person and/or organization.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.08
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -255,6 +255,25 @@ public class DefaultContact extends MetadataEntity implements Contact {
      */
     public DefaultContact(final OnlineResource resource) {
         setOnlineResource(resource);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultContact wrap(final Contact object) {
+        return (object == null) || (object instanceof DefaultContact)
+                ? (DefaultContact) object : new DefaultContact(object);
     }
 
     /**

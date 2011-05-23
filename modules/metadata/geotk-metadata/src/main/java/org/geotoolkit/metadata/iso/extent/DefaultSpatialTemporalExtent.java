@@ -36,10 +36,10 @@ import org.opengis.metadata.extent.SpatialTemporalExtent;
  * (<var>x</var>,<var>y</var>) coordinates of the polygon. The last
  * point replicates first point.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -88,6 +88,25 @@ public class DefaultSpatialTemporalExtent extends DefaultTemporalExtent implemen
     {
         super(startTime, endTime);
         setSpatialExtent(spatialExtent);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultSpatialTemporalExtent wrap(final SpatialTemporalExtent object) {
+        return (object == null) || (object instanceof DefaultSpatialTemporalExtent)
+                ? (DefaultSpatialTemporalExtent) object : new DefaultSpatialTemporalExtent(object);
     }
 
     /**

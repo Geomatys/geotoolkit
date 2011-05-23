@@ -42,10 +42,10 @@
  * {@link org.geotoolkit.metadata.iso.DefaultMetadata#setLanguage setLanguage(Locale)} method
  * will have precedence. The later behavior is compliant with INSPIRE rules.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.07
+ * @version 3.18
  *
  * @since 2.1
  * @module

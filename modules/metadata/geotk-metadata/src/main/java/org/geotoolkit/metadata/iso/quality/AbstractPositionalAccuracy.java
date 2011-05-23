@@ -28,6 +28,9 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.util.InternationalString;
 import org.opengis.metadata.quality.Result;
 import org.opengis.metadata.quality.PositionalAccuracy;
+import org.opengis.metadata.quality.GriddedDataPositionalAccuracy;
+import org.opengis.metadata.quality.AbsoluteExternalPositionalAccuracy;
+import org.opengis.metadata.quality.RelativeInternalPositionalAccuracy;
 
 import org.geotoolkit.resources.Vocabulary;
 import org.geotoolkit.resources.Descriptions;
@@ -36,9 +39,9 @@ import org.geotoolkit.resources.Descriptions;
 /**
  * Accuracy of the position of features.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.04
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -114,5 +117,39 @@ public class AbstractPositionalAccuracy extends AbstractElement implements Posit
      */
     public AbstractPositionalAccuracy(final Result result) {
         super(result);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link GriddedDataPositionalAccuracy},
+     * {@link AbsoluteExternalPositionalAccuracy} and {@link RelativeInternalPositionalAccuracy}
+     * sub-interfaces. If one of those interfaces is found, then this method delegates to the
+     * corresponding {@code wrap} static method. If the given object implements more than one
+     * of the above-cited interfaces, then the {@code wrap} method to be used is unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static AbstractPositionalAccuracy wrap(final PositionalAccuracy object) {
+        if (object instanceof AbsoluteExternalPositionalAccuracy) {
+            return DefaultAbsoluteExternalPositionalAccuracy.wrap((AbsoluteExternalPositionalAccuracy) object);
+        }
+        if (object instanceof GriddedDataPositionalAccuracy) {
+            return DefaultGriddedDataPositionalAccuracy.wrap((GriddedDataPositionalAccuracy) object);
+        }
+        if (object instanceof RelativeInternalPositionalAccuracy) {
+            return DefaultRelativeInternalPositionalAccuracy.wrap((RelativeInternalPositionalAccuracy) object);
+        }
+        return (object == null) || (object instanceof AbstractPositionalAccuracy)
+                ? (AbstractPositionalAccuracy) object : new AbstractPositionalAccuracy(object);
     }
 }

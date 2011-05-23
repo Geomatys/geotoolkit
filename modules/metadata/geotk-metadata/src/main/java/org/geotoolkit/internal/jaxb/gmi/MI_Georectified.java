@@ -30,7 +30,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.17
  * @module
@@ -72,10 +72,7 @@ public class MI_Georectified extends DefaultGeorectified {
             if (!isNullOrEmpty(original.getCheckPoints())) {
                 return new MI_Georectified(original);
             }
-            if (!(original instanceof DefaultGeorectified)) {
-                return new DefaultGeorectified(original);
-            }
         }
-        return (DefaultGeorectified) original;
+        return DefaultGeorectified.wrap(original);
     }
 }

@@ -30,7 +30,7 @@ import static org.geotoolkit.util.collection.XCollections.isNullOrEmpty;
  *
  * @author Guilhem Legal (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.17
  * @module
@@ -72,10 +72,7 @@ public class MI_CoverageDescription extends DefaultCoverageDescription {
             if (!isNullOrEmpty(original.getRangeElementDescriptions())) {
                 return new MI_CoverageDescription(original);
             }
-            if (!(original instanceof DefaultCoverageDescription)) {
-                return new DefaultCoverageDescription(original);
-            }
         }
-        return (DefaultCoverageDescription) original;
+        return DefaultCoverageDescription.wrap(original);
     }
 }

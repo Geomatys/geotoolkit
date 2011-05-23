@@ -42,7 +42,8 @@ import org.geotoolkit.xml.Namespaces;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.17
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.03
  * @module
@@ -107,6 +108,25 @@ public class DefaultProcessing extends MetadataEntity implements Processing {
      */
     public DefaultProcessing(final Processing source) {
         super(source);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultProcessing wrap(final Processing object) {
+        return (object == null) || (object instanceof DefaultProcessing)
+                ? (DefaultProcessing) object : new DefaultProcessing(object);
     }
 
     /**

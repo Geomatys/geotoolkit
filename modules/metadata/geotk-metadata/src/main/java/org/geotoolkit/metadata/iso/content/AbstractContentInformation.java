@@ -26,6 +26,8 @@ import javax.xml.bind.annotation.XmlType;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.content.ContentInformation;
+import org.opengis.metadata.content.CoverageDescription;
+import org.opengis.metadata.content.FeatureCatalogueDescription;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
@@ -33,10 +35,10 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 /**
  * Description of the content of a dataset.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
  * @author Cédric Briançon (Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -69,5 +71,36 @@ public class AbstractContentInformation extends MetadataEntity implements Conten
      */
     public AbstractContentInformation(final ContentInformation source) {
         super(source);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link CoverageDescription} and {@link FeatureCatalogueDescription}
+     * sub-interfaces. If one of those interfaces is found, then this method delegates to
+     * the corresponding {@code wrap} static method. If the given object implements more
+     * than one of the above-cited interfaces, then the {@code wrap} method to be used is
+     * unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static AbstractContentInformation wrap(final ContentInformation object) {
+        if (object instanceof CoverageDescription) {
+            return DefaultCoverageDescription.wrap((CoverageDescription) object);
+        }
+        if (object instanceof FeatureCatalogueDescription) {
+            return DefaultFeatureCatalogueDescription.wrap((FeatureCatalogueDescription) object);
+        }
+        return (object == null) || (object instanceof AbstractContentInformation)
+                ? (AbstractContentInformation) object : new AbstractContentInformation(object);
     }
 }

@@ -26,6 +26,9 @@ import javax.xml.bind.annotation.XmlRootElement;
 import net.jcip.annotations.ThreadSafe;
 
 import org.opengis.metadata.quality.Result;
+import org.opengis.metadata.quality.CoverageResult;
+import org.opengis.metadata.quality.ConformanceResult;
+import org.opengis.metadata.quality.QuantitativeResult;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
 
@@ -33,9 +36,9 @@ import org.geotoolkit.metadata.iso.MetadataEntity;
 /**
  * Type of test applied to the data specified by a data quality scope.
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Touraïvane (IRD)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.1
  * @module
@@ -69,5 +72,39 @@ public class AbstractResult extends MetadataEntity implements Result {
      */
     public AbstractResult(final Result source) {
         super(source);
+    }
+
+    /**
+     * Returns a Geotk metadata implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object, using a <cite>shallow</cite> copy operation
+     * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link CoverageResult}, {@link QuantitativeResult}, and
+     * {@link ConformanceResult} sub-interfaces. If one of those interfaces is found, then
+     * this method delegates to the corresponding {@code wrap} static method. If the given
+     * object implements more than one of the above-cited interfaces, then the {@code wrap}
+     * method to be used is unspecified.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static AbstractResult wrap(final Result object) {
+        if (object instanceof CoverageResult) {
+            return DefaultCoverageResult.wrap((CoverageResult) object);
+        }
+        if (object instanceof QuantitativeResult) {
+            return DefaultQuantitativeResult.wrap((QuantitativeResult) object);
+        }
+        if (object instanceof ConformanceResult) {
+            return DefaultConformanceResult.wrap((ConformanceResult) object);
+        }
+        return (object == null) || (object instanceof AbstractResult)
+                ? (AbstractResult) object : new AbstractResult(object);
     }
 }
