@@ -407,7 +407,7 @@ public final class XMath extends Static {
     /**
      * Tries to remove at least {@code n} fraction digits in the decimal representation of
      * the specified value. This method tries small changes to {@code value}, by adding or
-     * substracting up to {@code maxULP} (Unit in the Last Place). If there is no small
+     * subtracting up to {@code maxULP} (Unit in the Last Place). If there is no small
      * change that remove at least {@code n} fraction digits, then the value is returned
      * unchanged. This method is used for hiding rounding errors, like in conversions from
      * radians to degrees.

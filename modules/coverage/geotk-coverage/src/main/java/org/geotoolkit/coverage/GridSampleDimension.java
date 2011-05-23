@@ -527,7 +527,7 @@ public class GridSampleDimension implements SampleDimension, Serializable {
          *          no new category will be created.  This step will be executed only if the
          *          information provided by the user seem to be incomplete.
          *
-         *          Note that substractions way break a range into many smaller ranges.
+         *          Note that subtractions way break a range into many smaller ranges.
          *          The naive algorithm used here try to keep the widest range.
          */
         if (needQuantitative) {

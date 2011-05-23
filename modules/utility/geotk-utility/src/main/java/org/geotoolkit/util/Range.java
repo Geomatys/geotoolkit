@@ -413,7 +413,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
      *   <li>Otherwise returns an array of length 1.</li>
      * </ul>
      *
-     * @param  range The range to substract.
+     * @param  range The range to subtract.
      * @return This range without the given range.
      * @throws IllegalArgumentException is the given range can not be converted to a valid type
      *         through widening conversion, or if the units of measurement are not convertible.

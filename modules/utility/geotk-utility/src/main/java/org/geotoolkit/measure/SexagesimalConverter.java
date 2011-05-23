@@ -206,7 +206,7 @@ class SexagesimalConverter extends UnitConverter {
                     if (value >= 0) min++; else min--;
                     value = 0;
                 } else {
-                    throw new ArithmeticException("Invalid secondes: " + value);
+                    throw new ArithmeticException("Invalid seconds: " + value);
                 }
             }
             value = ((value/60) + min)/60 + deg;

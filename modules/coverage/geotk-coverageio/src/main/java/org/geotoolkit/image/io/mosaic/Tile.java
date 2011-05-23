@@ -1303,7 +1303,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         count /= (subsampling.width * subsampling.height);
         /*
          * Computes the amount of pixels from the current tile that would be unused. Note that
-         * we are substracting a quantity derived from the absolute space from a quantity in the
+         * we are subtracting a quantity derived from the absolute space from a quantity in the
          * relative space. The result should be positive anyway because we divided the former by
          * (s.width * s.height), which should be greater than (xSubsampling * ySubsampling).
          */

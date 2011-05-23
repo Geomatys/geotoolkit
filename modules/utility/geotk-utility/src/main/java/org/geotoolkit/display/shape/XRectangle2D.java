@@ -35,7 +35,7 @@ import org.geotoolkit.util.converter.Classes;
  *       infinites} and {@linkplain java.lang.Double#NaN NaN} values (the <var>width</var> and
  *       <var>height</var> alternative has ambiguities).</li>
  *   <li>Slightly faster {@code contains} and {@code intersects} methods since there is no
- *       addition or substraction to perform.</li>
+ *       addition or subtraction to perform.</li>
  * </ul>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)

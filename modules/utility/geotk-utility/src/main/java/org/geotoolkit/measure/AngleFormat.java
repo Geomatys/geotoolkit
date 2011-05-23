@@ -496,8 +496,8 @@ public class AngleFormat extends Format {
          * vers 0 (ce qui est le comportement souhaité) alors que 'floor' arrondie vers
          * l'entier inférieur.
          */
-        double minutes  = NaN;
-        double secondes = NaN;
+        double minutes = NaN;
+        double seconds = NaN;
         if (width1!=0 && !isNaN(angle)) {
             int tmp = (int) degrees; // Arrondie vers 0 même si négatif.
             minutes = Math.abs(degrees - tmp) * 60;
@@ -507,10 +507,10 @@ public class AngleFormat extends Format {
                 throw new IllegalArgumentException(Errors.format(Errors.Keys.ANGLE_OVERFLOW_$1, angle));
             }
             if (width2 != 0) {
-                tmp      = (int) minutes; // Arrondie vers 0 même si négatif.
-                secondes = (minutes - tmp) * 60;
-                minutes  = tmp;
-                if (secondes<0 || secondes>60) {
+                tmp     = (int) minutes; // Arrondie vers 0 même si négatif.
+                seconds = (minutes - tmp) * 60;
+                minutes = tmp;
+                if (seconds<0 || seconds>60) {
                     // Erreur d'arrondissement (parce que l'angle est trop élevé)
                     throw new IllegalArgumentException(Errors.format(Errors.Keys.ANGLE_OVERFLOW_$1, angle));
                 }
@@ -519,13 +519,13 @@ public class AngleFormat extends Format {
                  * compte des problèmes d'arrondissements.
                  */
                 final double puissance = XMath.pow10(widthDecimal);
-                secondes = Math.rint(secondes*puissance)/puissance;
-                tmp = (int) (secondes/60);
-                secondes -= 60*tmp;
+                seconds = Math.rint(seconds*puissance)/puissance;
+                tmp = (int) (seconds/60);
+                seconds -= 60*tmp;
                 minutes += tmp;
             } else {
                 final double puissance = XMath.pow10(widthDecimal);
-                minutes = Math.rint(minutes*puissance)/puissance;
+                minutes = Math.rint(minutes*puissance) / puissance;
             }
             tmp = (int) (minutes/60); // Arrondie vers 0 même si négatif.
             minutes -= 60*tmp;
@@ -554,8 +554,8 @@ public class AngleFormat extends Format {
             toAppendTo = formatField(minutes, toAppendTo, (field == MINUTES_FIELD) ? pos : null,
                                      width1, (width2 == 0), suffix1);
         }
-        if (!isNaN(secondes)) {
-            toAppendTo = formatField(secondes, toAppendTo, (field == SECONDS_FIELD) ? pos : null,
+        if (!isNaN(seconds)) {
+            toAppendTo = formatField(seconds, toAppendTo, (field == SECONDS_FIELD) ? pos : null,
                                      width2, true, suffix2);
         }
         return toAppendTo;
@@ -828,11 +828,11 @@ public class AngleFormat extends Format {
     private Angle parse(final String source, final ParsePosition pos, final boolean spaceAsSeparator) {
         double degrees   = NaN;
         double minutes   = NaN;
-        double secondes  = NaN;
+        double seconds   = NaN;
         final int length = source.length();
         ///////////////////////////////////////////////////////////////////////////////
         // BLOC A: Analyse la chaîne de caractères 'source' et affecte aux variables //
-        //         'degrés', 'minutes' et 'secondes' les valeurs appropriées.        //
+        //         'degrés', 'minutes' et 'seconds' les valeurs appropriées.         //
         //         Les premières accolades ne servent qu'à garder locales            //
         //         les variables sans intérêt une fois la lecture terminée.          //
         ///////////////////////////////////////////////////////////////////////////////
@@ -892,8 +892,8 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
                  * que la lecture est terminée.
                  */
                 case SECONDS_FIELD: {
-                    secondes = degrees;
-                    degrees  = NaN;
+                    seconds = degrees;
+                    degrees = NaN;
                     break BigBoss;
                 }
                 /* ----------------------------------------------
@@ -945,12 +945,12 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
                          * ANALYSE DU SYMBOLE SUIVANT LES PRÉSUMÉES MINUTES
                          * ------------------------------------------------
                          * Un symbole des secondes a été trouvé au lieu du symbole des minutes
-                         * attendu. On fera la modification dans les variables 'secondes' et
+                         * attendu. On fera la modification dans les variables 'seconds' et
                          * 'minutes' et on considèrera la lecture terminée.
                          */
                         case SECONDS_FIELD: {
-                            secondes = minutes;
-                            minutes  = NaN;
+                            seconds = minutes;
+                            minutes = NaN;
                             break BigBoss;
                         }
                         /* ------------------------------------------------
@@ -1018,7 +1018,7 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
                         break;
                     }
                     indexEndField = pos.getIndex();
-                    secondes = fieldObject.doubleValue();
+                    seconds = fieldObject.doubleValue();
                     switch (skipSuffix(source, pos, (width2!=0) ? MINUTES_FIELD : PREFIX_FIELD)) {
                         /* -------------------------------------------------
                          * ANALYSE DU SYMBOLE SUIVANT LES PRÉSUMÉES SECONDES
@@ -1048,7 +1048,7 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
                         case MINUTES_FIELD:
                         case DEGREES_FIELD: {
                             pos.setIndex(indexStartField);
-                            secondes = NaN;
+                            seconds = NaN;
                             break;
                         }
                         /* -------------------------------------------------
@@ -1072,25 +1072,25 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
         //         aurrait été absent, puis calcule l'angle en degrés.    //
         ////////////////////////////////////////////////////////////////////
         if (minutes < 0) {
-            secondes = -secondes;
+            seconds = -seconds;
         }
         if (degrees < 0) {
             minutes = -minutes;
-            secondes = -secondes;
+            seconds = -seconds;
         }
         if (!decimalSeparator) {
             final double facteur = XMath.pow10(widthDecimal);
             if (width2 != 0) {
-                if (suffix1 == null && isNaN(secondes)) {
+                if (suffix1 == null && isNaN(seconds)) {
                     if (suffix0 == null && isNaN(minutes)) {
                         degrees /= facteur;
                     } else {
                         minutes /= facteur;
                     }
                 } else {
-                    secondes /= facteur;
+                    seconds /= facteur;
                 }
-            } else if (isNaN(secondes)) {
+            } else if (isNaN(seconds)) {
                 if (width1 != 0) {
                     if (suffix0 == null && isNaN(minutes)) {
                         degrees /= facteur;
@@ -1107,25 +1107,25 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
          * le patron est "DDDMMmmm"), alors la variable 'degrés' englobe à la fois les
          * degrés, les minutes et d'éventuelles secondes. On applique une correction ici.
          */
-        if (suffix1 == null && width2 != 0 && isNaN(secondes)) {
+        if (suffix1 == null && width2 != 0 && isNaN(seconds)) {
             double facteur = XMath.pow10(width2);
             if (suffix0 == null && width1 != 0 && isNaN(minutes)) {
                 ///////////////////
                 //// DDDMMSS.s ////
                 ///////////////////
-                secondes  = degrees;
-                minutes   = (int) (degrees/facteur); // Arrondie vers 0
-                secondes -= minutes*facteur;
-                facteur   = XMath.pow10(width1);
-                degrees   = (int) (minutes/facteur); // Arrondie vers 0
+                seconds  = degrees;
+                minutes  = (int) (degrees/facteur); // Arrondie vers 0
+                seconds -= minutes*facteur;
+                facteur  = XMath.pow10(width1);
+                degrees  = (int) (minutes/facteur); // Arrondie vers 0
                 minutes  -= degrees*facteur;
             } else {
                 ////////////////////
                 //// DDD°MMSS.s ////
                 ////////////////////
-                secondes  = minutes;
-                minutes   = (int) (minutes/facteur); // Arrondie vers 0
-                secondes -= minutes*facteur;
+                seconds  = minutes;
+                minutes  = (int) (minutes/facteur); // Arrondie vers 0
+                seconds -= minutes*facteur;
             }
         } else if (suffix0==null && width1!=0 && isNaN(minutes)) {
             /////////////////
@@ -1137,9 +1137,9 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
             minutes -= degrees*facteur;
         }
         pos.setErrorIndex(-1);
-        if ( isNaN(degrees))  degrees  = 0;
-        if (!isNaN(minutes))  degrees += minutes/60;
-        if (!isNaN(secondes)) degrees += secondes/3600;
+        if ( isNaN(degrees)) degrees  = 0;
+        if (!isNaN(minutes)) degrees += minutes/60;
+        if (!isNaN(seconds)) degrees += seconds/3600;
         /////////////////////////////////////////////////////
         // BLOC C: Vérifie maintenant si l'angle ne serait //
         //         pas suivit d'un symbole N, S, E ou W.   //

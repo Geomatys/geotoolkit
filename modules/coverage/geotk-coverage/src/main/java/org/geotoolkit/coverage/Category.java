@@ -577,7 +577,7 @@ public class Category implements Serializable {
         if (sMaxInc == gMaxInc) sMaxInc = gMaxInc = 0;
         /*
          * If the minimal geophysics value is exclusive while the minimal sample value is inclusive,
-         * prepares to substract 1 to the sample value in order to make it exclusive (so that sample
+         * prepares to subtract 1 to the sample value in order to make it exclusive (so that sample
          * and geophysics values have the same "exclusive" state).  Do similar processing on maximal
          * values as well.  Note: the change is usually applied on sample values, but may be applied
          * on geophysics values instead if sample are floats or geophysics values are integers.

@@ -234,7 +234,7 @@ public class DateGraduation extends AbstractGraduation {
 
     /**
      * Returns the minimal value for this graduation. The value is in units of {@link #getUnit}.
-     * By default, it is the number of millisecondes elapsed since January 1st, 1970 at 00:00 UTC.
+     * By default, it is the number of milliseconds elapsed since January 1st, 1970 at 00:00 UTC.
      *
      * @see #setMinimum(double)
      * @see #getMaximum
@@ -247,7 +247,7 @@ public class DateGraduation extends AbstractGraduation {
 
     /**
      * Returns the maximal value for this graduation. The value is in units of {@link #getUnit}.
-     * By default, it is the number of millisecondes elapsed since January 1st, 1970 at 00:00 UTC.
+     * By default, it is the number of milliseconds elapsed since January 1st, 1970 at 00:00 UTC.
      *
      * @see #setMaximum(double)
      * @see #getMinimum

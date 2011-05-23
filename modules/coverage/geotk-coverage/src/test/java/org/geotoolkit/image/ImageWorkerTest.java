@@ -139,7 +139,7 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         final RenderedImage intensity = worker.image;
         worker.binarize(true);
         assertNotSame(intensity, image = worker.image);
-        assertCurrentChecksumEquals(null, 312929432L);
+        assertCurrentChecksumEquals(null, 312929432L, 1768844228L);
         worker.binarize(0.25);
         assertSame("Should be already binarized.", image, worker.image);
         showCurrentImage("binarize()");
@@ -235,7 +235,7 @@ public final class ImageWorkerTest extends SampleImageTestBase {
         final RenderedImage intensity = worker.image;
         worker.binarize(true);
         assertNotSame(intensity, image = worker.image);
-        assertCurrentChecksumEquals(null, 564364433L);
+        assertCurrentChecksumEquals(null, 564364433L, 3551509129L);
         worker.binarize(0.25);
         assertSame("Should be already binarized.", image, worker.image);
         showCurrentImage("binarize()");

@@ -225,7 +225,7 @@ public class LambertConformal extends UnitaryProjection {
          * At this point, all parameters have been processed. Now process to their
          * validation and the initialization of (de)normalize affine transforms.
          *
-         * In GeoTools 2, rho0 was added or substracted in the tranform methods.
+         * In GeoTools 2, rho0 was added or subtracted in the tranform methods.
          * In Geotk, we move those linear operations to the affine transforms.
          * In addition of rho0, linear operations include the reversal of the sign
          * of y, etc.

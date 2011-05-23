@@ -249,7 +249,7 @@ public abstract class FloodFill extends OpImage {
         /*
          * Prepares a stack of coordinates to be processed in successive passes of
          * the loop below. Note that the coordinates in this stack are relative to
-         * the tile upper left corner, i.e. (xmin,ymin) must be substracted.  This
+         * the tile upper left corner, i.e. (xmin,ymin) must be subtracted.  This
          * is for allowing IntegerList to do its job (pack the data).
          */
         final IntegerList stack = new IntegerList(128, Math.max(width, height)-1);

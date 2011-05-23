@@ -98,7 +98,9 @@ public final class OperationsTest extends GridProcessingTestBase {
                      * line, then make sure that "<your_jdk_path>/jre/bin/mlib_jai.dll" (Windows)
                      * or "lib/i386/libmlib_jai.so" (Linux) is presents in your JDK installation.
                      */
-                    assertTrue(Float.isNaN(t));
+                    assertTrue("This assertion is know to fail when JAI is running in pure Java mode.\n" +
+                               "Please make sure that \"<your_jdk_path>/jre/bin/mlib_jai.dll\" (Windows)\n" +
+                               "or \"lib/i386/libmlib_jai.so\" (Linux) is presents in your JDK installation.", Float.isNaN(t));
                 } else {
                     assertEquals(s - constants[0], t, 1E-3f);
                 }

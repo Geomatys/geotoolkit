@@ -90,7 +90,7 @@
  * {@link org.geotoolkit.referencing.operation.provider.MapProjection#ROLL_LONGITUDE ROLL_LONGITUDE}
  * boolean parameter. If this parameter is set to {@code TRUE}, then any longitude outside the
  * [-180 &hellip; 180)&deg; range (upper value is exclusive) will be forced to that range by the
- * addition or substraction of some multiple of 360&deg;. This applies to both the input of
+ * addition or subtraction of some multiple of 360&deg;. This applies to both the input of
  * projections and the output of inverse projections.
  * <p>
  * If this parameter is not provided, then the default behavior is to roll longitudes only if

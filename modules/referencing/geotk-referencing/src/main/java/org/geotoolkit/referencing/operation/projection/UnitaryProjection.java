@@ -201,7 +201,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
     private double longitudeBound = POSITIVE_INFINITY;
 
     /**
-     * The value to substract from the longitude before to apply a forward projection. This is
+     * The value to subtract from the longitude before to apply a forward projection. This is
      * usually equal to the central meridian in radians, except if some scale has been applied
      * on the normalize affine transform.
      */
@@ -213,7 +213,7 @@ public abstract class UnitaryProjection extends AbstractMathTransform2D implemen
      * ranges (-180/180&deg; for longitude, -90/90&deg; for latitude).
      *
      * {@note This check seems redundant with <code>longitudeBounds</code>, but it is not exactly
-     *        the same since this check is performed before the central meridian is substracted
+     *        the same since this check is performed before the central meridian is subtracted
      *        from the longitude, while <code>longitudeBounds</code> is checked after}.
      *
      * @see #verifyCoordinateRanges()
