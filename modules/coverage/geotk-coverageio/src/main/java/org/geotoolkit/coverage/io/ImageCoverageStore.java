@@ -40,7 +40,7 @@ import org.geotoolkit.internal.io.IOUtilities;
 import org.geotoolkit.internal.image.io.Formats;
 import org.geotoolkit.coverage.AbstractCoverage;
 import org.geotoolkit.coverage.grid.GridCoverage2D;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 
 import static org.geotoolkit.coverage.io.GridCoverageStore.LOGGER;
 import static org.geotoolkit.coverage.io.GridCoverageStore.X_DIMENSION;
@@ -207,11 +207,11 @@ final class ImageCoverageStore extends Static {
         }
         if (crs != null) {
             buffer.setLength(0);
-            String t = AbstractIdentifiedObject.getName(crs, null);
+            String t = IdentifiedObjects.getName(crs, null);
             if (t != null) {
                 buffer.append(t);
             }
-            final ReferenceIdentifier id = AbstractIdentifiedObject.getIdentifier(crs, null);
+            final ReferenceIdentifier id = IdentifiedObjects.getIdentifier(crs, null);
             if (id != null) {
                 buffer.append(" (").append(id).append(')');
             }

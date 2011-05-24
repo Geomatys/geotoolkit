@@ -34,7 +34,7 @@ import org.opengis.referencing.ReferenceIdentifier;
 import org.opengis.referencing.NoSuchAuthorityCodeException;
 
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.Citations;
 import org.geotoolkit.naming.DefaultNameSpace;
 import org.geotoolkit.util.converter.Classes;
@@ -268,7 +268,7 @@ public class IdentifiedObjectFinder {
              */
             authority = null;
         }
-        ReferenceIdentifier identifier = AbstractIdentifiedObject.getIdentifier(object, authority);
+        ReferenceIdentifier identifier = IdentifiedObjects.getIdentifier(object, authority);
         if (identifier == null) {
             identifier = object.getName();
             // Should never be null past this point, since 'name' is a mandatory attribute.

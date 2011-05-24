@@ -63,8 +63,8 @@ import org.geotoolkit.internal.sql.table.NoSuchRecordException;
 import org.geotoolkit.internal.coverage.TransferFunction;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.crs.DefaultTemporalCRS;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.cs.DiscreteCoordinateSystemAxis;
 import org.geotoolkit.coverage.io.CoverageStoreException;
@@ -651,7 +651,7 @@ public final class NewGridCoverageReference {
             }
             ReferenceIdentifier id = null;
             for (final Citation authority : AUTHORITIES) {
-                id = AbstractIdentifiedObject.getIdentifier(identifiedCRS, authority);
+                id = IdentifiedObjects.getIdentifier(identifiedCRS, authority);
                 if (id != null) {
                     final String code = id.getCode();
                     if (id != null) try {

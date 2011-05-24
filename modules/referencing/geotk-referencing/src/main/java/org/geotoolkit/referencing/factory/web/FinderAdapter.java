@@ -23,7 +23,7 @@ import org.opengis.util.FactoryException;
 import org.opengis.referencing.IdentifiedObject;
 import org.opengis.referencing.ReferenceIdentifier;
 
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 
@@ -87,7 +87,7 @@ class FinderAdapter extends IdentifiedObjectFinder {
     public final String findIdentifier(final IdentifiedObject object) throws FactoryException {
         final IdentifiedObject candidate = find(object);
         if (candidate != null) {
-            ReferenceIdentifier identifier = AbstractIdentifiedObject.getIdentifier(object, null);
+            ReferenceIdentifier identifier = IdentifiedObjects.getIdentifier(object, null);
             if (identifier != null || (identifier = object.getName()) != null) {
                 String code      = identifier.getCode();
                 String codespace = identifier.getCodeSpace();

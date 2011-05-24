@@ -42,7 +42,7 @@ import org.geotoolkit.internal.sql.table.SingletonTable;
 import org.geotoolkit.internal.sql.table.IllegalRecordException;
 import org.geotoolkit.internal.sql.table.SpatialDatabase;
 import org.geotoolkit.metadata.iso.citation.Citations;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
+import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.referencing.factory.AbstractAuthorityFactory;
 import org.geotoolkit.referencing.factory.IdentifiedObjectFinder;
 import org.geotoolkit.referencing.operation.transform.AffineTransform2D;
@@ -120,7 +120,7 @@ final class GridGeometryTable extends SingletonTable<GridGeometryEntry> {
         final SpatialDatabase database = (SpatialDatabase) getDatabase();
         final AbstractAuthorityFactory factory = (AbstractAuthorityFactory) database.getCRSAuthorityFactory();
         final IdentifiedObjectFinder finder = factory.getIdentifiedObjectFinder(CoordinateReferenceSystem.class);
-        final ReferenceIdentifier srid = AbstractIdentifiedObject.getIdentifier(finder.find(crs), Citations.POSTGIS);
+        final ReferenceIdentifier srid = IdentifiedObjects.getIdentifier(finder.find(crs), Citations.POSTGIS);
         if (srid == null) {
             return 0;
         }

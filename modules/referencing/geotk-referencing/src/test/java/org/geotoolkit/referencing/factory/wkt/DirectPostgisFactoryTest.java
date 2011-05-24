@@ -38,7 +38,6 @@ import org.geotoolkit.io.wkt.WKTFormatTest;
 import org.geotoolkit.internal.io.Installation;
 import org.geotoolkit.metadata.iso.citation.Citations;
 import org.geotoolkit.referencing.CRS;
-import org.geotoolkit.referencing.AbstractIdentifiedObject;
 import org.geotoolkit.referencing.crs.DefaultGeographicCRS;
 
 import org.junit.*;
@@ -46,6 +45,7 @@ import org.postgresql.ds.PGSimpleDataSource;
 
 import static org.junit.Assert.*;
 import static org.junit.Assume.*;
+import static org.geotoolkit.referencing.IdentifiedObjects.getIdentifier;
 
 
 /**
@@ -101,18 +101,18 @@ public class DirectPostgisFactoryTest {
             assertEquals("WGS 84", String.valueOf(factory.getDescriptionText("EPSG:4326")));
 
             final GeographicCRS geoCRS = factory.createGeographicCRS("EPSG:4326");
-            assertEquals("EPSG:4326",    AbstractIdentifiedObject.getIdentifier(geoCRS, Citations.EPSG).toString());
-            assertEquals("PostGIS:4326", AbstractIdentifiedObject.getIdentifier(geoCRS, Citations.POSTGIS).toString());
+            assertEquals("EPSG:4326",    getIdentifier(geoCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:4326", getIdentifier(geoCRS, Citations.POSTGIS).toString());
             assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, geoCRS));
 
             final ProjectedCRS projCRS = factory.createProjectedCRS("EPSG:3395");
-            assertEquals("EPSG:3395",    AbstractIdentifiedObject.getIdentifier(projCRS, Citations.EPSG).toString());
-            assertEquals("PostGIS:3395", AbstractIdentifiedObject.getIdentifier(projCRS, Citations.POSTGIS).toString());
+            assertEquals("EPSG:3395",    getIdentifier(projCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:3395", getIdentifier(projCRS, Citations.POSTGIS).toString());
             assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, projCRS.getBaseCRS()));
 
             final VerticalCRS vertCRS = factory.createVerticalCRS("EPSG:57150");
-            assertEquals("EPSG:57150",   AbstractIdentifiedObject.getIdentifier(vertCRS, Citations.EPSG).toString());
-            assertEquals("PostGIS:6000", AbstractIdentifiedObject.getIdentifier(vertCRS, Citations.POSTGIS).toString());
+            assertEquals("EPSG:57150",   getIdentifier(vertCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:6000", getIdentifier(vertCRS, Citations.POSTGIS).toString());
             /*
              * Test the list of authority codes.
              */
@@ -159,18 +159,18 @@ public class DirectPostgisFactoryTest {
             assertEquals("WGS 84", String.valueOf(factory.getDescriptionText("EPSG:4326")));
 
             final GeographicCRS geoCRS = factory.createGeographicCRS("EPSG:4326");
-            assertEquals("EPSG:4326",    AbstractIdentifiedObject.getIdentifier(geoCRS, Citations.EPSG).toString());
-            assertEquals("PostGIS:4326", AbstractIdentifiedObject.getIdentifier(geoCRS, Citations.POSTGIS).toString());
+            assertEquals("EPSG:4326",    getIdentifier(geoCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:4326", getIdentifier(geoCRS, Citations.POSTGIS).toString());
             assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, geoCRS));
 
             final ProjectedCRS projCRS = factory.createProjectedCRS("EPSG:3395");
-            assertEquals("EPSG:3395",    AbstractIdentifiedObject.getIdentifier(projCRS, Citations.EPSG).toString());
-            assertEquals("PostGIS:3395", AbstractIdentifiedObject.getIdentifier(projCRS, Citations.POSTGIS).toString());
+            assertEquals("EPSG:3395",    getIdentifier(projCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:3395", getIdentifier(projCRS, Citations.POSTGIS).toString());
             assertTrue(CRS.equalsIgnoreMetadata(DefaultGeographicCRS.WGS84, projCRS.getBaseCRS()));
 
             final VerticalCRS vertCRS = factory.createVerticalCRS("EPSG:57150");
-            assertEquals("EPSG:57150",   AbstractIdentifiedObject.getIdentifier(vertCRS, Citations.EPSG).toString());
-            assertEquals("PostGIS:6000", AbstractIdentifiedObject.getIdentifier(vertCRS, Citations.POSTGIS).toString());
+            assertEquals("EPSG:57150",   getIdentifier(vertCRS, Citations.EPSG).toString());
+            assertEquals("PostGIS:6000", getIdentifier(vertCRS, Citations.POSTGIS).toString());
             /*
              * Test the cache.
              */
