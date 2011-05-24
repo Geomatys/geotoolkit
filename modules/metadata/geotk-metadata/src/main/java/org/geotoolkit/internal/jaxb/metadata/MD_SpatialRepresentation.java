@@ -71,6 +71,14 @@ public final class MD_SpatialRepresentation
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<SpatialRepresentation> getBoundType() {
+        return SpatialRepresentation.class;
+    }
+
+    /**
      * Returns the {@link AbstractSpatialRepresentation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

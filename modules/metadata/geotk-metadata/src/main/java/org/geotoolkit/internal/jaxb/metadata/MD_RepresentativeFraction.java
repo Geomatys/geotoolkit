@@ -66,6 +66,14 @@ public final class MD_RepresentativeFraction
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<RepresentativeFraction> getBoundType() {
+        return RepresentativeFraction.class;
+    }
+
+    /**
      * Returns the {@link DefaultRepresentativeFraction} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

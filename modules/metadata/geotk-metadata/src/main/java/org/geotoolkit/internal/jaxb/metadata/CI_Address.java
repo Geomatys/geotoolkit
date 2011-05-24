@@ -62,6 +62,14 @@ public final class CI_Address extends PropertyType<CI_Address, Address> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Address> getBoundType() {
+        return Address.class;
+    }
+
+    /**
      * Returns the {@link DefaultAddress} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

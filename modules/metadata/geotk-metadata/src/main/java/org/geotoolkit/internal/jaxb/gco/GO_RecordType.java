@@ -28,7 +28,7 @@ import org.geotoolkit.naming.DefaultRecordType;
  * See package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -58,6 +58,14 @@ public final class GO_RecordType extends PropertyType<GO_RecordType, RecordType>
     @Override
     protected GO_RecordType wrap(final RecordType value) {
         return new GO_RecordType(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<RecordType> getBoundType() {
+        return RecordType.class;
     }
 
     /**

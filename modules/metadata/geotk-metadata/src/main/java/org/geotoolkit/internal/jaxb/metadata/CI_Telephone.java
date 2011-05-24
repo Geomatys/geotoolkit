@@ -62,6 +62,14 @@ public final class CI_Telephone extends PropertyType<CI_Telephone, Telephone> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Telephone> getBoundType() {
+        return Telephone.class;
+    }
+
+    /**
      * Returns the {@link DefaultTelephone} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

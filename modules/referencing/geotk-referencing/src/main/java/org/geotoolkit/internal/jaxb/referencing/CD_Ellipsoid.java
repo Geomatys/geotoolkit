@@ -35,7 +35,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.05
  * @module
@@ -65,6 +66,14 @@ public final class CD_Ellipsoid extends PropertyType<CD_Ellipsoid, Ellipsoid> {
     @Override
     protected CD_Ellipsoid wrap(final Ellipsoid value) {
         return new CD_Ellipsoid(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Ellipsoid> getBoundType() {
+        return Ellipsoid.class;
     }
 
     /**

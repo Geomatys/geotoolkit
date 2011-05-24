@@ -62,6 +62,14 @@ public final class LE_NominalResolution extends PropertyType<LE_NominalResolutio
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<NominalResolution> getBoundType() {
+        return NominalResolution.class;
+    }
+
+    /**
      * Returns the {@link DefaultNominalResolution} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -62,6 +62,14 @@ public final class LI_Lineage extends PropertyType<LI_Lineage, Lineage> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Lineage> getBoundType() {
+        return Lineage.class;
+    }
+
+    /**
      * Returns the {@link DefaultLineage} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

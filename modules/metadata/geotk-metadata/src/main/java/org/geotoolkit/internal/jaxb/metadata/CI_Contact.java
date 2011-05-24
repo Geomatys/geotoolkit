@@ -62,6 +62,14 @@ public final class CI_Contact extends PropertyType<CI_Contact, Contact> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Contact> getBoundType() {
+        return Contact.class;
+    }
+
+    /**
      * Returns the {@link DefaultContact} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

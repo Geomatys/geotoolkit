@@ -64,6 +64,14 @@ public final class MD_Constraints extends PropertyType<MD_Constraints, Constrain
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Constraints> getBoundType() {
+        return Constraints.class;
+    }
+
+    /**
      * Returns the {@link DefaultConstraints} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

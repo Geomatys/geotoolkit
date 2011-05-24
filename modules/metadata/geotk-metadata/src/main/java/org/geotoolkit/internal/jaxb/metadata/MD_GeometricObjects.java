@@ -62,6 +62,14 @@ public final class MD_GeometricObjects extends PropertyType<MD_GeometricObjects,
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<GeometricObjects> getBoundType() {
+        return GeometricObjects.class;
+    }
+
+    /**
      * Returns the {@link DefaultGeometricObjects} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

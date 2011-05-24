@@ -62,6 +62,14 @@ public final class EX_TemporalExtent extends PropertyType<EX_TemporalExtent, Tem
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<TemporalExtent> getBoundType() {
+        return TemporalExtent.class;
+    }
+
+    /**
      * Returns the {@link DefaultTemporalExtent} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

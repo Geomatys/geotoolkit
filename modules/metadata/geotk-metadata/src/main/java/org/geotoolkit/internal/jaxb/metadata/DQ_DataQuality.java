@@ -62,6 +62,14 @@ public final class DQ_DataQuality extends PropertyType<DQ_DataQuality, DataQuali
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<DataQuality> getBoundType() {
+        return DataQuality.class;
+    }
+
+    /**
      * Returns the {@link DefaultDataQuality} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.04
  * @module
@@ -58,6 +59,14 @@ public final class CS_CartesianCS extends PropertyType<CS_CartesianCS, Cartesian
     @Override
     protected CS_CartesianCS wrap(final CartesianCS value) {
         return new CS_CartesianCS(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<CartesianCS> getBoundType() {
+        return CartesianCS.class;
     }
 
     /**

@@ -62,6 +62,14 @@ public final class LE_ProcessStepReport extends PropertyType<LE_ProcessStepRepor
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<ProcessStepReport> getBoundType() {
+        return ProcessStepReport.class;
+    }
+
+    /**
      * Returns the {@link DefaultProcessStepReport} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

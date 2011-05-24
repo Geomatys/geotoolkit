@@ -29,7 +29,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.04
  * @module
@@ -59,6 +60,14 @@ public final class CS_EllipsoidalCS extends PropertyType<CS_EllipsoidalCS, Ellip
     @Override
     protected CS_EllipsoidalCS wrap(final EllipsoidalCS value) {
         return new CS_EllipsoidalCS(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<EllipsoidalCS> getBoundType() {
+        return EllipsoidalCS.class;
     }
 
     /**

@@ -62,6 +62,14 @@ public final class MD_Medium extends PropertyType<MD_Medium, Medium> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Medium> getBoundType() {
+        return Medium.class;
+    }
+
+    /**
      * Returns the {@link DefaultMedium} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -28,7 +28,8 @@ import org.geotoolkit.referencing.datum.DefaultVerticalDatum;
  * complying with OGC/ISO standard.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -58,6 +59,14 @@ public final class CD_VerticalDatum extends PropertyType<CD_VerticalDatum, Verti
     @Override
     protected CD_VerticalDatum wrap(final VerticalDatum value) {
         return new CD_VerticalDatum(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<VerticalDatum> getBoundType() {
+        return VerticalDatum.class;
     }
 
     /**

@@ -64,6 +64,14 @@ public final class MI_AcquisitionInformation
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<AcquisitionInformation> getBoundType() {
+        return AcquisitionInformation.class;
+    }
+
+    /**
      * Returns the {@link DefaultAcquisitionInformation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

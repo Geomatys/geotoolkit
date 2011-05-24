@@ -62,6 +62,14 @@ public final class MI_Plan extends PropertyType<MI_Plan, Plan> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Plan> getBoundType() {
+        return Plan.class;
+    }
+
+    /**
      * Returns the {@link DefaultPlan} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

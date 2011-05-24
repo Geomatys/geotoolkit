@@ -62,6 +62,14 @@ public final class MI_Objective extends PropertyType<MI_Objective, Objective> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Objective> getBoundType() {
+        return Objective.class;
+    }
+
+    /**
      * Returns the {@link DefaultObjective} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

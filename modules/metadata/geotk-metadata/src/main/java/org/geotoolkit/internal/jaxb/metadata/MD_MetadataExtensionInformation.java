@@ -66,6 +66,14 @@ public final class MD_MetadataExtensionInformation
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<MetadataExtensionInformation> getBoundType() {
+        return MetadataExtensionInformation.class;
+    }
+
+    /**
      * Returns the {@link DefaultMetadataExtensionInformation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

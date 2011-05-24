@@ -64,6 +64,14 @@ public final class MI_EnvironmentalRecord
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<EnvironmentalRecord> getBoundType() {
+        return EnvironmentalRecord.class;
+    }
+
+    /**
      * Returns the {@link DefaultEnvironmentalRecord} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

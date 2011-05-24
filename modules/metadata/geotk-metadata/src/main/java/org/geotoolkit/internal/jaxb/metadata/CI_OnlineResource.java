@@ -62,6 +62,14 @@ public final class CI_OnlineResource extends PropertyType<CI_OnlineResource, Onl
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<OnlineResource> getBoundType() {
+        return OnlineResource.class;
+    }
+
+    /**
      * Returns the {@link DefaultOnlineResource} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

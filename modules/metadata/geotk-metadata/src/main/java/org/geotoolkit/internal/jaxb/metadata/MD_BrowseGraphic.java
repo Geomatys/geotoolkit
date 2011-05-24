@@ -62,6 +62,14 @@ public final class MD_BrowseGraphic extends PropertyType<MD_BrowseGraphic, Brows
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<BrowseGraphic> getBoundType() {
+        return BrowseGraphic.class;
+    }
+
+    /**
      * Returns the {@link DefaultBrowseGraphic} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

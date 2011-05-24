@@ -66,6 +66,14 @@ public final class MD_ExtendedElementInformation
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<ExtendedElementInformation> getBoundType() {
+        return ExtendedElementInformation.class;
+    }
+
+    /**
      * Returns the {@link DefaultExtendedElementInformation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

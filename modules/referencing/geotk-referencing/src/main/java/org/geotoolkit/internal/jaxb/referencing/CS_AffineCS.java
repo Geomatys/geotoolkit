@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.04
  * @module
@@ -58,6 +59,14 @@ public final class CS_AffineCS extends PropertyType<CS_AffineCS, AffineCS> {
     @Override
     protected CS_AffineCS wrap(final AffineCS value) {
         return new CS_AffineCS(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<AffineCS> getBoundType() {
+        return AffineCS.class;
     }
 
     /**

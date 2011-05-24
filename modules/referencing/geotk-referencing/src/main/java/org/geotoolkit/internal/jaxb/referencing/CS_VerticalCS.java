@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * complying with OGC/ISO standard.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -58,6 +59,14 @@ public final class CS_VerticalCS extends PropertyType<CS_VerticalCS, VerticalCS>
     @Override
     protected CS_VerticalCS wrap(final VerticalCS value) {
         return new CS_VerticalCS(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<VerticalCS> getBoundType() {
+        return VerticalCS.class;
     }
 
     /**

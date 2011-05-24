@@ -64,6 +64,14 @@ public final class EX_GeographicBoundingBox extends
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<GeographicBoundingBox> getBoundType() {
+        return GeographicBoundingBox.class;
+    }
+
+    /**
      * Returns the {@link DefaultGeographicBoundingBox} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

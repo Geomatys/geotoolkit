@@ -63,6 +63,14 @@ public class RS_ReferenceSystem extends PropertyType<RS_ReferenceSystem, Referen
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<ReferenceSystem> getBoundType() {
+        return ReferenceSystem.class;
+    }
+
+    /**
      * Returns the {@link ReferenceSystem} generated from the metadata value.
      * This method is systematically called at marshalling-time by JAXB.
      *

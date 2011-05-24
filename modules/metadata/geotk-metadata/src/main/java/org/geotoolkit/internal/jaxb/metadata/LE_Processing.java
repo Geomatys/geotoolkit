@@ -62,6 +62,14 @@ public final class LE_Processing extends PropertyType<LE_Processing, Processing>
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Processing> getBoundType() {
+        return Processing.class;
+    }
+
+    /**
      * Returns the {@link DefaultProcessing} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -62,6 +62,14 @@ public final class MI_PlatformPass extends PropertyType<MI_PlatformPass, Platfor
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<PlatformPass> getBoundType() {
+        return PlatformPass.class;
+    }
+
+    /**
      * Returns the {@link DefaultPlatformPass} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

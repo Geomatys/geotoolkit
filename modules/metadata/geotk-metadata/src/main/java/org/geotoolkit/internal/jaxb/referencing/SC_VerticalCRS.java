@@ -29,7 +29,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * not the ISO 19139 one.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.13
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -59,6 +60,14 @@ public final class SC_VerticalCRS extends PropertyType<SC_VerticalCRS, VerticalC
     @Override
     protected SC_VerticalCRS wrap(final VerticalCRS value) {
         return new SC_VerticalCRS(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<VerticalCRS> getBoundType() {
+        return VerticalCRS.class;
     }
 
     /**

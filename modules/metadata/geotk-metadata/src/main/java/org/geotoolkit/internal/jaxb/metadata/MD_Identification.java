@@ -64,6 +64,14 @@ public final class MD_Identification extends PropertyType<MD_Identification, Ide
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Identification> getBoundType() {
+        return Identification.class;
+    }
+
+    /**
      * Returns the {@link AbstractIdentification} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

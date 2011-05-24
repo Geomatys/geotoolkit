@@ -62,6 +62,14 @@ public final class MI_RequestedDate extends PropertyType<MI_RequestedDate, Reque
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<RequestedDate> getBoundType() {
+        return RequestedDate.class;
+    }
+
+    /**
      * Returns the {@link DefaultRequestedDate} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -63,6 +63,14 @@ public final class LE_Algorithm extends PropertyType<LE_Algorithm, Algorithm> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Algorithm> getBoundType() {
+        return Algorithm.class;
+    }
+
+    /**
      * Returns the {@link DefaultAlgorithm} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

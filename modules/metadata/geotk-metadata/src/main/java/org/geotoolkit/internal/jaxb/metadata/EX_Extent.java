@@ -62,6 +62,14 @@ public final class EX_Extent extends PropertyType<EX_Extent, Extent> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Extent> getBoundType() {
+        return Extent.class;
+    }
+
+    /**
      * Returns the {@link DefaultExtent} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

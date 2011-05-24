@@ -62,6 +62,14 @@ public final class MD_Distribution extends PropertyType<MD_Distribution, Distrib
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Distribution> getBoundType() {
+        return Distribution.class;
+    }
+
+    /**
      * Returns the {@link DefaultDistribution} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -64,6 +64,14 @@ public final class MI_GeolocationInformation
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<GeolocationInformation> getBoundType() {
+        return GeolocationInformation.class;
+    }
+
+    /**
      * Returns the {@link AbstractGeolocationInformation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

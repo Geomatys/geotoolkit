@@ -62,6 +62,14 @@ public final class DQ_Element extends PropertyType<DQ_Element, Element> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Element> getBoundType() {
+        return Element.class;
+    }
+
+    /**
      * Returns the {@link AbstractElement} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -64,6 +64,14 @@ public final class CI_ResponsibleParty
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<ResponsibleParty> getBoundType() {
+        return ResponsibleParty.class;
+    }
+
+    /**
      * Returns the {@link DefaultResponsibleParty} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

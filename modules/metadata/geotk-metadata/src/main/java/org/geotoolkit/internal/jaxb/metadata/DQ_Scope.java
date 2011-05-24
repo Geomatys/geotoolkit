@@ -62,6 +62,14 @@ public final class DQ_Scope extends PropertyType<DQ_Scope, Scope> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Scope> getBoundType() {
+        return Scope.class;
+    }
+
+    /**
      * Returns the {@link DefaultScope} generated from the metadata value.
      * This method is systematically called at marshalling-time by JAXB.
      *

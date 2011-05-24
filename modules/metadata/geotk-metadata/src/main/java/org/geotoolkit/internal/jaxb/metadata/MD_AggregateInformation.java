@@ -65,6 +65,14 @@ public final class MD_AggregateInformation extends
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<AggregateInformation> getBoundType() {
+        return AggregateInformation.class;
+    }
+
+    /**
      * Returns the {@link DefaultAggregateInformation} generated from the metadata value.
      * This method is systematically called at marshalling-time by JAXB.
      *

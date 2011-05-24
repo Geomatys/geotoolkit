@@ -62,6 +62,14 @@ public final class MD_Resolution extends PropertyType<MD_Resolution, Resolution>
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Resolution> getBoundType() {
+        return Resolution.class;
+    }
+
+    /**
      * Returns the {@link DefaultResolution} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

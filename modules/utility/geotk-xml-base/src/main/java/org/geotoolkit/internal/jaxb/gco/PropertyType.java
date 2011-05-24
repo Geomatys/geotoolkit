@@ -417,13 +417,15 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
 
 
     /**
-     * Returns the bound type, which is typically the GeoAPI interface. This method fetches the
-     * type using reflection, by looking at the second argument in the parameterized types.
+     * Returns the bound type, which is typically the GeoAPI interface. The default implementation
+     * fetches the type using reflection, by looking at the second argument in the parameterized
+     * types. However subclasses can override this method in order to return directly the type,
+     * for type safety and performance reason.
      *
      * @return The bound type, which is typically the GeoAPI interface.
      */
     @SuppressWarnings("unchecked")
-    private Class<BoundType> getBoundType() {
+    protected Class<BoundType> getBoundType() {
         Class<?> classe = getClass();
         do {
             // Typically executed exactly once, but implemented as a loop anyway as a

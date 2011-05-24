@@ -62,6 +62,14 @@ public final class MI_Operation extends PropertyType<MI_Operation, Operation> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Operation> getBoundType() {
+        return Operation.class;
+    }
+
+    /**
      * Returns the {@link DefaultOperation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

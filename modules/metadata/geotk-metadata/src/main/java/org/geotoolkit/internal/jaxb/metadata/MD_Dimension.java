@@ -62,6 +62,14 @@ public final class MD_Dimension extends PropertyType<MD_Dimension, Dimension> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Dimension> getBoundType() {
+        return Dimension.class;
+    }
+
+    /**
      * Returns the {@link DefaultDimension} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

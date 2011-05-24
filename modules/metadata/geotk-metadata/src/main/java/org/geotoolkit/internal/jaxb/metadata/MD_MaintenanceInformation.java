@@ -66,6 +66,14 @@ public final class MD_MaintenanceInformation
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<MaintenanceInformation> getBoundType() {
+        return MaintenanceInformation.class;
+    }
+
+    /**
      * Returns the {@link DefaultMaintenanceInformation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

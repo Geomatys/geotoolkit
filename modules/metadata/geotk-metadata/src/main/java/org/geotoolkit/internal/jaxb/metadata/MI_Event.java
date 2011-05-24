@@ -62,6 +62,14 @@ public final class MI_Event extends PropertyType<MI_Event, Event> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Event> getBoundType() {
+        return Event.class;
+    }
+
+    /**
      * Returns the {@link DefaultEvent} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * complying with OGC/ISO standard.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -61,6 +62,14 @@ public final class CS_CoordinateSystemAxis extends
     @Override
     protected CS_CoordinateSystemAxis wrap(final CoordinateSystemAxis value) {
         return new CS_CoordinateSystemAxis(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<CoordinateSystemAxis> getBoundType() {
+        return CoordinateSystemAxis.class;
     }
 
     /**

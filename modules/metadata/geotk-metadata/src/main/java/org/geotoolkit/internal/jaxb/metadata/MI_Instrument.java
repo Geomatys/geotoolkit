@@ -62,6 +62,14 @@ public final class MI_Instrument extends PropertyType<MI_Instrument, Instrument>
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Instrument> getBoundType() {
+        return Instrument.class;
+    }
+
+    /**
      * Returns the {@link DefaultInstrument} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

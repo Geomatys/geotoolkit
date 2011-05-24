@@ -27,7 +27,8 @@
  *
  * @author Guilhem Legal (Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *

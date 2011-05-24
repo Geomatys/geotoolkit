@@ -62,6 +62,14 @@ public final class DQ_Result extends PropertyType<DQ_Result, Result> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Result> getBoundType() {
+        return Result.class;
+    }
+
+    /**
      * Returns the {@link AbstractResult} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

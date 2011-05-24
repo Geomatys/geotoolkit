@@ -65,6 +65,14 @@ public final class MD_StandardOrderProcess
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<StandardOrderProcess> getBoundType() {
+        return StandardOrderProcess.class;
+    }
+
+    /**
      * Returns the {@link DefaultStandardOrderProcess} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

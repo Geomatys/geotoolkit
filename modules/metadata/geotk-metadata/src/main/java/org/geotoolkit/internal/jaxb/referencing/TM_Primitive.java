@@ -74,6 +74,14 @@ public final class TM_Primitive extends PropertyType<TM_Primitive, TemporalPrimi
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<TemporalPrimitive> getBoundType() {
+        return TemporalPrimitive.class;
+    }
+
+    /**
      * Returns the {@link TemporalPrimitive} generated from the metadata value.
      * This method is systematically called at marshalling-time by JAXB.
      *

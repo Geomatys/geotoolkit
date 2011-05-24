@@ -62,6 +62,14 @@ public final class MI_GCP extends PropertyType<MI_GCP, GCP> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<GCP> getBoundType() {
+        return GCP.class;
+    }
+
+    /**
      * Returns the {@link DefaultGCP} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

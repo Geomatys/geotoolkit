@@ -67,6 +67,14 @@ public final class RS_Identifier extends PropertyType<RS_Identifier, ReferenceId
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<ReferenceIdentifier> getBoundType() {
+        return ReferenceIdentifier.class;
+    }
+
+    /**
      * Returns the {@link DefaultReferenceIdentifier} generated from the metadata value.
      * This method is systematically called at marshalling-time by JAXB.
      *

@@ -28,7 +28,8 @@ import org.geotoolkit.referencing.datum.DefaultGeodeticDatum;
  * complying with OGC/ISO standard.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.04
  * @module
@@ -58,6 +59,14 @@ public final class CD_GeodeticDatum extends PropertyType<CD_GeodeticDatum, Geode
     @Override
     protected CD_GeodeticDatum wrap(final GeodeticDatum value) {
         return new CD_GeodeticDatum(value);
+    }
+
+    /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<GeodeticDatum> getBoundType() {
+        return GeodeticDatum.class;
     }
 
     /**

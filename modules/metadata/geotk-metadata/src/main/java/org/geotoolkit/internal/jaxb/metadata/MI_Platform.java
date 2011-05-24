@@ -62,6 +62,14 @@ public final class MI_Platform extends PropertyType<MI_Platform, Platform> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Platform> getBoundType() {
+        return Platform.class;
+    }
+
+    /**
      * Returns the {@link DefaultPlatform} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

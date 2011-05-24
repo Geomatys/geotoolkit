@@ -66,6 +66,14 @@ public final class MD_DigitalTransferOptions
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<DigitalTransferOptions> getBoundType() {
+        return DigitalTransferOptions.class;
+    }
+
+    /**
      * Returns the {@link DefaultDigitalTransferOptions} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -62,6 +62,14 @@ public final class MD_Format extends PropertyType<MD_Format, Format> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Format> getBoundType() {
+        return Format.class;
+    }
+
+    /**
      * Returns the {@link DefaultFormat} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

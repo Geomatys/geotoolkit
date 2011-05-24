@@ -62,6 +62,14 @@ public final class MD_Usage extends PropertyType<MD_Usage, Usage> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Usage> getBoundType() {
+        return Usage.class;
+    }
+
+    /**
      * Returns the {@link DefaultUsage} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

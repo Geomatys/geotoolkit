@@ -64,6 +64,14 @@ public final class MD_ScopeDescription
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<ScopeDescription> getBoundType() {
+        return ScopeDescription.class;
+    }
+
+    /**
      * Returns the {@link DefaultScopeDescription} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

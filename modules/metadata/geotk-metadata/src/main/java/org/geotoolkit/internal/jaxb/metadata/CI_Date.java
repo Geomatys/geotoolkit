@@ -62,6 +62,14 @@ public final class CI_Date extends PropertyType<CI_Date, CitationDate> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<CitationDate> getBoundType() {
+        return CitationDate.class;
+    }
+
+    /**
      * Returns the {@link DefaultCitationDate} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

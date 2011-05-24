@@ -64,6 +64,14 @@ public final class MD_DataIdentification
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<DataIdentification> getBoundType() {
+        return DataIdentification.class;
+    }
+
+    /**
      * Returns the {@link DefaultDataIdentification} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

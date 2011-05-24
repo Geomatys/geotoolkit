@@ -70,6 +70,14 @@ public final class MD_ContentInformation
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<ContentInformation> getBoundType() {
+        return ContentInformation.class;
+    }
+
+    /**
      * Returns the {@link AbstractContentInformation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

@@ -62,6 +62,14 @@ public final class CI_Citation extends PropertyType<CI_Citation, Citation> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Citation> getBoundType() {
+        return Citation.class;
+    }
+
+    /**
      * Returns the {@link DefaultCitation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

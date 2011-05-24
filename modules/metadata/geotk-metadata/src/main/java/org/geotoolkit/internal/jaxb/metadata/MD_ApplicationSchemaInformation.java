@@ -66,6 +66,14 @@ public final class MD_ApplicationSchemaInformation
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<ApplicationSchemaInformation> getBoundType() {
+        return ApplicationSchemaInformation.class;
+    }
+
+    /**
      * Returns the {@link DefaultApplicationSchemaInformation} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

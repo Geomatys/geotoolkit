@@ -63,6 +63,14 @@ public final class LI_Source extends PropertyType<LI_Source, Source> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Source> getBoundType() {
+        return Source.class;
+    }
+
+    /**
      * Returns the {@link DefaultSource} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

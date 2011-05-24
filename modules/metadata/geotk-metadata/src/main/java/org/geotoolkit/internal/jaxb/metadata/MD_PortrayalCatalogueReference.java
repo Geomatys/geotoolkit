@@ -66,6 +66,14 @@ public final class MD_PortrayalCatalogueReference
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<PortrayalCatalogueReference> getBoundType() {
+        return PortrayalCatalogueReference.class;
+    }
+
+    /**
      * Returns the {@link DefaultPortrayalCatalogueReference} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

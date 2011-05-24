@@ -63,6 +63,14 @@ public final class LI_ProcessStep extends PropertyType<LI_ProcessStep, ProcessSt
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<ProcessStep> getBoundType() {
+        return ProcessStep.class;
+    }
+
+    /**
      * Returns the {@link DefaultProcessStep} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

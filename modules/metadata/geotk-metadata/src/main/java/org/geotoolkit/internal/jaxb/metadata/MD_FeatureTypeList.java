@@ -62,6 +62,14 @@ public final class MD_FeatureTypeList extends PropertyType<MD_FeatureTypeList, F
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<FeatureTypeList> getBoundType() {
+        return FeatureTypeList.class;
+    }
+
+    /**
      * Returns the {@link DefaultFeatureTypeList} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

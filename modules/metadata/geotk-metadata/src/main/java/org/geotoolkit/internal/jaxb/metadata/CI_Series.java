@@ -62,6 +62,14 @@ public final class CI_Series extends PropertyType<CI_Series, Series> {
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Series> getBoundType() {
+        return Series.class;
+    }
+
+    /**
      * Returns the {@link DefaultSeries} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

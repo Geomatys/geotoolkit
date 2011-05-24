@@ -62,6 +62,14 @@ public final class EX_VerticalExtent extends PropertyType<EX_VerticalExtent, Ver
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<VerticalExtent> getBoundType() {
+        return VerticalExtent.class;
+    }
+
+    /**
      * Returns the {@link DefaultVerticalExtent} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *

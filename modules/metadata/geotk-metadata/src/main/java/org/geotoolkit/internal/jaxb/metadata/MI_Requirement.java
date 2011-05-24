@@ -62,6 +62,14 @@ public final class MI_Requirement extends PropertyType<MI_Requirement, Requireme
     }
 
     /**
+     * Returns the GeoAPI interface which is bound by this adapter.
+     */
+    @Override
+    protected Class<Requirement> getBoundType() {
+        return Requirement.class;
+    }
+
+    /**
      * Returns the {@link DefaultRequirement} generated from the metadata value.
      * This method is systematically called at marshalling time by JAXB.
      *
