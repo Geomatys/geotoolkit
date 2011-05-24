@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -69,10 +70,7 @@ public final class LI_Lineage extends PropertyType<LI_Lineage, Lineage> {
     @Override
     @XmlElementRef
     public DefaultLineage getElement() {
-        if (skip()) return null;
-        final Lineage metadata = this.metadata;
-        return (metadata instanceof DefaultLineage) ?
-            (DefaultLineage) metadata : new DefaultLineage(metadata);
+        return skip() ? null : DefaultLineage.wrap(metadata);
     }
 
     /**

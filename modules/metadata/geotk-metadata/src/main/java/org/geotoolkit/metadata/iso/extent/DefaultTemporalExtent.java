@@ -30,6 +30,7 @@ import net.jcip.annotations.ThreadSafe;
 import org.opengis.geometry.Envelope;
 import org.opengis.temporal.TemporalPrimitive;
 import org.opengis.metadata.extent.TemporalExtent;
+import org.opengis.metadata.extent.SpatialTemporalExtent;
 import org.opengis.referencing.operation.TransformException;
 
 import org.geotoolkit.metadata.iso.MetadataEntity;
@@ -138,6 +139,9 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
+     * <p>
+     * This method checks for the {@link SpatialTemporalExtent} sub-interfaces. If this interface
+     * is found, then this method delegates to the corresponding {@code wrap} static method.
      *
      * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
@@ -146,6 +150,9 @@ public class DefaultTemporalExtent extends MetadataEntity implements TemporalExt
      * @since 3.18
      */
     public static DefaultTemporalExtent wrap(final TemporalExtent object) {
+        if (object instanceof SpatialTemporalExtent) {
+            return DefaultSpatialTemporalExtent.wrap((SpatialTemporalExtent) object);
+        }
         return (object == null) || (object instanceof DefaultTemporalExtent)
                 ? (DefaultTemporalExtent) object : new DefaultTemporalExtent(object);
     }

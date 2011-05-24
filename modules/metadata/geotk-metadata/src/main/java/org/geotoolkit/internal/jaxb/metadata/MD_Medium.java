@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -69,10 +70,7 @@ public final class MD_Medium extends PropertyType<MD_Medium, Medium> {
     @Override
     @XmlElementRef
     public DefaultMedium getElement() {
-        if (skip()) return null;
-        final Medium metadata = this.metadata;
-        return (metadata instanceof DefaultMedium) ?
-            (DefaultMedium) metadata : new DefaultMedium(metadata);
+        return skip() ? null : DefaultMedium.wrap(metadata);
     }
 
     /**

@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -72,10 +73,7 @@ public final class MD_StandardOrderProcess
     @Override
     @XmlElementRef
     public DefaultStandardOrderProcess getElement() {
-        if (skip()) return null;
-        final StandardOrderProcess metadata = this.metadata;
-        return (metadata instanceof DefaultStandardOrderProcess) ?
-            (DefaultStandardOrderProcess) metadata : new DefaultStandardOrderProcess(metadata);
+        return skip() ? null : DefaultStandardOrderProcess.wrap(metadata);
     }
 
     /**

@@ -20,12 +20,8 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 
 import org.opengis.metadata.identification.Identification;
-import org.opengis.metadata.identification.DataIdentification;
-import org.opengis.metadata.identification.ServiceIdentification;
 
 import org.geotoolkit.metadata.iso.identification.AbstractIdentification;
-import org.geotoolkit.metadata.iso.identification.DefaultDataIdentification;
-import org.geotoolkit.metadata.iso.identification.DefaultServiceIdentification;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
@@ -35,7 +31,7 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -76,18 +72,7 @@ public final class MD_Identification extends PropertyType<MD_Identification, Ide
     @Override
     @XmlElementRef
     public AbstractIdentification getElement() {
-        if (skip()) return null;
-        final Identification metadata = this.metadata;
-        if (metadata instanceof AbstractIdentification) {
-            return (AbstractIdentification) metadata;
-        }
-        if (metadata instanceof DataIdentification) {
-            return new DefaultDataIdentification((DataIdentification) metadata);
-        }
-        if (metadata instanceof ServiceIdentification) {
-            return new DefaultServiceIdentification((ServiceIdentification) metadata);
-        }
-        return new AbstractIdentification(metadata);
+        return skip() ? null : AbstractIdentification.wrap(metadata);
     }
 
     /**

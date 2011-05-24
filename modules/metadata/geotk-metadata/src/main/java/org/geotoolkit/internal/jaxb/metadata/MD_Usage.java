@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -69,10 +70,7 @@ public final class MD_Usage extends PropertyType<MD_Usage, Usage> {
     @Override
     @XmlElementRef
     public DefaultUsage getElement() {
-        if (skip()) return null;
-        final Usage metadata = this.metadata;
-        return (metadata instanceof DefaultUsage) ?
-            (DefaultUsage) metadata : new DefaultUsage(metadata);
+        return skip() ? null : DefaultUsage.wrap(metadata);
     }
 
     /**

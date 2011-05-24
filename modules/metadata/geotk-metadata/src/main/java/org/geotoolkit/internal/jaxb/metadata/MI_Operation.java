@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.16
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -69,10 +70,7 @@ public final class MI_Operation extends PropertyType<MI_Operation, Operation> {
     @Override
     @XmlElementRef
     public DefaultOperation getElement() {
-        if (skip()) return null;
-        final Operation metadata = this.metadata;
-        return (metadata instanceof DefaultOperation) ?
-            (DefaultOperation) metadata : new DefaultOperation(metadata);
+        return skip() ? null : DefaultOperation.wrap(metadata);
     }
 
     /**

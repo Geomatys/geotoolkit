@@ -50,7 +50,7 @@
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @see javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter
  *

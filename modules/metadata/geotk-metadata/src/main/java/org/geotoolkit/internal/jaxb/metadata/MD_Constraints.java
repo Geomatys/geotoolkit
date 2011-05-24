@@ -20,12 +20,8 @@ package org.geotoolkit.internal.jaxb.metadata;
 import javax.xml.bind.annotation.XmlElementRef;
 
 import org.opengis.metadata.constraint.Constraints;
-import org.opengis.metadata.constraint.LegalConstraints;
-import org.opengis.metadata.constraint.SecurityConstraints;
 
 import org.geotoolkit.metadata.iso.constraint.DefaultConstraints;
-import org.geotoolkit.metadata.iso.constraint.DefaultLegalConstraints;
-import org.geotoolkit.metadata.iso.constraint.DefaultSecurityConstraints;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
@@ -35,7 +31,7 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -76,18 +72,7 @@ public final class MD_Constraints extends PropertyType<MD_Constraints, Constrain
     @Override
     @XmlElementRef
     public DefaultConstraints getElement() {
-        if (skip()) return null;
-        final Constraints metadata = this.metadata;
-        if (metadata instanceof DefaultConstraints) {
-            return (DefaultConstraints) metadata;
-        }
-        if (metadata instanceof LegalConstraints) {
-            return new DefaultLegalConstraints((LegalConstraints) metadata);
-        }
-        if (metadata instanceof SecurityConstraints) {
-            return new DefaultSecurityConstraints((SecurityConstraints) metadata);
-        }
-        return new DefaultConstraints(metadata);
+        return skip() ? null : DefaultConstraints.wrap(metadata);
     }
 
     /**

@@ -18,16 +18,8 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
-
 import org.opengis.metadata.quality.Result;
-import org.opengis.metadata.quality.CoverageResult;
-import org.opengis.metadata.quality.ConformanceResult;
-import org.opengis.metadata.quality.QuantitativeResult;
-
 import org.geotoolkit.metadata.iso.quality.AbstractResult;
-import org.geotoolkit.metadata.iso.quality.DefaultCoverageResult;
-import org.geotoolkit.metadata.iso.quality.DefaultConformanceResult;
-import org.geotoolkit.metadata.iso.quality.DefaultQuantitativeResult;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
@@ -37,7 +29,7 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 3.04
  * @module
@@ -78,21 +70,7 @@ public final class DQ_Result extends PropertyType<DQ_Result, Result> {
     @Override
     @XmlElementRef
     public AbstractResult getElement() {
-        if (skip()) return null;
-        final Result metadata = this.metadata;
-        if (metadata instanceof AbstractResult) {
-            return (AbstractResult) metadata;
-        }
-        if (metadata instanceof QuantitativeResult) {
-            return new DefaultQuantitativeResult((QuantitativeResult) metadata);
-        }
-        if (metadata instanceof CoverageResult) {
-            return new DefaultCoverageResult((CoverageResult) metadata);
-        }
-        if (metadata instanceof ConformanceResult) {
-            return new DefaultConformanceResult((ConformanceResult) metadata);
-        }
-        return new AbstractResult(metadata);
+        return skip() ? null : AbstractResult.wrap(metadata);
     }
 
     /**

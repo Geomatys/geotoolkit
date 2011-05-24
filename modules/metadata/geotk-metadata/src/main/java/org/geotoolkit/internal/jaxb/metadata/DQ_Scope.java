@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -69,10 +70,7 @@ public final class DQ_Scope extends PropertyType<DQ_Scope, Scope> {
     @Override
     @XmlElementRef
     public DefaultScope getElement() {
-        if (skip()) return null;
-        final Scope metadata = this.metadata;
-        return (metadata instanceof DefaultScope) ?
-            (DefaultScope) metadata : new DefaultScope(metadata);
+        return skip() ? null : DefaultScope.wrap(metadata);
     }
 
     /**

@@ -22,15 +22,11 @@ import javax.xml.bind.annotation.XmlElementRef;
 import org.opengis.metadata.spatial.Georectified;
 import org.opengis.metadata.spatial.Georeferenceable;
 import org.opengis.metadata.spatial.SpatialRepresentation;
-import org.opengis.metadata.spatial.GridSpatialRepresentation;
-import org.opengis.metadata.spatial.VectorSpatialRepresentation;
 
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.internal.jaxb.gmi.MI_Georectified;
 import org.geotoolkit.internal.jaxb.gmi.MI_Georeferenceable;
 import org.geotoolkit.metadata.iso.spatial.AbstractSpatialRepresentation;
-import org.geotoolkit.metadata.iso.spatial.DefaultGridSpatialRepresentation;
-import org.geotoolkit.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
 
 
 /**
@@ -39,7 +35,7 @@ import org.geotoolkit.metadata.iso.spatial.DefaultVectorSpatialRepresentation;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -85,22 +81,13 @@ public final class MD_SpatialRepresentation
     public AbstractSpatialRepresentation getElement() {
         if (skip()) return null;
         final SpatialRepresentation metadata = this.metadata;
-        if (metadata instanceof AbstractSpatialRepresentation) {
-            return (AbstractSpatialRepresentation) metadata;
+        if (metadata instanceof Georectified) {
+            return MI_Georectified.wrap((Georectified) metadata);
         }
-        if (metadata instanceof GridSpatialRepresentation) {
-            if (metadata instanceof Georectified) {
-                return MI_Georectified.wrap((Georectified) metadata);
-            }
-            if (metadata instanceof Georeferenceable) {
-                return MI_Georeferenceable.wrap((Georeferenceable) metadata);
-            }
-            return new DefaultGridSpatialRepresentation((GridSpatialRepresentation) metadata);
+        if (metadata instanceof Georeferenceable) {
+            return MI_Georeferenceable.wrap((Georeferenceable) metadata);
         }
-        if (metadata instanceof VectorSpatialRepresentation) {
-            return new DefaultVectorSpatialRepresentation((VectorSpatialRepresentation) metadata);
-        }
-        return new AbstractSpatialRepresentation(metadata);
+        return AbstractSpatialRepresentation.wrap(metadata);
     }
 
     /**

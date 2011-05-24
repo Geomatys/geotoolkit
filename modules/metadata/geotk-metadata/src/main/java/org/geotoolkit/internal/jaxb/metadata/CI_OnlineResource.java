@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -69,10 +70,7 @@ public final class CI_OnlineResource extends PropertyType<CI_OnlineResource, Onl
     @Override
     @XmlElementRef
     public DefaultOnlineResource getElement() {
-        if (skip()) return null;
-        final OnlineResource metadata = this.metadata;
-        return (metadata instanceof DefaultOnlineResource) ?
-            (DefaultOnlineResource) metadata : new DefaultOnlineResource(metadata);
+        return skip() ? null : DefaultOnlineResource.wrap(metadata);
     }
 
     /**

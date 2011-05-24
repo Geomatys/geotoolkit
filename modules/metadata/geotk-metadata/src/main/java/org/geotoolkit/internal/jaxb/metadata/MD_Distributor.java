@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -69,10 +70,7 @@ public final class MD_Distributor extends PropertyType<MD_Distributor, Distribut
     @Override
     @XmlElementRef
     public DefaultDistributor getElement() {
-        if (skip()) return null;
-        final Distributor metadata = this.metadata;
-        return (metadata instanceof DefaultDistributor) ?
-            (DefaultDistributor) metadata : new DefaultDistributor(metadata);
+        return skip() ? null : DefaultDistributor.wrap(metadata);
     }
 
     /**

@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.16
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -69,10 +70,7 @@ public final class MI_Instrument extends PropertyType<MI_Instrument, Instrument>
     @Override
     @XmlElementRef
     public DefaultInstrument getElement() {
-        if (skip()) return null;
-        final Instrument metadata = this.metadata;
-        return (metadata instanceof DefaultInstrument) ?
-            (DefaultInstrument) metadata : new DefaultInstrument(metadata);
+        return skip() ? null : DefaultInstrument.wrap(metadata);
     }
 
     /**

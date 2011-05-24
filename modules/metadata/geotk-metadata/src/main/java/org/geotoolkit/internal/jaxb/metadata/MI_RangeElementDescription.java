@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.16
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -71,10 +72,7 @@ public final class MI_RangeElementDescription
     @Override
     @XmlElementRef
     public DefaultRangeElementDescription getElement() {
-        if (skip()) return null;
-        final RangeElementDescription metadata = this.metadata;
-        return (metadata instanceof DefaultRangeElementDescription) ?
-            (DefaultRangeElementDescription) metadata : new DefaultRangeElementDescription(metadata);
+        return skip() ? null : DefaultRangeElementDescription.wrap(metadata);
     }
 
     /**

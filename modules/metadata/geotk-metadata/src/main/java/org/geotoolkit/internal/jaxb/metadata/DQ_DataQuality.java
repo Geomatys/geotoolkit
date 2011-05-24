@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -69,10 +70,7 @@ public final class DQ_DataQuality extends PropertyType<DQ_DataQuality, DataQuali
     @Override
     @XmlElementRef
     public DefaultDataQuality getElement() {
-        if (skip()) return null;
-        final DataQuality metadata = this.metadata;
-        return (metadata instanceof DefaultDataQuality) ?
-            (DefaultDataQuality) metadata : new DefaultDataQuality(metadata);
+        return skip() ? null : DefaultDataQuality.wrap(metadata);
     }
 
     /**

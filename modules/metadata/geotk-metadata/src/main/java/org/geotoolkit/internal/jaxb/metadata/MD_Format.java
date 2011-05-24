@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -69,10 +70,7 @@ public final class MD_Format extends PropertyType<MD_Format, Format> {
     @Override
     @XmlElementRef
     public DefaultFormat getElement() {
-        if (skip()) return null;
-        final Format metadata = this.metadata;
-        return (metadata instanceof DefaultFormat) ?
-            (DefaultFormat) metadata : new DefaultFormat(metadata);
+        return skip() ? null : DefaultFormat.wrap(metadata);
     }
 
     /**

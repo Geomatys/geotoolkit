@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.16
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -69,10 +70,7 @@ public final class MI_PlatformPass extends PropertyType<MI_PlatformPass, Platfor
     @Override
     @XmlElementRef
     public DefaultPlatformPass getElement() {
-        if (skip()) return null;
-        final PlatformPass metadata = this.metadata;
-        return (metadata instanceof DefaultPlatformPass) ?
-            (DefaultPlatformPass) metadata : new DefaultPlatformPass(metadata);
+        return skip() ? null : DefaultPlatformPass.wrap(metadata);
     }
 
     /**

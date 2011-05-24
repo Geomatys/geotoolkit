@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -73,11 +74,7 @@ public final class MD_RepresentativeFraction
     @Override
     @XmlElementRef
     public DefaultRepresentativeFraction getElement() {
-        if (skip()) return null;
-        final RepresentativeFraction metadata = this.metadata;
-        return (metadata instanceof DefaultRepresentativeFraction) ?
-            (DefaultRepresentativeFraction) metadata :
-            new DefaultRepresentativeFraction(metadata.getDenominator());
+        return skip() ? null : DefaultRepresentativeFraction.wrap(metadata);
     }
 
     /**

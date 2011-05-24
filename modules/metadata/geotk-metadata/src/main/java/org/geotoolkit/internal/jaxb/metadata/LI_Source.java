@@ -29,7 +29,8 @@ import org.geotoolkit.metadata.iso.lineage.DefaultSource;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -70,8 +71,7 @@ public final class LI_Source extends PropertyType<LI_Source, Source> {
     @Override
     @XmlElementRef
     public DefaultSource getElement() {
-        if (skip()) return null;
-        return LE_Source.wrap(metadata);
+        return skip() ? null : LE_Source.wrap(metadata);
     }
 
     /**

@@ -72,10 +72,7 @@ public class MI_Metadata extends DefaultMetadata {
             if (!isNullOrEmpty(original.getAcquisitionInformation())) {
                 return new MI_Metadata(original);
             }
-            if (!(original instanceof DefaultMetadata)) {
-                return new DefaultMetadata(original);
-            }
         }
-        return (DefaultMetadata) original;
+        return DefaultMetadata.wrap(original);
     }
 }

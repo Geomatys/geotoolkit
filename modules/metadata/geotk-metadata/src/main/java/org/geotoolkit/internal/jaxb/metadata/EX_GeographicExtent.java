@@ -18,16 +18,8 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
-
 import org.opengis.metadata.extent.GeographicExtent;
-import org.opengis.metadata.extent.BoundingPolygon;
-import org.opengis.metadata.extent.GeographicBoundingBox;
-import org.opengis.metadata.extent.GeographicDescription;
-
 import org.geotoolkit.metadata.iso.extent.AbstractGeographicExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultBoundingPolygon;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicBoundingBox;
-import org.geotoolkit.metadata.iso.extent.DefaultGeographicDescription;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
@@ -37,7 +29,7 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -78,21 +70,7 @@ public final class EX_GeographicExtent extends PropertyType<EX_GeographicExtent,
     @Override
     @XmlElementRef
     public AbstractGeographicExtent getElement() {
-        if (skip()) return null;
-        final GeographicExtent metadata = this.metadata;
-        if (metadata instanceof AbstractGeographicExtent) {
-            return (AbstractGeographicExtent) metadata;
-        }
-        if (metadata instanceof BoundingPolygon) {
-            return new DefaultBoundingPolygon((BoundingPolygon) metadata);
-        }
-        if (metadata instanceof GeographicBoundingBox) {
-            return new DefaultGeographicBoundingBox((GeographicBoundingBox) metadata);
-        }
-        if (metadata instanceof GeographicDescription) {
-            return new DefaultGeographicDescription((GeographicDescription) metadata);
-        }
-        return new AbstractGeographicExtent(metadata);
+        return skip() ? null : AbstractGeographicExtent.wrap(metadata);
     }
 
     /**

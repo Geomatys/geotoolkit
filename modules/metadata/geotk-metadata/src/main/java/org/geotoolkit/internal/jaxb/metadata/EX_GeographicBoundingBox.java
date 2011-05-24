@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -71,10 +72,7 @@ public final class EX_GeographicBoundingBox extends
     @Override
     @XmlElementRef
     public DefaultGeographicBoundingBox getElement() {
-        if (skip()) return null;
-        final GeographicBoundingBox metadata = this.metadata;
-        return (metadata instanceof DefaultGeographicBoundingBox) ?
-            (DefaultGeographicBoundingBox) metadata : new DefaultGeographicBoundingBox(metadata);
+        return skip() ? null : DefaultGeographicBoundingBox.wrap(metadata);
     }
 
     /**

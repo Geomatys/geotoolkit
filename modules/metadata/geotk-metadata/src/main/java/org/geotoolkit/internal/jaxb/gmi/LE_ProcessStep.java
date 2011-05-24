@@ -75,10 +75,7 @@ public class LE_ProcessStep extends DefaultProcessStep {
             {
                 return new LE_ProcessStep(original);
             }
-            if (!(original instanceof DefaultProcessStep)) {
-                return new DefaultProcessStep(original);
-            }
         }
-        return (DefaultProcessStep) original;
+        return DefaultProcessStep.wrap(original);
     }
 }

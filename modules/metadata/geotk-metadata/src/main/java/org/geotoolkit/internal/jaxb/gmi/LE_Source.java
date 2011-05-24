@@ -70,10 +70,7 @@ public class LE_Source extends DefaultSource {
             if (original.getProcessedLevel() != null || original.getResolution() != null) {
                 return new LE_Source(original);
             }
-            if (!(original instanceof DefaultSource)) {
-                return new DefaultSource(original);
-            }
         }
-        return (DefaultSource) original;
+        return DefaultSource.wrap(original);
     }
 }

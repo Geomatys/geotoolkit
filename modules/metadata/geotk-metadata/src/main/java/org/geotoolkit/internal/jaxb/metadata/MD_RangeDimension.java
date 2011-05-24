@@ -33,7 +33,7 @@ import org.geotoolkit.metadata.iso.content.DefaultRangeDimension;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -76,13 +76,10 @@ public final class MD_RangeDimension extends PropertyType<MD_RangeDimension, Ran
     public DefaultRangeDimension getElement() {
         if (skip()) return null;
         final RangeDimension metadata = this.metadata;
-        if (metadata instanceof DefaultRangeDimension) {
-            return (DefaultRangeDimension) metadata;
-        }
         if (metadata instanceof Band) {
             return MI_Band.wrap((Band) metadata);
         }
-        return new DefaultRangeDimension(metadata);
+        return DefaultRangeDimension.wrap(metadata);
     }
 
     /**

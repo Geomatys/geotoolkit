@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -71,10 +72,7 @@ public final class MD_ScopeDescription
     @Override
     @XmlElementRef
     public DefaultScopeDescription getElement() {
-        if (skip()) return null;
-        final ScopeDescription metadata = this.metadata;
-        return (metadata instanceof DefaultScopeDescription) ?
-            (DefaultScopeDescription) metadata : new DefaultScopeDescription(metadata);
+        return skip() ? null : DefaultScopeDescription.wrap(metadata);
     }
 
     /**

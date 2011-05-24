@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.16
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -69,10 +70,7 @@ public final class MI_Plan extends PropertyType<MI_Plan, Plan> {
     @Override
     @XmlElementRef
     public DefaultPlan getElement() {
-        if (skip()) return null;
-        final Plan metadata = this.metadata;
-        return (metadata instanceof DefaultPlan) ?
-            (DefaultPlan) metadata : new DefaultPlan(metadata);
+        return skip() ? null : DefaultPlan.wrap(metadata);
     }
 
     /**

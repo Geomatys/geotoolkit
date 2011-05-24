@@ -21,14 +21,12 @@ import javax.xml.bind.annotation.XmlElementRef;
 
 import org.opengis.metadata.content.ContentInformation;
 import org.opengis.metadata.content.CoverageDescription;
-import org.opengis.metadata.content.FeatureCatalogueDescription;
 import org.opengis.metadata.content.ImageDescription;
 
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 import org.geotoolkit.internal.jaxb.gmi.MI_ImageDescription;
 import org.geotoolkit.internal.jaxb.gmi.MI_CoverageDescription;
 import org.geotoolkit.metadata.iso.content.AbstractContentInformation;
-import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
 
 
 /**
@@ -37,7 +35,7 @@ import org.geotoolkit.metadata.iso.content.DefaultFeatureCatalogueDescription;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -82,19 +80,13 @@ public final class MD_ContentInformation
     public AbstractContentInformation getElement() {
         if (skip()) return null;
         final ContentInformation metadata = this.metadata;
-        if (metadata instanceof AbstractContentInformation) {
-            return (AbstractContentInformation) metadata;
-        }
         if (metadata instanceof ImageDescription) {
             return MI_ImageDescription.wrap((ImageDescription) metadata);
         }
         if (metadata instanceof CoverageDescription) {
             return MI_CoverageDescription.wrap((CoverageDescription) metadata);
         }
-        if (metadata instanceof FeatureCatalogueDescription) {
-            return new DefaultFeatureCatalogueDescription((FeatureCatalogueDescription) metadata);
-        }
-        return new AbstractContentInformation(metadata);
+        return AbstractContentInformation.wrap(metadata);
     }
 
     /**

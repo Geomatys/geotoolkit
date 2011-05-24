@@ -18,12 +18,8 @@
 package org.geotoolkit.internal.jaxb.metadata;
 
 import javax.xml.bind.annotation.XmlElementRef;
-
 import org.opengis.metadata.extent.TemporalExtent;
-import org.opengis.metadata.extent.SpatialTemporalExtent;
-
 import org.geotoolkit.metadata.iso.extent.DefaultTemporalExtent;
-import org.geotoolkit.metadata.iso.extent.DefaultSpatialTemporalExtent;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
@@ -33,7 +29,7 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.14
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -74,15 +70,7 @@ public final class EX_TemporalExtent extends PropertyType<EX_TemporalExtent, Tem
     @Override
     @XmlElementRef
     public DefaultTemporalExtent getElement() {
-        if (skip()) return null;
-        final TemporalExtent metadata = this.metadata;
-        if (metadata instanceof DefaultTemporalExtent) {
-            return (DefaultTemporalExtent) metadata;
-        }
-        if (metadata instanceof SpatialTemporalExtent) {
-            return new DefaultSpatialTemporalExtent((SpatialTemporalExtent) metadata);
-        }
-        return new DefaultTemporalExtent(metadata);
+        return skip() ? null : DefaultTemporalExtent.wrap(metadata);
     }
 
     /**

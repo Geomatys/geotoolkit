@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.16
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -69,10 +70,7 @@ public final class MI_GCP extends PropertyType<MI_GCP, GCP> {
     @Override
     @XmlElementRef
     public DefaultGCP getElement() {
-        if (skip()) return null;
-        final GCP metadata = this.metadata;
-        return (metadata instanceof DefaultGCP) ?
-            (DefaultGCP) metadata : new DefaultGCP(metadata);
+        return skip() ? null : DefaultGCP.wrap(metadata);
     }
 
     /**

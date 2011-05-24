@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -69,10 +70,7 @@ public final class LE_ProcessStepReport extends PropertyType<LE_ProcessStepRepor
     @Override
     @XmlElementRef
     public DefaultProcessStepReport getElement() {
-        if (skip()) return null;
-        final ProcessStepReport metadata = this.metadata;
-        return (metadata instanceof DefaultProcessStepReport) ?
-            (DefaultProcessStepReport) metadata : new DefaultProcessStepReport(metadata);
+        return skip() ? null : DefaultProcessStepReport.wrap(metadata);
     }
 
     /**

@@ -29,7 +29,8 @@ import org.geotoolkit.metadata.iso.lineage.DefaultProcessStep;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.17
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -70,8 +71,7 @@ public final class LI_ProcessStep extends PropertyType<LI_ProcessStep, ProcessSt
     @Override
     @XmlElementRef
     public DefaultProcessStep getElement() {
-        if (skip()) return null;
-        return LE_ProcessStep.wrap(metadata);
+        return skip() ? null : LE_ProcessStep.wrap(metadata);
     }
 
     /**

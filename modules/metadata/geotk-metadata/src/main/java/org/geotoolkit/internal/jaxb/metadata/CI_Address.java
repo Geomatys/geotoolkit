@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -69,10 +70,7 @@ public final class CI_Address extends PropertyType<CI_Address, Address> {
     @Override
     @XmlElementRef
     public DefaultAddress getElement() {
-        if (skip()) return null;
-        final Address metadata = this.metadata;
-        return (metadata instanceof DefaultAddress) ?
-            (DefaultAddress) metadata : new DefaultAddress(metadata);
+        return skip() ? null : DefaultAddress.wrap(metadata);
     }
 
     /**

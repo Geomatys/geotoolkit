@@ -174,8 +174,8 @@ public class AbstractElement extends MetadataEntity implements Element {
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      * <p>
-     * This method checks for the {@link Completeness}, {@link LogicalConsistency},
-     * {@link PositionalAccuracy}, {@link ThematicAccuracy}, {@link TemporalAccuracy} and
+     * This method checks for the {@link PositionalAccuracy}, {@link TemporalAccuracy},
+     * {@link ThematicAccuracy}, {@link LogicalConsistency}, {@link Completeness} and
      * {@link Usability} sub-interfaces. If one of those interfaces is found, then this method
      * delegates to the corresponding {@code wrap} static method. If the given object implements
      * more than one of the above-cited interfaces, then the {@code wrap} method to be used is
@@ -188,20 +188,20 @@ public class AbstractElement extends MetadataEntity implements Element {
      * @since 3.18
      */
     public static AbstractElement wrap(final Element object) {
-        if (object instanceof Completeness) {
-            return AbstractCompleteness.wrap((Completeness) object);
-        }
-        if (object instanceof LogicalConsistency) {
-            return AbstractLogicalConsistency.wrap((LogicalConsistency) object);
-        }
         if (object instanceof PositionalAccuracy) {
             return AbstractPositionalAccuracy.wrap((PositionalAccuracy) object);
+        }
+        if (object instanceof TemporalAccuracy) {
+            return AbstractTemporalAccuracy.wrap((TemporalAccuracy) object);
         }
         if (object instanceof ThematicAccuracy) {
             return AbstractThematicAccuracy.wrap((ThematicAccuracy) object);
         }
-        if (object instanceof TemporalAccuracy) {
-            return AbstractTemporalAccuracy.wrap((TemporalAccuracy) object);
+        if (object instanceof LogicalConsistency) {
+            return AbstractLogicalConsistency.wrap((LogicalConsistency) object);
+        }
+        if (object instanceof Completeness) {
+            return AbstractCompleteness.wrap((Completeness) object);
         }
         if (object instanceof Usability) {
             return DefaultUsability.wrap((Usability) object);

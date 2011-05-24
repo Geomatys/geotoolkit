@@ -33,7 +33,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.13
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -79,8 +80,7 @@ public final class MD_Identifier extends PropertyType<MD_Identifier, Identifier>
         if (metadata instanceof ReferenceIdentifier) {
             return null;
         }
-        return (metadata instanceof DefaultIdentifier) ?
-            (DefaultIdentifier) metadata : new DefaultIdentifier(metadata);
+        return DefaultIdentifier.wrap(metadata);
     }
 
     /**

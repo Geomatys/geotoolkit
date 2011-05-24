@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -69,10 +70,7 @@ public final class LE_NominalResolution extends PropertyType<LE_NominalResolutio
     @Override
     @XmlElementRef
     public DefaultNominalResolution getElement() {
-        if (skip()) return null;
-        final NominalResolution metadata = this.metadata;
-        return (metadata instanceof DefaultNominalResolution) ?
-            (DefaultNominalResolution) metadata : new DefaultNominalResolution(metadata);
+        return skip() ? null : DefaultNominalResolution.wrap(metadata);
     }
 
     /**

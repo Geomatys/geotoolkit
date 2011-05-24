@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.17
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.17
  * @module
@@ -69,10 +70,7 @@ public final class MX_DataFile extends PropertyType<MX_DataFile, DataFile> {
     @Override
     @XmlElementRef
     public DefaultDataFile getElement() {
-        if (skip()) return null;
-        final DataFile metadata = this.metadata;
-        return (metadata instanceof DefaultDataFile) ?
-            (DefaultDataFile) metadata : new DefaultDataFile(metadata);
+        return skip() ? null : DefaultDataFile.wrap(metadata);
     }
 
     /**

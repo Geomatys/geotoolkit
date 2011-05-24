@@ -29,7 +29,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  *
  * @author Cédric Briançon (Geomatys)
  * @author Guilhem Legal (Geomatys)
- * @version 3.17
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.02
  * @module
@@ -70,10 +71,7 @@ public final class LE_Algorithm extends PropertyType<LE_Algorithm, Algorithm> {
     @Override
     @XmlElementRef
     public DefaultAlgorithm getElement() {
-        if (skip()) return null;
-        final Algorithm metadata = this.metadata;
-        return (metadata instanceof DefaultAlgorithm) ?
-            (DefaultAlgorithm) metadata : new DefaultAlgorithm(metadata);
+        return skip() ? null : DefaultAlgorithm.wrap(metadata);
     }
 
     /**

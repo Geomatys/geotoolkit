@@ -40,7 +40,6 @@ public final class MD_Keywords extends MetadataAdapter<Keywords, DefaultKeywords
      */
     @Override
     public DefaultKeywords marshal(final Keywords value) {
-        return (value == null || value instanceof DefaultKeywords) ?
-                (DefaultKeywords) value : new DefaultKeywords(value);
+        return DefaultKeywords.wrap(value);
     }
 }

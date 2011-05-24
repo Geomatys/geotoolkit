@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Cédric Briançon (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 2.5
  * @module
@@ -69,10 +70,7 @@ public final class MD_Resolution extends PropertyType<MD_Resolution, Resolution>
     @Override
     @XmlElementRef
     public DefaultResolution getElement() {
-        if (skip()) return null;
-        final Resolution metadata = this.metadata;
-        return (metadata instanceof DefaultResolution) ?
-            (DefaultResolution) metadata : new DefaultResolution(metadata);
+        return skip() ? null : DefaultResolution.wrap(metadata);
     }
 
     /**

@@ -28,7 +28,8 @@ import org.geotoolkit.internal.jaxb.gco.PropertyType;
  * package documentation for more information about JAXB and interface.
  *
  * @author Guilhem Legal (Geomatys)
- * @version 3.05
+ * @author Martin Desruisseaux (Geomatys)
+ * @version 3.18
  *
  * @since 3.00
  * @module
@@ -72,10 +73,7 @@ public final class MD_AggregateInformation extends
     @Override
     @XmlElementRef
     public DefaultAggregateInformation getElement() {
-        if (skip()) return null;
-        final AggregateInformation metadata = this.metadata;
-        return (metadata instanceof DefaultAggregateInformation) ?
-            (DefaultAggregateInformation) metadata : new DefaultAggregateInformation(metadata);
+        return skip() ? null : DefaultAggregateInformation.wrap(metadata);
     }
 
     /**
