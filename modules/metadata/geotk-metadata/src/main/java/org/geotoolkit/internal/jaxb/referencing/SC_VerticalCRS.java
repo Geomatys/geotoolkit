@@ -79,10 +79,7 @@ public final class SC_VerticalCRS extends PropertyType<SC_VerticalCRS, VerticalC
     @Override
     @XmlElement(name = "VerticalCRS")
     public DefaultVerticalCRS getElement() {
-        if (skip()) return null;
-        final VerticalCRS metadata = this.metadata;
-        return (metadata instanceof DefaultVerticalCRS) ?
-            (DefaultVerticalCRS) metadata : new DefaultVerticalCRS(metadata);
+        return skip() ? null : DefaultVerticalCRS.wrap(metadata);
     }
 
     /**

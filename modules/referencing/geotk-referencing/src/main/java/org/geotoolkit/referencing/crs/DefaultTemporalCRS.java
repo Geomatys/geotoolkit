@@ -226,10 +226,8 @@ public class DefaultTemporalCRS extends AbstractSingleCRS implements TemporalCRS
      * @return The given CRS as a {@code DefaultTemporalCRS}.
      */
     public static DefaultTemporalCRS wrap(final TemporalCRS crs) {
-        if (crs == null || crs instanceof DefaultTemporalCRS) {
-            return (DefaultTemporalCRS) crs;
-        }
-        return new DefaultTemporalCRS(crs);
+        return (crs == null || crs instanceof DefaultTemporalCRS)
+                ? (DefaultTemporalCRS) crs : new DefaultTemporalCRS(crs);
     }
 
     /**

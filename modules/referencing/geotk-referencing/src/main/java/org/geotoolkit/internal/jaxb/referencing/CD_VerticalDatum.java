@@ -78,10 +78,7 @@ public final class CD_VerticalDatum extends PropertyType<CD_VerticalDatum, Verti
     @Override
     @XmlElement(name = "VerticalDatum")
     public DefaultVerticalDatum getElement() {
-        if (skip()) return null;
-        final VerticalDatum metadata = this.metadata;
-        return (metadata instanceof DefaultVerticalDatum) ?
-            (DefaultVerticalDatum) metadata : new DefaultVerticalDatum(metadata);
+        return skip() ? null : DefaultVerticalDatum.wrap(metadata);
     }
 
     /**

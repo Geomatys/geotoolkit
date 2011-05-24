@@ -45,7 +45,7 @@ import org.geotoolkit.internal.referencing.AxisDirections;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -128,6 +128,24 @@ public class DefaultSphericalCS extends AbstractCS implements SphericalCS {
                               final CoordinateSystemAxis axis2)
     {
         super(properties, axis0, axis1, axis2);
+    }
+
+    /**
+     * Returns a Geotk coordinate system implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultSphericalCS wrap(final SphericalCS object) {
+        return (object == null) || (object instanceof DefaultSphericalCS)
+                ? (DefaultSphericalCS) object : new DefaultSphericalCS(object);
     }
 
     /**

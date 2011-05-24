@@ -17,16 +17,9 @@
  */
 package org.geotoolkit.internal.jaxb.referencing;
 
-import java.util.Map;
 import javax.xml.bind.annotation.XmlElement;
-
-import javax.measure.unit.Unit;
-import javax.measure.quantity.Length;
-
 import org.opengis.referencing.datum.Ellipsoid;
-
 import org.geotoolkit.referencing.datum.DefaultEllipsoid;
-import org.geotoolkit.referencing.IdentifiedObjects;
 import org.geotoolkit.internal.jaxb.gco.PropertyType;
 
 
@@ -85,17 +78,7 @@ public final class CD_Ellipsoid extends PropertyType<CD_Ellipsoid, Ellipsoid> {
     @Override
     @XmlElement(name = "Ellipsoid")
     public DefaultEllipsoid getElement() {
-        if (skip()) return null;
-        final Ellipsoid metadata = this.metadata;
-        if (metadata instanceof DefaultEllipsoid) {
-            return (DefaultEllipsoid) metadata;
-        }
-        final Map<String,?> properties = IdentifiedObjects.getProperties(metadata);
-        final double semiMajor = metadata.getSemiMajorAxis();
-        final Unit<Length> unit = metadata.getAxisUnit();
-        return metadata.isIvfDefinitive() ?
-            DefaultEllipsoid.createFlattenedSphere(properties, semiMajor, metadata.getInverseFlattening(), unit) :
-            DefaultEllipsoid.createEllipsoid(properties, semiMajor, metadata.getSemiMinorAxis(), unit);
+        return skip() ? null : DefaultEllipsoid.wrap(metadata);
     }
 
     /**

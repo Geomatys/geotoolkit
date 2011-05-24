@@ -63,8 +63,8 @@
  *   <li>{@link org.geotoolkit.referencing.cs.AbstractCS#swapAndScaleAxis}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
- * @version 3.00
+ * @author Martin Desruisseaux (IRD, Geomatys)
+ * @version 3.18
  *
  * @since 2.0
  * @module

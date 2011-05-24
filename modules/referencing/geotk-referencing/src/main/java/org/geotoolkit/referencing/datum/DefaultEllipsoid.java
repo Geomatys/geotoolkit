@@ -375,20 +375,15 @@ public class DefaultEllipsoid extends AbstractIdentifiedObject implements Ellips
      * @return The given ellipsoid as a {@code DefaultEllipsoid} instance.
      */
     public static DefaultEllipsoid wrap(final Ellipsoid ellipsoid) {
-        if (ellipsoid==null || ellipsoid instanceof DefaultEllipsoid) {
+        if (ellipsoid == null || ellipsoid instanceof DefaultEllipsoid) {
             return (DefaultEllipsoid) ellipsoid;
         }
-        if (ellipsoid.isIvfDefinitive()) {
-            return createFlattenedSphere(IdentifiedObjects.getProperties(ellipsoid),
-                                         ellipsoid.getSemiMajorAxis(),
-                                         ellipsoid.getInverseFlattening(),
-                                         ellipsoid.getAxisUnit());
-        } else {
-            return createEllipsoid(IdentifiedObjects.getProperties(ellipsoid),
-                                   ellipsoid.getSemiMajorAxis(),
-                                   ellipsoid.getSemiMinorAxis(),
-                                   ellipsoid.getAxisUnit());
-        }
+        final Map<String,?> properties = IdentifiedObjects.getProperties(ellipsoid);
+        final double        semiMajor  = ellipsoid.getSemiMajorAxis();
+        final Unit<Length>  unit       = ellipsoid.getAxisUnit();
+        return ellipsoid.isIvfDefinitive() ?
+                createFlattenedSphere(properties, semiMajor, ellipsoid.getInverseFlattening(), unit) :
+                createEllipsoid      (properties, semiMajor, ellipsoid.getSemiMinorAxis(),     unit);
     }
 
     /**

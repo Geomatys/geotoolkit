@@ -521,16 +521,10 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
     final CoordinateSystemAxis[] axisUsingUnit(final Unit<?> unit) throws IllegalArgumentException {
         CoordinateSystemAxis[] newAxis = null;
         for (int i=0; i<axis.length; i++) {
-            CoordinateSystemAxis a = axis[i];
+            final CoordinateSystemAxis a = axis[i];
             if (!unit.equals(a.getUnit())) {
-                DefaultCoordinateSystemAxis converted;
-                if (a instanceof DefaultCoordinateSystemAxis) {
-                    converted = (DefaultCoordinateSystemAxis) a;
-                } else {
-                    converted = new DefaultCoordinateSystemAxis(a);
-                    a = converted; // For detecting changes.
-                }
-                converted = converted.usingUnit(unit);
+                final DefaultCoordinateSystemAxis converted =
+                        DefaultCoordinateSystemAxis.wrap(a).usingUnit(unit);
                 if (converted != a) {
                     if (newAxis == null) {
                         newAxis = new CoordinateSystemAxis[axis.length];
@@ -554,11 +548,7 @@ public class AbstractCS extends AbstractIdentifiedObject implements CoordinateSy
             final CoordinateSystemAxis a = cs.getAxis(i);
             DefaultCoordinateSystemAxis c = DefaultCoordinateSystemAxis.getPredefined(a);
             if (c == null) {
-                if (a instanceof DefaultCoordinateSystemAxis) {
-                    c = (DefaultCoordinateSystemAxis) a;
-                } else {
-                    c = new DefaultCoordinateSystemAxis(a);
-                }
+                c = DefaultCoordinateSystemAxis.wrap(a);
             }
             axis[i] = c;
         }

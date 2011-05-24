@@ -78,10 +78,7 @@ public final class CD_TemporalDatum extends PropertyType<CD_TemporalDatum, Tempo
     @Override
     @XmlElement(name = "TemporalDatum")
     public DefaultTemporalDatum getElement() {
-        if (skip()) return null;
-        final TemporalDatum metadata = this.metadata;
-        return (metadata instanceof DefaultTemporalDatum) ?
-            (DefaultTemporalDatum) metadata : new DefaultTemporalDatum(metadata);
+        return skip() ? null : DefaultTemporalDatum.wrap(metadata);
     }
 
     /**

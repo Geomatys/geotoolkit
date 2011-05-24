@@ -78,10 +78,7 @@ public final class CS_AffineCS extends PropertyType<CS_AffineCS, AffineCS> {
     @Override
     @XmlElement(name = "AffineCS")
     public DefaultAffineCS getElement() {
-        if (skip()) return null;
-        final AffineCS metadata = this.metadata;
-        return (metadata instanceof DefaultAffineCS) ?
-            (DefaultAffineCS) metadata : new DefaultAffineCS(metadata);
+        return skip() ? null : DefaultAffineCS.wrap(metadata);
     }
 
     /**

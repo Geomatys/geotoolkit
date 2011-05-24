@@ -78,10 +78,7 @@ public final class CS_CartesianCS extends PropertyType<CS_CartesianCS, Cartesian
     @Override
     @XmlElement(name = "CartesianCS")
     public DefaultCartesianCS getElement() {
-        if (skip()) return null;
-        final CartesianCS metadata = this.metadata;
-        return (metadata instanceof DefaultCartesianCS) ?
-            (DefaultCartesianCS) metadata : new DefaultCartesianCS(metadata);
+        return skip() ? null : DefaultCartesianCS.wrap(metadata);
     }
 
     /**

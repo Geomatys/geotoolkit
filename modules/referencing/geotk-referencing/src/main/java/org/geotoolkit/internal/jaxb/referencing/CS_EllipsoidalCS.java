@@ -79,10 +79,7 @@ public final class CS_EllipsoidalCS extends PropertyType<CS_EllipsoidalCS, Ellip
     @Override
     @XmlElement(name = "EllipsoidalCS")
     public DefaultEllipsoidalCS getElement() {
-        if (skip()) return null;
-        final EllipsoidalCS metadata = this.metadata;
-        return (metadata instanceof DefaultEllipsoidalCS) ?
-            (DefaultEllipsoidalCS) metadata : new DefaultEllipsoidalCS(metadata);
+        return skip() ? null : DefaultEllipsoidalCS.wrap(metadata);
     }
 
     /**

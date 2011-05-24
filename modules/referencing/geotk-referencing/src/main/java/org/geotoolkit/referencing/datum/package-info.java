@@ -59,9 +59,9 @@
  *   <li>{@link org.geotoolkit.referencing.datum.DefaultGeodeticDatum#getAffineTransform}</li>
  * </ul>
  *
- * @author Martin Desruisseaux (IRD)
+ * @author Martin Desruisseaux (IRD, Geomatys)
  * @author Cédric Briançon (Geomatys)
- * @version 3.04
+ * @version 3.18
  *
  * @since 1.2
  * @module

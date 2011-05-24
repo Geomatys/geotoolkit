@@ -875,6 +875,24 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
     }
 
     /**
+     * Returns a Geotk axis implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultCoordinateSystemAxis wrap(final CoordinateSystemAxis object) {
+        return (object == null) || (object instanceof DefaultCoordinateSystemAxis)
+                ? (DefaultCoordinateSystemAxis) object : new DefaultCoordinateSystemAxis(object);
+    }
+
+    /**
      * Returns one of the predefined axis for the given name and direction, or {@code null} if
      * none. This method searches only in predefined constants like {@link #GEODETIC_LATITUDE},
      * not in any custom axis instantiated by a public constructor. The name of those constants
@@ -1262,10 +1280,8 @@ public class DefaultCoordinateSystemAxis extends AbstractIdentifiedObject implem
             return true; // Slight optimization.
         }
         if (super.equals(object, mode)) {
-            return equals(object instanceof DefaultCoordinateSystemAxis ?
-                    (DefaultCoordinateSystemAxis) object :
-                    new DefaultCoordinateSystemAxis((CoordinateSystemAxis) object),
-                    mode.ordinal() < ComparisonMode.IGNORE_METADATA.ordinal(), true);
+            final DefaultCoordinateSystemAxis that = wrap((CoordinateSystemAxis) object);
+            return equals(that, mode.ordinal() < ComparisonMode.IGNORE_METADATA.ordinal(), true);
         }
         return false;
     }

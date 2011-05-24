@@ -26,6 +26,7 @@ import javax.measure.unit.Unit;
 import net.jcip.annotations.Immutable;
 
 import org.opengis.referencing.cs.AffineCS;
+import org.opengis.referencing.cs.CartesianCS;
 import org.opengis.referencing.cs.AxisDirection;
 import org.opengis.referencing.cs.CoordinateSystemAxis;
 
@@ -45,7 +46,7 @@ import org.geotoolkit.internal.referencing.AxisDirections;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @see DefaultCartesianCS
  *
@@ -151,6 +152,30 @@ public class DefaultAffineCS extends AbstractCS implements AffineCS {
      */
     DefaultAffineCS(final Map<String,?> properties, final CoordinateSystemAxis[] axis) {
         super(properties, axis);
+    }
+
+    /**
+     * Returns a Geotk coordinate system implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object.
+     * <p>
+     * This method checks for the {@link CartesianCS} sub-interface. If that interface is
+     * found, then this method delegates to the corresponding {@code wrap} static method.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultAffineCS wrap(final AffineCS object) {
+        if (object instanceof CartesianCS) {
+            return DefaultCartesianCS.wrap((CartesianCS) object);
+        }
+        return (object == null) || (object instanceof DefaultAffineCS)
+                ? (DefaultAffineCS) object : new DefaultAffineCS(object);
     }
 
     /**

@@ -49,7 +49,7 @@ import org.geotoolkit.internal.referencing.AxisDirections;
  * </TD></TR></TABLE>
  *
  * @author Martin Desruisseaux (IRD, Geomatys)
- * @version 3.00
+ * @version 3.18
  *
  * @since 2.0
  * @module
@@ -157,6 +157,24 @@ public class DefaultTimeCS extends AbstractCS implements TimeCS {
     public DefaultTimeCS(final Map<String,?> properties, final CoordinateSystemAxis axis) {
         super(properties, axis);
         // Units are checked by super-class constructor.
+    }
+
+    /**
+     * Returns a Geotk coordinate system implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultTimeCS wrap(final TimeCS object) {
+        return (object == null) || (object instanceof DefaultTimeCS)
+                ? (DefaultTimeCS) object : new DefaultTimeCS(object);
     }
 
     /**

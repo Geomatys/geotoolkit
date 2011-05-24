@@ -81,10 +81,7 @@ public final class CS_CoordinateSystemAxis extends
     @Override
     @XmlElement(name = "CoordinateSystemAxis")
     public DefaultCoordinateSystemAxis getElement() {
-        if (skip()) return null;
-        final CoordinateSystemAxis metadata = this.metadata;
-        return (metadata instanceof DefaultCoordinateSystemAxis) ?
-            (DefaultCoordinateSystemAxis) metadata : new DefaultCoordinateSystemAxis(metadata);
+        return skip() ? null : DefaultCoordinateSystemAxis.wrap(metadata);
     }
 
     /**

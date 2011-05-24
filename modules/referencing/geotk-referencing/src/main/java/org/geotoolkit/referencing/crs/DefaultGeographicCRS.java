@@ -209,6 +209,24 @@ public class DefaultGeographicCRS extends AbstractSingleCRS implements Geographi
     }
 
     /**
+     * Returns a Geotk CRS implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultGeographicCRS wrap(final GeographicCRS object) {
+        return (object == null) || (object instanceof DefaultGeographicCRS)
+                ? (DefaultGeographicCRS) object : new DefaultGeographicCRS(object);
+    }
+
+    /**
      * Returns the coordinate system.
      */
     @Override

@@ -156,6 +156,24 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
     }
 
     /**
+     * Returns a Geotk prime meridian implementation with the same values than the given arbitrary
+     * implementation. If the given object is {@code null}, then this method returns {@code null}.
+     * Otherwise if the given object is already a Geotk implementation, then the given object is
+     * returned unchanged. Otherwise a new Geotk implementation is created and initialized to the
+     * attribute values of the given object.
+     *
+     * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
+     * @return A Geotk implementation containing the values of the given object (may be the
+     *         given object itself), or {@code null} if the argument was null.
+     *
+     * @since 3.18
+     */
+    public static DefaultPrimeMeridian wrap(final PrimeMeridian object) {
+        return (object == null) || (object instanceof DefaultPrimeMeridian)
+                ? (DefaultPrimeMeridian) object : new DefaultPrimeMeridian(object);
+    }
+
+    /**
      * Longitude of the prime meridian measured from the Greenwich meridian, positive eastward.
      * The {@code greenwichLongitude} initial value is zero, and that value shall be used
      * when the {@linkplain #getName meridian name} value is "Greenwich".
@@ -215,8 +233,7 @@ public class DefaultPrimeMeridian extends AbstractIdentifiedObject implements Pr
                            Utilities.equals(getAngularUnit(),        that.getAngularUnit());
                 }
                 default: {
-                    final DefaultPrimeMeridian that = (object instanceof DefaultPrimeMeridian) ?
-                            (DefaultPrimeMeridian) object : new DefaultPrimeMeridian((PrimeMeridian) object);
+                    final DefaultPrimeMeridian that = wrap((PrimeMeridian) object);
                     return Utilities.equals(this.getGreenwichLongitude(NonSI.DEGREE_ANGLE),
                                             that.getGreenwichLongitude(NonSI.DEGREE_ANGLE));
                     /*
