@@ -27,7 +27,7 @@ import java.lang.annotation.RetentionPolicy;
 
 /**
  * Annotates implementation classes that are thread safe. This annotation is
- * for documentation purpose only, and is applied only on classes that are worthly to note.
+ * for documentation purpose only, and is applied only on classes that are worthy to note.
  * For example unless stated otherwise, thread-safety is implicit for {@linkplain Static static}
  * methods, {@linkplain Enum enumerations} and {@linkplain Immutable immutable} objects.
  * As a general rule:

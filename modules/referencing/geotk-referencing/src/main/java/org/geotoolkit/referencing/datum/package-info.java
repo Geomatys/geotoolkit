@@ -53,7 +53,7 @@
  *   </td></tr>
  * </table></blockquote>
  *
- * <p>Some worthly methods defined in this package are:</p>
+ * <p>Some worthy methods defined in this package are:</p>
  * <ul>
  *   <li>{@link org.geotoolkit.referencing.datum.DefaultEllipsoid#orthodromicDistance}</li>
  *   <li>{@link org.geotoolkit.referencing.datum.DefaultGeodeticDatum#getAffineTransform}</li>
