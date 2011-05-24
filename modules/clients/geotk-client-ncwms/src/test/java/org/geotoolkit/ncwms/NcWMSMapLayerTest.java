@@ -268,24 +268,24 @@ public class NcWMSMapLayerTest {
         final NcWMSMapLayer layer = new NcWMSMapLayer(SERVER_111, "test");
         
         // Test mandatory values
-        String query = layer.queryTransect("CRS:84", "1%2,3%4", "image/png")
+        String query = layer.queryTransect("CRS:84", "1 2,3 4", "image/png")
                 .toString();        
         assertTrue(query.contains("REQUEST=GetTransect"));   
         assertTrue(query.contains("LAYER=test"));
         assertTrue(query.contains("CRS=CRS:84"));
         assertTrue(query.contains("FORMAT=image/png"));
-        assertTrue(query.contains("LINESTRING=1%2,3%4"));
+        assertTrue(query.contains("LINESTRING=1%202,3%204"));
         
         // Test optional values
         layer.dimensions().put("TIME", "10-10-10T10:00:00Z");
         layer.dimensions().put("ELEVATION", "550");
-        query = layer.queryTransect("CRS:84", "1%2,3%4", "image/png").toString();  
+        query = layer.queryTransect("CRS:84", "1 2,3 4", "image/png").toString();  
         assertTrue(query.contains("TIME=10-10-10T10:00:00Z"));
         assertTrue(query.contains("ELEVATION=550"));
     }
     
     /**
-     * This test checks if the ncWMS parameters are added to the get metadata 
+     * This test checks if the ncWMS parameters are added to the get vertical profile 
      * request
      */
     @Test
@@ -301,7 +301,7 @@ public class NcWMSMapLayerTest {
         assertTrue(query.contains("LAYER=test"));  
         assertTrue(query.contains("CRS=CRS:84"));
         assertTrue(query.contains("FORMAT=image/png")); 
-        assertTrue(query.contains("POINT=1.0%2.0")); 
+        assertTrue(query.contains("POINT=1.0%202.0")); 
         
         // Test optional values
         layer.dimensions().put("TIME", "10-10-10T10:00:00Z");

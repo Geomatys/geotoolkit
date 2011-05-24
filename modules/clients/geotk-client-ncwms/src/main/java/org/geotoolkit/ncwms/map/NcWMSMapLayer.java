@@ -353,7 +353,7 @@ public class NcWMSMapLayer extends WMSMapLayer {
         request.setLayer(getLayerNames()[0]);
         request.setCrs(crsCode);
         request.setFormat(outputFormat);
-        request.setPoint(x + "%" + y);        
+        request.setPoint(x + " " + y);     
         
         // Optional
         request.setTime(dimensions().get("TIME"));
