@@ -483,7 +483,7 @@ final class Resampler2D extends GridCoverage2D {
          * provide an ImageLayout built with the source image where the CM and the SM are valid.
          * those will be employed overriding a the possibility to expand the color model.
          */
-        if (ViewType.PHOTOGRAPHIC.equals(processingView)) {
+        if (processingView == ViewType.PHOTOGRAPHIC) {
             layout.unsetValid(ImageLayout.COLOR_MODEL_MASK | ImageLayout.SAMPLE_MODEL_MASK);
         }
         targetHints.put(JAI.KEY_IMAGE_LAYOUT, layout);

@@ -405,7 +405,7 @@ public abstract class AnnotationsTestBase extends TestBase {
                  * Check the 'required' declaration.
                  */
                 assertEquals("Wrong @XmlElement.required",
-                        Obligation.MANDATORY.equals(methodUML.obligation()), xmlElem.required());
+                        methodUML.obligation() == Obligation.MANDATORY, xmlElem.required());
             }
         }
         // On success, disable the report of failed class or method.

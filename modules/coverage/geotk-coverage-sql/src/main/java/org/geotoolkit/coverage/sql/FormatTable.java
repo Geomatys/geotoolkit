@@ -348,7 +348,7 @@ check:  for (final GridSampleDimension band : bands) {
                  */
                 if (name == null) {
                     final FormatEntry candidate = find(imageFormat, bands);
-                    if (candidate != null && type.equals(candidate.viewType)) {
+                    if (candidate != null && candidate.viewType == type) {
                         return candidate.getIdentifier();
                     }
                     name = searchFreeIdentifier(lc, imageFormat);

@@ -247,7 +247,7 @@ public class MetadataWriter extends MetadataSource {
          * after the check for existing entries, in order to take in account null values
          * when checking existing entries.
          */
-        if (!NullValuePolicy.ALL.equals(columnCreationPolicy)) {
+        if (columnCreationPolicy != NullValuePolicy.ALL) {
             for (final Iterator<Object> it=asMap.values().iterator(); it.hasNext();) {
                 if (it.next() == null) {
                     it.remove();

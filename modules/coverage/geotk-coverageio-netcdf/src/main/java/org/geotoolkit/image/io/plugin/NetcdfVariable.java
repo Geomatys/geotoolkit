@@ -215,7 +215,7 @@ final class NetcdfVariable {
          * if the type of the range is equals to the type of the scale, and the type of the
          * data is not wider, then assume that the minimum and maximum are geophysics values.
          */
-        if (rangeType.equals(scaleType) && rangeType.equals(widest(rangeType, dataType))) {
+        if ((rangeType == scaleType) && (rangeType == widest(rangeType, dataType))) {
             final double offset = Double.isNaN(this.offset) ? 0 : this.offset;
             final double scale  = Double.isNaN(this.scale ) ? 1 : this.scale;
             minimum = (minimum - offset) / scale;
@@ -335,7 +335,7 @@ scan:   for (int i=0; i<missingCount; i++) {
      * Returns {@code true} if the specified type is a floating point type.
      */
     private static boolean isFloatingPoint(final DataType type) {
-        return DataType.FLOAT.equals(type) || DataType.DOUBLE.equals(type);
+        return (type == DataType.FLOAT) || (type == DataType.DOUBLE);
     }
 
     /**

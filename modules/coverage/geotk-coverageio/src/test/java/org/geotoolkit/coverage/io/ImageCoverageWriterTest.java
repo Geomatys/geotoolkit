@@ -337,7 +337,7 @@ public final class ImageCoverageWriterTest extends ImageTestBase {
     @Test
     @PlatformDependentTest
     public void writeExpandedUpperLeftRegion() throws IOException, CoverageStoreException, ParseException {
-        assumeTrue(OS.MAC_OS.equals(OS.current()));
+        assumeTrue(OS.current() == OS.MAC_OS);
 
         final GridCoverage2D coverage = read("matrix.txt");
         final ImageCoverageWriterInspector writer = new ImageCoverageWriterInspector("writeOutsideRegion");

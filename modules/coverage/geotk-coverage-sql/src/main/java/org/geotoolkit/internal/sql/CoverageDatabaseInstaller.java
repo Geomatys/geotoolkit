@@ -139,7 +139,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
      */
     public CoverageDatabaseInstaller(final Connection connection) throws SQLException {
         super(connection);
-        if (!Dialect.POSTGRESQL.equals(dialect)) {
+        if (dialect != Dialect.POSTGRESQL) {
             connection.close();
             throw new UnsupportedOperationException(dialect.toString());
         }
@@ -221,7 +221,7 @@ public class CoverageDatabaseInstaller extends ScriptRunner {
         progress(80, SCHEMA);
         n += runFile("coverages-create.sql");
         final DatabaseMetaData md = getConnection().getMetaData();
-        if (Dialect.POSTGRESQL.equals(dialect)) {
+        if (dialect == Dialect.POSTGRESQL) {
             String database = new Host(md.getURL()).path;
             if (database != null) {
                 final String quote = md.getIdentifierQuoteString();

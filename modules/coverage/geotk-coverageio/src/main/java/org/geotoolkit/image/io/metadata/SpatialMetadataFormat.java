@@ -690,7 +690,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
                             obligation = c;
                             continue;
                         }
-                        if (c.equals(obligation)) {
+                        if (c == obligation) {
                             continue;
                         }
                     }

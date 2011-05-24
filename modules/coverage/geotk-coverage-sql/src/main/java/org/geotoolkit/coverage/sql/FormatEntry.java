@@ -137,7 +137,7 @@ final class FormatEntry extends DefaultEntry {
         super(name, comments);
         this.imageFormat = imageFormat.trim();
         if (bands != null) {
-            final boolean geophysics = ViewType.GEOPHYSICS.equals(viewType);
+            final boolean geophysics = (viewType == ViewType.GEOPHYSICS);
             final SampleDomain[] domains = new SampleDomain[bands.length];
             for (int i=0; i<bands.length; i++) {
                 final GridSampleDimension band = bands[i];

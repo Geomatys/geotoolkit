@@ -237,7 +237,7 @@ public class DimensionSet extends AbstractSet<DimensionIdentification> implement
         if (api == null) {
             throw new NullArgumentException(Warnings.message(this, Errors.Keys.NULL_ARGUMENT_$1, "api"));
         }
-        if (!api.equals(API.NONE) && apiMapping != null) {
+        if (api != API.NONE && apiMapping != null) {
             return apiMapping.dimensions[api.ordinal()];
         }
         return null;

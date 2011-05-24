@@ -463,7 +463,7 @@ public class DimensionSlice extends DimensionIdentification {
     public String toString() {
         final StringBuilder buffer = toStringBuilder().append("}, sliceIndex=").append(getSliceIndex());
         final API api = getAPI();
-        if (!API.NONE.equals(api)) {
+        if (api != API.NONE) {
             buffer.append(", API=").append(api.name());
     }
         return buffer.append(']').toString();

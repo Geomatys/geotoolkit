@@ -301,7 +301,7 @@ loop:   for (int i=0; ; i++) {
             colors.put(Level.SEVERE,  X364.BACKGROUND_RED);
             colors.put(PerformanceLevel.PERFORMANCE, X364.BACKGROUND_CYAN);
         }
-        faintSupported = !OS.MAC_OS.equals(OS.current());
+        faintSupported = OS.current() != OS.MAC_OS;
     }
 
     /**
@@ -410,7 +410,7 @@ loop:   for (int i=0; ; i++) {
             if (colors == null) {
                 colors = new TreeMap<Level,X364>(COMPARATOR);
             }
-            changed = !color.equals(colors.put(level, color));
+            changed = (colors.put(level, color) != color);
         } else if (colors != null) {
             changed = (colors.remove(level) != null);
             if (colors.isEmpty()) {

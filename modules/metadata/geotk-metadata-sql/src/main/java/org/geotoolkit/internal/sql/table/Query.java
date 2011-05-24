@@ -529,7 +529,7 @@ scan:       while (!tables.isEmpty()) {
             final Ordering ordering = column.getOrdering(type);
             if (ordering != null) {
                 column.appendName(buffer.append(separator), quote);
-                if (!ordering.equals(Ordering.ASC)) {
+                if (ordering != Ordering.ASC) {
                     buffer.append(' ').append(ordering.name());
                 }
                 separator = ", ";

@@ -282,7 +282,7 @@ public final class SQLBuilder {
     public String createForeignKey(final String schema, final String table, final String column,
             final String target, final String primaryKey, boolean cascade)
     {
-        if (Dialect.DERBY.equals(dialect)) {
+        if (dialect == Dialect.DERBY) {
             // Derby does not support "ON UPDATE CASCADE". It must be RESTRICT.
             cascade = false;
         }

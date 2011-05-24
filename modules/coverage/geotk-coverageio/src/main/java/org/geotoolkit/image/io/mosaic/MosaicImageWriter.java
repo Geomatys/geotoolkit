@@ -413,7 +413,7 @@ public class MosaicImageWriter extends ImageWriter implements LogProducer, Dispo
         }
         final List<Tile> tiles;
         final int bytesPerPixel;
-        if (policy.equals(TileWritingPolicy.NO_WRITE)) {
+        if (policy == TileWritingPolicy.NO_WRITE) {
             tiles = Collections.emptyList();
             bytesPerPixel = 1;
         } else {
@@ -1263,7 +1263,7 @@ search: for (final Tile tile : tiles) {
         final ImageReader reader = getImageReader(input);
         if (parameters instanceof MosaicImageWriteParam) {
             final MosaicImageWriteParam param = (MosaicImageWriteParam) parameters;
-            if (TileWritingPolicy.NO_WRITE.equals(param.getTileWritingPolicy())) {
+            if (param.getTileWritingPolicy() == TileWritingPolicy.NO_WRITE) {
                 return reader;
             }
             op = param.getSourceTileFilter();

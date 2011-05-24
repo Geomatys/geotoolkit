@@ -72,7 +72,7 @@ public final class PostgisInstaller extends ScriptRunner {
      */
     public PostgisInstaller(final Connection connection) throws SQLException {
         super(connection);
-        if (!Dialect.POSTGRESQL.equals(dialect)) {
+        if (dialect != Dialect.POSTGRESQL) {
             connection.close();
             throw new UnsupportedOperationException(dialect.toString());
         }

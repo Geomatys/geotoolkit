@@ -230,7 +230,7 @@ public class GridTransform extends AbstractMathTransform implements Serializable
             throw new IllegalArgumentException(Errors.format(Errors.Keys.MISMATCHED_ARRAY_LENGTH));
         }
         if (area != null) {
-            final double longitudeSign = GridType.NTv2.equals(type) ? -1 : +1;
+            final double longitudeSign = (type == GridType.NTv2) ? -1 : +1;
             xOrigin = area.getMinX() * longitudeSign;
             yOrigin = area.getMinY();
             scaleX  = width  / area.getWidth() * longitudeSign;

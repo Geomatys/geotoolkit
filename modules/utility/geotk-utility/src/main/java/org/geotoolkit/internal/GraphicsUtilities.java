@@ -57,7 +57,7 @@ public final class GraphicsUtilities extends Static {
                 // Do not change the user-supplied setting.
                 return;
             }
-        } else if (OS.MAC_OS.equals(OS.current())) {
+        } else if (OS.current() == OS.MAC_OS) {
             // MacOS come with a default L&F which is different than in standard JDK.
             return;
         } else {

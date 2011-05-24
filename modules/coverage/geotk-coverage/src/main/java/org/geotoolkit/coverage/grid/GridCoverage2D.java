@@ -870,7 +870,7 @@ public class GridCoverage2D extends AbstractGridCoverage implements RenderedCove
      * @since 2.5
      */
     public GridCoverage2D view(final ViewType type) {
-        if (ViewType.SAME.equals(type)) {
+        if (type == ViewType.SAME) {
             return this;
         }
         synchronized (this) {

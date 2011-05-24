@@ -349,7 +349,7 @@ public class NetcdfCRS extends NetcdfIdentifiedObject implements CoordinateRefer
     private static int lower(final List<CoordinateAxis> axes, int upper, final AxisType t1, final AxisType t2) {
         while (upper != 0) {
             final AxisType type = axes.get(upper-1).getAxisType();
-            if (!t1.equals(type) && !t2.equals(type)) {
+            if (type != t1 && type != t2) {
                 break;
             }
             upper--;

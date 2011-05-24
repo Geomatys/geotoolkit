@@ -507,7 +507,7 @@ public class MosaicBuilder implements LogProducer {
              * which are the maximum subsamplings expected (inclusive).
              */
             final int nx, ny;
-            if (TileLayout.CONSTANT_GEOGRAPHIC_AREA.equals(layout)) {
+            if (layout == TileLayout.CONSTANT_GEOGRAPHIC_AREA) {
                 nx = tileSize.width  / MIN_TILE_SIZE;
                 ny = tileSize.height / MIN_TILE_SIZE;
             } else {

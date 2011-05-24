@@ -358,7 +358,7 @@ public class XLink implements Serializable {
      */
     @XmlAttribute(name = "type", namespace = Namespaces.XLINK, required = true)
     public synchronized Type getType() {
-        if (!Type.AUTO.equals(type)) {
+        if (type != Type.AUTO) {
             return type;
         }
         Type best = null;

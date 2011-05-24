@@ -289,7 +289,7 @@ public final class TypeMap extends Static {
      */
     public static SampleDimensionType getSampleDimensionType(final NumberSet type, final int numBits) {
         final boolean real = type.ordinal() > NumberSet.INTEGER.ordinal();
-        final boolean signed = !type.equals(NumberSet.NATURAL);
+        final boolean signed = (type != NumberSet.NATURAL);
         for (final TypeMap candidate : MAP) {
             if (candidate.size >= numBits && candidate.real == real) {
                 // If 'signed' doesn't match the requested one,

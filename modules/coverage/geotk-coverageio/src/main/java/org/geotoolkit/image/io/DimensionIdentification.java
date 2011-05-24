@@ -103,7 +103,7 @@ public class DimensionIdentification implements WarningProducer {
             throw new NullArgumentException(Errors.format(Errors.Keys.NULL_ARGUMENT_$1, "owner"));
         }
         this.owner = owner;
-        if (!api.equals(API.NONE)) {
+        if (api != API.NONE) {
             final int ordinal = api.ordinal();
             final DimensionIdentification[] apiMapping = owner.apiMapping();
             if (apiMapping[ordinal] != null) {
