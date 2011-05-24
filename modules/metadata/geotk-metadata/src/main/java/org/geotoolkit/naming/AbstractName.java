@@ -377,7 +377,7 @@ public abstract class AbstractName implements GenericName, Serializable {
         if (object == this) {
             return true;
         }
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final AbstractName that = (AbstractName) object;
             return Utilities.equals(this.scope(), that.scope()) &&
                    Utilities.equals(this.getParsedNames(), that.getParsedNames());

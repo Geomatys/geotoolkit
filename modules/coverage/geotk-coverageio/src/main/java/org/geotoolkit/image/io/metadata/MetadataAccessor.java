@@ -936,9 +936,9 @@ search: for (int upper; (upper = path.indexOf(SEPARATOR, lower)) >= 0; lower=upp
                 value = XmlUtilities.parseDateTime(value.toString());
             } else if (type.isArray()) {
                 final Class<?> component = Numbers.primitiveToWrapper(type.getComponentType());
-                if (Double.class.equals(component)) {
+                if (component == Double.class) {
                     value = parseSequence(value.toString(), Double.TYPE, false, null);
-                } else if (Integer.class.equals(component)) {
+                } else if (component == Integer.class) {
                     value = parseSequence(value.toString(), Integer.TYPE, false, null);
                 }
             }

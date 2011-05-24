@@ -220,13 +220,13 @@ typeLoop:   for (int i=0; ; i++) {
             throws FactoryRegistryException
     {
         final AuthorityFactory f;
-        if (CRSAuthorityFactory.class.equals(type)) {
+        if (type == CRSAuthorityFactory.class) {
             f = AuthorityFactoryFinder.getCRSAuthorityFactory(authority, getHints());
-        } else if (CSAuthorityFactory.class.equals(type)) {
+        } else if (type == CSAuthorityFactory.class) {
             f = AuthorityFactoryFinder.getCSAuthorityFactory(authority, getHints());
-        } else if (DatumAuthorityFactory.class.equals(type)) {
+        } else if (type == DatumAuthorityFactory.class) {
             f = AuthorityFactoryFinder.getDatumAuthorityFactory(authority, getHints());
-        } else if (CoordinateOperationAuthorityFactory.class.equals(type)) {
+        } else if (type == CoordinateOperationAuthorityFactory.class) {
             f = AuthorityFactoryFinder.getCoordinateOperationAuthorityFactory(authority, getHints());
         } else {
             f = super.fromFactoryRegistry(authority, type);

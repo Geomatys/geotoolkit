@@ -137,7 +137,7 @@ class SexagesimalConverter extends UnitConverter {
      */
     @Override
     public final boolean equals(final Object object) {
-        return object != null && object.getClass().equals(getClass()) &&
+        return object != null && object.getClass() == getClass() &&
                 ((SexagesimalConverter) object).divider == divider;
     }
 

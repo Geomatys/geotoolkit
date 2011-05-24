@@ -553,7 +553,7 @@ public class MosaicChooser extends JComponent implements Dialog {
         final ChangeEvent event = new ChangeEvent(this);
         final Object[] listeners = listenerList.getListenerList();
         for (int i=listeners.length; (i-=2) >= 0;) {
-            if (ChangeListener.class.equals(listeners[i])) {
+            if (listeners[i] == ChangeListener.class) {
                 ((ChangeListener) listeners[i+1]).stateChanged(event);
             }
         }

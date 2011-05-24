@@ -119,7 +119,7 @@ public class DoubleDimension2D extends Dimension2D implements Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final DoubleDimension2D that = (DoubleDimension2D) object;
             return doubleToLongBits(this.width)  == doubleToLongBits(that.width) &&
                    doubleToLongBits(this.height) == doubleToLongBits(that.height);

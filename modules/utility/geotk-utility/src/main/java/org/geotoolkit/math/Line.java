@@ -506,7 +506,7 @@ public class Line implements Cloneable, Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && getClass().equals(object.getClass())) {
+        if (object != null && getClass() == object.getClass()) {
             final Line that = (Line) object;
             return Utilities.equals(this.slope, that.slope) &&
                    Utilities.equals(this.y0,    that.y0   ) &&

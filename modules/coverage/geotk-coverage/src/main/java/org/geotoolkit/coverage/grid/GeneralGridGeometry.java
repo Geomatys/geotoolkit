@@ -669,7 +669,7 @@ public class GeneralGridGeometry implements GridGeometry, Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final GeneralGridGeometry that = (GeneralGridGeometry) object;
             return Utilities.equals(this.gridRange, that.gridRange) &&
                    Utilities.equals(this.gridToCRS, that.gridToCRS) &&

@@ -1392,15 +1392,15 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
             throws FactoryException
     {
         final AuthorityFactory f;
-        if (CRSAuthorityFactory.class.equals(type)) {
+        if (type == CRSAuthorityFactory.class) {
             f = getCRSAuthorityFactory(code);
-        } else if (CSAuthorityFactory.class.equals(type)) {
+        } else if (type == CSAuthorityFactory.class) {
             f = getCSAuthorityFactory(code);
-        } else if (DatumAuthorityFactory.class.equals(type)) {
+        } else if (type == DatumAuthorityFactory.class) {
             f = getDatumAuthorityFactory(code);
-        } else if (CoordinateOperationAuthorityFactory.class.equals(type)) {
+        } else if (type == CoordinateOperationAuthorityFactory.class) {
             f = getCoordinateOperationAuthorityFactory(code);
-        } else if (AuthorityFactory.class.equals(type)) {
+        } else if (type == AuthorityFactory.class) {
             f = getAuthorityFactory(code);
         } else {
             throw new IllegalArgumentException(Errors.format(Errors.Keys.UNKNOWN_TYPE_$1, type));
@@ -1588,7 +1588,7 @@ public class AuthorityFactoryAdapter extends AbstractAuthorityFactory {
     final boolean isCodeMethodOverridden() {
         final Class<?>[] arguments = new Class<?>[] {String.class};
         Class<?> type = getClass();
-        while (!AuthorityFactoryAdapter.class.equals(type)) {
+        while (type != AuthorityFactoryAdapter.class) {
             try {
                 type.getDeclaredMethod("toBackingFactoryCode", arguments);
             } catch (NoSuchMethodException e) {

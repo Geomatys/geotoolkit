@@ -1043,7 +1043,7 @@ public class Plot2D extends ZoomPane {
             final Class<?> type = Numbers.widestClass(
                     Numbers.primitiveToWrapper(x.getElementType()).asSubclass(Number.class),
                     Numbers.primitiveToWrapper(y.getElementType()).asSubclass(Number.class));
-            if (Double.class.equals(type) || Long.class.equals(type)) {
+            if (type == Double.class || type == Long.class) {
                 path = new Path2D.Double();
             } else {
                 path = new Path2D.Float();

@@ -115,7 +115,7 @@ public class DefaultEntry implements Entry, Serializable {
         if (object == this) {
             return true;
         }
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final DefaultEntry that = (DefaultEntry) object;
             return Utilities.equals(this.identifier,  that.identifier) &&
                    Utilities.equals(this.description, that.description);

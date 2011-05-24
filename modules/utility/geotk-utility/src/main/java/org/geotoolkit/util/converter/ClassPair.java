@@ -126,8 +126,8 @@ class ClassPair<S,T> {
             }
             return isDefining(primary) || isDefining(fallback);
         }
-        return sourceClass.equals(converter.getSourceClass()) &&
-               targetClass.equals(converter.getTargetClass());
+        return converter.getSourceClass() == sourceClass &&
+               converter.getTargetClass() == targetClass;
     }
 
     /**
@@ -142,8 +142,8 @@ class ClassPair<S,T> {
     public final boolean equals(final Object other) {
         if (other instanceof ClassPair<?,?>) {
             final ClassPair<?,?> that = (ClassPair<?,?>) other;
-            return sourceClass.equals(that.sourceClass) &&
-                   targetClass.equals(that.targetClass);
+            return sourceClass == that.sourceClass &&
+                   targetClass == that.targetClass;
         }
         return false;
     }

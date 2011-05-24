@@ -247,7 +247,7 @@ public class Version implements CharSequence, Comparable<Version>, Serializable 
      */
     @Override
     public boolean equals(final Object other) {
-        if (other != null && getClass().equals(other.getClass())) {
+        if (other != null && getClass() == other.getClass()) {
             return compareTo((Version) other) == 0;
         }
         return false;

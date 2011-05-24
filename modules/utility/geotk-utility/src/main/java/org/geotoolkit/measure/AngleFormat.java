@@ -1235,14 +1235,16 @@ BigBoss:    switch (skipSuffix(source, pos, DEGREES_FIELD)) {
 
     /**
      * Compares this format with the specified object for equality.
+     *
+     * @param object The object to compare with this angle format for equality.
      */
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == this) {
+    public boolean equals(final Object object) {
+        if (object == this) {
             return true;
         }
-        if (obj!=null && getClass().equals(obj.getClass())) {
-            final  AngleFormat cast = (AngleFormat) obj;
+        if (object != null && getClass() == object.getClass()) {
+            final  AngleFormat cast = (AngleFormat) object;
             return width0           == cast.width0            &&
                    width1           == cast.width1            &&
                    width2           == cast.width2            &&

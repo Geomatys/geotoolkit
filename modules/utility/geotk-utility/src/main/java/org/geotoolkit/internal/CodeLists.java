@@ -120,7 +120,7 @@ public final class CodeLists extends Static implements CodeList.Filter {
      *
      * @since 3.03
      */
-    public static String[] identifiers(final Class<CodeList<?>> codeType) {
+    public static String[] identifiers(final Class<? extends CodeList<?>> codeType) {
         final CodeList<?>[] codes = values(codeType);
         final String[] ids = new String[codes.length];
         for (int i=0; i<codes.length; i++) {

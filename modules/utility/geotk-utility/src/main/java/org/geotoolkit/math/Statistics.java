@@ -606,7 +606,7 @@ public class Statistics implements Cloneable, Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && getClass().equals(object.getClass())) {
+        if (object != null && getClass() == object.getClass()) {
             final Statistics cast = (Statistics) object;
             return n == cast.n &&
                    Utilities.equals(min,  cast.min) &&

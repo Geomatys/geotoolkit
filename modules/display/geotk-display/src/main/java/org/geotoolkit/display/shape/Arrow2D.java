@@ -461,16 +461,16 @@ public class Arrow2D extends RectangularShape implements Serializable {
     /**
      * Compares this arrow with the specified object for equality.
      *
-     * @param  obj The object to compare with this arrow for equality.
+     * @param  object The object to compare with this arrow for equality.
      * @return {@code true} if the given object is equal to this arrow.
      */
     @Override
-    public boolean equals(final Object obj) {
-        if (obj == this) {
+    public boolean equals(final Object object) {
+        if (object == this) {
             return true;
         }
-        if (obj!=null && getClass().equals(obj.getClass())) {
-            final Arrow2D cast = (Arrow2D) obj;
+        if (object != null && getClass() == object.getClass()) {
+            final Arrow2D cast = (Arrow2D) object;
             return doubleToLongBits(thickness) == doubleToLongBits(cast.thickness) &&
                    doubleToLongBits(length   ) == doubleToLongBits(cast.length   ) &&
                    doubleToLongBits(minX     ) == doubleToLongBits(cast.minX     ) &&

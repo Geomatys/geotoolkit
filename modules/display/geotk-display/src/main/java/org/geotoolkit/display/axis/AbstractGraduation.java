@@ -318,7 +318,7 @@ public abstract class AbstractGraduation implements Graduation, Serializable {
      */
     @Override
     public  boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final AbstractGraduation that = (AbstractGraduation) object;
             // We should lock object as well, but can't because of deadlocks.
             synchronized (this) {

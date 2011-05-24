@@ -257,7 +257,7 @@ class DiscreteCRS<T extends CoordinateReferenceSystem> implements CoordinateRefe
      */
     @Override
     public final boolean equals(final Object other) {
-        if (other != null && other.getClass().equals(getClass())) {
+        if (other != null && other.getClass() == getClass()) {
             final DiscreteCRS<?> that = (DiscreteCRS<?>) other;
             return crs.equals(that.crs) && cs.equals(that.cs);
         }

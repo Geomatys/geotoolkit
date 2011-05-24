@@ -152,7 +152,7 @@ public abstract class NetcdfIdentifiedObject implements IdentifiedObject, Refere
         if (other == this) {
             return true;
         }
-        if (other != null && other.getClass().equals(getClass())) {
+        if (other != null && other.getClass() == getClass()) {
             return Utilities.equals(delegate(), ((NetcdfIdentifiedObject) other).delegate());
         }
         return false;

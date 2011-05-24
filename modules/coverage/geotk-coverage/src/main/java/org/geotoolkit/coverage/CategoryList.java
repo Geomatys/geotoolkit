@@ -605,7 +605,7 @@ class CategoryList extends AbstractList<Category> implements MathTransform1D, Co
         int type = DataBuffer.TYPE_FLOAT;
         final NumberRange<?> range = getRange();
         final Class<?> rt = range.getElementClass();
-        if (Byte.class.equals(rt) || Short.class.equals(rt) || Integer.class.equals(rt)) {
+        if (rt == Byte.class || rt == Short.class || rt == Integer.class) {
             final int min = range.getMinValue().intValue();
             final int max = range.getMaxValue().intValue();
             if (min >= 0) {

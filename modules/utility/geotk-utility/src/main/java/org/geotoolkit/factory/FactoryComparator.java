@@ -67,7 +67,7 @@ final class FactoryComparator {
                 final Object v2  = m2.get(key);
                 if (v1 == v2) continue;
                 if (v1 instanceof Factory) {
-                    if (v2 == null || !v1.getClass().equals(v2.getClass()) ||
+                    if (v2 == null || v1.getClass() != v2.getClass() ||
                        !new FactoryComparator((Factory) v1, (Factory) v2).compare(done))
                     {
                         return false;

@@ -328,7 +328,7 @@ public class NumberGraduation extends AbstractGraduation {
      */
     NumberIterator getTickIterator(final TickIterator reuse) {
         final NumberFormat format = getFormat();
-        if (reuse!=null && reuse.getClass().equals(NumberIterator.class)) {
+        if (reuse != null && reuse.getClass() == NumberIterator.class) {
             final NumberIterator it = (NumberIterator) reuse;
             it.setFormat(format);
             return it;

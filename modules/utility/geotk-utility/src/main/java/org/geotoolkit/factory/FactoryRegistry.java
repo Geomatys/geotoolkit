@@ -462,7 +462,7 @@ public class FactoryRegistry extends ServiceRegistry {
      */
     final void initCause(final FactoryNotFoundException e) {
         final Throwable c = failureCause;
-        if (c != null && e.getClass().equals(FactoryNotFoundException.class) && e.getCause() == null) {
+        if (c != null && e.getClass() == FactoryNotFoundException.class && e.getCause() == null) {
             e.initCause(c);
         }
     }

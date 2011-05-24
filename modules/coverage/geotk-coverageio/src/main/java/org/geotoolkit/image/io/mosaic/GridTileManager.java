@@ -310,7 +310,7 @@ final class GridTileManager extends TileManager {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final GridTileManager that = (GridTileManager) object;
             return count == that.count &&
                    Utilities.equals(region, that.region) &&

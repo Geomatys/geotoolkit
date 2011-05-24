@@ -149,7 +149,7 @@ public class FactoryFinder extends Static {
     static Hints mergeSystemHints(Hints hints) {
         if (hints == null) {
             hints = new Hints();
-        } else if (hints.containsKey(FILTER_KEY) || !hints.getClass().equals(Hints.class)) {
+        } else if (hints.containsKey(FILTER_KEY) || hints.getClass() != Hints.class) {
             hints = hints.clone();
         }
         return hints;

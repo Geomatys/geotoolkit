@@ -219,7 +219,7 @@ public class RangeSpecifier implements Serializable, Cloneable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final RangeSpecifier that = (RangeSpecifier) object;
             return Utilities.equals(this.range,     that.range    ) &&
                    Utilities.equals(this.transform, that.transform) &&

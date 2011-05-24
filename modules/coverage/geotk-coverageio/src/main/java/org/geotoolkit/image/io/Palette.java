@@ -285,7 +285,7 @@ public abstract class Palette {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && getClass().equals(object.getClass())) {
+        if (object != null && getClass() == object.getClass()) {
             final Palette that = (Palette) object;
             return this.numBands    == that.numBands    &&
                    this.visibleBand == that.visibleBand &&

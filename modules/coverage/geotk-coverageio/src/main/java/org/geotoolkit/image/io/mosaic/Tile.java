@@ -1093,7 +1093,7 @@ public class Tile implements Comparable<Tile>, Serializable {
      * case the user overridden the method.
      */
     final boolean isSizeEquals(final int dx, final int dy) {
-        assert getClass().equals(Tile.class) && (width != 0) && (height != 0) : this;
+        assert (getClass() == Tile.class) && (width != 0) && (height != 0) : this;
         return (width & MASK) == dx && (height & MASK) == dy;
     }
 
@@ -1445,7 +1445,7 @@ public class Tile implements Comparable<Tile>, Serializable {
         if (object == this) {
             return true;
         }
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final Tile that = (Tile) object;
             if (this.x == that.x  &&  this.y == that.y    &&
                 this.xSubsampling == that.xSubsampling    &&
@@ -1517,7 +1517,7 @@ public class Tile implements Comparable<Tile>, Serializable {
              * Since we have to read the fields directly, make sure that this instance is
              * not a subclass like LargeTile, otherwise those values may be wrong.
              */
-            if ((width != 0 || height != 0) && getClass().equals(Tile.class)) {
+            if ((width != 0 || height != 0) && getClass() == Tile.class) {
                 buffer.append(", size=(").append(width & MASK)
                       .append(',').append(height & MASK).append(')');
             }
@@ -1610,7 +1610,7 @@ public class Tile implements Comparable<Tile>, Serializable {
             int height       = tile.height       & MASK;
             int xSubsampling = tile.xSubsampling & MASK;
             int ySubsampling = tile.ySubsampling & MASK;
-            if (!tile.getClass().equals(Tile.class)) {
+            if (tile.getClass() != Tile.class) {
                 final Dimension subsampling = tile.getSubsampling();
                 xSubsampling = subsampling.width;
                 ySubsampling = subsampling.height;

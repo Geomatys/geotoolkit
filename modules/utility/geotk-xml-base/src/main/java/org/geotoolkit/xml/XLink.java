@@ -790,7 +790,7 @@ public class XLink implements Serializable {
         if (object == this) {
             return true;
         }
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final XLink that = (XLink) object;
             final int h0 = hashCode;
             if (h0 != 0) {

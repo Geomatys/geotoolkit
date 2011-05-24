@@ -457,7 +457,7 @@ public class WeakHashSet<E> extends AbstractSet<E> implements CheckedCollection<
                     if (operation == REMOVE) {
                         e.dispose();
                     }
-                    assert candidate.getClass().equals(obj.getClass()) : candidate;
+                    assert candidate.getClass() == obj.getClass() : candidate;
                     @SuppressWarnings("unchecked")
                     final T result = (T) candidate;
                     return result;

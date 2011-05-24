@@ -229,7 +229,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
                  * continue to scan down the tree, looking for a more specialized node.
                  */
                 if (candidate instanceof FallbackConverter<?,?>) {
-                    if (candidateClass.equals(targetClass)) {
+                    if (candidateClass == targetClass) {
                         /*
                          * Using Number for illustration purpose, but could be anything:
                          *
@@ -324,7 +324,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
     static ObjectConverter<?,?> createUnsafe(final ObjectConverter<?,?> existing,
                                              final ObjectConverter<?,?> converter)
     {
-        assert existing.getSourceClass().equals(converter.getSourceClass());
+        assert existing.getSourceClass() == converter.getSourceClass();
         return create((ObjectConverter) existing, (ObjectConverter) converter);
     }
 
@@ -424,7 +424,7 @@ final class FallbackConverter<S,T> extends ClassPair<S,T> implements ObjectConve
         MutableTreeNode node = new DefaultMutableTreeNode(name);
         if (converter instanceof FallbackConverter<?,?>) {
             final FallbackConverter<?,?> fallback = (FallbackConverter<?,?>) converter;
-            final boolean simplify = fallback.targetClass.equals(targetClass);
+            final boolean simplify = (fallback.targetClass == targetClass);
             if (simplify) {
                 node = addTo;
             }

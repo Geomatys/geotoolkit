@@ -712,7 +712,7 @@ loop:   for (int i=0; ; i++) {
         Handler[] handlers = logger.getHandlers();
         for (int i=0; i<handlers.length; i++) {
             final Handler handler = handlers[i];
-            if (handler.getClass().equals(ConsoleHandler.class)) {
+            if (handler.getClass() == ConsoleHandler.class) {
                 foundConsoleHandler = true;
                 final Formatter formatter = handler.getFormatter();
                 if (formatter instanceof MonolineFormatter) {
@@ -726,7 +726,7 @@ loop:   for (int i=0; ; i++) {
                         monoline = (MonolineFormatter) formatter;
                         setLevel(handler, level);
                     }
-                } else if (formatter.getClass().equals(SimpleFormatter.class)) {
+                } else if (formatter.getClass() == SimpleFormatter.class) {
                     /*
                      * A ConsoleHandler using the SimpleFormatter has been found. Replaces
                      * the SimpleFormatter by MonolineFormatter, creating it if necessary.
@@ -761,14 +761,14 @@ loop:   for (int i=0; ; i++) {
             handlers = parent.getHandlers();
             for (int i=0; i<handlers.length; i++) {
                 Handler handler = handlers[i];
-                if (handler.getClass().equals(ConsoleHandler.class)) {
+                if (handler.getClass() == ConsoleHandler.class) {
                     if (!foundConsoleHandler) {
                         // We have already set a ConsoleHandler and we don't want a second one.
                         continue;
                     }
                     foundConsoleHandler = true;
                     final Formatter formatter = handler.getFormatter();
-                    if (formatter.getClass().equals(SimpleFormatter.class)) {
+                    if (formatter.getClass() == SimpleFormatter.class) {
                         monoline = addHandler(logger, level);
                         continue;
                     }

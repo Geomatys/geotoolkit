@@ -586,7 +586,7 @@ public class Parameter<T> extends AbstractParameter implements ParameterValue<T>
         @SuppressWarnings("unchecked") // Checked by constructor.
         final ParameterDescriptor<T> descriptor = (ParameterDescriptor<T>) this.descriptor;
         final Class<T> type = descriptor.getValueClass();
-        if (Double.class.equals(type) || Double.TYPE.equals(type)) {
+        if (type == Double.class || type == Double.TYPE) {
             setValue((double) value);
             return;
         }

@@ -249,7 +249,7 @@ public class Polynom implements Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final Polynom that = (Polynom) object;
             return Arrays.equals(this.c, that.c);
         }

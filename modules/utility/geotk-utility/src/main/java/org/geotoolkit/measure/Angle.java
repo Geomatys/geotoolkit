@@ -152,7 +152,7 @@ public class Angle implements Comparable<Angle>, Serializable {
         if (object == this) {
             return true;
         }
-        if (object != null && getClass().equals(object.getClass())) {
+        if (object != null && getClass() == object.getClass()) {
             return Utilities.equals(theta, ((Angle) object).theta);
         }
         return false;

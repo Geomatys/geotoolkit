@@ -76,7 +76,7 @@ public abstract class MultiColumnIdentifier<T extends MultiColumnIdentifier<T>> 
         if (other == this) {
             return true;
         }
-        if (other != null && other.getClass().equals(getClass())) {
+        if (other != null && other.getClass() == getClass()) {
             @SuppressWarnings("unchecked")
             final T that = (T) other;
             return Arrays.equals(getIdentifiers(), that.getIdentifiers());

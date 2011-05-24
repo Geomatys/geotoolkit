@@ -66,7 +66,7 @@ public final class LocalNameAdapter extends XmlAdapter<String,LocalName> {
                 FactoryFinder.FILTER_KEY, new ServiceRegistry.Filter()
         {
             @Override public boolean filter(final Object provider) {
-                return provider.getClass().equals(DefaultNameFactory.class);
+                return provider.getClass() == DefaultNameFactory.class;
             }
         }));
     }

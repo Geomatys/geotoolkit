@@ -112,7 +112,7 @@ public class TransformedCoverage extends AbstractCoverage {
             if (CRS.equalsIgnoreMetadata(coverage.getCoordinateReferenceSystem(), crs)) {
                 return coverage;
             }
-            if (TransformedCoverage.class.equals(coverage.getClass())) {
+            if (coverage.getClass() == TransformedCoverage.class) {
                 coverage = ((TransformedCoverage) coverage).coverage;
                 continue;
             }

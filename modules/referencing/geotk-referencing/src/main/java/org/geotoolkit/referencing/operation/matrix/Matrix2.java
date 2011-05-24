@@ -294,7 +294,7 @@ public class Matrix2 implements XMatrix, Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final Matrix2 that = (Matrix2) object;
             return Double.doubleToLongBits(this.m00) == Double.doubleToLongBits(that.m00) &&
                    Double.doubleToLongBits(this.m01) == Double.doubleToLongBits(that.m01) &&

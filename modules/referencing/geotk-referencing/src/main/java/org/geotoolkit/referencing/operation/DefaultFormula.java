@@ -125,7 +125,7 @@ public class DefaultFormula implements Formula, Serializable {
         if (object == this) {
             return true;
         }
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final DefaultFormula that = (DefaultFormula) object;
             return Utilities.equals(this.formula,  that.formula) &&
                    Utilities.equals(this.citation, that.citation);

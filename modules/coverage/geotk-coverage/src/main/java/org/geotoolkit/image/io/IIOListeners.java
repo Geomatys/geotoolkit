@@ -335,19 +335,19 @@ public class IIOListeners implements Serializable {
         for (int i=0; i<listeners.length;) {
             final Object classe   = listeners[i++];
             final Object listener = listeners[i++];
-            if (IIOReadProgressListener.class.equals(classe)) {
+            if (classe == IIOReadProgressListener.class) {
                 final IIOReadProgressListener l = (IIOReadProgressListener) listener;
                 reader.removeIIOReadProgressListener(l); // Ensure singleton
                 if (add) reader.addIIOReadProgressListener(l);
                 continue;
             }
-            if (IIOReadUpdateListener.class.equals(classe)) {
+            if (classe == IIOReadUpdateListener.class) {
                 final IIOReadUpdateListener l = (IIOReadUpdateListener) listener;
                 reader.removeIIOReadUpdateListener(l); // Ensure singleton
                 if (add) reader.addIIOReadUpdateListener(l);
                 continue;
             }
-            if (IIOReadWarningListener.class.equals(classe)) {
+            if (classe == IIOReadWarningListener.class) {
                 final IIOReadWarningListener l = (IIOReadWarningListener) listener;
                 reader.removeIIOReadWarningListener(l); // Ensure singleton
                 if (add) reader.addIIOReadWarningListener(l);
@@ -369,13 +369,13 @@ public class IIOListeners implements Serializable {
         for (int i=0; i<listeners.length;) {
             final Object classe   = listeners[i++];
             final Object listener = listeners[i++];
-            if (IIOWriteProgressListener.class.equals(classe)) {
+            if (classe == IIOWriteProgressListener.class) {
                 final IIOWriteProgressListener l = (IIOWriteProgressListener) listener;
                 writer.removeIIOWriteProgressListener(l); // Ensure singleton
                 if (add) writer.addIIOWriteProgressListener(l);
                 continue;
             }
-            if (IIOWriteWarningListener.class.equals(classe)) {
+            if (classe == IIOWriteWarningListener.class) {
                 final IIOWriteWarningListener l = (IIOWriteWarningListener) listener;
                 writer.removeIIOWriteWarningListener(l); // Ensure singleton
                 if (add) writer.addIIOWriteWarningListener(l);

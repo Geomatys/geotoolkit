@@ -196,7 +196,7 @@ search: for (final QueryType type : types) {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final ColumnOrParameter that = (ColumnOrParameter) object;
             return Arrays.equals(this.index, that.index);
         }

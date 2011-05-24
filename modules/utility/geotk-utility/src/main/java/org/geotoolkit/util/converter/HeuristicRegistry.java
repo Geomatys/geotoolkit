@@ -53,11 +53,11 @@ class HeuristicRegistry extends ConverterRegistry {
          * delegated to a converter from String to the target. We handle CharSequence especially
          * because it is an interface rather than a class (see ConverterRegistry javadoc).
          */
-        if (CharSequence.class.equals(source)) {
+        if (source == CharSequence.class) {
             final ObjectConverter<?,?> converter;
             if (target.isAssignableFrom(source)) {
                 converter = IdentityConverter.CHAR_SEQUENCE;
-            } else if (target.equals(String.class)) {
+            } else if (target == String.class) {
                 converter = CharSequenceConverter.STRING;
             } else {
                 converter = CharSequenceConverter.create(target, super.converter(String.class, target));
@@ -78,7 +78,7 @@ class HeuristicRegistry extends ConverterRegistry {
     @Override
     @SuppressWarnings("unchecked")
     <S,T> ObjectConverter<S,T> createConverter(final Class<S> source, final Class<T> target) {
-        if (String.class.equals(source) && CodeList.class.isAssignableFrom(target)) {
+        if (source == String.class && CodeList.class.isAssignableFrom(target)) {
             return StringConverter.CodeList.create(target.asSubclass(CodeList.class));
         }
         return super.createConverter(source, target);

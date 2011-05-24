@@ -865,7 +865,7 @@ public class Category implements Serializable {
             // Slight optimization
             return true;
         }
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final Category that = (Category) object;
             if (Double.doubleToRawLongBits(minimum)== Double.doubleToRawLongBits(that.minimum) &&
                 Double.doubleToRawLongBits(maximum)== Double.doubleToRawLongBits(that.maximum) &&

@@ -317,7 +317,7 @@ public class Plane implements Cloneable, Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && getClass().equals(object.getClass())) {
+        if (object != null && getClass() == object.getClass()) {
             final Plane that = (Plane) object;
             return Utilities.equals(this.c,  that.c ) &&
                    Utilities.equals(this.cx, that.cx) &&

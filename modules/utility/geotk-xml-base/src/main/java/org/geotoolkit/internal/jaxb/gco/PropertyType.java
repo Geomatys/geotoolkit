@@ -433,7 +433,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
             final Type type = classe.getGenericSuperclass();
             if (type instanceof ParameterizedType) {
                 final ParameterizedType pt = (ParameterizedType) type;
-                if (PropertyType.class.equals(pt.getRawType())) {
+                if (pt.getRawType() == PropertyType.class) {
                     return (Class) pt.getActualTypeArguments()[1];
                 }
             }

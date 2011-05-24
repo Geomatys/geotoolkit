@@ -204,7 +204,7 @@ public abstract class AbstractParameter extends FormattableObject
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final AbstractParameter that = (AbstractParameter) object;
             return Utilities.equals(this.descriptor, that.descriptor);
         }

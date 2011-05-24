@@ -395,7 +395,7 @@ final class OverviewLevel implements Comparable<OverviewLevel>, Serializable {
          * check the tile size using the 'isSizeEquals' shortcut. We accept only tiles that fill
          * completely the cell size, otherwise we can not recreate the tile from a pattern.
          */
-        if (!Tile.class.equals(tile.getClass())) {
+        if (tile.getClass() != Tile.class) {
             return null;
         }
         if (!tile.isSizeEquals(dx, dy)) {
@@ -863,7 +863,7 @@ nextTile:   for (int tileX=minTileX; tileX<maxTileX; tileX++) {
                     atr.x = ox + atr.width  * tileX;
                     atr.y = oy + atr.height * tileY;
                     // Following assertion is enforced only if the Tile is not a custom implementation.
-                    assert atr.contains(tile.getAbsoluteRegion()) || !tile.getClass().equals(Tile.class) : tile;
+                    assert atr.contains(tile.getAbsoluteRegion()) || tile.getClass() != Tile.class : tile;
                     OverviewLevel previous = this;
                     while ((previous = previous.getFinerLevel()) != null) {
                         if (!previous.isAbsoluteTilesRegion(atr)) {

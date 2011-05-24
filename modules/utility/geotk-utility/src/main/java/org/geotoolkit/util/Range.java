@@ -581,7 +581,7 @@ public class Range<T extends Comparable<? super T>> implements Serializable  {
         if (object == this) {
             return true;
         }
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final Range<?> other = (Range<?>) object;
             if (Utilities.equals(elementClass, other.elementClass)) {
                 if (isEmpty()) {

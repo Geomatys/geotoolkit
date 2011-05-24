@@ -336,12 +336,12 @@ public class PredefinedMetadataFormat extends SpatialMetadataFormat {
     }
 
     /**
-     * Returns the code list identifiers. This is a hook for overriding by subclasses.
+     * Returns the code list identifiers.
      */
     @Override
-    final String[] getCodeList(final Class<CodeList<?>> codeType) {
+    final String[] getCodeList(final Class<? extends CodeList<?>> codeType) {
         String[] identifiers = super.getCodeList(codeType);
-        if (AxisDirection.class.equals(codeType)) {
+        if (codeType == AxisDirection.class) {
             for (int i=0; i<identifiers.length; i++) {
                 // Replace "CS_AxisOrientationEnum.CS_AO_Other" by something more readable.
                 if (identifiers[i].endsWith("Other")) {

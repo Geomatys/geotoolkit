@@ -210,7 +210,7 @@ public final class MathTransformDecorator implements MathTransform, Formattable,
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final MathTransformDecorator that = (MathTransformDecorator) object;
             return Utilities.equals(this.transform, that.transform);
         }

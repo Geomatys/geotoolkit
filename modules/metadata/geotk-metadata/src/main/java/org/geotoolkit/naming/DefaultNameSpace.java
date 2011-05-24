@@ -447,7 +447,7 @@ public class DefaultNameSpace implements NameSpace, Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final DefaultNameSpace that = (DefaultNameSpace) object;
             return equalsIgnoreParent(that) && Utilities.equals(this.parent, that.parent);
         }

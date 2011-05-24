@@ -1121,7 +1121,7 @@ public class MosaicBuilder implements LogProducer {
         Method method;
         do try {
             method = classe.getDeclaredMethod("generateFilename", parameters);
-            return method.getDeclaringClass().equals(MosaicBuilder.class);
+            return method.getDeclaringClass() == MosaicBuilder.class;
         } catch (NoSuchMethodException e) {
             classe = classe.getSuperclass();
         } while (classe != null);

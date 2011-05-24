@@ -733,11 +733,11 @@ public class ColorRamp implements Serializable {
         AbstractGraduation graduation = (reuse instanceof AbstractGraduation) ?
                 (AbstractGraduation) reuse : null;
         if (tr instanceof LinearTransform) {
-            if (graduation == null || !graduation.getClass().equals(NumberGraduation.class)) {
+            if (graduation == null || graduation.getClass() != NumberGraduation.class) {
                 graduation = new NumberGraduation(units);
             }
         } else if (tr instanceof ExponentialTransform1D) { // The *inverse* of 'tr' is logarithmic.
-            if (graduation == null || !graduation.getClass().equals(LogarithmicNumberGraduation.class)) {
+            if (graduation == null || graduation.getClass() != LogarithmicNumberGraduation.class) {
                 graduation = new LogarithmicNumberGraduation(units);
             }
         } else {

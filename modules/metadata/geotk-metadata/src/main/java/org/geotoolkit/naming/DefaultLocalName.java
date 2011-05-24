@@ -101,7 +101,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
         }
         this.scope = scope;
         if (name instanceof InternationalString) {
-            if (name.getClass().equals(SimpleInternationalString.class)) {
+            if (name.getClass() == SimpleInternationalString.class) {
                 /*
                  * In the special case of SimpleInternationalString, we will retain the String
                  * flavor instead than InternationalString (this is done by name.toString() at
@@ -234,7 +234,7 @@ public class DefaultLocalName extends AbstractName implements LocalName {
         if (object == this) {
             return true;
         }
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final DefaultLocalName that = (DefaultLocalName) object;
             return Utilities.equals(this.scope, that.scope) &&
                    Utilities.equals(this.name,  that.name);

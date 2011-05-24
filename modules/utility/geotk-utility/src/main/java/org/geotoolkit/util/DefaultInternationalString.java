@@ -387,7 +387,7 @@ public class DefaultInternationalString extends AbstractInternationalString impl
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final DefaultInternationalString that = (DefaultInternationalString) object;
             return Utilities.equals(this.localeMap, that.localeMap);
         }

@@ -796,7 +796,7 @@ public class SpatialMetadataFormat extends IIOMetadataFormatImpl {
      * {@link PredefinedMetadataFormat} will override this method for modifying a code
      * inherited from a legacy OGC specification.
      */
-    String[] getCodeList(final Class<CodeList<?>> codeType) {
+    String[] getCodeList(final Class<? extends CodeList<?>> codeType) {
         return CodeLists.identifiers(codeType);
     }
 

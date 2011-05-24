@@ -874,7 +874,7 @@ scanNumber: while (++i < length) {
         if (envelopeCRS != null) {
             crs = envelopeCRS;
             assert crs.getCoordinateSystem().getDimension() == getDimension() : crs;
-            assert !envelope.getClass().equals(getClass()) || equals(envelope) : envelope;
+            assert envelope.getClass() != getClass() || equals(envelope) : envelope;
         }
     }
 
@@ -1314,7 +1314,7 @@ scanNumber: while (++i < length) {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final GeneralEnvelope that = (GeneralEnvelope) object;
             return Arrays.equals(this.ordinates, that.ordinates) &&
                     Utilities.equals(this.crs, that.crs);

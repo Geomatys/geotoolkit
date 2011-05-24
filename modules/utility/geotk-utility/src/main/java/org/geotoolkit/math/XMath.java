@@ -354,11 +354,11 @@ public final class XMath extends Static {
             amount = -amount;
             value  = -value;
         }
-        if (Double.class.equals(type)) {
+        if (type == Double.class) {
             while (--amount >= 0) {
                 value = Math.nextUp(value);
             }
-        } else if (Float.class.equals(type)) {
+        } else if (type == Float.class) {
             float vf = (float) value;
             while (--amount >= 0) {
                 vf = Math.nextUp(vf);

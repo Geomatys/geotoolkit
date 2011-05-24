@@ -83,13 +83,13 @@ final class PooledUnmarshaller extends Pooled implements Unmarshaller {
     protected void reset(final Object key, final Object value) throws JAXBException {
         if (key instanceof String) {
             unmarshaller.setProperty((String) key, value);
-        } else if (AttachmentUnmarshaller.class.equals(key)) {
+        } else if (key == AttachmentUnmarshaller.class) {
             unmarshaller.setAttachmentUnmarshaller((AttachmentUnmarshaller) value);
-        } else if (Schema.class.equals(key)) {
+        } else if (key == Schema.class) {
             unmarshaller.setSchema((Schema) value);
-        } else if (Listener.class.equals(key)) {
+        } else if (key == Listener.class) {
             unmarshaller.setListener((Listener) value);
-        } else if (ValidationEventHandler.class.equals(key)) {
+        } else if (key == ValidationEventHandler.class) {
             unmarshaller.setEventHandler((ValidationEventHandler) value);
         } else {
             unmarshaller.setAdapter((Class) key, (XmlAdapter) value);

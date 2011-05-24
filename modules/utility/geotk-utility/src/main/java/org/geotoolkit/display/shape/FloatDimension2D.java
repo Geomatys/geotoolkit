@@ -118,7 +118,7 @@ public class FloatDimension2D extends Dimension2D implements Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final FloatDimension2D that = (FloatDimension2D) object;
             return floatToIntBits(this.width)  == floatToIntBits(that.width) &&
                    floatToIntBits(this.height) == floatToIntBits(that.height);

@@ -224,7 +224,7 @@ public class DefaultRecordType implements RecordType, Serializable {
         if (other == this) {
             return true;
         }
-        if (other != null && other.getClass().equals(getClass())) {
+        if (other != null && other.getClass() == getClass()) {
             final DefaultRecordType that = (DefaultRecordType) other;
             return Utilities.equals(name, that.name) &&
                    Utilities.equals(parent, that.parent) &&

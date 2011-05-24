@@ -144,7 +144,7 @@ public class AsciiGridReaderTest extends TextImageReaderTestBase {
     @Test
     @Override
     public void testByteType() throws IOException {
-        if (!getClass().equals(AsciiGridReaderTest.class)) {
+        if (getClass() != AsciiGridReaderTest.class) {
             super.testByteType();
         }
     }

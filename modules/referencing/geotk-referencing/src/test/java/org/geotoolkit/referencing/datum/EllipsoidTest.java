@@ -89,7 +89,7 @@ public class EllipsoidTest {
         final double radius = e.getSemiMajorAxis();
         final double circumference = (radius*1.00000001) * (2*Math.PI);
         final DefaultEllipsoid s = createEllipsoid("Sphere", radius, radius, e.getAxisUnit());
-        assertTrue("Spheroid class", Spheroid.class.equals(s.getClass()));
+        assertEquals("Spheroid class", Spheroid.class, s.getClass());
         tolerance = 0.001;
         for (double i=0; i<=180; i+=1) {
             final double base = 360*random.nextDouble()-180;

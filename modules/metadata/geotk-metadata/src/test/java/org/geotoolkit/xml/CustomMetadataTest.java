@@ -71,7 +71,7 @@ public final class CustomMetadataTest extends TestBase {
          */
         final InvocationHandler handler = new InvocationHandler() {
             @Override public Object invoke(Object proxy, Method method, Object[] args) {
-                if (String.class.equals(method.getReturnType())) {
+                if (method.getReturnType() == String.class) {
                     return method.getName();
                 }
                 return null;

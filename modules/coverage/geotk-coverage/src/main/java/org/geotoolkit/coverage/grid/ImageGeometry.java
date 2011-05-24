@@ -85,7 +85,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
      */
     public ImageGeometry(final Rectangle bounds, AffineTransform gridToCRS) {
         this.gridRange = new GridEnvelope2D(bounds);
-        if (gridToCRS.getClass().equals(AffineTransform2D.class)) {
+        if (gridToCRS.getClass() == AffineTransform2D.class) {
             // Cast only if this is exactly the AffineTransform2D class,
             // not a subclass (otherwise it could be mutable).
             this.gridToCRS = (AffineTransform2D) gridToCRS;
@@ -164,7 +164,7 @@ public class ImageGeometry implements GridGeometry, Serializable {
         if (object == this) {
             return true;
         }
-        if (object != null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final ImageGeometry that = (ImageGeometry) object;
             return Utilities.equals(gridRange, that.gridRange) &&
                    Utilities.equals(gridToCRS, that.gridToCRS);

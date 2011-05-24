@@ -697,7 +697,7 @@ public class CoverageEnvelope extends AbstractEnvelope implements Cloneable {
         if (other == this) {
             return true;
         }
-        if (other != null && other.getClass().equals(getClass())) {
+        if (other != null && other.getClass() == getClass()) {
             final CoverageEnvelope that = (CoverageEnvelope) other;
             return tMin == that.tMin && tMax == that.tMax &&
                    Utilities.equals(xMin, that.xMin) &&

@@ -236,7 +236,7 @@ public abstract class AbstractOperation implements Operation, Serializable {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final AbstractOperation that = (AbstractOperation) object;
             return Utilities.equals(this.descriptor, that.descriptor);
         }

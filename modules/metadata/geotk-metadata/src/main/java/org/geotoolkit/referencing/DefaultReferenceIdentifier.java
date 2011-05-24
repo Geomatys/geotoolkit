@@ -551,7 +551,7 @@ public class DefaultReferenceIdentifier implements ReferenceIdentifier, Serializ
         if (object == this) {
             return true;
         }
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final DefaultReferenceIdentifier that = (DefaultReferenceIdentifier) object;
             return Utilities.equals(code,      that.code)      &&
                    Utilities.equals(codeSpace, that.codeSpace) &&

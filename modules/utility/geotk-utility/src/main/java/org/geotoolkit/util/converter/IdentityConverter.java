@@ -62,10 +62,10 @@ final class IdentityConverter<T> extends SimpleConverter<T,T> implements Seriali
      */
     @SuppressWarnings("unchecked")
     public static <T> IdentityConverter<T> create(final Class<T> type) {
-        if (String.class.equals(type)) {
+        if (type == String.class) {
             return (IdentityConverter<T>) STRING;
         }
-        if (CharSequence.class.equals(type)) {
+        if (type == CharSequence.class) {
             return (IdentityConverter<T>) CHAR_SEQUENCE;
         }
         return new IdentityConverter<T>(type);

@@ -231,7 +231,7 @@ public class DefaultDataSource implements DataSource {
         if (other == this) {
             return true;
         }
-        if (other != null && other.getClass().equals(getClass())) {
+        if (other != null && other.getClass() == getClass()) {
             final DefaultDataSource that = (DefaultDataSource) other;
             return Utilities.equals(this.url, that.url);
         }

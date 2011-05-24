@@ -125,7 +125,7 @@ public class SimpleInternationalString extends AbstractInternationalString imple
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final SimpleInternationalString that = (SimpleInternationalString) object;
             return Utilities.equals(this.defaultValue, that.defaultValue);
         }

@@ -38,7 +38,7 @@ import org.geotoolkit.lang.Static;
  *         if (this == aThat) {
  *             return true;
  *         }
- *         if (other == null || !other.getClass().equals(getClass())) {
+ *         if (other == null || other.getClass() != getClass()) {
  *             return false;
  *         }
  *         Car that = (Car) other;

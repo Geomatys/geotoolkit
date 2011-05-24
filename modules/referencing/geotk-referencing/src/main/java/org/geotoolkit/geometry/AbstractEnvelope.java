@@ -257,7 +257,7 @@ public abstract class AbstractEnvelope implements Envelope {
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final Envelope that = (Envelope) object;
             final int dimension = getDimension();
             if (dimension == that.getDimension()) {

@@ -194,7 +194,7 @@ public class DirectPostgisFactory extends WKTParsingAuthorityFactory implements 
                      * class would have been CitationConstant), then add the name to the list of
                      * identifiers.
                      */
-                    if (authority.getClass().equals(DefaultCitation.class)) {
+                    if (authority.getClass() == DefaultCitation.class) {
                         ((DefaultCitation) authority).getIdentifiers().add(new DefaultIdentifier(name));
                     }
                     authorities[count++] = authority;

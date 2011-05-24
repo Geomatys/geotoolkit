@@ -685,7 +685,7 @@ public class RangeFormat extends Format {
             Class<? extends Number> type = (Class) elementClass;
             Number min = (Number) minValue;
             Number max = (Number) maxValue;
-            if (Number.class.equals(type)) {
+            if (type == Number.class) {
                 type = widestClass(finestClass(min), finestClass(max));
                 min  = cast(min, type);
                 max  = cast(max, type);

@@ -83,13 +83,13 @@ final class PooledMarshaller extends Pooled implements Marshaller {
                 value = ""; // Null value doesn't seem to be accepted.
             }
             marshaller.setProperty(k, value);
-        } else if (AttachmentMarshaller.class.equals(key)) {
+        } else if (key == AttachmentMarshaller.class) {
             marshaller.setAttachmentMarshaller((AttachmentMarshaller) value);
-        } else if (Schema.class.equals(key)) {
+        } else if (key == Schema.class) {
             marshaller.setSchema((Schema) value);
-        } else if (Listener.class.equals(key)) {
+        } else if (key == Listener.class) {
             marshaller.setListener((Listener) value);
-        } else if (ValidationEventHandler.class.equals(key)) {
+        } else if (key == ValidationEventHandler.class) {
             marshaller.setEventHandler((ValidationEventHandler) value);
         } else {
             marshaller.setAdapter((Class) key, (XmlAdapter) value);

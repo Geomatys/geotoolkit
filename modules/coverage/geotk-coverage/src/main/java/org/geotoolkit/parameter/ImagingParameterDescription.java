@@ -163,7 +163,7 @@ final class ImagingParameterDescription extends AbstractInternationalString impl
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final ImagingParameterDescription that = (ImagingParameterDescription) object;
             return Utilities.equals(this.key,       that.key)       &&
                    Utilities.equals(this.prefixKey, that.prefixKey) &&

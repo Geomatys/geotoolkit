@@ -365,7 +365,7 @@ public class AffineTransform2D extends XAffineTransform
                 return false;
             }
             if (object instanceof AffineTransform2D) {
-                return object.getClass().equals(getClass());
+                return object.getClass() == getClass();
             }
         }
         return true;

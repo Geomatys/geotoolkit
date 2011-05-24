@@ -222,7 +222,7 @@ final class DefaultAuthorityFactory extends CachingAuthorityFactory implements C
          */
         @Override
         public boolean filter(final Object provider) {
-            return provider.getClass().equals(type);
+            return provider.getClass() == type;
         }
     }
 

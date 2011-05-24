@@ -182,11 +182,11 @@ public class MathTransformParser extends Parser {
             final String name = param.pullString("name");
             final ParameterValue<?> parameter = parameters.parameter(name);
             final Class<?> type = parameter.getDescriptor().getValueClass();
-            if (Integer.class.equals(type)) {
+            if (type == Integer.class) {
                 parameter.setValue(param.pullInteger("value"));
-            } else if (Double.class.equals(type)) {
+            } else if (type == Double.class) {
                 parameter.setValue(param.pullDouble("value"));
-            } else if (Boolean.class.equals(type)) {
+            } else if (type == Boolean.class) {
                 parameter.setValue(param.pullBoolean("value"));
             } else {
                 parameter.setValue(param.pullString("value"));

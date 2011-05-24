@@ -156,7 +156,7 @@ scan:   for (int i=0; i<numBands; i++) {
                         if (Utilities.equals(coverage.image,            candidate.image)            &&
                             Utilities.equals(coverage.gridGeometry,     candidate.gridGeometry)     &&
                             Arrays   .equals(coverage.sampleDimensions, candidate.sampleDimensions) &&
-                            viewClass.equals(candidate.getViewClass()))
+                            candidate.getViewClass() == viewClass)
                             // The CRS is checked with the GridGeometry2D.
                         {
                             return candidate.copyViewsTo(coverage);
@@ -393,7 +393,7 @@ scan:   for (int i=0; i<numBands; i++) {
         ColorModel  colors      = targetBands[visibleBand].getColorModel(visibleBand, numBands);
         SampleModel targetModel = colors.createCompatibleSampleModel(
                 layout.getTileWidth(image), layout.getTileHeight(image));
-        if (colors instanceof IndexColorModel && targetModel.getClass().equals(ComponentSampleModel.class)) {
+        if (colors instanceof IndexColorModel && targetModel.getClass() == ComponentSampleModel.class) {
             // TODO: There is the 'IndexColorModel' hack (see method description).
             // Consider removing this hack when we will target Java 6.
             final int w = targetModel.getWidth();

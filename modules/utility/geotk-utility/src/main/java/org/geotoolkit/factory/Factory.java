@@ -761,7 +761,7 @@ public abstract class Factory {
         if (object == this) {
             return true;
         }
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final Factory that = (Factory) object;
             final Set<FactoryComparator> comparators = new HashSet<FactoryComparator>();
             return new FactoryComparator(this, that).compare(comparators);

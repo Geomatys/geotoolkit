@@ -328,7 +328,7 @@ public abstract class CommandLine implements Runnable {
         Logging.GEOTOOLKIT.forceMonolineConsoleOutput(debug ? Level.FINER : null);
         if (explicitEncoding) {
             for (final Handler handler : Logging.getLogger(Logging.GEOTOOLKIT.name).getHandlers()) {
-                if (handler.getClass().equals(ConsoleHandler.class)) try {
+                if (handler.getClass() == ConsoleHandler.class) try {
                     ((ConsoleHandler) handler).setEncoding(encoding.name());
                 } catch (UnsupportedEncodingException e) {
                     // Should not happen.

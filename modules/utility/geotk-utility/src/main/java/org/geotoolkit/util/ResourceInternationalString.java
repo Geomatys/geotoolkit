@@ -159,7 +159,7 @@ public class ResourceInternationalString extends AbstractInternationalString imp
      */
     @Override
     public boolean equals(final Object object) {
-        if (object!=null && object.getClass().equals(getClass())) {
+        if (object != null && object.getClass() == getClass()) {
             final ResourceInternationalString that = (ResourceInternationalString) object;
             return Utilities.equals(this.key,       that.key) &&
                    Utilities.equals(this.resources, that.resources);

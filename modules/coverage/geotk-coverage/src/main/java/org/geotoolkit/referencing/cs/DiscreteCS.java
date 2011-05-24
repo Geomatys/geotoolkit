@@ -276,7 +276,7 @@ class DiscreteCS implements CoordinateSystem, GridGeometry, Serializable {
      */
     @Override
     public final boolean equals(final Object other) {
-        if (other != null && other.getClass().equals(getClass())) {
+        if (other != null && other.getClass() == getClass()) {
             final DiscreteCS that = (DiscreteCS) other;
             return cs.equals(that.cs) && Arrays.equals(axes, that.axes);
         }
