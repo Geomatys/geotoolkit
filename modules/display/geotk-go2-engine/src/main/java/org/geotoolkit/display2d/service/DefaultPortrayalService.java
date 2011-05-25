@@ -45,6 +45,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.IIOException;
 import javax.imageio.IIOImage;
 import javax.imageio.ImageIO;
 import javax.imageio.ImageWriteParam;
@@ -81,7 +82,9 @@ import org.geotoolkit.map.MapLayer;
 import org.geotoolkit.style.MutableFeatureTypeStyle;
 import org.geotoolkit.style.MutableRule;
 import org.geotoolkit.style.MutableStyle;
+import org.geotoolkit.util.ArgumentChecks;
 import org.geotoolkit.util.ImageIOUtilities;
+import org.geotoolkit.util.converter.Classes;
 
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.geometry.Envelope;
@@ -731,7 +734,7 @@ public class DefaultPortrayalService implements PortrayalService{
         final String mime = outputDef.getMime();
         image = rectifyImageColorModel(image, mime);
 
-        final ImageWriter writer = ImageIOUtilities.getImageWriter(image, mime, outputDef.getOutput());
+        final ImageWriter writer = XImageIO.getWriterByMIMEType(mime, outputDef.getOutput(), image);
         final ImageWriteParam param = writer.getDefaultWriteParam();
 
         final Float compression = outputDef.getCompression();
@@ -758,7 +761,11 @@ public class DefaultPortrayalService implements PortrayalService{
             output = stream;
         }
         writer.setOutput(output);
-        writer.write(null,new IIOImage(image, null, null),param);
+        try{
+            writer.write(null,new IIOImage(image, null, null),param);
+        }catch(IIOException ex){
+            throw new IOException(ex.getLocalizedMessage()+toImageInformation(image), ex);
+        }
         writer.dispose();
         if (stream != null) {
             stream.close();
@@ -824,4 +831,20 @@ public class DefaultPortrayalService implements PortrayalService{
         return img;
     }
 
+    /**
+     * 
+     * @param image
+     * @return String containing a technical description of the image.
+     */
+    private static String toImageInformation(final RenderedImage image){
+        ArgumentChecks.ensureNonNull("image", image);
+        final StringBuilder sb = new StringBuilder();
+        sb.append("Image : ").append(Classes.getShortClassName(image)).append('\n');
+        sb.append("Height : ").append(image.getHeight()).append('\n');
+        sb.append("Width : ").append(image.getWidth()).append('\n');
+        sb.append("ColorModel : ").append(image.getColorModel()).append('\n');
+        sb.append("SampleModel : ").append(image.getSampleModel()).append('\n');
+        return sb.toString();
+    }
+    
 }
