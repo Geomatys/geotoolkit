@@ -90,11 +90,12 @@ import static org.geotoolkit.referencing.operation.provider.MapProjection.XY_PLA
  * </ul>
  *
  * {@code UnitaryProjection} does not expose publicly the above cited parameters (central meridian,
- * scale factor, <i>etc.</i>) on intend, in order to make clear that those parameters are not
- * used by subclasses. This separation removes ambiguity when testing for {@linkplain #equivalent
- * equivalence}. The ability to recognize two {@code UnitaryProjection}s as equivalent without
- * consideration for the scale factor (among other) allow more efficient concatenation in some
- * cases (typically some combinations of inverse projection followed by a direct projection).
+ * scale factor, <i>etc.</i>) on intend, in order to make clear that those parameters are not used
+ * by subclasses. This separation removes ambiguity when testing for {@linkplain #equals(Object,
+ * ComparisonMode) equivalence}. The ability to recognize two {@code UnitaryProjection}s as
+ * equivalent without consideration for the scale factor (among other) allow more efficient
+ * concatenation in some cases (typically some combinations of inverse projection followed
+ * by a direct projection).
  * <p>
  * All angles (either fields, method parameters or return values) in this class and subclasses are
  * in radians. This is the opposite of {@link Parameters} where all angles are in decimal degrees.

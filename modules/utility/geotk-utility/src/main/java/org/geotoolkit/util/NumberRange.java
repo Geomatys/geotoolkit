@@ -252,7 +252,8 @@ public class NumberRange<T extends Number & Comparable<? super T>> extends Range
     /**
      * Constructs a range using the smallest type of {@link Number} that can hold the
      * given values. The given numbers don't need to be of the same type since they will
-     * be {@linkplain Classes#cast(Number, Class) casted} as needed. More specifically:
+     * be {@linkplain org.geotoolkit.util.converter.Numbers#cast(Number, Class) casted}
+     * as needed. More specifically:
      * <p>
      * <ul>
      *   <li>If the values are between {@value java.lang.Byte#MIN_VALUE} and

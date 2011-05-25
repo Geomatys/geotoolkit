@@ -86,11 +86,8 @@ public class AbstractGeolocationInformation extends MetadataEntity implements Ge
      * attribute values of the given object, using a <cite>shallow</cite> copy operation
      * (i.e. attributes are not cloned).
      * <p>
-     * This method checks for the {@link LegalConstraints} and {@link SecurityConstraints}
-     * sub-interfaces. If one of those interfaces is found, then this method delegates to
-     * the corresponding {@code wrap} static method. If the given object implements more
-     * than one of the above-cited interfaces, then the {@code wrap} method to be used is
-     * unspecified.
+     * This method checks for the {@link GCPCollection} sub-interface. If that interface is
+     * found, then this method delegates to the corresponding {@code wrap} static method.
      *
      * @param  object The object to wrap in a Geotk implementation, or {@code null} if none.
      * @return A Geotk implementation containing the values of the given object (may be the
