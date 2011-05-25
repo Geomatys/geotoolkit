@@ -22,9 +22,16 @@ import org.geotoolkit.factory.Hints;
 import org.geotoolkit.gui.swing.tree.DefaultMutableTreeNode;
 import org.geotoolkit.gui.swing.tree.MutableTreeNode;
 import org.geotoolkit.lang.Static;
+import org.geotoolkit.sld.DefaultSLDFactory;
+import org.geotoolkit.sld.MutableSLDFactory;
+import org.geotoolkit.sld.MutableStyledLayerDescriptor;
+import org.geotoolkit.sld.MutableUserLayer;
 
 import org.opengis.filter.FilterFactory;
 import org.opengis.filter.expression.Expression;
+import org.opengis.sld.Layer;
+import org.opengis.sld.StyledLayerDescriptor;
+import org.opengis.sld.UserLayer;
 import org.opengis.style.FeatureTypeStyle;
 import org.opengis.style.Fill;
 import org.opengis.style.Graphic;
@@ -49,9 +56,41 @@ public final class StyleUtilities extends Static {
     private static final MutableStyleFactory SF = (MutableStyleFactory) FactoryFinder.getStyleFactory(
                                             new Hints(Hints.STYLE_FACTORY, MutableStyleFactory.class));
     private static final FilterFactory FF = FactoryFinder.getFilterFactory(null);
+    private static final MutableSLDFactory SLDF = new DefaultSLDFactory();
 
     private StyleUtilities(){}
 
+    public static MutableStyledLayerDescriptor copy(final StyledLayerDescriptor sld){
+        final MutableStyledLayerDescriptor copy = SLDF.createSLD();
+        copy.setName(sld.getName());
+        copy.setVersion(sld.getVersion());
+        copy.setDescription(sld.getDescription());
+        
+        for(Layer layer : sld.layers()){
+            if(layer instanceof UserLayer){
+                copy.layers().add(copy((UserLayer)layer));
+            }else{
+                //copy.layers().add(layer);
+            }
+        }
+        
+        return copy;
+    }
+    
+    public static MutableUserLayer copy(final UserLayer layer){
+        final MutableUserLayer copy = SLDF.createUserLayer();
+        copy.setName(layer.getName());
+        //copy.setConstraints(layer.getConstraints());
+        copy.setDescription(layer.getDescription());
+        copy.setSource(layer.getSource());
+        
+        for(Style style : layer.styles()){
+            copy.styles().add(copy(style));
+        }
+        
+        return copy;
+    }
+    
     public static MutableStyle copy(final Style style){
         return copy(style,1d);
     }
