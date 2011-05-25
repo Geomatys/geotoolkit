@@ -180,8 +180,10 @@ public class AbstractIdentifiedObject extends FormattableObject implements Ident
     private final InternationalString remarks;
 
     /**
-     * The cached hash code value, or 0 if not yet computed.
-     * This is calculated only when first needed.
+     * The cached hash code value, or 0 if not yet computed. This field is calculated only when
+     * first needed. We do not declare it {@code volatile} because it is not a big deal if this
+     * field is calculated many time, and the same value should be produced by all computations.
+     * The only possible outdated value is 0, which is okay.
      *
      * @since 3.18
      */
@@ -866,8 +868,14 @@ nextKey:for (final Map.Entry<String,?> entry : properties.entrySet()) {
              * that ignore metadata is okay only if the implementation note described in the
              * 'computeHashCode()' javadoc hold (metadata not used in hash code computation).
              */
-            if (mode != ComparisonMode.APPROXIMATIVE && hashCode() != object.hashCode()) {
-                return false;
+            if (mode != ComparisonMode.APPROXIMATIVE) {
+                final int tc = hashCode;
+                if (tc != 0) {
+                    final int oc = ((AbstractIdentifiedObject) object).hashCode;
+                    if (oc != 0 && tc != oc) {
+                        return false;
+                    }
+                }
             }
         } else if (mode == ComparisonMode.STRICT || // Same classes was required for this mode.
                 !Classes.implementSameInterfaces(thisType, thatType, IdentifiedObject.class))

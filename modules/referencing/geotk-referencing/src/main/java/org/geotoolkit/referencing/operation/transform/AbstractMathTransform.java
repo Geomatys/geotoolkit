@@ -119,8 +119,10 @@ public abstract class AbstractMathTransform extends FormattableObject
     static final int MAXIMUM_FAILURES = 32;
 
     /**
-     * The cached hash code value, or 0 if not yet computed.
-     * This is calculated only when first needed.
+     * The cached hash code value, or 0 if not yet computed. This field is calculated only when
+     * first needed. We do not declare it {@code volatile} because it is not a big deal if this
+     * field is calculated many time, and the same value should be produced by all computations.
+     * The only possible outdated value is 0, which is okay.
      *
      * @since 3.18
      */
@@ -1106,15 +1108,21 @@ public abstract class AbstractMathTransform extends FormattableObject
         // Do not check 'object==this' here, since this
         // optimization is usually done in subclasses.
         if (object != null && getClass() == object.getClass()) {
+            final AbstractMathTransform that = (AbstractMathTransform) object;
             /*
              * If the classes are the same, then the hash codes should be computed in the same
              * way. Since those codes are cached, this is an efficient way to quickly check if
              * the two objects are different.
              */
-            if (mode != ComparisonMode.APPROXIMATIVE && hashCode() != object.hashCode()) {
-                return false;
+            if (mode != ComparisonMode.APPROXIMATIVE) {
+                final int tc = hashCode;
+                if (tc != 0) {
+                    final int oc = that.hashCode;
+                    if (oc != 0 && tc != oc) {
+                        return false;
+                    }
+                }
             }
-            final AbstractMathTransform that = (AbstractMathTransform) object;
             return Utilities.deepEquals(this.getParameterDescriptors(),
                                         that.getParameterDescriptors(), mode);
         }
