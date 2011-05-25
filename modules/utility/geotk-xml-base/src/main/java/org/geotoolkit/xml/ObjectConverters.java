@@ -61,7 +61,7 @@ import org.geotoolkit.internal.io.IOUtilities;
  * {@code ObjectConverters} to a (un)marshaller.
  *
  * @author Martin Desruisseaux (Geomatys)
- * @version 3.17
+ * @version 3.18
  *
  * @since 3.07
  * @module
@@ -192,7 +192,7 @@ public class ObjectConverters {
     /**
      * Converts the given string to a URI. The default implementation first escapes the characters
      * that the {@link URI#URI(String) URI(String)} constructor would not accept (for example
-     * replacing space by {@code %20}), then perform the following work (omitting the check for
+     * replacing space by {@code %20}), then performs the following work (omitting the check for
      * null value and the call to {@link #exceptionOccured exceptionOccured} in case of error):
      *
      * {@preformat java
@@ -269,6 +269,35 @@ public class ObjectConverters {
             }
         } catch (IllegalArgumentException e) {
             if (!exceptionOccured(value, URI.class, URL.class, e)) {
+                throw e;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Converts the given string to a {@code NilReason}. The default implementation is as below,
+     * omitting the check for null value and the call to {@link #exceptionOccured exceptionOccured}
+     * in case of error:
+     *
+     * {@preformat java
+     *     return NilReason.valueOf(value);
+     * }
+     *
+     * @param  value The string to convert to a nil reason, or {@code null}.
+     * @return The converted nil reason, or {@code null} if the given value was null of if an
+     *         exception was thrown and {@code exceptionOccured} returned {@code true}.
+     * @throws URISyntaxException If the given string can not be converted to a nil reason.
+     *
+     * @see NilReason#valueOf(String)
+     *
+     * @since 3.18
+     */
+    public NilReason toNilReason(String value) throws URISyntaxException {
+        if (value != null && !(value = value.trim()).isEmpty()) try {
+            return NilReason.valueOf(value);
+        } catch (URISyntaxException e) {
+            if (!exceptionOccured(value, String.class, URI.class, e)) {
                 throw e;
             }
         }

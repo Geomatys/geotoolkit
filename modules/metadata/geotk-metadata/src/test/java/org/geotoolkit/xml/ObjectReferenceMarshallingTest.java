@@ -98,9 +98,10 @@ public final class ObjectReferenceMarshallingTest extends TestBase {
             "  <gmd:series xlink:href=\"org:dummy\"/>\n" +
             "</gmd:CI_Citation>";
         final Citation citation = (Citation) XML.unmarshal(expected);
-        assertEquals("title",  "A title", citation.getTitle().toString());
+        assertEquals("title", "A title", citation.getTitle().toString());
         final Series series = citation.getSeries();
-        assertEquals("href",   "org:dummy", ((IdentifiedObject) series).getXLink().getHRef().toString());
+        assertInstanceOf("Should have instantiated a proxy.", IdentifiedObject.class, series);
+        assertEquals("href", "org:dummy", ((IdentifiedObject) series).getXLink().getHRef().toString());
         assertEquals("Series[ObjectReference[type=\"simple\", href=\"org:dummy\"]]", series.toString());
         assertNull("All attributes are expected to be null.", series.getName());
         try {

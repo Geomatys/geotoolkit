@@ -47,6 +47,14 @@ package org.geotoolkit.xml;
  *
  * The reason why an object is empty can be obtained by the {@link #getNilReason()} method.
  *
+ * {@section Instantiation}
+ * The following example instantiates a {@link org.opengis.metadata.citation.Citation} object
+ * which is empty because the information are missing:
+ *
+ * {@preformat java
+ *     Citation nil = ObjectLinker.DEFAULT.resolve(Citation.class, NilReason.MISSING);
+ * }
+ *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
  *

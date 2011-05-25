@@ -18,12 +18,19 @@
 package org.geotoolkit.util.converter;
 
 import java.util.Map;
+import java.util.Set;
+import java.util.List;
+import java.util.Queue;
 import java.util.HashMap;
+import java.util.SortedSet;
+import java.util.Collections;
 import java.math.BigDecimal;
 import java.math.BigInteger;
+import java.lang.reflect.Array;
 
 import org.geotoolkit.lang.Static;
 import org.geotoolkit.resources.Errors;
+import org.geotoolkit.util.collection.XCollections;
 
 
 /**
@@ -560,7 +567,7 @@ public final class Numbers extends Static {
      * </ul>
      *
      * {@note This method is intentionally restricted to primitive types, with the addition of
-     *        <code>String</code> which can be though as an identity operation.. Other types
+     *        <code>String</code> which can be though as an identity operation. Other types
      *        like <code>BigDecimal</code> are not the purpose of this method. See the
      *        <code>ConverterRegistry</code> class for a more generic method.}
      *
@@ -600,6 +607,54 @@ public final class Numbers extends Static {
             return (T) value;
         }
         throw unknownType(type);
+    }
+
+    /**
+     * Returns a {@code NaN}, zero, empty or null value of the given type.
+     * <p>
+     * <ul>
+     *   <li>If the given type is a primitive floating point, then this method returns {@code NaN}.</li>
+     *   <li>Otherwise if the given type is an array, then this method returns an empty array.</li>
+     *   <li>Otherwise if the given type is a collection interface, then this method returns an
+     *       empty collection of the same kind.</li>
+     *   <li>Otherwise this method returns {@code null}. Note that if the given type is a number
+     *       wrapper like {@link Double}, then this method returns {@code null}, not NaN.</li>
+     * </ul>
+     *
+     * {@note Despite being defined in the <code>Numbers</code> class, the scope of this method
+     *        has been extended to array and collection types because those types can also be
+     *        seen as "mathematical" objects.}
+     *
+     * @param  <T> The compile-time type of the requested object.
+     * @param  type The type of the object for which to get a nil value.
+     * @return An object of the given type which represents a nil value, or {@code null}.
+     *
+     * @since 3.18
+     */
+    @SuppressWarnings("unchecked")
+    public static <T> T valueOfNil(final Class<T> type) {
+        if (type == Double   .TYPE)  return (T) Double   .valueOf(Double.NaN);
+        if (type == Float    .TYPE)  return (T) Float    .valueOf(Float.NaN);
+        if (type == Long     .TYPE)  return (T) Long     .valueOf(0L);
+        if (type == Integer  .TYPE)  return (T) Integer  .valueOf(0);
+        if (type == Short    .TYPE)  return (T) Short    .valueOf((short) 0);
+        if (type == Byte     .TYPE)  return (T) Byte     .valueOf((byte)  0);
+        if (type == Character.TYPE)  return (T) Character.valueOf((char)  0);
+        if (type == Boolean  .TYPE)  return (T) Boolean.FALSE;
+        if (type == Map      .class) return (T)  Collections.EMPTY_MAP;
+        if (type == List     .class) return (T)  Collections.EMPTY_LIST;
+        if (type == Queue    .class) return (T) XCollections.emptyQueue();
+        if (type == SortedSet.class) return (T) XCollections.emptySortedSet();
+        if (type != null && type != Object.class) {
+            if (type.isAssignableFrom(Set.class)) {
+                return (T) Collections.EMPTY_SET;
+            }
+            final Class<?> element = type.getComponentType();
+            if (element != null) {
+                return (T) Array.newInstance(element, 0);
+            }
+        }
+        return null;
     }
 
     /**

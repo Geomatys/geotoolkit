@@ -18,10 +18,7 @@
 package org.geotoolkit.xml;
 
 import java.util.Map;
-import java.util.Set;
-import java.util.List;
 import java.util.Collection;
-import java.util.Collections;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.Method;
 import java.lang.reflect.InvocationHandler;
@@ -30,6 +27,7 @@ import java.lang.reflect.InvocationTargetException;
 import org.geotoolkit.util.Utilities;
 import org.geotoolkit.util.ComparisonMode;
 import org.geotoolkit.util.LenientComparable;
+import org.geotoolkit.util.converter.Numbers;
 import org.geotoolkit.resources.Errors;
 
 
@@ -39,8 +37,8 @@ import org.geotoolkit.resources.Errors;
  * definition were found for a XML element identified by {@code xlink} or {@code uuidref}
  * attributes.
  *
- * NOTE: the same handler could be used for every proxy having the same XLink. For now,
- *       it doesn't seem worth to cache the handlers.
+ * {@note The same handler could be used for every proxy having the same XLink. For now,
+ *        it doesn't seem worth to cache the handlers.}
  *
  * @author Martin Desruisseaux (Geomatys)
  * @version 3.18
@@ -50,15 +48,25 @@ import org.geotoolkit.resources.Errors;
  */
 final class EmptyObjectHandler implements InvocationHandler {
     /**
-     * The {@code xlink} attributes.
+     * The {@code xlink} attribute as an {@link XLink} object, or the {@code nilReason}
+     * attribute as a {@link NilReason} object. We don't use separated fields because
+     * those attributes are exclusive, and some operations like {@code toString()},
+     * {@code hashCode()} and {@code equals(Object)} are the same for both types.
      */
-    private final XLink xlink;
+    private final Object attribute;
 
     /**
      * Creates a new handler for an object identified by the given {@code xlink} attributes.
      */
     EmptyObjectHandler(final XLink xlink) {
-        this.xlink = xlink;
+        attribute = xlink;
+    }
+
+    /**
+     * Creates a new handler for an object which is nil for the given reason.
+     */
+    EmptyObjectHandler(final NilReason nilReason) {
+        attribute = nilReason;
     }
 
     /**
@@ -102,30 +110,23 @@ final class EmptyObjectHandler implements InvocationHandler {
         final String name = method.getName();
         if (args == null) {
             // TODO: Strings in switch with JDK 7.
+            if (name.equals("getNilReason")) {
+                return (attribute instanceof NilReason) ? (NilReason) attribute : null;
+            }
             if (name.equals("getXLink")) {
-                return xlink;
+                return (attribute instanceof XLink) ? (XLink) attribute : null;
             }
             if (name.equals("toString")) {
-                return getInterface(proxy).getSimpleName() + '[' + xlink.toString() + ']';
+                return getInterface(proxy).getSimpleName() + '[' + attribute + ']';
             }
             if (name.equals("hashCode")) {
-                return ~xlink.hashCode();
+                return ~attribute.hashCode();
             }
-            if (name.startsWith("get")) {
-                final Class<?> resultType = method.getReturnType();
-                if (List.class.isAssignableFrom(resultType)) {
-                    return Collections.EMPTY_LIST;
-                }
-                if (Set.class.isAssignableFrom(resultType)) {
-                    return Collections.EMPTY_SET;
-                }
-                if (Map.class.isAssignableFrom(resultType)) {
-                    return Collections.EMPTY_MAP;
-                }
+            if (name.startsWith("get") || name.startsWith("is")) {
+                return Numbers.valueOfNil(method.getReturnType());
             }
         } else switch (args.length) {
             case 1: {
-                // TODO: Strings in switch with JDK 7.
                 if (name.equals("equals")) {
                     return equals(proxy, args[0], ComparisonMode.STRICT);
                 }
@@ -142,7 +143,8 @@ final class EmptyObjectHandler implements InvocationHandler {
                 break;
             }
         }
-        return null;
+        throw new UnsupportedOperationException(Errors.format(Errors.Keys.UNSUPPORTED_OPERATION_$1,
+                getInterface(proxy).getSimpleName() + '.' + name));
     }
 
     /**
@@ -155,19 +157,22 @@ final class EmptyObjectHandler implements InvocationHandler {
         if (other == null) return false;
         if (proxy.getClass() == other.getClass()) {
             final EmptyObjectHandler h = (EmptyObjectHandler) Proxy.getInvocationHandler(other);
-            return xlink.equals(h.xlink);
+            return attribute.equals(h.attribute);
         }
         switch (mode) {
             case STRICT: return false; // The above test is the only relevant one for this mode.
-            case IGNORE_METADATA:      // Do not compare the xlink below.
-            case APPROXIMATIVE: break; // Do not compare the xlink below.
-            default: {
-                XLink ox = null;
-                if (other instanceof IdentifiedObject) {
-                    final IdentifiedObject id = (IdentifiedObject) other;
-                    ox = id.getXLink();
+            case BY_CONTRACT: {
+                Object ox = null;
+                if (attribute instanceof XLink) {
+                    if (other instanceof IdentifiedObject) {
+                        ox = ((IdentifiedObject) other).getXLink();
+                    }
+                } else {
+                    if (other instanceof EmptyObject) {
+                        ox = ((EmptyObject) other).getNilReason();
+                    }
                 }
-                if (!Utilities.equals(xlink, ox)) {
+                if (!Utilities.equals(attribute, ox)) {
                     return false;
                 }
                 break;

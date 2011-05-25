@@ -79,4 +79,29 @@ public class ObjectLinker {
                 new Class<?>[] {type, IdentifiedObject.class, EmptyObject.class, LenientComparable.class},
                 new EmptyObjectHandler(link));
     }
+
+    /**
+     * Returns an object of the given type for the given {@code nilReason} attributes. The default
+     * implementation returns an immutable object which implement the given interface together
+     * with the {@link EmptyObject} interface. The {@link EmptyObject#getNilReason()} method will
+     * return the given link, and all other methods (except the ones inherited from the
+     * {@link Object} class) will return {@code null} or an empty collection as appropriate.
+     *
+     * @param  <T> The compile-time type of the {@code type} argument.
+     * @param  type The type of object to be unmarshalled as an <strong>interface</strong>.
+     *         This is usually a <a href="http://www.geoapi.org">GeoAPI</a> interface.
+     * @param  nilReason The {@code nilReason} attribute.
+     * @return An object of the given type for the given {@code nilReason} attribute,
+     *         or {@code null} if none.
+     */
+    @SuppressWarnings("unchecked")
+    public <T> T resolve(final Class<T> type, final NilReason nilReason) {
+        ArgumentChecks.ensureNonNull("type", type);
+        ArgumentChecks.ensureNonNull("nilReason", nilReason);
+        if (EmptyObjectHandler.isIgnoredInterface(type)) {
+            throw new IllegalArgumentException(Errors.format(Errors.Keys.ILLEGAL_ARGUMENT_$2, "type", type));
+        }
+        return (T) Proxy.newProxyInstance(ObjectLinker.class.getClassLoader(),
+                new Class<?>[] {type, EmptyObject.class}, new EmptyObjectHandler(nilReason));
+    }
 }

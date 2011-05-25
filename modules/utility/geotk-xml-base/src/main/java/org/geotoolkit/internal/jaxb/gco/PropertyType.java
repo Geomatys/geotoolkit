@@ -114,15 +114,14 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      */
     protected PropertyType(final BoundType metadata) {
         this.metadata = metadata;
-        if (metadata instanceof EmptyObject) {
+        if (metadata instanceof IdentifiedObject) {
+            reference = ((IdentifiedObject) metadata).getXLink();
+        }
+        if (reference == null && metadata instanceof EmptyObject) {
             final NilReason reason = ((EmptyObject) metadata).getNilReason();
             if (reason != null) {
                 reference = reason.toString();
             }
-        }
-        if (metadata instanceof IdentifiedObject) {
-            // Intentionally overwrite the nilReason.
-            reference = ((IdentifiedObject) metadata).getXLink();
         }
     }
 
@@ -153,7 +152,7 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * @category gco:PropertyType
      * @since 3.18
      */
-    @XmlAttribute(name = "nilReason")
+    @XmlAttribute(name = "nilReason", namespace = Namespaces.GCO)
     public final String getNilReason() {
         final Object ref = reference;
         return (ref instanceof String) ? (String) ref : null;
@@ -187,12 +186,6 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
             return true;
         }
         final Object ref = reference;
-        if (ref == null) {
-            return false;
-        }
-        if (ref instanceof String) {
-            return true; // A "nilReason" attribute has been specified.
-        }
         return (ref instanceof ObjectReference) && ((ObjectReference) ref).uuidref != null;
     }
 
@@ -471,33 +464,49 @@ public abstract class PropertyType<ValueType extends PropertyType<ValueType,Boun
      * Converts an adapter read from an XML stream to the GeoAPI interface which will
      * contains this value. JAXB calls automatically this method at unmarshalling time.
      *
-     * @param value The adapter for a metadata value.
+     * @param  value The adapter for a metadata value.
      * @return An instance of the GeoAPI interface which represents the metadata value.
-     *
-     * @todo We should replace the (BoundType) cast by a call to Class.cast(Object).
+     * @throws URISyntaxException If a URI can not be parsed.
      */
     @Override
-    @SuppressWarnings("unchecked")
-    public final BoundType unmarshal(final ValueType value) {
+    public final BoundType unmarshal(final ValueType value) throws URISyntaxException {
         if (value == null) {
             return null;
         }
-        BoundType result = value.metadata;
-        if (result == null) {
-            final String uuidref = value.getUUIDREF();
-            if (uuidref != null) {
-                result = (BoundType) UUIDs.DEFAULT.lookup(uuidref);
-            }
-        }
-        final XLink xlink = value.reference();
+        value.resolve();
+        return value.metadata;
+    }
+
+    /**
+     * If the {@linkplain #metadata} is still null, try to resolve it using UUID, XLink
+     * or NilReason information.
+     *
+     * @throws URISyntaxException If a URI can not be parsed.
+     */
+    final void resolve() throws URISyntaxException {
+        final XLink xlink = reference();
         if (xlink != null) {
-            if (result == null) {
-                result = MarshalContext.linker().resolve(getBoundType(), xlink);
-            } else if (result instanceof IdentifiedObject) {
-                ((IdentifiedObject) result).setXLink(xlink);
+            if (metadata == null) {
+                metadata = MarshalContext.linker().resolve(getBoundType(), xlink);
+            } else if (metadata instanceof IdentifiedObject) {
+                ((IdentifiedObject) metadata).setXLink(xlink);
             }
         }
-        return result;
+        if (metadata == null) {
+            final String uuidref = getUUIDREF();
+            if (uuidref != null) {
+                metadata = getBoundType().cast(UUIDs.DEFAULT.lookup(uuidref)); // May still null.
+            }
+            if (metadata == null) {
+                final String value = getNilReason();
+                if (value != null) {
+                    final NilReason nilReason = MarshalContext.converters().toNilReason(value);
+                    if (nilReason != null) {
+                        metadata = MarshalContext.linker().resolve(getBoundType(), nilReason);
+                    }
+                }
+            }
+        }
     }
 
     /**
