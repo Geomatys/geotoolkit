@@ -171,7 +171,7 @@ public class DecimatePolygonHandler extends PolygonHandler {
 
             //ensure it forms a closed line string if asked for
             if(!coords[0].equals2D(coords[lenght-1])){
-                coords[lenght] = new Coordinate(coords[0]);
+                coords[lenght-1] = new Coordinate(coords[0]);
                 lenght++;
             }
 
