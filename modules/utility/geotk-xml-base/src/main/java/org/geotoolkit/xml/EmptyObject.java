@@ -52,7 +52,7 @@ package org.geotoolkit.xml;
  * which is empty because the information are missing:
  *
  * {@preformat java
- *     Citation nil = ObjectLinker.DEFAULT.resolve(Citation.class, NilReason.MISSING);
+ *     Citation nil = NilReason.MISSING.createEmptyObject(Citation.class);
  * }
  *
  * @author Martin Desruisseaux (Geomatys)

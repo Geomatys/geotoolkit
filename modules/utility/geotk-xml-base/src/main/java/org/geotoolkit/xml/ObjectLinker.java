@@ -84,7 +84,7 @@ public class ObjectLinker {
      * Returns an object of the given type for the given {@code nilReason} attributes. The default
      * implementation returns an immutable object which implement the given interface together
      * with the {@link EmptyObject} interface. The {@link EmptyObject#getNilReason()} method will
-     * return the given link, and all other methods (except the ones inherited from the
+     * return the given reason, and all other methods (except the ones inherited from the
      * {@link Object} class) will return {@code null} or an empty collection as appropriate.
      *
      * @param  <T> The compile-time type of the {@code type} argument.

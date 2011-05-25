@@ -264,4 +264,20 @@ public final class NilReason implements Serializable {
         }
         return false;
     }
+
+    /**
+     * Returns an object of the given type which is empty for the reason represented by this enum.
+     * This method returns an object which implement the given interface together with the
+     * {@link EmptyObject} interface. The {@link EmptyObject#getNilReason()} method will return
+     * this enum, and all other methods (except the ones inherited from the {@link Object} class)
+     * will return {@code null} or an empty collection as appropriate.
+     *
+     * @param  <T> The compile-time type of the {@code type} argument.
+     * @param  type The object type as an <strong>interface</strong>.
+     *         This is usually a <a href="http://www.geoapi.org">GeoAPI</a> interface.
+     * @return An {@link EmptyObject} of the given type.
+     */
+    public <T> T createEmptyObject(final Class<T> type) {
+        return ObjectLinker.DEFAULT.resolve(type, this);
+    }
 }
